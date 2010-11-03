@@ -33,6 +33,7 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
@@ -166,7 +167,7 @@ namespace TvPlugin
         _channelOffset = xmlreader.GetValueAsInt("RadioGuideBase", "yoffset", 0);
       }
       _useNewRecordingButtonColor =
-        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
+        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
     }
 
     private void SaveSettings()
@@ -1097,7 +1098,7 @@ namespace TvPlugin
       }
 
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, strChannel);
-      if (!File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))      
       {
         strLogo = "defaultMyRadioBig.png";
       }
@@ -1496,8 +1497,8 @@ namespace TvPlugin
     
     private void RenderChannel(int iChannel, Channel channel, long iStart, long iEnd, bool selectCurrentShow)
     {
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-      if (File.Exists(strLogo))
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);      
+      if (!string.IsNullOrEmpty(strLogo))      
       {
         GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
         if (img != null)

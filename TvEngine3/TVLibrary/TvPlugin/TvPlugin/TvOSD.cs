@@ -30,6 +30,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -1405,7 +1406,7 @@ namespace TvPlugin
 
       if (imgTvChannelLogo != null)
       {
-        if (File.Exists(strLogo))
+        if (!string.IsNullOrEmpty(strLogo))                      
         {
           imgTvChannelLogo.SetFileName(strLogo);
           m_bNeedRefresh = true;
@@ -1535,7 +1536,7 @@ namespace TvPlugin
           if (ch != null)
           {
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (!File.Exists(strLogo))
+            if (string.IsNullOrEmpty(strLogo))                          
             {
               strLogo = "defaultVideoBig.png";
             }

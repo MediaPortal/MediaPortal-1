@@ -37,6 +37,7 @@ using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
 using System.Windows.Media.Animation;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
@@ -244,13 +245,13 @@ namespace TvPlugin
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
       }
       _useNewRecordingButtonColor =
-        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
+        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
       _useNewPartialRecordingButtonColor =
-        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_partRecButton_Focus_middle.png"));
+        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_partRecButton_Focus_middle.png"));
       _useNewNotifyButtonColor =
-        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_notifyButton_Focus_middle.png"));
+        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_notifyButton_Focus_middle.png"));
       _useHdProgramIcon =
-        File.Exists(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_hd_program.png"));
+        Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_hd_program.png"));
     }
 
     private void SaveSettings()
@@ -1418,11 +1419,11 @@ namespace TvPlugin
     private string GetChannelLogo(string strChannel)
     {
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannel);
-      if (!File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))
       {
         // Check for a default TV channel logo.
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, "default");
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))
         {
           strLogo = "defaultVideoBig.png";
         }

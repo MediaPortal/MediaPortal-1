@@ -27,6 +27,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using TvLibrary.Teletext;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {

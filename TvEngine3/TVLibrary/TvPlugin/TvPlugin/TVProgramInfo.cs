@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 
 
 namespace TvPlugin
@@ -558,7 +559,7 @@ namespace TvPlugin
         item.Label = TVUtil.GetDisplayTitle(episode);
         item.OnItemSelected += item_OnItemSelected;
         string logo = Utils.GetCoverArt(Thumbs.TVChannel, episode.ReferencedChannel().DisplayName);
-        if (!File.Exists(logo))
+        if (string.IsNullOrEmpty(logo))                      
         {
           item.Label = String.Format("{0} {1}", episode.ReferencedChannel().DisplayName, TVUtil.GetDisplayTitle(episode));
           logo = "defaultVideoBig.png";

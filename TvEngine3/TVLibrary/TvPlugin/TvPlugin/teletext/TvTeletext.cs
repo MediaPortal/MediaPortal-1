@@ -20,6 +20,7 @@
 
 using System;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin.teletext
 {

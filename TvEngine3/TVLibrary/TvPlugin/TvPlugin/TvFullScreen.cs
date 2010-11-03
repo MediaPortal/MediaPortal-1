@@ -41,6 +41,7 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using Timer = System.Timers.Timer;
 using System.Runtime.Remoting;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
@@ -1569,7 +1570,8 @@ namespace TvPlugin
       {
         dlg.AddLocalizedString(100748); // Program Information
       }
-      if (!g_Player.IsTVRecording && File.Exists(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+
+      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
       {
         dlg.AddLocalizedString(200041); // tuning details
       }

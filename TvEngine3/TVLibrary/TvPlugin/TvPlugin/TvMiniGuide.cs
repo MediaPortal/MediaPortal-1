@@ -33,6 +33,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 

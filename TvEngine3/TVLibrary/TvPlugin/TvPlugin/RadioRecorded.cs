@@ -32,6 +32,7 @@ using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -954,17 +955,17 @@ namespace TvPlugin
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
-        if (File.Exists(StationLogo))
+        if (!string.IsNullOrEmpty(StationLogo))            
         {
           SmallThumb = StationLogo;
         }
 
         // Display previews only if the option to create them is active
-        if (File.Exists(PreviewThumb) /*&& _createRecordedThumbs*/)
+        if (!string.IsNullOrEmpty(PreviewThumb))                              
         {
           // Search a larger one
           string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
-          if (File.Exists(PreviewThumbLarge))
+          if (!string.IsNullOrEmpty(PreviewThumbLarge))                                        
           {
             PreviewThumb = PreviewThumbLarge;
           }
@@ -1500,7 +1501,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Recorded.Channel", GetRecordingDisplayName(rec));
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, GetRecordingDisplayName(rec));
 
-        if (File.Exists(strLogo))
+        if (!string.IsNullOrEmpty(strLogo))                                                
         {
           GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", strLogo);
         }

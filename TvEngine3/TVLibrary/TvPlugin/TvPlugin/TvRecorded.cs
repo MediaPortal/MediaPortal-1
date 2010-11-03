@@ -36,6 +36,7 @@ using MediaPortal.Threading;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 //using System.Windows;
 //using System.Windows.Media;
@@ -75,10 +76,15 @@ namespace TvPlugin
           for (int i = recordings.Count - 1; i >= 0; i--)
           {
             string recFileName = TVUtil.GetFileNameForRecording(recordings[i]);
-            string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
+            /*string thumbNail = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                              Path.ChangeExtension(Utils.SplitFilename(recFileName), null),
                                              Utils.GetThumbExtension());
-            if ((!TVHome.UseRTSP()) && !File.Exists(thumbNail))
+            */
+            string thumbNail = Utils.GetCoverArtByThumbExtension(Thumbs.TVRecorded,
+                                                                Path.ChangeExtension(
+                                                                  Utils.SplitFilename(recFileName), null));
+
+            if ((!TVHome.UseRTSP()) && string.IsNullOrEmpty(thumbNail))
             {
               //Log.Info("RecordedTV: No thumbnail found at {0} for recording {1} - grabbing from file now", thumbNail, rec.FileName);
 
@@ -822,7 +828,7 @@ namespace TvPlugin
       else if (DateTime.Now.Year.Equals(compareDate.AddYears(1).Year))
         return GUILocalizeStrings.Get(6080); // "Last year";
       else return GUILocalizeStrings.Get(6090); // "Older";
-    }
+    }        
 
     private void LoadDirectory()
     {
@@ -1082,28 +1088,27 @@ namespace TvPlugin
         item.TVTag = aRecording;
 
         // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-        string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
-                                            Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
-                                            Utils.GetThumbExtension());
-
+        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;     
+        string previewThumb = Utils.GetCoverArtByThumbExtension(Thumbs.TVRecorded,
+                                                                Path.ChangeExtension(
+                                                                  Utils.SplitFilename(aRecording.FileName), null));
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
-        if (File.Exists(StationLogo))
+        if (!string.IsNullOrEmpty(StationLogo))
         {
           SmallThumb = StationLogo;
         }
 
-        // Display previews only if the option to create them is active
-        if (File.Exists(PreviewThumb) /*&& _createRecordedThumbs*/)
+        // Display previews only if the option to create them is active                
+        if (!string.IsNullOrEmpty(previewThumb))
         {
           // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
-          if (File.Exists(PreviewThumbLarge))
+          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(previewThumb);          
+          if (!string.IsNullOrEmpty(PreviewThumbLarge))
           {
-            PreviewThumb = PreviewThumbLarge;
+            previewThumb = PreviewThumbLarge;
           }
-          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
+          item.ThumbnailImage = item.IconImageBig = previewThumb;
         }
         else
         {
@@ -1663,13 +1668,13 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.RecordedTV.Channel", GetRecordingDisplayName(rec));
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, GetRecordingDisplayName(rec));
 
-        if (File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);          
         }
       }
       catch (Exception ex)

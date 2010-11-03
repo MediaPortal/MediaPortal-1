@@ -27,6 +27,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -296,7 +297,14 @@ namespace TvPlugin
     private void SetCurrentChannelLogo()
     {
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-      if (File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))                         
+      {
+        if (imgTvChannelLogo != null)
+        {
+          imgTvChannelLogo.IsVisible = false;
+        }
+      }
+      else
       {
         if (imgTvChannelLogo != null)
         {
@@ -304,14 +312,7 @@ namespace TvPlugin
           //img.SetPosition(GUIGraphicsContext.OverScanLeft, GUIGraphicsContext.OverScanTop);
           m_bNeedRefresh = true;
           imgTvChannelLogo.IsVisible = true;
-        }
-      }
-      else
-      {
-        if (imgTvChannelLogo != null)
-        {
-          imgTvChannelLogo.IsVisible = false;
-        }
+        }        
       }
       ShowPrograms();
     }

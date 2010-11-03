@@ -45,6 +45,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
@@ -2081,7 +2082,7 @@ namespace TvPlugin
             item.Label2 = programTitle;
 
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channelName);
-            if (!File.Exists(strLogo))
+            if (string.IsNullOrEmpty(strLogo))            
             {
               strLogo = "defaultVideoBig.png";
             }
@@ -2185,7 +2186,7 @@ namespace TvPlugin
             item.Label = ch.DisplayName;
             item.Label2 = user.Name;
             string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-            if (!File.Exists(strLogo))
+            if (string.IsNullOrEmpty(strLogo))                        
             {
               strLogo = "defaultVideoBig.png";
             }
@@ -2496,7 +2497,7 @@ namespace TvPlugin
           }
 
           string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, Navigator.CurrentChannel);
-          if (!File.Exists(strLogo))
+          if (string.IsNullOrEmpty(strLogo))
           {
             strLogo = "defaultVideoBig.png";
           }
@@ -2592,13 +2593,13 @@ namespace TvPlugin
         }
 
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, displayName);
-        if (File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                    
         {
-          GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+          GUIPropertyManager.SetProperty("#TV.View.thumb", "defaultVideoBig.png");          
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.View.thumb", "defaultVideoBig.png");
+          GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
         }
         //GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));                
       }

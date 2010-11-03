@@ -31,6 +31,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -223,7 +224,7 @@ namespace TvPlugin
         item.Label = String.Format("{0}.{1}", total, rec.ProgramName);
         item.TVTag = rec;
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -822,13 +823,13 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Time", strTime);
       GUIPropertyManager.SetProperty("#TV.RecordedTV.Description", "");
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, rec.ReferencedChannel().DisplayName);
-      if (File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))                    
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+        GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", strLogo);
       }
     }
 
@@ -862,13 +863,13 @@ namespace TvPlugin
 
 
       string logo = Utils.GetCoverArt(Thumbs.TVChannel, schedule.ReferencedChannel().DisplayName);
-      if (File.Exists(logo))
+      if (string.IsNullOrEmpty(logo))              
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);
+        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", "defaultVideoBig.png");
+        GUIPropertyManager.SetProperty("#TV.Scheduled.thumb", logo);        
       }
     }
 

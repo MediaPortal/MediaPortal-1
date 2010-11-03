@@ -24,6 +24,7 @@ using System;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
+using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 

@@ -32,6 +32,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -565,7 +566,7 @@ namespace TvPlugin
           item.ThumbnailImage = String.Empty;
           Utils.SetDefaultIcons(item);
           string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
-          if (File.Exists(thumbnail))
+          if (!string.IsNullOrEmpty(thumbnail))                            
           {
             item.IconImageBig = thumbnail;
             item.IconImage = thumbnail;
@@ -608,7 +609,7 @@ namespace TvPlugin
                 item.IconImage = "DefaultMyradio.png";
               }
               string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-              if (File.Exists(thumbnail))
+              if (!string.IsNullOrEmpty(thumbnail))              
               {
                 item.IconImageBig = thumbnail;
                 item.IconImage = thumbnail;
@@ -667,7 +668,7 @@ namespace TvPlugin
               item.IconImage = "DefaultMyradio.png";
             }
             string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-            if (File.Exists(thumbnail))
+            if (!string.IsNullOrEmpty(thumbnail))            
             {
               item.IconImageBig = thumbnail;
               item.IconImage = thumbnail;

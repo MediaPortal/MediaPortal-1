@@ -29,6 +29,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {

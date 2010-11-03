@@ -28,6 +28,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -1223,13 +1224,11 @@ namespace TvPlugin
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
-
-      if (!File.Exists(strLogo) || strLogo == String.Empty)
+      if (string.IsNullOrEmpty(strLogo))             
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
       }
-
-      if (!File.Exists(strLogo))
+      else
       {
         strLogo = "defaultVideoBig.png";
       }
@@ -1432,13 +1431,13 @@ namespace TvPlugin
       }
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
-      if (File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo))                   
       {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);
+        GUIPropertyManager.SetProperty("#TV.Search.thumb", "defaultVideoBig.png");
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", "defaultVideoBig.png");
+        GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);        
       }
     }
 

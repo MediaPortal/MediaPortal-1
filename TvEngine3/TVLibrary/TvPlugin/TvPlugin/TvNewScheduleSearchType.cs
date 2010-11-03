@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace TvPlugin
 {
@@ -123,7 +124,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
         }
@@ -254,7 +255,7 @@ namespace TvPlugin
       {
         GUIListItem item = new GUIListItem(chan.ReferencedChannel().DisplayName);
         string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, chan.ReferencedChannel().DisplayName);
-        if (!File.Exists(strLogo))
+        if (string.IsNullOrEmpty(strLogo))                      
         {
           strLogo = "defaultVideoBig.png";
         }
