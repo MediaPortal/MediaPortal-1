@@ -860,7 +860,6 @@ namespace MediaPortal.Util
     /// <returns>A list of GUIListItems for the specified folder</returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
-        var w = System.Diagnostics.Stopwatch.StartNew();
       if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
@@ -1166,8 +1165,6 @@ namespace MediaPortal.Util
           (List<GUIListItem>)CueUtil.CUEFileListFilter<GUIListItem>(items, CueUtil.CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER);
       }
       m_strPreviousDir = strDir;
-        w.Stop();
-        Log.Error("VDLoad: " + w.ElapsedMilliseconds);
       return items;
     }
 
