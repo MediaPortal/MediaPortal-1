@@ -116,6 +116,8 @@ CMultiSoundTouch::CMultiSoundTouch(bool pEnableAC3Encoding, int AC3bitrate, CSyn
 , m_fNewAdjustment(1.0)
 , m_fCurrentAdjustment(1.0)
 , m_fNewTempo(1.0)
+, m_nFrameCorr(0)
+, m_nPrevFrameCorr(0)
 {
   // Use separate thread per channnel pair?
   m_hSampleArrivedEvent = CreateEvent(0, FALSE, FALSE, 0);
@@ -313,25 +315,23 @@ DWORD CMultiSoundTouch::ResampleThread()
 
           if ((!m_pEncoder && nOutFrames > 0) || (m_pEncoder && nOutFrames >= AC3_FRAME_LENGTH))
           {
-            // with AC3 encoder enabled, the resampled buffer is not emptied completely
-						UINT32 nOrigOutFrames=nOutFrames;
-						static UINT32 nFrameCorr=0;
-						static UINT32 nPrevFrameCorr=0;
+            UINT32 nOrigOutFrames = nOutFrames;
+            m_nPrevFrameCorr = m_nFrameCorr;
 
-						nPrevFrameCorr=nFrameCorr;
             if (m_pEncoder)
-						{
-							nFrameCorr=nOutFrames % AC3_FRAME_LENGTH;
-						}
-						else
-						{
-							nFrameCorr=0;
-						}
-            nOutFrames = nOutFrames - nFrameCorr;  
+            {
+              // with AC3 encoder enabled, the resampled buffer is not emptied completely
+              m_nFrameCorr = nOutFrames % AC3_FRAME_LENGTH;
+            }
+            else
+            {
+              m_nFrameCorr = 0;
+            }
+            nOutFrames = nOutFrames - m_nFrameCorr;  
             
             UINT32 nInFrames = (size / m_pWaveFormat->Format.nBlockAlign) - unprocessedSamplesAfter + unprocessedSamplesBefore;
             double rtSampleDuration = (double)nInFrames * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
-            double rtProcessedSampleDuration = (double)(nOrigOutFrames-nPrevFrameCorr) * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
+            double rtProcessedSampleDuration = (double)(nOrigOutFrames - m_nPrevFrameCorr) * (double)UNITS / (double)m_pWaveFormat->Format.nSamplesPerSec;
 
             m_pClock->AudioResampled(rtProcessedSampleDuration, rtSampleDuration, bias, adjustment, AVMult);
             

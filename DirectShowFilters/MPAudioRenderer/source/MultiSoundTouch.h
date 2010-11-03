@@ -133,6 +133,9 @@ private:
   double m_fNewTempo;
   double m_fNewAdjustment;
 
+  INT32 m_nFrameCorr;
+  INT32 m_nPrevFrameCorr;
+
   soundtouch::SAMPLETYPE m_temp[2*SAMPLE_LEN];
   HANDLE m_hThread;
 
