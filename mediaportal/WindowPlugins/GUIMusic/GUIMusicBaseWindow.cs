@@ -34,6 +34,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -785,7 +786,7 @@ namespace MediaPortal.GUI.Music
       }
       PlayList playlist = new PlayList();
 
-      if (!File.Exists(strPlayList))
+      if (!Util.Utils.FileExistsInCache(strPlayList))
       {
         Log.Info("Playlist: Skipping non-existing Playlist file: {0}", strPlayList);
         return;
@@ -828,7 +829,7 @@ namespace MediaPortal.GUI.Music
         MusicTag tag = new MusicTag();
         tag = song.ToMusicTag();
         playListItem.MusicTag = tag;
-        if (File.Exists(playListItem.FileName) || playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
+        if (Util.Utils.FileExistsInCache(playListItem.FileName) || playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
         {
           playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
         }
@@ -1123,7 +1124,8 @@ namespace MediaPortal.GUI.Music
 
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))        
+
         {
           item.ThumbnailImage = strLarge;
         }
@@ -1838,7 +1840,7 @@ namespace MediaPortal.GUI.Music
               // use the better one
               thumb = Util.Utils.ConvertToLargeCoverArt(thumb);
               // to create a folder.jpg from it
-              if (File.Exists(thumb) && _createMissingFolderThumbs)
+              if (Util.Utils.FileExistsInCache(thumb) && _createMissingFolderThumbs)
               {
                 try
                 {
@@ -1921,7 +1923,7 @@ namespace MediaPortal.GUI.Music
         {
           string folderjpg = String.Format(@"{0}\folder.jpg", sharePath);
 
-          if (File.Exists(folderjpg))
+          if (Util.Utils.FileExistsInCache(folderjpg))
           {
             File.Delete(folderjpg);
           }
@@ -1935,7 +1937,7 @@ namespace MediaPortal.GUI.Music
 
         if (aSaveToAlbumThumbFolder || isCdOrDVD)
         {
-          if (File.Exists(thumbPath))
+          if (Util.Utils.FileExistsInCache(thumbPath))
           {
             File.Delete(thumbPath);
           }
@@ -1965,7 +1967,7 @@ namespace MediaPortal.GUI.Music
         return false;
       }
 
-      bool bHasThumbnailImage = File.Exists(Util.Utils.GetAlbumThumbName(ArtistName, AlbumName));
+      bool bHasThumbnailImage = Util.Utils.FileExistsInCache(Util.Utils.GetAlbumThumbName(ArtistName, AlbumName));
 
       if (!checkAlbumFolder)
       {
@@ -1973,7 +1975,7 @@ namespace MediaPortal.GUI.Music
       }
 
       string path = Path.GetDirectoryName(albumPath);
-      bool bHasAlbumFolderImage = File.Exists(Path.Combine(path, "folder.jpg"));
+      bool bHasAlbumFolderImage = Util.Utils.FileExistsInCache(Path.Combine(path, "folder.jpg"));
 
       return bHasThumbnailImage && bHasAlbumFolderImage;
     }

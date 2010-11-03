@@ -28,6 +28,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET.Helper;
+using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
@@ -157,13 +158,13 @@ namespace MediaPortal.GUI.Library
           XmlNodeList list = doc.DocumentElement.SelectNodes("/fonts/font");
           foreach (XmlNode node in list)
           {
-            XmlNode nodeStart = node.SelectSingleNode("startchar");
-            XmlNode nodeEnd = node.SelectSingleNode("endchar");
-            XmlNode nodeName = node.SelectSingleNode("name");
-            XmlNode nodeFileName = node.SelectSingleNode("filename");
-            XmlNode nodeHeight = node.SelectSingleNode("height");
-            XmlNode nodeBold = node.SelectSingleNode("bold");
-            XmlNode nodeItalics = node.SelectSingleNode("italic");
+            XmlNode nodeStart = node.SelectSingleNodeFast("startchar");
+            XmlNode nodeEnd = node.SelectSingleNodeFast("endchar");
+            XmlNode nodeName = node.SelectSingleNodeFast("name");
+            XmlNode nodeFileName = node.SelectSingleNodeFast("filename");
+            XmlNode nodeHeight = node.SelectSingleNodeFast("height");
+            XmlNode nodeBold = node.SelectSingleNodeFast("bold");
+            XmlNode nodeItalics = node.SelectSingleNodeFast("italic");
             if (nodeHeight != null && nodeName != null && nodeFileName != null)
             {
               bool bold = false;
@@ -218,8 +219,8 @@ namespace MediaPortal.GUI.Library
           XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
           foreach (XmlNode node in listAlias)
           {
-            XmlNode nodeName = node.SelectSingleNode("name");
-            XmlNode nodeFontName = node.SelectSingleNode("fontname");
+              XmlNode nodeName = node.SelectSingleNodeFast("name");
+              XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
             _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
           }
 

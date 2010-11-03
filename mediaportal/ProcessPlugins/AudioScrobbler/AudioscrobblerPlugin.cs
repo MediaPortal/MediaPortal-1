@@ -29,6 +29,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 namespace MediaPortal.Audioscrobbler

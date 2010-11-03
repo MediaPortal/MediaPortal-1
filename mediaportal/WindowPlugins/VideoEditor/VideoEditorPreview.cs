@@ -31,6 +31,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using Mpeg2SplitterPackage;
 using TsCutterPackage;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.VideoEditor
 {

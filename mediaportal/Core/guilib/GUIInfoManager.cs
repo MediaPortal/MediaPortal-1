@@ -2347,8 +2347,8 @@ namespace MediaPortal.GUI.Library
 
     private static readonly object lockCache = new object();
 
-    private static Dictionary<string, List<GUIInfo>> m_cacheMultiInfoBoolProperties =
-      new Dictionary<string, List<GUIInfo>>();
+    private static Dictionary<string, HashSet<GUIInfo>> m_cacheMultiInfoBoolProperties =
+      new Dictionary<string, HashSet<GUIInfo>>();
 
     private static Dictionary<GUIInfo, bool> m_cacheMultiInfoBoolResults = new Dictionary<GUIInfo, bool>();
 
@@ -2364,15 +2364,15 @@ namespace MediaPortal.GUI.Library
 
       lock (lockCache)
       {
-        if (!m_cacheMultiInfoBoolProperties.ContainsKey(property))
+        HashSet<GUIInfo> set = null;
+        if (!m_cacheMultiInfoBoolProperties.TryGetValue(property, out set))
         {
-          List<GUIInfo> set = new List<GUIInfo>();
+          set = new HashSet<GUIInfo>();
           set.Add(info);
           m_cacheMultiInfoBoolProperties[property] = set;
         }
         else
-        {
-          List<GUIInfo> set = m_cacheMultiInfoBoolProperties[property];
+        {          
           if (!set.Contains(info))
           {
             set.Add(info);
@@ -2419,12 +2419,13 @@ namespace MediaPortal.GUI.Library
     {
       lock (lockCache)
       {
-        if (!m_cacheMultiInfoBoolProperties.ContainsKey(tag))
+        HashSet<GUIInfo> GUIInfos = null;
+        if (!m_cacheMultiInfoBoolProperties.TryGetValue(tag, out GUIInfos))
         {
           return;
         }
 
-        foreach (GUIInfo info in m_cacheMultiInfoBoolProperties[tag])
+        foreach (GUIInfo info in GUIInfos)
         {
           if (m_cacheMultiInfoBoolResults.ContainsKey(info))
           {

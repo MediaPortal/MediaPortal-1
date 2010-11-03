@@ -581,9 +581,6 @@
     <Compile Include="Drawing\DashStyles.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Drawing\DoubleCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Drawing\DrawingContext.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -594,9 +591,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\Geometry.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Drawing\GeometryCollection.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Drawing\GeometryCombineMode.cs">
@@ -1176,9 +1170,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Collections\NullEnumerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Collections\PriorityQueue.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Threading\TimeoutLock.cs">

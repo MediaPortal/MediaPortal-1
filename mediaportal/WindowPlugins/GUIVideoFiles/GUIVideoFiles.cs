@@ -35,6 +35,7 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 
 #pragma warning disable 108
 
@@ -497,7 +498,7 @@ namespace MediaPortal.GUI.Video
       this.LoadDirectory(newFolderName, useCache, null);
     }
 
-    private void LoadDirectory(string newFolderName, bool useCache, IList<string> watchedFiles)
+    private void LoadDirectory(string newFolderName, bool useCache, HashSet<string> watchedFiles)
     {
       if (newFolderName == null)
       {
@@ -1208,13 +1209,13 @@ namespace MediaPortal.GUI.Video
         string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
         string thumbPath = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
 
-        if (string.IsNullOrEmpty(thumbPath) || !File.Exists(thumbPath))
+        if (string.IsNullOrEmpty(thumbPath) || !Util.Utils.FileExistsInCache(thumbPath))
         {
           thumbPath = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
             Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(pItem.Path, ".jpg"))));
         }
 
-        if (File.Exists(thumbPath))
+        if (Util.Utils.FileExistsInCache(thumbPath))
         {
           pItem.RefreshCoverArt();
 
@@ -1222,7 +1223,7 @@ namespace MediaPortal.GUI.Video
           pItem.IconImageBig = thumbPath;
 
           string thumbLargePath = Util.Utils.ConvertToLargeCoverArt(thumbPath);
-          if (File.Exists(thumbLargePath))
+          if (Util.Utils.FileExistsInCache(thumbLargePath))
           {
             pItem.ThumbnailImage = thumbLargePath;
           }
@@ -1589,7 +1590,7 @@ namespace MediaPortal.GUI.Video
       ArrayList movies = new ArrayList();
       int iidMovie = VideoDatabase.GetMovieId(filename);
       VideoDatabase.GetFiles(iidMovie, ref movies);
-      List<string> watchedMovies = new List<string>();
+      HashSet<string> watchedMovies = new HashSet<string>();
 
       if (movies.Count <= 0)
       {
@@ -1683,7 +1684,7 @@ namespace MediaPortal.GUI.Video
 
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
-      List<string> watchedMovies = new List<string>();
+      HashSet<string> watchedMovies = new HashSet<string>();
 
       int iidMovie = VideoDatabase.GetMovieId(filename);
       if (iidMovie >= 0)
@@ -2166,7 +2167,7 @@ namespace MediaPortal.GUI.Video
       }
       string strThumb = Util.Utils.GetCoverArtName(folder, name);
       string LargeThumb = Util.Utils.GetLargeCoverArtName(folder, name);
-      if (!File.Exists(strThumb))
+      if (!Util.Utils.FileExistsInCache(strThumb))
       {
         string strExtension;
         strExtension = Path.GetExtension(url);
@@ -2179,7 +2180,7 @@ namespace MediaPortal.GUI.Video
           Util.Utils.FileDelete(strTemp);
 
           Util.Utils.DownLoadImage(url, strTemp);
-          if (File.Exists(strTemp))
+          if (Util.Utils.FileExistsInCache(strTemp))
           {
             if (Util.Picture.CreateThumbnail(strTemp, strThumb, (int)Thumbs.ThumbResolution,
                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))

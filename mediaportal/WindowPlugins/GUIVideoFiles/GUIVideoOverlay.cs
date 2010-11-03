@@ -25,6 +25,7 @@ using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {
@@ -350,7 +351,7 @@ namespace MediaPortal.GUI.Video
           movieDetails.Genre = info.genre;
           GUIPropertyManager.SetProperty("#Play.Current.Channel", info.channelName);
           string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, info.channelName);
-          if (!File.Exists(logo))
+          if (!Util.Utils.FileExistsInCache(logo))
           {
             logo = "defaultVideoBig.png";
           }

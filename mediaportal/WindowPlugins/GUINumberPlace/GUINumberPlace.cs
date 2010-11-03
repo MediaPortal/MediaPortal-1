@@ -29,6 +29,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 namespace MediaPortal.GUI.NumberPlace

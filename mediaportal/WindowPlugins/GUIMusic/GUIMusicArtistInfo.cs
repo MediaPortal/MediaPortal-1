@@ -25,6 +25,7 @@ using System.Text;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -399,12 +400,17 @@ namespace MediaPortal.GUI.Music
         //	permanent thumb
         Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
       }
-
-      if (File.Exists(coverArtFileName))
+      
+      try
       {
         coverArtTexture = Util.Picture.Load(coverArtFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
-                                            out coverArtTextureHeight);
+                                            out coverArtTextureHeight);  
       }
+      catch (FileNotFoundException)
+      {
+        //ignore          
+      }
+              
       Update();
     }
 

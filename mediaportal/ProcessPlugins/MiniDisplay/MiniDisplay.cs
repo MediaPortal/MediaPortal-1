@@ -27,6 +27,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using Microsoft.Win32;
+using Action = MediaPortal.GUI.Library.Action;
 using Message = MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setting.Message;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin

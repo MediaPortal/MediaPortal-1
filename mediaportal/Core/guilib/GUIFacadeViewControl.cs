@@ -550,21 +550,67 @@ namespace MediaPortal.GUI.Library
 
     public void Sort(IComparer<GUIListItem> comparer)
     {
+      var preSort = new List<GUIListItem>(_itemList);
+      try
+      {
+          _itemList.Sort(comparer);
+      }
+      catch (Exception) { }
       if (_viewAlbum != null)
       {
-        _viewAlbum.Sort(comparer);
+          if (HasSameItems(_viewAlbum.ListItems, preSort))
+          {
+              if (_viewAlbum.ListItems != _itemList) //if same instance of list, nothing to do except refresh
+              {
+                  _viewAlbum.ListItems.Clear();
+                  _viewAlbum.ListItems.AddRange(_itemList);
+              }
+              _viewAlbum.SetNeedRefresh();
+          }
+          else
+              _viewAlbum.Sort(comparer);
       }
       if (_viewList != null)
       {
-        _viewList.Sort(comparer);
+          if (HasSameItems(_viewList.ListItems, preSort))
+          {
+              if (_viewList.ListItems != _itemList)
+              {
+                  _viewList.ListItems.Clear();
+                  _viewList.ListItems.AddRange(_itemList);
+              }
+              _viewList.SetNeedRefresh();
+          }
+          else
+              _viewList.Sort(comparer);
       }
       if (_viewThumbnail != null)
       {
-        _viewThumbnail.Sort(comparer);
+          if (HasSameItems(_viewThumbnail.ListItems, preSort))
+          {
+              if (_viewThumbnail.ListItems != _itemList)
+              {
+                  _viewThumbnail.ListItems.Clear();
+                  _viewThumbnail.ListItems.AddRange(_itemList);
+              }
+              _viewThumbnail.SetNeedRefresh();
+          }
+          else
+              _viewThumbnail.Sort(comparer);
       }
       if (_viewFilmStrip != null)
       {
-        _viewFilmStrip.Sort(comparer);
+          if (HasSameItems(_viewFilmStrip.ListItems, preSort))
+          {
+              if (_viewFilmStrip.ListItems != _itemList)
+              {
+                  _viewFilmStrip.ListItems.Clear();
+                  _viewFilmStrip.ListItems.AddRange(_itemList);
+              }
+              _viewFilmStrip.SetNeedRefresh();
+          }
+          else
+              _viewFilmStrip.Sort(comparer);
       }
       if (_viewPlayList != null)
       {
@@ -574,11 +620,7 @@ namespace MediaPortal.GUI.Library
       {
         _viewCoverFlow.Sort(comparer);
       }
-      try
-      {
-        _itemList.Sort(comparer);
-      }
-      catch (Exception) {}
+      
     }
 
     public void Add(GUIListItem item)
@@ -1433,6 +1475,20 @@ namespace MediaPortal.GUI.Library
       }
 
       return selectedItemIndex;
+    }
+
+    private static bool HasSameItems(IList<GUIListItem> sequence1, IList<GUIListItem> sequence2)
+    {
+        if (sequence1 == null) return sequence2 == null;
+        if (sequence2 == null) return false;
+        if (sequence1.Count != sequence2.Count) return false;
+        int items = sequence1.Count;
+        for (int i = 0; i < items; i++)
+        {
+            if (sequence1[i] != sequence2[i]) // let's be strict and require them to be the same instance, and not just same label, etc.
+                return false;
+        }
+        return true;
     }
   }
 }

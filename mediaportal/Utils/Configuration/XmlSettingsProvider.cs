@@ -19,8 +19,10 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Xml;
+using MediaPortal.Utils;
 
 namespace MediaPortal.Profile
 {
@@ -81,7 +83,8 @@ namespace MediaPortal.Profile
       {
         return null;
       }
-      XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));
+      //XmlNode entryNode = root.SelectSingleNode(GetSectionsPath(section) + "/" + GetEntryPath(entry));      
+      XmlNode entryNode = SelectSingleNodeFast(root, GetSectionsPath(section) + "/" + GetEntryPath(entry));
       if (entryNode == null)
       {
         return null;
@@ -151,7 +154,8 @@ namespace MediaPortal.Profile
       }
       XmlElement root = document.DocumentElement;
       // Get the section element and add it if it's not there
-      XmlNode sectionNode = root.SelectSingleNode(GetSectionsPath(section));
+      //XmlNode sectionNode = root.SelectSingleNode(GetSectionsPath(section));
+      XmlNode sectionNode = SelectSingleNodeFast(root, GetSectionsPath(section));
       if (sectionNode == null)
       {
         XmlElement element = document.CreateElement("section");
@@ -162,7 +166,8 @@ namespace MediaPortal.Profile
       }
 
       // Get the entry element and add it if it's not there
-      XmlNode entryNode = sectionNode.SelectSingleNode(GetEntryPath(entry));
+      //XmlNode entryNode = sectionNode.SelectSingleNode(GetEntryPath(entry));
+      XmlNode entryNode = SelectSingleNodeFast(sectionNode, GetEntryPath(entry));
       if (entryNode == null)
       {
         XmlElement element = document.CreateElement("entry");
@@ -260,6 +265,23 @@ namespace MediaPortal.Profile
     private static bool IsAtSection(XmlReader reader)
     {
       return reader.LocalName == "section" && reader.Depth == 1 && reader.NodeType == XmlNodeType.Element;
+    }
+
+    private static XmlNode SelectSingleNodeFast(XmlNode node, string xpath)
+    {
+        //NOTE: this is code-duplication from Util.cs, but I don't want to introduce new dependencies
+        // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+        XmlNodeList nodes = node.SelectNodes(xpath);
+
+        if (nodes == null)
+            return null;
+
+        IEnumerator enumerator = nodes.GetEnumerator();
+        if (enumerator != null && enumerator.MoveNext())
+        {
+            return (XmlNode)enumerator.Current;
+        }
+        return null; //nothing found
     }
   }
 }

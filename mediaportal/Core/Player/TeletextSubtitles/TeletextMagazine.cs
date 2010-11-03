@@ -220,9 +220,10 @@ namespace MediaPortal.Player.Subtitles
 
       lock (langInfo)
       {
-        if (langInfo.ContainsKey(pageNumInProgress))
+        string langInfoInPgrs = null;
+        if (langInfo.TryGetValue(pageNumInProgress, out langInfoInPgrs))
         {
-          realLang = langInfo[pageNumInProgress];
+          realLang = langInfoInPgrs;
         }
       }
 

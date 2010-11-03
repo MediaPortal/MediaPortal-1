@@ -33,6 +33,7 @@ using MediaPortal.Hardware;
 using MediaPortal.InputDevices;
 using MediaPortal.Player;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {

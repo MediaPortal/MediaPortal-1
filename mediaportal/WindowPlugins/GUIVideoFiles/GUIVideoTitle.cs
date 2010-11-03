@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.Video
 
         // check whether there is some larger cover art
         string LargeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-        if (File.Exists(LargeCover))
+        if (Util.Utils.FileExistsInCache(LargeCover))
         {
           aItem.ThumbnailImage = LargeCover;
         }
@@ -714,7 +714,7 @@ namespace MediaPortal.GUI.Video
             // Title suffix for problem with covers and movie with the same name
             string titleExt = movie.Title + "{" + movie.ID + "}";
             coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-            if (File.Exists(coverArtImage))
+            if (Util.Utils.FileExistsInCache(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
               listItem.IconImageBig = coverArtImage;
@@ -746,7 +746,7 @@ namespace MediaPortal.GUI.Video
         if (!string.IsNullOrEmpty(coverArtImage))
         {
           coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
-          if (File.Exists(coverArtImage))
+          if (Util.Utils.FileExistsInCache(coverArtImage))
           {
             listItem.ThumbnailImage = coverArtImage;
           }
@@ -770,7 +770,7 @@ namespace MediaPortal.GUI.Video
         //coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, movie.Title);
         string titleExt = movie.Title + "{" + movie.ID + "}";
         coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-        if (File.Exists(coverArtImage))
+        if (Util.Utils.FileExistsInCache(coverArtImage))
         {
           facadeView.FilmstripView.InfoImageFileName = coverArtImage;
         }
@@ -779,7 +779,7 @@ namespace MediaPortal.GUI.Video
       {
         string coverArtImage;
         coverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, movie.Actor);
-        if (File.Exists(coverArtImage))
+        if (Util.Utils.FileExistsInCache(coverArtImage))
         {
           facadeView.FilmstripView.InfoImageFileName = coverArtImage;
         }

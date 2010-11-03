@@ -27,6 +27,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {
@@ -474,7 +475,7 @@ namespace MediaPortal.GUI.Video
                     listItem.Label = String.Format("({0}:) {1}", listItem.Path.Substring(0, 1), movieDetails.Title);
                   }
                   string coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-                  if (File.Exists(coverArtImage))
+                  if (Util.Utils.FileExistsInCache(coverArtImage))
                   {
                     listItem.ThumbnailImage = coverArtImage;
                     listItem.IconImageBig = coverArtImage;
@@ -482,7 +483,7 @@ namespace MediaPortal.GUI.Video
                   }
                   // look for better thumbs
                   coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
-                  if (File.Exists(coverArtImage))
+                  if (Util.Utils.FileExistsInCache(coverArtImage))
                   {
                     listItem.ThumbnailImage = coverArtImage;
                   }
@@ -506,7 +507,7 @@ namespace MediaPortal.GUI.Video
           if (idMovie >= 0)
           {
             string coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-            if (File.Exists(coverArtImage))
+            if (Util.Utils.FileExistsInCache(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
               listItem.IconImageBig = coverArtImage;
@@ -514,7 +515,7 @@ namespace MediaPortal.GUI.Video
             }
             // look for better thumbs
             coverArtImage = Util.Utils.ConvertToLargeCoverArt(coverArtImage);
-            if (File.Exists(coverArtImage))
+            if (Util.Utils.FileExistsInCache(coverArtImage))
             {
               listItem.ThumbnailImage = coverArtImage;
             }

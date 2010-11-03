@@ -39,6 +39,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
 using Microsoft.Win32;
 using Win32.Utils.Cd;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {

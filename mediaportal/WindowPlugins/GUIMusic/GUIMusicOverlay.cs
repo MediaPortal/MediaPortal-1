@@ -29,6 +29,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -566,7 +567,7 @@ namespace MediaPortal.GUI.Music
       if (tag != null)
       {
         strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
-        if (File.Exists(strThumb))
+        if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;
         }
@@ -582,7 +583,7 @@ namespace MediaPortal.GUI.Music
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
           thumb = strLarge;

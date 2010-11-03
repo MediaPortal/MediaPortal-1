@@ -63,7 +63,7 @@ namespace MediaPortal.Player
     //Subtitles
     private int _numsubtitles = 0;
     private bool _hasSubtitles = false;
-    private static List<string> _subTitleExtensions = new List<string>();
+    private static HashSet<string> _subTitleExtensions = new HashSet<string>();
 
     #endregion
 

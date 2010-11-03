@@ -52,6 +52,7 @@ using MediaPortal.Services;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -1732,6 +1733,14 @@ public class MediaPortalApp : D3DApp, IRender
                       "Critical error", MessageBoxButtons.OK, MessageBoxIcon.Stop);
       Close();
     }
+
+    //System.Diagnostics.Debugger.Launch();
+
+    Utils.FileExistsInCache(Config.GetSubFolder(Config.Dir.Skin, "") + "dummy.png");
+    Utils.FileExistsInCache(Config.GetSubFolder(Config.Dir.Thumbs, "") + "dummy.png");            
+    Utils.FileExistsInCache(Thumbs.Videos + "\\dummy.png");
+    Utils.FileExistsInCache(Thumbs.MusicFolder + "\\dummy.png");    
+
     GUIGraphicsContext.Load();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
     GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
@@ -2167,6 +2176,7 @@ public class MediaPortalApp : D3DApp, IRender
       {
         Log.Info("Main: Stopping FrameMove");
         Close();
+        return;
       }
       if (_resetOnResize)
       {

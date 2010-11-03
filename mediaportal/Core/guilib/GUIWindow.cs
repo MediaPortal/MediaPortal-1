@@ -501,11 +501,6 @@ namespace MediaPortal.GUI.Library
       string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
       GUIControlFactory.LoadReferences(strReferenceFile);
 
-      if (!File.Exists(_windowXmlFileName))
-      {
-        Log.Error("SKIN: Missing {0}", _windowXmlFileName);
-        return false;
-      }
       try
       {
         // Load the XML file
@@ -608,7 +603,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        IDictionary defines = LoadDefines(doc);
+        IDictionary<string, string> defines = LoadDefines(doc);
 
         // Configure the autohide setting
         XmlNode nodeAutoHideTopbar = doc.DocumentElement.SelectSingleNode("/window/autohidetopbar");
@@ -688,6 +683,11 @@ namespace MediaPortal.GUI.Library
         _isSkinLoaded = true;
         return true;
       }
+      catch (FileNotFoundException e)
+      {
+        Log.Error("SKIN: Missing {0}", e.FileName);
+        return false; 
+      }        
       catch (Exception ex)
       {
         Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
@@ -701,13 +701,13 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     /// <param name="node">XmlNode describing the control</param>
     /// <param name="controls">on return this will contain an arraylist of all controls loaded</param>
-    protected void LoadControl(XmlNode node, IDictionary defines)
+    protected void LoadControl(XmlNode node, IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
       {
         return;
       }
-
+       
       try
       {
         GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, _windowXmlFileName);
@@ -732,16 +732,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private bool LoadInclude(XmlNode node, IDictionary defines)
+    private bool LoadInclude(XmlNode node,  IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
       {
-        return false;
-      }
-
-      if (File.Exists(_windowXmlFileName) == false)
-      {
-        Log.Error("SKIN: Missing {0}", _windowXmlFileName);
         return false;
       }
 
@@ -768,6 +762,11 @@ namespace MediaPortal.GUI.Library
 
         return true;
       }
+      catch (FileNotFoundException e)
+      {
+        Log.Error("SKIN: Missing {0}", e.FileName);
+        return false;
+      }
       catch (Exception e)
       {
         Log.Error("GUIWIndow.LoadInclude: {0}", e.Message);
@@ -776,9 +775,9 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    private IDictionary LoadDefines(XmlDocument document)
+    private IDictionary<string, string> LoadDefines(XmlDocument document)
     {
-      Hashtable table = new Hashtable();
+      IDictionary<string, string> table = new Dictionary<string, string>();
 
       try
       {
@@ -1062,7 +1061,7 @@ namespace MediaPortal.GUI.Library
 
         Dispose();
         LoadSkin();
-        List<int> faultyControl = new List<int>();
+        HashSet<int> faultyControl = new HashSet<int>();
         // tell every control we're gonna alloc the resources next
         for (int i = 0; i < Children.Count; i++)
         {

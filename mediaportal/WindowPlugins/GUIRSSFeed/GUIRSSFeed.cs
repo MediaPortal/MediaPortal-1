@@ -31,6 +31,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Rss;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.RSS
 {
@@ -469,7 +470,7 @@ namespace MediaPortal.GUI.RSS
           {
             //m_strSiteIcon = MediaPortal.Util.Utils.GetThumb(m_strSiteURL);
             m_strSiteIcon = Util.Utils.GetCoverArtName(Thumbs.News, m_strSiteURL);
-            if (!File.Exists(m_strSiteIcon))
+            if (!Util.Utils.FileExistsInCache(m_strSiteIcon))
             {
               string strExtension;
               strExtension = Path.GetExtension(strImage);
@@ -483,7 +484,7 @@ namespace MediaPortal.GUI.RSS
                 Util.Utils.DownLoadImage(strImage, strTemp);
                 //MediaPortal.Util.Utils.DownLoadAndCacheImage(strImage, strTemp);
 
-                if (File.Exists(strTemp))
+                if (Util.Utils.FileExistsInCache(strTemp))
                 {
                   Util.Picture.CreateThumbnail(strTemp, m_strSiteIcon, (int)Thumbs.ThumbResolution,
                                                (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);

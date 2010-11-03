@@ -26,6 +26,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.SerialIR;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 #pragma warning disable 108
 

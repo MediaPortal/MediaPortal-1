@@ -29,6 +29,7 @@ using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {

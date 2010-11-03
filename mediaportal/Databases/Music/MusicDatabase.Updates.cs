@@ -1387,7 +1387,7 @@ namespace MediaPortal.Music.Database
           if (tag.CoverArtImageBytes != null)
           {
             bool extractFile = false;
-            if (!File.Exists(smallThumbPath))
+            if (!Util.Utils.FileExistsInCache(smallThumbPath))
             {
               extractFile = true;
             }
@@ -1452,7 +1452,7 @@ namespace MediaPortal.Music.Database
         if (_useFolderThumbs)
         {
           // Do not overwrite covers extracted from mp3 files.
-          if (!File.Exists(smallThumbPath))
+          if (!Util.Utils.FileExistsInCache(smallThumbPath))
           {
             // No Album thumb found - create one.            
             bool foundThumb = false;
@@ -1474,7 +1474,7 @@ namespace MediaPortal.Music.Database
             else
             {
               sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
-              if (File.Exists(sharefolderThumb))
+              if (Util.Utils.FileExistsInCache(sharefolderThumb))
               {
                 foundThumb = true;
               }
@@ -1504,18 +1504,18 @@ namespace MediaPortal.Music.Database
           if (string.IsNullOrEmpty(_previousPosHitDir) || (Path.GetDirectoryName(tag.FileName) != _previousPosHitDir))
           {
             sharefolderThumb = Util.Utils.GetFolderThumb(tag.FileName);
-            if (!File.Exists(sharefolderThumb))
+            if (!Util.Utils.FileExistsInCache(sharefolderThumb))
             {
               string sourceCover = Util.Utils.TryEverythingToGetFolderThumbByFilename(tag.FileName, true);
               if (string.IsNullOrEmpty(sourceCover))
               {
                 sourceCover = smallThumbPath;
               }
-              if (File.Exists(Util.Utils.ConvertToLargeCoverArt(sourceCover)))
+              if (Util.Utils.FileExistsInCache(Util.Utils.ConvertToLargeCoverArt(sourceCover)))
               {
                 sourceCover = Util.Utils.ConvertToLargeCoverArt(sourceCover);
               }
-              if (File.Exists(sourceCover))
+              if (Util.Utils.FileExistsInCache(sourceCover))
               {
                 _previousPosHitDir = Path.GetDirectoryName(tag.FileName);
                 //FolderThumbCreator newThumb = new FolderThumbCreator(tag.FileName, tag);
@@ -1572,7 +1572,7 @@ namespace MediaPortal.Music.Database
               else
               {
                 sharefolderThumb = Util.Utils.GetFolderThumb(currentPath);
-                if (File.Exists(sharefolderThumb))
+                if (Util.Utils.FileExistsInCache(sharefolderThumb))
                 {
                   foundCover = true;
                 }
@@ -1632,7 +1632,7 @@ namespace MediaPortal.Music.Database
             groupedArtistSongs.Clear();
             imageTracks.Clear();
             string artistThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicArtists, curArtist);
-            if (!File.Exists(artistThumbPath))
+            if (!Util.Utils.FileExistsInCache(artistThumbPath))
             {
               if (GetSongsByArtist(curArtist, ref groupedArtistSongs, true))
               {
@@ -1698,7 +1698,7 @@ namespace MediaPortal.Music.Database
             groupedGenreSongs.Clear();
             imageTracks.Clear();
             string genreThumbPath = Util.Utils.GetCoverArtName(Thumbs.MusicGenre, curGenre);
-            if (!File.Exists(genreThumbPath))
+            if (!Util.Utils.FileExistsInCache(genreThumbPath))
             {
               if (GetSongsByGenre(curGenre, ref groupedGenreSongs, true))
               {

@@ -23,6 +23,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using Tetris;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Games.Tetris
 {

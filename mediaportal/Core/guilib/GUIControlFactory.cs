@@ -29,6 +29,7 @@ using System.Windows.Controls;
 using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Drawing.Layouts;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -128,8 +129,8 @@ namespace MediaPortal.GUI.Library
     private static void ReadSkinSizeFromReferenceFile(XmlDocument doc)
     {
       GUIGraphicsContext.SkinSize = new Size(720, 576);
-      XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNode("/controls/skin/width/text()");
-      XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNode("/controls/skin/height/text()");
+      XmlNode nodeSkinWidth = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/width/text()");
+      XmlNode nodeSkinHeight = doc.DocumentElement.SelectSingleNodeFast("/controls/skin/height/text()");
       if (nodeSkinWidth != null && nodeSkinHeight != null)
       {
         try
@@ -148,17 +149,19 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     /// <param name="guiControlType">The type of control you wish to update.</param>
-    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// <returns>A IDictionary which contains the MemberInfo objects for every
     /// updatable field, indexed by their corresponding Xml Element name. </returns>
-    private static Hashtable GetMembersToUpdate(Type guiControlType)
+    private static IDictionary<string, MemberInfo> GetMembersToUpdate(Type guiControlType)
     {
-      // Lazy Initializiation...
-      if (m_reflectionCacheByControlType.ContainsKey(guiControlType))
+      // Lazy Initializiation...      
+
+      IDictionary<string, MemberInfo> getMembersToUpdate = null;
+      if (m_reflectionCacheByControlType.TryGetValue(guiControlType, out getMembersToUpdate))      
       {
-        return (Hashtable)m_reflectionCacheByControlType[guiControlType];
+        return getMembersToUpdate;
       }
 
-      Hashtable membersTable = new Hashtable();
+      IDictionary<string, MemberInfo> membersTable = new Dictionary<string, MemberInfo>();
 
       MemberInfo[] allMembers = guiControlType.GetMembers(
         BindingFlags.Instance
@@ -176,7 +179,7 @@ namespace MediaPortal.GUI.Library
           membersTable[atrb.XmlElementName] = member;
         }
       }
-      m_reflectionCacheByControlType[guiControlType] = membersTable;
+      m_reflectionCacheByControlType[guiControlType] = membersTable;      
       return membersTable;
     }
 
@@ -184,17 +187,18 @@ namespace MediaPortal.GUI.Library
     /// 
     /// </summary>
     /// <param name="guiControlType">The type of control you wish to update.</param>
-    /// <returns>A hashtable which contains the MemberInfo objects for every
+    /// <returns>A IDictionary<XMLSkinAttribute, MemberInfo> which contains the MemberInfo objects for every
     /// updatable field, indexed by their corresponding Xml Element name. </returns>
-    private static Hashtable GetAttributesToUpdate(Type guiControlType)
+    private static IDictionary<XMLSkinAttribute, MemberInfo> GetAttributesToUpdate(Type guiControlType)
     {
       // Lazy Initializiation...
-      if (m_reflectionCacheByControlTypeAttr.ContainsKey(guiControlType))
+      IDictionary<XMLSkinAttribute, MemberInfo> getAttributesToUpdate = null;
+      if (m_reflectionCacheByControlTypeAttr.TryGetValue(guiControlType, out getAttributesToUpdate))
       {
-        return (Hashtable)m_reflectionCacheByControlTypeAttr[guiControlType];
+        return getAttributesToUpdate;
       }
 
-      Hashtable membersTable = new Hashtable();
+      IDictionary<XMLSkinAttribute, MemberInfo> membersTable = new Dictionary<XMLSkinAttribute, MemberInfo>();
 
       MemberInfo[] allMembers = guiControlType.GetMembers(
         BindingFlags.Instance
@@ -368,7 +372,7 @@ namespace MediaPortal.GUI.Library
       return null;
     }
 
-    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary defines, string filename)
+    public static GUIControl Create(int dwParentId, XmlNode pControlNode, IDictionary<string, string> defines, string filename)
     {
       Type typeOfControlToCreate = GetControlType(pControlNode);
       if (typeOfControlToCreate == null)
@@ -493,18 +497,19 @@ namespace MediaPortal.GUI.Library
     }
 
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode,
-                                                 IDictionary defines, string filename)
+                                                 IDictionary<string, string> defines, string filename)
     {
       List<int> vecInfo = new List<int>();
-      Hashtable attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
+      IDictionary<XMLSkinAttribute, MemberInfo> attributesThatCanBeUpdates = GetAttributesToUpdate(controlType);
       if (attributesThatCanBeUpdates != null)
       {
-        IDictionaryEnumerator en = attributesThatCanBeUpdates.GetEnumerator();
-        while (en.MoveNext())
-        {
+
+        foreach (KeyValuePair<XMLSkinAttribute, MemberInfo> en in attributesThatCanBeUpdates)
+        {                  
           XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
           MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
-          XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
+          //XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
+          XmlNode elementNode = pControlNode.SelectSingleNodeFast(xmlAttr.XmlElementName);
           if (elementNode != null)
           {
             XmlNode attribNode = elementNode.Attributes.GetNamedItem(xmlAttr.XmlAttributeName);
@@ -517,14 +522,18 @@ namespace MediaPortal.GUI.Library
                 // Window defines (passed in) override references defines (cached).
                 if (text.Length > 0 && text[0] == '#')
                 {
-                  if (_cachedDefines.ContainsKey(text))
+                  string foundDefine = null;                                    
+                  if (defines.TryGetValue(text, out foundDefine))
                   {
-                    text = (string)_cachedDefines[text];
+                    text = foundDefine;
                   }
-                  if (defines.Contains(text))
+                  else
                   {
-                  text = (string)defines[text];
-                }
+                    if (_cachedDefines.TryGetValue(text, out foundDefine))
+                    {
+                      text = foundDefine;
+                    }
+                  }
                 }
 
                 object newValue = null;
@@ -585,7 +594,7 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      Hashtable membersThatCanBeUpdated = GetMembersToUpdate(controlType);
+      IDictionary<string, MemberInfo> membersThatCanBeUpdated = GetMembersToUpdate(controlType);
       List<VisualEffect> animations = new List<VisualEffect>();
       List<VisualEffect> thumbAnimations = new List<VisualEffect>();
       XmlNodeList childNodes = pControlNode.ChildNodes;
@@ -664,8 +673,9 @@ namespace MediaPortal.GUI.Library
             }
           }
           control.Info = vecInfo;
-        }
-        MemberInfo correspondingMember = membersThatCanBeUpdated[element.Name] as MemberInfo;
+        }        
+        MemberInfo correspondingMember = null;
+        membersThatCanBeUpdated.TryGetValue(element.Name, out correspondingMember);
 
         if (correspondingMember != null)
         {
@@ -674,14 +684,19 @@ namespace MediaPortal.GUI.Library
           // Window defines (passed in) override references defines (cached).
           if (text.Length > 0 && text[0] == '#')
           {
-            if (_cachedDefines.ContainsKey(text))
+            string foundDefine = null;
+
+            if (defines.TryGetValue(text, out foundDefine))
             {
-              text = (string)_cachedDefines[text];
+              text = foundDefine;
             }
-            if (defines.Contains(text))
+            else
             {
-            text = (string)defines[text];
-          }
+              if (_cachedDefines.TryGetValue(text, out foundDefine))
+              {
+                text = foundDefine;
+              }
+            }
           }
 
           object newValue = null;
@@ -840,7 +855,7 @@ namespace MediaPortal.GUI.Library
 
     private static Type GetControlType(XmlNode controlNode)
     {
-      XmlNode typeText = controlNode.SelectSingleNode("type/text()");
+      XmlNode typeText = controlNode.SelectSingleNodeFast("type/text()");
       if (typeText == null || typeText.Value == "")
       {
         return null;
@@ -1172,9 +1187,11 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// A hashtable which contains the reflection results for every control.
     /// </summary>
-    private static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+    //private static Hashtable m_reflectionCacheByControlType = new Hashtable(20);
+    //private static Hashtable m_reflectionCacheByControlTypeAttr = new Hashtable(20);    
 
-    private static Hashtable m_reflectionCacheByControlTypeAttr = new Hashtable(20);
+    private static IDictionary<Type, IDictionary<string, MemberInfo>> m_reflectionCacheByControlType = new Dictionary<Type, IDictionary<string, MemberInfo>>(20);
+    private static IDictionary<Type, IDictionary<XMLSkinAttribute, MemberInfo>> m_reflectionCacheByControlTypeAttr = new Dictionary<Type, IDictionary<XMLSkinAttribute, MemberInfo>>(20);
 
     // same as above but for caching style nodes
     private static Dictionary<string, XmlNode> _cachedStyleNodes;

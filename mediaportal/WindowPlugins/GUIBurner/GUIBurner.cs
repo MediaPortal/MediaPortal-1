@@ -34,6 +34,7 @@ using MediaPortal.Ripper;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using XPBurn;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.GUIBurner
 {

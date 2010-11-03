@@ -25,6 +25,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices.FireDTV;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.InputDevices
 {

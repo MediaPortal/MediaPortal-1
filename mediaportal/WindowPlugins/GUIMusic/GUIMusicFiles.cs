@@ -33,6 +33,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -1413,7 +1414,7 @@ namespace MediaPortal.GUI.Music
         string strFolderThumb = string.Empty;
         strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
 
-        if (File.Exists(strFolderThumb))
+        if (Util.Utils.FileExistsInCache(strFolderThumb))
         {
           return strFolderThumb;
         }
@@ -1450,7 +1451,7 @@ namespace MediaPortal.GUI.Music
           string strFolderThumb = string.Empty;
           strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(dir);
 
-          if (File.Exists(strFolderThumb))
+          if (Util.Utils.FileExistsInCache(strFolderThumb))
           {
             return strFolderThumb;
           }
@@ -1467,12 +1468,12 @@ namespace MediaPortal.GUI.Music
 
       // use covert art thumbnail for albums
       string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
-      if (File.Exists(strThumb))
+      if (Util.Utils.FileExistsInCache(strThumb))
       {
         if (_createMissingFolderThumbs && _createMissingFolderThumbCache)
         {
           string folderThumb = Util.Utils.GetFolderThumb(filename);
-          if (!File.Exists(folderThumb))
+          if (!Util.Utils.FileExistsInCache(folderThumb))
           {
             FolderThumbCreator thumbCreator = new FolderThumbCreator(filename, tag);
           }

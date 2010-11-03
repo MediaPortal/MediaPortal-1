@@ -31,6 +31,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -523,7 +524,7 @@ namespace MediaPortal.GUI.Music
       if (filter.SqlOperator == "group")
       {
       	strThumb = GUIGraphicsContext.Skin + @"\media\alpha\" + item.Label + @".png";
-      	if (File.Exists(strThumb))
+        if (Util.Utils.FileExistsInCache(strThumb))
         {
           item.IconImage = strThumb;
           item.IconImageBig = strThumb;
@@ -537,7 +538,7 @@ namespace MediaPortal.GUI.Music
         {
           case "genre":
             strThumb = Util.Utils.GetCoverArt(Thumbs.MusicGenre, item.Label);
-            if (File.Exists(strThumb))
+            if (Util.Utils.FileExistsInCache(strThumb))
             {
               item.IconImage = strThumb;
               item.IconImageBig = strThumb;
@@ -552,7 +553,7 @@ namespace MediaPortal.GUI.Music
 
           case "artist":
             strThumb = Util.Utils.GetCoverArt(Thumbs.MusicArtists, item.Label);
-            if (File.Exists(strThumb))
+            if (Util.Utils.FileExistsInCache(strThumb))
             {
               item.IconImage = strThumb;
               item.IconImageBig = strThumb;
@@ -567,7 +568,7 @@ namespace MediaPortal.GUI.Music
             if (item.IsFolder && _useFolderThumbs)
             {
               strThumb = Util.Utils.GetLocalFolderThumb(item.Path);
-              if (File.Exists(strThumb))
+              if (Util.Utils.FileExistsInCache(strThumb))
               {
                 item.IconImage = strThumb;
                 item.IconImageBig = strThumb;
@@ -584,7 +585,7 @@ namespace MediaPortal.GUI.Music
                 if (_createMissingFolderThumbCache)
                 {
                   strThumb = Util.Utils.GetFolderThumb(item.Path);
-                  if (File.Exists(strThumb))
+                  if (Util.Utils.FileExistsInCache(strThumb))
                   {
                     FolderThumbCacher thumbworker = new FolderThumbCacher(Path.GetDirectoryName(strThumb), false);
                   }
@@ -595,7 +596,7 @@ namespace MediaPortal.GUI.Music
             {
               MusicTag tag = item.MusicTag as MusicTag;
               strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
-              if (File.Exists(strThumb))
+              if (Util.Utils.FileExistsInCache(strThumb))
               {
                 item.IconImage = strThumb;
                 item.IconImageBig = strThumb;
@@ -614,7 +615,7 @@ namespace MediaPortal.GUI.Music
         {
           // let us test if there is a larger cover art image
           string strLarge = Util.Utils.ConvertToLargeCoverArt(strThumb);
-          if (File.Exists(strLarge))
+          if (Util.Utils.FileExistsInCache(strLarge))
           {
             item.ThumbnailImage = strLarge;
           }

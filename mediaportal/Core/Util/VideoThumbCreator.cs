@@ -63,7 +63,7 @@ namespace MediaPortal.Util
     //public static bool CreateVideoThumb(string aVideoPath, bool aOmitCredits)
     //{
     //  string sharethumb = Path.ChangeExtension(aVideoPath, ".jpg");
-    //  if (File.Exists(sharethumb))
+    //  if (Util.Utils.FileExistsInCache(sharethumb))
     //    return true;
     //  else
     //    return CreateVideoThumb(aVideoPath, sharethumb, false, aOmitCredits);
@@ -82,12 +82,12 @@ namespace MediaPortal.Util
         Log.Warn("VideoThumbCreator: Invalid arguments to generate thumbnails of your video!");
         return false;
       }
-      if (!File.Exists(aVideoPath))
+      if (!Util.Utils.FileExistsInCache(aVideoPath))
       {
         Log.Warn("VideoThumbCreator: File {0} not found!", aVideoPath);
         return false;
       }
-      if (!File.Exists(ExtractorPath))
+      if (!Util.Utils.FileExistsInCache(ExtractorPath))
       {
         Log.Warn("VideoThumbCreator: No {0} found to generate thumbnails of your video!", ExtractApp);
         return false;
@@ -149,8 +149,8 @@ namespace MediaPortal.Util
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        if ((LeaveShareThumb && !File.Exists(ShareThumb)) // No thumb in share although it should be there
-            || (!LeaveShareThumb && !File.Exists(aThumbPath))) // No thumb cached and no chance to find it in share
+        if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb)) // No thumb in share although it should be there
+            || (!LeaveShareThumb && !Util.Utils.FileExistsInCache(aThumbPath))) // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
           Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
@@ -190,7 +190,7 @@ namespace MediaPortal.Util
         else
         {
           // We have a thumbnail in share but the cache was wiped out - make sure it is recreated
-          if (LeaveShareThumb && File.Exists(ShareThumb) && !File.Exists(aThumbPath))
+          if (LeaveShareThumb && Util.Utils.FileExistsInCache(ShareThumb) && !Util.Utils.FileExistsInCache(aThumbPath))
             Success = true;
         }
 
@@ -218,7 +218,7 @@ namespace MediaPortal.Util
       {
         Log.Error("VideoThumbCreator: Thumbnail generation failed - {0}!", ex.ToString());
       }
-      if (File.Exists(aThumbPath))
+      if (Util.Utils.FileExistsInCache(aThumbPath))
       {
         return true;
       }

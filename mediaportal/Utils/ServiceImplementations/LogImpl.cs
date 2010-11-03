@@ -41,6 +41,7 @@ namespace MediaPortal.ServiceImplementations
     private static Level _minLevel;
     private static string logDir;
     private static bool bConfiguration;
+    private object logLock = new object();
 
     #endregion
 
@@ -319,31 +320,33 @@ namespace MediaPortal.ServiceImplementations
 
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
-      lock (typeof(Log))
-      {
-        try
+        if (logLevel <= _minLevel)
         {
-          if (_previousDate != DateTime.Now.Date)
-          {
-            _previousDate = DateTime.Now.Date;
-            BackupLogFiles();
-          }
-
-          if (logLevel <= _minLevel)
-          {
-            using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
+            lock (logLock)
             {
-              string threadName = Thread.CurrentThread.Name;
-              int threadId = Thread.CurrentThread.ManagedThreadId;
-              // Write message to log stream
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now, GetLevelName(logLevel),
-                               threadName, threadId, string.Format(format, arg));
-              writer.Close();
+                try
+                {
+                    if (_previousDate != DateTime.Now.Date)
+                    {
+                        _previousDate = DateTime.Now.Date;
+                        BackupLogFiles();
+                    }
+
+                    using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
+                    {
+                        string threadName = Thread.CurrentThread.Name;
+                        int threadId = Thread.CurrentThread.ManagedThreadId;
+                        // Write message to log stream
+                        writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now, GetLevelName(logLevel),
+                            threadName, threadId, 
+                                    (arg == null || arg.Length < 1) ? format : string.Format(format, arg)); //avoid string.format if we don't have arguments
+                        writer.Close();
+
+                    }
+                }
+                catch (Exception) { }
             }
-          }
         }
-        catch (Exception) { }
-      }
 
       //
       if (type != LogType.Log && type != LogType.Error && type != LogType.EPG &&

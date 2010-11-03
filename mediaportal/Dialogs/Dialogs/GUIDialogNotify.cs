@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {
@@ -141,7 +142,7 @@ namespace MediaPortal.Dialogs
     public void SetImage(string filename)
     {
       logoUrl = filename;
-      if (File.Exists(filename))
+      if (Util.Utils.FileExistsInCache(filename))            
       {
         if (imgLogo != null)
         {

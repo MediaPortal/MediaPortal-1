@@ -162,12 +162,12 @@ namespace MediaPortal.Util
               {
                 string fileclean = filename;
                 // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-                string[] pattern = Utils.StackExpression();
-				foreach (string t in pattern)
+                var pattern = Utils.StackExpression();
+				foreach (var t in pattern)
                 {
-                  if (Regex.IsMatch(filename, t, RegexOptions.IgnoreCase))
+                  if (t.IsMatch(filename))
                   {
-                    fileclean = Regex.Replace(filename, t, "", RegexOptions.IgnoreCase);
+                      fileclean = t.Replace(filename, "");
                   }
                 }
                 _fileMovie = configDir + fileclean + ext;
@@ -240,12 +240,12 @@ namespace MediaPortal.Util
           {
             string fileclean = filename;
             // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-            string[] pattern = Utils.StackExpression();
-			foreach (string t in pattern)
+            var pattern = Utils.StackExpression();
+			foreach (var t in pattern)
             {
-              if (Regex.IsMatch(filename, t, RegexOptions.IgnoreCase))
+              if (t.IsMatch(filename))
               {
-                fileclean = Regex.Replace(filename, t, "", RegexOptions.IgnoreCase);
+                  fileclean = t.Replace(filename, "");
               }
             }
             _fileMovie = configDir + fileclean + ext;
@@ -328,13 +328,13 @@ namespace MediaPortal.Util
       {
         string fileclean = Path.GetFileNameWithoutExtension(fileNameArt);
         // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-        string[] pattern = Utils.StackExpression();
+        var pattern = Utils.StackExpression();
 
-        foreach (string t in pattern)
+        foreach (var t in pattern)
         {
-          if (Regex.IsMatch(fileNameArt, t, RegexOptions.IgnoreCase))
+          if (t.IsMatch(fileNameArt))
           {
-            fileclean = Regex.Replace(fileNameArt, t, "", RegexOptions.IgnoreCase);
+              fileclean = t.Replace(fileNameArt, "");
           }
         }
 

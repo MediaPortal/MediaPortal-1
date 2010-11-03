@@ -34,6 +34,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 using Point = MediaPortal.Drawing.Point;
 
 namespace MediaPortal.GUI.RADIOLASTFM
@@ -1159,7 +1160,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         string ThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
                                                           AudioscrobblerBase.CurrentPlayingSong.Artist);
         // If the download was unsuccessful or disabled in config then do not remove a possibly present placeholder by specifing a not existing file
-        if (File.Exists(ThumbFileName))
+        if (Util.Utils.FileExistsInCache(ThumbFileName))
         {
           GUIGraphicsContext.form.Invoke(new ThreadUpdateThumb(SetThumbnails), new object[] {ThumbFileName});
         }
@@ -1978,7 +1979,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           thumb = strLarge;
         }
@@ -1986,10 +1987,10 @@ namespace MediaPortal.GUI.RADIOLASTFM
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", thumb);
 
       string albumthumb = Util.Utils.GetCoverArtName(Thumbs.MusicAlbum, AudioscrobblerBase.CurrentPlayingSong.Album);
-      if (File.Exists(albumthumb))
+      if (Util.Utils.FileExistsInCache(albumthumb))
       {
         string strLarge = Util.Utils.ConvertToLargeCoverArt(albumthumb);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           albumthumb = strLarge;
         }

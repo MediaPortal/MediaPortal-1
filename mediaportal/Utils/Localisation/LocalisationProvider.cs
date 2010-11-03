@@ -64,9 +64,10 @@ namespace MediaPortal.Localisation
       GetAvailableLangauges();
 
       // If the language cannot be found default to Local language or English
-      if (cultureName != null && _availableLanguages.ContainsKey(cultureName))
+      CultureInfo cultureInfo = null;
+      if (cultureName != null && _availableLanguages.TryGetValue(cultureName, out cultureInfo))
       {
-        _currentLanguage = _availableLanguages[cultureName];
+        _currentLanguage = cultureInfo;
       }
       else
       {
@@ -123,21 +124,27 @@ namespace MediaPortal.Localisation
 
     public void ChangeLanguage(string cultureName)
     {
-      if (!_availableLanguages.ContainsKey(cultureName))
+      CultureInfo currentLanguageFound = null;
+      if (!_availableLanguages.TryGetValue(cultureName, out currentLanguageFound))
       {
         throw new ArgumentException("Language not available");
       }
 
-      _currentLanguage = _availableLanguages[cultureName];
+      _currentLanguage = currentLanguageFound;
 
       ReloadAll();
     }
 
     public StringLocalised Get(string section, int id)
     {
-      if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
+      Dictionary<int, StringLocalised> localList = null;
+      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
-        return _languageStrings[section.ToLower()][id];
+        StringLocalised stringLocalised = null;
+        if (localList.TryGetValue(id, out stringLocalised))        
+        {
+          return stringLocalised;  
+        }
       }
 
       return null;
@@ -145,15 +152,19 @@ namespace MediaPortal.Localisation
 
     public string GetString(string section, int id)
     {
-      if (_languageStrings.ContainsKey(section.ToLower()) && _languageStrings[section].ContainsKey(id))
+      Dictionary<int, StringLocalised> localList = null;
+      if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
-        string prefix = string.Empty;
-        if (_prefix)
+        StringLocalised stringLocalised = null;
+        if (localList.TryGetValue(id, out stringLocalised))            
         {
-          prefix = _languageStrings[section.ToLower()][id].prefix;
+          string prefix = string.Empty;
+          if (_prefix)
+          {
+            prefix = stringLocalised.prefix;
+          }
+          return prefix + stringLocalised.text;
         }
-
-        return prefix + _languageStrings[section.ToLower()][id].text;
       }
 
       return null;
@@ -224,9 +235,10 @@ namespace MediaPortal.Localisation
       }
 
       // default to English
-      if (_availableLanguages.ContainsKey("en"))
+      CultureInfo english = null;
+      if (_availableLanguages.TryGetValue("en", out english))
       {
-        return _availableLanguages["en"];
+        return english;
       }
 
       return null;
@@ -365,9 +377,8 @@ namespace MediaPortal.Localisation
           section.name = section.name.ToLower();
 
           Dictionary<int, StringLocalised> newSection;
-          if (_languageStrings.ContainsKey(section.name))
-          {
-            newSection = _languageStrings[section.name];
+          if (_languageStrings.TryGetValue(section.name, out newSection))
+          {            
             _languageStrings.Remove(section.name);
           }
           else

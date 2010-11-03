@@ -294,7 +294,8 @@ namespace MediaPortal.GUI.Library
           try
           {
             string strFileNameTemp = "";
-            if (!File.Exists(_textureFileNameTag))
+
+            if (!MediaPortal.Util.Utils.FileExistsInCache(_textureFileNameTag))
             {
               if (_textureFileNameTag[1] != ':')
               {
@@ -874,15 +875,17 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public override void Dispose()
     {
-      lock (GUIGraphicsContext.RenderLock) {
-        lock (this) 
+      lock (GUIGraphicsContext.RenderLock)
+      {
+        lock (this)
         {
           if (!_allocated)
           {
             return;
           }
-          
-          if (logtextures) {
+
+          if (logtextures)
+          {
             Log.Info("GUIImage:Dispose:{0} {1}", _debugCachedTextureFileName, _debugGuid);
           }
 
@@ -2549,60 +2552,65 @@ namespace MediaPortal.GUI.Library
 
     protected void LoadAnimation(ref string textureFiles)
     {
-      string fileName = GUIGraphicsContext.Skin + "\\" + textureFiles;
-      if (!File.Exists(fileName))
+      string fileName = GUIGraphicsContext.Skin + "\\" + textureFiles;      
+      try
       {
-        return;
-      }
-      XmlTextReader reader = new XmlTextReader(fileName);
-      reader.WhitespaceHandling = WhitespaceHandling.None;
-      // Parse the file and display each of the nodes.
-      while (reader.Read())
-      {
-        if (reader.NodeType == XmlNodeType.Element)
+        XmlTextReader reader = new XmlTextReader(fileName);
+        reader.WhitespaceHandling = WhitespaceHandling.None;
+        // Parse the file and display each of the nodes.
+        while (reader.Read())
         {
-          switch (reader.Name)
+          if (reader.NodeType == XmlNodeType.Element)
           {
-            case "textures":
-              {
-                while (reader.Read())
+            switch (reader.Name)
+            {
+              case "textures":
                 {
-                  if (reader.NodeType == XmlNodeType.EndElement)
+                  while (reader.Read())
                   {
-                    break;
-                  }
-                  if (reader.NodeType == XmlNodeType.Text)
-                  {
-                    textureFiles = reader.Value;
-                  }
-                }
-                break;
-              }
-            case "RepeatBehavior":
-              {
-                while (reader.Read())
-                {
-                  if (reader.NodeType == XmlNodeType.EndElement)
-                  {
-                    break;
-                  }
-                  if (reader.NodeType == XmlNodeType.Text)
-                  {
-                    if (reader.Value.CompareTo("Forever") == 0)
+                    if (reader.NodeType == XmlNodeType.EndElement)
                     {
-                      _repeatBehavior = RepeatBehavior.Forever;
+                      break;
                     }
-                    else
+                    if (reader.NodeType == XmlNodeType.Text)
                     {
-                      _repeatBehavior = new RepeatBehavior(double.Parse(reader.Value));
+                      textureFiles = reader.Value;
                     }
                   }
+                  break;
                 }
-                break;
-              }
+              case "RepeatBehavior":
+                {
+                  while (reader.Read())
+                  {
+                    if (reader.NodeType == XmlNodeType.EndElement)
+                    {
+                      break;
+                    }
+                    if (reader.NodeType == XmlNodeType.Text)
+                    {
+                      if (reader.Value.CompareTo("Forever") == 0)
+                      {
+                        _repeatBehavior = RepeatBehavior.Forever;
+                      }
+                      else
+                      {
+                        _repeatBehavior = new RepeatBehavior(double.Parse(reader.Value));
+                      }
+                    }
+                  }
+                  break;
+                }
+            }
           }
         }
       }
+      catch (FileNotFoundException)
+      {
+        //ignore
+        return;        
+      }
+      
     }
 
     public bool TileFill

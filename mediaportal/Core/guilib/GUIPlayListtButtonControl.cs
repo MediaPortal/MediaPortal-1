@@ -861,29 +861,32 @@ namespace MediaPortal.GUI.Library
                                                 int id, int xOffset, int yOffset, int width, int height)
     {
       string imagePath = Path.Combine(skinFolderImagePath, origImageFileName);
-
-      // If the original image doesn't exist bail out.
-      if (!File.Exists(imagePath))
-      {
-        return null;
-      }
-
+     
       string ext = Path.GetExtension(origImageFileName);
       string baseImgFileName = Path.GetFileNameWithoutExtension(origImageFileName);
       string dimmedImgFileName = baseImgFileName + "_dimmed" + ext;
       string fullImagePath = Path.Combine(skinFolderImagePath, dimmedImgFileName);
       GUIAnimation guiImg = null;
 
-      // Fix mantis-0002290: GUIPlayListButtonControl creates own images and save to skin media folder 
-      if (File.Exists(fullImagePath))
+      // Fix mantis-0002290: GUIPlayListButtonControl creates own images and save to skin media folder       
+      try
       {
-        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
+        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);  
       }
-      else
+      catch (FileNotFoundException)
       {
         Log.Warn("!!! Skin is missing image: {0}, using original one: {1}", dimmedImgFileName, origImageFileName);
-        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, imagePath);
-      }
+        try
+        {
+          guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, imagePath);
+        }
+        catch (FileNotFoundException)
+        {
+          // If the original image doesn't exist bail out.
+          return null;
+        }
+      }                
+      
       return guiImg;
     }
 

@@ -24,6 +24,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.InputDevices;
 using MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Setup
 {

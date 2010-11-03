@@ -299,12 +299,12 @@ namespace MediaPortal.Configuration.Sections
               strMovieName = Path.GetFileNameWithoutExtension(strFileName);
             }
             // Test pattern (CD, DISK, Part, X-Y...) and remove it from filename
-            string[] pattern = Util.Utils.StackExpression();
+            var pattern = Util.Utils.StackExpression();
             for (int i = 0; i < pattern.Length; i++)
             {
-              if (foldercheck == false && Regex.IsMatch(strMovieName, pattern[i], RegexOptions.IgnoreCase))
+              if (foldercheck == false && pattern[i].IsMatch(strMovieName))
               {
-                strMovieName = Regex.Replace(strMovieName, pattern[i], "", RegexOptions.IgnoreCase);
+                strMovieName = pattern[i].Replace(strMovieName, "");
               }
             }
           }

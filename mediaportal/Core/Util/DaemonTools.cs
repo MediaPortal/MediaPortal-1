@@ -36,7 +36,7 @@ namespace MediaPortal.Util
     private static bool _Enabled;
     private static int _DriveNo;
     private static string _MountedIsoFile = string.Empty;
-    private static List<string> _supportedExtensions;
+    private static HashSet<string> _supportedExtensions;
 
     static DaemonTools()
     {
@@ -60,7 +60,7 @@ namespace MediaPortal.Util
          */
         string[] extensions =
           xmlreader.GetValueAsString("daemon", "extensions", Utils.ImageExtensionsDefault).Split(',');
-        _supportedExtensions = new List<string>();
+        _supportedExtensions = new HashSet<string>();
         // Can't use an AddRange, as we need to trim the blanks  
         foreach (string ext in extensions)
           _supportedExtensions.Add(ext.Trim());
@@ -157,11 +157,12 @@ namespace MediaPortal.Util
     {
       if (extension == null) return false;
       if (extension == string.Empty) return false;
-      extension = extension.ToLower();
-      foreach (string ext in _supportedExtensions)
-        if (ext.Equals(extension))
-          return true;
-      return false;
+      return _supportedExtensions.Contains(extension.ToLower());
+      //extension = extension.ToLower();
+      //foreach (string ext in _supportedExtensions)
+      //  if (ext.Equals(extension))
+      //    return true;
+      //return false;
     }
   }
 }

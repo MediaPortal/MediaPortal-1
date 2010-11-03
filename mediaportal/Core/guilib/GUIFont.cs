@@ -34,6 +34,7 @@ using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Font = System.Drawing.Font;
+using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
@@ -1165,7 +1166,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         // If file does not exist
-        needsCreation = !File.Exists(strCache);
+        //needsCreation = !File.Exists(strCache);
         if (!needsCreation)
         {
           try
@@ -1194,6 +1195,10 @@ namespace MediaPortal.GUI.Library
             Log.Debug("  Loaded font:{0} height:{1} texture:{2}x{3} chars:[{4}-{5}] miplevels:{6}", _fontName,
                       _fontHeight,
                       _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
+          }
+          catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
+          {
+            needsCreation = true;
           }
           catch (Exception)
           {

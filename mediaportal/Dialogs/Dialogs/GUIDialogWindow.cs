@@ -21,6 +21,7 @@
 using System;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {

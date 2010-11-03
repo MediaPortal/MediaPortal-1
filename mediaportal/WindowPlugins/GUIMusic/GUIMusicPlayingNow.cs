@@ -38,6 +38,7 @@ using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
 using MediaPortal.Visualization;
+using Action = MediaPortal.GUI.Library.Action;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -356,7 +357,7 @@ namespace MediaPortal.GUI.Music
         // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
       {
         CurrentThumbFileName = Util.Utils.GetFolderThumb(CurrentTrackFileName);
-        if (!File.Exists(CurrentThumbFileName))
+        if (!Util.Utils.FileExistsInCache(CurrentThumbFileName))
         {
           CurrentThumbFileName = string.Empty;
         }
@@ -366,7 +367,7 @@ namespace MediaPortal.GUI.Music
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           CurrentThumbFileName = strLarge;
         }
@@ -730,7 +731,7 @@ namespace MediaPortal.GUI.Music
             {
               // let us test if there is a larger cover art image
               string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-              if (File.Exists(strLarge))
+              if (Util.Utils.FileExistsInCache(strLarge))
               {
                 CurrentThumbFileName = strLarge;
               }
@@ -955,7 +956,7 @@ namespace MediaPortal.GUI.Music
         {
           // let us test if there is a larger cover art image
           string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-          if (File.Exists(strLarge))
+          if (Util.Utils.FileExistsInCache(strLarge))
           {
             CurrentThumbFileName = strLarge;
           }
@@ -999,7 +1000,7 @@ namespace MediaPortal.GUI.Music
       {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-        if (File.Exists(strLarge))
+        if (Util.Utils.FileExistsInCache(strLarge))
         {
           CurrentThumbFileName = strLarge;
         }
@@ -1262,7 +1263,7 @@ namespace MediaPortal.GUI.Music
 
           if (vizWindow != null)
           {
-            if (File.Exists(ImagePath))
+            if (Util.Utils.FileExistsInCache(ImagePath))
             {
               try
               {
@@ -1291,7 +1292,7 @@ namespace MediaPortal.GUI.Music
             return false;
           }
 
-          if (File.Exists(ImagePath))
+          if (Util.Utils.FileExistsInCache(ImagePath))
           {
             try
             {
@@ -1325,38 +1326,35 @@ namespace MediaPortal.GUI.Music
       }
 
       if (ImgCoverArt != null)
-      {
-        if (ImagePathContainer.Count > 0)
+      {        
+        if (ImagePathContainer.Count > 1)
         {
-          if (ImagePathContainer.Count > 1)
+          int currentImage = 0;
+          // get the next image
+          foreach (string image in ImagePathContainer)
           {
-            int currentImage = 0;
-            // get the next image
-            foreach (string image in ImagePathContainer)
+            currentImage++;
+            if (ImgCoverArt.FileName == image)
             {
-              currentImage++;
-              if (ImgCoverArt.FileName == image)
-              {
-                break;
-              }
+              break;
             }
-            if (currentImage < ImagePathContainer.Count)
-            {
-              ImgCoverArt.SetFileName(ImagePathContainer[currentImage]);
-            }
-            else
-            {
-              // start loop again
-              ImgCoverArt.SetFileName(ImagePathContainer[0]);
-            }
+          }
+                                
+          if (currentImage < ImagePathContainer.Count)
+          {
+            ImgCoverArt.SetFileName(ImagePathContainer[currentImage]);
           }
           else
           {
+            // start loop again
             ImgCoverArt.SetFileName(ImagePathContainer[0]);
           }
         }
-        //ImgCoverArt.Dispose();
-        //ImgCoverArt.AllocResources();
+        else
+        {
+          ImgCoverArt.SetFileName(ImagePathContainer[0]);
+        }
+        
       }
     }
 
@@ -1581,7 +1579,7 @@ namespace MediaPortal.GUI.Music
               {
                 // let us test if there is a larger cover art image
                 string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-                if (File.Exists(strLarge))
+                if (Util.Utils.FileExistsInCache(strLarge))
                 {
                   CurrentThumbFileName = strLarge;
                 }

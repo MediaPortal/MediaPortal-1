@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
@@ -45,7 +46,7 @@ namespace MediaPortal.Util
     private const int MaximumShares = 128;
 
     private List<Share> m_shares = new List<Share>();
-    private List<string> m_extensions;
+    private HashSet<string> m_extensions;
     private string m_strPreviousDir = string.Empty;
     private string currentShare = string.Empty;
     private string previousShare = string.Empty;
@@ -197,17 +198,13 @@ namespace MediaPortal.Util
     {
       if (extensions == null) return;
       if (m_extensions == null)
-        m_extensions = new List<string>();
+        m_extensions = new HashSet<string>();
       else
         m_extensions.Clear();
 
       foreach (string ext in extensions)
       {
-        m_extensions.Add(ext);
-      }
-      for (int i = 0; i < m_extensions.Count; ++i)
-      {
-        m_extensions[i] = m_extensions[i].ToLower();
+        m_extensions.Add(ext.ToLower());
       }
     }
 
@@ -218,7 +215,7 @@ namespace MediaPortal.Util
     public void AddExtension(string extension)
     {
       if (m_extensions == null)
-        m_extensions = new List<string>();
+        m_extensions = new HashSet<string>();
       m_extensions.Add(extension.ToLower());
     }
 
@@ -325,12 +322,12 @@ namespace MediaPortal.Util
     //        string coverArt = Utils.GetCoverArtName(item.Path, "folder");
     //        string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
     //        bool coverArtExists = false;
-    //        if (File.Exists(coverArt))
+    //        if (Util.Utils.FileExistsInCache(coverArt))
     //        {
     //          item.IconImage = coverArt;
     //          coverArtExists = true;
     //        }
-    //        if (File.Exists(largeCoverArt))
+    //        if (Util.Utils.FileExistsInCache(largeCoverArt))
     //        {
     //          item.IconImageBig = largeCoverArt;
     //        }
@@ -712,7 +709,7 @@ namespace MediaPortal.Util
     //        {
     //          // If it looks like a DVD directory structure then return so
     //          // that the playing of the DVD is handled by the caller.
-    //          if (File.Exists(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
+    //          if (Util.Utils.FileExistsInCache(strDir + @"\VIDEO_TS\VIDEO_TS.IFO"))
     //          {
     //            return items;
     //          }
@@ -863,6 +860,7 @@ namespace MediaPortal.Util
     /// <returns>A list of GUIListItems for the specified folder</returns>
     public List<GUIListItem> GetDirectoryExt(string strDir)
     {
+        var w = System.Diagnostics.Stopwatch.StartNew();
       if (String.IsNullOrEmpty(strDir))
       {
         m_strPreviousDir = "";
@@ -1168,6 +1166,8 @@ namespace MediaPortal.Util
           (List<GUIListItem>)CueUtil.CUEFileListFilter<GUIListItem>(items, CueUtil.CUE_TRACK_FILE_GUI_LIST_ITEM_BUILDER);
       }
       m_strPreviousDir = strDir;
+        w.Stop();
+        Log.Error("VDLoad: " + w.ElapsedMilliseconds);
       return items;
     }
 
@@ -1415,12 +1415,12 @@ namespace MediaPortal.Util
           string coverArt = Utils.GetCoverArtName(item.Path, "folder");
           string largeCoverArt = Utils.GetLargeCoverArtName(item.Path, "folder");
           bool coverArtExists = false;
-          if (File.Exists(coverArt))
+          if (Util.Utils.FileExistsInCache(coverArt))
           {
             item.IconImage = coverArt;
             coverArtExists = true;
           }
-          if (File.Exists(largeCoverArt))
+          if (Util.Utils.FileExistsInCache(largeCoverArt))
           {
             item.IconImageBig = largeCoverArt;
           }
@@ -1550,11 +1550,12 @@ namespace MediaPortal.Util
               int pin;
               if (!IsProtectedShare(item.Path, out pin))
               {
-                Utils.SetThumbnails(ref item);
+                  Utils.SetThumbnails(ref item);
               }
 
               aItemsList.Add(item);
               _cachedItems.Add(item);
+              
             }
             else
             {
@@ -1580,31 +1581,36 @@ namespace MediaPortal.Util
                   continue;
                 }
               }
+              
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
-                if (!aHasRedbookDetails &&
-                    (File.GetAttributes(FileName) & FileAttributes.Hidden) == FileAttributes.Hidden)
-                  continue;
+                  if (!aHasRedbookDetails &&
+                      (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                        continue;
 
-                if (!aHasRedbookDetails)
-                  fi = new FileInformation(FileName, false);
-                else
-                {
-                  fi = new FileInformation();
-                  fi.CreationTime = DateTime.Now;
-                  fi.Length = 0;
-                }
+                  if (!aHasRedbookDetails)
+                  {
+                      //fi = new FileInformation(FileName, false);
+                      fi.Name = fd.cFileName;
+                  }
+                  else
+                  {
+                      fi = new FileInformation();
+                      fi.CreationTime = DateTime.Now;
+                      fi.Length = 0;
+                  }
 
                 item = new GUIListItem(Utils.GetFilename(FileName), "", FileName, false, fi);
 
                 Utils.SetDefaultIcons(item);
-                Utils.SetThumbnails(ref item);
+                  Utils.SetThumbnails(ref item);
                 
                 aItemsList.Add(item);
                 _cachedItems.Add(item);
               }
             }
+            
           }
           catch (Exception exi)
           {
@@ -1614,7 +1620,7 @@ namespace MediaPortal.Util
 
         Win32API.FindClose(handle);
 
-        _cachedDir = aDirectory;
+          _cachedDir = aDirectory;
       }
       catch (Exception ex)
       {
@@ -1625,7 +1631,8 @@ namespace MediaPortal.Util
       }
     }
 
-    ///// <summary>
+
+      ///// <summary>
     ///// This method returns an arraylist of GUIListItems for the specified folder
     ///// This method does not check if the folder is protected by an pincode. it will
     ///// always return all files/subfolders present
@@ -1734,13 +1741,10 @@ namespace MediaPortal.Util
         // waeberd: allow searching for files without an extension
         if (!Path.HasExtension(strPath)) return showFilesWithoutExtension;
         string extensionFile = Path.GetExtension(strPath).ToLower();
-        if ((m_extensions[0] as string) == "*") return true; // added for explorer modul by gucky
-        for (int i = 0; i < m_extensions.Count; ++i)
-        {
-          if ((m_extensions[i] as string) == extensionFile) return true;
-        }
+
+        return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
-      catch (Exception) {}
+      catch (Exception) { }
 
       return false;
     }
@@ -1879,7 +1883,7 @@ namespace MediaPortal.Util
       //nop then check if local file exists
       string localFile = GetLocalFilename(file);
       if (localFile == string.Empty) return false;
-      if (File.Exists(localFile))
+      if (Util.Utils.FileExistsInCache(localFile))
       {
         FileInfo info = new FileInfo(localFile);
         if (info.Length == size)

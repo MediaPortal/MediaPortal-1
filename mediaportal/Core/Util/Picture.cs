@@ -89,7 +89,7 @@ namespace MediaPortal.Util
           theImage = ImageFast.FromFile(strPic);
           Log.Debug("Picture: Fast loaded texture {0}", strPic);
         }
-        catch (ArgumentException)
+        catch (Exception)
         {
           theImage = Image.FromFile(strPic);
           Log.Warn("Picture: Fallback loaded texture {0}", strPic);
@@ -769,10 +769,10 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(string aInputFilename, string aThumbTargetPath, int iMaxWidth, int iMaxHeight,
                                        int iRotate, bool aFastMode)
     {
+      bool result = false;
       if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 ||
           iMaxHeight <= 0) return false;
-      if (!File.Exists(aInputFilename)) return false;
-
+      
       Image myImage = null;
 
       try
@@ -787,30 +787,39 @@ namespace MediaPortal.Util
         //  }
         //  catch (Exception) { }
         //}
+        try
+        {
+          myImage = ImageFast.FromFile(aInputFilename);
+        }
+        catch (FileNotFoundException)
+        {
+          result = false;
+        }       
 
-        myImage = ImageFast.FromFile(aInputFilename);
-
-        return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+        result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
-      catch (ArgumentException)
+      catch (Exception)
       {
         Log.Warn("Picture: Fast loading of thumbnail {0} failed - trying safe fallback now", aInputFilename);
 
         try
         {
           myImage = Image.FromFile(aInputFilename, true);
-
-          return CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
+          result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
         }
+        catch (FileNotFoundException)
+        {
+          result = false;
+        }   
         catch (OutOfMemoryException)
         {
           Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
-          return false;
+          result = false;
         }
         catch (Exception ex)
         {
           Log.Error("Picture: CreateThumbnail exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
-          return false;
+          result = false;
         }
       }
       finally
@@ -818,6 +827,8 @@ namespace MediaPortal.Util
         if (myImage != null)
           myImage.SafeDispose();
       }
+      
+      return result;
     }
 
     public static bool ThumbnailCallback()
@@ -843,6 +854,7 @@ namespace MediaPortal.Util
     public static bool CreateThumbnail(Image aDrawingImage, string aThumbTargetPath, int aThumbWidth, int aThumbHeight,
                                        int aRotation, bool aFastMode)
     {
+      bool result = false;
       if (string.IsNullOrEmpty(aThumbTargetPath) || aThumbHeight <= 0 || aThumbHeight <= 0) return false;
 
       Bitmap myBitmap = null;
@@ -906,11 +918,11 @@ namespace MediaPortal.Util
         if (MediaPortal.Player.g_Player.Playing)
           Thread.Sleep(30);
 
-        return SaveThumbnail(aThumbTargetPath, myTargetThumb);
+        result = SaveThumbnail(aThumbTargetPath, myTargetThumb);
       }
       catch (Exception)
       {
-        return false;
+        result = false;
       }
       finally
       {
@@ -919,6 +931,16 @@ namespace MediaPortal.Util
         if (myBitmap != null)
           myBitmap.SafeDispose();
       }
+
+      if (result && Utils.IsFileExistsCacheEnabled())
+      {
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);
+        Utils.FileLookUpItem fileLookUpItem = new Utils.FileLookUpItem();
+        fileLookUpItem.Filename = aThumbTargetPath;
+        fileLookUpItem.Exists = true;        
+        Utils.UpdateLookUpCacheItem(fileLookUpItem, aThumbTargetPath);
+      }
+      return result;
     }
 
     public static bool SaveThumbnail(string aThumbTargetPath, Image myImage)

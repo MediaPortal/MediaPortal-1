@@ -23,6 +23,7 @@ using System.Collections;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.Configuration;
+using MediaPortal.Util;
 
 namespace MediaPortal.GUI.Library
 {
@@ -88,9 +89,9 @@ namespace MediaPortal.GUI.Library
         XmlNodeList list = doc.DocumentElement.SelectNodes("/keymap/global/action");
         foreach (XmlNode node in list)
         {
-          XmlNode nodeId = node.SelectSingleNode("id");
-          XmlNode nodeGamepad = node.SelectSingleNode("key");
-          XmlNode nodeSound = node.SelectSingleNode("sound");
+          XmlNode nodeId = node.SelectSingleNodeFast("id");
+          XmlNode nodeGamepad = node.SelectSingleNodeFast("key");
+          XmlNode nodeSound = node.SelectSingleNodeFast("sound");
           MapAction(ref map, nodeId, nodeGamepad, nodeSound);
         }
         if (map.mapButtons.Count > 0)
@@ -101,7 +102,7 @@ namespace MediaPortal.GUI.Library
         XmlNodeList listWindows = doc.DocumentElement.SelectNodes("/keymap/window");
         foreach (XmlNode nodeWindow in listWindows)
         {
-          XmlNode nodeWindowId = nodeWindow.SelectSingleNode("id");
+          XmlNode nodeWindowId = nodeWindow.SelectSingleNodeFast("id");
           if (null != nodeWindowId)
           {
             map = new WindowMap();
@@ -110,9 +111,9 @@ namespace MediaPortal.GUI.Library
             // Create a list of key/actiontype mappings
             foreach (XmlNode node in listNodes)
             {
-              XmlNode nodeId = node.SelectSingleNode("id");
-              XmlNode nodeGamepad = node.SelectSingleNode("key");
-              XmlNode nodeSound = node.SelectSingleNode("sound");
+              XmlNode nodeId = node.SelectSingleNodeFast("id");
+              XmlNode nodeGamepad = node.SelectSingleNodeFast("key");
+              XmlNode nodeSound = node.SelectSingleNodeFast("sound");
               MapAction(ref map, nodeId, nodeGamepad, nodeSound);
             }
             if (map.mapButtons.Count > 0)
@@ -161,7 +162,7 @@ namespace MediaPortal.GUI.Library
         XmlNodeList listWindows = doc.DocumentElement.SelectNodes("/keymap/window");
         foreach (XmlNode nodeWindow in listWindows)
         {
-          XmlNode nodeWindowId = nodeWindow.SelectSingleNode("id");
+          XmlNode nodeWindowId = nodeWindow.SelectSingleNodeFast("id");
           if (null != nodeWindowId)
           {
             map = new WindowMap();
@@ -170,9 +171,9 @@ namespace MediaPortal.GUI.Library
             // Create a list of key/actiontype mappings
             foreach (XmlNode node in listNodes)
             {
-              XmlNode nodeId = node.SelectSingleNode("id");
-              XmlNode nodeGamepad = node.SelectSingleNode("key");
-              XmlNode nodeSound = node.SelectSingleNode("sound");
+              XmlNode nodeId = node.SelectSingleNodeFast("id");
+              XmlNode nodeGamepad = node.SelectSingleNodeFast("key");
+              XmlNode nodeSound = node.SelectSingleNodeFast("sound");
               MapAction(ref map, nodeId, nodeGamepad, nodeSound);
             }
             if (map.mapButtons.Count > 0)

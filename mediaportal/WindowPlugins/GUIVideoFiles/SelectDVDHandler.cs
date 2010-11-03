@@ -304,11 +304,11 @@ namespace MediaPortal.GUI.Video
           }
 
 
-          if (!File.Exists(strThumb) || string.IsNullOrEmpty(strThumb))
+          if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
           {
             strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
                                      Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
-            if (!File.Exists(strThumb))
+            if (!Util.Utils.FileExistsInCache(strThumb))
             {
               continue;
             }
@@ -319,7 +319,7 @@ namespace MediaPortal.GUI.Video
           pItem.IconImage = strThumb;
 
           strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-          if (File.Exists(strThumb))
+          if (Util.Utils.FileExistsInCache(strThumb))
           {
             pItem.ThumbnailImage = strThumb;
           }

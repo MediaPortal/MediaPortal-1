@@ -22,6 +22,7 @@ using System;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {

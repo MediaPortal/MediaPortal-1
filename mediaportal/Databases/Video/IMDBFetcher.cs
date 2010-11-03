@@ -960,12 +960,12 @@ namespace MediaPortal.Video.Database
                 strMovieName = Path.GetFileNameWithoutExtension(strFileName);
               }
               // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-              string[] pattern = Util.Utils.StackExpression();
+              var pattern = Util.Utils.StackExpression();
               for (int i = 0; i < pattern.Length; i++)
               {
-                if (foldercheck == false && Regex.IsMatch(strMovieName, pattern[i], RegexOptions.IgnoreCase))
+                if (foldercheck == false && pattern[i].IsMatch(strMovieName))
                 {
-                  strMovieName = Regex.Replace(strMovieName, pattern[i], "", RegexOptions.IgnoreCase);
+                    strMovieName = pattern[i].Replace(strMovieName, "");
                 }
               }
             }
@@ -1171,12 +1171,12 @@ namespace MediaPortal.Video.Database
         // Lets kill double check for the same movie if it consists from more than one file
         int digit = 0; // Only first file in set will proceed (cd1, part1, dvd1...)
 
-        string[] pattern = Util.Utils.StackExpression();
+        var pattern = Util.Utils.StackExpression();
         for (int i = 0; i < pattern.Length; i++)
         {
-          if (Regex.IsMatch(file, pattern[i], RegexOptions.IgnoreCase))
+          if (pattern[i].IsMatch(file))
           {
-            digit = Convert.ToInt16(Regex.Match(file, pattern[i], RegexOptions.IgnoreCase).Groups["digit"].Value);
+            digit = Convert.ToInt16(pattern[i].Match(file).Groups["digit"].Value);
           }
         }
         try

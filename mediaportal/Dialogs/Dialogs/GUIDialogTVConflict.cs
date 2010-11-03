@@ -80,7 +80,7 @@ namespace MediaPortal.Dialogs
     public void AddConflictRecording(GUIListItem item)
     {
       string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, item.Label3);
-      if (!File.Exists(logo))
+      if (!Util.Utils.FileExistsInCache(logo))      
       {
         logo = "defaultVideoBig.png";
       }

@@ -30,6 +30,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings
 {

@@ -31,6 +31,7 @@ using MediaPortal.Profile;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {
@@ -491,6 +492,7 @@ namespace MediaPortal.GUI.Video
             Geometry.Type arMode = GUIGraphicsContext.ARType;
 
             bool foundMode = false;
+
             for (int i = 0; i < _allowedArModes.Count; i++)
             {
               if (_allowedArModes[i] == arMode)

@@ -26,6 +26,7 @@ using MediaPortal.Music.Database;
 using MediaPortal.Picture.Database;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {

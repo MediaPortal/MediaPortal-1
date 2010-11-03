@@ -26,6 +26,7 @@ using MediaPortal.Music.Amazon;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -492,13 +493,13 @@ namespace MediaPortal.GUI.Music
       thumbPath = Util.Utils.GetAlbumThumbName(artist, album);
 
       // If it doesn't exist look for it in the album folder
-      if (!File.Exists(thumbPath))
+      if (!Util.Utils.FileExistsInCache(thumbPath))
       {
         thumbPath = String.Format(@"{0}\folder.jpg", Util.Utils.RemoveTrailingSlash(albumPath));
       }
 
       // If it still doesn't exist use the missing_coverart image
-      if (!File.Exists(thumbPath))
+      if (!Util.Utils.FileExistsInCache(thumbPath))
       {
         thumbPath = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
       }

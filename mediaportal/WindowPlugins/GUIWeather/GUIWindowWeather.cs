@@ -31,6 +31,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Weather
 {

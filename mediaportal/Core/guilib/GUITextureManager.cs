@@ -30,6 +30,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
+using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
@@ -172,7 +173,7 @@ namespace MediaPortal.GUI.Library
         return image.FileName;
       }
 
-      if (!File.Exists(fileName))
+      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))            
       {
         if (!Path.IsPathRooted(fileName))
         {
@@ -203,13 +204,7 @@ namespace MediaPortal.GUI.Library
 
       string extension = Path.GetExtension(fileName).ToLower();
       if (extension == ".gif")
-      {
-        if (!File.Exists(fileName))
-        {
-          Log.Warn("TextureManager: texture: {0} does not exist", fileName);
-          return 0;
-        }
-
+      {        
         Image theImage = null;
         try
         {
@@ -217,7 +212,12 @@ namespace MediaPortal.GUI.Library
           {
             theImage = ImageFast.FromFile(fileName);
           }
-          catch (ArgumentException)
+          catch(FileNotFoundException)
+          {
+            Log.Warn("TextureManager: texture: {0} does not exist", fileName);
+            return 0;    
+          }
+          catch (Exception)
           {
             Log.Warn("TextureManager: Fast loading texture {0} failed using safer fallback", fileName);
             theImage = Image.FromFile(fileName);
@@ -302,7 +302,7 @@ namespace MediaPortal.GUI.Library
         return 0;
       }
 
-      if (File.Exists(fileName))
+      try      
       {
         int width, height;
         Texture dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, out width, out height);
@@ -324,6 +324,10 @@ namespace MediaPortal.GUI.Library
           _cacheTextures[cacheKey] = newCache;
           return 1;
         }
+      }   
+      catch (Exception)
+      {        
+        return 0;
       }
       return 0;
     }
@@ -559,9 +563,14 @@ namespace MediaPortal.GUI.Library
                                          ref info2);
         width = info2.Width;
         height = info2.Height;
+      }      
+      catch( InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
+      {        
+        //we need to catch this on higer level.         
+        throw e1;
       }
-      catch (Exception)
-      {
+      catch (Exception e2)
+      {        
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;
         string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
@@ -796,7 +805,7 @@ namespace MediaPortal.GUI.Library
        */
 
       // Get fullpath and file name      
-      if (!File.Exists(fileName))
+      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))      
       {
         if (!Path.IsPathRooted(fileName))
         {

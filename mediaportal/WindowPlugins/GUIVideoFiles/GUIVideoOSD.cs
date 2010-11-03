@@ -24,6 +24,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {

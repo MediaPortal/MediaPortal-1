@@ -291,7 +291,8 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlreader = new MPSettings())
       {
-        if (xmlreader.GetValueAsBool("debug", "skincaching", true) && File.Exists(packedXml))
+
+        if (xmlreader.GetValueAsBool("debug", "skincaching", true) && MediaPortal.Util.Utils.FileExistsInCache(packedXml))
         {
           using (FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
@@ -524,7 +525,7 @@ namespace MediaPortal.GUI.Library
       {
         bmp = ImageFast.FromFile(file);
       }
-      catch (ArgumentException)
+      catch (Exception)
       {
         Log.Warn("TexturePacker: Fast loading of texture {0} failed - trying safe fallback now", file);
         bmp = Image.FromFile(file);

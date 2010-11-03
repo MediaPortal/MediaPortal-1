@@ -3054,13 +3054,13 @@ namespace MediaPortal.Configuration.Sections
             {
               // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
               string fileClean = filename;
-              string[] pattern = Util.Utils.StackExpression();
+              var pattern = Util.Utils.StackExpression();
 
               for (int i = 0; i < pattern.Length; i++)
               {
-                if (Regex.IsMatch(filename, pattern[i], RegexOptions.IgnoreCase))
+                if (pattern[i].IsMatch(filename))
                 {
-                  fileClean = Regex.Replace(filename, pattern[i], "", RegexOptions.IgnoreCase);
+                    fileClean = pattern[i].Replace(filename, "");
                 }
               }
               // Save new file by copying fileart as new file (no need to download same file again)

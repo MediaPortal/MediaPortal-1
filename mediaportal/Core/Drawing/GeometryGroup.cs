@@ -46,12 +46,6 @@ namespace MediaPortal.Drawing
       get { throw new NotImplementedException(); }
     }
 
-    public GeometryCollection Children
-    {
-      get { throw new NotImplementedException(); }
-      set { }
-    }
-
     public FillRule FillRule
     {
       get { throw new NotImplementedException(); }

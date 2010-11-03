@@ -282,10 +282,10 @@ namespace MediaPortal.GUI.Library
           _cultures.Add(cultureList[i].EnglishName, cultureList[i].Name);
         }
       }
-
-      if (_cultures.ContainsKey(language))
+      string cultures = null;
+      if (_cultures.TryGetValue(language, out cultures))
       {
-        return _cultures[language];
+        return cultures;
       }
 
       return null;

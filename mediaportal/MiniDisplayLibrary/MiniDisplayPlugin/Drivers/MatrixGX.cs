@@ -35,6 +35,7 @@ using LibDriverCoreClient;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Ripper;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {

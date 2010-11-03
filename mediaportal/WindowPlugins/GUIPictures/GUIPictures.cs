@@ -37,6 +37,7 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Player;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Pictures
 {
@@ -114,7 +115,7 @@ namespace MediaPortal.GUI.Pictures
                 {
                   string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures,
                                                         Util.Utils.EncryptLine(item.Path));
-                  if (recreateThumbs || !File.Exists(thumbnailImage))
+                  if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                   {
                     Thread.Sleep(10);
 
@@ -132,7 +133,7 @@ namespace MediaPortal.GUI.Pictures
                   if (autocreateLargeThumbs)
                   {
                     thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
-                    if (recreateThumbs || !File.Exists(thumbnailImage))
+                    if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                     {
                       Thread.Sleep(10);
                       if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
@@ -152,7 +153,7 @@ namespace MediaPortal.GUI.Pictures
                 if ((item.Label != "..") && (!vDir.IsProtectedShare(item.Path, out pin)))
                 {
                   string thumbnailImage = item.Path + @"\folder.jpg";
-                  if (recreateThumbs || (!item.IsRemote && !File.Exists(thumbnailImage)))
+                  if (recreateThumbs || (!item.IsRemote && !Util.Utils.FileExistsInCache(thumbnailImage)))
                   {
                     Thread.Sleep(10);
                     if (CreateFolderThumb(item.Path, recreateThumbs))
@@ -283,7 +284,7 @@ namespace MediaPortal.GUI.Pictures
 
     private const int MAX_PICS_PER_DATE = 1000;
 
-    public static List<string> thumbCreationPaths = new List<string>();
+    public static HashSet<string> thumbCreationPaths = new HashSet<string>();
     private int selectedItemIndex = -1;
     private GUIListItem selectedListItem = null;
     private DirectoryHistory folderHistory = new DirectoryHistory();
@@ -2080,7 +2081,7 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
       string thumbnailImage = GetLargeThumbnail(item.Path);
-      if (File.Exists(thumbnailImage))
+      if (Util.Utils.FileExistsInCache(thumbnailImage))
       {
         filmstrip.InfoImageFileName = thumbnailImage;
       }

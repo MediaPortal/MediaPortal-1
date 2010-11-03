@@ -29,6 +29,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.GUISettings.TV
 {

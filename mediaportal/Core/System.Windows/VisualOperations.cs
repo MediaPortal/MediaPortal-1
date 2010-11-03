@@ -120,15 +120,6 @@ namespace System.Windows
       throw new NotImplementedException();
     }
 
-    public static DoubleCollection GetXSnappingGuidelines(Visual visual)
-    {
-      throw new NotImplementedException();
-    }
-
-    public static DoubleCollection GetYSnappingGuidelines(Visual visual)
-    {
-      throw new NotImplementedException();
-    }
 
 //		public static HitTestResult HitTest(Visual visual, Point point)
 //		{
@@ -190,10 +181,7 @@ namespace System.Windows
       throw new NotImplementedException();
     }
 
-    public static void SetYSnappingGuidelines(Visual visual, DoubleCollection guidelines)
-    {
-      throw new NotImplementedException();
-    }
+
 
 //		public static GeneralTransform TransformToAncestor(Visual visual, Visual ancestor)
 //		{

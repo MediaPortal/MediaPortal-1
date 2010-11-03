@@ -36,6 +36,7 @@ using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {

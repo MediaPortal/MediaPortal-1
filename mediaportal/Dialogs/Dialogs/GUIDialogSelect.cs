@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.ExtensionMethods;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs
 {

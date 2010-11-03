@@ -28,6 +28,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace Wikipedia
 {

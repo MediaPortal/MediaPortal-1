@@ -374,7 +374,7 @@ namespace MediaPortal.Util
 
     public System.Drawing.Bitmap GetThumbnail(string file)
     {
-      if ((!File.Exists(file)) && (!Directory.Exists(file)))
+      if (!Util.Utils.FileExistsInCache(file))      
       {
         throw new FileNotFoundException(
           String.Format("The file '{0}' does not exist", file),

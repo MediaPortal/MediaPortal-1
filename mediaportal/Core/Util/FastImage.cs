@@ -123,15 +123,57 @@ namespace MediaPortal.Util
       }
     }
 
+    /// <summary>
+    /// Generates an exception depending on the GDI+ error codes (I removed some error
+    /// codes)
+    /// </summary>
+    private static Exception CreateException(int gdipErrorCode)
+    {
+      switch (gdipErrorCode)
+      {
+        case 1:
+          return new ExternalException("Gdiplus Generic Error", -2147467259);
+        case 2:
+          return new ArgumentException("Gdiplus Invalid Parameter");
+        case 3:
+          return new OutOfMemoryException("Gdiplus Out Of Memory");
+        case 4:
+          return new InvalidOperationException("Gdiplus Object Busy");
+        case 5:
+          return new OutOfMemoryException("Gdiplus Insufficient Buffer");
+        case 7:
+          return new ExternalException("Gdiplus Generic Error", -2147467259);
+        case 8:
+          return new InvalidOperationException("Gdiplus Wrong State");
+        case 9:
+          return new ExternalException("Gdiplus Aborted", -2147467260);
+        case 10:
+          return new FileNotFoundException("Gdiplus File Not Found");
+        case 11:
+          return new OverflowException("Gdiplus Over flow");
+        case 12:
+          return new ExternalException("Gdiplus Access Denied", -2147024891);
+        case 13:
+          return new ArgumentException("Gdiplus Unknown Image Format");
+        case 18:
+          return new ExternalException("Gdiplus Not Initialized", -2147467259);
+        case 20:
+          return new ArgumentException("Gdiplus Property Not Supported Error");
+      }
+
+      return new ExternalException("Gdiplus Unknown Error", -2147418113);
+    }
+
     public static Image FromFile(string filename)
     {
       filename = Path.GetFullPath(filename);
       IntPtr loadingImage = IntPtr.Zero;
 
       // We are not using ICM at all, fudge that, this should be FAAAAAST!
-      if (GdipLoadImageFromFile(filename, out loadingImage) != 0)
+      int ret = GdipLoadImageFromFile(filename, out loadingImage);
+      if (ret != 0)
       {
-        throw new ArgumentException("GDI+ threw a status error code.");
+        throw CreateException(ret);
       }
 
       GdipImageTypeEnum imageType;

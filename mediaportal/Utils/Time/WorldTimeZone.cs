@@ -101,9 +101,10 @@ namespace MediaPortal.Utils.Time
         LoadRegistryTimeZones();
       }
 
-      if (_TimeZoneNames.ContainsKey(TimeZone))
+      string TimeZoneNameFound = null;
+      if (_TimeZoneNames.TryGetValue(TimeZone, out TimeZoneNameFound))
       {
-        TimeZoneName = _TimeZoneNames[TimeZone];
+        TimeZoneName = TimeZoneNameFound;
       }
 
       if (_TimeZoneList.ContainsKey(TimeZone))

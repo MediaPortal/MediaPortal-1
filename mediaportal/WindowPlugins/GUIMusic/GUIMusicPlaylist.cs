@@ -30,6 +30,7 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {

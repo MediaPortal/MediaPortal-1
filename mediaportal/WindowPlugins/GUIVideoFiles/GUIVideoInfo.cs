@@ -27,6 +27,7 @@ using MediaPortal.Services;
 using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
 {
@@ -520,7 +521,7 @@ namespace MediaPortal.GUI.Video
           //added by BoelShit
           string largeCoverArtImageConvert = Util.Utils.ConvertToLargeCoverArt(coverArtImage); //edited by Boelshit
 
-          if (!File.Exists(coverArtImage))
+          if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
             string imageExtension;
             imageExtension = Path.GetExtension(imageUrl);
@@ -542,12 +543,12 @@ namespace MediaPortal.GUI.Video
               {
                 Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              if (File.Exists(temporaryFilename))
+              if (Util.Utils.FileExistsInCache(temporaryFilename))
               {
                 Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (File.Exists(temporaryFilenameLarge))
+                if (Util.Utils.FileExistsInCache(temporaryFilenameLarge))
                 {
                   Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
                                                (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
@@ -567,7 +568,7 @@ namespace MediaPortal.GUI.Video
               Log.Info("image has no extension:{0}", imageUrl);
             }
           }
-          if (!File.Exists(coverArtImage))
+          if (!Util.Utils.FileExistsInCache(coverArtImage))
           {
             int idMovie = currentMovie.ID;
             System.Collections.ArrayList movies = new System.Collections.ArrayList();
@@ -579,7 +580,7 @@ namespace MediaPortal.GUI.Video
                 string thumbFile = Util.Utils.EncryptLine((string)movies[i]);
                 coverArtImage = Util.Utils.GetCoverArtName(Thumbs.Videos, thumbFile);
                 largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.Videos, thumbFile);
-                if (File.Exists(largeCoverArtImage))
+                if (Util.Utils.FileExistsInCache(largeCoverArtImage))
                 {
                   currentMovie.ThumbURL = "file://" + largeCoverArtImage;
                   Refresh(forceFolderThumb);
@@ -589,7 +590,7 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          if (((File.Exists(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
+          if (((Util.Utils.FileExistsInCache(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
             //edited by BoelShit
           {
             // copy icon to folder also;
@@ -609,12 +610,12 @@ namespace MediaPortal.GUI.Video
               Util.Utils.FileDelete(strFolderImage);
               if (forceFolderThumb)
               {
-                if (File.Exists(largeCoverArtImage))
+                if (Util.Utils.FileExistsInCache(largeCoverArtImage))
                 {
                   File.Copy(largeCoverArtImage, strFolderImage, true);
                 }
 
-                else if (File.Exists(largeCoverArtImageConvert)) //edited by BoelShit
+                else if (Util.Utils.FileExistsInCache(largeCoverArtImageConvert)) //edited by BoelShit
                 {
                   File.Copy(largeCoverArtImageConvert, strFolderImage, true); //edited by BoelShit
                 }

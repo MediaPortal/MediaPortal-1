@@ -24,6 +24,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.TagReader;
 using Microsoft.DirectX.Direct3D;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
@@ -298,14 +299,14 @@ namespace MediaPortal.GUI.Music
         m_tag.Album = albumInfo.Title;
       }
       thumbNailFileName = Util.Utils.GetAlbumThumbName(m_tag.Artist, m_tag.Album);
-      if (!File.Exists(thumbNailFileName))
+      if (!Util.Utils.FileExistsInCache(thumbNailFileName))
       {
         //	Download image and save as 
         //	permanent thumb
         Util.Utils.DownLoadImage(imageFileName, thumbNailFileName);
       }
 
-      if (File.Exists(thumbNailFileName))
+      if (Util.Utils.FileExistsInCache(thumbNailFileName))
       {
         coverArtTexture = Util.Picture.Load(thumbNailFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
                                             out coverArtTextureHeight);

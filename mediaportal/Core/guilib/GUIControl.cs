@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml;
@@ -1409,7 +1410,9 @@ namespace MediaPortal.GUI.Library
     public List<GUIControl> LoadControl(string xmlFilename)
     {
       XmlDocument doc = new XmlDocument();
-      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+      
+      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);            
+      
       List<GUIControl> listControls = new List<GUIControl>();
 
 
@@ -1422,8 +1425,8 @@ namespace MediaPortal.GUI.Library
         return listControls;
       }
 
-      // Load Definitions
-      Hashtable table = new Hashtable();
+      // Load Definitions      
+      IDictionary<string, string> table = new Dictionary<string, string>();
       try
       {
         foreach (XmlNode node in doc.SelectNodes("/window/define"))

@@ -219,15 +219,14 @@ namespace MediaPortal.GUI.Library
       _horizontalScrollbar.ParentControl = this;
       _horizontalScrollbar.DimColor = DimColor;
 
-      // Create controls for the back of the selected card.  All of the controls are provided as a single subitem.
-      Hashtable defines = new Hashtable();  // An empty set of defines.
+      // Create controls for the back of the selected card.  All of the controls are provided as a single subitem.      
       XmlDocument doc = new XmlDocument();
 
       if (SubItemCount > 0)  // avoid exception when no SubItems are available
-      {
+      {        
         doc.LoadXml((string)GetSubItem(0));
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
-
+        IDictionary<string, string> defines = new Dictionary<string, string>();  // An empty set of defines.
         foreach (XmlNode node in nodeList)
         {
           try

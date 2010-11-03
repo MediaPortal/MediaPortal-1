@@ -66,9 +66,9 @@ namespace MediaPortal.Services
     {
       // Make sure service implements type
       Type t = typeof (T);
-      if (services.ContainsKey(t))
-      {
-        object o = services[t];
+      object o = null;
+      if (services.TryGetValue(t, out o))
+      {        
         if (!(o is ServiceCreatorCallback<T>))
         {
           throw new ArgumentException(string.Format("A service of type {0} is already present", t.ToString()));
@@ -102,9 +102,9 @@ namespace MediaPortal.Services
     public T Get<T>()
     {
       Type t = typeof (T);
-      if (services.ContainsKey(t))
-      {
-        object o = services[t];
+      object o = null;
+      if (services.TryGetValue(t, out o))
+      {        
         ServiceCreatorCallback<T> s = o as ServiceCreatorCallback<T>;
         if (s != null)
         {

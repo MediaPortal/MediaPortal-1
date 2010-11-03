@@ -32,6 +32,7 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using Mpeg2SplitterPackage;
+using Action = MediaPortal.GUI.Library.Action;
 
 namespace WindowPlugins.VideoEditor
 {

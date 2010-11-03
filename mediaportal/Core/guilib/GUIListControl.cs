@@ -3823,5 +3823,10 @@ namespace MediaPortal.GUI.Library
       get { return _enableSMSsearch; }
       set { _enableSMSsearch = value; }
     }
+
+    public void SetNeedRefresh()
+    {
+        _refresh = true;
+    }
   }
 }

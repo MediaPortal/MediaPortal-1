@@ -3261,6 +3261,16 @@ namespace MediaPortal.GUI.Library
       get { return _enableSMSsearch; }
       set { _enableSMSsearch = value; }
     }
-    
+
+    public List<GUIListItem> ListItems
+    {
+        get { return _listItems; }
+        set { _listItems = value; }
+    }
+
+    public void SetNeedRefresh()
+    {
+        _refresh = true;
+    }
   }
 }

@@ -3482,5 +3482,16 @@ namespace MediaPortal.GUI.Library
       get { return _keepAspectRatio; }
       set { _keepAspectRatio = value; }
     }
+
+    public List<GUIListItem> ListItems
+    {
+        get { return _listItems; }
+        set { _listItems = value; }
+    }
+
+    public void SetNeedRefresh()
+    {
+        _refresh = true;
+    }
   }
 }

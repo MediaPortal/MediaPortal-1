@@ -28,6 +28,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
+using Action = MediaPortal.GUI.Library.Action;
 
 #pragma warning disable 108
 
