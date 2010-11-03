@@ -556,7 +556,12 @@ namespace MediaPortal.Configuration.Sections
           pictureBoxActor.Image.Dispose();
           pictureBoxActor.Image = null;
         }
-
+        // Clear Actors listboxes
+        listViewAllActors.Items.Clear();
+        listViewMovieActors.Items.Clear();
+        // Clear Genres listboxes
+        listViewAllGenres.Items.Clear();
+        listViewGenres.Items.Clear();
         MessageBox.Show("Video database has been cleared", "Video Database", MessageBoxButtons.OK,
                         MessageBoxIcon.Exclamation);
       }
