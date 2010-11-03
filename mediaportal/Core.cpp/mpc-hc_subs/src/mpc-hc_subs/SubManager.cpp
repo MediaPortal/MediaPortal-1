@@ -12,7 +12,6 @@
 #include "SubManager.h"
 #include "TextPassThruFilter.h"
 #include "IPinHook.h"
-#include "DumpQIQS.cpp"
 #include "ITrackInfo.h"
 
 STSStyle g_style;
