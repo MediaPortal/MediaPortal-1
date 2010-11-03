@@ -10,13 +10,16 @@
     /// </summary>
     private void InitializeComponent()
     {
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.lblViews = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbViews = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.lblViewName = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tbViewName = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.dataGrid = new System.Windows.Forms.DataGridView();
+      this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
+      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
       this.dgSelection = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgOperator = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgRestriction = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -24,10 +27,7 @@
       this.dgViewAs = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgSortBy = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgAsc = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-      this.dgAct = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
-      this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.dgSkip = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.groupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
       this.SuspendLayout();
@@ -103,14 +103,14 @@
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.dataGrid.BackgroundColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-      dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightSteelBlue;
-      dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightSteelBlue;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
       this.dataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.dgSelection,
@@ -120,7 +120,7 @@
             this.dgViewAs,
             this.dgSortBy,
             this.dgAsc,
-            this.dgAct});
+            this.dgSkip});
       this.dataGrid.Location = new System.Drawing.Point(16, 78);
       this.dataGrid.MultiSelect = false;
       this.dataGrid.Name = "dataGrid";
@@ -135,57 +135,6 @@
       this.dataGrid.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dataGrid_DataError);
       this.dataGrid.KeyDown += new System.Windows.Forms.KeyEventHandler(this.dataGrid_KeyDown);
       this.dataGrid.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
-      // 
-      // dgSelection
-      // 
-      this.dgSelection.HeaderText = "Selection";
-      this.dgSelection.Name = "dgSelection";
-      this.dgSelection.Width = 80;
-      // 
-      // dgOperator
-      // 
-      this.dgOperator.HeaderText = "Operator";
-      this.dgOperator.Name = "dgOperator";
-      this.dgOperator.Width = 55;
-      // 
-      // dgRestriction
-      // 
-      this.dgRestriction.HeaderText = "Restriction";
-      this.dgRestriction.Name = "dgRestriction";
-      this.dgRestriction.Width = 78;
-      // 
-      // dgLimit
-      // 
-      this.dgLimit.HeaderText = "Limit";
-      this.dgLimit.Name = "dgLimit";
-      this.dgLimit.Width = 48;
-      // 
-      // dgViewAs
-      // 
-      this.dgViewAs.HeaderText = "ViewAs";
-      this.dgViewAs.Name = "dgViewAs";
-      this.dgViewAs.Width = 60;
-      // 
-      // dgSortBy
-      // 
-      this.dgSortBy.HeaderText = "SortBy";
-      this.dgSortBy.Name = "dgSortBy";
-      this.dgSortBy.Width = 60;
-      // 
-      // dgAsc
-      // 
-      this.dgAsc.FalseValue = "false";
-      this.dgAsc.HeaderText = "Asc";
-      this.dgAsc.Name = "dgAsc";
-      this.dgAsc.TrueValue = "true";
-      this.dgAsc.Width = 28;
-      // 
-      // dgAct
-      // 
-      this.dgAct.HeaderText = "Act";
-      this.dgAct.Name = "dgAct";
-      this.dgAct.ReadOnly = true;
-      this.dgAct.Width = 28;
       // 
       // lblActionCodes
       // 
@@ -221,6 +170,66 @@
       this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
+      // dgSelection
+      // 
+      this.dgSelection.HeaderText = "Selection";
+      this.dgSelection.Name = "dgSelection";
+      this.dgSelection.ToolTipText = "Select the field that should be retrieved from the database";
+      this.dgSelection.Width = 80;
+      // 
+      // dgOperator
+      // 
+      this.dgOperator.HeaderText = "Operator";
+      this.dgOperator.Name = "dgOperator";
+      this.dgOperator.ToolTipText = "Choose an Operator for the Restriction";
+      this.dgOperator.Width = 55;
+      // 
+      // dgRestriction
+      // 
+      this.dgRestriction.HeaderText = "Restriction";
+      this.dgRestriction.Name = "dgRestriction";
+      this.dgRestriction.ToolTipText = "Restrict the selected rows by the value specified";
+      this.dgRestriction.Width = 75;
+      // 
+      // dgLimit
+      // 
+      this.dgLimit.HeaderText = "Limit";
+      this.dgLimit.Name = "dgLimit";
+      this.dgLimit.ToolTipText = "Enter a Limit for Rows to be returned";
+      this.dgLimit.Width = 48;
+      // 
+      // dgViewAs
+      // 
+      this.dgViewAs.HeaderText = "ViewAs";
+      this.dgViewAs.Name = "dgViewAs";
+      this.dgViewAs.ToolTipText = "Select how the returned data should be shown";
+      this.dgViewAs.Width = 60;
+      // 
+      // dgSortBy
+      // 
+      this.dgSortBy.HeaderText = "SortBy";
+      this.dgSortBy.Name = "dgSortBy";
+      this.dgSortBy.ToolTipText = "Choose the sort field";
+      this.dgSortBy.Width = 60;
+      // 
+      // dgAsc
+      // 
+      this.dgAsc.FalseValue = "false";
+      this.dgAsc.HeaderText = "Asc";
+      this.dgAsc.Name = "dgAsc";
+      this.dgAsc.ToolTipText = "Chose sort direction";
+      this.dgAsc.TrueValue = "true";
+      this.dgAsc.Width = 28;
+      // 
+      // dgSkip
+      // 
+      this.dgSkip.FalseValue = "false";
+      this.dgSkip.HeaderText = "Skip";
+      this.dgSkip.Name = "dgSkip";
+      this.dgSkip.ToolTipText = "Don\'t display this level, if only 1 row is returned";
+      this.dgSkip.TrueValue = "true";
+      this.dgSkip.Width = 31;
+      // 
       // BaseViews
       // 
       this.Controls.Add(this.groupBox);
@@ -249,6 +258,6 @@
     private System.Windows.Forms.DataGridViewComboBoxColumn dgViewAs;
     private System.Windows.Forms.DataGridViewComboBoxColumn dgSortBy;
     private System.Windows.Forms.DataGridViewCheckBoxColumn dgAsc;
-    private System.Windows.Forms.DataGridViewTextBoxColumn dgAct;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn dgSkip;
   }
 }

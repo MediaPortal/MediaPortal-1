@@ -174,12 +174,18 @@ namespace MediaPortal.Configuration.Sections
         datasetFilters.Columns.Add(dtCol);
       }
 
-      // Add a Column with checkbox at last in the Grid     
+      // Add 2 columns with checkbox at the end of the Datarow     
       DataColumn dtcCheck = new DataColumn("SortAsc"); //create the data column object
       dtcCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
-      dtcCheck.DefaultValue = false; //Set the default value
+      dtcCheck.DefaultValue = true; //Set the default value
       dtcCheck.AllowDBNull = false;
       datasetFilters.Columns.Add(dtcCheck); //Add the above column to the Data Table
+
+      DataColumn skipCheck = new DataColumn("Skip"); //create the data column object
+      skipCheck.DataType = Type.GetType("System.Boolean"); //Set its data Type
+      skipCheck.DefaultValue = false; //Set the default value
+      skipCheck.AllowDBNull = false;
+      datasetFilters.Columns.Add(skipCheck); //Add the above column to the Data Table
 
       // Set the Data Properties for the field to map to the data table
       dgSelection.DataPropertyName = "Selection";
@@ -188,7 +194,8 @@ namespace MediaPortal.Configuration.Sections
       dgLimit.DataPropertyName = "Limit";
       dgViewAs.DataPropertyName = "ViewAs";
       dgSortBy.DataPropertyName = "SortBy";
-      dgAsc.DataPropertyName = "SortAsc"; // Set the data property for the grif
+      dgAsc.DataPropertyName = "SortAsc"; 
+      dgSkip.DataPropertyName = "Skip"; 
 
       //Set the Data Grid Source as the Data Table created above
       dataGrid.AutoGenerateColumns = false;
@@ -253,6 +260,7 @@ namespace MediaPortal.Configuration.Sections
               def.DefaultView,
               def.DefaultSort,
               def.SortAscending,
+              def.SkipLevel,
             }
           );
       }
@@ -361,6 +369,7 @@ namespace MediaPortal.Configuration.Sections
         def.DefaultView = row[4].ToString();
         def.DefaultSort = row[5].ToString();
         def.SortAscending = (bool)row[6];
+        def.SkipLevel = (bool)row[7];
         view.Filters.Add(def);
       }
     }
@@ -448,8 +457,10 @@ namespace MediaPortal.Configuration.Sections
       {
         case System.Windows.Forms.Keys.Insert:
           DataRow row = datasetFilters.NewRow();
-          row[0] = row[1] = row[2] = row[3] = row[4] = row[5] = "";
-          row[6] = false;
+          row[0] = row[1] = row[2] = row[3] = row[5] = "";
+          row[4] = ViewsAs[0]; // Set default Value
+          row[6] = true;
+          row[7] = false;
           datasetFilters.Rows.InsertAt(row, rowSelected + 1);
           e.Handled = true;
           break;
@@ -479,10 +490,6 @@ namespace MediaPortal.Configuration.Sections
       {
         _dragDropRectangle = Rectangle.Empty;
       }
-
-      // Show Context Menu on Right Mouse Click
-      if (e.Button == MouseButtons.Right)
-        dataGrid.ContextMenu.Show(dataGrid, new Point(e.X, e.Y));
 
       base.OnMouseDown(e);
     }

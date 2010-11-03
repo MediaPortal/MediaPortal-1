@@ -31,6 +31,7 @@ namespace MediaPortal.GUI.View
   {
     protected bool distinct = false;
     protected bool sortAscending = true;
+    protected bool skipLevel = false;
     protected string restriction = "";
     protected string whereClause = "";
     protected string fromStatement = "";
@@ -55,6 +56,13 @@ namespace MediaPortal.GUI.View
     {
       get { return sortAscending; }
       set { sortAscending = value; }
+    }
+
+    [XmlElement("SkipLevel")]
+    public bool SkipLevel
+    {
+      get { return skipLevel; }
+      set { skipLevel = value; }
     }
 
     [XmlElement("Restriction")]
