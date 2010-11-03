@@ -512,30 +512,33 @@ namespace MediaPortal.GUI.Music
       {
         tag = TagReader.TagReader.ReadTag(fileName);
 
-        // Mantis 3077: Handle Multiple Artists
-        // We need to replace the string ";" by an " | " so that it looks like coming from the Database
-        string[] strArtistSplit = tag.Artist.Split(new char[] { ';', '|' });
-
-        if (strArtistSplit.Length > 1)
+        if (tag != null)
         {
-          int i = 0;
-          string formattedArtist = "";
-          foreach (string strArtist in strArtistSplit)
-          {
-            string s = strArtist.Trim();
-            if (_stripArtistPrefixes)
-            {
-              Util.Utils.StripArtistNamePrefix(ref s, true);
-            }
+          // Mantis 3077: Handle Multiple Artists
+          // We need to replace the string ";" by an " | " so that it looks like coming from the Database
+          string[] strArtistSplit = tag.Artist.Split(new char[] {';', '|'});
 
-            if (i > 0)
+          if (strArtistSplit.Length > 1)
+          {
+            int i = 0;
+            string formattedArtist = "";
+            foreach (string strArtist in strArtistSplit)
             {
-              formattedArtist += " | ";
+              string s = strArtist.Trim();
+              if (_stripArtistPrefixes)
+              {
+                Util.Utils.StripArtistNamePrefix(ref s, true);
+              }
+
+              if (i > 0)
+              {
+                formattedArtist += " | ";
+              }
+              formattedArtist += s.Trim();
+              i++;
             }
-            formattedArtist += s.Trim();
-            i++;
+            tag.Artist = formattedArtist;
           }
-          tag.Artist = formattedArtist;
         }
       }
 
