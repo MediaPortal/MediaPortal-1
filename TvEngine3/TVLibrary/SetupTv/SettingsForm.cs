@@ -196,6 +196,7 @@ namespace SetupTv
         AddSection(new StreamingServer());
 
         AddSection(new TestService("Manual Control"));
+        AddSection(new TestChannels("Test Channels"));
 
         _pluginLoader.Load();
         pluginsRoot = new Plugins("Plugins", _pluginLoader);

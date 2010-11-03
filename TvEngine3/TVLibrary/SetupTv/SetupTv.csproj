@@ -13,6 +13,7 @@
     </Win32Resource>
     <ApplicationIcon>images\icon.mpConfig.ico</ApplicationIcon>
     <ApplicationManifest>SetupTv.exe.manifest</ApplicationManifest>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -70,6 +71,9 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
@@ -178,6 +182,7 @@
     <Compile Include="Dialogs\GroupSelectionForm.designer.cs">
       <DependentUpon>GroupSelectionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExtensionMethods.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="Sections\DebugOptions.cs">
       <SubType>UserControl</SubType>
@@ -203,6 +208,12 @@
     </Compile>
     <Compile Include="Sections\Epg.Designer.cs">
       <DependentUpon>Epg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\TestChannels.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\TestChannels.Designer.cs">
+      <DependentUpon>TestChannels.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\TvTimeshifting.cs">
       <SubType>UserControl</SubType>
@@ -686,6 +697,9 @@
     <EmbeddedResource Include="Sections\Epg.resx">
       <DependentUpon>Epg.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\TestChannels.resx">
+      <DependentUpon>TestChannels.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\ThirdPartyChecks.resx">
       <DependentUpon>ThirdPartyChecks.cs</DependentUpon>
