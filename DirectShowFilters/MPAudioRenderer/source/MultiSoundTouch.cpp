@@ -622,7 +622,8 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
     // If AC3 encoding is enabled we should not accepted a 
     // format that cannot be output to AC3
-    if(m_bEnableAC3Encoding && (dwChannelMask & SPEAKER_AC3_VALID_POSITIONS) != dwChannelMask)
+    if (m_bEnableAC3Encoding && pwfe->Format.nChannels > 2 && 
+       (dwChannelMask & SPEAKER_AC3_VALID_POSITIONS) != dwChannelMask)
       return VFW_E_TYPE_NOT_ACCEPTED;
 
     newStreams =  new std::vector<CSoundTouchEx *>;
@@ -643,7 +644,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     int currOffset = 0;
     // Each bit position in dwChannelMask corresponds to a speaker position
     // try every bit position from 0 to 31
-    for(DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
+    for (DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
     {
       if (dwChannelMask & dwSpeaker)
       {
@@ -654,7 +655,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
     ASSERT(inSpeakerOffset.size() == pwfe->Format.nChannels);
 
-    if(m_bEnableAC3Encoding)
+    if (m_bEnableAC3Encoding && pwfe->Format.nChannels > 2)
     {
       // If we ever support other formats with different speaker offsets
       // just create anoter speaker order table and set these three accordingly
@@ -663,7 +664,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
       WORD wOutBytesPerSample = 2;
 
       currOffset = 0;
-      for(int i = 0; i<nMaxOutSpeakers; i++)
+      for (int i = 0; i < nMaxOutSpeakers; i++)
       {
         DWORD dwSpeaker = pSpeakerOrder[i];
         if (dwChannelMask & dwSpeaker)
@@ -685,7 +686,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     // Now start adding channels
     bool isFloat = (pwfe->SubFormat == KSDATAFORMAT_SUBTYPE_IEEE_FLOAT);
     // First try all speaker pairs
-    for(SpeakerPair *pPair = PairedSpeakers; pPair->dwLeft; pPair++)
+    for (SpeakerPair *pPair = PairedSpeakers; pPair->dwLeft; pPair++)
     {
       if ((pPair->PairMask() & dwChannelMask) == pPair->PairMask())
       {
@@ -705,7 +706,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
     }
     // Then add all remaining channels as mono streams
     // try every bit position from 0 to 31
-    for(DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
+    for (DWORD dwSpeaker = 1; dwSpeaker != 0; dwSpeaker <<= 1) 
     {
       if (dwChannelMask & dwSpeaker)
       {
@@ -747,7 +748,7 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
   if (oldStreams)
   {
-    for(int i=0; i<oldStreams->size(); i++)
+    for (int i = 0; i < oldStreams->size(); i++)
     {
       SAFE_DELETE(oldStreams->at(i));
     }
@@ -756,7 +757,12 @@ HRESULT CMultiSoundTouch::SetFormat(WAVEFORMATEXTENSIBLE *pwfe)
 
   setTempoInternal(m_fNewTempo, m_fNewAdjustment);
 
-  if (m_bEnableAC3Encoding && m_pWaveFormat)
+  if (m_pEncoder && pwfe->Format.nChannels <= 2)
+  {
+    (void)CloseAC3Encoder();
+  }
+
+  if (m_bEnableAC3Encoding && m_pWaveFormat && pwfe->Format.nChannels > 2)
   {
     (void)OpenAC3Encoder(m_dAC3bitrate, m_pWaveFormat->Format.nChannels, m_pWaveFormat->Format.nSamplesPerSec);
   }

@@ -253,7 +253,7 @@ HRESULT	CMPAudioRenderer::CheckMediaType(const CMediaType *pmt)
 
   if (m_pRenderDevice)
   {
-    if (m_Settings.m_bEnableAC3Encoding)
+    if (m_Settings.m_bEnableAC3Encoding && pwfx->nChannels > 2)
     {
       WAVEFORMATEX *pRenderFormat = CreateWaveFormatForAC3(pwfx->nSamplesPerSec);
       hr = m_pRenderDevice->CheckFormat(pRenderFormat);
@@ -424,7 +424,7 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
   
   if (m_pRenderDevice)
   {
-    if (m_Settings.m_bEnableAC3Encoding)
+    if (m_Settings.m_bEnableAC3Encoding && pwf->nChannels > 2)
     {
       WAVEFORMATEX* pRenderFormat = CreateWaveFormatForAC3(pwf->nSamplesPerSec);
       m_pRenderDevice->SetMediaType(pRenderFormat);
