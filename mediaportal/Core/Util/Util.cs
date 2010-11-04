@@ -337,50 +337,23 @@ namespace MediaPortal.Util
       return diskSize;
     }
 
+    static char[] sizes = new char[] { 'K', 'M', 'G', 'T' };
+    // converts bytes to bytes / 1024^n
+    static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
     public static string GetSize(long dwFileSize)
     {
-      if (dwFileSize < 0) return "0";
-      string szTemp;
-      // file < 1 kbyte?
-      if (dwFileSize < 1024)
-      {
-        //  substract the integer part of the float value
-        float fRemainder = (((float)dwFileSize) / 1024.0f) - (((float)dwFileSize) / 1024.0f);
-        float fToAdd = 0.0f;
-        if (fRemainder < 0.01f)
-          fToAdd = 0.1f;
-        szTemp = String.Format("{0:f} KB", (((float)dwFileSize) / 1024.0f) + fToAdd);
-        return szTemp;
-      }
-      long iOneMeg = 1024 * 1024;
+        int i = sizes.Length;
+        double beautySize = 0.0D;
 
-      // file < 1 megabyte?
-      if (dwFileSize < iOneMeg)
-      {
-        szTemp = String.Format("{0:f} KB", ((float)dwFileSize) / 1024.0f);
-        return szTemp;
-      }
+        // get the highest power of 1024 that yields a value above 1
+        while ((beautySize = sizeConverter(dwFileSize, i)) < 1 && i > 1)
+            i--;
 
-      // file < 1 GByte?
-      long iOneGigabyte = iOneMeg;
-      iOneGigabyte *= (long)1000;
-      if (dwFileSize < iOneGigabyte)
-      {
-        szTemp = String.Format("{0:f} MB", ((float)dwFileSize) / ((float)iOneMeg));
-        return szTemp;
-      }
-      //file > 1 GByte
-      int iGigs = 0;
-      while (dwFileSize >= iOneGigabyte)
-      {
-        dwFileSize -= iOneGigabyte;
-        iGigs++;
-      }
-      float fMegs = ((float)dwFileSize) / ((float)iOneMeg);
-      fMegs /= 1000.0f;
-      fMegs += iGigs;
-      szTemp = String.Format("{0:f} GB", fMegs);
-      return szTemp;
+        // we force close enough values to the next higher, so we get 0.99 GB instead of 1010 MB for instance
+        if (beautySize >= 1000 && i < sizes.Length)
+            beautySize = sizeConverter(dwFileSize, ++i);
+
+        return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
     public static bool IsLiveTv(string strPath)
