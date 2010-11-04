@@ -30,6 +30,7 @@ namespace MediaPortal.Localisation.LanguageStrings
 
     [XmlAttribute("name")] public string languageName;
     [XmlAttribute("characters")] public int characters;
+    [XmlAttribute("rtl")] public bool rtl;
     [XmlElement("Section")] public List<StringSection> sections;
 
     #endregion

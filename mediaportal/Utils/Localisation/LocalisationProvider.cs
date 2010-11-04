@@ -44,6 +44,7 @@ namespace MediaPortal.Localisation
     private int _characters;
     private bool _prefix;
     private bool _userLanguage;
+    private bool _useRTL = false;
 
     #endregion
 
@@ -108,6 +109,11 @@ namespace MediaPortal.Localisation
     public int Characters
     {
       get { return _characters; }
+    }
+
+    public bool UseRTL
+    {
+        get { return _useRTL; }
     }
 
     #endregion
@@ -295,6 +301,7 @@ namespace MediaPortal.Localisation
       }
 
       _characters = 255;
+      _useRTL = false;
     }
 
     private void CheckUserStrings()
@@ -360,6 +367,7 @@ namespace MediaPortal.Localisation
 
         // Some chinese might prefer to use an english OS but still have all chars for media, etc
         bool useChineseHack = false;
+        int useChineseHackNum = 0;
         using (Settings reader = new MPSettings())
         {
           useChineseHack = reader.GetValueAsBool("debug", "useExtendedCharsWithStandardCulture", false);
@@ -367,9 +375,23 @@ namespace MediaPortal.Localisation
           {
             _characters = 1536;
           }
+          
+          useChineseHackNum = reader.GetValueAsInt("debug", "useExtendedCharsWithStandardCulture", 0);
+          if (useChineseHackNum >= 128 && useChineseHackNum <= 1536)
+          {
+            useChineseHack = true;
+            _characters = useChineseHackNum;
+          }
+          else
+          {
+            if (useChineseHack)
+              useChineseHackNum = 1536;
+          }
         }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}, StringChars = {1}", useChineseHack,
-                                                strings.characters);
+        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
+                                                useChineseHackNum, strings.characters);
+
+        _useRTL = strings.rtl;
 
         foreach (StringSection section in strings.sections)
         {

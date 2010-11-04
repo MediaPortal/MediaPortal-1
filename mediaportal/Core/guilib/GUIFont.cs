@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Library
       // Some users have english systems but use RTL text.. System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
       using (Settings xmlreader = new MPSettings())
       {
-        _useRTLLang = xmlreader.GetValueAsBool("general", "rtllang", false);
+        _useRTLLang = GUILocalizeStrings.UseRTL;
       }
     }
 

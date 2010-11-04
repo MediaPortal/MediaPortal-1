@@ -59,6 +59,21 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    #region Properties
+    public static bool UseRTL
+    {
+        get
+        {
+            if (_stringProvider == null) {
+                Load(null);
+            }
+
+            return _stringProvider.UseRTL;
+        }
+    }
+
+    #endregion
+
     #region Public Methods
 
     /// <summary>
