@@ -15,24 +15,6 @@ namespace MediaPortal.GUI.Library
     public override void InitializeInstance()
     {
       _capsLockTurnedOn = true;
-      _shiftTurnedOn = false;
-      _state = State.STATE_KEYBOARD;
-      _position = 0;
-      _currentKeyboard = KeyboardTypes.TYPE_ALPHABET;
-      _currentRow = 0;
-      _currentKey = 0;
-      _lastColumn = 0;
-      _keyHeightScaled = _keyHeight;
-      _maxRows = 5;
-      _pressedEnter = false;
-      _caretTimer = DateTime.Now;
-      // construct search def.
-      _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
-
-      if (GUIGraphicsContext.DX9Device != null)
-      {
-        InitBoard();
-      }
     }
 
     protected override void MoveLeft()

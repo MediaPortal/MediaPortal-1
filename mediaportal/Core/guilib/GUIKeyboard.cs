@@ -614,8 +614,6 @@ namespace MediaPortal.GUI.Library
 
     public void Reset()
     {
-      _password = false;
-      _pressedEnter = false;
       _capsLockTurnedOn = false;
       _shiftTurnedOn = false;
       _state = State.STATE_KEYBOARD;
@@ -626,11 +624,13 @@ namespace MediaPortal.GUI.Library
       _lastColumn = 0;
       _keyHeightScaled = _keyHeight;
       _maxRows = 5;
-      _position = 0;
-      _textEntered = "";
+      _pressedEnter = false;
       _caretTimer = DateTime.Now;
 
       _searchKind = (int)SearchKinds.SEARCH_CONTAINS; // default search Contains
+
+      _password = false;
+      _textEntered = "";
 
       int height = _keyHeight;
       GUIGraphicsContext.ScaleVertical(ref height);

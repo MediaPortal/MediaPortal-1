@@ -76,6 +76,7 @@ namespace MediaPortal.Dialogs
       // and the subsequent call to DoModal() will AllocResources() and clobber the callers overrides (AllocResources() is reentrant).
       AllocResources();
       _keyboard.Reset();
+      _keyboard.InitializeInstance();
     }
 
     public string Text
@@ -97,12 +98,12 @@ namespace MediaPortal.Dialogs
 
     public int MAX_CHARS
     {
-        get { return _keyboard.MAX_CHARS; }
+      get { return _keyboard.MAX_CHARS; }
     }
 
     public void SetMaxLength(int maxLen)
     {
-        _keyboard.SetMaxLength(maxLen);
+      _keyboard.SetMaxLength(maxLen);
     }
 
     public bool Password
@@ -118,6 +119,12 @@ namespace MediaPortal.Dialogs
     public bool IsSearchKeyboard
     {
       set { _keyboard.IsSearchKeyboard = value; }
+    }
+
+    public bool ShiftTurnedOn
+    {
+      get { return _keyboard._shiftTurnedOn; }
+      set { _keyboard._shiftTurnedOn = value; }
     }
 
     public void InitializeBackground()
@@ -140,7 +147,7 @@ namespace MediaPortal.Dialogs
     protected void PageLoad()
     {
       AllocResources();
-      _keyboard.InitializeInstance();
+      //_keyboard.InitializeInstance();
       _previousOverlayVisible = GUIGraphicsContext.Overlay;
       _keyboard.PressedEnter = false;
       GUIGraphicsContext.Overlay = false;
