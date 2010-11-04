@@ -2036,6 +2036,7 @@ namespace MediaPortal.GUI.Music
       }
       if (null != dlg)
       {
+        dlg.Reset();
         string strPath = Path.GetFileName(currentFolder);
         dlg.SetHeading(189);
         dlg.SetLine(1, 330);
