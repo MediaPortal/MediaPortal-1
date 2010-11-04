@@ -219,8 +219,8 @@ namespace MediaPortal.Util
       public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
       public System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
       public System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
-      public int nFileSizeHigh;
-      public int nFileSizeLow;
+      public uint nFileSizeHigh;
+      public uint nFileSizeLow;
       public int dwReserved0;
       public int dwReserved1;
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
