@@ -1017,6 +1017,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="shouldFocus">True if the card should be in focus.</param>
     private void RenderCard(float timePassed, int index, bool shouldFocus)
     {
+      if (index < 0 || index >= _listItems.Count) return;
       // The selected card may have its front or back shown.
       if (index == SelectedListItemIndex)
       {
@@ -1235,6 +1236,8 @@ namespace MediaPortal.GUI.Library
 
       GUIListItem pItem = SelectedListItem;
 
+      if (null == pItem) return;
+
       if (_labelText1 == string.Empty)
       {
         return;
@@ -1285,6 +1288,8 @@ namespace MediaPortal.GUI.Library
       }
 
       GUIListItem pItem = SelectedListItem;
+
+      if (null == pItem) return;
 
       if (pItem.IsFolder ||
           _labelText2 == string.Empty)
