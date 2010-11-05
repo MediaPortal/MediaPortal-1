@@ -397,6 +397,8 @@ namespace MediaPortal.Configuration.Sections
 
       dataGridViews.Rows[dataGridViews.Rows.Count - 1].Selected = true;
       dataGridViews.FirstDisplayedScrollingRowIndex = dataGridViews.Rows.Count - 1;
+      dataGridViews.CurrentCell = dataGridViews.Rows[dataGridViews.Rows.Count - 1].Cells[1];
+      dataGridViews.BeginEdit(false);
       currentView = view;
 
       datasetFilters.Rows.Clear();
@@ -421,8 +423,16 @@ namespace MediaPortal.Configuration.Sections
       {
         dataGridViews.Rows.Remove(dataGridViews.CurrentRow);
       }
-      
       updating = false;
+
+      if (dataGridViews.CurrentRow != null)
+      {
+        int newSelection = dataGridViews.CurrentRow.Index - 1;
+        if (newSelection > -1)
+        {
+          dataGridViews.Rows[newSelection].Selected = true;
+        }
+      }
     }
 
     /// <summary>
@@ -485,14 +495,10 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void dataGrid_KeyDown(object sender, KeyEventArgs e)
     {
-      if (dataGrid.CurrentRow == null)
+      int rowSelected = -1;
+      if (dataGrid.CurrentRow != null)
       {
-        return;
-      }
-      int rowSelected = dataGrid.CurrentRow.Index;
-      if (rowSelected == -1 || rowSelected == datasetFilters.Rows.Count)
-      {
-        return;
+        rowSelected = dataGrid.CurrentRow.Index;
       }
 
       switch (e.KeyCode)
@@ -503,11 +509,18 @@ namespace MediaPortal.Configuration.Sections
           row[4] = ViewsAs[0]; // Set default Value
           row[6] = true;
           row[7] = false;
+          if (rowSelected == -1)
+          {
+            rowSelected = 0;
+          }
           datasetFilters.Rows.InsertAt(row, rowSelected + 1);
           e.Handled = true;
           break;
         case System.Windows.Forms.Keys.Delete:
-          datasetFilters.Rows.RemoveAt(rowSelected);
+          if (rowSelected > -1)
+          {
+            datasetFilters.Rows.RemoveAt(rowSelected);
+          }
           e.Handled = true;
           break;
       }
@@ -637,7 +650,7 @@ namespace MediaPortal.Configuration.Sections
         if (e.RowIndex == _dragDropCurrentIndex && _dragDropCurrentIndex < dgV.RowCount - 1)
         {
           //if this cell is in the same row as the mouse cursor
-          Pen p = new Pen(Color.Red, 1);
+          Pen p = new Pen(Color.Red, 3);
           e.Graphics.DrawLine(p, e.CellBounds.Left, e.CellBounds.Top - 1, e.CellBounds.Right, e.CellBounds.Top - 1);
         }
       }
@@ -708,7 +721,11 @@ namespace MediaPortal.Configuration.Sections
         views.Clear();
         foreach (DataGridViewRow row in dataGridViews.Rows)
         {
-          views.Add(datasetViews.Rows[row.Index][2]);
+          ViewDefinition view = (ViewDefinition)datasetViews.Rows[row.Index][2];
+          if (view.Filters.Count > 0)
+          {
+            views.Add(view);
+          }
         }
 
         try

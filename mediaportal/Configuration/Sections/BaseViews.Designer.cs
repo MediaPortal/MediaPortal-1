@@ -14,8 +14,6 @@
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.dataGridViews = new System.Windows.Forms.DataGridView();
-      this.dgViewName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dgLocalisedName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.dataGrid = new System.Windows.Forms.DataGridView();
       this.dgSelection = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgOperator = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -28,6 +26,8 @@
       this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
       this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
+      this.dgViewName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dgLocalisedName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.groupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViews)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
@@ -88,23 +88,6 @@
       this.dataGridViews.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
       this.dataGridViews.SelectionChanged += new System.EventHandler(this.dataGridViews_SelectionChanged);
       this.dataGridViews.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
-      // 
-      // dgViewName
-      // 
-      this.dgViewName.HeaderText = "View Name";
-      this.dgViewName.Name = "dgViewName";
-      this.dgViewName.ReadOnly = true;
-      this.dgViewName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-      this.dgViewName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.dgViewName.Width = 200;
-      // 
-      // dgLocalisedName
-      // 
-      this.dgLocalisedName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      this.dgLocalisedName.HeaderText = "Enter Name or Localised Code";
-      this.dgLocalisedName.Name = "dgLocalisedName";
-      this.dgLocalisedName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-      this.dgLocalisedName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       // 
       // dataGrid
       // 
@@ -246,6 +229,23 @@
       this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
       // 
+      // dgViewName
+      // 
+      this.dgViewName.HeaderText = "Displayed View Name";
+      this.dgViewName.Name = "dgViewName";
+      this.dgViewName.ReadOnly = true;
+      this.dgViewName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.dgViewName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.dgViewName.Width = 200;
+      // 
+      // dgLocalisedName
+      // 
+      this.dgLocalisedName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dgLocalisedName.HeaderText = "Enter the View Name or Localised Code";
+      this.dgLocalisedName.Name = "dgLocalisedName";
+      this.dgLocalisedName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.dgLocalisedName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      // 
       // BaseViews
       // 
       this.Controls.Add(this.groupBox);
@@ -273,8 +273,8 @@
     private System.Windows.Forms.DataGridViewCheckBoxColumn dgAsc;
     private System.Windows.Forms.DataGridViewCheckBoxColumn dgSkip;
     private System.Windows.Forms.DataGridView dataGridViews;
+    private MediaPortal.UserInterface.Controls.MPButton btnAdd;
     private System.Windows.Forms.DataGridViewTextBoxColumn dgViewName;
     private System.Windows.Forms.DataGridViewTextBoxColumn dgLocalisedName;
-    private MediaPortal.UserInterface.Controls.MPButton btnAdd;
   }
 }
