@@ -39,7 +39,8 @@ namespace MediaPortal.Configuration.Sections
                                       "favorites",
                                       "recently added",
                                       "composer",
-                                      "conductor"
+                                      "conductor",
+                                      "disc#"
                                     };
 
     private string[] sqloperators = new string[]
@@ -78,7 +79,8 @@ namespace MediaPortal.Configuration.Sections
                                   "Artist",
                                   "Album",
                                   "Filename",
-                                  "Rating"
+                                  "Rating",
+                                  "Disc#"
                                 };
 
     public MusicViews()

@@ -53,7 +53,8 @@ namespace MediaPortal.GUI.Music
       Filename = 8,
       Rating = 9,
       AlbumArtist = 10, // Only used internally when albumartists or albums need to be sorted by Artist
-      Year = 11 // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
+      Year = 11, // Used Internally, when Sorting by Date is selected from GUI and Year defined as DefaultSort
+      DiscID = 12,
     }
 
     public int Compare(GUIListItem item1, GUIListItem item2)
@@ -352,6 +353,16 @@ namespace MediaPortal.GUI.Music
           else
           {
             return String.Compare(strFile2, strFile1, true);
+          }
+
+        case SortMethod.DiscID:
+          if (bAscending)
+          {
+            return String.Compare(item1.Label2, item2.Label2, true);
+          }
+          else
+          {
+            return String.Compare(item2.Label2, item1.Label2, true);
           }
       }
       return 0;

@@ -42,6 +42,7 @@ namespace MediaPortal.GUI.Music
 
     private ViewDefinition currentView;
     private int currentLevel = 0;
+    private int previousLevel = 0;
     private List<ViewDefinition> views = new List<ViewDefinition>();
 
     private MusicDatabase database;
@@ -377,6 +378,11 @@ namespace MediaPortal.GUI.Music
             from = String.Format("* from tracks", GetField(defCurrent.Where));
             whereClause += " group by strAlbum, strAlbumArtist ";
           }
+          if (defCurrent.Where == "disc#")
+          {
+            from = String.Format("* from tracks", GetField(defCurrent.Where));
+            whereClause += " group by strAlbum, strAlbumArtist, iDisc ";
+          }
 
           sql = String.Format("select distinct {0} {1} {2}", from, whereClause, orderClause);
 
@@ -404,6 +410,26 @@ namespace MediaPortal.GUI.Music
 
         database.GetSongsByFilter(sql, out songs, "tracks");
       }
+
+      if (songs.Count == 1 && definition.SkipLevel)
+      {
+        if (currentLevel < MaxLevels - 1)
+        {
+          if (previousLevel < currentLevel)
+          {
+            FilterDefinition fd = (FilterDefinition)currentView.Filters[currentLevel];
+            fd.SelectedValue = "%";
+            currentLevel = currentLevel + 1;
+          }
+          else
+          {
+            currentLevel = currentLevel - 1;
+          }
+          songs = Execute();
+        }
+      }
+      previousLevel = currentLevel;
+      
       return songs;
     }
 
@@ -626,6 +652,10 @@ namespace MediaPortal.GUI.Music
       {
         return "tracks";
       }
+      if (where == "disc#")
+      {
+        return "tracks";
+      }
       return null;
     }
 
@@ -686,6 +716,10 @@ namespace MediaPortal.GUI.Music
       if (where == "date")
       {
         return "dateAdded";
+      }
+      if (where =="disc#")
+      {
+        return "iDisc";
       }
       return null;
     }
@@ -748,6 +782,10 @@ namespace MediaPortal.GUI.Music
       {
         return song.DateTimeModified.ToShortDateString();
       }
+      if (where == "disc#")
+      {
+        return song.DiscId.ToString();
+      }
       return "";
     }
 
@@ -775,6 +813,10 @@ namespace MediaPortal.GUI.Music
       if (filter.DefaultSort == "Duration")
       {
         return "iDuration";
+      }
+      if (filter.DefaultSort == "disc#")
+      {
+        return "iDisc";
       }
 
       return GetField(filter.Where);
@@ -851,6 +893,13 @@ namespace MediaPortal.GUI.Music
         item.Label = song.Year.ToString();
         item.Label2 = string.Empty;
         item.Label3 = string.Empty;
+      }
+      if (definition.Where == "disc#")
+      {
+        item.Label = song.Album;
+        item.Label2 = song.DiscId.ToString();
+        item.Label3 = string.Empty;
+        
       }
     }
   }

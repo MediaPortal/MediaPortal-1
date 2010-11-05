@@ -277,6 +277,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("Rating");
             sortStrings.Add("AlbumArtist");
             sortStrings.Add("Year");
+            sortStrings.Add("Disc#");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -561,6 +562,7 @@ namespace MediaPortal.GUI.Music
             }
             break;
 
+          case "disc#":
           case "track":
             goto case "album";
 

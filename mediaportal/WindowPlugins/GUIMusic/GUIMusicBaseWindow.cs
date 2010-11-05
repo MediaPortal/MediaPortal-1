@@ -281,6 +281,8 @@ namespace MediaPortal.GUI.Music
           return MusicSort.SortMethod.Rating;
         case "year":
           return MusicSort.SortMethod.Year;
+        case "disc#":
+          return MusicSort.SortMethod.DiscID;
       }
       if (!string.IsNullOrEmpty(s))
       {
