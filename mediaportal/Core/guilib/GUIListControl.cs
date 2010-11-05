@@ -197,6 +197,10 @@ namespace MediaPortal.GUI.Library
     protected string _buttonNonFocusName = "";
     [XMLSkinElement("textureFocus")]
     protected string _buttonFocusName = "";
+    [XMLSkinElement("scrollbarwidth")]
+    protected int _scrollbarWidth = 15;
+    [XMLSkinElement("scrollbarXOff")]
+    protected int _scrollbarXOff = 0;
 
     [XMLSkin("textureNoFocus", "border")]
     protected string _strBorderBNF = "";
@@ -364,7 +368,7 @@ namespace MediaPortal.GUI.Library
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 
-      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height,
+      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width + _scrollbarXOff, _positionY, _scrollbarWidth, _height,
                                                     _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;

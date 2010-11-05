@@ -124,6 +124,10 @@ namespace MediaPortal.GUI.Library
     protected string _scrollbarTopTextureName = "";
     [XMLSkinElement("scrollbarbottom")]
     protected string _scrollbarBottomTextureName = "";
+    [XMLSkinElement("scrollbarwidth")]
+    protected int _scrollbarWidth = 15;
+    [XMLSkinElement("scrollbarXOff")]
+    protected int _scrollbarXOff = 0;
 
     [XMLSkinElement("scrollStartDelaySec")]
     protected int _scrollStartDelay = 1;
@@ -315,7 +319,7 @@ namespace MediaPortal.GUI.Library
         xpos = GUIGraphicsContext.Width - 15;
       }
       _verticalScrollBar = new GUIVerticalScrollbar(_controlId, 0,
-                                                    5 + _positionX + _width, _positionY, 15, _height,
+                                                    5 + _positionX + _width + _scrollbarXOff, _positionY, _scrollbarWidth, _height,
                                                     _scrollbarBackGroundTextureName, _scrollbarTopTextureName,
                                                     _scrollbarBottomTextureName);
       _verticalScrollBar.ParentControl = this;
