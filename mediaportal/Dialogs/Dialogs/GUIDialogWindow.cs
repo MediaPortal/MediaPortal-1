@@ -59,10 +59,15 @@ namespace MediaPortal.Dialogs
     {
       if (GUIWindowManager.IsRouted)
       {
-        GUIDialogWindow win = (GUIDialogWindow)GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
+        GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
         if (win != null)
         {
-          win.PageDestroy();
+            if (win is GUIDialogFile)
+                ((GUIDialogFile)win).Close();
+            else if (win is VirtualKeyboard)
+                ((VirtualKeyboard)win).PageDestroy();
+            else
+                ((GUIDialogWindow)win).PageDestroy();
         }
       }
 

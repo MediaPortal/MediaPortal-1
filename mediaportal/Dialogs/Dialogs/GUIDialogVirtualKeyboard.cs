@@ -144,7 +144,7 @@ namespace MediaPortal.Dialogs
       }
     }
 
-    protected void PageLoad()
+    public void PageLoad()
     {
       AllocResources();
       //_keyboard.InitializeInstance();
@@ -160,11 +160,20 @@ namespace MediaPortal.Dialogs
       Log.Debug("Window: {0} init", ToString());
     }
 
-    protected void PageDestroy(int new_windowId)
+    public void PageDestroy()
     {
-      base.OnPageDestroy(new_windowId);
-      GUIGraphicsContext.Overlay = _previousOverlayVisible;
-      FreeResources();
+      GUIWindowManager.IsSwitchingToNewWindow = true;
+      lock (this)
+      {
+        base.OnPageDestroy(_parentWindowId);
+        GUIGraphicsContext.Overlay = _previousOverlayVisible;
+        Dispose();
+
+        GUIWindowManager.UnRoute();
+        _parentWindow = null;
+      }
+      GUIWindowManager.IsSwitchingToNewWindow = false;
+      GUILayerManager.UnRegisterLayer(this);
 
       Log.Debug("Window: {0} deinit", ToString());
     }
@@ -199,17 +208,7 @@ namespace MediaPortal.Dialogs
         GUIWindowManager.Process();
       }
 
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        // deactive this window... (with its own OnPageDestroy)
-        PageDestroy(_parentWindowId);
-
-        GUIWindowManager.UnRoute();
-        _parentWindow = null;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
-      GUILayerManager.UnRegisterLayer(this);
+      PageDestroy();
     }
 
     #region IRenderLayer
