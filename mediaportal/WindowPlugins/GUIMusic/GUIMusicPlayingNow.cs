@@ -1632,11 +1632,64 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Rating", strRating);
           GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
           GUIPropertyManager.SetProperty("#duration", strDuration);
+          GUIPropertyManager.SetProperty("#Play.Current.AlbumArtist", CurrentTrackTag.AlbumArtist);
+          GUIPropertyManager.SetProperty("#Play.Current.BitRate", CurrentTrackTag.BitRate.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.Comment", CurrentTrackTag.Comment);
+          GUIPropertyManager.SetProperty("#Play.Current.Composer", CurrentTrackTag.Composer);
+          GUIPropertyManager.SetProperty("#Play.Current.Conductor", CurrentTrackTag.Conductor);
+          GUIPropertyManager.SetProperty("#Play.Current.DiscID", CurrentTrackTag.DiscID.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", CurrentTrackTag.DiscTotal.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.Lyrics", CurrentTrackTag.Lyrics);
+          GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", CurrentTrackTag.TimesPlayed.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", CurrentTrackTag.TrackTotal.ToString());
+
 
           if (InfoNeeded)
           {
             UpdateAlbumInfo();
             UpdateTagInfo();
+          }
+          
+          
+          AlbumInfo _albumInfo = new AlbumInfo();
+          if (MusicDatabase.Instance.GetAlbumInfo(CurrentTrackTag.Album,CurrentTrackTag.AlbumArtist, ref _albumInfo))
+          {
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",_albumInfo.Review);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",_albumInfo.Rating.ToString());
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",_albumInfo.Genre);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",_albumInfo.Styles);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",_albumInfo.Tones);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",_albumInfo.Year.ToString());
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",String.Empty);
+          }
+          ArtistInfo _artistInfo = new ArtistInfo();
+          if (MusicDatabase.Instance.GetArtistInfo(CurrentTrackTag.AlbumArtist,ref _artistInfo))
+          {
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",_artistInfo.AMGBio);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",_artistInfo.Born);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",_artistInfo.Genres);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",_artistInfo.Instruments);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",_artistInfo.Styles);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",_artistInfo.Tones);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",_artistInfo.YearsActive);   
+          }
+          else
+          {
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",String.Empty);
           }
         }
         else
@@ -1649,6 +1702,31 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Duration", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Rating", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Year", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.AlbumArtist", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.BitRate", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Comment", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Composer", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Conductor", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.DiscID", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Lyrics", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", string.Empty);
+          
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",String.Empty);
+          
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",String.Empty);
 
           if (PlaylistPlayer == null)
           {
@@ -1704,6 +1782,17 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Genre", NextTrackTag.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
         GUIPropertyManager.SetProperty("#Play.Next.Rating", strRating);
+        GUIPropertyManager.SetProperty("#Play.Next.AlbumArtist", NextTrackTag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRate", NextTrackTag.BitRate.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Comment", NextTrackTag.Comment);
+        GUIPropertyManager.SetProperty("#Play.Next.Composer", NextTrackTag.Composer);
+        GUIPropertyManager.SetProperty("#Play.Next.Conductor", NextTrackTag.Conductor);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscID", NextTrackTag.DiscID.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.DiscTotal", NextTrackTag.DiscTotal.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Lyrics", NextTrackTag.Lyrics);
+        GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", NextTrackTag.TimesPlayed.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", NextTrackTag.TrackTotal.ToString());
+
       }
       else
       {
@@ -1719,6 +1808,16 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
+        GUIPropertyManager.SetProperty("#Play.Next.AlbumArtist", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRate", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Comment", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Composer", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Conductor", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscID", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Lyrics", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", string.Empty);
       }
     }
 
