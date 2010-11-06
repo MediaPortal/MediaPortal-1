@@ -243,7 +243,7 @@ namespace MediaPortal.Configuration.Sections
         extension = extension.Replace("*", "");
 
         //
-        // Check if we have already new extension in the list
+        // Check if we already have new extension in the list
         //
         foreach (var ext in extensionsListBox.Items)
         {
@@ -251,6 +251,8 @@ namespace MediaPortal.Configuration.Sections
           {
             MessageBox.Show("Extension already exist.", "Information", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
+            extensionTextBox.Focus();
+            extensionTextBox.SelectAll();
             return;
           }
         }
