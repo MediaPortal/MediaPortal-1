@@ -213,9 +213,9 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="e"></param>
     private void addButton_Click(object sender, EventArgs e)
     {
-      string extension = extensionTextBox.Text;
-
-      if (extension != null && extension.Length != 0)
+      string extension = extensionTextBox.Text.Trim();
+      
+      if (extension.Length != 0)
       {
         //
         // Only grab what we got after the first .
@@ -241,6 +241,19 @@ namespace MediaPortal.Configuration.Sections
         // Remove unwanted characters
         //
         extension = extension.Replace("*", "");
+
+        //
+        // Check if we have already new extension in the list
+        //
+        foreach (var ext in extensionsListBox.Items)
+        {
+          if ((string)ext == extension)
+          {
+            MessageBox.Show("Extension already exist.", "Information", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+            return;
+          }
+        }
 
         //
         // Add extension to the list
