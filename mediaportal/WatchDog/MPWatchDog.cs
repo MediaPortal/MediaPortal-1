@@ -109,7 +109,7 @@ namespace WatchDog
 
       try
       {
-        File.Copy(MPSettings.ConfigPathName, tempSettingsFilename);
+        File.Copy(MPSettings.ConfigPathName, tempSettingsFilename, true);
         using (Settings xmlreader = new Settings(tempSettingsFilename, false))
         {
           xmlreader.SetValue("general", "loglevel", 3);
