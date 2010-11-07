@@ -797,7 +797,7 @@ namespace MediaPortal.Music.Database
 
         string sql =
           string.Format(
-            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iTrack asc",
+            "SELECT * FROM tracks WHERE strAlbumArtist LIKE '%| {0} |%' AND strAlbum LIKE '{1}' order by iDisc asc, iTrack asc",
             strAlbumArtist, strAlbum);
         GetSongsByFilter(sql, out aSongList, "tracks");
 
