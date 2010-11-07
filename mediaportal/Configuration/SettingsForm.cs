@@ -1123,13 +1123,44 @@ namespace MediaPortal.Configuration
     private void okButton_Click(object sender, EventArgs e)
     {
       applyButton_Click(sender, e);
-      if (!AllFilledIn())
+      if (!AllFilledIn() || MusicScanRunning())
       {
         return;
       }
       Close();
     }
 
+    private bool MusicScanRunning()
+    {
+      SectionSettings section = SectionSettings.GetSection("Music Database");
+
+      if (section != null)
+      {
+        bool scanRunning = (bool)section.GetSetting("folderscanning");
+        if (scanRunning !=null)
+        {
+          if (scanRunning)
+          {
+            MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish", "MediaPortal Settings", MessageBoxButtons.OK,
+                          MessageBoxIcon.Exclamation);
+
+            if (ActivateSection(section))
+            {
+              headerLabel.Caption = section.Text;
+            }
+          }
+          return scanRunning;
+        }
+      }
+
+      return false;
+    }
+
+
+    /// <summary>
+    /// Do we have all required fields filled
+    /// </summary>
+    /// <returns></returns>
     private bool AllFilledIn()
     {
       int MaximumShares = 250;

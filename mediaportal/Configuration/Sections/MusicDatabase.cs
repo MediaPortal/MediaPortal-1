@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
@@ -36,11 +37,12 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MusicDatabase : SectionSettings
   {
+    #region Variables
+
     private MPGroupBox groupBox1;
     private CheckedListBox sharesListBox;
     private MPButton startButton;
     private MPGroupBox groupBox2;
-    private ProgressBar progressBar;
     private MPLabel fileLabel;
     private IContainer components = null;
     private MPCheckBox folderAsAlbumCheckBox;
@@ -57,21 +59,15 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxCreateGenre;
     private MPCheckBox checkBoxAllImages;
 
-    private List<BaseShares.ShareData> sharesData = null;
-
-    public class MusicData
-    {
-      public string FilePath;
-      public MusicTag Tag;
-
-      public MusicData(string filePath, MusicTag tag)
-      {
-        this.FilePath = filePath;
-        this.Tag = tag;
-      }
-    }
-
     private MediaPortal.Music.Database.MusicDatabase m_dbs = MediaPortal.Music.Database.MusicDatabase.Instance;
+
+    private List<BaseShares.ShareData> sharesData = null;
+    private Thread _scanThread = null;
+    private bool _scanRunning = false;
+
+    #endregion
+
+    #region ctor / dtor
 
     public MusicDatabase()
       : this("Music Database") {}
@@ -85,13 +81,36 @@ namespace MediaPortal.Configuration.Sections
       groupBox2.Enabled = false;
     }
 
+    /// <summary>
+    /// Clean up any resources being used.
+    /// </summary>
+    protected override void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        if (components != null)
+        {
+          components.Dispose();
+        }
+      }
+      base.Dispose(disposing);
+    }
+
+    #endregion
+
+    #region Properties
+
     private string[] Extensions
     {
       get { return extensions; }
       set { extensions = value; }
     }
 
-    private string[] extensions = new string[] {".mp3"};
+    private string[] extensions = new string[] { ".mp3" };
+
+    #endregion
+
+    #region Overrides
 
     public override void OnSectionActivated()
     {
@@ -179,21 +198,17 @@ namespace MediaPortal.Configuration.Sections
       }
     }
 
-
-    /// <summary>
-    /// Clean up any resources being used.
-    /// </summary>
-    protected override void Dispose(bool disposing)
+    public override object GetSetting(string name)
     {
-      if (disposing)
+      switch (name.ToLower())
       {
-        if (components != null)
-        {
-          components.Dispose();
-        }
+        case "folderscanning":
+          return _scanRunning;
       }
-      base.Dispose(disposing);
+
+      return null;
     }
+    #endregion
 
     #region Designer generated code
 
@@ -221,7 +236,6 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.fileLabel = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.progressBar = new System.Windows.Forms.ProgressBar();
       this.groupBox1.SuspendLayout();
       this.groupBoxUseAlbumThumbs.SuspendLayout();
       this.groupBoxUseForThumbs.SuspendLayout();
@@ -439,7 +453,6 @@ namespace MediaPortal.Configuration.Sections
          (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
-      this.groupBox2.Controls.Add(this.progressBar);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 345);
       this.groupBox2.Name = "groupBox2";
@@ -459,17 +472,6 @@ namespace MediaPortal.Configuration.Sections
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
       this.fileLabel.TabIndex = 0;
       // 
-      // progressBar
-      // 
-      this.progressBar.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.progressBar.Location = new System.Drawing.Point(16, 23);
-      this.progressBar.Name = "progressBar";
-      this.progressBar.Size = new System.Drawing.Size(440, 16);
-      this.progressBar.TabIndex = 1;
-      // 
       // MusicDatabase
       // 
       this.Controls.Add(this.groupBox2);
@@ -487,6 +489,8 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
+
+    #region Private Methods
 
     private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
@@ -524,14 +528,26 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// 
-    private void SetPercentDonebyEvent(object sender, DatabaseReorgEventArgs e)
+    private void SetStatus(object sender, DatabaseReorgEventArgs e)
     {
-      progressBar.Value = e.progress;
-      SetStatus(e.phase);
+      fileLabel.Text = e.phase;
+      Application.DoEvents();
     }
 
     private void startButton_Click(object sender, EventArgs e)
     {
+      ThreadStart ts = new ThreadStart(FolderScanThread);
+      _scanThread = new Thread(ts);
+      _scanThread.Name = "MusicScan";
+      _scanThread.Start();
+    }
+
+    /// <summary>
+    /// Thread to scan the Shares
+    /// </summary>
+    private void FolderScanThread()
+    {
+      _scanRunning = true;
       ArrayList shares = new ArrayList();
       for (int index = 0; index < sharesListBox.CheckedIndices.Count; index++)
       {
@@ -572,13 +588,9 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       MediaPortal.Music.Database.MusicDatabase.DatabaseReorgChanged +=
-        new MusicDBReorgEventHandler(SetPercentDonebyEvent);
+        new MusicDBReorgEventHandler(SetStatus);
       groupBox1.Enabled = false;
       groupBox2.Enabled = true;
-
-      //RebuildDatabase();
-      progressBar.Maximum = 100;
-
       // Now create a Settings Object with the Settings checked to pass to the Import
       MusicDatabaseSettings setting = new MusicDatabaseSettings();
       setting.CreateMissingFolderThumb = checkBoxCreateFolderThumb.Checked;
@@ -590,31 +602,28 @@ namespace MediaPortal.Configuration.Sections
       setting.CreateArtistPreviews = checkBoxCreateArtist.Checked;
       setting.CreateGenrePreviews = checkBoxCreateGenre.Checked;
       setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
-      // ToDo - add GUI setting if wanted
       setting.ExcludeHiddenFiles = false;
 
-      int appel = m_dbs.MusicDatabaseReorg(shares, setting);
+      try
+      {
+        m_dbs.MusicDatabaseReorg(shares, setting);  
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Folder Scan: Exception during processing: ", ex.Message );
+        _scanRunning = false;
+      }
+      
       using (Settings xmlreader = new MPSettings())
       {
         checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",
                                                            xmlreader.GetValueAsString("musicfiles", "lastImport",
                                                                                       "1900-01-01 00:00:00"));
       }
-      progressBar.Value = 100;
 
+      _scanRunning = false;
       groupBox1.Enabled = true;
       groupBox2.Enabled = false;
-    }
-
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="status"></param>
-    private void SetStatus(string status)
-    {
-      fileLabel.Text = status;
-      Application.DoEvents();
     }
 
     /// <summary>
@@ -691,5 +700,7 @@ namespace MediaPortal.Configuration.Sections
         }
       }
     }
+
+    #endregion
   }
 }
