@@ -119,7 +119,7 @@ namespace MediaPortal.Player
     /// </summary>
     public static bool BassFreed
     {
-      get { return _Player.BassFreed; }
+      get { return _Player == null || _Player.BassFreed; }
     }
 
     #endregion
