@@ -122,11 +122,12 @@ namespace SetupTv.Sections
             cardId = Convert.ToInt32(listViewItem.SubItems[0].Tag);
             break; // Keep the first card enabled selected only
           }
-        }
+        }       
         User user = new User();
         user.Name = "setuptv-" + id + "-" + cardId;
-        user.IsAdmin = true; //fixing mantis bug 1513: recordings you start in manual control can not be stopped  
+        user.IsAdmin = true;
         user.CardId = cardId;
+
         TvResult result = server.StartTimeShifting(ref user, id, out card, cardId != -1);
         if (result != TvResult.Succeeded)
         {

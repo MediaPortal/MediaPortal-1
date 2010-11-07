@@ -28,10 +28,16 @@ namespace TvService
   {
     /// <summary>
     /// Gets a list of all free cards which can receive the channel specified
-    /// List is sorted by priority
+    /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user,
-                                                 bool checkTransponders, out TvResult result, int recommendedCardId);
+    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user, out TvResult result);
+
+    /// <summary>
+    /// Gets a list of all cards which can receive the channel specified
+    /// List is sorted by "same transponder" and priority
+    /// </summary>
+    /// <returns>list containg all free cards which can receive the channel</returns>
+    List<CardDetail> GetCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user);
   }
 }

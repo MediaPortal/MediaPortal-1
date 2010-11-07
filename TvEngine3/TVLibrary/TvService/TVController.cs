@@ -180,7 +180,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      _cardAllocation = new AdvancedCardAllocation();
+      _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer());
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -2420,42 +2420,8 @@ namespace TvService
       try
       {        
         TvResult result;
-        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
-                                                                            0);
-        if (freeCards.Count == 0)
-        {
-          // enumerate all cards and check if some card is already timeshifting the channel requested
-          Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-
-          //for each card
-          while (enumerator.MoveNext())
-          {
-            KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            //get a list of all users for this card
-            User[] users = keyPair.Value.Users.GetUsers();
-            if (users != null)
-            {
-              //for each user
-              for (int i = 0; i < users.Length; ++i)
-              {
-                User tmpUser = users[i];
-                //is user timeshifting?
-                if (keyPair.Value.TimeShifter.IsTimeShifting(ref tmpUser))
-                {
-                  //yes, is user timeshifting the correct channel
-                  if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
-                  {
-                    //yes, if card does not support subchannels (analog cards)
-                    //then assign user to this card
-                    VirtualCard card = GetVirtualCard(tmpUser);
-                    return card.Id;
-                  }
-                }
-              }
-            }
-          }
-        }
-        else
+        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, out result);
+        if (freeCards.Count > 0)
         {
           //get first free card
           return freeCards[0].Id;
@@ -2525,42 +2491,7 @@ namespace TvService
       try
       {        
         TvResult result;
-        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, true, out result,
-                                                                            0);
-        if (freeCards.Count == 0)
-        {
-          // enumerate all cards and check if some card is already timeshifting the channel requested
-          Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-
-          //for each card
-          while (enumerator.MoveNext())
-          {
-            KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-            //get a list of all users for this card
-            User[] users = keyPair.Value.Users.GetUsers();
-            if (users != null)
-            {
-              //for each user
-              for (int i = 0; i < users.Length; ++i)
-              {
-                User tmpUser = users[i];
-                //is user timeshifting?
-                if (keyPair.Value.TimeShifter.IsTimeShifting(ref tmpUser))
-                {
-                  //yes, is user timeshifting the correct channel
-                  if (keyPair.Value.CurrentDbChannel(ref tmpUser) == channel.IdChannel)
-                  {
-                    //yes, if card does not support subchannels (analog cards)
-                    //then assign user to this card
-                    card = GetVirtualCard(tmpUser);
-                    return TvResult.Succeeded;
-                  }
-                }
-              }
-            }
-          }
-        }
-
+        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, out result);
         if (freeCards.Count == 0)
         {
           //no free cards available
@@ -3338,7 +3269,7 @@ namespace TvService
         {
           Channel dbchannel = Channel.Retrieve(idChannel);
           TvResult viewResult;
-          _cardAllocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, true, out viewResult, 0);
+          _cardAllocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, out viewResult);
           chanState = viewResult == TvResult.Succeeded ? ChannelState.tunable : ChannelState.nottunable;
         }
       }

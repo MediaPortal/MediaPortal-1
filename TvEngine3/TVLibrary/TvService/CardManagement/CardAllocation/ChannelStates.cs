@@ -206,9 +206,14 @@ namespace TvService
               }
 
               //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-              ChannelMap channelMap = null;
-              bool isChannelMappedToCard = IsChannelMappedToCard(ch, cardHandler.DataBaseCard.DevicePath, out channelMap);
+              bool isChannelMappedToCard = IsChannelMappedToCard(ch, cardHandler.DataBaseCard.DevicePath);
               if (!isChannelMappedToCard)
+              {
+                UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
+                continue;
+              }
+
+              if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.CAM)
               {
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
@@ -292,12 +297,6 @@ namespace TvService
                                                  int decryptLimit, int cardId, IChannel tuningDetail,
                                                  bool checkTransponders)
     {
-      bool isSameTransponder = tvcard.Tuner.IsTunedToTransponder(tuningDetail) &&
-                               (tvcard.SupportsSubChannels || (checkTransponders == false));
-      if (isSameTransponder)
-      {
-        bool hasCA = tvcard.HasCA;
-        int camDecrypting = tvcard.NumberOfChannelsDecrypting;
         for (int i = 0; i < allUsers.Count; i++)
         {
           User user = allUsers[i];
@@ -308,73 +307,17 @@ namespace TvService
             continue;
           }
 
-          Dictionary<int, bool> cardsUsedByUser = GetCardsUsedByUser(cards, user);
-          bool isOnlyActiveUserCurrentUser = true;
-          cardsUsedByUser.TryGetValue(tvcard.DataBaseCard.IdCard, out isOnlyActiveUserCurrentUser);
-
-          if (isOnlyActiveUserCurrentUser)
-          {
-            //no need to do any further checks if user is the only one currently active.
-            UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-            continue;
-          }
-
-          bool isOwnerOfCard = tvcard.Users.IsOwner(user);         
-          if (!isOwnerOfCard)
-          {
-            if (hasCA && decryptLimit > 0)
-              //does the card have a CA module and a CA limit, if yes then proceed to check cam decrypt limit.                
-            {
-              //but we must check if cam can decode the extra channel as well
-              //first check if cam is already decrypting this channel          
-              bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, ch);
-
-              //check if cam is capable of descrambling an extra channel              
-              bool isCamAbleToDecrypChannel = IsCamAbleToDecrypChannel(user, tvcard, ch, decryptLimit);
-
-
-              if (isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel)
-              {
-                //it is.. we can really use this card
-                //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels",
-                //    cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                user = allUsers[i];
-                UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-                allUsers[i] = user;
-              }
-              else
-              {
-                //it is not, skip this card
-                //Log.Info("Controller:    card:{0} type:{1} is tuned to same transponder decrypting {2}/{3} channels. cam limit reached",
-                //     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, keyPair.Value.DataBaseCard.DecryptLimit);
-                user = allUsers[i];
-                if (tvcard.Users.IsOwner(user))
-                {
-                  UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-                }
-                else
-                {
-                  UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
-                }
-                allUsers[i] = user;
-              }
-            }
-            else // no cam present
-            {
-              UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-            }
-          }
-          else //in case of cardowner 
+          bool checkTransponder = CheckTransponder( user, tvcard, decryptLimit, tvcard.DataBaseCard.IdCard, tuningDetail);
+          if (checkTransponder)
           {
             UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+          } else
+          {
+            UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
           }
         } //foreach allusers end                         
-      }
-      else
-      {
-        //different transponder, are we the owner of this card?
-        UpdateChannelStateUserBasedOnCardOwnership(tvcard, allUsers, ch);
-      }
+      
+      
     }
 
     #endregion

@@ -2913,6 +2913,7 @@ namespace TvDatabase
       Log.Info("GetConflictingSchedules: Schedule = " + rec);
       List<Schedule> conflicts = new List<Schedule>();
       IList<Schedule> schedulesList = Schedule.ListAll();
+      
       IList<Card> cards = Card.ListAll();
       if (cards.Count == 0)
       {
@@ -2930,20 +2931,18 @@ namespace TvDatabase
       // as he decided to keep them before. That's why they are in the db
       foreach (Schedule schedule in schedulesList)
       {
-        List<Schedule> episodes = GetRecordingTimes(schedule);
-        foreach (Schedule episode in episodes)
+        //Only consider the individual episodes and only ones that are still to be recorded.
+        if (schedule.ScheduleType != (int)ScheduleRecordingType.Once || DateTime.Now > schedule.EndTime)
         {
-          if (DateTime.Now > episode.EndTime)
-          {
-            continue;
-          }
-          if (episode.IsSerieIsCanceled(episode.StartTime))
-          {
-            continue;
-          }
-          Schedule overlapping;
-          AssignSchedulesToCard(episode, cardSchedules, out overlapping);
+          continue;
         }
+        if (schedule.IsSerieIsCanceled(schedule.StartTime))
+        {
+          continue;
+        }
+        List<Schedule> overlapping;
+        ;
+        AssignSchedulesToCard(schedule, cardSchedules, out overlapping);
       }
 
       List<Schedule> newEpisodes = GetRecordingTimes(rec);
@@ -2957,53 +2956,27 @@ namespace TvDatabase
         {
           continue;
         }
-        Schedule overlapping;
+        List<Schedule> overlapping;
         if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
         {
           Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
-          conflicts.Add(overlapping);
+          conflicts.AddRange(overlapping);
         }
-
-        /*Log.Info("GetConflictingSchedules: newEpisode = " + newEpisode.ToString());
-        foreach (Schedule schedule in schedulesList)
-        {
-          if (DateTime.Now > schedule.EndTime) continue;
-          if (schedule.Canceled != Schedule.MinSchedule) continue;
-          if (newEpisode.IdSchedule == schedule.IdSchedule) continue;
-
-          List<Schedule> otherEpisodes = GetRecordingTimes(schedule);
-          foreach (Schedule otherEpisode in otherEpisodes)
-          {
-            if (DateTime.Now > otherEpisode.EndTime) continue;
-            if (otherEpisode.Canceled != Schedule.MinSchedule) continue;
-            if (newEpisode.IdSchedule == otherEpisode.IdSchedule) continue;
-
-            if (newEpisode.IsOverlapping(otherEpisode))
-            {
-              Log.Info("GetConflictingSchedules: overlapping -> " + newEpisode.ToString() + "   with   " + otherEpisode.ToString());
-              if (!AssignSchedulesToCard(otherEpisode, cardSchedules))
-              {
-                Log.Info("GetConflictingSchedules: conflicts.Add = " + otherEpisode.ToString());
-                conflicts.Add(otherEpisode);
-              }
-            }
-          }
-        }*/
       }
       return conflicts;
     }
 
     private static bool AssignSchedulesToCard(Schedule schedule, List<Schedule>[] cardSchedules,
-                                              out Schedule overlappingSchedule)
+                                              out List<Schedule> overlappingSchedules)
     {
-      overlappingSchedule = null;
+      overlappingSchedules = new List<Schedule>();
       Log.Info("AssignSchedulesToCard: schedule = " + schedule);
       IList<Card> cards = Card.ListAll();
       bool assigned = false;
       int count = 0;
       foreach (Card card in cards)
       {
-        if (card.canViewTvChannel(schedule.IdChannel))
+        if (card.Enabled && card.canViewTvChannel(schedule.IdChannel))
         {
           // checks if any schedule assigned to this cards overlaps current parsed schedule
           bool free = true;
@@ -3014,7 +2987,7 @@ namespace TvDatabase
             {
               if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
               {
-                overlappingSchedule = assignedSchedule;
+                overlappingSchedules.Add(assignedSchedule);
                 Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
                          card.IdCard);
                 free = false;
@@ -3026,6 +2999,16 @@ namespace TvDatabase
           {
             Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
             cardSchedules[count].Add(schedule);
+            int recommendedCard = schedule.RecommendedCard;
+            if (recommendedCard != card.IdCard)
+            {
+              schedule.RecommendedCard = card.IdCard;
+              //Only update, do not insert
+              if (schedule.IsPersisted)
+              {
+                schedule.Persist();
+              }
+            }
             assigned = true;
             break;
           }
