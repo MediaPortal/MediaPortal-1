@@ -30,6 +30,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
+using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
