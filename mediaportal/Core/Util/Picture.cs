@@ -934,11 +934,8 @@ namespace MediaPortal.Util
 
       if (result && Utils.IsFileExistsCacheEnabled())
       {
-        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);
-        Utils.FileLookUpItem fileLookUpItem = new Utils.FileLookUpItem();
-        fileLookUpItem.Filename = aThumbTargetPath;
-        fileLookUpItem.Exists = true;        
-        Utils.UpdateLookUpCacheItem(fileLookUpItem, aThumbTargetPath);
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);        
+        Utils.DoInsertExistingFileIntoCache(aThumbTargetPath);        
       }
       return result;
     }

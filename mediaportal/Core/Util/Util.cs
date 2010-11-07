@@ -2538,14 +2538,6 @@ namespace MediaPortal.Util
           {
             parentDir = parentDir.ToLower();
             hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == parentDir || s.StartsWith(parentDir));
-
-            /*if (hasFolderBeenScanned)
-            {
-              foreach (string s in foldersLookedUpCopy)
-              {
-                Log.Debug("foldersLookedUpCopy item={0}", s);
-              }
-            }*/
           }
           //Log.Debug("hasFolderBeenScanned parentDir {0} found {1}", parentDir, hasFolderBeenScanned);
           dir = parentDir;
@@ -2577,7 +2569,6 @@ namespace MediaPortal.Util
         Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);        
         string path = watcher.Path;
         RemoveWatcher(path);
-        //_lastTimeFolderWasAdded = DateTime.Now;//causes the watcher to be re-added again, useful for network shares.
       }                  
     }
 
@@ -2587,11 +2578,8 @@ namespace MediaPortal.Util
 
       if (watcher != null)
       {        
-          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);          
-          FileLookUpItem fileLookUpItem = new FileLookUpItem();
-          fileLookUpItem.Exists = true;
-          fileLookUpItem.Filename = e.FullPath;
-          UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);        
+          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
+          DoInsertExistingFileIntoCache(e.FullPath);          
       }
     }
 
@@ -2638,10 +2626,6 @@ namespace MediaPortal.Util
             {              
               ThreadPool.QueueUserWorkItem(new WaitCallback(InsertFilesIntoCacheAsynch), path);              
             }
-            /*else
-            {
-              Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
-            }*/
           }
         }
         catch (ArgumentException)
@@ -2689,22 +2673,11 @@ namespace MediaPortal.Util
                {
                  if (!string.IsNullOrEmpty(dir))
                  {
-                   //string dir4Watcher = FindPathForWatcher(dir, _foldersLookedUp);
                    UpdateWatchers(dir);
                  }
                }
                _lastTimeFolderWasAdded = DateTime.MinValue;
              }
-
-             /*string[] keyCopy = _watchers.Keys.ToArray();
-             foreach (string key in keyCopy)
-             {
-               FileSystemWatcher fsw = null;
-               if (_watchers.TryGetValue(key, out fsw))
-               {
-                 Log.Debug("FileSystemWatcher : {0}", fsw.Path);
-               }
-             }*/
            }
          }
 
@@ -2798,11 +2771,7 @@ namespace MediaPortal.Util
           {
             fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);  
           }
-
-          //string[] keyCopy = _fileLookUpCache.Keys.ToArray();
-          //foreach (string key in keyCopy)
-          //{
-            //FileLookUpItem fileLookUpItem;
+      
           IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir = fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
             
           foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
@@ -2812,29 +2781,12 @@ namespace MediaPortal.Util
                 _fileLookUpCache.Remove(fli.Key);
              }
           }
-            
-            /*if (_fileLookUpCache.TryGetValue(key, out fileLookUpItem))
-            {              
-              string pathName = GetDirectoryName(fileLookUpItem.Filename);
 
-              if (!String.IsNullOrEmpty(pathName))
-              {
-                if (pathName.StartsWith(dir))
-                {
-                  lock (_fileLookUpCache)
-                  {
-                    _fileLookUpCache.Remove(key);
-                  }
-                }
-              }                             
-            }*/
-
-            lock (_foldersLookedUpLock)
-            {
-              Log.Error("RemoveWatcher removing folders from cache={0}", dir);
-              _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
-            }
-          //}
+          lock (_foldersLookedUpLock)
+          {
+            Log.Error("RemoveWatcher removing folders from cache={0}", dir);
+            _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
+          }
         }
       }
       catch (Exception ex)
