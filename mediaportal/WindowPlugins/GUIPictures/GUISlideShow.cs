@@ -30,7 +30,6 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using Microsoft.DirectX.Direct3D;
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
@@ -106,7 +105,6 @@ namespace MediaPortal.GUI.Pictures
       private void resumePausedMusic()
       {
           pausedMusic = false;
-          Log.Debug("Marv:" + "ResumePausedMusic: pausedMusicFileName: "+ pausedMusicFileName);
           if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
           {
               playlistPlayer = pausedMusicPlaylist;
