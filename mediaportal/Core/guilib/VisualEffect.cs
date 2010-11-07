@@ -69,6 +69,15 @@ namespace MediaPortal.GUI.Library
     Loop
   } ;
 
+  public enum ClockHandleType
+  {
+    None = 0,
+    Hour ,
+    Minute,
+    Second
+  } ;
+
+
   public class VisualEffect : ICloneable
   {
     private AnimationType _type;
@@ -95,6 +104,11 @@ namespace MediaPortal.GUI.Library
     private uint _start;
     private uint _length;
     private uint _delay;
+
+    // Clock Animation vars
+    private int _savedMinute; 
+    private int _savedHour; 
+    private ClockHandleType _clockHandle;
 
     private bool _isReversible; // whether the animation is reversible or not
     private bool _lastCondition;
@@ -125,6 +139,9 @@ namespace MediaPortal.GUI.Library
       _isReversible = true;
       _lastCondition = false;
       _repeatAnim = AnimationRepeat.None;
+      _clockHandle = ClockHandleType.None;
+      _savedMinute = -1;
+      _savedHour = -1;
     }
 
     private float GetFloat(string text)
@@ -377,7 +394,32 @@ namespace MediaPortal.GUI.Library
             _repeatAnim = AnimationRepeat.Loop;
           }
         }
+
+        // Analog Clock animation
+        nodeAttribute = node.Attributes.GetNamedItem("clockhandle");
+        if (nodeAttribute != null)
+        {
+          string clockType = nodeAttribute.Value;
+          if (String.Compare(clockType, "second") == 0)
+          {
+            _clockHandle = ClockHandleType.Second;
+          }
+          else if (String.Compare(clockType, "minute") == 0)
+          {
+            _clockHandle = ClockHandleType.Minute;
+          }
+          else if (String.Compare(clockType, "hour") == 0)
+          {
+            _clockHandle = ClockHandleType.Hour;
+          }
+          else
+          {
+            _clockHandle = ClockHandleType.None;
+          }
+        }
       }
+
+      // slide parameters
       if (_effect == EffectType.Slide)
       {
         nodeAttribute = node.Attributes.GetNamedItem("start");
@@ -684,7 +726,11 @@ namespace MediaPortal.GUI.Library
       }
       else if (_effect == EffectType.RotateZ)
       {
-        _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY,
+        if (_clockHandle != ClockHandleType.None)
+        {
+          SetClock();
+        }
+        _matrix.SetZRotation(((_endX - _startX)*offset + _startX)*DEGREE_TO_RADIAN, _centerX, _centerY,
                              GUIGraphicsContext.PixelRatio);
       }
       else if (_effect == EffectType.Zoom)
@@ -692,6 +738,29 @@ namespace MediaPortal.GUI.Library
         float scaleX = ((_endX - _startX) * offset + _startX) * 0.01f;
         float scaleY = ((_endY - _startY) * offset + _startY) * 0.01f;
         _matrix.SetScaler(scaleX, scaleY, _centerX, _centerY);
+      }
+    }
+
+    private void SetClock()
+    {
+      DateTime currentTime = DateTime.Now;
+
+      if (_clockHandle == ClockHandleType.Second)
+      {
+        _startX = (float)Math.Ceiling(currentTime.Second/60.0*360.0);
+        _endX = _startX;
+      }
+      else if (_clockHandle == ClockHandleType.Minute)
+      {
+        _savedMinute = currentTime.Minute;
+        _startX = (float)Math.Ceiling(currentTime.Minute / 60.0 * 360.0);
+        _endX = _startX;
+      }
+      else if (_savedHour != currentTime.Hour)
+      {
+        _savedHour = currentTime.Hour;
+        _startX = (float)Math.Ceiling((currentTime.Hour / 12.0 * 360.0) + (currentTime.Minute / 60.0 * 30.0));
+        _endX = _startX;
       }
     }
 
@@ -925,6 +994,9 @@ namespace MediaPortal.GUI.Library
       effect._isReversible = _isReversible;
       effect._matrix = (TransformMatrix)_matrix.Clone();
       effect._tweener = _tweener;
+      effect._clockHandle = _clockHandle;
+      effect._savedMinute = _savedMinute;
+      effect._savedHour = _savedHour;
       return effect;
     }
 
