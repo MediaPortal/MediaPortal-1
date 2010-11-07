@@ -1,6 +1,7 @@
 ﻿<Applications>
 
   <!--- Common section -->
+
   <MSSQLExpress32>
     <URL>http://install.team-mediaportal.com/Sql2005_32bit</URL>
     <FILE>sqlexpr32.exe</FILE>
@@ -31,6 +32,14 @@
     <FILE>wmp11-windowsxp-x86.exe</FILE>
     <TYPE>Manual</TYPE>
   </WindowsMediaPlayer>
+
+  <!-- Section used by 1.2.0 beta installer -->
+  
+  <DirectXRedist2010>
+    <URL>http://install.team-mediaportal.com/DirectXRedist2010</URL>
+    <FILE>directx_jun2010_redist.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </DirectXRedist2010>
 
   <!-- Section used by 1.1.0 alpha installer -->
 

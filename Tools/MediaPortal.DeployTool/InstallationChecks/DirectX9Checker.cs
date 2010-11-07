@@ -33,13 +33,17 @@ namespace MediaPortal.DeployTool.InstallationChecks
 {
   class DirectX9Checker : IInstallationPackage
   {
-    public static string prg = "DirectXRedist";
+    //
+    // From 1.2.0 Beta  and on     we need directx_jun2010_redist.exe
+    // For  1.2.0 Alpha and before we need directx_mar2009_redist.exe
+    // 
+    public static string prg = "DirectXRedist2010";
 
     private string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     public string GetDisplayName()
     {
-      return "DirectX 9c - March 2009";
+      return "DirectX 9c - June 2010";
     }
 
     public bool Download()
@@ -107,7 +111,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
           {
             key.Close();
             string[] DllList = {
-                             @"\System32\D3DX9_30.dll",
+                             @"\System32\D3DX9_43.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.Direct3D.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectDraw.dll",
                              @"\microsoft.net\DirectX for Managed Code\1.0.2902.0\Microsoft.DirectX.DirectInput.dll",
