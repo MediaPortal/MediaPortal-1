@@ -530,10 +530,11 @@ namespace MediaPortal.GUI.Video
 
       GUIWaitCursor.Hide();
 
-      if (itemCount == 0)
-      {
-        btnViews.Focus = true;
-      }
+      // 07.11.2010 Put in comment by Deda (it's redundant now-button Layout is already in focus state)
+      //if (itemCount == 0)
+      //{
+      //  btnViews.Focus = true;
+      //}
     }
 
     protected void SetGenreThumbs(ArrayList itemlist)
