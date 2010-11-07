@@ -103,7 +103,7 @@ namespace TvPlugin
     #region Serialisation
 
     private void LoadSettings()
-    {
+    {      
       using (Settings xmlreader = new MPSettings())
       {
         string tmpLine = xmlreader.GetValue("myradio", "viewby");
@@ -645,14 +645,7 @@ namespace TvPlugin
           Channel channel = map.ReferencedChannel();
 
           if (channel != null)
-          {
-            if (_currentChannel != null)
-            {
-              if (channel.IdChannel == _currentChannel.IdChannel)
-              {
-                selectedItemIndex = totalItems - 1;
-              }
-            }
+          {          
             item = new GUIListItem();
             item.Label = channel.DisplayName;
             item.IsFolder = false;
@@ -688,12 +681,32 @@ namespace TvPlugin
 
       SelectCurrentItem();
       SetLabels();
+      
+      for (int i = 0; i < facadeView.Count; ++i)
+      {       
+        GUIListItem item = facadeView[i];
+        if (item != null)
+        {
+          Channel channel = item.MusicTag as Channel;   
 
-      //set selected item
-      if (selectedItemIndex >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
-      }
+          if (channel != null)
+          {
+            if (channel.IdChannel == _currentChannel.IdChannel)
+            {
+              selectedItemIndex = i++;
+              break;
+            }
+          }
+        }
+
+        //set selected item
+        if (selectedItemIndex >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+        }
+        
+      }      
+
     }
 
     #endregion
