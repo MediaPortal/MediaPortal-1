@@ -135,6 +135,7 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       switch (args.EventType)
       {
+        case PowerSchedulerEventType.Started:
         case PowerSchedulerEventType.Elapsed:
 
           IPowerScheduler ps = GlobalServiceProvider.Instance.Get<IPowerScheduler>();
