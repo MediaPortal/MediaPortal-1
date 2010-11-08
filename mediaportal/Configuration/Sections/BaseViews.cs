@@ -26,6 +26,7 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
+using System.Xml;
 using MediaPortal.GUI.View;
 
 #pragma warning disable 108
@@ -688,6 +689,42 @@ namespace MediaPortal.Configuration.Sections
       if (!File.Exists(customViews))
       {
         File.Copy(defaultViews, customViews);
+      }
+      else
+      {
+        // Let's see, if we got a pre 1.2 file
+        try
+        {
+          // Can't use XPath here, as the XML Namespace is dependend on the version of MP Core
+          // And this might change.
+          // So we iterate through the file, until we found a filterdef.
+          XmlDocument xmlDoc = new XmlDocument();
+          xmlDoc.Load(customViews);
+          XmlElement rootElement = xmlDoc.DocumentElement;
+          if (rootElement != null)
+          {
+            XmlNode body = rootElement.ChildNodes[0];
+            foreach (XmlNode node in body.ChildNodes)
+            {
+              if (node.Name == "a3:FilterDefinition")
+              {
+                XmlNode skipLevel = node.SelectSingleNode("skipLevel");
+                if (skipLevel == null)
+                {
+                  MediaPortal.GUI.Library.Log.Info("Views: Found old view format: {0} Copying default views.", customViews);
+                  File.Copy(defaultViews, customViews, true);
+                  break;
+                }
+                break;
+              }
+            }
+          }
+        }
+        catch (Exception)
+        {
+          MediaPortal.GUI.Library.Log.Error("Views: Exception reading view {0}. Copying default views.", customViews);
+          File.Copy(defaultViews, customViews, true);
+        }
       }
 
       views = new ArrayList();
