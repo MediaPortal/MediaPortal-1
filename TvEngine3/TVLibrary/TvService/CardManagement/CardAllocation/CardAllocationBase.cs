@@ -40,17 +40,33 @@ namespace TvService
     {
       if (!tuningDetail.FreeToAir)
       {
-        bool isRec = false;
         bool isCamAbleToDecryptChannel = true;
-        int camDecrypting = tvcard.NumberOfChannelsDecrypting;
         if (decryptLimit > 0)
         {
+          int camDecrypting = tvcard.NumberOfChannelsDecrypting;
+
+          //Check if the user is currently occupying a decoding slot and subtract that from the number of channels it is decoding.
           if (user.CardId == tvcard.DataBaseCard.IdCard)
           {
             IChannel currentUserCh = tvcard.CurrentChannel(ref user);
             if (currentUserCh != null && !currentUserCh.FreeToAir)
             {
-              camDecrypting -= 1;
+              int currentChannelId = tvcard.CurrentDbChannel(ref user);
+              int numberOfUsersOnCurrentChannel = 0;
+              foreach (User aUser in tvcard.Users.GetUsers())
+              {
+                
+                if (aUser.IdChannel == currentChannelId)
+                {
+                  ++numberOfUsersOnCurrentChannel;
+                }
+              }
+
+              //Only subtract the slot the user is currently occupying if he is the only user occupying the slot.
+              if (numberOfUsersOnCurrentChannel == 1)
+              {
+                --camDecrypting;
+              }
             }
           }
           //check if cam is capable of descrambling an extra channel
@@ -111,6 +127,7 @@ namespace TvService
       bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
       bool isOwnerOfCard = tvcard.Users.IsOwner(user);
 
+      //FIXME: Being card owner you can do whatever you want, but in case of decryptlimit that could mean kicking users. This is not handled in the code.
       if (isOwnerOfCard)
       {
         Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
@@ -126,17 +143,21 @@ namespace TvService
           {
             //but we must check if cam can decode the extra channel as well
             //first check if cam is already decrypting this channel          
+            bool canDecrypt = false;
             bool isCamAlreadyDecodingChannel = IsCamAlreadyDecodingChannel(tvcard, tuningDetail);
 
-            //if the user is already using this card
-            //and is watching a scrambled signal
-            //then we must the CAM will always be able to watch the requested channel
-            //since the users zaps
-
-            //check if cam is capable of descrambling an extra channel                            
-            bool isCamAbleToDecrypChannel = IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, decryptLimit);
-
-            bool canDecrypt = isCamAbleToDecrypChannel || isCamAlreadyDecodingChannel;
+            if (!isCamAlreadyDecodingChannel)
+            {
+              //check if cam is capable of descrambling an extra channel                            
+              bool isCamAbleToDecrypChannel = IsCamAbleToDecryptChannel(user, tvcard, tuningDetail, decryptLimit);
+              if (isCamAbleToDecrypChannel)
+              {
+                canDecrypt = true;
+              }
+            } else
+            {
+              canDecrypt = true;
+            }
 
             if (canDecrypt)
             {
