@@ -319,16 +319,6 @@ namespace MediaPortal.Configuration.Sections
     }
 
     /// <summary>
-    /// The Save button has been pressed
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void btnSave_Click(object sender, EventArgs e)
-    {
-      StoreGridInView();
-    }
-
-    /// <summary>
     /// Store the Grid Values in the View
     /// </summary>
     private void StoreGridInView()
@@ -751,6 +741,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="mediaType"></param>
     protected void SaveSettings(string mediaType)
     {
+      StoreGridInView();  // Save pending changes
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
       if (settingsChanged)
       {
@@ -767,7 +758,10 @@ namespace MediaPortal.Configuration.Sections
 
         try
         {
-          using (FileStream fileStream = new FileInfo(customViews).OpenWrite())
+          // Don't use FileInfo.OpenWrite
+          // From msdn:
+          //  If you overwrite a longer string (such as "This is a test of the OpenWrite method") with a shorter string (like "Second run"), the file will contain a mix of the strings ("Second runtest of the OpenWrite method").
+          using (FileStream fileStream = new FileStream(customViews, FileMode.Truncate))
           {
             SoapFormatter formatter = new SoapFormatter();
             formatter.Serialize(fileStream, views);

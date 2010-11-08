@@ -14,6 +14,8 @@
       this.groupBox = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.btnAdd = new MediaPortal.UserInterface.Controls.MPButton();
       this.dataGridViews = new System.Windows.Forms.DataGridView();
+      this.dgViewName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.dgLocalisedName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.dataGrid = new System.Windows.Forms.DataGridView();
       this.dgSelection = new System.Windows.Forms.DataGridViewComboBoxColumn();
       this.dgOperator = new System.Windows.Forms.DataGridViewComboBoxColumn();
@@ -24,10 +26,7 @@
       this.dgAsc = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.dgSkip = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.lblActionCodes = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.btnSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.btnDelete = new MediaPortal.UserInterface.Controls.MPButton();
-      this.dgViewName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-      this.dgLocalisedName = new System.Windows.Forms.DataGridViewTextBoxColumn();
       this.groupBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViews)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).BeginInit();
@@ -42,7 +41,6 @@
       this.groupBox.Controls.Add(this.dataGridViews);
       this.groupBox.Controls.Add(this.dataGrid);
       this.groupBox.Controls.Add(this.lblActionCodes);
-      this.groupBox.Controls.Add(this.btnSave);
       this.groupBox.Controls.Add(this.btnDelete);
       this.groupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox.Location = new System.Drawing.Point(0, 0);
@@ -54,7 +52,7 @@
       // btnAdd
       // 
       this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnAdd.Location = new System.Drawing.Point(195, 172);
+      this.btnAdd.Location = new System.Drawing.Point(284, 172);
       this.btnAdd.Name = "btnAdd";
       this.btnAdd.Size = new System.Drawing.Size(83, 22);
       this.btnAdd.TabIndex = 5;
@@ -88,6 +86,23 @@
       this.dataGridViews.CellPainting += new System.Windows.Forms.DataGridViewCellPaintingEventHandler(this.OnCellPainting);
       this.dataGridViews.SelectionChanged += new System.EventHandler(this.dataGridViews_SelectionChanged);
       this.dataGridViews.DragDrop += new System.Windows.Forms.DragEventHandler(this.OnDragDrop);
+      // 
+      // dgViewName
+      // 
+      this.dgViewName.HeaderText = "Displayed View Name";
+      this.dgViewName.Name = "dgViewName";
+      this.dgViewName.ReadOnly = true;
+      this.dgViewName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.dgViewName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.dgViewName.Width = 200;
+      // 
+      // dgLocalisedName
+      // 
+      this.dgLocalisedName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+      this.dgLocalisedName.HeaderText = "Enter the View Name or Localised Code";
+      this.dgLocalisedName.Name = "dgLocalisedName";
+      this.dgLocalisedName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+      this.dgLocalisedName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       // 
       // dataGrid
       // 
@@ -207,44 +222,16 @@
           "rder";
       this.lblActionCodes.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
       // 
-      // btnSave
-      // 
-      this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnSave.Location = new System.Drawing.Point(373, 172);
-      this.btnSave.Name = "btnSave";
-      this.btnSave.Size = new System.Drawing.Size(83, 22);
-      this.btnSave.TabIndex = 7;
-      this.btnSave.Text = "Save View";
-      this.btnSave.UseVisualStyleBackColor = true;
-      this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-      // 
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(284, 172);
+      this.btnDelete.Location = new System.Drawing.Point(373, 172);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(83, 22);
       this.btnDelete.TabIndex = 6;
       this.btnDelete.Text = "Delete View";
       this.btnDelete.UseVisualStyleBackColor = true;
       this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
-      // 
-      // dgViewName
-      // 
-      this.dgViewName.HeaderText = "Displayed View Name";
-      this.dgViewName.Name = "dgViewName";
-      this.dgViewName.ReadOnly = true;
-      this.dgViewName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-      this.dgViewName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
-      this.dgViewName.Width = 200;
-      // 
-      // dgLocalisedName
-      // 
-      this.dgLocalisedName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-      this.dgLocalisedName.HeaderText = "Enter the View Name or Localised Code";
-      this.dgLocalisedName.Name = "dgLocalisedName";
-      this.dgLocalisedName.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-      this.dgLocalisedName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
       // 
       // BaseViews
       // 
@@ -261,7 +248,6 @@
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBox;
     private MediaPortal.UserInterface.Controls.MPLabel lblActionCodes;
-    private MediaPortal.UserInterface.Controls.MPButton btnSave;
     private MediaPortal.UserInterface.Controls.MPButton btnDelete;
     private System.Windows.Forms.DataGridView dataGrid;
     private System.Windows.Forms.DataGridViewComboBoxColumn dgSelection;
