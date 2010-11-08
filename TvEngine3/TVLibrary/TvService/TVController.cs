@@ -4069,8 +4069,9 @@ namespace TvService
         {
           Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
 
-          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName);
-          if (wasDeleted)
+          bool wasPendingDeletionAdded = false;
+          bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName, out wasPendingDeletionAdded);
+          if (wasDeleted && !wasPendingDeletionAdded)
           {
             pendingDelitionRemove.Add(pendingDelition.IdPendingDeletion);
           }
