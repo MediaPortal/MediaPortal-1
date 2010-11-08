@@ -508,22 +508,23 @@ namespace OSInfo
     /// </summary>
     public static OsSupport GetOSSupported()
     {
+      int minSp;
+      int minBuild;
+
       switch (GetOSName())
       {
         case OSList.WindowsXp:
-          if (OSServicePackMajor < 2)
-          {
-            return OsSupport.Blocked;
-          }
-          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 3;
+          minBuild = 2600;
+          break;
         case OSList.WindowsVista:
-          if (OSServicePackMajor < 1)
-          {
-            return (int)OsSupport.Blocked;
-          }
-          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 2;
+          minBuild = 6000;
+          break;
         case OSList.Windows7:
-          return OSBuildVersion == 7600 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 0;
+          minBuild = 7600;
+          break;
         case OSList.Windows2003:
         case OSList.Windows2003R2:
         case OSList.Windows2008:
@@ -533,6 +534,11 @@ namespace OSInfo
           // Windows2000andPrevious and WindowsXp64
           return OsSupport.Blocked;
       }
+      if (OSServicePackMajor < minSp || OSBuildVersion < minBuild)
+      {
+        return OsSupport.Blocked;
+      }
+      return OSServicePackMinor != 0 ? OsSupport.NotSupported : OsSupport.FullySupported;
     }
 
     /// <summary>
