@@ -1710,6 +1710,7 @@ namespace MediaPortal.GUI.Library
         }
       }
       GUIGraphicsContext.PopMatrix();
+      GUIGraphicsContext.RemoveTransform();
 
       // Render the foreground.
       if (_imageForeground != null && _showForeground)
