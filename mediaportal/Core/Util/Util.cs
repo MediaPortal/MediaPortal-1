@@ -122,9 +122,9 @@ namespace MediaPortal.Util
 
     private const int CONNECT_UPDATE_PROFILE = 0x00000001;
     private const int RESOURCETYPE_DISK = 0x1;
-    private const int FileLookUpCacheThreadScanningIntervalMSecs = 60000;
+    private const int FileLookUpCacheThreadScanningIntervalMSecs = 1000;
 
-    private static CRCTool crc = null;  
+    private static CRCTool crc = null;
 
     [StructLayout(LayoutKind.Sequential)]
     private struct NetResource
@@ -342,18 +342,18 @@ namespace MediaPortal.Util
     static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
     public static string GetSize(long dwFileSize)
     {
-        int i = sizes.Length;
-        double beautySize = 0.0D;
+      int i = sizes.Length;
+      double beautySize = 0.0D;
 
-        // get the highest power of 1024 that yields a value above 1
-        while ((beautySize = sizeConverter(dwFileSize, i)) < 1 && i > 1)
-            i--;
+      // get the highest power of 1024 that yields a value above 1
+      while ((beautySize = sizeConverter(dwFileSize, i)) < 1 && i > 1)
+        i--;
 
-        // we force close enough values to the next higher, so we get 0.99 GB instead of 1010 MB for instance
-        if (beautySize >= 1000 && i < sizes.Length)
-            beautySize = sizeConverter(dwFileSize, ++i);
+      // we force close enough values to the next higher, so we get 0.99 GB instead of 1010 MB for instance
+      if (beautySize >= 1000 && i < sizes.Length)
+        beautySize = sizeConverter(dwFileSize, ++i);
 
-        return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
+      return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
     public static bool IsLiveTv(string strPath)
@@ -467,11 +467,11 @@ namespace MediaPortal.Util
 
     static bool IsPlayListExtension(string extensionFile)
     {
-        if (extensionFile == ".m3u") return true;
-        if (extensionFile == ".pls") return true;
-        if (extensionFile == ".b4s") return true;
-        if (extensionFile == ".wpl") return true;
-        return false;
+      if (extensionFile == ".m3u") return true;
+      if (extensionFile == ".pls") return true;
+      if (extensionFile == ".b4s") return true;
+      if (extensionFile == ".wpl") return true;
+      return false;
     }
 
     public static bool IsPlayList(string strPath)
@@ -1213,7 +1213,7 @@ namespace MediaPortal.Util
           // See if we can find the special patterns in both filenames
           //if (Regex.IsMatch(strFileName1, pattern[i], RegexOptions.IgnoreCase) &&
           //    Regex.IsMatch(strFileName2, pattern[i], RegexOptions.IgnoreCase))
-          if(stackReg[i].IsMatch(strFileName1) && stackReg[i].IsMatch(strFileName2))
+          if (stackReg[i].IsMatch(strFileName1) && stackReg[i].IsMatch(strFileName2))
           {
             // Both strings had the special pattern. Now see if the filenames are the same.
             // Do this by removing the special pattern and compare the remains.
@@ -1241,14 +1241,14 @@ namespace MediaPortal.Util
       {
         // See if we can find the special patterns in both filenames
         //if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
-        if(stackReg[i].IsMatch(strFileName))
+        if (stackReg[i].IsMatch(strFileName))
         {
-            strFileName = stackReg[i].Replace(strFileName, ""); //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
+          strFileName = stackReg[i].Replace(strFileName, ""); //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
         }
       }
     }
 
-      private static Regex[] StackRegExpressions = null;
+    private static Regex[] StackRegExpressions = null;
     public static Regex[] StackExpression()
     {
       // Patterns that are used for matching
@@ -1263,13 +1263,13 @@ namespace MediaPortal.Util
                            "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
                              "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
-      
+
       StackRegExpressions = new Regex[]
                  {
                      new Regex(pattern[0], RegexOptions.Compiled | RegexOptions.IgnoreCase), 
                      new Regex(pattern[1], RegexOptions.Compiled | RegexOptions.IgnoreCase)
                  };
-        return StackRegExpressions;
+      return StackRegExpressions;
     }
 
     public static string GetThumb(string strLine)
@@ -2139,7 +2139,7 @@ namespace MediaPortal.Util
 
       if (sSoundFile == null) return 0;
       if (sSoundFile.Length == 0) return 0;
-      if (!Util.Utils.FileExistsInCache(sSoundFile))      
+      if (!Util.Utils.FileExistsInCache(sSoundFile))
       {
         string strSkin = GUIGraphicsContext.Skin;
         if (Util.Utils.FileExistsInCache(strSkin + "\\sounds\\" + sSoundFile))
@@ -2296,11 +2296,11 @@ namespace MediaPortal.Util
       if (strLine == null) return string.Empty;
       if (strLine.Length == 0) return string.Empty;
       if (String.Compare(Strings.Unknown, strLine, true) == 0) return string.Empty;
-      if(crc == null)
+      if (crc == null)
       {
-          crc = new CRCTool();
-          crc.Init(CRCTool.CRCCode.CRC32);
-      }      
+        crc = new CRCTool();
+        crc.Init(CRCTool.CRCCode.CRC32);
+      }
       ulong dwcrc = crc.calc(strLine);
       return dwcrc.ToString();
       //string strRet = String.Format("{0}", dwcrc);
@@ -2431,9 +2431,9 @@ namespace MediaPortal.Util
     }
 
     public struct FileLookUpItem
-    {      
+    {
       private string _filename;
-      private bool _exists;      
+      private bool _exists;
 
       public string Filename
       {
@@ -2454,25 +2454,25 @@ namespace MediaPortal.Util
     private static Dictionary<string, FileSystemWatcher> _watchers = new Dictionary<string, FileSystemWatcher>();
 
     private static Thread _fileSystemManagerThread = null;
-    
+
     private static object _fileLookUpCacheLock = new object();
     private static object _foldersLookedUpLock = new object();
     private static object _watchersLock = new object();
-        
+
     public static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
-    {      
+    {
       lock (_fileLookUpCacheLock)
       {
         //Log.Debug("UpdateLookUpCacheItem : {0}", key);
         _fileLookUpCache[key] = fileLookUpItem; // we never remove anything, so this is safe
-      }      
+      }
     }
 
     private static IEnumerable<string> DirSearch(string sDir)
     {
       var files = new List<string>();
       try
-      {        
+      {
         files.AddRange(Directory.GetFiles(sDir, "*.*", SearchOption.AllDirectories));
         AddFoldersLookedUp(sDir);
 
@@ -2483,7 +2483,7 @@ namespace MediaPortal.Util
           {
             AddFoldersLookedUp(dir);
           }
-        }                
+        }
       }
       catch (System.Exception e)
       {
@@ -2494,8 +2494,8 @@ namespace MediaPortal.Util
       return files;
     }
 
-     static string GetParentDirectory(string path)
-     {
+    static string GetParentDirectory(string path)
+    {
       if (string.IsNullOrEmpty(path))
       {
         return string.Empty;
@@ -2503,12 +2503,12 @@ namespace MediaPortal.Util
       return Path.GetDirectoryName(path[path.Length - 1] == '\\' ? path.Substring(0, path.Length - 1) : path);
     }
 
-    private static bool HasFolderBeenScanned(string dir) 
-    {            
+    private static bool HasFolderBeenScanned(string dir)
+    {
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv\recorded
       // 2:					\\thumbs\tv         
-      
+
       //or 
       // eg. takes care of this sequence
       // 1:         \\thumbs\tv
@@ -2522,7 +2522,7 @@ namespace MediaPortal.Util
         foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
       }
 
-      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy || s.StartsWith(dirCopy));              
+      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy || s.StartsWith(dirCopy));
 
       if (!hasFolderBeenScanned)
       {
@@ -2531,34 +2531,35 @@ namespace MediaPortal.Util
         // 2:					\\thumbs\tv\recorded
         bool parentFolderFound = true;
         while (!hasFolderBeenScanned && parentFolderFound)
-        {          
-          string parentDir = GetParentDirectory(dir);          
+        {
+          string parentDir = GetParentDirectory(dir);
           parentFolderFound = (!string.IsNullOrEmpty(parentDir));
           if (parentFolderFound)
           {
             parentDir = parentDir.ToLower();
-            hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == parentDir || s.StartsWith(parentDir));
+            hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == parentDir);
           }
           //Log.Debug("hasFolderBeenScanned parentDir {0} found {1}", parentDir, hasFolderBeenScanned);
           dir = parentDir;
-        }        
+        }
       }
-
-      return hasFolderBeenScanned;            
+     
+      return hasFolderBeenScanned;
     }
 
     private static void AddFoldersLookedUp(string dir)
     {
       if (!string.IsNullOrEmpty(dir))
-      {                
+      {
         lock (_foldersLookedUpLock)
         {
+          //Log.Info("AddFoldersLookedUp {0}", dir);
           _foldersLookedUp.Add(dir);
           _lastTimeFolderWasAdded = DateTime.Now;
-        } 
-      } 
+        }
+      }
     }
-     
+
     private static void fileSystemWatcher_Error(object sender, ErrorEventArgs e)
     {
       Exception watchException = e.GetException();
@@ -2566,10 +2567,10 @@ namespace MediaPortal.Util
 
       if (watcher != null)
       {
-        Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);        
+        Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);
         string path = watcher.Path;
-        RemoveWatcher(path);
-      }                  
+        RemoveWatcher(path);        
+      }
     }
 
     private static void fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
@@ -2577,55 +2578,62 @@ namespace MediaPortal.Util
       FileSystemWatcher watcher = sender as FileSystemWatcher;
 
       if (watcher != null)
-      {        
-          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
-          DoInsertExistingFileIntoCache(e.FullPath);          
+      {
+        Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
+        FileLookUpItem fileLookUpItem = new FileLookUpItem();
+        fileLookUpItem.Exists = true;
+        fileLookUpItem.Filename = e.FullPath;
+        UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);
       }
     }
 
     private static void fileSystemWatcher_Deleted(object sender, FileSystemEventArgs e)
-    {      
+    {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
 
       if (watcher != null)
-      {        
+      {
         Log.Debug("fileSystemWatcher_Deleted file {0}", e.FullPath);
         DoInsertNonExistingFileIntoCache(e.FullPath);
-      }      
+      }
     }
 
     private static string GetDirectoryName(string f)
     {
-        try
-        {
-            int posOfDirSep = f.LastIndexOf(Path.DirectorySeparatorChar);
-            if (posOfDirSep >= 0)
-                return f.Substring(0, posOfDirSep);
-            else return string.Empty;
-        }
-        catch (Exception)
-        {
-            return string.Empty;
-        }
+      try
+      {
+        int posOfDirSep = f.LastIndexOf(Path.DirectorySeparatorChar);
+        if (posOfDirSep >= 0)
+          return f.Substring(0, posOfDirSep);
+        else return string.Empty;
+      }
+      catch (Exception)
+      {
+        return string.Empty;
+      }
     }
-    
+
     public static bool FileExistsInCache(string filename)
-    {
+    {      
       bool found = false;
-     
+
       if (IsFileExistsCacheEnabled())
       {
-        SetupFileSystemManagerThread();        
+        SetupFileSystemManagerThread();
         try
-        {          
+        {
           string path = GetDirectoryName(filename);
           if (path.Length > 0)
           {
-            path = path.ToLower();            
+            path = path.ToLower();
             if (!HasFolderBeenScanned(path))
-            {              
-              ThreadPool.QueueUserWorkItem(new WaitCallback(InsertFilesIntoCacheAsynch), path);              
+            {
+              ThreadPool.QueueUserWorkItem(new WaitCallback(InsertFilesIntoCacheAsynch), path);
             }
+            /*else
+            {
+              Log.Debug("FileExistsInCache: already pre-scanned dir : {0} .. skipping", path);
+            }*/
           }
         }
         catch (ArgumentException)
@@ -2648,42 +2656,53 @@ namespace MediaPortal.Util
         using (Settings xmlreader = new MPSettings())
         {
           _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("general", "fileexistscache", true);
-        } 
+        }
       }
       return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
     }
 
-    private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;
+    private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;    
+
     private static void FileSystemWatchManagerThread()
-    {     
-       while (true)
-       {
-         lock (_watchersLock)
-         {
-           if (_lastTimeFolderWasAdded != DateTime.MinValue)
-           {
-             DateTime now = DateTime.Now;
-             TimeSpan ts = now - _lastTimeFolderWasAdded;
+    {
+      while (true)
+      {
+        lock (_watchersLock)
+        {
+          if (_lastTimeFolderWasAdded != DateTime.MinValue)
+          {
+            DateTime now = DateTime.Now;
+            TimeSpan ts = now - _lastTimeFolderWasAdded;
 
-             if (ts.TotalSeconds > 60)
-             {
-               HashSet<string> folders = GetUniqueTopLevelFolders();
+            if (ts.TotalSeconds > 5)
+            {
+              Log.Debug("FileSystemWatchManagerThread : updating watchers");
+              HashSet<string> folders = GetUniqueTopLevelFolders();
 
-               foreach (string dir in folders)
-               {
-                 if (!string.IsNullOrEmpty(dir))
-                 {
-                   UpdateWatchers(dir);
-                 }
-               }
-               _lastTimeFolderWasAdded = DateTime.MinValue;
-             }
-           }
-         }
+              foreach (string dir in folders)
+              {
+                if (!string.IsNullOrEmpty(dir))
+                {                  
+                  UpdateWatchers(dir);
+                }
+              }
+              _lastTimeFolderWasAdded = DateTime.MinValue;
+              Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);                      
+            }
 
-         Log.Debug("FileLookUpCacheThread dictionary size : {0}", _fileLookUpCache.Count);
-         Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs); //do this parse, each 1 minute
-       }
+            /*string[] keyCopy = _watchers.Keys.ToArray();
+            foreach (string key in keyCopy)
+            {
+              FileSystemWatcher fsw = null;
+              if (_watchers.TryGetValue(key, out fsw))
+              {
+                Log.Debug("FileSystemWatcher : {0}", fsw.Path);
+              }
+            }*/
+          }
+        }        
+        Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
+      }
     }
 
     private static HashSet<string> GetUniqueTopLevelFolders()
@@ -2722,10 +2741,10 @@ namespace MediaPortal.Util
           if ((pathLen > dir4WatcherLen) && path.IndexOf(dir4Watcher) > 0)
           {
             RemoveWatcher(dir4Watcher);
-          }                     
+          }
         }
-      } 
-     
+      }
+
       if (!_watchers.ContainsKey(dir4Watcher))
       {
         AddWatcher(dir4Watcher);
@@ -2743,12 +2762,12 @@ namespace MediaPortal.Util
         fsw.Created += new FileSystemEventHandler(fileSystemWatcher_Created);
         fsw.Deleted += new FileSystemEventHandler(fileSystemWatcher_Deleted);
         fsw.Error += new ErrorEventHandler(fileSystemWatcher_Error);
-        _watchers.Add(dir, fsw); 
+        _watchers.Add(dir, fsw);
       }
       catch (Exception ex)
       {
-        Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);        
-      }      
+        Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);
+      }
     }
 
     private static void RemoveWatcher(string dir)
@@ -2769,34 +2788,55 @@ namespace MediaPortal.Util
           Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
           lock (_fileLookUpCache)
           {
-            fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);  
+            fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
           }
-      
+
+          //string[] keyCopy = _fileLookUpCache.Keys.ToArray();
+          //foreach (string key in keyCopy)
+          //{
+          //FileLookUpItem fileLookUpItem;
           IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir = fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
-            
+
           foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
           {
-             lock (_fileLookUpCache)
-             {
-                _fileLookUpCache.Remove(fli.Key);
-             }
+            lock (_fileLookUpCache)
+            {
+              _fileLookUpCache.Remove(fli.Key);
+            }
           }
+
+          /*if (_fileLookUpCache.TryGetValue(key, out fileLookUpItem))
+          {              
+            string pathName = GetDirectoryName(fileLookUpItem.Filename);
+
+            if (!String.IsNullOrEmpty(pathName))
+            {
+              if (pathName.StartsWith(dir))
+              {
+                lock (_fileLookUpCache)
+                {
+                  _fileLookUpCache.Remove(key);
+                }
+              }
+            }                             
+          }*/
 
           lock (_foldersLookedUpLock)
           {
             Log.Error("RemoveWatcher removing folders from cache={0}", dir);
             _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
           }
+          //}
         }
       }
       catch (Exception ex)
       {
         Log.Error("RemoveWatcher exception on dir={0}, ex={1}", dir, ex);
-      } 
+      }
     }
 
     private static string FindPathForWatcher(string dir)
-    {      
+    {
       string path = dir;
       int dirLen = dir.Length;
 
@@ -2827,61 +2867,61 @@ namespace MediaPortal.Util
         _fileSystemManagerThread.Priority = ThreadPriority.Lowest;
         _fileSystemManagerThread.Start();
       }
-    }   
+    }
 
     private static void InsertFilesIntoCacheAsynch(object oPath)
     {
-      string path = oPath as string;      
+      string path = oPath as string;
       if (!String.IsNullOrEmpty(path))
-      {        
+      {
         string dir2Lower = path.ToLower();
-        
+
         if (!HasFolderBeenScanned(dir2Lower))
         {
-          Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);      
-          IEnumerable<string> files = DirSearch(dir2Lower);                    
+          Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
+          IEnumerable<string> files = DirSearch(dir2Lower);
           foreach (string file in files)
-          {            
+          {
             DoInsertExistingFileIntoCache(file);
-          }                              
+          }
         }
         /*else
         {
           Log.Debug("InsertFilesIntoCacheAsynch: dir already pre-scanned : {0}", path);      
         }*/
-      }      
+      }
     }
 
-    internal static void DoInsertExistingFileIntoCache(string file)
-    {        
-        FileLookUpItem fileLookUpItem = new FileLookUpItem();
+    public static void DoInsertExistingFileIntoCache(string file)
+    {
+      FileLookUpItem fileLookUpItem = new FileLookUpItem();
 
-        fileLookUpItem.Exists = true;
-        fileLookUpItem.Filename = file;
-        UpdateLookUpCacheItem(fileLookUpItem, file);       
+      fileLookUpItem.Exists = true;
+      fileLookUpItem.Filename = file;
+      UpdateLookUpCacheItem(fileLookUpItem, file);
     }
 
-    internal static void DoInsertNonExistingFileIntoCache(string file)
+    public static void DoInsertNonExistingFileIntoCache(string file)
     {
       FileLookUpItem fileLookUpItem = new FileLookUpItem();
       fileLookUpItem.Exists = false;
       fileLookUpItem.Filename = file;
-      UpdateLookUpCacheItem(fileLookUpItem, file);      
+      UpdateLookUpCacheItem(fileLookUpItem, file);
     }
 
-    private static bool DoFileExistsInCache(string filename) 
+    private static bool DoFileExistsInCache(string filename)
     {
-      bool found = false;      
+      bool found = false;
 
       if (!string.IsNullOrEmpty(filename))
       {
-        FileLookUpItem fileLookUpItem = new FileLookUpItem();      
+        FileLookUpItem fileLookUpItem = new FileLookUpItem();
         if (!_fileLookUpCache.TryGetValue(filename, out fileLookUpItem))
         {
           found = File.Exists(filename);
           fileLookUpItem.Filename = filename;
           fileLookUpItem.Exists = found;
-          UpdateLookUpCacheItem(fileLookUpItem, filename);          
+          UpdateLookUpCacheItem(fileLookUpItem, filename);
         }
         else
         {
@@ -3185,7 +3225,7 @@ namespace MediaPortal.Util
       else
       {
         result = false;
-      }      
+      }
       return result;
     }
 
@@ -3301,7 +3341,7 @@ namespace MediaPortal.Util
       {
         try
         {
-          return (Util.Utils.FileExistsInCache(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"));          
+          return (Util.Utils.FileExistsInCache(Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll"));
         }
         catch (Exception)
         {
@@ -3800,20 +3840,20 @@ namespace MediaPortal.Util
 
   public static class XMLNodeExtensions
   {
-      public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
+    public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
+    {
+      // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+      XmlNodeList nodes = node.SelectNodes(xpath);
+
+      if (nodes == null)
+        return null;
+
+      IEnumerator enumerator = nodes.GetEnumerator();
+      if (enumerator != null && enumerator.MoveNext())
       {
-          // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
-          XmlNodeList nodes = node.SelectNodes(xpath);
-
-          if (nodes == null)
-              return null;
-
-          IEnumerator enumerator = nodes.GetEnumerator();
-          if (enumerator != null && enumerator.MoveNext())
-          {
-              return (XmlNode)enumerator.Current;
-          }
-          return null; //nothing found
+        return (XmlNode)enumerator.Current;
       }
+      return null; //nothing found
+    }
   }
 }
