@@ -365,13 +365,19 @@ namespace MediaPortal.GUI.Video
         }
 
         currentMovie.ThumbURL = coverArtUrls[item];
-        //string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-        //string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
         // Title suffix for problem with covers and movie with the same name
         string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
         string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
         string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
         Util.Utils.FileDelete(coverArtImage);
+        //
+        // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
+        //
+        Util.Utils.FileLookUpItem fileLookUpItem = new Util.Utils.FileLookUpItem();
+        fileLookUpItem.Filename = coverArtImage;
+        fileLookUpItem.Exists = false;
+        Util.Utils.UpdateLookUpCacheItem(fileLookUpItem, coverArtImage);
+        //
         Util.Utils.FileDelete(largeCoverArtImage);
         Refresh(false);
         Update();
@@ -432,7 +438,6 @@ namespace MediaPortal.GUI.Video
         return;
       }
     }
-
 
     public IMDBMovie Movie
     {
@@ -513,8 +518,6 @@ namespace MediaPortal.GUI.Video
         string imageUrl = currentMovie.ThumbURL;
         if (imageUrl.Length > 0)
         {
-          //coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
-          //largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, currentMovie.Title);
           string titleExt = currentMovie.Title + "{" + currentMovie.ID + "}";
           coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
           largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
@@ -528,12 +531,12 @@ namespace MediaPortal.GUI.Video
             if (imageExtension.Length > 0)
             {
               string temporaryFilename = Path.GetTempFileName();
+              string tmpFile = temporaryFilename;
               temporaryFilename += imageExtension;
               string temporaryFilenameLarge = Util.Utils.ConvertToLargeCoverArt(temporaryFilename);
               temporaryFilenameLarge += imageExtension;
-              Util.Utils.FileDelete(temporaryFilename);
+              Util.Utils.FileDelete(tmpFile);
               Util.Utils.FileDelete(temporaryFilenameLarge);
-
               if (imageUrl.Length > 7 && imageUrl.Substring(0, 7).Equals("file://"))
               {
                 // Local image, don't download, just copy
@@ -543,12 +546,12 @@ namespace MediaPortal.GUI.Video
               {
                 Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              if (Util.Utils.FileExistsInCache(temporaryFilename))
+              if (File.Exists(temporaryFilename)) // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
               {
                 Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (Util.Utils.FileExistsInCache(temporaryFilenameLarge))
+                if (File.Exists(temporaryFilenameLarge)) // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
                 {
                   Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
                                                (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
