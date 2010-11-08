@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1418</entry>
+    <entry name="TotalChannels">1420</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5675,6 +5675,14 @@
     <entry name="ChannelID">america@espn.com</entry>
     <entry name="FullName">ESPN America</entry>
   </section>
+  <section name="1418">
+    <entry name="ChannelID">bliss@tv2.no</entry>
+    <entry name="FullName">TV2 Bliss</entry>
+  </section>
+  <section name="1419">
+    <entry name="ChannelID">max@tvnorge.no</entry>
+    <entry name="FullName">Max</entry>
+  </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
   </section>
@@ -6887,7 +6895,7 @@
     <entry name="66">1251</entry>
   </section>
   <section name="NO">
-    <entry name="TotalChannels">100</entry>
+    <entry name="TotalChannels">102</entry>
     <entry name="0">24</entry>
     <entry name="1">25</entry>
     <entry name="2">60</entry>
@@ -6988,6 +6996,8 @@
     <entry name="97">1376</entry>
     <entry name="98">1377</entry>
     <entry name="99">1378</entry>
+    <entry name="100">1418</entry>
+    <entry name="101">1419</entry>
   </section>
   <section name="NZ">
     <entry name="TotalChannels">6</entry>

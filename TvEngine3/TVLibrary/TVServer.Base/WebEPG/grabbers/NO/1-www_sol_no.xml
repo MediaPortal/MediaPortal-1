@@ -12,9 +12,11 @@
     <Channel id="zebra@tv2.no" siteId="tv2zebra" />    
     <Channel id="nyhetskanalen@tv2.no" siteId="tv2nyhet" />
     <Channel id="sport@tv2.no" siteId="tv2sport" />
+    <Channel id="bliss@tv2.no" siteId="tv2bliss" />
     <Channel id="tvnorge.no" siteId="tvn" />
     <Channel id="tvnorgehd.no" siteId="tvnhd" />
     <Channel id="fem@tvnorge.no" siteId="fem" />
+    <Channel id="max@tvnorge.no" siteId="max" />
     <Channel id="tv3.no" siteId="tv3" />
     <Channel id="viasat4@viasat.no" siteId="viasat4" />
     <Channel id="3sat.de" siteId="3sat" />
