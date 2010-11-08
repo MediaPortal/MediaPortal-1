@@ -100,7 +100,7 @@
     <Channel id="family@tv1000.no" siteId="tv1kfamily" />
     <Channel id="nordic@tv1000.no" siteId="tv1knordic" />
     <Channel id="vh1.com" siteId="vh1" />
-    <Channel id="vh1classic.com" siteId="vh1classic" />
+    <Channel id="classic@vh1.co.uk" siteId="vh1classic" />
     <Channel id="explorer@viasat.no" siteId="viaexpl" />
     <Channel id="sport@viasatsport.no" siteId="viaspo" />
     <Channel id="sport2@viasatsport.no" siteId="viaspo2" />

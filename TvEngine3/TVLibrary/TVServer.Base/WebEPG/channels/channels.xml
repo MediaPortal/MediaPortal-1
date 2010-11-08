@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <profile>
   <section name="ChannelInfo">
-    <entry name="TotalChannels">1420</entry>
+    <entry name="TotalChannels">1421</entry>
   </section>
   <section name="0">
     <entry name="ChannelID">1@betv.be</entry>
@@ -5682,6 +5682,10 @@
   <section name="1419">
     <entry name="ChannelID">max@tvnorge.no</entry>
     <entry name="FullName">Max</entry>
+  </section>
+  <section name="1420">
+    <entry name="ChannelID">tvnorgehd.no</entry>
+    <entry name="FullName">TV Norge HD</entry>
   </section>
   <section name=".svn">
     <entry name="TotalChannels">0</entry>
