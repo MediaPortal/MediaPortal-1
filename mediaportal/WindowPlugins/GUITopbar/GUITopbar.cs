@@ -254,9 +254,7 @@ namespace MediaPortal.Topbar
             m_bTopBarHide = false;
           }
 
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
-                                          null);
-          OnMessage(msg);
+          GUIControl.FocusControl(GetID, _defaultControlId);
         }
         else
         {
@@ -291,8 +289,7 @@ namespace MediaPortal.Topbar
           {
             if (!bFocus)
             {
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, id, 0, 0, null);
-              OnMessage(msg);
+              GUIControl.FocusControl(GetID, id);
               control.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out bFocus);
             }
             control.OnAction(action);
