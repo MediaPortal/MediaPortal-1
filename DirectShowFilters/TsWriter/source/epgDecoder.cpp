@@ -746,7 +746,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			}
 			else
 			{
-				CAutoString buffer(event_len+10);
+				CAutoString buffer(event_len*4);
 				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
@@ -786,7 +786,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			}
 			else
 			{
-				CAutoString buffer (text_len+10);
+				CAutoString buffer (text_len*4);
 			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
