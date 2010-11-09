@@ -124,7 +124,7 @@ namespace MediaPortal.Dialogs
 
       int iRotate = PictureDatabase.GetRotation(FileName);
 
-      m_pTexture = Util.Picture.Load(FileName, iRotate, 512, 512, true, false, out m_iTextureWidth, out m_iTextureHeight);
+      m_pTexture = Util.Picture.Load(FileName, iRotate, 1024, 1024, true, false, out m_iTextureWidth, out m_iTextureHeight);
 
       lblCameraModel.Label = string.Empty;
       lblDateTakenLabel.Label = string.Empty;
