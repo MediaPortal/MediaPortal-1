@@ -538,7 +538,11 @@ namespace OSInfo
       {
         return OsSupport.Blocked;
       }
-      return OSServicePackMinor != 0 ? OsSupport.NotSupported : OsSupport.FullySupported;
+      //
+      // Final service packs have OSServicePackMinor == 0
+      // Unfortunately Windows7 SP1 RC report 0 even if it's not final: added check on the string description
+      //
+      return (OSServicePackMinor != 0 || OSServicePackDesc.Contains(", v.")) ? OsSupport.NotSupported : OsSupport.FullySupported;
     }
 
     /// <summary>
@@ -666,8 +670,20 @@ namespace OSInfo
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
         osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-        if (!GetVersionEx(ref osVersionInfo)) return -1;
-        return osVersionInfo.wServicePackMinor;
+        return !GetVersionEx(ref osVersionInfo) ? -1 : osVersionInfo.wServicePackMinor;
+      }
+    }
+
+    /// <summary>
+    /// Gets the string description of the service pack running on this computer.
+    /// </summary>
+    public static string OSServicePackDesc
+    {
+      get
+      {
+        OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        return !GetVersionEx(ref osVersionInfo) ? String.Empty : osVersionInfo.szCSDVersion;
       }
     }
 
