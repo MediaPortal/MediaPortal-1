@@ -111,19 +111,31 @@ namespace MediaPortal.GUI.Pictures
                 int iRotate = PictureDatabase.GetRotation(item.Path);
                 Thread.Sleep(30);
 
-                if (!item.IsRemote && Util.Utils.IsPicture(item.Path))
+                bool isVideo=Util.Utils.IsVideo(item.Path);
+                bool isPicture=Util.Utils.IsPicture(item.Path);
+                if (!item.IsRemote && (isPicture || isVideo))
                 {
-                  string thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures,
-                                                        Util.Utils.EncryptLine(item.Path));
+                  string thumbnailImage;
+                  if (isPicture)
+                    thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                  else
+                    thumbnailImage = String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(item.Path));
+
                   if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                   {
                     Thread.Sleep(10);
 
-                    iRotate = Util.Picture.GetRotateByExif(item.Path);
-                    Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
-                    
-                    if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
-                                                     (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall))
+                    bool thumbRet;
+                    if (isPicture)
+                    {
+                      iRotate = Util.Picture.GetRotateByExif(item.Path);
+                      Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
+                      thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
+                                                     (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall);
+                    }
+                    else
+                      thumbRet = Util.VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, true);
+                    if (thumbRet)
                     {
                       Thread.Sleep(30);
                       Log.Debug("GUIPictures: Creation of missing thumb successful for {0}", item.Path);
@@ -132,13 +144,21 @@ namespace MediaPortal.GUI.Pictures
 
                   if (autocreateLargeThumbs)
                   {
-                    thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                    if (isPicture)
+                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(item.Path));
+                    else
+                      thumbnailImage = String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(item.Path));
                     if (recreateThumbs || !Util.Utils.FileExistsInCache(thumbnailImage))
                     {
                       Thread.Sleep(10);
-                      if (Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
+                      bool thumbRet;
+                      if (isPicture)
+                        thumbRet=Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
                                                        (int)Thumbs.ThumbLargeResolution, iRotate,
-                                                       Thumbs.SpeedThumbsLarge))
+                                                       Thumbs.SpeedThumbsLarge);
+                      else
+                        thumbRet=Util.VideoThumbCreator.CreateVideoThumb(item.Path,thumbnailImage,true,true);
+                      if (thumbRet)
                       {
                         Thread.Sleep(30);
                         //Log.Debug("GUIPictures: Creation of missing large thumb successful for {0}", item.Path);
