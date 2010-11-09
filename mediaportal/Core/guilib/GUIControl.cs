@@ -777,6 +777,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool VisibleFromSkinCondition
+    {
+      get { return _visibleFromSkinCondition; }
+    }
+
     /// <summary>
     /// Set the up/down/left/right control
     /// </summary>
@@ -1919,6 +1924,7 @@ namespace MediaPortal.GUI.Library
     {
       if (_visibleCondition == 0)
       {
+        _visibilityInitialized = true;
         return;
       }
       //Make sure to initialize visibility
