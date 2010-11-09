@@ -47,6 +47,11 @@ namespace MediaPortal.Player
       RTSP = 3,
     }
 
+    public static ArrayList ExternalPlayerList
+    {
+      get { return _externalPlayerList; }
+    }
+
     private bool CheckMpgFile(string fileName)
     {
       try

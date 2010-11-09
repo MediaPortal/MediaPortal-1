@@ -232,7 +232,7 @@ namespace MediaPortal.GUI.Music
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _enableScrobbling = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
+        _enableScrobbling = MediaPortal.GUI.Library.PluginManager.IsPluginNameEnabled2("Audioscrobbler");
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true);
       }

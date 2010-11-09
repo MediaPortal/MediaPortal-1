@@ -2242,7 +2242,7 @@ namespace MediaPortal.GUI.Library
         case PLUGIN_IS_ENABLED:
           using (Settings xmlreader = new MPSettings())
           {
-            bReturn = xmlreader.GetValueAsBool("plugins", info.m_stringData, false);
+            bReturn = MediaPortal.GUI.Library.PluginManager.IsPluginNameEnabled2(info.m_stringData);
           }
           break;
         case CONTROL_HAS_TEXT:

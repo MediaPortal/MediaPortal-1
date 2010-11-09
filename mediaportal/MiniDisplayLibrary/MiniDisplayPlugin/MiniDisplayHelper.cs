@@ -1048,7 +1048,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       bool enabled = false;
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        enabled = xmlreader.GetValueAsBool("plugins", "MiniDisplay", false);
+        enabled = MediaPortal.GUI.Library.PluginManager.IsPluginNameEnabled2("MiniDisplay");
       }
       return enabled;
     }

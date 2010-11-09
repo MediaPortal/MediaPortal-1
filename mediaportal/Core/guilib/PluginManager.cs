@@ -362,6 +362,7 @@ namespace MediaPortal.GUI.Library
                       try
                       {
                         win.Init();
+                        _guiPlugins.Add(win);
                       }
                       catch (Exception ex)
                       {
@@ -491,8 +492,31 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlreader = new MPSettings())
       {
-        return xmlreader.GetValueAsBool("plugins", strPluginName, false);
+        return xmlreader.GetValueAsBool("plugins", strPluginName, false) && IsPluginNameLoaded(strPluginName);
       }
+    }
+
+    public static bool IsPluginNameLoaded(string strPluginName)
+    {
+      if (MediaPortal.Player.PlayerFactory.ExternalPlayerList != null && MediaPortal.Player.PlayerFactory.ExternalPlayerList.Count > 0)
+      {
+        foreach (ISetupForm sf in MediaPortal.Player.PlayerFactory.ExternalPlayerList)
+        {
+          if (null != sf && sf.PluginName() == strPluginName && !string.IsNullOrEmpty(sf.PluginName()))
+            return true;
+        }
+      }
+
+      if (_setupForms != null && _setupForms.Count > 0)
+      {
+        foreach (ISetupForm sf in _setupForms)
+        {
+          if (null != sf && sf.PluginName() == strPluginName && !string.IsNullOrEmpty(sf.PluginName()))
+            return true;
+        }
+      }
+      
+      return false;
     }
 
     public static bool PluginEntryExists(string strPluginName)
