@@ -273,11 +273,9 @@ namespace MediaPortal.GUI.Music
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
 
-        //PlayList currentPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-        //if (currentPlaylist.AllPlayed())
-        if (!g_Player.Playing && NextTrackTag == null)
+        if (!g_Player.Playing && NextTrackTag.Title == string.Empty)
         {
-          //Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
+          Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
           Action action = new Action();
           action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
           GUIGraphicsContext.OnAction(action);
@@ -1931,6 +1929,11 @@ namespace MediaPortal.GUI.Music
     {
       MusicTag tag = null;
       Song song = new Song();
+      if(String.IsNullOrEmpty(strFile))
+      {
+        // Return an empty object
+        return song.ToMusicTag();
+      }
       bool bFound = dbs.GetSongByFileName(strFile, ref song);
       if (!bFound)
       {
