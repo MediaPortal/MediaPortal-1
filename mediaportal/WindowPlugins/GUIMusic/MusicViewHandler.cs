@@ -415,10 +415,10 @@ namespace MediaPortal.GUI.Music
       {
         if (currentLevel < MaxLevels - 1)
         {
-          if (previousLevel < currentLevel)
+          if (previousLevel <= currentLevel)
           {
             FilterDefinition fd = (FilterDefinition)currentView.Filters[currentLevel];
-            fd.SelectedValue = "%";
+            fd.SelectedValue = GetFieldValue(songs[0], fd.Where);
             currentLevel = currentLevel + 1;
           }
           else
