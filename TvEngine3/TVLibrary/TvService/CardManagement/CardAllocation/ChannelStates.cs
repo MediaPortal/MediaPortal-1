@@ -33,6 +33,11 @@ namespace TvService
 {
   public class ChannelStates : CardAllocationBase
   {
+    protected override bool LogEnabled
+    {
+      get { return false; }
+    }
+
     #region private members   
 
     private static void UpdateChannelStateUserBasedOnCardOwnership(ITvCardHandler tvcard, IList<User> allUsers,
@@ -144,7 +149,7 @@ namespace TvService
     }   
 
     [MethodImpl(MethodImplOptions.Synchronized)]
-    private static void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
+    private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
                                            bool checkTransponders, IList<User> allUsers, TVController tvController)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
@@ -293,7 +298,7 @@ namespace TvService
       }      
     }
 
-    private static void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
+    private void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
                                                  int decryptLimit, int cardId, IChannel tuningDetail,
                                                  bool checkTransponders)
     {

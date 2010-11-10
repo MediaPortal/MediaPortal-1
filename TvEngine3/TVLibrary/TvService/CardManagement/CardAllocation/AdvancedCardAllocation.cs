@@ -230,7 +230,7 @@ namespace TvService
       }
     }
 
-    private static bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
+    private bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
     {
       int cardId = cardHandler.DataBaseCard.IdCard;
       bool isCardEnabled = IsCardEnabled(cardHandler);
