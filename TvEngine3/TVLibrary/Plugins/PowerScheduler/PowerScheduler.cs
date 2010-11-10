@@ -38,7 +38,7 @@ using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
 using System.Threading;
-
+using Gentle.Common;
 #endregion
 
 namespace TvEngine.PowerScheduler
@@ -524,7 +524,7 @@ namespace TvEngine.PowerScheduler
       _lastUserTime = DateTime.MinValue;
 
       // test if shutdown is allowed
-      bool disallow = DisAllowShutdown();
+      bool disallow = DisAllowShutdown(true);
 
       Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
@@ -823,22 +823,26 @@ namespace TvEngine.PowerScheduler
       {
         Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
       }
-  
+
+      int reload = 0;
       do
       {
-        int reload = 0;
         if (!_standby)
         {
           try
           {
-            
-            CheckForStandby();
             if (reload++ == _reloadInterval)
-            {
+            { 
               reload = 0;
+              CheckForStandby(true);
+              // Clear cache
+              CacheManager.Clear();
+              GC.Collect();
               LoadSettings();
               SendPowerSchedulerEvent(PowerSchedulerEventType.Elapsed);
             }
+            else
+              CheckForStandby(false);
           }
           catch (Exception ex)
           {
@@ -1043,7 +1047,7 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Checks if the system should enter standby
     /// </summary>
-    private void CheckForStandby()
+    private void CheckForStandby(bool refresh)
     {
       lock (this) // to avoid clash with OnPowerEvent
       {
@@ -1058,7 +1062,7 @@ namespace TvEngine.PowerScheduler
         bool unattended = Unattended;
 
         // is anybody disallowing shutdown?
-        if (!DisAllowShutdown())
+        if (!DisAllowShutdown(refresh))
         {
            _powerManager.AllowStandby();
           if (!_idle)
@@ -1194,8 +1198,8 @@ namespace TvEngine.PowerScheduler
       if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
-        DateTime nextWakeup = NextWakeupTime;
-        bool disallow = DisAllowShutdown();
+        DateTime nextWakeup = NextWakeupTime(true);
+        bool disallow = DisAllowShutdown(true);
         if (disallow && OSInfo.OSInfo.VistaOrLater())
         {
           // fixing mantis 1487: If suspend it's triggered by remote on vista PSClient tells TV Server Power scheduler to wakeup after 1 min 
@@ -1403,8 +1407,8 @@ namespace TvEngine.PowerScheduler
     {
       if (refresh)
       {
-        bool dummy = DisAllowShutdown();
-        DateTime dummy2 = NextWakeupTime;
+        bool dummy = DisAllowShutdown(true);
+        DateTime dummy2 = NextWakeupTime(true);
         dummy = Unattended;
       }
 
@@ -1453,7 +1457,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     /// <param name="checkStatusOnly">true = Check status of standby handlers only, don't actually disallow</param>
     [MethodImpl(MethodImplOptions.Synchronized)]
-    private bool DisAllowShutdown()
+    private bool DisAllowShutdown(bool refresh)
     {
       // at first ask the handlers
 
@@ -1474,7 +1478,7 @@ namespace TvEngine.PowerScheduler
       }
 
       // then, check whether the next event is almost due, i.e. within PreNoShutdownTime seconds
-      DateTime nextWakeupTime = NextWakeupTime;
+      DateTime nextWakeupTime = NextWakeupTime(refresh);
       if (DateTime.Now >= nextWakeupTime.AddSeconds(-_settings.PreNoShutdownTime))
       {
         LogVerbose("PowerScheduler.DisAllowShutdown: some event is almost due");
@@ -1525,45 +1529,46 @@ namespace TvEngine.PowerScheduler
     /// <summary>
     /// Returns the earliest desirable wakeup time from all IWakeupHandlers
     /// </summary>
-    private DateTime NextWakeupTime
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    private DateTime NextWakeupTime(bool refresh)
     {
-      [MethodImpl(MethodImplOptions.Synchronized)]
-      get
+
+      if (!refresh && _currentNextWakeupTime != DateTime.MaxValue)
+        return _currentNextWakeupTime;
+
+      // earliestWakeupTime is set to "now" in order to not miss wakeups that are almost due.
+      // preWakupTime is not substracted here.
+      String handlerName = "";
+
+      DateTime nextWakeupTime = DateTime.MaxValue;
+      DateTime earliestWakeupTime = DateTime.Now;
+
+      //too much logging Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
+      foreach (IWakeupHandler handler in _wakeupHandlers)
       {
-        // earliestWakeupTime is set to "now" in order to not miss wakeups that are almost due.
-        // preWakupTime is not substracted here.
-        String handlerName = "";
-
-        DateTime nextWakeupTime = DateTime.MaxValue;
-        DateTime earliestWakeupTime = DateTime.Now;
-
-        //too much logging Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
-        foreach (IWakeupHandler handler in _wakeupHandlers)
+        DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
+        if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
+        LogVerbose("PowerScheduler.NextWakeupTime: inspecting IWakeupHandler:{0} time:{1}", handler.HandlerName,
+                   nextTime);
+        if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
-          DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
-          if (nextTime < earliestWakeupTime) nextTime = DateTime.MaxValue;
-          LogVerbose("PowerScheduler.NextWakeupTime: inspecting IWakeupHandler:{0} time:{1}", handler.HandlerName,
-                     nextTime);
-          if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
-          {
-            //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
-            handlerName = handler.HandlerName;
-            nextWakeupTime = nextTime;
-          }
+          //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
+          handlerName = handler.HandlerName;
+          nextWakeupTime = nextTime;
         }
-
-        _currentNextWakeupHandler = handlerName;
-
-        // next wake-up time changed?
-        if (nextWakeupTime != _currentNextWakeupTime)
-        {
-          _currentNextWakeupTime = nextWakeupTime;
-
-          Log.Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
-        }
-
-        return nextWakeupTime;
       }
+
+      _currentNextWakeupHandler = handlerName;
+
+      // next wake-up time changed?
+      if (nextWakeupTime != _currentNextWakeupTime)
+      {
+        _currentNextWakeupTime = nextWakeupTime;
+
+        Log.Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
+      }
+
+      return nextWakeupTime;
     }
 
     #endregion

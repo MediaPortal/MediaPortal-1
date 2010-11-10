@@ -107,12 +107,21 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       get
       {
+        // dont use GetProcessesByName, it leaks
         _preventers.Clear();
-        foreach (string process in _processes)
+        Process[] runningProcesses = Process.GetProcesses();
+
+        foreach (Process p1 in runningProcesses)
         {
-          Process[] processes = Process.GetProcessesByName(process);
-          if (processes.Length > 0)
-            _preventers.Add(process);
+          foreach (string p2 in _processes)
+          {
+            if (string.Equals(p1.ProcessName, p2, StringComparison.OrdinalIgnoreCase))
+            {
+              _preventers.Add(p2);
+              break;
+            }
+          }
+          p1.Dispose();
         }
         return (_preventers.Count > 0);
       }
