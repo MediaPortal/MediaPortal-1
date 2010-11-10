@@ -373,9 +373,31 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+     
+      // if hyperlink parameter is set (to string ID not actual name)
+      // then load that view
+      if (_loadParameter != null)
+      {
+        bool viewFound = false;
+        foreach(ViewDefinition v in handler.Views)
+        {
+          if (v.Name == _loadParameter)
+          {
+            MusicState.View = v.Name; //don't just set _currentView as this is used below
+            m_iItemSelected = -1; //remove any selected item from previous selection
+            viewFound = true;
+            
+          }
+        }
+        if (!viewFound)
+        {
+          // got here as parameter passed from hyperlinkParameter value 
+          // did not match to a view name
+          Log.Error("Invalid view load parameter: {0} when loading music genres, using default view",_loadParameter);
+        }
+      }
 
       string view = MusicState.View;
-
       if (view == string.Empty)
       {
         view = ((ViewDefinition)handler.Views[0]).Name;
