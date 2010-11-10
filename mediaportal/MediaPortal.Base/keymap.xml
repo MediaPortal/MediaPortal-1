@@ -200,7 +200,7 @@
       <sound>click.wav</sound>
       <description>volume up</description>
     </action>
-	<action>
+    <action>
       <id>103</id>
       <key>+</key>
       <sound>click.wav</sound>
@@ -259,6 +259,12 @@
       <key>G</key>
       <sound />
       <description>Toggle Gap / Crossfade (BASS Player only)</description>
+    </action>
+    <action>
+      <id>125</id>
+      <key>Z</key>
+      <sound />
+      <description>Jump to Music Now Playing</description>
     </action>
   </global>
   <window>

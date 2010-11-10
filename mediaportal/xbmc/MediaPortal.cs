@@ -2699,7 +2699,15 @@ public class MediaPortalApp : D3DApp, IRender
               return;
             }
             break;
-
+          
+          //Jump to Music Now Playing
+          case Action.ActionType.ACTION_JUMP_MUSIC_NOW_PLAYING:
+            if (g_Player.IsMusic && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+            {
+              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+            }
+            break;
+          
           //play music
           //resume playback
           case Action.ActionType.ACTION_PLAY:
