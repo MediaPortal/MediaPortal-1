@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
@@ -414,10 +415,11 @@ namespace MediaPortal.GUI.Library
       if (line.IndexOf('#') > -1)
       {
         // Matches a property tag and replaces it with the value for that property
-        MatchCollection matches = propertyExpr.Matches(line);
-        foreach (Match match in matches)
+        // sort the matches descending by the length of their value, to prevent a match named "#selecteditem" replacing "#selecteditem2" in the line
+        var matches = from Match aMatch in propertyExpr.Matches(line) orderby aMatch.Value.Length descending select aMatch.Value;
+        foreach (string match in matches)
         {
-          line = line.Replace(match.Value, ParseProperty(match.Value));
+          line = line.Replace(match, ParseProperty(match));
         }
       }
 

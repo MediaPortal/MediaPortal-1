@@ -421,7 +421,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_hyperLinkParameter != null && !_hyperLinkParameter.Equals(""))
             {//the link also contains a parameter that we want to pass to the plugin
-              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, _hyperLinkParameter, !_addToHistory);
+              GUIWindowManager.ActivateWindow((int)_hyperLinkWindowId, GUIPropertyManager.Parse(_hyperLinkParameter), !_addToHistory);
             }
             else
             {
