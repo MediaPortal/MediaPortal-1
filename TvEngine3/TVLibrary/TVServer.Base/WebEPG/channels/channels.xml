@@ -4537,7 +4537,7 @@
   </section>
   <section name="1133">
     <entry name="ChannelID">tv3.no</entry>
-    <entry name="FullName">TV3</entry>
+    <entry name="FullName">TV3 (N)</entry>
   </section>
   <section name="1134">
     <entry name="ChannelID">tv3.se</entry>
@@ -5500,7 +5500,7 @@
     <entry name="FullName">BBC Life</entry>
   </section>
     <section name="1374">
-    <entry name="ChannelID">silver@no</entry>
+    <entry name="ChannelID">silver.no</entry>
     <entry name="FullName">Silver</entry>
   </section>
     <section name="1375">

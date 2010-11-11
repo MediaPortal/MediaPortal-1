@@ -112,15 +112,11 @@
   <Listing type="Html">
     <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
     <Html>
-      <Template name="default">
-        <SectionTemplate tags="T">
+      <Template name="default" start="tableau">
+        <SectionTemplate tags="TSI">
           <TemplateText>
-            &lt;td&gt;&lt;/td&gt;
-            &lt;/tr&gt;&lt;tr&gt;
-            &lt;td&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;#START&gt;&lt;br&gt;&lt;#END&gt;&lt;br&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;#TITLE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;&lt;#START&gt;&lt;/strong&gt;&lt;br&gt;&lt;span&gt;&lt;#END&gt;&lt;/span&gt;&lt;br/&gt;
+&lt;/td&gt;&lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;&lt;td&gt;&lt;strong&gt;&lt;a&gt;&lt;#TITLE&gt; (&lt;#EPISODE&gt;)&lt;/a&gt;&lt;/strong&gt; &lt;z(&gt;(&lt;#REPEAT&gt;)&lt;/z)?&gt; &lt;br&gt;&lt;#SUBTITLENOTUSED&gt;&lt;/td&gt;&lt;td&gt;&lt;z(&gt;&lt;img&gt;&lt;/z)?&gt;
           </TemplateText>
         </SectionTemplate>
       </Template>
@@ -131,7 +127,7 @@
             &lt;tr&gt;&lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;
             &lt;tr&gt;
             &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;/td&gt;
-            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRENOT&gt;&lt;/td&gt;
             &lt;td&gt;&lt;b&gt;&lt;/b&gt;&lt;/td&gt;
             &lt;td&gt;&lt;br&gt;&lt;/td&gt;
             &lt;/tr&gt;
