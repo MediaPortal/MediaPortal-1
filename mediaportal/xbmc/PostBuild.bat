@@ -12,68 +12,54 @@ if exist %ProgramData%\nul (
 REM Check for Microsoft Antispyware .BAT bug
 if exist .\kernel32.dll exit 1
 
-REM Hack to remove dll not needed in root 
-del *.dll
-del *.ax
-
 REM Support
-xcopy /y %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* .
-
+xcopy %1\MediaPortal.Support\bin\%2\MediaPortal.Support.* . /Y /D
 
 REM Configuration
-xcopy /y %1\Configuration\Wizards\*.* Wizards\
-xcopy /y %1\Configuration\bin\%2\Configuration.* .
+xcopy %1\Configuration\Wizards\*.* Wizards\ /Y /D
+xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 
 REM Core
-xcopy /y %1\core\bin\%2\DirectShowLib.* .
-xcopy /y %1\core\bin\%2\Core.* .
+xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D
+xcopy %1\core\bin\%2\Core.* . /Y /D
 
 REM Databases
-xcopy /y %1\databases\bin\%2\databases.* .
+xcopy %1\databases\bin\%2\databases.* . /Y /D
 
 REM Plugins
 
 REM SubtitlePlugin
-xcopy /y %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\
+xcopy %1\SubtitlePlugins\bin\%2\SubtitlePlugins.* plugins\subtitle\ /Y /D
 
 REM ExternalPlayers
-xcopy /y %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\
+xcopy %1\ExternalPlayers\bin\%2\ExternalPlayers.* plugins\ExternalPlayers\ /Y /D
 
 REM WindowPlugins
-xcopy /y %1\WindowPlugins\bin\%2\WindowPlugins.* plugins\Windows\
+xcopy %1\WindowPlugins\bin\%2\WindowPlugins.* plugins\Windows\ /Y /D
 
 REM Dialogs
-xcopy /y %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\
+xcopy %1\Dialogs\bin\%2\Dialogs.* plugins\Windows\ /Y /D
 
 REM ProcessPlugins
-xcopy /y %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\
-xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* .
-xcopy /y %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe .
+xcopy %1\ProcessPlugins\bin\%2\ProcessPlugins.* plugins\process\ /Y /D
+xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\%2\MusicShareWatcherHelper.* . /Y /D
+xcopy %1\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\%2\MusicShareWatcher.exe . /Y /D
 
 REM MiniDisplayLibrary
-xcopy /y %1\MiniDisplayLibrary\bin\%2\MiniDisplayLibrary.* .
+xcopy %1\MiniDisplayLibrary\bin\%2\MiniDisplayLibrary.* . /Y /D
 
 REM RemotePlugins
-xcopy /y %1\RemotePlugins\bin\%2\RemotePlugins.* .
+xcopy %1\RemotePlugins\bin\%2\RemotePlugins.* . /Y /D
 
 REM Remotes
-xcopy /y %1\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\%2\HCWHelper.* .
-xcopy /y %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll .
+xcopy %1\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\%2\HCWHelper.* . /Y /D
+xcopy %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll . /Y /D
 
 REM Utils
-xcopy /y %1\Utils\bin\%2\Utils.dll .
-
-rem C#scripts
-rem don't need to be copied seperate, those files are already in MediaPortal.Base
-rem xcopy /y %1\scripts\*.* scripts\
-rem xcopy /y %1\scripts\imdb\*.* scripts\imdb\
-
+xcopy %1\Utils\bin\%2\Utils.dll . /Y /D
 
 rem MyBurner plugin dependencies
-xcopy /y %1\WindowPlugins\GUIBurner\madlldlib.dll .
-xcopy /y %1\XPImapiBurner\bin\%2\XPBurnComponent.dll .
-REM xcopy /y %1\WindowPlugins\GUIBurner\XPBurnComponent.dll .
-
+xcopy %1\XPImapiBurner\bin\%2\XPBurnComponent.dll . /Y /D
 
 REM Copy all new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
@@ -84,32 +70,39 @@ xcopy %1\MediaPortal.Base\Language\*.* %ConfigPath%\"Team MediaPortal\MediaPorta
 REM Skins
 xcopy %1\MediaPortal.Base\Skin\*.* %ConfigPath%\"Team MediaPortal\MediaPortal\Skin\" /E /Y /D
 
-REM Copy all dll files from cpp solution
-xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll .
-xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll .
-xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll .
-xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll .
-copy /y %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll .
+REM Copy all dll files from cpp solution 
+xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.dll . /Y /D
+xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.dll . /Y /D
+xcopy %1\Core.cpp\DXUtil\bin\%2\dxutil.dll . /Y /D
+xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.dll . /Y /D
+xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
+
+if /I "%2" EQU "DEBUG" (
+xcopy %1\Core.cpp\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D
+xcopy %1\Core.cpp\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper.pdb . /Y /D
+xcopy %1\Core.cpp\fontEngine\bin\%2\fontEngine.pdb . /Y /D
+xcopy %1\Core.cpp\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
+)
 
 REM Copy one dll from DirectShowFilters folder
-xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll .
+xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
 
 REM mpWatchDog
-xcopy /y %1\WatchDog\bin\%2\WatchDog.exe .
-xcopy /y %1\WatchDog\bin\%2\DaggerLib.dll .
-xcopy /y %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll .
-xcopy /y %1\WatchDog\bin\%2\DirectShowLib-2005.dll .
-xcopy /y %1\WatchDog\bin\%2\MediaFoundation.dll .
+xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D
+xcopy %1\WatchDog\bin\%2\DaggerLib.dll . /Y /D
+xcopy %1\WatchDog\bin\%2\DaggerLib.DSGraphEdit.dll . /Y /D
+xcopy %1\WatchDog\bin\%2\DirectShowLib-2005.dll . /Y /D
+xcopy %1\WatchDog\bin\%2\MediaFoundation.dll . /Y /D
 
 REM MPTray
-xcopy /y %1\MPTray\bin\%2\MPTray.* .
+xcopy %1\MPTray\bin\%2\MPTray.* . /Y /D
 
 REM MPInstaller
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.Library.* .
-xcopy /y %1\MPInstaller\bin\%2\MPInstaller.* .
-xcopy /y %1\MPInstaller\bin\%2\MPIMaker.* .
+xcopy %1\MPInstaller\bin\%2\MPInstaller.Library.* . /Y /D
+xcopy %1\MPInstaller\bin\%2\MPInstaller.* . /Y /D
+xcopy %1\MPInstaller\bin\%2\MPIMaker.* . /Y /D
 
 REM MPE
-xcopy /y %1\MPE\MpeCore\bin\%2\MpeCore.* .
-xcopy /y %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* .
-xcopy /y %1\MPE\MpeMaker\bin\%2\MpeMaker.* .
+xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
+xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
+xcopy %1\MPE\MpeMaker\bin\%2\MpeMaker.* . /Y /D
