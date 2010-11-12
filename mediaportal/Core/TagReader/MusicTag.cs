@@ -55,6 +55,11 @@ namespace MediaPortal.TagReader
     internal bool m_hasAlbumArtist = false;
     internal DateTime m_dateTimeModified = DateTime.MinValue;
     internal DateTime m_dateTimePlayed = DateTime.MinValue;
+    internal string m_Codec = string.Empty;
+    internal string m_BitRateMode = string.Empty;
+    internal int m_BPM = 0;
+    internal int m_Channels = 0;
+    internal int m_SampleRate = 0;
 
     #endregion
 
@@ -87,6 +92,8 @@ namespace MediaPortal.TagReader
       CoverArtImageBytes = tag.CoverArtImageBytes;
       AlbumArtist = tag.AlbumArtist;
       Lyrics = tag.Lyrics;
+      Comment = tag.Comment;
+
       DateTimePlayed = tag.DateTimePlayed;
       DateTimeModified = tag.DateTimeModified;
     }
@@ -105,6 +112,7 @@ namespace MediaPortal.TagReader
       m_strGenre = "";
       m_strTitle = "";
       m_strComment = "";
+      m_FileType = "";
       m_iYear = 0;
       m_iDuration = 0;
       m_iTrack = 0;
@@ -119,6 +127,11 @@ namespace MediaPortal.TagReader
       m_iDiscId = 0;
       m_iNumDisc = 0;
       m_hasAlbumArtist = false;
+      m_Codec = "";
+      m_BitRateMode = "";
+      m_BPM = 0;
+      m_Channels = 0;
+      m_SampleRate = 0;
       m_dateTimeModified = DateTime.MinValue;
       m_dateTimePlayed = DateTime.MinValue;
     }
@@ -324,6 +337,36 @@ namespace MediaPortal.TagReader
     {
       get { return m_Lyrics; }
       set { m_Lyrics = value; }
+    }
+
+    public string Codec
+    {
+      get { return m_Codec; }
+      set { m_Codec = value; }
+    }
+
+    public string BitRateMode
+    {
+      get { return m_BitRateMode; }
+      set { m_BitRateMode = value; }
+    }
+
+    public int BPM
+    {
+      get { return m_BPM; }
+      set { m_BPM = value; }
+    }
+
+    public int Channels
+    {
+      get { return m_Channels; }
+      set { m_Channels = value; }
+    }
+
+    public int SampleRate
+    {
+      get { return m_SampleRate; }
+      set { m_SampleRate = value; }
     }
 
     public byte[] CoverArtImageBytes

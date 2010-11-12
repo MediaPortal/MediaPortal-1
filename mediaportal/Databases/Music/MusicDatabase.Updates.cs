@@ -1158,7 +1158,9 @@ namespace MediaPortal.Music.Database
         strTmp = tag.Conductor;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Conductor = strTmp == "unknown" ? "" : strTmp;
-
+        strTmp = tag.Comment;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        tag.Comment = strTmp == "unknown" ? "" : strTmp;
 
         if (!tag.HasAlbumArtist)
         {
@@ -1219,14 +1221,16 @@ namespace MediaPortal.Music.Database
             @"insert into tracks (
                                strPath, strArtist, strAlbumArtist, strAlbum, strGenre, strComposer, strConductor, strTitle, 
                                iTrack, iNumTracks, iDuration, iYear, iTimesPlayed, iRating, iFavorite, 
-                               iResumeAt, iDisc, iNumDisc, strLyrics, dateLastPlayed) 
+                               iResumeAt, iDisc, iNumDisc, strLyrics, strComment, strFileType, strFullCodec, strBitRateMode, 
+                               iBPM, iBitRate, iChannels, iSampleRate, dateLastPlayed, dateAdded) 
                                values ( 
                                '{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}',
                                {8}, {9}, {10}, {11}, {12}, {13}, {14}, 
-                               {15}, {16}, {17}, '{18}', '{19}' )",
+                               {15}, {16}, {17}, '{18}', '{19}',  '{20}', '{21}',  '{22}',  {23}, {24}, {25}, {26}, '{27}', '{28}' )",
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, DateTime.MinValue
+            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode, 
+            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, DateTime.Now
             );
         try
         {
@@ -1310,12 +1314,16 @@ namespace MediaPortal.Music.Database
                                  set strArtist = '{0}', strAlbumArtist = '{1}', strAlbum = '{2}', 
                                  strGenre = '{3}', strTitle = '{4}', iTrack = {5}, iNumTracks = {6}, 
                                  iDuration = {7}, iYear = {8}, iRating = {9}, iDisc = {10}, iNumDisc = {11}, 
-                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}' 
-                                 where strPath = '{15}'",
+                                 strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}',
+                                 strComment = '{15}', strFileType = '{16}', strFullCodec = '{17}',
+                                 strBitRateMode = '{18}', iBPM = {19}, iBitRate = {20}, iChannels = {21},
+                                 iSampleRate = {22}
+                                 where strPath = '{23}'",
               tag.Artist, tag.AlbumArtist, tag.Album,
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
-              tag.Lyrics, tag.Composer, tag.Conductor,
+              tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
+              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate,
               strFileName
               );
           try

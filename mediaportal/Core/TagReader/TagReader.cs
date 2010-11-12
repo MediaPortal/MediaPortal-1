@@ -124,7 +124,7 @@ namespace MediaPortal.TagReader
           musictag.CoverArtImageBytes = pics[0].Data.Data;
         musictag.Duration = (int)tag.Properties.Duration.TotalSeconds;
         musictag.FileName = strFile;
-        musictag.FileType = tag.MimeType;
+        musictag.FileType = tag.MimeType.Substring(tag.MimeType.IndexOf("/") + 1);
         string[] genre = tag.Tag.Genres;
         if (genre.Length > 0)
           musictag.Genre = String.Join(";", genre).Trim(trimChars);
@@ -140,7 +140,18 @@ namespace MediaPortal.TagReader
         musictag.TrackTotal = (int)tag.Tag.TrackCount;
         musictag.DiscID = (int)tag.Tag.Disc;
         musictag.DiscTotal = (int)tag.Tag.DiscCount;
-
+        musictag.Codec = tag.Properties.Description;
+        if (tag.MimeType == "taglib/mp3")
+        {
+          musictag.BitRateMode = tag.Properties.Description.IndexOf("VBR") > -1 ? "VBR" : "CBR";
+        }
+        else
+        {
+          musictag.BitRateMode = "";
+        }
+        musictag.BPM = (int)tag.Tag.BeatsPerMinute;
+        musictag.Channels = tag.Properties.AudioChannels;
+        musictag.SampleRate = tag.Properties.AudioSampleRate;
         musictag.Year = (int)tag.Tag.Year;
 
         if (tag.MimeType == "taglib/mp3")

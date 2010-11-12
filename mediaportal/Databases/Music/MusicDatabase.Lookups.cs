@@ -63,6 +63,14 @@ namespace MediaPortal.Music.Database
       aSong.Lyrics = DatabaseUtility.Get(aResult, aRow, "tracks.strLyrics");
       aSong.Composer = DatabaseUtility.Get(aResult, aRow, "tracks.strComposer").Trim(trimChars);
       aSong.Conductor = DatabaseUtility.Get(aResult, aRow, "tracks.strConductor").Trim(trimChars);
+      aSong.Comment = DatabaseUtility.Get(aResult, aRow, "tracks.strComment").Trim(trimChars);
+      aSong.FileType = DatabaseUtility.Get(aResult, aRow, "tracks.strFileType").Trim(trimChars);
+      aSong.Codec = DatabaseUtility.Get(aResult, aRow, "tracks.strFullCodec").Trim(trimChars);
+      aSong.BitRateMode = DatabaseUtility.Get(aResult, aRow, "tracks.strBitRateMode").Trim(trimChars);
+      aSong.BPM = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBPM");
+      aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
+      aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
+      aSong.SampleRate= DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
       try
       {
         aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
