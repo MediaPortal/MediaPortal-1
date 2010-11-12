@@ -149,7 +149,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
 
     // Discontinuity in the stream time line detected
-    if (m_ullPrevTimeHW > hwClock)
+    if (m_ullPrevTimeHW > hwClock + 50 * UNITS)
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;

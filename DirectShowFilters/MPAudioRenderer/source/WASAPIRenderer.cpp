@@ -403,14 +403,6 @@ HRESULT WASAPIRenderer::AudioClock(ULONGLONG& pTimestamp, ULONGLONG& pQpc)
   if (m_dClockPosIn == m_dClockPosOut || m_dClockDataCollectionCount < CLOCK_DATA_SIZE)
     return S_FALSE;
 
-  // check for discontinuity point
-  if ((m_ullHwClock[m_dClockPosIn] < m_ullHwClock[m_dClockPosOut]) ||
-       m_ullHwQpc[m_dClockPosIn] < m_ullHwQpc[m_dClockPosOut])
-  {
-    ResetClockData();
-    return S_FALSE;
-  }
-
   //Log("m_dClockPosIn: %d m_dClockPosOut: %d diff: %I64u",m_dClockPosIn, m_dClockPosOut, m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut] );
 
   UINT64 clock = m_ullHwClock[m_dClockPosIn] - m_ullHwClock[m_dClockPosOut];
