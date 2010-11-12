@@ -112,7 +112,7 @@ namespace TvPlugin
           break;
 
         case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-          programs = Program.RetrieveWeeklyEveryTimeOnThisChannel(rec.StartTime, rec.EndTime, rec.ProgramName, rec.ReferencedChannel().IdChannel);
+          programs = Program.RetrieveWeeklyEveryTimeOnThisChannel(rec.StartTime, rec.EndTime, rec.ProgramName, rec.ReferencedChannel().IdChannel);          
           break;
       }
       recordings = AddProgramsToSchedulesList(rec, programs);
@@ -585,29 +585,34 @@ namespace TvPlugin
 
     private static bool StopRecAndDeleteSchedule(Schedule schedule, Schedule parentSchedule, int idChannel, DateTime canceledStartTime)
     {
-      bool wasDeleted = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
-
-      if (!wasDeleted && canceledStartTime == schedule.StartTime)
+      bool wasCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
+      bool wasDeleted = false;
+      if (canceledStartTime == schedule.StartTime)
       {
-        wasDeleted = DeleteSchedule(schedule.IdSchedule);
-        StopRecording(schedule);
+        bool isScheduleTypeOnce = IsScheduleTypeOnce(schedule.IdSchedule);
+
+        wasDeleted = StopRecording(schedule);
+        if (isScheduleTypeOnce && !wasDeleted)
+        {
+          wasDeleted = DeleteSchedule(schedule.IdSchedule);
+        }        
       }
             
       TvServer server = new TvServer();
-      server.OnNewSchedule();      
-      return wasDeleted;
+      server.OnNewSchedule();
+      return wasDeleted || wasCanceled;
     }
 
     private static bool StopRecAndDeleteEntireSchedule(Schedule schedule, Schedule parentSchedule, DateTime canceledStartTime)
     {
-      int idChannel = schedule.IdChannel;
-      bool wasDeleted = false;
-      bool episodeCanceled = CancelEpisode(canceledStartTime, parentSchedule, idChannel);
+      int idChannel = schedule.IdChannel;      
+      CancelEpisode(canceledStartTime, parentSchedule, idChannel);
       TvServer server = new TvServer();
-      StopRecording(schedule);      
-      wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);            
+      bool wasRecStopped = StopRecording(schedule);            
+      bool wasDeleted = DeleteEntireOrOnceSchedule(schedule, parentSchedule);              
+                        
       server.OnNewSchedule();
-      return wasDeleted;
+      return wasRecStopped || wasDeleted;
     }
 
     private static bool IsScheduleTypeOnce (int IdSchedule)
@@ -819,14 +824,17 @@ namespace TvPlugin
       return true;
     }
 
-    private static void StopRecording(Schedule schedule)
+    private static bool StopRecording(Schedule schedule)
     {
+      bool stoppedRec = false;
       bool isRec = TvDatabase.Schedule.IsScheduleRecording(schedule.IdSchedule);
       if (isRec)
       {
         TvServer server = new TvServer();
         server.StopRecordingSchedule(schedule.IdSchedule);
+        stoppedRec = true;
       }
+      return stoppedRec;
     }
 
     #endregion
