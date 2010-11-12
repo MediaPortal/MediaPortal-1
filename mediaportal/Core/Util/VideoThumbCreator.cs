@@ -46,8 +46,8 @@ namespace MediaPortal.Util
     {
       using (Settings xmlreader = new MPSettings())
       {
-        PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 2);
-        PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 2);
+        PreviewColumns = xmlreader.GetValueAsInt("thumbnails", "tvthumbcols", 1);
+        PreviewRows = xmlreader.GetValueAsInt("thumbnails", "tvthumbrows", 1);
         LeaveShareThumb = xmlreader.GetValueAsBool("thumbnails", "tvrecordedsharepreview", false);
         Log.Debug("VideoThumbCreator: Settings loaded - using {0} columns and {1} rows. Share thumb = {2}",
                   PreviewColumns, PreviewRows, LeaveShareThumb);
