@@ -237,6 +237,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
       WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
       WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
+      WriteRegistryKeyDword(hKey, WASAPIUseEventMode, WASAPIUseEventModeData);
       WriteRegistryKeyDword(hKey, devicePeriod, devicePeriodData);
       WriteRegistryKeyDword(hKey, enableAC3Encoding, enableAC3EncodingData);
       WriteRegistryKeyDword(hKey, AC3bitrate, AC3bitrateData);
