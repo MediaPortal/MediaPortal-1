@@ -149,6 +149,7 @@
     <Compile Include="Dialogs\GUIDialogMenu.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dialogs\GUIDialogNotifyLastFM.cs" />
     <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
     <Compile Include="Dialogs\GUIDialogDateTime.cs">
       <SubType>Code</SubType>

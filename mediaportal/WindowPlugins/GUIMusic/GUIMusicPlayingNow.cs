@@ -85,6 +85,9 @@ namespace MediaPortal.GUI.Music
       BEST_TAG_TRACKS = 28,
       BEST_ALBUM_TRACKS = 29,
 
+      BTN_LASTFM_LOVE = 30,
+      BTN_LASTFM_BAN = 31,
+
       LIST_TAG_INFO = 155,
       LIST_ALBUM_INFO = 166,
 
@@ -150,6 +153,8 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.VUMETER_LEFT)] protected GUIImage VUMeterLeft = null;
     [SkinControl((int)ControlIDs.VUMETER_RIGHT)] protected GUIImage VUMeterRight = null;
     [SkinControl((int)ControlIDs.LBL_FORCE_FOCUS)] protected GUILabelControl lblForceFocus = null;
+    [SkinControl((int)ControlIDs.BTN_LASTFM_LOVE)] protected GUIButtonControl btnLastFMLove = null;
+    [SkinControl((int)ControlIDs.BTN_LASTFM_BAN)] protected GUIButtonControl btnLastFMBan = null;
 
     #endregion
 
@@ -194,6 +199,7 @@ namespace MediaPortal.GUI.Music
     private bool _doArtistLookups = true;
     private bool _doAlbumLookups = true;
     private bool _doTrackTagLookups = true;
+    private bool _audioscrobblerEnabled = false;
     private bool _usingBassEngine = false;
     private bool _showVisualization = false;
     private bool _enqueueDefault = true;
@@ -238,6 +244,16 @@ namespace MediaPortal.GUI.Music
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
         _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
+
+        _audioscrobblerEnabled = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
+        if (btnLastFMLove != null)
+        {
+          btnLastFMLove.Label = GUILocalizeStrings.Get(34010); // love
+        }
+        if (btnLastFMBan != null)
+        {
+          btnLastFMBan.Label = GUILocalizeStrings.Get(34011); // ban
+        }
 
         if (ShowViz && VizName != "None")
         {
@@ -484,6 +500,14 @@ namespace MediaPortal.GUI.Music
               //  break;
           }
           break;
+
+         case Action.ActionType.ACTION_LASTFM_LOVE:
+           doLastFMLove();
+           break;
+
+         case Action.ActionType.ACTION_LASTFM_BAN:
+           doLastFMBan();
+           break;   
       }
     }
 
@@ -669,6 +693,18 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    {
+      if(control == btnLastFMLove)
+      {
+        doLastFMLove();
+      }
+      if(control == btnLastFMBan)
+      {
+        doLastFMBan();
+      }
+    }
+
     protected override void OnShowContextMenu()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -700,6 +736,12 @@ namespace MediaPortal.GUI.Music
       if (CurrentTrackTag != null)
       {
         dlg.AddLocalizedString(33040); // copy IRC spam
+      }
+
+      if (_audioscrobblerEnabled)
+      {
+        dlg.AddLocalizedString(34010); // love
+        dlg.AddLocalizedString(34011); // ban
       }
 
       dlg.DoModal(GetID);
@@ -833,6 +875,13 @@ namespace MediaPortal.GUI.Music
             Log.Error("GUIMusicPlayingNow: error while adding album tracks for {0} - {1}", CurrentTrackTag.Album,
                       ex.Message);
           }
+          break;
+
+        case 34010: //love 
+          doLastFMLove();
+          break;
+        case 34011: //ban
+          doLastFMBan();
           break;
       }
     }
@@ -2342,6 +2391,34 @@ namespace MediaPortal.GUI.Music
         Log.Warn("GUIMusicPlayingNow: Could not toggle rating stars - {0}", ex.Message);
       }
     }
+
+    private void doLastFMLove()
+    {
+      if (_audioscrobblerEnabled)
+      {
+        AudioscrobblerBase.DoLoveTrackNow();
+        GUIDialogNotifyLastFM dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+        dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+        string dlgText = GUILocalizeStrings.Get(34010)+" : " + AudioscrobblerBase.CurrentPlayingSong.Title;
+        dlgNotifyLastFM.SetText(dlgText);
+        dlgNotifyLastFM.TimeOut = 2;
+        dlgNotifyLastFM.DoModal(GetID);
+      }
+    }
+    
+    private void doLastFMBan()
+    {
+      if (_audioscrobblerEnabled)
+      {
+        AudioscrobblerBase.DoBanTrackNow();
+        GUIDialogNotifyLastFM dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+        dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
+        string dlgText = GUILocalizeStrings.Get(34011)+" : " + AudioscrobblerBase.CurrentPlayingSong.Title;
+        dlgNotifyLastFM.SetText(dlgText);
+        dlgNotifyLastFM.TimeOut = 2;
+        dlgNotifyLastFM.DoModal(GetID);
+      }
+    }    
 
     #endregion
   }

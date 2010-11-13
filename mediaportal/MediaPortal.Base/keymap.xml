@@ -1341,4 +1341,20 @@
       <description>BlueButton</description>
     </action>
   </window>
+  <window>
+    <id>510</id>
+    <description>My Music Now Playing</description>
+    <action>
+      <id>800</id>
+      <key>L</key>
+      <sound />
+      <description>LastFM Love</description>
+    </action>
+    <action>
+      <id>801</id>
+      <key>K</key>
+      <sound />
+      <description>LastFM Ban</description>
+    </action>
+  </window>
 </keymap>
