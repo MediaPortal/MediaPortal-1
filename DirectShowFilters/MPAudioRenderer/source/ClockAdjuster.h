@@ -26,11 +26,11 @@ public:
   void Reset();
   // get / set pair for the multiplier
   void SetAdjuster(double val);
-  double GetAdjustment();
+  double GetAdjustment() const;
   // returns the total adjustments made
-  INT64 GetAdjustments();
+  INT64 GetAdjustments() const;
   // returns the time over which the adjustments are made
-  INT64 GetTotalBaseTime();
+  INT64 GetTotalBaseTime() const;
   // reference clock delta in relation to this adjuster
   virtual INT64 Adjustment(INT64 time);
   // gets the delta relative to another adjustment value

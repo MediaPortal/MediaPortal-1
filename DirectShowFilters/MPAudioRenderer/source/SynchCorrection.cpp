@@ -92,7 +92,7 @@ void SynchCorrection::SetAVMult(double mult)
   m_dAVmult = 1.0 / mult;
 }
 
-double SynchCorrection::GetAVMult()
+double SynchCorrection::GetAVMult() const
 {
   return m_dAVmult;
 }
@@ -141,7 +141,7 @@ void SynchCorrection::SetAudioDelay(INT64 delay)
 {
   m_dAudioDelay = (double)delay;
 }
-INT64 SynchCorrection::GetAudioDelay()
+INT64 SynchCorrection::GetAudioDelay() const
 {
   return (INT64)m_dAudioDelay;
 }

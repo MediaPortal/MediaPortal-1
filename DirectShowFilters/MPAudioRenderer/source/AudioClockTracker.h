@@ -29,11 +29,11 @@ public:
   // informs code that a resample has been done
   void ResampleComplete(double sampleTime, double resampleTime, double bias, double adjustment, double AVMult);
   // debug information on amount processed (in non-corrected time)
-  INT64 GetAudioProcessed();
+  INT64 GetAudioProcessed() const;
   // debug information on amount processed through resampler
-  INT64 GetAudioResampled();
+  INT64 GetAudioResampled() const;
   // the current uncorrected drift
-  double GetCurrentDrift(double AVMult);
+  double GetCurrentDrift(double AVMult) const;
 
 protected:
 

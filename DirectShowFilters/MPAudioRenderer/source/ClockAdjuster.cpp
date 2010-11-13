@@ -39,17 +39,17 @@ void ClockAdjuster::SetAdjuster(double val)
   m_dMultVal = val;
 }
 
-double ClockAdjuster::GetAdjustment()
+double ClockAdjuster::GetAdjustment() const
 {
   return m_dMultVal;
 }
 
-INT64 ClockAdjuster::GetAdjustments()
+INT64 ClockAdjuster::GetAdjustments() const
 {
   return m_llAdjustmentsMade;
 }
 
-INT64 ClockAdjuster::GetTotalBaseTime()
+INT64 ClockAdjuster::GetTotalBaseTime() const
 {
   return m_ullTotalTime;
 }

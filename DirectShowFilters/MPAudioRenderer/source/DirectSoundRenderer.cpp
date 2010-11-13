@@ -423,8 +423,7 @@ HRESULT DirectSoundRenderer::WriteSampleToDSBuffer(IMediaSample *pMediaSample, b
   }
   if (SUCCEEDED(hr) && looped) *looped = loop;
 
-  if (mediaBufferResult)
-    free(mediaBufferResult);
+  free(mediaBufferResult);
 
   return hr;
 }

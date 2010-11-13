@@ -60,16 +60,16 @@ void AudioClockTracker::ResampleComplete(double sampleTime, double resampleTime,
   }
 }
 
-double AudioClockTracker::GetCurrentDrift(double AVMult)
+double AudioClockTracker::GetCurrentDrift(double AVMult) const
 {
   return m_dDriftedAudioProcessed - m_dUndriftedAudioProcessed * AVMult;
 }
 
-INT64 AudioClockTracker::GetAudioProcessed()
+INT64 AudioClockTracker::GetAudioProcessed() const
 {
   return m_llAudioProcessed;
 }
-INT64 AudioClockTracker::GetAudioResampled()
+INT64 AudioClockTracker::GetAudioResampled() const
 {
   return m_llAudioResampled;
 }

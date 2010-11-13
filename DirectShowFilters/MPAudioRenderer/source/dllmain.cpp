@@ -180,15 +180,18 @@ void Log(const char *fmt, ...)
     StartLogger();
   }
   char buffer[1000]; 
-  int tmp;
+  int ret;
   va_start(ap, fmt);
-  tmp = vsprintf(buffer, fmt, ap);
+  ret = vsprintf(buffer, fmt, ap);
   va_end(ap); 
+
+  if (ret < 0)
+    return;
 
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
-  char msg[5000];
-  sprintf_s(msg, 5000,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
+  char msg[500];
+  sprintf_s(msg, 500,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%03.3d [%5x] %s\n",
     systemTime.wDay, systemTime.wMonth, systemTime.wYear,
     systemTime.wHour, systemTime.wMinute, systemTime.wSecond,
     systemTime.wMilliseconds,

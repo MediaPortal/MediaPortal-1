@@ -50,7 +50,7 @@ public:
   // The current AV Drift (mult) value
   // This is the difference in hardware clocks
   void SetAVMult(double mult);
-  double GetAVMult();
+  double GetAVMult() const;
 
   // Used for the adjustment - it also corrects bias
   void SetAdjustment(double adjustment);
@@ -61,7 +61,7 @@ public:
 
   // gets and sets the audio delay in 10 shake units
   void SetAudioDelay(INT64 delay);
-  INT64 GetAudioDelay();
+  INT64 GetAudioDelay() const;
 
   // Recalculation of the delta value for the reference clock
   INT64 GetCorrectedTimeDelta(INT64 time);
