@@ -336,6 +336,7 @@ namespace MediaPortal.GUI.Library
                                                   _frameNoFocusName);
       _frameNoFocusControl.ParentControl = this;
       _frameNoFocusControl.DimColor = DimColor;
+      _frameNoFocusControl.MaskFileName = _maskFilename;
       _frameNoFocusControl.SetAnimations(ThumbAnimations);
 
 
@@ -344,6 +345,7 @@ namespace MediaPortal.GUI.Library
                                                 _frameFocusName);
       _frameFocusControl.ParentControl = this;
       _frameFocusControl.DimColor = DimColor;
+      _frameFocusControl.MaskFileName = _maskFilename;
       _frameFocusControl.SetAnimations(ThumbAnimations);
     }
 
@@ -523,7 +525,6 @@ namespace MediaPortal.GUI.Library
             _frameFocusControl.SetPosition(btn._positionX, btn._positionY);
             _frameFocusControl.Width = btn.Width;
             _frameFocusControl.Height = btn.Height;
-            _frameFocusControl.MaskFileName = _maskFilename;
             _frameFocusControl.Render(timePassed);
           }
 
@@ -711,7 +712,6 @@ namespace MediaPortal.GUI.Library
           _frameNoFocusControl.SetPosition(dwPosX, dwPosY);
           _frameNoFocusControl.Width = btn.Width + 2 * iOverSized;
           _frameNoFocusControl.Height = btn.Height + 2 * iOverSized;
-          _frameNoFocusControl.MaskFileName = _maskFilename;
           _frameNoFocusControl.Render(timePassed);
         }
         btn.Width = _textureWidth;
