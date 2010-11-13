@@ -45,7 +45,8 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_llDurationSystem(0),
   m_dSuggestedAudioMultiplier(1.0),
   m_ullPrevSystemTime(0),
-  m_ullPrivateTime(0)
+  m_ullPrivateTime(0),
+  m_bDiscontinuity(false)
 {
 }
 
@@ -77,10 +78,12 @@ double CSyncClock::Adjustment()
   return m_dAdjustment;
 }
 
-HRESULT CSyncClock::Run(REFERENCE_TIME /*tStart*/)
+HRESULT CSyncClock::Reset()
 {
+  CAutoLock cObjectLock(this);
   m_SynchCorrection.Reset();
   m_SynchCorrection.SetBias(m_dBias);
+  m_bDiscontinuity = true;
   return S_OK;
 }
 
@@ -133,7 +136,7 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
 
   HRESULT hr = m_pAudioRenderer->AudioClock(hwClock, hwQpc);
 
-  if (hr == S_OK && hwClock > 5000000)
+  if (hr == S_OK)
   {
     if (m_ullStartQpcHW == 0)
     {
@@ -148,12 +151,12 @@ REFERENCE_TIME CSyncClock::GetPrivateTime()
     m_llDurationHW = (hwClock - m_ullStartTimeHW);
     m_llDurationSystem = (qpcNow - m_ullStartTimeSystem); 
 
-    // Discontinuity in the stream time line detected
-    if (m_ullPrevTimeHW > hwClock + 50 * UNITS)
+    if (m_bDiscontinuity)
     {
       m_ullStartTimeHW = m_ullPrevTimeHW = hwClock;
       m_ullStartQpcHW = m_ullPrevQpcHW = hwQpc;
       m_ullStartTimeSystem = qpcNow;
+      m_bDiscontinuity = false;
     }
     else
     {

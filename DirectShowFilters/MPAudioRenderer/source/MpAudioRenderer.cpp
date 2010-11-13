@@ -525,7 +525,7 @@ STDMETHODIMP CMPAudioRenderer::Run(REFERENCE_TIME tStart)
 
   if (m_State == State_Running) return NOERROR;
 
-  m_pClock->Run(tStart);
+  m_pClock->Reset();
   m_pRenderDevice->Run(tStart);
 
   if (m_dRate >= 1.0 && m_pSoundTouch)
@@ -648,6 +648,7 @@ HRESULT CMPAudioRenderer::EndFlush()
   }
 
   m_pRenderDevice->EndFlush();
+  m_pClock->Reset();
 
   return CBaseRenderer::EndFlush(); 
 }

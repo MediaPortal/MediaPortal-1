@@ -36,7 +36,7 @@ public:
 
   double Bias();
   double Adjustment();
-  HRESULT Run(REFERENCE_TIME tStart);
+  HRESULT Reset();
   void GetClockData(CLOCKDATA *pClockData);
 
   void AudioResampled(double sourceLength, double resampleLength, double bias, double adjustment, double driftMultiplier);
@@ -66,6 +66,7 @@ private:
   UINT64 m_dwPrevSystemTime;
 
   bool m_bHWBasedRefClock;
+  bool m_bDiscontinuity;
 
   SynchCorrection m_SynchCorrection;
 
