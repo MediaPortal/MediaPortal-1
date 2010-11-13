@@ -442,25 +442,6 @@ namespace MediaPortal.GUI.Library
       btn.Width = _textureWidth;
       btn.Height = _textureHeight;
 
-      if (bFocus && Focus)
-      {
-        Viewport view = GUIGraphicsContext.DX9Device.Viewport;
-        view.Width = (_columnCount * _itemWidth) + _zoomXPixels + (_zoomXPixels / 2);
-        ;
-        view.Height = (_rowCount * _itemHeight) + _zoomYPixels + (_zoomYPixels / 2);
-        view.X -= _zoomXPixels / 2;
-        view.Y -= _zoomYPixels / 2;
-        if (view.X < 0)
-        {
-          view.X = 0;
-        }
-        if (view.Y < 0)
-        {
-          view.Y = 0;
-        }
-        GUIGraphicsContext.DX9Device.Viewport = view;
-      }
-
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
 
       long dwColor = _textColor;
@@ -765,27 +746,6 @@ namespace MediaPortal.GUI.Library
         iScrollYOffset = _itemHeight - _scrollCounter;
       }
 
-      Viewport oldview = GUIGraphicsContext.DX9Device.Viewport;
-      Viewport view = new Viewport();
-      float fx = (float)_positionX;
-      float fy = (float)_positionY;
-
-      if (fx <= 0)
-      {
-        fx = 0;
-      }
-      if (fy <= 0)
-      {
-        fy = 0;
-      }
-      view.X = (int)fx;
-      view.Y = (int)fy;
-      view.Width = _columnCount * _itemWidth;
-      view.Height = _rowCount * _itemHeight;
-      view.MinZ = 0.0f;
-      view.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = view;
-
       // Free unused textures if page has changed
       int iStartItem = _offset;
       int iEndItem = _rowCount * _columnCount + _offset;
@@ -912,8 +872,6 @@ namespace MediaPortal.GUI.Library
         RenderItem(timePassed, focusButton, Focus && !_controlUpDown.Focus, focusX, focusY, focusItem, true);
         RenderItem(timePassed, focusButton, Focus && !_controlUpDown.Focus, focusX, focusY, focusItem, false);
       }
-
-      GUIGraphicsContext.DX9Device.Viewport = oldview;
 
       //  _frames = 12;
       int iStep = _itemHeight / _frames;
@@ -1918,6 +1876,9 @@ namespace MediaPortal.GUI.Library
                                                     _textureHeight, _imageFolderNameFocus, _imageFolderName,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         btn.ParentControl = this;
+        btn.SetFocusedTextureMask(_maskFilename);
+        btn.SetNonFocusedTextureMask(_maskFilename);
+        btn.SetHoverTextureMask(_maskFilename);
         btn.AllocResources();
 
         _listButtons.Add(btn);
@@ -2276,26 +2237,17 @@ namespace MediaPortal.GUI.Library
       {
         fHeight = (float)viewportMaxY - fPosCY;
       }
-      Viewport newviewport = new Viewport();
-      Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-      newviewport.X = (int)fPosCX;
-      newviewport.Y = (int)fPosCY;
-      newviewport.Width = (int)(fwidth);
-      newviewport.Height = (int)(fHeight);
-      newviewport.MinZ = 0.0f;
-      newviewport.MaxZ = 1.0f;
 
-      // Sanity check for the ViewPort values. 
+      // Sanity check for the control boundary values. 
       // Fix for Mantis issue: 0001580: GUIThumbnailPanel causes flickering GUI on some cases
-      if (!(newviewport.X >= 0 && newviewport.Y >= 0 && newviewport.Width >= 0 && newviewport.Height >= 0))
+      if (!((int)fPosCX >= 0 && (int)fPosCY >= 0 && (int)(fwidth) >= 0 && (int)(fHeight) >= 0))
       {
         return;
       }
 
       if (!bScroll)
       {
-        _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)(fMaxWidth));
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+        _font.DrawTextWidth(fPosX, fPosY, dwTextColor, wszText, (int)(fMaxWidth), Alignment.ALIGN_LEFT);
         return;
       }
 
@@ -2305,7 +2257,6 @@ namespace MediaPortal.GUI.Library
       if (fTextWidth <= fMaxWidth)
       {
         _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)(fMaxWidth));
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
         return;
       }
       else
@@ -2404,7 +2355,6 @@ namespace MediaPortal.GUI.Library
             }
             if (fPosY >= 0.0)
             {
-              //              _font.DrawText((int) (fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _scrollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
               _font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _scrollText,
                              Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
             }
@@ -2417,7 +2367,6 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
       }
     }
 

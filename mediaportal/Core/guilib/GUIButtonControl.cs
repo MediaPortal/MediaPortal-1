@@ -68,6 +68,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "colorKey")] protected long _borderColorKeyTF = 0xFFFFFFFF;
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
+    [XMLSkin("textureFocus", "mask")] protected string _focusedTextureMask = "";
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
     [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
@@ -76,6 +77,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureNoFocus", "colorKey")] protected long _borderColorKeyTNF = 0xFFFFFFFF;
     [XMLSkin("textureNoFocus", "corners")] protected bool _borderHasCornersTNF = false;
     [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTNF = true;
+    [XMLSkin("textureNoFocus", "mask")] protected string _nonFocusedTextureMask = "";
     [XMLSkin("hover", "border")] protected string _strBorderH = "";
     [XMLSkin("hover", "position")] protected GUIImage.BorderPosition _borderPositionH = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
     [XMLSkin("hover", "textureRepeat")] protected bool _borderTextureRepeatH = false;
@@ -84,6 +86,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("hover", "colorKey")] protected long _borderColorKeyH = 0xFFFFFFFF;
     [XMLSkin("hover", "corners")] protected bool _borderHasCornersH = false;
     [XMLSkin("hover", "cornerRotate")] protected bool _borderCornerTextureRotateH = true;
+    [XMLSkin("hover", "mask")] protected string _hoverMask = "";
     [XMLSkin("textureFocus", "tileFill")] protected bool _textureFocusTileFill = false;
     [XMLSkin("textureNoFocus", "tileFill")] protected bool _textureNoFocusTileFill = false;
     [XMLSkin("hover", "tileFill")] protected bool _hoverTileFill = false;
@@ -157,6 +160,7 @@ namespace MediaPortal.GUI.Library
       _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
         _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
       TileFillTF = _textureFocusTileFill;
+      _imageFocused.MaskFileName = _focusedTextureMask;
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -167,6 +171,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
         _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
       TileFillTNF = _textureNoFocusTileFill;
+      _imageNonFocused.MaskFileName = _nonFocusedTextureMask;
 
       if (_hoverFilename != string.Empty)
       {
@@ -179,6 +184,7 @@ namespace MediaPortal.GUI.Library
         _hoverImage.SetBorder(_strBorderH, _borderPositionH, _borderTextureRepeatH, _borderTextureRotateH,
           _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
         TileFillH = _hoverTileFill;
+        _hoverImage.MaskFileName = _hoverMask;
       }
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
@@ -1046,6 +1052,33 @@ namespace MediaPortal.GUI.Library
     {
       get { return _hoverImage.TileFill; }
       set { _hoverImage.TileFill = value; }
+    }
+
+    public void SetFocusedTextureMask(string mask)
+    {
+      if (null != _imageFocused)
+      {
+        _focusedTextureMask = mask;
+        _imageFocused.MaskFileName = _focusedTextureMask;
+      }
+    }
+
+    public void SetNonFocusedTextureMask(string mask)
+    {
+      if (null != _imageNonFocused)
+      {
+        _nonFocusedTextureMask = mask;
+        _imageNonFocused.MaskFileName = _nonFocusedTextureMask;
+      }
+    }
+
+    public void SetHoverTextureMask(string mask)
+    {
+      if (null != _hoverImage)
+      {
+        _hoverMask = mask;
+        _hoverImage.MaskFileName = _hoverMask;
+      }
     }
   }
 }
