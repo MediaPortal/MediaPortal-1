@@ -819,7 +819,30 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
 
   TransformMatrix matrix(m);
+
+  //save original viewport
+  D3DVIEWPORT9 viewport;
+  m_pDevice->GetViewport(&viewport);
+
+  if ((x+nw <= viewport.X) || 
+    (y+nh <=viewport.Y) || 
+    (x >= viewport.X+viewport.Width) || 
+    (y >= viewport.Y+viewport.Height)) 
+  {
+    return;  // nothing to do everthing outside the view
+  }
+
+  D3DVIEWPORT9 viewportWholeScreen;
+  viewportWholeScreen.X=0;
+  viewportWholeScreen.Y=0;
+  viewportWholeScreen.Width =m_iScreenWidth;
+  viewportWholeScreen.Height=m_iScreenHeight;
+  viewportWholeScreen.MaxZ = 1.0; 
+  viewportWholeScreen.MinZ = 0.0;
+  m_pDevice->SetViewport(&viewportWholeScreen);
+
   FontEnginePresentTextures();
+  m_pDevice->SetViewport(&viewport);
 
   TEXTURE_DATA_T* texture1;
   TEXTURE_DATA_T* texture2;
