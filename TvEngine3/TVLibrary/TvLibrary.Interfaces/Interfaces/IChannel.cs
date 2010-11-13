@@ -47,6 +47,10 @@ namespace TvLibrary.Interfaces
     /// <returns>true, if the channels are on the same transponder</returns>
     bool IsDifferentTransponder(IChannel channel);
 
-    bool FreeToAir { get; }   
+    /// <summary>
+    /// Checks if the given channel is FTA. (Not scrambled)
+    /// </summary>
+    /// <returns>true, if the channel is FTA</returns>
+    bool FreeToAir { get; }
   }
 }
