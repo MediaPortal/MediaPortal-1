@@ -191,6 +191,8 @@ namespace MediaPortal.GUI.Library
     protected bool _showFrame = true;
     [XMLSkinElement("keepaspectratio")]
     protected bool _keepAspectRatio = true;
+    [XMLSkinElement("thumbMask")]
+    protected string _maskFilename = "";
 
     #endregion
 
@@ -521,6 +523,7 @@ namespace MediaPortal.GUI.Library
             _frameFocusControl.SetPosition(btn._positionX, btn._positionY);
             _frameFocusControl.Width = btn.Width;
             _frameFocusControl.Height = btn.Height;
+            _frameFocusControl.MaskFileName = _maskFilename;
             _frameFocusControl.Render(timePassed);
           }
 
@@ -555,9 +558,9 @@ namespace MediaPortal.GUI.Library
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
+            pImage.MaskFileName = _maskFilename;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.AllocResources();
-
             pItem.Thumbnail = pImage;
             pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY);
             pImage.DimColor = DimColor;
@@ -590,6 +593,7 @@ namespace MediaPortal.GUI.Library
           pImage.Width = _thumbNailWidth + 2 * iOverSized;
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
           pImage.Centered = true;
+          pImage.MaskFileName = _maskFilename;
           pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized, _yPositionThumbNail - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
           if (bFocus || !Focus)
@@ -623,6 +627,7 @@ namespace MediaPortal.GUI.Library
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
+            pImage.MaskFileName = _maskFilename;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
 
             pImage.AllocResources();
@@ -655,6 +660,7 @@ namespace MediaPortal.GUI.Library
             }
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.Centered = true;
+            pImage.MaskFileName = _maskFilename;
             pImage.Width = _thumbNailWidth + 2 * iOverSized;
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
             pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY);
@@ -705,6 +711,7 @@ namespace MediaPortal.GUI.Library
           _frameNoFocusControl.SetPosition(dwPosX, dwPosY);
           _frameNoFocusControl.Width = btn.Width + 2 * iOverSized;
           _frameNoFocusControl.Height = btn.Height + 2 * iOverSized;
+          _frameNoFocusControl.MaskFileName = _maskFilename;
           _frameNoFocusControl.Render(timePassed);
         }
         btn.Width = _textureWidth;
