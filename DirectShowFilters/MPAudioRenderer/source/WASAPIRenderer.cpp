@@ -536,16 +536,8 @@ HRESULT	WASAPIRenderer::DoRenderSample(IMediaSample *pMediaSample, LONGLONG /*pS
   REFERENCE_TIME rtStop = 0;
   
   DWORD flags = 0;
-  BYTE* pMediaBuffer = NULL;
-  BYTE* mediaBufferResult = NULL; 
-
-  BYTE* pInputBufferPointer = NULL;
-  BYTE* pInputBufferEnd = NULL;
-  BYTE* pData = NULL;
 
   m_nBufferSize = pMediaSample->GetActualDataLength();
-  long lSize = m_nBufferSize;
-  long lResampledSize = 0;
 
   pMediaSample->GetTime(&rtStart, &rtStop);
   
@@ -697,7 +689,7 @@ HRESULT WASAPIRenderer::GetAudioDevice(IMMDevice **ppMMDevice)
 
   Log("Target end point: %S", m_pRenderer->Settings()->m_wWASAPIPreferredDeviceId);
 
-  if (GetAvailableAudioDevices(&devices, false) == S_OK)
+  if (GetAvailableAudioDevices(&devices, false) == S_OK && devices)
   {
     UINT count(0);
     hr = devices->GetCount(&count);
@@ -1311,7 +1303,6 @@ DWORD WASAPIRenderer::RenderThread()
       // Interface lock should keep us safe from different threads closing down the audio client
       if (m_pAudioClient && m_pRenderClient && m_bIsAudioClientStarted)
       {
-        DWORD bufferFlags = 0;
         BYTE* data = NULL;
         
         m_pAudioClient->GetBufferSize(&bufferSize);
@@ -1329,6 +1320,8 @@ DWORD WASAPIRenderer::RenderThread()
         hr = m_pRenderClient->GetBuffer(bufferSize - currentPadding, &data);
         if (SUCCEEDED(hr))
         {
+          DWORD bufferFlags = 0;
+
           if (writeSilence || !sample)
             bufferFlags = AUDCLNT_BUFFERFLAGS_SILENT;
           else if (sample) // we have at least some data to be written
