@@ -266,10 +266,6 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\XPImapiBurner\XPImapiBurner.csproj">
-      <Project>{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}</Project>
-      <Name>XPImapiBurner</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
@@ -277,14 +273,6 @@
     </Compile>
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="GUIBurner\BurnVideoDVD.cs" />
-    <Compile Include="GUIBurner\BurnDataDVD.cs" />
-    <Compile Include="GUIBurner\BurnDVDEvents.cs" />
-    <Compile Include="GUIBurner\GUIBurner.cs" />
-    <Compile Include="GUIBurner\MadlldlibWrapper.cs" />
-    <Compile Include="GUIBurner\SetupForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="GUIDisc\GUIDisc.cs" />
     <Compile Include="GUIMusic\GUIMusicMenu.cs" />
@@ -588,10 +576,6 @@
     <Compile Include="VideoEditor\VideoEditorPreview.cs" />
     <Compile Include="VideoEditor\VideoEditorSettings.cs" />
     <Compile Include="VideoEditor\VideoEditorSetup.cs" />
-    <EmbeddedResource Include="GUIBurner\SetupForm.resx">
-      <DependentUpon>SetupForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
@@ -677,12 +661,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUISettings\SettingsDisabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUIBurner\Burner.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="GUIBurner\BurnerDisabled.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUINumberPlace\NumberPlace.gif" />
