@@ -1752,6 +1752,7 @@
     <String id="100509">Music/Lookup/Progress</String>
     <String id="100510">Music/Now playing</String>
     <String id="100511">Music/Fullscreen</String>
+	<String id="100512">LastFM Love/Ban</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Scheduler</String>
     <String id="100602">TV/fullscreen</String>
