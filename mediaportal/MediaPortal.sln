@@ -23,9 +23,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSetup", "PostSetup\PostSetup.csproj", "{57137A99-FD0A-4A3C-9B51-0DA10DCDE7A6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
-	ProjectSection(ProjectDependencies) = postProject
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
-	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -46,7 +43,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPo
 		{68168FAA-A363-4F64-981C-32629A537900} = {68168FAA-A363-4F64-981C-32629A537900}
 		{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D} = {DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}
 		{6DA0E4DF-6230-4642-98B5-E690BB6942BB} = {6DA0E4DF-6230-4642-98B5-E690BB6942BB}
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7} = {F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dialogs", "Dialogs\Dialogs.csproj", "{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}"
@@ -68,8 +64,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller", "MPInstaller\MPInstaller.csproj", "{11ADEC11-8343-40AD-8AE1-F5AF63F3D7DE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPInstaller.Library", "MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj", "{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XPImapiBurner", "XPImapiBurner\XPImapiBurner.csproj", "{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WatchDog", "WatchDog\WatchDog.csproj", "{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}"
 EndProject
@@ -271,14 +265,6 @@ Global
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
 		{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Debug|x86.ActiveCfg = Debug|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Debug|x86.Build.0 = Debug|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Release|x86.ActiveCfg = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.Release|x86.Build.0 = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.UseCaptureCardDefinitions|x86.ActiveCfg = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.UseCaptureCardDefinitions|x86.Build.0 = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.UseCaptureDefintionsRelease|x86.ActiveCfg = Release|x86
-		{F2B349EB-67F5-48E3-9BE2-EC5BA8F010C7}.UseCaptureDefintionsRelease|x86.Build.0 = Release|x86
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|x86.ActiveCfg = Debug|x86
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Debug|x86.Build.0 = Debug|x86
 		{2B094D86-DD1A-4DDD-95D2-56A57E714C4E}.Release|x86.ActiveCfg = Release|x86
