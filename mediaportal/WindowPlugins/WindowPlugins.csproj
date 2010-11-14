@@ -555,27 +555,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="VideoEditor\BufferedTsFileReader.cs" />
-    <Compile Include="VideoEditor\CompressSettings.cs" />
-    <Compile Include="VideoEditor\Converter.cs" />
-    <Compile Include="VideoEditor\DvrMsModifier.cs" />
-    <Compile Include="VideoEditor\EditSettings.cs" />
-    <Compile Include="VideoEditor\GUIVideoEditor.cs" />
-    <Compile Include="VideoEditor\Mpeg2Divx.cs" />
-    <Compile Include="VideoEditor\Mpeg2Splitter.cs" />
-    <Compile Include="VideoEditor\MpegModifier.cs" />
-    <Compile Include="VideoEditor\PcrUtils.cs" />
-    <Compile Include="VideoEditor\TimeDomain.cs" />
-    <Compile Include="VideoEditor\TsFileCutter.cs" />
-    <Compile Include="VideoEditor\VideoEditorConfiguration.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="VideoEditor\VideoEditorConfiguration.Designer.cs">
-      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VideoEditor\VideoEditorPreview.cs" />
-    <Compile Include="VideoEditor\VideoEditorSettings.cs" />
-    <Compile Include="VideoEditor\VideoEditorSetup.cs" />
     <EmbeddedResource Include="Home\GUIHomeSetupForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>GUIHomeSetupForm.cs</DependentUpon>
@@ -602,10 +581,6 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VideoEditor\VideoEditorConfiguration.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>VideoEditorConfiguration.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -673,12 +648,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Home\Homemenu_disabled.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VideoEditor\VideoEditor.gif" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VideoEditor\VideoEditor_disabled.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="GUITopbar\Topbar.gif" />
