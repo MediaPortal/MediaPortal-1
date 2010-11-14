@@ -232,8 +232,10 @@ void FontEngineInitialize(int screenWidth, int screenHeight, int poolFormat)
   if(poolFormat==0)
   {
     m_ipoolFormat = D3DPOOL_DEFAULT;
-    m_usage = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
-    m_lock = D3DLOCK_DISCARD;
+    //m_usage = D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY;
+    //m_lock = D3DLOCK_DISCARD;
+    m_usage = D3DUSAGE_WRITEONLY;
+    m_lock = 0;
   }
   else
   {
