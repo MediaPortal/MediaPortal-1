@@ -173,20 +173,7 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KCS.Utilities, Version=1.1.1.2, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\KCS.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.DirectX, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
     <Reference Include="Microsoft.DirectX.Direct3D, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.Direct3DX, Version=1.0.2911.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
-      <SpecificVersion>True</SpecificVersion>
-    </Reference>
-    <Reference Include="Microsoft.DirectX.DirectDraw, Version=1.0.2902.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35">
       <SpecificVersion>True</SpecificVersion>
     </Reference>
     <Reference Include="System">
@@ -195,17 +182,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
-    </Reference>
-    <Reference Include="System.Drawing.Design">
-      <Name>System.Drawing.Design</Name>
-    </Reference>
-    <Reference Include="System.Management">
-      <Name>System.Management</Name>
     </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
@@ -218,14 +196,6 @@
     </Reference>
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
-    </Reference>
-    <Reference Include="xAPMessage, Version=1.2.9.8, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\xAPMessage.dll</HintPath>
-    </Reference>
-    <Reference Include="xAPTransport, Version=1.2.9.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\xAPTransport.dll</HintPath>
     </Reference>
     <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
@@ -246,17 +216,9 @@
       <Project>{396C5208-5D46-4A11-92C1-FD0F2F42D7DD}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\ExternalPlayers\ExternalPlayers.csproj">
-      <Project>{DFAB8CDD-A6BA-4A87-930F-CB09B30C1C9D}</Project>
-      <Name>ExternalPlayers</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MiniDisplayLibrary\MiniDisplayLibrary.csproj">
       <Project>{8635D515-A5D4-4FB7-BD30-71770651E18B}</Project>
       <Name>MiniDisplayLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MPInstaller\MPInstaller.Library\MPInstaller.Library.csproj">
-      <Project>{BD406DA4-3CD7-4D77-92EB-DAEC22763E55}</Project>
-      <Name>MPInstaller.Library</Name>
     </ProjectReference>
     <ProjectReference Include="..\RemotePlugins\RemotePlugins.csproj">
       <Project>{0A234721-1F13-4DF8-9B1E-64D9E3111203}</Project>
