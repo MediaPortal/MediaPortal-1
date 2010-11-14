@@ -58,7 +58,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("thumbHeightBig")] protected int _heightThumbBig = 0;
 
     [XMLSkinElement("imageFolder")] protected string _imageFolderName = "";
+    [XMLSkin("imageFolder", "mask")] protected string _imageFolderMask = "";
     [XMLSkinElement("imageFolderFocus")] protected string _imageFolderNameFocus = "";
+    [XMLSkin("imageFolderFocus", "mask")] protected string _imageFolderFocusMask = "";
 
     [XMLSkinElement("enableFocusZoom")] protected bool _enableFocusZoom = true;
 
@@ -115,18 +117,22 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("InfoImage")] protected string _infoImageName;
     [XMLSkinElement("unfocusedAlpha")] protected int _unfocusedAlpha = 0xFF;
     [XMLSkinElement("frame")] protected string _frameName = "";
+    [XMLSkin("frame", "mask")] protected string _frameMask = "";
     [XMLSkinElement("showFrame")] protected bool _showFrame = true;
     [XMLSkinElement("showFolder")] protected bool _showFolder = true;
     [XMLSkinElement("frameFocus")] protected string _frameFocusName = "";
+    [XMLSkin("frameFocus", "mask")] protected string _frameFocusMask = "";
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
 
     [XMLSkin("thumbs", "flipX")] protected bool _flipX = false;
     [XMLSkin("thumbs", "flipY")] protected bool _flipY = false;
     [XMLSkin("thumbs", "diffuse")] protected string _diffuseFileName = "";
+    [XMLSkin("thumbs", "mask")] protected string _textureMask = "";
 
     [XMLSkin("InfoImage", "flipX")] protected bool _flipInfoImageX = false;
     [XMLSkin("InfoImage", "flipY")] protected bool _flipInfoImageY = false;
     [XMLSkin("InfoImage", "diffuse")] protected string _diffuseInfoImageFileName = "";
+    [XMLSkin("InfoImage", "mask")] protected string _infoImageMask = "";
 
     [XMLSkinElement("textXOff")] protected int _textXOff = 0;
     [XMLSkinElement("textYOff")] protected int _textYOff = 0;
@@ -229,6 +235,7 @@ namespace MediaPortal.GUI.Library
         anim.FlipX = _flipX;
         anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
+        anim.MaskFileName = _imageFolderMask;
         anim.SetAnimations(ThumbAnimations);
         _imageFolder.Add(anim);
 
@@ -239,6 +246,7 @@ namespace MediaPortal.GUI.Library
         anim.FlipX = _flipX;
         anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
+        anim.MaskFileName = _imageFolderFocusMask;
         anim.SetAnimations(ThumbAnimations);
         _imageFolderFocus.Add(anim);
 
@@ -249,6 +257,7 @@ namespace MediaPortal.GUI.Library
         //anim.FlipX = _flipX;
         //anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
+        anim.MaskFileName = _frameMask;
         anim.SetAnimations(ThumbAnimations);
         _frameControl.Add(anim);
 
@@ -259,6 +268,7 @@ namespace MediaPortal.GUI.Library
         //anim.FlipX = _flipX;
         //anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
+        anim.MaskFileName = _frameFocusMask;
         anim.SetAnimations(ThumbAnimations);
         _frameFocusControl.Add(anim);
       }
@@ -302,6 +312,7 @@ namespace MediaPortal.GUI.Library
       _imageInfo.FlipX = _flipInfoImageX;
       _imageInfo.FlipY = _flipInfoImageY;
       _imageInfo.DiffuseFileName = _diffuseInfoImageFileName;
+      _imageInfo.MaskFileName = _infoImageMask;
 
       SetThumbDimensionsLow(_thumbNailPositionX, _thumbNailPositionY, _thumbNailWidth, _thumbNailHeight);
       SetTextureDimensions(_textureWidth, _textureHeight);
@@ -473,6 +484,7 @@ namespace MediaPortal.GUI.Library
           pImage.FlipX = _flipX;
           pImage.FlipY = _flipY;
           pImage.DiffuseFileName = _diffuseFileName;
+          pImage.MaskFileName = _textureMask;
           pImage.SetAnimations(ThumbAnimations);
           pImage.AllocResources();
 
@@ -548,6 +560,7 @@ namespace MediaPortal.GUI.Library
             pImage.SetPosition(_thumbNailPositionX + dwPosX - iOverSized + xOff,
                                _thumbNailPositionY - iOverSized + dwPosY + yOff);
             pImage.DimColor = DimColor;
+            pImage.MaskFileName = _textureMask;
 
             if (itemFocused)
             {

@@ -145,8 +145,12 @@ namespace MediaPortal.GUI.Library
     protected string _downTextureNameFocus = "";
     [XMLSkinElement("imageFolder")]
     protected string _imageFolderName = "";
+    [XMLSkin("imageFolder", "mask")]
+    protected string _imageFolderMask = "";
     [XMLSkinElement("imageFolderFocus")]
     protected string _imageFolderNameFocus = "";
+    [XMLSkin("imageFolderFocus", "mask")]
+    protected string _imageFolderFocusMask = "";
 
     [XMLSkinElement("thumbPosXBig")]
     protected int _positionXThumbBig = 0;
@@ -185,14 +189,19 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("frameNoFocus")]
     protected string _frameNoFocusName = "";
+    [XMLSkin("frameNoFocus", "mask")]
+    protected string _frameNoFocusMask = "";
     [XMLSkinElement("frameFocus")]
     protected string _frameFocusName = "";
+    [XMLSkin("frameFocus", "mask")]
+    protected string _frameFocusMask = "";
     [XMLSkinElement("showFrame")]
     protected bool _showFrame = true;
     [XMLSkinElement("keepaspectratio")]
     protected bool _keepAspectRatio = true;
-    [XMLSkinElement("thumbMask")]
-    protected string _maskFilename = "";
+
+    [XMLSkinElement("textureMask")]
+    protected string _textureMask = "";
 
     #endregion
 
@@ -336,7 +345,7 @@ namespace MediaPortal.GUI.Library
                                                   _frameNoFocusName);
       _frameNoFocusControl.ParentControl = this;
       _frameNoFocusControl.DimColor = DimColor;
-      _frameNoFocusControl.MaskFileName = _maskFilename;
+      _frameNoFocusControl.MaskFileName = _frameNoFocusMask;
       _frameNoFocusControl.SetAnimations(ThumbAnimations);
 
 
@@ -345,7 +354,7 @@ namespace MediaPortal.GUI.Library
                                                 _frameFocusName);
       _frameFocusControl.ParentControl = this;
       _frameFocusControl.DimColor = DimColor;
-      _frameFocusControl.MaskFileName = _maskFilename;
+      _frameFocusControl.MaskFileName = _frameFocusMask;
       _frameFocusControl.SetAnimations(ThumbAnimations);
     }
 
@@ -540,7 +549,7 @@ namespace MediaPortal.GUI.Library
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
-            pImage.MaskFileName = _maskFilename;
+            pImage.MaskFileName = _textureMask;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.AllocResources();
             pItem.Thumbnail = pImage;
@@ -575,7 +584,7 @@ namespace MediaPortal.GUI.Library
           pImage.Width = _thumbNailWidth + 2 * iOverSized;
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
           pImage.Centered = true;
-          pImage.MaskFileName = _maskFilename;
+          pImage.MaskFileName = _textureMask;
           pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized, _yPositionThumbNail - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
           if (bFocus || !Focus)
@@ -609,7 +618,7 @@ namespace MediaPortal.GUI.Library
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
             pImage.Centered = true;
-            pImage.MaskFileName = _maskFilename;
+            pImage.MaskFileName = _textureMask;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
 
             pImage.AllocResources();
@@ -642,7 +651,7 @@ namespace MediaPortal.GUI.Library
             }
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.Centered = true;
-            pImage.MaskFileName = _maskFilename;
+            pImage.MaskFileName = _textureMask;
             pImage.Width = _thumbNailWidth + 2 * iOverSized;
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
             pImage.SetPosition(_xPositionThumbNail - iOverSized + dwPosX, _yPositionThumbNail - iOverSized + dwPosY);
@@ -1876,9 +1885,9 @@ namespace MediaPortal.GUI.Library
                                                     _textureHeight, _imageFolderNameFocus, _imageFolderName,
                                                     _shadowAngle, _shadowDistance, _shadowColor);
         btn.ParentControl = this;
-        btn.SetFocusedTextureMask(_maskFilename);
-        btn.SetNonFocusedTextureMask(_maskFilename);
-        btn.SetHoverTextureMask(_maskFilename);
+        btn.SetFocusedTextureMask(_textureMask);
+        btn.SetNonFocusedTextureMask(_textureMask);
+        btn.SetHoverTextureMask(_textureMask);
         btn.AllocResources();
 
         _listButtons.Add(btn);
