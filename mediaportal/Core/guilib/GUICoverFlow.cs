@@ -513,9 +513,16 @@ namespace MediaPortal.GUI.Library
             {
               if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
               {
+                // We require mouse support for the scrollbar to respond properly.  Temporarily bypass the global setting to allow
+                // the action to work for us.
+                bool ms = GUIGraphicsContext.MouseSupport;
+                GUIGraphicsContext.MouseSupport = true;
+
                 _horizontalScrollbar.OnAction(action);
                 int index = (int)((_horizontalScrollbar.Percentage / 100.0f) * _listItems.Count);
                 SelectCardIndex(index);
+
+                GUIGraphicsContext.MouseSupport = ms;
               }
             }
           }
@@ -1338,24 +1345,12 @@ namespace MediaPortal.GUI.Library
             _horizontalScrollbar.Percentage = fPercent;
           }
 
-          int w = _horizontalScrollbar.Width;
-          int h = _horizontalScrollbar.Height;
-          GUIGraphicsContext.ScaleHorizontal(ref w);
-          GUIGraphicsContext.ScaleVertical(ref h);
-          _horizontalScrollbar.Width = w;
-          _horizontalScrollbar.Height = h;
-
-          int x = _horizontalScrollbar.XPosition;
-          int y = _horizontalScrollbar.YPosition;
-          GUIGraphicsContext.ScalePosToScreenResolution(ref x, ref y);
-          _horizontalScrollbar.XPosition = x;
-          _horizontalScrollbar.YPosition = y;
-
           // The scrollbar is only rendered when the mouse support is enabled.  Temporarily bypass the global setting to allow
           // the skin to determine whether or not it should be displayed.
           bool ms = GUIGraphicsContext.MouseSupport;
           GUIGraphicsContext.MouseSupport = true;
 
+          _horizontalScrollbar.IsVisible = _showScrollbar;  // Guarantee that the scrollbar is visible based on skin setting.
           _horizontalScrollbar.Render(timePassed);
 
           GUIGraphicsContext.MouseSupport = ms;
