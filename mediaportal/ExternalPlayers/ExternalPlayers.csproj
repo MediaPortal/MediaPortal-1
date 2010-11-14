@@ -168,23 +168,11 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data">
-      <Name>System.Data</Name>
-    </Reference>
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
-    <Reference Include="System.Web">
-      <Name>System.Web</Name>
-    </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Name>System.XML</Name>
     </Reference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Name>Core</Name>
@@ -203,12 +191,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Foobar\FoobarConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Foobar\FoobarPlugin.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Itunes\ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -224,21 +206,12 @@
     <Compile Include="Winamp\WinampPlugin.cs">
       <SubType>Code</SubType>
     </Compile>
-    <EmbeddedResource Include="Foobar\FoobarConfigForm.resx">
-      <DependentUpon>FoobarConfigForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Itunes\ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Winamp\ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Foobar\foobarlogo.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Foobar\foobarlogodisabled.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Winamp\WinampLogo.png" />
