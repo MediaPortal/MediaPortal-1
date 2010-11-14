@@ -477,9 +477,6 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Plugins\Windows"
   File "${svn_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
   File "${svn_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
-  ; MyBurner plugin dependencies
-  SetOutPath "$MPdir.Base"
-  File "${svn_MP}\XPImapiBurner\bin\${BUILD_TYPE}\XPBurnComponent.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
   File "${svn_MP}\Docs\BASS License.txt"
@@ -600,8 +597,6 @@ SectionEnd
   Delete "$MPdir.Plugins\Windows\WindowPlugins.dll"
   RMDir "$MPdir.Plugins\Windows"
   RMDir "$MPdir.Plugins"
-  ; MyBurner plugin dependencies
-  Delete "$MPdir.Base\XPBurnComponent.dll"
   ; Doc
   Delete "$MPdir.Base\Docs\BASS License.txt"
   Delete "$MPdir.Base\Docs\MediaPortal License.rtf"
