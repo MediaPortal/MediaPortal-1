@@ -251,12 +251,6 @@
     <Compile Include="AudioScrobbler\AudioscrobblerSettings.Designer.cs">
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="MameDevice\MameDevice.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MameDevice\MappingForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="MiniDisplay\MiniDisplay.cs" />
     <Compile Include="MiniDisplay\SetupForm.cs">
       <SubType>Form</SubType>
@@ -294,9 +288,6 @@
     <EmbeddedResource Include="AudioScrobbler\AudioscrobblerSettings.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AudioscrobblerSettings.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MameDevice\MappingForm.resx">
-      <DependentUpon>MappingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
