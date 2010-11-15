@@ -79,6 +79,23 @@ namespace MediaPortal.GUI.Library
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
+      _properties["#albumartist"] = string.Empty;
+      _properties["#bitrate"] = string.Empty;
+      _properties["#composer"] = string.Empty;
+      _properties["#conductor"] = string.Empty;
+      _properties["#discid"] = string.Empty;
+      _properties["#disctotal"] = string.Empty;
+      _properties["#lyrics"] = string.Empty;
+      _properties["#timesplayed"] = string.Empty;
+      _properties["#tracktotal"] = string.Empty;
+      _properties["#filetype"] = string.Empty;
+      _properties["#codec"] = string.Empty;
+      _properties["#bitratemode"] = string.Empty;
+      _properties["#bpm"] = string.Empty;
+      _properties["#channels"] = string.Empty;
+      _properties["#samplerate"] = string.Empty;
+      _properties["#datelastplayed"] = string.Empty;
+      _properties["#dateadded"] = string.Empty;
       _properties["#thumb"] = string.Empty;
       _properties["#currentplaytime"] = string.Empty;
       _properties["#currentremaining"] = string.Empty;
@@ -220,6 +237,38 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Lastfm.ArtistInfo"] = string.Empty;
       _properties["#Play.Current.Lastfm.CurrentStream"] = string.Empty;
 
+      _properties["#Play.Current.AlbumArtist"] = string.Empty;
+      _properties["#Play.Current.BitRate"] = string.Empty;
+      _properties["#Play.Current.Composer"] = string.Empty;
+      _properties["#Play.Current.Conductor"] = string.Empty;
+      _properties["#Play.Current.DiscID"] = string.Empty;
+      _properties["#Play.Current.DiscTotal"] = string.Empty;
+      _properties["#Play.Current.Lyrics"] = string.Empty;
+      _properties["#Play.Current.TimesPlayed"] = string.Empty;
+      _properties["#Play.Current.TrackTotal"] = string.Empty;
+      _properties["#Play.Current.FileType"] = string.Empty;
+      _properties["#Play.Current.Codec"] = string.Empty;
+      _properties["#Play.Current.BitRateMode"] = string.Empty;
+      _properties["#Play.Current.BPM"] = string.Empty;
+      _properties["#Play.Current.Channels"] = string.Empty;
+      _properties["#Play.Current.SampleRate"] = string.Empty;
+      _properties["#Play.Current.DateLastPlayed"] = string.Empty;
+      _properties["#Play.Current.DateAdded"] = string.Empty;
+
+      _properties["#Play.AlbumInfo.Review"] = string.Empty;
+      _properties["#Play.AlbumInfo.Rating"] = string.Empty;
+      _properties["#Play.AlbumInfo.Genre"] = string.Empty;
+      _properties["#Play.AlbumInfo.Styles"] = string.Empty;
+      _properties["#Play.AlbumInfo.Tones"] = string.Empty;
+      _properties["#Play.AlbumInfo.Year"] = string.Empty;
+      _properties["#Play.ArtistInfo.Bio"] = string.Empty;
+      _properties["#Play.ArtistInfo.Born"] = string.Empty;
+      _properties["#Play.ArtistInfo.Genres"] = string.Empty;
+      _properties["#Play.ArtistInfo.Instruments"] = string.Empty;
+      _properties["#Play.ArtistInfo.Styles"] = string.Empty;
+      _properties["#Play.ArtistInfo.Tones"] = string.Empty;
+      _properties["#Play.ArtistInfo.YearsActive"] = string.Empty;
+
       _properties["#Play.Next.Thumb"] = string.Empty;
       _properties["#Play.Next.File"] = string.Empty;
       _properties["#Play.Next.Title"] = string.Empty;
@@ -244,6 +293,25 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.Runtime"] = string.Empty;
       _properties["#Play.Next.MPAARating"] = string.Empty;
       _properties["#Play.Next.IsWatched"] = string.Empty;
+
+      _properties["#Play.Next.AlbumArtist"] = string.Empty;
+      _properties["#Play.Next.BitRate"] = string.Empty;
+      _properties["#Play.Next.Comment"] = string.Empty;
+      _properties["#Play.Next.Composer"] = string.Empty;
+      _properties["#Play.Next.Conductor"] = string.Empty;
+      _properties["#Play.Next.DiscID"] = string.Empty;
+      _properties["#Play.Next.DiscTotal"] = string.Empty;
+      _properties["#Play.Next.Lyrics"] = string.Empty;
+      _properties["#Play.Next.TimesPlayed"] = string.Empty;
+      _properties["#Play.Next.TrackTotal"] = string.Empty;
+      _properties["#Play.Next.FileType"] = string.Empty;
+      _properties["#Play.Next.Codec"] = string.Empty;
+      _properties["#Play.Next.BitRateMode"] = string.Empty;
+      _properties["#Play.Next.BPM"] = string.Empty;
+      _properties["#Play.Next.Channels"] = string.Empty;
+      _properties["#Play.Next.SampleRate"] = string.Empty;
+      _properties["#Play.Next.DateLastPlayed"] = string.Empty;
+      _properties["#Play.Next.DateAdded"] = string.Empty;
 
       _properties["#Lastfm.Rating.AlbumTrack1"] = string.Empty;
       _properties["#Lastfm.Rating.AlbumTrack2"] = string.Empty;
@@ -370,7 +438,29 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
-
+      SetProperty("#Play.Current.AlbumArtist", string.Empty);
+      SetProperty("#Play.Current.BitRate", string.Empty);
+      SetProperty("#Play.Current.Comment", string.Empty);
+      SetProperty("#Play.Current.Composer", string.Empty);
+      SetProperty("#Play.Current.Conductor", string.Empty);
+      SetProperty("#Play.Current.DiscID", string.Empty);
+      SetProperty("#Play.Current.DiscTotal", string.Empty);
+      SetProperty("#Play.Current.Lyrics", string.Empty);
+      SetProperty("#Play.Current.TimesPlayed", string.Empty);
+      SetProperty("#Play.Current.TrackTotal", string.Empty);
+      SetProperty("#Play.AlbumInfo.Review", string.Empty);
+      SetProperty("#Play.AlbumInfo.Rating", string.Empty);
+      SetProperty("#Play.AlbumInfo.Genre", string.Empty);
+      SetProperty("#Play.AlbumInfo.Styles", string.Empty);
+      SetProperty("#Play.AlbumInfo.Tones", string.Empty);
+      SetProperty("#Play.AlbumInfo.Year", string.Empty);
+      SetProperty("#Play.ArtistInfo.Bio", string.Empty);
+      SetProperty("#Play.ArtistInfo.Born", string.Empty);
+      SetProperty("#Play.ArtistInfo.Genres", string.Empty);
+      SetProperty("#Play.ArtistInfo.Instruments", string.Empty);
+      SetProperty("#Play.ArtistInfo.Styles", string.Empty);
+      SetProperty("#Play.ArtistInfo.Tones", string.Empty);
+      SetProperty("#Play.ArtistInfo.YearsActive", string.Empty);
 
       SetProperty("#Play.Next.Thumb", string.Empty);
       SetProperty("#Play.Next.File", string.Empty);
@@ -396,6 +486,17 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.Runtime", string.Empty);
       SetProperty("#Play.Next.MPAARating", string.Empty);
       SetProperty("#Play.Next.IsWatched", string.Empty);
+
+      SetProperty("#Play.Next.AlbumArtist", string.Empty);
+      SetProperty("#Play.Next.BitRate", string.Empty);
+      SetProperty("#Play.Next.Comment", string.Empty);
+      SetProperty("#Play.Next.Composer", string.Empty);
+      SetProperty("#Play.Next.Conductor", string.Empty);
+      SetProperty("#Play.Next.DiscID", string.Empty);
+      SetProperty("#Play.Next.DiscTotal", string.Empty);
+      SetProperty("#Play.Next.Lyrics", string.Empty);
+      SetProperty("#Play.Next.TimesPlayed", string.Empty);
+      SetProperty("#Play.Next.TrackTotal", string.Empty);
 
       _isChanged = true;
     }

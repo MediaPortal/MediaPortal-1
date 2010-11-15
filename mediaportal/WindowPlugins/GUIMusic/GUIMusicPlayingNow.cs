@@ -1689,7 +1689,14 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Lyrics", CurrentTrackTag.Lyrics);
           GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", CurrentTrackTag.TimesPlayed.ToString());
           GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", CurrentTrackTag.TrackTotal.ToString());
-
+          GUIPropertyManager.SetProperty("#Play.Current.FileType", CurrentTrackTag.FileType);
+          GUIPropertyManager.SetProperty("#Play.Current.Codec", CurrentTrackTag.Codec);
+          GUIPropertyManager.SetProperty("#Play.Current.BitRateMode", CurrentTrackTag.BitRateMode);
+          GUIPropertyManager.SetProperty("#Play.Current.BPM", CurrentTrackTag.BPM.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.Channels", CurrentTrackTag.Channels.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.SampleRate", CurrentTrackTag.SampleRate.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", CurrentTrackTag.DateTimePlayed.ToShortDateString());
+          GUIPropertyManager.SetProperty("#Play.Current.DateAdded", CurrentTrackTag.DateTimeModified.ToShortDateString());
 
           if (InfoNeeded)
           {
@@ -1759,6 +1766,14 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Lyrics", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.FileType", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Codec", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.BitRateMode", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.BPM", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.Channels", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.SampleRate", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", string.Empty);
+          GUIPropertyManager.SetProperty("#Play.Current.DateAdded", string.Empty);
           
           GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",String.Empty);
           GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",String.Empty);
@@ -1839,7 +1854,14 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Lyrics", NextTrackTag.Lyrics);
         GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", NextTrackTag.TimesPlayed.ToString());
         GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", NextTrackTag.TrackTotal.ToString());
-
+        GUIPropertyManager.SetProperty("#Play.Next.FileType", NextTrackTag.FileType);
+        GUIPropertyManager.SetProperty("#Play.Next.Codec", NextTrackTag.Codec);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRateMode", NextTrackTag.BitRateMode);
+        GUIPropertyManager.SetProperty("#Play.Next.BPM", NextTrackTag.BPM.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Channels", NextTrackTag.Channels.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.SampleRate", NextTrackTag.SampleRate.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.DateLastPlayed", NextTrackTag.DateTimePlayed.ToShortDateString());
+        GUIPropertyManager.SetProperty("#Play.Next.DateAdded", NextTrackTag.DateTimeModified.ToShortDateString());
       }
       else
       {
@@ -1865,6 +1887,14 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#Play.Next.Lyrics", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", string.Empty);
         GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.FileType", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Codec", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRateMode", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BPM", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Channels", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.SampleRate", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DateLastPlayed", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DateAdded", string.Empty);
       }
     }
 

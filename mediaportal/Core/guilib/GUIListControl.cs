@@ -424,7 +424,8 @@ namespace MediaPortal.GUI.Library
       string strSelected2 = "";
       string strThumb = "";
       string strIndex = "";
-      int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb, ref strIndex);
+      TagReader.MusicTag tag = null;
+      int item = GetSelectedItem(ref strSelected, ref strSelected2, ref strThumb, ref strIndex, ref tag);
       if (!GUIWindowManager.IsRouted)
       {
         GUIPropertyManager.SetProperty("#selecteditem", strSelected);
@@ -432,6 +433,7 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
         GUIPropertyManager.SetProperty("#selectedindex", strIndex);
         GUIPropertyManager.SetProperty("#highlightedbutton", strSelected);
+        SetMusicProperties(tag);
       }
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0,
                                       null);
@@ -958,6 +960,80 @@ namespace MediaPortal.GUI.Library
           break;
       }
       return label;
+    }
+
+    private void SetMusicProperties(TagReader.MusicTag tag)
+    {
+      if (tag != null)
+      {
+        // Duration
+        string strDuration = tag.Duration <= 0 ? string.Empty : MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+
+        // Track
+        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
+
+        // Year
+        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
+
+        // Rating
+        string strRating = (Convert.ToDecimal(2 * tag.Rating + 1)).ToString();
+
+        GUIPropertyManager.SetProperty("#title", tag.Title);
+        GUIPropertyManager.SetProperty("#track", strTrack);
+        GUIPropertyManager.SetProperty("#album", tag.Album);
+        GUIPropertyManager.SetProperty("#artist", tag.Artist);
+        GUIPropertyManager.SetProperty("#genre", tag.Genre);
+        GUIPropertyManager.SetProperty("#year", strYear);
+        GUIPropertyManager.SetProperty("#rating", strRating);
+        GUIPropertyManager.SetProperty("#duration", strDuration);
+        GUIPropertyManager.SetProperty("#albumArtist", tag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#bitRate", tag.BitRate.ToString());
+        GUIPropertyManager.SetProperty("#comment", tag.Comment);
+        GUIPropertyManager.SetProperty("#composer", tag.Composer);
+        GUIPropertyManager.SetProperty("#conductor", tag.Conductor);
+        GUIPropertyManager.SetProperty("#discid", tag.DiscID.ToString());
+        GUIPropertyManager.SetProperty("#disctotal", tag.DiscTotal.ToString());
+        GUIPropertyManager.SetProperty("#lyrics", tag.Lyrics);
+        GUIPropertyManager.SetProperty("#timesplayed", tag.TimesPlayed.ToString());
+        GUIPropertyManager.SetProperty("#trackTotal", tag.TrackTotal.ToString());
+        GUIPropertyManager.SetProperty("#filetype", tag.FileType);
+        GUIPropertyManager.SetProperty("#codec", tag.Codec);
+        GUIPropertyManager.SetProperty("#bitratemode", tag.BitRateMode);
+        GUIPropertyManager.SetProperty("#bpm", tag.BPM.ToString());
+        GUIPropertyManager.SetProperty("#channels", tag.Channels.ToString());
+        GUIPropertyManager.SetProperty("#samplerate", tag.SampleRate.ToString());
+        GUIPropertyManager.SetProperty("#datelastplayed", tag.DateTimePlayed.ToShortDateString());
+        GUIPropertyManager.SetProperty("#dateadded", tag.DateTimeModified.ToShortDateString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#title", string.Empty);
+        GUIPropertyManager.SetProperty("#track", string.Empty);
+        GUIPropertyManager.SetProperty("#album", string.Empty);
+        GUIPropertyManager.SetProperty("#artist", string.Empty);
+        GUIPropertyManager.SetProperty("#genre", string.Empty);
+        GUIPropertyManager.SetProperty("#year", string.Empty);
+        GUIPropertyManager.SetProperty("#rating", string.Empty);
+        GUIPropertyManager.SetProperty("#duration", string.Empty);
+        GUIPropertyManager.SetProperty("#albumArtist", string.Empty);
+        GUIPropertyManager.SetProperty("#bitRate", string.Empty);
+        GUIPropertyManager.SetProperty("#comment", string.Empty);
+        GUIPropertyManager.SetProperty("#composer", string.Empty);
+        GUIPropertyManager.SetProperty("#conductor", string.Empty);
+        GUIPropertyManager.SetProperty("#discid", string.Empty);
+        GUIPropertyManager.SetProperty("#disctotal", string.Empty);
+        GUIPropertyManager.SetProperty("#lyrics", string.Empty);
+        GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#trackTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#filetype", string.Empty);
+        GUIPropertyManager.SetProperty("#codec", string.Empty);
+        GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
+        GUIPropertyManager.SetProperty("#bpm", string.Empty);
+        GUIPropertyManager.SetProperty("#channels", string.Empty);
+        GUIPropertyManager.SetProperty("#samplerate", string.Empty);
+        GUIPropertyManager.SetProperty("#datelastplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#dateadded", string.Empty);
+      }
     }
 
     /// <summary>
@@ -2836,13 +2912,32 @@ namespace MediaPortal.GUI.Library
     /// Get the selected item
     /// </summary>
     /// <param name="strLabel"></param>
+    /// <param name="strLabel2"></param>
+    /// <param name="strThumb"></param>
+    /// <param name="strIndex"></param>
     /// <returns></returns>
     public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumb, ref string strIndex)
+    {
+      TagReader.MusicTag tag = null;
+      return GetSelectedItem(ref strLabel, ref strLabel2, ref strThumb, ref strIndex, ref tag);
+    }
+
+    /// <summary>
+    /// Get the selected item
+    /// </summary>
+    /// <param name="strLabel"></param>
+    /// <param name="strLabel2"></param>
+    /// <param name="strThumb"></param>
+    /// <param name="strIndex"></param>
+    /// <param name="tag"></param>
+    /// <returns></returns>
+    public int GetSelectedItem(ref string strLabel, ref string strLabel2, ref string strThumb, ref string strIndex, ref TagReader.MusicTag tag)
     {
       strLabel = "";
       strLabel2 = "";
       strThumb = "";
       strIndex = "";
+      tag = null;
       int iItem = _cursorX + _offset;
       if (iItem >= 0 && iItem < _listItems.Count)
       {
@@ -2850,6 +2945,7 @@ namespace MediaPortal.GUI.Library
         strLabel = pItem.Label;
         strLabel2 = pItem.Label2;
         strThumb = pItem.ThumbnailImage;
+        tag = (TagReader.MusicTag)pItem.MusicTag;
         int index = iItem;
 
         if (_listItems[0].Label != "..")

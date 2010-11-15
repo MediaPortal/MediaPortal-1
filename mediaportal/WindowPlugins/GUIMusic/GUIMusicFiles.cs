@@ -1738,18 +1738,13 @@ namespace MediaPortal.GUI.Music
 
               if (!bFound)
               {
-                // if id3 tag scanning is turned on AND we're scanning the directory
-                // then parse id3tag from file
-                if (UseID3 && m_bScan)
-                {
-                  // get correct tag parser
-                  tag = TagReader.TagReader.ReadTag(pItem.Path);
-                  if (tag != null)
-                  {
-                    pItem.MusicTag = tag;
-                    bNewFile = true;
-                  }
-                }
+               // get correct tag parser
+               tag = TagReader.TagReader.ReadTag(pItem.Path);
+               if (tag != null)
+               {
+                 pItem.MusicTag = tag;
+                 bNewFile = true;
+               }
               }
               else // of if ( !bFound )
               {
