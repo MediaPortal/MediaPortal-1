@@ -242,7 +242,10 @@ namespace TvEngine.PowerScheduler.Handlers
         psi.WindowStyle = ProcessWindowStyle.Minimized;
         psi.Arguments = action;
         psi.ErrorDialog = false;
-        psi.Verb = "runas";
+        if (OSInfo.OSInfo.VistaOrLater())
+        {
+          psi.Verb = "runas";
+        }
 
         p.StartInfo = psi;
         Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
