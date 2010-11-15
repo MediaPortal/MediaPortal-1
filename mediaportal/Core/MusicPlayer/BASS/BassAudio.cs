@@ -235,6 +235,7 @@ namespace MediaPortal.Player
     private SYNCPROC CueTrackEndProcDelegate = null;
     private SYNCPROC PlaybackStreamFreedProcDelegate = null;
     private SYNCPROC MetaTagSyncProcDelegate = null;
+    private SYNCPROC PlayBackSlideEndDelegate = null;
 
     #endregion
 
@@ -2109,6 +2110,37 @@ namespace MediaPortal.Player
       }
     }
 
+    /// <summary>
+    /// Register Slide End Event for Soft Stop
+    /// </summary>
+    /// <param name="stream"></param>
+    /// <returns></returns>
+    private void RegisterStreamSlideEndEvent(int stream)
+    {
+      PlayBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
+      int syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, PlayBackSlideEndDelegate,
+                                            IntPtr.Zero);
+      if (syncHandle == 0)
+      {
+        Log.Debug("BASS: RegisterSlideEndEvent of stream {0} failed with error {1}", stream,
+                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      }
+
+      return;
+    }
+
+    /// <summary>
+    /// This Callback Procedure is called by BASS, once a Slide Ended.
+    /// </summary>
+    /// <param name="handle"></param>
+    /// <param name="channel"></param>
+    /// <param name="data"></param>
+    /// <param name="user"></param>
+    private void SlideEndedProc(int handle, int channel, int data, IntPtr user)
+    {
+      Log.Debug("BASS: Slide of channel ended.");
+      StopInternal();
+    }
     #endregion
 
     #region IPlayer Implementation
@@ -2635,10 +2667,30 @@ namespace MediaPortal.Player
       catch { }
     }
 
+
     /// <summary>
     /// Stopping Playback
     /// </summary>
     public override void Stop()
+    {
+      int stream = GetCurrentStream();
+      if (_SoftStop)
+      {
+        RegisterStreamSlideEndEvent(stream);
+        Log.Info("BASS: Stopping song. Fading out.");
+        Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, _CrossFadeIntervalMS);
+      }
+      else
+      {
+        StopInternal();
+      }
+    }
+
+    /// <summary>
+    /// Internal Stop called by the above method
+    /// Needed to handle the sliding for a fade out correctly
+    /// </summary>
+    private void StopInternal()
     {
       _CrossFading = false;
 
@@ -2650,14 +2702,6 @@ namespace MediaPortal.Player
         // Otherwise, the HandleSongEnded would be called twice
         UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
 
-        if (_SoftStop)
-        {
-          Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, 500);
-
-          // Wait until the slide is done
-          while (Bass.BASS_ChannelIsSliding(stream, BASSAttribute.BASS_ATTRIB_VOL))
-            System.Threading.Thread.Sleep(20);
-        }
         if (_Mixing || _useASIO)
         {
           Bass.BASS_ChannelStop(stream);
