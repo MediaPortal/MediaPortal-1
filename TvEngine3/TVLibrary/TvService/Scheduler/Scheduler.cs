@@ -896,19 +896,18 @@ namespace TvService
       //get list of all cards we can use todo the recording
       ICardAllocation allocation = new AdvancedCardAllocation(new TvBusinessLayer()); //CardAllocationFactory.Create(false);
       List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection,
-                                                                          RecDetail.Channel, ref user, out result);
+                                                                          RecDetail.Channel, ref user, out result);      
+      int maxCards = GetMaxCards(freeCards);
+      Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
 
-      CardDetail cardInfo = GetCardInfo(RecDetail, ref user, freeCards);
-
-      if (cardInfo != null)
+      //keep tuning each card until we are succesful                
+      for (int i = 0; i < maxCards; i++)
       {
-        int maxCards = GetMaxCards(freeCards);
-        Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
-
-        //keep tuning each card until we are succesful                
-        for (int i = 0; i < maxCards; i++)
-        {          
-          try
+        CardDetail cardInfo = null;
+        try
+        {
+          cardInfo = GetCardInfo(RecDetail, ref user, freeCards);
+          if (cardInfo != null)
           {
             user.CardId = cardInfo.Id;
 
@@ -926,21 +925,22 @@ namespace TvService
               SetupQualityControl(RecDetail);
               WriteMatroskaFile(RecDetail);
 
-              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}", _recordingsInProgressList.Count,
+              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
+                        _recordingsInProgressList.Count,
                         RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
               break;
-            }            
-          }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-          }
-          Log.Write("scheduler: recording failed, lets try next available card.");
-          if (freeCards.Contains(cardInfo))
-          {
-            freeCards.Remove(cardInfo);
+            }
           }
         }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+        }
+        Log.Write("scheduler: recording failed, lets try next available card.");
+        if (cardInfo != null && freeCards.Contains(cardInfo))
+        {
+          freeCards.Remove(cardInfo);
+        }        
       }
     }
 
