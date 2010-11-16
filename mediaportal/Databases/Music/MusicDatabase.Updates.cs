@@ -469,6 +469,7 @@ namespace MediaPortal.Music.Database
         _createArtistPreviews = setting.CreateArtistPreviews;
         _createGenrePreviews = setting.CreateGenrePreviews;
         _updateSinceLastImport = setting.UseLastImportDate;
+        _dateAddedValue = setting.DateAddedValue;
         //_excludeHiddenFiles = setting.ExcludeHiddenFiles; <-- no GUI setting yet; use xml file to specify this
       }
 
@@ -1216,6 +1217,21 @@ namespace MediaPortal.Music.Database
       {
         DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
+        DateTime dateadded = DateTime.Now;
+        switch (_dateAddedValue)
+        {
+          case 0:   // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
+            break;
+
+          case 1:
+            dateadded = File.GetCreationTime(strFileName);
+            break;
+
+          case 2:
+            dateadded = File.GetLastWriteTime(strFileName);
+            break;
+        }
+
         strSQL =
           String.Format(
             @"insert into tracks (
@@ -1230,7 +1246,7 @@ namespace MediaPortal.Music.Database
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
             0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode, 
-            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, DateTime.Now
+            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded
             );
         try
         {
@@ -1308,6 +1324,21 @@ namespace MediaPortal.Music.Database
         {
           DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
+          DateTime dateadded = DateTime.Now;
+          switch (_dateAddedValue)
+          {
+            case 0:   // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
+              break;
+
+            case 1:
+              dateadded = File.GetCreationTime(strFileName);
+              break;
+
+            case 2:
+              dateadded = File.GetLastWriteTime(strFileName);
+              break;
+          }
+
           strSQL =
             String.Format(
               @"update tracks 
@@ -1317,13 +1348,13 @@ namespace MediaPortal.Music.Database
                                  strLyrics = '{12}', strComposer = '{13}', strConductor = '{14}',
                                  strComment = '{15}', strFileType = '{16}', strFullCodec = '{17}',
                                  strBitRateMode = '{18}', iBPM = {19}, iBitRate = {20}, iChannels = {21},
-                                 iSampleRate = {22}
-                                 where strPath = '{23}'",
+                                 iSampleRate = {22}, dateAdded = '{23}' 
+                                 where strPath = '{24}'",
               tag.Artist, tag.AlbumArtist, tag.Album,
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
               tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
-              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate,
+              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded,
               strFileName
               );
           try

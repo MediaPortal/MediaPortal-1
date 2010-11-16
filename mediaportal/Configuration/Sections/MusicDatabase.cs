@@ -63,6 +63,8 @@ namespace MediaPortal.Configuration.Sections
 
     private List<BaseShares.ShareData> sharesData = null;
     private Thread _scanThread = null;
+    private MPComboBox comboBoxDateAdded;
+    private MPLabel lblDate;
     private bool _scanRunning = false;
 
     #endregion
@@ -174,6 +176,7 @@ namespace MediaPortal.Configuration.Sections
                                                                                       "1900-01-01 00:00:00"));
         checkBoxStripArtistPrefix.Checked = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         tbPrefixes.Text = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
+        comboBoxDateAdded.SelectedIndex = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
       }
     }
 
@@ -195,6 +198,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "updateSinceLastImport", checkBoxUpdateSinceLastImport.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "stripartistprefixes", checkBoxStripArtistPrefix.Checked);
         xmlwriter.SetValue("musicfiles", "artistprefixes", tbPrefixes.Text);
+        xmlwriter.SetValue("musicfiles", "dateadded", comboBoxDateAdded.SelectedIndex);
       }
     }
 
@@ -219,6 +223,8 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxDateAdded = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.lblDate = new MediaPortal.UserInterface.Controls.MPLabel();
       this.groupBoxUseAlbumThumbs = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxCreateGenre = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxCreateFolderThumb = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -244,11 +250,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.comboBoxDateAdded);
+      this.groupBox1.Controls.Add(this.lblDate);
       this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
       this.groupBox1.Controls.Add(this.groupBoxUseForThumbs);
       this.groupBox1.Controls.Add(this.tbPrefixes);
@@ -266,13 +272,36 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Scan music shares";
       // 
+      // comboBoxDateAdded
+      // 
+      this.comboBoxDateAdded.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxDateAdded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxDateAdded.FormattingEnabled = true;
+      this.comboBoxDateAdded.Items.AddRange(new object[] {
+            "Current Date",
+            "Creation Date",
+            "Last Write Date"});
+      this.comboBoxDateAdded.Location = new System.Drawing.Point(246, 257);
+      this.comboBoxDateAdded.Name = "comboBoxDateAdded";
+      this.comboBoxDateAdded.Size = new System.Drawing.Size(210, 21);
+      this.comboBoxDateAdded.TabIndex = 16;
+      // 
+      // lblDate
+      // 
+      this.lblDate.AutoSize = true;
+      this.lblDate.Location = new System.Drawing.Point(16, 261);
+      this.lblDate.Name = "lblDate";
+      this.lblDate.Size = new System.Drawing.Size(226, 13);
+      this.lblDate.TabIndex = 15;
+      this.lblDate.Text = "Set date in database for new/changed files to:";
+      // 
       // groupBoxUseAlbumThumbs
       // 
       this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateGenre);
       this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateFolderThumb);
       this.groupBoxUseAlbumThumbs.Controls.Add(this.checkBoxCreateArtist);
       this.groupBoxUseAlbumThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxUseAlbumThumbs.Location = new System.Drawing.Point(246, 165);
+      this.groupBoxUseAlbumThumbs.Location = new System.Drawing.Point(246, 156);
       this.groupBoxUseAlbumThumbs.Name = "groupBoxUseAlbumThumbs";
       this.groupBoxUseAlbumThumbs.Size = new System.Drawing.Size(210, 96);
       this.groupBoxUseAlbumThumbs.TabIndex = 14;
@@ -321,7 +350,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.Controls.Add(this.checkBoxUseFolderThumb);
       this.groupBoxUseForThumbs.Controls.Add(this.buildThumbsCheckBox);
       this.groupBoxUseForThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxUseForThumbs.Location = new System.Drawing.Point(16, 165);
+      this.groupBoxUseForThumbs.Location = new System.Drawing.Point(16, 156);
       this.groupBoxUseForThumbs.Name = "groupBoxUseForThumbs";
       this.groupBoxUseForThumbs.Size = new System.Drawing.Size(210, 96);
       this.groupBoxUseForThumbs.TabIndex = 13;
@@ -391,7 +420,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxUpdateSinceLastImport.Checked = true;
       this.checkBoxUpdateSinceLastImport.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxUpdateSinceLastImport.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(16, 278);
+      this.checkBoxUpdateSinceLastImport.Location = new System.Drawing.Point(19, 287);
       this.checkBoxUpdateSinceLastImport.Name = "checkBoxUpdateSinceLastImport";
       this.checkBoxUpdateSinceLastImport.Size = new System.Drawing.Size(178, 17);
       this.checkBoxUpdateSinceLastImport.TabIndex = 10;
@@ -402,7 +431,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.monitorSharesCheckBox.AutoSize = true;
       this.monitorSharesCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.monitorSharesCheckBox.Location = new System.Drawing.Point(16, 310);
+      this.monitorSharesCheckBox.Location = new System.Drawing.Point(19, 311);
       this.monitorSharesCheckBox.Name = "monitorSharesCheckBox";
       this.monitorSharesCheckBox.Size = new System.Drawing.Size(199, 17);
       this.monitorSharesCheckBox.TabIndex = 11;
@@ -424,9 +453,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.Location = new System.Drawing.Point(246, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
@@ -448,10 +475,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 345);
@@ -463,10 +488,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 23);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
@@ -486,6 +509,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -603,6 +627,7 @@ namespace MediaPortal.Configuration.Sections
       setting.CreateGenrePreviews = checkBoxCreateGenre.Checked;
       setting.UseLastImportDate = checkBoxUpdateSinceLastImport.Checked;
       setting.ExcludeHiddenFiles = false;
+      setting.DateAddedValue = comboBoxDateAdded.SelectedIndex;
 
       try
       {

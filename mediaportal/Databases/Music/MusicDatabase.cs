@@ -51,6 +51,7 @@ namespace MediaPortal.Music.Database
     private static bool _stripArtistPrefixes;
     private static DateTime _lastImport;
     private static DateTime _currentDate = DateTime.Now;
+    private static int _dateAddedValue;
 
     #endregion
 
@@ -80,6 +81,7 @@ namespace MediaPortal.Music.Database
       _supportedExtensions = Util.Utils.AudioExtensionsDefault;
       _stripArtistPrefixes = false;
       _currentDate = DateTime.Now;
+      _dateAddedValue = 0;
 
       LoadDBSettings();
       Open();
@@ -147,6 +149,7 @@ namespace MediaPortal.Music.Database
         _createGenrePreviews = xmlreader.GetValueAsBool("musicfiles", "creategenrethumbs", true);
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", Util.Utils.AudioExtensionsDefault);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
+        _dateAddedValue = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
 
         try
         {
