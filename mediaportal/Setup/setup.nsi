@@ -409,8 +409,6 @@ Section "MediaPortal core files (required)" SecCore
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
   ; create empty folders
-  SetOutPath "$MPdir.BurnerSupport"
-  CreateDirectory "$MPdir.BurnerSupport"
   SetOutPath "$MPdir.Config"
   CreateDirectory "$MPdir.Config"
   SetOutPath "$MPdir.Database"
@@ -534,7 +532,6 @@ SectionEnd
 
 
   ; Remove the Folders
-  RMDir /r "$MPdir.BurnerSupport"
   RMDir /r "$MPdir.Cache"
 
   ; Config Files

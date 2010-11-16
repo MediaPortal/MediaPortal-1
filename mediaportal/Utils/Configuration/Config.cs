@@ -44,7 +44,6 @@ namespace MediaPortal.Configuration
       CustomInputDevice,
       Config,
       CustomInputDefault,
-      BurnerSupport,
       Installer,
     }
 
@@ -339,7 +338,6 @@ private Config()
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
-      Set(Dir.BurnerSupport, Path.Combine(baseDir, @"Burner\"));
       Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
     }
 

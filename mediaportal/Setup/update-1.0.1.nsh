@@ -122,8 +122,6 @@ Delete "$MPdir.Base\Docs\MediaPortal License.rtf"
 Delete "$MPdir.Base\Docs\BASS License.txt"
 RMDir "$MPdir.Base\Docs"
 
-RMDir "$MPdir.BurnerSupport"
-
 ${LOG_TEXT} "INFO" "                  CustomInputDefault..."
 Delete "$MPdir.CustomInputDefault\WARNING.txt"
 Delete "$MPdir.CustomInputDefault\ATI X10.xml"

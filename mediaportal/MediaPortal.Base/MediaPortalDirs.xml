@@ -77,8 +77,4 @@
   <Dir id = "Cache">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Cache\</Path>
   </Dir>
-  <!-- The path to CYGWIN files needed for the burner plugin -->
-  <Dir id = "BurnerSupport">
-    <Path>Burner\</Path>
-  </Dir>
 </Config>
