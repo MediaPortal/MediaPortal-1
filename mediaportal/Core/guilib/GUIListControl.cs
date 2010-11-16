@@ -2945,7 +2945,11 @@ namespace MediaPortal.GUI.Library
         strLabel = pItem.Label;
         strLabel2 = pItem.Label2;
         strThumb = pItem.ThumbnailImage;
-        tag = (TagReader.MusicTag)pItem.MusicTag;
+        // Seems that in some part of the code MusicTag is used to place a TVChannel object into it
+        if (pItem.MusicTag != null && pItem.MusicTag.GetType() == typeof(TagReader.MusicTag))
+        {
+          tag = (TagReader.MusicTag)pItem.MusicTag;
+        }
         int index = iItem;
 
         if (_listItems[0].Label != "..")
