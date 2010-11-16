@@ -31,14 +31,20 @@ namespace MediaPortal.Configuration.Sections
     public MovieExtensions(string name)
       : base(name) { }
 
-    public override void LoadSettings()
+    protected override string SettingsSection
     {
-      base.LoadSettings("movies", Util.Utils.VideoExtensionsDefault);
+      get
+      {
+        return "movies";
+      }
     }
 
-    public override void SaveSettings()
+    protected override string DefaultExtensions
     {
-      base.SaveSettings("movies");
+      get
+      {
+        return Util.Utils.VideoExtensionsDefault;
+      }
     }
   }
 }

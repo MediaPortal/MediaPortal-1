@@ -44,6 +44,7 @@ namespace MediaPortal.Configuration.Sections
     private MPTextBox textBoxExtensions;
     private MPLabel mpLabel1;
     private MPLabel mpLabel2;
+    private MPButton resetButton;
     private IContainer components = null;
 
     public GeneralDaemonTools()
@@ -181,6 +182,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxDaemonTools = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxAskBeforePlaying = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.resetButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.groupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -190,6 +192,7 @@ namespace MediaPortal.Configuration.Sections
         ((System.Windows.Forms.AnchorStyles)
          (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Controls.Add(this.resetButton);
       this.groupBox2.Controls.Add(this.mpLabel2);
       this.groupBox2.Controls.Add(this.textBoxExtensions);
       this.groupBox2.Controls.Add(this.mpLabel1);
@@ -219,7 +222,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxExtensions.BorderColor = System.Drawing.Color.Empty;
       this.textBoxExtensions.Location = new System.Drawing.Point(168, 118);
       this.textBoxExtensions.Name = "textBoxExtensions";
-      this.textBoxExtensions.Size = new System.Drawing.Size(288, 20);
+      this.textBoxExtensions.Size = new System.Drawing.Size(208, 20);
       this.textBoxExtensions.TabIndex = 10;
       // 
       // mpLabel1
@@ -349,6 +352,17 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2.TabIndex = 11;
       this.mpLabel2.Text = "Supported tools: Virtual CloneDrive and Daemon Tools";
       // 
+      // resetButton
+      // 
+      this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.resetButton.Location = new System.Drawing.Point(384, 119);
+      this.resetButton.Name = "resetButton";
+      this.resetButton.Size = new System.Drawing.Size(72, 22);
+      this.resetButton.TabIndex = 12;
+      this.resetButton.Text = "Default";
+      this.resetButton.UseVisualStyleBackColor = true;
+      this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
+      // 
       // GeneralDaemonTools
       // 
       this.BackColor = System.Drawing.SystemColors.Control;
@@ -358,6 +372,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -400,6 +415,14 @@ namespace MediaPortal.Configuration.Sections
         comboDriveNo.Enabled = false;
         checkBoxAskBeforePlaying.Enabled = false;
       }
+    }
+
+    private void resetButton_Click(object sender, EventArgs e)
+    {
+      if (MessageBox.Show("Do you really want to reset the extension list to the default?\r\nAny modification you did will be lost.", "MediaPortal Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
+        == DialogResult.No) return;
+
+      textBoxExtensions.Text = Util.Utils.ImageExtensionsDefault;
     }
   }
 }

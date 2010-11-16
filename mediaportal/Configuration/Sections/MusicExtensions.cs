@@ -31,14 +31,20 @@ namespace MediaPortal.Configuration.Sections
     public MusicExtensions(string name)
       : base(name) { }
 
-    public override void LoadSettings()
+    protected override string SettingsSection
     {
-      base.LoadSettings("music", Util.Utils.AudioExtensionsDefault);
+      get
+      {
+        return "music";
+      }
     }
 
-    public override void SaveSettings()
+    protected override string DefaultExtensions
     {
-      base.SaveSettings("music");
+      get
+      {
+        return Util.Utils.AudioExtensionsDefault;
+      }
     }
   }
 }

@@ -26,19 +26,25 @@ namespace MediaPortal.Configuration.Sections
   public class PictureExtensions : BaseFileExtensions
   {
     public PictureExtensions()
-      : this("Picture Extensions") {}
+      : this("Picture Extensions") { }
 
     public PictureExtensions(string name)
-      : base(name) {}
+      : base(name) { }
 
-    public override void LoadSettings()
+    protected override string SettingsSection
     {
-      base.LoadSettings("pictures", Util.Utils.PictureExtensionsDefault);
+      get
+      {
+        return "pictures";
+      }
     }
 
-    public override void SaveSettings()
+    protected override string DefaultExtensions
     {
-      base.SaveSettings("pictures");
+      get
+      {
+        return Util.Utils.PictureExtensionsDefault;
+      }
     }
   }
 }

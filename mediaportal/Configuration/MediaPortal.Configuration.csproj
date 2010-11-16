@@ -249,6 +249,12 @@
     <Compile Include="Common.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
+    <Compile Include="Sections\BaseFileExtensions.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\BaseFileExtensions.designer.cs">
+      <DependentUpon>BaseFileExtensions.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\BaseViews.Designer.cs">
       <DependentUpon>BaseViews.cs</DependentUpon>
     </Compile>
@@ -355,9 +361,6 @@
     </Compile>
     <Compile Include="SectionSettings.designer.cs">
       <DependentUpon>SectionSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\BaseFileExtensions.cs">
-      <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\BasePostProcessing.cs">
       <SubType>UserControl</SubType>
@@ -598,6 +601,9 @@
     <EmbeddedResource Include="ConfigSplashScreen.resx">
       <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\BaseFileExtensions.resx">
+      <DependentUpon>BaseFileExtensions.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseShares.resx">
       <SubType>Designer</SubType>
