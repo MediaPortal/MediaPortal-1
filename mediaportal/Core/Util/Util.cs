@@ -2448,7 +2448,7 @@ namespace MediaPortal.Util
       }
     }
 
-    private static bool? _fileLookUpCacheEnabled = true;
+    private static bool? _fileLookUpCacheEnabled = null;
     private static Dictionary<string, FileLookUpItem> _fileLookUpCache = new Dictionary<string, FileLookUpItem>();
     private static HashSet<string> _foldersLookedUp = new HashSet<string>();
     private static Dictionary<string, FileSystemWatcher> _watchers = new Dictionary<string, FileSystemWatcher>();
