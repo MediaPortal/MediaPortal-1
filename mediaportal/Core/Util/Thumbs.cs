@@ -85,7 +85,6 @@ namespace MediaPortal.Util
 
     public static readonly string Radio = Config.GetSubFolder(Config.Dir.Thumbs, @"Radio");
     public static readonly string Pictures = Config.GetSubFolder(Config.Dir.Thumbs, @"Pictures");
-    public static readonly string Yac = Config.GetSubFolder(Config.Dir.Thumbs, @"yac");
     public static readonly string News = Config.GetSubFolder(Config.Dir.Thumbs, @"News");
     public static readonly string Trailers = Config.GetSubFolder(Config.Dir.Thumbs, @"Trailers");
     public static readonly string Videos = Config.GetSubFolder(Config.Dir.Thumbs, @"Videos");
@@ -170,7 +169,6 @@ namespace MediaPortal.Util
         Directory.CreateDirectory(MovieGenre);
         Directory.CreateDirectory(MovieTitle);
         Directory.CreateDirectory(MovieActors);
-        Directory.CreateDirectory(Yac);
         Directory.CreateDirectory(News);
         Directory.CreateDirectory(Trailers);
       }
