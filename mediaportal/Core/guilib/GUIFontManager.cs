@@ -71,28 +71,13 @@ namespace MediaPortal.GUI.Library
       public int fontHeight;
     } ;
 
-    // This is used for caching font textures (non-latin char support)
-    private struct FontTexture
-    {
-      public int size;
-      public string text;
-      public Texture texture;
-    } ;
-
-    // This is used for caching system fonts (non-latin char support)
-    private struct FontObject
-    {
-      public int size;
-      public System.Drawing.Font font;
-    } ;
-
     #endregion
 
     private static object _renderlock = new object();
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
-    private static int _maxCachedTextures = 500;
+    private static int _maxCachedTextures = 250;
     private static List<FontManagerDrawText> _listDrawText = new List<FontManagerDrawText>();
     private static List<FontTexture> _listFontTextures = new List<FontTexture>();
     private static List<FontObject> _listFontObjects = new List<FontObject>();
@@ -341,7 +326,7 @@ namespace MediaPortal.GUI.Library
       if (!fontCached)
       {
         System.Drawing.Font systemFont = new System.Drawing.Font("Arial", fontSize);
-        FontObject newFont;
+        FontObject newFont= new FontObject();
         newFont.size = fontSize;
         newFont.font = systemFont;
         _listFontObjects.Add(newFont);
@@ -374,19 +359,26 @@ namespace MediaPortal.GUI.Library
     {
       bool textureCached = false;
       int cacheSlot = 0;
+      FontTexture drawingTexture = new FontTexture();
       foreach (FontTexture cachedTexture in _listFontTextures)
       {
         if (cachedTexture.text == draw.text && cachedTexture.size == fontSize)
         {
           textureCached = true;
+          drawingTexture = cachedTexture;
           break;
         }
         cacheSlot++;
       }
 
       Size size = new Size(0, 0);
-
-      if (!textureCached)
+      if (textureCached)
+      {
+        //keep commonly used textures at the top of the pile
+        _listFontTextures.RemoveAt(cacheSlot);
+        _listFontTextures.Add(drawingTexture);
+      }
+      else // texture needs to be cached
       {
         Texture texture = null;
         float textwidth = 0, textheight = 0;
@@ -455,19 +447,23 @@ namespace MediaPortal.GUI.Library
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
-        FontTexture newTexture;
+        FontTexture newTexture = new FontTexture();
         newTexture.text = draw.text;
         newTexture.texture = texture;
         newTexture.size = fontSize;
 
         if (_listFontTextures.Count >= _maxCachedTextures)
         {
+          //need to clear this and not rely on the finalizer
+          FontTexture disposableFont = _listFontTextures[0];
           _listFontTextures.RemoveAt(0);
+          disposableFont.Dispose();
         }
         _listFontTextures.Add(newTexture);
+        drawingTexture = newTexture;
       }
 
-      _d3dxSprite.Draw(_listFontTextures[cacheSlot].texture, new Rectangle(0, 0, size.Width, size.Height),
+      _d3dxSprite.Draw(drawingTexture.texture, new Rectangle(0, 0, size.Width, size.Height),
                        Vector3.Empty,
                        new Vector3((int)draw.xpos, (int)draw.ypos, 0), draw.color);
     }
