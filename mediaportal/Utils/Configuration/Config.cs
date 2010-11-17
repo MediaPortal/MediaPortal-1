@@ -40,6 +40,7 @@ namespace MediaPortal.Configuration
       Plugins,
       Thumbs,
       Cache,
+      Weather,
       CustomInputDevice,
       Config,
       CustomInputDefault,
@@ -51,6 +52,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
+    private static string skinName = string.Empty;
 
     #endregion
 
@@ -215,6 +217,24 @@ private Config()
 
     #endregion
 
+    #region Properties
+
+    public static string SkinName {
+      set {
+        if (value != skinName)
+        {
+          skinName = value;
+          string commonAppData =
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
+            + @"\Team MediaPortal\MediaPortal\";
+          string weatherDir = commonAppData + @"skin\" + skinName + @"\Media\Weather\";
+          Set(Dir.Weather, weatherDir);
+        }
+      }
+    }
+
+    #endregion
+
     #region Private Methods
 
     /// <summary>
@@ -336,6 +356,7 @@ private Config()
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Blue3wide\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
       Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
     }
 

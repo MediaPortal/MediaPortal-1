@@ -283,6 +283,7 @@ namespace MediaPortal.Configuration.Sections
           Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, selectedSkin + @"\fonts"), "*");
         }
         xmlwriter.SetValue("skin", "name", selectedSkin);
+        Config.SkinName = selectedSkin;
         // Set language
         string prevLanguage = xmlwriter.GetValueAsString("skin", "language", "English");
         string skin = xmlwriter.GetValueAsString("skin", "name", "Blue3wide");

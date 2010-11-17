@@ -1111,6 +1111,7 @@ namespace MediaPortal.GUI.Library
           using (Settings xmlwriter = new MPSettings())
           {
             xmlwriter.SetValue("skin", "name", skinName);
+            Configuration.Config.SkinName = skinName;
           }
 
           GUITextureManager.Clear();

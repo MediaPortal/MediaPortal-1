@@ -171,6 +171,7 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
         xmlwriter.SetValue("skin", "language", btnLanguage.Label);
         xmlwriter.SetValue("skin", "name", btnSkin.Label);
+        Config.SkinName = btnSkin.Label;
       }
     }
 

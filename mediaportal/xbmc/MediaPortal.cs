@@ -793,6 +793,7 @@ public class MediaPortalApp : D3DApp, IRender
       using (Settings xmlreader = new MPSettings())
       {
         m_strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Blue3");
+        Config.SkinName = m_strSkin;
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
         GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general",
