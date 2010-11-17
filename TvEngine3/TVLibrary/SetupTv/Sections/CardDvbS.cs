@@ -1039,7 +1039,7 @@ namespace SetupTv.Sections
 
         if (scanIndex == 1) // first scanned
         {
-          RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+          RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
         }
         UpdateStatus();
 

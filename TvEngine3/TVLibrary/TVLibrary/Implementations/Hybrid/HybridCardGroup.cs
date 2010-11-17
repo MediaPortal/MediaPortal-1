@@ -209,6 +209,32 @@ namespace TvLibrary.Implementations.Hybrid
     }
 
     /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The subchannel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      for (int i = 0; i < _cards.Count; ++i)
+      {
+        if (_cards[i].CanTune(channel))
+        {
+          _currentCardIndex = i;
+          for (int x = 0; x < _cards.Count; x++)
+          {
+            if (x != i)
+            {
+              _cards[x].Dispose();
+            }
+          }
+          return _cards[_currentCardIndex].Scan(subChannelId, channel);
+        }
+      }
+      return null;
+    }
+
+    /// <summary>
     /// Property which returns true if card supports quality control
     /// </summary>
     /// <value></value>

@@ -22,6 +22,35 @@ using System;
 
 namespace TvLibrary
 {
+
+  /// <summary>
+  /// Exception class for the tv library
+  /// </summary>
+  [Serializable]
+  public class TvExceptionNoPMT : Exception
+  {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
+    /// </summary>
+    public TvExceptionNoPMT() { }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    public TvExceptionNoPMT(string message)
+      : base(message) { }
+
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public TvExceptionNoPMT(string message, Exception innerException)
+      : base(message, innerException) { }
+  }
+
   /// <summary>
   /// Exception class for the tv library
   /// </summary>

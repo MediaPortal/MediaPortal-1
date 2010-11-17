@@ -251,8 +251,9 @@ namespace TvLibrary.Implementations.DVB
       _pmtVersion = -1;
     }
 
-    private void WaitForPMT()
+    private bool WaitForPMT()
     {
+      bool foundPMT = false;
       int retryCount = 0;
       int lookForPid;
       _pmtPid = -1;
@@ -341,8 +342,8 @@ namespace TvLibrary.Implementations.DVB
               {
                 Log.Log.Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
               }
-
               // PMT was found so exit here
+              foundPMT = true;
               break;
             }
             else
@@ -358,7 +359,7 @@ namespace TvLibrary.Implementations.DVB
         } // retry loop
       }
 
-      return;
+      return foundPMT;
     }
 
     /// <summary>
@@ -405,16 +406,20 @@ namespace TvLibrary.Implementations.DVB
       if (GraphRunning())
       {
         Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);
-        WaitForPMT();
+        bool foundPMT = WaitForPMT();
+        if (!foundPMT)
+        {
+          throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStart: no PMT found");
+        }
       }
       else
-      {
+      {        
         if (_teletextDecoder != null)
           _teletextDecoder.ClearBuffer();
 
         _pmtPid = -1;
         _pmtVersion = -1;
-      }
+      }      
     }
 
     /// <summary>
@@ -425,17 +430,21 @@ namespace TvLibrary.Implementations.DVB
     public override void OnGraphStarted()
     {
       Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
-
       if (!GraphRunning())
       {
         _pmtPid = -1;
         _pmtVersion = -1;
 
         Log.Log.WriteFile("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
-        return;
       }
-
-      WaitForPMT();
+      else
+      {
+        bool foundPMT = WaitForPMT();
+        if (!foundPMT)
+        {
+          throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStarted: no PMT found");
+        }
+      }            
     }
 
     /// <summary>
@@ -1200,9 +1209,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region properties
 
-    /// <summary>
-    /// get/set the current selected audio stream
-    /// </summary>
+    
     public bool PMTreceived
     {
       get { return (_pmtVersion > -1 && _channelInfo.pids.Count > 0); }

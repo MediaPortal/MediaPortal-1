@@ -172,7 +172,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _card.IsScanning = true;
-        _card.Tune(0, channel);
+        _card.Scan(0, channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {
@@ -371,7 +371,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         _card.IsScanning = true;
-        _card.Tune(0, channel);
+        _card.Scan(0, channel);
         _analyzer = GetAnalyzer();
         if (_analyzer == null)
         {

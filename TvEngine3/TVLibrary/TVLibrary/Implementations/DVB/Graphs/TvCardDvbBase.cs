@@ -285,12 +285,28 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public virtual ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, true);
+    }
+
+    /// <summary>
     /// Tunes the specified channel.
     /// </summary>
     /// <param name="subChannelId">The sub channel id</param>
     /// <param name="channel">The channel.</param>
     /// <returns></returns>
     public virtual ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, false);
+    }
+
+    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
     {
       bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));      
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
@@ -300,13 +316,24 @@ namespace TvLibrary.Implementations.DVB
       {
         if (ch != null)
         {
-          RunGraph(ch.SubChannelId);
+          bool foundPMT = false;
+          try
+          {
+            RunGraph(ch.SubChannelId);
+          }
+          catch (TvExceptionNoPMT)
+          {
+            if (!ignorePMT)
+            {
+              throw;
+            }
+          }
           OnAfterTune(channel);
           return ch;
         }       
         else
         {
-          throw new TvException("TvCardDvbVase.Tune: Subchannel was null");
+          throw new TvException("TvCardDvbBase.Tune: Subchannel was null");
         }
       }
       catch (Exception)
@@ -570,7 +597,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_conditionalAccess.AllowedToStopGraph == false)
         {
-          RunGraph(-1);
+          RunGraph(-1);          
         }
       }
       return;
@@ -580,8 +607,12 @@ namespace TvLibrary.Implementations.DVB
     /// Checks if the tuner is locked in and a sginal is present
     ///</summary>
     ///<returns>true, when the tuner is locked and a signal is present</returns>
+    ///<summary>
+    /// Checks if the tuner is locked in and a sginal is present
+    ///</summary>
+    ///<returns>true, when the tuner is locked and a signal is present</returns>
     public override bool LockedInOnSignal()
-    {      
+    {
       //UpdateSignalQuality(true);
       bool isLocked = false;
       DateTime timeStart = DateTime.Now;
@@ -606,10 +637,10 @@ namespace TvLibrary.Implementations.DVB
           }
         }
         if (!isLocked)
-        {        
+        {
           ts = DateTime.Now - timeStart;
           Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
-          System.Threading.Thread.Sleep(20);          
+          System.Threading.Thread.Sleep(20);
         }
       }
 
@@ -629,12 +660,13 @@ namespace TvLibrary.Implementations.DVB
       return true;
       //default behaviour is nothing
     }
-
+    //protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
     public override void RunGraph(int subChannel)
     {
+      Log.Log.Info("RunGraph");      
       bool graphRunning = GraphRunning();
 
       if (_mapSubChannels.ContainsKey(subChannel))

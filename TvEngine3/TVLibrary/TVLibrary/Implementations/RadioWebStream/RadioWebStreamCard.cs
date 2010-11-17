@@ -136,12 +136,12 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback) {}
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback) { }
 
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
-    public void ResetLinkageScanner() {}
+    public void ResetLinkageScanner() { }
 
     /// <summary>
     /// Returns the channel linkages grabbed
@@ -214,6 +214,18 @@ namespace TvLibrary.Implementations.RadioWebStream
       return null;
     }
 
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
+      return null;
+    }
+
     #endregion
 
     #region quality control
@@ -261,20 +273,20 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
-    public void FreeSubChannel(int id) {}
+    public void FreeSubChannel(int id) { }
 
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
     /// <param name="subchannelBusy">is the subcannel busy with other users.</param>
-    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy) {}
+    public void FreeSubChannelContinueGraph(int id, bool subchannelBusy) { }
 
     /// <summary>
     /// Frees the sub channel.
     /// </summary>
     /// <param name="id">The id.</param>
-    public void FreeSubChannelContinueGraph(int id) {}
+    public void FreeSubChannelContinueGraph(int id) { }
 
     /// <summary>
     /// Gets the sub channel.
@@ -560,12 +572,12 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback) {}
+    public void GrabEpg(BaseEpgGrabber callback) { }
 
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
-    public void GrabEpg() {}
+    public void GrabEpg() { }
 
     /// <summary>
     /// Gets the interface for controlling the diseqc motor
@@ -579,11 +591,11 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <summary>
     /// Updates the signal state for a card.
     /// </summary>
-    public void ResetSignalUpdate() {}
+    public void ResetSignalUpdate() { }
 
     /// <summary>
     /// Reloads the card configuration
     /// </summary>
-    public void ReloadCardConfiguration() {}
+    public void ReloadCardConfiguration() { }
   }
 }

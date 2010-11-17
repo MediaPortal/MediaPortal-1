@@ -1606,70 +1606,111 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    public TvResult Scan(ref User user, IChannel channel, int idChannel)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(channel))
+      {
         return TvResult.UnknownError;
+      }
       try
       {
-        //if (user == null) return TvResult.UnknownError;
-        //if (channel == null) return TvResult.UnknownError;
-        //if (user.CardId < 0) return TvResult.CardIsDisabled;
-
         int cardId = user.CardId;
-        if (_cards[cardId].DataBaseCard.Enabled == false)
+        ITvCardHandler cardHandler = _cards[cardId];
+        if (cardHandler.DataBaseCard.Enabled == false)
+        {
           return TvResult.CardIsDisabled;
-        //if (!CardPresent(cardId)) return TvResult.CardIsDisabled;
-
-        if (_cards[cardId].Card.SubChannels.Length > 0)
-        {
-          bool isRec = _cards[cardId].Recorder.IsRecordingAnyUser();
-          if (!isRec)
-          {
-            TvCardContext context = (TvCardContext)_cards[cardId].Card.Context;
-            User[] users = context.Users;
-
-            foreach (User userObj in users)
-            {
-              if (userObj.Name.Equals(user.Name))
-              {
-                if (userObj.SubChannel > -1)
-                {
-                  _cards[cardId].Card.FreeSubChannelContinueGraph(userObj.SubChannel);
-                }
-                break;
-              }
-            }
-          }
         }
+        FreeSubChannel(ref user, channel);
 
+        TvResult res = cardHandler.Tuner.Scan(ref user, channel, idChannel);
 
-        //on tune we need to remember to remove the previous subchannel before tuning the next one.
-        // but only if the subchannel is free, meaning not recording and no other users attached.          
-        if (user.SubChannel > 0 && _cards[cardId].Card.SubChannels.Length > -1)
-        {
-          bool isRec = _cards[cardId].Recorder.IsRecordingAnyUser();
-          if (!isRec)
-          {
-            _cards[cardId].Card.FreeSubChannelContinueGraph(user.SubChannel);
-          }
-        }
-
-        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
-        TvResult res = _cards[cardId].Tuner.Tune(ref user, channel, idChannel);
-
-
-        /*if (res == TvResult.Succeeded)
-        {
-          RemoveUserFromOtherCards(cardId, user);
-        }
-        */
         return res;
       }
       finally
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
       }
+    }
+
+    /// <summary>
+    /// Tunes the the specified card to the channel.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="idChannel">The id channel.</param>
+    /// <returns>true if succeeded</returns>
+    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    {
+      if (ValidateTvControllerParams(user) || ValidateTvControllerParams(channel))
+      {
+        return TvResult.UnknownError;
+      }
+      try
+      {
+        int cardId = user.CardId;
+        ITvCardHandler cardHandler = _cards[cardId];
+        if (cardHandler.DataBaseCard.Enabled == false)
+        {
+          return TvResult.CardIsDisabled;
+        }
+        FreeSubChannel(ref user, channel);
+
+        TvResult res = cardHandler.Tuner.Tune(ref user, channel, idChannel);
+
+        return res;
+      }
+      finally
+      {
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+      }
+    }
+
+    /// <summary>
+    /// Tunes the the specified card to the channel.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="idChannel">The id channel.</param>
+    /// <returns>true if succeeded</returns>
+    private void FreeSubChannel(ref User user, IChannel channel)
+    {
+      int cardId = user.CardId;
+      ITvCardHandler cardHandler = _cards[cardId];
+
+      if (cardHandler.Card.SubChannels.Length > 0)
+      {
+        bool isRec = cardHandler.Recorder.IsRecordingAnyUser();
+        if (!isRec)
+        {
+          TvCardContext context = (TvCardContext)cardHandler.Card.Context;
+          User[] users = context.Users;
+
+          foreach (User userObj in users)
+          {
+            if (userObj.Name.Equals(user.Name))
+            {
+              if (userObj.SubChannel > -1)
+              {
+                cardHandler.Card.FreeSubChannelContinueGraph(userObj.SubChannel);
+              }
+              break;
+            }
+          }
+        }
+      }
+
+      //on tune we need to remember to remove the previous subchannel before tuning the next one.
+      // but only if the subchannel is free, meaning not recording and no other users attached.          
+      if (user.SubChannel > 0 && cardHandler.Card.SubChannels.Length > -1)
+      {
+        bool isRec = cardHandler.Recorder.IsRecordingAnyUser();
+        if (!isRec)
+        {
+          cardHandler.Card.FreeSubChannelContinueGraph(user.SubChannel);
+        }
+      }
+
+      Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
     }
 
     /// <summary>
@@ -2601,6 +2642,7 @@ namespace TvService
           result = CardTune(ref userCopy, tuneChannel, channel);
           if (result != TvResult.Succeeded)
           {
+            StopTimeShifting(ref userCopy);
             continue; //try next card            
           }
           Log.Info("control2:{0} {1} {2}", userCopy.Name, userCopy.CardId, userCopy.SubChannel);
@@ -2616,6 +2658,7 @@ namespace TvService
           result = StartTimeShifting(ref userCopy, ref timeshiftFileName);
           if (result != TvResult.Succeeded)
           {
+            StopTimeShifting(ref userCopy);
             continue; //try next card
           }
           Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", userCopy.CardId, timeshiftFileName);

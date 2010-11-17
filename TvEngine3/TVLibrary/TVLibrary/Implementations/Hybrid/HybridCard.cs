@@ -337,6 +337,18 @@ namespace TvLibrary.Implementations.Hybrid
       return _group.Tune(subChannelId, channel);
     }
 
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns>true if succeeded else false</returns>
+    public ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return _group.Scan(subChannelId, channel);
+    }
+
     /// <summary>
     /// Get/Set the quality
     /// </summary>

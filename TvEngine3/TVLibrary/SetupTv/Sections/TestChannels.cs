@@ -397,6 +397,9 @@ namespace SetupTv.Sections
       string err = "";
       switch (result)
       {
+        case TvResult.NoPmtFound:
+          err = "No PMT found";
+          break;
         case TvResult.NoSignalDetected:
           err = "No signal";
           break;

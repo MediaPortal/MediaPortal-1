@@ -133,6 +133,9 @@ namespace SetupTv.Sections
         {
           switch (result)
           {
+            case TvResult.NoPmtFound:
+              MessageBox.Show(this, "No PMT found");
+              break;
             case TvResult.NoSignalDetected:
               MessageBox.Show(this, "No signal");
               break;

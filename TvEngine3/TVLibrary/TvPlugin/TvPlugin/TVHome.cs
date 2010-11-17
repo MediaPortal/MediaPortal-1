@@ -2996,6 +2996,9 @@ namespace TvPlugin
       _lastError.Messages.Add(GUILocalizeStrings.Get(1500));
       switch (succeeded)
       {
+        case TvResult.NoPmtFound:
+          TextID = 1498;
+          break;
         case TvResult.NoSignalDetected:
           TextID = 1499;
           break;

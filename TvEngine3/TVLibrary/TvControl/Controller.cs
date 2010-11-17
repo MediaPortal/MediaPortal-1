@@ -120,7 +120,11 @@ namespace TvControl
     /// <summary>
     /// Operation failed since there is no free disk space
     /// </summary>
-    NoFreeDiskSpace
+    NoFreeDiskSpace,
+     /// <summary>
+    /// No PMT found
+    /// </summary>
+    NoPmtFound
   }
 
   /// <summary>
@@ -930,7 +934,16 @@ namespace TvControl
     bool StopRecording(ref User user);
 
     /// <summary>
-    /// Tune the the specified card to the channel.
+    /// Scan the specified card to the channel.
+    /// </summary>
+    /// <param name="user">The user.</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="idChannel">The id channel.</param>
+    /// <returns>true if succeeded</returns>
+    TvResult Scan(ref User user, IChannel channel, int idChannel);
+
+    /// <summary>
+    /// Tune the specified card to the channel.
     /// </summary>
     /// <param name="user">The user.</param>
     /// <param name="channel">The channel.</param>

@@ -20,6 +20,7 @@
 
 using System;
 using TvLibrary;
+using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
@@ -44,30 +45,31 @@ namespace TvService
 
 
     /// <summary>
-    /// Tunes the the specified card to the channel.
+    /// Scans the the specified card to the channel.
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The channel id</param>
     /// <returns></returns>
-    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    public TvResult Scan(ref User user, IChannel channel, int idChannel)
     {
       ITvSubChannel result = null;
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
-        Log.Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
-        
+        Log.Info("card: Scan {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
+
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
         {
+
           if (_cardHandler.IsLocal == false)
           {
             try
             {
               RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-              return RemoteControl.Instance.Tune(ref user, channel, idChannel);
+              return RemoteControl.Instance.Scan(ref user, channel, idChannel);
             }
             catch (Exception)
             {
@@ -76,106 +78,13 @@ namespace TvService
               return TvResult.ConnectionToSlaveFailed;
             }
           }
-
-          //@FIX this fails for back-2-back recordings
-          //if (CurrentDbChannel(ref user) == idChannel && idChannel >= 0)
-          //{
-          //  return true;
-          //}
-          Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
-          _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
-          _cardHandler.SetParameters();
-
-          //check if transponder differs
-          TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
-          if (_cardHandler.Card.SubChannels.Length > 0)
+          TvResult tvResult = TvResult.UnknownError;
+          if (!BeforeTune(channel, ref user, out tvResult))
           {
-            if (IsTunedToTransponder(channel) == false)
-            {
-              if (context.IsOwner(user) || user.IsAdmin)
-              {
-                Log.Debug("card: to different transponder");
-
-                //remove all subchannels, except for this user...
-                User[] users = context.Users;
-                for (int i = 0; i < users.Length; ++i)
-                {
-                  if (users[i].Name != user.Name)
-                  {
-                    Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
-
-                    //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
-                    if (users[i].IsAdmin)
-                      // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
-                    {
-                      Log.Debug("user is scheduler: {0}", users[i].Name);
-                      int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
-                                                                                      users[i].IdChannel);
-
-                      if (recScheduleId > 0)
-                      {
-                        Schedule schedule = Schedule.Retrieve(recScheduleId);
-                        Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
-                        RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
-                        schedule.Delete();
-                      }
-                    }
-                    else
-                    {
-                      _cardHandler.Card.FreeSubChannel(users[i].SubChannel);
-                      context.Remove(users[i]);
-                    }
-                  }
-                }
-              }
-              else
-              {
-                Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
-                return TvResult.NotTheOwner;
-              }
-            }
-            else // same transponder, free previous subchannel before tuning..
-            {
-              _cardHandler.Card.FreeSubChannel(user.SubChannel);
-            }
+            return tvResult;
           }
-
-          result = _cardHandler.Card.Tune(user.SubChannel, channel);
-
-          bool isLocked = _cardHandler.Card.IsTunerLocked;
-          Log.Debug("card: Tuner locked: {0}", isLocked);
-
-          Log.Info("**************************************************");
-          Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
-                   _cardHandler.Card.SignalQuality);
-          Log.Info("**************************************************");
-
-          if (result != null)
-          {
-            Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
-            user.SubChannel = result.SubChannelId;
-            user.IdChannel = idChannel;
-            context.Add(user);
-          }
-          else
-          {
-            //_cardHandler.Card.FreeSubChannel(result.SubChannelId);
-            return TvResult.AllCardsBusy;
-          }
-
-          //no need to recheck if signal is ok, this is done sooner now.
-          /*if (!isLocked)
-          {
-            _cardHandler.Card.FreeSubChannel(result.SubChannelId);
-            return TvResult.NoSignalDetected;
-          } 
-          */
-
-          if (result.IsTimeShifting || result.IsRecording)
-          {
-            context.OnZap(user);
-          }
-          return TvResult.Succeeded;
+          result = _cardHandler.Card.Scan(user.SubChannel, channel);
+          return AfterTune(user, idChannel, result);
         }
       }
       catch (TvExceptionNoSignal)
@@ -204,6 +113,15 @@ namespace TvService
         }
         return TvResult.GraphBuildingFailed;
       }
+      catch (TvExceptionNoPMT exceptionNoPmt)
+      {
+        Log.Write(exceptionNoPmt);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.NoPmtFound;
+      }
       catch (Exception ex)
       {
         Log.Write(ex);
@@ -213,6 +131,196 @@ namespace TvService
         }
         return TvResult.UnknownError;
       }
+    }
+
+    /// <summary>
+    /// Tunes the the specified card to the channel.
+    /// </summary>
+    /// <param name="user">User</param>
+    /// <param name="channel">The channel.</param>
+    /// <param name="idChannel">The channel id</param>
+    /// <returns></returns>
+    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    {
+      ITvSubChannel result = null;
+      try
+      {
+        if (_cardHandler.DataBaseCard.Enabled == false)
+          return TvResult.CardIsDisabled;
+        Log.Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
+
+        // fix mantis 0002776: Code locking in cardtuner can cause hangs 
+        //lock (this)
+        {
+
+          if (_cardHandler.IsLocal == false)
+          {
+            try
+            {
+              RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+              return RemoteControl.Instance.Tune(ref user, channel, idChannel);
+            }
+            catch (Exception)
+            {
+              Log.Error("card: unable to connect to slave controller at: {0}",
+                        _cardHandler.DataBaseCard.ReferencedServer().HostName);
+              return TvResult.ConnectionToSlaveFailed;
+            }
+          }
+          TvResult tvResult = TvResult.UnknownError;
+          if (!BeforeTune(channel, ref user, out tvResult))
+          {
+            return tvResult;
+          }
+          result = _cardHandler.Card.Tune(user.SubChannel, channel);          
+          return AfterTune(user, idChannel, result);
+        }
+      }
+      catch (TvExceptionNoSignal)
+      {
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.NoSignalDetected;
+      }
+      catch (TvExceptionSWEncoderMissing ex)
+      {
+        Log.Write(ex);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.SWEncoderMissing;
+      }
+      catch (TvExceptionGraphBuildingFailed ex2)
+      {
+        Log.Write(ex2);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.GraphBuildingFailed;
+      }
+      catch (TvExceptionNoPMT exceptionNoPmt)
+      {
+        Log.Write(exceptionNoPmt);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.NoPmtFound;
+      }
+      catch (Exception ex)
+      {
+        Log.Write(ex);
+        if (result != null)
+        {
+          _cardHandler.Card.FreeSubChannel(result.SubChannelId);
+        }
+        return TvResult.UnknownError;
+      }
+    }
+
+    private TvResult AfterTune(User user, int idChannel, ITvSubChannel result)
+    {
+      bool isLocked = _cardHandler.Card.IsTunerLocked;
+      Log.Debug("card: Tuner locked: {0}", isLocked);
+
+      Log.Info("**************************************************");
+      Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
+               _cardHandler.Card.SignalQuality);
+      Log.Info("**************************************************");
+
+      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      if (result != null)
+      {
+        Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
+        user.SubChannel = result.SubChannelId;
+        user.IdChannel = idChannel;
+        context.Add(user);
+      }
+      else
+      {
+        return TvResult.AllCardsBusy;
+      }
+
+      if (result.IsTimeShifting || result.IsRecording)
+      {
+        context.OnZap(user);
+      }
+      return TvResult.Succeeded;
+    }
+
+    private bool BeforeTune(IChannel channel, ref User user, out TvResult result)
+    {
+      result = TvResult.UnknownError;
+      //@FIX this fails for back-2-back recordings
+      //if (CurrentDbChannel(ref user) == idChannel && idChannel >= 0)
+      //{
+      //  return true;
+      //}
+      Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
+      _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
+      _cardHandler.SetParameters();
+
+      //check if transponder differs
+      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      if (_cardHandler.Card.SubChannels.Length > 0)
+      {
+        if (IsTunedToTransponder(channel) == false)
+        {
+          if (context.IsOwner(user) || user.IsAdmin)
+          {
+            Log.Debug("card: to different transponder");
+
+            //remove all subchannels, except for this user...
+            User[] users = context.Users;
+            for (int i = 0; i < users.Length; ++i)
+            {
+              if (users[i].Name != user.Name)
+              {
+                Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
+
+                //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
+                if (users[i].IsAdmin)
+                // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
+                {
+                  Log.Debug("user is scheduler: {0}", users[i].Name);
+                  int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
+                                                                                  users[i].IdChannel);
+
+                  if (recScheduleId > 0)
+                  {
+                    Schedule schedule = Schedule.Retrieve(recScheduleId);
+                    Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
+                    RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
+                    schedule.Delete();
+                  }
+                }
+                else
+                {
+                  _cardHandler.Card.FreeSubChannel(users[i].SubChannel);
+                  context.Remove(users[i]);
+                }
+              }
+            }
+          }
+          else
+          {
+            Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
+            result = TvResult.NotTheOwner;
+            return false;
+          }
+        }
+        else // same transponder, free previous subchannel before tuning..
+        {
+          _cardHandler.Card.FreeSubChannel(user.SubChannel);
+        }
+      }
+      
+      result = TvResult.Succeeded;
+      return true;
     }
 
 

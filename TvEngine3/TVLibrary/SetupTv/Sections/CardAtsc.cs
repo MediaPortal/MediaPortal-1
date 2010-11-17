@@ -220,7 +220,7 @@ namespace SetupTv.Sections
           item.EnsureVisible();
           if (index == minchan)
           {
-            RemoteControl.Instance.Tune(ref user, tuneChannel, -1);
+            RemoteControl.Instance.Scan(ref user, tuneChannel, -1);
           }
           IChannel[] channels = RemoteControl.Instance.Scan(_cardNumber, tuneChannel);
           UpdateStatus();
