@@ -69,10 +69,6 @@
   <Dir id = "Thumbs">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Thumbs\</Path>
   </Dir>
-  <!-- The Path were all the Weather related files are located. -->
-  <Dir id = "Weather">
-    <Path>Weather\</Path>
-  </Dir>
   <!-- A Path holding cached information. Like Picture thumbs, modified skin files (packedgfx), etc. Files in there can be removed by the user -->
   <Dir id = "Cache">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Cache\</Path>

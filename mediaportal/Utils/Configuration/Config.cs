@@ -40,7 +40,6 @@ namespace MediaPortal.Configuration
       Plugins,
       Thumbs,
       Cache,
-      Weather,
       CustomInputDevice,
       Config,
       CustomInputDefault,
@@ -337,7 +336,6 @@ private Config()
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(baseDir, @"weather\"));
       Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
     }
 

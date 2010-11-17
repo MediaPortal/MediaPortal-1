@@ -314,13 +314,7 @@ Section "-prepare" SecPrepare
   ${AndIf} $UpdateMode == 1
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 1"
 
-    ${If} $PREVIOUS_VERSION == 1.0.0.0
-      ${LOG_TEXT} "INFO" "Removing 1.0 files..."
-      !include "update-1.0.1.nsh"
-    ${ElseIf} $PREVIOUS_VERSION == 1.0.1.0
-      ${LOG_TEXT} "INFO" "Removing 1.0.1 files..."
-      !include "update-1.0.2.nsh"
-    ${ElseIf} $PREVIOUS_VERSION == ""
+    ${If} $PREVIOUS_VERSION == ""
       ${LOG_TEXT} "INFO" "It seems MP is not installed, no update procedure will be done"
     ${ElseIf} $R3 != 0
       ${LOG_TEXT} "INFO" "An SVN version ($0) of MP is installed. Update is not supported."
@@ -376,7 +370,7 @@ Section "MediaPortal core files (required)" SecCore
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   # Files which were diffed before including in installer
   # means all of them are in full installer, but only the changed and new ones are in svn installer 
-  #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs, weather need to be extracted to their special MPdir location
+  #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs need to be extracted to their special MPdir location
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
   !ifdef HEISE_BUILD
@@ -404,8 +398,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\skin\*"
   SetOutPath "$MPdir.Thumbs"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs\*"
-  SetOutPath "$MPdir.Weather"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\weather\*"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
   ; create empty folders

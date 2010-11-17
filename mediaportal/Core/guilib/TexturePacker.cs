@@ -351,8 +351,7 @@ namespace MediaPortal.GUI.Library
         }
         if (xmlreader.GetValueAsBool("debug", "packPluginGfx", true))
         {
-          string[] weatherFiles = Directory.GetFiles(Config.GetFolder(Config.Dir.Weather), "*.png",
-                                                     SearchOption.AllDirectories);
+          string[] weatherFiles = Directory.GetFiles(String.Format(@"{0}\media\weather", skinName), "*.png");
           string[] tetrisFiles = Directory.GetFiles(String.Format(@"{0}\media\tetris", skinName), "*.png");
           files.AddRange(weatherFiles);
           files.AddRange(tetrisFiles);

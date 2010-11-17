@@ -70,12 +70,6 @@ namespace MediaPortal.Tests.Core.Util
     }
 
     [Test]
-    public void TestWeatherDirName()
-    {
-      DoTest(Config.Dir.Weather);
-    }
-
-    [Test]
     public void TestCustomInputDeviceDirName()
     {
       DoTest(Config.Dir.CustomInputDevice);
