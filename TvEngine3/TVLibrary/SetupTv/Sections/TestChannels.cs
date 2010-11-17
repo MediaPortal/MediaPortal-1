@@ -356,6 +356,12 @@ namespace SetupTv.Sections
               user.CardId = card.Id;
               _succeeded++;              
             }
+            else if (result == TvResult.AllCardsBusy)
+            {
+              Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", "All cards are busy");
+              user.CardId = card.Id;
+              _succeeded++;              
+            }
             else
             {
               string err = GetErrMsgFromTVResult(result);
@@ -700,9 +706,9 @@ namespace SetupTv.Sections
       {
         buffer.Append(mpListViewLog.Columns[i].Text);  
         buffer.Append("\t");  
-      }  
-   
-      buffer.Append("\n");
+      }
+
+      buffer.Append(Environment.NewLine);  
 
       for (int i = 0; i < mpListViewLog.Items.Count; i++)  
       {
@@ -712,7 +718,7 @@ namespace SetupTv.Sections
            buffer.Append("\t");  
          }  
    
-        buffer.Append("\n");  
+        buffer.Append(Environment.NewLine);  
       }  
    
       Clipboard.SetText(buffer.ToString());

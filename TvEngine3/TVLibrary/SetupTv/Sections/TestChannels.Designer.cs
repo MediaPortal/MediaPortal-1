@@ -90,6 +90,8 @@ namespace SetupTv.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel10);
       this.mpGroupBox1.Controls.Add(this.txtFirstFail);
       this.mpGroupBox1.Controls.Add(this.mpLabel9);
@@ -155,7 +157,9 @@ namespace SetupTv.Sections
       // 
       this.mpListViewLog.AllowDrop = true;
       this.mpListViewLog.AllowRowReorder = true;
-      this.mpListViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListViewLog.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader12,
             this.columnHeader13,
@@ -217,6 +221,7 @@ namespace SetupTv.Sections
       // 
       // mpButton1
       // 
+      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButton1.Location = new System.Drawing.Point(365, 146);
       this.mpButton1.Name = "mpButton1";
       this.mpButton1.Size = new System.Drawing.Size(75, 25);
@@ -317,6 +322,9 @@ namespace SetupTv.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -423,9 +431,9 @@ namespace SetupTv.Sections
       this.mpLabel3.AutoSize = true;
       this.mpLabel3.Location = new System.Drawing.Point(9, 245);
       this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(192, 13);
+      this.mpLabel3.Size = new System.Drawing.Size(175, 13);
       this.mpLabel3.TabIndex = 66;
-      this.mpLabel3.Text = "Each tune should last between (mSec):";
+      this.mpLabel3.Text = "Each tune will last between (mSec):";
       // 
       // txtRndFrom
       // 
@@ -464,9 +472,9 @@ namespace SetupTv.Sections
       this.chkRepeatTest.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkRepeatTest.Location = new System.Drawing.Point(349, 271);
       this.chkRepeatTest.Name = "chkRepeatTest";
-      this.chkRepeatTest.Size = new System.Drawing.Size(79, 17);
+      this.chkRepeatTest.Size = new System.Drawing.Size(104, 17);
       this.chkRepeatTest.TabIndex = 71;
-      this.chkRepeatTest.Text = "Repeat test";
+      this.chkRepeatTest.Text = "Repeat until stop";
       this.chkRepeatTest.UseVisualStyleBackColor = true;
       this.chkRepeatTest.CheckedChanged += new System.EventHandler(this.chkRepeatTest_CheckedChanged);
       // 
