@@ -992,6 +992,7 @@
     <String id="1449">Stop optagelse</String>
     <String id="1450">Er du sikker på du vil stoppe optagelse?</String>
     <String id="1451">Kunne ikke afspille</String>
+    <String id="1498">Program/Kanal ikke fundet</String>
     <String id="1499">Intet signal</String>
     <String id="1500">Kan ikke starte tidsforskudt optagelse</String>
     <String id="1501">Kort er inaktivt</String>
