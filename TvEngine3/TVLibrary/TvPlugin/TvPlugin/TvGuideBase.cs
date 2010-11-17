@@ -673,7 +673,7 @@ namespace TvPlugin
               SaveSettings();
               _recordingList.Clear();
 
-              _controls = null;
+              _controls = new Dictionary<int, GUIButton3PartControl>();
               _channelList = null;
               _recordingList = null;
               _currentProgram = null;
@@ -1899,11 +1899,11 @@ namespace TvPlugin
         GUILabelControl labelTemplate;
         if (program.IsRunningAt(dt))
         {
-          labelTemplate = GetControl((int)Controls.LABEL_TITLE_DARK_TEMPLATE) as GUILabelControl;
+          labelTemplate = _titleDarkTemplate;
         }
         else
         {
-          labelTemplate = GetControl((int)Controls.LABEL_TITLE_TEMPLATE) as GUILabelControl;
+          labelTemplate = _titleTemplate;
         }
 
         if (labelTemplate != null)
@@ -4002,7 +4002,6 @@ namespace TvPlugin
       if (refresh || _channelList == null)
       {
         _channelList = new List<TvGuideChannel>();
-        _controls = new Dictionary<int, GUIButton3PartControl>();
       }
 
       if (_channelList.Count == 0)
