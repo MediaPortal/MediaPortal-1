@@ -85,7 +85,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       1
-!define VER_REVISION    1
+!define VER_REVISION    2
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
@@ -97,7 +97,7 @@
 !if ${VER_BUILD} == 0       # it's an official release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
   ;this is for display purposes
-  !define VERSION "1.1.1"
+  !define VERSION "1.1.2"
 !else                       # it's a svn release
   ;!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} SVN build ${VER_BUILD} for TESTING ONLY"
   ;this is for display purposes
