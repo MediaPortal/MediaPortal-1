@@ -1007,6 +1007,7 @@
     <String id="1449">Stopp opptak</String>
     <String id="1450">Er du sikker på at du vil stoppe opptaket?</String>
     <String id="1451">Kan ikke spille av</String>
+    <String id="1498">Program/Kanal ikke funnet</String>
     <String id="1499">Ikke signal</String>
     <String id="1500">Kan ikke starte timeshifting</String>
     <String id="1501">TV-kortet er deaktivert</String>
@@ -1752,6 +1753,7 @@
     <String id="100509" prefix="Min ">Musikk/Søk/Fremgang</String>
     <String id="100510" prefix="Min ">Musikk/Spilles nå</String>
     <String id="100511" prefix="Min">Musikk/Fullskjerm</String>
+    <String id="100512">LastFM Liker/Hater</String>
     <String id="100600" prefix="Min ">TV/Guide</String>
     <String id="100601" prefix="Min ">TV/Planlegger</String>
     <String id="100602" prefix="Min ">TV/Full skjerm</String>
