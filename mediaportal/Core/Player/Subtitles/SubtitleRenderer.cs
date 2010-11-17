@@ -480,6 +480,7 @@ namespace MediaPortal.Player.Subtitles
           else
           {
             Log.Debug("Page: <BLANK PAGE>");
+            return;
           }
         }
       }
