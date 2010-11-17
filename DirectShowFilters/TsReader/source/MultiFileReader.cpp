@@ -654,13 +654,14 @@ void MultiFileReader::setBufferPointer()
 
 __int64 MultiFileReader::GetFileSize()
 {
+  RefreshTSBufferFile();
   return m_endPosition - m_startPosition;
-  if (m_cachedFileSize==0)
-  {
-    RefreshTSBufferFile();
-    RefreshFileSize();
-  }
-  return m_cachedFileSize;
+//  if (m_cachedFileSize==0)
+//  {
+//    RefreshTSBufferFile();
+//    RefreshFileSize();
+//  }
+//  return m_cachedFileSize;
 }
 
 void MultiFileReader::RefreshFileSize()

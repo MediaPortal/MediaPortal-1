@@ -170,7 +170,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   TCHAR filename[1024];
   GetLogFile(filename);
   ::DeleteFile(filename);
-  LogDebug("-------------- v1.4.4 ----------------");
+  LogDebug("-------------- v1.4.5 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
@@ -1143,6 +1143,7 @@ void CTsReaderFilter::ThreadProc()
 
   int durationUpdateLoop = 1;
   long Old_rtspDuration = -1 ;
+  long PauseDuration =0;
 
   ::SetThreadPriority(GetCurrentThread(),THREAD_PRIORITY_BELOW_NORMAL);
   do
@@ -1179,6 +1180,18 @@ void CTsReaderFilter::ThreadProc()
           }
         }
       }
+      if (m_bLiveTv && (m_State == State_Paused))
+      {
+        // After 10 secs Pause, for sure, liveTv is cancelled.
+        PauseDuration++ ;
+        if (PauseDuration > 10)
+        {
+          m_bLiveTv=false;
+          LogDebug("CTsReaderFilter, Live Tv is paused for more than 10 secs => m_bLiveTv=false.");
+        }
+      }
+      else
+        PauseDuration=0 ;
     }
     else
     {
