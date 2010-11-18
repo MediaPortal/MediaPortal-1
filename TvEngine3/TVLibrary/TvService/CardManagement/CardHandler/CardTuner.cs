@@ -114,8 +114,7 @@ namespace TvService
         return TvResult.GraphBuildingFailed;
       }
       catch (TvExceptionNoPMT exceptionNoPmt)
-      {
-        Log.Write(exceptionNoPmt);
+      {        
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -203,8 +202,7 @@ namespace TvService
         return TvResult.GraphBuildingFailed;
       }
       catch (TvExceptionNoPMT exceptionNoPmt)
-      {
-        Log.Write(exceptionNoPmt);
+      {      
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
