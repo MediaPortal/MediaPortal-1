@@ -1688,7 +1688,7 @@ namespace TvPlugin
         for (int i = 0; i < programs.Count; i++)
         {
           Program program = (Program)programs[i];
-          if (program.StartTime >= _viewingTime)
+          if (program.StartTime <= _viewingTime && program.EndTime >= _viewingTime)
           {
             _programOffset = i;
             found = true;
