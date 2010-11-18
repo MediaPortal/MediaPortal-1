@@ -35,7 +35,7 @@ using Action = MediaPortal.GUI.Library.Action;
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Class is for GUI interface to music playist
   /// </summary>
   public class GUIMusicPlayList : GUIMusicBaseWindow
   {
@@ -49,57 +49,11 @@ namespace MediaPortal.GUI.Music
       Random = 5,
     }
 
-    private static int CompareSongsByTimesPlayed(Song x, Song y)
-    {
-      // ...and y is not null, compare 
-      int retval = 0;
-      try
-      {
-        if (x.TimesPlayed == 0)
-        {
-          return 0;
-        }
-
-        if (y.TimesPlayed == 0)
-        {
-          return 0;
-        }
-
-        if (x.TimesPlayed == y.TimesPlayed)
-        {
-          return 0;
-        }
-        else if (x.TimesPlayed < y.TimesPlayed)
-        {
-          retval = 1;
-        }
-        else
-        {
-          retval = -1;
-        }
-
-        if (retval != 0)
-        {
-          return retval;
-        }
-        else
-        {
-          return 0;
-        }
-      }
-
-      catch (Exception)
-      {
-        return 0;
-      }
-    }
-
     // add the beginning artist again to avoid drifting away in style.
     private const int REINSERT_AFTER_THIS_MANY_SONGS = 10;
 
     #region Variables
 
-    private MusicDatabase mdb = null;
     private DirectoryHistory m_history = new DirectoryHistory();
     private string m_strDirectory = string.Empty;
     private int m_iItemSelected = -1;
@@ -111,7 +65,6 @@ namespace MediaPortal.GUI.Music
     private string _currentScrobbleUser = string.Empty;
     private Song _scrobbleStartTrack;
     private VirtualDirectory _virtualDirectory = new VirtualDirectory();
-    //const int MaxNumPShuffleSongPredict = 12;
     private int _totalScrobbledSongs = 0;
     private int _maxScrobbledSongsPerArtist = 1;
     private int _maxScrobbledArtistsForSongs = 4;
@@ -174,7 +127,7 @@ namespace MediaPortal.GUI.Music
       {
         Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
         IPlayListIO saver = new PlayListM3uIO();
-        PlayList playlist = PlayListPlayer.SingletonPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
         PlayList playlistTmp = new PlayList();
         // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
         foreach (PlayListItem item in playlist)
@@ -194,15 +147,15 @@ namespace MediaPortal.GUI.Music
 
     private void LoadScrobbleUserSettings()
     {
-      string currentUID = Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser));
-      ScrobblerOn = (mdb.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
-      _maxScrobbledArtistsForSongs = mdb.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
-      _maxScrobbledSongsPerArtist = mdb.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);
-      _preferCountForTracks = mdb.AddScrobbleUserSettings(currentUID, "iPreferCount", -1);
-      _rememberStartTrack = (mdb.AddScrobbleUserSettings(currentUID, "iRememberStartArtist", -1) == 1) ? true : false;
+      string currentUID = Convert.ToString(m_database.AddScrobbleUser(_currentScrobbleUser));
+      ScrobblerOn = (m_database.AddScrobbleUserSettings(currentUID, "iScrobbleDefault", -1) == 1) ? true : false;
+      _maxScrobbledArtistsForSongs = m_database.AddScrobbleUserSettings(currentUID, "iAddArtists", -1);
+      _maxScrobbledSongsPerArtist = m_database.AddScrobbleUserSettings(currentUID, "iAddTracks", -1);
+      _preferCountForTracks = m_database.AddScrobbleUserSettings(currentUID, "iPreferCount", -1);
+      _rememberStartTrack = (m_database.AddScrobbleUserSettings(currentUID, "iRememberStartArtist", -1) == 1) ? true : false;
       _maxScrobbledArtistsForSongs = (_maxScrobbledArtistsForSongs > 0) ? _maxScrobbledArtistsForSongs : 3;
       _maxScrobbledSongsPerArtist = (_maxScrobbledSongsPerArtist > 0) ? _maxScrobbledSongsPerArtist : 1;
-      int tmpRMode = mdb.AddScrobbleUserSettings(currentUID, "iOfflineMode", -1);
+      int tmpRMode = m_database.AddScrobbleUserSettings(currentUID, "iOfflineMode", -1);
 
       switch (tmpRMode)
       {
@@ -227,7 +180,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      mdb = MusicDatabase.Instance;
+      m_database = MusicDatabase.Instance;
       m_strDirectory = Directory.GetCurrentDirectory();
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -237,7 +190,7 @@ namespace MediaPortal.GUI.Music
         _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true);
       }
 
-      _scrobbleUsers = mdb.GetAllScrobbleUsers();
+      _scrobbleUsers = m_database.GetAllScrobbleUsers();
       // no users in database
       if (_scrobbleUsers.Count > 0 && _enableScrobbling)
       {
@@ -270,26 +223,6 @@ namespace MediaPortal.GUI.Music
       get { return "mymusicplaylist"; }
     }
 
-    protected override bool AllowView(View view)
-    {
-      if (view == View.List)
-      {
-        return false;
-      }
-      if (view == View.Albums)
-      {
-        return false;
-      }
-      if (view == View.FilmStrip)
-      {
-        return false;
-      }
-      if (view == View.CoverFlow)
-      {
-        return false;
-      }
-      return true;
-    }
 
     // Fires every time - especially ACTION_MUSIC_PLAY even if we're already playing stuff
     private void OnNewAction(Action action)
@@ -375,7 +308,7 @@ namespace MediaPortal.GUI.Music
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
-      currentView = View.PlayList;
+      currentLayout = Layout.PlayList;
       facadeView.View = GUIFacadeControl.ViewMode.Playlist;
 
       if (ScrobblerOn)
@@ -471,8 +404,8 @@ namespace MediaPortal.GUI.Music
           btnScrobbleUser.Label = GUILocalizeStrings.Get(33005) + _currentScrobbleUser;
 
           AudioscrobblerBase.DoChangeUser(_currentScrobbleUser,
-                                          mdb.AddScrobbleUserPassword(
-                                            Convert.ToString(mdb.AddScrobbleUser(_currentScrobbleUser)), ""));
+                                          m_database.AddScrobbleUserPassword(
+                                            Convert.ToString(m_database.AddScrobbleUser(_currentScrobbleUser)), ""));
           LoadScrobbleUserSettings();
           UpdateButtonStates();
         }
@@ -575,19 +508,8 @@ namespace MediaPortal.GUI.Music
       {
         ClearPlayList();
       }
-        //else if (control == btnPlay)
-        //{
-        //  playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_MUSIC;
-        //  playlistPlayer.Reset();
-        //  playlistPlayer.Play(facadeView.SelectedListItemIndex);
-
-        //  UpdateButtonStates();
-        //}
-
       else if (control == btnScrobble)
       {
-        //if (_enableScrobbling)
-        //{
         //get state of button
         if (btnScrobble.Selected)
         {
@@ -601,12 +523,6 @@ namespace MediaPortal.GUI.Music
 
         if (facadeView.PlayListView != null)
         {
-          //{
-          //  // Prevent the currently playing track from being scrolled off the top 
-          //  // or bottom of the screen when other items are re-ordered
-          //  facadeView.PlayListView.AllowLastVisibleListItemDown = !ScrobblerOn;
-          //  facadeView.PlayListView.AllowMoveFirstVisibleListItemUp = !ScrobblerOn;
-          //}
           UpdateButtonStates();
         }
       }
@@ -638,16 +554,6 @@ namespace MediaPortal.GUI.Music
 
         case GUIMessage.MessageType.GUI_MSG_PLAYLIST_CHANGED:
           {
-            //	global playlist changed outside playlist window
-            //added by Sam
-            ////if party shuffle...
-            //if (PShuffleOn)// || ScrobblerOn)
-            //{
-            //  LoadDirectory(string.Empty);
-            //  UpdateButtonStates();
-            //}
-            //ended changes
-
             if (m_iLastControl == facadeView.GetID && facadeView.Count <= 0)
             {
               if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_MUSIC_PLAYLIST)
@@ -699,12 +605,6 @@ namespace MediaPortal.GUI.Music
           //          btnPlay.Disabled = true;
           btnSave.Disabled = true;
         }
-        //PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-
-        //if (playList != null && playList.Count > 0)
-        //  btnSave.Disabled = false;
-        //else
-        //  btnSave.Disabled = true;
       }
       base.UpdateButtonStates();
     }
@@ -1233,8 +1133,8 @@ namespace MediaPortal.GUI.Music
       RemovePlayListItem(iItem);
 
       if (currentFile.Length > 0 && currentFile == item.Path)
-      {
-        string nextTrackPath = PlayListPlayer.SingletonPlayer.GetNext();
+      {        
+        string nextTrackPath = playlistPlayer.GetNext();
 
         if (nextTrackPath.Length == 0)
         {
@@ -1563,14 +1463,6 @@ namespace MediaPortal.GUI.Music
           // okay okay seems like there aren't enough files to add
           if (loops == LookupArtists.Count - 1)
           {
-            // make sure we get a few songs at least...
-            //if (_preferCountForTracks != 2)
-            //{
-            //  _preferCountForTracks = 2;
-            //  Log.Info("ScrobbleLookupThread: could not find enough songs - temporarily accepting all songs");
-            //  loops = 0;
-            //}
-            //else
             break;
           }
         }

@@ -38,7 +38,7 @@ using Action = MediaPortal.GUI.Library.Action;
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Class is for GUI interface to music shares view
   /// </summary>
   [PluginIcons("WindowPlugins.GUIMusic.Music.gif", "WindowPlugins.GUIMusic.MusicDisabled.gif")]
   public class GUIMusicFiles : GUIMusicBaseWindow, ISetupForm, IShowPlugin
@@ -298,15 +298,15 @@ namespace MediaPortal.GUI.Music
     {
       get { return "mymusic"; }
     }
-
-    protected override bool AllowView(View view)
+    
+    protected override bool AllowLayout(Layout layout)
     {
-      if (view == View.Albums)
+      if (layout == Layout.Albums)
       {
         return false;
       }
-      return base.AllowView(view);
-    }
+      return base.AllowLayout(layout);
+    }    
 
     public override void OnAdded()
     {
@@ -1275,7 +1275,7 @@ namespace MediaPortal.GUI.Music
         }
         CurrentSortAsc = _mapSettings.SortAscending;
         CurrentSortMethod = (MusicSort.SortMethod) _mapSettings.SortBy;
-        currentView = (View) _mapSettings.ViewAs;
+        currentLayout = (Layout) _mapSettings.ViewAs;
       }
       else
       {
@@ -1288,7 +1288,7 @@ namespace MediaPortal.GUI.Music
           }
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (MusicSort.SortMethod) _mapSettings.SortBy;
-          currentView = (View) share.DefaultView;
+          currentLayout = (Layout) share.DefaultView;
         }
       }
       using (Profile.Settings xmlreader = new Profile.MPSettings())
@@ -1311,7 +1311,7 @@ namespace MediaPortal.GUI.Music
       }
       _mapSettings.SortAscending = CurrentSortAsc;
       _mapSettings.SortBy = (int) CurrentSortMethod;
-      _mapSettings.ViewAs = (int) currentView;
+      _mapSettings.ViewAs = (int) currentLayout;
       FolderSettings.AddFolderSetting(strDirectory, "MusicFiles", typeof (MapSettings), _mapSettings);
     }
 
@@ -1528,10 +1528,6 @@ namespace MediaPortal.GUI.Music
 
     public static bool IsMusicWindow(int window)
     {
-      if (window == (int) Window.WINDOW_MUSIC)
-      {
-        return true;
-      }
       if (window == (int) Window.WINDOW_MUSIC_PLAYLIST)
       {
         return true;
@@ -1540,23 +1536,7 @@ namespace MediaPortal.GUI.Music
       {
         return true;
       }
-      if (window == (int) Window.WINDOW_MUSIC_ALBUM)
-      {
-        return true;
-      }
-      if (window == (int) Window.WINDOW_MUSIC_ARTIST)
-      {
-        return true;
-      }
       if (window == (int) Window.WINDOW_MUSIC_GENRE)
-      {
-        return true;
-      }
-      if (window == (int) Window.WINDOW_MUSIC_TOP100)
-      {
-        return true;
-      }
-      if (window == (int) Window.WINDOW_MUSIC_FAVORITES)
       {
         return true;
       }
@@ -1565,8 +1545,8 @@ namespace MediaPortal.GUI.Music
         return true;
       }
       return false;
-    }
-
+    }    
+    
     #region Handlers
 
     private void OnPlayCD(string strDriveLetter, bool AskForAlbum)
@@ -2153,25 +2133,6 @@ namespace MediaPortal.GUI.Music
         playlistItem.MusicTag = pItem.MusicTag;
 
         playList.Insert(playlistItem, index);
-
-        //PlayList tempPlayList = new PlayList();
-        //for (int i = 0; i < playList.Count; i++)
-        //{
-        //  if (i == index + 1)
-        //  {
-        //    AddItemToPlayList(pItem, ref tempPlayList);
-        //  }
-
-        //  tempPlayList.Add(playList[i]);
-        //}
-
-        //playList.Clear();
-
-        //// add each item of the playlist to the playlistplayer
-        //for (int i = 0; i < tempPlayList.Count; ++i)
-        //{
-        //  playList.Add(tempPlayList[i]);
-        //}
       }
 
       else
@@ -2356,27 +2317,11 @@ namespace MediaPortal.GUI.Music
       {
         return true; //SV Added by SteveV 2006-09-07
       }
-      if (windowId == (int) Window.WINDOW_MUSIC)
-      {
-        return true;
-      }
-      if (windowId == (int) Window.WINDOW_MUSIC_ALBUM)
-      {
-        return true;
-      }
-      if (windowId == (int) Window.WINDOW_MUSIC_ARTIST)
-      {
-        return true;
-      }
       if (windowId == (int) Window.WINDOW_MUSIC_COVERART_GRABBER_PROGRESS)
       {
         return true;
       }
       if (windowId == (int) Window.WINDOW_MUSIC_COVERART_GRABBER_RESULTS)
-      {
-        return true;
-      }
-      if (windowId == (int) Window.WINDOW_MUSIC_FAVORITES)
       {
         return true;
       }
@@ -2397,14 +2342,6 @@ namespace MediaPortal.GUI.Music
         return true;
       }
       if (windowId == (int) Window.WINDOW_MUSIC_PLAYLIST)
-      {
-        return true;
-      }
-      if (windowId == (int) Window.WINDOW_MUSIC_TOP100)
-      {
-        return true;
-      }
-      if (windowId == (int) Window.WINDOW_MUSIC_YEARS)
       {
         return true;
       }

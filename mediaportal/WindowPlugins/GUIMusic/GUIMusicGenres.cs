@@ -36,7 +36,7 @@ using Action = MediaPortal.GUI.Library.Action;
 namespace MediaPortal.GUI.Music
 {
   /// <summary>
-  /// Summary description for Class1.
+  /// Class is for GUI interface to music database views
   /// </summary>
   public class GUIMusicGenres : GUIMusicBaseWindow
   {
@@ -57,8 +57,10 @@ namespace MediaPortal.GUI.Music
     private DirectoryHistory m_history = new DirectoryHistory();
     private string m_strDirectory = string.Empty;
     private int m_iItemSelected = -1;
-    private VirtualDirectory m_directory = new VirtualDirectory();
-    private View[,] views;
+    //viewDefaultLayouts stores the default layout (list, album, filmstrip etc)
+    //with first dimension being view number and second dimension
+    //being level within the view
+    private Layout[,] viewDefaultLayouts;    
     private bool[,] sortasc;
     private MusicSort.SortMethod[,] sortby;
     private static string _showArtist = string.Empty;
@@ -66,9 +68,6 @@ namespace MediaPortal.GUI.Music
     private int _currentLevel;
     private ViewDefinition _currentView;
     private List<Share> _shareList = new List<Share>();
-
-    private string m_strCurrentFolder = string.Empty;
-    private string currentFolder = string.Empty;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -80,11 +79,6 @@ namespace MediaPortal.GUI.Music
     public GUIMusicGenres()
     {
       GetID = (int)Window.WINDOW_MUSIC_GENRE;
-
-      m_directory.AddDrives();
-      m_directory.SetExtensions(Util.Utils.AudioExtensions);
-      playlistPlayer = PlayListPlayer.SingletonPlayer;
-
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
     }
 
@@ -189,42 +183,35 @@ namespace MediaPortal.GUI.Music
       get { return "mymusic" + handler.CurrentView; }
     }
 
-    protected override View CurrentView
+    protected override Layout CurrentLayout
     {
       get
       {
         if (handler.View != null)
         {
-          if (views == null)
+          if (viewDefaultLayouts == null)
           {
-            views = new View[handler.Views.Count,50];
-
-            ArrayList viewStrings = new ArrayList();
-            viewStrings.Add("List");
-            viewStrings.Add("Icons");
-            viewStrings.Add("Big Icons");
-            viewStrings.Add("Albums");
-            viewStrings.Add("Filmstrip");
+            viewDefaultLayouts = new Layout[handler.Views.Count,50];
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)
               {
                 FilterDefinition def = (FilterDefinition)handler.Views[i].Filters[j];
-                views[i, j] = GetViewNumber(def.DefaultView);
+                viewDefaultLayouts[i, j] = GetLayoutNumber(def.DefaultView);
               }
             }
           }
 
-          return views[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
+          return viewDefaultLayouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel];
         }
         else
         {
-          return View.List;
+          return Layout.List;
         }
       }
-      set { views[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
-    }
+      set { viewDefaultLayouts[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = value; }
+    }    
 
     protected override bool CurrentSortAsc
     {
@@ -331,11 +318,11 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    protected override bool AllowView(View view)
+    protected override bool AllowLayout(Layout layout)
     {
-      return base.AllowView(view);
+      return base.AllowLayout(layout);
     }
-
+    
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -419,8 +406,7 @@ namespace MediaPortal.GUI.Music
       {
         GUIControl.FocusControl(GetID, btnViewAs.GetID);
       }
-
-
+      
       if (_showArtist != string.Empty)
       {
         for (int i = 0; i < facadeView.Count; ++i)
@@ -437,7 +423,7 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      _showArtist = string.Empty;
+      _showArtist = string.Empty;      
 
       using (Profile.Settings settings = new Profile.MPSettings())
       {
@@ -1079,22 +1065,16 @@ namespace MediaPortal.GUI.Music
           break;
       }
     }
-
+    
     public static void SelectArtist(string artist)
     {
       _showArtist = artist;
-    }
+    }    
 
     private void AddItemToPlayList(GUIListItem pItem)
     {
       PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
       AddItemToPlayList(pItem, ref playList);
-    }
-
-    private void AddSongToPlayList(Song song)
-    {
-      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      AddSongToPlayList(song, playList);
     }
 
     private void AddSongToPlayList(Song song, PlayList playList)
@@ -1111,24 +1091,12 @@ namespace MediaPortal.GUI.Music
       playList.Add(playlistItem);
     }
 
-    private void AddSongsToPlayList(List<Song> songs)
-    {
-      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      AddSongsToPlayList(songs, playList);
-    }
-
     private void AddSongsToPlayList(List<Song> songs, PlayList playList)
     {
       foreach (Song song in songs)
       {
         AddSongToPlayList(song, playList);
       }
-    }
-
-    private void AddAlbumsToPlayList(List<Song> songs)
-    {
-      PlayList playList = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      AddAlbumsToPlayList(songs, playList);
     }
 
     private void AddAlbumsToPlayList(List<Song> albums, PlayList playList)

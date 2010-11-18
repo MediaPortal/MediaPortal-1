@@ -45,13 +45,7 @@ namespace MediaPortal.GUI.Music
   {
     #region enums
 
-    protected enum Level
-    {
-      Root,
-      Sub
-    }
-
-    public enum View
+    public enum Layout
     {
       List = 0,
       Icons = 1,
@@ -82,12 +76,9 @@ namespace MediaPortal.GUI.Music
     public bool _useFolderThumbs = true;
     public bool _showSortButton = false;
 
-    protected View currentView = View.List;
-    protected View currentViewRoot = View.List;
+    protected Layout currentLayout = Layout.List;
     protected MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
-    protected MusicSort.SortMethod currentSortMethodRoot = MusicSort.SortMethod.Name;
     protected bool m_bSortAscending;
-    protected bool m_bSortAscendingRoot;
     protected string m_strPlayListPath = string.Empty;
     private bool m_bUseID3 = false;
     private bool _autoShuffleOnLoad = false;
@@ -211,25 +202,20 @@ namespace MediaPortal.GUI.Music
         _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
 
-        int defaultView = (int)View.List;
+        int defaultView = (int)Layout.List;
         int defaultSort = (int)MusicSort.SortMethod.Name;
         bool defaultAscending = true;
         if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
             (handler.View.Filters.Count > 0))
         {
           FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
-          defaultView = (int)GetViewNumber(def.DefaultView);
+          defaultView = (int)GetLayoutNumber(def.DefaultView);
           defaultSort = (int)GetSortMethod(def.DefaultSort);
           defaultAscending = def.SortAscending;
         }
-        currentView = (View)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
-        currentViewRoot = (View)xmlreader.GetValueAsInt(SerializeName, "viewroot", defaultView);
-
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "view", defaultView);
         currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
-        currentSortMethodRoot =
-          (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethodroot", defaultSort);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
-        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
         m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
 
         for (int i = 0; i < _sortModes.Length; ++i)
@@ -245,7 +231,7 @@ namespace MediaPortal.GUI.Music
         m_strPlayListPath = Util.Utils.RemoveTrailingSlash(m_strPlayListPath);
       }
 
-      if (AllowView(CurrentView) == false)
+      if (AllowLayout(CurrentLayout) == false)
       {
         OnClicked(0, btnViewAs, 0); //switch to next valid one      
       }
@@ -291,44 +277,41 @@ namespace MediaPortal.GUI.Music
       return MusicSort.SortMethod.Name;
     }
 
-    protected View GetViewNumber(string s)
+    protected Layout GetLayoutNumber(string s)
     {
       switch (s.Trim().ToLower())
       {
         case "list":
-          return View.List;
+          return Layout.List;
         case "icons":
-          return View.Icons;
+          return Layout.Icons;
         case "big icons":
-          return View.LargeIcons;
+          return Layout.LargeIcons;
         case "largeicons":
-          return View.LargeIcons;
+          return Layout.LargeIcons;
         case "albums":
-          return View.Albums;
+          return Layout.Albums;
         case "filmstrip":
-          return View.FilmStrip;
+          return Layout.FilmStrip;
         case "playlist":
-          return View.PlayList;
+          return Layout.PlayList;
         case "cover flow":
-          return View.CoverFlow;
+          return Layout.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
       {
-        Log.Error("GUIMusicBaseWindow::GetViewNumber: Unknown String - " + s);
+        Log.Error("GUIMusicBaseWindow::GetLayoutNumber: Unknown String - " + s);
       }
-      return View.List;
+      return Layout.List;
     }
 
     protected virtual void SaveSettings()
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue(SerializeName, "view", (int)currentView);
-        xmlwriter.SetValue(SerializeName, "viewroot", (int)currentViewRoot);
+        xmlwriter.SetValue(SerializeName, "view", (int)currentLayout);
         xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
-        xmlwriter.SetValue(SerializeName, "sortmethodroot", (int)currentSortMethodRoot);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
       }
     }
 
@@ -339,25 +322,20 @@ namespace MediaPortal.GUI.Music
       get { return m_bUseID3; }
       set { m_bUseID3 = value; }
     }
-
-    protected virtual bool AllowView(View view)
+    
+    protected virtual bool AllowLayout(Layout layout)
     {
-      if (view == View.PlayList)
+      if (layout == Layout.PlayList)
       {
         return false;
       }
       return true;
-    }
+    }    
 
-    protected virtual bool AllowSortMethod(MusicSort.SortMethod method)
+    protected virtual Layout CurrentLayout
     {
-      return true;
-    }
-
-    protected virtual View CurrentView
-    {
-      get { return currentView; }
-      set { currentView = value; }
+      get { return currentLayout; }
+      set { currentLayout = value; }
     }
 
     protected virtual MusicSort.SortMethod CurrentSortMethod
@@ -375,30 +353,6 @@ namespace MediaPortal.GUI.Music
     protected virtual string SerializeName
     {
       get { return "musicbase"; }
-    }
-
-    protected bool ViewByIcon
-    {
-      get
-      {
-        if (CurrentView != View.List)
-        {
-          return true;
-        }
-        return false;
-      }
-    }
-
-    protected bool ViewByLargeIcon
-    {
-      get
-      {
-        if (CurrentView == View.LargeIcons)
-        {
-          return true;
-        }
-        return false;
-      }
     }
 
     public override void OnAction(Action action)
@@ -447,11 +401,11 @@ namespace MediaPortal.GUI.Music
         do
         {
           shouldContinue = false;
-          switch (CurrentView)
+          switch (CurrentLayout)
           {
-            case View.List:
-              CurrentView = View.PlayList;
-              if (!AllowView(CurrentView) || facadeView.PlayListView == null)
+            case Layout.List:
+              CurrentLayout = Layout.PlayList;
+              if (!AllowLayout(CurrentLayout) || facadeView.PlayListView == null)
               {
                 shouldContinue = true;
               }
@@ -461,9 +415,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.PlayList:
-              CurrentView = View.Icons;
-              if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
+            case Layout.PlayList:
+              CurrentLayout = Layout.Icons;
+              if (!AllowLayout(CurrentLayout) || facadeView.ThumbnailView == null)
               {
                 shouldContinue = true;
               }
@@ -473,9 +427,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.Icons:
-              CurrentView = View.LargeIcons;
-              if (!AllowView(CurrentView) || facadeView.ThumbnailView == null)
+            case Layout.Icons:
+              CurrentLayout = Layout.LargeIcons;
+              if (!AllowLayout(CurrentLayout) || facadeView.ThumbnailView == null)
               {
                 shouldContinue = true;
               }
@@ -485,9 +439,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.LargeIcons:
-              CurrentView = View.Albums;
-              if (!AllowView(CurrentView) || facadeView.AlbumListView == null)
+            case Layout.LargeIcons:
+              CurrentLayout = Layout.Albums;
+              if (!AllowLayout(CurrentLayout) || facadeView.AlbumListView == null)
               {
                 shouldContinue = true;
               }
@@ -497,9 +451,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.Albums:
-              CurrentView = View.FilmStrip;
-              if (!AllowView(CurrentView) || facadeView.FilmstripView == null)
+            case Layout.Albums:
+              CurrentLayout = Layout.FilmStrip;
+              if (!AllowLayout(CurrentLayout) || facadeView.FilmstripView == null)
               {
                 shouldContinue = true;
               }
@@ -509,9 +463,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.FilmStrip:
-              CurrentView = View.CoverFlow;
-              if (!AllowView(CurrentView) || facadeView.CoverFlowView == null)
+            case Layout.FilmStrip:
+              CurrentLayout = Layout.CoverFlow;
+              if (!AllowLayout(CurrentLayout) || facadeView.CoverFlowView == null)
               {
                 shouldContinue = true;
               }
@@ -521,9 +475,9 @@ namespace MediaPortal.GUI.Music
               }
               break;
 
-            case View.CoverFlow:
-              CurrentView = View.List;
-              if (!AllowView(CurrentView) || facadeView.ListView == null)
+            case Layout.CoverFlow:
+              CurrentLayout = Layout.List;
+              if (!AllowLayout(CurrentLayout) || facadeView.ListView == null)
               {
                 shouldContinue = true;
               }
@@ -604,28 +558,28 @@ namespace MediaPortal.GUI.Music
       GUIControl.FocusControl(GetID, facadeView.GetID);
 
       string strLine = string.Empty;
-      View view = CurrentView;
+      Layout view = CurrentLayout;
       switch (view)
       {
-        case View.List:
+        case Layout.List:
           strLine = GUILocalizeStrings.Get(101);
           break;
-        case View.Icons:
+        case Layout.Icons:
           strLine = GUILocalizeStrings.Get(100);
           break;
-        case View.LargeIcons:
+        case Layout.LargeIcons:
           strLine = GUILocalizeStrings.Get(417);
           break;
-        case View.Albums:
+        case Layout.Albums:
           strLine = GUILocalizeStrings.Get(529);
           break;
-        case View.FilmStrip:
+        case Layout.FilmStrip:
           strLine = GUILocalizeStrings.Get(733);
           break;
-        case View.PlayList:
+        case Layout.PlayList:
           strLine = GUILocalizeStrings.Get(101);
           break;
-        case View.CoverFlow:
+        case Layout.CoverFlow:
           strLine = GUILocalizeStrings.Get(791);
           break;
       }
@@ -1062,27 +1016,27 @@ namespace MediaPortal.GUI.Music
 
     protected void SwitchView()
     {
-      switch (CurrentView)
+      switch (CurrentLayout)
       {
-        case View.List:
+        case Layout.List:
           facadeView.View = GUIFacadeControl.ViewMode.List;
           break;
-        case View.Icons:
+        case Layout.Icons:
           facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
           break;
-        case View.LargeIcons:
+        case Layout.LargeIcons:
           facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
           break;
-        case View.Albums:
+        case Layout.Albums:
           facadeView.View = GUIFacadeControl.ViewMode.AlbumView;
           break;
-        case View.FilmStrip:
+        case Layout.FilmStrip:
           facadeView.View = GUIFacadeControl.ViewMode.Filmstrip;
           break;
-        case View.PlayList:
+        case Layout.PlayList:
           facadeView.View = GUIFacadeControl.ViewMode.Playlist;
           break;
-        case View.CoverFlow:
+        case Layout.CoverFlow:
           facadeView.View = GUIFacadeControl.ViewMode.CoverFlow;
           break;
       }
