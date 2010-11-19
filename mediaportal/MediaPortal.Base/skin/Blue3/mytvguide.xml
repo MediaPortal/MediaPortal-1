@@ -228,6 +228,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ccffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -247,6 +249,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <!--	<control>
 		<description>template for genre  dark area</description>
