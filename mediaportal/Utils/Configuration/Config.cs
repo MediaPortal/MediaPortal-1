@@ -317,14 +317,19 @@ private Config()
                   {
                     strPath += @"\";
                   }
+
+                  Dir dir = Dir.Base; // default - it's parsed below
                   try
                   {
-                    Set((Dir)Enum.Parse(typeof (Dir), dirId.InnerText), strPath);
+                    dir = (Dir)Enum.Parse(typeof(Dir), dirId.InnerText); // parse directory name from XML to enum - it might fail here
                   }
-                  catch (Exception)
+                  catch
                   {
-                    return false;
+                      continue; // why return on failure, skip the dir
                   }
+
+                  Set(dir, strPath);
+                  
                 }
               }
             }
