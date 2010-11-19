@@ -1117,6 +1117,11 @@ namespace MediaPortal.Configuration
 
     private void cancelButton_Click(object sender, EventArgs e)
     {
+      if (MusicScanRunning())
+      {
+        return;
+      }
+
       Close();
     }
 
