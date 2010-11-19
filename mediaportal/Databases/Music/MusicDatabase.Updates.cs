@@ -1215,8 +1215,6 @@ namespace MediaPortal.Music.Database
       MusicTag tag = GetTag(strFileName);
       if (tag != null)
       {
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
         DateTime dateadded = DateTime.Now;
         switch (_dateAddedValue)
         {
@@ -1231,6 +1229,8 @@ namespace MediaPortal.Music.Database
             dateadded = File.GetLastWriteTime(strFileName);
             break;
         }
+        
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);        
 
         strSQL =
           String.Format(
@@ -1322,8 +1322,6 @@ namespace MediaPortal.Music.Database
         MusicTag tag = GetTag(strFileName);
         if (tag != null)
         {
-          DatabaseUtility.RemoveInvalidChars(ref strFileName);
-
           DateTime dateadded = DateTime.Now;
           switch (_dateAddedValue)
           {
@@ -1339,6 +1337,8 @@ namespace MediaPortal.Music.Database
               break;
           }
 
+          DatabaseUtility.RemoveInvalidChars(ref strFileName);          
+          
           strSQL =
             String.Format(
               @"update tracks 
