@@ -2449,15 +2449,24 @@ namespace MediaPortal.Util
     }
 
     private static bool? _fileLookUpCacheEnabled = null;
+
     private static Dictionary<string, FileLookUpItem> _fileLookUpCache = new Dictionary<string, FileLookUpItem>();
-    private static HashSet<string> _foldersLookedUp = new HashSet<string>();
     private static Dictionary<string, FileSystemWatcher> _watchers = new Dictionary<string, FileSystemWatcher>();
 
+    private static HashSet<string> _foldersLookedUp = new HashSet<string>();
+    private static HashSet<string> _fileExistsCacheQueue = new HashSet<string>();        
+
     private static Thread _fileSystemManagerThread = null;
+    private static Thread _fileExistsCacheThread = null;
+
+    private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;
+    
+    private static ManualResetEvent _fileExistsCacheThreadEvt = new ManualResetEvent(false);
 
     private static object _fileLookUpCacheLock = new object();
     private static object _foldersLookedUpLock = new object();
     private static object _watchersLock = new object();
+    private static object _fileExistsCacheLock = new object();    
 
     public static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
     {
@@ -2568,8 +2577,21 @@ namespace MediaPortal.Util
       if (watcher != null)
       {
         Log.Debug("fileSystemWatcher_Error path {0} exception={1}", watcher.Path, watchException);
+
         string path = watcher.Path;
-        RemoveWatcher(path);        
+        if (watchException is InternalBufferOverflowException)
+        {
+          // buffer overflow ex.
+          // remove watcher, and re-add with 4k bigger buffer.
+          int buffersize = watcher.InternalBufferSize;
+          RemoveWatcher(path);
+          AddWatcher(path, (buffersize + 4096));
+        }
+        else
+        {          
+          RemoveWatcher(path);
+          RemoveFoldersFromCache(path);
+        }        
       }
     }
 
@@ -2620,6 +2642,7 @@ namespace MediaPortal.Util
       if (IsFileExistsCacheEnabled())
       {
         SetupFileSystemManagerThread();
+        SetupFileExistsCacheThread();
         try
         {
           string path = GetDirectoryName(filename);
@@ -2628,7 +2651,11 @@ namespace MediaPortal.Util
             path = path.ToLower();
             if (!HasFolderBeenScanned(path))
             {
-              ThreadPool.QueueUserWorkItem(new WaitCallback(InsertFilesIntoCacheAsynch), path);
+              lock (_fileExistsCacheLock)
+              {
+                _fileExistsCacheQueue.Add(path);
+                _fileExistsCacheThreadEvt.Set();
+              }              
             }
             /*else
             {
@@ -2659,9 +2686,49 @@ namespace MediaPortal.Util
         }
       }
       return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
-    }
+    }    
 
-    private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;    
+    private static void FileExistsCacheThread ()
+    {
+      while (true)
+      {
+        HashSet<string> fileExistsCacheQueueCopy = null;
+        lock (_fileExistsCacheLock)
+        {
+          fileExistsCacheQueueCopy = new HashSet<string>(_fileExistsCacheQueue);
+        }
+
+        int items = fileExistsCacheQueueCopy.Count;
+        if (items > 0)
+        {
+          Log.Debug("FileExistsCacheThread: new items found waiting for caching: {0}", items);
+
+          foreach (string path in fileExistsCacheQueueCopy)
+          {
+            InsertFilesIntoCacheAsynch(path);
+            lock (_fileExistsCacheLock)
+            {
+              _fileExistsCacheQueue.Remove(path);
+            }
+          }
+        }
+
+        bool isQueueEmpty = false;
+        lock (_fileExistsCacheLock)
+        {
+          isQueueEmpty = (_fileExistsCacheQueue.Count == 0);          
+        }
+
+        if (isQueueEmpty)
+        {
+          Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
+          _fileExistsCacheThreadEvt.Reset();
+        }
+        
+        _fileExistsCacheThreadEvt.WaitOne();
+        
+      }      
+    }
 
     private static void FileSystemWatchManagerThread()
     {
@@ -2673,6 +2740,9 @@ namespace MediaPortal.Util
           {
             DateTime now = DateTime.Now;
             TimeSpan ts = now - _lastTimeFolderWasAdded;
+
+            //Log.Debug("_lastTimeFolderWasAdded: {0}", _lastTimeFolderWasAdded);
+            //Log.Debug("ts.TotalSeconds: {0}", ts.TotalSeconds);
 
             if (ts.TotalSeconds > 5)
             {
@@ -2717,17 +2787,112 @@ namespace MediaPortal.Util
 
       foreach (string dir in foldersLookedUpCopy)
       {
+        if (string.IsNullOrEmpty(dir))
+        {
+          continue;
+        }
         if (Path.IsPathRooted(dir))
         {
-          uniqueTopLevelFolders.Add(FindPathForWatcher(dir));
+
+          string parentDir2Use = dir;
+          string parentDir = dir;
+          int nrOfFoldersOnParentDirOld = 0;
+          while (true)
+          {
+            parentDir = GetParentDirectory(parentDir);
+
+            if (string.IsNullOrEmpty(parentDir))
+            {
+              break;
+            }
+
+            bool isPathRoot = IsPathRoot(parentDir);
+
+            if (isPathRoot)
+            {
+              break;
+            }
+            
+            if (!uniqueTopLevelFolders.Contains(parentDir))
+            {
+              int nrOfFoldersOnParentDir = foldersLookedUpCopy.Count(fli => fli.StartsWith(parentDir));
+
+              if (nrOfFoldersOnParentDir == 1)
+              {
+                break;
+              }
+
+              if (nrOfFoldersOnParentDirOld == nrOfFoldersOnParentDir)
+              {
+                break;
+              }
+              if (nrOfFoldersOnParentDir > 0)
+              {
+                parentDir2Use = parentDir;                
+              }
+              nrOfFoldersOnParentDirOld = nrOfFoldersOnParentDir;
+            }     
+            else
+            {
+              parentDir2Use = null;
+              break;
+            }
+          }
+
+          if (parentDir2Use != null && !uniqueTopLevelFolders.Contains(parentDir2Use))
+          {
+            string folderCompare = parentDir2Use;
+            bool addFolder = true;
+            if (uniqueTopLevelFolders.Count > 0)
+            {
+              while (true)
+              {
+                int itemsCount =
+                  uniqueTopLevelFolders.Count(fli => fli.StartsWith(folderCompare));
+                if (itemsCount > 0)
+                {
+                  addFolder = false;
+                  break;
+                }
+               
+                folderCompare = GetParentDirectory(folderCompare);
+
+                if (string.IsNullOrEmpty(folderCompare))
+                {
+                  break;
+                }
+
+                bool isPathRoot = IsPathRoot(folderCompare);
+                if (isPathRoot)
+                {
+                  break;
+                }
+              }
+            }
+            if (addFolder)
+            {
+              uniqueTopLevelFolders.Add(parentDir2Use);    
+            }            
+          }          
         }
       }
 
       return uniqueTopLevelFolders;
     }
 
-    private static void UpdateWatchers(string dir4Watcher)
+    private static bool IsPathRoot(string dir)
     {
+      bool isPathRoot = false;
+      string root = Path.GetPathRoot(dir);
+      if (!string.IsNullOrEmpty(root))
+      {
+        isPathRoot = (dir.Length == root.Length);
+      }
+      return isPathRoot;
+    }
+
+    private static void UpdateWatchers(string dir4Watcher)
+    {           
       int dir4WatcherLen = dir4Watcher.Length;
 
       string[] keyCopy = _watchers.Keys.ToArray();
@@ -2738,9 +2903,9 @@ namespace MediaPortal.Util
         {
           string path = fsw.Path;
           int pathLen = path.Length;
-          if ((pathLen > dir4WatcherLen) && path.IndexOf(dir4Watcher) > 0)
-          {
-            RemoveWatcher(dir4Watcher);
+          if ((pathLen > dir4WatcherLen) && path.StartsWith(dir4Watcher))
+          {            
+            RemoveWatcher(path);
           }
         }
       }
@@ -2751,18 +2916,41 @@ namespace MediaPortal.Util
       }
     }
 
+    private static void AddWatcher(string dir, int buffersize)
+    {
+      AddWatcher(dir);
+      FileSystemWatcher fsw = null;
+
+      lock (_watchersLock)
+      {        
+        if (_watchers.TryGetValue(dir, out fsw))
+        {
+          fsw.InternalBufferSize = buffersize;
+        }
+      }
+    }
+
     private static void AddWatcher(string dir)
     {
       try
-      {
-        Log.Debug("AddWatcher {0}", dir);
+      {        
         FileSystemWatcher fsw = new FileSystemWatcher(dir);
         fsw.IncludeSubdirectories = true;
         fsw.EnableRaisingEvents = true;
         fsw.Created += new FileSystemEventHandler(fileSystemWatcher_Created);
         fsw.Deleted += new FileSystemEventHandler(fileSystemWatcher_Deleted);
         fsw.Error += new ErrorEventHandler(fileSystemWatcher_Error);
-        _watchers.Add(dir, fsw);
+
+        fsw.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;        
+
+        lock (_watchersLock)
+        {
+          if (!_watchers.ContainsKey(dir))
+          {
+            _watchers.Add(dir, fsw);
+          }
+        }
+        Log.Debug("AddWatcher {0}", dir);
       }
       catch (Exception ex)
       {
@@ -2783,29 +2971,10 @@ namespace MediaPortal.Util
           fsw.Deleted -= new FileSystemEventHandler(fileSystemWatcher_Deleted);
           fsw.Error -= new ErrorEventHandler(fileSystemWatcher_Error);
           fsw.SafeDispose();
-          _watchers.Remove(dir);
-
-          Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
-          lock (_fileLookUpCache)
+          lock (_watchersLock)
           {
-            fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
-          }
-
-          IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir = fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
-
-          foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
-          {
-            lock (_fileLookUpCache)
-            {
-              _fileLookUpCache.Remove(fli.Key);
-            }
-          }
-
-          lock (_foldersLookedUpLock)
-          {
-            Log.Debug("RemoveWatcher removing folders from cache={0}", dir);
-            _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
-          }
+            _watchers.Remove(dir);
+          }                    
         }
       }
       catch (Exception ex)
@@ -2814,27 +2983,29 @@ namespace MediaPortal.Util
       }
     }
 
-    private static string FindPathForWatcher(string dir)
-    {
-      string path = dir;
-      int dirLen = dir.Length;
-
-      HashSet<string> foldersLookedUpCopy = null;
-      lock (_foldersLookedUpLock)
+    private static void RemoveFoldersFromCache(string dir) {
+      Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;          
+      lock (_fileLookUpCache)
       {
-        foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
+        fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
       }
-      foreach (string dirItem in foldersLookedUpCopy)
+
+      IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir = fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
+
+      foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
       {
-        int dirItemLen = dirItem.Length;
-        if ((dirItemLen < dirLen) && dir.StartsWith(dirItem))
+        lock (_fileLookUpCache)
         {
-          path = FindPathForWatcher(dirItem);
+          _fileLookUpCache.Remove(fli.Key);
         }
       }
-      return path;
-    }
 
+      lock (_foldersLookedUpLock)
+      {
+        Log.Debug("RemoveWatcher removing folders from cache={0}", dir);
+        _foldersLookedUp.RemoveWhere(s => s.StartsWith(dir));
+      }
+    }
 
     private static void SetupFileSystemManagerThread()
     {
@@ -2848,13 +3019,25 @@ namespace MediaPortal.Util
       }
     }
 
+    private static void SetupFileExistsCacheThread ()
+    {
+      if (_fileExistsCacheThread == null)
+      {
+        _fileExistsCacheThread = new Thread(FileExistsCacheThread);
+        _fileExistsCacheThread.Name = "FileExistsCache Thread";
+        _fileExistsCacheThread.IsBackground = true;
+        _fileExistsCacheThread.Priority = ThreadPriority.Lowest;
+        _fileExistsCacheThread.Start();
+      }
+    }
+
     private static void InsertFilesIntoCacheAsynch(object oPath)
     {
       string path = oPath as string;
       if (!String.IsNullOrEmpty(path))
       {
         string dir2Lower = path.ToLower();
-
+        
         if (!HasFolderBeenScanned(dir2Lower))
         {
           Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
