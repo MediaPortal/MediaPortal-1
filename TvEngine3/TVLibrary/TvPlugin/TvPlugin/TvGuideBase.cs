@@ -1622,7 +1622,7 @@ namespace TvPlugin
       }
 
       IList<Program> programs = new List<Program>();
-      DateTime dtStart = DateTime.Now;
+      DateTime dtStart = _viewingTime;
       DateTime dtEnd = dtStart.AddDays(30);
 
       TvBusinessLayer layer = new TvBusinessLayer();
@@ -1697,7 +1697,7 @@ namespace TvPlugin
         }
         if (!found)
         {
-          _programOffset = programs.Count;
+          _programOffset = 0;
         }
       }
       else if (_programOffset < programs.Count)
