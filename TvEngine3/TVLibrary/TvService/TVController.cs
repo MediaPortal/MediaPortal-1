@@ -3759,6 +3759,13 @@ namespace TvService
         }
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
+
+        _cards[user.CardId].Tuner.OnAfterTuneEvent -= new CardTuner.OnAfterTuneDelegate(Tuner_OnAfterTuneEvent);
+        _cards[user.CardId].Tuner.OnBeforeTuneEvent -= new CardTuner.OnBeforeTuneDelegate(Tuner_OnBeforeTuneEvent);
+
+        _cards[user.CardId].Tuner.OnAfterTuneEvent += new CardTuner.OnAfterTuneDelegate(Tuner_OnAfterTuneEvent);
+        _cards[user.CardId].Tuner.OnBeforeTuneEvent += new CardTuner.OnBeforeTuneDelegate(Tuner_OnBeforeTuneEvent);        
+
         TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
         Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
 
@@ -3774,6 +3781,16 @@ namespace TvService
       {
         Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
       }
+    }
+
+    private void Tuner_OnBeforeTuneEvent(ITvCardHandler cardHandler)
+    {
+      cardHandler.TimeShifter.OnBeforeTune();
+    }
+
+    private void Tuner_OnAfterTuneEvent(ITvCardHandler cardHandler)
+    {
+      cardHandler.TimeShifter.OnAfterTune();
     }
 
     /// <summary>

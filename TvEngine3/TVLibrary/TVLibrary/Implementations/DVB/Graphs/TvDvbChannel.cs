@@ -40,6 +40,14 @@ namespace TvLibrary.Implementations.DVB
   public class TvDvbChannel : BaseSubChannel, ITeletextCallBack, IPMTCallback, ICACallback, ITvSubChannel,
                               IVideoAudioObserver
   {
+
+    #region events
+
+    public event OnAfterTuneDelegate OnAfterTuneEvent;
+    public delegate void OnAfterTuneDelegate();
+
+    #endregion
+
     #region variables
 
     #region local variables
@@ -827,6 +835,12 @@ namespace TvLibrary.Implementations.DVB
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
       }
+
+      if (OnAfterTuneEvent != null)
+      {
+        OnAfterTuneEvent();
+      }
+
       return true;
     }
 

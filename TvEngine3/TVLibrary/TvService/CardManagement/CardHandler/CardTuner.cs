@@ -316,11 +316,35 @@ namespace TvService
           _cardHandler.Card.FreeSubChannel(user.SubChannel);
         }
       }
-      
+
+      if (OnBeforeTuneEvent != null)
+      {
+        OnBeforeTuneEvent(_cardHandler);
+      }
+      TvCardDvbBase dvbCard = _cardHandler.Card as TvCardDvbBase;
+      if (dvbCard != null)
+      {
+        dvbCard.OnAfterTuneEvent -= new TvCardDvbBase.OnAfterTuneDelegate(dvbCard_OnAfterTuneEvent);
+        dvbCard.OnAfterTuneEvent += new TvCardDvbBase.OnAfterTuneDelegate(dvbCard_OnAfterTuneEvent);
+      }
+
       result = TvResult.Succeeded;
       return true;
     }
 
+    public event OnAfterTuneDelegate OnAfterTuneEvent;
+    public delegate void OnAfterTuneDelegate(ITvCardHandler cardHandler);
+
+    public event OnBeforeTuneDelegate OnBeforeTuneEvent;
+    public delegate void OnBeforeTuneDelegate(ITvCardHandler cardHandler);
+
+    private void dvbCard_OnAfterTuneEvent()
+    {
+      if (OnAfterTuneEvent != null)
+      {
+        OnAfterTuneEvent(_cardHandler);
+      }
+    }
 
     /// <summary>
     /// Tune the card to the specified channel

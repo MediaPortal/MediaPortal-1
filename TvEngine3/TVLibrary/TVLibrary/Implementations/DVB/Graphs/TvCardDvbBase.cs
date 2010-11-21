@@ -277,6 +277,13 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
+    #region events
+
+    public event OnAfterTuneDelegate OnAfterTuneEvent;
+    public delegate void OnAfterTuneDelegate();
+
+    #endregion
+
     #region tuning
 
     protected virtual void OnAfterTune (IChannel channel)
@@ -678,6 +685,8 @@ namespace TvLibrary.Implementations.DVB
             throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
           }
         }
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent -= new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent += new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStart();
       }
 
@@ -707,7 +716,17 @@ namespace TvLibrary.Implementations.DVB
           //Log.Log.WriteFile("Unable to tune to channel - no signal");
           throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
         }
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent -= new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent += new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
+      }
+    }
+
+    private void TvCardDvbBase_OnAfterTuneEvent()
+    {
+      if (OnAfterTuneEvent != null)
+      {
+        OnAfterTuneEvent();
       }
     }
 
