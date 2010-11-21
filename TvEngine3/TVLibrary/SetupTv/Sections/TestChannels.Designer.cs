@@ -204,6 +204,7 @@ namespace SetupTv.Sections
       this.mpListViewLog.TabIndex = 72;
       this.mpListViewLog.UseCompatibleStateImageBehavior = false;
       this.mpListViewLog.View = System.Windows.Forms.View.Details;
+      this.mpListViewLog.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListViewLog_ColumnClick);
       // 
       // columnHeader12
       // 

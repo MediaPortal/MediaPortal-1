@@ -39,6 +39,10 @@ namespace SetupTv.Sections
       this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label12 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.label3 = new System.Windows.Forms.Label();
+      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.txtBytes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.label4 = new System.Windows.Forms.Label();
       this.mpLabelSignalQuality = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelSignalLevel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -61,10 +65,6 @@ namespace SetupTv.Sections
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.label4 = new System.Windows.Forms.Label();
-      this.txtBytes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.label3 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -137,6 +137,9 @@ namespace SetupTv.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label3);
       this.mpGroupBox1.Controls.Add(this.txtDisc);
       this.mpGroupBox1.Controls.Add(this.txtBytes);
@@ -160,6 +163,45 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabIndex = 53;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(21, 129);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(91, 13);
+      this.label3.TabIndex = 70;
+      this.label3.Text = "Bytes processed: ";
+      // 
+      // txtDisc
+      // 
+      this.txtDisc.AcceptsReturn = true;
+      this.txtDisc.Location = new System.Drawing.Point(353, 126);
+      this.txtDisc.Name = "txtDisc";
+      this.txtDisc.ReadOnly = true;
+      this.txtDisc.Size = new System.Drawing.Size(80, 20);
+      this.txtDisc.TabIndex = 69;
+      this.txtDisc.Text = "0";
+      this.txtDisc.Value = 0;
+      // 
+      // txtBytes
+      // 
+      this.txtBytes.Location = new System.Drawing.Point(113, 126);
+      this.txtBytes.Name = "txtBytes";
+      this.txtBytes.ReadOnly = true;
+      this.txtBytes.Size = new System.Drawing.Size(142, 20);
+      this.txtBytes.TabIndex = 68;
+      this.txtBytes.Text = "0";
+      this.txtBytes.Value = 0;
+      // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(261, 129);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(78, 13);
+      this.label4.TabIndex = 60;
+      this.label4.Text = "Discontinuities:";
       // 
       // mpLabelSignalQuality
       // 
@@ -234,6 +276,9 @@ namespace SetupTv.Sections
       // 
       this.mpListView1.AllowDrop = true;
       this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.columnHeader1,
             this.columnHeader2,
@@ -288,6 +333,7 @@ namespace SetupTv.Sections
       // 
       // buttonRestart
       // 
+      this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.buttonRestart.Location = new System.Drawing.Point(241, 392);
       this.buttonRestart.Name = "buttonRestart";
       this.buttonRestart.Size = new System.Drawing.Size(95, 23);
@@ -298,6 +344,7 @@ namespace SetupTv.Sections
       // 
       // mpButtonReGrabEpg
       // 
+      this.mpButtonReGrabEpg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpButtonReGrabEpg.Location = new System.Drawing.Point(343, 392);
       this.mpButtonReGrabEpg.Name = "mpButtonReGrabEpg";
       this.mpButtonReGrabEpg.Size = new System.Drawing.Size(115, 23);
@@ -348,45 +395,6 @@ namespace SetupTv.Sections
       this.mpLabel2.Size = new System.Drawing.Size(39, 13);
       this.mpLabel2.TabIndex = 62;
       this.mpLabel2.Text = "Group:";
-      // 
-      // label4
-      // 
-      this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(21, 152);
-      this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(78, 13);
-      this.label4.TabIndex = 60;
-      this.label4.Text = "Discontinuities:";
-      // 
-      // txtBytes
-      // 
-      this.txtBytes.Location = new System.Drawing.Point(113, 126);
-      this.txtBytes.Name = "txtBytes";
-      this.txtBytes.ReadOnly = true;
-      this.txtBytes.Size = new System.Drawing.Size(142, 20);
-      this.txtBytes.TabIndex = 68;
-      this.txtBytes.Text = "0";
-      this.txtBytes.Value = 0;
-      // 
-      // txtDisc
-      // 
-      this.txtDisc.AcceptsReturn = true;
-      this.txtDisc.Location = new System.Drawing.Point(113, 149);
-      this.txtDisc.Name = "txtDisc";
-      this.txtDisc.ReadOnly = true;
-      this.txtDisc.Size = new System.Drawing.Size(142, 20);
-      this.txtDisc.TabIndex = 69;
-      this.txtDisc.Text = "0";
-      this.txtDisc.Value = 0;
-      // 
-      // label3
-      // 
-      this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(21, 129);
-      this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(91, 13);
-      this.label3.TabIndex = 70;
-      this.label3.Text = "Bytes processed: ";
       // 
       // TestService
       // 

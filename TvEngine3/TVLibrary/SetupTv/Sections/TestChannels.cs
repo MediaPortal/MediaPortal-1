@@ -224,6 +224,7 @@ namespace SetupTv.Sections
       if (_running)
       {
         mpListViewLog.Items.Clear();
+        txtDisc.Value = 0;
         _total = 0;
         _succeeded = 0;
         _failed = 0;
@@ -350,7 +351,7 @@ namespace SetupTv.Sections
           else if (result == TvResult.AllCardsBusy)
           {
             nextRowIndexForDiscUpdate = -1;
-            Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", "All cards are busy");            
+            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", "All cards are busy");            
             _succeeded++;
           }
           else
@@ -361,13 +362,13 @@ namespace SetupTv.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);            
             _failed++;
           }
         }
         catch (Exception e)
         {
-          Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, "N/A", e.Message);
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, "N/A", e.Message);
           _succeeded++;
           if (_firstFail == 0 && _running)
           {
@@ -458,16 +459,22 @@ namespace SetupTv.Sections
         }        
       }
 
-      if (user.CardId > 0 && nextRowIndexForDiscUpdate > 0)
+      if (nextRowIndexForDiscUpdate > 0)
       {
-        int discCounter = 0;
-        int totalBytes = 0;
-        RemoteControl.Instance.GetStreamQualityCounters(user, out totalBytes, out discCounter);
+        ListViewItem item = mpListViewLog.Items[nextRowIndexForDiscUpdate - 1];
+        if (user.CardId > 0)
+        {
+          int discCounter = 0;
+          int totalBytes = 0;
+          RemoteControl.Instance.GetStreamQualityCounters(user, out totalBytes, out discCounter);
+          item.SubItems[7].Text = Convert.ToString(discCounter);
 
-        ListViewItem item = mpListViewLog.Items[nextRowIndexForDiscUpdate-1];
-        item.SubItems[7].Text = Convert.ToString(discCounter);
-
-        txtDisc.Value += discCounter;
+          txtDisc.Value += discCounter;
+        }
+        else
+        {
+          item.SubItems[7].Text = "N/A";
+        }
       }
     }
 
