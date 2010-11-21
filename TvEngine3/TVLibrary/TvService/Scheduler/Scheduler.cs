@@ -887,72 +887,69 @@ namespace TvService
     /// <param name="recording">Recording instance</param>
     /// <returns>true if recording is started, otherwise false</returns>
     private void StartRecord(RecordingDetail RecDetail)
-    {
-      lock (_tvController.TimeShiftingLock)
+    {      
+      User user = RecDetail.User;
+
+      Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName,
+                DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
+                RecDetail.Schedule.ProgramName);
+      TvResult result;
+      //get list of all cards we can use todo the recording
+      ICardAllocation allocation = new AdvancedCardAllocation(new TvBusinessLayer());
+        //CardAllocationFactory.Create(false);
+      List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection,
+                                                                          RecDetail.Channel, ref user, out result);
+      int maxCards = GetMaxCards(freeCards);
+      Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
+
+      //keep tuning each card until we are succesful                
+      for (int i = 0; i < maxCards; i++)
       {
-        User user = RecDetail.User;
-
-        Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName,
-                  DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
-                  RecDetail.Schedule.ProgramName);
-        TvResult result;
-        //get list of all cards we can use todo the recording
-        ICardAllocation allocation = new AdvancedCardAllocation(new TvBusinessLayer());
-          //CardAllocationFactory.Create(false);
-        List<CardDetail> freeCards = allocation.GetAvailableCardsForChannel(_tvController.CardCollection,
-                                                                            RecDetail.Channel, ref user, out result);
-        int maxCards = GetMaxCards(freeCards);
-        Log.Write("scheduler: try max {0} of {1} cards for recording", maxCards, freeCards.Count);
-
-        //keep tuning each card until we are succesful                
-        for (int i = 0; i < maxCards; i++)
+        CardDetail cardInfo = null;
+        try
         {
-          CardDetail cardInfo = null;
-          try
+          cardInfo = GetCardInfo(RecDetail, ref user, freeCards);
+          if (cardInfo != null)
           {
-            cardInfo = GetCardInfo(RecDetail, ref user, freeCards);
-            if (cardInfo != null)
+            user.CardId = cardInfo.Id;
+            StartRecordingNotification(RecDetail);
+            SetupRecordingFolder(cardInfo);
+            if (StartRecordingOnDisc(RecDetail, ref user, cardInfo))
             {
-              user.CardId = cardInfo.Id;
-              StartRecordingNotification(RecDetail);
-              SetupRecordingFolder(cardInfo);
-              if (StartRecordingOnDisc(RecDetail, ref user, cardInfo))
+              CreateRecording(RecDetail);
+              try
               {
-                CreateRecording(RecDetail);
-                try
-                {
-                  RecDetail.User.CardId = user.CardId;
-                  SetRecordingProgramState(RecDetail);                  
-                  _recordingsInProgressList.Add(RecDetail);
-                  RecordingStartedNotification(RecDetail);
-                  SetupQualityControl(RecDetail);
-                  WriteMatroskaFile(RecDetail);
-                }
-                catch (Exception ex)
-                {
-                  //consume exception, since it isn't catastrophic
-                  Log.Write(ex);
-                }
-
-                Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
-                          _recordingsInProgressList.Count,
-                          RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
-                break;
+                RecDetail.User.CardId = user.CardId;
+                SetRecordingProgramState(RecDetail);                  
+                _recordingsInProgressList.Add(RecDetail);
+                RecordingStartedNotification(RecDetail);
+                SetupQualityControl(RecDetail);
+                WriteMatroskaFile(RecDetail);
               }
+              catch (Exception ex)
+              {
+                //consume exception, since it isn't catastrophic
+                Log.Write(ex);
+              }
+
+              Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
+                        _recordingsInProgressList.Count,
+                        RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
+              break;
             }
           }
-          catch (Exception ex)
-          {
-            Log.Write(ex);
-            StopFailedRecord(RecDetail);                        
-          }
-          Log.Write("scheduler: recording failed, lets try next available card.");
-          if (cardInfo != null && freeCards.Contains(cardInfo))
-          {
-            freeCards.Remove(cardInfo);
-          }
         }
-      }
+        catch (Exception ex)
+        {
+          Log.Write(ex);
+          StopFailedRecord(RecDetail);                        
+        }
+        Log.Write("scheduler: recording failed, lets try next available card.");
+        if (cardInfo != null && freeCards.Contains(cardInfo))
+        {
+          freeCards.Remove(cardInfo);
+        }
+      }      
     }
 
     /// <summary>
