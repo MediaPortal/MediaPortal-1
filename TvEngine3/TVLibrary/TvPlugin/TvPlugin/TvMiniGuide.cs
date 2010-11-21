@@ -255,12 +255,12 @@ namespace TvPlugin
               if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
               {
                 // switching logic
-                SelectedChannel = (Channel)lstChannels.SelectedListItem.MusicTag;
+                SelectedChannel = (Channel)lstChannels.SelectedListItem.TVTag;
 
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = (string)lstChannels.SelectedListItem.TVTag;
+                  string selectedChan = SelectedChannel.DisplayName;
                   if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
@@ -550,8 +550,7 @@ namespace TvPlugin
           sb.Length = 0;
           item = new GUIListItem("");
           // store here as it is not needed right now - please beat me later..
-          item.TVTag = CurrentChan.DisplayName;
-          item.MusicTag = CurrentChan;
+          item.TVTag = CurrentChan;
 
           sb.Append(CurrentChan.DisplayName);
           ChannelLogo = Utils.GetCoverArt(Thumbs.TVChannel, CurrentChan.DisplayName);
