@@ -701,5 +701,30 @@ namespace TvService
             }
             return false;
         }
+
+      /// <summary>
+      /// Fetches the stream quality information
+      /// </summary>   
+      /// <param name="user">user</param>    
+      /// <param name="totalBytes">Amount of packets processed</param>    
+      /// <param name="discontinuityCounter">Number of stream discontinuities</param>
+      /// <returns></returns>
+        public void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter)
+      {
+        totalBytes = 0;
+        discontinuityCounter = 0;
+        
+        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        bool userExists;
+        context.GetUser(ref user, out userExists);
+        ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
+
+        TvDvbChannel dvbSubchannel = subchannel as TvDvbChannel;
+
+        if (dvbSubchannel != null)
+        {
+          dvbSubchannel.GetStreamQualityCounters(out totalBytes, out discontinuityCounter);
+        }        
+      }
     }
 }

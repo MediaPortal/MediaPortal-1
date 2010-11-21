@@ -96,10 +96,11 @@ public:
 	void SetChunkReserve( __int64 chunkSize) ;
 	void GetFileBufferSize( __int64 *lpllsize) ;
 	void GetTimeShiftPosition(__int64 * position,long * bufferId);
+  void GetDiscontinuityCounter(int* counter);
+  void GetTotalBytes(int* packetsProcessed);
 
 	void OnTsPacket(byte* tsPacket);
 	void Write(byte* buffer, int len);
-
 
 private:  
 	void WriteToRecording(byte* buffer, int len);
@@ -133,6 +134,7 @@ private:
 	bool								 m_AudioOrVideoSeen;
 	int									 m_iPmtContinuityCounter;
 	int									 m_iPatContinuityCounter;
+  int									 m_iTsContinuityCounter;
   
   BOOL            m_bPaused;
   bool            m_bDetermineNewStartPcr;
@@ -140,18 +142,18 @@ private:
   int             m_iPacketCounter;
 	int			        m_iPatVersion;
 	int			        m_iPmtVersion;
-	int              m_iPart;
+	int             m_iPart;
   byte*           m_pWriteBuffer;
   int             m_iWriteBufferPos;
   CTsHeader       m_tsHeader;
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;
 
-	int             m_JumpInProgress ;              // Jump detected, wait confirmation
-	float           m_PcrSpeed ;                    // Time average between PCR samples
-	__int64         m_PcrCompensation ;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
-	__int64         m_PcrFutureCompensation ;       // Future compensation computed during jump detection.
-	DWORD           m_prevTimeStamp ;               // TimeStamp of last PCR patching.
+	int             m_JumpInProgress;              // Jump detected, wait confirmation
+	float           m_PcrSpeed;                    // Time average between PCR samples
+	__int64         m_PcrCompensation;             // Compensation from PCR/PTS/DTS to fake PCR/PTS/DTS ( 33 bits offset with PCR resoluion )
+	__int64         m_PcrFutureCompensation;       // Future compensation computed during jump detection.
+	DWORD           m_prevTimeStamp;               // TimeStamp of last PCR patching.
 
   bool            m_bClearTsQueue;
   unsigned long   m_TsPacketCount;

@@ -271,6 +271,12 @@ namespace SetupTv.Sections
           mpLabelRecording.Text = card.RecordingFileName;
           mpLabelTimeShift.Text = card.TimeShiftFileName;
 
+          int bytes = 0;
+          int disc = 0;
+          RemoteControl.Instance.GetStreamQualityCounters(card.User, out bytes, out disc);
+          txtBytes.Value = bytes;
+          txtDisc.Value = disc;
+
           mpButtonTimeShift.Text = card.IsTimeShifting ? "Stop TimeShift" : "Start TimeShift";
           mpButtonRec.Text = card.IsRecording ? "Stop Rec/TimeShift" : "Record";
           mpButtonRec.Enabled = card.IsTimeShifting;

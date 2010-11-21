@@ -1027,7 +1027,7 @@ namespace TvControl
     /// Does the card have a CA module.
     /// </summary>
     /// <value>The number of channels decrypting.</value>
-    bool HasCA(int cardId);
+    bool HasCA(int cardId);       
 
     #endregion
 
@@ -1151,5 +1151,19 @@ namespace TvControl
     event CiMenuCallback OnCiMenu;
 
     #endregion
+
+    #region stream quality / statistics
+
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>   
+    /// <param name="user">user</param>    
+    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="discontinuityCounter">Number of stream discontinuities</param>
+    /// <returns></returns>
+    void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter);
+
+    #endregion
+
   }
 }

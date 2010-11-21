@@ -32,9 +32,11 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestChannels));
       this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.mpLabel10 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblDisc = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.lblFirstFail = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtFirstFail = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblAvgMsec = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtAvgMsec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.mpListViewLog = new MediaPortal.UserInterface.Controls.MPListView();
       this.columnHeader12 = new System.Windows.Forms.ColumnHeader();
@@ -44,13 +46,14 @@ namespace SetupTv.Sections
       this.columnHeader8 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader9 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader10 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader14 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader11 = new System.Windows.Forms.ColumnHeader();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblTotal = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtTotal = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel7 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblFailed = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtFailed = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblSucceeded = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtSucceded = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.mpLabelRecording = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -68,14 +71,14 @@ namespace SetupTv.Sections
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtConcurrentTunes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel3 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblNrOfConcurrentUsers = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblEachTuneWillLast = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtRndFrom = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.txtRndTo = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkRepeatTest = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.txtTuneDelay = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.lblTuneDelayMsec = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkShareChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
@@ -92,17 +95,19 @@ namespace SetupTv.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox1.Controls.Add(this.mpLabel10);
+      this.mpGroupBox1.Controls.Add(this.lblDisc);
+      this.mpGroupBox1.Controls.Add(this.txtDisc);
+      this.mpGroupBox1.Controls.Add(this.lblFirstFail);
       this.mpGroupBox1.Controls.Add(this.txtFirstFail);
-      this.mpGroupBox1.Controls.Add(this.mpLabel9);
+      this.mpGroupBox1.Controls.Add(this.lblAvgMsec);
       this.mpGroupBox1.Controls.Add(this.txtAvgMsec);
       this.mpGroupBox1.Controls.Add(this.mpListViewLog);
       this.mpGroupBox1.Controls.Add(this.mpButton1);
-      this.mpGroupBox1.Controls.Add(this.mpLabel8);
+      this.mpGroupBox1.Controls.Add(this.lblTotal);
       this.mpGroupBox1.Controls.Add(this.txtTotal);
-      this.mpGroupBox1.Controls.Add(this.mpLabel7);
+      this.mpGroupBox1.Controls.Add(this.lblFailed);
       this.mpGroupBox1.Controls.Add(this.txtFailed);
-      this.mpGroupBox1.Controls.Add(this.mpLabel6);
+      this.mpGroupBox1.Controls.Add(this.lblSucceeded);
       this.mpGroupBox1.Controls.Add(this.txtSucceded);
       this.mpGroupBox1.Controls.Add(this.mpLabelRecording);
       this.mpGroupBox1.Controls.Add(this.mpLabelTimeShift);
@@ -115,14 +120,33 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
       // 
-      // mpLabel10
+      // lblDisc
       // 
-      this.mpLabel10.AutoSize = true;
-      this.mpLabel10.Location = new System.Drawing.Point(126, 177);
-      this.mpLabel10.Name = "mpLabel10";
-      this.mpLabel10.Size = new System.Drawing.Size(40, 13);
-      this.mpLabel10.TabIndex = 76;
-      this.mpLabel10.Text = "1st fail:";
+      this.lblDisc.AutoSize = true;
+      this.lblDisc.Location = new System.Drawing.Point(222, 177);
+      this.lblDisc.Name = "lblDisc";
+      this.lblDisc.Size = new System.Drawing.Size(34, 13);
+      this.lblDisc.TabIndex = 78;
+      this.lblDisc.Text = "Disc.:";
+      // 
+      // txtDisc
+      // 
+      this.txtDisc.Location = new System.Drawing.Point(266, 173);
+      this.txtDisc.Name = "txtDisc";
+      this.txtDisc.ReadOnly = true;
+      this.txtDisc.Size = new System.Drawing.Size(46, 20);
+      this.txtDisc.TabIndex = 77;
+      this.txtDisc.Text = "0";
+      this.txtDisc.Value = 0;
+      // 
+      // lblFirstFail
+      // 
+      this.lblFirstFail.AutoSize = true;
+      this.lblFirstFail.Location = new System.Drawing.Point(126, 177);
+      this.lblFirstFail.Name = "lblFirstFail";
+      this.lblFirstFail.Size = new System.Drawing.Size(40, 13);
+      this.lblFirstFail.TabIndex = 76;
+      this.lblFirstFail.Text = "1st fail:";
       // 
       // txtFirstFail
       // 
@@ -134,14 +158,14 @@ namespace SetupTv.Sections
       this.txtFirstFail.Text = "0";
       this.txtFirstFail.Value = 0;
       // 
-      // mpLabel9
+      // lblAvgMsec
       // 
-      this.mpLabel9.AutoSize = true;
-      this.mpLabel9.Location = new System.Drawing.Point(4, 177);
-      this.mpLabel9.Name = "mpLabel9";
-      this.mpLabel9.Size = new System.Drawing.Size(59, 13);
-      this.mpLabel9.TabIndex = 74;
-      this.mpLabel9.Text = "Avg mSec:";
+      this.lblAvgMsec.AutoSize = true;
+      this.lblAvgMsec.Location = new System.Drawing.Point(4, 177);
+      this.lblAvgMsec.Name = "lblAvgMsec";
+      this.lblAvgMsec.Size = new System.Drawing.Size(59, 13);
+      this.lblAvgMsec.TabIndex = 74;
+      this.lblAvgMsec.Text = "Avg mSec:";
       // 
       // txtAvgMsec
       // 
@@ -168,6 +192,7 @@ namespace SetupTv.Sections
             this.columnHeader8,
             this.columnHeader9,
             this.columnHeader10,
+            this.columnHeader14,
             this.columnHeader11});
       this.mpListViewLog.FullRowSelect = true;
       this.mpListViewLog.HideSelection = false;
@@ -214,6 +239,10 @@ namespace SetupTv.Sections
       this.columnHeader10.Text = "Card";
       this.columnHeader10.Width = 40;
       // 
+      // columnHeader14
+      // 
+      this.columnHeader14.Text = "Disc.";
+      // 
       // columnHeader11
       // 
       this.columnHeader11.Text = "Details";
@@ -230,14 +259,14 @@ namespace SetupTv.Sections
       this.mpButton1.UseVisualStyleBackColor = true;
       this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
       // 
-      // mpLabel8
+      // lblTotal
       // 
-      this.mpLabel8.AutoSize = true;
-      this.mpLabel8.Location = new System.Drawing.Point(222, 155);
-      this.mpLabel8.Name = "mpLabel8";
-      this.mpLabel8.Size = new System.Drawing.Size(34, 13);
-      this.mpLabel8.TabIndex = 70;
-      this.mpLabel8.Text = "Total:";
+      this.lblTotal.AutoSize = true;
+      this.lblTotal.Location = new System.Drawing.Point(222, 155);
+      this.lblTotal.Name = "lblTotal";
+      this.lblTotal.Size = new System.Drawing.Size(34, 13);
+      this.lblTotal.TabIndex = 70;
+      this.lblTotal.Text = "Total:";
       // 
       // txtTotal
       // 
@@ -249,14 +278,14 @@ namespace SetupTv.Sections
       this.txtTotal.Text = "0";
       this.txtTotal.Value = 0;
       // 
-      // mpLabel7
+      // lblFailed
       // 
-      this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(126, 156);
-      this.mpLabel7.Name = "mpLabel7";
-      this.mpLabel7.Size = new System.Drawing.Size(38, 13);
-      this.mpLabel7.TabIndex = 68;
-      this.mpLabel7.Text = "Failed:";
+      this.lblFailed.AutoSize = true;
+      this.lblFailed.Location = new System.Drawing.Point(126, 156);
+      this.lblFailed.Name = "lblFailed";
+      this.lblFailed.Size = new System.Drawing.Size(38, 13);
+      this.lblFailed.TabIndex = 68;
+      this.lblFailed.Text = "Failed:";
       // 
       // txtFailed
       // 
@@ -268,14 +297,14 @@ namespace SetupTv.Sections
       this.txtFailed.Text = "0";
       this.txtFailed.Value = 0;
       // 
-      // mpLabel6
+      // lblSucceeded
       // 
-      this.mpLabel6.AutoSize = true;
-      this.mpLabel6.Location = new System.Drawing.Point(3, 156);
-      this.mpLabel6.Name = "mpLabel6";
-      this.mpLabel6.Size = new System.Drawing.Size(65, 13);
-      this.mpLabel6.TabIndex = 66;
-      this.mpLabel6.Text = "Succeeded:";
+      this.lblSucceeded.AutoSize = true;
+      this.lblSucceeded.Location = new System.Drawing.Point(3, 156);
+      this.lblSucceeded.Name = "lblSucceeded";
+      this.lblSucceeded.Size = new System.Drawing.Size(65, 13);
+      this.lblSucceeded.TabIndex = 66;
+      this.lblSucceeded.Text = "Succeeded:";
       // 
       // txtSucceded
       // 
@@ -417,23 +446,23 @@ namespace SetupTv.Sections
       this.txtConcurrentTunes.Text = "2";
       this.txtConcurrentTunes.Value = 2;
       // 
-      // mpLabel1
+      // lblNrOfConcurrentUsers
       // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(9, 220);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(207, 13);
-      this.mpLabel1.TabIndex = 64;
-      this.mpLabel1.Text = "Number of concurrent virtual users (tunes):";
+      this.lblNrOfConcurrentUsers.AutoSize = true;
+      this.lblNrOfConcurrentUsers.Location = new System.Drawing.Point(9, 220);
+      this.lblNrOfConcurrentUsers.Name = "lblNrOfConcurrentUsers";
+      this.lblNrOfConcurrentUsers.Size = new System.Drawing.Size(207, 13);
+      this.lblNrOfConcurrentUsers.TabIndex = 64;
+      this.lblNrOfConcurrentUsers.Text = "Number of concurrent virtual users (tunes):";
       // 
-      // mpLabel3
+      // lblEachTuneWillLast
       // 
-      this.mpLabel3.AutoSize = true;
-      this.mpLabel3.Location = new System.Drawing.Point(9, 245);
-      this.mpLabel3.Name = "mpLabel3";
-      this.mpLabel3.Size = new System.Drawing.Size(175, 13);
-      this.mpLabel3.TabIndex = 66;
-      this.mpLabel3.Text = "Each tune will last between (mSec):";
+      this.lblEachTuneWillLast.AutoSize = true;
+      this.lblEachTuneWillLast.Location = new System.Drawing.Point(9, 245);
+      this.lblEachTuneWillLast.Name = "lblEachTuneWillLast";
+      this.lblEachTuneWillLast.Size = new System.Drawing.Size(175, 13);
+      this.lblEachTuneWillLast.TabIndex = 66;
+      this.lblEachTuneWillLast.Text = "Each tune will last between (mSec):";
       // 
       // txtRndFrom
       // 
@@ -487,14 +516,14 @@ namespace SetupTv.Sections
       this.txtTuneDelay.Text = "1000";
       this.txtTuneDelay.Value = 1000;
       // 
-      // mpLabel11
+      // lblTuneDelayMsec
       // 
-      this.mpLabel11.AutoSize = true;
-      this.mpLabel11.Location = new System.Drawing.Point(304, 223);
-      this.mpLabel11.Name = "mpLabel11";
-      this.mpLabel11.Size = new System.Drawing.Size(102, 13);
-      this.mpLabel11.TabIndex = 73;
-      this.mpLabel11.Text = "Tune delay (mSec) :";
+      this.lblTuneDelayMsec.AutoSize = true;
+      this.lblTuneDelayMsec.Location = new System.Drawing.Point(304, 223);
+      this.lblTuneDelayMsec.Name = "lblTuneDelayMsec";
+      this.lblTuneDelayMsec.Size = new System.Drawing.Size(99, 13);
+      this.lblTuneDelayMsec.TabIndex = 73;
+      this.lblTuneDelayMsec.Text = "Tune delay (mSec):";
       // 
       // chkShareChannels
       // 
@@ -512,14 +541,14 @@ namespace SetupTv.Sections
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.chkShareChannels);
-      this.Controls.Add(this.mpLabel11);
+      this.Controls.Add(this.lblTuneDelayMsec);
       this.Controls.Add(this.txtTuneDelay);
       this.Controls.Add(this.chkRepeatTest);
       this.Controls.Add(this.mpLabel5);
       this.Controls.Add(this.txtRndTo);
-      this.Controls.Add(this.mpLabel3);
+      this.Controls.Add(this.lblEachTuneWillLast);
       this.Controls.Add(this.txtRndFrom);
-      this.Controls.Add(this.mpLabel1);
+      this.Controls.Add(this.lblNrOfConcurrentUsers);
       this.Controls.Add(this.txtConcurrentTunes);
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.comboBoxGroups);
@@ -555,17 +584,17 @@ namespace SetupTv.Sections
     private SetupControls.ComboBoxEx comboBoxGroups;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtConcurrentTunes;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel3;
+    private MediaPortal.UserInterface.Controls.MPLabel lblNrOfConcurrentUsers;
+    private MediaPortal.UserInterface.Controls.MPLabel lblEachTuneWillLast;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtRndFrom;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtRndTo;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel5;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkRepeatTest;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel8;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTotal;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtTotal;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel7;
+    private MediaPortal.UserInterface.Controls.MPLabel lblFailed;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtFailed;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel6;
+    private MediaPortal.UserInterface.Controls.MPLabel lblSucceeded;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtSucceded;
     private MediaPortal.UserInterface.Controls.MPButton mpButton1;
     private MediaPortal.UserInterface.Controls.MPListView mpListViewLog;
@@ -576,13 +605,16 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader10;
     private System.Windows.Forms.ColumnHeader columnHeader11;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtTuneDelay;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel10;
+    private MediaPortal.UserInterface.Controls.MPLabel lblFirstFail;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtFirstFail;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel9;
+    private MediaPortal.UserInterface.Controls.MPLabel lblAvgMsec;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtAvgMsec;
     private System.Windows.Forms.ColumnHeader columnHeader12;
     private System.Windows.Forms.ColumnHeader columnHeader13;
-    private MediaPortal.UserInterface.Controls.MPLabel mpLabel11;
+    private MediaPortal.UserInterface.Controls.MPLabel lblTuneDelayMsec;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkShareChannels;
+    private System.Windows.Forms.ColumnHeader columnHeader14;
+    private MediaPortal.UserInterface.Controls.MPLabel lblDisc;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
   }
 }

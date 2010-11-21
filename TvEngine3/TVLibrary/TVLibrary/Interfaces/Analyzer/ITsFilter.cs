@@ -343,5 +343,18 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int CaReset(int handle);
+
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="totalTsBytes">Amount of packets processed - timeshifting</param>
+    /// <param name="totalRecordingBytes">Amount of packets processed - recording</param>
+    /// <param name="TsDiscontinuity">Number of stream discontinuities - timeshifting</param>
+    /// <param name="recordingDiscontinuity">Number of stream discontinuities - recording</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int GetStreamQualityCounters(int handle, out int totalTsBytes, out int totalRecordingBytes,
+      out int TsDiscontinuity, out int recordingDiscontinuity);
   }
 }

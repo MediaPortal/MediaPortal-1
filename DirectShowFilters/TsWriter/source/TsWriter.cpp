@@ -99,7 +99,6 @@ void LogDebug(const char *fmt, ...)
 	tmp=vsprintf(logbuffer, fmt, ap);
 	va_end(ap); 
 
-  TCHAR folder[MAX_PATH];
   TCHAR fileName[MAX_PATH];
   GetLogFile(fileName);
 	FILE* fp = fopen(fileName,"a+");
@@ -677,7 +676,7 @@ STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pm
 	return S_OK;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
+STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
@@ -699,7 +698,7 @@ STDMETHODIMP CMpTs:: TimeShiftSetTimeShiftingFileName( int handle, char* pszFile
 	return S_OK;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
+STDMETHODIMP CMpTs::TimeShiftStart( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
@@ -714,7 +713,7 @@ STDMETHODIMP CMpTs:: TimeShiftStart( int handle )
 		return S_FALSE;
 }
 
-STDMETHODIMP CMpTs:: TimeShiftStop( int handle )
+STDMETHODIMP CMpTs::TimeShiftStop( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
@@ -848,3 +847,28 @@ STDMETHODIMP CMpTs::CaReset(int handle)
   if (pChannel==NULL) return S_OK;
 	return pChannel->m_pCaGrabber->Reset( );
 }
+
+STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
+      int* TsDiscontinuity, int* recordingDiscontinuity)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_FALSE;
+
+  if (pChannel->m_pTimeShifting)
+  {
+    pChannel->m_pTimeShifting->GetDiscontinuityCounter(TsDiscontinuity);
+    pChannel->m_pTimeShifting->GetTotalBytes(totalTsBytes);
+  }
+
+  if (pChannel->m_pRecorder)
+  {
+    pChannel->m_pRecorder->GetDiscontinuityCounter(recordingDiscontinuity);
+    pChannel->m_pTimeShifting->GetTotalBytes(totalRecordingBytes);
+  }
+
+  if (pChannel->m_pRecorder || pChannel->m_pTimeShifting)
+    return S_OK;
+  else
+    return S_FALSE;
+}
+

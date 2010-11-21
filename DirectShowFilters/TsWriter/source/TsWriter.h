@@ -87,6 +87,9 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
   STDMETHOD(CaSetCallBack)(THIS_ int handle,ICACallback* callback)PURE;
 	STDMETHOD(CaGetCaData) (THIS_ int handle,BYTE *caData)PURE;
 	STDMETHOD(CaReset)(THIS_ int handle)PURE;
+
+  STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
+      int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
 };
 
 // Main filter object
@@ -203,6 +206,9 @@ public:
     STDMETHODIMP CaSetCallBack(int handle,ICACallback* callback);
 	  STDMETHODIMP CaGetCaData(int handle,BYTE *caData);
 	  STDMETHODIMP CaReset(int handle);
+    STDMETHODIMP GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
+      int* TsDiscontinuity, int* recordingDiscontinuity);
+
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();
     static CUnknown * WINAPI CreateInstance(LPUNKNOWN punk, HRESULT *phr);

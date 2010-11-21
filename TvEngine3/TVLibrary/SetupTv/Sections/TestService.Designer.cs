@@ -61,6 +61,10 @@ namespace SetupTv.Sections
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.label4 = new System.Windows.Forms.Label();
+      this.txtBytes = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.label3 = new System.Windows.Forms.Label();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -133,6 +137,10 @@ namespace SetupTv.Sections
       // 
       // mpGroupBox1
       // 
+      this.mpGroupBox1.Controls.Add(this.label3);
+      this.mpGroupBox1.Controls.Add(this.txtDisc);
+      this.mpGroupBox1.Controls.Add(this.txtBytes);
+      this.mpGroupBox1.Controls.Add(this.label4);
       this.mpGroupBox1.Controls.Add(this.mpLabelSignalQuality);
       this.mpGroupBox1.Controls.Add(this.mpLabelSignalLevel);
       this.mpGroupBox1.Controls.Add(this.mpLabelRecording);
@@ -341,6 +349,45 @@ namespace SetupTv.Sections
       this.mpLabel2.TabIndex = 62;
       this.mpLabel2.Text = "Group:";
       // 
+      // label4
+      // 
+      this.label4.AutoSize = true;
+      this.label4.Location = new System.Drawing.Point(21, 152);
+      this.label4.Name = "label4";
+      this.label4.Size = new System.Drawing.Size(78, 13);
+      this.label4.TabIndex = 60;
+      this.label4.Text = "Discontinuities:";
+      // 
+      // txtBytes
+      // 
+      this.txtBytes.Location = new System.Drawing.Point(113, 126);
+      this.txtBytes.Name = "txtBytes";
+      this.txtBytes.ReadOnly = true;
+      this.txtBytes.Size = new System.Drawing.Size(142, 20);
+      this.txtBytes.TabIndex = 68;
+      this.txtBytes.Text = "0";
+      this.txtBytes.Value = 0;
+      // 
+      // txtDisc
+      // 
+      this.txtDisc.AcceptsReturn = true;
+      this.txtDisc.Location = new System.Drawing.Point(113, 149);
+      this.txtDisc.Name = "txtDisc";
+      this.txtDisc.ReadOnly = true;
+      this.txtDisc.Size = new System.Drawing.Size(142, 20);
+      this.txtDisc.TabIndex = 69;
+      this.txtDisc.Text = "0";
+      this.txtDisc.Value = 0;
+      // 
+      // label3
+      // 
+      this.label3.AutoSize = true;
+      this.label3.Location = new System.Drawing.Point(21, 129);
+      this.label3.Name = "label3";
+      this.label3.Size = new System.Drawing.Size(91, 13);
+      this.label3.TabIndex = 70;
+      this.label3.Text = "Bytes processed: ";
+      // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,5 +444,9 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalLevel;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelSignalQuality;
+    private System.Windows.Forms.Label label4;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtBytes;
+    private System.Windows.Forms.Label label3;
   }
 }

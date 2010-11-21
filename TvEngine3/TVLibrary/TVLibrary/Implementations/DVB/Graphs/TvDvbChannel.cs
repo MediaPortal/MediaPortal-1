@@ -1207,8 +1207,40 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region properties
+    #region properties   
 
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>   
+    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="discontinuityCounter">Number of stream discontinuities</param>
+    /// <returns></returns>
+    public void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter)
+    {
+      discontinuityCounter = 0;
+      totalBytes = 0;
+
+      int totalTsBytes = 0;
+      int TsDiscontinuity = 0;
+      int totalRecordingBytes = 0;
+      int recordingDiscontinuity = 0;
+
+      if (_tsFilterInterface != null)
+      {
+        _tsFilterInterface.GetStreamQualityCounters(_subChannelId, out totalTsBytes, out totalRecordingBytes, out TsDiscontinuity, out recordingDiscontinuity);
+      }
+
+      if (IsRecording)
+      {
+        totalBytes = totalRecordingBytes;
+        discontinuityCounter = recordingDiscontinuity;
+      }
+      else if (IsTimeShifting)
+      {
+        totalBytes = totalTsBytes;
+        discontinuityCounter = TsDiscontinuity;
+      }            
+    }   
     
     public bool PMTreceived
     {

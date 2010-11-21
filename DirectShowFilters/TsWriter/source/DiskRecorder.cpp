@@ -89,6 +89,8 @@ CDiskRecorder::CDiskRecorder(RecordingMode mode)
 	m_bRunning=false;
 	m_pTimeShiftFile=NULL;
 
+  m_iTsContinuityCounter=0;
+
 	m_bStartPcrFound=false;
 	m_bDetermineNewStartPcr=false;
 	m_iPatVersion=0;
@@ -189,6 +191,7 @@ bool CDiskRecorder::Start()
 		}
 		m_iPmtContinuityCounter=-1;
 		m_iPatContinuityCounter=-1;
+    m_iTsContinuityCounter=0;
 		m_bDetermineNewStartPcr=false;
 		m_bStartPcrFound=false;
 		m_mapLastPtsDts.clear();
@@ -288,6 +291,7 @@ void CDiskRecorder::Reset()
 		m_iPacketCounter=0;
 		m_bPaused=FALSE;
 		m_mapLastPtsDts.clear();
+    m_iTsContinuityCounter=0;
 	}
 	catch(...)
 	{
@@ -419,7 +423,15 @@ void CDiskRecorder::GetTimeShiftPosition(__int64 * position,long * bufferId)
 	*bufferId=m_pTimeShiftFile->getCurrentFileId();
 }
 
+void CDiskRecorder::GetDiscontinuityCounter(int* counter)
+{
+  (*counter) = m_iTsContinuityCounter;
+}
 
+void CDiskRecorder::GetTotalBytes(int* packetsProcessed)
+{
+  (*packetsProcessed) = m_TsPacketCount;
+}
 
 void CDiskRecorder::OnTsPacket(byte* tsPacket)
 {
@@ -843,7 +855,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 	CEnterCriticalSection enter(m_section);
 	try{
 		m_TsPacketCount++;
-		if( m_TsPacketCount < IGNORE_AFTER_TUNE ) return;
+		if (m_TsPacketCount < IGNORE_AFTER_TUNE) return;
 		if (m_pcrPid<0 || m_vecPids.size()==0 || m_iPmtPid<0) return;
 
 		m_tsHeader.Decode(tsPacket);
@@ -875,9 +887,10 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 					if (m_tsHeader.HasPayload)
 					{
 						// Check Ts packet continuity with payload, remove duplicate frames.
-						/*if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
+						if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
-							if (m_tsHeader.ContinuityCounter == info.ccPrev)
+              m_iTsContinuityCounter++;
+							/*if (m_tsHeader.ContinuityCounter == info.ccPrev)
 							{	
 								// May be duplicated....
 								int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
@@ -892,7 +905,8 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 							}
 							else
 								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
-						}*/
+              */
+						}
 					}
 					else
 					{
