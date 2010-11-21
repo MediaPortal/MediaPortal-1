@@ -122,10 +122,6 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        case Action.ActionType.ACTION_PAUSE:
-          g_Player.Pause();
-          break;
-
         case Action.ActionType.ACTION_SMALL_STEP_BACK:
           {
             if (g_Player.CanSeek)

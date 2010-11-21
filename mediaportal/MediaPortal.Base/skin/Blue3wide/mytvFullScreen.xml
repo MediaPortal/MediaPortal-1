@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>602</id>
   <defaultcontrol>13</defaultcontrol>
@@ -34,7 +34,7 @@
       <texture>#TV.View.thumb</texture>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused+!window.isosdvisible</visible>
+      <visible>player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible+!window.isosdvisible</visible>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <!--  will be removed later if no issues occur
@@ -93,7 +93,7 @@
       <label2>#TV.Record.percent3</label2>
       <font>font13</font>
       <textcolor>FF000000</textcolor>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>window.isosdvisible|window.ispauseosdvisible|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>

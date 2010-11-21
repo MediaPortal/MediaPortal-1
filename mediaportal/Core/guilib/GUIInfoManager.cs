@@ -340,6 +340,7 @@ namespace MediaPortal.GUI.Library
     public const int FACADEVIEW_SMALLICONS = 805;
     public const int FACADEVIEW_COVERFLOW = 806;
 
+    public const int WINDOW_IS_PAUSE_OSD_VISIBLE = 9993;
     public const int WINDOW_IS_TOPMOST = 9994;
     public const int WINDOW_IS_VISIBLE = 9995;
     public const int WINDOW_NEXT = 9996;
@@ -1304,6 +1305,10 @@ namespace MediaPortal.GUI.Library
         {
           ret = WINDOW_IS_OSD_VISIBLE;
         }
+        else if (strTest == "window.ispauseosdvisible")
+        {
+            ret = WINDOW_IS_PAUSE_OSD_VISIBLE;
+        }
         else if (strTest.Substring(0, 16) == "window.isactive(")
         {
           int winID = TranslateWindowString(strTest.Substring(16, strTest.Length - 17));
@@ -1929,6 +1934,10 @@ namespace MediaPortal.GUI.Library
       else if (condition == WINDOW_IS_OSD_VISIBLE)
       {
         bReturn = GUIWindowManager.IsOsdVisible;
+      }
+      else if (condition == WINDOW_IS_PAUSE_OSD_VISIBLE)
+      {
+          bReturn = GUIWindowManager.IsPauseOsdVisible;
       }
       else if (condition == PLAYER_MUTED)
       {

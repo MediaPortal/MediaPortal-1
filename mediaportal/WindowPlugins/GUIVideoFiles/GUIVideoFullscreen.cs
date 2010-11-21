@@ -27,10 +27,8 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
-using MediaPortal.Profile;
 using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
-using MediaPortal.ExtensionMethods;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video
@@ -45,6 +43,7 @@ namespace MediaPortal.GUI.Video
       public int SeekStep = 1;
       public int Speed = 1;
       public bool OsdVisible = false;
+      public bool PauseOsdVisible = false;
       public bool Paused = false;
       public bool ContextMenuVisible = false;
       public bool ShowStatusLine = false;
@@ -87,6 +86,7 @@ namespace MediaPortal.GUI.Video
     protected GUIImage imgActionForbiddenIcon;
 
     private bool _isOsdVisible = false;
+    private bool _isPauseOsdVisible = false;
     private bool _showStep = false;
     private bool _showStatus = false;
     private bool _showTime = false;
@@ -299,7 +299,7 @@ namespace MediaPortal.GUI.Video
           }
         }
         Action newAction = new Action();
-        if (action.wID != Action.ActionType.ACTION_KEY_PRESSED &&
+        if (action.wID != Action.ActionType.ACTION_KEY_PRESSED && action.wID != Action.ActionType.ACTION_PAUSE &&
             ActionTranslator.GetAction((int)Window.WINDOW_OSD, action.m_key, ref newAction))
         {
           _osdWindow.OnAction(newAction); // route keys to OSD window
@@ -532,6 +532,8 @@ namespace MediaPortal.GUI.Video
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
+                  _isPauseOsdVisible = false;
+                  GUIWindowManager.IsPauseOsdVisible = false;
                   ScreenStateChanged();
                   UpdateGUI();
                 }
@@ -565,6 +567,8 @@ namespace MediaPortal.GUI.Video
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
+                  _isPauseOsdVisible = false;
+                  GUIWindowManager.IsPauseOsdVisible = false;
                   ScreenStateChanged();
                   UpdateGUI();
                 }
@@ -597,6 +601,8 @@ namespace MediaPortal.GUI.Video
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
+                  _isPauseOsdVisible = false;
+                  GUIWindowManager.IsPauseOsdVisible = false;
                   ScreenStateChanged();
                   UpdateGUI();
                 }
@@ -650,6 +656,8 @@ namespace MediaPortal.GUI.Video
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
+                  _isPauseOsdVisible = false;
+                  GUIWindowManager.IsPauseOsdVisible = false;
                   ScreenStateChanged();
                   UpdateGUI();
                 }
@@ -777,18 +785,15 @@ namespace MediaPortal.GUI.Video
 
         // PAUSE action is handled globally in the Application class
         case Action.ActionType.ACTION_PAUSE:
-          g_Player.Pause();
-          ScreenStateChanged();
-          UpdateGUI();
           if (g_Player.Paused)
           {
-            if ((GUIGraphicsContext.Vmr9Active && VMR9Util.g_vmr9 != null))
-            {
-              VMR9Util.g_vmr9.SetRepaint();
-              VMR9Util.g_vmr9.Repaint(); // repaint vmr9
-            }
+            m_dwOSDTimeOut = DateTime.Now;
+            GUIWindowManager.IsPauseOsdVisible = true;
           }
-
+          else
+          {
+             GUIWindowManager.IsPauseOsdVisible = false;
+          }
           break;
 
         case Action.ActionType.ACTION_SUBTITLE_DELAY_MIN:
@@ -818,14 +823,15 @@ namespace MediaPortal.GUI.Video
             {
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
-                g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
                 if (dPos > 1)
                 {
-                  Log.Debug("GUIVideoFullscreen.Rewind - skipping");
-                  g_Player.SeekAbsolute(dPos - 0.25d);
+                    Log.Debug("GUIVideoFullscreen.Rewind - skipping");
+                    g_Player.SeekAbsolute(dPos - 0.25d);
                 }
               }
               else
@@ -834,10 +840,6 @@ namespace MediaPortal.GUI.Video
                 _forbiddenTimer = DateTime.Now;
                 RenderForbidden(true);
               }
-            }
-            else
-            {
-              g_Player.Speed = Util.Utils.GetNextRewindSpeed(g_Player.Speed);
             }
           }
           break;
@@ -848,14 +850,15 @@ namespace MediaPortal.GUI.Video
             {
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
-                g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
                 if (g_Player.Duration - dPos > 1)
                 {
-                  Log.Debug("GUIVideoFullscreen.Forward - skipping");
-                  g_Player.SeekAbsolute(dPos + 0.25d);
+                    Log.Debug("GUIVideoFullscreen.Forward - skipping");
+                    g_Player.SeekAbsolute(dPos + 0.25d);
                 }
               }
               else
@@ -864,10 +867,6 @@ namespace MediaPortal.GUI.Video
                 _forbiddenTimer = DateTime.Now;
                 RenderForbidden(true);
               }
-            }
-            else
-            {
-              g_Player.Speed = Util.Utils.GetNextForwardSpeed(g_Player.Speed);
             }
           }
           break;
@@ -1084,6 +1083,7 @@ namespace MediaPortal.GUI.Video
             LoadSettings();
             GUIWindowManager.IsOsdVisible = false;
             _isOsdVisible = false;
+            _isPauseOsdVisible = false;
             _showStep = false;
             _showStatus = false;
             _showTime = false;
@@ -1645,11 +1645,15 @@ namespace MediaPortal.GUI.Video
         screenState.OsdVisible = _isOsdVisible;
         updateGUI = true;
       }
+      if (_isPauseOsdVisible != screenState.PauseOsdVisible)
+      {
+          screenState.PauseOsdVisible = _isPauseOsdVisible;
+          updateGUI = true;
+      }
       if (_isOsdVisible && _osdWindow.NeedRefresh())
       {
         _needToClearScreen = true;
       }
-
       if (_IsDialogVisible != screenState.ContextMenuVisible)
       {
         screenState.ContextMenuVisible = _IsDialogVisible;
@@ -1707,39 +1711,8 @@ namespace MediaPortal.GUI.Video
 
     private void UpdateGUI()
     {
-      if ((_showStep || _showSkipBar || (!_isOsdVisible && g_Player.Speed != 1) || (!_isOsdVisible && g_Player.Paused)))
-      {
-        if (!_isOsdVisible)
-        {
-          for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
-          {
-            ShowControl(GetID, i);
-          }
-          ShowControl(GetID, (int)Control.OSD_TIMEINFO);
-          ShowControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
-        }
-        else
-        {
-          for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
-          {
-            HideControl(GetID, i);
-          }
-          HideControl(GetID, (int)Control.OSD_TIMEINFO);
-          HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
-        }
-      }
-      else
-      {
-        for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
-        {
-          HideControl(GetID, i);
-        }
-        HideControl(GetID, (int)Control.OSD_TIMEINFO);
-        HideControl(GetID, (int)Control.OSD_VIDEOPROGRESS);
-      }
 
-
-      if (g_Player.Paused && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
+      if (_isPauseOsdVisible && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
@@ -1811,7 +1784,7 @@ namespace MediaPortal.GUI.Video
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
-      if (_showSkipBar && !g_Player.Paused) // If paused, this will already be shown, including LABEL_ROW1
+      if (_showSkipBar && !_isPauseOsdVisible) // If paused, this will already be shown, including LABEL_ROW1
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
       }
@@ -1881,6 +1854,20 @@ namespace MediaPortal.GUI.Video
           msg = null;
         }
       }
+      if (g_Player.Paused && m_iMaxTimeOSDOnscreen > 0)
+      {
+          TimeSpan ts = DateTime.Now - m_dwOSDTimeOut;
+          if (ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
+          {
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
+          }
+          else
+          {
+              _isPauseOsdVisible = true;
+              GUIWindowManager.IsPauseOsdVisible = true;
+          }
+      }
     }
 
     public override void Process()
@@ -1906,6 +1893,8 @@ namespace MediaPortal.GUI.Video
         }
         _isOsdVisible = false;
         GUIWindowManager.IsOsdVisible = false;
+        _isPauseOsdVisible = false;
+        GUIWindowManager.IsPauseOsdVisible = false;
         GUIWindowManager.ShowPreviousWindow();
         return;
       }
@@ -1925,11 +1914,6 @@ namespace MediaPortal.GUI.Video
           _osdWindow.Render(timePassed);
         }
       }
-    }
-
-    private bool OSDVisible()
-    {
-      return _isOsdVisible;
     }
 
     private void ChangetheTimeCode(char chKey)

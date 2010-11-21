@@ -2742,19 +2742,19 @@ public class MediaPortalApp : D3DApp, IRender
           //pause (or resume playback)
           case Action.ActionType.ACTION_PAUSE:
             g_Player.Pause();
-            return;
+                break;
 
           //fast forward...
           case Action.ActionType.ACTION_FORWARD:
           case Action.ActionType.ACTION_MUSIC_FORWARD:
             g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
-            return;
+                break;
 
           //fast rewind...
           case Action.ActionType.ACTION_REWIND:
           case Action.ActionType.ACTION_MUSIC_REWIND:
             g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
-            return;
+                break;
         }
       }
       GUIWindowManager.OnAction(action);

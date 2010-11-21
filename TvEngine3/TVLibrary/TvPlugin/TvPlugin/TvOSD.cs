@@ -468,7 +468,6 @@ namespace TvPlugin
 
             if (iControl == (int)Controls.OSD_PAUSE)
             {
-              g_Player.Pause(); // Pause/Un-Pause playback
               if (g_Player.Paused)
               {
                 ToggleButton((int)Controls.OSD_PLAY, true);
@@ -509,7 +508,6 @@ namespace TvPlugin
               }
               else
               {
-                g_Player.Pause(); // Pause/Un-Pause playback
                 if (g_Player.Paused)
                 {
                   ToggleButton((int)Controls.OSD_PLAY, true);

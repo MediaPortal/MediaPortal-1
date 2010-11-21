@@ -1439,7 +1439,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    /// <summary>
+      /// <summary>
+      /// Are we displaying pause OSD?
+      /// </summary>
+      public static bool IsPauseOsdVisible { get; set; }
+
+      /// <summary>
     /// Returns the ID of the current visible OSD
     /// <returns>GUIWindow.Window.WINDOW_INVALID if no OSD is visible</returns>
     /// <returns>GUIWindow.Window when OSD is visible</returns>

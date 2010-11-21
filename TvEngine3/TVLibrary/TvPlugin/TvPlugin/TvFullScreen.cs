@@ -99,6 +99,7 @@ namespace TvPlugin
     //		string			m_sZapChannel;
     //		long				m_iZapDelay;
     private volatile bool _isOsdVisible = false;
+    private volatile bool _isPauseOsdVisible = false;
     private volatile bool _zapOsdVisible = false;
     //bool _msnWindowVisible = false;       // msn related can be removed
     private bool _channelInputVisible = false;
@@ -657,12 +658,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Paused)
               {
                 g_Player.Pause();
               }
-
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
               ScreenStateChanged();
               UpdateGUI();
             }
@@ -673,12 +674,12 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Paused)
               {
                 g_Player.Pause();
               }
-
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
               ScreenStateChanged();
               UpdateGUI();
             }
@@ -708,6 +709,8 @@ namespace TvPlugin
               if (g_Player.Paused)
               {
                 g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
               }
@@ -731,6 +734,8 @@ namespace TvPlugin
               if (g_Player.Paused)
               {
                 g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
               }
@@ -754,6 +759,8 @@ namespace TvPlugin
               if (g_Player.Paused)
               {
                 g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
               }
@@ -783,6 +790,8 @@ namespace TvPlugin
               if (g_Player.Paused)
               {
                 g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
               }
@@ -806,11 +815,6 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PAUSE:
           {
-            if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
-            {
-              g_Player.Pause();
-            }
-
             ScreenStateChanged();
             UpdateGUI();
             if (g_Player.Paused)
@@ -820,6 +824,12 @@ namespace TvPlugin
                 VMR9Util.g_vmr9.SetRepaint();
                 VMR9Util.g_vmr9.Repaint(); // repaint vmr9
               }
+               _osdTimeoutTimer = DateTime.Now;
+              GUIWindowManager.IsPauseOsdVisible = true;
+            }
+            else
+            {
+                GUIWindowManager.IsPauseOsdVisible = false;
             }
           }
           break;
@@ -1349,11 +1359,12 @@ namespace TvPlugin
             //}
 
             _isOsdVisible = false;
+            _isPauseOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = false;
             _channelInputVisible = false;
             _keyPressedTimer = DateTime.Now;
             _channelName = "";
-            _updateTimer = DateTime.Now;
 
             _stepSeekVisible = false;
             _statusVisible = false;
@@ -1429,7 +1440,6 @@ namespace TvPlugin
 
             _isOsdVisible = false;
             GUIWindowManager.IsOsdVisible = false;
-            _updateTimer = DateTime.Now;
             //					_zapTimeOutTimer=DateTime.Now;
 
             _stepSeekVisible = false;
@@ -2234,13 +2244,6 @@ namespace TvPlugin
 
     public override void Process()
     {
-      TimeSpan ts = DateTime.Now - _updateTimer;
-
-      if (ts.TotalMilliseconds < 800)
-      {
-        return;
-      }
-      _updateTimer = DateTime.Now; // reset timer
       CheckTimeOuts();
       if (ScreenStateChanged())
       {
@@ -2248,7 +2251,7 @@ namespace TvPlugin
       }
 
       if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) ||
-           (!_isOsdVisible && g_Player.Paused)) || _isOsdVisible)
+           (!_isOsdVisible && _isPauseOsdVisible)) || _isOsdVisible)
       {
         TVHome.UpdateProgressPercentageBar();
       }
@@ -2419,48 +2422,48 @@ namespace TvPlugin
 
     private void UpdateGUI()
     {
-      if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) ||
-           (!_isOsdVisible && g_Player.Paused)))
-      {
-        if (!_isOsdVisible)
-        {
-          for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-          {
-            ShowControl(GetID, i);
-          }
+      //if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) ||
+      //     (!_isOsdVisible && _isPauseOsdVisible)))
+      //{
+      //  if (!_isOsdVisible)
+      //  {
+      //    for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
+      //    {
+      //      ShowControl(GetID, i);
+      //    }
 
-          // Set recorder status
-          VirtualCard card;
-          TvServer server = new TvServer();
-          if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
-          {
+      //    // Set recorder status
+        VirtualCard card;
+        var server = new TvServer();
+        if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
+        {
             ShowControl(GetID, (int)Control.REC_LOGO);
-          }
-          else
-          {
-            HideControl(GetID, (int)Control.REC_LOGO);
-          }
         }
         else
         {
-          for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-          {
-            HideControl(GetID, i);
-          }
-          HideControl(GetID, (int)Control.REC_LOGO);
+            HideControl(GetID, (int)Control.REC_LOGO);
         }
-      }
-      else
-      {
-        for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-        {
-          HideControl(GetID, i);
-        }
-        HideControl(GetID, (int)Control.REC_LOGO);
-      }
+      //  }
+      //  else
+      //  {
+      //    for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
+      //    {
+      //      HideControl(GetID, i);
+      //    }
+      //    HideControl(GetID, (int)Control.REC_LOGO);
+      //  }
+      //}
+      //else
+      //{
+      //  for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
+      //  {
+      //    HideControl(GetID, i);
+      //  }
+      //  HideControl(GetID, (int)Control.REC_LOGO);
+      //}
 
 
-      if (g_Player.Paused)
+      if (_isPauseOsdVisible)
       {
         ShowControl(GetID, (int)Control.IMG_PAUSE);
       }
@@ -2609,6 +2612,20 @@ namespace TvPlugin
           //yes, then remove osd offscreen
           HideMainOSD();
         }
+      }
+      if (g_Player.Paused && _timeOsdOnscreen > 0)
+      {
+          TimeSpan ts = DateTime.Now - _osdTimeoutTimer;
+          if (ts.TotalMilliseconds > _timeOsdOnscreen)
+          {
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
+          }
+          else
+          {
+              _isPauseOsdVisible = true;
+              GUIWindowManager.IsPauseOsdVisible = true;
+          }
       }
 
 

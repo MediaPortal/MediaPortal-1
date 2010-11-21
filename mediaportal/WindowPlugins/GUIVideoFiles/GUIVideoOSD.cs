@@ -177,9 +177,9 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PAUSE:
           {
             // push a message through to this window to handle the remote control button
-            GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
-                                               (int)Controls.OSD_PAUSE, 0, 0, null);
-            OnMessage(msgSet);
+              GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
+                                                 (int)Controls.OSD_PAUSE, 0, 0, null);
+              OnMessage(msgSet);
             return;
           }
 
@@ -193,7 +193,7 @@ namespace MediaPortal.GUI.Video
 
             if (g_Player.Paused)
             {
-              g_Player.Pause();
+              //g_Player.Pause();
               ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
             }
             return;
@@ -317,7 +317,6 @@ namespace MediaPortal.GUI.Video
 
             if (iControl == (int)Controls.OSD_PAUSE)
             {
-              g_Player.Pause(); // Pause/Un-Pause playback
               if (g_Player.Paused)
               {
                 ToggleButton((int)Controls.OSD_PLAY, true);
@@ -392,7 +391,6 @@ namespace MediaPortal.GUI.Video
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Util.Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Speed < 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true); // make sure out button is in the down position
@@ -415,7 +413,6 @@ namespace MediaPortal.GUI.Video
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Util.Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Speed > 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true); // make sure out button is in the down position

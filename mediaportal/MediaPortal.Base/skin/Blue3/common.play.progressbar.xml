@@ -14,7 +14,7 @@
       <texture>OSD-Smalbackground.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible]+!window.isosdvisible</visible>
     </control>
     <control>
       <description>TV Logo</description>
@@ -29,7 +29,7 @@
       <centered>yes</centered>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible]+!window.isosdvisible</visible>
       <animation effect="fade" time="150">windowopen</animation>
     </control>
     <control>
@@ -45,7 +45,7 @@
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible]+!window.isosdvisible</visible>
     </control>
     <control>
       <description>Stripe</description>
@@ -57,7 +57,7 @@
       <texture>OSD_Stripe.png</texture>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible]+!window.isosdvisible</visible>
     </control>
     <control>
       <description>Current Time Info</description>
@@ -70,7 +70,7 @@
       <textcolor>white</textcolor>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
-      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|player.paused]+!window.isosdvisible</visible>
+      <visible>[player.rewinding|Control.IsVisible(10)|player.forwarding|window.ispauseosdvisible]+!window.isosdvisible</visible>
     </control>
     <control>
       <description>progress bar background</description>
@@ -80,7 +80,7 @@
       <width>467</width>
       <height>20</height>
       <texture>osd_progress_background.png</texture>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>window.isosdvisible|window.ispauseosdvisible|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -93,7 +93,7 @@
       <width>462</width>
       <height>20</height>
       <label>#play.progressbar.percentage</label>
-      <visible>[window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)]+!window.isvisible(602)</visible>
+      <visible>[window.isosdvisible|window.ispauseosdvisible|player.rewinding|player.forwarding|Control.IsVisible(10)]+!window.isvisible(602)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -106,7 +106,7 @@
       <align>center</align>
       <font>font12</font>
       <textcolor>white</textcolor>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>window.isosdvisible|window.ispauseosdvisible|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -119,7 +119,7 @@
       <align>center</align>
       <font>font12</font>
       <textcolor>white</textcolor>
-      <visible>window.isosdvisible|player.paused|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
+      <visible>window.isosdvisible|window.ispauseosdvisible|player.rewinding|player.forwarding|Control.IsVisible(10)</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -131,7 +131,7 @@
       <posY>544</posY>
       <width>62</width>
       <height>16</height>
-      <visible>player.paused+!Control.IsVisible(10)</visible>
+      <visible>window.ispauseosdvisible+!Control.IsVisible(10)</visible>
       <texture>video-pause.png</texture>
       <colorkey>0</colorkey>
       <colordiffuse>White</colordiffuse>
