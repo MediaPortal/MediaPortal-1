@@ -155,8 +155,7 @@ namespace TvService
               while (deleteDir != Path.GetDirectoryName(checkPath) && deleteDir.Length > checkPath.Length)
               {
                 try
-                {                  
-                  string[] subdirs;
+                {                                    
                   bool hasSubDirs = HasSubDirs(deleteDir);
 
                   if (!hasSubDirs)

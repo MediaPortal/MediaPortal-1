@@ -147,9 +147,7 @@ namespace SetupTv.Sections
       while (_running)
       {
         try
-        {
-          VirtualCard card;
-
+        {          
           List<List<Channel>> channelChunks = null;
 
           if (_usersShareChannels)
@@ -281,7 +279,7 @@ namespace SetupTv.Sections
             RemoteControl.Instance.StopTimeShifting(ref user);
           //}
         }
-        catch (Exception e)
+        catch (Exception)
         {
           
         }
@@ -849,16 +847,6 @@ namespace SetupTv.Sections
     private delegate void UpdateDiscontinuityCounterDelegate(User user, int nextRowIndexForDiscUpdate);
 
     #endregion
-
-    #region Nested type: ThreadParams
-
-    private class ThreadParams
-    {
-      public List<Channel> _channels;
-      public User _user;
-    } ;
-
-    #endregion     
   }
 
   public class ListViewSorter : IComparer

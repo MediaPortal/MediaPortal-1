@@ -80,12 +80,6 @@ namespace TvService
     /// </summary>
     private int _maxRecordFreeCardsToTry;
 
-
-    /// <summary>
-    /// Indicates how many free cards to try for timeshifting
-    /// </summary>
-    private int _maxTimeshiftFreeCardsToTry;
-
     #endregion
    
     #region ctor

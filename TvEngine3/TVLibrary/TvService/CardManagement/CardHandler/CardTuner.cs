@@ -113,7 +113,7 @@ namespace TvService
         }
         return TvResult.GraphBuildingFailed;
       }
-      catch (TvExceptionNoPMT exceptionNoPmt)
+      catch (TvExceptionNoPMT)
       {        
         if (result != null)
         {
@@ -201,7 +201,7 @@ namespace TvService
         }
         return TvResult.GraphBuildingFailed;
       }
-      catch (TvExceptionNoPMT exceptionNoPmt)
+      catch (TvExceptionNoPMT)
       {      
         if (result != null)
         {
