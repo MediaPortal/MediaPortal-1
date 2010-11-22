@@ -318,5 +318,31 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
+    
+    <control>
+      <description>Bytes Transferred</description>
+      <type>label</type>
+      <id>27</id>
+      <posX>10</posX>
+      <posY>340</posY>
+      <label>Bytes Transferred: #TV.TuningDetails.BytesTransferred</label>
+      <font>font14</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    <control>
+      <description>Discontinuities</description>
+      <type>label</type>
+      <id>28</id>
+      <posX>400</posX>
+      <posY>340</posY>
+      <label>Discontinuities: #TV.TuningDetails.Discontinuities</label>
+      <font>font14</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+    
   </controls>
 </window>
