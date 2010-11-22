@@ -3372,10 +3372,15 @@ namespace TvPlugin
       {
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
-
+        
         if (_currentChannel.Length > 0)
         {
           dlg.AddLocalizedString(938); // View this channel
+        }
+
+        if (_currentProgram.IdProgram != 0)
+        {
+          dlg.AddLocalizedString(1041); //Upcoming episodes
         }
 
         dlg.AddLocalizedString(939); // Switch mode
@@ -3422,6 +3427,11 @@ namespace TvPlugin
         }
         switch (dlg.SelectedId)
         {
+
+          case 1041:
+            ShowProgramInfo();
+            Log.Debug("TVGuide: show episodes or repeatings for current show");
+            break;
           case 368: // IMDB
             OnGetIMDBInfo();
             break;

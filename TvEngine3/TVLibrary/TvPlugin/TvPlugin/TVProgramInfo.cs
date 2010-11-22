@@ -648,7 +648,7 @@ namespace TvPlugin
         lstUpcomingEpsiodes.SelectedListItemIndex = itemToSelect;
       }
 
-      lblUpcomingEpsiodes.Label = GUILocalizeStrings.Get(1041, new object[] { activeRecordings });
+      lblUpcomingEpsiodes.Label = GUILocalizeStrings.Get(1203, new object[] { activeRecordings });
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(lstUpcomingEpsiodes.ListItems.Count));
