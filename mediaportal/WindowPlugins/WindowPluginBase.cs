@@ -15,9 +15,7 @@ namespace WindowPlugins
     #region Base Variables
 
     protected Layout currentLayout = Layout.List;
-    protected Layout currentLayoutRoot = Layout.List;
     protected bool m_bSortAscending;
-    protected bool m_bSortAscendingRoot;
     protected ViewHandler handler;
 
     #endregion
@@ -52,9 +50,7 @@ namespace WindowPlugins
           defaultAscending = def.SortAscending;
         }
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", defaultLayout);
-        currentLayoutRoot = (Layout)xmlreader.GetValueAsInt(SerializeName, "layoutroot", defaultLayout);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
-        m_bSortAscendingRoot = xmlreader.GetValueAsBool(SerializeName, "sortascroot", defaultAscending);
 
         if (AllowLayout(CurrentLayout) == false)
         {
@@ -70,9 +66,7 @@ namespace WindowPlugins
       using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
-        xmlwriter.SetValue(SerializeName, "layoutroot", (int)currentLayoutRoot);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        xmlwriter.SetValueAsBool(SerializeName, "sortascroot", m_bSortAscendingRoot);
       }
     }
 
