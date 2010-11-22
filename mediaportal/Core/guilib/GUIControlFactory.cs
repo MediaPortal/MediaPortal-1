@@ -434,7 +434,7 @@ namespace MediaPortal.GUI.Library
             if (subControl is GUIPlayListItemListControl)
             {
               GUIPlayListItemListControl list = subControl as GUIPlayListItemListControl;
-              facade.PlayListView = list;
+              facade.PlayListLayout = list;
             }
 
             else if (subControl is GUIListControl)
@@ -442,24 +442,24 @@ namespace MediaPortal.GUI.Library
               GUIListControl list = subControl as GUIListControl;
               if (list.SubType == "album")
               {
-                facade.AlbumListView = list;
+                facade.AlbumListLayout = list;
               }
               else
               {
-                facade.ListView = list;
+                facade.ListLayout = list;
               }
             }
             if (subControl is GUIThumbnailPanel)
             {
-              facade.ThumbnailView = subControl as GUIThumbnailPanel;
+              facade.ThumbnailLayout = subControl as GUIThumbnailPanel;
             }
             if (subControl is GUIFilmstripControl)
             {
-              facade.FilmstripView = subControl as GUIFilmstripControl;
+              facade.FilmstripLayout = subControl as GUIFilmstripControl;
             }
             if (subControl is GUICoverFlow)
             {
-              facade.CoverFlowView = subControl as GUICoverFlow;
+              facade.CoverFlowLayout = subControl as GUICoverFlow;
             }
             //UpdateControlWithXmlData(subControl, subControl.GetType(), subControlNode, defines);
           }

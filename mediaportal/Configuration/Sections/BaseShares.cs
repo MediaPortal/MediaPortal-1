@@ -26,6 +26,7 @@ using System.Windows.Forms;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 #pragma warning disable 108
 
@@ -35,14 +36,14 @@ namespace MediaPortal.Configuration.Sections
   {
     public class ShareData
     {
-      public enum Views
+      /*public enum Views
       {
         List,
         Icons,
         BigIcons,
         Filmstrip,
         CoverFlow
-      }
+      }*/
 
       public string Name;
       public string Folder;
@@ -55,7 +56,7 @@ namespace MediaPortal.Configuration.Sections
       public string RemoteFolder = string.Empty;
       public int Port = 21;
       public bool ActiveConnection = true;
-      public Views DefaultView = Views.List;
+      public Layout DefaultLayout = MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
       public bool ScanShare = false;
 
       public bool HasPinCode
@@ -320,7 +321,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.Port = editShare.Port;
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
-        shareData.DefaultView = (ShareData.Views)editShare.View;
+        shareData.DefaultLayout = (Layout)editShare.View;
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -371,7 +372,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
-          editShare.View = (int)shareData.DefaultView;
+          editShare.View = (int)shareData.DefaultLayout;
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -388,7 +389,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.Port = editShare.Port;
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
-            shareData.DefaultView = (ShareData.Views)editShare.View;
+            shareData.DefaultLayout = (Layout)editShare.View;
 
             selectedItem.Tag = shareData;
 
@@ -621,7 +622,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = xmlreader.GetValueAsString(section, sharePwd, "");
           int sharePortData = xmlreader.GetValueAsInt(section, sharePort, 21);
           string shareRemotePathData = xmlreader.GetValueAsString(section, shareRemotePath, "/");
-          int shareView = xmlreader.GetValueAsInt(section, shareViewPath, (int)ShareData.Views.List);
+          int shareLayout = xmlreader.GetValueAsInt(section, shareViewPath, (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List);
 
           // For Music Shares, we can indicate, if we want to scan them every time
           bool shareScanData = false;
@@ -640,7 +641,7 @@ namespace MediaPortal.Configuration.Sections
             newShare.PassWord = sharePwdData;
             newShare.Port = sharePortData;
             newShare.RemoteFolder = shareRemotePathData;
-            newShare.DefaultView = (ShareData.Views)shareView;
+            newShare.DefaultLayout = (Layout)shareLayout;
 
             if (section == "music" || section == "movies")
             {
@@ -707,7 +708,7 @@ namespace MediaPortal.Configuration.Sections
           string sharePwdData = string.Empty;
           int sharePortData = 21;
           string shareRemotePathData = string.Empty;
-          int shareView = (int)ShareData.Views.List;
+          int shareLayout = (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
           bool shareScanData = false;
 
           if (CurrentShares != null && CurrentShares.Count > index)
@@ -725,7 +726,7 @@ namespace MediaPortal.Configuration.Sections
               sharePwdData = shareData.PassWord;
               sharePortData = shareData.Port;
               shareRemotePathData = shareData.RemoteFolder;
-              shareView = (int)shareData.DefaultView;
+              shareLayout = (int)shareData.DefaultLayout;
               shareScanData = shareData.ScanShare;
 
               if (CurrentShares[index] == DefaultShare)
@@ -742,7 +743,7 @@ namespace MediaPortal.Configuration.Sections
               xmlwriter.SetValue(section, sharePwd, sharePwdData);
               xmlwriter.SetValue(section, sharePort, sharePortData.ToString());
               xmlwriter.SetValue(section, shareRemotePath, shareRemotePathData);
-              xmlwriter.SetValue(section, shareViewPath, shareView);
+              xmlwriter.SetValue(section, shareViewPath, shareLayout);
 
               if (section == "music" || section == "movies")
               {

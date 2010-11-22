@@ -35,14 +35,12 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// Summary description for VideoViewHandler.
   /// </summary>
-  public class VideoViewHandler
+  public class VideoViewHandler : ViewHandler
   {
     private string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
     private string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
 
-    private ViewDefinition currentView;
-    private int currentLevel = 0;
-    private List<ViewDefinition> views = new List<ViewDefinition>();
+    
 
     public VideoViewHandler()
     {
@@ -65,99 +63,6 @@ namespace MediaPortal.GUI.Video
         }
       }
       catch (Exception) {}
-    }
-
-    public ViewDefinition View
-    {
-      get { return currentView; }
-      set { currentView = value; }
-    }
-
-    public List<ViewDefinition> Views
-    {
-      get { return views; }
-      set { views = value; }
-    }
-
-    public string LocalizedCurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.LocalizedName;
-      }
-    }
-
-    public string CurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.Name;
-      }
-      set
-      {
-        bool done = false;
-        foreach (ViewDefinition definition in views)
-        {
-          if (definition.Name == value)
-          {
-            currentView = definition;
-            CurrentLevel = 0;
-            done = true;
-            break;
-          }
-        }
-        if (!done)
-        {
-          if (views.Count > 0)
-          {
-            currentView = (ViewDefinition)views[0];
-          }
-        }
-      }
-    }
-
-    public int CurrentViewIndex
-    {
-      get { return views.IndexOf(currentView); }
-    }
-
-    public string CurrentLevelWhere
-    {
-      get
-      {
-        FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
-        if (definition == null)
-        {
-          return string.Empty;
-        }
-        return definition.Where;
-      }
-    }
-
-    public int CurrentLevel
-    {
-      get { return currentLevel; }
-      set
-      {
-        if (value < 0 || value >= currentView.Filters.Count)
-        {
-          return;
-        }
-        currentLevel = value;
-      }
-    }
-
-    public int MaxLevels
-    {
-      get { return currentView.Filters.Count; }
     }
 
     public void Select(IMDBMovie movie)

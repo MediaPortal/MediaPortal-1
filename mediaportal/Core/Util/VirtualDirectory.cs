@@ -29,6 +29,7 @@ using MediaPortal.Configuration;
 using MediaPortal.TagReader;
 using EnterpriseDT.Net.Ftp;
 using System.Threading;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace MediaPortal.Util
 {
@@ -92,7 +93,7 @@ namespace MediaPortal.Util
           share.FtpPassword = xmlreader.GetValueAsString(section, sharePwd, string.Empty);
           share.FtpPort = xmlreader.GetValueAsInt(section, sharePort, 21);
           share.FtpFolder = xmlreader.GetValueAsString(section, remoteFolder, "/");
-          share.DefaultView = (Share.Views)xmlreader.GetValueAsInt(section, shareViewPath, (int)Share.Views.List);
+          share.DefaultLayout = (Layout)xmlreader.GetValueAsInt(section, shareViewPath, (int)Layout.List);
 
           if (share.Name.Length > 0)
           {

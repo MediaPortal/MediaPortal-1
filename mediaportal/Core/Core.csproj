@@ -341,6 +341,7 @@
     <Compile Include="guilib\GUISmsStyledKeyboard.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
+    <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />

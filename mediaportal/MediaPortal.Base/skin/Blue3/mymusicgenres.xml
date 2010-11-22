@@ -160,12 +160,12 @@
         <label>100</label>
         <onright>50</onright>
         <onup>17</onup>
-        <ondown>6</ondown>
+        <ondown>5</ondown>
       </control>
       <control>
         <description>Switch View</description>
         <type>button</type>
-        <id>6</id>
+        <id>5</id>
         <label>457</label>
         <onright>50</onright>
         <onup>2</onup>
@@ -177,7 +177,7 @@
         <id>3</id>
         <label>103</label>
         <onright>50</onright>
-        <onup>6</onup>
+        <onup>5</onup>
         <ondown>8</ondown>
       </control>
       <control>

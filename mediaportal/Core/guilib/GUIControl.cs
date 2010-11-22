@@ -434,22 +434,22 @@ namespace MediaPortal.GUI.Library
         {
           GUIFacadeControl facade = (GUIFacadeControl)control;
 
-          switch (facade.View)
+          switch (facade.CurrentLayout)
           {
-            case GUIFacadeControl.ViewMode.AlbumView:
-              targetList.Add(facade.AlbumListView);
+            case GUIFacadeControl.Layout.AlbumView:
+              targetList.Add(facade.AlbumListLayout);
               break;
-            case GUIFacadeControl.ViewMode.Filmstrip:
-              targetList.Add(facade.FilmstripView);
+            case GUIFacadeControl.Layout.Filmstrip:
+              targetList.Add(facade.FilmstripLayout);
               break;
-            case GUIFacadeControl.ViewMode.CoverFlow:
-              targetList.Add(facade.CoverFlowView);
+            case GUIFacadeControl.Layout.CoverFlow:
+              targetList.Add(facade.CoverFlowLayout);
               break;
-            case GUIFacadeControl.ViewMode.List:
-              targetList.Add(facade.ListView);
+            case GUIFacadeControl.Layout.List:
+              targetList.Add(facade.ListLayout);
               break;
             default:
-              targetList.Add(facade.ThumbnailView);
+              targetList.Add(facade.ThumbnailLayout);
               break;
           }
 

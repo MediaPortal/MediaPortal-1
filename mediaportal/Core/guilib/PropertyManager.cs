@@ -329,7 +329,7 @@ namespace MediaPortal.GUI.Library
       _properties["#numberplace.score4"] = string.Empty;
       _properties["#numberplace.score5"] = string.Empty;
 
-      _properties["#facadeview.viewmode"] = string.Empty;
+      _properties["#facadeview.layout"] = string.Empty;
 
       _properties["#VUMeterL"] = string.Empty; // The name of the VUMeterfile Left
       _properties["#VUMeterR"] = string.Empty; // The name of the VUMeterfile Right

@@ -36,6 +36,7 @@ using MediaPortal.Video.Database;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
 using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 #pragma warning disable 108
 
@@ -162,9 +163,9 @@ namespace MediaPortal.GUI.Video
       set { _mapSettings.SortBy = (int)value; }
     }
 
-    protected override View CurrentView
+    protected override Layout CurrentLayout
     {
-      get { return (View)_mapSettings.ViewAs; }
+      get { return (Layout)_mapSettings.ViewAs; }
       set { _mapSettings.ViewAs = (int)value; }
     }
 
@@ -270,16 +271,19 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
-    protected override bool AllowView(View view)
+    protected override string SerializeName
     {
-      return base.AllowView(view);
+      get
+      {
+        return "myvideo";
+      }
     }
 
     public override void OnAction(Action action)
     {
-      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeView.Focus))
+      if ((action.wID == Action.ActionType.ACTION_PREVIOUS_MENU) && (facadeLayout.Focus))
       {
-        GUIListItem item = facadeView[0];
+        GUIListItem item = facadeLayout[0];
         if ((item != null) && item.IsFolder && (item.Label == "..") && (_currentFolder != _virtualStartDirectory))
         {
           LoadDirectory(item.Path);
@@ -289,7 +293,7 @@ namespace MediaPortal.GUI.Video
 
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = facadeView[0];
+        GUIListItem item = facadeLayout[0];
         if ((item != null) && item.IsFolder && (item.Label == ".."))
         {
           LoadDirectory(item.Path);
@@ -344,7 +348,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      _currentSelectedItem = facadeView.SelectedListItemIndex;
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
     }
@@ -373,12 +377,12 @@ namespace MediaPortal.GUI.Video
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
-          facadeView.OnMessage(message);
+          facadeLayout.OnMessage(message);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADED:
 
-          facadeView.OnMessage(message);
+          facadeLayout.OnMessage(message);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_SHOW_DIRECTORY:
@@ -449,7 +453,7 @@ namespace MediaPortal.GUI.Video
         }
         CurrentSortAsc = _mapSettings.SortAscending;
         CurrentSortMethod = (VideoSort.SortMethod)_mapSettings.SortBy;
-        currentView = (View)_mapSettings.ViewAs;
+        currentLayout = (Layout)_mapSettings.ViewAs;
       }
       else
       {
@@ -462,8 +466,8 @@ namespace MediaPortal.GUI.Video
           }
           CurrentSortAsc = _mapSettings.SortAscending;
           CurrentSortMethod = (VideoSort.SortMethod)_mapSettings.SortBy;
-          currentView = (View)share.DefaultView;
-          CurrentView = (View)share.DefaultView;
+          currentLayout = (Layout)share.DefaultLayout;
+          CurrentLayout = (Layout)share.DefaultLayout;
         }
       }
 
@@ -475,7 +479,7 @@ namespace MediaPortal.GUI.Video
         }
       }
 
-      SwitchView();
+      SwitchLayout();
       UpdateButtonStates();
     }
 
@@ -506,7 +510,7 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
-      if (facadeView == null)
+      if (facadeLayout == null)
       {
         return;
       }
@@ -514,9 +518,9 @@ namespace MediaPortal.GUI.Video
       GUIWaitCursor.Show();
       GUIListItem selectedListItem = null;
       
-      if (facadeView != null)
+      if (facadeLayout != null)
       {
-        selectedListItem = facadeView.SelectedListItem;
+        selectedListItem = facadeLayout.SelectedListItem;
       }
       if (selectedListItem != null)
       {
@@ -550,9 +554,9 @@ namespace MediaPortal.GUI.Video
       }
       string objectCount = string.Empty;
 
-      if (facadeView != null)
+      if (facadeLayout != null)
       {
-        GUIControl.ClearControl(GetID, facadeView.GetID);  
+        GUIControl.ClearControl(GetID, facadeLayout.GetID);  
       }
       
 
@@ -573,7 +577,7 @@ namespace MediaPortal.GUI.Video
 
           //Do NOT add OnItemSelected event handler here, because its still there...
 
-          facadeView.Add(item);
+          facadeLayout.Add(item);
         }
       }
       else
@@ -656,7 +660,7 @@ namespace MediaPortal.GUI.Video
         foreach (GUIListItem item in itemlist)
         {
           item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeView.Add(item);
+          facadeLayout.Add(item);
         }
 
         _cachedItems = itemlist;
@@ -672,12 +676,12 @@ namespace MediaPortal.GUI.Video
       if (selectedListItem != null && !useCache)
       {
         string selectedItemLabel = _history.Get(_currentFolder);
-        for (int i = 0; i < facadeView.Count; ++i)
+        for (int i = 0; i < facadeLayout.Count; ++i)
         {
-          GUIListItem item = facadeView[i];
+          GUIListItem item = facadeLayout[i];
           if (item.Label == selectedItemLabel)
           {
-            GUIControl.SelectItemControl(GetID, facadeView.GetID, i);
+            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, i);
             itemSelected = true;
             break;
           }
@@ -711,7 +715,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnClick(int iItem)
     {
-      GUIListItem item = facadeView.SelectedListItem;
+      GUIListItem item = facadeLayout.SelectedListItem;
       if (item == null)
       {
         return;
@@ -787,7 +791,7 @@ namespace MediaPortal.GUI.Video
         movieFileName = _virtualDirectory.GetLocalFilename(movieFileName);
 
         // Set selected item
-        _currentSelectedItem = facadeView.SelectedListItemIndex;
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
         if (PlayListFactory.IsPlayList(movieFileName))
         {
           LoadPlayList(movieFileName);
@@ -979,7 +983,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnQueueItem(int itemIndex)
     {
       // add item 2 playlist
-      GUIListItem listItem = facadeView[itemIndex];
+      GUIListItem listItem = facadeLayout[itemIndex];
 
       if (listItem == null)
       {
@@ -1003,7 +1007,7 @@ namespace MediaPortal.GUI.Video
       AddItemToPlayList(listItem);
 
       //move to next item
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, itemIndex + 1);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, itemIndex + 1);
     }
 
     protected override void AddItemToPlayList(GUIListItem listItem)
@@ -1086,8 +1090,8 @@ namespace MediaPortal.GUI.Video
     // GUI Item file name handler - share view ->IMDB
     protected override void OnInfo(int iItem)
     {
-      _currentSelectedItem = facadeView.SelectedListItemIndex;
-      GUIListItem pItem = facadeView.SelectedListItem;
+      _currentSelectedItem = facadeLayout.SelectedListItemIndex;
+      GUIListItem pItem = facadeLayout.SelectedListItem;
       if (pItem == null)
       {
         return;
@@ -1736,8 +1740,8 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnShowContextMenu()
     {
-      GUIListItem item = facadeView.SelectedListItem;
-      int itemNo = facadeView.SelectedListItemIndex;
+      GUIListItem item = facadeLayout.SelectedListItem;
+      int itemNo = facadeLayout.SelectedListItemIndex;
       if (item == null)
       {
         return;
@@ -1750,7 +1754,7 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
-      if (!facadeView.Focus)
+      if (!facadeLayout.Focus)
       {
         // Menu button context menuu
         if (!_virtualDirectory.IsRemote(_currentFolder))
@@ -1888,7 +1892,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 102: //Scan
-          if (facadeView.Focus)
+          if (facadeLayout.Focus)
           {
             if (item.IsFolder)
             {
@@ -1952,7 +1956,7 @@ namespace MediaPortal.GUI.Video
       {
         _resetSMSsearchDelay = DateTime.Now;
         _resetSMSsearch = true;
-        facadeView.EnableSMSsearch = _oldStateSMSsearch;
+        facadeLayout.EnableSMSsearch = _oldStateSMSsearch;
       }
       
       base.Process();
@@ -1978,7 +1982,7 @@ namespace MediaPortal.GUI.Video
 
     private void OnShowFileMenu(bool preselectDelete)
     {
-      GUIListItem item = facadeView.SelectedListItem;
+      GUIListItem item = facadeLayout.SelectedListItem;
       
       if (item == null)
       {
@@ -2010,11 +2014,11 @@ namespace MediaPortal.GUI.Video
       _fileMenuDestinationDir = dlgFile.GetDestinationDir();
 
       //final
-      _oldStateSMSsearch = facadeView.EnableSMSsearch;
-      facadeView.EnableSMSsearch = false;
+      _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
+      facadeLayout.EnableSMSsearch = false;
       if (dlgFile.Reload())
       {
-        int selectedItem = facadeView.SelectedListItemIndex;
+        int selectedItem = facadeLayout.SelectedListItemIndex;
         if (_currentFolder != dlgFile.GetSourceDir())
         {
           selectedItem = -1;
@@ -2024,9 +2028,9 @@ namespace MediaPortal.GUI.Video
         LoadDirectory(_currentFolder);
         if (selectedItem >= 0)
         {
-          if (selectedItem >= facadeView.Count)
-            selectedItem = facadeView.Count - 1;
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItem);
+          if (selectedItem >= facadeLayout.Count)
+            selectedItem = facadeLayout.Count - 1;
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItem);
         }
       }
       dlgFile.DeInit();
@@ -2039,7 +2043,7 @@ namespace MediaPortal.GUI.Video
     {
       if (_currentSelectedItem >= 0)
       {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, _currentSelectedItem);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
         return true;
       }
       else
@@ -2292,7 +2296,7 @@ namespace MediaPortal.GUI.Video
     {
       try
       {
-        GUIListItem item = facadeView.SelectedListItem;
+        GUIListItem item = facadeLayout.SelectedListItem;
         if (item == null)
         {
           return;

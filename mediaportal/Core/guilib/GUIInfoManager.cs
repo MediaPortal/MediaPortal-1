@@ -2009,32 +2009,32 @@ namespace MediaPortal.GUI.Library
       else if (condition >= 800 && condition <= 806)
       {
         bReturn = false;
-        string viewmode = GUIPropertyManager.GetProperty("#facadeview.viewmode");
-        if (viewmode == "album" && condition == FACADEVIEW_ALBUM)
+        string layout = GUIPropertyManager.GetProperty("#facadeview.layout");
+        if (layout == "album" && condition == FACADEVIEW_ALBUM)
         {
           bReturn = true;
         }
-        else if (viewmode == "filmstrip" && condition == FACADEVIEW_FILMSTRIP)
+        else if (layout == "filmstrip" && condition == FACADEVIEW_FILMSTRIP)
         {
           bReturn = true;
         }
-        else if (viewmode == "largeicons" && condition == FACADEVIEW_LARGEICONS)
+        else if (layout == "largeicons" && condition == FACADEVIEW_LARGEICONS)
         {
           bReturn = true;
         }
-        else if (viewmode == "list" && condition == FACADEVIEW_LIST)
+        else if (layout == "list" && condition == FACADEVIEW_LIST)
         {
           bReturn = true;
         }
-        else if (viewmode == "playlist" && condition == FACADEVIEW_PLAYLIST)
+        else if (layout == "playlist" && condition == FACADEVIEW_PLAYLIST)
         {
           bReturn = true;
         }
-        else if (viewmode == "smallicons" && condition == FACADEVIEW_SMALLICONS)
+        else if (layout == "smallicons" && condition == FACADEVIEW_SMALLICONS)
         {
           bReturn = true;
         }
-        else if (viewmode == "coverflow" && condition == FACADEVIEW_COVERFLOW)
+        else if (layout == "coverflow" && condition == FACADEVIEW_COVERFLOW)
         {
           bReturn = true;
       }

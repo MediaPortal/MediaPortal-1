@@ -35,15 +35,12 @@ namespace MediaPortal.GUI.Music
   /// <summary>
   /// Summary description for MusicViewHandler.
   /// </summary>
-  public class MusicViewHandler
+  public class MusicViewHandler : ViewHandler
   {
     private string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
     private string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
 
-    private ViewDefinition currentView;
-    private int currentLevel = 0;
     private int previousLevel = 0;
-    private List<ViewDefinition> views = new List<ViewDefinition>();
 
     private MusicDatabase database;
     private int restrictionLength = 0; // used to sum up the length of all restrictions
@@ -75,70 +72,6 @@ namespace MediaPortal.GUI.Music
       database = MusicDatabase.Instance;
     }
 
-    public ViewDefinition View
-    {
-      get { return currentView; }
-      set { currentView = value; }
-    }
-
-
-    public List<ViewDefinition> Views
-    {
-      get { return views; }
-      set { views = value; }
-    }
-
-    public string LocalizedCurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.LocalizedName;
-      }
-    }
-
-    public string CurrentView
-    {
-      get
-      {
-        if (currentView == null)
-        {
-          return string.Empty;
-        }
-        return currentView.Name;
-      }
-      set
-      {
-        bool done = false;
-        foreach (ViewDefinition definition in views)
-        {
-          if (definition.Name == value)
-          {
-            currentView = definition;
-            CurrentLevel = 0;
-            done = true;
-            break;
-          }
-        }
-        if (!done)
-        {
-          if (views.Count > 0)
-          {
-            currentView = (ViewDefinition)views[0];
-          }
-        }
-      }
-    }
-
-    public int CurrentViewIndex
-    {
-      get { return views.IndexOf(currentView); }
-    }
-
-
     public void Restore(ViewDefinition view, int level)
     {
       currentView = view;
@@ -148,24 +81,6 @@ namespace MediaPortal.GUI.Music
     public ViewDefinition GetView()
     {
       return currentView;
-    }
-
-    public int CurrentLevel
-    {
-      get { return currentLevel; }
-      set
-      {
-        if (value < 0 || value >= currentView.Filters.Count)
-        {
-          return;
-        }
-        currentLevel = value;
-      }
-    }
-
-    public int MaxLevels
-    {
-      get { return currentView.Filters.Count; }
     }
 
 

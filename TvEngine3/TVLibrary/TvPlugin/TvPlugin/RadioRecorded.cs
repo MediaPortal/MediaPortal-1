@@ -33,10 +33,12 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
+using WindowPlugins;
 
 namespace TvPlugin
 {
-  public class RadioRecorded : GUIInternalWindow, IComparer<GUIListItem>
+  public class RadioRecorded : WindowPluginBase, IComparer<GUIListItem>
   {
     #region Variables
 
@@ -66,14 +68,12 @@ namespace TvPlugin
       History,
     }
 
-    private GUIFacadeControl.ViewMode _currentViewMethod = GUIFacadeControl.ViewMode.List;
     private SortMethod _currentSortMethod = SortMethod.Date;
     private DBView _currentDbView = DBView.Recordings;
     private static Recording _oActiveRecording = null;
     private static bool _bIsLiveRecording = false;
     private static bool _thumbCreationActive = false;
     private static bool _createRecordedThumbs = true;
-    private bool m_bSortAscending = true;
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
@@ -86,12 +86,8 @@ namespace TvPlugin
 
     #region Skin variables
 
-    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(5)] protected GUIButtonControl btnView = null;
     [SkinControl(6)] protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)] protected GUIButtonControl btnCompress = null;
-    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
 
     #endregion
 
@@ -106,7 +102,7 @@ namespace TvPlugin
 
     #region Serialisation
 
-    private void LoadSettings()
+    protected override void LoadSettings()
     {
       using (Settings xmlreader = new MPSettings())
       {
@@ -137,39 +133,14 @@ namespace TvPlugin
           _currentSortMethod = SortMethod.Duration;
         }
 
-        strTmp = xmlreader.GetValueAsString("radiorecorded", "view", "list");
-        if (strTmp == "List")
-        {
-          _currentViewMethod = GUIFacadeControl.ViewMode.List;
-        }
-        else if (strTmp == "AlbumView")
-        {
-          _currentViewMethod = GUIFacadeControl.ViewMode.AlbumView;
-        }
-        else if (strTmp == "SmallIcons")
-        {
-          _currentViewMethod = GUIFacadeControl.ViewMode.SmallIcons;
-        }
-        else if (strTmp == "LargeIcons")
-        {
-          _currentViewMethod = GUIFacadeControl.ViewMode.LargeIcons;
-        }
-        else if (strTmp == "Filmstrip")
-        {
-          _currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
-        }
-
-        facadeView.View = _currentViewMethod;
-        facadeView.Focus = true;
-
-        m_bSortAscending = xmlreader.GetValueAsBool("radiorecorded", "sortascending", true);
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
         _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "radiorecordedondemand", true);
       }
     }
 
-    private void SaveSettings()
+    protected override void SaveSettings()
     {
+      base.SaveSettings();
       using (Settings xmlwriter = new MPSettings())
       {
         switch (_currentSortMethod)
@@ -193,39 +164,20 @@ namespace TvPlugin
             xmlwriter.SetValue("radiorecorded", "sort", "duration");
             break;
         }
-
-        switch (_currentViewMethod)
-        {
-          case GUIFacadeControl.ViewMode.AlbumView:
-            xmlwriter.SetValue("radiorecorded", "view", "AlbumView");
-            break;
-          case GUIFacadeControl.ViewMode.Filmstrip:
-            xmlwriter.SetValue("radiorecorded", "view", "Filmstrip");
-            break;
-          case GUIFacadeControl.ViewMode.LargeIcons:
-            xmlwriter.SetValue("radiorecorded", "view", "LargeIcons");
-            break;
-          case GUIFacadeControl.ViewMode.List:
-            xmlwriter.SetValue("radiorecorded", "view", "List");
-            break;
-          case GUIFacadeControl.ViewMode.Playlist:
-            xmlwriter.SetValue("radiorecorded", "view", "Playlist");
-            break;
-          case GUIFacadeControl.ViewMode.SmallIcons:
-            xmlwriter.SetValue("radiorecorded", "view", "SmallIcons");
-            break;
-          default:
-            xmlwriter.SetValue("radiorecorded", "view", "List");
-            break;
-        }
-
-        xmlwriter.SetValueAsBool("radiorecorded", "sortascending", m_bSortAscending);
       }
     }
 
     #endregion
 
     #region Overrides
+
+    protected override string SerializeName
+    {
+      get
+      {
+        return "radiorecorded";
+      }
+    }
 
     public override bool Init()
     {
@@ -261,7 +213,7 @@ namespace TvPlugin
       {
         _iSelectedItem--;
       }
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
@@ -294,9 +246,9 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_PREVIOUS_MENU:
-          if (facadeView != null)
+          if (facadeLayout != null)
           {
-            if (facadeView.Focus)
+            if (facadeLayout.Focus)
             {
               GUIListItem item = GetItem(0);
               if (item != null)
@@ -305,7 +257,7 @@ namespace TvPlugin
                 {
                   _currentLabel = string.Empty;
                   LoadDirectory();
-                  GUIControl.SelectItemControl(GetID, facadeView.GetID, _rootItem);
+                  GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _rootItem);
                   _rootItem = 0;
                   return;
                 }
@@ -317,10 +269,10 @@ namespace TvPlugin
       base.OnAction(action);
     }
 
-    protected bool AllowView(GUIFacadeControl.ViewMode view)
+    protected override bool AllowLayout(Layout layout)
     {
       // Disable playlist for now as it makes no sense to move recording entries
-      if (view == GUIFacadeControl.ViewMode.Playlist)
+      if (layout == Layout.Playlist)
       {
         return false;
       }
@@ -330,116 +282,52 @@ namespace TvPlugin
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == btnView)
+
+      if (control == btnLayouts)
       {
-        ShowViews();
-        return;
-      }
-
-      if (control == btnViewAs)
-      {
-        bool shouldContinue = false;
-        do
-        {
-          shouldContinue = false;
-          switch (_currentViewMethod)
-          {
-            case GUIFacadeControl.ViewMode.List:
-              _currentViewMethod = GUIFacadeControl.ViewMode.Playlist;
-              if (!AllowView(_currentViewMethod) || facadeView.PlayListView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-            case GUIFacadeControl.ViewMode.Playlist:
-              _currentViewMethod = GUIFacadeControl.ViewMode.SmallIcons;
-              if (!AllowView(_currentViewMethod) || facadeView.ThumbnailView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-            case GUIFacadeControl.ViewMode.SmallIcons:
-              _currentViewMethod = GUIFacadeControl.ViewMode.LargeIcons;
-              if (!AllowView(_currentViewMethod) || facadeView.ThumbnailView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-            case GUIFacadeControl.ViewMode.LargeIcons:
-              _currentViewMethod = GUIFacadeControl.ViewMode.AlbumView;
-              if (!AllowView(_currentViewMethod) || facadeView.AlbumListView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-            case GUIFacadeControl.ViewMode.AlbumView:
-              _currentViewMethod = GUIFacadeControl.ViewMode.Filmstrip;
-              if (!AllowView(_currentViewMethod) || facadeView.FilmstripView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-            case GUIFacadeControl.ViewMode.Filmstrip:
-              _currentViewMethod = GUIFacadeControl.ViewMode.List;
-              if (!AllowView(_currentViewMethod) || facadeView.ListView == null)
-              {
-                shouldContinue = true;
-              }
-              break;
-          }
-        } while (shouldContinue);
-
-        facadeView.View = _currentViewMethod;
-
         LoadDirectory();
-      }
-
-      if (control == btnSortBy) // sort by
-      {
-        switch (_currentSortMethod)
-        {
-          case SortMethod.Channel:
-            _currentSortMethod = SortMethod.Date;
-            break;
-          case SortMethod.Date:
-            _currentSortMethod = SortMethod.Name;
-            break;
-          case SortMethod.Name:
-            _currentSortMethod = SortMethod.Genre;
-            break;
-          case SortMethod.Genre:
-            _currentSortMethod = SortMethod.Played;
-            break;
-          case SortMethod.Played:
-            _currentSortMethod = SortMethod.Duration;
-            break;
-          case SortMethod.Duration:
-            _currentSortMethod = SortMethod.Channel;
-            break;
-        }
-        OnSort();
       }
 
       if (control == btnCleanup)
       {
         OnCleanup();
       }
+    }
 
-      if (control == facadeView)
+    protected override void OnClick(int iItem)
+    {
+      OnSelectedRecording(iItem);
+    }
+
+    protected override void OnInfo(int iItem)
+    {
+      OnShowContextMenu();
+    }
+
+    protected override void OnShowSort()
+    {
+      switch (_currentSortMethod)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, control.GetID, 0, 0,
-                                        null);
-        OnMessage(msg);
-        int iItem = (int)msg.Param1;
-        if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
-        {
-          OnSelectedRecording(iItem);
-        }
-        if (actionType == Action.ActionType.ACTION_SHOW_INFO)
-        {
-          OnShowContextMenu();
-        }
+        case SortMethod.Channel:
+          _currentSortMethod = SortMethod.Date;
+          break;
+        case SortMethod.Date:
+          _currentSortMethod = SortMethod.Name;
+          break;
+        case SortMethod.Name:
+          _currentSortMethod = SortMethod.Genre;
+          break;
+        case SortMethod.Genre:
+          _currentSortMethod = SortMethod.Played;
+          break;
+        case SortMethod.Played:
+          _currentSortMethod = SortMethod.Duration;
+          break;
+        case SortMethod.Duration:
+          _currentSortMethod = SortMethod.Channel;
+          break;
       }
+      OnSort();
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -519,7 +407,7 @@ namespace TvPlugin
           _iSelectedItem = GetSelectedItemNo();
           ResetWatchedStatus(rec);
           LoadDirectory();
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
           break;
       }
     }
@@ -532,12 +420,100 @@ namespace TvPlugin
       {
         _resetSMSsearchDelay = DateTime.Now;
         _resetSMSsearch = true;
-        facadeView.EnableSMSsearch = _oldStateSMSsearch;
+        facadeLayout.EnableSMSsearch = _oldStateSMSsearch;
       }
 
       base.Process();
     }
-       
+
+    protected override void OnShowViews()
+    {
+      try
+      {
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(811); // recorded radio
+
+        dlg.AddLocalizedString(914);  // Recordings
+        dlg.AddLocalizedString(135);  // Genres
+        dlg.AddLocalizedString(812);  // Radio Stations
+        dlg.AddLocalizedString(636); //TODO: Implement proper view
+        dlg.DoModal(GetID);
+        if (dlg.SelectedLabel == -1)
+        {
+          return;
+        }
+        switch (dlg.SelectedId)
+        {
+          case 914: //	all
+            _currentDbView = DBView.Recordings;
+            break;
+          case 135: //	genres
+            _currentDbView = DBView.Genre;
+            break;
+          case 812: //	Radio stations
+            _currentDbView = DBView.Channel;
+            break;
+          case 636: //	date
+            _currentDbView = DBView.History;
+            break;
+        }
+        // If we had been in 2nd group level - go up to root again
+        _currentLabel = String.Empty;
+        LoadDirectory();
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
+      }
+    }
+
+    protected override void UpdateButtonStates()
+    {
+      base.UpdateButtonStates();
+      try
+      {
+        string strLine = string.Empty;
+        if (btnSortBy != null)
+        {
+          switch (_currentSortMethod)
+          {
+            case SortMethod.Channel:
+              strLine = GUILocalizeStrings.Get(620); //Sort by: Channel
+              break;
+            case SortMethod.Date:
+              strLine = GUILocalizeStrings.Get(621); //Sort by: Date
+              break;
+            case SortMethod.Name:
+              strLine = GUILocalizeStrings.Get(268); //Sort by: Title
+              break;
+            case SortMethod.Genre:
+              strLine = GUILocalizeStrings.Get(678); //Sort by: Genre
+              break;
+            case SortMethod.Played:
+              strLine = GUILocalizeStrings.Get(671); //Sort by: Watched
+              break;
+            case SortMethod.Duration:
+              strLine = GUILocalizeStrings.Get(1017); //Sort by: Duration
+              break;
+          }
+          GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
+        }
+
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
+        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
+      }
+      catch (Exception ex)
+      {
+        Log.Warn("RadioRecorded: Error updating button states - {0}", ex.ToString());
+      }
+    }
     
     #endregion
 
@@ -605,52 +581,6 @@ namespace TvPlugin
       }
     }
 
-    private void ShowViews()
-    {
-      try
-      {
-        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
-        {
-          return;
-        }
-        dlg.Reset();
-        dlg.SetHeading(811); // recorded radio
-
-        dlg.AddLocalizedString(914);  // Recordings
-        dlg.AddLocalizedString(135);  // Genres
-        dlg.AddLocalizedString(812);  // Radio Stations
-        dlg.AddLocalizedString(636); //TODO: Implement proper view
-        dlg.DoModal(GetID);
-        if (dlg.SelectedLabel == -1)
-        {
-          return;
-        }
-        switch (dlg.SelectedId)
-        {
-          case 914: //	all
-            _currentDbView = DBView.Recordings;
-            break;
-          case 135: //	genres
-            _currentDbView = DBView.Genre;
-            break;
-          case 812: //	Radio stations
-            _currentDbView = DBView.Channel;
-            break;
-          case 636: //	date
-            _currentDbView = DBView.History;
-            break;
-        }
-        // If we had been in 2nd group level - go up to root again
-        _currentLabel = String.Empty;
-        LoadDirectory();
-      }
-      catch (Exception ex)
-      {
-        Log.Error("RadioRecorded: Error in ShowViews - {0}", ex.ToString());
-      }
-    }
-
     /// <summary>
     /// Build an Outlook / Thunderbird like view grouped by date
     /// </summary>
@@ -695,7 +625,7 @@ namespace TvPlugin
       List<GUIListItem> itemlist = new List<GUIListItem>();
       try
       {
-        GUIControl.ClearControl(GetID, facadeView.GetID);
+        GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
         IList<RadioGroupMap> radiogroups = RadioGroupMap.ListAll();
         IList<Recording> recordings = Recording.ListAll();
@@ -864,7 +794,7 @@ namespace TvPlugin
             }
           }
 
-          facadeView.Add(item);
+          facadeLayout.Add(item);
         }
       }
       catch (Exception ex2)
@@ -994,86 +924,16 @@ namespace TvPlugin
       return item;
     }
 
-    private void UpdateButtonStates()
-    {
-      try
-      {
-        string strLine = string.Empty;
-        if (btnSortBy != null)
-        {
-          switch (_currentSortMethod)
-          {
-            case SortMethod.Channel:
-              strLine = GUILocalizeStrings.Get(620); //Sort by: Channel
-              break;
-            case SortMethod.Date:
-              strLine = GUILocalizeStrings.Get(621); //Sort by: Date
-              break;
-            case SortMethod.Name:
-              strLine = GUILocalizeStrings.Get(268); //Sort by: Title
-              break;
-            case SortMethod.Genre:
-              strLine = GUILocalizeStrings.Get(678); //Sort by: Genre
-              break;
-            case SortMethod.Played:
-              strLine = GUILocalizeStrings.Get(671); //Sort by: Watched
-              break;
-            case SortMethod.Duration:
-              strLine = GUILocalizeStrings.Get(1017); //Sort by: Duration
-              break;
-          }
-          GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
-          btnSortBy.IsAscending = m_bSortAscending;
-        }
-        if (btnViewAs != null)
-        {
-          switch (_currentViewMethod)
-          {
-            case GUIFacadeControl.ViewMode.AlbumView:
-              strLine = GUILocalizeStrings.Get(529);
-              break;
-            case GUIFacadeControl.ViewMode.Filmstrip:
-              strLine = GUILocalizeStrings.Get(733);
-              break;
-            case GUIFacadeControl.ViewMode.LargeIcons:
-              strLine = GUILocalizeStrings.Get(417);
-              break;
-            case GUIFacadeControl.ViewMode.List:
-              strLine = GUILocalizeStrings.Get(101);
-              break;
-            //case GUIFacadeControl.ViewMode.Playlist:
-            //  break;
-            case GUIFacadeControl.ViewMode.SmallIcons:
-              strLine = GUILocalizeStrings.Get(100);
-              break;
-            default:
-              strLine = GUILocalizeStrings.Get(101);
-              break;
-          }
-          GUIControl.SetControlLabel(GetID, btnViewAs.GetID, strLine);
-        }
-
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMGENRE);
-        GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTIME);
-      }
-      catch (Exception ex)
-      {
-        Log.Warn("RadioRecorded: Error updating button states - {0}", ex.ToString());
-      }
-    }
-
     private void SetLabels()
     {
       SortMethod method = _currentSortMethod;
       bool bAscending = m_bSortAscending;
 
-      for (int i = 0; i < facadeView.Count; ++i)
+      for (int i = 0; i < facadeLayout.Count; ++i)
       {
         try
         {
-          GUIListItem item1 = facadeView[i];
+          GUIListItem item1 = facadeLayout[i];
           if (item1.Label == "..")
           {
             continue;
@@ -1090,7 +950,7 @@ namespace TvPlugin
           {
             item1.Label2 = strTime;
           }
-          if (_currentViewMethod != GUIFacadeControl.ViewMode.List)
+          if (currentLayout != Layout.List)
           {
             item1.Label3 = GUILocalizeStrings.Get(2014); // unknown
             if (!String.IsNullOrEmpty(rec.Genre))
@@ -1150,7 +1010,7 @@ namespace TvPlugin
         LoadDirectory();
         if (pItem.Label.Equals(".."))
         {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, _rootItem);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _rootItem);
           _rootItem = 0;
         }
         return false;
@@ -1310,8 +1170,8 @@ namespace TvPlugin
 
     private void DeleteRecordingAndUpdateGUI(Recording rec)
     {
-      _oldStateSMSsearch = facadeView.EnableSMSsearch;
-      facadeView.EnableSMSsearch = false;
+      _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
+      facadeLayout.EnableSMSsearch = false;
 
       TryDeleteRecordingAndNotifyUser(rec);
 
@@ -1322,7 +1182,7 @@ namespace TvPlugin
       {
         _iSelectedItem--;
       }
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
 
       _resetSMSsearchDelay = DateTime.Now;
       _resetSMSsearch = true;
@@ -1419,7 +1279,7 @@ namespace TvPlugin
         _iSelectedItem--;
       }
 
-      GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
     }
 
     private void DeleteWatchedRecordings(string currentTitle)
@@ -1438,7 +1298,7 @@ namespace TvPlugin
           _iSelectedItem--;
         }
 
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, _iSelectedItem);
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
       }
     }
 
@@ -1522,23 +1382,23 @@ namespace TvPlugin
 
     private GUIListItem GetSelectedItem()
     {
-      return facadeView.SelectedListItem;
+      return facadeLayout.SelectedListItem;
     }
 
     private GUIListItem GetItem(int iItem)
     {
-      if (iItem < 0 || iItem >= facadeView.Count)
+      if (iItem < 0 || iItem >= facadeLayout.Count)
       {
         return null;
       }
-      return facadeView[iItem];
+      return facadeLayout[iItem];
     }
 
     private int GetSelectedItemNo()
     {
-      if (facadeView.Count > 0)
+      if (facadeLayout.Count > 0)
       {
-        return facadeView.SelectedListItemIndex;
+        return facadeLayout.SelectedListItemIndex;
       }
       else
       {
@@ -1548,7 +1408,7 @@ namespace TvPlugin
 
     private int GetItemCount()
     {
-      return facadeView.Count;
+      return facadeLayout.Count;
     }
 
     #endregion
@@ -1560,7 +1420,7 @@ namespace TvPlugin
       try
       {
         SetLabels();
-        facadeView.Sort(this);
+        facadeLayout.Sort(this);
         UpdateButtonStates();
       }
       catch (Exception ex)

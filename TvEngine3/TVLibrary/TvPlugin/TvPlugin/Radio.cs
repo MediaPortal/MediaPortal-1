@@ -32,12 +32,14 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
+using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
+using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
 
 namespace TvPlugin
 {
   [PluginIcons("TvPlugin.Radio.gif", "TvPlugin.Radio_disabled.gif")]
-  public class Radio : GUIInternalWindow, IComparer<GUIListItem>, ISetupForm, IShowPlugin
+  public class Radio : WindowPluginBase, IComparer<GUIListItem>, ISetupForm, IShowPlugin
   {
     #region constants    
 
@@ -54,22 +56,13 @@ namespace TvPlugin
       Number = 4
     }
 
-    private enum View
-    {
-      List = 0,
-      Icons = 1,
-      LargeIcons = 2,
-    }
-
     #endregion
 
     #region Base variables
 
     private static Channel _currentChannel = null;
     private static bool _autoTurnOnRadio = false;
-    private View currentView = View.List;
-    private SortMethod currentSortMethod = SortMethod.Number;
-    private bool sortAscending = true;
+    private SortMethod currentSortMethod = SortMethod.Number;    
     private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
     private string currentFolder = null;
     private string lastFolder = "..";
@@ -82,9 +75,6 @@ namespace TvPlugin
 
     #region SkinControls
 
-    [SkinControl(50)] protected GUIFacadeControl facadeView = null;
-    [SkinControl(2)] protected GUIButtonControl btnViewAs = null;
-    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(6)] protected GUIButtonControl btnPrevious = null;
     [SkinControl(7)] protected GUIButtonControl btnNext = null;
 
@@ -102,27 +92,12 @@ namespace TvPlugin
 
     #region Serialisation
 
-    private void LoadSettings()
-    {      
+    protected override void LoadSettings()
+    {
+      base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
-        string tmpLine = xmlreader.GetValue("myradio", "viewby");
-        if (tmpLine != null)
-        {
-          if (tmpLine == "list")
-          {
-            currentView = View.List;
-          }
-          else if (tmpLine == "icons")
-          {
-            currentView = View.Icons;
-          }
-          else if (tmpLine == "largeicons")
-          {
-            currentView = View.LargeIcons;
-          }
-        }
-
+        string tmpLine;
         tmpLine = xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
         {
@@ -148,7 +123,6 @@ namespace TvPlugin
           }
         }
 
-        sortAscending = xmlreader.GetValueAsBool("myradio", "sortascending", true);
         if (xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true))
         {
           currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
@@ -160,23 +134,11 @@ namespace TvPlugin
       }
     }
 
-    private void SaveSettings()
+    protected override void SaveSettings()
     {
+      base.SaveSettings();
       using (Settings xmlwriter = new MPSettings())
       {
-        switch (currentView)
-        {
-          case View.List:
-            xmlwriter.SetValue("myradio", "viewby", "list");
-            break;
-          case View.Icons:
-            xmlwriter.SetValue("myradio", "viewby", "icons");
-            break;
-          case View.LargeIcons:
-            xmlwriter.SetValue("myradio", "viewby", "largeicons");
-            break;
-        }
-
         switch (currentSortMethod)
         {
           case SortMethod.Name:
@@ -196,7 +158,6 @@ namespace TvPlugin
             break;
         }
 
-        xmlwriter.SetValueAsBool("myradio", "sortascending", sortAscending);
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
         if (_currentChannel != null)
         {
@@ -210,13 +171,21 @@ namespace TvPlugin
 
     #region BaseWindow Members
 
+    protected override string SerializeName
+    {
+      get
+      {
+        return "myradio";
+      }
+    }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
       {
-        if (facadeView.Focus)
+        if (facadeLayout.Focus)
         {
-          GUIListItem item = facadeView[0];
+          GUIListItem item = facadeLayout[0];
           if (item != null)
           {
             if (item.IsFolder && item.Label == "..")
@@ -230,7 +199,7 @@ namespace TvPlugin
 
       if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
       {
-        GUIListItem item = facadeView[0];
+        GUIListItem item = facadeLayout[0];
         if (item != null)
         {
           if (item.IsFolder && item.Label == "..")
@@ -287,7 +256,7 @@ namespace TvPlugin
 
       if (_autoTurnOnRadio)
       {
-        Play(facadeView.SelectedListItem);
+        Play(facadeLayout.SelectedListItem);
       }
 
       btnSortBy.SortChanged += SortChanged;
@@ -297,86 +266,35 @@ namespace TvPlugin
     {
       if (_currentChannel != null)
       {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);      
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);      
         UpdateButtonStates();        
       }
     }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      selectedItemIndex = facadeView.SelectedListItemIndex;
+      selectedItemIndex = facadeLayout.SelectedListItemIndex;
       SaveSettings();
       base.OnPageDestroy(newWindowId);
     }
 
-    protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
+    protected override void OnClick(int iItem)
     {
-      base.OnClicked(controlId, control, actionType);
-
-      if (control == btnViewAs)
+      Log.Info("OnClick");
+      GUIListItem item = facadeLayout[iItem];
+      if (item.MusicTag == null)
       {
-        bool shouldContinue;
-        do
-        {
-          shouldContinue = false;
-          switch (currentView)
-          {
-            case View.List:
-              currentView = View.Icons;
-              if (facadeView.ThumbnailView == null)
-              {
-                shouldContinue = true;
-              }
-              else
-              {
-                facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
-              }
-              break;
-
-            case View.Icons:
-              currentView = View.LargeIcons;
-              if (facadeView.ThumbnailView == null)
-              {
-                shouldContinue = true;
-              }
-              else
-              {
-                facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-              }
-              break;
-
-            case View.LargeIcons:
-              currentView = View.List;
-              if (facadeView.ListView == null)
-              {
-                shouldContinue = true;
-              }
-              else
-              {
-                facadeView.View = GUIFacadeControl.ViewMode.List;
-              }
-              break;
-          }
-        } while (shouldContinue);
-
-        SelectCurrentItem();
-        GUIControl.FocusControl(GetID, controlId);
-        return;
-      } //if (control == btnViewAs)
-
-      if (control == btnSortBy)
-      {
-        OnShowSort();
+        selectedItemIndex = -1;
+        LoadDirectory(null);
       }
-
-      if (control == facadeView)
+      if (item.IsFolder)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
-        OnMessage(msg);
-        if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
-        {
-          OnClick();
-        }
+        selectedItemIndex = -1;
+        LoadDirectory(item.Label);
+      }
+      else
+      {
+        Play(item);
       }
     }
 
@@ -436,31 +354,9 @@ namespace TvPlugin
     //    return listView.Count;
     //}
 
-    private void UpdateButtonStates()
+    protected override void UpdateButtonStates()
     {
-      facadeView.IsVisible = false;
-      facadeView.IsVisible = true;
-      GUIControl.FocusControl(GetID, facadeView.GetID);
-
       string strLine = string.Empty;
-      View view = currentView;
-      switch (view)
-      {
-        case View.List:
-          strLine = GUILocalizeStrings.Get(101);
-          break;
-        case View.Icons:
-          strLine = GUILocalizeStrings.Get(100);
-          break;
-        case View.LargeIcons:
-          strLine = GUILocalizeStrings.Get(417);
-          break;
-      }
-      if (btnViewAs != null)
-      {
-        btnViewAs.Label = strLine;
-      }
-
       switch (currentSortMethod)
       {
         case SortMethod.Name:
@@ -482,40 +378,19 @@ namespace TvPlugin
       if (btnSortBy != null)
       {
         btnSortBy.Label = strLine;
-        btnSortBy.IsAscending = sortAscending;
       }
     }
 
-    private void SelectCurrentItem()
+    protected override bool AllowLayout(Layout layout)
     {
-      if (facadeView == null)
+      switch (layout)
       {
-        return;
+        case Layout.List:
+        case Layout.SmallIcons:
+        case Layout.LargeIcons:
+          return true;
       }
-      int iItem = facadeView.SelectedListItemIndex;
-      if (iItem > -1)
-      {
-        GUIControl.SelectItemControl(GetID, facadeView.GetID, iItem);
-      }
-      UpdateButtonStates();
-    }
-
-    private void SwitchView()
-    {
-      switch (currentView)
-      {
-        case View.List:
-          facadeView.View = GUIFacadeControl.ViewMode.List;
-          break;
-        case View.Icons:
-          facadeView.View = GUIFacadeControl.ViewMode.SmallIcons;
-          break;
-        case View.LargeIcons:
-          facadeView.View = GUIFacadeControl.ViewMode.LargeIcons;
-          break;
-      }
-
-      UpdateButtonStates(); // Ensure "View: xxxx" button label is updated to suit
+      return false;
     }
 
     //void ShowThumbPanel()
@@ -532,7 +407,7 @@ namespace TvPlugin
 
     private void LoadDirectory(string strNewDirectory)
     {
-      GUIListItem SelectedItem = facadeView.SelectedListItem;
+      GUIListItem SelectedItem = facadeLayout.SelectedListItem;
       if (SelectedItem != null)
       {
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
@@ -541,7 +416,7 @@ namespace TvPlugin
         }
       }
       currentFolder = strNewDirectory;
-      GUIControl.ClearControl(GetID, facadeView.GetID);
+      GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       int totalItems = 0;
       if (currentFolder == null || currentFolder == "..")
@@ -572,7 +447,7 @@ namespace TvPlugin
             item.IconImage = thumbnail;
             item.ThumbnailImage = thumbnail;
           }
-          facadeView.Add(item);
+          facadeLayout.Add(item);
           totalItems++;
         }
         if (rootGroup != "(none)")
@@ -615,7 +490,7 @@ namespace TvPlugin
                 item.IconImage = thumbnail;
                 item.ThumbnailImage = thumbnail;
               }
-              facadeView.Add(item);
+              facadeLayout.Add(item);
               totalItems++;
             }
           }
@@ -638,7 +513,7 @@ namespace TvPlugin
         item.MusicTag = null;
         item.ThumbnailImage = String.Empty;
         Utils.SetDefaultIcons(item);
-        facadeView.Add(item);
+        facadeLayout.Add(item);
         IList<RadioGroupMap> maps = group.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
@@ -667,13 +542,13 @@ namespace TvPlugin
               item.IconImage = thumbnail;
               item.ThumbnailImage = thumbnail;
             }
-            facadeView.Add(item);
+            facadeLayout.Add(item);
             totalItems++;
           }
         }
       }
 
-      SwitchView();
+      SwitchLayout();
       OnSort();
 
       //set object count label
@@ -682,9 +557,9 @@ namespace TvPlugin
       SelectCurrentItem();
       SetLabels();
       
-      for (int i = 0; i < facadeView.Count; ++i)
+      for (int i = 0; i < facadeLayout.Count; ++i)
       {       
-        GUIListItem item = facadeView[i];
+        GUIListItem item = facadeLayout[i];
         if (item != null)
         {
           Channel channel = item.MusicTag as Channel;   
@@ -702,7 +577,7 @@ namespace TvPlugin
         //set selected item
         if (selectedItemIndex >= 0)
         {
-          GUIControl.SelectItemControl(GetID, facadeView.GetID, selectedItemIndex);
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
         }
         
       }      
@@ -748,7 +623,7 @@ namespace TvPlugin
     private void OnSort()
     {
       SetLabels();
-      facadeView.Sort(this);
+      facadeLayout.Sort(this);
       UpdateButtonStates();
     }
 
@@ -785,7 +660,7 @@ namespace TvPlugin
 
 
       SortMethod method = currentSortMethod;
-      bool bAscending = sortAscending;
+      bool bAscending = m_bSortAscending;
       Channel channel1 = item1.MusicTag as Channel;
       Channel channel2 = item2.MusicTag as Channel;
       switch (method)
@@ -883,25 +758,7 @@ namespace TvPlugin
 
     #endregion
 
-    private void OnClick()
-    {
-      Log.Info("OnClick");
-      GUIListItem item = facadeView.SelectedListItem;
-      if (item.MusicTag == null)
-      {
-        selectedItemIndex = -1;
-        LoadDirectory(null);
-      }
-      if (item.IsFolder)
-      {
-        selectedItemIndex = -1;
-        LoadDirectory(item.Label);
-      }
-      else
-      {
-        Play(item);
-      }
-    }
+    
 
     private void OnShowSort()
     {
@@ -1006,7 +863,7 @@ namespace TvPlugin
 
     private void SortChanged(object sender, SortEventArgs e)
     {
-      sortAscending = e.Order != SortOrder.Descending;
+      m_bSortAscending = e.Order != SortOrder.Descending;
 
       OnSort();
       UpdateButtonStates();
