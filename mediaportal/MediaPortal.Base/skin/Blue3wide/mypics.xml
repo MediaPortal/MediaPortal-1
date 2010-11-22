@@ -169,13 +169,13 @@
             <id>3</id>
             <label>103</label>
             <onright>50</onright>
-            <ondown>4</ondown>
+            <ondown>5</ondown>
             <onup>2</onup>
           </control>
           <control>
             <description>Switch View</description>
             <type>button</type>
-            <id>4</id>
+            <id>5</id>
             <label>457</label>
             <onright>50</onright>
             <ondown>6</ondown>
@@ -188,7 +188,7 @@
             <label>108</label>
             <onright>50</onright>
             <ondown>7</ondown>
-            <onup>4</onup>
+            <onup>5</onup>
           </control>
           <control>
             <description>Recursive Slideshow</description>
