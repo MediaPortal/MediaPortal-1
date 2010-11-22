@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using TvDatabase;
@@ -140,10 +141,27 @@ namespace TvPlugin
       }
     }
 
+    private DateTime _updateTimer = DateTime.Now;
     public override void Process()
     {
+
+      TimeSpan ts = DateTime.Now - _updateTimer;
+      if (ts.TotalMilliseconds < 500)
+      {
+        return;
+      }
+
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
+
+      int totalBytes = 0;
+      int discontinuityCounter = 0;
+      TVHome.Card.GetStreamQualityCounters(out totalBytes, out discontinuityCounter);
+
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.BytesTransferred", Convert.ToString (totalBytes));
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.Discontinuities", Convert.ToString(discontinuityCounter));
+
+      _updateTimer = DateTime.Now;
     }
 
     #endregion

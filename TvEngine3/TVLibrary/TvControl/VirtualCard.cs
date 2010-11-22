@@ -898,6 +898,33 @@ namespace TvControl
       }
     }
 
+
+    /// <summary>
+    /// Fetches the stream quality information
+    /// </summary>   
+    /// <param name="user">user</param>    
+    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="discontinuityCounter">Number of stream discontinuities</param>
+    /// <returns></returns>    
+    public void GetStreamQualityCounters(out int totalBytes, out int discontinuityCounter)
+    {
+      totalBytes = 0;
+      discontinuityCounter = 0;
+      try
+      {
+        if (User.CardId > 0)
+        {
+          RemoteControl.HostName = _server;
+          RemoteControl.Instance.GetStreamQualityCounters(User, out totalBytes, out discontinuityCounter);
+        }                
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }      
+    }
+
+
     /// <summary>
     /// Returns the signal level 
     /// </summary>
