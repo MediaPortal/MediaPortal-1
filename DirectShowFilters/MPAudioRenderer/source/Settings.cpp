@@ -20,7 +20,7 @@
 extern void Log(const char *fmt, ...);
 extern void LogRotate();
 
-int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
+unsigned int gAllowedAC3bitrates[9] = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 
 AudioRendererSettings::AudioRendererSettings() :
   m_bLogSampleTimes(false),
