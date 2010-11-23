@@ -999,7 +999,7 @@ namespace MediaPortal.GUI.Library
       switch (_currentLayout)
       {
         case Layout.AlbumView:
-          GUIPropertyManager.SetProperty("#facadeview.layoute", "album");
+          GUIPropertyManager.SetProperty("#facadeview.layout", "album");
           break;
         case Layout.Filmstrip:
           GUIPropertyManager.SetProperty("#facadeview.layout", "filmstrip");
