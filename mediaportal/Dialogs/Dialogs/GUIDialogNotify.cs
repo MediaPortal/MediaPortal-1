@@ -23,6 +23,8 @@ using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
+using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
+using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
 namespace MediaPortal.Dialogs
 {
@@ -170,7 +172,8 @@ namespace MediaPortal.Dialogs
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
-      imgLogo.Centered = centered;
+      imgLogo.ImageAlignment = Alignment.ALIGN_CENTER;
+      imgLogo.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
     }
 
     public int TimeOut

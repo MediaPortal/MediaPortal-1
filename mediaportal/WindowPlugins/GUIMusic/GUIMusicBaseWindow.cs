@@ -68,7 +68,7 @@ namespace MediaPortal.GUI.Music
     public bool _showSortButton = false;
 
     protected MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
-    protected bool m_bSortAscending;
+    //protected bool m_bSortAscending;
     protected string m_strPlayListPath = string.Empty;
     private bool m_bUseID3 = false;
     private bool _autoShuffleOnLoad = false;
@@ -334,16 +334,6 @@ namespace MediaPortal.GUI.Music
       {
         OnShowSavedPlaylists(m_strPlayListPath);
       }
-    }
-
-    protected void SelectCurrentItem()
-    {
-      int iItem = facadeLayout.SelectedListItemIndex;
-      if (iItem > -1)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
-      }
-      UpdateButtonStates();
     }
 
     protected override void UpdateButtonStates()

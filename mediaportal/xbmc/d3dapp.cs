@@ -254,7 +254,7 @@ namespace MediaPortal
     private PlayListType _currentPlayListType = PlayListType.PLAYLIST_NONE;
     private PlayList _currentPlayList = null;
     private bool _fullscreen = false;
-    private int m_iSleepingTime = 50;
+    //private int m_iSleepingTime = 50;
     protected bool autoHideTaskbar = true;
     private bool alwaysOnTop = false;
     private bool alwaysOnTopConfig = false;

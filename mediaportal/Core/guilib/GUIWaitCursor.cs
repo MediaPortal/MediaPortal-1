@@ -120,7 +120,7 @@ namespace MediaPortal.GUI.Library
 
       // The count label depends on font rendering.  If the users callback involves reloading fonts then we need to reallocate
       // the labels resources to be sure everything calculates okay (e.g., the x,y position of the control).
-      _countLabel.FreeResources();
+      _countLabel.Dispose();
       _countLabel.AllocResources();
 
       Show();
@@ -140,7 +140,7 @@ namespace MediaPortal.GUI.Library
 
       // The count label depends on font rendering.  If the users callback involves reloading fonts then we need to reallocate
       // the labels resources to be sure everything calculates okay (e.g., the x,y position of the control).
-      _countLabel.FreeResources();
+      _countLabel.Dispose();
       _countLabel.AllocResources();
 
       Show();

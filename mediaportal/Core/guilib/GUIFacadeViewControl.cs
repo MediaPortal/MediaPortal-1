@@ -820,7 +820,7 @@ namespace MediaPortal.GUI.Library
 
     }
 
-    private void UpdateLayout()
+    new private void UpdateLayout()
     {
       if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
       {

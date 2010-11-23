@@ -1196,7 +1196,7 @@ namespace MediaPortal.GUI.Library
                       _fontHeight,
                       _textureWidth, _textureHeight, _StartCharacter, _EndCharacter, _textureFont.LevelCount);
           }
-          catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
+          catch (InvalidDataException) // weird : should have been FileNotFoundException when file is missing ??
           {
             needsCreation = true;
           }

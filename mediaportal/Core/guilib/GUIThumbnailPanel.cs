@@ -550,7 +550,8 @@ namespace MediaPortal.GUI.Library
           {
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
-            pImage.Centered = true;
+            pImage.ImageAlignment = Alignment.ALIGN_CENTER;
+            pImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
             pImage.MaskFileName = _textureMask;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
             pImage.AllocResources();
@@ -585,7 +586,8 @@ namespace MediaPortal.GUI.Library
           pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
           pImage.Width = _thumbNailWidth + 2 * iOverSized;
           pImage.Height = _thumbNailHeight + 2 * iOverSized;
-          pImage.Centered = true;
+          pImage.ImageAlignment = Alignment.ALIGN_CENTER;
+          pImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
           pImage.MaskFileName = _textureMask;
           pImage.SetPosition(_xPositionThumbNail + dwPosX - iOverSized, _yPositionThumbNail - iOverSized + dwPosY);
           pImage.DimColor = DimColor;
@@ -619,7 +621,8 @@ namespace MediaPortal.GUI.Library
                                   _thumbNailHeight + 2 * iOverSized, pItem.IconImageBig, 0x0);
             pImage.ParentControl = this;
             pImage.KeepAspectRatio = _keepAspectRatio;
-            pImage.Centered = true;
+            pImage.ImageAlignment = Alignment.ALIGN_CENTER;
+            pImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
             pImage.MaskFileName = _textureMask;
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
 
@@ -652,7 +655,8 @@ namespace MediaPortal.GUI.Library
               pImage.AllocResources();
             }
             pImage.ZoomFromTop = !pItem.IsFolder && _zoom;
-            pImage.Centered = true;
+            pImage.ImageAlignment = Alignment.ALIGN_CENTER;
+            pImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
             pImage.MaskFileName = _textureMask;
             pImage.Width = _thumbNailWidth + 2 * iOverSized;
             pImage.Height = _thumbNailHeight + 2 * iOverSized;
@@ -684,7 +688,8 @@ namespace MediaPortal.GUI.Library
         btn.Render(timePassed);
         if (pFocusImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
         {
-          pFocusImage.Centered = true;
+          pFocusImage.ImageAlignment = Alignment.ALIGN_CENTER;
+          pFocusImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
           pFocusImage.Render(timePassed);
         }
         if (_showFrame)

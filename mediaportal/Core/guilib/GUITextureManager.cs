@@ -569,7 +569,7 @@ namespace MediaPortal.GUI.Library
         //we need to catch this on higer level.         
         throw e1;
       }
-      catch (Exception e2)
+      catch (Exception)
       {        
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;

@@ -767,7 +767,7 @@ namespace MediaPortal.Player.Subtitles
             return;
           }
         }
-        bool alphaTest = false;
+        //bool alphaTest = false;
         bool alphaBlend = false;
         VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
 

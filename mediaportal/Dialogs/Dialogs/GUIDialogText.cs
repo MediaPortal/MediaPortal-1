@@ -20,6 +20,8 @@
 
 using System.Drawing;
 using MediaPortal.GUI.Library;
+using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
+using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
 namespace MediaPortal.Dialogs
 {
@@ -101,7 +103,8 @@ namespace MediaPortal.Dialogs
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
-      imgLogo.Centered = centered;
+      imgLogo.ImageAlignment = Alignment.ALIGN_CENTER;
+      imgLogo.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
     }
   }
 }

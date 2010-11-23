@@ -2494,7 +2494,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (System.Exception e)
+      catch (Exception)
       {
         AddFoldersLookedUp(sDir); //lets tag the invalid folder as have looked-up
         //Log.Error("DirSearch failed in dir={0}, with err={1}", sDir, e.Message);        

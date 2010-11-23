@@ -460,7 +460,7 @@ namespace MediaPortal.GUI.Library
         // Create a button control template.
         if (button != null)
         {
-          button.FreeResources();
+          button.Dispose();
         }
         button = new GUIButtonControl(kb.GetID, -1, 0, 0, 0, 0, kb._keyTextureFocus, kb._keyTextureNoFocus, 
           kb._keyTextShadowAngle, kb._keyTextShadowDistance, kb._keyTextShadowColor);
@@ -590,9 +590,9 @@ namespace MediaPortal.GUI.Library
       if (_isAllocated)
       {
         // Free the keyboard directx resources.
-        inputTextBox.FreeResources();
-        inputText.FreeResources();
-        inputTextCaret.FreeResources();
+        inputTextBox.Dispose();
+        inputText.Dispose();
+        inputTextCaret.Dispose();
 
         ArrayList keyBoard = null;
         for (int kb = 0; kb < _keyboardList.Count; kb++)
@@ -603,7 +603,7 @@ namespace MediaPortal.GUI.Library
             for (int i = 0; i < keyRow.Count; i++)
             {
               Key key = (Key)keyRow[i];
-              key.button.FreeResources();
+              key.button.Dispose();
             }
           }
 

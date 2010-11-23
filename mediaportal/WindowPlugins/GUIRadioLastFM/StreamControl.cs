@@ -149,7 +149,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
     /// <summary>
     /// Type of most recent playlist
     /// </summary>
-    private StreamType _currentPlaylistType = StreamType.Unknown;
+    //private StreamType _currentPlaylistType = StreamType.Unknown;
 
     /// <summary>
     /// The time of the last http access

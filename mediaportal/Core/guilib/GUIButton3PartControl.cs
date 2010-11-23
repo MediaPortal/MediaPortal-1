@@ -703,7 +703,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocusedMid.SafeDispose();
       _imageNonFocusedRight.SafeDispose();
       _imageIcon.SafeDispose();
-      _imageIcon2.FreeResources();
+      _imageIcon2.Dispose();
 
       _labelControl1.SafeDispose();
       _labelControl2.SafeDispose();
@@ -1270,7 +1270,8 @@ namespace MediaPortal.GUI.Library
       if (_imageIcon != null)
       {
         _imageIcon.KeepAspectRatio = _iconKeepAspectRatio;
-        _imageIcon.Centered = _iconCentered;
+        _imageIcon.ImageAlignment = Alignment.ALIGN_CENTER;
+        _imageIcon.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
         _imageIcon.Zoom = _iconZoomed;
         _imageIcon.Refresh();
 
@@ -1329,7 +1330,8 @@ namespace MediaPortal.GUI.Library
       if (_imageIcon2 != null)
       {
         _imageIcon2.KeepAspectRatio = _icon2KeepAspectRatio;
-        _imageIcon2.Centered = _icon2Centered;
+        _imageIcon2.ImageAlignment = Alignment.ALIGN_CENTER;
+        _imageIcon2.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
         _imageIcon2.Zoom = _icon2Zoomed;
         _imageIcon2.Refresh();
 

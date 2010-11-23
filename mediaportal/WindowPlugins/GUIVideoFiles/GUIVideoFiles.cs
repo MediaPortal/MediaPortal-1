@@ -1239,6 +1239,20 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    protected override void SelectCurrentItem()
+    {
+      if (_currentSelectedItem >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+        //return true;
+      }
+      //else
+      //{
+      //  Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", _currentSelectedItem.ToString());
+      //  return false;
+      //}
+    }
+
     #endregion
 
     private void SetMovieUnwatched(string movieFileName)
@@ -2037,20 +2051,6 @@ namespace MediaPortal.GUI.Video
       dlgFile = null;
       _resetSMSsearchDelay = DateTime.Now;
       _resetSMSsearch = true;
-    }
-
-    private bool SelectCurrentItem()
-    {
-      if (_currentSelectedItem >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
-        return true;
-      }
-      else
-      {
-        Log.Debug("GUIVideoFiles: SelectCurrentItem - nothing to do for item {0}", _currentSelectedItem.ToString());
-        return false;
-      }
     }
 
     /// <summary>

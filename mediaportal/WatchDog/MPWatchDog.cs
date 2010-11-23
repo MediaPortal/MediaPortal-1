@@ -52,7 +52,7 @@ namespace WatchDog
     private bool _restartMP = false;
     private int _cancelDelay = 10;
     private Process _processMP = null;
-    private int _lastMPLogLevel = 2;
+    //private int _lastMPLogLevel = 2;
     private int _graphsCreated = 0;
     private List<string> _knownPids = new List<string>();
     private bool _safeMode = false;

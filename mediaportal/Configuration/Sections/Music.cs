@@ -116,7 +116,7 @@ namespace MediaPortal.Configuration.Sections
     private IVisualizationManager IVizMgr = null;
     private VisualizationInfo VizPluginInfo = null;
     private bool VisualizationsInitialized = false;
-    private bool SuppressVisualizationRestart = false;
+    //private bool SuppressVisualizationRestart = false;
     private bool EnqueueNext = true;
     private BASSVIS_PARAM _visParam = null;
 
@@ -1734,10 +1734,10 @@ namespace MediaPortal.Configuration.Sections
       if (VizPluginInfo.HasPresets)
       {
         VizPresetsCmbBox.Items.AddRange(VizPluginInfo.PresetNames.ToArray());
-        SuppressVisualizationRestart = true;
+        //SuppressVisualizationRestart = true;
         VizPresetsCmbBox.SelectedIndex = VizPluginInfo.PresetIndex;
         VizPresetsCmbBox.Enabled = VizPresetsCmbBox.Items.Count > 1;
-        SuppressVisualizationRestart = false;
+        //SuppressVisualizationRestart = false;
       }
       else
       {

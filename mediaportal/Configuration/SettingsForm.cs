@@ -1142,20 +1142,17 @@ namespace MediaPortal.Configuration
       if (section != null)
       {
         bool scanRunning = (bool)section.GetSetting("folderscanning");
-        if (scanRunning !=null)
+        if (scanRunning)
         {
-          if (scanRunning)
-          {
-            MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish", "MediaPortal Settings", MessageBoxButtons.OK,
+          MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish", "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
 
-            if (ActivateSection(section))
-            {
-              headerLabel.Caption = section.Text;
-            }
+          if (ActivateSection(section))
+          {
+            headerLabel.Caption = section.Text;
           }
-          return scanRunning;
         }
+        return scanRunning;
       }
 
       return false;

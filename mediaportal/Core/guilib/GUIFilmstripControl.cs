@@ -305,7 +305,8 @@ namespace MediaPortal.GUI.Library
       _imageInfo.ParentControl = this;
       _imageInfo.Filtering = true;
       _imageInfo.KeepAspectRatio = true;
-      _imageInfo.Centered = true;
+      _imageInfo.ImageAlignment = Alignment.ALIGN_CENTER;
+      _imageInfo.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
       _imageInfo.HorizontalAlignment = MediaPortal.Drawing.HorizontalAlignment.Center;
       _imageInfo.VerticalAlignment = MediaPortal.Drawing.VerticalAlignment.Center;
       _imageInfo.DimColor = DimColor;

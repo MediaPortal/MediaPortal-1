@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Library
     };
 
     // Defines the directions in which the cover flow can move.
-    private enum FlowDirection
+    new private enum FlowDirection
     {
       LEFT,
       RIGHT
@@ -310,32 +310,32 @@ namespace MediaPortal.GUI.Library
 
       if (_imageBackground != null)
       {
-        _imageBackground.FreeResources();
+        _imageBackground.Dispose();
       }
 
       if (_imageForeground != null)
       {
-        _imageForeground.FreeResources();
+        _imageForeground.Dispose();
       }
 
       if (_label1 != null)
       {
-        _label1.FreeResources();
+          _label1.Dispose();
       }
 
       if (_label2 != null)
       {
-        _label2.FreeResources();
+        _label2.Dispose();
       }
 
       if (_horizontalScrollbar != null)
       {
-        _horizontalScrollbar.FreeResources();
+        _horizontalScrollbar.Dispose();
       }
 
       foreach (GUIControl control in _cardBackControls)
       {
-        control.FreeResources();
+          control.Dispose();
       }
 
       base.Dispose();
@@ -1950,11 +1950,11 @@ namespace MediaPortal.GUI.Library
     private void OnCardDeleted()
     {
       // Remove the card frame.
-      _frame[_frame.Count - 1].FreeResources();
+      _frame[_frame.Count - 1].Dispose();
       _frame.RemoveAt(_frame.Count - 1);
 
       // Remove the card focus frame.
-      _frameFocus[_frameFocus.Count - 1].FreeResources();
+      _frameFocus[_frameFocus.Count - 1].Dispose();
       _frameFocus.RemoveAt(_frameFocus.Count - 1);
     }
 

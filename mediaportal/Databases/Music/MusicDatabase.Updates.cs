@@ -107,7 +107,7 @@ namespace MediaPortal.Music.Database
 
     private Thread _scanThread = null;
     private AutoResetEvent _resetEvent = null;
-    private bool _abortScan = false;
+    //private bool _abortScan = false;
 
     private string _previousDirectory = null;
     private string _previousNegHitDir = null;

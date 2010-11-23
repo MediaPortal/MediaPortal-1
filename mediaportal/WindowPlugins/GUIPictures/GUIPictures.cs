@@ -1672,7 +1672,7 @@ namespace MediaPortal.GUI.Pictures
       itemlist.RemoveAll(ContainsFolderThumb);
     }
 
-    private void LoadDirectory(string strNewDirectory)
+    protected override void LoadDirectory(string strNewDirectory)
     {
       List<GUIListItem> itemlist;
       string objectCount = string.Empty;
