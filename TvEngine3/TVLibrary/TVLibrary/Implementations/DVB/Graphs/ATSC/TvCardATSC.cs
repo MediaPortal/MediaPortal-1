@@ -219,6 +219,10 @@ namespace TvLibrary.Implementations.DVB
       {
         throw;
       }
+      catch (TvExceptionNoPMT)
+      {
+        throw;
+      }
       catch (Exception ex)
       {
         Log.Log.Write(ex);
