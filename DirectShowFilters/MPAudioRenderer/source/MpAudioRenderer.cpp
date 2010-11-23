@@ -125,6 +125,19 @@ CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
     if(phr)
       *phr = E_OUTOFMEMORY;
   }
+
+  // CBaseRenderer is using a lazy initialization for the CRendererPosPassThru - we need it always
+  HRESULT hr = S_OK;
+  CBasePin *pPin = GetPin(0);
+  m_pPosition = new CRendererPosPassThru(NAME("Renderer CPosPassThru"), CBaseFilter::GetOwner(), (HRESULT *) &hr, pPin);
+  if (!m_pPosition)
+  {
+    if(phr)
+    {
+      *phr = E_OUTOFMEMORY;
+      return;
+    }
+  }
 }
 
 

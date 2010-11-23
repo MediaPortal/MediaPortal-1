@@ -28,82 +28,72 @@ extern void Log(const char *fmt, ...);
 
 STDMETHODIMP CMPAudioRenderer::IsFormatSupported(const GUID* pFormat)
 {
-  CheckPointer(pFormat, E_POINTER);
-  // only seeking in time (REFERENCE_TIME units) is supported
-  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
+  return m_pPosition->IsFormatSupported(pFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::QueryPreferredFormat(GUID* pFormat)
 {
-  CheckPointer(pFormat, E_POINTER);
-  *pFormat = TIME_FORMAT_MEDIA_TIME;
-  return S_OK;
+  return m_pPosition->QueryPreferredFormat(pFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::SetTimeFormat(const GUID* pFormat)
 {
-  CheckPointer(pFormat, E_POINTER);
-
-  // nothing to set; just check that it's TIME_FORMAT_TIME
-  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : E_INVALIDARG;
+  return m_pPosition->SetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::IsUsingTimeFormat(const GUID* pFormat)
 {
-  CheckPointer(pFormat, E_POINTER);
-  return *pFormat == TIME_FORMAT_MEDIA_TIME ? S_OK : S_FALSE;
+  return m_pPosition->IsUsingTimeFormat(pFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetTimeFormat(GUID* pFormat)
 {
-  CheckPointer(pFormat, E_POINTER);
-  *pFormat = TIME_FORMAT_MEDIA_TIME;
-  return S_OK;
+  return m_pPosition->GetTimeFormat(pFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetDuration(LONGLONG* pDuration)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetDuration(pDuration);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetStopPosition(LONGLONG* pStop)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetStopPosition(pStop);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetCurrentPosition(LONGLONG* pCurrent)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetCurrentPosition(pCurrent);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetCapabilities(DWORD* pCapabilities)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CMPAudioRenderer::CheckCapabilities(DWORD* pCapabilities)
 {
-  return E_NOTIMPL;
+  return m_pPosition->CheckCapabilities(pCapabilities);
 }
 
 STDMETHODIMP CMPAudioRenderer::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
 {
-  return E_NOTIMPL;
+  return m_pPosition->ConvertTimeFormat(pTarget, pTargetFormat, Source, pSourceFormat);
 }
 
 STDMETHODIMP CMPAudioRenderer::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG * pStop, DWORD StopFlags)
 {
-  return E_NOTIMPL;
+  return m_pPosition->SetPositions(pCurrent, CurrentFlags, pStop, StopFlags);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetPositions(pCurrent, pStop);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetAvailable(pEarliest, pLatest);
 }
 
 STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
@@ -126,7 +116,7 @@ STDMETHODIMP CMPAudioRenderer::SetRate(double dRate)
 
 STDMETHODIMP CMPAudioRenderer::GetRate(double* pdRate)
 {
-  return E_NOTIMPL;
+  return m_pPosition->GetRate(pdRate);
 }
 
 STDMETHODIMP CMPAudioRenderer::GetPreroll(LONGLONG *pPreroll)
