@@ -266,7 +266,7 @@ namespace TvLibrary.Implementations.DVB
     {
       // workaround for hauppauge dvb-s cards that fail to properly set diseqC the first time around.
       // restart graph, but only once.
-      if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null && _conditionalAccess.HWProvider is Hauppauge)
+      if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
       {
         _diseqCretries++;
         Log.Log.WriteFile("dvbs: setting diseqC failed the first time, resetting diseqC");
