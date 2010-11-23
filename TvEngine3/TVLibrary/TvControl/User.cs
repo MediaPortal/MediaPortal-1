@@ -33,6 +33,7 @@ namespace TvControl
     private string _hostName;
     private bool _isAdmin;
     private int _cardId;
+    private int _failedCardId;
     private int _subChannel;
     private int _idChannel;
     private TvStoppedReason _timeshiftStoppedReason;
@@ -48,6 +49,7 @@ namespace TvControl
       _hostName = Dns.GetHostName();
       _isAdmin = false;
       _cardId = -1;
+      _failedCardId = -1;
       _idChannel = -1;
       _subChannel = -1;
       _lastHeartBeat = DateTime.MinValue;
@@ -92,6 +94,16 @@ namespace TvControl
     {
       get { return _channelStates; }
       set { _channelStates = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the failed card id.
+    /// </summary>
+    /// <value>The card id.</value>
+    public int FailedCardId
+    {
+      get { return _failedCardId; }
+      set { _failedCardId = value; }
     }
 
     /// <summary>

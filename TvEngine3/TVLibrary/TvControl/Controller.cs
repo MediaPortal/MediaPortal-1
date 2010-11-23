@@ -587,6 +587,16 @@ namespace TvControl
     #region sub channels
 
     /// <summary>
+    /// Returns the subchannels count for the selected card
+    /// stream for the selected card
+    /// </summary>
+    /// <param name="idCard">card id.</param>
+    /// <returns>
+    /// subchannels count
+    /// </returns>
+    int GetSubChannels(int idCard);
+
+    /// <summary>
     /// Returns the URL for the RTSP stream on which the client can find the
     /// stream for the selected card
     /// </summary>
@@ -1164,6 +1174,8 @@ namespace TvControl
     void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter);
 
     #endregion
+
+    
 
   }
 }

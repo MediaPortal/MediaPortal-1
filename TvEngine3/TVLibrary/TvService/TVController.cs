@@ -2529,6 +2529,7 @@ namespace TvService
       {
         _epgGrabber.Stop();
       }
+      User userCopy = null;
       try
       {        
         TvResult result;
@@ -2570,7 +2571,7 @@ namespace TvService
             Log.Write("Controller: Timeshifting failed, lets try next available card.");
             cardChanged = (maxCards > 1);
           }
-          User userCopy = new User(user.Name, user.IsAdmin);
+          userCopy = new User(user.Name, user.IsAdmin);
 
           CardDetail cardInfo = freeCards[i];
           userCopy.CardId = cardInfo.Id;
@@ -2642,6 +2643,7 @@ namespace TvService
           result = CardTune(ref userCopy, tuneChannel, channel);
           if (result != TvResult.Succeeded)
           {
+            user.FailedCardId = userCopy.FailedCardId;
             StopTimeShifting(ref userCopy);
             continue; //try next card            
           }
@@ -2687,6 +2689,10 @@ namespace TvService
       }
       catch (Exception ex)
       {
+        if (userCopy != null)
+        {
+          user.FailedCardId = userCopy.FailedCardId;
+        }
         if (_epgGrabber != null && AllCardsIdle)
         {
           _epgGrabber.Start();
@@ -4205,6 +4211,30 @@ namespace TvService
       ITvCardHandler cardHandler = _cards[cardId];
 
       cardHandler.TimeShifter.GetStreamQualityCounters(user, out totalBytes, out discontinuityCounter);
+    }
+
+    /// <summary>
+    /// Returns the subchannels count for the selected card
+    /// stream for the selected card
+    /// </summary>
+    /// <param name="idCard">card id.</param>
+    /// <returns>
+    /// subchannels count
+    /// </returns>
+    public int GetSubChannels(int idCard)
+    {
+      int subchannels = 0;
+
+      if (idCard > 0)
+      {
+        ITvCardHandler cardHandler = _cards[idCard];
+        if (cardHandler.Card != null && cardHandler.Card.SubChannels != null)
+        {
+          subchannels = cardHandler.Card.SubChannels.Length;
+        }
+      }
+
+      return subchannels;
     }
   }
 }

@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -172,7 +173,7 @@ namespace SetupTv.Sections
               channelsForUser = channelsForUser.Randomize();
 
               User user = new User();
-              user.Name = "setuptv-" + Convert.ToString(rnd.Next(1, 500));
+              user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
               user.IsAdmin = false;
 
               _users.Add(user.Name, true);
@@ -267,6 +268,10 @@ namespace SetupTv.Sections
         _users[user.Name] = true;        
         foreach (Channel ch in channels)
         {
+          if (!_running)
+          {
+            break;
+          }
           TuneChannel(ch, ref user, ref nextRowIndexForDiscUpdate);
         }
       }
@@ -362,13 +367,13 @@ namespace SetupTv.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);            
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), err);            
             _failed++;
           }
         }
         catch (Exception e)
         {
-          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, "N/A", e.Message);
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), e.Message);
           _succeeded++;
           if (_firstFail == 0 && _running)
           {
@@ -568,6 +573,7 @@ namespace SetupTv.Sections
             item.SubItems.Add("");
             item.SubItems.Add("");
             item.SubItems.Add("");
+            item.SubItems.Add("");   
           }
           else
           {
@@ -584,6 +590,7 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
@@ -602,6 +609,7 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
@@ -609,6 +617,7 @@ namespace SetupTv.Sections
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
           {
+            ColorLine(card, item);
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -617,11 +626,13 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
             continue;
           }
           if (usersForCard.Length == 0)
           {
+            ColorLine(card, item);
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -630,6 +641,7 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
             continue;
           }
@@ -670,11 +682,13 @@ namespace SetupTv.Sections
             }
             item.SubItems[5].Text = usersForCard[i].Name;
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
 
             if (off >= mpListView1.Items.Count)
             {
               item = mpListView1.Items.Add("");
+              item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
@@ -691,11 +705,13 @@ namespace SetupTv.Sections
           // This means that the card is idle.
           if (!userFound)
           {
+            ColorLine(card, item);
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard)); ;
             off++;
           }
         }
@@ -709,12 +725,39 @@ namespace SetupTv.Sections
           item.SubItems[4].Text = "";
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
+          item.SubItems[7].Text = "";
         }
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
+    }
+
+    private void ColorLine(Card card, ListViewItem item)
+    {
+      Color lineColor = Color.White;
+      int subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);      
+      if (subchannels > 0 && !_running)
+      {
+        lineColor = Color.Red;
+      }
+
+      item.UseItemStyleForSubItems = false;
+
+      item.BackColor = lineColor;
+
+      foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)
+      {
+        lvi.BackColor = lineColor;
+      }
+
+      item.SubItems[3].Text = "";
+      item.SubItems[4].Text = "";
+      item.SubItems[5].Text = "";
+      item.SubItems[6].Text = card.Name;
+      item.SubItems[7].Text = Convert.ToString(subchannels);
+
     }
 
     private void txtRndFrom_TextChanged(object sender, EventArgs e)

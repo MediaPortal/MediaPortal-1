@@ -171,12 +171,14 @@ namespace TvService
           {
             return tvResult;
           }
-          result = _cardHandler.Card.Tune(user.SubChannel, channel);          
+          user.FailedCardId = -1;
+          result = _cardHandler.Card.Tune(user.SubChannel, channel);                              
           return AfterTune(user, idChannel, result);
         }
       }
       catch (TvExceptionNoSignal)
       {
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -185,6 +187,7 @@ namespace TvService
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex);
         if (result != null)
         {
@@ -194,6 +197,7 @@ namespace TvService
       }
       catch (TvExceptionGraphBuildingFailed ex2)
       {
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex2);
         if (result != null)
         {
@@ -202,7 +206,8 @@ namespace TvService
         return TvResult.GraphBuildingFailed;
       }
       catch (TvExceptionNoPMT)
-      {      
+      {
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -211,6 +216,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
+        user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
         Log.Write(ex);
         if (result != null)
         {

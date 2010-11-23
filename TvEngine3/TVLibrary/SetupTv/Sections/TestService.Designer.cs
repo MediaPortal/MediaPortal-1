@@ -65,6 +65,7 @@ namespace SetupTv.Sections
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.subchannels = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -286,7 +287,8 @@ namespace SetupTv.Sections
             this.columnHeader4,
             this.columnHeader5,
             this.User,
-            this.cardName});
+            this.cardName,
+            this.subchannels});
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.HideSelection = false;
       this.mpListView1.IsChannelListView = false;
@@ -301,15 +303,16 @@ namespace SetupTv.Sections
       // columnHeader1
       // 
       this.columnHeader1.Text = "Card";
+      this.columnHeader1.Width = 35;
       // 
       // columnHeader2
       // 
       this.columnHeader2.Text = "Type";
+      this.columnHeader2.Width = 40;
       // 
       // columnHeader3
       // 
       this.columnHeader3.Text = "State";
-      this.columnHeader3.Width = 100;
       // 
       // columnHeader4
       // 
@@ -319,12 +322,11 @@ namespace SetupTv.Sections
       // columnHeader5
       // 
       this.columnHeader5.Text = "Scrambled";
-      this.columnHeader5.Width = 80;
+      this.columnHeader5.Width = 65;
       // 
       // User
       // 
       this.User.Text = "User";
-      this.User.Width = 100;
       // 
       // cardName
       // 
@@ -396,6 +398,11 @@ namespace SetupTv.Sections
       this.mpLabel2.TabIndex = 62;
       this.mpLabel2.Text = "Group:";
       // 
+      // subchannels
+      // 
+      this.subchannels.Text = "Subchannels";
+      this.subchannels.Width = 100;
+      // 
       // TestService
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -456,5 +463,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtBytes;
     private System.Windows.Forms.Label label3;
+    private System.Windows.Forms.ColumnHeader subchannels;
   }
 }

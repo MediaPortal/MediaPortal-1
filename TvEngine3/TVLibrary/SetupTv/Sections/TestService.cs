@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
@@ -321,6 +322,7 @@ namespace SetupTv.Sections
             item.SubItems.Add("");
             item.SubItems.Add("");
             item.SubItems.Add("");
+            item.SubItems.Add("");
           }
           else
           {
@@ -337,6 +339,7 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
@@ -355,13 +358,15 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = "0";
             off++;
             continue;
           }
 
           User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-          if (usersForCard == null)
+          if (usersForCard == null || usersForCard.Length == 0)
           {
+            ColorLine(card, item);
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -370,23 +375,10 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
             continue;
-          }
-          if (usersForCard.Length == 0)
-          {
-            string tmp = "idle";
-            if (vcard.IsScanning) tmp = "Scanning";
-            if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
-            item.SubItems[2].Text = tmp;
-            item.SubItems[3].Text = "";
-            item.SubItems[4].Text = "";
-            item.SubItems[5].Text = "";
-            item.SubItems[6].Text = card.Name;
-            off++;
-            continue;
-          }
-
+          }          
 
           bool userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
@@ -423,6 +415,7 @@ namespace SetupTv.Sections
             }
             item.SubItems[5].Text = usersForCard[i].Name;
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
 
             if (off >= mpListView1.Items.Count)
@@ -434,6 +427,7 @@ namespace SetupTv.Sections
               item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
+              item.SubItems.Add("");   
             }
             else
             {
@@ -444,11 +438,14 @@ namespace SetupTv.Sections
           // This means that the card is idle.
           if (!userFound)
           {
+            ColorLine(card, item);
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));                        
+
             off++;
           }
         }
@@ -462,12 +459,39 @@ namespace SetupTv.Sections
           item.SubItems[4].Text = "";
           item.SubItems[5].Text = "";
           item.SubItems[6].Text = "";
+          item.SubItems[7].Text = "";
         }
       }
       catch (Exception ex)
       {
         Log.Write(ex);
       }
+    }
+
+    private void ColorLine(Card card, ListViewItem item)
+    {
+      Color lineColor = Color.White;
+      int subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+      if (subchannels > 0)
+      {
+        lineColor = Color.Red;
+      }
+
+      item.UseItemStyleForSubItems = false;
+
+      item.BackColor = lineColor;
+
+      foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)
+      {
+        lvi.BackColor = lineColor;
+      }
+
+      item.SubItems[3].Text = "";
+      item.SubItems[4].Text = "";
+      item.SubItems[5].Text = "";
+      item.SubItems[6].Text = card.Name;
+      item.SubItems[7].Text = Convert.ToString(subchannels);                        
+
     }
 
     private void buttonRestart_Click(object sender, EventArgs e)

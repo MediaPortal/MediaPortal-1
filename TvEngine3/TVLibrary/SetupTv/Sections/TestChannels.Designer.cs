@@ -59,14 +59,6 @@ namespace SetupTv.Sections
       this.mpLabelTimeShift = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpButtonTimeShift = new MediaPortal.UserInterface.Controls.MPButton();
       this.timer1 = new System.Windows.Forms.Timer(this.components);
-      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
-      this.User = new System.Windows.Forms.ColumnHeader();
-      this.cardName = new System.Windows.Forms.ColumnHeader();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -80,6 +72,15 @@ namespace SetupTv.Sections
       this.txtTuneDelay = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.lblTuneDelayMsec = new MediaPortal.UserInterface.Controls.MPLabel();
       this.chkShareChannels = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
+      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.User = new System.Windows.Forms.ColumnHeader();
+      this.cardName = new System.Windows.Forms.ColumnHeader();
+      this.subchannels = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -348,65 +349,6 @@ namespace SetupTv.Sections
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
-      // mpListView1
-      // 
-      this.mpListView1.AllowDrop = true;
-      this.mpListView1.AllowRowReorder = true;
-      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5,
-            this.User,
-            this.cardName});
-      this.mpListView1.FullRowSelect = true;
-      this.mpListView1.HideSelection = false;
-      this.mpListView1.IsChannelListView = false;
-      this.mpListView1.Location = new System.Drawing.Point(12, 295);
-      this.mpListView1.MultiSelect = false;
-      this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(446, 134);
-      this.mpListView1.TabIndex = 58;
-      this.mpListView1.UseCompatibleStateImageBehavior = false;
-      this.mpListView1.View = System.Windows.Forms.View.Details;
-      // 
-      // columnHeader1
-      // 
-      this.columnHeader1.Text = "Card";
-      // 
-      // columnHeader2
-      // 
-      this.columnHeader2.Text = "Type";
-      // 
-      // columnHeader3
-      // 
-      this.columnHeader3.Text = "State";
-      this.columnHeader3.Width = 100;
-      // 
-      // columnHeader4
-      // 
-      this.columnHeader4.Text = "Name";
-      this.columnHeader4.Width = 120;
-      // 
-      // columnHeader5
-      // 
-      this.columnHeader5.Text = "Scrambled";
-      this.columnHeader5.Width = 80;
-      // 
-      // User
-      // 
-      this.User.Text = "User";
-      this.User.Width = 100;
-      // 
-      // cardName
-      // 
-      this.cardName.Text = "Card Name";
-      this.cardName.Width = 120;
-      // 
       // imageList1
       // 
       this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
@@ -537,10 +479,76 @@ namespace SetupTv.Sections
       this.chkShareChannels.Text = "Users share channels";
       this.chkShareChannels.UseVisualStyleBackColor = true;
       // 
+      // mpListView1
+      // 
+      this.mpListView1.AllowDrop = true;
+      this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5,
+            this.User,
+            this.cardName,
+            this.subchannels});
+      this.mpListView1.FullRowSelect = true;
+      this.mpListView1.HideSelection = false;
+      this.mpListView1.IsChannelListView = false;
+      this.mpListView1.Location = new System.Drawing.Point(12, 295);
+      this.mpListView1.MultiSelect = false;
+      this.mpListView1.Name = "mpListView1";
+      this.mpListView1.Size = new System.Drawing.Size(446, 134);
+      this.mpListView1.TabIndex = 75;
+      this.mpListView1.UseCompatibleStateImageBehavior = false;
+      this.mpListView1.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader1
+      // 
+      this.columnHeader1.Text = "Card";
+      this.columnHeader1.Width = 35;
+      // 
+      // columnHeader2
+      // 
+      this.columnHeader2.Text = "Type";
+      this.columnHeader2.Width = 40;
+      // 
+      // columnHeader3
+      // 
+      this.columnHeader3.Text = "State";
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Name";
+      this.columnHeader4.Width = 120;
+      // 
+      // columnHeader5
+      // 
+      this.columnHeader5.Text = "Scrambled";
+      this.columnHeader5.Width = 65;
+      // 
+      // User
+      // 
+      this.User.Text = "User";
+      // 
+      // cardName
+      // 
+      this.cardName.Text = "Card Name";
+      this.cardName.Width = 120;
+      // 
+      // subchannels
+      // 
+      this.subchannels.Text = "Subchannels";
+      this.subchannels.Width = 100;
+      // 
       // TestChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.chkShareChannels);
       this.Controls.Add(this.lblTuneDelayMsec);
       this.Controls.Add(this.txtTuneDelay);
@@ -553,7 +561,6 @@ namespace SetupTv.Sections
       this.Controls.Add(this.txtConcurrentTunes);
       this.Controls.Add(this.mpLabel2);
       this.Controls.Add(this.comboBoxGroups);
-      this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.mpButtonTimeShift);
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "TestChannels";
@@ -571,14 +578,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGroupBox1;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonTimeShift;
     private System.Windows.Forms.Timer timer1;
-    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
-    private System.Windows.Forms.ColumnHeader columnHeader1;
-    private System.Windows.Forms.ColumnHeader columnHeader2;
-    private System.Windows.Forms.ColumnHeader columnHeader3;
-    private System.Windows.Forms.ColumnHeader columnHeader4;
-    private System.Windows.Forms.ColumnHeader columnHeader5;
-    private System.Windows.Forms.ColumnHeader User;
-    private System.Windows.Forms.ColumnHeader cardName;
     private System.Windows.Forms.ImageList imageList1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelRecording;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabelTimeShift;
@@ -617,5 +616,14 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader14;
     private MediaPortal.UserInterface.Controls.MPLabel lblDisc;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox txtDisc;
+    private MediaPortal.UserInterface.Controls.MPListView mpListView1;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ColumnHeader User;
+    private System.Windows.Forms.ColumnHeader cardName;
+    private System.Windows.Forms.ColumnHeader subchannels;
   }
 }
