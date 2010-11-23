@@ -115,6 +115,8 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent -= new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent += new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStart();
       }
       RemoveStreamSourceFilter();
@@ -130,6 +132,8 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent -= new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
+        ((TvDvbChannel)_mapSubChannels[subChannel]).OnAfterTuneEvent += new TvDvbChannel.OnAfterTuneDelegate(TvCardDvbBase_OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }

@@ -722,7 +722,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    private void TvCardDvbBase_OnAfterTuneEvent()
+    protected void TvCardDvbBase_OnAfterTuneEvent()
     {
       if (OnAfterTuneEvent != null)
       {
