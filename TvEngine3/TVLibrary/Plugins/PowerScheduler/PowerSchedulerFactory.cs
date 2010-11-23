@@ -79,6 +79,8 @@ namespace TvEngine.PowerScheduler
       _standbyHandlers.Add(standbyHandler);
       standbyHandler = new NetworkMonitorHandler();
       _standbyHandlers.Add(standbyHandler);
+      standbyHandler = new ActiveSharesHandler();
+      _standbyHandlers.Add(standbyHandler);
 
       ScheduledRecordingsHandler recHandler = new ScheduledRecordingsHandler();
       XmlTvImportWakeupHandler xmltvHandler = new XmlTvImportWakeupHandler();

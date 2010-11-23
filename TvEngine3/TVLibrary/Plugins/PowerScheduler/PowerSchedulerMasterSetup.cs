@@ -139,6 +139,25 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       textBox1.Text = setting.Value;
 
+      // Load share monitoring configuration for standby prevention
+      setting = _layer.GetSetting("PreventStandybyWhenSharesInUse", "true");
+      shareMonitoring.Checked = Convert.ToBoolean(setting.Value);
+
+      setting = _layer.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
+      inhibitStandbyShares.Rows.Clear();
+      string[] shares = setting.Value.Split(';');
+      foreach (string share in shares)
+      {
+        string[] shareItem = share.Split(',');
+        if ((shareItem.Length.Equals(3)) &&
+           ((shareItem[0].Trim().Length > 0) ||
+            (shareItem[1].Trim().Length > 0) ||
+            (shareItem[2].Trim().Length > 0)))
+        {
+          inhibitStandbyShares.Rows.Add(shareItem);
+        }
+      }
+
       setting = _layer.GetSetting("NetworkMonitorEnabled", "false");
       checkBox15.Checked = Convert.ToBoolean(setting.Value);
 
@@ -241,6 +260,20 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       setting.Value = textBox1.Text;
       setting.Persist();
+ 
+      // Persist share monitoring configuration for standby prevention
+      setting = _layer.GetSetting("PreventStandybyWhenSharesInUse", "true");
+      setting.Value = shareMonitoring.Checked.ToString();
+      setting.Persist();
+
+      setting = _layer.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
+      StringBuilder shares = new StringBuilder();
+      foreach (DataGridViewRow row in inhibitStandbyShares.Rows)
+      {
+        shares.AppendFormat("{0},{1},{2};", row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value);
+      }
+      setting.Value = shares.ToString();
+      setting.Persist();      
 
       setting = _layer.GetSetting("NetworkMonitorEnabled", "false");
       setting.Value = checkBox15.Checked.ToString();

@@ -19,13 +19,14 @@
 #endregion
 
 #region Usings
-
 using System;
 using System.Management;
 using System.Collections.Generic;
 using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
-
+using TvLibrary.Interfaces;
+using TvDatabase;
+using TvLibrary.Log;
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -37,26 +38,138 @@ namespace TvEngine.PowerScheduler.Handlers
   {
     #region Structs
 
-    private struct HostUserCombo
+    internal class ShareMonitor
     {
-      public string Host;
-      public string User;
-      public HostUserCombo(string host) : this(host, String.Empty) {}
-
-      public HostUserCombo(string host, string user)
+      internal enum ShareType
       {
-        User = user;
-        Host = host;
+        ShareOnly,                    // If anything is connected to the share, then prevent standby.
+        UserOnly,                     // If a matching user is connected to any share, then prevent standby.
+        HostOnly,                     // If a matching host is connected to any share, then prevent standby.
+        HostUsingShare,               // If a matching host is connected to the matching share, then prevent standby.
+        UserUsingShare,               // If a matching user is connected from any host to the matching share, then prevent standby.
+        UserFromHostConnected,        // If a matching user is connected to any share from the define host, then prevent standby.
+        UserFromHostUsingShare,       // All three fields must match to prevent standby.
+        Undefined,                    // Invalid share configuration. Do not prevent standby.
+      };
+
+      string _share;
+      string _host;
+      string _user;
+
+      internal readonly ShareType MonitoringType;
+
+      internal ShareMonitor(string shareName, string hostName, string userName)
+      {
+        _share = shareName.Trim();
+        _host = hostName.Trim();
+        _user = userName.Trim();
+
+        if (_share.Equals(string.Empty))
+        {
+          if (_host.Equals(string.Empty))
+          {
+            if (_user.Equals(string.Empty))
+            {
+              MonitoringType = ShareType.Undefined;
+            }
+            else
+            {
+              MonitoringType = ShareType.UserOnly;
+            }
+          }
+          else if (_user.Equals(string.Empty))
+          {
+            MonitoringType = ShareType.HostOnly;
+          }
+          else
+          {
+            MonitoringType = ShareType.UserFromHostConnected;
+          }
+        }
+        else if (_host.Equals(string.Empty))
+        {
+          if (_user.Equals(string.Empty))
+          {
+            MonitoringType = ShareType.ShareOnly;
+          }
+          else
+          {
+            MonitoringType = ShareType.UserUsingShare;
+          }
+        }
+        else if (_user.Equals(string.Empty))
+        {
+          MonitoringType = ShareType.HostUsingShare;
+        }
+        else
+        {
+          MonitoringType = ShareType.UserFromHostUsingShare;
+        }
+        Log.Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share, MonitoringType);
+      }
+
+      internal bool Equals(ServerConnection serverConnection)
+      {
+        bool serverConnectionMatches = false;
+
+        switch (MonitoringType)
+        {
+          case ShareType.ShareOnly:
+            if (serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.HostOnly:
+            if (serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.UserOnly:
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.HostUsingShare:
+            if (serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.UserUsingShare:
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.UserFromHostConnected:
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          case ShareType.UserFromHostUsingShare:
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            {
+              serverConnectionMatches = true;
+            }
+            break;
+          default:
+            Log.Debug("Invalid share monitoring configuration.");
+            break;
+        }
+        return serverConnectionMatches;
       }
     }
 
-    private struct ServerConnection
+    internal struct ServerConnection
     {
       public string ShareName;
       public string ComputerName;
       public string UserName;
       public int NumberOfFiles;
-
       public ServerConnection(string shareName, string computerName, string userName, int numFiles)
       {
         ShareName = shareName;
@@ -65,68 +178,75 @@ namespace TvEngine.PowerScheduler.Handlers
         NumberOfFiles = numFiles;
       }
     }
-
     #endregion
 
     #region Variables
 
-    private List<string> _shares = new List<string>();
-    private List<HostUserCombo> _combos = new List<HostUserCombo>();
-
-    private ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
-      "SELECT ShareName, UserName, ComputerName, NumberOfFiles  FROM Win32_ServerConnection WHERE NumberOfFiles > 0");
-
+    bool _enabled = false;
+    List<ShareMonitor> _sharesToMonitor = new List<ShareMonitor>();
+    ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
+    "SELECT ShareName, UserName, ComputerName, NumberOfFiles  FROM Win32_ServerConnection WHERE NumberOfFiles > 0");
     #endregion
 
-    #region Public methods
-
-    /// <summary>
-    /// Adds a valid sharename to watch. If no shares have been added, all shares will be monitored.
-    /// </summary>
-    /// <param name="shareName">sharename to watch</param>
-    public void AddShare(string shareName)
+    #region Constructor
+    public ActiveSharesHandler()
     {
-      if (!_shares.Contains(shareName))
-        _shares.Add(shareName);
+      if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
     }
-
-    /// <summary>
-    /// Adds a host which can keep the server alive when it has open files on the server.
-    /// If no hosts or host/user combinations have been added, all users can keep the server alive
-    /// with open files.
-    /// </summary>
-    /// <param name="host">host to add</param>
-    public void AddHost(string host)
-    {
-      AddHostUserCombo(host, String.Empty);
-    }
-
-    /// <summary>
-    /// Adds a host/user combination which can keep the server alive if it has open files on the
-    /// server. For example: if you do AddHostUserCombo("Bar", "Foo"); then only user "Foo" on
-    /// the computer named "Bar" can keep the server alive if they have open files via a network
-    /// share.
-    /// </summary>
-    /// <param name="host">host to add</param>
-    /// <param name="user">user to add</param>
-    public void AddHostUserCombo(string host, string user)
-    {
-      _combos.Add(new HostUserCombo(host, user));
-    }
-
-    /// <summary>
-    /// Clears both the share list and host/user list. After this call all sessions which have
-    /// open files can keep the server from entering standby.
-    /// </summary>
-    public void Clear()
-    {
-      _shares.Clear();
-      _combos.Clear();
-    }
-
     #endregion
 
     #region private methods
+
+    private void ProcessActiveHandler_OnPowerSchedulerEvent(PowerSchedulerEventArgs args)
+    {
+      switch (args.EventType)
+      {
+        case PowerSchedulerEventType.Started:
+        case PowerSchedulerEventType.Elapsed:
+          _enabled = LoadSharesToMonitor();
+          break;
+      }
+    }
+
+    /// <summary>
+    /// Read the share configuration data.
+    /// </summary>
+    /// <returns>true if share monitoring is enabled.</returns>
+    private bool LoadSharesToMonitor()
+    {
+      try
+      {
+        _sharesToMonitor.Clear();
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+
+        // Load share monitoring configuration for standby prevention 
+        if (Convert.ToBoolean(layer.GetSetting("PreventStandybyWhenSharesInUse", "false").Value))
+        {
+          Setting setting = layer.GetSetting("PreventStandybyWhenSpecificSharesInUse", "");
+
+          string[] shares = setting.Value.Split(';');
+          foreach (string share in shares)
+          {
+            string[] shareItem = share.Split(',');
+            if ((shareItem.Length.Equals(3)) &&
+               ((shareItem[0].Trim().Length > 0) ||
+                (shareItem[1].Trim().Length > 0) ||
+                (shareItem[2].Trim().Length > 0)))
+            {
+              _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
+            }
+          }
+        }
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("{0}: Error >{1}< loading shares to monitor", HandlerName, ex.Message);
+      }
+      return false;
+    }
 
     private List<ServerConnection> GetConnections(ManagementObjectCollection col)
     {
@@ -144,70 +264,46 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return connections;
     }
-
     #endregion
 
     #region IStandbyHandler implementation
-
     public bool DisAllowShutdown
     {
       get
       {
-        bool activeServerConnections = false;
-        bool allowed;
-        List<ServerConnection> connections = GetConnections(_searcher.Get());
-        // Check if there are no sessions at all with NumberOfFiles > 0
-        if (connections.Count == 0)
-          return false;
-        // inspect all active server connections against current setup (shares/hostuser combo's)
-        foreach (ServerConnection connection in connections)
+        if (_enabled)
         {
-          // check if we should filter by sharename
-          if (_shares.Count > 0)
+          List<ServerConnection> connections = GetConnections(_searcher.Get());
+
+          // inspect all active server connections against current setup (shares/hostuser combo's)
+          foreach (ServerConnection connection in connections)
           {
-            allowed = false;
-            foreach (string share in _shares)
-              if (connection.ShareName.Equals(share, StringComparison.CurrentCultureIgnoreCase))
+            foreach (ShareMonitor shareBeingMonitored in _sharesToMonitor)
+            {
+              if (shareBeingMonitored.Equals(connection))
               {
-                allowed = true;
-                break;
+                Log.Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName, connection.UserName, connection.ComputerName, connection.ShareName);
+                return true;
               }
-            if (!allowed) continue;
+            }
           }
-          // check if we should filter by host/user combo
-          if (_combos.Count > 0)
-          {
-            allowed = false;
-            foreach (HostUserCombo combo in _combos)
-              if (connection.ComputerName.Equals(combo.Host, StringComparison.CurrentCultureIgnoreCase))
-              {
-                if (combo.User.Equals(String.Empty))
-                {
-                  allowed = true;
-                  break;
-                }
-                else if (connection.UserName.Equals(combo.User, StringComparison.CurrentCultureIgnoreCase))
-                {
-                  allowed = true;
-                  break;
-                }
-              }
-            if (!allowed) continue;
-          }
-          // if we got here then we should regard this ServerConnection as active
-          activeServerConnections = true;
+          Log.Debug("{0}: have not found any matching connections - will allow standby", HandlerName);
+          return false;
         }
-        return activeServerConnections;
+        else
+        {
+          Log.Debug("{0}: Standby permitted. Share monitoring is disabled.", HandlerName);
+        }
+        return false;
       }
     }
-
-    public void UserShutdownNow() {}
-
+    public void UserShutdownNow()
+    {
+    }
     public string HandlerName
     {
       get { return "ActiveSharesHandler"; }
     }
-
     #endregion
   }
 }
