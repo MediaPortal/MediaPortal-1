@@ -108,7 +108,9 @@ namespace MediaPortal.GUI.Library
         Directory.CreateDirectory(Config.GetSubFolder(Config.Dir.Plugins, "process"));
       }
       catch (Exception) {}
-      string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "*.dll");
+
+      string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "process"), "dll");
+
       foreach (string strFile in strFiles)
       {
         LoadPlugin(strFile);
@@ -132,7 +134,8 @@ namespace MediaPortal.GUI.Library
       catch (Exception) {}
       LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
 
-      string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "*.dll");
+      string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
+      
       foreach (string strFile in strFiles)
       {
         if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0)

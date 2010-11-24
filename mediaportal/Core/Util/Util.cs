@@ -3991,6 +3991,33 @@ namespace MediaPortal.Util
         }
       }
     }
+
+    /// <summary>
+    /// Will load all files in path with specified extensions.
+    /// </summary>
+    /// <param name="path">Path where to get files from</param>
+    /// <param name="extensions">Extension ("dll" for example). Multiple extensions should be in format "ext1|ext2|ext3"</param>
+    /// <returns>String list of file names</returns>
+    public static string[] GetFiles(string path, string extensions) {
+      string[] allExtensions = extensions.Split('|');
+      List<string> files = new List<string>();
+      foreach (string sp in allExtensions)
+      {
+        string[] strFiles = System.IO.Directory.GetFiles(path, "*." + sp);
+        foreach (string strFile in strFiles)
+        {
+          //this check is needed because GetFiles truncates extension to 3 letters, 
+          //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
+          if (!strFile.ToLower().EndsWith("." + sp)) 
+          {
+            continue;
+          }
+          files.Add(strFile);
+        }
+      }
+      files.Sort();
+      return files.ToArray();
+    }
   }
 
   public static class XMLNodeExtensions

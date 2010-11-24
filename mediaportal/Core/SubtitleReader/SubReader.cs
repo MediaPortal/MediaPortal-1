@@ -37,7 +37,7 @@ namespace MediaPortal.Subtitle
     static SubReader()
     {
       Log.Info("loading subtitle plugins");
-      string[] strFiles = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"), "*.dll");
+      string[] strFiles = Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "subtitle"), "dll");
       foreach (string strFile in strFiles)
       {
         try
