@@ -405,7 +405,7 @@ namespace TvPlugin
     //  UpdateButtons();
     //}    
 
-    private void LoadDirectory(string strNewDirectory)
+    protected override void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
       if (SelectedItem != null)
@@ -760,7 +760,7 @@ namespace TvPlugin
 
     
 
-    private void OnShowSort()
+    protected override void OnShowSort()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)

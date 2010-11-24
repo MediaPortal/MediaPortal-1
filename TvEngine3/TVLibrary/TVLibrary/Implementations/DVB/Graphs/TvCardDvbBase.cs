@@ -322,8 +322,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         if (ch != null)
-        {
-          bool foundPMT = false;
+        {          
           try
           {
             RunGraph(ch.SubChannelId);

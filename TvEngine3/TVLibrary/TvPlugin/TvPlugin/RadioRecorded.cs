@@ -72,8 +72,6 @@ namespace TvPlugin
     private DBView _currentDbView = DBView.Recordings;
     private static Recording _oActiveRecording = null;
     private static bool _bIsLiveRecording = false;
-    private static bool _thumbCreationActive = false;
-    private static bool _createRecordedThumbs = true;
     private bool _deleteWatchedShows = false;
     private int _iSelectedItem = 0;
     private string _currentLabel = string.Empty;
@@ -134,7 +132,6 @@ namespace TvPlugin
         }
 
         _deleteWatchedShows = xmlreader.GetValueAsBool("capture", "deletewatchedshows", false);
-        _createRecordedThumbs = xmlreader.GetValueAsBool("thumbnails", "radiorecordedondemand", true);
       }
     }
 

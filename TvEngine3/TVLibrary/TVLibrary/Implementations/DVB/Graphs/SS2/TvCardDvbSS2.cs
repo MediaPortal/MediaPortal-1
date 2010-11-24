@@ -298,8 +298,7 @@ namespace TvLibrary.Implementations.DVB
       SendHwPids(new List<ushort>());
       _mapSubChannels[subChannelId].OnAfterTune();
       try
-      {
-        bool foundPMT = false;
+      {        
         try
         {
           RunGraph(subChannelId);

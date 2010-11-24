@@ -84,8 +84,7 @@ namespace TvPlugin
       {
         case (int)ScheduleRecordingType.Once:
           recordings.Add(rec);
-          return recordings;
-          break;
+          return recordings;          
 
         case (int)ScheduleRecordingType.Daily:
           programs = Program.RetrieveDaily(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);

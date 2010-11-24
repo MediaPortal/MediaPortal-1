@@ -2641,8 +2641,7 @@ namespace TvPlugin
       int idxStreamIndexmpeg = -1; // the streamindex of mpg found based on lang. pref   
       int idx = -1; // the chosen audio index we return
       int idxLangPriAc3 = -1; // the lang priority of ac3 found based on lang. pref
-      int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref   
-      string langSel = ""; // find audio based on this language.
+      int idxLangPrimpeg = -1; // the lang priority of mpg found based on lang. pref         
       string ac3BasedOnLang = ""; // for debugging, what lang. in prefs. where used to choose the ac3 audio track ?
       string mpegBasedOnLang = "";
       // for debugging, what lang. in prefs. where used to choose the mpeg audio track ?      

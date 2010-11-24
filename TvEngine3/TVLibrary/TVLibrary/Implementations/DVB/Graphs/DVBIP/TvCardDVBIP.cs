@@ -149,7 +149,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId"></param>
     /// <param name="channel"></param>
     /// <returns></returns>
-    public ITvSubChannel Tune(int subChannelId, IChannel channel)
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
       ITvSubChannel ch = null;

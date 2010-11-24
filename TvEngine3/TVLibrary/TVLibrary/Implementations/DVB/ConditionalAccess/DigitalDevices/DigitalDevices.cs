@@ -115,8 +115,6 @@ namespace TvLibrary.Implementations.DVB
 
     struct DD_CAM_MENU_TITLE
     {
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
-      String MenuTitle;
     }
 
     struct DD_CAM_MENU_REPLY
@@ -125,13 +123,13 @@ namespace TvLibrary.Implementations.DVB
       public Int32 Choice;
     }
 
-    struct DD_CAM_TEXT_DATA
+    /*struct DD_CAM_TEXT_DATA
     {
       public Int32 Id;
       public Int32 Length;
       [MarshalAs(UnmanagedType.LPStr)]
       public String Data;
-    }
+    }*/
 
     struct DD_CAM_MENU_DATA
     {
@@ -152,7 +150,6 @@ namespace TvLibrary.Implementations.DVB
     #region variables
 
     private readonly bool _isDigitalDevices;
-    private readonly IKsPropertySet _propertySet;
     // CI menu related handlers
     private bool StopThread;
     private ICiMenuCallbacks ciMenuCallbacks;

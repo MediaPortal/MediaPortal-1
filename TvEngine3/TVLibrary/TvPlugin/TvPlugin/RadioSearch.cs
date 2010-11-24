@@ -433,7 +433,7 @@ namespace TvPlugin
               h -= 55;
               GUIGraphicsContext.ScaleVertical(ref h);
               titleView.SpinY = titleView.YPosition + h;
-              titleView.FreeResources();
+              titleView.Dispose();
               titleView.AllocResources();
             }
           }
@@ -455,7 +455,7 @@ namespace TvPlugin
               GUIGraphicsContext.ScaleVertical(ref h);
               titleView.SpinY = titleView.YPosition + h;
 
-              titleView.FreeResources();
+              titleView.Dispose();
               titleView.AllocResources();
             }
             lblNumberOfItems.YPosition = titleView.SpinY;

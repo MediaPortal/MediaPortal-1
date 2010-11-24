@@ -149,7 +149,7 @@ namespace TvPlugin
     protected override void OnPageDestroy(int newWindowId)
     {
       Log.Debug("zaposd pagedestroy");
-      FreeResources();
+      Dispose();
       base.OnPageDestroy(newWindowId);
 
       GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + newWindowId));

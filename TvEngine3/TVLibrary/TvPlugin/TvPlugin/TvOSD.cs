@@ -352,7 +352,7 @@ namespace TvPlugin
       {
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT: // fired when OSD is hidden
           {
-            FreeResources();
+            Dispose();
             GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(100000 + message.Param1));
             return true;
           }
@@ -1689,7 +1689,6 @@ namespace TvPlugin
         string startTime = "";
         string endTime = "";
         string channelDisplayName = "";
-        string genre = "";
 
         rec = TvRecorded.ActiveRecording();
         if (rec != null)
