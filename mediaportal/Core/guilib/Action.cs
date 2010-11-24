@@ -209,6 +209,7 @@ namespace MediaPortal.GUI.Library
       ACTION_TVGUIDE_PREV_GROUP = 9996, // switch to the previous tv group in guide
       ACTION_ROTATE_PICTURE_180 = 9997, // rotate current picture 180 during slideshow.
       ACTION_ROTATE_PICTURE_270 = 9998, // rotate current picture 270 during slideshow.
+      ACTION_NEXT_EDITION = 134 // Switch to next edition
     } ;
 
     #endregion

@@ -470,6 +470,34 @@ namespace MediaPortal.Player
       set { }
     }
 
+    public virtual int EditionStreams
+    {
+        get { return 1; }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public virtual int CurrentEditionStream
+    {
+        get { return 0; }
+        set { }
+    }
+    /// <summary>
+    /// Property to get the name for an edition stream
+    /// </summary>
+    public virtual string EditionLanguage(int iStream)
+    {
+        return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the type of an edition stream
+    /// </summary>
+    public virtual string EditionType(int iStream)
+    {
+        return Strings.Unknown;
+    }
     /// <summary>
     /// Property to get the name for an audio stream
     /// </summary>

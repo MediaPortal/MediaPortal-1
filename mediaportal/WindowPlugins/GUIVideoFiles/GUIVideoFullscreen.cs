@@ -747,6 +747,34 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
+        case Action.ActionType.ACTION_NEXT_EDITION:
+          {
+              if (g_Player.EditionStreams > 1)
+              {
+                  _showStatus = true;
+                  _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                                  (int)Control.LABEL_ROW1, 0, 0, null);
+                  g_Player.SwitchToNextEdition();
+
+                  String language = g_Player.EditionLanguage(g_Player.CurrentEditionStream);
+                  if (String.Equals(language, "Edition") || String.Equals(language, ""))
+                  {
+                      msg.Label = string.Format("{0} ({1}/{2})", g_Player.EditionType(g_Player.CurrentEditionStream),
+                                                g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
+                  }
+                  else
+                  {
+                      msg.Label = string.Format("{0} {1} ({2}/{3})", language, g_Player.EditionType(g_Player.CurrentEditionStream),
+                                                g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
+                  }
+
+                  OnMessage(msg);
+                  Log.Info("GUIVideoFullscreen: switched edition to {0}", msg.Label);
+              }
+          }
+          break;
+
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
           {
             if (g_Player.SubtitleStreams > 0)
@@ -1192,6 +1220,12 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(492);
       }
 
+      // Edition stream selection, show only when more than one streams exists
+      if (g_Player.EditionStreams > 1)
+      {
+          dlg.AddLocalizedString(200090);
+      }
+
       eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
       if (dualMonoMode != eAudioDualMonoMode.UNSUPPORTED)
       {
@@ -1267,6 +1301,10 @@ namespace MediaPortal.GUI.Video
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
+          break;
+
+        case 200090:
+          ShowEditionStreamsMenu();
           break;
 
         case 200091:
@@ -1353,6 +1391,50 @@ namespace MediaPortal.GUI.Video
         // set mplayers play position
         g_Player.SeekAbsolute(chaptersList[selectedChapterIndex]);
       }
+    }
+
+    // Add edition stream selection to be able to switch edition streams in .ts recordings
+    private void ShowEditionStreamsMenu()
+    {
+        if (dlg == null)
+        {
+            return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(200090); // Edition Streams
+
+        // get the number of editionstreams in the current movie
+        int count = g_Player.EditionStreams;
+        // cycle through each editionstream and add it to our list control
+        for (int i = 0; i < count; i++)
+        {
+            string editionType = g_Player.EditionType(i);
+            if (editionType == Strings.Unknown || String.Equals(editionType, "") || editionType.Equals(g_Player.EditionType(i)))
+            {
+                dlg.Add(g_Player.EditionLanguage(i));
+            }
+            else
+            {
+                dlg.Add(String.Format("{0} {1}", g_Player.EditionLanguage(i), editionType));
+            }
+        }
+          
+        // select/focus the editionstream, which is active atm
+        dlg.SelectedLabel = g_Player.CurrentEditionStream;
+
+        // show dialog and wait for result
+        _IsDialogVisible = true;
+        dlg.DoModal(GetID);
+        _IsDialogVisible = false;
+
+        if (dlg.SelectedId == -1)
+        {
+            return;
+        }
+        if (dlg.SelectedLabel != g_Player.CurrentEditionStream)
+        {
+            g_Player.CurrentEditionStream = dlg.SelectedLabel;
+        }
     }
 
     // Add audio stream selection to be able to switch audio streams in .ts recordings

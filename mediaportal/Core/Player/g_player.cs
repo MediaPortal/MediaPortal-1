@@ -2178,6 +2178,70 @@ namespace MediaPortal.Player
       }
     }
 
+    #region Edition selection
+    /// <summary>
+    /// Property which returns the total number of edition streams available
+    /// </summary>
+    public static int EditionStreams
+    {
+        get
+        {
+            if (_player == null)
+            {
+                return 0;
+            }
+            return _player.EditionStreams;
+        }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public static int CurrentEditionStream
+    {
+        get
+        {
+            if (_player == null)
+            {
+                return 0;
+            }
+            return _player.CurrentEditionStream;
+        }
+        set
+        {
+            if (_player != null)
+            {
+                _player.CurrentEditionStream = value;
+            }
+        }
+    }
+
+    public static string EditionLanguage(int iStream)
+    {
+        if (_player == null)
+        {
+            return Strings.Unknown;
+        }
+
+        string stream = _player.EditionLanguage(iStream);
+        return Util.Utils.TranslateLanguageString(stream);
+    }
+
+    /// <summary>
+    /// Property to get the type of an edition stream
+    /// </summary>
+    public static string EditionType(int iStream)
+    {
+        if (_player == null)
+        {
+            return Strings.Unknown;
+        }
+
+        string stream = _player.EditionType(iStream);
+        return stream;
+    }
+    #endregion
+
     #region subtitle/audio stream selection
 
     /// <summary>
@@ -2510,6 +2574,46 @@ namespace MediaPortal.Player
         CurrentSubtitleStream = 0;
         EnableSubtitle = true;
       }
+    }
+      
+    /// <summary>
+    /// Switches to the next edition stream.
+    /// 
+    /// Calls are directly pushed to the embedded player. And care 
+    /// is taken not to do multiple calls to the player.
+    /// </summary>
+    public static void SwitchToNextEdition()
+    {
+        if (_player != null)
+        {
+            // take current stream and number of
+            int streams = _player.EditionStreams;
+            int current = _player.CurrentEditionStream;
+            int next = current;
+            bool success = false;
+            // Loop over the stream, so we skip the disabled streams
+            // stops if the loop is over the current stream again.
+            do
+            {
+                // if next stream is greater then the amount of stream
+                // take first
+                if (++next >= streams)
+                {
+                    next = 0;
+                }
+                // set the next stream
+                _player.CurrentEditionStream = next;
+                // if the stream is set in, stop the loop
+                if (next == _player.CurrentEditionStream)
+                {
+                    success = true;
+                }
+            } while ((next != current) && (success == false));
+            if (success == false)
+            {
+                Log.Info("g_Player: Failed to switch to next editionstream.");
+            }
+        }
     }
 
     private static bool IsFileUsedbyAnotherProcess(string file)

@@ -139,6 +139,7 @@ namespace MediaPortal.Player
       Subtitle,
       Subtitle_hidden,
       Subtitle_shown,
+      Edition,
       Unknown,
     }
 
@@ -548,7 +549,7 @@ namespace MediaPortal.Player
       {
         if (mediaPos != null)
         {
-          //mediaPos.get_Duration(out m_dDuration);
+          mediaPos.get_Duration(out m_dDuration); //(refresh timeline when change EDITION)
           mediaPos.get_CurrentPosition(out m_dCurrentPos);
         }
         if (GUIGraphicsContext.BlankScreen ||
@@ -1491,9 +1492,9 @@ namespace MediaPortal.Player
                   FSInfos.LCID = sPLCid;
                   FSInfos.Id = istream;
                   FSInfos.Type = StreamType.Unknown;
-                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams.
+                  //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
                   if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") &&
-                      ((sPDWGroup == 1) || (sPDWGroup == 2)))
+                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18)))
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
@@ -1524,6 +1525,11 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
+                    //EDITION
+                  else if (sPDWGroup == 18)
+                  {
+                    FSInfos.Type = StreamType.Edition;
+                  }
                   Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
                             FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
               sPDWGroup.ToString(), sPLCid.ToString());
@@ -1535,6 +1541,7 @@ namespace MediaPortal.Player
                     case StreamType.Video:
                     case StreamType.Audio:
                     case StreamType.Subtitle:
+                    case StreamType.Edition:
                       if (FStreams.GetStreamCount(FSInfos.Type) == 0)
                       {
                         FSInfos.Current = true;
@@ -1578,6 +1585,64 @@ namespace MediaPortal.Player
       return true;
     }
 
+    #endregion
+
+    #region edition selection
+
+    /// <summary>
+    /// Property to get the language for an edition stream
+    /// </summary>
+    public override string EditionLanguage(int iStream)
+    {
+        string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+        return streamName;
+    }
+
+    public override string EditionType(int iStream)
+    {
+        string streamName = FStreams.GetStreamInfos(StreamType.Edition, iStream).Name;
+        return streamName;
+    }
+
+    public override int EditionStreams
+    {
+        get { return FStreams.GetStreamCount(StreamType.Edition); }
+    }
+
+    /// <summary>
+    /// Property to get/set the current edition stream
+    /// </summary>
+    public override int CurrentEditionStream
+    {
+        get
+        {
+            for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+            {
+                if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+                {
+                    return i;
+                }
+            }
+            return 0;
+        }
+        set
+        {
+            for (int i = 0; i < FStreams.GetStreamCount(StreamType.Edition); i++)
+            {
+                if (FStreams.GetStreamInfos(StreamType.Edition, i).Current)
+                {
+                    FStreams.SetCurrentValue(StreamType.Edition, i, false);
+                }
+            }
+            FStreams.SetCurrentValue(StreamType.Edition, value, true);
+            EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, 0,
+                         FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+            EnableStream(FStreams.GetStreamInfos(StreamType.Edition, value).Id, AMStreamSelectEnableFlags.Enable,
+                         FStreams.GetStreamInfos(StreamType.Edition, value).Filter);
+            Log.Info("VideoPlayer:Edition Duration Change:{0}", m_dDuration);
+            return;
+        }
+    }
     #endregion
 
     #region IDisposable Members
