@@ -121,6 +121,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("border", "cornerRotate")] protected bool _borderCornerTextureRotate = true;
     [XMLSkinElement("imagepath")] private string _imagePath = "";  // Image path used to store VUMeter files
     [XMLSkinElement("tileFill")] private bool _tileFill = false;  // Will tile a texture to the rectangle rather than stretch it
+    [XMLSkinElement("shouldCache")] private bool _shouldCache = false;  // hint from the skin that the particular texture should be cached for perf reasons
 
     private int _diffuseTexWidth = 0;
     private int _diffuseTexHeight = 0;
@@ -742,7 +743,7 @@ namespace MediaPortal.GUI.Library
           else
           {
             //Log.Info("load:{0}", fileName);
-            frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight);
+              frameCount = GUITextureManager.Load(fileName, m_dwColorKey, m_iRenderWidth, _textureHeight, _shouldCache);
             if (0 == frameCount)
             {
               continue; // unable to load texture
