@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>25</id>
   <defaultcontrol>2</defaultcontrol>
@@ -155,7 +155,7 @@
           <layout>StackLayout</layout>
           <visible>!Control.HasFocus(50)</visible>
           <control>
-            <description>View-As</description>
+            <description>Switch Layout</description>
             <type>button</type>
             <id>2</id>
             <label>100</label>
