@@ -154,7 +154,7 @@
 					<layout>StackLayout</layout>
 					<visible>!Control.HasFocus(50)</visible>
 					<control>
-						<description>View-As</description>
+						<description>Switch Layout</description>
 						<type>button</type>
 						<id>2</id>
 						<label>100</label>

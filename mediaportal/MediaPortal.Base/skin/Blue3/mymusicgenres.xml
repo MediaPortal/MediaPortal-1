@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>504</id>
   <defaultcontrol>2</defaultcontrol>
@@ -154,7 +154,7 @@
       <posY>97</posY>
       <layout>StackLayout</layout>
       <control>
-        <description>View-As</description>
+        <description>Switch Layout</description>
         <type>button</type>
         <id>2</id>
         <label>100</label>
