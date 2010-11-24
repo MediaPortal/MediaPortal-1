@@ -3610,7 +3610,7 @@ namespace TvPlugin
         return false;
       }
       keyboard.Password = bPassword;
-      keyboard.Title = title;
+      //keyboard.Title = title;
       keyboard.SetMaxLength(maxLength);
       keyboard.Reset();
       keyboard.Text = strLine;
