@@ -174,6 +174,12 @@ namespace SetupTv.Sections
 
               User user = new User();
               user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
+
+              while (_users.ContainsKey(user.Name))
+              {
+                user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
+              }
+
               user.IsAdmin = false;
 
               _users.Add(user.Name, true);
