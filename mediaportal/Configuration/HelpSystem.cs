@@ -26,7 +26,7 @@ namespace MediaPortal.Configuration
 {
   public static class HelpSystem
   {
-    private const string baseURL = @"http://wiki2010.team-mediaportal.com/REDIRECTS/";
+    private const string baseURL = @"http://wiki.team-mediaportal.com/REDIRECTS/";
 
     public static void ShowHelp(string sectionName)
     {
