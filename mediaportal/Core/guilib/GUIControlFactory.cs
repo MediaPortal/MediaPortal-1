@@ -220,6 +220,8 @@ namespace MediaPortal.GUI.Library
       return membersTable;
     }
 
+    static Dictionary<string, Color> colCache = new Dictionary<string, Color>(); // colcon.fromhtml is weirdly slow, so we cache its result
+    static Dictionary<Type, TypeConverter> convCache = new Dictionary<Type, TypeConverter>(); // colcon.fromhtml is weirdly slow, so we cache its result
     private static object ConvertXmlStringToObject(string valueName, string valueText, Type type)
     {
       if (type == typeof (bool))
@@ -275,7 +277,9 @@ namespace MediaPortal.GUI.Library
 
                 if (index != -1)
                 {
-                  Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+                  // FromHTML is strangly and unnessesarily slow, simple cache
+                  //Color color = ColorTranslator.FromHtml(valueText.Substring(0, index));
+                  Color color = colCache.TryGetOrAdd(valueText.Substring(0, index), col => ColorTranslator.FromHtml(col));
                   int alpha = 255;
 
                   if (index < valueText.Length)
@@ -292,13 +296,14 @@ namespace MediaPortal.GUI.Library
 
                   return Color.FromArgb(alpha, color).ToArgb();
                 }
-
-                return Color.FromName(valueText).ToArgb();
+                return colCache.TryGetOrAdd(valueText, col => Color.FromName(valueText)).ToArgb();
+                //return Color.FromName(valueText).ToArgb();
               }
 
               try
               {
-                Color color = ColorTranslator.FromHtml('#' + valueText);
+                Color color = colCache.TryGetOrAdd('#' + valueText, col => ColorTranslator.FromHtml(col));
+                //Color color = ColorTranslator.FromHtml('#' + valueText);
 
                 return color.ToArgb();
               }
@@ -362,8 +367,8 @@ namespace MediaPortal.GUI.Library
       }
 
       // much of the above could be changed to use the following, needs time for thorough testing though
-      TypeConverter converter = TypeDescriptor.GetConverter(type);
-
+      //TypeConverter converter = TypeDescriptor.GetConverter(type);
+      TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
       if (converter.CanConvertFrom(typeof (string)))
       {
         return converter.ConvertFromString(valueText);
@@ -496,6 +501,17 @@ namespace MediaPortal.GUI.Library
       return (condition != 0);
     }
 
+    private static Dictionary<string, XmlNode> getNodes(XmlNode ControlNode)
+    {
+      var dic = new Dictionary<string, XmlNode>();
+      foreach (XmlNode child in ControlNode.ChildNodes)
+      {
+        if (!dic.ContainsKey(child.Name))
+             dic.Add(child.Name, child);
+      }
+      return dic;
+    }
+
     private static void UpdateControlWithXmlData(GUIControl control, Type controlType, XmlNode pControlNode,
                                                  IDictionary<string, string> defines, string filename)
     {
@@ -504,13 +520,16 @@ namespace MediaPortal.GUI.Library
       if (attributesThatCanBeUpdates != null)
       {
 
+        var nodeDic = getNodes(pControlNode);
         foreach (KeyValuePair<XMLSkinAttribute, MemberInfo> en in attributesThatCanBeUpdates)
         {                  
           XMLSkinAttribute xmlAttr = (XMLSkinAttribute)en.Key;
           MemberInfo correspondingMemberAttr = en.Value as MemberInfo;
           //XmlNode elementNode = pControlNode.SelectSingleNode(xmlAttr.XmlElementName);
-          XmlNode elementNode = pControlNode.SelectSingleNodeFast(xmlAttr.XmlElementName);
-          if (elementNode != null)
+          //XmlNode elementNode = pControlNode.SelectSingleNodeFast(xmlAttr.XmlElementName);
+          XmlNode elementNode;
+          //if (elementNode != null)
+          if(nodeDic.TryGetValue(xmlAttr.XmlElementName, out elementNode))
           {
             XmlNode attribNode = elementNode.Attributes.GetNamedItem(xmlAttr.XmlAttributeName);
             if (attribNode != null)
@@ -855,12 +874,13 @@ namespace MediaPortal.GUI.Library
 
     private static Type GetControlType(XmlNode controlNode)
     {
-      XmlNode typeText = controlNode.SelectSingleNodeFast("type/text()");
-      if (typeText == null || typeText.Value == "")
+      //XmlNode typeText = controlNode.SelectSingleNodeFast("type/text()");
+      XmlNode typeText = controlNode.SelectByNameFromChildren("type"); // this does the same without requiring full XPATH and doc parsing
+      if (typeText == null || typeText.InnerText == "")
       {
         return null;
       }
-      string xmlTypeName = typeText.Value;
+      string xmlTypeName = typeText.InnerText;
       switch (xmlTypeName)
       {
         case ("image"):

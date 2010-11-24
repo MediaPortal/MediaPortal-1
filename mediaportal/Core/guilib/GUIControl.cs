@@ -34,10 +34,70 @@ using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
+
+  public abstract class GUIBaseControl : System.ComponentModel.ISupportInitialize
+  {
+      protected GUIBaseControl()
+      {
+          // default values
+          IsVisible = true;
+          Focusable = true;
+          IsEnabled = true;
+      }
+
+      public bool IsEnabled { get; set; }
+
+      [XMLSkinElement("visible")]
+      public bool IsVisible
+      {
+          get { return Visibility == Visibility.Visible; }
+          set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
+      }
+      public bool IsFocused { get; set; }
+      public bool Focusable { get; set; }
+      public MediaPortal.Drawing.Point Location { get; set; }
+      public Thickness Margin { get; set; }
+      public Size RenderSize { get; set; }
+      public Visibility Visibility { get; set; }
+      public HorizontalAlignment HorizontalAlignment { get; set; }
+      public VerticalAlignment VerticalAlignment { get; set; }
+      public HorizontalAlignment HorizontalContentAlignment { get; set; }
+      public ContextMenu ContextMenu { get; set; }
+      public virtual int Width { get; set; }
+      public virtual int Height { get; set; }
+
+      public void Arrange(Rect finalRect)
+      {
+          Location = finalRect.Location;
+          Width = (int)finalRect.Width;
+          Height = (int)finalRect.Height;
+      }
+
+      // not implemented before either, but probably should?
+      public Size Measure(Size availableSize)
+      {
+          return Size.Empty; 
+      }
+
+      // not implemented before either, but probably should?
+      public void BringIntoView() { } 
+      public void UpdateLayout() { }
+
+      #region ISupportInitialize
+      public virtual void BeginInit()
+      {
+      }
+
+      public virtual void EndInit()
+      {
+      }
+      #endregion
+  }
+
   /// <summary>
   /// Base class for GUIControls.
   /// </summary>
-  public abstract class GUIControl : Control, IDisposable
+  public abstract class GUIControl : GUIBaseControl, IDisposable// Control, IDisposable
   {
     [XMLSkinElement("subtype")] protected string _subType = "";
     [XMLSkinElement("onleft")] protected int _leftControlId = 0;
@@ -406,7 +466,7 @@ namespace MediaPortal.GUI.Library
       return Math.Round(Math.Sqrt((horzDelta * horzDelta) + (vertDelta * vertDelta)));
     }
 
-    private ArrayList FlattenHierarchy(UIElementCollection elements)
+    private ArrayList FlattenHierarchy(ICollection<GUIControl> elements)
     {
       ArrayList targetList = new ArrayList();
 
@@ -415,7 +475,7 @@ namespace MediaPortal.GUI.Library
       return targetList;
     }
 
-    private void FlattenHierarchy(ICollection collection, ArrayList targetList)
+    private void FlattenHierarchy(ICollection<GUIControl> collection, ArrayList targetList)
     {
       foreach (GUIControl control in collection)
       {
@@ -592,7 +652,8 @@ namespace MediaPortal.GUI.Library
         {
           QueueAnimation(AnimationType.Focus);
         }
-        SetValue(IsFocusedProperty, value);
+        //SetValue(IsFocusedProperty, value);
+        IsFocused = value;
       }
     }
 
@@ -1302,16 +1363,10 @@ namespace MediaPortal.GUI.Library
     /// Property to get the control for a specific control ID
     /// </summary>
     /// <param name="ID">Id of wanted control</param>
-    /// <returns>null if not found or
-    ///          GUIControl if found
-    /// </returns>
+    /// <returns>null if not found orGUIControl if found</returns>
     public virtual GUIControl GetControlById(int ID)
     {
-      if (ID == GetID)
-      {
-        return this;
-      }
-      return null;
+      return ID == GetID ? this : null;
     }
 
     /// <summary>
@@ -1387,8 +1442,8 @@ namespace MediaPortal.GUI.Library
     {
       x = _positionX;
       y = _positionY;
-      width = base.Width;
-      height = base.Height;
+      width = Width;
+      height = Height;
     }
 
     /// <summary>
@@ -1538,19 +1593,6 @@ namespace MediaPortal.GUI.Library
 
     #endregion Enums
 
-    #region Methods
-
-    protected override Size ArrangeOverride(Rect finalRect)
-    {
-      Size size = base.ArrangeOverride(finalRect);
-
-      Update();
-
-      return size;
-    }
-
-    #endregion Methods
-
     #region Properties
 
     public override int Width
@@ -1579,7 +1621,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public override double Opacity
+    public double Opacity
     {
       get { return 255.0 / Color.FromArgb((int)_diffuseColor).A; }
       set { _diffuseColor = Color.FromArgb((int)(255 * value), Color.FromArgb((int)_diffuseColor)).ToArgb(); }
@@ -1587,11 +1629,11 @@ namespace MediaPortal.GUI.Library
 
     public Size Size
     {
-      get { return new Size(base.Width, base.Height); }
+      get { return new Size(Width, Height); }
       set
       {
-        base.Width = (int)value.Width;
-        base.Height = (int)value.Height;
+        Width = (int)value.Width;
+        Height = (int)value.Height;
         Update();
       }
     }

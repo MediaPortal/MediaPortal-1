@@ -1181,9 +1181,6 @@
     <Compile Include="System.Windows.Automation.Provider\ExpandCollapseState.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Automation.Provider\IAutomationPatternProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Automation.Provider\IExpandCollapseProvider.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1197,15 +1194,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Automation\ToggleState.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Button.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ButtonBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Canvas.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\ClickMode.cs">
@@ -1223,28 +1211,10 @@
     <Compile Include="System.Windows.Controls\ContextMenuService.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Control.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ControlTemplate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DataTemplate.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DataTemplateSelector.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\DefinitionBase.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\Dock.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\DockPanel.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Grid.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\GridLength.cs">
@@ -1256,28 +1226,10 @@
     <Compile Include="System.Windows.Controls\GridUnitType.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\HeaderedItemsControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Image.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\IScrollInfo.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\ItemCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\ItemsControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Menu.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\MenuBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\MenuItem.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\MenuItemMode.cs">
@@ -1289,12 +1241,6 @@
     <Compile Include="System.Windows.Controls\Orientation.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows.Controls\Page.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\Panel.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows.Controls\PlacementMode.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1302,9 +1248,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Controls\RowDefinitionCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows.Controls\StackPanel.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows.Data\Binding.cs">
@@ -1590,9 +1533,6 @@
     <Compile Include="System.Windows\ComponentResourceKey.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\ContentControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\ContentElement.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1647,9 +1587,6 @@
     <Compile Include="System.Windows\FrameworkContentElement.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\FrameworkElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\FrameworkElementFactory.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1657,9 +1594,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\FrameworkPropertyMetadataOptions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\FrameworkTemplate.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\Freezable.cs">
@@ -1681,9 +1615,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\LocalValueEnumerator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\LogicalTreeHelper.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\PropertyInvalidatedCallback.cs">
@@ -1758,9 +1689,6 @@
     <Compile Include="System.Windows\SizeChangedEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\SizeChangedInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\StaticResourceExtension.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1797,12 +1725,6 @@
     <Compile Include="System.Windows\TriggerInvalidatedEventHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="System.Windows\UIElement.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\UIElementCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="System.Windows\UIPropertyMetadata.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1816,12 +1738,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\VisualCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\VisualOperations.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="System.Windows\VisualUtility.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="System.Windows\WindowState.cs">

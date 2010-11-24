@@ -21,7 +21,7 @@
 using System;
 using System.Windows;
 using MediaPortal.GUI.Library;
-
+/*
 namespace MediaPortal.Drawing.Layouts
 {
   public class DockLayout : ILayout
@@ -221,3 +221,4 @@ namespace MediaPortal.Drawing.Layouts
     #endregion Fields
   }
 }
+*/

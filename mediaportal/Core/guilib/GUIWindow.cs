@@ -22,8 +22,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -31,6 +33,7 @@ using System.Windows.Serialization;
 using System.Xml;
 using MediaPortal.Player;
 using MediaPortal.ExtensionMethods;
+using System.Linq;
 
 namespace MediaPortal.GUI.Library
 {
@@ -45,7 +48,7 @@ namespace MediaPortal.GUI.Library
   /// Each window plugin should derive from this base class
   /// Pluginwindows should be copied in the plugins/windows folder
   /// </summary>
-  public class GUIWindow : Page, IDisposable
+  public class GUIWindow : ISupportInitialize, IDisposable
   {
     #region window ids
 
@@ -473,7 +476,6 @@ namespace MediaPortal.GUI.Library
       return LoadSkin();
     }
 
-
     /// <summary>
     /// Loads the xml file for the window.
     /// </summary>
@@ -491,6 +493,7 @@ namespace MediaPortal.GUI.Library
       {
         return false;
       }
+
       _showAnimation.Reset();
       _closeAnimation.Reset();
 
@@ -657,11 +660,6 @@ namespace MediaPortal.GUI.Library
 
         foreach (XmlNode node in nodeList)
         {
-          if (node.Name == null)
-          {
-            continue;
-          }
-
           switch (node.Name)
           {
             case "control":
@@ -1068,7 +1066,7 @@ namespace MediaPortal.GUI.Library
         {
           try
           {
-            ((GUIControl)(Children[i])).PreAllocResources();
+            Children[i].PreAllocResources();
           }
           catch (Exception ex1)
           {
@@ -1084,7 +1082,7 @@ namespace MediaPortal.GUI.Library
           {
             if (!faultyControl.Contains(i))
             {
-              ((GUIControl)(Children[i])).AllocResources();
+              Children[i].AllocResources();
             }
             else
             {
@@ -1114,7 +1112,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         // tell every control to free its resources
-        Children.DisposeAndClearList();        
+        Children.DisposeAndClearCollection();        
         _listPositions.DisposeAndClear();
       }
       catch (Exception ex)
@@ -1201,16 +1199,18 @@ namespace MediaPortal.GUI.Library
     /// <returns>GUIControl or null if control is not found</returns>
     public virtual GUIControl GetControl(int iControlId)
     {
-      for (int x = 0; x < Children.Count; x++)
-      {
-        GUIControl cntl = (GUIControl)Children[x];
-        GUIControl cntlFound = cntl.GetControlById(iControlId);
-        if (cntlFound != null)
-        {
-          return cntlFound;
-        }
-      }
-      return null;
+      // this is a very hot method, called millions of times and all the virtual property calls costs
+      return Children.GetControlById(iControlId);
+      //for (int x = 0; x < Children.Count; x++)
+      //{
+      //    GUIControl cntl = Children[x];
+      //    GUIControl cntlFound = cntl.GetControlById(iControlId);
+      //    if (cntlFound != null)
+      //    {
+      //        return cntlFound;
+      //    }
+      //}
+      //return null;
     }
 
     /// <summary>
@@ -1233,7 +1233,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          ((GUIControl)Children[x]).UpdateVisibility();
+          Children[x].UpdateVisibility();
         }
       }
     }
@@ -1258,9 +1258,10 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          if (((GUIControl)Children[x]).Focus)
+          var guicontrol = Children[x];
+          if (guicontrol.Focus)
           {
-            return ((GUIControl)Children[x]).GetID;
+            return guicontrol.GetID;
           }
         }
       }
@@ -1772,7 +1773,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      foreach (UIElement element in _children)
+      foreach (var element in _children)
       {
         if (element is GUIAnimation)
         {
@@ -1783,7 +1784,7 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
-    public UIElementCollection controlList
+    public GUIControlCollection controlList
     {
       get { return this.Children; }
     }
@@ -1950,13 +1951,13 @@ namespace MediaPortal.GUI.Library
 
     #region Properties
 
-    public UIElementCollection Children
+    public GUIControlCollection Children
     {
       get
       {
         if (_children == null)
         {
-          _children = new UIElementCollection();
+          _children = new GUIControlCollection();
         }
         return _children;
       }
@@ -1983,9 +1984,19 @@ namespace MediaPortal.GUI.Library
 
     #region Fields
 
-    private UIElementCollection _children;
+    private GUIControlCollection _children;
     private StoryboardCollection _storyboards;
 
     #endregion Fields
+
+    public void BeginInit()
+    {
+        
+    }
+
+    public void EndInit()
+    {
+
+    }
   }
 }

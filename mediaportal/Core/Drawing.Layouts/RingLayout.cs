@@ -24,6 +24,7 @@ using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Drawing.Layouts
 {
+    
   public class RingLayout : ILayout
   {
     #region Constructors
@@ -42,38 +43,38 @@ namespace MediaPortal.Drawing.Layouts
 
     #region Methods
 
-    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
-    {
-      Rect rect = new Rect(x, y, element.Width, element.Height);
+    //private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    //{
+    //  Rect rect = new Rect(x, y, element.Width, element.Height);
 
-      switch (element.HorizontalAlignment)
-      {
-        case HorizontalAlignment.Center:
-          rect.X = x + w / 2 - element.Width / 2;
-          break;
-        case HorizontalAlignment.Right:
-          rect.X = x + w - element.Width;
-          break;
-        case HorizontalAlignment.Stretch:
-          rect.Width = w - t.Right;
-          break;
-      }
+    //  switch (element.HorizontalAlignment)
+    //  {
+    //    case HorizontalAlignment.Center:
+    //      rect.X = x + w / 2 - element.Width / 2;
+    //      break;
+    //    case HorizontalAlignment.Right:
+    //      rect.X = x + w - element.Width;
+    //      break;
+    //    case HorizontalAlignment.Stretch:
+    //      rect.Width = w - t.Right;
+    //      break;
+    //  }
 
-      switch (element.VerticalAlignment)
-      {
-        case VerticalAlignment.Center:
-          rect.Y = y + h / 2 - element.Height / 2;
-          break;
-        case VerticalAlignment.Bottom:
-          rect.Y = h - element.Height;
-          break;
-        case VerticalAlignment.Stretch:
-          rect.Height = h - t.Bottom;
-          break;
-      }
+    //  switch (element.VerticalAlignment)
+    //  {
+    //    case VerticalAlignment.Center:
+    //      rect.Y = y + h / 2 - element.Height / 2;
+    //      break;
+    //    case VerticalAlignment.Bottom:
+    //      rect.Y = h - element.Height;
+    //      break;
+    //    case VerticalAlignment.Stretch:
+    //      rect.Height = h - t.Bottom;
+    //      break;
+    //  }
 
-      element.Arrange(rect);
-    }
+    //  element.Arrange(rect);
+    //}
 
     public void Arrange(GUIGroup element)
     {
@@ -83,7 +84,7 @@ namespace MediaPortal.Drawing.Layouts
 
       int index = 0;
 
-      foreach (FrameworkElement child in element.Children)
+      foreach (var child in element.Children)
       {
         if (child.Visibility == Visibility.Collapsed)
         {
@@ -108,7 +109,7 @@ namespace MediaPortal.Drawing.Layouts
       double w = 0;
       double h = 0;
 
-      foreach (FrameworkElement child in element.Children)
+      foreach (var child in element.Children)
       {
         if (child.Visibility == Visibility.Collapsed)
         {

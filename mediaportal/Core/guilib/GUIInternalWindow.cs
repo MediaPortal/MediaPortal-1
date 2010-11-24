@@ -18,6 +18,8 @@
 
 #endregion
 
+using System.Drawing;
+
 namespace MediaPortal.GUI.Library
 {
   /// <summary>
@@ -33,6 +35,7 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIInternalWindow : GUIWindow
   {
+    public bool IsVisible { get; set; }
     public override string GetModuleName()
     {
       return GUILocalizeStrings.Get(100000 + GetID);

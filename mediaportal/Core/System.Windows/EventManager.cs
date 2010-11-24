@@ -37,10 +37,10 @@ namespace System.Windows
     public static RoutedEvent GetRoutedEventFromName(string name, Type ownerType)
     {
       // MPSPECIFIC
-      if (ownerType == typeof (GUIWindow))
-      {
-        ownerType = typeof (Page);
-      }
+      //if (ownerType == typeof (GUIWindow))
+      //{
+      //  ownerType = typeof (Page);
+      //}
 
       return (RoutedEvent)_registeredRoutedEvents[ownerType + name];
     }

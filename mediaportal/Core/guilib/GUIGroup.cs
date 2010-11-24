@@ -348,20 +348,20 @@ namespace MediaPortal.GUI.Library
       _layout.Arrange(this);
     }
 
-    protected override Size ArrangeOverride(Rect finalRect)
-    {
-      this.Location = finalRect.Location;
-      this.Size = finalRect.Size;
+    //protected override Size ArrangeOverride(Rect finalRect)
+    //{
+    //  this.Location = finalRect.Location;
+    //  this.Size = finalRect.Size;
 
-      if (_layout == null)
-      {
-        return this.Size;
-      }
+    //  if (_layout == null)
+    //  {
+    //    return this.Size;
+    //  }
 
-      _layout.Arrange(this);
+    //  _layout.Arrange(this);
 
-      return finalRect.Size;
-    }
+    //  return finalRect.Size;
+    //}
 
     void ISupportInitialize.BeginInit()
     {
@@ -376,17 +376,17 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected override Size MeasureOverride(Size availableSize)
-    {
-      if (_layout == null)
-      {
-        return Size.Empty;
-      }
+    //protected override Size MeasureOverride(Size availableSize)
+    //{
+    //  if (_layout == null)
+    //  {
+    //    return Size.Empty;
+    //  }
 
-      _layout.Measure(this, this.Size);
+    //  _layout.Measure(this, this.Size);
 
-      return this.Size = _layout.Size;
-    }
+    //  return this.Size = _layout.Size;
+    //}
 
     public override int DimColor
     {
@@ -414,13 +414,13 @@ namespace MediaPortal.GUI.Library
       set { _layout = value; }
     }
 
-    public UIElementCollection Children
+    public GUIControlCollection Children
     {
       get
       {
         if (_children == null)
         {
-          _children = new UIElementCollection();
+          _children = new GUIControlCollection();
         }
         return _children;
       }
@@ -432,7 +432,7 @@ namespace MediaPortal.GUI.Library
 
     private Animator _animator;
     private int _beginInitCount = 0;
-    private UIElementCollection _children;
+    private GUIControlCollection _children;
 
     [XMLSkinElement("layout")] private ILayout _layout;
 

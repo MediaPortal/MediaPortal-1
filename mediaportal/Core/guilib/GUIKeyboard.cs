@@ -129,7 +129,6 @@ namespace MediaPortal.GUI.Library
     public char _currentKeyb = (char)0;
     public char _previousKey = (char)0;
     public DateTime _timerKey = DateTime.Now;
-    private bool _isVisible;
     private bool _isAllocated = false;
     private bool _labelClearedFromText = false;
 
@@ -782,7 +781,7 @@ namespace MediaPortal.GUI.Library
 
     protected void Close()
     {
-      _isVisible = false;
+      IsVisible = false;
     }
 
     public override void Render(float timePassed)
@@ -1855,12 +1854,6 @@ namespace MediaPortal.GUI.Library
     {
       get { return _useSearchLayout; }
       set { _useSearchLayout = value; }
-    }
-
-    public override bool IsVisible
-    {
-      get { return _isVisible; }
-      set { _isVisible = value; }
     }
   }
 }

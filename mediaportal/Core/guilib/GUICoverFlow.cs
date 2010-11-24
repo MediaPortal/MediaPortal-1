@@ -136,7 +136,7 @@ namespace MediaPortal.GUI.Library
     private GUIHorizontalScrollbar _horizontalScrollbar = null;
 
     // Create a collection to maintain the controls for the back of the card.
-    private System.Windows.UIElementCollection _cardBackControls = new System.Windows.UIElementCollection();
+    private List<GUIControl> _cardBackControls = new List<GUIControl>();
 
     // Cover flow status
     private float _position = 0.0f;

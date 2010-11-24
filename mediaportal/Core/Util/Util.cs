@@ -4020,22 +4020,65 @@ namespace MediaPortal.Util
     }
   }
 
-  public static class XMLNodeExtensions
+  public static class GenericExtensions
   {
-    public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
-    {
-      // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
-      XmlNodeList nodes = node.SelectNodes(xpath);
-
-      if (nodes == null)
-        return null;
-
-      IEnumerator enumerator = nodes.GetEnumerator();
-      if (enumerator != null && enumerator.MoveNext())
+      public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
       {
-        return (XmlNode)enumerator.Current;
+          // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+          XmlNodeList nodes = node.SelectNodes(xpath);
+
+          if (nodes == null)
+              return null;
+
+          IEnumerator enumerator = nodes.GetEnumerator();
+          if (enumerator != null && enumerator.MoveNext())
+          {
+              return (XmlNode)enumerator.Current;
+          }
+          return null;
       }
-      return null; //nothing found
-    }
+
+      /// <summary>
+      /// In simple cases this is much much faster than a Full XPATH query
+      /// </summary>
+      /// <param name="node"></param>
+      /// <param name="name"></param>
+      /// <returns></returns>
+      public static XmlNode SelectByNameFromChildren(this XmlNode node, string name)
+      {
+          if (node == null || string.IsNullOrEmpty(name) || !node.HasChildNodes)
+              return null;
+          foreach (XmlNode child in node.ChildNodes)
+              if (name.Equals(child.Name, StringComparison.OrdinalIgnoreCase))
+                  return child;
+          return null;
+      }
+
+      public static TResult TryGetOrAdd<TIn, TResult>(this Dictionary<TIn, TResult> cache, TIn arg, Func<TIn, TResult> evaluator)
+      {
+          TResult res;
+          if (cache.TryGetValue(arg, out res))
+              return res;
+          res = evaluator(arg);
+          cache.Add(arg, res);
+          return res;
+      }
+
+      public static IAsyncResult DoAsync<T>(this Action<T> action, T arg)
+      {
+          return action.BeginInvoke(arg, null, null);
+      }
+
+      public static void WaitForAll(this IEnumerable<IAsyncResult> operations)
+      {
+          while (operations.Any(o => !o.IsCompleted))
+              System.Threading.Thread.Sleep(10);
+      }
+
+      public static IEnumerable<IAsyncResult> DoActionAsync<T>(this IEnumerable<T> source, Action<T> actionOnItem)
+      {
+          return source.Select(i => actionOnItem.DoAsync(i))
+                       .ToArray();
+      }
   }
 }

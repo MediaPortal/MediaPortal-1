@@ -46,7 +46,7 @@ namespace MediaPortal.Drawing.Layouts
 
     #region Methods
 
-    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    private void ApplyAlignment(GUIControl element, Thickness t, double x, double y, double w, double h)
     {
       Rect rect = new Rect(x, y, element.Width, element.Height);
 
@@ -89,7 +89,7 @@ namespace MediaPortal.Drawing.Layouts
       double w = _orientation != Orientation.Horizontal ? Math.Max(0, element.Width - t.Width) : 0;
       double h = _orientation == Orientation.Horizontal ? Math.Max(0, element.Height - t.Height) : 0;
 
-      foreach (FrameworkElement child in element.Children)
+      foreach (var child in element.Children)
       {
         if (child.Visibility == Visibility.Collapsed)
         {
@@ -116,7 +116,7 @@ namespace MediaPortal.Drawing.Layouts
       double w = 0;
       double h = 0;
 
-      foreach (FrameworkElement child in element.Children)
+      foreach (var child in element.Children)
       {
         if (child.Visibility == Visibility.Collapsed)
         {

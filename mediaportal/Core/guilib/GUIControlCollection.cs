@@ -20,90 +20,166 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows;
 
 namespace MediaPortal.GUI.Library
 {
-  public sealed class GUIControlCollection : CollectionBase
+  public sealed class GUIControlCollection :  IList<GUIControl>
   {
-    #region Methods
+      // we maintain ids to avoid expensive virtual property calls
+      private List<GUIControl> list = new List<GUIControl>();
+      private Dictionary<int, GUIControl> knownIDs = new Dictionary<int, GUIControl>();
+      #region IList implementation
 
-    public void Add(GUIControl control)
-    {
-      if (control == null)
+      public int IndexOf(GUIControl item)
       {
-        throw new ArgumentNullException("control");
+          return list.IndexOf(item);
       }
 
-      List.Add(control);
-    }
-
-    public bool Contains(GUIControl control)
-    {
-      if (control == null)
+      public void Insert(int index, GUIControl item)
       {
-        throw new ArgumentNullException("control");
+          TryAdd(item);
+          list.Insert(index, item);
       }
 
-      return List.Contains(control);
-    }
-
-    public void CopyTo(GUIControl[] array, int arrayIndex)
-    {
-      if (array == null)
+      public void RemoveAt(int index)
       {
-        throw new ArgumentNullException("array");
+          knownIDs.Remove(list[index].GetID);
+          list.RemoveAt(index);
       }
 
-      List.CopyTo(array, arrayIndex);
-    }
-
-    public int IndexOf(GUIControl control)
-    {
-      if (control == null)
+      public GUIControl this[int index]
       {
-        throw new ArgumentNullException("control");
+          get { return list[index]; }
+          set
+          {
+              TryAdd(value);
+              list[index] = value; 
+          }
       }
 
-      return List.IndexOf(control);
-    }
-
-    public void Insert(int index, GUIControl control)
-    {
-      if (control == null)
+      public void Add(GUIControl item)
       {
-        throw new ArgumentNullException("control");
+          TryAdd(item);
+          list.Add(item);
       }
 
-      List.Insert(index, control);
-    }
-
-    public bool Remove(GUIControl control)
-    {
-      if (control == null)
+      public void Clear()
       {
-        throw new ArgumentNullException("control");
+          knownIDs.Clear();
+          list.Clear();
       }
 
-      if (List.Contains(control) == false)
+      public bool Contains(GUIControl item)
       {
-        return false;
+          return IndexOf(item) >= 0;
       }
 
-      List.Remove(control);
+      public void CopyTo(GUIControl[] array, int arrayIndex)
+      {
+          list.CopyTo(array, arrayIndex);
+      }
 
-      return true;
-    }
+      public int Count
+      {
+          get { return list.Count; }
+      }
 
-    #endregion Methods
+      public bool IsReadOnly
+      {
+          get { return false; }
+      }
 
-    #region Properties
+      public bool Remove(GUIControl item)
+      {
+          var index = IndexOf(item);
+          if (index >= 0)
+          {
+              RemoveAt(IndexOf(item));
+              return true;
+          }
+          return false;
+      }
 
-    public GUIControl this[int index]
-    {
-      get { return (GUIControl)List[index]; }
-      set { List[index] = value; }
-    }
+      public IEnumerator<GUIControl> GetEnumerator()
+      {
+          return list.GetEnumerator();
+      }
 
-    #endregion Properties
+      System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+      {
+          return list.GetEnumerator();
+      }
+
+      #endregion
+
+      #region public methods
+
+      public GUIControl GetControlById(int id)
+      {
+          GUIControl knownControl;
+          
+          if (knownIDs.TryGetValue(id, out knownControl))
+          {
+            // looking good
+            // make sure its id didn't change
+            if (knownControl.GetID == id)
+            {
+                // hit
+                return knownControl;
+            }
+            GUIControl sub;
+            if((sub = knownControl.GetControlById(id)) != null)
+            {
+                // control is a subcontrol of knowncontrol
+                return sub;
+            }
+            else
+            {
+                // control has changed it's id since we stored it
+                knownIDs.Remove(id);
+                TryAdd(knownControl);
+                // we have to retry from top since a control before this one might have the wanted id
+            }
+          }
+
+          // we should very rarely reach here, means we didn't find it by stored id, most likely it doesnt exist
+          // however we have to try in case a control changed its id since we stored it
+          // it could also be a subcontrol
+          for (int i = 0; i < list.Count; i++)
+          {
+              GUIControl sub;
+              if((sub = list[i].GetControlById(id)) != null)
+              {
+                  // control with id found, store item in this list, not potential subitem itself
+                  TryAdd(list[i]);
+                  return sub;
+              }
+          }
+          // not found, we can't remember that since a subcontrol might add it to its children which we wont know
+          return null;
+      }
+
+      #endregion
+
+      #region helpers
+      private bool TryAdd(GUIControl control)
+      {
+          int id = control.GetID;
+          if (knownIDs.ContainsKey(id))
+              return false;
+          try
+          {
+              knownIDs.Add(id, control);
+              return true;
+          }
+          catch (Exception)
+          {}
+          
+          return false;
+      }
+      #endregion
   }
 }

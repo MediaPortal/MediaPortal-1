@@ -954,13 +954,13 @@ namespace MediaPortal.GUI.Library
       dialog.Reset();
       dialog.SetHeading(924); // menu
 
-      foreach (object item in ContextMenu.Items)
-      {
-        if (item is MenuItem)
-        {
-          dialog.Add(((MenuItem)item).Header as string);
-        }
-      }
+      //foreach (object item in ContextMenu.Items)
+      //{
+      //  if (item is MenuItem)
+      //  {
+      //    dialog.Add(((MenuItem)item).Header as string);
+      //  }
+      //}
 
       dialog.DoModal(ParentID);
 

@@ -410,7 +410,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
         }
         keyboard.Reset();
         keyboard.IsSearchKeyboard = false;
-        keyboard.Location = new Point(50, 50);
+        //keyboard.Location = new Point(50, 50);
         keyboard.Text = searchterm;
         keyboard.DoModal(GetID); // show it...
         if (keyboard.IsConfirmed)

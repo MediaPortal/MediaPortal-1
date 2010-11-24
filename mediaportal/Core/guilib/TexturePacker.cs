@@ -80,24 +80,18 @@ namespace MediaPortal.GUI.Library
 
       public PackedTextureNode Get(string fileName)
       {
-        if (fileName == null)
+        return string.IsNullOrEmpty(fileName) ? null : GetInternal(fileName);
+      }
+
+      private PackedTextureNode GetInternal(string fileName)
+      {
+        if (FileName == fileName)
         {
-          return null;
-        }
-        if (fileName.Length == 0)
-        {
-          return null;
-        }
-        if (FileName != null)
-        {
-          if (FileName == fileName)
-          {
             return this;
-          }
         }
         if (ChildLeft != null)
         {
-          PackedTextureNode node = ChildLeft.Get(fileName);
+          PackedTextureNode node = ChildLeft.GetInternal(fileName);
           if (node != null)
           {
             return node;
@@ -105,7 +99,7 @@ namespace MediaPortal.GUI.Library
         }
         if (ChildRight != null)
         {
-          return ChildRight.Get(fileName);
+          return ChildRight.GetInternal(fileName);
         }
         return null;
       }
@@ -457,8 +451,8 @@ namespace MediaPortal.GUI.Library
       Format useFormat = Format.A8R8G8B8;
       //if (IsCompressedTextureFormatOk(Format.Dxt5))
       //{
-      //  Log.Debug("TexturePacker: Using DXT5 texture format");
-      //  useFormat = Format.Dxt5;
+      //    Log.Debug("TexturePacker: Using DXT5 texture format");
+      //    useFormat = Format.Dxt5;
       //}
       if (bigOne.texture == null)
       {

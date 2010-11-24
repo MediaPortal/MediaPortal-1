@@ -39,9 +39,9 @@ namespace MediaPortal.GUI.Library
     private const int MAX_THUMB_WIDTH = 512;
     private const int MAX_THUMB_HEIGHT = 512;
 
-    private static Dictionary<string, CachedTexture> _cacheTextures = new Dictionary<string, CachedTexture>();
-    private static Dictionary<string, bool> _persistentTextures = new Dictionary<string, bool>();
-    private static Dictionary<string, DownloadedImage> _cacheDownload = new Dictionary<string, DownloadedImage>();
+    private static readonly Dictionary<string, CachedTexture> _cacheTextures = new Dictionary<string, CachedTexture>();
+    private static readonly Dictionary<string, bool> _persistentTextures = new Dictionary<string, bool>();
+    private static readonly Dictionary<string, DownloadedImage> _cacheDownload = new Dictionary<string, DownloadedImage>();
     private static TexturePacker _packer = new TexturePacker();
 
     // singleton. Dont allow any instance of this class
@@ -483,16 +483,16 @@ namespace MediaPortal.GUI.Library
           string cacheKey = cached.Name.ToLower();
 
           // a texture in the cache has been disposed of! remove from the cache
-          if (_cacheTextures.ContainsKey(cacheKey))
-          {
+          //if (_cacheTextures.ContainsKey(cacheKey))
+          //{
             //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
             cached.Disposed -= new EventHandler(cachedTexture_Disposed);
-            if (_persistentTextures.ContainsKey(cacheKey)) 
-            {
-              _persistentTextures.Remove(cacheKey);
-            }
+            //if (_persistentTextures.ContainsKey(cacheKey)) 
+            //{
+              _persistentTextures.Remove(cacheKey); // remove is fine even if it doesnt exist
+            //}
             _cacheTextures.Remove(cacheKey);
-          }
+          //}
         }
       }
     }
@@ -550,6 +550,7 @@ namespace MediaPortal.GUI.Library
         Format fmt = Format.A8R8G8B8;
 
         ImageInformation info2 = new ImageInformation();
+                
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height

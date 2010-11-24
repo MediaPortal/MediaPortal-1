@@ -51,9 +51,9 @@ namespace System.Windows.Controls
       PlacementRectangleProperty = DependencyProperty.RegisterAttached("PlacementRectangle", typeof (Rect),
                                                                        typeof (ContextMenuService),
                                                                        new FrameworkPropertyMetadata(Rect.Empty));
-      PlacementTargetProperty = DependencyProperty.RegisterAttached("PlacementTarget", typeof (UIElement),
-                                                                    typeof (ContextMenuService),
-                                                                    new FrameworkPropertyMetadata(false));
+      //PlacementTargetProperty = DependencyProperty.RegisterAttached("PlacementTarget", typeof (UIElement),
+      //                                                              typeof (ContextMenuService),
+      //                                                              new FrameworkPropertyMetadata(false));
 //			StaysOpenProperty = DependencyProperty.RegisterAttached("StaysOpen", typeof(bool), typeof(ContextMenuService), new FrameworkPropertyMetadata(false));
       VerticalOffsetProperty = DependencyProperty.RegisterAttached("VerticalOffset", typeof (double),
                                                                    typeof (ContextMenuService),

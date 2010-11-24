@@ -196,7 +196,7 @@ namespace MediaPortal.Drawing.Layouts
 
     #region Methods
 
-    private void ApplyAlignment(FrameworkElement element, Thickness t, double x, double y, double w, double h)
+    private void ApplyAlignment(GUIControl element, Thickness t, double x, double y, double w, double h)
     {
       Rect rect = new Rect(x, y, element.Width, element.Height);
 
@@ -236,7 +236,7 @@ namespace MediaPortal.Drawing.Layouts
       int rows = _rowHeight.Count; // Calculated number of table rows.
       int cols = _cols; // User specified number of table columns.
       int i = 0; // Index for retrieving child controls.
-      FrameworkElement child;
+      GUIControl child;
       Cell TableCell;
 
       double x = element.Location.X + t.Left;
@@ -254,7 +254,7 @@ namespace MediaPortal.Drawing.Layouts
             break; // Bailout if we run out of controls while looking at the last row.
           }
 
-          child = (FrameworkElement)element.Children[i];
+          child = element.Children[i];
 
           if (child.Visibility == Visibility.Collapsed)
           {
@@ -332,7 +332,7 @@ namespace MediaPortal.Drawing.Layouts
       int i = 0; // Index for retrieving child controls.
       int c = 1; // Current column number.
       double rowHeight = 0d; // Current row height.
-      FrameworkElement child;
+      GUIControl child;
       Cell TableCell;
 
       while (i < element.Children.Count)
@@ -345,7 +345,7 @@ namespace MediaPortal.Drawing.Layouts
             break; // Bailout if we run out of controls while looking at the last row.
           }
 
-          child = (FrameworkElement)element.Children[i];
+          child = element.Children[i];
 
           if (child.Visibility == Visibility.Collapsed)
           {
