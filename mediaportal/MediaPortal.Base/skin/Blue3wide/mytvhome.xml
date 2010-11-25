@@ -152,7 +152,7 @@
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
-      <id>13</id>
+      <id>133</id>
       <posX>515</posX>
       <posY>518</posY>
       <width>533</width>
@@ -165,7 +165,7 @@
     <control>
       <description>Channel label</description>
       <type>label</type>
-      <id>13</id>
+      <id>134</id>
       <posX>1173</posX>
       <posY>518</posY>
       <label>602</label>
@@ -178,7 +178,7 @@
     <control>
       <description>Current program time</description>
       <type>label</type>
-      <id>13</id>
+      <id>135</id>
       <posX>515</posX>
       <posY>543</posY>
       <label>#TV.View.start-#TV.View.stop</label>
@@ -191,7 +191,7 @@
     <control>
       <description>Current Channelname</description>
       <type>fadelabel</type>
-      <id>13</id>
+      <id>136</id>
       <posX>1173</posX>
       <posY>543</posY>
       <width>160</width>
