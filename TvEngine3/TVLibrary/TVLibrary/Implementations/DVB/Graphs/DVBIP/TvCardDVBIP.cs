@@ -141,6 +141,28 @@ namespace TvLibrary.Implementations.DVB
         if (!CheckThreadId()) return null;
         return new DVBIPScanning(this);
       }
+    }   
+
+    /// <summary>
+    /// Scans the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override ITvSubChannel Scan(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, true);
+    }
+
+    /// <summary>
+    /// Tunes the specified channel.
+    /// </summary>
+    /// <param name="subChannelId">The sub channel id</param>
+    /// <param name="channel">The channel.</param>
+    /// <returns></returns>
+    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    {
+      return DoTune(subChannelId, channel, false);
     }
 
     /// <summary>
@@ -149,7 +171,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="subChannelId"></param>
     /// <param name="channel"></param>
     /// <returns></returns>
-    public override ITvSubChannel Tune(int subChannelId, IChannel channel)
+    private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
     {
       Log.Log.WriteFile("dvbip:  Tune:{0}", channel);
       ITvSubChannel ch = null;
@@ -214,7 +236,19 @@ namespace TvLibrary.Implementations.DVB
         ch = _mapSubChannels[subChannelId];
         Log.Log.Info("dvbip: tune: Running graph for channel {0}", ch.ToString());
         Log.Log.Info("dvbip: tune: SubChannel {0}", ch.SubChannelId);
-        RunGraph(ch.SubChannelId, dvbipChannel.Url);
+
+        try
+        {
+          RunGraph(ch.SubChannelId, dvbipChannel.Url);
+        }
+        catch (TvExceptionNoPMT)
+        {
+          if (!ignorePMT)
+          {
+            throw;
+          }
+        }
+        
         Log.Log.Info("dvbip: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
