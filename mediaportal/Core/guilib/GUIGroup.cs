@@ -346,6 +346,7 @@ namespace MediaPortal.GUI.Library
       this.Size = _layout.Measure(this, this.Size);
 
       _layout.Arrange(this);
+      DoUpdate();
     }
 
     //protected override Size ArrangeOverride(Rect finalRect)
