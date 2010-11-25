@@ -318,7 +318,9 @@ namespace TvLibrary.Implementations.DVB
                       {
                         SetMpegPidMapping(_channelInfo);
                         if (_mdplugs != null && _channelInfo.scrambled)
+                        {
                           _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
+                        }
                       }
                       Log.Log.Info("subch:{0} stop tif", _subChannelId);
                       if (_filterTIF != null)
@@ -361,7 +363,7 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
                             ts.TotalSeconds);
               Log.Log.Debug("Setting to 0 to search for new PMT.");
-              lookForPid = 0;
+              lookForPid = 0;              
             }
           }
         } // retry loop
@@ -414,6 +416,7 @@ namespace TvLibrary.Implementations.DVB
       if (GraphRunning())
       {
         Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);
+        
         bool foundPMT = WaitForPMT();
         if (!foundPMT)
         {
@@ -952,7 +955,7 @@ namespace TvLibrary.Implementations.DVB
             }
           }
           //EMM Pids
-          foreach (ECMEMM emmValue in _channelInfo.caPMT.GetECM())
+          foreach (ECMEMM emmValue in _channelInfo.caPMT.GetEMM())
           {
             if (emmValue.Pid != 0 && !hwPids.Contains((ushort)emmValue.Pid))
             {
@@ -1310,7 +1313,9 @@ namespace TvLibrary.Implementations.DVB
               {
                 SetMpegPidMapping(_channelInfo);
                 if (_mdplugs != null && _channelInfo.scrambled)
+                {
                   _mdplugs.SetChannel(_currentChannel, _channelInfo, true);
+                }
               }
             }
           }
@@ -1319,7 +1324,14 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("Failed SendPmtToCam in callback handler");
           }
         }
-      }
+      }      
+      PersistPMTtoDataBase(pmtPid);
+      _pmtRequested = false; // once received, reset
+      return 0;
+    }
+
+    private void PersistPMTtoDataBase(int pmtPid)
+    {
       // check if PMT has changed, in this case update tuning details
       DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
       if (pmtPid != CurrentDVBChannel.PmtPid && !alwaysUsePATLookup)
@@ -1335,8 +1347,6 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
         td.Persist();
       }
-      _pmtRequested = false; // once received, reset
-      return 0;
     }
 
     #endregion
