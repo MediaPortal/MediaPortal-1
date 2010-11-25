@@ -141,7 +141,8 @@ namespace MediaPortal.Player.Subtitles
     public void Render(Rectangle subsRect, Rectangle frameRect)
     {
       Rectangle r = posRelativeToFrame ? frameRect : subsRect;
-      MpcSubtitles.Render(r.X, r.Y, r.Width, r.Height);
+      int posY = adjustPosY * r.Height / GUIGraphicsContext.Height;
+      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);      
     }
 
     public int GetCount()

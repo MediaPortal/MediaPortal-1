@@ -44,11 +44,12 @@ namespace MediaPortal.Configuration
     /// Required designer variable.
     /// </summary>
     private Container components = null;
-
     private MPNumericUpDown subPicsAheadUpDown;
     private MPLabel mpLabel1;
     private MPCheckBox disableAnimCheckBox;
     private MPLabel mpLabel2;
+    private Label label2;
+    private NumericUpDown posYUpDown;
     private MPCheckBox pow2texCheckBox;
 
     public MpcHcSubsForm()
@@ -93,17 +94,20 @@ namespace MediaPortal.Configuration
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.buttonClose = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonOK = new MediaPortal.UserInterface.Controls.MPButton();
+      this.posYUpDown = new System.Windows.Forms.NumericUpDown();
+      this.label2 = new System.Windows.Forms.Label();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.subPicsAheadUpDown)).BeginInit();
+      ((System.ComponentModel.ISupportInitialize)(this.posYUpDown)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.label2);
+      this.groupBox1.Controls.Add(this.posYUpDown);
       this.groupBox1.Controls.Add(this.disableAnimCheckBox);
       this.groupBox1.Controls.Add(this.mpLabel2);
       this.groupBox1.Controls.Add(this.pow2texCheckBox);
@@ -115,7 +119,7 @@ namespace MediaPortal.Configuration
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(8, 8);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(450, 129);
+      this.groupBox1.Size = new System.Drawing.Size(450, 151);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Options";
@@ -124,7 +128,7 @@ namespace MediaPortal.Configuration
       // 
       this.disableAnimCheckBox.AutoSize = true;
       this.disableAnimCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.disableAnimCheckBox.Location = new System.Drawing.Point(104, 96);
+      this.disableAnimCheckBox.Location = new System.Drawing.Point(101, 96);
       this.disableAnimCheckBox.Name = "disableAnimCheckBox";
       this.disableAnimCheckBox.Size = new System.Drawing.Size(137, 17);
       this.disableAnimCheckBox.TabIndex = 16;
@@ -164,28 +168,22 @@ namespace MediaPortal.Configuration
       this.subPicsAheadUpDown.Name = "subPicsAheadUpDown";
       this.subPicsAheadUpDown.Size = new System.Drawing.Size(41, 20);
       this.subPicsAheadUpDown.TabIndex = 12;
-      this.subPicsAheadUpDown.Value = new decimal(new int[]
-                                                    {
-                                                      3,
-                                                      0,
-                                                      0,
-                                                      0
-                                                    });
+      this.subPicsAheadUpDown.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
       // 
       // textureComboBox
       // 
-      this.textureComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textureComboBox.BorderColor = System.Drawing.Color.Empty;
       this.textureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.textureComboBox.Items.AddRange(new object[]
-                                            {
-                                              "Desktop",
-                                              "Medium",
-                                              "Low"
-                                            });
+      this.textureComboBox.Items.AddRange(new object[] {
+            "Desktop",
+            "Medium",
+            "Low"});
       this.textureComboBox.Location = new System.Drawing.Point(169, 62);
       this.textureComboBox.Name = "textureComboBox";
       this.textureComboBox.Size = new System.Drawing.Size(104, 21);
@@ -209,11 +207,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonClose
       // 
-      this.buttonClose.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.buttonClose.Location = new System.Drawing.Point(383, 155);
+      this.buttonClose.Location = new System.Drawing.Point(383, 165);
       this.buttonClose.Name = "buttonClose";
       this.buttonClose.Size = new System.Drawing.Size(75, 23);
       this.buttonClose.TabIndex = 2;
@@ -223,16 +219,30 @@ namespace MediaPortal.Configuration
       // 
       // buttonOK
       // 
-      this.buttonOK.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonOK.Location = new System.Drawing.Point(302, 155);
+      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Location = new System.Drawing.Point(302, 165);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
       this.buttonOK.TabIndex = 1;
       this.buttonOK.Text = "OK";
       this.buttonOK.UseVisualStyleBackColor = true;
       this.buttonOK.Click += new System.EventHandler(this.okButton_Click);
+      // 
+      // posYUpDown
+      // 
+      this.posYUpDown.Location = new System.Drawing.Point(232, 118);
+      this.posYUpDown.Name = "posYUpDown";
+      this.posYUpDown.Size = new System.Drawing.Size(41, 20);
+      this.posYUpDown.TabIndex = 17;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(6, 120);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(210, 13);
+      this.label2.TabIndex = 18;
+      this.label2.Text = "Adjust subtitle height position (pixels down):";
       // 
       // MpcHcSubsForm
       // 
@@ -254,7 +264,9 @@ namespace MediaPortal.Configuration
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.subPicsAheadUpDown)).EndInit();
+      ((System.ComponentModel.ISupportInitialize)(this.posYUpDown)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -266,6 +278,7 @@ namespace MediaPortal.Configuration
       {
         xmlwriter.SetValue("subtitles", "subPicsBufferAhead", subPicsAheadUpDown.Value);
         xmlwriter.SetValue("subtitles", "textureSize", textureComboBox.SelectedItem);
+        xmlwriter.SetValue("subtitles", "adjustY", posYUpDown.Value);
         xmlwriter.SetValueAsBool("subtitles", "pow2tex", pow2texCheckBox.Checked);
         xmlwriter.SetValueAsBool("subtitles", "disableAnimation", disableAnimCheckBox.Checked);
       }
@@ -290,6 +303,7 @@ namespace MediaPortal.Configuration
         textureComboBox.SelectedItem = textureSize;
         bool disableAnimation = xmlreader.GetValueAsBool("subtitles", "disableAnimation", true);
         disableAnimCheckBox.Checked = disableAnimation;
+        posYUpDown.Value = xmlreader.GetValueAsInt("subtitles", "adjustY", 0);
       }
     }
   }
