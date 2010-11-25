@@ -236,7 +236,8 @@ namespace MediaPortal.GUI.Library
     {
       foreach (GUIControl control in Children)
       {
-        control.DoUpdate();
+        if(!(control is GUIFacadeControl)) // a facadecontrol inside a group with layout, stay compatible with previous implementation
+          control.DoUpdate();
       }
     }
 
