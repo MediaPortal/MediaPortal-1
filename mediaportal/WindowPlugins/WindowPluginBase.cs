@@ -121,8 +121,7 @@ namespace WindowPlugins
       base.OnClicked(controlId, control, actionType);
       if (control == btnLayouts)
       {
-        //OnShowLayouts(); TODO
-        SwitchToNexAllowedLayout((int)CurrentLayout + 1);
+        OnShowLayouts();
         SelectCurrentItem();
         GUIControl.FocusControl(GetID, controlId);
       }
@@ -156,6 +155,65 @@ namespace WindowPlugins
           OnQueueItem(iItem);
         }
       }
+    }
+
+    protected virtual void OnShowLayouts()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(792); // Layouts menu
+      int dlgItems = 0;
+      int totalLayouts = Enum.GetValues(typeof(GUIFacadeControl.Layout)).Length;
+      bool[] allowedLayouts = new bool[totalLayouts];
+      for (int i = 0; i < totalLayouts; i++)
+      {
+        string layoutName = Enum.GetName(typeof(GUIFacadeControl.Layout), i);
+        GUIFacadeControl.Layout layout = GetLayoutNumber(layoutName);
+        if (AllowLayout(layout))
+        {
+          if (!facadeLayout.IsNullLayout(layout))
+          {
+            dlg.Add(GUIFacadeControl.GetLayoutLocalizedName(layout));
+            dlgItems++;
+            allowedLayouts[i] = true;
+          }
+        }
+      }
+      dlg.SelectedLabel = -1;
+      for (int i = 0; i <= (int)CurrentLayout; i++)
+      {
+        if (allowedLayouts[i])
+        {
+          dlg.SelectedLabel++;
+        }
+      }
+      if (dlg.SelectedLabel >= dlgItems)
+      {
+        dlg.SelectedLabel = dlgItems;
+      }
+
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      int iSelectedLayout = dlg.SelectedLabel;
+      int allowedItemsFound = -1;
+      for (int i = 0; i < allowedLayouts.Length; i++)
+      {
+        if (allowedLayouts[i])
+        {
+          iSelectedLayout = i;
+          allowedItemsFound++;
+          if (allowedItemsFound == dlg.SelectedLabel)
+            break;
+        }
+      }
+      SwitchToNexAllowedLayout(iSelectedLayout);
     }
 
     protected virtual void OnInfo(int iItem) {}
