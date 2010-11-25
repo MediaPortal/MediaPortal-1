@@ -1227,39 +1227,7 @@ namespace TvPlugin
                 }
               }
             */
-      string fileName = TVUtil.GetFileNameForRecording(rec);
-
-      bool useRTSP = TVHome.UseRTSP();
-
-      Log.Info("TvRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-      {
-        if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
-        {
-          //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
-          g_Player.ShowFullScreenWindow();
-        }
-        if (stoptime > 0)
-        {
-          g_Player.SeekAbsolute(stoptime);
-        }
-        else if (stoptime == -1)
-        {
-          // 5 second margin is used that the TsReader wont stop playback right after it has been started
-          double dTime = g_Player.Duration - 5;
-          g_Player.SeekAbsolute(dTime);
-        }
-        //populates recording metadata to g_player;
-        g_Player.currentFileName = rec.FileName;
-        g_Player.currentTitle = TVUtil.GetDisplayTitle(rec);
-        g_Player.currentDescription = rec.Description;
-
-        rec.TimesWatched++;
-        rec.Persist();
-
-        return true;
-      }
-      return false;
+      return TVUtil.PlayRecording(rec, stoptime);
     }
 
     private void OnDeleteRecording(int iItem)

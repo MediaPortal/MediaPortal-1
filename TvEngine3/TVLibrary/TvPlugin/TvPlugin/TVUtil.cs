@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Text;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
+using MediaPortal.Util;
 using TvDatabase;
 using MediaPortal.Profile;
 using System.IO;
@@ -370,7 +372,50 @@ namespace TvPlugin
     }
 
     
+    public static bool PlayRecording(Recording rec)
+    {
+      return PlayRecording(rec, 0);
+    }
 
+    public static bool PlayRecording(Recording rec, double startOffset)
+    {
+      string fileName = GetFileNameForRecording(rec);
+
+      bool useRTSP = TVHome.UseRTSP();
+      string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
+    
+      Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
+      if (g_Player.Play(fileName, g_Player.MediaType.Recording, chapters))
+      {
+        if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
+        {
+          g_Player.ShowFullScreenWindow();
+        }
+        if (startOffset > 0)
+        {
+          g_Player.SeekAbsolute(startOffset);
+        }
+        else if (startOffset == -1)
+        {
+          // 5 second margin is used that the TsReader wont stop playback right after it has been started
+          double dTime = g_Player.Duration - 5;
+          g_Player.SeekAbsolute(dTime);
+        }
+        
+        TvRecorded.SetActiveRecording(rec);
+
+        //populates recording metadata to g_player;
+        g_Player.currentFileName = rec.FileName;
+        g_Player.currentTitle = GetDisplayTitle(rec);
+        g_Player.currentDescription = rec.Description;
+
+        rec.TimesWatched++;
+        rec.Persist();
+
+        return true;
+      }
+      return false;
+    }
 
 
     #region scheduler helper methods

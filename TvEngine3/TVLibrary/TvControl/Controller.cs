@@ -329,6 +329,13 @@ namespace TvControl
     string GetRecordingUrl(int idRecording);
 
     /// <summary>
+    /// Returns the contents of the chapters file (if any) for a recording 
+    /// </summary>
+    /// <param name="idRecording">id of recording</param>
+    /// <returns>The contents of the chapters file of the recording</returns>
+    string GetRecordingChapters(int idRecording);
+
+    /// <summary>
     /// Deletes the recording from database and disk
     /// </summary>
     /// <param name="idRecording">The id recording.</param>

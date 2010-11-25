@@ -1183,6 +1183,19 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type)
     {
+      return Play(strFile, type, (TextReader)null);
+    }
+
+    public static bool Play(string strFile, MediaType type, string chapters)
+    {
+      using (var stream = String.IsNullOrEmpty(chapters)? null : new StringReader(chapters))
+      {
+        return Play(strFile, type, stream);
+      }
+    }
+
+    public static bool Play(string strFile, MediaType type, TextReader chapters)
+    {
       try
       {
         if (string.IsNullOrEmpty(strFile))
@@ -1327,7 +1340,14 @@ namespace MediaPortal.Player
 
         if (_player != null)
         {
-          LoadChapters(strFile);
+          if (chapters != null)
+          {
+            LoadChapters(chapters);
+          }
+          else
+          {
+            LoadChapters(strFile);
+          }
           _player = CachePreviousPlayer(_player);
           bool bResult = _player.Play(strFile);
           if (!bResult)
@@ -2630,20 +2650,45 @@ namespace MediaPortal.Player
       return false;
     }
 
+    public static bool LoadChaptersFromString(string chapters)
+    {
+      if(String.IsNullOrEmpty(chapters))
+      {
+        return false;
+      }
+      Log.Debug("g_Player.LoadChaptersFromString() - Chapters provided externally");
+      using (TextReader stream = new StringReader(chapters))
+      {
+        return LoadChapters(stream);
+      }      
+    }
+
     private static bool LoadChapters(string videoFile)
+    {
+      _chapters = null;
+      _jumpPoints = null;
+
+      string chapterFile = Path.ChangeExtension(videoFile, ".txt");
+      if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
+      {
+        return false;
+      }
+
+      Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
+      
+      using (TextReader chapters = new StreamReader(chapterFile))
+      {
+        return LoadChapters(chapters);
+      }
+    }
+    
+    private static bool LoadChapters(TextReader chaptersReader)
     {
       _chapters = null;
       _jumpPoints = null;
 
       try
       {
-        string chapterFile = Path.ChangeExtension(videoFile, ".txt");
-        if (!File.Exists(chapterFile) || IsFileUsedbyAnotherProcess(chapterFile))
-        {
-          return false;
-        }
-
-        Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
 
         if (_loadAutoComSkipSetting)
         {
@@ -2660,49 +2705,45 @@ namespace MediaPortal.Player
         ArrayList chapters = new ArrayList();
         ArrayList jumps = new ArrayList();
 
-        using (StreamReader file = new StreamReader(chapterFile))
-        {
-          string line = file.ReadLine();
+        string line = chaptersReader.ReadLine();
 
-          int fps;
-          if (!int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        int fps;
+        if (String.IsNullOrEmpty(line) || !int.TryParse(line.Substring(line.LastIndexOf(' ') + 1), out fps))
+        {
+          Log.Warn("g_Player.LoadChapters() - Invalid chapter file");
+          return false;
+        }
+
+        double framesPerSecond = fps / 100.0;
+        int time;
+
+        while ((line = chaptersReader.ReadLine()) != null)
+        {
+          if (String.IsNullOrEmpty(line))
           {
-            Log.Warn("g_Player.LoadChapters() - Invalid chapter file \"{0}\"", chapterFile);
-            return false;
+            continue;
           }
 
-          double framesPerSecond = fps / 100.0;
-          int time;
-
-          while (!file.EndOfStream)
+          string[] tokens = line.Split(new char[] { '\t' });
+          if (tokens.Length != 2)
           {
-            line = file.ReadLine();
-            if (String.IsNullOrEmpty(line))
-            {
-              continue;
-            }
+            continue;
+          }
 
-            string[] tokens = line.Split(new char[] { '\t' });
-            if (tokens.Length != 2)
-            {
-              continue;
-            }
+          if (int.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+          {
+            jumps.Add(time / framesPerSecond);
+          }
 
-            if (int.TryParse(tokens[0], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
-            {
-              jumps.Add(time / framesPerSecond);
-            }
-
-            if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
-            {
-              chapters.Add(time / framesPerSecond);
-            }
+          if (int.TryParse(tokens[1], NumberStyles.Float, NumberFormatInfo.InvariantInfo, out time))
+          {
+            chapters.Add(time / framesPerSecond);
           }
         }
 
         if (chapters.Count == 0)
         {
-          Log.Warn("g_Player.LoadChapters() - No chapters found in file \"{0}\"", chapterFile);
+          Log.Warn("g_Player.LoadChapters() - No chapters found in file");
           return false;
         }
         _chapters = new double[chapters.Count];

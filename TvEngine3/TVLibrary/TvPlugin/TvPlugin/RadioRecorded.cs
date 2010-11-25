@@ -1060,38 +1060,8 @@ namespace TvPlugin
       {
         TVHome.Card.StopTimeShifting();
       }
-      string fileName = TVUtil.GetFileNameForRecording(rec);
 
-      bool useRTSP = TVHome.UseRTSP();
-
-      Log.Info("RadioRecorded Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-      {
-        if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
-        {
-          g_Player.ShowFullScreenWindow();
-        }
-        if (stoptime > 0)
-        {
-          g_Player.SeekAbsolute(stoptime);
-        }
-        else if (stoptime == -1)
-        {
-          // 5 second margin is used that the TsReader wont stop playback right after it has been started
-          double dTime = g_Player.Duration - 5;
-          g_Player.SeekAbsolute(dTime);
-        }
-        //populates recording metadata to g_player;
-        g_Player.currentFileName = rec.FileName;
-        g_Player.currentTitle = rec.Title;
-        g_Player.currentDescription = rec.Description;
-
-        rec.TimesWatched++;
-        rec.Persist();
-
-        return true;
-      }
-      return false;
+      return TVUtil.PlayRecording(rec);
     }
 
     private void OnDeleteRecording(int iItem)

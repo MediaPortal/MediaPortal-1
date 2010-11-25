@@ -521,6 +521,24 @@ namespace TvControl
     }
 
     /// <summary>
+    /// Returns the contents of the chapters file (if any) for a recording
+    /// </summary>
+    /// <param name="idRecording">The id of the recording</param>
+    /// <returns>the contents of the chapters file (if any) for a recording</returns>
+    public string GetChaptersForFileName(int idRecording)
+    {
+      try
+      {
+        return RemoteControl.Instance.GetRecordingChapters(idRecording);
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return "";
+    }
+
+    /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      

@@ -2396,6 +2396,58 @@ namespace TvService
     }
 
     /// <summary>
+    /// Returns the contents of the chapters file (if any) for a recording 
+    /// </summary>
+    /// <param name="idRecording">id of recording</param>
+    /// <returns>The contents of the chapters file of the recording</returns>
+    public string GetRecordingChapters(int idRecording)
+    {
+      try
+      {
+        Recording recording = Recording.Retrieve(idRecording);
+        if (recording == null)
+          return "";
+        if (recording.FileName == null)
+          return "";
+        if (recording.FileName.Length == 0)
+          return "";
+        if (!IsLocal(recording.ReferencedServer().HostName))
+        {
+          try
+          {
+            RemoteControl.HostName = recording.ReferencedServer().HostName;
+            return RemoteControl.Instance.GetRecordingChapters(idRecording);
+          }
+          catch (Exception)
+          {
+            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+            return "";
+          }
+        }
+        try
+        {
+          string chapterFile = Path.ChangeExtension(recording.FileName, ".txt");
+          if (File.Exists(chapterFile))
+          {
+            using (StreamReader chapters = new StreamReader(chapterFile))
+            {
+              return chapters.ReadToEnd();
+            }
+          }
+        }
+        catch (Exception)
+        {
+          Log.Error("Controller: Can't get recording chapters - First catch");
+        }
+      }
+      catch (Exception)
+      {
+        Log.Error("Controller: Can't get recording chapters - Second catch");
+      }
+      return "";      
+    }
+
+    /// <summary>
     /// Gets the rtsp URL for file located on the tvserver.
     /// </summary>
     /// <param name="fileName">Name of the file.</param>

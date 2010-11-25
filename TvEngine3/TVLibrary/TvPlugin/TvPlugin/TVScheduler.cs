@@ -959,32 +959,7 @@ namespace TvPlugin
             Recording recDB = Recording.Retrieve(fileName);
             if (recDB != null)
             {
-              fileName = TVUtil.GetFileNameForRecording(recDB);
-              bool useRTSP = TVHome.UseRTSP();
-              if (useRTSP)
-              {
-                fileName = TVHome.TvServer.GetStreamUrlForFileName(recDB.IdRecording);
-              }
-
-              Log.Info("TvScheduler Play:{0} - using rtsp mode:{1}", fileName, useRTSP);
-              if (g_Player.Play(fileName, g_Player.MediaType.Recording))
-              {
-                if (Utils.IsVideo(fileName))
-                {
-                  //g_Player.SeekAbsolute(0); //this seek sometimes causes a deadlock in tsreader. original problem still present.
-                  g_Player.ShowFullScreenWindow();
-                }
-
-                TvRecorded.SetActiveRecording(recDB);
-
-                //populates recording metadata to g_player;
-                g_Player.currentFileName = recDB.FileName;
-                g_Player.currentTitle = TVUtil.GetDisplayTitle(recDB);
-                g_Player.currentDescription = recDB.Description;
-
-                recDB.TimesWatched++;
-                recDB.Persist();
-              }
+              TVUtil.PlayRecording(recDB);
             }
           }
           return;
