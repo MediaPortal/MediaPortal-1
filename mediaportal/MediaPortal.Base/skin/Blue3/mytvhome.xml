@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <id>1</id>
   <defaultcontrol>2</defaultcontrol>
@@ -152,7 +152,7 @@
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
-      <id>13</id>
+      <id>133</id>
       <posX>290</posX>
       <posY>415</posY>
       <width>300</width>
@@ -165,7 +165,7 @@
     <control>
       <description>Channel label</description>
       <type>label</type>
-      <id>13</id>
+      <id>134</id>
       <posX>660</posX>
       <posY>415</posY>
       <label>602</label>
@@ -178,7 +178,7 @@
     <control>
       <description>Current program time</description>
       <type>label</type>
-      <id>13</id>
+      <id>135</id>
       <posX>290</posX>
       <posY>435</posY>
       <label>#TV.View.start-#TV.View.stop</label>
@@ -191,7 +191,7 @@
     <control>
       <description>Current Channelname</description>
       <type>fadelabel</type>
-      <id>13</id>
+      <id>136</id>
       <posX>660</posX>
       <posY>435</posY>
       <width>90</width>

@@ -180,7 +180,7 @@
     <control>
       <description>Current program title</description>
       <type>fadelabel</type>
-      <id>13</id>
+      <id>133</id>
       <posX>290</posX>
       <posY>425</posY>
       <width>350</width>
@@ -316,7 +316,7 @@
      <control>
       <description>Channel label</description>
       <type>label</type>
-      <id>13</id>
+      <id>134</id>
       <posX>120</posX>
       <posY>430</posY>
       <label>602</label>
