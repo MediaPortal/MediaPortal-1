@@ -30,6 +30,7 @@ using MediaPortal.Utils.Web;
 using MediaPortal.WebEPG;
 using MediaPortal.WebEPG.Config;
 using MediaPortal.WebEPG.Parser;
+using ChannelMap=MediaPortal.WebEPG.Config.ChannelMap;
 
 namespace MediaPortal.EPG
 {
@@ -184,7 +185,9 @@ namespace MediaPortal.EPG
       Log.Info("WebEPG: Loading Channel Config");
       _grabList = new Dictionary<string, List<grabInfo>>();
       // for each channel write info xmltv file.
-      foreach (MediaPortal.WebEPG.Config.ChannelMap channel in _config.Channels)
+      List<ChannelMap> allChannels = new List<ChannelMap>(_config.Channels);
+      allChannels.AddRange(_config.RadioChannels);
+      foreach (ChannelMap channel in allChannels)
       {
         if (channel.id == null && channel.merged == null)
         {
