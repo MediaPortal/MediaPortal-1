@@ -2641,120 +2641,136 @@ public class MediaPortalApp : D3DApp, IRender
       {
         switch (action.wID)
         {
-          //show DVD menu
-          case Action.ActionType.ACTION_DVD_MENU:
-            if (g_Player.IsDVD)
-            {
-              g_Player.OnAction(action);
-              return;
-            }
-            break;
-
-          //DVD: goto previous chapter
-          //play previous item from playlist;
-          case Action.ActionType.ACTION_PREV_ITEM:
-          case Action.ActionType.ACTION_PREV_CHAPTER:
-            if (g_Player.IsDVD || g_Player.HasChapters)
-            {
-              action = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
-              g_Player.OnAction(action);
-              return;
-            }
-
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
-            {
-              playlistPlayer.PlayPrevious();
-            }
-            break;
-
-          //play next item from playlist;
-          //DVD: goto next chapter
-          case Action.ActionType.ACTION_NEXT_CHAPTER:
-          case Action.ActionType.ACTION_NEXT_ITEM:
-            if (g_Player.IsDVD || g_Player.HasChapters)
-            {
-              action = new Action(Action.ActionType.ACTION_NEXT_CHAPTER, 0, 0);
-              g_Player.OnAction(action);
-              return;
-            }
-
-            if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
-            {
-              playlistPlayer.PlayNext();
-            }
-            break;
-
-          //stop playback
-          case Action.ActionType.ACTION_STOP:
-            
-            //When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
-            if ((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) == GUIWindow.Window.WINDOW_SLIDESHOW)
-            {
-                break;
-            }
-              
-            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
-            {  
-              Log.Info("Main: Stopping media");
-              g_Player.Stop();
-              return;
-            }
-            break;
-          
-          //Jump to Music Now Playing
-          case Action.ActionType.ACTION_JUMP_MUSIC_NOW_PLAYING:
-            if (g_Player.IsMusic && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
-            {
-              GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
-            }
-            break;
-          
-          //play music
-          //resume playback
-          case Action.ActionType.ACTION_PLAY:
-          case Action.ActionType.ACTION_MUSIC_PLAY:
-            if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
-            {
-              // Don't start playing from the beginning if we press play to return to normal speed
-              if (g_Player.IsMusic && g_Player.Speed != 1)
-              {
-                // Attention: GUIMusicGenre / GUIMusicFiles need to be handled differently. we reset the speed there
-                if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
-                    GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+                //show DVD menu
+            case Action.ActionType.ACTION_DVD_MENU:
+                if (g_Player.IsDVD)
                 {
-                  return;
+                    g_Player.OnAction(action);
+                    return;
                 }
+                break;
+
+                //DVD: goto previous chapter
+                //play previous item from playlist;
+            case Action.ActionType.ACTION_PREV_ITEM:
+            case Action.ActionType.ACTION_PREV_CHAPTER:
+                if (g_Player.IsDVD || g_Player.HasChapters)
+                {
+                    action = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
+                    g_Player.OnAction(action);
+                    return;
+                }
+
+                if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+                {
+                    playlistPlayer.PlayPrevious();
+                }
+                break;
+
+                //play next item from playlist;
+                //DVD: goto next chapter
+            case Action.ActionType.ACTION_NEXT_CHAPTER:
+            case Action.ActionType.ACTION_NEXT_ITEM:
+                if (g_Player.IsDVD || g_Player.HasChapters)
+                {
+                    action = new Action(Action.ActionType.ACTION_NEXT_CHAPTER, 0, 0);
+                    g_Player.OnAction(action);
+                    return;
+                }
+
+                if (!ActionTranslator.HasKeyMapped(GUIWindowManager.ActiveWindowEx, action.m_key))
+                {
+                    playlistPlayer.PlayNext();
+                }
+                break;
+
+                //stop playback
+            case Action.ActionType.ACTION_STOP:
+
+                //When MyPictures Plugin shows the pictures we want to stop the slide show only, not the player
+                if (
+                    (GUIWindow.Window)(Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+                    GUIWindow.Window.WINDOW_SLIDESHOW)
+                {
+                    break;
+                }
+
+                if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
+                {
+                    Log.Info("Main: Stopping media");
+                    g_Player.Stop();
+                    return;
+                }
+                break;
+
+                //Jump to Music Now Playing
+            case Action.ActionType.ACTION_JUMP_MUSIC_NOW_PLAYING:
+                if (g_Player.IsMusic && GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+                {
+                    GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+                }
+                break;
+
+                //play music
+                //resume playback
+            case Action.ActionType.ACTION_PLAY:
+            case Action.ActionType.ACTION_MUSIC_PLAY:
+                // if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
+                //{
+                // Don't start playing from the beginning if we press play to return to normal speed
+                if (g_Player.IsMusic && g_Player.Speed != 1)
+                {
+                    // Attention: GUIMusicGenre / GUIMusicFiles need to be handled differently. we reset the speed there
+                    if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_FILES ||
+                        GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_GENRE)
+                    {
+                        return;
+                    }
+                    g_Player.Speed = 1;
+                    return;
+                }
+
+                g_Player.StepNow();
                 g_Player.Speed = 1;
-                return;
-              }
+                // Bass Player can handle the Pause State itself
+                //if (g_Player.Paused && !(g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer))
+                //{
+                if (g_Player.Paused)
+                {
+                    g_Player.Pause();
+                }
+                //}
+                //}
+                break;
 
-              g_Player.StepNow();
-              g_Player.Speed = 1;
-              // Bass Player can handle the Pause State itself
-              if (g_Player.Paused && !(g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer))
-              {
+                //pause (or resume playback)
+            case Action.ActionType.ACTION_PAUSE:
                 g_Player.Pause();
-              }
-              return;
-            }
-            break;
-
-          //pause (or resume playback)
-          case Action.ActionType.ACTION_PAUSE:
-            g_Player.Pause();
                 break;
 
-          //fast forward...
-          case Action.ActionType.ACTION_FORWARD:
-          case Action.ActionType.ACTION_MUSIC_FORWARD:
-            g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
-                break;
+                //fast forward...
+            case Action.ActionType.ACTION_FORWARD:
+            case Action.ActionType.ACTION_MUSIC_FORWARD:
+                {
+                    if (g_Player.Paused)
+                    {
+                        g_Player.Pause();
+                    }
+                    g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
+                    break;
+                }
 
           //fast rewind...
-          case Action.ActionType.ACTION_REWIND:
-          case Action.ActionType.ACTION_MUSIC_REWIND:
-            g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
-                break;
+            case Action.ActionType.ACTION_REWIND:
+            case Action.ActionType.ACTION_MUSIC_REWIND:
+                {
+                    if (g_Player.Paused)
+                    {
+                        g_Player.Pause();
+                    }
+                    g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
+                    break;
+                }
         }
       }
       GUIWindowManager.OnAction(action);

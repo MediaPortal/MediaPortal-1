@@ -521,14 +521,6 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-              if (g_Player.IsDVD && g_Player.Paused)
-              {
-                // Don't skip in paused DVD's
-                _forbiddenTimer = DateTime.Now;
-                RenderForbidden(true);
-              }
-              else
-              {
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
@@ -546,7 +538,6 @@ namespace MediaPortal.GUI.Video
                                                 (int)Control.LABEL_ROW1, 0, 0, null);
                 msg.Label = statusLine;
                 OnMessage(msg);
-              }
             }
           }
           break;
@@ -556,14 +547,6 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-              if (g_Player.IsDVD && g_Player.Paused)
-              {
-                // Don't skip in paused DVD's
-                _forbiddenTimer = DateTime.Now;
-                RenderForbidden(true);
-              }
-              else
-              {
                 if (g_Player.Paused)
                 {
                   g_Player.Pause();
@@ -580,7 +563,6 @@ namespace MediaPortal.GUI.Video
                                                 (int)Control.LABEL_ROW1, 0, 0, null);
                 msg.Label = statusLine;
                 OnMessage(msg);
-              }
             }
           }
           break;
@@ -811,15 +793,16 @@ namespace MediaPortal.GUI.Video
           }
           break;
 
-        // PAUSE action is handled globally in the Application class
         case Action.ActionType.ACTION_PAUSE:
           if (g_Player.Paused)
           {
             m_dwOSDTimeOut = DateTime.Now;
+            _isPauseOsdVisible = true;
             GUIWindowManager.IsPauseOsdVisible = true;
           }
           else
           {
+              _isPauseOsdVisible = false;
              GUIWindowManager.IsPauseOsdVisible = false;
           }
           break;
@@ -847,12 +830,11 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_REWIND:
           {
-            if (g_Player.Paused)
-            {
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
+
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
-                _isPauseOsdVisible = false;
-                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
@@ -862,24 +844,16 @@ namespace MediaPortal.GUI.Video
                     g_Player.SeekAbsolute(dPos - 0.25d);
                 }
               }
-              else
-              {
-                // Don't skip in paused DVD's
-                _forbiddenTimer = DateTime.Now;
-                RenderForbidden(true);
-              }
             }
-          }
           break;
 
         case Action.ActionType.ACTION_FORWARD:
           {
-            if (g_Player.Paused)
-            {
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
+
               if (g_Player.CanSeek && !g_Player.IsDVD)
               {
-                _isPauseOsdVisible = false;
-                GUIWindowManager.IsPauseOsdVisible = false;
                 ScreenStateChanged();
                 UpdateGUI();
                 double dPos = g_Player.CurrentPosition;
@@ -889,14 +863,7 @@ namespace MediaPortal.GUI.Video
                     g_Player.SeekAbsolute(dPos + 0.25d);
                 }
               }
-              else
-              {
-                // Don't skip in paused DVD's
-                _forbiddenTimer = DateTime.Now;
-                RenderForbidden(true);
-              }
             }
-          }
           break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
@@ -954,15 +921,11 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
-          {
-            g_Player.StepNow();
-            g_Player.Speed = 1;
-            if (g_Player.Paused)
-            {
-              g_Player.Pause();
-            }
-          }
-          break;
+              {
+                  GUIWindowManager.IsPauseOsdVisible = false;
+                  break;
+              }
+
 
         case Action.ActionType.ACTION_CONTEXT_MENU:
           ShowContextMenu();
@@ -1794,15 +1757,6 @@ namespace MediaPortal.GUI.Video
     private void UpdateGUI()
     {
 
-      if (_isPauseOsdVisible && !_showStep && !_showTime && !_showStatus && !_isOsdVisible && g_Player.Speed == 1)
-      {
-        ShowControl(GetID, (int)Control.IMG_PAUSE);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.IMG_PAUSE);
-      }
-
       int iSpeed = g_Player.Speed;
       HideControl(GetID, (int)Control.IMG_2X);
       HideControl(GetID, (int)Control.IMG_4X);
@@ -1866,7 +1820,7 @@ namespace MediaPortal.GUI.Video
         ShowControl(GetID, (int)Control.BLUE_BAR);
         ShowControl(GetID, (int)Control.LABEL_ROW1);
       }
-      if (_showSkipBar && !_isPauseOsdVisible) // If paused, this will already be shown, including LABEL_ROW1
+      if (_showSkipBar && !g_Player.Paused) // If paused, this will already be shown, including LABEL_ROW1
       {
         ShowControl(GetID, (int)Control.BLUE_BAR);
       }

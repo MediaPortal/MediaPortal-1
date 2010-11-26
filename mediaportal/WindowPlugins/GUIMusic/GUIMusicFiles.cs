@@ -2213,9 +2213,7 @@ namespace MediaPortal.GUI.Music
         if (pItem.IsFolder && UsingInternalMusicPlayer)
         {
           BassMusicPlayer.Player.SwitchToGaplessPlaybackMode();
-        }
-
-        playlistPlayer.Play(playStartIndex);
+        } 
 
         if (!g_Player.Playing)
         {

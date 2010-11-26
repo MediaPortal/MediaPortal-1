@@ -658,10 +658,6 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
-              if (g_Player.Paused)
-              {
-                g_Player.Pause();
-              }
               _isPauseOsdVisible = false;
               GUIWindowManager.IsPauseOsdVisible = false;
               ScreenStateChanged();
@@ -674,10 +670,6 @@ namespace TvPlugin
           {
             if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
             {
-              if (g_Player.Paused)
-              {
-                g_Player.Pause();
-              }
               _isPauseOsdVisible = false;
               GUIWindowManager.IsPauseOsdVisible = false;
               ScreenStateChanged();
@@ -836,16 +828,11 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
-          if (g_Player.IsTimeShifting || g_Player.IsTVRecording)
-          {
-            g_Player.StepNow();
-            g_Player.Speed = 1;
-            if (g_Player.Paused)
-            {
-              g_Player.Pause();
-            }
-          }
-          break;
+              {
+                  GUIWindowManager.IsPauseOsdVisible = false;
+                  break;
+              }
+
 
         case Action.ActionType.ACTION_CONTEXT_MENU:
           ShowContextMenu();
@@ -2422,17 +2409,8 @@ namespace TvPlugin
 
     private void UpdateGUI()
     {
-      //if ((_statusVisible || _stepSeekVisible || (!_isOsdVisible && g_Player.Speed != 1) ||
-      //     (!_isOsdVisible && _isPauseOsdVisible)))
-      //{
-      //  if (!_isOsdVisible)
-      //  {
-      //    for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-      //    {
-      //      ShowControl(GetID, i);
-      //    }
 
-      //    // Set recorder status
+		 // Set recorder status
         VirtualCard card;
         var server = new TvServer();
         if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
@@ -2443,35 +2421,6 @@ namespace TvPlugin
         {
             HideControl(GetID, (int)Control.REC_LOGO);
         }
-      //  }
-      //  else
-      //  {
-      //    for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-      //    {
-      //      HideControl(GetID, i);
-      //    }
-      //    HideControl(GetID, (int)Control.REC_LOGO);
-      //  }
-      //}
-      //else
-      //{
-      //  for (int i = (int)Control.OSD_VIDEOPROGRESS; i < (int)Control.OSD_VIDEOPROGRESS + 50; ++i)
-      //  {
-      //    HideControl(GetID, i);
-      //  }
-      //  HideControl(GetID, (int)Control.REC_LOGO);
-      //}
-
-
-      if (_isPauseOsdVisible)
-      {
-        ShowControl(GetID, (int)Control.IMG_PAUSE);
-      }
-      else
-      {
-        HideControl(GetID, (int)Control.IMG_PAUSE);
-      }
-
 
       int speed = g_Player.Speed;
       HideControl(GetID, (int)Control.IMG_2X);

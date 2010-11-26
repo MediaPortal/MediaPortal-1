@@ -497,7 +497,6 @@ namespace TvPlugin
 
             if (iControl == (int)Controls.OSD_PLAY)
             {
-              //TODO
               int iSpeed = g_Player.Speed;
               if (iSpeed != 1) // we're in ffwd or rewind mode
               {
@@ -508,6 +507,7 @@ namespace TvPlugin
               }
               else
               {
+                g_Player.Pause(); //Pause/Un-Pause playback
                 if (g_Player.Paused)
                 {
                   ToggleButton((int)Controls.OSD_PLAY, true);
