@@ -383,6 +383,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     public void Dispose()
     {
       Log.Debug("iMONLCDg.Dispose(): called");
+      RestartIrss();
+      Log.Debug("iMONLCDg.Dispose(): completed");
+    }
+
+    public void RestartIrss()
+    {
+      Log.Debug("iMONLCDg.RestartIrss(): called");
       //
       // If IRSS (Input Remote Server Suite by and-81) is installed
       // we need to restart it in order to re-register dll handler
@@ -398,7 +405,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           continue;
         }
-        Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (service) from IRSS");
+        Log.Debug("iMONLCDg.RestartIrss(): Restarting \"" + irss_app + "\" (service) from IRSS");
         try
         {
           ctrl.Stop();
@@ -410,7 +417,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         catch (Exception ex)
         {
-          Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (service) from IRSS: " + ex.Message);
+          Log.Error("iMONLCDg.RestartIrss(): Unable to restart \"" + irss_app + "\" (service) from IRSS: " + ex.Message);
         }
       }
       //
@@ -422,7 +429,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         Process[] procs = Process.GetProcessesByName(irss_app);
         foreach (Process proc in procs)
         {
-          Log.Debug("iMONLCDg.Dispose(): Restarting \"" + irss_app + "\" (application) from IRSS");
+          Log.Debug("iMONLCDg.RestartIrss(): Restarting \"" + irss_app + "\" (application) from IRSS");
           proc.Kill();
           proc.WaitForExit(2000);
 
@@ -449,7 +456,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           else
           {
-            Log.Error("iMONLCDg.Dispose(): IRSS registry keys missing, aborting...");
+            Log.Error("iMONLCDg.RestartIrss(): IRSS registry keys missing, aborting...");
             break;
           }
 
@@ -469,13 +476,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           catch (Exception ex)
           {
-            Log.Error("iMONLCDg.Dispose(): Unable to restart \"" + irss_app + "\" (application) from IRSS: " +
+            Log.Error("iMONLCDg.RestartIrss(): Unable to restart \"" + irss_app + "\" (application) from IRSS: " +
                       ex.Message);
           }
           break;
         }
       }
-      Log.Debug("iMONLCDg.Dispose(): completed");
+      Log.Debug("iMONLCDg.RestartIrss(): completed");
     }
 
     public void DrawImage(Bitmap bitmap)
@@ -575,11 +582,15 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         OpenLcd();
         Clear();
+        if (_ForceManagerRestart)
+        {
+          RestartIrss();
+        }
         Log.Info("(IDisplay) iMONLCDg.Initialize(): completed");
       }
     }
 
-    public void SetCustomCharacters(int[][] customCharacters) {}
+    public void SetCustomCharacters(int[][] customCharacters) { }
 
     public void SetLine(int line, string message)
     {
@@ -1630,7 +1641,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         DrawVU(EQSettings.EqArray);
       }
-      Label_0613:
+    Label_0613:
       EQSettings._LastEQupdate = DateTime.Now;
       if ((DateTime.Now.Ticks - EQSettings._EQ_FPS_time.Ticks) < 0x989680L)
       {
@@ -1784,7 +1795,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         _IsDisplayOff = false;
       }
-      Label_0150:
+    Label_0150:
       if (DoDebug)
       {
         Log.Info("iMONLCDg.DisplayOn(): called");
@@ -3081,7 +3092,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         Log.Info("iMONLCDg.SendText3R(): Called");
       }
-      var buffer = new byte[] {13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2};
+      var buffer = new byte[] { 13, 15, 0x20, 0x20, 0x20, 0x20, 0x20, 0, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 2 };
       Line1 = Line1 + "            ";
       Line1 = Line1.Substring(0, 12);
       for (int i = 0; i < 5; i++)
@@ -3569,7 +3580,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
                 }
               }
             }
-            Label_06B0:
+          Label_06B0:
             if (DisplayOptions.DiskIcon & DisplayOptions.DiskMediaStatus)
             {
               optionBitmask |= icon.Mask;
@@ -3975,7 +3986,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml")))
         {
           Log.Info("iMONLCDg.AdvancedSettings.Load(): Loading settings from XML file");
-          var serializer = new XmlSerializer(typeof (AdvancedSettings));
+          var serializer = new XmlSerializer(typeof(AdvancedSettings));
           var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"));
           settings = (AdvancedSettings)serializer.Deserialize(xmlReader);
           xmlReader.Close();
@@ -4010,9 +4021,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         {
           Log.Info("iMONLCDg.AdvancedSettings.Save(): Saving settings to XML file");
         }
-        var serializer = new XmlSerializer(typeof (AdvancedSettings));
+        var serializer = new XmlSerializer(typeof(AdvancedSettings));
         var writer = new XmlTextWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg.xml"),
-                                       Encoding.UTF8) {Formatting = Formatting.Indented, Indentation = 2};
+                                       Encoding.UTF8) { Formatting = Formatting.Indented, Indentation = 2 };
         serializer.Serialize(writer, ToSave);
         writer.Close();
         if (DoDebug)
@@ -4157,20 +4168,20 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           {
             FontData.Rows.Clear();
             FontData.Columns.Clear();
-            CstmFont = new byte[0x100,6];
-            CID.DataType = typeof (byte);
+            CstmFont = new byte[0x100, 6];
+            CID.DataType = typeof(byte);
             FontData.Columns.Add(CID);
-            CData0.DataType = typeof (byte);
+            CData0.DataType = typeof(byte);
             FontData.Columns.Add(CData0);
-            CData1.DataType = typeof (byte);
+            CData1.DataType = typeof(byte);
             FontData.Columns.Add(CData1);
-            CData2.DataType = typeof (byte);
+            CData2.DataType = typeof(byte);
             FontData.Columns.Add(CData2);
-            CData3.DataType = typeof (byte);
+            CData3.DataType = typeof(byte);
             FontData.Columns.Add(CData3);
-            CData4.DataType = typeof (byte);
+            CData4.DataType = typeof(byte);
             FontData.Columns.Add(CData4);
-            CData5.DataType = typeof (byte);
+            CData5.DataType = typeof(byte);
             FontData.Columns.Add(CData5);
             FontData.Clear();
           }
@@ -4193,7 +4204,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
           FontData.Rows.Clear();
-          var serializer = new XmlSerializer(typeof (DataTable));
+          var serializer = new XmlSerializer(typeof(DataTable));
           var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
           Log.Debug("LoadCustomFontData(): DeSerializing data");
           FontData = (DataTable)serializer.Deserialize(xmlReader);
@@ -4247,7 +4258,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           row[6] = _Font8x5[i, 5];
           FontData.Rows.Add(row);
         }
-        var serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
         {
           Log.Debug("SaveFontData(): Serializing data");
@@ -4567,72 +4578,72 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             {
               LIconData.Rows.Clear();
               LIconData.Columns.Clear();
-              CustomIcons = new byte[10,0x20];
-              LIID.DataType = typeof (byte);
+              CustomIcons = new byte[10, 0x20];
+              LIID.DataType = typeof(byte);
               LIconData.Columns.Add(LIID);
-              IData0.DataType = typeof (byte);
+              IData0.DataType = typeof(byte);
               LIconData.Columns.Add(IData0);
-              IData1.DataType = typeof (byte);
+              IData1.DataType = typeof(byte);
               LIconData.Columns.Add(IData1);
-              IData2.DataType = typeof (byte);
+              IData2.DataType = typeof(byte);
               LIconData.Columns.Add(IData2);
-              IData3.DataType = typeof (byte);
+              IData3.DataType = typeof(byte);
               LIconData.Columns.Add(IData3);
-              IData4.DataType = typeof (byte);
+              IData4.DataType = typeof(byte);
               LIconData.Columns.Add(IData4);
-              IData5.DataType = typeof (byte);
+              IData5.DataType = typeof(byte);
               LIconData.Columns.Add(IData5);
-              IData6.DataType = typeof (byte);
+              IData6.DataType = typeof(byte);
               LIconData.Columns.Add(IData6);
-              IData7.DataType = typeof (byte);
+              IData7.DataType = typeof(byte);
               LIconData.Columns.Add(IData7);
-              IData8.DataType = typeof (byte);
+              IData8.DataType = typeof(byte);
               LIconData.Columns.Add(IData8);
-              IData9.DataType = typeof (byte);
+              IData9.DataType = typeof(byte);
               LIconData.Columns.Add(IData9);
-              IData10.DataType = typeof (byte);
+              IData10.DataType = typeof(byte);
               LIconData.Columns.Add(IData10);
-              IData11.DataType = typeof (byte);
+              IData11.DataType = typeof(byte);
               LIconData.Columns.Add(IData11);
-              IData12.DataType = typeof (byte);
+              IData12.DataType = typeof(byte);
               LIconData.Columns.Add(IData12);
-              IData13.DataType = typeof (byte);
+              IData13.DataType = typeof(byte);
               LIconData.Columns.Add(IData13);
-              IData14.DataType = typeof (byte);
+              IData14.DataType = typeof(byte);
               LIconData.Columns.Add(IData14);
-              IData15.DataType = typeof (byte);
+              IData15.DataType = typeof(byte);
               LIconData.Columns.Add(IData15);
-              IData16.DataType = typeof (byte);
+              IData16.DataType = typeof(byte);
               LIconData.Columns.Add(IData16);
-              IData17.DataType = typeof (byte);
+              IData17.DataType = typeof(byte);
               LIconData.Columns.Add(IData17);
-              IData18.DataType = typeof (byte);
+              IData18.DataType = typeof(byte);
               LIconData.Columns.Add(IData18);
-              IData19.DataType = typeof (byte);
+              IData19.DataType = typeof(byte);
               LIconData.Columns.Add(IData19);
-              IData20.DataType = typeof (byte);
+              IData20.DataType = typeof(byte);
               LIconData.Columns.Add(IData20);
-              IData21.DataType = typeof (byte);
+              IData21.DataType = typeof(byte);
               LIconData.Columns.Add(IData21);
-              IData22.DataType = typeof (byte);
+              IData22.DataType = typeof(byte);
               LIconData.Columns.Add(IData22);
-              IData23.DataType = typeof (byte);
+              IData23.DataType = typeof(byte);
               LIconData.Columns.Add(IData23);
-              IData24.DataType = typeof (byte);
+              IData24.DataType = typeof(byte);
               LIconData.Columns.Add(IData24);
-              IData25.DataType = typeof (byte);
+              IData25.DataType = typeof(byte);
               LIconData.Columns.Add(IData25);
-              IData26.DataType = typeof (byte);
+              IData26.DataType = typeof(byte);
               LIconData.Columns.Add(IData26);
-              IData27.DataType = typeof (byte);
+              IData27.DataType = typeof(byte);
               LIconData.Columns.Add(IData27);
-              IData28.DataType = typeof (byte);
+              IData28.DataType = typeof(byte);
               LIconData.Columns.Add(IData28);
-              IData29.DataType = typeof (byte);
+              IData29.DataType = typeof(byte);
               LIconData.Columns.Add(IData29);
-              IData30.DataType = typeof (byte);
+              IData30.DataType = typeof(byte);
               LIconData.Columns.Add(IData30);
-              IData31.DataType = typeof (byte);
+              IData31.DataType = typeof(byte);
               LIconData.Columns.Add(IData31);
               LIconData.Clear();
             }
@@ -4656,7 +4667,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           LIconData.Rows.Clear();
-          var serializer = new XmlSerializer(typeof (DataTable));
+          var serializer = new XmlSerializer(typeof(DataTable));
           var xmlReader =
             new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml"));
           Log.Debug("LoadLargeIconData(): DeSerializing data");
@@ -4707,14 +4718,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           }
           LIconData.Rows.Add(row);
         }
-        var serializer = new XmlSerializer(typeof (DataTable));
+        var serializer = new XmlSerializer(typeof(DataTable));
         using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           Log.Debug("SaveDefaultLargeIconData(): Serializing data");
           serializer.Serialize(textWriter, LIconData);
           Log.Debug("SaveDefaultLargeIconData(): Writing data to file");
-          textWriter.Close(); 
-        }        
+          textWriter.Close();
+        }
         Log.Debug("SaveDefaultLargeIconData(): completed");
       }
     }
