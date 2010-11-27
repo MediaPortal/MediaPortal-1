@@ -358,17 +358,22 @@ namespace SetupTv.Sections
             nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(card.Id), "");
             user.CardId = card.Id;
             _succeeded++;
-          }
-          else if (result == TvResult.AllCardsBusy)
+          }          
+          else if (result == TvResult.CardIsDisabled ||
+                   result == TvResult.AllCardsBusy ||
+                   result == TvResult.CardIsDisabled ||
+                    result == TvResult.ChannelNotMappedToAnyCard            
+            )
           {
+            string err = GetErrMsgFromTVResult(result);
             nextRowIndexForDiscUpdate = -1;
-            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", "All cards are busy");            
+            nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
             _succeeded++;
           }
           else
           {
-            nextRowIndexForDiscUpdate = -1;
             string err = GetErrMsgFromTVResult(result);
+            nextRowIndexForDiscUpdate = -1;            
             if (_firstFail == 0 && _running)
             {
               _firstFail = mpListViewLog.Items.Count + 1;

@@ -59,13 +59,13 @@ namespace SetupTv.Sections
       this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
       this.User = new System.Windows.Forms.ColumnHeader();
       this.cardName = new System.Windows.Forms.ColumnHeader();
+      this.subchannels = new System.Windows.Forms.ColumnHeader();
       this.buttonRestart = new System.Windows.Forms.Button();
       this.mpButtonReGrabEpg = new MediaPortal.UserInterface.Controls.MPButton();
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.mpComboBoxChannels = new SetupControls.ComboBoxEx();
       this.comboBoxGroups = new SetupControls.ComboBoxEx();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.subchannels = new System.Windows.Forms.ColumnHeader();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -170,9 +170,9 @@ namespace SetupTv.Sections
       this.label3.AutoSize = true;
       this.label3.Location = new System.Drawing.Point(21, 129);
       this.label3.Name = "label3";
-      this.label3.Size = new System.Drawing.Size(91, 13);
+      this.label3.Size = new System.Drawing.Size(120, 13);
       this.label3.TabIndex = 70;
-      this.label3.Text = "Bytes processed: ";
+      this.label3.Text = "TS packets processed: ";
       // 
       // txtDisc
       // 
@@ -187,10 +187,10 @@ namespace SetupTv.Sections
       // 
       // txtBytes
       // 
-      this.txtBytes.Location = new System.Drawing.Point(113, 126);
+      this.txtBytes.Location = new System.Drawing.Point(137, 126);
       this.txtBytes.Name = "txtBytes";
       this.txtBytes.ReadOnly = true;
-      this.txtBytes.Size = new System.Drawing.Size(142, 20);
+      this.txtBytes.Size = new System.Drawing.Size(118, 20);
       this.txtBytes.TabIndex = 68;
       this.txtBytes.Text = "0";
       this.txtBytes.Value = 0;
@@ -333,6 +333,11 @@ namespace SetupTv.Sections
       this.cardName.Text = "Card Name";
       this.cardName.Width = 120;
       // 
+      // subchannels
+      // 
+      this.subchannels.Text = "Subchannels";
+      this.subchannels.Width = 100;
+      // 
       // buttonRestart
       // 
       this.buttonRestart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -397,11 +402,6 @@ namespace SetupTv.Sections
       this.mpLabel2.Size = new System.Drawing.Size(39, 13);
       this.mpLabel2.TabIndex = 62;
       this.mpLabel2.Text = "Group:";
-      // 
-      // subchannels
-      // 
-      this.subchannels.Text = "Subchannels";
-      this.subchannels.Width = 100;
       // 
       // TestService
       // 

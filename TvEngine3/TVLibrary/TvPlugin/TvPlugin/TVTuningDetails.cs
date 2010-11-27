@@ -154,11 +154,11 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalLevel", TVHome.Card.SignalLevel.ToString());
       GUIPropertyManager.SetProperty("#TV.TuningDetails.SignalQuality", TVHome.Card.SignalQuality.ToString());
 
-      int totalBytes = 0;
+      int totalTSpackets = 0;
       int discontinuityCounter = 0;
-      TVHome.Card.GetStreamQualityCounters(out totalBytes, out discontinuityCounter);
+      TVHome.Card.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
 
-      GUIPropertyManager.SetProperty("#TV.TuningDetails.BytesTransferred", Convert.ToString (totalBytes));
+      GUIPropertyManager.SetProperty("#TV.TuningDetails.TSPacketsTransferred", Convert.ToString(totalTSpackets));
       GUIPropertyManager.SetProperty("#TV.TuningDetails.Discontinuities", Convert.ToString(discontinuityCounter));
 
       _updateTimer = DateTime.Now;

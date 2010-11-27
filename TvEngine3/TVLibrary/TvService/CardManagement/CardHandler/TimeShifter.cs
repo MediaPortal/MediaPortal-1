@@ -390,9 +390,6 @@ namespace TvService
 
           if (subchannel is TvDvbChannel)
           {
-            //((TvDvbChannel)subchannel).OnAfterTuneEvent += new TvDvbChannel.OnAfterTuneDelegate(TimeShifter_OnAfterTuneEvent);
-            //((TvDvbChannel)subchannel).OnBeforeTuneEvent += new TvDvbChannel.OnBeforeTuneDelegate(TimeShifter_OnBeforeTuneEvent);
-
             if (!((TvDvbChannel)subchannel).PMTreceived)
             {
               Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
@@ -704,12 +701,12 @@ if (!WaitForUnScrambledSignal(ref user))
     /// Fetches the stream quality information
     /// </summary>   
     /// <param name="user">user</param>    
-    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="totalTSpackets">Amount of packets processed</param>    
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter)
+    public void GetStreamQualityCounters(User user, out int totalTSpackets, out int discontinuityCounter)
     {
-      totalBytes = 0;
+      totalTSpackets = 0;
       discontinuityCounter = 0;
 
       TvCardContext context = _cardHandler.Card.Context as TvCardContext;
@@ -721,7 +718,7 @@ if (!WaitForUnScrambledSignal(ref user))
 
       if (dvbSubchannel != null)
       {
-        dvbSubchannel.GetStreamQualityCounters(out totalBytes, out discontinuityCounter);
+        dvbSubchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
       }
     }    
 

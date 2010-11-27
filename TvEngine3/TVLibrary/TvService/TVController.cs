@@ -4254,15 +4254,15 @@ namespace TvService
     /// Fetches the stream quality information
     /// </summary>   
     /// <param name="user">user</param>    
-    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="totalTSpackets">Amount of packets processed</param>    
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter)
+    public void GetStreamQualityCounters(User user, out int totalTSpackets, out int discontinuityCounter)
     {
       int cardId = user.CardId;
       ITvCardHandler cardHandler = _cards[cardId];
 
-      cardHandler.TimeShifter.GetStreamQualityCounters(user, out totalBytes, out discontinuityCounter);
+      cardHandler.TimeShifter.GetStreamQualityCounters(user, out totalTSpackets, out discontinuityCounter);
     }
 
     /// <summary>

@@ -1175,10 +1175,10 @@ namespace TvControl
     /// Fetches the stream quality information
     /// </summary>   
     /// <param name="user">user</param>    
-    /// <param name="totalBytes">Amount of packets processed</param>    
+    /// <param name="totalTSpackets">Amount of packets processed</param>    
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    void GetStreamQualityCounters(User user, out int totalBytes, out int discontinuityCounter);
+    void GetStreamQualityCounters(User user, out int totalTSpackets, out int discontinuityCounter);
 
     #endregion
 
