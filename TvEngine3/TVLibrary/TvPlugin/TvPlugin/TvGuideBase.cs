@@ -136,6 +136,7 @@ namespace TvPlugin
     private int _singleChannelNumber = 0;
     private bool _showChannelLogos = false;
     private TvServer _server = null;
+    private IList<Program> _programs = null;
 
     private int _backupCursorX = 0;
     private int _backupCursorY = 0;
@@ -1615,23 +1616,6 @@ namespace TvPlugin
           }
         }
         chan++;
-        if (chan >= _channelList.Count)
-        {
-          //chan = 0;
-        }
-      }
-
-      IList<Program> programs = new List<Program>();
-      DateTime dtStart = _viewingTime;
-      DateTime dtEnd = dtStart.AddDays(30);
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      programs = layer.GetPrograms(channel, dtStart, dtEnd);
-
-      _totalProgramCount = programs.Count;
-      if (_totalProgramCount == 0)
-      {
-        _totalProgramCount = _channelCount;
       }
 
       GUILabelControl channelLabel = GetControl((int)Controls.SINGLE_CHANNEL_LABEL) as GUILabelControl;
@@ -1683,11 +1667,24 @@ namespace TvPlugin
       }
       if (_recalculateProgramOffset)
       {
+        _programs = new List<Program>();
+        DateTime dtStart = _viewingTime;
+        DateTime dtEnd = dtStart.AddDays(30);
+
+        TvBusinessLayer layer = new TvBusinessLayer();
+        _programs = layer.GetPrograms(channel, dtStart, dtEnd);
+
+        _totalProgramCount = _programs.Count;
+        if (_totalProgramCount == 0)
+        {
+          _totalProgramCount = _channelCount;
+        }
+
         _recalculateProgramOffset = false;
         bool found = false;
-        for (int i = 0; i < programs.Count; i++)
+        for (int i = 0; i < _programs.Count; i++)
         {
-          Program program = (Program)programs[i];
+          Program program = (Program)_programs[i];
           if (program.StartTime <= _viewingTime && program.EndTime >= _viewingTime)
           {
             _programOffset = i;
@@ -1700,9 +1697,9 @@ namespace TvPlugin
           _programOffset = 0;
         }
       }
-      else if (_programOffset < programs.Count)
+      else if (_programOffset < _programs.Count)
       {
-        int day = ((Program)programs[_programOffset]).StartTime.DayOfYear;
+        int day = ((Program)_programs[_programOffset]).StartTime.DayOfYear;
         bool changed = false;
         while (day > _viewingTime.DayOfYear)
         {
@@ -1747,14 +1744,14 @@ namespace TvPlugin
 
         Program program;
         int offset = _programOffset;
-        if (offset + ichan < programs.Count)
+        if (offset + ichan < _programs.Count)
         {
-          program = (Program)programs[offset + ichan];
+          program = (Program)_programs[offset + ichan];
         }
         else
         {
           // bugfix for 0 items
-          if (programs.Count == 0)
+          if (_programs.Count == 0)
           {
             program = new Program(channel.IdChannel, _viewingTime, _viewingTime, "-", string.Empty, string.Empty,
                                   Program.ProgramState.None,
@@ -1763,7 +1760,7 @@ namespace TvPlugin
           }
           else
           {
-            program = (Program)programs[programs.Count - 1];
+            program = (Program)_programs[_programs.Count - 1];
             if (program.EndTime.DayOfYear == _viewingTime.DayOfYear)
             {
               program = new Program(channel.IdChannel, program.EndTime, program.EndTime, "-", "-", "-",
