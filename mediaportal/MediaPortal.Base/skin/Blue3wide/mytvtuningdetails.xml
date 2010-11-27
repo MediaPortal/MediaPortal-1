@@ -331,12 +331,12 @@
     </control>
     
     <control>
-      <description>Bytes Transferred</description>
+      <description>TS packets Transferred</description>
       <type>label</type>
       <id>27</id>
       <posX>17</posX>
       <posY>450</posY>
-      <label>Bytes Transferred: #TV.TuningDetails.BytesTransferred</label>
+      <label>TS packets Transferred: #TV.TuningDetails.TSPacketsTransferred</label>
       <font>font14</font>
       <textcolor>FFFFFFFF</textcolor>
       <animation effect="fade" time="250">WindowOpen</animation>
