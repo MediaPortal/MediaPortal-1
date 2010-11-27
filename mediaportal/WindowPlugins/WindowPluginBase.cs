@@ -92,6 +92,7 @@ namespace WindowPlugins
         case "playlist":
           return Layout.Playlist;
         case "coverflow":
+        case "cover flow":
           return Layout.CoverFlow;
       }
       if (!string.IsNullOrEmpty(s))
