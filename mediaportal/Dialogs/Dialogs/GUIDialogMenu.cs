@@ -277,7 +277,7 @@ namespace MediaPortal.Dialogs
       return index;
     }
 
-    public int IndexOfItem(string strItemLable)
+    public int IndexOfItem(string strItemLabel)
     {
       int index = 0;
       foreach (GUIListItem pItem in listItems)
@@ -285,14 +285,14 @@ namespace MediaPortal.Dialogs
         if (showQuickNumbers)
         {
           int labelIndex = listItems.IndexOf(pItem) + 1;
-          if (pItem.Label.Equals(labelIndex.ToString() + " " + strItemLable))
+          if (pItem.Label.Equals(labelIndex.ToString() + " " + strItemLabel))
           {
             index = listItems.IndexOf(pItem);
           }
         }
         else
         {
-          if (pItem.Label.Equals(strItemLable))
+          if (pItem.Label.Equals(strItemLabel))
           {
             index = listItems.IndexOf(pItem);
           }

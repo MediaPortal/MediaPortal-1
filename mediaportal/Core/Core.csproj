@@ -345,7 +345,17 @@
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
+    <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Player\FFDShow\Interfaces\DirectShow.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffDecoder.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowBase.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowDec.cs" />
+    <Compile Include="Player\FFDShow\Interfaces\IffdshowDecVideo.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
+    <Compile Include="Player\PostProcessing\PostProcessingEngine.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />
     <Compile Include="MusicPlayer\BASS\StreamCopy.cs" />
@@ -397,6 +407,8 @@
     <Compile Include="Player\IPlayerFactory.cs" />
     <Compile Include="Player\MediaInfo.cs" />
     <Compile Include="Player\Subtitles\DirectVobSubEngine.cs" />
+    <Compile Include="Player\FFDShow\FFDShowAPI.cs" />
+    <Compile Include="Player\FFDShow\FFDShowConstants.cs" />
     <Compile Include="Player\Subtitles\SubEngine.cs" />
     <Compile Include="Player\Subtitles\MpcEngine.cs" />
     <Compile Include="Player\Subtitles\SubSettings.cs" />

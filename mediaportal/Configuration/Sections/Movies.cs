@@ -30,6 +30,9 @@ using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
 using DShowNET.Helper;
 using System.Runtime.InteropServices;
+using DirectShowLib;
+using FFDShow;
+using FFDShow.Interfaces;
 
 #pragma warning disable 108
 
@@ -87,12 +90,13 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel3;
     private TextBox subPaths;
     private Label label2;
+    private MPLabel mpSubEngineCommentLabel;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
 
     public Movies()
-      : this("Videos") {}
+      : this("Videos") { }
 
     public Movies(string name)
       : base(name)
@@ -130,7 +134,7 @@ namespace MediaPortal.Configuration.Sections
             {
               Directory.CreateDirectory(playListFolder);
             }
-            catch {}
+            catch { }
           }
         }
 
@@ -186,7 +190,7 @@ namespace MediaPortal.Configuration.Sections
             subtitlesFontTextBox.BackColor = Color.Black;
             subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
           }
-          catch {}
+          catch { }
         }
         subStyleOverrideCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "subStyleOverride", false);
         subPosRelativeCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "subPosRelative", false);
@@ -268,6 +272,7 @@ namespace MediaPortal.Configuration.Sections
       MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
       System.Windows.Forms.Panel panel1;
       MediaPortal.UserInterface.Controls.MPTabPage mpTabPage2;
+      this.mpSubEngineCommentLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.advancedButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -344,20 +349,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      mpGroupBox3.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      mpGroupBox3.Controls.Add(this.mpSubEngineCommentLabel);
       mpGroupBox3.Controls.Add(mpLabel2);
       mpGroupBox3.Controls.Add(this.subEnginesCombo);
       mpGroupBox3.Controls.Add(this.advancedButton);
       mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       mpGroupBox3.Location = new System.Drawing.Point(15, 12);
       mpGroupBox3.Name = "mpGroupBox3";
-      mpGroupBox3.Size = new System.Drawing.Size(432, 90);
+      mpGroupBox3.Size = new System.Drawing.Size(432, 104);
       mpGroupBox3.TabIndex = 1;
       mpGroupBox3.TabStop = false;
       mpGroupBox3.Text = "Engine";
+      // 
+      // mpSubEngineCommentLabel
+      // 
+      this.mpSubEngineCommentLabel.Location = new System.Drawing.Point(17, 74);
+      this.mpSubEngineCommentLabel.Name = "mpSubEngineCommentLabel";
+      this.mpSubEngineCommentLabel.Size = new System.Drawing.Size(409, 24);
+      this.mpSubEngineCommentLabel.TabIndex = 16;
+      this.mpSubEngineCommentLabel.Text = "* - FFDShow Tryout revision 3603 or greater needed";
       // 
       // mpLabel2
       // 
@@ -372,12 +384,11 @@ namespace MediaPortal.Configuration.Sections
       this.subEnginesCombo.BorderColor = System.Drawing.Color.Empty;
       this.subEnginesCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.subEnginesCombo.FormattingEnabled = true;
-      this.subEnginesCombo.Items.AddRange(new object[]
-                                            {
-                                              "MPC-HC",
-                                              "DirectVobSub",
-                                              "Disabled"
-                                            });
+      this.subEnginesCombo.Items.AddRange(new object[] {
+            "MPC-HC",
+            "DirectVobSub",
+            "FFDShow",
+            "Disabled"});
       this.subEnginesCombo.Location = new System.Drawing.Point(16, 46);
       this.subEnginesCombo.Name = "subEnginesCombo";
       this.subEnginesCombo.Size = new System.Drawing.Size(246, 21);
@@ -386,9 +397,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // advancedButton
       // 
-      this.advancedButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.advancedButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.advancedButton.Location = new System.Drawing.Point(337, 46);
       this.advancedButton.Name = "advancedButton";
       this.advancedButton.Size = new System.Drawing.Size(72, 22);
@@ -399,10 +408,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.label2);
       this.mpGroupBox1.Controls.Add(this.subPaths);
       this.mpGroupBox1.Controls.Add(this.mpLabel3);
@@ -557,10 +564,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.subStyleOverrideCheckBox);
       this.mpGroupBox2.Controls.Add(this.opaqueBoxRadioButton);
       this.mpGroupBox2.Controls.Add(this.borderOutlineRadioButton);
@@ -621,13 +626,11 @@ namespace MediaPortal.Configuration.Sections
       this.borderWidthUpDown.Name = "borderWidthUpDown";
       this.borderWidthUpDown.Size = new System.Drawing.Size(79, 20);
       this.borderWidthUpDown.TabIndex = 12;
-      this.borderWidthUpDown.Value = new decimal(new int[]
-                                                   {
-                                                     2,
-                                                     0,
-                                                     0,
-                                                     0
-                                                   });
+      this.borderWidthUpDown.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
       // 
       // shadowDepthUpDown
       // 
@@ -635,13 +638,11 @@ namespace MediaPortal.Configuration.Sections
       this.shadowDepthUpDown.Name = "shadowDepthUpDown";
       this.shadowDepthUpDown.Size = new System.Drawing.Size(79, 20);
       this.shadowDepthUpDown.TabIndex = 11;
-      this.shadowDepthUpDown.Value = new decimal(new int[]
-                                                   {
-                                                     3,
-                                                     0,
-                                                     0,
-                                                     0
-                                                   });
+      this.shadowDepthUpDown.Value = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
       // 
       // mpLabel1
       // 
@@ -663,9 +664,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesButton
       // 
-      this.subtitlesButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesButton.Location = new System.Drawing.Point(337, 18);
       this.subtitlesButton.Name = "subtitlesButton";
       this.subtitlesButton.Size = new System.Drawing.Size(72, 22);
@@ -676,10 +675,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // subtitlesFontTextBox
       // 
-      this.subtitlesFontTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.subtitlesFontTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.subtitlesFontTextBox.BorderColor = System.Drawing.Color.Empty;
       this.subtitlesFontTextBox.Location = new System.Drawing.Point(129, 19);
       this.subtitlesFontTextBox.Name = "subtitlesFontTextBox";
@@ -707,10 +704,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.fileNameButton);
@@ -751,9 +746,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileNameButton
       // 
-      this.fileNameButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileNameButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.fileNameButton.Location = new System.Drawing.Point(339, 28);
       this.fileNameButton.Name = "fileNameButton";
       this.fileNameButton.Size = new System.Drawing.Size(72, 22);
@@ -764,10 +757,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // folderNameTextBox
       // 
-      this.folderNameTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.folderNameTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.folderNameTextBox.BorderColor = System.Drawing.Color.Empty;
       this.folderNameTextBox.Location = new System.Drawing.Point(133, 28);
       this.folderNameTextBox.Name = "folderNameTextBox";
@@ -795,11 +786,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabControl1
       // 
-      this.tabControl1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.tabControl1.Controls.Add(this.tabPage1);
       this.tabControl1.Controls.Add(tabPage3);
       this.tabControl1.Controls.Add(mpTabPage2);
@@ -822,10 +811,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox4
       // 
-      this.mpGroupBox4.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox4.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox4.Controls.Add(this.mpLabel7);
       this.mpGroupBox4.Controls.Add(this.defaultAudioLanguageComboBox);
       this.mpGroupBox4.Controls.Add(this.mpLabel8);
@@ -848,10 +835,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultAudioLanguageComboBox
       // 
-      this.defaultAudioLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultAudioLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultAudioLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(136, 51);
@@ -870,10 +855,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // defaultSubtitleLanguageComboBox
       // 
-      this.defaultSubtitleLanguageComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.defaultSubtitleLanguageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.defaultSubtitleLanguageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(136, 24);
@@ -905,6 +888,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpTabPage1.ResumeLayout(false);
       this.mpGroupBox4.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion
@@ -975,7 +959,7 @@ namespace MediaPortal.Configuration.Sections
               subtitlesFontTextBox.BackColor = Color.Black;
               subtitlesFontTextBox.ForeColor = Color.FromArgb(rgbColor);
             }
-            catch {}
+            catch { }
           }
         }
       }
@@ -985,6 +969,29 @@ namespace MediaPortal.Configuration.Sections
     {
       string selection = (string)subEnginesCombo.SelectedItem;
       advancedButton.Enabled = !selection.Equals("Disabled");
+      if (selection.Equals("FFDShow"))
+      {
+        int version = FFDShowAPI.FFDShowRevision;
+        if (version == 0)
+        {
+          mpSubEngineCommentLabel.Text = "* - FFDShow not detected. Please install it first (32 bits version, revision " + FFDShowAPI.minRevision + " or greater)";
+          mpSubEngineCommentLabel.ForeColor = Color.Red;
+        }
+        else if (version < FFDShowAPI.minRevision)
+        {
+          mpSubEngineCommentLabel.Text = "* - FFDShow revision " + version + " detected but revision " + FFDShowAPI.minRevision + " or greater is required. Please update it";
+          mpSubEngineCommentLabel.ForeColor = Color.Red;
+        }
+        else
+        {
+          mpSubEngineCommentLabel.Text = "* - FFDShow detected";
+          mpSubEngineCommentLabel.ForeColor = Color.Black;
+        }
+        mpSubEngineCommentLabel.Visible = true;
+      }
+      else
+        mpSubEngineCommentLabel.Visible = false;
+
     }
 
     private void advancedButton_Click(object sender, EventArgs e)
@@ -994,6 +1001,18 @@ namespace MediaPortal.Configuration.Sections
       {
         MpcHcSubsForm dlg = new MpcHcSubsForm();
         DialogResult dialogResult = dlg.ShowDialog();
+      }
+      else if (selection.Equals("FFDShow"))
+      {
+        IBaseFilter ffdshow = (DirectShowLib.IBaseFilter)ClassId.CoCreateInstance(ClassId.FFDShowVideo);
+        if (ffdshow == null)
+        {
+          MessageBox.Show("FFDShow is not installed, please download it and install it from http://ffdshow-tryout.sourceforge.net/");
+          return;
+        }
+        IffdshowBase ffdshowBase = ffdshow as IffdshowBase;
+        DirectShowPropertyPage page = new DirectShowPropertyPage(ffdshow);
+        page.Show(this);
       }
       else if (selection.Equals("DirectVobSub"))
       {

@@ -44,11 +44,20 @@ namespace MediaPortal.Player.Subtitles
     ////
     //subs management functions
     ///
+    #region Embedded subtitles
     int GetCount();
 
     string GetLanguage(int i);
 
+    string GetSubtitleName(int i);
+
     int Current { get; set; }
+    #endregion
+
+    #region Subtitle files
+    string[] GetSubtitleFiles();
+    string CurrentSubtitleFile { get; set; }
+    #endregion
 
     bool Enable { get; set; }
 
@@ -58,31 +67,40 @@ namespace MediaPortal.Player.Subtitles
 
     void DelayPlus();
     void DelayMinus();
+
+    void SwitchToNextSubtitleSub();
   }
 
   public class SubEngine
-  {
-    private static ISubEngine engine;
+  { 
+    public static ISubEngine engine;
 
     public static ISubEngine GetInstance()
-    {
-      if (engine == null)
-      {
-        using (Settings xmlreader = new MPSettings())
+        {
+        return GetInstance(false);
+        }
+
+      public static ISubEngine GetInstance(bool forceinitialize)
+        {
+        if (engine == null || forceinitialize)
+     {
+            using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           if (engineType.Equals("MPC-HC"))
             engine = new MpcEngine();
+          else if (engineType.Equals("FFDShow"))
+            engine = new FFDShowEngine();
           else if (engineType.Equals("DirectVobSub"))
             engine = new DirectVobSubEngine();
           else
             engine = new DummyEngine();
         }
-      }
+      }  
       return engine;
     }
 
-    private class DummyEngine : ISubEngine
+    public class DummyEngine : ISubEngine
     {
       #region ISubEngine Members
 
@@ -120,11 +138,23 @@ namespace MediaPortal.Player.Subtitles
         return null;
       }
 
+      public string GetSubtitleName(int i)
+      {
+        return "";
+      }
+
       public int Current
       {
         get { return -1; }
         set { }
       }
+
+      public void SwitchToNextSubtitleSub() { }
+
+      #region Subtitle files
+      public string[] GetSubtitleFiles() { return new string[] { }; }
+      public string CurrentSubtitleFile { get { return null; } set { } }
+      #endregion
 
       public bool Enable
       {

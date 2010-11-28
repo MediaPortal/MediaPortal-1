@@ -756,9 +756,47 @@
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
       <onup>705</onup>
-      <ondown>706</ondown>
+      <ondown>707</ondown>
       <onleft>706</onleft>
       <onright>706</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+	<control>
+    <description>Postprocessing deblock checkbox</description>
+      <type>checkmark</type>
+      <id>707</id>
+      <posX>1828</posX>
+      <posY>552</posY>
+      <label>200074</label>
+      <MarkWidth>11</MarkWidth>
+      <MarkHeight>16</MarkHeight>
+      <font>font10</font>
+      <textcolor>ffffffff</textcolor>
+      <onup>706</onup>
+      <ondown>708</ondown>
+      <onleft>707</onleft>
+      <onright>707</onright>
+      <visible>no</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+	<control>
+    <description>Postprocessing resize checkbox</description>
+      <type>checkmark</type>
+      <id>708</id>
+      <posX>1828</posX>
+      <posY>590</posY>
+      <label>200075</label>
+      <MarkWidth>11</MarkWidth>
+      <MarkHeight>16</MarkHeight>
+      <font>font10</font>
+      <textcolor>ffffffff</textcolor>
+      <onup>707</onup>
+      <ondown>708</ondown>
+      <onleft>708</onleft>
+      <onright>708</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>

@@ -1938,6 +1938,21 @@
     <String id="200070">Please check firewall</String>
     <String id="200071">Delete this folder and all subfolders?</String>
     <String id="200072">Upcoming episodes</String>
+	<String id="200073">Postprocessing</String>
+	<String id="200074">Postprocess picture</String>
+	<String id="200075">Resize</String>
+	<String id="200076">Subtitle files</String>
+	<String id="200077">Deinterlace</String>
+	<String id="200078">Crop</String>
+	<String id="200079">Vertical crop</String>
+	<String id="200080">Horizontal crop</String>
+	<String id="200081">VIDEO MENU</String>
+	<String id="200082">AUDIO MENU</String>
+	<String id="200083">SUBTITLES MENU</String>
+	<String id="200084">Video Menu</String>
+	<String id="200085">Audio Menu</String>
+	<String id="200086">MAIN MENU</String>
+	<String id="200087">Mute</String>
 	<String id="200090">Edition</String>
 	<String id="200091">Chapter</String>
   </Section>

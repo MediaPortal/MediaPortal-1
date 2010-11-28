@@ -179,6 +179,12 @@ namespace MediaPortal.Player.Subtitles
       return streamName;
     }
 
+    public string GetSubtitleName(int iStream)
+    {
+        string languageTranslated = "";
+        return languageTranslated;
+    }
+
     public int Current
     {
       get { return current; }
@@ -226,6 +232,26 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
+    public void SwitchToNextSubtitleSub()
+    {
+        if (Enable)
+        {
+            if (Current < GetCount() - 1)
+            {
+                Current++;
+            }
+            else
+            {
+                Enable = false;
+            }
+        }
+        else
+        {
+            Current = 0;
+            Enable = true;
+        }
+    }
+
     public int DelayInterval
     {
       get { return delayInterval; }
@@ -253,6 +279,11 @@ namespace MediaPortal.Player.Subtitles
     }
 
     public void SetTime(long nsSampleTime) {}
+
+    #region Subtitle files
+    public string[] GetSubtitleFiles() { return new string[] { }; }
+    public string CurrentSubtitleFile { get { return null; } set { } }
+    #endregion
     #endregion
   }
 
@@ -296,8 +327,10 @@ namespace MediaPortal.Player.Subtitles
       // Check if Haali Media Splitter is in the graph.
       IBaseFilter hms = null;
       DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.HaaliGuid, out hms);
-      if(hms == null)
+      if (hms == null)
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.MPCMatroska, out hms);
+      if (hms == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.MPCMatroskaSource, out hms);
       if (hms != null)
       {
         IPin pinSubTo = null;

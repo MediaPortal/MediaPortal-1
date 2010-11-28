@@ -32,6 +32,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
 using System.Collections.Generic;
+using MediaPortal.Player.PostProcessing;
 
 
 namespace MediaPortal.Player
@@ -140,6 +141,8 @@ namespace MediaPortal.Player
       Subtitle_hidden,
       Subtitle_shown,
       Edition,
+      Subtitle_file,
+      PostProcessing,
       Unknown,
     }
 
@@ -246,6 +249,25 @@ namespace MediaPortal.Player
           CloseInterfaces();
           return false;
         }
+
+        //This is Sebastiii unsupported release version by Chemelli
+        string tmpstr;
+        ISubEngine engine = SubEngine.GetInstance(true);
+        if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
+        {
+          tmpstr = engine.ToString().Substring(engine.ToString().LastIndexOf(".") + 1);
+          Log.Error("VideoPlayerVMR7: {0} subtitle configured in MP but misconfigured, disabled!", tmpstr);
+          SubEngine.engine = new SubEngine.DummyEngine();
+        }
+
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(graphBuilder))
+        {
+          tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
+          Log.Error("VideoPlayerVMR7: {0} postprocessing configured in MP but misconfigured!", tmpstr);
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+        //End This is Sebastiii unsupported release version by Chemelli
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
         {
@@ -322,7 +344,7 @@ namespace MediaPortal.Player
       return true;
     }
 
-    private void SelectSubtitles()
+    protected void SelectSubtitles()
     {
       if (SubtitleStreams == 0) return;
       CultureInfo ci = null;
@@ -332,6 +354,7 @@ namespace MediaPortal.Player
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
+          Log.Error("VideoPlayerVMR7: Subtitle CI {0}", ci);
         }
         catch (Exception ex)
         {
@@ -341,22 +364,27 @@ namespace MediaPortal.Player
             ex);
         }
       }
-      for (int i = 0; i < SubtitleStreams; i++)
+      int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
+      for (int i = 0; i < subsCount; i++)
       {
         string subtitleLanguage = SubtitleLanguage(i);
-        if (ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
+        //Sebastiii : Add localized stream names for FFDshow when OS language = Skin language
+        string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
+        if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
+          Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
       EnableSubtitle = true;
     }
 
-    private void SelectAudioLanguage()
+    protected void SelectAudioLanguage()
     {
       CultureInfo ci = null;
       using (Settings xmlreader = new MPSettings())
@@ -364,6 +392,7 @@ namespace MediaPortal.Player
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", defaultLanguageCulture));
+          Log.Error("VideoPlayerVMR7: AudioLanguage CI {0}", ci);
         }
         catch (Exception ex)
         {
@@ -373,15 +402,17 @@ namespace MediaPortal.Player
         }
       }
       for (int i = 0; i < AudioStreams; i++)
-      {
+      { 
         // Unfortunately we use localized stream names...
         string localizedCIName = Util.Utils.TranslateLanguageString(ci.EnglishName);
         if (localizedCIName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
+            ci.EnglishName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.TwoLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterISOLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentAudioStream = i;
+          Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
@@ -1239,9 +1270,13 @@ namespace MediaPortal.Player
       //Audio - English, Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
       //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       Regex regexMPS = new Regex(@"Audio\s*-\s*(?<1>.+?),\s*.+?,\s*.+?,\s*.+?,\s*.+", RegexOptions.IgnoreCase);
+      Regex regexMPAUDIONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Audio\s.+?)$");
+      Regex regexMPAUDIO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Audio\s.+?)$");
       Regex regexMPC = new Regex("([^, ]+)");
       Match result = regex.Match(streamName);
       Match resultMPS = regexMPS.Match(streamName);
+      Match resultMPAUDIONoType = regexMPAUDIONoType.Match(streamName);
+      Match resultMPAUDIO = regexMPAUDIO.Match(streamName);
       Match resultMPC = regexMPC.Match(streamName);
 
       if (result.Success)
@@ -1255,6 +1290,7 @@ namespace MediaPortal.Player
         if (language.Length > 0) // && streamName.Length <= 0)
         {
           streamName = language;
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-result :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPS.Success)
@@ -1265,6 +1301,32 @@ namespace MediaPortal.Player
         if (language.Length > 0)
         {
           streamName = language;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPS :streamName \"{0}\"", streamName);
+        }
+      }
+      else if (resultMPAUDIO.Success)
+      // check for mpc-hc audio switcher response format, e.g.: 
+      // Language, Trackname (Audio 2)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPAUDIO.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultAAC :streamName \"{0}\"", streamName);
+        }
+      }
+      else if (resultMPAUDIONoType.Success)
+      // check for mpc-hc audio switcher response format, e.g.: 
+      // Language (Audio 2)
+      {
+        string language = Util.Utils.TranslateLanguageString(resultMPAUDIONoType.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPAUDIONoType :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPC.Success)
@@ -1275,6 +1337,8 @@ namespace MediaPortal.Player
         if (language.Length > 0)
         {
           streamName = language;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPC :streamName \"{0}\"", streamName);
         }
       }
 
@@ -1283,6 +1347,7 @@ namespace MediaPortal.Player
       // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
 
+      //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage end: streamName \"{0}\"", streamName);
       return streamName;
     }
 
@@ -1292,6 +1357,7 @@ namespace MediaPortal.Player
     public override string AudioType(int iStream)
     {
       string streamName = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
+      string streamNameFalse = FStreams.GetStreamInfos(StreamType.Audio, iStream).Name;
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") || streamName.EndsWith(".dts"))
       {
         return Path.GetExtension(streamName).ToUpper().Replace(".", "");         
@@ -1303,6 +1369,7 @@ namespace MediaPortal.Player
 
       // remove prefix, which is added by Haali Media Splitter
       streamName = Regex.Replace(streamName, @"^A: ", "");
+
       // Check if returned string contains both language and trackname info
       // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
       // where "trackname" is stream's "trackname" property muxed in the mkv.
@@ -1311,15 +1378,53 @@ namespace MediaPortal.Player
       //Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       Regex regexMPS = new Regex(@"Audio\s*-\s*.+?,\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
       Regex regexMPSNoLang = new Regex(@"Audio\s*-\s*(?<1>.+?,\s*.+?,\s*.+?,\s*.+)", RegexOptions.IgnoreCase);
+      Regex regexLAVF = new Regex(@"(?:A:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      Regex regexMPAUDIONoType = new Regex(@"^(.+?)(?<!]*,\s.+?)\s\((Audio\s.+?)$");
+      Regex regexMPAUDIO = new Regex(@"^(.+?)]*,\s(.+?)\s\((Audio\s.+?)$");
       Regex regexMPC = new Regex(@"\S+,\s+(?<1>.+)");
       Match result = regex.Match(streamName);
       Match resultMPS = regexMPS.Match(streamName);
       Match resultMPSNoLang = regexMPSNoLang.Match(streamName);
+      Match resultMPAUDIO = regexMPAUDIO.Match(streamName);
+      Match resultMPAUDIONoType = regexMPAUDIONoType.Match(streamName);
       Match resultMPC = regexMPC.Match(streamName);
-      if (result.Success)
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+      
+      if (resultLAVF.Success)
+      // check for LAVF response format, e.g.: 
+      // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      {
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF start: \"{0}\"", streamNameFalse);
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF lang_or_title: \"{0}\"", lang_or_title);
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF lang: \"{0}\"", lang);
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF info: \"{0}\"", info);
+        if (!string.IsNullOrEmpty(info))
+        {
+          if (!string.IsNullOrEmpty(lang))
+          {
+            streamName = "" + lang_or_title + "]" + " [" + info + "";
+          }
+          else
+          {
+            streamName = info;
+          }
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName Choice: \"{0}\"", streamName);
+        }
+        else if (string.IsNullOrEmpty(info))
+        {
+          streamName = regex.Replace(streamName, "").Trim();
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName Replace: \"{0}\"", streamName);
+        }
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName result: \"{0}\"", streamName);
+      }
+      else if (result.Success)
       {
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-result :streamName \"{0}\"", streamName);
       }
       else if (resultMPS.Success)
       // check for mpegsplitter response format, e.g.:  
@@ -1329,17 +1434,40 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPS :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPSNoLang.Success)
       // check for mpegsplitter response format, e.g.:  
       // Audio - Dolby Digital, 48.0 kHz, 6 chn, 640.0 kbit/s 
       {
-        string audioType = Util.Utils.TranslateLanguageString(resultMPS.Groups[1].Value);
+        string audioType = Util.Utils.TranslateLanguageString(resultMPSNoLang.Groups[1].Value);
         if (audioType.Length > 0)
         {
           streamName = audioType;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPSNoLang :streamName \"{0}\"", streamName);
         }
+      }
+      else if (resultMPAUDIO.Success)
+      // check for mpc-hc audio switcher response format, e.g.: 
+      // Language, Trackname (Audio 2)
+      {
+        string audioType = Util.Utils.TranslateLanguageString(resultMPAUDIO.Groups[2].Value).TrimStart();
+        if (audioType.Length > 0)
+        {
+          streamName = audioType;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultAAC :streamName \"{0}\"", streamName);
+        }
+      }
+      else if (resultMPAUDIONoType.Success)
+      // check for mpc-hc audio switcher response format, e.g.: 
+      // Language (Audio 2)
+      {
+        streamName = "";
+        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPAUDIONoType :streamName \"{0}\"", streamName);
       }
       else if (resultMPC.Success)
       // check for mpc-hc audio response format, e.g.: 
@@ -1349,14 +1477,14 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
+          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
+          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPC :streamName \"{0}\"", streamName);
         }
       }
-
       // Remove extraneous info from splitter in parenthesis at end of line, e.g.:
       // English, DTS-HD MA core 1536k (Audio 1) - 48000 Hz, 6 channels dts (libavcodec)
       // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
-
       return streamName;
     }
 
@@ -1365,7 +1493,20 @@ namespace MediaPortal.Player
     /// </summary>
     public override int SubtitleStreams
     {
-      get { return SubEngine.GetInstance().GetCount(); }
+      get
+      {
+        int ss = 0;
+        ISubEngine t = SubEngine.GetInstance();
+        try
+        {
+          ss = t.GetCount();
+        }
+        catch (Exception ex)
+        {
+          Log.Warn("get_SubtitleStreams: {0}", ex.Message);
+        }
+        return ss;
+      }
     }
 
     /// <summary>
@@ -1383,38 +1524,180 @@ namespace MediaPortal.Player
     public override string SubtitleLanguage(int iStream)
     {
       string streamName = SubEngine.GetInstance().GetLanguage(iStream);
+      string langName = SubEngine.GetInstance().GetLanguage(iStream);
+      string streamNameUND = SubEngine.GetInstance().GetSubtitleName(iStream);
+      
       if (streamName == null)
       {
         return Strings.Unknown;
       }
-      // Sometimes underline engine returns Haali mkv streams as: "S: trackname [language]"
+      
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^S: ", "");
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
       Regex regex = new Regex(@"\[([^\]]+)\]");
+      Regex regexFFD = new Regex(@"\[.+\]");
+      Regex regexLAVF = new Regex(@"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?(?:\s*\[(?<Default>[^\]]*?)\])?$");
+      // For example MPC Splitter and MPC Engine returns mkv streams as: "language (trackname)",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regexMPCEngine = new Regex(@"(\w.+)\((\D+[^\]]+)\)"); //(@"(\w.+)\(([^\]]+)\)");
       Match result = regex.Match(streamName);
+      Match resultFFD = regexFFD.Match(streamName);
+      Match resultMPCEngine = regexMPCEngine.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameUND);
       if (result.Success)
-      {
-        streamName = result.Groups[1].Value;
-      }
-      else
-      {
-        // mpeg splitter subtitle format
-        Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
-        if (m.Success)
+      { 
+        string language = Util.Utils.TranslateLanguageString(result.Groups[1].Value);
+        if (language.Length > 0)
         {
-          string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
-          if (language.Length > 0)
-          {
-            streamName = language;
-          }
+          streamName = language;
         }
       }
-
+      else if (resultFFD.Success)
+      {
+        string subtitleLanguage = Util.Utils.TranslateLanguageString(resultFFD.Groups[0].Value);
+        if (subtitleLanguage.Length > 0)
+        {
+          streamName = subtitleLanguage;
+        }
+      }
+      else if (resultMPCEngine.Success)
+      // check for mpc-hc engine response format, e.g.: 
+      // Language (Trackname)
+      {
+          streamName = resultMPCEngine.Groups[1].Value.TrimEnd();
+      }
+      else if (resultLAVF.Success)
+      // check for LAVF response format, e.g.: 
+      // S: Title [Lang] (Info) here is to detect if langID = 0 so the language is set as Undetermined
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value;
+        string info = resultLAVF.Groups[3].Value;
+        streamNameUND = Regex.Replace(streamNameUND, @"^S: ", "");
+        if (lang_or_title == streamNameUND && lang_or_title == streamName && lang_or_title != langName && string.IsNullOrEmpty(lang) && string.IsNullOrEmpty(info)) //|| lang_or_title.Contains("Stream #") && string.IsNullOrEmpty(info)) //string.IsNullOrEmpty(lang_or_title) && string.IsNullOrEmpty(lang))
+        {
+          streamName = "Undetermined";
+        }
+      }
+      // mpeg splitter subtitle format
+      Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
+      if (m.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = language;
+        }
+      }
       return streamName;
     }
+
+    public override string SubtitleName(int iStream)
+    {
+      string streamName = SubEngine.GetInstance().GetSubtitleName(iStream);
+      string streamNameFalse = SubEngine.GetInstance().GetSubtitleName(iStream);
+      string langName = SubEngine.GetInstance().GetLanguage(iStream);
+      if (streamName == null)
+      {
+        return Strings.Unknown;
+      }
+      // remove prefix, which is added by Haali Media Splitter
+      streamName = Regex.Replace(streamName, @"^S: ", "");
+      
+      // Check if returned string contains both language and trackname info
+      // For example Haali Media Splitter returns mkv streams as: "trackname [language]",
+      // where "trackname" is stream's "trackname" property muxed in the mkv.
+      Regex regex = new Regex(@"\[([^\]]+)\]");
+      Regex regexFFDShow = new Regex(@"\s\[.+\]");
+      Regex regexMPCEngine = new Regex(@"\((\D+[^\]]+)\)");
+      Regex regexLAVF = new Regex(@"(?:S:\s)(?<lang_or_title>.+?)(?:\s*\[(?<lang>[^\]]*?)\])?(?:\s*\((?<info>[^\)]*?)\))?$");
+      Match result = regex.Match(streamName);
+      Match resultFFDShow = regexFFDShow.Match(streamName);
+      Match resultMPCEngine = regexMPCEngine.Match(streamName);
+      Match resultLAVF = regexLAVF.Match(streamNameFalse);
+      if (resultFFDShow.Success)
+      {
+        //Get the trackname part by removing the language part from the string.
+        streamName = regex.Replace(streamName, "").Trim();
+
+        //Put things back together
+        streamName = (streamName == string.Empty ? "" : "" + streamName + "");
+      }
+      else if (result.Success)
+      {
+        //if language only is detected -> set to ""
+        streamName = "";
+      }
+      else if (resultMPCEngine.Success)
+      // check for mpc-hc engine response format, e.g.: 
+      // Language (Trackname)
+      {
+        //Get the trackname.
+        streamName = resultMPCEngine.Groups[1].Value;
+      }
+      else if (resultLAVF.Success)
+      // check for LAVF response format, e.g.: 
+      // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
+      {
+        string lang_or_title = resultLAVF.Groups[1].Value;
+        string lang = resultLAVF.Groups[2].Value; 
+        string info = resultLAVF.Groups[3].Value;
+        if (lang_or_title == langName || lang_or_title.Contains("Stream #") && string.IsNullOrEmpty(info))
+        {
+          streamName = "";
+        }
+      }
+      // mpeg splitter subtitle format
+      Match m = Regex.Match(streamName, @"Subtitle\s+-\s+(?<1>.+?),", RegexOptions.IgnoreCase);
+      if (m.Success)
+      {
+        string language = Util.Utils.TranslateLanguageString(m.Groups[1].Value);
+        if (language.Length > 0)
+        {
+          streamName = "";
+        }
+      }
+      
+      #region Remove the false detection of Language Name when is detected as Stream Name
+      
+        //Look if Language Name is equal Stream Name, if it's equal, remove it.
+        if (streamName == langName)
+        {
+          streamName = "";
+        }
+        
+      #endregion
+
+      return streamName;
+    } 
 
     public override bool EnableSubtitle
     {
       get { return SubEngine.GetInstance().Enable; }
       set { SubEngine.GetInstance().Enable = value; }
+    }
+
+    public override string[] SubtitleFiles
+    {
+      get
+      {
+        return SubEngine.GetInstance().GetSubtitleFiles();
+      }
+    }
+
+    public override string SubtitleFile
+    {
+      get
+      {
+        return SubEngine.GetInstance().CurrentSubtitleFile;
+      }
+      set
+      {
+        SubEngine.GetInstance().CurrentSubtitleFile = value;
+      }
     }
 
     public bool AnalyseStreams()
@@ -1530,6 +1813,14 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Edition;
                   }
+                  else if (sPDWGroup == 4) //Subtitle file
+                  {
+                    FSInfos.Type = StreamType.Subtitle_file;
+                  }
+                  else if (sPDWGroup == 10) //Postprocessing filter
+                  {
+                    FSInfos.Type = StreamType.PostProcessing;
+                  }
                   Log.Debug("VideoPlayer: FoundStreams: Type={0}; Name={1}, Filter={2}, Id={3}, PDWGroup={4}, LCID={5}",
                             FSInfos.Type.ToString(), FSInfos.Name, FSInfos.Filter, FSInfos.Id.ToString(),
               sPDWGroup.ToString(), sPLCid.ToString());
@@ -1542,6 +1833,8 @@ namespace MediaPortal.Player
                     case StreamType.Audio:
                     case StreamType.Subtitle:
                     case StreamType.Edition:
+                    case StreamType.Subtitle_file:
+                    case StreamType.PostProcessing:
                       if (FStreams.GetStreamCount(FSInfos.Type) == 0)
                       {
                         FSInfos.Current = true;
@@ -1583,6 +1876,14 @@ namespace MediaPortal.Player
       }
       catch { }
       return true;
+    }
+
+    public override bool HasPostprocessing
+    {
+      get
+      {
+        return PostProcessingEngine.GetInstance().HasPostProcessing;
+      }
     }
 
     #endregion

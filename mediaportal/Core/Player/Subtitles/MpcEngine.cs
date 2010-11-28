@@ -155,6 +155,11 @@ namespace MediaPortal.Player.Subtitles
       return MpcSubtitles.GetLanguage(i);
     }
 
+    public string GetSubtitleName(int i)
+    {
+      return MpcSubtitles.GetLanguage(i);
+    }
+
     public int Current
     {
       get { return MpcSubtitles.GetCurrent(); }
@@ -193,6 +198,30 @@ namespace MediaPortal.Player.Subtitles
       MpcSubtitles.SetTime(nsSampleTime);
     }
 
+    public void SwitchToNextSubtitleSub()
+    {
+        if (Enable)
+        {
+            if (Current < GetCount() - 1)
+            {
+                Current++;
+            }
+            else
+            {
+                Enable = false;
+            }
+        }
+        else
+        {
+            Current = 0;
+            Enable = true;
+        }
+    }
+
+    #region Subtitle files
+    public string[] GetSubtitleFiles() { return new string[] { }; }
+    public string CurrentSubtitleFile { get { return null; } set { } }
+    #endregion
     #endregion
 
     private class MpcSubtitles
@@ -225,6 +254,10 @@ namespace MediaPortal.Player.Subtitles
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       [return: MarshalAs(UnmanagedType.BStr)]
       public static extern string GetLanguage(int i);
+
+      [DllImport("mpcSubs.dll", ExactSpelling = true)]
+      [return: MarshalAs(UnmanagedType.BStr)]
+      public static extern string GetSubtitleName(int i);
 
       [DllImport("mpcSubs.dll", ExactSpelling = true)]
       public static extern int GetCurrent();

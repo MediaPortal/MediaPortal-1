@@ -24,6 +24,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -523,6 +524,20 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property to get the total number of subtitle files
+    /// </summary>
+    public virtual string[] SubtitleFiles
+    {
+        get { return new string[] {}; }
+    }
+
+    public virtual string SubtitleFile
+    {
+        get { return null; }
+        set { }
+    }
+
+    /// <summary>
     /// Property to get/set the current subtitle stream
     /// </summary>
     public virtual int CurrentSubtitleStream
@@ -532,11 +547,19 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get/set the name for a subtitle stream
+    /// Property to get/set the language name for a subtitle stream
     /// </summary>
     public virtual string SubtitleLanguage(int iStream)
     {
       return Strings.Unknown;
+    }
+
+    /// <summary>
+    /// Property to get the name for a subtitle stream
+    /// </summary>
+    public virtual string SubtitleName(int iStream)
+    {
+      return null;
     }
 
     /// <summary>
@@ -665,7 +688,17 @@ namespace MediaPortal.Player
       return false;
     }
 
-    public virtual void OnZapping(int info) { }    
+    public virtual void OnZapping(int info) { }
+
+    #region Posprocessing features
+    public virtual bool HasPostprocessing
+    {
+      get
+      {
+        return false;
+      }
+    }
+    #endregion
 
     #region IDisposable Members
 

@@ -3093,6 +3093,7 @@ namespace MediaPortal.Util
       return found;
     }
 
+
     public static string GetCoverArtByThumbExtension(string strFolder, string strFileName)
     {
       if (string.IsNullOrEmpty(strFolder) || string.IsNullOrEmpty(strFileName))
@@ -3952,6 +3953,9 @@ namespace MediaPortal.Util
           break;
         case "ukrainian":
           languageTranslated = GUILocalizeStrings.Get(2614);
+          break;
+        case "deutsch":
+          languageTranslated = GUILocalizeStrings.Get(2615);
           break;
         default:
           break;

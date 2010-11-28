@@ -25,6 +25,8 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.PostProcessing;
+using FFDShow;
 
 namespace MediaPortal.GUI.Video
 {
@@ -65,6 +67,14 @@ namespace MediaPortal.GUI.Video
       OSD_CONTRASTLABEL = 753,
       OSD_GAMMA = 706,
       OSD_GAMMALABEL = 754,
+      OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF = 707,
+      OSD_VIDEO_POSTPROC_RESIZE_ONOFF = 708,
+      //OSD_VIDEO_POSTPROC_CROP_ONOFF = 709,
+      OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL = 710,
+      OSD_VIDEO_POSTPROC_CROP_VERTICAL = 711,
+      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL = 712,
+      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL = 713,   
+      OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF = 714,
       OSD_SUBTITLE_DELAY = 800,
       OSD_SUBTITLE_DELAY_LABEL = 850,
       OSD_SUBTITLE_ONOFF = 801,
@@ -523,6 +533,16 @@ namespace MediaPortal.GUI.Video
                 // set the controls values
                 float fPercent = (float)(100 * (g_Player.CurrentPosition / g_Player.Duration));
                 SetSliderValue(0.0f, 100.0f, (float)fPercent, (int)Controls.OSD_VIDEOPOS);
+                bool hasPostProc = g_Player.HasPostprocessing;
+                if (hasPostProc)
+                {
+                    IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+                    SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                    SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                    //SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                    SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                    UpdatePostProcessing();
+                }
 
 
                 // SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
@@ -542,6 +562,15 @@ namespace MediaPortal.GUI.Video
                 ShowControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
                 ShowControl(GetID, (int)Controls.OSD_GAMMA);
                 ShowControl(GetID, (int)Controls.OSD_GAMMALABEL);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                //ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                  
                 FocusControl(GetID, (int)Controls.OSD_VIDEOPOS, 0); // set focus to the first control in our group
               }
             }
@@ -582,6 +611,13 @@ namespace MediaPortal.GUI.Video
       SetSliderValue(0.0f, 100.0f, (float)fBrightNess, (int)Controls.OSD_BRIGHTNESS);
       SetSliderValue(0.0f, 100.0f, (float)fContrast, (int)Controls.OSD_CONTRAST);
       SetSliderValue(0.0f, 100.0f, (float)fGamma, (int)Controls.OSD_GAMMA);
+    }
+
+    private void UpdatePostProcessing()
+    {
+        IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+        SetSliderValue(0.0f, 100.0f, (float)engine.CropVertical, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+        SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
     }
 
     private void SetVideoProgress()
@@ -682,6 +718,15 @@ namespace MediaPortal.GUI.Video
 
       HideControl(GetID, (int)Controls.OSD_GAMMA);
       HideControl(GetID, (int)Controls.OSD_GAMMALABEL);
+
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+      //HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
 
       HideControl(GetID, (int)Controls.OSD_CONTRAST);
       HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
@@ -891,6 +936,16 @@ namespace MediaPortal.GUI.Video
                   }
                   break;
         */
+        case (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF:
+            {
+              PostProcessingEngine.GetInstance().EnablePostProcess = !PostProcessingEngine.GetInstance().EnablePostProcess;
+              break;
+            }
+        case (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF:
+            {
+                PostProcessingEngine.GetInstance().EnableResize = !PostProcessingEngine.GetInstance().EnableResize;
+              break;
+            }
         case (int)Controls.OSD_SUBTITLE_ONOFF:
           {
             g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
@@ -903,7 +958,20 @@ namespace MediaPortal.GUI.Video
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
                                               (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
               OnMessage(msg); // retrieve the selected list item
-              g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              if (msg.Param1 >= g_Player.SubtitleStreams) // Subtitle file
+              {
+                  msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
+                                              (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
+                  OnMessage(msg); // retrieve the selected list item
+                  GUIListItem item = (GUIListItem)msg.Object;
+                  Log.Info("Subtitle file selected " + item.Path);
+                  g_Player.SubtitleFile = item.Path; // set the current subtitle file
+              }
+              else
+              {
+                  Log.Info("Subtitle stream selected " + msg.Label);
+                  g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              }
               PopulateSubTitles();
             }
           }
@@ -923,6 +991,26 @@ namespace MediaPortal.GUI.Video
               }
               m_subtitleDelay = (int)pControl.FloatValue;
             }
+          }
+          break;
+        case (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL:
+          {
+              GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+              if (null != pControl)
+              {
+                  PostProcessingEngine.GetInstance().CropVertical = pControl.Percentage;
+                  UpdatePostProcessing();
+              }
+          }
+          break;
+        case (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL:
+          {
+              GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+              if (null != pControl)
+              {
+                  PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
+                  UpdatePostProcessing();
+              }
           }
           break;
       }
@@ -1036,7 +1124,7 @@ namespace MediaPortal.GUI.Video
     private void PopulateSubTitles()
     {
       // get the number of subtitles in the current movie
-      int iValue = g_Player.SubtitleStreams;
+      int subStreamsCount = g_Player.SubtitleStreams;
 
       // tell the list control not to show the page x/y spin control
       GUIListControl pControl = (GUIListControl)GetControl((int)Controls.OSD_SUBTITLE_LIST);
@@ -1055,29 +1143,36 @@ namespace MediaPortal.GUI.Video
 
       // cycle through each subtitle and add it to our list control
       int currentSubtitleStream = g_Player.CurrentSubtitleStream;
-      for (int i = 0; i < iValue; ++i)
+      for (int i = 0; i < subStreamsCount; ++i)
       {
         string strItem;
         string strLang = g_Player.SubtitleLanguage(i);
+        string strName = g_Player.SubtitleName(i);
+        // formats right label2 to '[active]'
+        string strActive = (currentSubtitleStream == i) ? strActiveLabel : null;
         int ipos = strLang.IndexOf("(");
         if (ipos > 0)
         {
           strLang = strLang.Substring(0, ipos);
         }
-        if (currentSubtitleStream == i) // this subtitle is active, show as such
+        //if (strName != null && !strName.Equals(""))
+        if (strName != null && !strName.Equals("") && !strName.Equals(strLang)) //Sebastiii
         {
-          // formats to 'Subtitle X [active]'
-          strItem = String.Format(strLang + " " + strActiveLabel); // this audio stream is active, show as such
+          if (strLang != null && !strLang.Equals(""))
+            // formats to 'Subtitle name (language)'
+            strItem = String.Format(strName + " (" + strLang + ")");
+          else
+            // formats to 'Subtitle name'
+            strItem = String.Format(strName);
         }
         else
-        {
-          // formats to 'Subtitle X'
+          // formats to 'Language'
           strItem = String.Format(strLang);
-        }
 
         // create a list item object to add to the list
-        GUIListItem pItem = new GUIListItem();
-        pItem.Label = strItem;
+        GUIListItem pItem = new GUIListItem(strItem);
+
+        if (strActive != null) pItem.Label2 = strActive;
 
         // add it ...
         GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
@@ -1085,9 +1180,54 @@ namespace MediaPortal.GUI.Video
         OnMessage(msg2);
       }
 
+      string[] subFiles = g_Player.SubtitleFiles;
+      string currentSubFile = g_Player.SubtitleFile;
+      int subFileIndex = -1;
+      if (subFiles.Length > 0)
+      {
+        Log.Info("Current subtitle file " + ((currentSubFile != null) ? currentSubFile : "None"));
+
+        // First scan if the current subtitles file is in the list, otherwise add it
+        if (currentSubFile != null && !currentSubFile.Equals(""))
+        {
+          for (int i = 0; i < subFiles.Length; i++)
+          {
+            if (currentSubFile.Equals(subFiles[i]))
+            {
+              subFileIndex = i;
+              break;
+            }
+          }
+          if (subFileIndex == -1) // The current subtitle file is not in the list, add it on top of it
+          {
+            // create a list item object to add to the list
+            GUIListItem pItem = new GUIListItem();
+            pItem.Label = currentSubFile;
+
+            // add it ...
+            GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
+                                             (int)Controls.OSD_SUBTITLE_LIST, 0, 0, pItem);
+            OnMessage(msg2);
+            subFileIndex = 0;
+          }
+        }
+        for (int i = 0; i < subFiles.Length; i++)
+        {
+          // create a list item object to add to the list
+          GUIListItem pItem = new GUIListItem();
+          pItem.Label = FFDShowAPI.getFileName(subFiles[i], FFDShow.FFDShowAPI.FileNameMode.FileNameWithoutExtension);
+          pItem.Path = subFiles[i];
+
+          // add it ...
+          GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
+                                           (int)Controls.OSD_SUBTITLE_LIST, 0, 0, pItem);
+          OnMessage(msg2);
+        }
+      }
+
       // set the current active subtitle as the selected item in the list control
       GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-                                         (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
+        (int)Controls.OSD_SUBTITLE_LIST, (subFileIndex == -1) ? currentSubtitleStream : (subFileIndex + subStreamsCount ), 0, null);
       OnMessage(msgSet);
     }
 
@@ -1175,6 +1315,8 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
 
       ToggleButton((int)Controls.OSD_MUTE, false);
       ToggleButton((int)Controls.OSD_SUBTITLES, false);

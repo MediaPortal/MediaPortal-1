@@ -101,7 +101,7 @@
       <id>1</id>
       <posX>633</posX>
       <posY>464</posY>
-      <label>Main Menu</label>
+      <label>200086</label>
       <font>font11</font>
       <align>center</align>
       <textcolor>white</textcolor>
@@ -114,7 +114,7 @@
       <id>1</id>
       <posX>633</posX>
       <posY>464</posY>
-      <label>Subtitle</label>
+      <label>287</label>
       <font>font11</font>
       <align>center</align>
       <textcolor>white</textcolor>
@@ -122,12 +122,12 @@
       <animation effect="fade" time="250">visiblechange</animation>
     </control>
     <control>
-      <description>label VideopostionMenu</description>
+      <description>label Video Menu</description>
       <type>label</type>
       <id>1</id>
       <posX>633</posX>
       <posY>464</posY>
-      <label>Videoposition</label>
+      <label>200084</label>
       <font>font11</font>
       <align>center</align>
       <textcolor>white</textcolor>
@@ -140,7 +140,7 @@
       <id>1</id>
       <posX>633</posX>
       <posY>464</posY>
-      <label>Mute</label>
+      <label>200087</label>
       <font>font11</font>
       <align>center</align>
       <textcolor>white</textcolor>
@@ -180,7 +180,7 @@
       <textureNoFocus>osd_mute_nofocus.png</textureNoFocus>
     </control>
     <control>
-      <description>Video Position Menu</description>
+      <description>Video Menu</description>
       <type>togglebutton</type>
       <id>220</id>
       <posX>635</posX>
@@ -598,8 +598,8 @@
       <type>label</type>
       <id>750</id>
       <posX>590</posX>
-      <posY>464</posY>
-      <label>Video Position</label>
+      <posY>2</posY>
+      <label>298</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
@@ -611,14 +611,14 @@
       <type>slider</type>
       <id>700</id>
       <posX>515</posX>
-      <posY>492</posY>
+      <posY>22</posY>
       <spintype>int</spintype>
       <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
       <onup>220</onup>
-      <ondown>700</ondown>
+      <ondown>701</ondown>
       <onleft>700</onleft>
       <onright>700</onright>
       <visible>no</visible>
@@ -629,14 +629,15 @@
       <description>Non-Interleaved Checkbox</description>
       <type>checkmark</type>
       <id>701</id>
-      <posX>1028</posX>
-      <posY>369</posY>
+      <posX>515</posX>
+      <posY>45</posY>
       <label>306</label>
       <onup>700</onup>
-      <ondown>703</ondown>
+      <ondown>702</ondown>
       <onleft>701</onleft>
       <onright>701</onright>
       <visible>no</visible>
+	  <font>font10</font>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -644,14 +645,15 @@
       <description>No Cache Checkbox</description>
       <type>checkmark</type>
       <id>702</id>
-      <posX>1033</posX>
-      <posY>369</posY>
+      <posX>515</posX>
+      <posY>70</posY>
       <label>431</label>
-      <onup>700</onup>
+      <onup>701</onup>
       <ondown>703</ondown>
-      <onleft>701</onleft>
+      <onleft>702</onleft>
       <onright>702</onright>
       <visible>no</visible>
+	  <font>font10</font>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
@@ -659,13 +661,14 @@
       <description>Adjust Framerate Checkbox</description>
       <type>checkmark</type>
       <id>703</id>
-      <posX>1028</posX>
-      <posY>394</posY>
+      <posX>515</posX>
+      <posY>95</posY>
       <label>343</label>
-      <onup>701</onup>
+      <onup>702</onup>
       <ondown>704</ondown>
       <onleft>703</onleft>
-      <onright>702</onright>
+      <onright>703</onright>
+	  <font>font10</font>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
@@ -674,10 +677,10 @@
       <description>brightness label</description>
       <type>label</type>
       <id>752</id>
-      <posX>1028</posX>
-      <posY>424</posY>
+      <posX>590</posX>
+      <posY>120</posY>
       <label>464</label>
-      <font>font13</font>
+      <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -687,9 +690,10 @@
       <description>brightness</description>
       <type>slider</type>
       <id>704</id>
-      <posX>1031</posX>
-      <posY>424</posY>
+      <posX>515</posX>
+      <posY>140</posY>
       <spintype>int</spintype>
+	  <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -705,10 +709,10 @@
       <description>contrast label</description>
       <type>label</type>
       <id>753</id>
-      <posX>1028</posX>
-      <posY>454</posY>
+      <posX>590</posX>
+      <posY>165</posY>
       <label>465</label>
-      <font>font13</font>
+      <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -718,9 +722,10 @@
       <description>contrast</description>
       <type>slider</type>
       <id>705</id>
-      <posX>1031</posX>
-      <posY>454</posY>
+      <posX>515</posX>
+      <posY>185</posY>
       <spintype>int</spintype>
+	  <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
@@ -736,10 +741,10 @@
       <description>gamma label</description>
       <type>label</type>
       <id>754</id>
-      <posX>1028</posX>
-      <posY>484</posY>
+      <posX>590</posX>
+      <posY>210</posY>
       <label>466</label>
-      <font>font13</font>
+      <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
@@ -749,21 +754,128 @@
       <description>gamma</description>
       <type>slider</type>
       <id>706</id>
-      <posX>1031</posX>
-      <posY>484</posY>
+      <posX>515</posX>
+      <posY>230</posY>
       <spintype>int</spintype>
+	  <showrange>no</showrange>
       <textureSliderBar>osd_slider_bg.png</textureSliderBar>
       <textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
       <textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
       <onup>705</onup>
-      <ondown>706</ondown>
+      <ondown>707</ondown>
       <onleft>706</onleft>
       <onright>706</onright>
       <visible>no</visible>
       <animation effect="fade" time="250">visiblechange</animation>
       <animation effect="fade" time="250">windowopen</animation>
     </control>
-    <control>
+	<control>
+    <description>Postprocessing deblock checkbox</description>
+      <type>checkmark</type>
+      <id>707</id>
+      <posX>515</posX>
+      <posY>255</posY>
+      <label>200074</label>
+      <onup>706</onup>
+      <ondown>708</ondown>
+      <onleft>707</onleft>
+      <onright>707</onright>
+      <visible>no</visible>
+	  <font>font10</font>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+	<control>
+    <description>Postprocessing resize checkbox</description>
+      <type>checkmark</type>
+      <id>708</id>
+      <posX>515</posX>
+      <posY>280</posY>
+      <label>200075</label>
+      <onup>707</onup>
+      <ondown>711</ondown>
+      <onleft>708</onleft>
+      <onright>708</onright>
+      <visible>no</visible>
+	  <font>font10</font>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+	<control>
+		<description>Postprocessing crop vertical label</description>
+		<type>label</type>
+		<id>710</id>
+		<posX>590</posX>
+		<posY>315</posY>
+		<label>200079</label>
+		<font>font10</font>
+		<animation effect="slide" start="1300,0" end="0,0" tween="quadratic" time="300" delay="0">visible</animation>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>Postprocessing crop vertical</description>
+		<type>slider</type>
+		<id>711</id>
+		<posX>515</posX>
+		<posY>325</posY>
+		<spintype>int</spintype>
+		<showrange>no</showrange>
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+		<onup>708</onup>
+		<ondown>713</ondown>
+		<onleft>711</onleft>
+		<onright>711</onright>
+		<animation effect="slide" start="1300,0" end="0,0" tween="quadratic" time="300" delay="0">visible</animation>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>Postprocessing crop horizontal label</description>
+		<type>label</type>
+		<id>712</id>
+		<posX>590</posX>
+		<posY>350</posY>
+		<label>200080</label>
+		<font>font10</font>
+		<animation effect="slide" start="1300,0" end="0,0" tween="quadratic" time="300" delay="0">visible</animation>
+		<visible>no</visible>
+	</control>
+	<control>
+		<description>Postprocessing horizontal</description>
+		<type>slider</type>
+		<id>713</id>
+		<posX>515</posX>
+		<posY>370</posY>
+		<spintype>int</spintype>
+		<showrange>no</showrange>
+		<textureSliderBar>osd_slider_bg.png</textureSliderBar>
+		<textureSliderNib>osd_slider_nibNF.png</textureSliderNib>
+		<textureSliderNibFocus>osd_slider_nibFO.png</textureSliderNibFocus>
+		<onup>711</onup>
+		<ondown>714</ondown>
+		<onleft>713</onleft>
+		<onright>713</onright>
+		<animation effect="slide" start="1300,0" end="0,0" tween="quadratic" time="300" delay="0">visible</animation>
+		<visible>no</visible>
+	</control>
+	<control>
+	<description>Deinterlace checkbox</description>
+      <type>checkmark</type>
+      <id>714</id>
+      <posX>515</posX>
+      <posY>395</posY>
+      <label>200077</label>
+      <onup>713</onup>
+      <ondown>750</ondown>
+      <onleft>714</onleft>
+      <onright>714</onright>
+      <visible>no</visible>
+	  <font>font10</font>
+      <animation effect="fade" time="250">visiblechange</animation>
+      <animation effect="fade" time="250">windowopen</animation>
+    </control>
+	<control>
       <description>Create Bookmark</description>
       <type>button</type>
       <id>600</id>

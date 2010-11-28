@@ -1910,6 +1910,21 @@
     <String id="1079874">Activer image courante comme Fanart</String>
     <String id="1079875">Activer image courante par defaut</String>
     <String id="200072">Episodes suivants</String>
+	<String id="200073">Post-traitement</String>
+	<String id="200074">Améliorer la qualitée</String>
+	<String id="200075">Redimensionner l'image</String>
+	<String id="200076">Fichiers sous-titre</String>
+	<String id="200077">Désentrelacer</String>
+	<String id="200078">Recadrer</String>
+	<String id="200079">Recadrage Vertical</String>
+	<String id="200080">Recadrase Horizontal</String>
+	<String id="200081">MENU VIDEO</String>
+	<String id="200082">MENU AUDIO</String>
+	<String id="200083">MENU SOUS-TITRES</String>
+	<String id="200084">Menu Vidéo</String>
+	<String id="200085">Menu Audio</String>
+	<String id="200086">MENU PRINCIPAL</String>
+	<String id="200087">Couper le volume</String>
 	<String id="200090">Edition</String>
 	<String id="200091">Chapitre</String>
   </Section>

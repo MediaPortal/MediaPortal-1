@@ -37,6 +37,7 @@ using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
 
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -2262,6 +2263,24 @@ namespace MediaPortal.Player
     }
     #endregion
 
+    #region Postprocessing selection
+    /// <summary>
+    /// Property which returns true if the player is able to perform postprocessing features
+    /// </summary>
+    public static bool HasPostprocessing
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.HasPostprocessing;
+      }
+    }
+    #endregion
+
+
     #region subtitle/audio stream selection
 
     /// <summary>
@@ -2344,8 +2363,33 @@ namespace MediaPortal.Player
       }
     }
 
+    public static string[] SubtitleFiles
+    {
+      get
+      {
+        if (_player == null) return new string[] { };
+        return _player.SubtitleFiles;
+      }
+    }
+
+    public static string SubtitleFile
+    {
+      get
+      {
+        if (_player == null) return null;
+        return _player.SubtitleFile;
+      }
+      set
+      {
+        if (_player == null) return;
+        _player.SubtitleFile = value;
+      }
+    }
+    
+
     /// <summary>
     /// Property to get/set the current subtitle stream
+    /// Returns -1 if no subtitle stream is active
     /// </summary>
     public static int CurrentSubtitleStream
     {
@@ -2377,6 +2421,22 @@ namespace MediaPortal.Player
       }
 
       string stream = _player.SubtitleLanguage(iStream);
+      return Util.Utils.TranslateLanguageString(stream);
+    }
+
+    /// <summary>
+    /// Retrieves the name of the subtitle stream
+    /// </summary>
+    /// <param name="iStream">Index of the stream</param>
+    /// <returns>Name of the track</returns>
+    public static string SubtitleName(int iStream)
+    {
+      if (_player == null)
+      {
+        return null;
+      }
+
+      string stream = _player.SubtitleName(iStream);
       return Util.Utils.TranslateLanguageString(stream);
     }
 
@@ -2576,6 +2636,20 @@ namespace MediaPortal.Player
       }
     }
 
+    //}
+
+    /// <summary>
+    /// Switches to the next subtitle stream or file
+    /// </summary>
+    public static void SwitchToNextSubtitleSub()
+    {
+      if (_player != null)
+        SubEngine.GetInstance().SwitchToNextSubtitleSub();
+    }
+
+    /// <summary>
+    /// Switches to the next subtitle stream TV
+    /// </summary>
     public static void SwitchToNextSubtitle()
     {
       if (EnableSubtitle)

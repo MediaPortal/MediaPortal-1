@@ -30,6 +30,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Player.Teletext;
 using MediaPortal.Profile;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
@@ -353,6 +354,21 @@ namespace MediaPortal.Player
         }
 
         #endregion
+
+        #region PostProcessingEngine Detection return on DummyEngine if False
+        //This is Sebastiii unsupported release version by Chemelli
+        string tmpstr;
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(_graphBuilder))
+        {
+          tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
+          Log.Error("TSReaderPlayer: {0} postprocessing configured in MP but misconfigured!", tmpstr);
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+        //End This is Sebastiii unsupported release version by Chemelli
+        #endregion
+
+
 
         #region render TsReader output pins
 
@@ -780,6 +796,17 @@ namespace MediaPortal.Player
         {
           _dvbSubRenderer.RenderSubtitles = value;
         }
+      }
+    }
+
+    /// <summary>
+    /// Property to Get Postprocessing
+    /// </summary>
+    public override bool HasPostprocessing
+    {
+      get
+      {
+        return PostProcessingEngine.GetInstance().HasPostProcessing;
       }
     }
 

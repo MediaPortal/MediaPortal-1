@@ -64,7 +64,12 @@ namespace DShowNET.Helper
 
     public static readonly Guid HaaliGuid = new Guid("55DA30FC-F16B-49FC-BAA5-AE59FC65F82D");
     public static readonly Guid MPCMatroska = new Guid("149D2E01-C32E-4939-80F6-C07B81015A7A");
+    public static readonly Guid MPCMatroskaSource = new Guid("0A68C3B5-9164-4A54-AFAF-995B2FF0E0D4");
 
+    public static readonly Guid FFDShowVideo = new Guid("04FE9017-F873-410e-871E-AB91661A4EF7");
+    public static readonly Guid FFDShowVideoRaw = new Guid("0B390488-D80F-4a68-8408-48DC199F0E97");
+    public static readonly Guid FFDShowVideoDXVA = new Guid("0B0EFF97-C750-462c-9488-B10E7D87F1A6");
+    
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>
     /// <returns>A new instance of the class.</returns>
