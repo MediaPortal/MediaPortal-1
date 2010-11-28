@@ -332,6 +332,8 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="guilib\ExpressionManager.cs" />
+    <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
     <Compile Include="guilib\FontTexture.cs" />
     <Compile Include="guilib\GUICoverFlow.cs" />
@@ -342,6 +344,7 @@
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
+    <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="Player\MediaInfoWrapper.cs" />
     <Compile Include="Player\RefreshRateChanger.cs" />
     <Compile Include="guilib\Tween.cs" />

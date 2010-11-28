@@ -322,6 +322,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void Clear()
     {
+      GUIExpressionManager.ClearExpressionCache();
       GUIControlFactory.ClearReferences();
     }
 
@@ -1186,6 +1187,11 @@ namespace MediaPortal.GUI.Library
               Log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace,
                         this.ToString());
             }
+          }
+          else
+          {
+            Log.Warn("GUIWindow:OnWindowLoaded: '{0}' is missing control id {1} (window property: {2})", 
+              _windowXmlFileName, atrb.ID, field.Name);
           }
         }
       }

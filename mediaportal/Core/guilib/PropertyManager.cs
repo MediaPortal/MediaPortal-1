@@ -35,7 +35,6 @@ namespace MediaPortal.GUI.Library
   {
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
     private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-
     private static Dictionary<string, string> _properties = new Dictionary<string, string>();
     private static bool _isChanged = false;
 
@@ -382,6 +381,11 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+      if (changed)
+      {
+        GUIExpressionManager.InvalidateExpression(tag);
+      }
+
       if (changed && OnPropertyChanged != null)
       {
         _isChanged = true;
@@ -513,6 +517,8 @@ namespace MediaPortal.GUI.Library
         return string.Empty;
       }
 
+      line = GUIExpressionManager.Parse(line);
+
       if (line.IndexOf('#') > -1)
       {
         // Matches a property tag and replaces it with the value for that property
@@ -553,5 +559,6 @@ namespace MediaPortal.GUI.Library
 
       return property;
     }
+
   }
 }

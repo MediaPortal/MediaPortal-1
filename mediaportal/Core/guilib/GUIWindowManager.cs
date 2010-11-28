@@ -1012,6 +1012,7 @@ namespace MediaPortal.GUI.Library
           GUITextureManager.Init();
           GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
           GUIFontManager.InitializeDeviceObjects();
+          GUIExpressionManager.ClearExpressionCache();
           GUIControlFactory.ClearReferences();
           GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
           GUIWindowManager.OnResize();
