@@ -42,6 +42,9 @@ using TvLibrary.Interfaces;
 using Timer = System.Timers.Timer;
 using System.Runtime.Remoting;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.PostProcessing;
+using FFDShow;
+
 
 #endregion
 
@@ -1561,6 +1564,19 @@ namespace TvPlugin
         dlg.AddLocalizedString(200059); // Audio dual mono mode menu
       }
 
+      // SubTitle stream, show only when there exists any streams,
+      //    dialog shows then the streams and an item to disable them
+      if (g_Player.SubtitleStreams > 0 || g_Player.SubtitleFiles.Length > 0)
+      {
+        dlg.AddLocalizedString(462);
+      }
+
+      // If the decoder supports postprocessing features (FFDShow)
+      if (g_Player.HasPostprocessing)
+      {
+        dlg.AddLocalizedString(200073);
+      }
+
       dlg.AddLocalizedString(11000); // Crop settings
 
       if (!g_Player.IsTVRecording)
@@ -1789,6 +1805,14 @@ namespace TvPlugin
 
         case 200091:
           ShowChapterStreamsMenu();
+          break;
+
+        case 462:
+          ShowSubtitleStreamsMenu();
+          break;
+
+        case 200073:
+          ShowPostProcessingMenu();
           break;
       }
     }
@@ -2227,6 +2251,163 @@ namespace TvPlugin
       }
       ChannelLinkageMap lmap = (ChannelLinkageMap)linkages[dlg.SelectedLabel];
       TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), false);
+    }
+
+    private void ShowSubtitleStreamsMenu() //Sebastiii
+    {
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(462); // SubTitle Streams
+
+      dlg.AddLocalizedString(519); // disable Subtitles
+
+      // get the number of subtitles in the current movie
+      int nbSubStreams = g_Player.SubtitleStreams;
+      // cycle through each subtitle and add it to our list control
+      for (int i = 0; i < nbSubStreams; ++i)
+      {
+        // remove (English) in: "English (English)", should be done by gplayer
+        string strLang = g_Player.SubtitleLanguage(i);
+        int ipos = strLang.IndexOf("(");
+        if (ipos > 0)
+        {
+          strLang = strLang.Substring(0, ipos);
+        }
+        /*string strName = g_Player.SubtitleName(i);
+        if (!string.IsNullOrEmpty(strName))
+        {
+          dlg.Add(String.Format("{0} [{1}]", strLang.TrimEnd(), strName.TrimStart()));
+        }
+        else*/
+        {
+          dlg.Add(strLang);
+        }
+      } //This is Sebastiii unsupported release version.
+
+      // select/focus the subtitle, which is active atm.
+      // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
+      if (g_Player.EnableSubtitle && nbSubStreams > 0)
+      {
+        int subStream = g_Player.CurrentSubtitleStream;
+        if (subStream != -1) dlg.SelectedLabel = subStream + 1;
+      }
+      else
+        dlg.SelectedLabel = 0;
+
+      /*string currentSubFile = g_Player.SubtitleFile;
+      string[] subFiles = null;
+      if (g_Player.SubtitleFiles.Length > 0)
+      {
+        //TODO Add separator header
+        subFiles = g_Player.SubtitleFiles;
+
+        Log.Info("Current subtitle file " + ((currentSubFile != null) ? currentSubFile : "None"));
+        int index = -1;
+        // First scan if the current subtitles file is in the list, otherwise add it
+        if (currentSubFile != null && !currentSubFile.Equals(""))
+        {
+          for (int i = 0; i < subFiles.Length; i++)
+          {
+            if (currentSubFile.Equals(subFiles[i]))
+            {
+              index = i;
+              break;
+            }
+          }
+          if (index == -1) // The current subtitle file is not in the list, add it on top of it
+          {
+            dlg.Add(currentSubFile);
+            index = 0;
+          }
+        }
+        for (int i = 0; i < subFiles.Length; i++)
+        {
+          // Store short file name in Label and full file path in Label2
+          GUIListItem item = new GUIListItem(FFDShowAPI.getFileName(subFiles[i], FFDShowAPI.FileNameMode.FileNameLanguage));
+          item.Path = subFiles[i];
+          dlg.Add(item);
+        }
+        if (index != -1) dlg.SelectedLabel = nbSubStreams + index + 1;
+      }*/
+
+      // show dialog and wait for result
+      _isDialogVisible = true;
+      dlg.DoModal(GetID);
+      _isDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      if (dlg.SelectedLabel == 0)
+      {
+        g_Player.EnableSubtitle = false;
+      }
+      else
+      {
+        /*if (dlg.SelectedLabel - 1 >= nbSubStreams)  // Subtitles file
+        {
+          string subFile = subFiles[dlg.SelectedLabel - 1 - nbSubStreams];
+          Log.Info("Subtitle file selected : " + subFile);
+          if (currentSubFile == null || !subFile.Equals(currentSubFile))
+            g_Player.SubtitleFile = subFile;
+        }*/
+        /*else*/
+        if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
+        {
+          Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - 1));
+          g_Player.CurrentSubtitleStream = dlg.SelectedLabel - 1;
+        }
+        g_Player.EnableSubtitle = true;
+      }
+    }
+
+    private void ShowPostProcessingMenu() //Sebastiii
+    {
+      if (dlg == null)
+      {
+        return;
+      }
+
+      do
+      {
+        dlg.Reset();
+        dlg.SetHeading(200073); // Postprocessing
+        IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+        // Deblocking
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200074), (engine.EnablePostProcess) ? GUILocalizeStrings.Get(461) : ""));
+        // Resize
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200075), (engine.EnableResize) ? GUILocalizeStrings.Get(461) : ""));
+        // Crop
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200078), (engine.EnableCrop) ? GUILocalizeStrings.Get(461) : ""));
+        // Deinterlace
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200077), (engine.EnableDeinterlace) ? GUILocalizeStrings.Get(461) : ""));
+        dlg.AddLocalizedString(970); // Previous window
+        dlg.SelectedLabel = 0;
+
+        // show dialog and wait for result
+        _isDialogVisible = true;
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == 970)
+        {
+          // switch back to previous window
+          _isDialogVisible = false;
+          GUIWindowManager.ShowPreviousWindow();
+          return;
+        }
+
+        switch (dlg.SelectedLabel)
+        {
+          case 0: engine.EnablePostProcess = !engine.EnablePostProcess; break;
+          case 1: engine.EnableResize = !engine.EnableResize; break;
+          case 2: engine.EnableCrop = !engine.EnableCrop; break;
+          case 3: engine.EnableDeinterlace = !engine.EnableDeinterlace; break;
+        }
+      } while (dlg.SelectedId != -1);
+      _isDialogVisible = false;
     }
 
     public override void Process()
