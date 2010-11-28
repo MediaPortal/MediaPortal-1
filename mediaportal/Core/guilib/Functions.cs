@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
 // Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -121,6 +121,42 @@ namespace MediaPortal.GUI.Library
       return GUILocalizeStrings.Get(int.Parse(Id));
     }
 
+    [XMLSkinFunction("string.trim")]
+    public static string TrimString(string text)
+    {
+      return text.Trim();
+    }
+
+    [XMLSkinFunction("string.trim")]
+    public static string TrimString(string text, string charsToTrim)
+    {
+      return text.Trim(charsToTrim.ToCharArray());
+    }
+
+    [XMLSkinFunction("string.rtrim")]
+    public static string RightTrimString(string text)
+    {
+      return text.TrimEnd();
+    }
+
+    [XMLSkinFunction("string.rtrim")]
+    public static string RightTrimString(string text, string charsToTrim)
+    {
+      return text.TrimEnd(charsToTrim.ToCharArray());
+    }
+
+    [XMLSkinFunction("string.ltrim")]
+    public static string LeftTrimString(string text)
+    {
+      return text.TrimStart();
+    }
+
+    [XMLSkinFunction("string.ltrim")]
+    public static string LeftTrimString(string text, string charsToTrim)
+    {
+      return text.TrimStart(charsToTrim.ToCharArray());
+    }
+
     #endregion
 
     #region Conversions
@@ -129,6 +165,18 @@ namespace MediaPortal.GUI.Library
     public static int ConvertToInt(object value)
     {
       return Convert.ToInt32(value);
+    }
+
+    [XMLSkinFunction("cflt")]
+    public static float ConvertToFloat(object value)
+    {
+      return Convert.ToSingle(value);
+    }
+
+    [XMLSkinFunction("cdate")]
+    public static DateTime ConvertToDate(object value)
+    {
+      return Convert.ToDateTime(value);
     }
 
     #endregion
@@ -393,6 +441,175 @@ namespace MediaPortal.GUI.Library
     public static float Divide(float arg1, float arg2)
     {
       return arg1 / arg2;
+    }
+
+    [XMLSkinFunction("math.round")]
+    public static float Round(float arg)
+    {
+      return (float)Math.Round(arg);
+    }
+
+    [XMLSkinFunction("math.round")]
+    public static float Round(float arg, int decimals)
+    {
+      return (float)Math.Round(arg, decimals);
+    }
+
+    [XMLSkinFunction("math.ceil")]
+    public static float Ceiling(float arg)
+    {
+      return (float)Math.Ceiling(arg);
+    }
+
+    [XMLSkinFunction("math.ceil")]
+    public static float Ceiling(float arg, int decimals)
+    {
+      double scale = Math.Pow(10, decimals);
+      return (float)(Math.Ceiling(arg * scale)/scale);
+    }
+
+    [XMLSkinFunction("math.floor")]
+    public static float Floor(float arg)
+    {
+      return (float)Math.Floor(arg);
+    }
+
+    [XMLSkinFunction("math.floor")]
+    public static float Floor(float arg, int decimals)
+    {
+      double scale = Math.Pow(10, decimals);
+      return (float)(Math.Floor(arg * scale) / scale);
+    }
+
+    #endregion
+
+    #region Date functions
+
+    [XMLSkinFunction("date.add")]
+    public static DateTime DateAdd(DateTime date, TimeSpan timeSpan)
+    {
+      return date.Add(timeSpan);
+    }
+
+    [XMLSkinFunction("date.add")]
+    public static DateTime DateAdd(string interval, float number, DateTime date)
+    {
+      switch(interval.ToLowerInvariant())
+      {
+        case "d":
+        case "dd":
+        case "y":
+        case "dy":
+        case "w":
+        case "dw":
+          return date.AddDays(number);
+        case "ww":
+        case "wk":
+          return date.AddDays(7 * number);
+        case "m":
+        case "mm":
+          return date.AddMonths((int)number);
+        case "q":
+        case "qq":
+          return date.AddMonths(3 * (int)number);
+        case "yy":
+        case "yyyy":
+          return date.AddYears((int)number);
+        case "h":
+        case "hh":
+          return date.AddHours(number);
+        case "n":
+        case "nn":
+          return date.AddMinutes(number);
+        case "s":
+        case "ss":
+          return date.AddSeconds(number);
+        case "ms":
+          return date.AddMilliseconds(number);
+        default:
+          throw new ArgumentException("Invalid parameter value", "interval");
+      }
+    }
+
+    [XMLSkinFunction("date.sub")]
+    public static TimeSpan DateSub(DateTime date1, DateTime date2)
+    {
+      return date1.Subtract(date2);
+    }
+
+    [XMLSkinFunction("date.sub")]
+    public static DateTime DateSub(DateTime date, TimeSpan timeSpan)
+    {
+      return date.Subtract(timeSpan);
+    }
+
+    [XMLSkinFunction("date.extract")]
+    public static int DateExtract(string interval, DateTime date)
+    {
+      switch (interval.ToLowerInvariant())
+      {
+        case "d":
+        case "dd":
+          return date.Day;
+        case "y":
+        case "dy":
+          return date.DayOfYear;
+        case "w":
+        case "dw":
+          return (int)date.DayOfWeek;
+        case "ww":
+        case "wk":
+          return date.DayOfYear/7;
+        case "m":
+        case "mm":
+          return date.Month;
+        case "q":
+        case "qq":
+          return (date.Month - 1) / 3 + 1;
+        case "yy":
+        case "yyyy":
+          return date.Year;
+        case "h":
+        case "hh":
+          return date.Hour;
+        case "n":
+        case "nn":
+          return date.Minute;
+        case "s":
+        case "ss":
+          return date.Second;
+        case "ms":
+          return date.Millisecond;
+        default:
+          throw new ArgumentException("Invalid parameter value", "interval");
+      }
+    }
+
+    [XMLSkinFunction("date.extract")]
+    public static float DateExtract(string interval, TimeSpan timeSpan)
+    {
+      switch (interval.ToLowerInvariant())
+      {
+        case "d":
+        case "dd":
+          return timeSpan.Days;
+        case "ww":
+        case "wk":
+          return (float)timeSpan.Days / 7;
+        case "h":
+        case "hh":
+          return timeSpan.Hours;
+        case "n":
+        case "nn":
+          return timeSpan.Minutes;
+        case "s":
+        case "ss":
+          return timeSpan.Seconds;
+        case "ms":
+          return timeSpan.Milliseconds;
+        default:
+          throw new ArgumentException("Invalid parameter value", "interval");
+      }
     }
 
     #endregion
