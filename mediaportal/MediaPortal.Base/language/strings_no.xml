@@ -712,6 +712,7 @@
     <String id="789">Nå: </String>
     <String id="790">Neste: </String>
     <String id="791">Utseende: Cower Flow</String>
+    <String id="792">Meny for utseende</String>
     <String id="798">lav</String>
     <String id="799">høy</String>
     <String id="800">Begynner med</String>
@@ -993,6 +994,7 @@
     <String id="1200">Oppsettsassistent</String>
     <String id="1201">Spill av video fra begynnelsen</String>
     <String id="1202">Sorter etter: Auto</String>
+    <String id="1203">Kommende episode (aktiv: {0})</String>
     <String id="1211">Gjenoppta avspilling fra {0}</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
@@ -1936,6 +1938,7 @@
     <String id="200070">Vennligst sjekk brannmurinnstillingene dine</String>
     <String id="200071">Slette denne mappen og alle undermapper?</String>
     <String id="200072">Episoder som kommer snart</String>
+    <String id="200090">Utgave</String>
     <String id="200091">Kapittel</String>
   </Section>
 </Language>
