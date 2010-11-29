@@ -134,6 +134,7 @@ namespace MediaPortal.GUI.Video
 
     protected override void SaveSettings()
     {
+      base.SaveSettings();
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
         xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);

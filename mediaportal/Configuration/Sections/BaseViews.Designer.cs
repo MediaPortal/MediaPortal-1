@@ -180,7 +180,7 @@
       // 
       // dgViewAs
       // 
-      this.dgViewAs.HeaderText = "ViewAs";
+      this.dgViewAs.HeaderText = "Layout";
       this.dgViewAs.Name = "dgViewAs";
       this.dgViewAs.ToolTipText = "Select how the returned data should be shown";
       this.dgViewAs.Width = 60;
