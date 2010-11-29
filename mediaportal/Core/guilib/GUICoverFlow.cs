@@ -117,7 +117,7 @@ namespace MediaPortal.GUI.Library
     };
 
     // Defines the directions in which the cover flow can move.
-    new private enum FlowDirection
+    private enum FlowDirection
     {
       LEFT,
       RIGHT

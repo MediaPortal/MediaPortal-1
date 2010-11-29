@@ -639,7 +639,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Sets and gets the status of the focus of the control.
     /// </summary>
-    public new virtual bool Focus
+    public virtual bool Focus
     {
       get { return IsFocused; }
       set
