@@ -791,11 +791,18 @@ namespace MediaPortal.Video.Database
           actor.Name = url.Title;
         }
         // Photo
-        if ((parser.skipToEndOf("<td id=\"img_primary\"")) &&
-            (parser.skipToEndOf("<img src=\"")) &&
-            (parser.extractTo("\"", ref strThumb)))
+        string parserTxt = parser.Content;
+        string photoBlock = string.Empty;
+        if (parser.skipToStartOf("<td id=\"img_primary\"") &&
+        (parser.extractTo("</td>", ref photoBlock)))
         {
-          actor.ThumbnailUrl = strThumb;
+          parser.Content = photoBlock;
+          if ((parser.skipToEndOf("<img src=\"")) &&
+              (parser.extractTo("\"", ref strThumb)))
+          {
+            actor.ThumbnailUrl = strThumb;
+          }
+          parser.Content = parserTxt;
         }
         // Birth date
         if ((parser.skipToEndOf("Born:")) &&
@@ -817,31 +824,34 @@ namespace MediaPortal.Video.Database
         //Mini Biography
         parser.resetPosition();
         if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
+            (parser.skipToEndOf("<p>")) &&
             (parser.extractTo("</p>", ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           actor.MiniBiography = Util.Utils.stripHTMLtags(value);
           actor.MiniBiography = actor.MiniBiography.Replace("See full bio »", string.Empty).Trim();
           actor.MiniBiography = HttpUtility.HtmlDecode(actor.MiniBiography); // Remove HTML entities like &#189;
-          
-          // get complete biography
-          string bioURL = absoluteUri;
-          if (!bioURL.EndsWith("/"))
+          if (actor.MiniBiography != string.Empty)
           {
-            bioURL += "/bio";
-          }
-          else
-            bioURL += "bio";
-          string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
-          if (!string.IsNullOrEmpty(strBioBody))
-          {
-            HTMLParser parser1 = new HTMLParser(strBioBody);
-            if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
-                parser1.extractTo("</p>", ref value))
+            // get complete biography
+            string bioURL = absoluteUri;
+            if (!bioURL.EndsWith("/"))
             {
-              value = new HTMLUtil().ConvertHTMLToAnsi(value);
-              actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
-              actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+              bioURL += "/bio";
+            }
+            else
+              bioURL += "bio";
+            string strBioBody = GetPage(bioURL, "utf-8", out absoluteUri);
+            if (!string.IsNullOrEmpty(strBioBody))
+            {
+              HTMLParser parser1 = new HTMLParser(strBioBody);
+              if (parser1.skipToEndOf("<h5>Mini Biography</h5>") &&
+                  parser1.extractTo("</p>", ref value))
+              {
+                value = new HTMLUtil().ConvertHTMLToAnsi(value);
+                actor.Biography = Util.Utils.stripHTMLtags(value).Trim();
+                actor.Biography = HttpUtility.HtmlDecode(actor.Biography); // Remove HTML entities like &#189;
+              }
             }
           }
         }
