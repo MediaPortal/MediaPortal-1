@@ -199,7 +199,7 @@ namespace MediaPortal.Configuration
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(69, 13);
       this.label9.TabIndex = 24;
-      this.label9.Text = "Default view:";
+      this.label9.Text = "Default layout:";
       // 
       // textBoxRemoteFolder
       // 
