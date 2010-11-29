@@ -816,6 +816,8 @@ namespace TvLibrary.Implementations.Analog
 
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
       }
 
@@ -844,6 +846,8 @@ namespace TvLibrary.Implementations.Analog
       }
       if (_mapSubChannels.ContainsKey(subChannel))
       {
+        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStarted();
       }
     }

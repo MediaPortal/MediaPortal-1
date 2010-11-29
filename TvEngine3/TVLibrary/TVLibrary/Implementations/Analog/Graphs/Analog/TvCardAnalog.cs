@@ -707,6 +707,8 @@ namespace TvLibrary.Implementations.Analog
             throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
           }
         }
+        _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+        _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].OnGraphStart();
       }
 
@@ -739,6 +741,8 @@ namespace TvLibrary.Implementations.Analog
       {
         throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
       }
+      _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
+      _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
       _mapSubChannels[subChannel].OnGraphStarted();
     }
 

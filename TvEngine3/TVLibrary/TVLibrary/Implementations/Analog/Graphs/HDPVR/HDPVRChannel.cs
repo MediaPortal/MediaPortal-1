@@ -143,6 +143,8 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelId, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelId, pmtPid, serviceId);
+
+      OnAfterTuneEvent();
       return true;
     }
 

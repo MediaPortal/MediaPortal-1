@@ -33,6 +33,31 @@ namespace TvLibrary.Implementations
   /// </summary>
   public abstract class TvCardBase
   {
+    #region events
+
+    /// <summary>
+    /// Delegate for the after tune event.
+    /// </summary>
+    public delegate void OnAfterTuneDelegate();
+
+    /// <summary>
+    /// After tune observer event.
+    /// </summary>
+    public event OnAfterTuneDelegate AfterTuneEvent;
+
+    /// <summary>
+    /// Handles the after tune observer event.
+    /// </summary>
+    protected void OnAfterTuneEvent()
+    {
+      if (AfterTuneEvent != null)
+      {
+        AfterTuneEvent();
+      }
+    }
+
+    #endregion
+
     #region ctor
 
     ///<summary>

@@ -36,21 +36,21 @@ namespace TvLibrary.Implementations
   /// </summary>
   public abstract class BaseSubChannel : ITvSubChannel
   {
-    #region Audio/Video Observer event and method
+    #region events
 
     /// <summary>
-    /// Delegate for the audio video oberserver events
+    /// Delegate for the audio/video oberserver events.
     /// </summary>
     /// <param name="pidType">Type of the pid</param>
     public delegate void AudioVideoObserverEvent(PidType pidType);
 
     /// <summary>
-    /// Audio observer event
+    /// Audio/video observer event.
     /// </summary>
     public event AudioVideoObserverEvent AudioVideoEvent;
 
     /// <summary>
-    /// Handles the audio video observer event
+    /// Handles the audio/video observer event.
     /// </summary>
     /// <param name="pidType">Type of the pid</param>
     protected void OnAudioVideoEvent(PidType pidType)
@@ -58,6 +58,28 @@ namespace TvLibrary.Implementations
       if (AudioVideoEvent != null)
       {
         AudioVideoEvent(pidType);
+      }
+    }
+
+    /// <summary>
+    /// Delegate for the after tune event.
+    /// </summary>
+    public delegate void OnAfterTuneDelegate();
+
+    /// <summary>
+    /// After tune observer event.
+    /// </summary>
+    public event OnAfterTuneDelegate AfterTuneEvent;
+
+    /// <summary>
+    /// Handles the after tune observer event.
+    /// </summary>
+    /// <param name="pidType">Type of the pid</param>
+    protected void OnAfterTuneEvent()
+    {
+      if (AfterTuneEvent != null)
+      {
+        AfterTuneEvent();
       }
     }
 

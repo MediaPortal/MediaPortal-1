@@ -107,6 +107,7 @@ namespace TvLibrary.Implementations.Analog
       {
         _teletextDecoder.ClearBuffer();
       }
+      OnAfterTuneEvent();
     }
 
     /// <summary>
@@ -117,6 +118,7 @@ namespace TvLibrary.Implementations.Analog
     {
       Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
       _dateTimeShiftStarted = DateTime.MinValue;
+      OnAfterTuneEvent();
     }
 
     /// <summary>

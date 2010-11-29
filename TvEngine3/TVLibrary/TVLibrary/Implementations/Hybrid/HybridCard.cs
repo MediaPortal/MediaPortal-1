@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
+using System;
 
 namespace TvLibrary.Implementations.Hybrid
 {
@@ -78,11 +79,25 @@ namespace TvLibrary.Implementations.Hybrid
     #region properties
 
     /// <summary>
-    /// Gets wether or not card supports pausing the graph.
+    /// Sets the after tune event listener on the internal card.
     /// </summary>
+    /// <value>the delegate</returns>
+    public TvCardBase.OnAfterTuneDelegate AfterTuneEvent
+    {
+      set
+      {
+        (_internalCard as TvCardBase).AfterTuneEvent -= value;
+        (_internalCard as TvCardBase).AfterTuneEvent += value;
+      }
+    }
+
+    /// <summary>
+    /// Gets whether or not card supports pausing the graph.
+    /// </summary>
+    /// <value><c>true</c> if the card supports pausing the graph, otherwise <c>false</c></returns>
     public bool SupportsPauseGraph
     {
-      get { return true; }
+      get { return _internalCard.SupportsPauseGraph; }
     }
 
     /// <summary>
@@ -97,7 +112,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Does the card have a CA module.
     /// </summary>
-    /// <value>The number of channels decrypting.</value>
+    /// <value><c>true</c> if the card supports conditional access, otherwise <c>false</c></value>
     public bool HasCA
     {
       get { return _internalCard.HasCA; }

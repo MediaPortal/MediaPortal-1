@@ -20,6 +20,7 @@
 
 using System;
 using TvLibrary;
+using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
@@ -327,11 +328,20 @@ namespace TvService
       {
         OnBeforeTuneEvent(_cardHandler);
       }
-      TvCardDvbBase dvbCard = _cardHandler.Card as TvCardDvbBase;
-      if (dvbCard != null)
+
+      TvCardBase card = _cardHandler.Card as TvCardBase;
+      if (card != null)
       {
-        dvbCard.OnAfterTuneEvent -= new TvCardDvbBase.OnAfterTuneDelegate(dvbCard_OnAfterTuneEvent);
-        dvbCard.OnAfterTuneEvent += new TvCardDvbBase.OnAfterTuneDelegate(dvbCard_OnAfterTuneEvent);
+        card.AfterTuneEvent -= new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
+        card.AfterTuneEvent += new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
+      }
+      else
+      {
+        HybridCard hybridCard = _cardHandler.Card as HybridCard;
+        if (hybridCard != null)
+        {
+          hybridCard.AfterTuneEvent = new TvCardBase.OnAfterTuneDelegate(Card_OnAfterTuneEvent);
+        }
       }
 
       result = TvResult.Succeeded;
@@ -344,7 +354,7 @@ namespace TvService
     public event OnBeforeTuneDelegate OnBeforeTuneEvent;
     public delegate void OnBeforeTuneDelegate(ITvCardHandler cardHandler);
 
-    private void dvbCard_OnAfterTuneEvent()
+    private void Card_OnAfterTuneEvent()
     {
       if (OnAfterTuneEvent != null)
       {
