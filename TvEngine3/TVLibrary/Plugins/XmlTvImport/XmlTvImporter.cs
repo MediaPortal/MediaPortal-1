@@ -116,9 +116,7 @@ namespace TvEngine
     {
       Log.WriteFile("plugin: xmltv started");
 
-      //System.Diagnostics.Debugger.Launch();
-      _lastResumeOrStartupAt = DateTime.Now;
-
+      //System.Diagnostics.Debugger.Launch();      
       RegisterPowerEventHandler();
       RetrieveRemoteTvGuideOnStartUp();
       CheckNewTVGuide();
@@ -231,8 +229,7 @@ namespace TvEngine
     {
       try
       {
-        Log.Info("xmlTV plugin resumed");
-        _lastResumeOrStartupAt = DateTime.Now;
+        Log.Info("xmlTV plugin resumed");        
         RetrieveRemoteTvGuideOnStartUp();
       }
       catch (Exception e)
