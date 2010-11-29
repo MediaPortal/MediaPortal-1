@@ -52,8 +52,7 @@ namespace TvEngine
     private bool _remoteFileDownloadInProgress = false;
     private DateTime _remoteFileDonwloadInProgressAt = DateTime.MinValue;
     private string _remoteURL = "";
-    private System.Timers.Timer _timer1;
-    private DateTime _lastResumeOrStartupAt = DateTime.MinValue;
+    private System.Timers.Timer _timer1;    
 
     #endregion
 
@@ -222,6 +221,7 @@ namespace TvEngine
         {
           string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
           string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
+          Log.Debug("downloadGuideOnWakeUp");
           RetrieveRemoteFile(folder, URL);
         }
       }
@@ -616,21 +616,15 @@ namespace TvEngine
       catch (Exception)
       {
         //ignore      
-      }      
-
-      Setting setting = layer.GetSetting("xmlTvRemoteScheduleLastTransfer", "");
-      DateTime lastTransfer = DateTime.MinValue;
-      DateTime.TryParse(setting.Value, out lastTransfer);
-
-      TimeSpan tsResume = now - _lastResumeOrStartupAt;
+      }            
+      DateTime lastTransfer = remoteScheduleTime.AddDays(-1);           
       TimeSpan tsSchedule = now - remoteScheduleTime;
-
-      //Log.Info("tsResume.totalmins {0}", tsResume.TotalMinutes);
-      //Log.Info("tsSchedule.totalmins {0}", tsSchedule.TotalMinutes);
+      TimeSpan tsLastTransfer = DateTime.Now - lastTransfer;
 
       // if just recently resumed (max 5mins) and scheduled time hasn't exceeded the 5mins mark, then ok.
-      if (tsResume.TotalMinutes < 5 && tsSchedule.TotalMinutes < 5)
-      {
+      //1440 mins = 1 day. - we only want to update once per day.
+      if (tsLastTransfer.TotalMinutes > 1440 && tsSchedule.TotalMinutes < 5)
+      {                             
         string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
         string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
         RetrieveRemoteFile(folder, URL);
