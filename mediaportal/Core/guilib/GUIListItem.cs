@@ -195,7 +195,11 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _thumbNailName = value;
+        if (_thumbNailName != value)
+        {
+          DisposeImage(ref _thumbnailImage);
+          _thumbNailName = value;
+        }
       }
     }
 
@@ -215,7 +219,11 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _smallIconName = value;
+        if (_smallIconName != value)
+        {
+          DisposeImage(ref _imageIcon);
+          _smallIconName = value;
+        }
       }
     }
 
@@ -232,7 +240,11 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _pinIconName = value;
+        if (_pinIconName != value)
+        {
+          DisposeImage(ref _imagePinIcon);
+          _pinIconName = value;
+        }
       }
     }
 
@@ -253,7 +265,11 @@ namespace MediaPortal.GUI.Library
         {
           return;
         }
-        _bigIconName = value;
+        if (_bigIconName != value)
+        {
+          DisposeImage(ref _imageBigPinIcon);
+          _bigIconName = value;
+        }
       }
     }
 
@@ -528,18 +544,19 @@ namespace MediaPortal.GUI.Library
     public void FreeMemory()
     {
       _isCoverArtRetrieved = false;
-    
-      _thumbnailImage.SafeDispose();
-      _thumbnailImage = null;
-    
-      _imageIcon.SafeDispose();
-      _imageIcon = null;
-    
-      _imagePinIcon.SafeDispose();
-      _imagePinIcon = null;
-    
-      _imageBigPinIcon.SafeDispose();
-      _imageBigPinIcon = null;      
+
+      DisposeImage(ref _thumbnailImage);
+      DisposeImage(ref _imageIcon);
+      DisposeImage(ref _imagePinIcon);
+      DisposeImage(ref _imageBigPinIcon);
+    }
+
+    private void DisposeImage(ref GUIImage image)
+    {
+      if (null == image) return;
+
+      image.SafeDispose();
+      image = null;
     }    
 
     /// <summary>
