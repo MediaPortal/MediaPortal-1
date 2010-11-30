@@ -1770,9 +1770,15 @@ namespace MediaPortal.Configuration.Sections
         FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
         // Delete fanarts
         FanArt.DeleteFanarts(strFilenameAndPath, CurrentMovie.Title);
-        
+        // When delete movie from the database do not back to index 0
         {
+          int currentIndex = cbTitle.SelectedIndex;
+          if (currentIndex > 0)
+          {
+            currentIndex--;
+          }
           LoadMovies(0);
+          cbTitle.SelectedIndex = currentIndex;
         }
       }
     }
