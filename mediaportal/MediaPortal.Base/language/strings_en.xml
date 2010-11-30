@@ -995,6 +995,7 @@
     <String id="1201">Play video from beginning</String>
     <String id="1202">Sort by : Auto</String>
     <String id="1203">Upcoming episodes (active:{0})</String>
+	<String id="1204">Play all videos in selected folder</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>

@@ -90,6 +90,7 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel mpLabel3;
     private TextBox subPaths;
     private Label label2;
+    private MPComboBox comboBoxPlayAll;
     private MPLabel mpSubEngineCommentLabel;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
@@ -139,6 +140,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         repeatPlaylistCheckBox.Checked = xmlreader.GetValueAsBool("movies", "repeat", true);
+        comboBoxPlayAll.SelectedIndex = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
 
         subEnginesCombo.SelectedItem = xmlreader.GetValueAsString("subtitles", "engine", "MPC-HC");
         subPaths.Text = xmlreader.GetValueAsString("subtitles", "paths", @".\,.\Subtitles\");
@@ -216,6 +218,7 @@ namespace MediaPortal.Configuration.Sections
       {
         xmlwriter.SetValueAsBool("movies", "repeat", repeatPlaylistCheckBox.Checked);
         xmlwriter.SetValue("movies", "playlists", folderNameTextBox.Text);
+        xmlwriter.SetValue("movies", "playallinfolder", comboBoxPlayAll.SelectedIndex);
 
         xmlwriter.SetValueAsBool("movies", "markwatched", checkBoxShowWatched.Checked);
         xmlwriter.SetValueAsBool("movies", "eachFolderIsMovie", checkBoxEachFolderIsMovie.Checked);
@@ -272,6 +275,7 @@ namespace MediaPortal.Configuration.Sections
       MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
       System.Windows.Forms.Panel panel1;
       MediaPortal.UserInterface.Controls.MPTabPage mpTabPage2;
+      MediaPortal.UserInterface.Controls.MPLabel labelPlayAll;
       this.mpSubEngineCommentLabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.subEnginesCombo = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.advancedButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -303,6 +307,7 @@ namespace MediaPortal.Configuration.Sections
       this.fontDialog = new System.Windows.Forms.FontDialog();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comboBoxPlayAll = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.checkBoxEachFolderIsMovie = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxShowWatched = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.fileNameButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -321,6 +326,7 @@ namespace MediaPortal.Configuration.Sections
       mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       panel1 = new System.Windows.Forms.Panel();
       mpTabPage2 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      labelPlayAll = new MediaPortal.UserInterface.Controls.MPLabel();
       tabPage3.SuspendLayout();
       mpGroupBox3.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
@@ -692,6 +698,15 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel10.TabIndex = 4;
       this.mpLabel10.Text = "Display font:";
       // 
+      // labelPlayAll
+      // 
+      labelPlayAll.AutoSize = true;
+      labelPlayAll.Location = new System.Drawing.Point(16, 147);
+      labelPlayAll.Name = "labelPlayAll";
+      labelPlayAll.Size = new System.Drawing.Size(191, 13);
+      labelPlayAll.TabIndex = 11;
+      labelPlayAll.Text = "Play all videos inside folder (play order):";
+      // 
       // tabPage1
       // 
       this.tabPage1.Controls.Add(this.groupBox1);
@@ -706,6 +721,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(labelPlayAll);
+      this.groupBox1.Controls.Add(this.comboBoxPlayAll);
       this.groupBox1.Controls.Add(this.checkBoxEachFolderIsMovie);
       this.groupBox1.Controls.Add(this.checkBoxShowWatched);
       this.groupBox1.Controls.Add(this.fileNameButton);
@@ -715,10 +732,25 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 150);
+      this.groupBox1.Size = new System.Drawing.Size(432, 186);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // comboBoxPlayAll
+      // 
+      this.comboBoxPlayAll.BorderColor = System.Drawing.Color.Empty;
+      this.comboBoxPlayAll.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBoxPlayAll.FormattingEnabled = true;
+      this.comboBoxPlayAll.Items.AddRange(new object[] {
+            "By Name",
+            "By Date",
+            "Shuffle",
+            "Always ask"});
+      this.comboBoxPlayAll.Location = new System.Drawing.Point(226, 144);
+      this.comboBoxPlayAll.Name = "comboBoxPlayAll";
+      this.comboBoxPlayAll.Size = new System.Drawing.Size(185, 21);
+      this.comboBoxPlayAll.TabIndex = 8;
       // 
       // checkBoxEachFolderIsMovie
       // 

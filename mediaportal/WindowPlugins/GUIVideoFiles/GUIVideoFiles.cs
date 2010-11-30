@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
@@ -132,6 +133,7 @@ namespace MediaPortal.GUI.Video
     private bool _oldStateSMSsearch;
     private DateTime _resetSMSsearchDelay;
 
+    private int _howToPlayAll = 3;
 
     #endregion
 
@@ -205,6 +207,7 @@ namespace MediaPortal.GUI.Video
         _eachFolderIsMovie = xmlreader.GetValueAsBool("movies", "eachFolderIsMovie", false);
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
+        _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
 
         _virtualDirectory = VirtualDirectories.Instance.Movies;
 
@@ -1751,7 +1754,124 @@ namespace MediaPortal.GUI.Video
         VideoDatabase.SetMovieDuration(idFile, movieDuration);
       }
     }
+    //
+    // Play all files in selected directory
+    //
+    private void OnPlayAll(string path)
+    {
+      // Get all video files in selected folder and it's subfolders
+      ArrayList playFiles = new ArrayList();
+      AddVideoFiles(path, ref playFiles);
+      int selectedOption = 0;
 
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+
+      // Check and play according to setting value
+      if (_howToPlayAll == 3) // Ask, select sort method from options in GUIDialogMenu
+      {
+        if (dlg == null)
+        {
+          return;
+        }
+        dlg.Reset();
+        dlg.SetHeading(498); // menu
+        dlg.AddLocalizedString(103); // By Name
+        dlg.AddLocalizedString(104); // By Date
+        dlg.AddLocalizedString(191); // Shuffle
+        
+        // Show GUIDialogMenu
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+        selectedOption = dlg.SelectedId;
+      }
+      else // Don't ask, sort according to setting and play videos
+      {
+        selectedOption = _howToPlayAll;
+      }
+
+      // Reset playlist
+      _playlistPlayer.Reset();
+      _playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO_TEMP;
+      PlayList tmpPlayList = _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP);
+      tmpPlayList.Clear();
+
+      // Do sorting
+      switch (selectedOption)
+      {
+        case 0: // By name
+          IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
+          // Add all files in temporary playlist
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          break;
+        
+        case 103:
+          goto case 0;
+
+        case 1: // By date (date modified)
+          sortedPlayList = GetSortedPlayListbyDate(playFiles);
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          break;
+
+        case 104:
+          goto case 1;
+
+        case 2: // Shuffle
+          sortedPlayList = GetSortedPlayListbyName(playFiles);
+          AddToPlayList(tmpPlayList, sortedPlayList);
+          tmpPlayList.Shuffle();
+          break;
+
+        case 191:
+          goto case 2;
+      }
+      // Play movies
+      PlayMovieFromPlayList(false);
+    }
+    
+    private void AddToPlayList(PlayList tmpPlayList, IOrderedEnumerable<object> sortedPlayList)
+    {
+      foreach (string file in sortedPlayList)
+      {
+        // Remove stop data if exists
+        int idFile = VideoDatabase.GetFileId(file);
+        if (idFile >= 0)
+          VideoDatabase.DeleteMovieStopTime(idFile);
+
+        // Add file to tmp playlist
+        PlayListItem newItem = new PlayListItem();
+        newItem.FileName = file;
+        // Set file description (for sorting by name -> DVD IFO file problem)
+        string description = string.Empty;
+        if (file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO") >= 0)
+        {
+          string dvdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
+          description = Path.GetFileName(dvdFolder);
+        }
+        else
+        {
+          description = Path.GetFileName(file);
+        }
+        newItem.Description = description;
+        newItem.Type = PlayListItem.PlayListItemType.Video;
+        tmpPlayList.Add(newItem);
+      }
+    }
+
+    // Sort by item description (Filename or DVD folder)
+    private IOrderedEnumerable<object> GetSortedPlayListbyName(ArrayList playFiles)
+    {
+      return playFiles.ToArray().OrderBy(fn => new PlayListItem().Description);
+    }
+
+    // Sort by modified date without path
+    private IOrderedEnumerable<object> GetSortedPlayListbyDate(ArrayList playFiles)
+    {
+      return playFiles.ToArray().OrderBy(fn => new FileInfo((string)fn).LastWriteTime);
+    }
+    
     protected override void OnShowContextMenu()
     {
       GUIListItem item = facadeLayout.SelectedListItem;
@@ -1812,6 +1932,11 @@ namespace MediaPortal.GUI.Video
             dlg.AddLocalizedString(926); //Queue
             if (!VirtualDirectory.IsImageFile(Path.GetExtension(item.Path)))
             {
+              //
+              // Play all
+              //
+              dlg.AddLocalizedString(1204); // Play All in selected folder
+              //
               dlg.AddLocalizedString(102); //Scan            
             }
             dlg.AddLocalizedString(368); //IMDB
@@ -1961,9 +2086,19 @@ namespace MediaPortal.GUI.Video
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
+        // Play all
+        case 1204:
+          {
+            if (!_virtualDirectory.RequestPin(item.Path))
+            {
+              return;
+            }
+            OnPlayAll(item.Path);
+          }
+          break;
       }
     }
-
+    
     public override void Process()
     {
       if ((_resetSMSsearch == true) && (_resetSMSsearchDelay.Subtract(DateTime.Now).Seconds < -2))
@@ -2288,6 +2423,65 @@ namespace MediaPortal.GUI.Video
               Log.Debug("GUIVideoFiles: url=null for actor {0}", actor);
             }
           }
+        }
+      }
+    }
+
+    private static void AddVideoFiles(string path, ref ArrayList availableFiles)
+    {
+      //
+      // Count the files in the current directory
+      //
+      bool currentCreateVideoThumbs = false;
+      try
+      {
+        VirtualDirectory dir = new VirtualDirectory();
+        dir.SetExtensions(Util.Utils.VideoExtensions);
+        // Temporary disable thumbcreation
+        using (Profile.Settings xmlreader = new MPSettings())
+        {
+          currentCreateVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+        }
+        using (Profile.Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", false);
+        }
+
+        List<GUIListItem> items = dir.GetDirectoryUnProtectedExt(path, true);
+        foreach (GUIListItem item in items)
+        {
+          if (item.IsFolder)
+          {
+            if (item.Label != "..")
+            {
+              if (item.Path.ToLower().IndexOf("video_ts") >= 0)
+              {
+                string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
+                availableFiles.Add(strFile);
+              }
+              else
+              {
+                AddVideoFiles(item.Path, ref availableFiles);
+              }
+            }
+          }
+          else
+          {
+            availableFiles.Add(item.Path);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Info("Exception counting files:{0}", e);
+        // Ignore
+      }
+      finally
+      {
+        // Restore thumbcreation setting
+        using (Profile.Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValueAsBool("thumbnails", "tvrecordedondemand", currentCreateVideoThumbs);
         }
       }
     }
