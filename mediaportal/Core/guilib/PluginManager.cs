@@ -463,40 +463,28 @@ namespace MediaPortal.GUI.Library
         return false;
       }
 
-      using (Settings xmlreader = new MPSettings())
-      {
-        // from the assembly name check the reference to plugin name
-        // if available check to see if the plugin is enabled
-        // if the plugin name is unknown suggest the assembly should be loaded
+      // from the assembly name check the reference to plugin name
+      // if available check to see if the plugin is enabled
+      // if the plugin name is unknown suggest the assembly should be loaded
 
-        return xmlreader.GetValueAsBool("pluginsdlls", strDllname, true);
-      }
+      return MPSettings.Instance.GetValueAsBool("pluginsdlls", strDllname, true);
     }
 
     public static bool IsWindowPlugInEnabled(string strType)
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        return xmlreader.GetValueAsBool("pluginswindows", strType, true);
-      }
+      return MPSettings.Instance.GetValueAsBool("pluginswindows", strType, true);
     }
 
     public static bool IsPluginNameEnabled(string strPluginName)
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        return xmlreader.GetValueAsBool("plugins", strPluginName, true);
-      }
+      return MPSettings.Instance.GetValueAsBool("plugins", strPluginName, true);
     }
 
     // hwahrmann: the previous method always returns true as a default, regardless if a plugin is in xml or not.
     // Don't know the reason why, but some code might rely on that and don't want to break it before release.
     public static bool IsPluginNameEnabled2(string strPluginName)
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        return xmlreader.GetValueAsBool("plugins", strPluginName, false) && IsPluginNameLoaded(strPluginName);
-      }
+      return MPSettings.Instance.GetValueAsBool("plugins", strPluginName, false) && IsPluginNameLoaded(strPluginName);
     }
 
     public static bool IsPluginNameLoaded(string strPluginName)

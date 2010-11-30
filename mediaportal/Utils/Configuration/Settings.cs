@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Collections.Generic;
 
 //using MediaPortal.GUI.Library;
 
@@ -61,6 +62,14 @@ namespace MediaPortal.Profile
       }
     }
 
+    private static MPSettings _instance;
+    public static MPSettings Instance
+    {
+      get { return _instance ?? (_instance = new MPSettings()); }
+    }
+
+    // public constructor should be made/private protected, we should encourage the usage of Instance
+
     public MPSettings()
       : base(ConfigPathName) {}
 
@@ -76,110 +85,53 @@ namespace MediaPortal.Profile
 
     public Settings(string fileName, bool isCached)
     {
-      xmlFileName = Path.GetFileName(fileName);
+      xmlFileName = Path.GetFileName(fileName).ToLowerInvariant();
 
       _isCached = isCached;
 
       if (_isCached)
-      {
-        foreach (ISettingsProvider doc in xmlCache)
-        {
-          string xmlName = Path.GetFileName(doc.FileName);
-          if (String.Compare(xmlName, xmlFileName, true) == 0)
-          {
-            xmlDoc = doc;
-            break;
-          }
-        }
-      }
+        xmlCache.TryGetValue(xmlFileName, out xmlDoc);
 
       if (xmlDoc == null)
       {
         xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
-
+        
         if (_isCached)
-        {
-          xmlCache.Add(xmlDoc);
-        }
+          xmlCache.Add(xmlFileName, xmlDoc);
       }
     }
 
     public string GetValue(string section, string entry)
     {
-      object value = xmlDoc.GetValue(section, entry);
-      if (value == null)
-      {
-        return string.Empty;
-      }
+        object value = xmlDoc.GetValue(section, entry);
+        return value == null ? string.Empty : value.ToString();
+    }
 
-      string strValue = value.ToString();
-      if (strValue.Length == 0)
-      {
-        return string.Empty;
-      }
-      return strValue;
+    T GetValueOrDefault<T>(string section, string entry, Func<string, T> conv, T defaultValue)
+    {
+        string strValue = GetValue(section, entry);
+        return string.IsNullOrEmpty(strValue) ? defaultValue : conv(strValue);
     }
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
-      object obj = xmlDoc.GetValue(section, entry);
-      if (obj == null)
-      {
-        return strDefault;
-      }
-      string strValue = obj.ToString();
-      if (strValue == null)
-      {
-        return strDefault;
-      }
-      if (strValue.Length == 0)
-      {
-        return strDefault;
-      }
-      return strValue;
+        return GetValueOrDefault(section, entry, val => val, strDefault);
     }
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-      string strValue = (string)xmlDoc.GetValue(section, entry);
-      if (strValue == null)
-      {
-        return bDefault;
-      }
-      if (strValue.Length == 0)
-      {
-        return bDefault;
-      }
-      if (strValue.ToLower() == "yes")
-      {
-        return true;
-      }
-      return false;
+        return GetValueOrDefault(section, entry,
+                                val => val.Equals("yes", StringComparison.InvariantCultureIgnoreCase),
+                                bDefault);
     }
 
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
-      object obj = xmlDoc.GetValue(section, entry);
-      if (obj == null)
-      {
-        return iDefault;
-      }
-      string strValue = obj.ToString();
-      if (strValue == null)
-      {
-        return iDefault;
-      }
-      if (strValue.Length == 0)
-      {
-        return iDefault;
-      }
-      try
-      {
-        int iRet = Int32.Parse(strValue);
-        return iRet;
-      }
-      catch (Exception) {}
-      return iDefault;
+        return GetValueOrDefault(section, entry,
+                                 val =>
+                                 {   int iVal;
+                                     return Int32.TryParse(val, out iVal) ? iVal : iDefault;
+                                 }, iDefault);
     }
 
     //public float GetValueAsFloat(string section, string entry, float fDefault)
@@ -215,12 +167,7 @@ namespace MediaPortal.Profile
 
     public void SetValueAsBool(string section, string entry, bool bValue)
     {
-      string strValue = "yes";
-      if (!bValue)
-      {
-        strValue = "no";
-      }
-      SetValue(section, entry, strValue);
+      SetValue(section, entry, bValue ? "yes" : "no");
     }
 
     public void RemoveEntry(string section, string entry)
@@ -230,14 +177,14 @@ namespace MediaPortal.Profile
 
     public static void ClearCache()
     {
-      xmlCache = new ArrayList();
+        xmlCache.Clear();
     }
 
     #region IDisposable Members
 
     public void Dispose()
     {
-      if (_isCached == false)
+      if (!_isCached)
       {
         xmlDoc.Save();
       }
@@ -247,9 +194,9 @@ namespace MediaPortal.Profile
 
     public static void SaveCache()
     {
-      foreach (ISettingsProvider doc in xmlCache)
+      foreach (var doc in xmlCache)
       {
-        doc.Save();
+        doc.Value.Save();
       }
     }
 
@@ -258,7 +205,7 @@ namespace MediaPortal.Profile
     #region Fields
 
     private bool _isCached;
-    private static ArrayList xmlCache = new ArrayList();
+    private static Dictionary<string, ISettingsProvider> xmlCache = new Dictionary<string, ISettingsProvider>();
     private string xmlFileName;
     private ISettingsProvider xmlDoc;
 
