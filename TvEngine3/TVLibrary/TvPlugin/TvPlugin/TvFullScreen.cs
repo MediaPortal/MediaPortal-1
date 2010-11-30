@@ -1566,7 +1566,7 @@ namespace TvPlugin
 
       // SubTitle stream, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
-      if (g_Player.SubtitleStreams > 0 || g_Player.SubtitleFiles.Length > 0)
+      if (g_Player.SubtitleStreams > 0)
       {
         dlg.AddLocalizedString(462);
       }
@@ -2253,7 +2253,7 @@ namespace TvPlugin
       TVHome.Navigator.ZapToChannel(lmap.ReferringLinkedChannel(), false);
     }
 
-    private void ShowSubtitleStreamsMenu() //Sebastiii
+    private void ShowSubtitleStreamsMenu()
     {
       if (dlg == null)
       {
@@ -2276,16 +2276,8 @@ namespace TvPlugin
         {
           strLang = strLang.Substring(0, ipos);
         }
-        /*string strName = g_Player.SubtitleName(i);
-        if (!string.IsNullOrEmpty(strName))
-        {
-          dlg.Add(String.Format("{0} [{1}]", strLang.TrimEnd(), strName.TrimStart()));
-        }
-        else*/
-        {
           dlg.Add(strLang);
-        }
-      } //This is Sebastiii unsupported release version.
+      }
 
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
@@ -2296,42 +2288,6 @@ namespace TvPlugin
       }
       else
         dlg.SelectedLabel = 0;
-
-      /*string currentSubFile = g_Player.SubtitleFile;
-      string[] subFiles = null;
-      if (g_Player.SubtitleFiles.Length > 0)
-      {
-        //TODO Add separator header
-        subFiles = g_Player.SubtitleFiles;
-
-        Log.Info("Current subtitle file " + ((currentSubFile != null) ? currentSubFile : "None"));
-        int index = -1;
-        // First scan if the current subtitles file is in the list, otherwise add it
-        if (currentSubFile != null && !currentSubFile.Equals(""))
-        {
-          for (int i = 0; i < subFiles.Length; i++)
-          {
-            if (currentSubFile.Equals(subFiles[i]))
-            {
-              index = i;
-              break;
-            }
-          }
-          if (index == -1) // The current subtitle file is not in the list, add it on top of it
-          {
-            dlg.Add(currentSubFile);
-            index = 0;
-          }
-        }
-        for (int i = 0; i < subFiles.Length; i++)
-        {
-          // Store short file name in Label and full file path in Label2
-          GUIListItem item = new GUIListItem(FFDShowAPI.getFileName(subFiles[i], FFDShowAPI.FileNameMode.FileNameLanguage));
-          item.Path = subFiles[i];
-          dlg.Add(item);
-        }
-        if (index != -1) dlg.SelectedLabel = nbSubStreams + index + 1;
-      }*/
 
       // show dialog and wait for result
       _isDialogVisible = true;
@@ -2347,15 +2303,7 @@ namespace TvPlugin
         g_Player.EnableSubtitle = false;
       }
       else
-      {
-        /*if (dlg.SelectedLabel - 1 >= nbSubStreams)  // Subtitles file
-        {
-          string subFile = subFiles[dlg.SelectedLabel - 1 - nbSubStreams];
-          Log.Info("Subtitle file selected : " + subFile);
-          if (currentSubFile == null || !subFile.Equals(currentSubFile))
-            g_Player.SubtitleFile = subFile;
-        }*/
-        /*else*/
+      { 
         if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
         {
           Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - 1));
@@ -2365,7 +2313,7 @@ namespace TvPlugin
       }
     }
 
-    private void ShowPostProcessingMenu() //Sebastiii
+    private void ShowPostProcessingMenu()
     {
       if (dlg == null)
       {
