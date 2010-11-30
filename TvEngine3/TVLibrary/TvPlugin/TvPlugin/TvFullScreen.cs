@@ -24,11 +24,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using Gentle.Common;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
@@ -40,11 +38,8 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using Timer = System.Timers.Timer;
-using System.Runtime.Remoting;
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.PostProcessing;
-using FFDShow;
-
 
 #endregion
 
@@ -2850,6 +2845,7 @@ namespace TvPlugin
       Log.Debug("UpdateOSD()");
       if (!_zapOsdVisible && !g_Player.IsTVRecording)
       {
+        GUIWindowManager.IsPauseOsdVisible = false;
         ShowZapOSD(message);
       }
       else
@@ -2913,6 +2909,11 @@ namespace TvPlugin
                              GetID, 0, null);
         _zapWindow.OnMessage(msg);
         _zapOsdVisible = false;
+      }
+
+      if (g_Player.Paused)
+      {
+        GUIWindowManager.IsPauseOsdVisible = true;
       }
     }
 

@@ -190,6 +190,15 @@ namespace MediaPortal.GUI.Video
               GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
                                                  (int)Controls.OSD_PAUSE, 0, 0, null);
               OnMessage(msgSet);
+
+            if (g_Player.Paused)
+            {
+              GUIWindowManager.IsPauseOsdVisible = true;
+            }
+            else
+            {
+              GUIWindowManager.IsPauseOsdVisible = false;
+            }
             return;
           }
 
@@ -203,8 +212,12 @@ namespace MediaPortal.GUI.Video
 
             if (g_Player.Paused)
             {
-              //g_Player.Pause();
+              GUIWindowManager.IsPauseOsdVisible = true;
               ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
+            }
+            else
+            {
+              GUIWindowManager.IsPauseOsdVisible = false;
             }
             return;
           }
@@ -215,6 +228,8 @@ namespace MediaPortal.GUI.Video
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_STOP,
                                                (int)Controls.OSD_STOP, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
         case Action.ActionType.ACTION_FORWARD:
@@ -223,6 +238,8 @@ namespace MediaPortal.GUI.Video
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_FFWD,
                                                (int)Controls.OSD_FFWD, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
         case Action.ActionType.ACTION_REWIND:
@@ -231,6 +248,8 @@ namespace MediaPortal.GUI.Video
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_REWIND,
                                                (int)Controls.OSD_REWIND, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 

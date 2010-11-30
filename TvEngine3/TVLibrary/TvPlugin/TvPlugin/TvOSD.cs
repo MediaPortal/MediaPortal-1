@@ -232,6 +232,15 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
                                                (int)Controls.OSD_PAUSE, 0, 0, null);
             OnMessage(msgSet);
+
+            if (g_Player.Paused)
+            {
+              GUIWindowManager.IsPauseOsdVisible = true;
+            }
+            else
+            {
+              GUIWindowManager.IsPauseOsdVisible = false;
+            }
             return;
           }
 
@@ -243,12 +252,8 @@ namespace TvPlugin
             ToggleButton((int)Controls.OSD_REWIND, false); // pop all the relevant
             ToggleButton((int)Controls.OSD_FFWD, false); // buttons back to
             ToggleButton((int)Controls.OSD_PLAY, false); // their up state
-
-            if (g_Player.Paused)
-            {
-              g_Player.Pause();
-              ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
-            }
+            ToggleButton((int)Controls.OSD_PLAY, false); // make sure play button is up (so it shows the play symbol)
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -279,6 +284,7 @@ namespace TvPlugin
                 Log.Debug("TvOSD: stop from recorded TV");
                 g_Player.Stop();
             }
+            GUIWindowManager.IsPauseOsdVisible = false;
               return;
           }
 
@@ -289,6 +295,8 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_FFWD,
                                                (int)Controls.OSD_FFWD, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -299,6 +307,8 @@ namespace TvPlugin
             GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_REWIND,
                                                (int)Controls.OSD_REWIND, 0, 0, null);
             OnMessage(msgSet);
+
+            GUIWindowManager.IsPauseOsdVisible = false;
             return;
           }
 
@@ -323,12 +333,14 @@ namespace TvPlugin
 
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           {
+            GUIWindowManager.IsPauseOsdVisible = false;
             OnNextChannel();
             return;
           }
 
         case Action.ActionType.ACTION_PREV_CHANNEL:
           {
+            GUIWindowManager.IsPauseOsdVisible = false;
             OnPreviousChannel();
             return;
           }
@@ -547,7 +559,6 @@ namespace TvPlugin
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Utils.GetNextRewindSpeed(g_Player.Speed);
               if (g_Player.Speed < 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_REWIND, true); // make sure out button is in the down position
@@ -570,7 +581,6 @@ namespace TvPlugin
                 g_Player.Pause(); // Unpause playback
               }
 
-              g_Player.Speed = Utils.GetNextForwardSpeed(g_Player.Speed);
               if (g_Player.Speed > 1) // are we not playing back at normal speed
               {
                 ToggleButton((int)Controls.OSD_FFWD, true); // make sure out button is in the down position

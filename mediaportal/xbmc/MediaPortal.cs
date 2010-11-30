@@ -2715,8 +2715,6 @@ public class MediaPortalApp : D3DApp, IRender
                 //resume playback
             case Action.ActionType.ACTION_PLAY:
             case Action.ActionType.ACTION_MUSIC_PLAY:
-                // if (!g_Player.IsTV || !GUIGraphicsContext.IsFullScreenVideo)
-                //{
                 // Don't start playing from the beginning if we press play to return to normal speed
                 if (g_Player.IsMusic && g_Player.Speed != 1)
                 {
@@ -2732,15 +2730,11 @@ public class MediaPortalApp : D3DApp, IRender
 
                 g_Player.StepNow();
                 g_Player.Speed = 1;
-                // Bass Player can handle the Pause State itself
-                //if (g_Player.Paused && !(g_Player.IsMusic && BassMusicPlayer.IsDefaultMusicPlayer))
-                //{
+               
                 if (g_Player.Paused)
                 {
                     g_Player.Pause();
                 }
-                //}
-                //}
                 break;
 
                 //pause (or resume playback)
