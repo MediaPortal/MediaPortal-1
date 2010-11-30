@@ -250,13 +250,13 @@ namespace MediaPortal.Player
           return false;
         }
 
-        //This is Sebastiii unsupported release version by Chemelli
+        #region FFDShowEngine and PostProcessingEngine Detection
         string tmpstr;
         ISubEngine engine = SubEngine.GetInstance(true);
         if (!engine.LoadSubtitles(graphBuilder, m_strCurrentFile))
         {
           tmpstr = engine.ToString().Substring(engine.ToString().LastIndexOf(".") + 1);
-          Log.Error("VideoPlayerVMR7: {0} subtitle configured in MP but misconfigured, disabled!", tmpstr);
+          Log.Info("VideoPlayerVMR7: {0} subtitle configured in MP but misconfigured, disabled!", tmpstr);
           SubEngine.engine = new SubEngine.DummyEngine();
         }
 
@@ -264,10 +264,11 @@ namespace MediaPortal.Player
         if (!postengine.LoadPostProcessing(graphBuilder))
         {
           tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
-          Log.Error("VideoPlayerVMR7: {0} postprocessing configured in MP but misconfigured!", tmpstr);
+          Log.Info("VideoPlayerVMR7: {0} postprocessing configured in MP but misconfigured!", tmpstr);
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
-        //End This is Sebastiii unsupported release version by Chemelli
+        #endregion
+
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
         {
@@ -354,21 +355,19 @@ namespace MediaPortal.Player
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("subtitles", "language", defaultLanguageCulture));
-          Log.Error("VideoPlayerVMR7: Subtitle CI {0}", ci);
+          Log.Info("VideoPlayerVMR7: Subtitle CultureInfo {0}", ci);
         }
         catch (Exception ex)
         {
           ci = new CultureInfo(defaultLanguageCulture);
-          Log.Error(
-            "SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}",
-            ex);
+          Log.Error("SelectSubtitleLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
       int subsCount = SubtitleStreams; // Not in the loop otherwise it will be reaccessed at each pass
       for (int i = 0; i < subsCount; i++)
       {
         string subtitleLanguage = SubtitleLanguage(i);
-        //Sebastiii : Add localized stream names for FFDshow when OS language = Skin language
+        //Add localized stream names for FFDshow when OS language = Skin language
         string localizedCINameSub = Util.Utils.TranslateLanguageString(ci.EnglishName);
         if (localizedCINameSub.Equals(SubtitleLanguage(i), StringComparison.OrdinalIgnoreCase) ||
             ci.EnglishName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase) ||
@@ -377,7 +376,7 @@ namespace MediaPortal.Player
             ci.ThreeLetterWindowsLanguageName.Equals(subtitleLanguage, StringComparison.OrdinalIgnoreCase))
         {
           CurrentSubtitleStream = i;
-          Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
+          Log.Info("VideoPlayerVMR7: CultureInfo Selected active subtitle track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
@@ -392,13 +391,12 @@ namespace MediaPortal.Player
         try
         {
           ci = new CultureInfo(xmlreader.GetValueAsString("movieplayer", "audiolanguage", defaultLanguageCulture));
-          Log.Error("VideoPlayerVMR7: AudioLanguage CI {0}", ci);
+          Log.Info("VideoPlayerVMR7: AudioLanguage CultureInfo {0}", ci);
         }
         catch (Exception ex)
         {
           ci = new CultureInfo(defaultLanguageCulture);
-          Log.Error(
-            "SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
+          Log.Error("SelectAudioLanguage - unable to build CultureInfo, make sure MediaPortal.xml is not corrupted! - {0}", ex);
         }
       }
       for (int i = 0; i < AudioStreams; i++)
@@ -412,7 +410,7 @@ namespace MediaPortal.Player
             ci.ThreeLetterWindowsLanguageName.Equals(AudioLanguage(i), StringComparison.OrdinalIgnoreCase))
         {
           CurrentAudioStream = i;
-          Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
+          Log.Info("VideoPlayerVMR7: CultureInfo Selected active audio track language: {0} ({1})", ci.EnglishName, i);
           break;
         }
       }
@@ -1290,7 +1288,6 @@ namespace MediaPortal.Player
         if (language.Length > 0) // && streamName.Length <= 0)
         {
           streamName = language;
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-result :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPS.Success)
@@ -1301,8 +1298,6 @@ namespace MediaPortal.Player
         if (language.Length > 0)
         {
           streamName = language;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPS :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPAUDIO.Success)
@@ -1312,9 +1307,7 @@ namespace MediaPortal.Player
         string language = Util.Utils.TranslateLanguageString(resultMPAUDIO.Groups[1].Value);
         if (language.Length > 0)
         {
-          streamName = language;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultAAC :streamName \"{0}\"", streamName);
+          streamName = language;  
         }
       }
       else if (resultMPAUDIONoType.Success)
@@ -1325,8 +1318,6 @@ namespace MediaPortal.Player
         if (language.Length > 0)
         {
           streamName = language;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPAUDIONoType :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPC.Success)
@@ -1337,8 +1328,6 @@ namespace MediaPortal.Player
         if (language.Length > 0)
         {
           streamName = language;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage-resultMPC :streamName \"{0}\"", streamName);
         }
       }
 
@@ -1347,7 +1336,6 @@ namespace MediaPortal.Player
       // Audio - Dolby TrueHD, 48.0 kHz, 6 chn, 640.0 kbit/s (1100,fd,00)
       streamName = Regex.Replace(streamName, @"\(.+?\)$", "");
 
-      //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioLanguage end: streamName \"{0}\"", streamName);
       return streamName;
     }
 
@@ -1393,14 +1381,10 @@ namespace MediaPortal.Player
       if (resultLAVF.Success)
       // check for LAVF response format, e.g.: 
       // S: Title [Lang] (Info) when only Language in stream -> answer is S: Lang -> start to detect if [lang] is present if not replace Lang by "" 
-      {
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF start: \"{0}\"", streamNameFalse);
+      { 
         string lang_or_title = resultLAVF.Groups[1].Value;
         string lang = resultLAVF.Groups[2].Value;
         string info = resultLAVF.Groups[3].Value;
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF lang_or_title: \"{0}\"", lang_or_title);
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF lang: \"{0}\"", lang);
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF info: \"{0}\"", info);
         if (!string.IsNullOrEmpty(info))
         {
           if (!string.IsNullOrEmpty(lang))
@@ -1411,20 +1395,16 @@ namespace MediaPortal.Player
           {
             streamName = info;
           }
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName Choice: \"{0}\"", streamName);
         }
         else if (string.IsNullOrEmpty(info))
         {
           streamName = regex.Replace(streamName, "").Trim();
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName Replace: \"{0}\"", streamName);
         }
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultLAVF streamName result: \"{0}\"", streamName);
       }
       else if (result.Success)
       {
         //Get the trackname part by removing the language part from the string.
         streamName = regex.Replace(streamName, "").Trim();
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-result :streamName \"{0}\"", streamName);
       }
       else if (resultMPS.Success)
       // check for mpegsplitter response format, e.g.:  
@@ -1434,8 +1414,6 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPS :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPSNoLang.Success)
@@ -1446,8 +1424,6 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPSNoLang :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPAUDIO.Success)
@@ -1458,8 +1434,6 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultAAC :streamName \"{0}\"", streamName);
         }
       }
       else if (resultMPAUDIONoType.Success)
@@ -1467,7 +1441,6 @@ namespace MediaPortal.Player
       // Language (Audio 2)
       {
         streamName = "";
-        //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPAUDIONoType :streamName \"{0}\"", streamName);
       }
       else if (resultMPC.Success)
       // check for mpc-hc audio response format, e.g.: 
@@ -1477,8 +1450,6 @@ namespace MediaPortal.Player
         if (audioType.Length > 0)
         {
           streamName = audioType;
-          //streamName = Regex.Replace(streamName, @"\(.+?\)", "");
-          //Log.Error("This is Sebastiii unsupported release version: VideoPlayerVMR7-AudioType-resultMPC :streamName \"{0}\"", streamName);
         }
       }
       // Remove extraneous info from splitter in parenthesis at end of line, e.g.:

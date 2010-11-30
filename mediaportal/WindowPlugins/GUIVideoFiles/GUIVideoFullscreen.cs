@@ -1539,7 +1539,7 @@ namespace MediaPortal.GUI.Video
         {
           dlg.Add(strLang);
         }
-      } //This is Sebastiii unsupported release version.
+      }
        
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead

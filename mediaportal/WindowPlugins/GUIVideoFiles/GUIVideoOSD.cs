@@ -1155,8 +1155,8 @@ namespace MediaPortal.GUI.Video
         {
           strLang = strLang.Substring(0, ipos);
         }
-        //if (strName != null && !strName.Equals(""))
-        if (strName != null && !strName.Equals("") && !strName.Equals(strLang)) //Sebastiii
+        
+        if (strName != null && !strName.Equals("") && !strName.Equals(strLang))
         {
           if (strLang != null && !strLang.Equals(""))
             // formats to 'Subtitle name (language)'
