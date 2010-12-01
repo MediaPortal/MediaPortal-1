@@ -31,6 +31,7 @@ using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
+using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX;
@@ -1082,6 +1083,12 @@ namespace MediaPortal.GUI.Library
 
         if (null != pCard)
         {
+          if (pCard.TextureHeight == 0 && pCard.TextureWidth == 0)
+          {
+            pCard.SafeDispose();
+            pCard.AllocResources();
+          }
+
           if (itemFocused)
           {
             pCard.ColourDiffuse = 0xffffffff;
@@ -1473,7 +1480,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
           GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
-          RenderCard(timePassed, l, false);
+          RenderCard(timePassed, l, l == _selectedCard);
         }
         GUIGraphicsContext.PopMatrix();
       }
@@ -1551,7 +1558,7 @@ namespace MediaPortal.GUI.Library
           // Cards are in motion if fractional and fract are changing.
           // Move all the cards to the left to make room for the new card.
           float shiftx = 0.0f;
-          float shifty = _offsetY;
+          float shifty = _offsetY + _selectedYOffset;
           float shiftz = 0.0f;
           bool shouldFocus = true;
 
@@ -1608,7 +1615,7 @@ namespace MediaPortal.GUI.Library
             shiftx *= fractional;
             shifty = (_offsetY * fractional + _selectedYOffset * fract);
             shiftz *= fractional;
-            shouldFocus = true; // The card coming to the front should be focused.
+            //shouldFocus = true; // The card coming to the front should be focused.
           }
 
           // Set the cards local coordinates on the cover flow.
@@ -1705,7 +1712,6 @@ namespace MediaPortal.GUI.Library
         }
       }
       GUIGraphicsContext.PopMatrix();
-      GUIGraphicsContext.RemoveTransform();
 
       // Render the foreground.
       if (_imageForeground != null && _showForeground)
@@ -1719,6 +1725,8 @@ namespace MediaPortal.GUI.Library
 
       // Render the horizontal scrollbar.
       RenderScrollbar(timePassed);
+
+      GUIGraphicsContext.RemoveTransform();
 
       base.Render(timePassed);
     }
@@ -1963,6 +1971,11 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     protected void OnSelectionChanged()
     {
+      if (!IsVisible)
+      {
+        return;
+      }
+
       GUIListItem listitem = SelectedListItem;
       if (listitem != null)
       {
@@ -2398,7 +2411,10 @@ namespace MediaPortal.GUI.Library
 
     public void Clear()
     {
-      _listItems.Clear();
+      _listItems.DisposeAndClear();
+      //SelectCardIndexNow(0);
+      _selectedCard = 0;
+      //_position = 0;
       OnSelectionChanged();
     }
 
