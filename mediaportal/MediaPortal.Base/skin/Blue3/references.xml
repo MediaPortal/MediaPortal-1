@@ -8,7 +8,7 @@
   <control>
     <description>default image</description>
     <type>image</type>
-    <id>1</id>
+    <id>0</id>
     <posX>0</posX>
     <posY>0</posY>
     <texture>background.png</texture>
@@ -22,7 +22,7 @@
   <control>
     <description>default label</description>
     <type>label</type>
-    <id>1</id>
+    <id>0</id>
     <posX>80</posX>
     <posY>60</posY>
     <label>6</label>
@@ -33,7 +33,7 @@
   <control>
     <description>default button</description>
     <type>button</type>
-    <id>1</id>
+    <id>0</id>
     <posX>300</posX>
     <posY>200</posY>
     <width>190</width>
@@ -53,7 +53,7 @@
   <control>
     <description>default updownbutton</description>
     <type>updownbutton</type>
-    <id>1</id>
+    <id>0</id>
     <posX>300</posX>
     <posY>200</posY>
     <width>190</width>
@@ -73,7 +73,7 @@
   <control>
     <description>playlist item button</description>
     <type>playlistbutton</type>
-    <id>5</id>
+    <id>0</id>
     <posX>100</posX>
     <posY>100</posY>
     <width>425</width>
@@ -110,7 +110,7 @@
   <control>
     <description>default togglebutton</description>
     <type>togglebutton</type>
-    <id>4</id>
+    <id>0</id>
     <posX>300</posX>
     <posY>200</posY>
     <width>190</width>
@@ -132,7 +132,7 @@
   <control>
     <description>sort button</description>
     <type>sortbutton</type>
-    <id>3</id>
+    <id>0</id>
     <width>190</width>
     <height>32</height>
     <textXOff>10</textXOff>
@@ -156,7 +156,7 @@
   <control>
     <description>default listcontrol</description>
     <type>listcontrol</type>
-    <id>10</id>
+    <id>0</id>
     <posX>260</posX>
     <posY>97</posY>
     <width>425</width>
@@ -198,7 +198,7 @@
   <control>
     <description>default checklistcontrol</description>
     <type>checklistcontrol</type>
-    <id>10</id>
+    <id>0</id>
     <posX>260</posX>
     <posY>97</posY>
     <width>425</width>
@@ -243,7 +243,7 @@
   <control>
     <description>default up/downlistcontrol</description>
     <type>updownlistcontrol</type>
-    <id>10</id>
+    <id>0</id>
     <posX>260</posX>
     <posY>97</posY>
     <width>425</width>
@@ -282,7 +282,7 @@
   <control>
     <description>default playlist item listcontrol</description>
     <type>playlistcontrol</type>
-    <id>10</id>
+    <id>0</id>
     <posX>260</posX>
     <posY>97</posY>
     <width>425</width>
@@ -341,7 +341,7 @@
   <control>
     <description>default thumbnail panel</description>
     <type>thumbnailpanel</type>
-    <id>11</id>
+    <id>0</id>
     <posX>80</posX>
     <posY>97</posY>
     <width>660</width>
@@ -393,7 +393,7 @@
   <control>
     <description>default filmstrip</description>
     <type>filmstrip</type>
-    <id>11</id>
+    <id>0</id>
     <posX>80</posX>
     <posY>420</posY>
     <width>640</width>
@@ -453,7 +453,7 @@
   <control>
     <description>default fadelabel</description>
     <type>fadelabel</type>
-    <id>5</id>
+    <id>0</id>
     <posX>55</posX>
     <posY>530</posY>
     <width>180</width>
@@ -465,7 +465,7 @@
   <control>
     <description>default textboxscrollup</description>
     <type>textboxscrollup</type>
-    <id>15</id>
+    <id>0</id>
     <posX>220</posX>
     <posY>220</posY>
     <width>410</width>
@@ -480,7 +480,7 @@
   <control>
     <description>default textarea</description>
     <type>textbox</type>
-    <id>4</id>
+    <id>0</id>
     <posX>220</posX>
     <posY>220</posY>
     <width>410</width>
@@ -502,7 +502,7 @@
   <control>
     <description>default progress control</description>
     <type>progress</type>
-    <id>20</id>
+    <id>0</id>
     <posX>100</posX>
     <posY>325</posY>
     <height>25</height>
@@ -515,7 +515,7 @@
   <control>
     <description>default horizontal scrollbar control</description>
     <type>hscrollbar</type>
-    <id>20</id>
+    <id>0</id>
     <posX>100</posX>
     <posY>325</posY>
     <texturebg>bar_hor.png</texturebg>
@@ -526,7 +526,7 @@
   <control>
     <description>default vertical scrollbar control</description>
     <type>vscrollbar</type>
-    <id>20</id>
+    <id>0</id>
     <posX>100</posX>
     <posY>25</posY>
     <scrollbarbg>bar_vert.png</scrollbarbg>
@@ -537,7 +537,7 @@
   <control>
     <description>default spin control</description>
     <type>spincontrol</type>
-    <id>2</id>
+    <id>0</id>
     <posX>330</posX>
     <posY>126</posY>
     <width>16</width>
@@ -558,7 +558,7 @@
   <control>
     <description>default checkmark</description>
     <type>checkmark</type>
-    <id>4</id>
+    <id>0</id>
     <posX>208</posX>
     <posY>166</posY>
     <label>167</label>
@@ -577,7 +577,7 @@
   <control>
     <description>default select button</description>
     <type>selectbutton</type>
-    <id>6</id>
+    <id>0</id>
     <posX>55</posX>
     <posY>230</posY>
     <width>190</width>
