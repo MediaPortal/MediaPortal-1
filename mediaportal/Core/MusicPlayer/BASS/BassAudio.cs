@@ -47,7 +47,7 @@ using Action = MediaPortal.GUI.Library.Action;
 namespace MediaPortal.Player
 {
   /// <summary>
-  /// This singleton class is responsible for managing the BASS audio Engine object. 
+  /// This singleton class is responsible for managing the BASS audio Engine object.
   /// </summary>
   public class BassMusicPlayer
   {
@@ -306,16 +306,16 @@ namespace MediaPortal.Player
     private int _mixer = 0;
     // Mixing Matrix
     private float[,] _MixingMatrix = new float[8,2]
-                                       {
-                                         {1, 0}, // left front out = left in
-                                         {0, 1}, // right front out = right in
-                                         {1, 0}, // centre out = left in
-                                         {0, 1}, // LFE out = right in
-                                         {1, 0}, // left rear/side out = left in
-                                         {0, 1}, // right rear/side out = right in
-                                         {1, 0}, // left-rear center out = left in
-                                         {0, 1} // right-rear center out = right in
-                                       };
+    {
+      {1, 0}, // left front out = left in
+      {0, 1}, // right front out = right in
+      {1, 0}, // centre out = left in
+      {0, 1}, // LFE out = right in
+      {1, 0}, // left rear/side out = left in
+      {0, 1}, // right rear/side out = right in
+      {1, 0}, // left-rear center out = left in
+      {0, 1} // right-rear center out = right in
+    };
 
     private StreamCopy _streamcopy; // For Asio Channels
 
@@ -987,7 +987,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Load Settings 
+    /// Load Settings
     /// </summary>
     private void LoadSettings()
     {
@@ -1480,7 +1480,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Create the Visualisation 
+    /// Create the Visualisation
     /// </summary>
     /// <param name="vizPluginInfo"></param>
     /// <returns></returns>
@@ -1514,7 +1514,7 @@ namespace MediaPortal.Player
     /// <summary>
     /// Return the BASS Stream to be used for Visualisation purposes.
     /// We will extract the WAVE and FFT data to be provided to the Visualisation Plugins
-    /// In case of Mixer active, we need to return the Mixer Stream. 
+    /// In case of Mixer active, we need to return the Mixer Stream.
     /// In all other cases the current active stream is used.
     /// </summary>
     /// <returns></returns>
@@ -1569,7 +1569,7 @@ namespace MediaPortal.Player
     #region Private Methods
 
     /// <summary>
-    /// Returns the Current Stream 
+    /// Returns the Current Stream
     /// </summary>
     /// <returns></returns>
     internal int GetCurrentStream()
@@ -2119,7 +2119,7 @@ namespace MediaPortal.Player
     {
       PlayBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
       int syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, PlayBackSlideEndDelegate,
-                                            IntPtr.Zero);
+                                                IntPtr.Zero);
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterSlideEndEvent of stream {0} failed with error {1}", stream,
@@ -2222,7 +2222,7 @@ namespace MediaPortal.Player
             Index index = track.Indices[0];
             cueTrackStartPos = CueUtil.cueIndexToFloatTime(index);
 
-            // If single audio file and is not last track, set track end position. 
+            // If single audio file and is not last track, set track end position.
             if (currentCueSheet.Tracks[currentCueSheet.Tracks.Length - 1].TrackNumber > track.TrackNumber)
             {
               Track nextTrack =
@@ -2236,7 +2236,7 @@ namespace MediaPortal.Player
 
             // If audio file is not changed, just set new start/end position and reset pause
             string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
-                                   System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
+              System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
             if (audioFilePath.CompareTo(FilePath) == 0 /* && StreamIsPlaying(stream)*/)
             {
               setCueTrackEndPosition(stream);
@@ -2337,8 +2337,12 @@ namespace MediaPortal.Player
           else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
                    filePath.ToLower().StartsWith("mms") || filePath.ToLower().StartsWith("rtsp"))
           {
-            _isRadio = true; // We're playing Internet Radio Stream
+            // We're playing Internet Radio Stream
             _isLastFMRadio = Util.Utils.IsLastFMStream(filePath);
+            if(!_isLastFMRadio)
+            { // We're playing Internet Radio Stream, but not LastFM
+              _isRadio = true;
+            }
 
             stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, IntPtr.Zero);
 
@@ -2374,7 +2378,7 @@ namespace MediaPortal.Player
           // Is Mixing / ASIO enabled, then we create a mixer channel and assign the stream to the mixer
           if ((_Mixing || _useASIO) && stream != 0)
           {
-            // Do an upmix of the stereo according to the matrix. 
+            // Do an upmix of the stereo according to the matrix.
             // Now Plugin the stream to the mixer and set the mixing matrix
             BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream,
                                                 BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE |
@@ -2401,7 +2405,7 @@ namespace MediaPortal.Player
               // Reduce the stream volume to zero so we can fade it in...
               Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0);
 
-              // Fade in from 0 to 1 over the _CrossFadeIntervalMS duration 
+              // Fade in from 0 to 1 over the _CrossFadeIntervalMS duration
               Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1, _CrossFadeIntervalMS);
             }
 
@@ -2829,7 +2833,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Is Seeking enabled 
+    /// Is Seeking enabled
     /// </summary>
     /// <returns></returns>
     public override bool CanSeek()
@@ -3144,7 +3148,7 @@ namespace MediaPortal.Player
       }
 
       if (GUIGraphicsContext.BlankScreen)
-      //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
+        //BAV || (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false))
       {
         //BAV if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
         {
@@ -3284,7 +3288,7 @@ namespace MediaPortal.Player
         }
 
         Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}", Enum.GetName(typeof (PlayBackType), _playBackType),
-                  Enum.GetName(typeof (PlayBackType), (int)PlayBackType.GAPLESS));
+                 Enum.GetName(typeof (PlayBackType), (int)PlayBackType.GAPLESS));
 
         _playBackType = (int)PlayBackType.GAPLESS;
         _CrossFadeIntervalMS = 200;
@@ -3299,7 +3303,7 @@ namespace MediaPortal.Player
       if (_savedPlayBackType > -1)
       {
         Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}", Enum.GetName(typeof(PlayBackType), _playBackType),
-          Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
+                 Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
 
         if (_savedPlayBackType == 0)
         {
@@ -3307,7 +3311,7 @@ namespace MediaPortal.Player
         }
         else if (_savedPlayBackType == 1)
         {
-          _CrossFadeIntervalMS = 200;        
+          _CrossFadeIntervalMS = 200;
         }
         else
         {
