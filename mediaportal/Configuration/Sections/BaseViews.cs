@@ -54,6 +54,7 @@ namespace MediaPortal.Configuration.Sections
     private Rectangle _dragDropRectangle;
     private int _dragDropSourceIndex;
     private int _dragDropTargetIndex;
+    private string _dragDropInitiatingGrid = "";
 
     #endregion
 
@@ -531,11 +532,13 @@ namespace MediaPortal.Configuration.Sections
           Size DragSize = SystemInformation.DragSize;
           _dragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)), DragSize);
           _dragDropSourceIndex = selectedRow;
+          _dragDropInitiatingGrid = dgV.Name;
         }
       }
       else
       {
         _dragDropRectangle = Rectangle.Empty;
+        _dragDropInitiatingGrid = "";
       }
 
       base.OnMouseDown(e);
@@ -548,10 +551,13 @@ namespace MediaPortal.Configuration.Sections
       {
         if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
         {
-          if (_dragDropRectangle != Rectangle.Empty && !_dragDropRectangle.Contains(e.X, e.Y))
+          if (dgV.Name == _dragDropInitiatingGrid)
           {
-            DragDropEffects DropEffect = dgV.DoDragDrop(dgV.Rows[_dragDropSourceIndex],
-                                                                     DragDropEffects.Move);
+            if (_dragDropRectangle != Rectangle.Empty && !_dragDropRectangle.Contains(e.X, e.Y))
+            {
+              DragDropEffects DropEffect = dgV.DoDragDrop(dgV.Rows[_dragDropSourceIndex],
+                                                          DragDropEffects.Move);
+            }
           }
         }
       }
