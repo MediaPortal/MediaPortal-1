@@ -680,6 +680,25 @@ namespace MediaPortal.Player
       }
       OnProcess();
       CheckVideoResolutionChanges();
+	    if ((_currentPos > (_duration-1.0)) && IsTimeShifting && (iSpeed != 1))
+      {
+        Log.Info("TSReaderPlayer : timeshifting FFWD/REW : currentPos > duration-1");
+        MovieEnded();
+      }
+      if (_endOfFileDetected && IsTimeShifting)
+      {
+        UpdateDuration();
+        UpdateCurrentPosition();
+        double pos = _duration - 1.0; //Continue playing from end of file -1 seconds
+        if (pos < 0)
+        {
+          pos = 0;
+        }
+        SeekAbsolute(pos);
+        Speed = 1; 
+        _endOfFileDetected = false;     
+        Log.Info("TSReaderPlayer : timeshift EOF - start play");
+      }
       if (_speedRate != 10000)
       {
         DoFFRW();
@@ -689,21 +708,10 @@ namespace MediaPortal.Player
         _lastFrameCounter = 0;
         _FFRWtimer = DateTime.Now;
       }
-      if (_endOfFileDetected && IsTimeShifting)
-      {
-        UpdateDuration();
-        UpdateCurrentPosition();
-        double pos = CurrentPosition;
-        if (pos < 0)
-        {
-          pos = 0;
-        }
-        SeekAbsolute(pos);
-      }
-
       // Workaround for Mantis issue: 0002698: Last frame can get stuck on the screen when TS file playback ends 
-	  if (_currentPos > _duration && !IsTimeShifting)
+	    if (_currentPos > _duration && !IsTimeShifting)
       {
+        Log.Info("TSReaderPlayer : currentPos > duration");
         MovieEnded();
       }
 
@@ -791,7 +799,7 @@ namespace MediaPortal.Player
           if (_CodecSupportsFastSeeking)
           {
             // Inform dshowhelper of playback rate changes
-            VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
+            if (VMR9Util.g_vmr9 != null) VMR9Util.g_vmr9.EVRProvidePlaybackRate((double)value);
               
             if (iSpeed != value)
             {
@@ -1338,6 +1346,7 @@ namespace MediaPortal.Player
       else
       {
         _endOfFileDetected = true;
+        Log.Info("TSReaderPlayer timeshift EOF");
       }
     }
 
@@ -1831,14 +1840,14 @@ namespace MediaPortal.Player
       {
         return;
       }
-      if ((_speedRate == 10000) || (_mediaSeeking == null))
+      if ((_speedRate == 10000) || (_mediaSeeking == null) || (_mediaCtrl == null))
       {
         return;
       }
       TimeSpan ts = DateTime.Now - _elapsedTimer;
-      if ((ts.TotalMilliseconds < 100) || (ts.TotalMilliseconds < Math.Abs(1000.0f / Speed)) ||
-          (VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) &&
-          (ts.TotalMilliseconds < 2000))
+      if ((ts.TotalMilliseconds < 200) || (ts.TotalMilliseconds < Math.Abs(1000.0f / Speed)) ||
+          ((VMR9Util.g_vmr9 != null && _lastFrameCounter == VMR9Util.g_vmr9.FreeFrameCounter) &&
+          (ts.TotalMilliseconds < 2000)))
       {
         // Ambass : Normally, 100 mS are enough to present the new frame, but sometimes the PC is thinking...and we launch a new seek
         return;
@@ -1860,7 +1869,10 @@ namespace MediaPortal.Player
 
         // new time = current time + timerinterval * speed
         long lTimerInterval = (long)ts.TotalMilliseconds;
-
+        if (lTimerInterval > 1000)
+        {
+          lTimerInterval = 1000;
+        }
         rewind = (long)(current + ((long)(lTimerInterval) * Speed * 10000));
         int hr;
         pStop = 0;
@@ -1870,15 +1882,15 @@ namespace MediaPortal.Player
         {
           _speedRate = 10000;
           rewind = earliest;
-          //Log.Info(" seek back:{0}",rewind/10000000);
-          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
+          Log.Info("TSReaderPlayer: timeshift SOF seek back:{0}",rewind/10000000);
+          hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-          _mediaCtrl.Run();
+          Speed = 1;      
           return;
         }
         // if we end up at the end of time then just
-        // start @ the end-100msec
-        long margin = (IsTimeShifting) ? 30000000 : 10000;
+        // start @ the end -1sec
+        long margin = (IsTimeShifting) ? 10000000 : 100000;
 
         if ((rewind > (latest - margin)) && (_speedRate > 0))
         {
@@ -1886,10 +1898,10 @@ namespace MediaPortal.Player
           {
             _speedRate = 10000;
             rewind = latest - margin;
-            //Log.Info(" seek ff:{0} {1}",rewind,latest);
-            hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning,
+            Log.Info("TSReaderPlayer: timeshift EOF seek ff:{0} {1}",rewind,latest);
+            hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-            _mediaCtrl.Run();
+            Speed = 1;      
           }
           else
           {
@@ -1900,11 +1912,16 @@ namespace MediaPortal.Player
         }
         //seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
-        if (VMR9Util.g_vmr9 != null) _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
-        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning, new DsLong(pStop),
-                                        AMSeekingSeekingFlags.NoPositioning);
+        if (VMR9Util.g_vmr9 != null)
+        {
+          _lastFrameCounter = VMR9Util.g_vmr9.FreeFrameCounter;
+          VMR9Util.g_vmr9.EVRProvidePlaybackRate(0.0);
+        }
+        hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
+                                        new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
+        _mediaCtrl.Run();
         //according to ms documentation, this is the prefered way to do seeking
-        _mediaCtrl.StopWhenReady();
+       // _mediaCtrl.StopWhenReady();
         _elapsedTimer = DateTime.Now;
       }
     }
