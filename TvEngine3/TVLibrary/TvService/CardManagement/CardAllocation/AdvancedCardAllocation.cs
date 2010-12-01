@@ -34,8 +34,6 @@ namespace TvService
 {
   public class AdvancedCardAllocation : CardAllocationBase, ICardAllocation
   {
-
-
     private readonly TvBusinessLayer _businessLayer;
     public AdvancedCardAllocation(TvBusinessLayer businessLayer)
     {
@@ -97,18 +95,18 @@ namespace TvService
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
+    public List<CardDetail> GetFreeCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
                                                         ref User user, out TvResult result)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
       {        
-        //Log.Info("GetAvailableCardsForChannel st {0}", Environment.StackTrace);
+        //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         Log.Info("Controller: find free card for channel {0}", dbChannel.Name);
         List<CardDetail> cardsAvailable = new List<CardDetail>();
 
-        List<CardDetail> cardDetails = GetCardsForChannel(cards, dbChannel, ref user);
+        List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user);
         foreach (CardDetail cardDetail in cardDetails)
         {
           bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], cardDetail.Card.DecryptLimit, cardDetail.Card.IdCard, cardDetail.TuningDetail);
@@ -143,21 +141,21 @@ namespace TvService
       finally
       {
         stopwatch.Stop();        
-        Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
+        Log.Info("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 
     /// <summary>
-    /// Gets a list of all cards which can receive the channel specified
+    /// Gets a list of all available cards which can receive the channel specified
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all cards which can receive the channel</returns>
-    public List<CardDetail> GetCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user)
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
       {
-        //Log.Info("GetAvailableCardsForChannel st {0}", Environment.StackTrace);
+        //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         List<CardDetail> cardsAvailable = new List<CardDetail>();
         List<int> cardsUnAvailable = new List<int>();
@@ -226,7 +224,7 @@ namespace TvService
       finally
       {
         stopwatch.Stop();
-        Log.Info("AdvancedCardAllocation.GetCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
+        Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 

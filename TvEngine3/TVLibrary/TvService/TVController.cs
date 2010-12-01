@@ -2513,7 +2513,7 @@ namespace TvService
       try
       {        
         TvResult result;
-        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, out result);
+        List<CardDetail> freeCards = _cardAllocation.GetFreeCardsForChannel(_cards, channel, ref user, out result);
         if (freeCards.Count > 0)
         {
           //get first free card
@@ -2585,7 +2585,7 @@ namespace TvService
       try
       {        
         TvResult result;
-        List<CardDetail> freeCards = _cardAllocation.GetAvailableCardsForChannel(_cards, channel, ref user, out result);
+        List<CardDetail> freeCards = _cardAllocation.GetFreeCardsForChannel(_cards, channel, ref user, out result);
         if (freeCards.Count == 0)
         {
           //no free cards available
@@ -3370,7 +3370,7 @@ namespace TvService
         {
           Channel dbchannel = Channel.Retrieve(idChannel);
           TvResult viewResult;
-          _cardAllocation.GetAvailableCardsForChannel(_cards, dbchannel, ref user, out viewResult);
+          _cardAllocation.GetFreeCardsForChannel(_cards, dbchannel, ref user, out viewResult);
           chanState = viewResult == TvResult.Succeeded ? ChannelState.tunable : ChannelState.nottunable;
         }
       }
