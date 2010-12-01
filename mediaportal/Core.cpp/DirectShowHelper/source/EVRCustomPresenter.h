@@ -49,8 +49,8 @@ using namespace std;
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
 
-// uncomment the //Log to enable extra logging
-#define LOG_DELAYS //Log
+// Change to 'true' to enable extra logging of processing latencies
+#define LOG_DELAYS false
 
 // uncomment the //Log to enable extra logging
 #define LOG_LATEFR //Log
@@ -199,12 +199,16 @@ public:
   void           NotifyRateChange(double pRate);
   void           NotifyDVDMenuState(bool pIsInMenu);
 
+  bool           m_bScrubbing;
+  bool           m_bZeroScrub;
+
 friend class StatsRenderer;
 
 protected:
   void           GetAVSyncClockInterface();
   void           SetupAudioRenderer();
   void           AdjustAVSync(double currentPhaseDiff);
+  int            MeasureScanLines(LONGLONG startTime, double *times, double *scanLines, int n);
   BOOL           EstimateRefreshTimings();
   void           ReleaseSurfaces();
   HRESULT        Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -281,7 +285,8 @@ protected:
   int                               m_iFramesDropped;
   bool                              m_bFrameSkipping;
   double                            m_fSeekRate;
-  bool                              m_bScrubbing;
+//  bool                              m_bScrubbing;
+//  bool                              m_bZeroScrub;
   bool                              m_bFirstFrame;
   bool                              m_bDVDMenu;
   MP_RENDER_STATE                   m_state;
@@ -351,6 +356,9 @@ protected:
   void CalculateNSTStats(LONGLONG timeStamp);
   void CalculatePresClockDelta(LONGLONG presTime, LONGLONG sysTime);
 
+  bool QueryFpsFromVideoMSDecoder();
+  bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame);
+
   double m_dDetectedScanlineTime;
   double m_dEstRefreshCycle; 
   bool   m_estRefreshLock;
@@ -362,6 +370,7 @@ protected:
   UINT   m_LastStartOfPaintScanline;
   UINT   m_LastEndOfPaintScanline;
   UINT   m_maxScanLine;
+  double m_dEstRefCycDiff; 
   
   LONGLONG m_SampDuration;
 
@@ -397,6 +406,7 @@ protected:
   LONGLONG      m_lastDelayErr;
   
   BOOL          m_bIsWin7;
+  bool          m_bMsVideoCodec;
   
   IAVSyncClock* m_pAVSyncClock;
   double        m_dBias;

@@ -189,14 +189,14 @@ void StatsRenderer::DrawStats()
     CString  strText;
     int TextHeight = int(25.0*m_TextScale + 0.5);
     
-    strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.4f", 
+    strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.6f", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
       m_pPresenter->m_dD3DRefreshRate, 1000.0/m_pPresenter->m_dEstRefreshCycle, m_pPresenter->m_maxScanLine,
       m_pPresenter->m_fPCDMean);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Video: %d x %d @ %d x %d | Act FPS: %.3f (red)| Drwn: %d | Drop: %d | Lkd: %d", 
+    strText.Format("Video: %d x %d @ %d x %d | Act FPS: %.6f (red)| Drwn: %d | Drop: %d | Lkd: %d", 
       m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight, 
       m_pPresenter->m_iARX, m_pPresenter->m_iARY, 
       10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped,
@@ -206,7 +206,7 @@ void StatsRenderer::DrawStats()
 
     OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
 
-    strText.Format("Render time (grn): %+5.1f ms | NST: %+3.2f ms | AveNST: %+3.2f ms | FrRat: %d | Stall: %3.2f ms ", 
+    strText.Format("Render time (grn): %+5.1f ms | NST: %+3.2f ms | AveNST: %+3.2f ms | FrRat: %d | Stall: %3.2f ms", 
       m_pPresenter->m_fSyncOffsetAvr/10000.0, m_pPresenter->m_llLastCFPts/10000.0, 
       m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio, m_pPresenter->m_stallTime/10000.0);
     DrawText(rc, strText);
@@ -243,8 +243,8 @@ void StatsRenderer::DrawStats()
       CLOCKDATA clockData;
       m_pPresenter->m_pAVSyncClock->GetClockData(&clockData);
 
-      strText.Format("A vs S rate: %.7f HW vs. sys: %3d ms dError cor: %3d ms", 
-        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.driftHWvsCorrected);
+      strText.Format("HW vs system: %.7fx HW vs. sys: %+.3f ms resampling adj.: %.7f Drift: %+.3f ms", 
+        clockData.driftMultiplier, clockData.driftHWvsSystem, clockData.resamplingAdjustment, clockData.currentDrift);
       DrawText(rc, strText);
       OffsetRect(&rc, 0, TextHeight);
     }
