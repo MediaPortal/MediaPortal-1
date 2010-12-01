@@ -360,18 +360,23 @@ namespace TvPlugin
       switch (currentSortMethod)
       {
         case SortMethod.Name:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(103);
           break;
         case SortMethod.Type:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(668);
           break;
         case SortMethod.Genre:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(669);
           break;
         case SortMethod.Bitrate:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(670);
           break;
         case SortMethod.Number:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(620);
           break;
       }

@@ -97,7 +97,7 @@ namespace MediaPortal.GUI.Pictures
             }
             if (String.IsNullOrEmpty(item.Path))
             {
-              return;
+              continue;
             }
             if (path.Length >= item.Path.Length)
             {
@@ -862,12 +862,15 @@ namespace MediaPortal.GUI.Pictures
       switch (method)
       {
         case SortMethod.Name:
+          facadeLayout.FirstLetterScroll = true;
           textLine = GUILocalizeStrings.Get(103);
           break;
         case SortMethod.Date:
+          facadeLayout.FirstLetterScroll = false;
           textLine = GUILocalizeStrings.Get(104);
           break;
         case SortMethod.Size:
+          facadeLayout.FirstLetterScroll = false;
           textLine = GUILocalizeStrings.Get(105);
           break;
       }

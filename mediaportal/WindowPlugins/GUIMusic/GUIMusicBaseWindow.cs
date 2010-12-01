@@ -356,39 +356,51 @@ namespace MediaPortal.GUI.Music
       switch (CurrentSortMethod)
       {
         case MusicSort.SortMethod.Name:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(103);
           break;
         case MusicSort.SortMethod.Date:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(104);
           break;
         case MusicSort.SortMethod.Year:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(104); // Also display Date for Year
           break;
         case MusicSort.SortMethod.Size:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(105);
           break;
         case MusicSort.SortMethod.Track:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(266);
           break;
         case MusicSort.SortMethod.Duration:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(267);
           break;
         case MusicSort.SortMethod.Title:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(268);
           break;
         case MusicSort.SortMethod.Artist:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(269);
           break;
         case MusicSort.SortMethod.Album:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(270);
           break;
         case MusicSort.SortMethod.Filename:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(363);
           break;
         case MusicSort.SortMethod.Rating:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(367);
           break;
         case MusicSort.SortMethod.AlbumArtist:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(269); // Also display Artist for AlbumArtist
           break;
       }

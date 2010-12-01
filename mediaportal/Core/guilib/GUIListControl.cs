@@ -51,6 +51,11 @@ namespace MediaPortal.GUI.Library
       SEARCH_NEXT
     } ;
 
+    #region Events
+    public delegate string GetFirstLetterScrollTextDelegate(GUIListItem item);
+    public event GetFirstLetterScrollTextDelegate GetFirstLetterScrollText;
+    #endregion
+
     [XMLSkinElement("spaceBetweenItems")]protected int _spaceBetweenItems = 2;
 
     [XMLSkinElement("textureHeight")]protected int _itemHeight = 10;
@@ -153,6 +158,8 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
+    [XMLSkinElement("explicitlyEnableFirstLetterScroll")] protected bool _explicitlyEnableFirstLetterScroll = false;
+
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
     protected GUIFont _font3 = null;
@@ -199,8 +206,12 @@ namespace MediaPortal.GUI.Library
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
     protected bool _enableSMSsearch = true;
+    protected bool _firstLetterScroll = false;
 
-
+    private DateTime _scrollTimer = DateTime.Now;
+    private int _scrollCounter = 0;
+    private const int _scrollCounterLimit = 3;
+    protected string _scrollDirection = "";
 
     public GUIListControl(int dwParentID)
       : base(dwParentID) { }
@@ -560,6 +571,23 @@ namespace MediaPortal.GUI.Library
 
     protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
     {
+      GUIListItem scrollItem = SelectedListItem;
+      if ((_explicitlyEnableFirstLetterScroll || _firstLetterScroll) && FirstLetterScrollIsScrolling && scrollItem != null)
+      {
+        string firstChars = string.Empty;
+        if (GetFirstLetterScrollText != null)
+          firstChars = GetFirstLetterScrollText(scrollItem);
+        else if (scrollItem.Label != null && scrollItem.Label.Length > 0)
+          firstChars = scrollItem.Label.Substring(0, 1).ToUpper();
+        if (string.IsNullOrEmpty(firstChars))
+          firstChars = " ";
+        GUIPropertyManager.SetProperty("#selecteditem.firstchar", firstChars);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#selecteditem.firstchar", " ");
+      }
+
       GUIListItem pItem = _listItems[buttonNr + _offset];
       long dwColor = _textColor;
       if (pItem.Shaded)
@@ -985,6 +1013,16 @@ namespace MediaPortal.GUI.Library
       } //for (int i = 0; i < _itemsPerPage; i++)
 
       RenderScrollbar(timePassed, dwPosY);
+
+      if ((_explicitlyEnableFirstLetterScroll || _firstLetterScroll) && FirstLetterScrollIsScrolling)
+      {
+        GUIPropertyManager.SetProperty("#scrolling." + _scrollDirection, "yes");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#scrolling.up", "no");
+        GUIPropertyManager.SetProperty("#scrolling.down", "no");
+      }
 
       if (Focus)
       {
@@ -2343,6 +2381,9 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_UP;
       if (_listType == ListType.CONTROL_LIST)
       {
+        _scrollDirection = "up";
+        _scrollTimer = DateTime.Now;
+        _scrollCounter++;
         if ((_cursorX > _scrollStartOffset) || ((_cursorX > 0) && (_offset == 0)))
         {
           _cursorX--;
@@ -2416,6 +2457,9 @@ namespace MediaPortal.GUI.Library
       action.wID = Action.ActionType.ACTION_MOVE_DOWN;
       if (_listType == ListType.CONTROL_LIST)
       {
+        _scrollDirection = "down";
+        _scrollTimer = DateTime.Now;
+        _scrollCounter++;
         if ((_cursorX + 1 + _scrollStartOffset < _itemsPerPage) ||
             (_offset + 1 + _cursorX + _scrollStartOffset >= _listItems.Count))
         {
@@ -3198,6 +3242,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         _listItems.Sort(comparer);
+        _firstLetterScroll = false;
       }
       catch (Exception) { }
       _refresh = true;
@@ -3647,7 +3692,6 @@ namespace MediaPortal.GUI.Library
       return selectedItemIndex;
     }
 
-
     public override int DimColor
     {
       get { return base.DimColor; }
@@ -3753,15 +3797,40 @@ namespace MediaPortal.GUI.Library
       get { return _text3Content; }
       set { _text3Content = value; }
     }
+
     public bool EnableSMSsearch
     {
       get { return _enableSMSsearch; }
       set { _enableSMSsearch = value; }
     }
 
+    public bool FirstLetterScroll
+    {
+      get
+      {
+        return _firstLetterScroll;
+      }
+      set
+      {
+        _firstLetterScroll = value;
+      }
+    }
+
+    private bool FirstLetterScrollIsScrolling
+    {
+      get
+      {
+        TimeSpan ts = DateTime.Now - _scrollTimer;
+        bool result = (ts.TotalMilliseconds < 100); //how close keypresses should be, before they trigger the label showing
+        if (!result)
+          _scrollCounter = 0;
+        return result && (_scrollCounter >= _scrollCounterLimit); //we also take in account how many scrolls passed so far
+      }
+    }
+
     public void SetNeedRefresh()
     {
-        _refresh = true;
+      _refresh = true;
     }
   }
 }

@@ -244,6 +244,18 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public bool FirstLetterScroll {
+    get
+      {
+        if (_layoutList != null) return _layoutList.FirstLetterScroll;
+        return false;
+      }
+      set
+      {
+        if (_layoutList != null) _layoutList.FirstLetterScroll = value;
+      }
+    }
+
     public override void AddAnimations(List<VisualEffect> animations)
     {
       //base.AddAnimations(animations);

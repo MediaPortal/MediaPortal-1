@@ -297,24 +297,31 @@ namespace MediaPortal.GUI.Video
       switch (CurrentSortMethod)
       {
         case VideoSort.SortMethod.Name:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(365);
           break;
         case VideoSort.SortMethod.Date:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(104);
           break;
         case VideoSort.SortMethod.Size:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(105);
           break;
         case VideoSort.SortMethod.Year:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(366);
           break;
         case VideoSort.SortMethod.Rating:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(367);
           break;
         case VideoSort.SortMethod.Label:
+          facadeLayout.FirstLetterScroll = true;
           strLine = GUILocalizeStrings.Get(430);
           break;
         case VideoSort.SortMethod.Unwatched:
+          facadeLayout.FirstLetterScroll = false;
           strLine = GUILocalizeStrings.Get(527);
           break;
       }
