@@ -79,21 +79,21 @@ namespace MediaPortal.GUI.Music
     private const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
 
     private string[] _sortModes = {
-                                    "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
-                                    "Rating"
-                                  };
+      "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
+      "Rating"
+    };
 
     private string[] _defaultSortTags1 = {
-                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-                                           defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag,
-                                           defaultTrackTag, defaultTrackTag
-                                         };
+      defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+      defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag,
+      defaultTrackTag, defaultTrackTag
+    };
 
     private string[] _defaultSortTags2 = {
-                                           "%duration%", "%year%", "%filesize%", "%duration%", "%duration%",
-                                           "%duration%"
-                                           , "%duration%", "%duration%", "%filesize%", "%rating%"
-                                         };
+      "%duration%", "%year%", "%filesize%", "%duration%", "%duration%",
+      "%duration%"
+        , "%duration%", "%duration%", "%filesize%", "%rating%"
+    };
 
     private string[] _sortTags1 = new string[20];
     private string[] _sortTags2 = new string[20];
@@ -245,9 +245,9 @@ namespace MediaPortal.GUI.Music
             if (strDefault == share.Name)
             {
               share.Default = true;
-      }
+            }
             _shareList.Add(share);
-    }
+          }
           else
           {
             break;
@@ -745,7 +745,7 @@ namespace MediaPortal.GUI.Music
           if (item.FileInfo != null)
           {
             date = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-                   item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+              item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           ;
 
@@ -1806,7 +1806,27 @@ namespace MediaPortal.GUI.Music
         // Date Added
         string strDateAdded = tag.DateTimeModified == DateTime.MinValue ? string.Empty : tag.DateTimeModified.ToShortDateString();
 
-        if(!item.IsFolder)
+        if(item.IsFolder)
+        {
+          GUIPropertyManager.SetProperty("#title", string.Empty);
+          GUIPropertyManager.SetProperty("#track", string.Empty);
+          GUIPropertyManager.SetProperty("#rating", string.Empty);
+          GUIPropertyManager.SetProperty("#duration", string.Empty);
+          GUIPropertyManager.SetProperty("#artist", string.Empty);
+          GUIPropertyManager.SetProperty("#bitRate", string.Empty);
+          GUIPropertyManager.SetProperty("#comment", string.Empty);
+          GUIPropertyManager.SetProperty("#composer", string.Empty);
+          GUIPropertyManager.SetProperty("#conductor", string.Empty);
+          GUIPropertyManager.SetProperty("#lyrics", string.Empty);
+          GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
+          GUIPropertyManager.SetProperty("#filetype", string.Empty);
+          GUIPropertyManager.SetProperty("#codec", string.Empty);
+          GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
+          GUIPropertyManager.SetProperty("#bpm", string.Empty);
+          GUIPropertyManager.SetProperty("#channels", string.Empty);
+          GUIPropertyManager.SetProperty("#samplerate", string.Empty);
+        }
+        else
         {
           GUIPropertyManager.SetProperty("#title", tag.Title);
           GUIPropertyManager.SetProperty("#track", strTrack);
@@ -1825,7 +1845,7 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#bpm", strBPM);
           GUIPropertyManager.SetProperty("#channels", strChannels);
           GUIPropertyManager.SetProperty("#samplerate", strSampleRate);
-  }
+        }
 
         GUIPropertyManager.SetProperty("#album", tag.Album);
         GUIPropertyManager.SetProperty("#genre", tag.Genre);
