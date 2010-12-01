@@ -26,21 +26,7 @@ namespace SetupTv.Dialogs
         textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
         textBoxDVBSProvider.Text = TuningDetail.Provider;
         checkBoxDVBSfta.Checked = TuningDetail.FreeToAir;
-        switch ((Polarisation)TuningDetail.Polarisation)
-        {
-          case Polarisation.LinearH:
-            comboBoxPol.SelectedIndex = 0;
-            break;
-          case Polarisation.LinearV:
-            comboBoxPol.SelectedIndex = 1;
-            break;
-          case Polarisation.CircularL:
-            comboBoxPol.SelectedIndex = 2;
-            break;
-          case Polarisation.CircularR:
-            comboBoxPol.SelectedIndex = 3;
-            break;
-        }
+        comboBoxPol.SelectedIndex = TuningDetail.Polarisation + 1;
         comboBoxModulation.SelectedIndex = TuningDetail.Modulation + 1;
         comboBoxInnerFecRate.SelectedIndex = TuningDetail.InnerFecRate + 1;
         comboBoxPilot.SelectedIndex = TuningDetail.Pilot + 1;
@@ -90,6 +76,7 @@ namespace SetupTv.Dialogs
       TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
       TuningDetail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
       TuningDetail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
+      TuningDetail.Polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
       TuningDetail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
       TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
       TuningDetail.RollOff = (int)(RollOff)(comboBoxRollOff.SelectedIndex - 1);
@@ -98,21 +85,6 @@ namespace SetupTv.Dialogs
       TuningDetail.PmtPid = Int32.Parse(textBoxDVBSPmt.Text);
       TuningDetail.Provider = textBoxDVBSProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBSfta.Checked;
-      switch (comboBoxPol.SelectedIndex)
-      {
-        case 0:
-          TuningDetail.Polarisation = (int)Polarisation.LinearH;
-          break;
-        case 1:
-          TuningDetail.Polarisation = (int)Polarisation.LinearV;
-          break;
-        case 2:
-          TuningDetail.Polarisation = (int)Polarisation.CircularL;
-          break;
-        case 3:
-          TuningDetail.Polarisation = (int)Polarisation.CircularR;
-          break;
-      }
       TuningDetail.Diseqc = comboBoxDisEqc.SelectedIndex;
     }
 

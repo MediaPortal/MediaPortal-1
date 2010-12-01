@@ -233,8 +233,8 @@ namespace SetupTv.Dialogs
       this.comboBoxInnerFecRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxInnerFecRate.FormattingEnabled = true;
       this.comboBoxInnerFecRate.Items.AddRange(new object[] {
-            "Default",
-            "Undefined",
+            "Not Set",
+            "Not Defined",
             "1/2",
             "2/3",
             "3/4",
@@ -243,6 +243,11 @@ namespace SetupTv.Dialogs
             "5/6",
             "5/11",
             "7/8",
+            "1/4",
+            "1/3",
+            "2/5",
+            "6/7",
+            "8/9",
             "9/10",
             "Max"});
       this.comboBoxInnerFecRate.Location = new System.Drawing.Point(85, 270);
@@ -264,8 +269,8 @@ namespace SetupTv.Dialogs
       this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Items.AddRange(new object[] {
-            "ModNotSet",
-            "ModNotDefined",
+            "Not Set",
+            "Not Defined",
             "Mod16Qam",
             "Mod32Qam",
             "Mod64Qam",
@@ -321,7 +326,7 @@ namespace SetupTv.Dialogs
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(63, 13);
       this.label9.TabIndex = 94;
-      this.label9.Text = "LBN Switch";
+      this.label9.Text = "LNB Switch";
       // 
       // comboBoxDisEqc
       // 
@@ -347,15 +352,15 @@ namespace SetupTv.Dialogs
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(44, 13);
       this.label10.TabIndex = 93;
-      this.label10.Text = "DisEqc:";
+      this.label10.Text = "DiSEqC:";
       // 
       // comboBoxPol
       // 
       this.comboBoxPol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxPol.FormattingEnabled = true;
       this.comboBoxPol.Items.AddRange(new object[] {
-            "NotSet",
-            "NotDefined",
+            "Not Set",
+            "Not Defined",
             "Horizontal",
             "Vertical",
             "CircularL",
