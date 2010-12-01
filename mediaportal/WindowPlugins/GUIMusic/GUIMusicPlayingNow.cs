@@ -365,7 +365,7 @@ namespace MediaPortal.GUI.Music
       NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
 
-      CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+      CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
       if (CurrentThumbFileName.Length < 1)
         // no LOCAL Thumb found because user has bad settings -> check if there is a folder.jpg in the share
@@ -765,7 +765,7 @@ namespace MediaPortal.GUI.Music
 
             _MusicWindow.FindCoverArt(false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath,
                                       CurrentTrackTag, -1);
-            CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+            CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
 
             if (CurrentThumbFileName.Length > 0)
             {
@@ -998,7 +998,7 @@ namespace MediaPortal.GUI.Music
           }
         }
 
-        CurrentThumbFileName = GUIMusicFiles.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
+        CurrentThumbFileName = GUIMusicBaseWindow.GetCoverArt(false, CurrentTrackFileName, CurrentTrackTag);
         if (CurrentThumbFileName.Length > 0)
         {
           // let us test if there is a larger cover art image
@@ -1833,7 +1833,7 @@ namespace MediaPortal.GUI.Music
         string strRating = (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString();
 
         // Thumb
-        string nextTrackThumb = NextTrackFileName != string.Empty ? GUIMusicFiles.GetCoverArt(false, NextTrackFileName, NextTrackTag) : string.Empty;
+        string nextTrackThumb = NextTrackFileName != string.Empty ? GUIMusicBaseWindow.GetCoverArt(false, NextTrackFileName, NextTrackTag) : string.Empty;
 
         GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
         GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);

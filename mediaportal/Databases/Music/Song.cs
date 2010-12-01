@@ -22,6 +22,7 @@ using System;
 using System.Text;
 using System.Web;
 using MediaPortal.TagReader;
+using MediaPortal.Playlists;
 
 namespace MediaPortal.Music.Database
 {
@@ -455,6 +456,20 @@ namespace MediaPortal.Music.Database
       return tmpTag;
     }
 
+    public PlayListItem ToPlayListItem()
+    {
+      PlayListItem pli = new PlayListItem();
+      
+      pli.Type = PlayListItem.PlayListItemType.Audio;
+      pli.FileName = this.FileName;
+      pli.Description = this.Title;
+      pli.Duration = this.Duration;
+      MusicTag tag = this.ToMusicTag();
+      pli.MusicTag = tag;  
+        
+      return pli;
+    }
+    
     public string ToShortString()
     {
       StringBuilder s = new StringBuilder();

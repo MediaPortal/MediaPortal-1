@@ -52,12 +52,7 @@ namespace WindowPlugins
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", defaultLayout);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
 
-        if (AllowLayout(CurrentLayout) == false)
-        {
-          SwitchToNexAllowedLayout((int)CurrentLayout + 1);  //switch to next valid one
-        }
 
-        SwitchLayout();
       }
     }
 
@@ -220,8 +215,8 @@ namespace WindowPlugins
     protected virtual void OnInfo(int iItem) {}
 
     protected virtual void OnClick(int iItem) {}
-
-    protected virtual void OnQueueItem(int iItem) {}
+    
+    protected virtual void OnQueueItem(int item) {}
 
     protected  virtual void SelectCurrentItem()
     {
@@ -289,8 +284,6 @@ namespace WindowPlugins
       }
     }
 
-    
-
     protected virtual void SwitchToNexAllowedLayout(int iSelectedLayout)
     {
       int totalLayouts = Enum.GetValues(typeof(Layout)).Length - 1;
@@ -320,7 +313,7 @@ namespace WindowPlugins
 
     protected virtual void OnShowSort() {}
 
-    protected virtual void OnShowViews() 
+    protected virtual void OnShowViews()
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg == null)
@@ -464,28 +457,5 @@ namespace WindowPlugins
       set { m_bSortAscending = value; }
     }
 
-    protected virtual bool ViewByIcon
-    {
-      get
-      {
-        if (CurrentLayout != Layout.List)
-        {
-          return true;
-        }
-        return false;
-      }
-    }
-
-    protected virtual bool ViewByLargeIcon
-    {
-      get
-      {
-        if (CurrentLayout == Layout.LargeIcons)
-        {
-          return true;
-        }
-        return false;
-      }
-    }
   }
 }

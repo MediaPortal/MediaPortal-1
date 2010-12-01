@@ -801,7 +801,7 @@ namespace MediaPortal.GUI.Pictures
 
     #region listview management
 
-    protected override bool ViewByIcon
+    protected bool ViewByIcon
     {
       get
       {
@@ -813,7 +813,7 @@ namespace MediaPortal.GUI.Pictures
       }
     }
 
-    protected override bool ViewByLargeIcon
+    protected bool ViewByLargeIcon
     {
       get
       {
@@ -1340,8 +1340,6 @@ namespace MediaPortal.GUI.Pictures
         OnShowPicture(item.Path);
       }
     }
-
-    protected override void OnQueueItem(int itemIndex) {}
 
     private void OnShowPicture(string strFile)
     {
