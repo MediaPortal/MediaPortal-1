@@ -83,9 +83,15 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   {
     HRESULT hr;
     LogRotate();
-    Log("----- Owlsroost Version ------ instance 0x%x", this);
-    Log("---------- v0.0.49 ----------- instance 0x%x", this);
-    Log("--- audio renderer testing --- instance 0x%x", this);
+    if (NO_MP_AUD_REND)
+    {
+      Log("---------- v1.4.54 ----------- instance 0x%x", this);
+    }
+    else
+    {
+      Log("---------- v0.0.54 ----------- instance 0x%x", this);
+      Log("--- audio renderer testing --- instance 0x%x", this);
+    }
     m_hMonitor = monitor;
     m_pD3DDev = direct3dDevice;
     hr = m_pDXVA2CreateDirect3DDeviceManager9(&m_iResetToken, &m_pDeviceManager);
@@ -113,6 +119,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_bFrameSkipping           = true;
     m_bDVDMenu                 = false;
     m_bScrubbing               = false;
+    m_bZeroScrub               = false;
     m_fSeekRate                = m_fRate;
     memset(m_pllJitter,           0, sizeof(m_pllJitter));
     memset(m_pllSyncOffset,       0, sizeof(m_pllSyncOffset));
@@ -131,6 +138,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_dDetectedScanlineTime = 0.0;
     m_dEstRefreshCycle      = 0.0;
     m_estRefreshLock        = false;
+    m_dEstRefCycDiff        = 0.0;
     
 
     // sample time correction variables
@@ -152,7 +160,7 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_bDrawStats = false;
   }
     
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 2; i++)
   {
     if (EstimateRefreshTimings())
     {
@@ -544,14 +552,16 @@ HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *ph
   }
   LOG_TRACE("Due: %I64d, Calculated delta: %I64d (rate: %f)", hnsPresentationTime, hnsDelta, m_fRate);
 
-  if (m_fRate != 1.0f && m_fRate != 0.0f)
-  {
-    *phnsDelta = (LONGLONG)((float)hnsDelta / m_fRate);
-  }
-  else
-  {
-    *phnsDelta = hnsDelta;
-  }
+//  if (m_fRate != 1.0f && m_fRate != 0.0f)
+//  {
+//    *phnsDelta = (LONGLONG)((float)hnsDelta / m_fRate);
+//  }
+//  else
+//  {
+//    *phnsDelta = hnsDelta;
+//  }
+
+  *phnsDelta = hnsDelta;
   
   if (*phnsDelta == 0)
   {
@@ -1044,6 +1054,7 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
   HRESULT hr = S_OK;
   IMFMediaBuffer* pBuffer = NULL;
   IDirect3DSurface9* pSurface = NULL;
+  LONGLONG then = 0;
   LOG_TRACE("Presenting sample");
   // Get the buffer from the sample.
   CHECK_HR(hr = pSample->GetBufferByIndex(0, &pBuffer), "failed: GetBufferByIndex");
@@ -1075,13 +1086,18 @@ HRESULT MPEVRCustomPresenter::PresentSample(IMFSample* pSample)
 
     // Present the swap surface
     LOG_TRACE("Painting");
-    LONGLONG then = GetCurrentTimestamp();
+    if (LOG_DELAYS)
+      then = GetCurrentTimestamp();
+      
     CHECK_HR(hr = Paint(pSurface), "failed: Paint");
-    LONGLONG diff = GetCurrentTimestamp() - then;
-    LOG_TRACE("Paint() latency: %.2f ms", (double)diff/10000);
-    if (diff > 500000)
+    
+    if (LOG_DELAYS)
     {
-      LOG_DELAYS("High Paint() latency: %.2f ms", (double)diff/10000);
+      LONGLONG diff = GetCurrentTimestamp() - then;
+      if (diff > 500000)
+      {
+        Log("High Paint() latency: %.2f ms", (double)diff/10000);
+      }
     }
   }
 
@@ -1144,6 +1160,9 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     }
   }
 
+  //Bail out after presenting first frame in skip-step FFWD/RWD mode
+  if (m_bZeroScrub && (m_iFramesProcessed > 0))
+    return S_OK;
 
   while (CheckQueueCount() > 0)
   {        
@@ -1185,7 +1204,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
       delErr = 0;
     }
     
-    *pTargetTime = 0;
+    *pTargetTime = 0;      
         
     //De-sensitise frame dropping to avoid occasional delay glitches triggering frame drops
     if ((m_frameRateRatio > 0) && !m_bDVDMenu && !m_bScrubbing)
@@ -1224,7 +1243,8 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
     }
 
     // nextSampleTime == 0 means there is no valid presentation time, so we present it immediately without vsync correction
-    if ( (nextSampleTime >= -lateLimit) || m_bDVDMenu || !m_bFrameSkipping )
+    // When scrubbing always display at least every eighth frame - even if it's late
+    if ( (nextSampleTime >= -lateLimit) || m_bDVDMenu || !m_bFrameSkipping || (m_bScrubbing && !(m_iFramesProcessed % 8)) || m_bZeroScrub )
     {   
       if (m_iLateFrames > 0)
       {
@@ -1232,7 +1252,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
       }
       GetFrameRateRatio(); // update video to display FPS ratio data
       // Within the time window to 'present' a sample, or it's a special play mode
-      if (true)
+      if (!m_bZeroScrub)
       {   
         systemTime = GetCurrentTimestamp();
         if ((m_earliestPresentTime - systemTime) > (displayTime/2) )
@@ -2425,6 +2445,64 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::MapOutputCoordinateToInputStream
   return S_OK;
 }
 
+double LinearRegression(double *x, double *y, int n, double *pSlope, double *pIntercept)
+{
+  int i;
+  double sigmaXY = 0;
+  double sigmaX2 = 0;
+  double sigmaX = 0;
+  double sigmaY = 0;
+  double sigmaY2 = 0;
+
+  for(i = 0; i < n; i++)
+  {
+    sigmaXY += (*x) * (*y);
+    sigmaX2 += (*x) * (*x);
+    sigmaY2 += (*y) * (*y);
+    sigmaX += *x++;
+    sigmaY += *y++;
+  }
+
+  *pSlope = (n * sigmaXY - sigmaX * sigmaY) / (n * sigmaX2 - sigmaX * sigmaX);
+  *pIntercept = (sigmaY - *pSlope * sigmaX) / n;
+  return (n * sigmaXY - sigmaX * sigmaY) / sqrt((n * sigmaX2 - sigmaX * sigmaX) * (n * sigmaY2 - sigmaY * sigmaY));
+}
+
+int MPEVRCustomPresenter::MeasureScanLines(LONGLONG startTime, double *times, double *scanLines, int n)
+{
+  D3DRASTER_STATUS rasterStatus;
+  int line = -1;
+  for (int i = 0; i < n; i++)
+  {
+    do
+    {
+      times[i] = (double)(GetCurrentTimestamp() - startTime);
+      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+      scanLines[i] = (double)rasterStatus.ScanLine;
+    } while (line == rasterStatus.ScanLine);
+
+    if (line > (int)m_maxScanLine) 
+      m_maxScanLine = (UINT)line;
+
+    if ((int)rasterStatus.ScanLine < line)
+      return i;
+      
+    line = rasterStatus.ScanLine;
+  }
+
+  //Looping wait until next vsync
+  while ((int)rasterStatus.ScanLine >= line) 
+  {
+    line = rasterStatus.ScanLine;
+    
+    if (line > (int)m_maxScanLine) 
+      m_maxScanLine = (UINT)line;
+      
+    m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+  }
+    
+  return n;
+}
 
 BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 {
@@ -2439,14 +2517,11 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     D3DRASTER_STATUS rasterStatus;
 
     LONGLONG startTime = 0;
+    LONGLONG startTimeLR =0;
     LONGLONG endTime = 0;
     UINT line = 0;
     UINT startLine = 0;
     UINT endLine = 0;
-    double estRefreshCyc [8];
-    double cycFrac = 0.0;
-    double sumRefCyc = 0.0;
-    double aveRefCyc = 0.0;
     double AllowedError = 0.0;
     double currError = 0.0;
     
@@ -2458,44 +2533,56 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
       SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     }
 
-    m_maxScanLine = m_displayMode.Height;
-    
-    m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-    line = 0;
-    while (rasterStatus.ScanLine >= line) 
-    {
-      line = rasterStatus.ScanLine;
-      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      if (rasterStatus.ScanLine > m_maxScanLine) 
-      {
-        m_maxScanLine = rasterStatus.ScanLine;
-      }
-    }
-    endLine = rasterStatus.ScanLine;
-    endTime = GetCurrentTimestamp();
-    
+    //m_maxScanLine = m_displayMode.Height;
+    const int maxScanLineSamples = 1000;
+    const int maxFrameSamples = 8;
+    double times[maxScanLineSamples*2];
+    double scanLines[maxScanLineSamples*2];
+    struct {
+      double slope;
+      double intercept;
+      double fit;
+    }   coeff[maxFrameSamples];
+    int sampleCount;
+
+    double estRefreshCyc [maxFrameSamples];
+    double cycFrac = 0.0;
+    double sumRefCyc = 0.0;
+    double aveRefCyc = 0.0;
+
+    startTime = GetCurrentTimestamp();
+    startTimeLR = startTime;
+  
     // Now we're at the start of a vsync
-    for (int i = 0; i <= 7; i++)
+    for (int i = 0; i < maxFrameSamples; i++)
     {
-      startLine = endLine;
-      startTime = endTime;
+      
+      // make sure we are near the start of the frame, otherwise wait for next vsync
       line = 0;
-      while (rasterStatus.ScanLine >= line) 
+      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+      while ( (line <= rasterStatus.ScanLine && rasterStatus.ScanLine > 100) || rasterStatus.ScanLine < 10)
       {
         line = rasterStatus.ScanLine;
         m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-        if (rasterStatus.ScanLine > m_maxScanLine) 
-        {
-          m_maxScanLine = rasterStatus.ScanLine;
-        }
-      }
+      } 
+      startLine = rasterStatus.ScanLine;
+      startTime = GetCurrentTimestamp();
+
+      // make a few measurements
+      sampleCount = MeasureScanLines(startTimeLR, times, scanLines, maxScanLineSamples);
       // Now we're at the next vsync
+      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       endLine = rasterStatus.ScanLine;
       endTime = GetCurrentTimestamp();
-      
+
+      Log("Frame: %d, start scanline: %d, end scanline: %d, maxScanline: %d", i, startLine, endLine, m_maxScanLine);
+
       cycFrac = ((double)endLine - (double)startLine)/(double)(m_maxScanLine + 1);
-      estRefreshCyc[i] = (double)(endTime - startTime) / ((1.0 + cycFrac) * 10000.0); // in milliseconds
+      estRefreshCyc[i] = (double)(endTime - startTime) / (1.0 + cycFrac); // in hns units
       sumRefCyc += estRefreshCyc[i];
+      
+      coeff[i].fit = LinearRegression(scanLines, times, sampleCount, &coeff[i].slope, &coeff[i].intercept);
+      Log("  samples = %d, slope = %.6f, intercept = %.6f, fit = %.6f", sampleCount, coeff[i].slope, coeff[i].intercept, coeff[i].fit);
     }    
 
     // Restore thread priority
@@ -2503,14 +2590,18 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     {
       SetThreadPriority(GetCurrentThread(), priority);
     }
-    
-    aveRefCyc = sumRefCyc / 8.0;
+
+    //-----------------------------------------------------
+    // Calculate the simplistic refresh rate estimate
+    //-----------------------------------------------------
+
+    aveRefCyc = sumRefCyc / (double)maxFrameSamples;
     
     AllowedError = 0.0;
     currError = 0.0;
     int BadIdx0 = 0;
-    // Find worst match with average refresh period so we can remove it 
-    for (int i = 0; i <= 7; ++i)
+    // Find worst match with average refresh period so it can be removed 
+    for (int i = 0; i < maxFrameSamples; ++i)
     {
       currError = fabs(1.0 - (aveRefCyc / estRefreshCyc[i]) );
       if (currError > AllowedError)
@@ -2522,13 +2613,13 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     
     sumRefCyc -= estRefreshCyc[BadIdx0];
 
-    aveRefCyc = sumRefCyc / 7.0;
+    aveRefCyc = sumRefCyc / (double)(maxFrameSamples - 1);
     
     AllowedError = 0.0;
     currError = 0.0;
     int BadIdx1 = 0;
-    // Find next worst match with new average refresh period so we can remove it 
-    for (int i = 0; i <= 7; ++i)
+    // Find next worst match with new average refresh period so it can be removed 
+    for (int i = 0; i < maxFrameSamples; ++i)
     {
       currError = fabs(1.0 - (aveRefCyc / estRefreshCyc[i]) );
       if ((currError > AllowedError) && (i != BadIdx0))
@@ -2539,41 +2630,55 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     }
     sumRefCyc -= estRefreshCyc[BadIdx1];
 
-    m_dEstRefreshCycle = sumRefCyc / 6.0; // in milliseconds
+    double simpleFrameTime = sumRefCyc / (double)(maxFrameSamples - 2); // in hns units
+
+    //--------------------------------------------------------------
+    // Calculate the linear regression refresh rate estimate
+    //--------------------------------------------------------------
     
+    // Find the best matching measurement and the minimum frame time
+    int bestFitIdx = 0;
+    double minFrameTime = DBL_MAX;
+    int frameCount = 0;
+
+    for (int i = 1; i < maxFrameSamples; i++)
+    {
+      if (coeff[i].fit > coeff[bestFitIdx].fit)
+        bestFitIdx = i;
+      if (minFrameTime > coeff[i].intercept - coeff[i-1].intercept)
+        minFrameTime = coeff[i].intercept - coeff[i-1].intercept;
+    }
+
+    // Find the number of frames measured
+    for (int i = 1; i < maxFrameSamples; i++)
+    {
+      frameCount += (int)floor((coeff[i].intercept - coeff[i-1].intercept)/minFrameTime + 0.5);
+    }
+    
+    Log("  frame count = %d", frameCount);
+    double scanLineTime = coeff[bestFitIdx].slope;
+    double frameTime = (coeff[maxFrameSamples-1].intercept - coeff[0].intercept)/frameCount;
+
+    //--------------------------------------------------------------
+    // Compare the two methods
+    //--------------------------------------------------------------
+
+    AllowedError = 0.02; //Allow 2.0% error
+
+    currError = fabs(1.0 - (simpleFrameTime / frameTime));
+    if (currError < AllowedError)
+    {
+      m_estRefreshLock = true;
+    }
+    m_dEstRefCycDiff = currError;
+
+    m_maxScanLine = ((UINT)(frameTime / scanLineTime)) - 1;    
+    m_dEstRefreshCycle = frameTime / 10000.0; // in milliseconds
+    m_dDetectedScanlineTime = scanLineTime / 10000.0; 
+
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
     GetRealRefreshRate(); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
     
-    AllowedError = 0.015; //Allow 1.5% error
-    // static double AllowedValues[] = {1000000.0/30000.0, 1001000.0/30000.0, 1000000.0/25000.0, 1000000.0/24000.0, 1001000.0/24000.0};
-    static double AllowedValues[] = {1000500.0/30000.0, 1000000.0/25000.0, 1000500.0/24000.0}; //30Hz and 24Hz are compromise values
-
-    double BestVal = 0.0;
-    currError = AllowedError;
-    int nAllowed = sizeof(AllowedValues) / sizeof(AllowedValues[0]);
-    
-    // Find best match with allowed refresh periods
-    for (int i = 0; i < nAllowed; ++i)
-    {
-      for (int j = 1; j <= 4; j++)
-      {
-        currError = fabs(1.0 - (m_dEstRefreshCycle / (AllowedValues[i] / (double)j) ));
-        if (currError < AllowedError)
-        {
-          AllowedError = currError;
-          BestVal = (AllowedValues[i] / (double)j);
-        }
-      }
-    }
-
-    if (BestVal != 0.0)
-    {
-      m_estRefreshLock = true;
-      m_dEstRefreshCycle = BestVal;
-    }
-
-    m_dDetectedScanlineTime = m_dEstRefreshCycle/(double)(m_maxScanLine + 1); // in milliseconds
-
     if (m_dEstRefreshCycle < 5.0) // just in case it's gone badly wrong...
     {
       Log("Display refresh estimation failed, measured display cycle: %.6f ms", m_dEstRefreshCycle);
@@ -2584,6 +2689,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     }
 
     Log("Display cycle from Windows: %.6f ms", m_dD3DRefreshCycle);
+    Log("Raw est display cycle, linReg: %.6f ms, simple: %.6f ms, diff: %.6f ", frameTime/10000.0, simpleFrameTime/10000.0, currError);
     Log("Measured display cycle: %.6f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
     Log("Maximum scanline: %d", m_maxScanLine);
     Log("Measured scanline time: %.6f us", (m_dDetectedScanlineTime * 1000.0));
@@ -2913,13 +3019,23 @@ void MPEVRCustomPresenter::NotifyRateChange(double pRate)
   {
     Log("NotifyRateChange: %f", pRate);
     m_fSeekRate = pRate;
-    if (m_fSeekRate != 1.0 && m_fSeekRate != 0.0)
+    if (m_fSeekRate != 1.0)
     {
-      m_bScrubbing = true;
+      if (m_fSeekRate == 0.0) //Special case for skip-step FFWD/RWD mode
+      {
+        m_bScrubbing = true;
+        m_bZeroScrub = true;
+      }
+      else
+      {
+        m_bScrubbing = true;
+        m_bZeroScrub = false;
+      }
     }
     else
     {
       m_bScrubbing = false;
+      m_bZeroScrub = false;
     }
   }
 }
@@ -3266,7 +3382,7 @@ bool MPEVRCustomPresenter::ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFE
 
 void MPEVRCustomPresenter::GetAVSyncClockInterface()
 {
-  if (m_pAVSyncClock)
+  if (m_pAVSyncClock || NO_MP_AUD_REND)
   {
     return;
   }
@@ -3320,6 +3436,11 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
 
 void MPEVRCustomPresenter::SetupAudioRenderer()
 {
+  if (NO_MP_AUD_REND)
+  {
+    return;
+  }
+
   m_dFrameCycle = m_rtTimePerFrame / 10000.0;
 
   double cycleDiff = GetCycleDifference();

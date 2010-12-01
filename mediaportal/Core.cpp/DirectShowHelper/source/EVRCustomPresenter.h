@@ -26,6 +26,9 @@ using namespace std;
 #define CHECK_HR(hr, msg) if (FAILED(hr)) Log(msg);
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 
+//Disables MP audio renderer functions if true
+#define NO_MP_AUD_REND false
+
 #define NUM_SURFACES 5
 #define NB_JITTER 125
 #define NB_RFPSIZE 64
@@ -46,8 +49,8 @@ using namespace std;
 // uncomment the //Log to enable extra logging
 #define LOG_TRACE //Log
 
-// uncomment the //Log to enable extra logging
-#define LOG_DELAYS //Log
+// Change to 'true' to enable extra logging of processing latencies
+#define LOG_DELAYS false
 
 // uncomment the //Log to enable extra logging
 #define LOG_LATEFR //Log
@@ -196,12 +199,16 @@ public:
   void           NotifyRateChange(double pRate);
   void           NotifyDVDMenuState(bool pIsInMenu);
 
+  bool           m_bScrubbing;
+  bool           m_bZeroScrub;
+
 friend class StatsRenderer;
 
 protected:
   void           GetAVSyncClockInterface();
   void           SetupAudioRenderer();
   void           AdjustAVSync(double currentPhaseDiff);
+  int            MeasureScanLines(LONGLONG startTime, double *times, double *scanLines, int n);
   BOOL           EstimateRefreshTimings();
   void           ReleaseSurfaces();
   HRESULT        Paint(CComPtr<IDirect3DSurface9> pSurface);
@@ -278,7 +285,8 @@ protected:
   int                               m_iFramesDropped;
   bool                              m_bFrameSkipping;
   double                            m_fSeekRate;
-  bool                              m_bScrubbing;
+//  bool                              m_bScrubbing;
+//  bool                              m_bZeroScrub;
   bool                              m_bFirstFrame;
   bool                              m_bDVDMenu;
   MP_RENDER_STATE                   m_state;
@@ -362,6 +370,7 @@ protected:
   UINT   m_LastStartOfPaintScanline;
   UINT   m_LastEndOfPaintScanline;
   UINT   m_maxScanLine;
+  double m_dEstRefCycDiff; 
   
   LONGLONG m_SampDuration;
 

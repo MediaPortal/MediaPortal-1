@@ -110,17 +110,20 @@ UINT CALLBACK TimerThread(void* param)
         while ( (now < p->llTime) && (now < timeout) && !p->bDone && (p->llTime > 0))
         {    
           now = GetCurrentTimestamp(); //poll until we reach the target time
-          Sleep(1); //CPU load is too high without a Sleep()
+          Sleep(2); //CPU load is too high without a Sleep()
         }
         if ((p->llTime > 0) && !p->bDone)
         {
           p->pPresenter->NotifySchedulerTimer(); //wake up scheduler thread
-        }
-        diff = GetCurrentTimestamp() - p->llTime;
-        if ((diff > 100000) && (p->llTime > 0))
+        }   
+        
+        if (LOG_DELAYS)
         {
-          LOG_DELAYS("High latency in TimerThread: %.2f ms", (double)diff/10000);
+          diff = GetCurrentTimestamp() - p->llTime;
+          if ((diff > 100000) && (p->llTime > 0))
+            Log("High latency in TimerThread: %.2f ms", (double)diff/10000);
         }
+        
         break;
     }
 
@@ -180,7 +183,10 @@ UINT CALLBACK WorkerThread(void* param)
     if (p->iPause <= 0)
     {
 //      dwObject = WaitForMultipleObjects (2, hEvts, FALSE, INFINITE);
-      dwObject = WaitForMultipleObjects (2, hEvts, FALSE, 50);
+      if(p->pPresenter->m_bScrubbing)
+        dwObject = WaitForMultipleObjects (2, hEvts, FALSE, 5);
+      else
+        dwObject = WaitForMultipleObjects (2, hEvts, FALSE, 50);
     }
 
     if (p->iPause > 0)
@@ -197,7 +203,9 @@ UINT CALLBACK WorkerThread(void* param)
       p->eTimerEnd.Reset();
     }
 
-    now = GetCurrentTimestamp();
+    if (LOG_DELAYS)
+      now = GetCurrentTimestamp();
+    
     switch (dwObject)
     {
       case WAIT_OBJECT_0 :     //eHasWork
@@ -212,12 +220,14 @@ UINT CALLBACK WorkerThread(void* param)
         p->pPresenter->CheckForInput(false);
         break;
     }
-    diff = GetCurrentTimestamp()-now;
-    if (diff > 1000000)
-    {
-      LOG_DELAYS("High CheckForInput() latency in WorkerThread: %.2f ms", (double)diff/10000);
-    }
 
+    if (LOG_DELAYS)
+    {
+      diff = GetCurrentTimestamp()-now;
+      if (diff > 1000000)
+        Log("High CheckForInput() latency in WorkerThread: %.2f ms", (double)diff/10000);
+    }
+    
     LOG_TRACE("Worker woken up");
   }
   
@@ -254,6 +264,9 @@ UINT CALLBACK SchedulerThread(void* param)
   DWORD dwObject;
   HANDLE hEvts2[] = {p->eHasWork, p->eTimerEnd};
   HANDLE hEvts3[] = {p->eHasWork, p->eTimerEnd, p->eHasWorkLP};
+
+
+  // SetThreadAffinityMask(GetCurrentThread(), 1); //Force onto CPU 0 - ATi flickering GUI experiment
   
     // Tell Vista Multimedia Class Scheduler (MMCS) we are doing threaded playback (increase priority)
 //  if (m_pAvSetMmThreadCharacteristicsW) 
@@ -267,7 +280,7 @@ UINT CALLBACK SchedulerThread(void* param)
 //      Log("Scheduler set AvSetMmThreadPriority succeeded");
 //    }
 //  }
-
+ 
     // Set timer resolution (must be after MMCS setup, since timer res can be changed by MMCS)
   timeGetDevCaps(&tc, sizeof(TIMECAPS));
   dwResolution = min(max(tc.wPeriodMin, 1), tc.wPeriodMax);
@@ -275,7 +288,7 @@ UINT CALLBACK SchedulerThread(void* param)
 
   while (!p->bDone)
   {   
-    delErr = 0;
+    // delErr = 0;
     delay  = 0;
     dwObject = (WAIT_FAILED - 1); // Make sure we fall through the switch by default
     
@@ -339,43 +352,46 @@ UINT CALLBACK SchedulerThread(void* param)
         break;
       case WAIT_OBJECT_0 + 1 : //eTimerEnd
         p->eTimerEnd.Reset();
-        delErr = GetCurrentTimestamp() - hnsTargetTime;
-        if (idleWait) 
+        if (LOG_DELAYS)
         {
-          delErr = 0;
-        }
-        if (delErr > 50000 )
-        {
-          LOG_DELAYS("High timer latency in SchedulerThread: %.2f ms, target: %.2f ms", ((double)delErr)/10000.0, ((double)delay)/10000.0);
+          delErr = GetCurrentTimestamp() - hnsTargetTime;
+          if (idleWait) 
+            delErr = 0;
+          if (delErr > 50000 )
+            Log("High timer latency in SchedulerThread: %.2f ms, target: %.2f ms", ((double)delErr)/10000.0, ((double)delay)/10000.0);
         }
         break;
       case WAIT_OBJECT_0 + 2 : //eHasWorkLP
         p->eHasWorkLP.Reset();
         break;
       case WAIT_TIMEOUT :
-        delErr = GetCurrentTimestamp() - hnsTargetTime;
-        if (idleWait) 
+        if (LOG_DELAYS)
         {
-          delErr = 0;
-        }
-        if (delErr > 50000 )
-        {
-          LOG_DELAYS("High WFMO timeout latency in SchedulerThread: %.2f ms, target: %.2f ms", ((double)delErr)/10000.0, ((double)delay)/10000.0);
+          delErr = GetCurrentTimestamp() - hnsTargetTime;
+          if (idleWait) 
+            delErr = 0;
+          if (delErr > 50000 )
+            Log("High WFMO timeout latency in SchedulerThread: %.2f ms, target: %.2f ms", ((double)delErr)/10000.0, ((double)delay)/10000.0);
         }
         break;
     }
 
-      
     idleWait = true;
-    now = GetCurrentTimestamp();
+    
+    if (LOG_DELAYS)
+      now = GetCurrentTimestamp();
+      
     p->pPresenter->CheckForScheduledSample(&hnsTargetTime, delay, &idleWait);
+    
     LOG_TRACE("Got scheduling time: %I64d", hnsTargetTime);
-    diff = GetCurrentTimestamp()-now;
+    
+    if (LOG_DELAYS)
+      diff = GetCurrentTimestamp()-now;
+      
     LOG_TRACE("Scheduler Timer woken up");
-    if (diff > (500000 + delay))
-    {
-      LOG_DELAYS("High CheckForScheduledSample() latency in SchedulerThread: %.2f ms", ((double)diff)/10000.0);
-    }
+    
+    if (LOG_DELAYS && (diff > (500000 + delay)))
+      Log("High CheckForScheduledSample() latency in SchedulerThread: %.2f ms", ((double)diff)/10000.0);
     
   }
   
