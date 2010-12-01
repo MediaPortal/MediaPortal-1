@@ -52,8 +52,8 @@ namespace MediaPortal.GUI.Library
     } ;
 
     #region Events
-    public delegate string GetFirstLetterScrollTextDelegate(GUIListItem item);
-    public event GetFirstLetterScrollTextDelegate GetFirstLetterScrollText;
+    public delegate string GetScrollLabelDelegate(GUIListItem item);
+    public event GetScrollLabelDelegate GetScrollLabel;
     #endregion
 
     [XMLSkinElement("spaceBetweenItems")]protected int _spaceBetweenItems = 2;
@@ -158,7 +158,7 @@ namespace MediaPortal.GUI.Library
 
     [XMLSkinElement("spinCanFocus")] protected bool _spinCanFocus = true;
 
-    [XMLSkinElement("explicitlyEnableFirstLetterScroll")] protected bool _explicitlyEnableFirstLetterScroll = false;
+    [XMLSkinElement("explicitlyEnableScrollLabel")] protected bool _explicitlyEnableScrollLabel = false;
 
     protected GUIFont _font = null;
     protected GUIFont _font2 = null;
@@ -206,7 +206,7 @@ namespace MediaPortal.GUI.Library
     protected string _searchString = "";
     protected int _lastSearchItem = 0;
     protected bool _enableSMSsearch = true;
-    protected bool _firstLetterScroll = false;
+    protected bool _enableScrollLabel = false;
 
     private DateTime _scrollTimer = DateTime.Now;
     private int _scrollCounter = 0;
@@ -572,16 +572,16 @@ namespace MediaPortal.GUI.Library
     protected virtual void RenderLabel(float timePassed, int buttonNr, int dwPosX, int dwPosY, bool gotFocus)
     {
       GUIListItem scrollItem = SelectedListItem;
-      if ((_explicitlyEnableFirstLetterScroll || _firstLetterScroll) && FirstLetterScrollIsScrolling && scrollItem != null)
+      if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling && scrollItem != null)
       {
-        string firstChars = string.Empty;
-        if (GetFirstLetterScrollText != null)
-          firstChars = GetFirstLetterScrollText(scrollItem);
+        string scrollLabel = string.Empty;
+        if (GetScrollLabel != null)
+          scrollLabel = GetScrollLabel(scrollItem);
         else if (scrollItem.Label != null && scrollItem.Label.Length > 0)
-          firstChars = scrollItem.Label.Substring(0, 1).ToUpper();
-        if (string.IsNullOrEmpty(firstChars))
-          firstChars = " ";
-        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", firstChars);
+          scrollLabel = scrollItem.Label.Substring(0, 1).ToUpper();
+        if (string.IsNullOrEmpty(scrollLabel))
+          scrollLabel = " ";
+        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", scrollLabel);
       }
       else
       {
@@ -1014,7 +1014,7 @@ namespace MediaPortal.GUI.Library
 
       RenderScrollbar(timePassed, dwPosY);
 
-      if ((_explicitlyEnableFirstLetterScroll || _firstLetterScroll) && FirstLetterScrollIsScrolling)
+      if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling)
       {
         GUIPropertyManager.SetProperty("#scrolling." + _scrollDirection, "yes");
       }
@@ -3242,7 +3242,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         _listItems.Sort(comparer);
-        _firstLetterScroll = false;
+        _enableScrollLabel = false;
       }
       catch (Exception) { }
       _refresh = true;
@@ -3804,19 +3804,19 @@ namespace MediaPortal.GUI.Library
       set { _enableSMSsearch = value; }
     }
 
-    public bool FirstLetterScroll
+    public bool EnableScrollLabel
     {
       get
       {
-        return _firstLetterScroll;
+        return _enableScrollLabel;
       }
       set
       {
-        _firstLetterScroll = value;
+        _enableScrollLabel = value;
       }
     }
 
-    private bool FirstLetterScrollIsScrolling
+    private bool ScrollLabelIsScrolling
     {
       get
       {

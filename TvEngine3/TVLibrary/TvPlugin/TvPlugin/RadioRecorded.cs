@@ -480,32 +480,29 @@ namespace TvPlugin
           switch (_currentSortMethod)
           {
             case SortMethod.Channel:
-              facadeLayout.FirstLetterScroll = false;
               strLine = GUILocalizeStrings.Get(620); //Sort by: Channel
               break;
             case SortMethod.Date:
-              facadeLayout.FirstLetterScroll = false;
               strLine = GUILocalizeStrings.Get(621); //Sort by: Date
               break;
             case SortMethod.Name:
-              facadeLayout.FirstLetterScroll = true;
               strLine = GUILocalizeStrings.Get(268); //Sort by: Title
               break;
             case SortMethod.Genre:
-              facadeLayout.FirstLetterScroll = false;
               strLine = GUILocalizeStrings.Get(678); //Sort by: Genre
               break;
             case SortMethod.Played:
-              facadeLayout.FirstLetterScroll = false;
               strLine = GUILocalizeStrings.Get(671); //Sort by: Watched
               break;
             case SortMethod.Duration:
-              facadeLayout.FirstLetterScroll = false;
               strLine = GUILocalizeStrings.Get(1017); //Sort by: Duration
               break;
           }
           GUIControl.SetControlLabel(GetID, btnSortBy.GetID, strLine);
         }
+
+        if (null != facadeLayout)
+          facadeLayout.EnableScrollLabel = _currentSortMethod == SortMethod.Name;
 
         GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMTITLE);
         GUIControl.ShowControl(GetID, (int)Controls.LABEL_PROGRAMDESCRIPTION);

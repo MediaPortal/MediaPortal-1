@@ -244,15 +244,15 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public bool FirstLetterScroll {
+    public bool EnableScrollLabel {
     get
       {
-        if (_layoutList != null) return _layoutList.FirstLetterScroll;
+        if (_layoutList != null) return _layoutList.EnableScrollLabel;
         return false;
       }
       set
       {
-        if (_layoutList != null) _layoutList.FirstLetterScroll = value;
+        if (_layoutList != null) _layoutList.EnableScrollLabel = value;
       }
     }
 

@@ -862,19 +862,19 @@ namespace MediaPortal.GUI.Pictures
       switch (method)
       {
         case SortMethod.Name:
-          facadeLayout.FirstLetterScroll = true;
           textLine = GUILocalizeStrings.Get(103);
           break;
         case SortMethod.Date:
-          facadeLayout.FirstLetterScroll = false;
           textLine = GUILocalizeStrings.Get(104);
           break;
         case SortMethod.Size:
-          facadeLayout.FirstLetterScroll = false;
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
       GUIControl.SetControlLabel(GetID, btnSortBy.GetID, textLine);
+
+      if (null != facadeLayout)
+        facadeLayout.EnableScrollLabel = method == SortMethod.Name;
     }
 
     private void ShowThumbPanel()
