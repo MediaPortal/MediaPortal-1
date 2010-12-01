@@ -340,7 +340,6 @@
     <Compile Include="guilib\GUIInternalOverlayWindow.cs" />
     <Compile Include="guilib\GUIInternalWindow.cs" />
     <Compile Include="guilib\GUIKeyboard.cs" />
-    <Compile Include="guilib\GUISmsStyledKeyboard.cs" />
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
@@ -863,9 +862,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUISliderControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="guilib\GUISMSInputControl.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="guilib\GUISortButtonControl.cs">

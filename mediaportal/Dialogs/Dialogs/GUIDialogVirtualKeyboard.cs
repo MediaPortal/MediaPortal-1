@@ -155,6 +155,11 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
+      using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        _keyboard.SmsStyleText = xmlreader.GetValueAsBool("general", "smsstyleinput", true);
+      }
+
       base.OnPageLoad();
 
       Log.Debug("Window: {0} init", ToString());
@@ -162,6 +167,13 @@ namespace MediaPortal.Dialogs
 
     public void PageDestroy()
     {
+      if (!_keyboard._useSearchLayout)
+      {
+        using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
+        {
+          xmlwriter.SetValueAsBool("general", "smsstyleinput", _keyboard.SmsStyleText);
+        }
+      }
       GUIWindowManager.IsSwitchingToNewWindow = true;
       lock (this)
       {
@@ -234,18 +246,6 @@ namespace MediaPortal.Dialogs
       if (Load(GUIGraphicsContext.Skin + @"\stdKeyboard.xml"))
       {
         GetID = (int)Window.WINDOW_VIRTUAL_KEYBOARD;
-        _keyboard.InitializeInstance();
-      }
-    }
-  }
-
-  public class SmsStyledKeyboard : VirtualKeyboard
-  {
-    public SmsStyledKeyboard() : base()
-    {
-      if (Load(GUIGraphicsContext.Skin + @"\smsKeyboard.xml"))
-      {
-        GetID = (int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD;
         _keyboard.InitializeInstance();
       }
     }

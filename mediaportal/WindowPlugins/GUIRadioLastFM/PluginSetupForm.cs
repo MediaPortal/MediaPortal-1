@@ -45,7 +45,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         numericUpDownListEntries.Value = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 24);
         comboBoxStreamPlayerType.SelectedIndex = xmlreader.GetValueAsInt("audioscrobbler", "streamplayertype", 0);
         checkBoxOneClickMode.Checked = xmlreader.GetValueAsBool("audioscrobbler", "oneclickstart", false);
-        checkBoxUseSMSStyle.Checked = xmlreader.GetValueAsBool("audioscrobbler", "usesmskeyboard", true);
       }
     }
 
@@ -60,7 +59,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         xmlwriter.SetValue("audioscrobbler", "listentrycount", numericUpDownListEntries.Value);
         xmlwriter.SetValue("audioscrobbler", "streamplayertype", 0); // comboBoxStreamPlayerType.SelectedIndex);
         xmlwriter.SetValueAsBool("audioscrobbler", "oneclickstart", checkBoxOneClickMode.Checked);
-        xmlwriter.SetValueAsBool("audioscrobbler", "usesmskeyboard", checkBoxUseSMSStyle.Checked);
       }
     }
 

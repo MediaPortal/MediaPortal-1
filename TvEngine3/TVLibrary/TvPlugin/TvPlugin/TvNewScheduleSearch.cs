@@ -25,6 +25,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Dialogs;
 
 namespace TvPlugin
 {
@@ -45,8 +46,10 @@ namespace TvPlugin
 
     private static SearchType _searchType = SearchType.Title;
     [SkinControl(50)] protected GUIListControl listResults = null;
-    [SkinControl(51)] protected GUISMSInputControl smsInputControl = null;
-    public string _searchKeyword = "";
+    [SkinControl(7)] protected GUIButtonControl btnSearchTitle = null;
+    [SkinControl(8)] protected GUIButtonControl btnSearchKeyword = null;
+    [SkinControl(9)] protected GUIButtonControl btnSearchGenre = null;
+    public string _searchKeyword = string.Empty;
     public bool _refreshList = false;
 
     private Action LastAction = null; // Keeps the Last received Action from the OnAction Methode
@@ -91,38 +94,7 @@ namespace TvPlugin
             GUIWindowManager.ShowPreviousWindow();
             return;
           }
-        case Action.ActionType.ACTION_SELECT_ITEM:
-          {
-            if (GetFocusControlId() == smsInputControl.GetID)
-            {
-              _refreshList = true;
-              return;
-            }
-          }
-          break;
       }
-
-      if (action.wID == Action.ActionType.ACTION_KEY_PRESSED)
-      {
-        // Check focus on sms input control
-        if (GetFocusControlId() != smsInputControl.GetID)
-        {
-          // set focus to the default control then
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, (int)smsInputControl.GetID,
-                                          0, 0, null);
-          OnMessage(msg);
-        }
-        smsInputControl.OnAction(action);
-        return;
-      }
-      //else
-      //{
-      //  // translate all other actions from regular keypresses back to keypresses
-      //  if (action.m_key != null && action.m_key.KeyChar >= 32)
-      //  {
-      //    action.wID = Action.ActionType.ACTION_KEY_PRESSED;
-      //  }
-      //}
       base.OnAction(action);
     }
 
@@ -135,15 +107,14 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+      _searchKeyword = string.Empty;
       Log.Info("newsearch OnPageLoad");
-      smsInputControl.OnTextChanged += new GUISMSInputControl.OnTextChangedHandler(OnTextChanged);
       base.OnPageLoad();
     }
 
     protected override void OnPageDestroy(int new_windowId)
     {
       Log.Info("newsearch OnPageDestroy");
-      smsInputControl.OnTextChanged -= new GUISMSInputControl.OnTextChangedHandler(OnTextChanged);
       base.OnPageDestroy(new_windowId);
     }
 
@@ -160,7 +131,58 @@ namespace TvPlugin
           OnClick(iItem);
         }
       }
+
+      bool searchButtonClicked = false;
+      
+      if (control == btnSearchTitle)
+      {
+        SearchFor = TvNewScheduleSearch.SearchType.Title;
+        searchButtonClicked = true;
+      }
+      if (control == btnSearchGenre)
+      {
+        SearchFor = TvNewScheduleSearch.SearchType.Genres;
+        searchButtonClicked = true;
+      }
+      if (control == btnSearchKeyword)
+      {
+        SearchFor = TvNewScheduleSearch.SearchType.KeyWord;
+        searchButtonClicked = true;
+      }
+
+      if (searchButtonClicked)
+      {
+        string searchKeyword = _searchKeyword;
+        if (GetKeyboard(ref searchKeyword) && !string.IsNullOrEmpty(searchKeyword))
+        {
+          if (searchKeyword != _searchKeyword)
+          {
+            _searchKeyword = searchKeyword;
+            _refreshList = true;
+          }
+        }
+        return;
+      }
+
       base.OnClicked(controlId, control, actionType);
+    }
+
+    private bool GetKeyboard(ref string strLine)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.Reset();
+      keyboard.Text = strLine;
+      keyboard.DoModal(GetID);
+      if (keyboard.IsConfirmed)
+      {
+        strLine = keyboard.Text;
+        return true;
+      }
+      return false;
     }
 
     private GUIListItem GetItem(int index)
@@ -185,16 +207,6 @@ namespace TvPlugin
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
       }
       return;
-    }
-
-    public void OnTextChanged()
-    {
-      Log.Info("newsearch OnTextChanged:{0}", smsInputControl.Text);
-      if (_searchKeyword != smsInputControl.Text)
-      {
-        _searchKeyword = smsInputControl.Text;
-        //_refreshList = true;
-      }
     }
 
     public override void Process()

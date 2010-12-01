@@ -96,7 +96,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private bool _configDirectSkip = false;
     private int _configListEntryCount = 24;
     private bool _configOneClickStart = false;
-    private bool _configUseSMSInput = true;
     private List<string> _scrobbleUsers = null;
     private List<string> _usersTopArtists = null;
     private List<string> _usersOwnTags = null;
@@ -213,7 +212,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
         _configDirectSkip = xmlreader.GetValueAsBool("audioscrobbler", "directskip", false);
         _configListEntryCount = xmlreader.GetValueAsInt("audioscrobbler", "listentrycount", 24);
         _configOneClickStart = xmlreader.GetValueAsBool("audioscrobbler", "oneclickstart", false);
-        _configUseSMSInput = xmlreader.GetValueAsBool("audioscrobbler", "usesmskeyboard", true);
       }
 
       PlaylistPlayer = PlayListPlayer.SingletonPlayer;
@@ -400,14 +398,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
       try
       {
         VirtualKeyboard keyboard;
-        if (_configUseSMSInput)
-        {
-          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_SMS_KEYBOARD);
-        }
-        else
-        {
-          keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
-        }
+        keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
         keyboard.Reset();
         keyboard.IsSearchKeyboard = false;
         //keyboard.Location = new Point(50, 50);

@@ -356,6 +356,7 @@ namespace MediaPortal.GUI.Library
       XK_HIRAGANA, // Hiragana
       XK_KATAKANA, // Katakana
       XK_ANS, // Alphabet/numeral/symbol
+      XK_SMS, //SMS Toggle
 
       // Special Search-Keys
       XK_SEARCH_START_WITH = 0x11000, // to search music that starts with string
@@ -443,6 +444,35 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    #region SMS style for virtual
+    int smsLastKeyPressTime = 0;
+    int smsLastKeyPressed = -1;
+    int smsLastKeyInternalPos = 0;
+    bool smsLastShiftState = false;
+    bool _useSmsStyleTextInsertion = true;
+
+    string[] smsKeyMap =
+      {
+      " 0",
+      ".!?-*_\\/1",
+      "abcäáà2",
+      "deféè3",
+      "ghií4",
+      "jkl5",
+      "mnoóö6",
+      "pqrsß7",
+      "tuvúü8",
+      "wxyz9"
+      };
+    #endregion
+
+    public bool SmsStyleText
+    {
+      get { return _useSmsStyleTextInsertion; }
+      set { _useSmsStyleTextInsertion = value; }
+    }
+
+
     public class Key
     {
       public Xkey xKey; // virtual key code
@@ -509,6 +539,9 @@ namespace MediaPortal.GUI.Library
             break;
           case Xkey.XK_ACCENTS:
             name = "ACCENTS";
+            break;
+          case Xkey.XK_SMS:
+            name = "SMS";
             break;
           case Xkey.XK_OK:
             name = GUILocalizeStrings.Get(804);
@@ -715,6 +748,56 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+            switch (action.wID)
+      {
+        case Action.ActionType.REMOTE_0:
+          ProcessSmsInsertion(0);
+          break;
+        case Action.ActionType.REMOTE_1:
+          ProcessSmsInsertion(1);
+          break;
+        case Action.ActionType.REMOTE_2:
+          ProcessSmsInsertion(2);
+          break;
+        case Action.ActionType.REMOTE_3:
+          ProcessSmsInsertion(3);
+          break;
+        case Action.ActionType.REMOTE_4:
+          ProcessSmsInsertion(4);
+          break;
+        case Action.ActionType.REMOTE_5:
+          ProcessSmsInsertion(5);
+          break;
+        case Action.ActionType.REMOTE_6:
+          ProcessSmsInsertion(6);
+          break;
+        case Action.ActionType.REMOTE_7:
+          ProcessSmsInsertion(7);
+          break;
+        case Action.ActionType.REMOTE_8:
+          ProcessSmsInsertion(8);
+          break;
+        case Action.ActionType.REMOTE_9:
+          ProcessSmsInsertion(9);
+          break;
+        case Action.ActionType.ACTION_MOVE_LEFT:
+          if (_useSmsStyleTextInsertion && _currentKey == 0)
+          {
+            Press(Xkey.XK_BACKSPACE);
+            smsLastKeyPressed = -1;
+            return;
+          }
+          break;
+        case Action.ActionType.ACTION_MOVE_UP:
+          if (_useSmsStyleTextInsertion && _currentRow == 0)
+          {
+            _shiftTurnedOn = !_shiftTurnedOn;
+            return;
+          }
+          break;
+      }
+
+
       Event ev;
       switch (action.wID)
       {
@@ -768,7 +851,22 @@ namespace MediaPortal.GUI.Library
           {
             if (action.m_key.KeyChar >= 32)
             {
-              Press((char)action.m_key.KeyChar);
+              char chKey = (char)action.m_key.KeyChar;
+              if ((chKey >= '0' && chKey <= '9')) //Make sure it's only for the remote
+              {
+                if (_useSmsStyleTextInsertion)
+                {
+                  ProcessSmsInsertion(int.Parse(chKey.ToString()));
+                }
+                else
+                {
+                  Press(chKey);
+                }
+              }
+              else
+              {
+                Press(chKey);
+              }
             }
             if (action.m_key.KeyChar == 8)
             {
@@ -776,8 +874,62 @@ namespace MediaPortal.GUI.Library
             }
           }
           break;
+        case Action.ActionType.ACTION_TOGGLE_SMS_INPUT:
+          _useSmsStyleTextInsertion = !_useSmsStyleTextInsertion;
+          smsLastKeyPressed = -1;
+          break;
+
       }
     }
+
+    void ProcessSmsInsertion(int keyPressed)
+    {
+      if (_useSmsStyleTextInsertion)
+      {
+        if (smsLastKeyPressTime + 1500 < System.Environment.TickCount || smsLastKeyPressed != keyPressed)
+        {
+          smsLastKeyInternalPos = 0;
+
+          string tmpKeys = smsKeyMap[keyPressed];
+          if (_shiftTurnedOn) tmpKeys = tmpKeys.ToUpper();
+          smsLastShiftState = _shiftTurnedOn;
+          char tmpChar = tmpKeys[smsLastKeyInternalPos];
+
+          /*Action tmpAction = new Action(new MediaPortal.GUI.Library.Key(tmpChar, (int)tmpChar),
+                                        Action.ActionType.ACTION_KEY_PRESSED, 0, 0);*/
+          Press(tmpChar);
+          //OnAction(tmpAction);
+        }
+        else
+        {
+          smsLastKeyInternalPos++;
+          if (smsLastKeyInternalPos >= smsKeyMap[keyPressed].Length) smsLastKeyInternalPos = 0;
+
+          Press(Xkey.XK_BACKSPACE);
+
+          string tmpKeys = smsKeyMap[keyPressed];
+          if (smsLastShiftState) tmpKeys = tmpKeys.ToUpper();
+          char tmpChar = tmpKeys[smsLastKeyInternalPos];
+
+          /*Action tmpAction = new Action(new MediaPortal.GUI.Library.Key(tmpChar, (int)tmpChar),
+                                        Action.ActionType.ACTION_KEY_PRESSED, 0, 0);*/
+          Press(tmpChar);
+
+          //OnAction(tmpAction);
+        }
+        smsLastKeyPressed = keyPressed;
+        smsLastKeyPressTime = System.Environment.TickCount;
+      }
+      else
+      {
+        char tmpChar = (char)('0' + keyPressed);
+        Action tmpAction = new Action(new MediaPortal.GUI.Library.Key(tmpChar, (int)tmpChar),
+                                      Action.ActionType.ACTION_KEY_PRESSED, 0, 0);
+
+        OnAction(tmpAction);
+      }
+    }
+
 
     protected void Close()
     {
@@ -911,7 +1063,7 @@ namespace MediaPortal.GUI.Library
       keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
       keyBoard.Add(keyRow);
 
-      // Fifth row is <empty>, Space, Left, Right
+      // Fifth row is SMS, Space, Left, Right
       keyRow = new ArrayList();
 
       if (_useSearchLayout)
@@ -920,9 +1072,10 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        //keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
-
+      //keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
       keyRow.Add(new Key(Xkey.XK_ARROWLEFT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
       keyRow.Add(new Key(Xkey.XK_ARROWRIGHT, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
@@ -1038,7 +1191,8 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        //keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
@@ -1157,7 +1311,8 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        //keyRow.Add(new Key(Xkey.XK_NULL, _modeKeyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_SMS, _modeKeyWidth, this));
       }
 
       keyRow.Add(new Key(Xkey.XK_SPACE, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
@@ -1331,6 +1486,9 @@ namespace MediaPortal.GUI.Library
             break;
           case Xkey.XK_ACCENTS:
             _currentKeyboard = KeyboardTypes.TYPE_ACCENTS;
+            break;
+          case Xkey.XK_SMS:
+            _useSmsStyleTextInsertion = !_useSmsStyleTextInsertion;
             break;
           case Xkey.XK_ARROWLEFT:
             if (_position > 0)
@@ -1853,7 +2011,14 @@ namespace MediaPortal.GUI.Library
     public bool IsSearchKeyboard
     {
       get { return _useSearchLayout; }
-      set { _useSearchLayout = value; }
+      set 
+      { 
+        _useSearchLayout = value;
+        if (value)
+        {
+          _useSmsStyleTextInsertion = false;
+        }
+      }
     }
   }
 }

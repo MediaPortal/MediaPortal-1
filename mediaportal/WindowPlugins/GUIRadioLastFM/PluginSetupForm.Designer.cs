@@ -68,7 +68,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.comboBoxStreamPlayerType = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.buttonCancel = new System.Windows.Forms.Button();
       this.buttonSave = new System.Windows.Forms.Button();
-      this.checkBoxUseSMSStyle = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.panelBannerAlign.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBoxBanner)).BeginInit();
       this.groupBoxSettings.SuspendLayout();
@@ -99,7 +98,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       // 
       this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBoxSettings.Controls.Add(this.checkBoxUseSMSStyle);
       this.groupBoxSettings.Controls.Add(this.checkBoxOneClickMode);
       this.groupBoxSettings.Controls.Add(this.checkBoxDirectSkip);
       this.groupBoxSettings.Controls.Add(this.labelListEntries);
@@ -256,20 +254,6 @@ namespace MediaPortal.GUI.RADIOLASTFM
       this.buttonSave.UseVisualStyleBackColor = true;
       this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
       // 
-      // checkBoxUseSMSStyle
-      // 
-      this.checkBoxUseSMSStyle.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.checkBoxUseSMSStyle.Checked = true;
-      this.checkBoxUseSMSStyle.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxUseSMSStyle.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxUseSMSStyle.Location = new System.Drawing.Point(15, 96);
-      this.checkBoxUseSMSStyle.Name = "checkBoxUseSMSStyle";
-      this.checkBoxUseSMSStyle.Size = new System.Drawing.Size(349, 17);
-      this.checkBoxUseSMSStyle.TabIndex = 9;
-      this.checkBoxUseSMSStyle.Text = "Use SMS style instead of full keyboard";
-      this.checkBoxUseSMSStyle.UseVisualStyleBackColor = true;
-      // 
       // PluginSetupForm
       // 
       this.AcceptButton = this.buttonSave;
@@ -310,6 +294,5 @@ namespace MediaPortal.GUI.RADIOLASTFM
     private MediaPortal.UserInterface.Controls.MPComboBox comboBoxStreamPlayerType;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxDirectSkip;
     private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxOneClickMode;
-    private MediaPortal.UserInterface.Controls.MPCheckBox checkBoxUseSMSStyle;
   }
 }

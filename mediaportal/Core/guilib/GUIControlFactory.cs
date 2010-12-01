@@ -941,8 +941,6 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIFacadeControl);
         case ("filmstrip"):
           return typeof (GUIFilmstripControl);
-        case ("smsinput"):
-          return typeof (GUISMSInputControl);
         case ("sortbutton"):
           return typeof (GUISortButtonControl);
         case ("volumebar"):
@@ -963,8 +961,6 @@ namespace MediaPortal.GUI.Library
           return typeof (GUIMenuControl);
         case ("standardKeyboard"):
           return typeof(GUIStandardKeyboard);
-        case ("smsStyledKeyboard"):
-          return typeof(GUISmsStyledKeyboard);
         case ("coverflow"):
           return typeof(GUICoverFlow);
         default:

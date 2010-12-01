@@ -255,6 +255,17 @@ namespace MediaPortal.GUI.Library
                   break;
               }
               break;
+            case Xkey.XK_SMS:
+              if (SmsStyleText)
+              {
+                //selKeyColor = _keyPressedColor;
+                key.name = "STANDARD";
+              }
+              else
+              {
+                key.name = "SMS";
+              }
+              break;
           }
 
           // Highlight the current key
