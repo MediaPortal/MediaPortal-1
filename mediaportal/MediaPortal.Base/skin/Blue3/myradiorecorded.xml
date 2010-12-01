@@ -227,5 +227,6 @@
     </control>
 
     <import>common.facade.recordings.xml</import>
+    <import>common.facade.scrolling.xml</import>
   </controls>
 </window>

@@ -581,11 +581,11 @@ namespace MediaPortal.GUI.Library
           firstChars = scrollItem.Label.Substring(0, 1).ToUpper();
         if (string.IsNullOrEmpty(firstChars))
           firstChars = " ";
-        GUIPropertyManager.SetProperty("#selecteditem.firstchar", firstChars);
+        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", firstChars);
       }
       else
       {
-        GUIPropertyManager.SetProperty("#selecteditem.firstchar", " ");
+        GUIPropertyManager.SetProperty("#selecteditem.scrolllabel", " ");
       }
 
       GUIListItem pItem = _listItems[buttonNr + _offset];

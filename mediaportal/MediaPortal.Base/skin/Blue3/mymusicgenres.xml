@@ -238,7 +238,8 @@
     </control>
     </control>
     </control>
-     <import>common.facade.music.roundedges.xml</import>
+    <import>common.facade.music.roundedges.xml</import>
+    <import>common.facade.scrolling.xml</import>
   <control>
       <id>1</id>
       <type>image</type>

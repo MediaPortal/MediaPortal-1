@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+	<controls>
+		<control>
+			<description>listscroller bg</description>
+			<type>image</type>
+			<id>1</id>
+			<posX>486</posX>
+			<posY>620</posY>
+			<width>69</width>
+			<height>104</height>
+			<texture>listscroller_bg.png</texture>
+			<visible>string.contains(enabled:no,yes)+[string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)]</visible>
+			<animation effect="slide" start="0,50" end="0,0" delay="250" time="150" reversible="true">visiblechange</animation>
+		</control>
+		
+		<control>
+			<type>label</type>
+			<id>1</id>
+			<posX>482</posX>
+			<posY>620</posY>
+			<width>78</width>
+			<height>90</height>
+			<label>#selecteditem.scrolllabel</label>
+			<textcolor>6aa5cb</textcolor>
+			<visible>string.contains(enabled:no,yes)+[string.contains(#scrolling.up,yes)|string.contains(#scrolling.down,yes)]</visible>
+			<animation effect="slide" start="0,50" end="0,0" delay="250" time="150" reversible="true">visiblechange</animation>
+			<align>center</align>
+			<valign>middle</valign>
+		</control>
+	</controls>
+</window>
