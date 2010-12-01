@@ -270,6 +270,11 @@ namespace MediaPortal.Player
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
         #endregion
+        
+        AnalyseStreams();
+        SelectSubtitles();
+        SelectAudioLanguage();
+        OnInitialized();
 
         int hr = mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
         if (hr < 0)
@@ -339,10 +344,6 @@ namespace MediaPortal.Player
         SetVideoWindow();
         mediaPos.get_Duration(out m_dDuration);
         Log.Info("VideoPlayer:Duration:{0}", m_dDuration);
-        AnalyseStreams();
-        SelectSubtitles();
-        SelectAudioLanguage();
-        OnInitialized();
       }
       return true;
     }
