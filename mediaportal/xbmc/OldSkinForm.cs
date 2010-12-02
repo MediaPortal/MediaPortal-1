@@ -157,7 +157,7 @@ namespace MediaPortal
       this.Close();
     }
 
-    public bool CheckSkinVersion(string skin)
+    public bool CheckSkinVersion(string skin, Version version)
     {
       using (Settings xmlreader = new MPSettings())
       {
@@ -171,9 +171,8 @@ namespace MediaPortal
       }
       checkBoxIgnoreMsg.Visible = _nagCount > 4 ? true : false;
 
-      string versionBlue3Skin = "";
-      string versionSkin = "";
-      string filename = Config.GetFile(Config.Dir.Skin, "Blue3", "references.xml");
+      Version versionSkin = null;
+      string filename = Config.GetFile(Config.Dir.Skin, skin, "references.xml");
       if (File.Exists(filename))
       {
         XmlDocument doc = new XmlDocument();
@@ -181,21 +180,10 @@ namespace MediaPortal
         XmlNode node = doc.SelectSingleNode("/controls/skin/version");
         if (node != null && node.InnerText != null)
         {
-          versionBlue3Skin = node.InnerText;
+          versionSkin = new Version(node.InnerText);
         }
       }
-      filename = Config.GetFile(Config.Dir.Skin, skin, "references.xml");
-      if (File.Exists(filename))
-      {
-        XmlDocument doc = new XmlDocument();
-        doc.Load(filename);
-        XmlNode node = doc.SelectSingleNode("/controls/skin/version");
-        if (node != null && node.InnerText != null)
-        {
-          versionSkin = node.InnerText;
-        }
-      }
-      if (versionBlue3Skin == versionSkin)
+      if (version == versionSkin)
       {
         return true;
       }
@@ -213,6 +201,7 @@ namespace MediaPortal
       {
         CloseTimer.Enabled = false;
         bClose_Click(sender, e);
+        Environment.Exit(7546);
       }
     }
   }

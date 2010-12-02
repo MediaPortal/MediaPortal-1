@@ -72,6 +72,8 @@ public class MediaPortalApp : D3DApp, IRender
 {
   #region vars
 
+  private Version SkinVersion = new Version(1, 2, 0, 0);
+
 #if AUTOUPDATE
   private ApplicationUpdateManager _updater = null;
   private Thread _updaterThread = null;
@@ -3791,7 +3793,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     using (OldSkinForm form = new OldSkinForm())
     {
-      if (form.CheckSkinVersion(m_strSkin))
+      if (form.CheckSkinVersion(m_strSkin, SkinVersion))
       {
         return;
       }
