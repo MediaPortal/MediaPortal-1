@@ -332,19 +332,25 @@ namespace TvLibrary.Implementations.DVB
         locator.put_CarrierFrequency((int)dvbsChannel.Frequency);
         dvbsLocator.put_SymbolRate(dvbsChannel.SymbolRate);
         dvbsLocator.put_SignalPolarisation(dvbsChannel.Polarisation);
-        //DVB-S2 specific modulation class call here if DVB-S2 card detected
-        DVBSChannel tuneChannel = dvbsChannel;
+
+        // Set DVB-S2 and manufacturer specific tuning parameters here.
+        //-------------------------------------------------------------------
+        // Important: the original dvbsChannel object *must not* be modified
+        // otherwise IsDifferentTransponder() will sometimes returns true
+        // when it shouldn't. See mantis 0002979.
+        //-------------------------------------------------------------------
+        DVBSChannel tuneChannel = new DVBSChannel(dvbsChannel);
         if (_conditionalAccess != null)
         {
-          tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, dvbsChannel);
+          tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, tuneChannel);
         }
         dvbsLocator.put_Modulation(tuneChannel.ModulationType);
         Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
         dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
         Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
         _tuneRequest.put_Locator(locator);
-        //set the DisEqC parameters 
 
+        //set the DisEqC parameters 
         if (_conditionalAccess != null)
         {
           //int hr2 = ((IMediaControl)_graphBuilder).Pause();

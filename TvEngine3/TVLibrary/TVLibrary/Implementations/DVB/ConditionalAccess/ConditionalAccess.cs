@@ -825,10 +825,11 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Sets the DVB s2 modulation.
+    /// Sets the DVB-S2 parameters such as modulation, roll-off, pilot etc.
     /// </summary>
-    /// <param name="parameters">The parameters.</param>
-    /// <param name="channel">The channel.</param>
+    /// <param name="parameters">The LNB parameters.</param>
+    /// <param name="channel">The channel to tune.</param>
+    /// <returns>The channel with DVB-S2 parameters set.</returns>
     public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
       //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
@@ -983,7 +984,6 @@ namespace TvLibrary.Implementations.DVB
             //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
           }
 
-          DVBSChannel tuneChannel = new DVBSChannel(channel);
           if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
           {
             //Set the DigitalEverywhere binary values for Pilot & Roll-off
@@ -1000,13 +1000,14 @@ namespace TvLibrary.Implementations.DVB
             if (channel.Rolloff == RollOff.ThirtyFive)
               _rollOff = 48;
             //The binary values get added to the current InnerFECRate - done!
-            tuneChannel.InnerFecRate = channel.InnerFecRate + _pilot + _rollOff;
+            BinaryConvolutionCodeRate r = channel.InnerFecRate + _pilot + _rollOff;
+            channel.InnerFecRate = r;
           }
           Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
           Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
           Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)tuneChannel.InnerFecRate);
-          return tuneChannel;
+          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
+          return channel;
         }
       }
       catch (Exception ex)
