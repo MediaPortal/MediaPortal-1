@@ -117,7 +117,6 @@ namespace MediaPortal.Configuration.Sections
     private VisualizationInfo VizPluginInfo = null;
     private bool VisualizationsInitialized = false;
     //private bool SuppressVisualizationRestart = false;
-    private bool EnqueueNext = true;
     private BASSVIS_PARAM _visParam = null;
 
     #endregion
@@ -139,7 +138,6 @@ namespace MediaPortal.Configuration.Sections
     private MPLabel CrossFadingLbl;
     private MPGroupBox mpGroupBox1;
     private MPLabel label2;
-    private MPCheckBox showID3CheckBox;
     private MPComboBox audioPlayerComboBox;
     private TabPage VisualizationsTabPg;
     private MPGroupBox mpGroupBox3;
@@ -179,9 +177,6 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox ShowVizInNowPlayingChkBox;
     private ComboBox ShowLyricsCmbBox;
     private Label label9;
-    private MPGroupBox groupBoxEnqueueAdd;
-    private MPRadioButton radioButtonAddFile;
-    private MPRadioButton radioButtonEnqueue;
     private MPLabel mpLabel2;
     private MPComboBox soundDeviceComboBox;
     private CheckBox enableMixing;
@@ -192,6 +187,11 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton radioButtonVUNone;
     private MPRadioButton radioButtonVULed;
     private MPCheckBox checkBoxSwitchArtistOnLastFMSubmit;
+    private GroupBox groupBoxPlayBehaviour;
+    private RadioButton radioPlaylist;
+    private RadioButton radioPlay;
+    private Label lblPlayMode;
+    private CheckBox checkBoxAddAll;
     private MPComboBox autoPlayComboBox;
 
     #endregion
@@ -241,7 +241,6 @@ namespace MediaPortal.Configuration.Sections
       {
         // Player Settings
         audioPlayerComboBox.SelectedItem = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
-        showID3CheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         enableMixing.Checked = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
         // Get all available devices and add them to the combo box
@@ -368,6 +367,16 @@ namespace MediaPortal.Configuration.Sections
         SavePlaylistOnExitChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", true);
         ResumePlaylistChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", true);
 
+        String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode","play");
+        if (strPlayMode == "playlist")
+        {
+          radioPlaylist.Checked = true;
+        }
+        else
+        {
+          radioPlay.Checked = true;
+        }
+        checkBoxAddAll.Checked = xmlreader.GetValueAsBool("musicfiles", "addall", true);
 
         // Misc Settings
         string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Ask");
@@ -450,8 +459,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxDisableAlbumLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true));
         checkBoxDisableTagLookups.Checked = !(xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true));
         checkBoxSwitchArtistOnLastFMSubmit.Checked = xmlreader.GetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", false);
-        radioButtonEnqueue.Checked = EnqueueNext = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
-        radioButtonAddFile.Checked = !EnqueueNext;
 
         string vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
 
@@ -483,7 +490,6 @@ namespace MediaPortal.Configuration.Sections
         // Player Settings
         xmlwriter.SetValue("audioplayer", "player", audioPlayerComboBox.Text);
         xmlwriter.SetValue("audioplayer", "sounddevice", soundDeviceComboBox.Text);
-        xmlwriter.SetValueAsBool("musicfiles", "showid3", showID3CheckBox.Checked);
         xmlwriter.SetValueAsBool("audioplayer", "mixing", enableMixing.Checked);
 
         xmlwriter.SetValue("audioplayer", "crossfade", hScrollBarCrossFade.Value);
@@ -543,6 +549,19 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "savePlaylistOnExit", SavePlaylistOnExitChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", ResumePlaylistChkBox.Checked);
+
+        //Play behaviour
+        String strPlayMode;
+        if(radioPlay.Checked)
+        {
+          strPlayMode = "play";
+        }
+        else
+        {
+          strPlayMode = "playlist";
+        }
+        xmlwriter.SetValue("musicfiles", "playmode", strPlayMode);
+        xmlwriter.SetValueAsBool("musicfiles", "addall", checkBoxAddAll.Checked);
 
 
         // Misc Settings
@@ -627,7 +646,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtopalbums", !checkBoxDisableAlbumLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "fetchlastfmtracktags", !checkBoxDisableTagLookups.Checked);
         xmlwriter.SetValueAsBool("musicmisc", "switchArtistOnLastFMSubmit", checkBoxSwitchArtistOnLastFMSubmit.Checked);
-        xmlwriter.SetValueAsBool("musicmisc", "enqueuenext", radioButtonEnqueue.Checked);
 
         string vuMeter = VUMeterValue0;
 
@@ -722,7 +740,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.soundDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.showID3CheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -738,6 +755,9 @@ namespace MediaPortal.Configuration.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.PlaylistTabPg = new System.Windows.Forms.TabPage();
+      this.groupBoxPlayBehaviour = new System.Windows.Forms.GroupBox();
+      this.radioPlaylist = new System.Windows.Forms.RadioButton();
+      this.radioPlay = new System.Windows.Forms.RadioButton();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ResumePlaylistChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -752,9 +772,7 @@ namespace MediaPortal.Configuration.Sections
       this.radioButtonVUAnalog = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioButtonVUNone = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.groupBoxDynamicContent = new System.Windows.Forms.GroupBox();
-      this.groupBoxEnqueueAdd = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.radioButtonAddFile = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.radioButtonEnqueue = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.checkBoxSwitchArtistOnLastFMSubmit = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDisableTagLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDisableAlbumLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxDisableCoverLookups = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -770,7 +788,8 @@ namespace MediaPortal.Configuration.Sections
       this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxSwitchArtistOnLastFMSubmit = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.checkBoxAddAll = new System.Windows.Forms.CheckBox();
+      this.lblPlayMode = new System.Windows.Forms.Label();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -781,11 +800,11 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxWinampVis.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
       this.PlaylistTabPg.SuspendLayout();
+      this.groupBoxPlayBehaviour.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
       this.groupBoxVUMeter.SuspendLayout();
       this.groupBoxDynamicContent.SuspendLayout();
-      this.groupBoxEnqueueAdd.SuspendLayout();
       this.groupBoxVizOptions.SuspendLayout();
       this.MiscTabPg.SuspendLayout();
       this.groupBox2.SuspendLayout();
@@ -967,7 +986,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
-      this.mpGroupBox1.Controls.Add(this.showID3CheckBox);
       this.mpGroupBox1.Controls.Add(this.audioPlayerComboBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
@@ -1005,17 +1023,6 @@ namespace MediaPortal.Configuration.Sections
       this.label2.Size = new System.Drawing.Size(39, 13);
       this.label2.TabIndex = 0;
       this.label2.Text = "Player:";
-      // 
-      // showID3CheckBox
-      // 
-      this.showID3CheckBox.AutoSize = true;
-      this.showID3CheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.showID3CheckBox.Location = new System.Drawing.Point(91, 78);
-      this.showID3CheckBox.Name = "showID3CheckBox";
-      this.showID3CheckBox.Size = new System.Drawing.Size(317, 17);
-      this.showID3CheckBox.TabIndex = 2;
-      this.showID3CheckBox.Text = "Use ID3 tags / autoadd file to music database (recommended)";
-      this.showID3CheckBox.UseVisualStyleBackColor = true;
       // 
       // audioPlayerComboBox
       // 
@@ -1187,6 +1194,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // PlaylistTabPg
       // 
+      this.PlaylistTabPg.Controls.Add(this.groupBoxPlayBehaviour);
       this.PlaylistTabPg.Controls.Add(this.groupBox1);
       this.PlaylistTabPg.Location = new System.Drawing.Point(4, 22);
       this.PlaylistTabPg.Name = "PlaylistTabPg";
@@ -1194,6 +1202,41 @@ namespace MediaPortal.Configuration.Sections
       this.PlaylistTabPg.TabIndex = 2;
       this.PlaylistTabPg.Text = "Playlist settings";
       this.PlaylistTabPg.UseVisualStyleBackColor = true;
+      // 
+      // groupBox3
+      // 
+      this.groupBoxPlayBehaviour.Controls.Add(this.lblPlayMode);
+      this.groupBoxPlayBehaviour.Controls.Add(this.checkBoxAddAll);
+      this.groupBoxPlayBehaviour.Controls.Add(this.radioPlaylist);
+      this.groupBoxPlayBehaviour.Controls.Add(this.radioPlay);
+      this.groupBoxPlayBehaviour.Location = new System.Drawing.Point(16, 210);
+      this.groupBoxPlayBehaviour.Name = "groupBox3";
+      this.groupBoxPlayBehaviour.Size = new System.Drawing.Size(432, 143);
+      this.groupBoxPlayBehaviour.TabIndex = 1;
+      this.groupBoxPlayBehaviour.TabStop = false;
+      this.groupBoxPlayBehaviour.Text = "Playlist Behaviour";
+      // 
+      // radioPlaylist
+      // 
+      this.radioPlaylist.AutoSize = true;
+      this.radioPlaylist.Location = new System.Drawing.Point(136, 67);
+      this.radioPlaylist.Name = "radioPlaylist";
+      this.radioPlaylist.Size = new System.Drawing.Size(87, 17);
+      this.radioPlaylist.TabIndex = 1;
+      this.radioPlaylist.Text = "Playlist Mode";
+      this.radioPlaylist.UseVisualStyleBackColor = true;
+      // 
+      // radioPlay
+      // 
+      this.radioPlay.AutoSize = true;
+      this.radioPlay.Checked = true;
+      this.radioPlay.Location = new System.Drawing.Point(17, 67);
+      this.radioPlay.Name = "radioPlay";
+      this.radioPlay.Size = new System.Drawing.Size(75, 17);
+      this.radioPlay.TabIndex = 0;
+      this.radioPlay.TabStop = true;
+      this.radioPlay.Text = "Play Mode";
+      this.radioPlay.UseVisualStyleBackColor = true;
       // 
       // groupBox1
       // 
@@ -1209,7 +1252,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(16, 16);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 169);
+      this.groupBox1.Size = new System.Drawing.Size(432, 174);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Playlist settings";
@@ -1352,7 +1395,6 @@ namespace MediaPortal.Configuration.Sections
       // groupBoxDynamicContent
       // 
       this.groupBoxDynamicContent.Controls.Add(this.checkBoxSwitchArtistOnLastFMSubmit);
-      this.groupBoxDynamicContent.Controls.Add(this.groupBoxEnqueueAdd);
       this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableTagLookups);
       this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableAlbumLookups);
       this.groupBoxDynamicContent.Controls.Add(this.checkBoxDisableCoverLookups);
@@ -1363,41 +1405,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxDynamicContent.TabStop = false;
       this.groupBoxDynamicContent.Text = "Dynamic content";
       // 
-      // groupBoxEnqueueAdd
+      // checkBoxSwitchArtistOnLastFMSubmit
       // 
-      this.groupBoxEnqueueAdd.Controls.Add(this.radioButtonAddFile);
-      this.groupBoxEnqueueAdd.Controls.Add(this.radioButtonEnqueue);
-      this.groupBoxEnqueueAdd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxEnqueueAdd.Location = new System.Drawing.Point(11, 129);
-      this.groupBoxEnqueueAdd.Name = "groupBoxEnqueueAdd";
-      this.groupBoxEnqueueAdd.Size = new System.Drawing.Size(238, 42);
-      this.groupBoxEnqueueAdd.TabIndex = 12;
-      this.groupBoxEnqueueAdd.TabStop = false;
-      this.groupBoxEnqueueAdd.Text = "When adding files to the playlist:";
-      // 
-      // radioButtonAddFile
-      // 
-      this.radioButtonAddFile.AutoSize = true;
-      this.radioButtonAddFile.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonAddFile.Location = new System.Drawing.Point(138, 18);
-      this.radioButtonAddFile.Name = "radioButtonAddFile";
-      this.radioButtonAddFile.Size = new System.Drawing.Size(94, 17);
-      this.radioButtonAddFile.TabIndex = 13;
-      this.radioButtonAddFile.Text = "Add to the end";
-      this.radioButtonAddFile.UseVisualStyleBackColor = true;
-      // 
-      // radioButtonEnqueue
-      // 
-      this.radioButtonEnqueue.AutoSize = true;
-      this.radioButtonEnqueue.Checked = true;
-      this.radioButtonEnqueue.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioButtonEnqueue.Location = new System.Drawing.Point(11, 18);
-      this.radioButtonEnqueue.Name = "radioButtonEnqueue";
-      this.radioButtonEnqueue.Size = new System.Drawing.Size(90, 17);
-      this.radioButtonEnqueue.TabIndex = 12;
-      this.radioButtonEnqueue.TabStop = true;
-      this.radioButtonEnqueue.Text = "Enqueue next";
-      this.radioButtonEnqueue.UseVisualStyleBackColor = true;
+      this.checkBoxSwitchArtistOnLastFMSubmit.AutoSize = true;
+      this.checkBoxSwitchArtistOnLastFMSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.checkBoxSwitchArtistOnLastFMSubmit.Location = new System.Drawing.Point(11, 88);
+      this.checkBoxSwitchArtistOnLastFMSubmit.Name = "checkBoxSwitchArtistOnLastFMSubmit";
+      this.checkBoxSwitchArtistOnLastFMSubmit.Size = new System.Drawing.Size(404, 17);
+      this.checkBoxSwitchArtistOnLastFMSubmit.TabIndex = 13;
+      this.checkBoxSwitchArtistOnLastFMSubmit.Text = "Switch artist on internet lookup. i.e. LastName, Firstname -> FirstName LastName";
+      this.checkBoxSwitchArtistOnLastFMSubmit.UseVisualStyleBackColor = true;
       // 
       // checkBoxDisableTagLookups
       // 
@@ -1559,16 +1576,26 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Size = new System.Drawing.Size(100, 23);
       this.label4.TabIndex = 0;
       // 
-      // checkBoxSwitchArtistOnLastFMSubmit
+      // checkBoxAddAll
       // 
-      this.checkBoxSwitchArtistOnLastFMSubmit.AutoSize = true;
-      this.checkBoxSwitchArtistOnLastFMSubmit.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxSwitchArtistOnLastFMSubmit.Location = new System.Drawing.Point(11, 88);
-      this.checkBoxSwitchArtistOnLastFMSubmit.Name = "checkBoxSwitchArtistOnLastFMSubmit";
-      this.checkBoxSwitchArtistOnLastFMSubmit.Size = new System.Drawing.Size(404, 17);
-      this.checkBoxSwitchArtistOnLastFMSubmit.TabIndex = 13;
-      this.checkBoxSwitchArtistOnLastFMSubmit.Text = "Switch artist on internet lookup. i.e. LastName, Firstname -> FirstName LastName";
-      this.checkBoxSwitchArtistOnLastFMSubmit.UseVisualStyleBackColor = true;
+      this.checkBoxAddAll.AutoSize = true;
+      this.checkBoxAddAll.Checked = true;
+      this.checkBoxAddAll.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.checkBoxAddAll.Location = new System.Drawing.Point(17, 101);
+      this.checkBoxAddAll.Name = "checkBoxAddAll";
+      this.checkBoxAddAll.Size = new System.Drawing.Size(136, 17);
+      this.checkBoxAddAll.TabIndex = 2;
+      this.checkBoxAddAll.Text = "Add all tracks to playlist";
+      this.checkBoxAddAll.UseVisualStyleBackColor = true;
+      // 
+      // label3
+      // 
+      this.lblPlayMode.Location = new System.Drawing.Point(14, 22);
+      this.lblPlayMode.Name = "label3";
+      this.lblPlayMode.Size = new System.Drawing.Size(329, 42);
+      this.lblPlayMode.TabIndex = 3;
+      this.lblPlayMode.Text = "These options determine how the play and enter/ok buttons behave.  See the Wiki f" +
+        "or details";
       // 
       // Music
       // 
@@ -1588,6 +1615,8 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxWinampVis.ResumeLayout(false);
       ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
       this.PlaylistTabPg.ResumeLayout(false);
+      this.groupBoxPlayBehaviour.ResumeLayout(false);
+      this.groupBoxPlayBehaviour.PerformLayout();
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.tabPageNowPlaying.ResumeLayout(false);
@@ -1595,8 +1624,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVUMeter.PerformLayout();
       this.groupBoxDynamicContent.ResumeLayout(false);
       this.groupBoxDynamicContent.PerformLayout();
-      this.groupBoxEnqueueAdd.ResumeLayout(false);
-      this.groupBoxEnqueueAdd.PerformLayout();
       this.groupBoxVizOptions.ResumeLayout(false);
       this.groupBoxVizOptions.PerformLayout();
       this.MiscTabPg.ResumeLayout(false);

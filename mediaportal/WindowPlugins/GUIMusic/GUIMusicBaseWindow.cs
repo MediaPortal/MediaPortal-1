@@ -187,6 +187,18 @@ namespace MediaPortal.GUI.Music
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
         _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
+        String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode", "play");
+        if (strPlayMode == "playlist")
+        {
+          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAYLIST_MODE;
+        }
+        else
+        {
+          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAY_MODE;
+        }
+        
+        PlayAllOnSingleItemPlayNow = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+
         int defaultSort = (int)MusicSort.SortMethod.Name;
         
         if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
