@@ -1351,6 +1351,52 @@ namespace MediaPortal.GUI.Music
       }
     }
 
+    private void OnInfoFile(GUIListItem item) {}
+
+    private void OnInfoFolder(GUIListItem item) {}
+    
+    protected override void OnInfo(int iItem)
+    {
+      GUIListItem pItem = facadeLayout[iItem];
+      if (pItem == null)
+      {
+        return;
+      }
+      Song song = pItem.AlbumInfoTag as Song;
+      if (song == null)
+      {
+        if (!pItem.IsFolder)
+        {
+          if (pItem.Path != string.Empty)
+          {
+            OnInfoFile(pItem);
+          }
+        }
+        else
+        {
+          if (pItem.Path != string.Empty)
+          {
+            OnInfoFolder(pItem);
+          }
+        }
+        facadeLayout.RefreshCoverArt();
+        return;
+      }
+      else if (song.Album != "")
+      {
+        ShowAlbumInfo(false, song.Artist, song.Album, song.FileName, pItem.MusicTag as MusicTag);
+      }
+      else if (song.Artist != "")
+      {
+        ShowArtistInfo(song.Artist, song.Album);
+      }
+      else if (song.AlbumArtist != "")
+      {
+        ShowArtistInfo(song.AlbumArtist, song.Album);
+      }
+      facadeLayout.RefreshCoverArt();
+    }
+
     protected void ShowAlbumInfo(bool isFolder, string artistName, string albumName, string strPath, MusicTag tag)
     {
       ShowAlbumInfo(GetID, isFolder, artistName, albumName, strPath, tag);
