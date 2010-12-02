@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Profile;
 using MediaPortal.ServiceImplementations;
@@ -55,11 +54,13 @@ namespace MediaPortal.Music.Database
 
   public partial class MusicDatabase
   {
-    private ArrayList _shares = new ArrayList();
+    #region Delegates
 
     public delegate void MusicRatingChangedHandler(object sender, string filePath, int rating);
 
     public static event MusicRatingChangedHandler MusicRatingChanged;
+
+    #endregion
 
     #region Reorg events
 
@@ -78,6 +79,8 @@ namespace MediaPortal.Music.Database
 
     #endregion
 
+    #region Enums
+
     private enum Errors
     {
       ERROR_OK = 317,
@@ -93,6 +96,11 @@ namespace MediaPortal.Music.Database
       ERROR_COMPRESSING = 332
     }
 
+    #endregion
+
+    #region Variables
+
+    private ArrayList _shares = new ArrayList();
     private string strSQL;
     private List<string> musicFolders;
     private List<string> cueFiles;
@@ -104,6 +112,7 @@ namespace MediaPortal.Music.Database
     private int _songsUpdated = 0;
     private bool _updateSinceLastImport = false;
     private bool _excludeHiddenFiles = false;
+    private bool _singleFolderScan = false;
 
     private Thread _scanThread = null;
     private AutoResetEvent _resetEvent = null;
@@ -118,6 +127,8 @@ namespace MediaPortal.Music.Database
     private readonly char[] trimChars = {' ', '\x00', '|'};
 
     private readonly string[] _multipleValueFields = new string[] {"artist", "albumartist", "genre", "composer"};
+
+    #endregion
 
     #region Favorite / Ratings
 
@@ -445,11 +456,36 @@ namespace MediaPortal.Music.Database
 
     #region		Database rebuild
 
+    /// <summary>
+    /// Called from with GUIMusicFiles for a single folder update
+    /// </summary>
+    /// <param name="strFolder"></param>
+    public void ImportFolder(object strFolder)
+    {
+      ArrayList shares = new ArrayList();
+      shares.Add((string)strFolder);
+      _singleFolderScan = true;
+
+      MusicDatabaseReorg(shares, null);
+    }
+
+    /// <summary>
+    /// This method is called out of plugins or the GUI
+    /// </summary>
+    /// <param name="shares"></param>
+    /// <returns></returns>
     public int MusicDatabaseReorg(ArrayList shares)
     {
       return MusicDatabaseReorg(shares, null);
     }
 
+    /// <summary>
+    /// This method is called directly from the Config dialog and should use all settings,
+    /// which may have changed in the Config GUI
+    /// </summary>
+    /// <param name="shares"></param>
+    /// <param name="setting"></param>
+    /// <returns></returns>
     public int MusicDatabaseReorg(ArrayList shares, MusicDatabaseSettings setting)
     {
       // Get the values from the Setting Object, which we received from the Config
@@ -473,7 +509,7 @@ namespace MediaPortal.Music.Database
         //_excludeHiddenFiles = setting.ExcludeHiddenFiles; <-- no GUI setting yet; use xml file to specify this
       }
 
-      if (!_updateSinceLastImport)
+      if (!_updateSinceLastImport && !_singleFolderScan)
       {
         _lastImport = DateTime.MinValue;
       }
@@ -492,13 +528,20 @@ namespace MediaPortal.Music.Database
 
       try
       {
-        Log.Info("Musicdatabasereorg: Beginning music database reorganization...");
-        Log.Info("Musicdatabasereorg: Last import done at {0}", _lastImport.ToString());
+        if (_singleFolderScan)
+        {
+          Log.Info("Musicdatabasereorg: Importing Music for folder: {0}", _shares[0].ToString());
+        }
+        else
+        {
+          Log.Info("Musicdatabasereorg: Beginning music database reorganization...");
+          Log.Info("Musicdatabasereorg: Last import done at {0}", _lastImport.ToString());
+        }
 
         BeginTransaction();
 
         // When starting a complete rescan, we cleanup the foreign keys
-        if (_lastImport == DateTime.MinValue)
+        if (_lastImport == DateTime.MinValue && !_singleFolderScan)
         {
           MyArgs.progress = 2;
           MyArgs.phase = "Cleaning up Artists, AlbumArtists and Genres";
@@ -507,7 +550,7 @@ namespace MediaPortal.Music.Database
           CleanupForeignKeys();
         }
 
-        /// Add missing files (example: You downloaded some new files)
+        // Add missing files (example: You downloaded some new files)
         MyArgs.progress = 3;
         MyArgs.phase = "Scanning new files";
         OnDatabaseReorgChanged(MyArgs);
@@ -541,13 +584,16 @@ namespace MediaPortal.Music.Database
           "Musicdatabasereorg: Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}", _processCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
 
 
-        // Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
-        Log.Info("Musicdatabasereorg: Removing non existing songs from the database");
-        MyArgs.progress = 80;
-        MyArgs.phase = "Removing non existing songs";
-        OnDatabaseReorgChanged(MyArgs);
-        DeleteNonExistingSongs();
-        
+        if (!_singleFolderScan)
+        {
+          // Delete files that don't exist anymore (example: you deleted files from the Windows Explorer)
+          Log.Info("Musicdatabasereorg: Removing non existing songs from the database");
+          MyArgs.progress = 80;
+          MyArgs.phase = "Removing non existing songs";
+          OnDatabaseReorgChanged(MyArgs);
+          DeleteNonExistingSongs();
+        }
+
         if (_useFolderThumbs)
         {
           Log.Info("Musicdatabasereorg: Create Folder Thumbs");
@@ -572,9 +618,12 @@ namespace MediaPortal.Music.Database
           // Util.Picture.CreateThumbnail(aThumbLocation, folderThumb, (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
         }
 
-        MyArgs.progress = 95;
-        MyArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
-        CleanupMultipleEntryTables();
+        if (!_singleFolderScan)
+        {
+          MyArgs.progress = 95;
+          MyArgs.phase = "Cleanup non-existing Artists, AlbumArtists and Genres";
+          CleanupMultipleEntryTables();
+        }
       }
       catch (Exception ex)
       {
@@ -582,6 +631,7 @@ namespace MediaPortal.Music.Database
                   ex.StackTrace);
 
         RollbackTransaction();
+        _singleFolderScan = false;
         return (int)Errors.ERROR_CANCEL;
       }
       finally
@@ -603,14 +653,18 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Finished Reorganisation of the Database");
 
         // Save the time of the reorg, to be able to skip the files not updated / added the next time
-        using (Settings xmlreader = new MPSettings())
+        if (!_singleFolderScan)
         {
-          xmlreader.SetValue("musicfiles", "lastImport",
-                             startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture));
+          using (Settings xmlreader = new MPSettings())
+          {
+            xmlreader.SetValue("musicfiles", "lastImport",
+                               startTime.ToString("yyyy-M-d H:m:s", CultureInfo.InvariantCulture));
+          }
         }
 
         GC.Collect();
       }
+      _singleFolderScan = false;
       return (int)Errors.ERROR_OK;
     }
 
@@ -1088,7 +1142,7 @@ namespace MediaPortal.Music.Database
         allFiles.Add(file, false);
 
         // Only Add files to the list, if they have been Created / Updated after the Last Import date
-        if (_updateSinceLastImport)
+        if (_updateSinceLastImport && !_singleFolderScan)
         {
           if (fileInfo.CreationTime > _lastImport || fileInfo.LastWriteTime > _lastImport)
           {

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
@@ -152,6 +153,9 @@ namespace MediaPortal.GUI.Music
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
     private bool _switchRemovableDrives;
+
+    private Thread _importFolderThread = null;
+    private Queue<string> _scanQueue = new Queue<string>();
     #endregion
 
     public GUIMusicFiles()
@@ -1150,103 +1154,76 @@ namespace MediaPortal.GUI.Music
     
     #region Handlers
 
-    private bool DoScan(string strDir, ref List<GUIListItem> items)
-    {
-      GUIDialogProgress dlg = (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
-      if (dlg != null)
-      {
-        string strPath = Path.GetFileName(strDir);
-        dlg.SetLine(2, strPath);
-        dlg.Progress();
-      }
-
-      GetTagInfo(ref items);
-
-      if (dlg != null && dlg.IsCanceled)
-      {
-        return false;
-      }
-
-      bool bCancel = false;
-      for (int i = 0; i < (int) items.Count; ++i)
-      {
-        GUIListItem pItem = items[i];
-        if (pItem.IsRemote)
-        {
-          continue;
-        }
-        if (dlg != null && dlg.IsCanceled)
-        {
-          bCancel = true;
-          break;
-        }
-        if (pItem.IsFolder)
-        {
-          if (pItem.Label != "..")
-          {
-            // load subfolder
-            string strPrevDir = currentFolder;
-            currentFolder = pItem.Path;
-            List<GUIListItem> subDirItems = _virtualDirectory.GetDirectoryExt(currentFolder);
-            if (!DoScan(currentFolder, ref subDirItems))
-            {
-              bCancel = true;
-            }
-            currentFolder = strPrevDir;
-            if (bCancel)
-            {
-              break;
-            }
-          }
-        }
-      }
-
-      return !bCancel;
-    }
-
+    /// <summary>
+    /// Queue the selected folder for scanning
+    /// </summary>
     private void OnScan()
     {
-      GUIDialogProgress dlg = (GUIDialogProgress) GUIWindowManager.GetWindow((int) Window.WINDOW_DIALOG_PROGRESS);
-      GUIGraphicsContext.Overlay = false;
-
-      List<GUIListItem> items = new List<GUIListItem>();
-      for (int i = 0; i < facadeLayout.Count; ++i)
+      GUIListItem pItem = facadeLayout.SelectedListItem;
+      if (pItem == null)
       {
-        GUIListItem pItem = facadeLayout[i];
-        if (!pItem.IsRemote)
-        {
-          items.Add(pItem);
-        }
-      }
-      if (null != dlg)
-      {
-        dlg.Reset();
-        string strPath = Path.GetFileName(currentFolder);
-        dlg.SetHeading(189);
-        dlg.SetLine(1, 330);
-        //dlg.SetLine(1, string.Empty);
-        dlg.SetLine(2, strPath);
-        dlg.StartModal(GetID);
+        return;
       }
 
-      m_database.BeginTransaction();
-      if (DoScan(currentFolder, ref items))
+      string path = pItem.Path;
+      if (!pItem.IsFolder)
       {
-        dlg.SetLine(1, 328);
-        dlg.SetLine(2, string.Empty);
-        dlg.SetLine(3, 330);
-        dlg.Progress();
-        m_database.CommitTransaction();
+        path = Path.GetDirectoryName(pItem.Path);
+      }
+
+      _scanQueue.Enqueue(path);
+      DoScan();
+    }
+
+    /// <summary>
+    /// Retrieve item from queue and start scanning
+    /// </summary>
+    private void DoScan()
+    {
+      if (_importFolderThread == null)
+      {
+        MusicDatabase.DatabaseReorgChanged += new MusicDBReorgEventHandler(ReorgStatusChange);
+        _importFolderThread = new Thread(m_database.ImportFolder);
+        _importFolderThread.Name = "Import Folder";
+        _importFolderThread.Priority = ThreadPriority.Lowest;
+      }
+
+      if (_importFolderThread.ThreadState != ThreadState.Running && _scanQueue.Count > 0)
+      {
+        _importFolderThread = new Thread(m_database.ImportFolder);
+        _importFolderThread.Start(_scanQueue.Dequeue());
+      }
+    }
+
+    /// <summary>
+    /// When Scanning has finished, start scan of next folder
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ReorgStatusChange(object sender, DatabaseReorgEventArgs e)
+    {
+      if (e.progress < 100)
+      {
+        return;
+      }
+
+      // Scan has finished, let's see, if we have more scans pending
+      if (_scanQueue.Count > 0)
+      {
+        m_database.ImportFolder(_scanQueue.Dequeue());
       }
       else
       {
-        m_database.RollbackTransaction();
+        GUIDialogNotify dlgNotify =
+        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+        if (null != dlgNotify)
+        {
+          dlgNotify.SetHeading(GUILocalizeStrings.Get(313));
+          dlgNotify.SetText(GUILocalizeStrings.Get(317));
+          dlgNotify.DoModal(GetID);
+        }
       }
-      dlg.Close();
-      
-      GUIGraphicsContext.Overlay = _isOverlayAllowed;
 
-      LoadDirectory(currentFolder);
     }
 
     private void OnCoverArtGrabberCoverArtSelected(AlbumInfo albumInfo, string albumPath, bool bSaveToAlbumFolder,
