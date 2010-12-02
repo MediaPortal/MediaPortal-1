@@ -53,7 +53,7 @@ namespace MediaPortal.GUI.Library
       {
         object state;
         Binder defaultBinder = Type.DefaultBinder;
-        MethodInfo selectedMethod = (MethodInfo)defaultBinder.BindToMethod(BindingFlags.Static | BindingFlags.Public,
+        MethodInfo selectedMethod = (MethodInfo)defaultBinder.BindToMethod(BindingFlags.Static | BindingFlags.Public | BindingFlags.OptionalParamBinding,
                                                                                 _methods.ToArray(), ref parameters, null,
                                                                                 null, null, out state);
         if (selectedMethod == null)
@@ -197,20 +197,24 @@ namespace MediaPortal.GUI.Library
                                          @")*" +                // a sequence of any number of any of the above
                                          @"(?(p)(?!))";         // require depth to be 0
 
-    private const string FunctionExpr = @"#(?<function>[a-z0-9\._]+)" +       // function name
+    private const string FunctionExpr = @"(?<function>[a-z][a-z0-9\._]*)" +       // function name
                                         @"\s*\(" +                            // opening parenthesis
                                         @"((?(param),)(?<param>" + ParameterExpr + @"))*" + // parameters
                                         @"\)";                                // final closing parenthesis
-    private const string ExpressionExpr = @"^\s*" +
+    private const string ExpressionExpr = @"\s*" +
                                           @"((?<property>#[a-z0-9\._]+)" +    // a property name
                                           @"|(?<int>[+-]?\d+)" +              // an integer
                                           @"|(?<float>[+-]?\d+\.\d*)" +       // a float
                                           @"|\'(?<string>([^']|\\\')*)\'" +   // a quoted string
                                           @"|" + FunctionExpr +               // a function call
-                                          @")\s*$";         // require depth to be 0
+                                          @")\s*";         // require depth to be 0
 
-    private static Regex _functionRegEx = new Regex(FunctionExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static Regex _expressionRegEx = new Regex(ExpressionExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    //private const string ExprTriggerExpr = @"(?:#\(\s*)" + FunctionExpr + @"(?:\s*\))";
+    private const string ExprTriggerExpr = @"(?:#\(\s*)" + ExpressionExpr + @"(?:\s*\))";
+
+    //private static Regex _functionRegEx = new Regex(FunctionExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static Regex _expressionRegEx = new Regex("^"+ExpressionExpr+"$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static Regex _exprTriggerRegEx = new Regex(ExprTriggerExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 
     private static Dictionary<string, FunctionDefinition> _registeredFunctions;
@@ -282,9 +286,10 @@ namespace MediaPortal.GUI.Library
 
     public static string Parse(string line)
     {
-      if (line.IndexOf('#') > -1 && line.IndexOf('(') > -1)
+      if (line.IndexOf("#(") > -1)
       {
-        MatchCollection matches = _functionRegEx.Matches(line);
+        MatchCollection matches = _exprTriggerRegEx.Matches(line);
+        int offset = 0;
         foreach (Match match in matches)
         {
           string result;
@@ -300,7 +305,9 @@ namespace MediaPortal.GUI.Library
           {
             result = ex.ToString().Replace('\n',' ').Replace('\r',' ');
           }
-          line = line.Replace(match.Value, result);
+          //line = line.Replace(match.Value, result);
+          line = line.Remove(match.Index + offset, match.Length).Insert(match.Index + offset, result);
+          offset += result.Length - match.Length;
         }
       }
       return line;
@@ -308,7 +315,8 @@ namespace MediaPortal.GUI.Library
 
     public static object ParseExpression(string expressionText)
     {
-      Match match = _functionRegEx.Match(expressionText);
+      //Match match = _functionRegEx.Match(expressionText);
+      Match match = _expressionRegEx.Match(expressionText);
       if (match != null)
       {
         return ParseExpression(match).Evaluate();
