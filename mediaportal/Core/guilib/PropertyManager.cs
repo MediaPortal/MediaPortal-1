@@ -71,6 +71,7 @@ namespace MediaPortal.GUI.Library
       _properties["#file"] = string.Empty; // imdb movie filename
       _properties["#plot"] = string.Empty; // imdb movie plot 
       _properties["#plotoutline"] = string.Empty; // imdb movie plot outline
+      _properties["#userreview"] = string.Empty; // imdb movie user review
       _properties["#rating"] = string.Empty; // imdb movie rating (0-10)
       _properties["#tagline"] = string.Empty; // imdb movie tag line
       _properties["#votes"] = string.Empty; // imdb movie votes
@@ -218,6 +219,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Duration"] = string.Empty;
       _properties["#Play.Current.Plot"] = string.Empty;
       _properties["#Play.Current.PlotOutline"] = string.Empty;
+      _properties["#Play.Current.UserReview"] = string.Empty;
       _properties["#Play.Current.Channel"] = string.Empty;
       _properties["#Play.Current.Cast"] = string.Empty;
       _properties["#Play.Current.DVDLabel"] = string.Empty;
@@ -281,6 +283,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Next.Duration"] = string.Empty;
       _properties["#Play.Next.Plot"] = string.Empty;
       _properties["#Play.Next.PlotOutline"] = string.Empty;
+      _properties["#Play.Next.UserReview"] = string.Empty;
       _properties["#Play.Next.Channel"] = string.Empty;
       _properties["#Play.Next.Cast"] = string.Empty;
       _properties["#Play.Next.DVDLabel"] = string.Empty;
@@ -431,6 +434,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Duration", string.Empty);
       SetProperty("#Play.Current.Plot", string.Empty);
       SetProperty("#Play.Current.PlotOutline", string.Empty);
+      SetProperty("#Play.Current.UserReview", string.Empty);
       SetProperty("#Play.Current.Channel", string.Empty);
       SetProperty("#Play.Current.Cast", string.Empty);
       SetProperty("#Play.Current.DVDLabel", string.Empty);
@@ -479,6 +483,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Next.Duration", string.Empty);
       SetProperty("#Play.Next.Plot", string.Empty);
       SetProperty("#Play.Next.PlotOutline", string.Empty);
+      SetProperty("#Play.Next.UserReview", string.Empty);
       SetProperty("#Play.Next.Channel", string.Empty);
       SetProperty("#Play.Next.Cast", string.Empty);
       SetProperty("#Play.Next.DVDLabel", string.Empty);

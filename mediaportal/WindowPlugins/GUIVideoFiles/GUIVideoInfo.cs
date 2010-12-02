@@ -160,11 +160,13 @@ namespace MediaPortal.GUI.Video
     [SkinControl(4)] protected GUIToggleButtonControl btnCast = null;
     [SkinControl(5)] protected GUIButtonControl btnRefresh = null;
     [SkinControl(6)] protected GUIToggleButtonControl btnWatched = null;
+    [SkinControl(7)] protected GUIToggleButtonControl btnReview = null;
     [SkinControl(10)] protected GUISpinControl spinImages = null;
     [SkinControl(11)] protected GUISpinControl spinDisc = null;
     [SkinControl(20)] protected GUITextScrollUpControl tbPlotArea = null;
     [SkinControl(21)] protected GUIImage imgCoverArt = null;
     [SkinControl(22)] protected GUITextControl tbTextArea = null;
+    [SkinControl(23)] protected GUITextScrollUpControl tbReviwArea = null;
     [SkinControl(30)] protected GUILabelControl lblImage = null;
     [SkinControl(100)] protected GUILabelControl lblDisc = null;
 
@@ -176,6 +178,7 @@ namespace MediaPortal.GUI.Video
     {
       Image,
       Cast,
+      Review,
     }
 
     private ViewMode viewmode = ViewMode.Image;
@@ -401,6 +404,12 @@ namespace MediaPortal.GUI.Video
         Update();
       }
 
+      if (control == btnReview)
+      {
+        viewmode = ViewMode.Review;
+        Update();
+      }
+
       if (control == btnWatched)
       {
         if (currentMovie.Watched > 0)
@@ -466,6 +475,8 @@ namespace MediaPortal.GUI.Video
       {
         if (tbPlotArea != null)
           tbPlotArea.IsVisible = false;
+        if (tbReviwArea != null)
+          tbReviwArea.IsVisible = false;
         if (tbTextArea != null)
           tbTextArea.IsVisible = true;
         if (imgCoverArt != null)
@@ -476,6 +487,8 @@ namespace MediaPortal.GUI.Video
           spinDisc.IsVisible = false;
         if (btnPlot != null)
           btnPlot.Selected = false;
+        if (btnReview != null)
+          btnReview.Selected = false;
         if (btnCast != null)
           btnCast.Selected = true;
       }
@@ -484,6 +497,8 @@ namespace MediaPortal.GUI.Video
       {
         if (tbPlotArea != null)
           tbPlotArea.IsVisible = true;
+        if (tbReviwArea != null)
+          tbReviwArea.IsVisible = false;
         if (tbTextArea != null)
           tbTextArea.IsVisible = false;
         if (imgCoverArt != null)
@@ -494,9 +509,33 @@ namespace MediaPortal.GUI.Video
           spinDisc.IsVisible = true;
         if (btnPlot != null)
           btnPlot.Selected = true;
+        if (btnReview != null)
+          btnReview.Selected = false;
         if (btnCast != null)
           btnCast.Selected = false;
        }
+      // cast->Review
+      if (viewmode == ViewMode.Review)
+      {
+        if (tbPlotArea != null)
+          tbPlotArea.IsVisible = false;
+        if (tbReviwArea != null)
+          tbReviwArea.IsVisible = true;
+        if (tbTextArea != null)
+          tbTextArea.IsVisible = false;
+        if (imgCoverArt != null)
+          imgCoverArt.IsVisible = true;
+        if (lblDisc != null)
+          lblDisc.IsVisible = true;
+        if (spinDisc != null)
+          spinDisc.IsVisible = true;
+        if (btnPlot != null)
+          btnPlot.Selected = false;
+        if (btnReview != null)
+          btnReview.Selected = true;
+        if (btnCast != null)
+          btnCast.Selected = false;
+      }
 
       btnWatched.Selected = (currentMovie.Watched != 0);
       currentMovie.SetProperties();

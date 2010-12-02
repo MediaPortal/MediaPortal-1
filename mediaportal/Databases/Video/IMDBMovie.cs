@@ -297,8 +297,6 @@ namespace MediaPortal.Video.Database
 
     public void SetProperties()
     {
-      // Temporary join plot + user review
-      string joinedPlot = GetJoinedPlot();
       // Title suffix for problem with covers and movie with the same name
       string strThumb = GetStrThumb();
 
@@ -308,8 +306,9 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#dvdlabel", DVDLabel);
       GUIPropertyManager.SetProperty("#imdbnumber", IMDBNumber);
       GUIPropertyManager.SetProperty("#file", File);
-      GUIPropertyManager.SetProperty("#plot", joinedPlot); // Changed
+      GUIPropertyManager.SetProperty("#plot", Plot);
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
+      GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
       GUIPropertyManager.SetProperty("#tagline", TagLine);
       GUIPropertyManager.SetProperty("#votes", Votes);
@@ -329,8 +328,6 @@ namespace MediaPortal.Video.Database
 
     public void SetPlayProperties()
     {
-      // Temporary join plot + user review
-      string joinedPlot = GetJoinedPlot();
       // Title suffix for problem with covers and movie with the same name
       string strThumb = GetStrThumb();
 
@@ -340,8 +337,9 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#Play.Current.DVDLabel", DVDLabel);
       GUIPropertyManager.SetProperty("#Play.Current.IMDBNumber", IMDBNumber);
       GUIPropertyManager.SetProperty("#Play.Current.File", File);
-      GUIPropertyManager.SetProperty("#Play.Current.Plot", joinedPlot); // Changed
+      GUIPropertyManager.SetProperty("#Play.Current.Plot", Plot);
       GUIPropertyManager.SetProperty("#Play.Current.PlotOutline", PlotOutline);
+      GUIPropertyManager.SetProperty("#Play.Current.UserReview", UserReview); // Added
       GUIPropertyManager.SetProperty("#Play.Current.Rating", Rating.ToString());
       GUIPropertyManager.SetProperty("#Play.Current.TagLine", TagLine);
       GUIPropertyManager.SetProperty("#Play.Current.Votes", Votes);
@@ -357,18 +355,6 @@ namespace MediaPortal.Video.Database
         strValue = "yes";
       }
       GUIPropertyManager.SetProperty("#Play.Current.IsWatched", strValue);
-    }
-
-    private string GetJoinedPlot()
-    {
-      string joinedPlot = Plot;
-      if (UserReview != "" && UserReview.ToLower() != "unknown")
-      {
-        string strReview = GUILocalizeStrings.Get(177).ToUpper();
-        string strUserReview = "\n\n****" + strReview + "****\n\n";
-        joinedPlot = Plot + strUserReview + UserReview;
-      }
-      return joinedPlot;
     }
 
     private string GetStrThumb()
