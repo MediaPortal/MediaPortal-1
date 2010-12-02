@@ -376,25 +376,45 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("add")]
-    public static int Add(params int[] args)
+    public static int Add(int arg0, int arg1)
     {
-      int sum = 0;
+      return arg0 + arg1;
+    }
+
+    private static int Add(int arg0, params object[] args)
+    {
+      int sum = arg0;
       for (int i = 0; i < args.Length; i++)
       {
-        sum += args[i];
+        sum += Convert.ToInt32(args[i]);
       }
       return sum;
     }
 
     [XMLSkinFunction("add")]
-    public static float Add(params float[] args)
+    public static float Add(float arg0, float arg1)
     {
-      float sum = 0;
+      return arg0 + arg1;
+    }
+
+    private static float Add(float arg0, params object[] args)
+    {
+      float sum = arg0;
       for (int i = 0; i < args.Length; i++)
       {
-        sum += args[i];
+        sum += Convert.ToSingle(args[i]);
       }
       return sum;
+    }
+
+    [XMLSkinFunction("add")]
+    public static object Add(object arg0, params object[] args)
+    {
+      if(arg0 is int)
+      {
+        return Add((int)arg0, args);
+      }
+      return Add((float)arg0, args);
     }
 
     [XMLSkinFunction("sub")]
@@ -410,23 +430,43 @@ namespace MediaPortal.GUI.Library
     }
 
     [XMLSkinFunction("mul")]
-    public static int Multiply(params int[] args)
+    public static int Multiply(int arg0, int arg1)
     {
-      int prod = 1;
+      return arg0 * arg1;
+    }
+
+    [XMLSkinFunction("mul")]
+    public static float Multiply(float arg0, float arg1)
+    {
+      return arg0 * arg1;
+    }
+
+    [XMLSkinFunction("mul")]
+    public static object Multiply(object arg0, params object[] args)
+    {
+      if (arg0 is int)
+      {
+        return Multiply((int)arg0, args);
+      }
+      return Multiply((float)arg0, args);
+    }
+
+    private static int Multiply(int arg0, params object[] args)
+    {
+      int prod = arg0;
       for (int i = 0; i < args.Length; i++)
       {
-        prod *= args[i];
+        prod *= Convert.ToInt32(args[i]);
       }
       return prod;
     }
 
-    [XMLSkinFunction("mul")]
-    public static float Multiply(params float[] args)
+    private static float Multiply(float arg0, params object[] args)
     {
-      float prod = 1;
+      float prod = arg0;
       for (int i = 0; i < args.Length; i++)
       {
-        prod *= args[i];
+        prod *= Convert.ToSingle(args[i]);
       }
       return prod;
     }
