@@ -694,32 +694,33 @@ namespace MediaPortal.Music.Database
     private int LoadShares()
     {
       _shares.Clear(); // Clear the list of Shares to avoid duplicates on a rerun
-      string currentFolder = string.Empty;
-      bool fileMenuEnabled = false;
-      string fileMenuPinCode = string.Empty;
 
       using (Settings xmlreader = new MPSettings())
       {
-        fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
-
-        string strDefault = xmlreader.GetValueAsString("music", "default", string.Empty);
         for (int i = 0; i < VirtualDirectory.MaxSharesCount; i++)
         {
-          string strShareName = String.Format("sharename{0}", i);
           string strSharePath = String.Format("sharepath{0}", i);
-
-          string shareType = String.Format("sharetype{0}", i);
-          string shareServer = String.Format("shareserver{0}", i);
-          string shareLogin = String.Format("sharelogin{0}", i);
-          string sharePwd = String.Format("sharepassword{0}", i);
-          string sharePort = String.Format("shareport{0}", i);
-          string remoteFolder = String.Format("shareremotepath{0}", i);
+          string strShareType = String.Format("sharetype{0}", i);
+          string strShareScan = String.Format("sharescan{0}", i);
 
           string SharePath = xmlreader.GetValueAsString("music", strSharePath, string.Empty);
+          string ShareType = xmlreader.GetValueAsString("music", strShareType, "no");
+          string ShareScan = xmlreader.GetValueAsString("music", strShareScan, "no");
 
           if (SharePath.Length > 0)
           {
-            _shares.Add(SharePath);
+            if (ShareType.ToLower() == "yes")
+            {
+              Log.Info("Musicdatabasereorg: Skipping scan of Remote Share: {0}", SharePath);
+            }
+            else if (ShareScan.ToLower() == "no")
+            {
+              Log.Info("Musicdatabasereorg: Skipping scan of non-selected Share: {0}", SharePath);
+            }
+            else
+            {
+              _shares.Add(SharePath);
+            }
           }
         }
       }
