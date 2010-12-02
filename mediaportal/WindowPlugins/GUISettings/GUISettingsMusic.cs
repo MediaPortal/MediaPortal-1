@@ -35,21 +35,12 @@ namespace MediaPortal.GUI.Settings
     private enum Controls
     {
       CONTROL_AUTOSHUFFLE = 2,
-      CONTROL_VISUALISATION = 4,
-      CONTROL_ENABLECDDB = 5,
-      CONTROL_ENABLEID3 = 6,
       CONTROL_BTNREORGDB = 8,
       CONTROL_BTNDELALBUMINFO = 10,
-      CONTROL_BTNDELCDDB = 12,
       CONTROL_BTNDELALBUM = 13,
-      CONTROL_MUSICREPEAT = 14,
-      CONTROL_USEPLAYLIST = 15,
-      CONTROL_AUTOSWITCH = 16,
-      CONTROL_AUTOSWITCHBIG = 17
     } ;
 
     private bool m_bAutoShuffle;
-    private bool m_bUseID3;
 
     public GUISettingsMusic()
     {
@@ -61,7 +52,6 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_bAutoShuffle = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", true);
-        m_bUseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", m_bUseID3);
       }
     }
 
@@ -70,7 +60,6 @@ namespace MediaPortal.GUI.Settings
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         xmlreader.SetValueAsBool("musicfiles", "autoshuffle", m_bAutoShuffle);
-        xmlreader.SetValueAsBool("musicfiles", "showid3", m_bUseID3);
       }
     }
 
@@ -105,10 +94,6 @@ namespace MediaPortal.GUI.Settings
             {
               GUIControl.SelectControl(GetID, (int)Controls.CONTROL_AUTOSHUFFLE);
             }
-            if (m_bUseID3)
-            {
-              GUIControl.SelectControl(GetID, (int)Controls.CONTROL_ENABLEID3);
-            }
             return true;
           }
 
@@ -125,10 +110,6 @@ namespace MediaPortal.GUI.Settings
             if (iControl == (int)Controls.CONTROL_AUTOSHUFFLE)
             {
               m_bAutoShuffle = !m_bAutoShuffle;
-            }
-            if (iControl == (int)Controls.CONTROL_ENABLEID3)
-            {
-              m_bUseID3 = !m_bUseID3;
             }
 
             if (iControl == (int)Controls.CONTROL_BTNDELALBUMINFO)
@@ -161,43 +142,6 @@ namespace MediaPortal.GUI.Settings
                   GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
                 }
               }
-              /*
-              GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
-              if (null != dlgYesNo)
-              {
-                dlgYesNo.SetHeading(313);
-                dlgYesNo.SetLine(1, "");
-                dlgYesNo.SetLine(2, "");
-                dlgYesNo.SetLine(3, "");
-                dlgYesNo.DoModal(GetID);
-
-                if (dlgYesNo.IsConfirmed)
-                {
-                  GUIDialogProgress dlgProgress = (GUIDialogProgress)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS);
-                  if (null != dlgProgress)
-                  {
-                    dlgProgress.StartModal(GetID);
-
-                    MusicDatabaseReorg reorg = new MusicDatabaseReorg();
-                    int iReturnString = reorg.DoReorg();
-                    dlgProgress.PageDestroy();
-
-                    if (!dlgProgress.IsCanceled)
-                    {
-                      GUIDialogOK dlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OK);
-                      if (null != dlgOK)
-                      {
-                        dlgOK.SetHeading(313);
-                        dlgOK.SetLine(1, iReturnString);
-                        dlgOK.SetLine(2, "");
-                        dlgOK.SetLine(3, "");
-                        dlgOK.DoModal(GetID);
-                      }
-                    }
-                  }
-                }
-              }
-              */
             }
           }
           break;

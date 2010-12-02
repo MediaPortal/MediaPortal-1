@@ -75,7 +75,6 @@ namespace MediaPortal.GUI.Music
     private bool _useBassEngine = false;
     private bool _didRenderLastTime = false;
     private bool _visualisationEnabled = true;
-    private bool _useID3 = false;
     private bool _stripArtistPrefixes = false;
     private bool _settingVisEnabled = true;
     private PlayListPlayer playlistPlayer;
@@ -93,7 +92,6 @@ namespace MediaPortal.GUI.Music
       {
         _settingVisEnabled = xmlreader.GetValueAsBool("musicfiles", "doVisualisation", false) && _useBassEngine;
         _visualisationEnabled = _settingVisEnabled;
-        _useID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
       }
     }

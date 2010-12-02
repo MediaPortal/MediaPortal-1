@@ -194,7 +194,6 @@ namespace MediaPortal.GUI.Music
     private Timer ImageChangeTimer = null;
     private Timer VUMeterTimer = null;
     private List<String> ImagePathContainer = null;
-    private bool UseID3 = false;
     private bool _trackChanged = true;
     private bool _doArtistLookups = true;
     private bool _doAlbumLookups = true;
@@ -236,8 +235,6 @@ namespace MediaPortal.GUI.Music
         bool ShowViz = false;
         VizName = xmlreader.GetValueAsString("musicvisualization", "name", "None");
         ShowViz = xmlreader.GetValueAsBool("musicmisc", "showVisInNowPlaying", false);
-
-        UseID3 = xmlreader.GetValueAsBool("musicfiles", "showid3", true);
 
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
@@ -1912,16 +1909,13 @@ namespace MediaPortal.GUI.Music
 
       if (!isCurSongCdTrack && !isInternetStream)
       {
-        // CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, UseID3);
-        // always use the tagreader now if the info is not in the database
-        // since some people use settings which do not represent the results they expect
-        CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName, true);
+        CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName);
       }
 
       if (!isNextSongCdTrack && !isInternetStream)
       {
         //NextTrackFileName = PlaylistPlayer.GetNext();
-        NextTrackTag = GetTrackTag(dbs, NextTrackFileName, true);
+        NextTrackTag = GetTrackTag(dbs, NextTrackFileName);
       }
 
       // Get Information from CD Track
@@ -2004,7 +1998,7 @@ namespace MediaPortal.GUI.Music
       return tag;
     }
 
-    private MusicTag GetTrackTag(MusicDatabase dbs, string strFile, bool useID3)
+    private MusicTag GetTrackTag(MusicDatabase dbs, string strFile)
     {
       MusicTag tag = null;
       Song song = new Song();
@@ -2016,13 +2010,10 @@ namespace MediaPortal.GUI.Music
       bool bFound = dbs.GetSongByFileName(strFile, ref song);
       if (!bFound)
       {
-        if (useID3)
+        tag = TagReader.TagReader.ReadTag(strFile);
+        if (tag != null && tag.Title != GUILocalizeStrings.Get(4543)) // Track information not available
         {
-          tag = TagReader.TagReader.ReadTag(strFile);
-          if (tag != null && tag.Title != GUILocalizeStrings.Get(4543)) // Track information not available
-          {
-            return tag;
-          }
+          return tag;
         }
         // tagreader failed or not using it
         song.Title = Path.GetFileNameWithoutExtension(strFile);
@@ -2030,7 +2021,6 @@ namespace MediaPortal.GUI.Music
         song.Album = string.Empty;
       }
 
-      tag = new MusicTag();
       tag = song.ToMusicTag();
 
       return tag;
