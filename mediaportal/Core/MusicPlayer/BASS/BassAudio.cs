@@ -550,6 +550,14 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Indicate that we don't need to get disposed between calls
+    /// </summary>
+    public override bool SupportsReplay
+    {
+      get { return true; }
+    }
+
+    /// <summary>
     /// Gets/Sets Fullscreen Status
     /// </summary>
     public override bool FullScreen
@@ -2678,7 +2686,7 @@ namespace MediaPortal.Player
     public override void Stop()
     {
       int stream = GetCurrentStream();
-      if (_SoftStop)
+      if (_SoftStop && !_isLastFMRadio && !_isRadio)
       {
         RegisterStreamSlideEndEvent(stream);
         Log.Info("BASS: Stopping song. Fading out.");
