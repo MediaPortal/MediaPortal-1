@@ -42,6 +42,12 @@ namespace MediaPortal.Drawing.Layouts
       _orientation = orientation;
     }
 
+    public StackLayout(int spacing, Orientation orientation, bool collapseHiddenButtons)
+      : this(spacing, orientation)
+    {
+      _collapseHiddenButtons = collapseHiddenButtons;
+    }
+
     #endregion Constructors
 
     #region Methods
@@ -158,6 +164,12 @@ namespace MediaPortal.Drawing.Layouts
       set { _spacing = value; }
     }
 
+    public bool CollapseHiddenButtons
+    {
+      get { return _collapseHiddenButtons; }
+      set { _collapseHiddenButtons = value; }
+    }
+
     #endregion Properties
 
     #region Fields
@@ -165,6 +177,7 @@ namespace MediaPortal.Drawing.Layouts
     private Orientation _orientation = Orientation.Vertical;
     private Size _spacing = Size.Empty;
     private Size _size = Size.Empty;
+    private bool _collapseHiddenButtons = false;
 
     #endregion Fields
   }

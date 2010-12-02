@@ -1031,6 +1031,11 @@ namespace MediaPortal.GUI.Library
 
       if (string.Compare(layoutClass, "StackLayout", true) == 0)
       {
+        if (valueParameters.Length >= 3)
+        {
+          return new StackLayout(valueParameters[0], (Orientation)valueParameters[1], (valueParameters[2] == 1));
+        }
+
         if (valueParameters.Length >= 2)
         {
           return new StackLayout(valueParameters[0], (Orientation)valueParameters[1]);
@@ -1154,6 +1159,14 @@ namespace MediaPortal.GUI.Library
           else if (string.Compare(token, "Vertical") == 0)
           {
             valuesTemp.Add((int)Orientation.Vertical);
+          }
+          else if (string.Compare(token, "true") == 0)
+          {
+            valuesTemp.Add(1);
+          }
+          else if (string.Compare(token, "false") == 0)
+          {
+            valuesTemp.Add(0);
           }
           else
           {

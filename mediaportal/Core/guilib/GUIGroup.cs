@@ -328,6 +328,14 @@ namespace MediaPortal.GUI.Library
       }
       cntl.DimColor = DimColor;
       Children.Add(cntl);
+      if (cntl is GUIButtonControl)
+      {
+        if (_buttons == null)
+        {
+          _buttons = new List<GUIButtonControl>();
+        }
+        _buttons.Add((GUIButtonControl)cntl);
+      }
     }
 
     void IAddChild.AddText(string text) {}
@@ -435,6 +443,10 @@ namespace MediaPortal.GUI.Library
     private Animator _animator;
     private int _beginInitCount = 0;
     private GUIControlCollection _children;
+    private List<GUIButtonControl> _buttons = null;
+    private Point[] _positions = null;
+    private Point[] _modPositions = null;
+    private bool _first = true;
 
     [XMLSkinElement("layout")] private ILayout _layout;
 
@@ -499,5 +511,197 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
+
+    public override void UpdateVisibility()
+    {
+      base.UpdateVisibility();
+      if (_buttons == null)
+      {
+        return;
+      }
+      if (_layout == null)
+      {
+        return;
+      }
+
+      if (_layout is StackLayout)
+      {
+        StackLayout layout = _layout as StackLayout;
+        if (!layout.CollapseHiddenButtons)
+        {
+          return;
+        }
+        if (_first)
+        {
+          StoreButtonsPosition();
+        }
+        bool isVisible = IsVisible;
+        int visCon = GetVisibleCondition();
+        if (isVisible && visCon != 0) isVisible = GUIInfoManager.GetBool(visCon, ParentID);
+        //bool isVisible = GUIInfoManager.GetBool(GetVisibleCondition(), ParentID);
+        if (!isVisible)
+        {
+          RestoreButtonsPosition();
+          _first = true;
+          return;
+        }
+
+        if (!_first && CheckButtonsModifiedPosition())
+            _first = true;
+
+        for (int i = 0; i < _buttons.Count; i++)
+        {
+          //buttons[i].UpdateVisibility();
+          bool bWasvisible = _buttons[i].IsVisible;
+          //if (bWasvisible)
+          //  bWasvisible = _buttons[i].VisibleFromSkinCondition;
+
+          int bVisCon = _buttons[i].GetVisibleCondition();
+          bool bVisible = _buttons[i].IsVisible;
+          if (bVisCon != 0)
+            bVisible = GUIInfoManager.GetBool(bVisCon, _buttons[i].ParentID);
+          
+          if (_first && !bVisible)
+          {
+            if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+            {
+              ShiftControlsUp(i);
+            }
+            else
+            {
+              ShiftControlsLeft(i);
+            }
+          }
+          if (!bWasvisible && bVisible)
+          {
+            if (!_first)
+            {
+              if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+              {
+                ShiftControlsDown(i);
+              }
+              else
+              {
+                ShiftControlsRight(i);
+              }
+            }
+
+          }
+          else if (bWasvisible && !bVisible)
+          {
+            if (!_first)
+            {
+              if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
+              {
+                ShiftControlsUp(i);
+              }
+              else
+              {
+                ShiftControlsLeft(i);
+              }
+            }
+
+          }
+        }
+        _first = false;
+        StoreButtonsModifiedPosition();
+      }
+    }
+
+    private void ShiftControlsUp(int index)
+    {
+      for (int i = index; i < _buttons.Count; i++)
+      {
+        if (i + 1 < _buttons.Count)
+        {
+          _buttons[i + 1].YPosition -= _buttons[i].Height;
+        }
+      }
+    }
+
+    private void ShiftControlsDown(int index)
+    {
+      for (int i = index; i < _buttons.Count; i++)
+      {
+        if (i + 1 < _buttons.Count)
+        {
+          _buttons[i + 1].YPosition += _buttons[i].Height;
+        }
+      }
+    }
+
+    private void ShiftControlsRight(int index)
+    {
+      for (int i = index; i < _buttons.Count; i++)
+      {
+        if (i + 1 < _buttons.Count)
+        {
+          _buttons[i + 1].XPosition += _buttons[i].Width;
+        }
+      }
+    }
+
+    private void ShiftControlsLeft(int index)
+    {
+      for (int i = index; i < _buttons.Count; i++)
+      {
+        if (i + 1 < _buttons.Count)
+        {
+          _buttons[i + 1].XPosition -= _buttons[i].Width;
+        }
+      }
+    }
+
+    private void StoreButtonsPosition()
+    {
+      if (_positions == null)
+      {
+        _positions = new Point[_buttons.Count];
+      }
+      for (int i = 0; i < _buttons.Count; i++)
+      {
+        _positions[i].X = _buttons[i].XPosition;
+        _positions[i].Y = _buttons[i].YPosition;
+      }
+    }
+
+    private void RestoreButtonsPosition()
+    {
+      if (_positions == null)
+      {
+        return;
+      }
+      for (int i = 0; i < _positions.Length; i++)
+      {
+        _buttons[i].XPosition = (int)_positions[i].X;
+        _buttons[i].YPosition = (int)_positions[i].Y;
+      }
+    }
+
+    private void StoreButtonsModifiedPosition()
+    {
+        if (_modPositions == null)
+        {
+          _modPositions = new Point[_buttons.Count];
+        }
+        for (int i = 0; i < _buttons.Count; i++)
+        {
+          _modPositions[i].X = _buttons[i].XPosition;
+          _modPositions[i].Y = _buttons[i].YPosition;
+        }
+    }
+
+    private bool CheckButtonsModifiedPosition()
+    {
+        for (int i = 0; i < _buttons.Count; i++)
+        {
+            if (_modPositions[i].X != _buttons[i].XPosition || _modPositions[i].Y != _buttons[i].YPosition)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
   }
 }
