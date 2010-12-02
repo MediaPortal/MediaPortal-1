@@ -199,6 +199,8 @@ namespace MediaPortal.GUI.Music
       
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
 
