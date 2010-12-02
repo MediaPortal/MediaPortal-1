@@ -1868,6 +1868,51 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#trackTotal", strTrackTotal);
         GUIPropertyManager.SetProperty("#datelastplayed", strDateLastPlayed);
         GUIPropertyManager.SetProperty("#dateadded", strDateAdded);
+        
+        // see if we have album info
+        AlbumInfo _albumInfo = new AlbumInfo();
+        if (MusicDatabase.Instance.GetAlbumInfo(tag.Album,tag.AlbumArtist, ref _albumInfo))
+        {
+          GUIPropertyManager.SetProperty("#AlbumInfo.Review", _albumInfo.Review);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Rating", _albumInfo.Rating.ToString());
+          GUIPropertyManager.SetProperty("#AlbumInfo.Genre", _albumInfo.Genre);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Styles", _albumInfo.Styles);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Tones", _albumInfo.Tones);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Year", _albumInfo.Year.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#AlbumInfo.Review", string.Empty);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Rating", string.Empty);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Genre", string.Empty);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Styles", string.Empty);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Tones", string.Empty);
+          GUIPropertyManager.SetProperty("#AlbumInfo.Year", string.Empty);
+        }
+        
+        // see if we have artist info
+        ArtistInfo _artistInfo = new ArtistInfo();
+        if (MusicDatabase.Instance.GetArtistInfo(tag.AlbumArtist,ref _artistInfo))
+        {
+          GUIPropertyManager.SetProperty("#ArtistInfo.Bio", _artistInfo.AMGBio);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Born", _artistInfo.Born);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Genres", _artistInfo.Genres);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Instruments", _artistInfo.Instruments);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Styles", _artistInfo.Styles);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Tones", _artistInfo.Tones);
+          GUIPropertyManager.SetProperty("#ArtistInfo.YearsActive", _artistInfo.YearsActive);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#ArtistInfo.Bio", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Born", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Genres", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Instruments", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Styles", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.Tones", string.Empty);
+          GUIPropertyManager.SetProperty("#ArtistInfo.YearsActive", string.Empty);
+        }
+        
       }
       else
       {
