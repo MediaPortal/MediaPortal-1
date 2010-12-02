@@ -389,12 +389,12 @@ namespace MediaPortal.GUI.Library
       // If the selected card is spinning then throw away the action.
       if (CardIsSpinning())
       {
-        return;
+        //return;
       }
 
       // If the card is spun around then unspin the card before executing the action.  The action is queued to execute after
       // the card has been unspun.
-      if (CardIsSpun())
+      if (CardIsSpun() || CardIsSpinning())
       {
         // Don't queue invalid actions or actions that are designed to spin the card in the first place.
         if (action.wID != Action.ActionType.ACTION_SHOW_INFO &&
@@ -1558,7 +1558,7 @@ namespace MediaPortal.GUI.Library
           // Cards are in motion if fractional and fract are changing.
           // Move all the cards to the left to make room for the new card.
           float shiftx = 0.0f;
-          float shifty = _offsetY + _selectedYOffset;
+          float shifty = _offsetY * fractional + _selectedYOffset * fract;
           float shiftz = 0.0f;
           bool shouldFocus = true;
 
