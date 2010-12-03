@@ -499,11 +499,11 @@ namespace MediaPortal.GUI.Music
           break;
 
          case Action.ActionType.ACTION_LASTFM_LOVE:
-           doLastFMLove();
+           DoLastFMLove();
            break;
 
          case Action.ActionType.ACTION_LASTFM_BAN:
-           doLastFMBan();
+           DoLastFMBan();
            break;   
       }
     }
@@ -694,11 +694,11 @@ namespace MediaPortal.GUI.Music
     {
       if(control == btnLastFMLove)
       {
-        doLastFMLove();
+        DoLastFMLove();
       }
       if(control == btnLastFMBan)
       {
-        doLastFMBan();
+        DoLastFMBan();
       }
     }
 
@@ -875,10 +875,10 @@ namespace MediaPortal.GUI.Music
           break;
 
         case 34010: //love 
-          doLastFMLove();
+          DoLastFMLove();
           break;
         case 34011: //ban
-          doLastFMBan();
+          DoLastFMBan();
           break;
       }
     }
@@ -2412,7 +2412,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private void doLastFMLove()
+    private void DoLastFMLove()
     {
       if (_audioscrobblerEnabled)
       {
@@ -2426,7 +2426,7 @@ namespace MediaPortal.GUI.Music
       }
     }
     
-    private void doLastFMBan()
+    private void DoLastFMBan()
     {
       if (_audioscrobblerEnabled)
       {
