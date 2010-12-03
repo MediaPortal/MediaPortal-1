@@ -1864,7 +1864,7 @@ namespace MediaPortal.GUI.Music
         // Date Added
         string strDateAdded = tag.DateTimeModified == DateTime.MinValue ? string.Empty : tag.DateTimeModified.ToShortDateString();
 
-        if(item.IsFolder)
+        if(item.IsFolder || item.Label == "..")
         {
           GUIPropertyManager.SetProperty("#title", string.Empty);
           GUIPropertyManager.SetProperty("#track", string.Empty);
