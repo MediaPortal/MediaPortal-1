@@ -1208,7 +1208,15 @@ namespace TvPlugin
 
             GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
-            item.Label3 = conflict.IdChannel.ToString();
+            Channel channel = Channel.Retrieve(conflict.IdChannel);
+            if (channel != null && !string.IsNullOrEmpty(channel.Name))
+            {
+              item.Label3 = channel.Name;
+            }
+            else
+            {
+              item.Label3 = conflict.IdChannel.ToString();
+            }
             item.TVTag = conflict;
             dlg.AddConflictRecording(item);
           }
