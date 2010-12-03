@@ -354,11 +354,11 @@ namespace MediaPortal.GUI.Library
 
     #region Other functions
     // Other
-    [XMLSkinFunction("eval")]
-    public static object Evaluate(string expression)
-    {
-      return GUIExpressionManager.ParseExpression(expression);
-    }
+    //[XMLSkinFunction("eval")]
+    //public static object Evaluate(string expression)
+    //{
+    //  return GUIExpressionManager.ParseExpression(expression);
+    //}
     #endregion
 
     #region Math related
