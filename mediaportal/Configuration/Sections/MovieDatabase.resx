@@ -125,13 +125,6 @@
 fanart (random) and actor data (if "Download actor details" option is checked in Scan section).
 Otherwise, title name and standard lookup is used.</value>
   </data>
-  <data name="btnRefreshAllImg.ToolTip" xml:space="preserve">
-    <value>Refresh all covers for all movies in your collection.
-Refreshing will be done by IMDB id. If id is invalid
-no action will  be taken.
-Default cover source is TMDB, then IMP Awards and
-if both fails IMDB.</value>
-  </data>
   <data name="tbFASearchString.ToolTip" xml:space="preserve">
     <value>Fanart search string for movies without IMDBid number.
 If you can, use English title for better result but also other

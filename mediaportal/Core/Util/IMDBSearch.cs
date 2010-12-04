@@ -53,9 +53,11 @@ namespace MediaPortal.Util
     /// <summary>
     /// Cover search on IMDB movie page.
     /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros).
+    /// Parameter defaultOnly = TRUE will download only IMDB movie default cover.
     /// </summary>
     /// <param name="imdbID"></param>
-    public void SearchCovers(string imdbID)
+    /// <param name="defaultOnly"></param>
+    public void SearchCovers(string imdbID, bool defaultOnly)
 
     {
       if (!Win32API.IsConnectedToInternet())
@@ -84,6 +86,9 @@ namespace MediaPortal.Util
         // Remember default PIC, maybe it is in the Product Group so we can escape duplicate
         defaultPic = HttpUtility.HtmlDecode(jpgDefault.Groups["jpg"].Value);
       }
+
+      if (defaultOnly)
+        return;
 
       // Then get all we can from IMDB Product thumbs group for movie
       string posterPageLinkURL = "http://www.imdb.com/title/" + imdbID + "/mediaindex?refine=product";

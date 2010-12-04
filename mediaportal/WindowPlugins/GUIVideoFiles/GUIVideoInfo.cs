@@ -66,9 +66,9 @@ namespace MediaPortal.GUI.Video
           // Search for more covers
           string[] thumbUrls = new string[1];
           IMDBMovie movie = _aMovie;
-          // IMDB GUI and IMPAwards Covers Search  Deda 30.4.2010
-          IMDBSearch imdbSearch = new IMDBSearch();
-          imdbSearch.SearchCovers(movie.IMDBNumber);
+          // TMDB Search  Deda 30.4.2010
+          TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
+          tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
           // IMPAward search
           IMPAwardsSearch impSearch = new IMPAwardsSearch();
           impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
@@ -80,43 +80,40 @@ namespace MediaPortal.GUI.Video
             thumbUrls[0] = movie.ThumbURL;
             thumb = 1;
           }
-          int pictureCount =  impSearch.Count + imdbSearch.Count + thumb;
+          int pictureCount =  impSearch.Count + tmdbSearch.Count + thumb;
           //Hugh, no covers, lets pull our last card
-          if ((imdbSearch.Count == 0) & (impSearch.Count == 0))
+          if ((tmdbSearch.Count == 0) & (impSearch.Count == 0))
           {
-            // TMDB
+            // IMDB
             // Last defence in search for covers - will be counted if previous methods fails
-            TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
-            tmdbSearch.SearchCovers(movie.Title, movie.IMDBNumber);
+            IMDBSearch imdbSearch = new IMDBSearch();
+            imdbSearch.SearchCovers(movie.IMDBNumber, false);
             // Nothing found, we loose -> exit
-            if (tmdbSearch.Count == 0)
+            if (imdbSearch.Count == 0)
             {
               return;
             }
-            else
             // Last defence survived, so lets grab what we can from TMDB and get out of here
-            {
-              pictureCount = tmdbSearch.Count;
-              
-              int pictureIndextmdb = 0;
-              thumbUrls = new string[pictureCount];
+            pictureCount = tmdbSearch.Count;
+            
+            int pictureIndeximdb = 0;
+            thumbUrls = new string[pictureCount];
 
-              if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
+            if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+            {
+              for (int i = 0; i < imdbSearch.Count; ++i)
               {
-                for (int i = 0; i < tmdbSearch.Count; ++i)
+                if (thumbUrls[0] != imdbSearch[i])
                 {
-                  if (thumbUrls[0] != tmdbSearch[i])
-                  {
-                    thumbUrls[pictureIndextmdb++] = tmdbSearch[i];
-                  }
+                  thumbUrls[pictureIndeximdb++] = imdbSearch[i];
                 }
               }
-              if (AmazonImagesDownloaded != null)
-              {
-                AmazonImagesDownloaded(thumbUrls);
-              }
-              return;
             }
+            if (AmazonImagesDownloaded != null)
+            {
+              AmazonImagesDownloaded(thumbUrls);
+            }
+            return;
           }
 
           int pictureIndex = 0;
@@ -135,12 +132,12 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          // IMDB Count check and add into thumbs Deda 30.4.2010
-          if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
+          // TMDB Count check and add into thumbs Deda 30.4.2010
+          if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
           {
-              for (int i = 0; i < imdbSearch.Count; ++i)
+              for (int i = 0; i < tmdbSearch.Count; ++i)
               {
-                  thumbUrls[pictureIndex++] = imdbSearch[i];
+                  thumbUrls[pictureIndex++] = tmdbSearch[i];
               }
           }
           

@@ -165,6 +165,8 @@ namespace MediaPortal.Video.Database
           // Folder name for title (Change scraped title with folder name)
           Settings xmlreader = new MPSettings();
           bool folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+          bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
           string moviePath = _movieDetails.Path;
             
           if (folderTitle)
@@ -256,7 +258,7 @@ namespace MediaPortal.Video.Database
               IMDBSearch imdbSearch = new IMDBSearch();
               line1 = GUILocalizeStrings.Get(928) + ": IMDB"; // **Progress bar message for IMDB start
               OnProgress(line1, _movieDetails.Title, string.Empty, percent);
-              imdbSearch.SearchCovers(_movieDetails.IMDBNumber);
+              imdbSearch.SearchCovers(_movieDetails.IMDBNumber, true);
 
               if ((imdbSearch.Count > 0) && (imdbSearch[0] != string.Empty))
               {
@@ -300,15 +302,15 @@ namespace MediaPortal.Video.Database
 
             if (_movieDetails.FanartURL == string.Empty)
             {
-              fanartSearch.GetFanArt(strFile, _movieDetails.Path, _movieDetails.Title, _movieDetails.IMDBNumber, true,
-                                     false, string.Empty);
+              fanartSearch.GetWebFanart
+                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);
               // Set fanart url to db
               _movieDetails.FanartURL = fanartSearch.DefaultFanartURL;
             }
             else // Local file or user url
             {
-              fanartSearch.GetFanArt(strFile, _movieDetails.Path, _movieDetails.Title, _movieDetails.IMDBNumber, false,
-                                     true, _movieDetails.FanartURL);
+              fanartSearch.GetLocalFanart
+                (_movieDetails.Path, strFile, _movieDetails.Title, _movieDetails.FanartURL, 0, faShare);
             }
             percent = percent + step; // **Progress bar message fanart End
             OnProgress(line1, _movieDetails.Title, string.Empty, percent);
