@@ -2523,11 +2523,11 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          tbFanartLocation.Text = configDir + item.Movie.Title + _fanartImgIndex + ".jpg";
+          tbFanartLocation.Text = configDir + item.Movie.Title + " " + _fanartImgIndex + ".jpg";
         }
         if (!_isRefreshing)
         {
-          pictureBoxFanArt.ImageLocation = configDir + item.Movie.Title + _fanartImgIndex + ".jpg";
+          pictureBoxFanArt.ImageLocation = configDir + item.Movie.Title + " " + _fanartImgIndex + ".jpg";
           // Update cover search string
           tbCoverSearchStr.Text = tbTitle.Text;
           // FanArt Picture
@@ -2861,8 +2861,8 @@ namespace MediaPortal.Configuration.Sections
       // Proceed only if fanart options is enabled
       if (useFanartCheckBox.CheckState == CheckState.Checked)
       {
-        string strFile = "";
-        string strPath = "";
+        string strFile = string.Empty;
+        string strPath = string.Empty;
 
         Util.Utils.Split(listViewFiles.Items[0].Text, out strPath, out strFile);
         if (strFile != string.Empty & strPath != string.Empty)
