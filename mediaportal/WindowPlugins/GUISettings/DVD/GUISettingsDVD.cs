@@ -286,14 +286,13 @@ namespace WindowPlugins.GUISettings.TV
         return;
       }
       dlg.Reset();
-      dlg.SetHeading(941); // Change aspect ratio
-      dlg.AddLocalizedString(942); // Stretch
       dlg.AddLocalizedString(943); // Normal
       dlg.AddLocalizedString(944); // Original
-      dlg.AddLocalizedString(945); // Letterbox
-      dlg.AddLocalizedString(946); // Pan and scan
       dlg.AddLocalizedString(947); // Zoom
       dlg.AddLocalizedString(1190); // Zoom 14:9
+      dlg.AddLocalizedString(942); // Stretch
+      dlg.AddLocalizedString(945); // Letterbox
+      dlg.AddLocalizedString(946); // Non linear stretch
       // set the focus to currently used mode
       dlg.SelectedLabel = (int)aspectRatio;
       // show dialog and wait for result
