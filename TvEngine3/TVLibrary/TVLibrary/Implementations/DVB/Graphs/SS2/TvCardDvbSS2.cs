@@ -276,19 +276,14 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("ss2:tune done:{0:X}", pmtPid);
         return _mapSubChannels[subChannelId];
       }
-      catch (TvExceptionNoSignal)
+      catch (Exception)
       {
+        if (subChannelId > -1)
+        {
+          FreeSubChannel(subChannelId);
+        }
         throw;
-      }
-      catch (TvExceptionNoPMT)
-      {
-        throw;
-      }
-      catch (Exception ex)
-      {
-        Log.Log.Write(ex);
-        throw;
-      }        
+      }   
     }
 
     private void AfterTune(int subChannelId, bool ignorePMT)
@@ -338,7 +333,7 @@ namespace TvLibrary.Implementations.DVB
       if (((uint)hr) == 0x90010115)
       {
         Log.Log.Info("ss2:could not lock tuner after {0} attempts", lockRetries);
-        return false;
+        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");             
       }
       if (lockRetries > 0)
       {
@@ -353,7 +348,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           //Log.Log.Error("ss2:SetTunerStatus failed:0x{0:X}", hr);
-          return false;
+          throw new TvExceptionGraphBuildingFailed("Graph building failed");  
         }
       }
       return true;
