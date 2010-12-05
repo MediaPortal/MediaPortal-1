@@ -278,7 +278,7 @@ namespace TvLibrary.Implementations.Analog.Components
         //connect tv tuner->crossbar
         IPin tunerOut = DsFindPin.ByDirection(tuner.Filter, PinDirection.Output,
                                               graph.Tuner.VideoPin);
-        if (tunerOut != null &&
+        if (tunerOut != null && _videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner) &&
             FilterGraphTools.ConnectPin(graphBuilder, tunerOut, tmp, _videoPinMap[AnalogChannel.VideoInputType.Tuner]))
         {
           // Got it, we're done
@@ -379,7 +379,13 @@ namespace TvLibrary.Implementations.Analog.Components
           Release.ComObject("CrossBarFilter", tmp);
           continue;
         }
-        IPin pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
+
+        // Check that the crossbar has a tuner video input pin.
+        IPin pinIn = null;
+        if (_videoPinMap.ContainsKey(AnalogChannel.VideoInputType.Tuner))
+        {
+          pinIn = DsFindPin.ByDirection(tmp, PinDirection.Input, _videoPinMap[AnalogChannel.VideoInputType.Tuner]);
+        }
         if (pinIn == null)
         {
           // no pin found, continue with next crossbar

@@ -226,23 +226,23 @@ namespace TvLibrary.Implementations.Analog.Components
       if (_filterAudioCapture != null && _filterVideoCapture != _filterAudioCapture)
       {
         Release.ComObject("audio capture filter", _filterAudioCapture);
-        _filterAudioCapture = null;
       }
       if (_filterVideoCapture != null)
       {
         Release.ComObject("video capture filter", _filterVideoCapture);
         _filterVideoCapture = null;
       }
+      _filterAudioCapture = null;
       if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
       {
         DevicesInUse.Instance.Remove(_audioCaptureDevice);
-        _audioCaptureDevice = null;
       }
       if (_videoCaptureDevice != null)
       {
         DevicesInUse.Instance.Remove(_videoCaptureDevice);
         _videoCaptureDevice = null;
       }
+      _audioCaptureDevice = null;
     }
 
     #endregion
@@ -299,8 +299,8 @@ namespace TvLibrary.Implementations.Analog.Components
                                                         IFilterGraph2 graphBuilder, Tuner tuner, Crossbar crossbar,
                                                         TvAudio tvAudio)
     {
-      string videoDeviceName = graph.Capture.AudioCaptureName;
-      string audioDeviceName = graph.Capture.Name;
+      string audioDeviceName = graph.Capture.AudioCaptureName;
+      string videoDeviceName = graph.Capture.Name;
       DsDevice[] devices;
       bool videoConnected = false;
       bool audioConnected = false;
@@ -415,7 +415,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         else
         {
-          i = 0;
+          i = -1; // Go through the devices again from the start...
         }
         if (videoConnected && audioConnected)
         {
@@ -568,7 +568,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         else
         {
-          i = 0;
+          i = -1; // Go through the devices again from the start...
         }
         if (videoConnected && audioConnected)
         {
