@@ -1455,7 +1455,21 @@ namespace MediaPortal.GUI.Music
       }
       else
       { // add tracks
-        pl.Add(ConvertItemToPlaylist(item));
+        if (PlayAllOnSingleItemPlayNow)
+        {
+          for(int i = 0; i < facadeLayout.Count; i++)
+          {
+            GUIListItem trackItem = facadeLayout[i];
+            if (trackItem.Label != "..")
+            {
+              pl.Add(ConvertItemToPlaylist(facadeLayout[i]));
+            }
+          }
+        }
+        else
+        {
+          pl.Add(ConvertItemToPlaylist(item));
+        }
       }
     }
     
