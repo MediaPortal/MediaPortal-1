@@ -48,6 +48,8 @@ namespace SetupTv.Sections
       this.mpLabelChannelCount = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.lblFilterLabel = new System.Windows.Forms.Label();
+      this.txtFilterString = new System.Windows.Forms.TextBox();
       this.label2 = new System.Windows.Forms.Label();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpButtonDown = new MediaPortal.UserInterface.Controls.MPButton();
@@ -98,14 +100,15 @@ namespace SetupTv.Sections
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.LabelEdit = true;
       this.mpListView1.LargeImageList = this.imageList1;
-      this.mpListView1.Location = new System.Drawing.Point(9, 44);
+      this.mpListView1.Location = new System.Drawing.Point(9, 75);
       this.mpListView1.Name = "mpListView1";
-      this.mpListView1.Size = new System.Drawing.Size(438, 220);
+      this.mpListView1.Size = new System.Drawing.Size(438, 189);
       this.mpListView1.SmallImageList = this.imageList1;
       this.mpListView1.TabIndex = 0;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       this.mpListView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.mpListView1_MouseDoubleClick);
+      this.mpListView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.mpListView1_ItemChecked);
       this.mpListView1.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.mpListView1_AfterLabelEdit);
       this.mpListView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.mpListView1_ColumnClick);
       this.mpListView1.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.mpListView1_ItemDrag);
@@ -231,6 +234,8 @@ namespace SetupTv.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.lblFilterLabel);
+      this.tabPage1.Controls.Add(this.txtFilterString);
       this.tabPage1.Controls.Add(this.label2);
       this.tabPage1.Controls.Add(this.mpListView1);
       this.tabPage1.Controls.Add(this.mpGroupBox1);
@@ -244,6 +249,23 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Channels";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // lblFilterLabel
+      // 
+      this.lblFilterLabel.AutoSize = true;
+      this.lblFilterLabel.Location = new System.Drawing.Point(6, 52);
+      this.lblFilterLabel.Name = "lblFilterLabel";
+      this.lblFilterLabel.Size = new System.Drawing.Size(116, 13);
+      this.lblFilterLabel.TabIndex = 34;
+      this.lblFilterLabel.Text = "Filter by Channel Name";
+      // 
+      // txtFilterString
+      // 
+      this.txtFilterString.Location = new System.Drawing.Point(126, 49);
+      this.txtFilterString.Name = "txtFilterString";
+      this.txtFilterString.Size = new System.Drawing.Size(321, 20);
+      this.txtFilterString.TabIndex = 33;
+      this.txtFilterString.TextChanged += new System.EventHandler(this.txtFilterString_TextChanged);
       // 
       // label2
       // 
@@ -527,5 +549,7 @@ namespace SetupTv.Sections
   private System.Windows.Forms.ToolStripMenuItem renameGroupToolStripMenuItem;
   private System.Windows.Forms.ToolStripMenuItem deleteGroupToolStripMenuItem;
   private System.Windows.Forms.ColumnHeader hdrNumberOfDetails;
+  private System.Windows.Forms.TextBox txtFilterString;
+  private System.Windows.Forms.Label lblFilterLabel;
   }
 }

@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -209,6 +209,7 @@
     <Compile Include="Sections\Epg.Designer.cs">
       <DependentUpon>Epg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\Helpers\ChannelListViewHandler.cs" />
     <Compile Include="Sections\TestChannels.cs">
       <SubType>UserControl</SubType>
     </Compile>
