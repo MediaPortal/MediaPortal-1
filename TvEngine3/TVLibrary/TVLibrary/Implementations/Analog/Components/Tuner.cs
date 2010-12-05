@@ -428,8 +428,13 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         AMTunerSignalStrength signalStrength;
         _tuner.SignalPresent(out signalStrength);
-        _tunerLocked = (signalStrength == AMTunerSignalStrength.SignalPresent ||
-                        signalStrength == AMTunerSignalStrength.HasNoSignalStrength);
+        // Some tuners (in particular, cards based on the Philips/NXP
+        // SAA713x and SAA716x PCI-e bridge chipsets such as the Hauppauge
+        // HVR2200) report values outside the range specified by the DirectShow
+        // interface when they are locked. This means it is best to assume the
+        // tuner is locked unless the tuner reports no signal.
+        // See Mantis #0002445.
+        _tunerLocked = (signalStrength != AMTunerSignalStrength.NoSignal);
       }
       catch (TvExceptionSWEncoderMissing)
       {
