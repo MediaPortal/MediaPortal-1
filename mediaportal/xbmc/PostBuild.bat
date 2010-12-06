@@ -61,9 +61,6 @@ xcopy %1\RemotePlugins\Remotes\X10Remote\Interop.X10.dll . /Y /D
 REM Utils
 xcopy %1\Utils\bin\%2\Utils.dll . /Y /D
 
-rem MyBurner plugin dependencies
-xcopy %1\XPImapiBurner\bin\%2\XPBurnComponent.dll . /Y /D
-
 REM Copy all new files from base
 xcopy %1\MediaPortal.Base\*.* . /E /R /Y /D
 
