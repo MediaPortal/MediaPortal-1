@@ -1038,19 +1038,26 @@ namespace MediaPortal.GUI.Music
 
     private void DoUpdateArtistInfo(ArtistInfoRequest request, Song song)
     {
-      CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
-                                                        Util.Utils.MakeFileName(CurrentTrackTag.Artist));
-      if (CurrentThumbFileName.Length > 0)
+      // artist tag can contain multiple artists and 
+      // will be separated by " | " so split by | then trim
+      // so we will add one thumb for artist
+      String[] strArtists = CurrentTrackTag.Artist.Split('|');
+      foreach(String strArtist in strArtists)
       {
-        // let us test if there is a larger cover art image
-        string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-        if (Util.Utils.FileExistsInCache(strLarge))
+        CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
+                                                          Util.Utils.MakeFileName(strArtist.Trim()));
+        if (CurrentThumbFileName.Length > 0)
         {
-          CurrentThumbFileName = strLarge;
-        }
+          // let us test if there is a larger cover art image
+          string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
+          if (Util.Utils.FileExistsInCache(strLarge))
+          {
+            CurrentThumbFileName = strLarge;
+          }
 
-        AddImageToImagePathContainer(CurrentThumbFileName);
-        UpdateImagePathContainer();
+          AddImageToImagePathContainer(CurrentThumbFileName);
+          UpdateImagePathContainer();
+        }
       }
     }
 
@@ -1549,6 +1556,10 @@ namespace MediaPortal.GUI.Music
         _lastArtistRequest = request;
         InfoScrobbler.AddRequest(request);
       }
+      else
+      { // if internet lookups are disabled just attempt to load local thumb
+        DoUpdateArtistInfo(null,null);
+      }
     }
 
     /// <summary>
@@ -1612,25 +1623,16 @@ namespace MediaPortal.GUI.Music
           if (PreviousTrackTag != null)
           {
             if (CurrentTrackTag.Artist != PreviousTrackTag.Artist)
-            {
+            { // Based on config settings this will attempt to lookup
+              // artist thumbs from last.fm
               UpdateArtistInfo();
             }
             else
-            {
-              CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
-                                                                Util.Utils.MakeFileName(CurrentTrackTag.Artist));
-              if (CurrentThumbFileName.Length > 0)
-              {
-                // let us test if there is a larger cover art image
-                string strLarge = Util.Utils.ConvertToLargeCoverArt(CurrentThumbFileName);
-                if (Util.Utils.FileExistsInCache(strLarge))
-                {
-                  CurrentThumbFileName = strLarge;
-                }
-
-                AddImageToImagePathContainer(CurrentThumbFileName);
-                UpdateImagePathContainer();
-              }
+            { // if artist has not changed then no point attempting
+              // to lookup artist thumbs as this would have been done
+              // for first track for this artist so just jump to 
+              // loading current track thumbs
+              DoUpdateArtistInfo(null,null);
             }
 
             if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeTagInfo.Count < 1)
@@ -1651,7 +1653,7 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            UpdateArtistInfo();
+            DoUpdateArtistInfo(null,null);
             InfoNeeded = true;
           }
 
