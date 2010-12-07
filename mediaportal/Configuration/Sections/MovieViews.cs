@@ -25,9 +25,6 @@ namespace MediaPortal.Configuration.Sections
 {
   public class MovieViews : BaseViews
   {
-    private string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
-    private string customVideoViews = Config.GetFile(Config.Dir.Config, "Views.xml");
-
     private string[] selections = new string[]
                                     {
                                       "watched",
