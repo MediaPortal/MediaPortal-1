@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
@@ -613,6 +614,74 @@ namespace TvLibrary.Implementations.DVB
       }
 
       return pRet;
+    }
+
+    ///<summary>
+    /// Enumerates and DirectShow graph starting with vSource into specific direction. It takes only Pins into account,
+    /// that match a given PinCategory.
+    ///</summary>
+    ///<param name="vSource">Starting IBaseFilter</param>
+    ///<param name="pinCategory">PinCategory</param>
+    ///<param name="vDir">Direction</param>
+    ///<returns>List of next IBaseFilters</returns>
+    public static IList<IBaseFilter> GetAllNextFilters(IBaseFilter vSource, Guid pinCategory, PinDirection vDir)
+    {
+      IList<IBaseFilter> nextFilters = new List<IBaseFilter>();
+      IEnumPins ppEnum;
+      PinInfo ppinfo;
+      IPin[] pPins = new IPin[1];
+      if (vSource == null)
+        return null;
+
+      // Get the pin enumerator
+      int hr = vSource.EnumPins(out ppEnum);
+      DsError.ThrowExceptionForHR(hr);
+
+      try
+      {
+        int lFetched;
+        // Walk the pins looking for a match
+        while ((ppEnum.Next(1, pPins, out lFetched) >= 0) && (lFetched == 1))
+        {
+          PinDirection ppindir;
+
+          hr = pPins[0].QueryDirection(out ppindir);
+          DsError.ThrowExceptionForHR(hr);
+
+          // Is it the right direction?
+          if (ppindir == vDir)
+          {
+            // Is it the right category?
+            if (DsUtils.GetPinCategory(pPins[0]) == pinCategory)
+            {
+
+              // Read the info
+              IPin connectedPin;
+              hr = pPins[0].ConnectedTo(out connectedPin);
+              DsError.ThrowExceptionForHR(hr);
+
+              connectedPin.QueryPinInfo(out ppinfo);
+              DsError.ThrowExceptionForHR(hr);
+
+              // This is a filter we're looking for.
+              nextFilters.Add(ppinfo.filter);
+
+              // recursive return all other filter of this type
+              foreach (IBaseFilter subfilter in GetAllNextFilters(ppinfo.filter, pinCategory, vDir))
+                nextFilters.Add(subfilter);
+
+              DsUtils.FreePinInfo(ppinfo);
+              Marshal.ReleaseComObject(connectedPin);
+            }
+          }
+          Marshal.ReleaseComObject(pPins[0]);
+        }
+      }
+      finally
+      {
+        Marshal.ReleaseComObject(ppEnum);
+      }
+      return nextFilters;
     }
 
     /// <summary>

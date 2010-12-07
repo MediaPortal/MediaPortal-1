@@ -19,17 +19,12 @@
 #endregion
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using DirectShowLib;
-using DirectShowLib.BDA;
-using TvLibrary.Channels;
-using TvLibrary.Interfaces;
-using System.Security;
-using System.Text;
-using System.Threading;
 using System.Collections.Generic;
-using TvLibrary.Hardware;
+using System.Runtime.InteropServices;
+using System.Security;
+using System.Threading;
+using DirectShowLib;
+using TvLibrary.Interfaces;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -41,7 +36,8 @@ namespace TvLibrary.Implementations.DVB
   {
     #region constants
 
-    public static List<String> CIFilterNames = new List<String>() { "Digital Devices Common Interface", "Mystique SaTiX-S2 Dual Common Interface" };
+    private Guid PINNAME_BDA_TRANSPORT = new Guid("{78216a81-cfa8-493e-9711-36a61c08bd9d}");
+
     public static List<String> VendorNames = new List<String>() { "Digital Devices", "Mystique SaTiX-S2 Dual" };
 
     [ComImport, SuppressUnmanagedCodeSecurity,
@@ -173,6 +169,12 @@ namespace TvLibrary.Implementations.DVB
       FilterInfo fInfo;
       tunerFilter.QueryFilterInfo(out fInfo);
 
+      // remarks: the better way of detection would be to check the DevicePath for matching parts
+      // but I didn't find a way to access IMoniker interface for query DevicePath from its property bag from a IFilterGraph only.
+      // see also TvCardDvdBase:
+      // //DD components have a common device path part. 
+      //   if (!(capDevices[capIndex].DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56") 
+
       // check for all vendors names to support this hardware
       foreach (String vendor in VendorNames)
       {
@@ -186,23 +188,20 @@ namespace TvLibrary.Implementations.DVB
       if (_CardName == String.Empty)
         return;
 
-      try
+      IEnumerable<IBaseFilter> nextFilters = FilterGraphTools.GetAllNextFilters(tunerFilter, PINNAME_BDA_TRANSPORT, PinDirection.Output);
+      foreach (IBaseFilter nextFilter in nextFilters)
       {
-        foreach (String CIFilterName in CIFilterNames)
+        FilterInfo filterInfo;
+        nextFilter.QueryFilterInfo(out filterInfo);
+
+        if (filterInfo.achName.ToLowerInvariant().Contains("common interface") && nextFilter is IKsControl)
         {
-          if (fInfo.pGraph.FindFilterByName(CIFilterName, out CiFilter) == 0)
-          {
-            _isDigitalDevices = true;
-            Log.Log.Debug(FormatMessage(" Common Interface found!"));
-            break; // found
-          }
-          else
-          {
-            Log.Log.Info(FormatMessage(" Common Interface NOT found!"));
-          }
+          CiFilter = nextFilter;
+          _isDigitalDevices = true;
+          Log.Log.Debug(FormatMessage(" Common Interface found!"));
+          break;
         }
       }
-      catch { }
     }
 
     #endregion
