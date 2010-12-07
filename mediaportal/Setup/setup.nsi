@@ -249,10 +249,6 @@ ShowUninstDetails show
   ${KillProcess} "MediaPortal.exe"
   ${KillProcess} "configuration.exe"
 
-  ; MpeInstaller v1
-  ${KillProcess} "MPInstaller.exe"
-  ${KillProcess} "MPIMaker.exe"
-  ; MpeInstaller v2
   ${KillProcess} "MpeInstaller.exe"
   ${KillProcess} "MpeMaker.exe"
 
@@ -644,15 +640,6 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   ${LOG_TEXT} "INFO" "MediaPortal Extension Installer..."
 
   ; install files
-  ; MpeInstaller v1
-  SetOutPath "$MPdir.Base"
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe"
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.exe.config"
-  File "${svn_MP}\MPInstaller\bin\${BUILD_TYPE}\MPInstaller.Library.dll"
-  File "${svn_MP}\MPInstaller\MPIMaker\bin\${BUILD_TYPE}\MPIMaker.exe"
-  SetOutPath "$MPdir.Config\Installer"
-  File /nonfatal "${MEDIAPORTAL.BASE}\Installer\cleanup.xml"
-  ; MpeInstaller v2
   SetOutPath "$MPdir.Base"
   File "${svn_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
   File "${svn_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
@@ -667,14 +654,8 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
   CreateShortCut "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"     "$MPdir.Base\MpeMaker.exe"      ""  "$MPdir.Base\MpeMaker.exe"      0 "" "" "MediaPortal Extension Maker"
 
   ; associate file extensions
-  ; MpeInstaller v1
-  ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
   ${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
-  ${RegisterExtension} "$MPdir.Base\MpiMaker.exe"     ".xmp"  "MediaPortal extension project"
-  ; MpeInstaller v2
-  #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpi"  "MediaPortal extension"
-  #${RegisterExtension} "$MPdir.Base\MpeInstaller.exe" ".mpe1" "MediaPortal extension"
-  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2"  "MediaPortal extension project"
+  ${RegisterExtension} "$MPdir.Base\MpeMaker.exe"     ".xmp2" "MediaPortal extension project"
 
   ${RefreshShellIcons}
 SectionEnd
@@ -682,12 +663,6 @@ SectionEnd
   ${LOG_TEXT} "INFO" "Uninstalling MediaPortal Extension Installer..."
 
   ; remove files
-  ; MpeInstaller v1
-  Delete "$MPdir.Base\MPInstaller.exe"
-  Delete "$MPdir.Base\MPInstaller.exe.config"
-  Delete "$MPdir.Base\MPInstaller.Library.dll"
-  Delete "$MPdir.Base\MPIMaker.exe"
-  ; MpeInstaller v2
   Delete "$MPdir.Base\MpeCore.dll"
   Delete "$MPdir.Base\MpeInstaller.exe"
   Delete "$MPdir.Base\MpeMaker.exe"
@@ -698,11 +673,7 @@ SectionEnd
   Delete "${STARTMENU_GROUP}\MediaPortal Extension Maker.lnk"
 
   ; unassociate file extensions
-  ; MpeInstaller v1
-  ${UnRegisterExtension} ".mpi"  "MediaPortal extension"
   ${UnRegisterExtension} ".mpe1" "MediaPortal extension"
-  ${UnRegisterExtension} ".xmp"  "MediaPortal extension project"
-  ; MpeInstaller v2
   ${UnRegisterExtension} ".xmp2"  "MediaPortal extension project"
 
   ${RefreshShellIcons}

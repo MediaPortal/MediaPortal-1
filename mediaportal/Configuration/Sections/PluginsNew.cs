@@ -27,7 +27,6 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
-using MediaPortal.MPInstaller;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 
@@ -39,11 +38,6 @@ namespace MediaPortal.Configuration.Sections
     private ArrayList availablePlugins = new ArrayList();
     private bool isLoaded = false;
     private bool wasLastLoadAdvanced = false;
-
-    public MPInstallHelper lst = new MPInstallHelper();
-    public MPInstallHelper lst_online = new MPInstallHelper();
-    private string InstalDir = Config.GetFolder(Config.Dir.Base) + @"\" + "Installer";
-
 
     private class ItemTag
     {

@@ -97,11 +97,6 @@ xcopy %1\WatchDog\bin\%2\MediaFoundation.dll . /Y /D
 REM MPTray
 xcopy %1\MPTray\bin\%2\MPTray.* . /Y /D
 
-REM MPInstaller
-xcopy %1\MPInstaller\bin\%2\MPInstaller.Library.* . /Y /D
-xcopy %1\MPInstaller\bin\%2\MPInstaller.* . /Y /D
-xcopy %1\MPInstaller\bin\%2\MPIMaker.* . /Y /D
-
 REM MPE
 xcopy %1\MPE\MpeCore\bin\%2\MpeCore.* . /Y /D
 xcopy %1\MPE\MpeInstaller\bin\%2\MpeInstaller.* . /Y /D
