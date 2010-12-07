@@ -32,14 +32,14 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       1
-!define VER_REVISION    5
+!define VER_REVISION    6
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 
 !if "${SKRIPT_NAME}" == "MediaPortal Unpacker"
   ;this is for display purposes
-  !define VERSION "1.2.0"
+  !define VERSION "1.2.0 Beta"
 !else
 
   !if ${BUILD_TYPE} == "Debug"
