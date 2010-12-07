@@ -6,7 +6,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HcwHelper", "HcwHelper", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MusicShareWatcher", "MusicShareWatcher", "{05789B6D-8173-4709-991B-34234041D393}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MediaPortal.ExtensionTools", "MediaPortal.ExtensionTools", "{7E1AA929-F9B8-42E6-A6AD-6759CE43521F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mpe", "Mpe", "{7E1AA929-F9B8-42E6-A6AD-6759CE43521F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{02FFFC1F-2555-4B99-8B01-3432D0673855}"
 EndProject
