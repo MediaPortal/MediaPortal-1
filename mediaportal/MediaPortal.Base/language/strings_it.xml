@@ -712,6 +712,7 @@
     <String id="789">Adesso: </String>
     <String id="790">Dopo: </String>
     <String id="791">Vista: flusso copertine</String>
+    <String id="792">Menu viste</String>
     <String id="798">Basso</String>
     <String id="799">Alto</String>
     <String id="800">Comincia con</String>
@@ -993,6 +994,8 @@
     <String id="1200">Wizard delle impostazioni</String>
     <String id="1201">Riproduci il video dall'inizio</String>
     <String id="1202">Ordina per: Automatico</String>
+    <String id="1203">Episodio imminente (attivi:{0})</String>
+    <String id="1204">Riproduci tutti i video nella cartella</String>
     <String id="1211">Riproduci il video da {0}</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
@@ -1936,6 +1939,22 @@
     <String id="200070">Controllare il firewall</String>
     <String id="200071">Cancellare questa cartella e tutte le sottocartelle?</String>
     <String id="200072">Prossimi episodi</String>
+    <String id="200073">Elaborazione successiva</String>
+    <String id="200074">Elaborazione foto successiva</String>
+    <String id="200075">Ridimensiona</String>
+    <String id="200076">Files sottotitoli</String>
+    <String id="200077">Deinterlaccia</String>
+    <String id="200078">Rifila</String>
+    <String id="200079">Rifila verticalmente</String>
+    <String id="200080">Rifila orizzontalmente</String>
+    <String id="200081">Menu VIDEO</String>
+    <String id="200082">Menu AUDIO</String>
+    <String id="200083">Menu SOTTOTITOLI</String>
+    <String id="200084">Menu video</String>
+    <String id="200085">Menu audio</String>
+    <String id="200086">Menu principale</String>
+    <String id="200087">Muto</String>
+    <String id="200090">Edizione</String>
     <String id="200091">Capitolo</String>
   </Section>
 </Language>
