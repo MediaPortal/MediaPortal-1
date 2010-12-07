@@ -229,7 +229,6 @@ namespace MediaPortal.InputDevices
             case (int)GUIWindow.Window.WINDOW_MUSIC_INFO:
             case (int)GUIWindow.Window.WINDOW_OSD:
             case (int)GUIWindow.Window.WINDOW_TOPBAR:
-              //case (int)GUIWindow.Window.WINDOW_TOPBARHOME:
             case (int)GUIWindow.Window.WINDOW_TVMSNOSD:
             case (int)GUIWindow.Window.WINDOW_TVOSD:
             case (int)GUIWindow.Window.WINDOW_TVZAPOSD:

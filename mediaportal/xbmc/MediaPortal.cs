@@ -2555,13 +2555,6 @@ public class MediaPortalApp : D3DApp, IRender
                 {
                   win.OnAction(new Action(Action.ActionType.ACTION_MOVE_LEFT, 0, 0));
                 }
-                /* GUIOverlayWindow topBar =
-                     (GUIOverlayWindow)
-                     GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBARHOME);
-                 if (topBar != null)
-                 {
-                   topBar.Focused = true;
-                 }*/
                 return;
               }
               switch (dlg.SelectedId)
