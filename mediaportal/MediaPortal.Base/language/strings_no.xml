@@ -995,6 +995,7 @@
     <String id="1201">Spill av video fra begynnelsen</String>
     <String id="1202">Sorter etter: Auto</String>
     <String id="1203">Kommende episode (aktiv: {0})</String>
+    <String id="1204">Spill av alle videoene i valgte folder</String>
     <String id="1211">Gjenoppta avspilling fra {0}</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
@@ -1938,6 +1939,21 @@
     <String id="200070">Vennligst sjekk brannmurinnstillingene dine</String>
     <String id="200071">Slette denne mappen og alle undermapper?</String>
     <String id="200072">Episoder som kommer snart</String>
+    <String id="200073">Postprocessing</String>
+    <String id="200074">Postprocessing bilde</String>
+    <String id="200075">Endre størrelse</String>
+    <String id="200076">Undertekst filer</String>
+    <String id="200077">Deinterlace</String>
+    <String id="200078">Krympe</String>
+    <String id="200079">Vertikal krymping</String>
+    <String id="200080">Horisontal krymping</String>
+    <String id="200081">MENY VIDEO</String>
+    <String id="200082">MENY LYD</String>
+    <String id="200083">MENY UNDERTEKST</String>
+    <String id="200084">Meny video</String>
+    <String id="200085">Meny lyd</String>
+    <String id="200086">HOVED MENY</String>
+    <String id="200087">Stille</String>
     <String id="200090">Utgave</String>
     <String id="200091">Kapittel</String>
   </Section>
