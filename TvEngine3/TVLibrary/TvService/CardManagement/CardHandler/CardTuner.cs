@@ -52,7 +52,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The channel id</param>
     /// <returns></returns>
-    public TvResult Scan(ref User user, IChannel channel, int idChannel)
+    public TvResult Scan(ref IUser user, IChannel channel, int idChannel)
     {
       ITvSubChannel result = null;
       try
@@ -85,7 +85,14 @@ namespace TvService
             return tvResult;
           }
           result = _cardHandler.Card.Scan(user.SubChannel, channel);
-          return AfterTune(user, idChannel, result);
+          if (result != null)
+          {
+            return AfterTune(user, idChannel, result);
+          }
+          else
+          {
+            return TvResult.UnknownError;
+          }
         }
       }
       catch (TvExceptionNoSignal)
@@ -140,7 +147,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The channel id</param>
     /// <returns></returns>
-    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    public TvResult Tune(ref IUser user, IChannel channel, int idChannel)
     {
       ITvSubChannel result = null;
       try
@@ -173,8 +180,16 @@ namespace TvService
             return tvResult;
           }
           user.FailedCardId = -1;
-          result = _cardHandler.Card.Tune(user.SubChannel, channel);                              
-          return AfterTune(user, idChannel, result);
+          result = _cardHandler.Card.Tune(user.SubChannel, channel);
+
+          if (result != null)
+          {
+            return AfterTune(user, idChannel, result);
+          }
+          else
+          {
+            return TvResult.UnknownError;
+          }          
         }
       }
       catch (TvExceptionNoSignal)
@@ -227,7 +242,7 @@ namespace TvService
       }
     }
 
-    private TvResult AfterTune(User user, int idChannel, ITvSubChannel result)
+    private TvResult AfterTune(IUser user, int idChannel, ITvSubChannel result)
     {
       bool isLocked = _cardHandler.Card.IsTunerLocked;
       Log.Debug("card: Tuner locked: {0}", isLocked);
@@ -237,7 +252,7 @@ namespace TvService
                _cardHandler.Card.SignalQuality);
       Log.Info("**************************************************");
 
-      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (result != null)
       {
         Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
@@ -257,7 +272,7 @@ namespace TvService
       return TvResult.Succeeded;
     }
 
-    private bool BeforeTune(IChannel channel, ref User user, out TvResult result)
+    private bool BeforeTune(IChannel channel, ref IUser user, out TvResult result)
     {
       result = TvResult.UnknownError;
       //@FIX this fails for back-2-back recordings
@@ -270,7 +285,7 @@ namespace TvService
       _cardHandler.SetParameters();
 
       //check if transponder differs
-      TvCardContext context = (TvCardContext)_cardHandler.Card.Context;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (_cardHandler.Card.SubChannels.Length > 0)
       {
         if (IsTunedToTransponder(channel) == false)
@@ -280,7 +295,7 @@ namespace TvService
             Log.Debug("card: to different transponder");
 
             //remove all subchannels, except for this user...
-            User[] users = context.Users;
+            IUser[] users = context.Users;
             for (int i = 0; i < users.Length; ++i)
             {
               if (users[i].Name != user.Name)
@@ -369,7 +384,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="dbChannel">The db channel</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult CardTune(ref User user, IChannel channel, Channel dbChannel)
+    public TvResult CardTune(ref IUser user, IChannel channel, Channel dbChannel)
     {
       try
       {

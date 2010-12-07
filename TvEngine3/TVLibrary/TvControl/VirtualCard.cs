@@ -40,7 +40,7 @@ namespace TvControl
     private string _recordingFolder;
     private string _timeShiftFolder;
     private int _recordingFormat;
-    private User _user;
+    private IUser _user;
     public static readonly int CommandTimeOut = 3000;
 
     #endregion
@@ -67,7 +67,7 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <param name="server">The server.</param>
-    public VirtualCard(User user, string server)
+    public VirtualCard(IUser user, string server)
     {
       _user = user;
       _server = server;
@@ -79,7 +79,7 @@ namespace TvControl
     /// Initializes a new instance of the <see cref="VirtualCard"/> class.
     /// </summary>
     /// <param name="user">The user.</param>
-    public VirtualCard(User user)
+    public VirtualCard(IUser user)
     {
       _user = user;
       _server = Dns.GetHostName();
@@ -100,7 +100,7 @@ namespace TvControl
     /// Gets the user.
     /// </summary>
     /// <value>The user.</value>
-    public User User
+    public IUser User
     {
       get { return _user; }
     }
@@ -1106,7 +1106,7 @@ namespace TvControl
     /// <returns>
     /// 	<c>true</c> if the card is locked; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsLocked(out User user)
+    public bool IsLocked(out IUser user)
     {
       user = null;
       try

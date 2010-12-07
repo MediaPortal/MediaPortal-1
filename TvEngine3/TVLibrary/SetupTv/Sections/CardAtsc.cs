@@ -130,7 +130,7 @@ namespace SetupTv.Sections
           return;
         }
         // Check if the card is locked for scanning.
-        User user;
+        IUser user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
@@ -173,7 +173,7 @@ namespace SetupTv.Sections
         listViewStatus.Items.Clear();
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         int minchan = 2;
         int maxchan = 69;
@@ -343,7 +343,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;

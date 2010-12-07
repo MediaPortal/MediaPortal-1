@@ -21,14 +21,17 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using TvLibrary.Interfaces;
 
 namespace TvControl
 {
+  
+
   /// <summary>
   /// Class holding user credentials
   /// </summary>
   [Serializable]
-  public class User : ICloneable
+  public class User : ICloneable, IUser
   {
     private string _hostName;
     private bool _isAdmin;

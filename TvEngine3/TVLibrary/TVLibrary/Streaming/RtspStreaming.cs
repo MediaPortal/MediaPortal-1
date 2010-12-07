@@ -173,7 +173,7 @@ namespace TvLibrary.Streaming
           {
             ipadress = Marshal.PtrToStringAnsi(ptrIpAdress);
           }
-          if (ptrStream != null)
+          if (ptrStream != IntPtr.Zero)
           {
             streamName = Marshal.PtrToStringAnsi(ptrStream);
           }

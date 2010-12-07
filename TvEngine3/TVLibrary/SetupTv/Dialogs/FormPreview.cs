@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using SetupControls;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvControl;
 
@@ -50,7 +51,7 @@ namespace SetupTv.Sections
       Text = "Preview " + _channel.Name;
 
       TvServer server = new TvServer();
-      User user = new User("setuptv", false);
+      IUser user = new User("setuptv", false);
       TvResult result = server.StartTimeShifting(ref user, _channel.IdChannel, out _card);
       if (result != TvResult.Succeeded)
       {

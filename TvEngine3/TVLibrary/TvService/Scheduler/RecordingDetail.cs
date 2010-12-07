@@ -200,7 +200,7 @@ namespace TvService
       get { return _isSerie; }
     }
 
-    public User User
+    public IUser User
     {
       get { return _user; }
     }

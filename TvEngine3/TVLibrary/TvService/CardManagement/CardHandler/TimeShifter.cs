@@ -76,7 +76,7 @@ namespace TvService
     /// Gets the name of the time shift file.
     /// </summary>
     /// <value>The name of the time shift file.</value>
-    public string FileName(ref User user)
+    public string FileName(ref IUser user)
     {
       try
       {
@@ -99,7 +99,7 @@ namespace TvService
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return "";
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return null;
         context.GetUser(ref user);
@@ -121,7 +121,7 @@ namespace TvService
     /// <param name="user">The user.</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool GetCurrentFilePosition(ref User user, ref Int64 position, ref long bufferId)
+    public bool GetCurrentFilePosition(ref IUser user, ref Int64 position, ref long bufferId)
     {
       try
       {
@@ -145,7 +145,7 @@ namespace TvService
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return false;
         context.GetUser(ref user);
@@ -172,14 +172,14 @@ namespace TvService
     {
       get
       {
-        User[] users = _cardHandler.Users.GetUsers();
+        IUser[] users = _cardHandler.Users.GetUsers();
         if (users == null)
           return false;
         if (users.Length == 0)
           return false;
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           if (IsTimeShifting(ref user))
             return true;
         }
@@ -191,7 +191,7 @@ namespace TvService
     /// Returns if the card is timeshifting or not
     /// </summary>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    public bool IsTimeShifting(ref User user)
+    public bool IsTimeShifting(ref IUser user)
     {
       try
       {
@@ -214,7 +214,7 @@ namespace TvService
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return false;
         bool userExists;
@@ -238,7 +238,7 @@ namespace TvService
     /// returns the date/time when timeshifting has been started for the card specified
     /// </summary>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime TimeShiftStarted(User user)
+    public DateTime TimeShiftStarted(IUser user)
     {
       try
       {
@@ -262,7 +262,7 @@ namespace TvService
           return DateTime.MinValue;
         }
 
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return DateTime.MinValue;
         context.GetUser(ref user);
@@ -326,7 +326,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the timeshiftfile.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult Start(ref User user, ref string fileName)
+    public TvResult Start(ref IUser user, ref string fileName)
     {
       try
       {
@@ -375,7 +375,7 @@ namespace TvService
             return TvResult.UnknownError;
           }
 
-          TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+          ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
           if (context == null)
             return TvResult.UnknownChannel;
           context.GetUser(ref user);
@@ -476,7 +476,7 @@ namespace TvService
     /// Stops the time shifting.
     /// </summary>
     /// <returns></returns>
-    public bool Stop(ref User user)
+    public bool Stop(ref IUser user)
     {
       try
       {
@@ -514,7 +514,7 @@ namespace TvService
             return false;
           }
 
-          TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+          ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
           if (context == null)
             return true;
           if (_linkageScannerEnabled)
@@ -547,7 +547,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="fileName">Name of the file.</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    public TvResult CardTimeShift(ref User user, ref string fileName)
+    public TvResult CardTimeShift(ref IUser user, ref string fileName)
     {
       try
       {
@@ -585,7 +585,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="scrambled">Indicates if the cahnnel is scambled</param>
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
-    public bool WaitForTimeShiftFile(ref User user, out bool scrambled)
+    public bool WaitForTimeShiftFile(ref IUser user, out bool scrambled)
     {
       scrambled = false;
       if (_cardHandler.DataBaseCard.Enabled == false)
@@ -704,12 +704,12 @@ if (!WaitForUnScrambledSignal(ref user))
     /// <param name="totalTSpackets">Amount of packets processed</param>    
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(User user, out int totalTSpackets, out int discontinuityCounter)
+    public void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter)
     {
       totalTSpackets = 0;
       discontinuityCounter = 0;
 
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       bool userExists;
       context.GetUser(ref user, out userExists);
       ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);

@@ -2148,7 +2148,7 @@ namespace TvPlugin
       List<Channel> channels = new List<Channel>();
       int count = 0;
       TvServer server = new TvServer();
-      List<User> _users = new List<User>();
+      List<IUser> _users = new List<IUser>();
       foreach (Card card in cards)
       {
         if (card.Enabled == false)
@@ -2159,14 +2159,14 @@ namespace TvPlugin
         {
           continue;
         }
-        User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        IUser[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (users == null)
         {
           return;
         }
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           if (card.IdCard != user.CardId)
           {
             continue;
@@ -3266,7 +3266,7 @@ namespace TvPlugin
         TvResult succeeded;
 
 
-        User user = new User();
+        IUser user = new User();
         if (Card != null)
         {
           user.CardId = Card.Id;

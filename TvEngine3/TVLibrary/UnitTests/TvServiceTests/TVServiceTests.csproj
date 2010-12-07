@@ -73,6 +73,7 @@
     <Compile Include="Mocks\DVBTCard\DVBTCardMocks.cs" />
     <Compile Include="Mocks\IDVBCardMocks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TvCardContextTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">

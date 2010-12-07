@@ -711,7 +711,7 @@ namespace SetupTv.Sections
 
       // Create tunning objects Server, User and Card
       TvServer _server = new TvServer();
-      User _user = new User();
+      IUser _user = new User();
       VirtualCard _card;
 
       foreach (ListViewItem item in mpListView1.Items)

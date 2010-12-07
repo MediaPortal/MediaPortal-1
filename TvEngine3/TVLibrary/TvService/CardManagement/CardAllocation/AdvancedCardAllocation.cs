@@ -67,11 +67,11 @@ namespace TvService
    
     
 
-    private static int NumberOfOtherUsersOnCard(ITvCardHandler card, User user)
+    private static int NumberOfOtherUsersOnCard(ITvCardHandler card, IUser user)
     {
       //determine how many other users are using this card
       int nrOfOtherUsers = 0;
-      User[] users = card.Users.GetUsers();
+      IUser[] users = card.Users.GetUsers();
       if (users != null)
       {
         for (int i = 0; i < users.Length; ++i)
@@ -96,7 +96,7 @@ namespace TvService
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
     public List<CardDetail> GetFreeCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
-                                                        ref User user, out TvResult result)
+                                                        ref IUser user, out TvResult result)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
@@ -150,7 +150,7 @@ namespace TvService
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref User user)
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try

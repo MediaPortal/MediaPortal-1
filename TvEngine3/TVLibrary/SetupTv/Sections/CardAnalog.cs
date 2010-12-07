@@ -807,7 +807,7 @@ namespace SetupTv.Sections
           return;
         }
         // Check if the card is locked for scanning.
-        User user;
+        IUser user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
@@ -846,7 +846,7 @@ namespace SetupTv.Sections
         mpButton1.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = mpComboBoxSource.SelectedIndex == 0 ? TunerInputType.Antenna : TunerInputType.Cable;
@@ -1008,7 +1008,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
@@ -1045,7 +1045,7 @@ namespace SetupTv.Sections
           return;
         }
         // Check if the card is locked for scanning.
-        User user;
+        IUser user;
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
@@ -1150,7 +1150,7 @@ namespace SetupTv.Sections
           string line = String.Format("frequence:{0} MHz ", freqMHz.ToString("f2"));
           ListViewItem item = mpListView1.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
-          User user = new User();
+          IUser user = new User();
           user.CardId = _cardNumber;
           TvResult tuneResult = RemoteControl.Instance.Tune(ref user, channel, -1);
           if (tuneResult == TvResult.SWEncoderMissing)
@@ -1220,7 +1220,7 @@ namespace SetupTv.Sections
       finally
       {
         checkButton.Enabled = true;
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
@@ -1244,7 +1244,7 @@ namespace SetupTv.Sections
     {
       if (string.IsNullOrEmpty(_configuration.Graph.Crossbar.Name))
       {
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         AnalogChannel temp = new AnalogChannel();
         temp.TunerSource = TunerInputType.Antenna;
@@ -1447,7 +1447,7 @@ namespace SetupTv.Sections
 
     private void checkButton_Click(object sender, EventArgs e)
     {
-      User user;
+      IUser user;
       try
       {
         TvBusinessLayer layer = new TvBusinessLayer();

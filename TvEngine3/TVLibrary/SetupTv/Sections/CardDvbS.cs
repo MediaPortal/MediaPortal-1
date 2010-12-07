@@ -146,7 +146,7 @@ namespace SetupTv.Sections
     private int _radioChannelsUpdated;
     private bool _enableEvents;
     private bool _ignoreCheckBoxCreateGroupsClickEvent;
-    private User _user;
+    private IUser _user;
 
     private CI_Menu_Dialog ciMenuDialog; // ci menu dialog object
 
@@ -807,7 +807,7 @@ namespace SetupTv.Sections
             return;
           }
           // Check if the card is locked for scanning.
-          User user;
+          IUser user;
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
@@ -891,7 +891,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        User user = new User();
+        IUser user = new User();
         user.CardId = _cardNumber;
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
@@ -1001,7 +1001,7 @@ namespace SetupTv.Sections
       if (_channels.Count == 0)
         return;
 
-      User user = new User();
+      IUser user = new User();
       user.CardId = _cardNumber;
       int scanIndex = 0; // count of really scanned TPs (S2 skipped)
       for (int index = 0; index < _channels.Count; ++index)

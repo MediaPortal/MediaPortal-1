@@ -31,6 +31,7 @@ using System.Windows.Forms;
 using SetupControls;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 #endregion
@@ -172,7 +173,7 @@ namespace SetupTv.Sections
               IEnumerable<Channel> channelsForUser = channelChunks[i];
               channelsForUser = channelsForUser.Randomize();
 
-              User user = new User();
+              IUser user = new User();
               user.Name = "stress-" + Convert.ToString(rnd.Next(1, 500));
 
               while (_users.ContainsKey(user.Name))
@@ -266,7 +267,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void TuneChannelsForUser(User user, IEnumerable<Channel> channels)
+    private void TuneChannelsForUser(IUser user, IEnumerable<Channel> channels)
     {
       int nextRowIndexForDiscUpdate = -1;
       try
@@ -311,7 +312,7 @@ namespace SetupTv.Sections
       }
     }
 
-    private void TuneChannel(Channel channel, ref User user, ref int nextRowIndexForDiscUpdate)
+    private void TuneChannel(Channel channel, ref IUser user, ref int nextRowIndexForDiscUpdate)
     {
       if (!_running)
       {
@@ -464,7 +465,7 @@ namespace SetupTv.Sections
       return err;
     }
 
-    private void UpdateDiscontinuityCounter(User user, int nextRowIndexForDiscUpdate)
+    private void UpdateDiscontinuityCounter(IUser user, int nextRowIndexForDiscUpdate)
     {
       if (_running)
       {
@@ -573,7 +574,7 @@ namespace SetupTv.Sections
         foreach (Card card in _cards)
         {
           cardNo++;
-          User user = new User();
+          IUser user = new User();
           user.CardId = card.IdCard;
           if (off >= mpListView1.Items.Count)
           {
@@ -625,7 +626,7 @@ namespace SetupTv.Sections
             continue;
           }
 
-          User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
           {
             ColorLine(card, item);

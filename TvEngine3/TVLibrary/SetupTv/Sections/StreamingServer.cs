@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
 using System.Net;
 using TvLibrary.Log;
@@ -191,7 +192,7 @@ namespace SetupTv.Sections
       {
         RtspClient client = (RtspClient)item.Tag;
 
-        User user = new User();
+        IUser user = new User();
         user.Name = System.Net.Dns.GetHostEntry(client.IpAdress).HostName;
 
         IList<Card> dbsCards = Card.ListAll();
@@ -203,8 +204,8 @@ namespace SetupTv.Sections
           if (!RemoteControl.Instance.CardPresent(card.IdCard))
             continue;
 
-          User[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
-          foreach (User u in users)
+          IUser[] users = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          foreach (IUser u in users)
           {
             if (u.Name == user.Name || u.Name == "setuptv")
             {

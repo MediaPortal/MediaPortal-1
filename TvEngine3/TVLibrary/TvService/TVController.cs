@@ -386,7 +386,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if card is in use; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsCardInUse(int cardId, out User user)
+    public bool IsCardInUse(int cardId, out IUser user)
     {
       if (ValidateTvControllerParams(cardId))
       {
@@ -401,12 +401,12 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <returns></returns>
-    public User GetUserForCard(int cardId)
+    public IUser GetUserForCard(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
         return null;
 
-      User user;
+      IUser user;
       _cards[cardId].Users.IsLocked(out user);
       return user;
     }
@@ -416,7 +416,7 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
-    public void LockCard(int cardId, User user)
+    public void LockCard(int cardId, IUser user)
     {
       if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(cardId)))
       {
@@ -429,7 +429,7 @@ namespace TvService
     /// Unlocks the card.
     /// </summary>
     /// <param name="user">The user.</param>
-    public void UnlockCard(User user)
+    public void UnlockCard(IUser user)
     {
       if (ValidateTvControllerParams(user) || (ValidateTvControllerParams(user.CardId)))
       {
@@ -1068,7 +1068,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>channel</returns>
-    public IChannel CurrentChannel(ref User user)
+    public IChannel CurrentChannel(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return null;
@@ -1080,7 +1080,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>id of database channel</returns>
-    public int CurrentDbChannel(ref User user)
+    public int CurrentDbChannel(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1092,7 +1092,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>channel</returns>
-    public string CurrentChannelName(ref User user)
+    public string CurrentChannelName(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return "";
@@ -1152,14 +1152,14 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>filename or null when not recording</returns>
-    public string RecordingFileName(ref User user)
+    public string RecordingFileName(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return "";
       return _cards[user.CardId].Recorder.FileName(ref user);
     }
 
-    public string TimeShiftFileName(ref User user)
+    public string TimeShiftFileName(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return "";
@@ -1172,7 +1172,7 @@ namespace TvService
     /// <param name="user">The user.</param>
     /// <param name="position">The position in the current timeshift buffer file</param>
     /// <param name="bufferId">The id of the current timeshift buffer file</param>
-    public bool TimeShiftGetCurrentFilePosition(ref User user, ref Int64 position, ref long bufferId)
+    public bool TimeShiftGetCurrentFilePosition(ref IUser user, ref Int64 position, ref long bufferId)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1184,7 +1184,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true when card is timeshifting otherwise false</returns>
-    public bool IsTimeShifting(ref User user)
+    public bool IsTimeShifting(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1216,7 +1216,7 @@ namespace TvService
     /// Returns the video stream currently associated with the card. 
     /// </summary>
     /// <returns>stream_type</returns>
-    public int GetCurrentVideoStream(User user)
+    public int GetCurrentVideoStream(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1235,7 +1235,7 @@ namespace TvService
       while (en.MoveNext())
       {
         ITvCardHandler card = en.Current.Value;
-        User user = new User();
+        IUser user = new User();
         user.CardId = card.DataBaseCard.IdCard;
         if (card.Recorder.IsAnySubChannelRecording)
         {
@@ -1255,7 +1255,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
+    public bool IsAnyCardRecordingOrTimeshifting(IUser userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
     {
       isUserTS = false;
       isAnyUserTS = false;
@@ -1265,7 +1265,7 @@ namespace TvService
       while (en.MoveNext())
       {
         ITvCardHandler card = en.Current.Value;
-        User user = new User();
+        IUser user = new User();
         user.CardId = card.DataBaseCard.IdCard;
 
         if (!isRec)
@@ -1277,14 +1277,14 @@ namespace TvService
           isUserTS = card.TimeShifter.IsTimeShifting(ref userTS);
         }
 
-        User[] users = card.Users.GetUsers();
+        IUser[] users = card.Users.GetUsers();
         if (users == null)
           continue;
         if (users.Length == 0)
           continue;
         for (int i = 0; i < users.Length; ++i)
         {
-          User anyUser = users[i];
+          IUser anyUser = users[i];
 
           if (anyUser.Name != userTS.Name)
           {
@@ -1320,14 +1320,14 @@ namespace TvService
       while (en.MoveNext())
       {
         ITvCardHandler tvcard = en.Current.Value;
-        User[] users = tvcard.Users.GetUsers();
+        IUser[] users = tvcard.Users.GetUsers();
         if (users == null)
           continue;
         if (users.Length == 0)
           continue;
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           if (tvcard.CurrentChannelName(ref user) == null)
             continue;
           if (tvcard.CurrentChannelName(ref user) == channelName)
@@ -1352,14 +1352,14 @@ namespace TvService
       while (en.MoveNext())
       {
         tvcard = en.Current.Value;
-        User[] users = tvcard.Users.GetUsers();
+        IUser[] users = tvcard.Users.GetUsers();
         if (users == null)
           continue;
         if (users.Length == 0)
           continue;
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           bool isREC = tvcard.Recorder.IsRecording(ref user);
           if (isREC)
           {
@@ -1388,18 +1388,18 @@ namespace TvService
       card = null;
       Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
       ITvCardHandler tvcard;
-      User recUser = null;
+      IUser recUser = null;
       while (en.MoveNext())
       {
         tvcard = en.Current.Value;
-        User[] users = tvcard.Users.GetUsers();
+        IUser[] users = tvcard.Users.GetUsers();
         if (users == null)
           continue;
         if (users.Length == 0)
           continue;
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           if (tvcard.CurrentChannelName(ref user) == null)
             continue;
           if (tvcard.CurrentChannelName(ref user) == channelName)
@@ -1436,7 +1436,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true when card is recording otherwise false</returns>
-    public bool IsRecording(ref User user)
+    public bool IsRecording(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1472,7 +1472,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true when card is grabbing teletext otherwise false</returns>
-    public bool IsGrabbingTeletext(User user)
+    public bool IsGrabbingTeletext(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1485,7 +1485,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>yes if channel has teletext otherwise false</returns>
-    public bool HasTeletext(User user)
+    public bool HasTeletext(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1498,7 +1498,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(User user, int pageNumber)
+    public TimeSpan TeletextRotation(IUser user, int pageNumber)
     {
       if (ValidateTvControllerParams(user))
         return new TimeSpan(0, 0, 15);
@@ -1510,7 +1510,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>DateTime containg the date/time when timeshifting was started</returns>
-    public DateTime TimeShiftStarted(User user)
+    public DateTime TimeShiftStarted(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return DateTime.MinValue;
@@ -1522,7 +1522,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted(User user)
+    public DateTime RecordingStarted(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return DateTime.MinValue;
@@ -1551,7 +1551,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>yes if channel is scrambled and CI/CAM cannot decode it, otherwise false</returns>
-    public bool IsScrambled(ref User user)
+    public bool IsScrambled(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1606,7 +1606,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    public TvResult Scan(ref User user, IChannel channel, int idChannel)
+    public TvResult Scan(ref IUser user, IChannel channel, int idChannel)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(channel))
       {
@@ -1628,7 +1628,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), (User)user, channel));
       }
     }
 
@@ -1639,7 +1639,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    public TvResult Tune(ref User user, IChannel channel, int idChannel)
+    public TvResult Tune(ref IUser user, IChannel channel, int idChannel)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(channel))
       {
@@ -1661,7 +1661,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), (User)user, channel));
       }
     }
 
@@ -1672,7 +1672,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="idChannel">The id channel.</param>
     /// <returns>true if succeeded</returns>
-    private void FreeSubChannel(ref User user, IChannel channel)
+    private void FreeSubChannel(ref IUser user, IChannel channel)
     {
       int cardId = user.CardId;
       ITvCardHandler cardHandler = _cards[cardId];
@@ -1682,10 +1682,10 @@ namespace TvService
         bool isRec = cardHandler.Recorder.IsRecordingAnyUser();
         if (!isRec)
         {
-          TvCardContext context = (TvCardContext)cardHandler.Card.Context;
-          User[] users = context.Users;
+          ITvCardContext context = (ITvCardContext)cardHandler.Card.Context;
+          IUser[] users = context.Users;
 
-          foreach (User userObj in users)
+          foreach (IUser userObj in users)
           {
             if (userObj.Name.Equals(user.Name))
             {
@@ -1710,7 +1710,7 @@ namespace TvService
         }
       }
 
-      Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
+      Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), (User)user, channel));
     }
 
     /// <summary>
@@ -1718,7 +1718,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="onOff">turn on/off teletext grabbing</param>
-    public void GrabTeletext(User user, bool onOff)
+    public void GrabTeletext(IUser user, bool onOff)
     {
       if (ValidateTvControllerParams(user))
         return;
@@ -1732,7 +1732,7 @@ namespace TvService
     /// <param name="pageNumber">The page number.</param>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <returns></returns>
-    public byte[] GetTeletextPage(User user, int pageNumber, int subPageNumber)
+    public byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber)
     {
       if (ValidateTvControllerParams(user))
         return new byte[] {1};
@@ -1745,7 +1745,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="pageNumber">The page number.</param>
     /// <returns></returns>
-    public int SubPageCount(User user, int pageNumber)
+    public int SubPageCount(IUser user, int pageNumber)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1757,7 +1757,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(User user)
+    public int GetTeletextRedPageNumber(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1769,7 +1769,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(User user)
+    public int GetTeletextGreenPageNumber(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1781,7 +1781,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(User user)
+    public int GetTeletextYellowPageNumber(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1793,7 +1793,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(User user)
+    public int GetTeletextBluePageNumber(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return -1;
@@ -1808,7 +1808,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, ref string fileName)
+    public TvResult StartTimeShifting(ref IUser user, ref string fileName)
     {
       if (ValidateTvControllerParams(user))
         return TvResult.UnknownError;
@@ -1830,7 +1830,7 @@ namespace TvService
           }
         }
 
-        Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), user));
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
         if (_epgGrabber != null)
         {
           _epgGrabber.Stop();
@@ -1874,21 +1874,21 @@ namespace TvService
       return TvResult.UnknownError;
     }
 
-    public void StopCard(User user)
+    public void StopCard(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return;
       _cards[user.CardId].StopCard(user);
     }
 
-    public void PauseCard(User user)
+    public void PauseCard(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return;
       _cards[user.CardId].PauseCard(user);
     }
 
-    public bool StopTimeShifting(ref User user, TvStoppedReason reason)
+    public bool StopTimeShifting(ref IUser user, TvStoppedReason reason)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1896,7 +1896,7 @@ namespace TvService
       return StopTimeShifting(ref user);
     }
 
-    public TvStoppedReason GetTvStoppedReason(User user)
+    public TvStoppedReason GetTvStoppedReason(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return TvStoppedReason.UnknownReason;
@@ -1921,7 +1921,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns></returns>
-    public bool StopTimeShifting(ref User user)
+    public bool StopTimeShifting(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -1964,7 +1964,7 @@ namespace TvService
 
         if (false == _cards[cardId].TimeShifter.IsTimeShifting(ref user))
           return true;
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), user));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndTimeShifting, GetVirtualCard(user), (User)user));
 
         if (_cards[cardId].Recorder.IsRecording(ref user))
           return true;
@@ -2014,7 +2014,7 @@ namespace TvService
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
     /// <param name="startTime">not used</param>
     /// <returns></returns>
-    public TvResult StartRecording(ref User user, ref string fileName, bool contentRecording, long startTime)
+    public TvResult StartRecording(ref IUser user, ref string fileName, bool contentRecording, long startTime)
     {
       if (ValidateTvControllerParams(user))
         return TvResult.UnknownError;
@@ -2044,7 +2044,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns></returns>
-    public bool StopRecording(ref User user)
+    public bool StopRecording(ref IUser user)
     {
       if (ValidateTvControllerParams(user))
         return false;
@@ -2292,28 +2292,28 @@ namespace TvService
 
     #region audio streams
 
-    public IAudioStream[] AvailableAudioStreams(User user)
+    public IAudioStream[] AvailableAudioStreams(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return null;
       return _cards[user.CardId].Audio.Streams(user);
     }
 
-    public IAudioStream GetCurrentAudioStream(User user)
+    public IAudioStream GetCurrentAudioStream(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return null;
       return _cards[user.CardId].Audio.GetCurrent(user);
     }
 
-    public void SetCurrentAudioStream(User user, IAudioStream stream)
+    public void SetCurrentAudioStream(IUser user, IAudioStream stream)
     {
       if (ValidateTvControllerParams(user))
         return;
       _cards[user.CardId].Audio.Set(user, stream);
     }
 
-    public string GetStreamingUrl(User user)
+    public string GetStreamingUrl(IUser user)
     {
       if (ValidateTvControllerParams(user))
         return "";
@@ -2502,7 +2502,7 @@ namespace TvService
     /// <returns>
     /// CardDetail which would be used when doing the actual timeshifting.
     /// </returns>
-    public int TimeShiftingWouldUseCard(ref User user, int idChannel)
+    public int TimeShiftingWouldUseCard(ref IUser user, int idChannel)
     {
       if (user == null)
         return -1;
@@ -2539,7 +2539,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card, bool forceCardId)
     {
       bool cardChanged = false;
       return StartTimeShifting(ref user, idChannel, out card, forceCardId, out cardChanged);
@@ -2556,7 +2556,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card, bool forceCardId, out bool cardChanged)
     {      
       cardChanged = false;
       if (user == null)
@@ -2581,7 +2581,7 @@ namespace TvService
       {
         _epgGrabber.Stop();
       }
-      User userCopy = null;
+      IUser userCopy = null;
       try
       {        
         TvResult result;
@@ -2665,10 +2665,10 @@ namespace TvService
 
           if (isTS)
           {
-            User[] users = tvcard.Users.GetUsers();
+            IUser[] users = tvcard.Users.GetUsers();
             for (int j = users.Length - 1; j > -1; j--)
             {
-              User u = users[j];
+              IUser u = users[j];
               if (user.Name.Equals(u.Name))
                 continue;
               IChannel tmpChannel = tvcard.CurrentChannel(ref u);
@@ -2763,7 +2763,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card)
     {
       bool cardChanged = false;
       return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
@@ -2779,7 +2779,7 @@ namespace TvService
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card, out bool cardChanged)
     {
       return StartTimeShifting(ref user, idChannel, out card, false, out cardChanged);
     }
@@ -3126,7 +3126,7 @@ namespace TvService
     /// Stops the grabbing epg.
     /// </summary>
     /// <param name="user">User</param>
-    public void StopGrabbingEpg(User user)
+    public void StopGrabbingEpg(IUser user)
     {
       if (ValidateTvControllerParams(user))
       {
@@ -3162,7 +3162,7 @@ namespace TvService
       Gentle.Common.CacheManager.Clear();
     }
 
-    public User[] GetUsersForCard(int cardId)
+    public IUser[] GetUsersForCard(int cardId)
     {
       if (ValidateTvControllerParams(cardId))
       {
@@ -3190,14 +3190,14 @@ namespace TvService
 
       foreach (ITvCardHandler tvcard in cardHandlers)      
       {                
-        User[] users = tvcard.Users.GetUsers();
+        IUser[] users = tvcard.Users.GetUsers();
 
         if (users == null || users.Length == 0)
           continue;
 
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           string tmpChannel = tvcard.CurrentChannelName(ref user);
           if (string.IsNullOrEmpty(tmpChannel))
             continue;
@@ -3243,14 +3243,14 @@ namespace TvService
       {
         KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
         ITvCardHandler tvcard = keyPair.Value;
-        User[] users = tvcard.Users.GetUsers();
+        IUser[] users = tvcard.Users.GetUsers();
 
         if (users == null || users.Length == 0)
           continue;
 
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           string tmpChannel = tvcard.CurrentChannelName(ref user);
           if (string.IsNullOrEmpty(tmpChannel))
             continue;
@@ -3282,20 +3282,20 @@ namespace TvService
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      
-    public Dictionary<int, ChannelState> GetAllChannelStatesCached(User user)
+    public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
       if (user == null || user.CardId < 1)
       {
         return null;
       }
 
-      User[] users = _cards[user.CardId].Users.GetUsers();
+      IUser[] users = _cards[user.CardId].Users.GetUsers();
 
       if (users != null)
       {
         for (int i = 0; i < users.Length; i++)
         {
-          User u = users[i];
+          IUser u = users[i];
 
           if (u.Name.Equals(user.Name))
           {
@@ -3313,7 +3313,7 @@ namespace TvService
     /// </summary>
     /// <param name="idGroup"></param>    
     /// <param name="user"></param>        
-    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user)
+    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, IUser user)
     {
       if (idGroup < 1)
       {
@@ -3351,7 +3351,7 @@ namespace TvService
     /// <returns>
     ///       <c>channel state tunable|nottunable</c>.
     /// </returns>
-    public ChannelState GetChannelState(int idChannel, User user)
+    public ChannelState GetChannelState(int idChannel, IUser user)
     {
       ChannelState chanState = ChannelState.tunable;
 
@@ -3648,13 +3648,13 @@ namespace TvService
         {
           KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
           //get a list of all users for this card
-          User[] users = keyPair.Value.Users.GetUsers();
+          IUser[] users = keyPair.Value.Users.GetUsers();
           if (users != null)
           {
             //for each user
             for (int i = 0; i < users.Length; ++i)
             {
-              User tmpUser = users[i];
+              IUser tmpUser = users[i];
               if (tmpUser.HeartBeat > DateTime.MinValue)
               {
                 DateTime now = DateTime.Now;
@@ -3684,7 +3684,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified user is the card owner; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsOwner(int cardId, User user)
+    public bool IsOwner(int cardId, IUser user)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(cardId))
       {
@@ -3698,7 +3698,7 @@ namespace TvService
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
-    public void RemoveUserFromOtherCards(int cardId, User user)
+    public void RemoveUserFromOtherCards(int cardId, IUser user)
     {
       if (ValidateTvControllerParams(user) || ValidateTvControllerParams(cardId))
       {
@@ -3728,7 +3728,7 @@ namespace TvService
       return _cards[cardId].SupportsSubChannels;
     }
 
-    public void HeartBeat(User user)
+    public void HeartBeat(IUser user)
     {
       if (ValidateTvControllerParams(user))
       {
@@ -3745,7 +3745,7 @@ namespace TvService
     /// <param name="channel">The channel.</param>
     /// <param name="dbChannel">The db channel</param>
     /// <returns>TvResult indicating whether method succeeded</returns>
-    private TvResult CardTune(ref User user, IChannel channel, Channel dbChannel)
+    private TvResult CardTune(ref IUser user, IChannel channel, Channel dbChannel)
     {
       if (ValidateTvControllerParams(user))
       {
@@ -3765,15 +3765,15 @@ namespace TvService
           bool isRec = _cards[user.CardId].Recorder.IsRecordingAnyUser();
           if (!isRec)
           {
-            TvCardContext context = (TvCardContext)_cards[user.CardId].Card.Context;
-            User[] users = context.Users;
+            ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
+            IUser[] users = context.Users;
 
             int userSubCh = -1;
             int userChannelId = -1;
             bool otherUserFoundOnSameCh = false;
 
             //lets find the current user, if he has a subchannel and what channel it is.
-            foreach (User userObj in users)
+            foreach (IUser userObj in users)
             {
               if (userObj.Name.Equals(user.Name))
               {
@@ -3789,7 +3789,7 @@ namespace TvService
             //lets find if any other users are sharing that same subchannel/channel
             if (userChannelId > -1)
             {
-              foreach (User userObj in users)
+              foreach (IUser userObj in users)
               {
                 if (!userObj.Name.Equals(user.Name))
                 {
@@ -3816,7 +3816,7 @@ namespace TvService
           }
         }
 
-        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), user, channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), (User)user, channel));
 
         _cards[user.CardId].Tuner.OnAfterTuneEvent -= new CardTuner.OnAfterTuneDelegate(Tuner_OnAfterTuneEvent);
         _cards[user.CardId].Tuner.OnBeforeTuneEvent -= new CardTuner.OnBeforeTuneDelegate(Tuner_OnBeforeTuneEvent);
@@ -3837,7 +3837,7 @@ namespace TvService
       }
       finally
       {
-        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), user, channel));
+        Fire(this, new TvServerEventArgs(TvServerEventType.EndZapChannel, GetVirtualCard(user), (User)user, channel));
       }
     }
 
@@ -3919,7 +3919,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns></returns>
-    private VirtualCard GetVirtualCard(User user)
+    private VirtualCard GetVirtualCard(IUser user)
     {
       if (ValidateTvControllerParams(user))
       {
@@ -3956,7 +3956,7 @@ namespace TvService
           // Do we have a card or is it disposed?
           if (_cards[cardId] == null)
             continue;
-          User[] users = _cards[cardId].Users.GetUsers();
+          IUser[] users = _cards[cardId].Users.GetUsers();
           if (users != null)
           {
             for (int i = 0; i < users.Length; ++i)
@@ -4008,7 +4008,7 @@ namespace TvService
       return ValidateTvControllerParams(cardId, true);
     }
 
-    private bool ValidateTvControllerParams(User user)
+    private bool ValidateTvControllerParams(IUser user)
     {
       if (user == null || user.CardId < 0 || !_cards.ContainsKey(user.CardId) || (!CardPresent(user.CardId)))
       {
@@ -4234,7 +4234,7 @@ namespace TvService
         _scheduler.Stop();  
       }      
 
-      User tmpUser = new User();
+      IUser tmpUser = new User();
       foreach (ITvCardHandler cardhandler in this.CardCollection.Values)
       {
         cardhandler.StopCard(tmpUser);
@@ -4248,7 +4248,7 @@ namespace TvService
     /// <param name="totalTSpackets">Amount of packets processed</param>    
     /// <param name="discontinuityCounter">Number of stream discontinuities</param>
     /// <returns></returns>
-    public void GetStreamQualityCounters(User user, out int totalTSpackets, out int discontinuityCounter)
+    public void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter)
     {
       int cardId = user.CardId;
       ITvCardHandler cardHandler = _cards[cardId];

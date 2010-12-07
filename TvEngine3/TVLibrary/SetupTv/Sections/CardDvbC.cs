@@ -340,7 +340,7 @@ namespace SetupTv.Sections
             return;
           }
           // Check if the card is locked for scanning.
-          User user;
+          IUser user;
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
@@ -451,7 +451,7 @@ namespace SetupTv.Sections
     {
       suminfo tv = new suminfo();
       suminfo radio = new suminfo();
-      User user = new User();
+      IUser user = new User();
       user.CardId = _cardNumber;
       try
       {

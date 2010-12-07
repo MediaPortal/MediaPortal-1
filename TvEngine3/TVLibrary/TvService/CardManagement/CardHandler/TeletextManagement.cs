@@ -43,7 +43,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">USer</param>
     /// <returns>true when card is grabbing teletext otherwise false</returns>
-    public bool IsGrabbingTeletext(User user)
+    public bool IsGrabbingTeletext(IUser user)
     {
       try
       {
@@ -66,7 +66,7 @@ namespace TvService
           return false;
         }
 
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return false;
         context.GetUser(ref user);
@@ -88,7 +88,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>yes if channel has teletext otherwise false</returns>
-    public bool HasTeletext(User user)
+    public bool HasTeletext(IUser user)
     {
       if (_cardHandler.DataBaseCard.Enabled == false)
         return false;
@@ -110,7 +110,7 @@ namespace TvService
         return false;
       }
 
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
         return false;
       context.GetUser(ref user);
@@ -126,7 +126,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="pageNumber">The pagenumber (0x100-0x899)</param>
     /// <returns>timespan containing the rotation time</returns>
-    public TimeSpan TeletextRotation(User user, int pageNumber)
+    public TimeSpan TeletextRotation(IUser user, int pageNumber)
     {
       try
       {
@@ -149,7 +149,7 @@ namespace TvService
           return new TimeSpan(0, 0, 0, 15);
         }
 
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return new TimeSpan(0, 0, 0, 15);
         context.GetUser(ref user);
@@ -170,7 +170,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <param name="onOff">turn on/off teletext grabbing</param>
-    public void GrabTeletext(User user, bool onOff)
+    public void GrabTeletext(IUser user, bool onOff)
     {
       try
       {
@@ -193,7 +193,7 @@ namespace TvService
           return;
         }
 
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return;
         context.GetUser(ref user);
@@ -216,7 +216,7 @@ namespace TvService
     /// <param name="pageNumber">The page number.</param>
     /// <param name="subPageNumber">The sub page number.</param>
     /// <returns></returns>
-    public byte[] GetTeletextPage(User user, int pageNumber, int subPageNumber)
+    public byte[] GetTeletextPage(IUser user, int pageNumber, int subPageNumber)
     {
       try
       {
@@ -239,7 +239,7 @@ namespace TvService
           return new byte[] {1};
         }
 
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return new byte[] {1};
         context.GetUser(ref user);
@@ -263,7 +263,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="pageNumber">The page number.</param>
     /// <returns></returns>
-    public int SubPageCount(User user, int pageNumber)
+    public int SubPageCount(IUser user, int pageNumber)
     {
       try
       {
@@ -283,7 +283,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
         context.GetUser(ref user);
@@ -306,7 +306,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the red button</returns>
-    public int GetTeletextRedPageNumber(User user)
+    public int GetTeletextRedPageNumber(IUser user)
     {
       try
       {
@@ -326,7 +326,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
         context.GetUser(ref user);
@@ -349,7 +349,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the green button</returns>
-    public int GetTeletextGreenPageNumber(User user)
+    public int GetTeletextGreenPageNumber(IUser user)
     {
       try
       {
@@ -369,7 +369,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
         context.GetUser(ref user);
@@ -392,7 +392,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the yellow button</returns>
-    public int GetTeletextYellowPageNumber(User user)
+    public int GetTeletextYellowPageNumber(IUser user)
     {
       try
       {
@@ -412,7 +412,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
         context.GetUser(ref user);
@@ -435,7 +435,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>Teletext pagenumber for the blue button</returns>
-    public int GetTeletextBluePageNumber(User user)
+    public int GetTeletextBluePageNumber(IUser user)
     {
       try
       {
@@ -455,7 +455,7 @@ namespace TvService
             return -1;
           }
         }
-        TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+        ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return -1;
         context.GetUser(ref user);

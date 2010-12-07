@@ -232,7 +232,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
@@ -252,7 +252,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(1, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -262,7 +262,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
 
@@ -283,7 +283,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(1, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -293,7 +293,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
 
@@ -314,7 +314,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -325,7 +325,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
 
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
@@ -345,7 +345,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(1, availCards.Count, "The number of cards returned is not as expected");
       Assert.AreEqual(availCards[0].SameTransponder, false, "same transponder not as expected");
@@ -357,7 +357,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
@@ -378,7 +378,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -387,8 +387,8 @@ namespace CardAllocationTests
     {
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
-      
-      User user = Isolate.Fake.Instance<User>();
+
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
@@ -409,7 +409,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -420,7 +420,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
 
       DVBCardMocks dvbCardMocks = GetCardMockByCardType(CardType.DvbC, tuningDetails, user);
@@ -437,7 +437,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -447,7 +447,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
 
       //we need to pick a different cardtype here-
@@ -485,7 +485,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(0, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -501,7 +501,7 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      User user = Isolate.Fake.Instance<User>();
+      IUser user = Isolate.Fake.Instance<User>();
       TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(CardType.DvbT);      
 
@@ -528,7 +528,7 @@ namespace CardAllocationTests
       AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
 
       TvResult result;
-      List<CardDetail> availCards = allocation.GetAvailableCardsForChannel(cards, channel, ref user, out result);
+      List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(2, availCards.Count, "The number of cards returned is not as expected");
     }
@@ -549,7 +549,7 @@ namespace CardAllocationTests
       Isolate.WhenCalled(() => channelMap.ReferencedCard().DevicePath).WillReturn(cardHandler1.DataBaseCard.DevicePath);      
     }
 
-    private DVBCardMocks GetCardMockByCardType(CardType cardType, List<IChannel> tuningDetails, User user)
+    private DVBCardMocks GetCardMockByCardType(CardType cardType, List<IChannel> tuningDetails, IUser user)
     {
       DVBCardMocks cardMocks = null;
       switch (cardType)

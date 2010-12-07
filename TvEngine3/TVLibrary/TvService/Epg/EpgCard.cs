@@ -69,7 +69,7 @@ namespace TvService
     private readonly TvServerEventHandler _eventHandler;
     private bool _disposed;
     private readonly Card _card;
-    private User _user;
+    private IUser _user;
     private readonly EpgDBUpdater _dbUpdater;
 
     #endregion
@@ -405,7 +405,7 @@ namespace TvService
           }
           try
           {
-            User cardUser;
+            IUser cardUser;
             if (_tvController.IsCardInUse(card.IdCard, out cardUser) == false)
             {
               _user.CardId = card.IdCard;
@@ -702,7 +702,7 @@ namespace TvService
         return false;
       if (cardId < 0)
         return false;
-      User user = new User();
+      IUser user = new User();
       user.CardId = cardId;
       if (RemoteControl.Instance.IsRecording(ref user))
         return false;
@@ -710,7 +710,7 @@ namespace TvService
         return false;
       if (RemoteControl.Instance.IsScanning(user.CardId))
         return false;
-      User cardUser;
+      IUser cardUser;
       if (_tvController.IsCardInUse(cardId, out cardUser))
         return false;
       if (_tvController.IsCardInUse(user.CardId, out cardUser))
@@ -729,7 +729,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true if card is idle, otherwise false</returns>
-    private bool IsCardIdle(User user)
+    private bool IsCardIdle(IUser user)
     {
       if (_isRunning == false)
         return false;
@@ -741,7 +741,7 @@ namespace TvService
         return false;
       if (RemoteControl.Instance.IsScanning(user.CardId))
         return false;
-      User cardUser;
+      IUser cardUser;
       if (_tvController.IsCardInUse(user.CardId, out cardUser))
       {
         if (cardUser != null)

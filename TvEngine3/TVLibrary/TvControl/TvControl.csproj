@@ -77,6 +77,10 @@
     <Compile Include="..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Enums\ChannelState.cs" />
+    <Compile Include="Enums\TvResult.cs" />
+    <Compile Include="Enums\TvStoppedReason.cs" />
+    <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="RemoteControl.cs" />
     <Compile Include="TvServer.cs" />
     <Compile Include="User.cs" />

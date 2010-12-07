@@ -857,8 +857,8 @@ namespace TvPlugin
         rec.Persist();
         currentSchedule = rec;
 
-        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
-                                                       CurrentProgram.EndTime);
+        Schedule assocSchedule = Schedule.RetrieveSpawnedSchedule(rec.IdSchedule, rec.StartTime);
+        
         if (assocSchedule != null)
         {
           assocSchedule.PostRecordInterval = rec.PostRecordInterval;

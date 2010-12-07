@@ -110,6 +110,7 @@
     <Compile Include="Epg\Transponder.cs" />
     <Compile Include="CardManagement\CardAllocation\ICardAllocation.cs" />
     <Compile Include="CardManagement\CardHandler\ITvCardHandler.cs" />
+    <Compile Include="Interfaces\ITvCardContext.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Scheduler\CardDetail.cs" />
     <Compile Include="Epg\EpgGrabber.cs" />

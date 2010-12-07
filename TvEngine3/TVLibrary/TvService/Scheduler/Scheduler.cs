@@ -192,7 +192,7 @@ namespace TvService
       {
         if (rec.Schedule.IdSchedule == idSchedule)
         {
-          User user = new User();
+          IUser user = new User();
           user.Name = string.Format("scheduler{0}", rec.Schedule.IdSchedule);
           user.CardId = rec.CardInfo.Id;
           card = new VirtualCard(user);
@@ -541,10 +541,10 @@ namespace TvService
                             _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
                                                                newRecording.Program);
                           }
-                          User user = newRecording.User;
+                          IUser user = newRecording.User;
                           _tvController.Fire(this,
                                              new TvServerEventArgs(TvServerEventType.ScheduleDeleted,
-                                                                   new VirtualCard(user), user, newRecording.Schedule,
+                                                                   new VirtualCard(user), (User)user, newRecording.Schedule,
                                                                    null));
                           // now we can safely delete it
                           newRecording.Schedule.Delete();
@@ -882,7 +882,7 @@ namespace TvService
     /// <returns>true if recording is started, otherwise false</returns>
     private void StartRecord(RecordingDetail RecDetail)
     {      
-      User user = RecDetail.User;
+      IUser user = RecDetail.User;
 
       Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName,
                 DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
@@ -933,7 +933,7 @@ namespace TvService
       }
     }
     
-    private bool FindAvailCardAndStartRecord(RecordingDetail RecDetail, User user, List<CardDetail> cards, int maxCards)
+    private bool FindAvailCardAndStartRecord(RecordingDetail RecDetail, IUser user, List<CardDetail> cards, int maxCards)
     {
       bool result = false;
       //keep tuning each card until we are succesful                
@@ -963,7 +963,7 @@ namespace TvService
       return result;
     }
 
-    private bool FindFreeCardAndStartRecord(RecordingDetail RecDetail, User user, List<CardDetail> cards, int maxCards)
+    private bool FindFreeCardAndStartRecord(RecordingDetail RecDetail, IUser user, List<CardDetail> cards, int maxCards)
     {
       bool result = false;      
       //keep tuning each card until we are succesful                
@@ -993,7 +993,7 @@ namespace TvService
       return result;
     }
 
-    private bool SetupAndStartRecord(RecordingDetail RecDetail, ref User user, CardDetail cardInfo)
+    private bool SetupAndStartRecord(RecordingDetail RecDetail, ref IUser user, CardDetail cardInfo)
     {
       bool result = false;
       if (cardInfo != null)
@@ -1040,7 +1040,7 @@ namespace TvService
     {      
       try
       {
-        User user = recording.User;
+        IUser user = recording.User;
 
         if (recording.CardInfo != null && _tvController.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
@@ -1075,7 +1075,7 @@ namespace TvService
       }     
     }
 
-    private CardDetail GetCardInfoForRecording(RecordingDetail RecDetail, ref User user, List<CardDetail> freeCards)
+    private CardDetail GetCardInfoForRecording(RecordingDetail RecDetail, ref IUser user, List<CardDetail> freeCards)
     {
       CardDetail cardInfo;
       
@@ -1161,11 +1161,11 @@ namespace TvService
       {
         if (!cardDetail.SameTransponder)
         {
-          User[] tmpUsers = _tvController.GetUsersForCard(cardDetail.Id);
+          IUser[] tmpUsers = _tvController.GetUsersForCard(cardDetail.Id);
           Boolean canKickAll = true;
           for (int i = 0; i < tmpUsers.Length; i++)
           {
-            User tmpUser = tmpUsers[i];
+            IUser tmpUser = tmpUsers[i];
             if (_tvController.IsRecording(ref tmpUser))
             {
               canKickAll = false;
@@ -1179,7 +1179,7 @@ namespace TvService
               cardInfo.Id, cardInfo.Card.Priority);
             for (int i = 0; i < tmpUsers.Length; i++)
             {
-              User tmpUser = tmpUsers[i];
+              IUser tmpUser = tmpUsers[i];
               if (_tvController.IsTimeShifting(ref tmpUser))
               {
                 Log.Write(
@@ -1205,11 +1205,11 @@ namespace TvService
       {
         if (cardDetail.SameTransponder)
         {
-          User[] tmpUsers = _tvController.GetUsersForCard(cardDetail.Id);
+          IUser[] tmpUsers = _tvController.GetUsersForCard(cardDetail.Id);
 
           for (int i = 0; i < tmpUsers.Length; i++)
           {
-            User tmpUser = tmpUsers[i];
+            IUser tmpUser = tmpUsers[i];
             if (!_tvController.IsRecording(ref tmpUser))
             {
               if (_tvController.IsTimeShifting(ref tmpUser))
@@ -1235,17 +1235,17 @@ namespace TvService
     
     private void RecordingStartedNotification(RecordingDetail RecDetail)
     {
-      User user = RecDetail.User;
+      IUser user = RecDetail.User;
       _tvController.Fire(this,
-                         new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(user), user,
+                         new TvServerEventArgs(TvServerEventType.RecordingStarted, new VirtualCard(user), (User)user,
                                                RecDetail.Schedule, RecDetail.Recording));
     }
 
     private void StartRecordingNotification(RecordingDetail RecDetail)
     {
-      User user = RecDetail.User;
+      IUser user = RecDetail.User;
       _tvController.Fire(this,
-                         new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(user), user,
+                         new TvServerEventArgs(TvServerEventType.StartRecording, new VirtualCard(user), (User)user,
                                                RecDetail.Schedule, null));
     }
 
@@ -1260,7 +1260,7 @@ namespace TvService
                                                         Environment.SpecialFolder.CommonApplicationData));
     }
 
-    private bool StartRecordingOnDisc(RecordingDetail RecDetail, ref User user, CardDetail cardInfo) 
+    private bool StartRecordingOnDisc(RecordingDetail RecDetail, ref IUser user, CardDetail cardInfo) 
     {
       bool startRecordingOnDisc = false;
       _tvController.EpgGrabberEnabled = false;
@@ -1330,7 +1330,7 @@ namespace TvService
 
     private void SetupQualityControl(RecordingDetail RecDetail)
     {
-      User user = RecDetail.User;
+      IUser user = RecDetail.User;
       int cardId = user.CardId;
       if (_tvController.SupportsQualityControl(cardId))
       {
@@ -1379,7 +1379,7 @@ namespace TvService
     {      
       try
       {
-        User user = recording.User;
+        IUser user = recording.User;
 
         if (_tvController.SupportsSubChannels(recording.CardInfo.Id) == false)
         {
@@ -1428,9 +1428,9 @@ namespace TvService
 
     private void RecordingEndedNotification(RecordingDetail recording)
     {
-      User user = recording.User;
+      IUser user = recording.User;
       _tvController.Fire(this,
-                         new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(user), user,
+                         new TvServerEventArgs(TvServerEventType.RecordingEnded, new VirtualCard(user), (User)user,
                                                recording.Schedule, recording.Recording));
     }
 
@@ -1446,13 +1446,13 @@ namespace TvService
     }
 
     private void StopRecordOnOnceSchedule(RecordingDetail recording) {
-      User user = recording.User;
+      IUser user = recording.User;
       if (recording.IsSerie)
       {
         _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
       }
       _tvController.Fire(this,
-                         new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(user), user,
+                         new TvServerEventArgs(TvServerEventType.ScheduleDeleted, new VirtualCard(user), (User)user,
                                                recording.Schedule, null));
       // now we can safely delete it
       recording.Schedule.Delete();

@@ -39,7 +39,7 @@ namespace TvService
     }
 
     #region protected members            
-    protected bool IsCamAbleToDecryptChannel(User user, ITvCardHandler tvcard, IChannel tuningDetail, int decryptLimit)
+    protected bool IsCamAbleToDecryptChannel(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int decryptLimit)
     {
       if (!tuningDetail.FreeToAir)
       {
@@ -56,7 +56,7 @@ namespace TvService
             {
               int currentChannelId = tvcard.CurrentDbChannel(ref user);
               int numberOfUsersOnCurrentChannel = 0;
-              foreach (User aUser in tvcard.Users.GetUsers())
+              foreach (IUser aUser in tvcard.Users.GetUsers())
               {
                 
                 if (aUser.IdChannel == currentChannelId)
@@ -84,12 +84,12 @@ namespace TvService
     protected bool IsCamAlreadyDecodingChannel(ITvCardHandler tvcard, IChannel tuningDetail)
     {
       bool isCamAlreadyDecodingChannel = false;
-      User[] currentUsers = tvcard.Users.GetUsers();
+      IUser[] currentUsers = tvcard.Users.GetUsers();
       if (currentUsers != null)
       {
         for (int i = 0; i < currentUsers.Length; ++i)
         {
-          User tmpUser = currentUsers[i];
+          IUser tmpUser = currentUsers[i];
           if (tvcard.CurrentChannel(ref tmpUser).Equals(tuningDetail))
           {
             //yes, cam already is descrambling this channel
@@ -123,7 +123,7 @@ namespace TvService
       return isValid;
     }
 
-    protected bool CheckTransponder(User user, ITvCardHandler tvcard, int decryptLimit, int cardId,
+    protected bool CheckTransponder(IUser user, ITvCardHandler tvcard, int decryptLimit, int cardId,
                                   IChannel tuningDetail)
     {
       bool checkTransponder = true;

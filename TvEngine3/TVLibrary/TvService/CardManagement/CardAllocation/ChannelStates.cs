@@ -40,12 +40,12 @@ namespace TvService
 
     #region private members   
 
-    private static void UpdateChannelStateUserBasedOnCardOwnership(ITvCardHandler tvcard, IList<User> allUsers,
+    private static void UpdateChannelStateUserBasedOnCardOwnership(ITvCardHandler tvcard, IList<IUser> allUsers,
                                                                    Channel ch)
     {
       for (int i = 0; i < allUsers.Count; i++)
       {
-        User user = allUsers[i];
+        IUser user = allUsers[i];
         if (user.IsAdmin)
         {
           continue;
@@ -65,11 +65,11 @@ namespace TvService
       }
     }   
 
-    private static void UpdateChannelStateUsers(IList<User> allUsers, ChannelState chState, int channelId)
+    private static void UpdateChannelStateUsers(IList<IUser> allUsers, ChannelState chState, int channelId)
     {
       for (int i = 0; i < allUsers.Count; i++)
       {
-        User u = null;
+        IUser u = null;
         try
         {
           u = allUsers[i];
@@ -89,7 +89,7 @@ namespace TvService
       }
     }
 
-    private static void UpdateChannelStateUser(User user, ChannelState chState, int channelId)
+    private static void UpdateChannelStateUser(IUser user, ChannelState chState, int channelId)
     {
       ChannelState currentChState;
       
@@ -113,10 +113,10 @@ namespace TvService
       }
     }
 
-    private static IList<User> GetActiveUsers(Dictionary<int, ITvCardHandler> cards)
+    private static IList<IUser> GetActiveUsers(Dictionary<int, ITvCardHandler> cards)
     {
       // find all users
-      IList<User> allUsers = new List<User>();
+      IList<IUser> allUsers = new List<IUser>();
 
       try
       {
@@ -124,13 +124,13 @@ namespace TvService
         foreach (ITvCardHandler cardHandler in cardHandlers)
         {          
           //get a list of all users for this card
-          User[] usersAvail = cardHandler.Users.GetUsers();
+          IUser[] usersAvail = cardHandler.Users.GetUsers();
           if (usersAvail != null)
           {
             //for each user
             for (int i = 0; i < usersAvail.Length; ++i)
             {
-              User tmpUser = usersAvail[i];
+              IUser tmpUser = usersAvail[i];
               if (!tmpUser.IsAdmin)
               {
                 tmpUser.ChannelStates = new Dictionary<int, ChannelState>();
@@ -150,7 +150,7 @@ namespace TvService
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
-                                           bool checkTransponders, IList<User> allUsers, TVController tvController)
+                                           bool checkTransponders, IList<IUser> allUsers, TVController tvController)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
@@ -259,9 +259,9 @@ namespace TvService
       }
     }
 
-    private static void RemoveAllTunableChannelStates(IList<User> allUsers)
+    private static void RemoveAllTunableChannelStates(IList<IUser> allUsers)
     {
-      foreach (User user in allUsers)
+      foreach (IUser user in allUsers)
       {
 
         List<int> keysToDelete = new List<int>();
@@ -282,7 +282,7 @@ namespace TvService
       }
     }
 
-    private static void UpdateRecOrTSChannelStateForUsers(Channel ch, IList<User> allUsers,
+    private static void UpdateRecOrTSChannelStateForUsers(Channel ch, IList<IUser> allUsers,
                                                           Dictionary<int, ChannelState> TSandRecStates)
     {
       ChannelState cs = ChannelState.tunable;
@@ -298,13 +298,13 @@ namespace TvService
       }      
     }
 
-    private void CheckTransponderAllUsers(Channel ch, IList<User> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
+    private void CheckTransponderAllUsers(Channel ch, IList<IUser> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
                                                  int decryptLimit, int cardId, IChannel tuningDetail,
                                                  bool checkTransponders)
     {
         for (int i = 0; i < allUsers.Count; i++)
         {
-          User user = allUsers[i];
+          IUser user = allUsers[i];
                     
           //ignore admin users, like scheduler
           if (user.IsAdmin)
@@ -339,7 +339,7 @@ namespace TvService
 
       //call the real work as a thread in order to avoid slower channel changes.
       // find all users      
-      IList<User> allUsers = GetActiveUsers(cards);
+      IList<IUser> allUsers = GetActiveUsers(cards);
       ThreadStart starter = delegate { DoSetChannelStates(cards, channels, checkTransponders, allUsers, tvController); };
       Thread setChannelStatesThread = new Thread(starter);
       setChannelStatesThread.Name = "Channel state thread";
@@ -354,7 +354,7 @@ namespace TvService
     /// </summary>    
     /// <returns>dictionary containing all channel states of the channels supplied</returns>
     public Dictionary<int, ChannelState> GetChannelStates(Dictionary<int, ITvCardHandler> cards, IList<Channel> channels,
-                                                          ref User user, bool checkTransponders,
+                                                          ref IUser user, bool checkTransponders,
                                                           TVController tvController)
     {
       if (channels == null)
@@ -362,7 +362,7 @@ namespace TvService
         return null;
       }
 
-      List<User> allUsers = new List<User>();
+      List<IUser> allUsers = new List<IUser>();
       allUsers.Add(user);
 
       DoSetChannelStates(cards, channels, checkTransponders, allUsers, tvController);

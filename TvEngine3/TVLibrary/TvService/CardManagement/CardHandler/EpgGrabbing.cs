@@ -224,7 +224,7 @@ namespace TvService
     /// Stops the grabbing epg.
     /// </summary>
     /// <param name="user">User</param>
-    public void Stop(User user)
+    public void Stop(IUser user)
     {
       Log.Epg("EpgGrabbing: Stop - user {0}", user.Name);
       if (_cardHandler.IsLocal == false)
@@ -233,7 +233,7 @@ namespace TvService
         // RemoteControl.Instance.StopGrabbingEpg();
         return;
       }
-      TvCardContext context = _cardHandler.Card.Context as TvCardContext;
+      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context != null)
       {
         context.Remove(user);

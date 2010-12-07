@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using TvLibrary.Interfaces;
 
 namespace TvControl
 {
@@ -122,7 +123,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">The card id.</param>
     /// <returns></returns>
-    public User GetUserForCard(int cardId)
+    public IUser GetUserForCard(int cardId)
     {
       try
       {
@@ -142,7 +143,7 @@ namespace TvControl
     /// <param name="user">The user.</param>
     /// <param name="index">index of card</param>
     /// <returns></returns>
-    public VirtualCard CardByIndex(User user, int index)
+    public VirtualCard CardByIndex(IUser user, int index)
     {
       try
       {
@@ -209,7 +210,7 @@ namespace TvControl
     /// <returns>
     /// 	<c>true</c> if a card is recording or timeshifting; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsAnyCardRecordingOrTimeshifting(User userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
+    public bool IsAnyCardRecordingOrTimeshifting(IUser userTS, out bool isUserTS, out bool isAnyUserTS, out bool isRec)
     {
       isUserTS = false;
       isAnyUserTS = false;
@@ -259,7 +260,7 @@ namespace TvControl
     /// <returns>
     /// returns card id which would be used when doing the actual timeshifting.
     /// </returns>
-    public int TimeShiftingWouldUseCard(ref User user, int idChannel)
+    public int TimeShiftingWouldUseCard(ref IUser user, int idChannel)
     {
       try
       {
@@ -277,11 +278,11 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <param name="idChannel">id of the channel</param>
-    /// <param name="card">returns on which card timeshifting is started</param>    
+    /// <param name="card">returns on which card timeshifting is started</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card)
     {
       card = null;      
       try
@@ -306,7 +307,7 @@ namespace TvControl
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, out bool cardChanged)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card, out bool cardChanged)
     {
       card = null;
       cardChanged = false;
@@ -328,11 +329,11 @@ namespace TvControl
     /// <param name="user">The user.</param>
     /// <param name="idChannel">id of the channel</param>
     /// <param name="card">returns on which card timeshifting is started</param>
-    /// <param name="forceCardId">Indicated, if the card should be forced</param>    
+    /// <param name="forceCardId">Indicated, if the card should be forced</param>
     /// <returns>
     /// TvResult indicating whether method succeeded
     /// </returns>
-    public TvResult StartTimeShifting(ref User user, int idChannel, out VirtualCard card, bool forceCardId)
+    public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card, bool forceCardId)
     {
       card = null;
       try
@@ -542,7 +543,7 @@ namespace TvControl
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      
-    public Dictionary<int, ChannelState> GetAllChannelStatesCached(User user)
+    public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
       try
       {
@@ -561,7 +562,7 @@ namespace TvControl
     /// </summary>
     /// <param name="idGroup"></param>    
     /// <param name="user"></param>        
-    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, User user)
+    public Dictionary<int, ChannelState> GetAllChannelStatesForGroup(int idGroup, IUser user)
     {
       try
       {
@@ -580,7 +581,7 @@ namespace TvControl
     /// <param name="idChannel">the channel id</param>
     /// <param name="user">User</param>
     /// <returns>an enum indicating tunable/timeshifting/recording</returns>
-    public ChannelState GetChannelState(int idChannel, User user)
+    public ChannelState GetChannelState(int idChannel, IUser user)
     {
       try
       {

@@ -79,7 +79,7 @@ namespace TvService
     /// <param name="contentRecording">if true then create a content recording else a reference recording</param>
     /// <param name="startTime">not used</param>
     /// <returns></returns>
-    public TvResult Start(ref User user, ref string fileName, bool contentRecording, long startTime)
+    public TvResult Start(ref IUser user, ref string fileName, bool contentRecording, long startTime)
     {
       bool useErrorDetection = false;
       try
@@ -199,7 +199,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns></returns>
-    public bool Stop(ref User user)
+    public bool Stop(ref IUser user)
     {
       try
       {
@@ -249,7 +249,7 @@ namespace TvService
             }
           }          
 
-          User[] users = context.Users;
+          IUser[] users = context.Users;
           for (int i = 0; i < users.Length; ++i)
           {
             ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(users[i].SubChannel);
@@ -276,7 +276,7 @@ namespace TvService
 
     public bool IsRecordingChannel(string channelName)
     {
-      User[] users = _cardHandler.Users.GetUsers();
+      IUser[] users = _cardHandler.Users.GetUsers();
       if (users == null)
         return false;
       if (users.Length == 0)
@@ -284,7 +284,7 @@ namespace TvService
 
       for (int i = 0; i < users.Length; ++i)
       {
-        User user = users[i];
+        IUser user = users[i];
         if (!user.IsAdmin)
           continue;
         if (_cardHandler.CurrentChannelName(ref user) == null)
@@ -310,14 +310,14 @@ namespace TvService
     {
       get
       {
-        User[] users = _cardHandler.Users.GetUsers();
+        IUser[] users = _cardHandler.Users.GetUsers();
         if (users == null)
           return false;
         if (users.Length == 0)
           return false;
         for (int i = 0; i < users.Length; ++i)
         {
-          User user = users[i];
+          IUser user = users[i];
           if (IsRecording(ref user))
             return true;
         }
@@ -327,7 +327,7 @@ namespace TvService
 
     public bool IsRecordingAnyUser()
     {
-      User[] users = _cardHandler.Users.GetUsers();
+      IUser[] users = _cardHandler.Users.GetUsers();
       if (users == null)
         return false;
       if (users.Length == 0)
@@ -335,7 +335,7 @@ namespace TvService
 
       for (int i = 0; i < users.Length; ++i)
       {
-        User user = users[i];
+        IUser user = users[i];
         if (!user.IsAdmin)
           continue;
         if (_cardHandler.CurrentChannelName(ref user) == null)
@@ -354,7 +354,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>true when card is recording otherwise false</returns>
-    public bool IsRecording(ref User user)
+    public bool IsRecording(ref IUser user)
     {
       try
       {
@@ -400,7 +400,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>filename or null when not recording</returns>
-    public string FileName(ref User user)
+    public string FileName(ref IUser user)
     {
       try
       {
@@ -446,7 +446,7 @@ namespace TvService
     /// </summary>
     /// <param name="user">User</param>
     /// <returns>DateTime containg the date/time when recording was started</returns>
-    public DateTime RecordingStarted(User user)
+    public DateTime RecordingStarted(IUser user)
     {
       try
       {
@@ -491,7 +491,7 @@ namespace TvService
     /// <param name="user">User</param>
     /// <param name="scrambled">Indicates if the channel is scambled</param>
     /// <returns>true when timeshift files is at least of 300kb, else timeshift file is less then 300kb</returns>
-    public bool WaitForRecordingFile(ref User user, out bool scrambled)
+    public bool WaitForRecordingFile(ref IUser user, out bool scrambled)
     {
       ///(taken from timeshifter)
       scrambled = false;

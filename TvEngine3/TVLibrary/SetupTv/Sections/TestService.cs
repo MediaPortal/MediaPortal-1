@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using Gentle.Framework;
 using SetupControls;
@@ -124,7 +125,7 @@ namespace SetupTv.Sections
             break; // Keep the first card enabled selected only
           }
         }       
-        User user = new User();
+        IUser user = new User();
         user.Name = "setuptv-" + id + "-" + cardId;
         user.IsAdmin = true;
         user.CardId = cardId;
@@ -311,7 +312,7 @@ namespace SetupTv.Sections
         foreach (Card card in _cards)
         {
           cardNo++;
-          User user = new User();
+          IUser user = new User();
           user.CardId = card.IdCard;
           if (off >= mpListView1.Items.Count)
           {
@@ -363,7 +364,7 @@ namespace SetupTv.Sections
             continue;
           }
 
-          User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+          IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null || usersForCard.Length == 0)
           {
             ColorLine(card, item);
@@ -550,7 +551,7 @@ namespace SetupTv.Sections
       {
         if (card.Enabled == false) continue;
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
         for (int i = 0; i < usersForCard.Length; ++i)
@@ -581,7 +582,7 @@ namespace SetupTv.Sections
       {
         if (card.Enabled == false) continue;
         if (!RemoteControl.Instance.CardPresent(card.IdCard)) continue;
-        User[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+        IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
         if (usersForCard == null) continue;
         if (usersForCard.Length == 0) continue;
         for (int i = 0; i < usersForCard.Length; ++i)
