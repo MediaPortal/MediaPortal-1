@@ -478,14 +478,23 @@ namespace MediaPortal.GUI.Music
 
     private void BuildOrder(FilterDefinition filter, ref string orderClause)
     {
-      orderClause = " order by " + GetSortField(filter) + " ";
-      if (!filter.SortAscending)
+      string[] sortFields = GetSortField(filter).Split('|');
+      orderClause = " order by ";
+      for (int i = 0; i < sortFields.Length; i++ )
       {
-        orderClause += "desc";
-      }
-      else
-      {
-        orderClause += "asc";
+        if (i > 0)
+        {
+          orderClause += ", ";
+        }
+        orderClause += sortFields[i];
+        if (!filter.SortAscending)
+        {
+          orderClause += " desc";
+        }
+        else
+        {
+          orderClause += " asc";
+        }
       }
       if (filter.Limit > 0)
       {
@@ -733,6 +742,11 @@ namespace MediaPortal.GUI.Music
       {
         return "iDisc";
       }
+      if (filter.DefaultSort == "Track")
+      {
+        return "iDisc|iTrack";  // We need to sort on Discid + Track
+      }
+
 
       return GetField(filter.Where);
     }
