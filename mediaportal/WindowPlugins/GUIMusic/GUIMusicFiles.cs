@@ -62,32 +62,24 @@ namespace MediaPortal.GUI.Music
         {
           MusicTag tag1 = (MusicTag) item1.MusicTag;
           MusicTag tag2 = (MusicTag) item2.MusicTag;
-
-          if (tag1.Track < 1)
+          if (!string.IsNullOrEmpty(tag1.AlbumArtist) &&
+              !string.IsNullOrEmpty(tag2.AlbumArtist) &&
+              tag1.AlbumArtist != tag2.AlbumArtist)
           {
-            return CompareAlbumNames(tag1.Album, tag2.Album);
+            return string.Compare(tag1.AlbumArtist, tag2.AlbumArtist);
           }
-
-          else
+          if (!string.IsNullOrEmpty(tag1.Album) &&
+              !string.IsNullOrEmpty(tag2.Album) &&
+              tag1.Album != tag2.Album)
           {
-            return CompareTracks(tag1.Track, tag2.Track);
+            return string.Compare(tag1.Album, tag2.Album);
           }
+          if(tag1.DiscID != tag2.DiscID)
+          {
+            return tag1.DiscID.CompareTo(tag2.DiscID);
+          }
+          return tag1.Track - tag2.Track;
         }
-      }
-
-      private int CompareTracks(int track1, int track2)
-      {
-        return track1.CompareTo(track2);
-      }
-
-      private int CompareAlbumNames(string albumTitle1, string albumTitle2)
-      {
-        if (albumTitle1 == null || albumTitle2 == null)
-        {
-          return 0;
-        }
-
-        return albumTitle1.CompareTo(albumTitle2);
       }
     }
 
@@ -1457,13 +1449,23 @@ namespace MediaPortal.GUI.Music
       { // add tracks
         if (PlayAllOnSingleItemPlayNow)
         {
-          for(int i = 0; i < facadeLayout.Count; i++)
-          {
-            GUIListItem trackItem = facadeLayout[i];
-            if (trackItem.Label != "..")
+          GUIListItem selectedItem = facadeLayout.SelectedListItem;
+          if (!selectedItem.IsFolder)
+          { // we have a track selected so add any other tracks which
+            // are on showing on the facade
+            for(int i = 0; i < facadeLayout.Count; i++)
             {
-              pl.Add(ConvertItemToPlaylist(facadeLayout[i]));
+              GUIListItem trackItem = facadeLayout[i];
+              if (!trackItem.IsFolder)
+              {
+                pl.Add(ConvertItemToPlaylist(trackItem));
+              }
             }
+          }
+          else
+          { // selected item was a folder so contents will get 
+            // recursively added so just add item to playlist
+            pl.Add(ConvertItemToPlaylist(item));
           }
         }
         else

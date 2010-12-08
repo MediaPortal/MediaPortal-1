@@ -61,6 +61,10 @@ namespace MediaPortal.GUI.Music
         {
           return string.Compare(tag1.Album, tag2.Album);
         }
+        if(tag1.DiscID != tag2.DiscID)
+        {
+          return tag1.DiscID.CompareTo(tag2.DiscID);
+        }
         return tag1.Track - tag2.Track;
       }
     }
@@ -1028,7 +1032,9 @@ namespace MediaPortal.GUI.Music
     private void InsertSelectionToPlaylist()
     {
       List<Song> songs = GetSongsForSelection();
-      base.InsertItemsToPlaylist(ConvertSongsToPlaylist(songs));
+      List<PlayListItem> pl = ConvertSongsToPlaylist(songs);
+      pl.Sort(new TrackComparer());
+      base.InsertItemsToPlaylist(pl);
     }
 
     /// <summary>
