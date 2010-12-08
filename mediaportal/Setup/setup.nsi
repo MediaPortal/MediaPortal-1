@@ -55,7 +55,7 @@
 !else
   !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
 !endif
-!define MEDIAPORTAL.XBMCBIN "${svn_MP}\xbmc\bin\${BUILD_TYPE}"
+!define MEDIAPORTAL.XBMCBIN "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}"
 
 
 #---------------------------------------------------------------------------
@@ -418,8 +418,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${svn_MP}\MediaPortal.Base\MediaPortalDirs.xml"
   File "${svn_MP}\MediaPortal.Base\BuiltInPlugins.xml"
   ; MediaPortal.exe
-  File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe"
-  File "${svn_MP}\xbmc\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  File "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
+  File "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
   File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
   File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"

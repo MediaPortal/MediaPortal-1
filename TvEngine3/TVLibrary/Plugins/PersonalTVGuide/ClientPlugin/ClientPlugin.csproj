@@ -30,11 +30,11 @@
   <ItemGroup>
     <Reference Include="Core, Version=1.0.2620.39239, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\MediaPortal\MediaPortal.Application\bin\Release\Core.dll</HintPath>
     </Reference>
     <Reference Include="Dialogs, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\plugins\windows\Dialogs.dll</HintPath>
+      <HintPath>..\..\..\..\..\MediaPortal\MediaPortal.Application\bin\Release\plugins\windows\Dialogs.dll</HintPath>
     </Reference>
     <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
       <SpecificVersion>False</SpecificVersion>
@@ -65,11 +65,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="Utils, Version=2.1.2.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\Utils.dll</HintPath>
+      <HintPath>..\..\..\..\..\MediaPortal\MediaPortal.Application\bin\Release\Utils.dll</HintPath>
     </Reference>
     <Reference Include="WindowPlugins, Version=0.2.2.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\MediaPortal\xbmc\bin\Release\plugins\windows\WindowPlugins.dll</HintPath>
+      <HintPath>..\..\..\..\..\MediaPortal\MediaPortal.Application\bin\Release\plugins\windows\WindowPlugins.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

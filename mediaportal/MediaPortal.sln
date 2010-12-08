@@ -24,7 +24,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostSetup", "PostSetup\Post
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal.Configuration", "Configuration\MediaPortal.Configuration.csproj", "{68168FAA-A363-4F64-981C-32629A537900}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "xbmc\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediaPortal", "MediaPortal.Application\MediaPortal.csproj", "{CBDFAA0E-01F5-4331-AB55-18A4A037B5AE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{396C5208-5D46-4A11-92C1-FD0F2F42D7DD} = {396C5208-5D46-4A11-92C1-FD0F2F42D7DD}
 		{BD4A3413-C9F9-4299-BB52-ED45027EE7CC} = {BD4A3413-C9F9-4299-BB52-ED45027EE7CC}
