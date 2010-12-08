@@ -81,6 +81,7 @@ namespace SetupTv.Sections
       this.User = new System.Windows.Forms.ColumnHeader();
       this.cardName = new System.Windows.Forms.ColumnHeader();
       this.subchannels = new System.Windows.Forms.ColumnHeader();
+      this.chkSynch = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -409,7 +410,7 @@ namespace SetupTv.Sections
       // 
       // txtRndFrom
       // 
-      this.txtRndFrom.Location = new System.Drawing.Point(222, 242);
+      this.txtRndFrom.Location = new System.Drawing.Point(183, 242);
       this.txtRndFrom.Name = "txtRndFrom";
       this.txtRndFrom.Size = new System.Drawing.Size(33, 20);
       this.txtRndFrom.TabIndex = 65;
@@ -419,7 +420,7 @@ namespace SetupTv.Sections
       // 
       // txtRndTo
       // 
-      this.txtRndTo.Location = new System.Drawing.Point(274, 242);
+      this.txtRndTo.Location = new System.Drawing.Point(235, 242);
       this.txtRndTo.Name = "txtRndTo";
       this.txtRndTo.Size = new System.Drawing.Size(33, 20);
       this.txtRndTo.TabIndex = 67;
@@ -430,7 +431,7 @@ namespace SetupTv.Sections
       // mpLabel5
       // 
       this.mpLabel5.AutoSize = true;
-      this.mpLabel5.Location = new System.Drawing.Point(258, 245);
+      this.mpLabel5.Location = new System.Drawing.Point(219, 245);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(10, 13);
       this.mpLabel5.TabIndex = 69;
@@ -456,8 +457,8 @@ namespace SetupTv.Sections
       this.txtTuneDelay.Name = "txtTuneDelay";
       this.txtTuneDelay.Size = new System.Drawing.Size(46, 20);
       this.txtTuneDelay.TabIndex = 72;
-      this.txtTuneDelay.Text = "1000";
-      this.txtTuneDelay.Value = 1000;
+      this.txtTuneDelay.Text = "0";
+      this.txtTuneDelay.Value = 0;
       // 
       // lblTuneDelayMsec
       // 
@@ -471,6 +472,8 @@ namespace SetupTv.Sections
       // chkShareChannels
       // 
       this.chkShareChannels.AutoSize = true;
+      this.chkShareChannels.Checked = true;
+      this.chkShareChannels.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chkShareChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkShareChannels.Location = new System.Drawing.Point(332, 245);
       this.chkShareChannels.Name = "chkShareChannels";
@@ -544,10 +547,24 @@ namespace SetupTv.Sections
       this.subchannels.Text = "Subchannels";
       this.subchannels.Width = 100;
       // 
+      // chkSynch
+      // 
+      this.chkSynch.AutoSize = true;
+      this.chkSynch.Checked = true;
+      this.chkSynch.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.chkSynch.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.chkSynch.Location = new System.Drawing.Point(278, 245);
+      this.chkSynch.Name = "chkSynch";
+      this.chkSynch.Size = new System.Drawing.Size(48, 17);
+      this.chkSynch.TabIndex = 76;
+      this.chkSynch.Text = "Sync";
+      this.chkSynch.UseVisualStyleBackColor = true;
+      // 
       // TestChannels
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.chkSynch);
       this.Controls.Add(this.mpListView1);
       this.Controls.Add(this.chkShareChannels);
       this.Controls.Add(this.lblTuneDelayMsec);
@@ -625,5 +642,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader User;
     private System.Windows.Forms.ColumnHeader cardName;
     private System.Windows.Forms.ColumnHeader subchannels;
+    private MediaPortal.UserInterface.Controls.MPCheckBox chkSynch;
   }
 }

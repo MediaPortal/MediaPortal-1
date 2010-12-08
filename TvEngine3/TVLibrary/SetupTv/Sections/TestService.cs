@@ -329,7 +329,7 @@ namespace SetupTv.Sections
           {
             item = mpListView1.Items[off];
           }
-
+          ColorLine(card, item);
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
           {
@@ -366,8 +366,7 @@ namespace SetupTv.Sections
 
           IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null || usersForCard.Length == 0)
-          {
-            ColorLine(card, item);
+          {            
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -438,8 +437,7 @@ namespace SetupTv.Sections
           // If we haven't found a user that fits, than it is a hybrid card which is inactive
           // This means that the card is idle.
           if (!userFound)
-          {
-            ColorLine(card, item);
+          {            
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
@@ -472,14 +470,20 @@ namespace SetupTv.Sections
     private void ColorLine(Card card, ListViewItem item)
     {
       Color lineColor = Color.White;
-      int subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
-      if (subchannels > 0)
+      int subchannels = 0;
+      IUser user;
+      bool cardInUse = RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+
+      if (!cardInUse)
       {
-        lineColor = Color.Red;
+        subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+        if (subchannels > 0)
+        {
+          lineColor = Color.Red;
+        }
       }
-
+      
       item.UseItemStyleForSubItems = false;
-
       item.BackColor = lineColor;
 
       foreach (ListViewItem.ListViewSubItem lvi in item.SubItems)

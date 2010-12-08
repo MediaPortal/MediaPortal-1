@@ -49,7 +49,7 @@ namespace SetupTv.Sections
     private int _concurrentTunes;
     private int _failed;
     private int _firstFail;
-    //private object _lock = new object();
+    private object _lock = new object();
     private bool _repeat = true;
     private int _rndFrom;
     private int _rndTo;
@@ -286,11 +286,19 @@ namespace SetupTv.Sections
       {
         try
         {
-          //lock (_lock)
-          //{
-            UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);          
+          if (chkSynch.Checked)
+          {
+            lock (_lock)
+            {
+              UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
+              RemoteControl.Instance.StopTimeShifting(ref user);
+            }
+          }
+          else
+          {
+            UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
             RemoteControl.Instance.StopTimeShifting(ref user);
-          //}
+          }
         }
         catch (Exception)
         {
@@ -346,14 +354,17 @@ namespace SetupTv.Sections
               }
             }
           }
-          //lock (_lock)
-          //{          
-            Stopwatch sw = Stopwatch.StartNew();
-            UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);          
-            result = RemoteControl.Instance.StartTimeShifting(ref user, channel.IdChannel, out card);
-            mSecsElapsed = sw.ElapsedMilliseconds;
-            _avg += mSecsElapsed;
-          //}
+          if (chkSynch.Checked)
+          {
+            lock (_lock)
+            {
+              user = StartTimeshifting(channel, user, nextRowIndexForDiscUpdate, out mSecsElapsed, out result, out card);
+            }
+          }
+          else
+          {
+            user = StartTimeshifting(channel, user, nextRowIndexForDiscUpdate, out mSecsElapsed, out result, out card);            
+          }
           if (result == TvResult.Succeeded)
           {
             nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(card.Id), "");
@@ -406,7 +417,16 @@ namespace SetupTv.Sections
           Thread.Sleep(rnd.Next(_rndFrom, _rndTo));
         }
       }
-    }   
+    }
+
+    private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed, out TvResult result, out VirtualCard card) {
+      Stopwatch sw = Stopwatch.StartNew();
+      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);          
+      result = RemoteControl.Instance.StartTimeShifting(ref user, channel.IdChannel, out card);
+      mSecsElapsed = sw.ElapsedMilliseconds;
+      _avg += mSecsElapsed;
+      return user;
+    }
 
     private string GetErrMsgFromTVResult(TvResult result)
     {
@@ -592,6 +612,8 @@ namespace SetupTv.Sections
             item = mpListView1.Items[off];
           }
 
+          ColorLine(card, item);
+
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
           {
@@ -628,8 +650,7 @@ namespace SetupTv.Sections
 
           IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
-          {
-            ColorLine(card, item);
+          {            
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -643,8 +664,7 @@ namespace SetupTv.Sections
             continue;
           }
           if (usersForCard.Length == 0)
-          {
-            ColorLine(card, item);
+          {            
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -716,8 +736,7 @@ namespace SetupTv.Sections
           // If we haven't found a user that fits, than it is a hybrid card which is inactive
           // This means that the card is idle.
           if (!userFound)
-          {
-            ColorLine(card, item);
+          {            
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
@@ -749,11 +768,18 @@ namespace SetupTv.Sections
     private void ColorLine(Card card, ListViewItem item)
     {
       Color lineColor = Color.White;
-      int subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);      
-      if (subchannels > 0 && !_running)
+      int subchannels = 0;
+      IUser user;
+      bool cardInUse = RemoteControl.Instance.IsCardInUse(card.IdCard, out user);
+
+      if (!cardInUse)
       {
-        lineColor = Color.Red;
-      }
+        subchannels = RemoteControl.Instance.GetSubChannels(card.IdCard);
+        if (subchannels > 0)
+        {
+          lineColor = Color.Red;
+        }
+      }      
 
       item.UseItemStyleForSubItems = false;
 
