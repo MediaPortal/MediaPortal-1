@@ -225,21 +225,41 @@ namespace MediaPortal.GUI.Music
         case SortMethod.Track:
           int iTrack1 = 0;
           int iTrack2 = 0;
-          if (item1.MusicTag != null)
+          int iDisk1 = 0;
+          int iDisk2 = 0;
+          MusicTag tag1 = (MusicTag)item1.MusicTag;
+          MusicTag tag2 = (MusicTag)item2.MusicTag;
+          if (tag1 != null)
           {
-            iTrack1 = ((MusicTag)item1.MusicTag).Track;
+            iTrack1 = tag1.Track;
+            iDisk1 = tag1.DiscID;
           }
-          if (item2.MusicTag != null)
+          if (tag2 != null)
           {
-            iTrack2 = ((MusicTag)item2.MusicTag).Track;
+            iTrack2 = tag2.Track;
+            iDisk2 = tag2.DiscID;
           }
           if (bAscending)
           {
-            return (int)(iTrack1 - iTrack2);
+            if (iDisk1 != iDisk2)
+            {
+              return iDisk1.CompareTo(iDisk2);
+            }
+            else
+            {
+              return iTrack1.CompareTo(iTrack2);
+            }
           }
           else
           {
-            return (int)(iTrack2 - iTrack1);
+            if (iDisk1 != iDisk2)
+            {
+              return iDisk2.CompareTo(iDisk1);
+            }
+            else
+            {
+              return iTrack2.CompareTo(iTrack1);
+            }
           }
 
         case SortMethod.Duration:
