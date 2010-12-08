@@ -1217,6 +1217,9 @@ namespace MediaPortal.Music.Database
         strTmp = tag.Comment;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         tag.Comment = strTmp == "unknown" ? "" : strTmp;
+        strTmp = tag.Codec;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        tag.Codec = strTmp == "unknown" ? "" : strTmp;
 
         if (!tag.HasAlbumArtist)
         {
