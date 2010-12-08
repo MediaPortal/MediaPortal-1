@@ -431,6 +431,8 @@ namespace MediaPortal.Music.Database
 
       tmpTag.Title = this.Title;
       tmpTag.Album = this.Album;
+      tmpTag.DiscID = this.DiscId;
+      tmpTag.DiscTotal = this.DiscTotal;
       tmpTag.AlbumArtist = this.AlbumArtist;
       tmpTag.Artist = this.Artist;
       tmpTag.Duration = this.Duration;
@@ -438,6 +440,7 @@ namespace MediaPortal.Music.Database
       tmpTag.Composer = this.Composer;
       tmpTag.Conductor = this.Conductor;
       tmpTag.Track = this.Track;
+      tmpTag.TrackTotal = this.TrackTotal;
       tmpTag.Year = this.Year;
       tmpTag.Rating = this.Rating;
       tmpTag.TimesPlayed = this.TimesPlayed;
@@ -452,6 +455,7 @@ namespace MediaPortal.Music.Database
       tmpTag.BitRate = this.BitRate;
       tmpTag.Channels = this.Channels;
       tmpTag.SampleRate = this.SampleRate;
+      tmpTag.HasAlbumArtist = string.IsNullOrEmpty(this.AlbumArtist);
 
       return tmpTag;
     }
