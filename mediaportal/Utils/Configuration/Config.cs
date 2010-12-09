@@ -58,15 +58,6 @@ namespace MediaPortal.Configuration
 
     #region Constructors/Destructors
 
-    /// <summary>
-    /// Private constructor. Singleton. Do not allow any instance of this class.
-    /// </summary>
-    ///
-    /*
-private Config()
-{
-}
-*/
     static Config()
     {
       directories = new Dictionary<Dir, string>();
