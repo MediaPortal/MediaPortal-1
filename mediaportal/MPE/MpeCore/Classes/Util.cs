@@ -24,12 +24,21 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 
 namespace MpeCore.Classes
 {
   public class Util
   {
+    public static string InstallerConfigDir
+    {
+      get
+      {
+        return Config.GetSubFolder(Config.Dir.Config, "Installer");
+      }
+    }
+
     public static void LoadPlugins(string pluginFile)
     {
       if (!File.Exists(pluginFile))

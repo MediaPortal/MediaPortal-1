@@ -44,7 +44,6 @@ namespace MediaPortal.Configuration
       CustomInputDevice,
       Config,
       CustomInputDefault,
-      Installer,
     }
 
     #endregion
@@ -353,7 +352,6 @@ namespace MediaPortal.Configuration
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
       Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Blue3wide\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
-      Set(Dir.Installer, Path.Combine(commonAppData, @"Installer\"));
     }
 
 

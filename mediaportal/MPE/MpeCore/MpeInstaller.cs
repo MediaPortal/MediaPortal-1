@@ -20,7 +20,6 @@
 
 using System.Collections.Generic;
 using System.IO;
-using MediaPortal.Configuration;
 using MpeCore.Classes.ProviderHelpers;
 using MpeCore.Interfaces;
 using MpeCore.Classes;
@@ -133,7 +132,7 @@ namespace MpeCore
     /// <value>The base folder.</value>
     public static string BaseFolder
     {
-      get { return string.Format("{0}\\V2", Config.GetFolder(Config.Dir.Installer)); }
+      get { return string.Format("{0}\\V2", Util.InstallerConfigDir); }
     }
 
     /// <summary>

@@ -21,8 +21,6 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Xml.Serialization;
-using MediaPortal.Configuration;
-
 
 namespace MpeCore.Classes
 {
@@ -51,7 +49,7 @@ namespace MpeCore.Classes
     /// <value>The location folder.</value>
     public string LocationFolder
     {
-      get { return string.Format("{0}\\V2\\{1}\\{2}\\", Config.GetFolder(Config.Dir.Installer), ExtensionId, Version); }
+      get { return string.Format("{0}\\V2\\{1}\\{2}\\", Util.InstallerConfigDir, ExtensionId, Version); }
     }
 
 
