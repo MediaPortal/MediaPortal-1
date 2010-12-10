@@ -1846,7 +1846,7 @@ namespace MediaPortal.GUI.Music
         // Bitrate
         string strBitrate = tag.BitRate <= 0 ? string.Empty : tag.BitRate.ToString();
         // Disc ID
-        string strDicsID = tag.DiscID <= 0 ? string.Empty : tag.DiscID.ToString();
+        string strDiscID = tag.DiscID <= 0 ? string.Empty : tag.DiscID.ToString();
         // Disc Total
         string strDiscTotal = tag.DiscTotal <= 0 ? string.Empty : tag.DiscTotal.ToString();
         // Times played
@@ -1909,7 +1909,7 @@ namespace MediaPortal.GUI.Music
         GUIPropertyManager.SetProperty("#genre", tag.Genre);
         GUIPropertyManager.SetProperty("#year", strYear);
         GUIPropertyManager.SetProperty("#albumArtist", tag.AlbumArtist);
-        GUIPropertyManager.SetProperty("#discid", strDicsID);
+        GUIPropertyManager.SetProperty("#discid", strDiscID);
         GUIPropertyManager.SetProperty("#disctotal", strDiscTotal);
         GUIPropertyManager.SetProperty("#trackTotal", strTrackTotal);
         GUIPropertyManager.SetProperty("#datelastplayed", strDateLastPlayed);
