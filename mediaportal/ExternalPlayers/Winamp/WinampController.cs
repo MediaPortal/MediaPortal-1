@@ -63,7 +63,7 @@ namespace MediaPortal.WinampPlayer
     private const int WM_USER = 1024; //0x4A;
     private const int WA_VERSION = 0; // Returns the version of Winamp.
     private const int WA_NOTHING = 0;
-    private const int WA_FILETOPLAYLIST = 100; // Adds a file to playlist.
+    private const int WA_FILETOPLAYLIST = 1100; // Adds a file to playlist.
     private const int WA_CLEARPLAYLIST = 101; // Clears playlist. 
     private const int WA_PLAYTRACK = 102; // Begins play of selected track. 
     private const int WA_GETSTATUS = 104; // Returns: playing=1, paused=3, stopped=all others 
@@ -311,11 +311,11 @@ namespace MediaPortal.WinampPlayer
       Win32API.COPYDATASTRUCT cds;
       cds.dwData = (IntPtr)WA_FILETOPLAYLIST;
       cds.lpData = Marshal.StringToHGlobalUni(filename);
-      cds.cbData = filename.Length + 1;
-
-      //IntPtr hwnd = FindWindow(m_windowName, null);
+      cds.cbData = 2*(filename.Length + 1);
+      IntPtr songMemory = cds.lpData;
 
       Win32API.SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);
+      Marshal.FreeHGlobal(songMemory);
     }
 
     public int Status()
