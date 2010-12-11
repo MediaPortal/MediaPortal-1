@@ -27,11 +27,15 @@ using DirectShowLib;
 using MediaPortal.GUI.Library;
 using DShowNET.Helper;
 using MediaPortal.Profile;
+using FFDShow;
+using FFDShow.Interfaces;
 
 namespace MediaPortal.Player.Subtitles
 {
   public class MpcEngine : SubSettings, ISubEngine
   {
+    private FFDShowAPI ffdshowAPI;
+
     protected override void LoadAdvancedSettings(Settings xmlreader)
     {
       int subPicsBufferAhead = xmlreader.GetValueAsInt("subtitles", "subPicsBufferAhead", 3);
@@ -111,6 +115,24 @@ namespace MediaPortal.Player.Subtitles
         }
       }
 
+      {
+        IBaseFilter baseFilter = null;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
+        if (baseFilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
+        if (baseFilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
+
+        ffdshowAPI = new FFDShowAPI((object)baseFilter);
+
+        IffdshowDec ffdshowDec = baseFilter as IffdshowDec;
+        if (ffdshowDec != null)
+        {
+          ffdshowAPI.DoShowSubtitles = false;
+          Log.Info("MPCEngine - FFDshow interfaces found -> Disable Subtitle");
+        } 
+      }
+
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
       return MpcSubtitles.LoadSubtitles(
@@ -142,7 +164,7 @@ namespace MediaPortal.Player.Subtitles
     {
       Rectangle r = posRelativeToFrame ? frameRect : subsRect;
       int posY = adjustPosY * r.Height / GUIGraphicsContext.Height;
-      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);      
+      MpcSubtitles.Render(r.X, r.Y + posY, r.Width, r.Height);
     }
 
     public int GetCount()
@@ -198,30 +220,6 @@ namespace MediaPortal.Player.Subtitles
       MpcSubtitles.SetTime(nsSampleTime);
     }
 
-    public void SwitchToNextSubtitleSub()
-    {
-        if (Enable)
-        {
-            if (Current < GetCount() - 1)
-            {
-                Current++;
-            }
-            else
-            {
-                Enable = false;
-            }
-        }
-        else
-        {
-            Current = 0;
-            Enable = true;
-        }
-    }
-
-    #region Subtitle files
-    public string[] GetSubtitleFiles() { return new string[] { }; }
-    public string CurrentSubtitleFile { get { return null; } set { } }
-    #endregion
     #endregion
 
     private class MpcSubtitles

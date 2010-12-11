@@ -54,11 +54,6 @@ namespace MediaPortal.Player.Subtitles
     int Current { get; set; }
     #endregion
 
-    #region Subtitle files
-    string[] GetSubtitleFiles();
-    string CurrentSubtitleFile { get; set; }
-    #endregion
-
     bool Enable { get; set; }
 
     int Delay { get; set; }
@@ -67,8 +62,7 @@ namespace MediaPortal.Player.Subtitles
 
     void DelayPlus();
     void DelayMinus();
-
-    void SwitchToNextSubtitleSub();
+    
   }
 
   public class SubEngine
@@ -148,13 +142,6 @@ namespace MediaPortal.Player.Subtitles
         get { return -1; }
         set { }
       }
-
-      public void SwitchToNextSubtitleSub() { }
-
-      #region Subtitle files
-      public string[] GetSubtitleFiles() { return new string[] { }; }
-      public string CurrentSubtitleFile { get { return null; } set { } }
-      #endregion
 
       public bool Enable
       {

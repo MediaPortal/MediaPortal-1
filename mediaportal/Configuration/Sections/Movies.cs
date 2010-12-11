@@ -375,7 +375,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpSubEngineCommentLabel.Name = "mpSubEngineCommentLabel";
       this.mpSubEngineCommentLabel.Size = new System.Drawing.Size(409, 24);
       this.mpSubEngineCommentLabel.TabIndex = 16;
-      this.mpSubEngineCommentLabel.Text = "* - FFDShow Tryout revision 3603 or greater needed";
+      this.mpSubEngineCommentLabel.Text = "* - FFDShow Tryout revision 3640 or greater needed";
       // 
       // mpLabel2
       // 

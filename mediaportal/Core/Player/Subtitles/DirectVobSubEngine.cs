@@ -27,6 +27,7 @@ using DShowNET.Helper;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using FFDShow;
 
 namespace MediaPortal.Player.Subtitles
 {
@@ -39,7 +40,8 @@ namespace MediaPortal.Player.Subtitles
     private List<string> intNames = new List<string>();
     private int extCount;
     private int current;
-
+    private FFDShowAPI ffdshowAPI;
+    
     #region ISubEngine Members
 
     public bool LoadSubtitles(IGraphBuilder graphBuilder, string filename)
@@ -86,6 +88,23 @@ namespace MediaPortal.Player.Subtitles
           //if there are embedded subtitles,
           //last stream of directvobsub is currently selected embedded subtitle
           extCount--;
+        }
+      }
+      {
+        IBaseFilter baseFilter = null;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
+        if (baseFilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
+        if (baseFilter == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
+
+        ffdshowAPI = new FFDShowAPI((object)baseFilter);
+
+        FFDShow.Interfaces.IffdshowDec ffdshowDec = baseFilter as FFDShow.Interfaces.IffdshowDec;
+        if (ffdshowDec != null)
+        {
+          ffdshowAPI.DoShowSubtitles = false;
+          Log.Info("DirectVobSubEngine - FFDshow interfaces found -> Disable Subtitle");
         }
       }
       Current = 0;
@@ -232,26 +251,6 @@ namespace MediaPortal.Player.Subtitles
       }
     }
 
-    public void SwitchToNextSubtitleSub()
-    {
-        if (Enable)
-        {
-            if (Current < GetCount() - 1)
-            {
-                Current++;
-            }
-            else
-            {
-                Enable = false;
-            }
-        }
-        else
-        {
-            Current = 0;
-            Enable = true;
-        }
-    }
-
     public int DelayInterval
     {
       get { return delayInterval; }
@@ -280,10 +279,6 @@ namespace MediaPortal.Player.Subtitles
 
     public void SetTime(long nsSampleTime) {}
 
-    #region Subtitle files
-    public string[] GetSubtitleFiles() { return new string[] { }; }
-    public string CurrentSubtitleFile { get { return null; } set { } }
-    #endregion
     #endregion
   }
 

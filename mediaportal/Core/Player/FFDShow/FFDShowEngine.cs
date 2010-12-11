@@ -273,25 +273,6 @@ namespace MediaPortal.Player.Subtitles
       //MpcSubtitles.SetTime(nsSampleTime);
     }
 
-    #region Subtitle files
-    public string[] GetSubtitleFiles()
-    {
-      return ffdshowAPI.SubtitleFiles;
-
-    }
-    public string CurrentSubtitleFile
-    {
-      get
-      {
-        return ffdshowAPI.CurrentSubtitleFile;
-      }
-      set
-      {
-        ffdshowAPI.CurrentSubtitleFile = value;
-      }
-    }
-    #endregion
-
     #endregion
 
     #region IPostProcessing Members
@@ -334,71 +315,6 @@ namespace MediaPortal.Player.Subtitles
         ffdshowAPI.DoPostProcessing = value;
       }
     }
-
-    public void SwitchToNextSubtitleSub()
-    {
-      if (ffdshowAPI.DoShowSubtitles)
-      {
-        // Cycle through subtitle streams and files
-        string currentSubFile = CurrentSubtitleFile;
-        subFiles = GetSubtitleFiles();
-        int subStreams = GetCount();
-        int nextSubStream = Current + 1;
-        int subIndex = -1;
-        if ((currentSubFile != null && !currentSubFile.Equals("")) || nextSubStream >= subStreams)
-        {
-          if (currentSubFile != null && !currentSubFile.Equals(""))
-          {
-            for (int i = 0; i < subFiles.Length; i++)
-            {
-              if (currentSubFile.Equals(subFiles[i]))
-              {
-                subIndex = i;
-                break;
-              }
-            }
-          }
-          subIndex++;
-          if (subIndex < subFiles.Length) // Next subtitle file
-          {
-            CurrentSubtitleFile = subFiles[subIndex];
-            return;
-          }
-          // Disable subtitles if last sub file reached
-          ffdshowAPI.DoShowSubtitles = false;
-          return;
-        }
-        // End of sub streams => first subtitle file or disable subtitles
-        if (nextSubStream >= subStreams)
-        {
-          if (subFiles.Length > 0)
-          {
-            CurrentSubtitleFile = subFiles[0];
-            return;
-          }
-          ffdshowAPI.DoShowSubtitles = false;
-          return;
-        }
-        Current = nextSubStream;
-      }
-      else // Subtitles disabled : first sub stream if any or first sub file
-      {
-        ffdshowAPI.DoShowSubtitles = true;
-        FFDShowAPI.Streams subStreams = ffdshowAPI.SubtitleStreams;
-        if (subStreams.Count > 0)
-        {
-          foreach (KeyValuePair<int, FFDShowAPI.Stream> stream in subStreams)
-          {
-            ffdshowAPI.SubtitleStream = stream.Key;
-            return;
-          }
-        }
-
-        subFiles = GetSubtitleFiles();
-        if (subFiles.Length > 0) CurrentSubtitleFile = subFiles[0];
-      }
-    }
-
 
     public bool EnableDeinterlace
     {

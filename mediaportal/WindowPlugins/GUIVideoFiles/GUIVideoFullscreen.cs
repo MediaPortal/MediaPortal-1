@@ -764,40 +764,24 @@ namespace MediaPortal.GUI.Video
           {
             string[] subFiles = g_Player.SubtitleFiles;
             int subStreamsCount = g_Player.SubtitleStreams;
-            if (subStreamsCount > 0 || subFiles.Length > 0)
+            if (subStreamsCount > 0)
             {
               _showStatus = true;
               _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
                                               (int)Control.LABEL_ROW1, 0, 0, null);
-              g_Player.SwitchToNextSubtitleSub();
+              g_Player.SwitchToNextSubtitle();
               if (g_Player.EnableSubtitle)
               {
-                if (g_Player.SubtitleFile != null)
-                {
-                  string subFile = g_Player.SubtitleFile;
-                  int subIndex = 0;
-                  for (int i = 0; i < subFiles.Length; i++)
-                  {
-                    if (subFile.Equals(subFiles[i])) { subIndex = i; break; }
-                  }
-                  msg.Label = string.Format("{0} ({1}/{2})",
-                    FFDShowAPI.getFileName(g_Player.SubtitleFile, FFDShowAPI.FileNameMode.FileNameLanguage),
-                    subStreamsCount + subIndex + 1, subStreamsCount + subFiles.Length);
-                }
+                int streamId = g_Player.CurrentSubtitleStream;
+                string strName = g_Player.SubtitleName(streamId);
+                string langName = g_Player.SubtitleLanguage(streamId);
+                if (!string.IsNullOrEmpty(strName))
+                  msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
+                    streamId + 1, subStreamsCount);
                 else
-                {
-                  int streamId = g_Player.CurrentSubtitleStream;
-                  string strName = g_Player.SubtitleName(streamId);
-                  string langName = g_Player.SubtitleLanguage(streamId);
-                  if (!string.IsNullOrEmpty(strName))
-                    msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
-                      streamId + 1, subStreamsCount + subFiles.Length);
-                  else
-                    msg.Label = string.Format("{0} ({1}/{2})", langName,
-                      streamId + 1, subStreamsCount + subFiles.Length);
-
-                }
+                  msg.Label = string.Format("{0} ({1}/{2})", langName,
+                    streamId + 1, subStreamsCount);
               }
               else
               {
@@ -1225,7 +1209,7 @@ namespace MediaPortal.GUI.Video
 
       // SubTitle stream and/or files selection, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
-      if (g_Player.SubtitleStreams > 0 || g_Player.SubtitleFiles.Length > 0)
+      if (g_Player.SubtitleStreams > 0)
       {
         dlg.AddLocalizedString(462);
       }
@@ -1543,48 +1527,9 @@ namespace MediaPortal.GUI.Video
        
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
-      if (g_Player.EnableSubtitle && nbSubStreams > 0)
+      if (g_Player.EnableSubtitle)
       {
-        int subStream = g_Player.CurrentSubtitleStream;
-        if (subStream != -1) dlg.SelectedLabel = subStream + 1;
-      }
-      else
-        dlg.SelectedLabel = 0;
-
-      string currentSubFile = g_Player.SubtitleFile;
-      string[] subFiles = null;
-      if (g_Player.SubtitleFiles.Length > 0)
-      {
-        //TODO Add separator header
-        subFiles = g_Player.SubtitleFiles;
-
-        Log.Info("Current subtitle file " + ((currentSubFile != null) ? currentSubFile : "None"));
-        int index = -1;
-        // First scan if the current subtitles file is in the list, otherwise add it
-        if (currentSubFile != null && !currentSubFile.Equals(""))
-        {
-          for (int i = 0; i < subFiles.Length; i++)
-          {
-            if (currentSubFile.Equals(subFiles[i]))
-            {
-              index = i;
-              break;
-            }
-          }
-          if (index == -1) // The current subtitle file is not in the list, add it on top of it
-          {
-            dlg.Add(currentSubFile);
-            index = 0;
-          }
-        }
-        for (int i = 0; i < subFiles.Length; i++)
-        {
-          // Store short file name in Label and full file path in Label2
-          GUIListItem item = new GUIListItem(FFDShowAPI.getFileName(subFiles[i], FFDShowAPI.FileNameMode.FileNameLanguage));
-          item.Path = subFiles[i];
-          dlg.Add(item);
-        }
-        if (index != -1) dlg.SelectedLabel = nbSubStreams + index + 1;
+        dlg.SelectedLabel = g_Player.CurrentSubtitleStream + 1;
       }
 
       // show dialog and wait for result
@@ -1602,14 +1547,7 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        if (dlg.SelectedLabel - 1 >= nbSubStreams)  // Subtitles file
-        {
-          string subFile = subFiles[dlg.SelectedLabel - 1 - nbSubStreams];
-          Log.Info("Subtitle file selected : " + subFile);
-          if (currentSubFile == null || !subFile.Equals(currentSubFile))
-            g_Player.SubtitleFile = subFile;
-        }
-        else if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
+        if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
         {
           Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - 1));
           g_Player.CurrentSubtitleStream = dlg.SelectedLabel - 1;

@@ -2639,16 +2639,7 @@ namespace MediaPortal.Player
     //}
 
     /// <summary>
-    /// Switches to the next subtitle stream or file
-    /// </summary>
-    public static void SwitchToNextSubtitleSub()
-    {
-      if (_player != null)
-        SubEngine.GetInstance().SwitchToNextSubtitleSub();
-    }
-
-    /// <summary>
-    /// Switches to the next subtitle stream TV
+    /// Switches to the next subtitle stream
     /// </summary>
     public static void SwitchToNextSubtitle()
     {

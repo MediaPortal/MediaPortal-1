@@ -34,7 +34,6 @@ using MediaPortal.Player.Subtitles;
 using System.Collections.Generic;
 using MediaPortal.Player.PostProcessing;
 
-
 namespace MediaPortal.Player
 {
   public abstract class VideoPlayerVMR7 : IPlayer
@@ -1704,26 +1703,6 @@ namespace MediaPortal.Player
       set { SubEngine.GetInstance().Enable = value; }
     }
 
-    public override string[] SubtitleFiles
-    {
-      get
-      {
-        return SubEngine.GetInstance().GetSubtitleFiles();
-      }
-    }
-
-    public override string SubtitleFile
-    {
-      get
-      {
-        return SubEngine.GetInstance().CurrentSubtitleFile;
-      }
-      set
-      {
-        SubEngine.GetInstance().CurrentSubtitleFile = value;
-      }
-    }
-
     public bool AnalyseStreams()
     {
       try
@@ -1801,7 +1780,7 @@ namespace MediaPortal.Player
                   FSInfos.Type = StreamType.Unknown;
                   //Avoid listing ffdshow video filter's plugins amongst subtitle and audio streams and editions.
                   if ((FSInfos.Filter == "ffdshow DXVA Video Decoder" || FSInfos.Filter == "ffdshow Video Decoder" || FSInfos.Filter == "ffdshow raw video filter") &&
-                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18)))
+                      ((sPDWGroup == 1) || (sPDWGroup == 2) || (sPDWGroup == 18) || (sPDWGroup == 4)))
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }

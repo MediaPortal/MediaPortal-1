@@ -155,7 +155,7 @@ namespace FFDShow
     private const int FALSE = 0;
     private const int TRUE = 1;
 
-    public const int minRevision = 3603;
+    public const int minRevision = 3640;
     #endregion Constants
 
     #region Structures
@@ -879,7 +879,7 @@ namespace FFDShow
             object pppunk, ppobject;
             streamSelect.Info(i, out mediaType, out flag, out langId,
                        out group, out streamName, out pppunk, out ppobject);
-            if (group == 2 && streamName.LastIndexOf("No ") == -1)
+            if (group == 4 || group == 2 && streamName.LastIndexOf("No ") == -1)
             {
               if ((streamName == null || streamName.Equals("")) && subtitleStreams.Count == 0)
                 streamName = "No subtitles";
@@ -910,10 +910,18 @@ namespace FFDShow
               {
                 langName = streamName; // If some splitter doesn't give LCID but Language is here need a little hack for parsing in VideoPlayerVRM7.
               }
-
-              Stream stream = new Stream(streamName, langName,
-                  (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, false);
-              subtitleStreams.Add(i, stream);
+              if (group == 4)
+              {
+                Stream stream = new Stream(FFDShowAPI.getFileName(streamName, FFDShowAPI.FileNameMode.FileNameLanguage), FFDShowAPI.getFileName(langName, FFDShowAPI.FileNameMode.FileNameLanguage),
+                    (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, true);
+                subtitleStreams.Add(i, stream);
+              }
+              else if (group == 2)
+              {
+                Stream stream = new Stream(streamName, langName,
+                    (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, false);
+                subtitleStreams.Add(i, stream);
+              }
             }
           }
           return subtitleStreams;
