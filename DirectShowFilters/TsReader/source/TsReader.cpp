@@ -171,7 +171,7 @@ CTsReaderFilter::CTsReaderFilter(IUnknown *pUnk, HRESULT *phr):
   GetLogFile(filename);
   ::DeleteFile(filename);
   LogDebug("--------- Fast forward debug ---------");
-  LogDebug("-------------- v0.4.6 ----------------");
+  LogDebug("-------------- v0.4.7 ----------------");
 
   m_fileReader=NULL;
   m_fileDuration=NULL;
