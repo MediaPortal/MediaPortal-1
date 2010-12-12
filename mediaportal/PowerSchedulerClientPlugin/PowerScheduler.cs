@@ -955,6 +955,7 @@ namespace MediaPortal.Plugins.Process
     /// This implementation only does the following basic checks:
     /// - Checks if the global player is playing. If not, then:
     ///   - (if configured) checks whether or not the system is at the home screen
+    ///   - if slideshow is active
     /// </summary>
     public bool UserInterfaceIdle
     {
@@ -962,10 +963,11 @@ namespace MediaPortal.Plugins.Process
       {
         if (!g_Player.Playing)
         {
+          int activeWindow = GUIWindowManager.ActiveWindow;
+
           // No media is playing, see if user is still active then
           if (_settings.GetSetting("HomeOnly").Get<bool>() && !_shutdownInitiated)
           {
-            int activeWindow = GUIWindowManager.ActiveWindow;
             if (activeWindow == (int)GUIWindow.Window.WINDOW_HOME ||
                 activeWindow == (int)GUIWindow.Window.WINDOW_SECOND_HOME ||
                 activeWindow == (int)GUIWindow.Window.WINDOW_PSCLIENTPLUGIN_UNATTENDED)
@@ -977,6 +979,11 @@ namespace MediaPortal.Plugins.Process
               //LogVerbose("PSClientPlugin.UserInterfaceIdle: Not in home screen, {0}", (GUIWindow.Window) GUIWindowManager.ActiveWindow);
               return false;
             }
+          }
+          else if (activeWindow == (int)GUIWindow.Window.WINDOW_SLIDESHOW)
+          {
+            LogVerbose("PSClientPlugin.UserInterfaceIdle: slideshow active");
+            return false;
           }
           else
           {
