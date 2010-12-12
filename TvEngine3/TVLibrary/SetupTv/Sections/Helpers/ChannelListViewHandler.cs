@@ -172,7 +172,7 @@ namespace SetupTv.Sections.Helpers
       bool textChanged = false;
       _currentText.Invoke(new MethodInvoker(delegate()
       {
-        textChanged = !_currentText.Text.Equals(filterText);
+        textChanged = !_currentText.Text.Equals(filterText, StringComparison.InvariantCultureIgnoreCase);
       }));
       return textChanged;
     }
