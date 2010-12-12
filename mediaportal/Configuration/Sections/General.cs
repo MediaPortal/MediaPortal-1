@@ -115,6 +115,8 @@ namespace MediaPortal.Configuration.Sections
                                             new string[] {"screenselector", "usescreenselector", "false"},
                                             // 16 Allow remember last focused item on supported window/skin
                                             new string[] {"general", "allowRememberLastFocusedItem", "true"},
+                                            // 17 Allow remember last focused item on supported window/skin
+                                            new string[] {"general", "fileexistscache", "false"},
                                           };
 
     /// <summary> 

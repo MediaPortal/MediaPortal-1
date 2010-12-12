@@ -71,7 +71,7 @@ namespace MediaPortal.Configuration.Sections
             "AboveNormal",
             "Normal",
             "BelowNormal"});
-      this.mpThreadPriority.Location = new System.Drawing.Point(329, 338);
+      this.mpThreadPriority.Location = new System.Drawing.Point(329, 341);
       this.mpThreadPriority.MinimumSize = new System.Drawing.Size(100, 0);
       this.mpThreadPriority.Name = "mpThreadPriority";
       this.mpThreadPriority.Size = new System.Drawing.Size(131, 21);
@@ -80,7 +80,7 @@ namespace MediaPortal.Configuration.Sections
       // lbDebug
       // 
       this.lbDebug.AutoSize = true;
-      this.lbDebug.Location = new System.Drawing.Point(6, 341);
+      this.lbDebug.Location = new System.Drawing.Point(6, 344);
       this.lbDebug.Name = "lbDebug";
       this.lbDebug.Size = new System.Drawing.Size(73, 13);
       this.lbDebug.TabIndex = 3;
@@ -100,7 +100,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxGeneralSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxGeneralSettings.Location = new System.Drawing.Point(3, 3);
       this.groupBoxGeneralSettings.Name = "groupBoxGeneralSettings";
-      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 363);
+      this.groupBoxGeneralSettings.Size = new System.Drawing.Size(466, 369);
       this.groupBoxGeneralSettings.TabIndex = 1;
       this.groupBoxGeneralSettings.TabStop = false;
       this.groupBoxGeneralSettings.Text = "General settings";
@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
       // labelPriority
       // 
       this.labelPriority.AutoSize = true;
-      this.labelPriority.Location = new System.Drawing.Point(242, 341);
+      this.labelPriority.Location = new System.Drawing.Point(242, 344);
       this.labelPriority.Name = "labelPriority";
       this.labelPriority.Size = new System.Drawing.Size(81, 13);
       this.labelPriority.TabIndex = 1;
@@ -124,7 +124,7 @@ namespace MediaPortal.Configuration.Sections
             "Warning",
             "Information",
             "Debug"});
-      this.cbDebug.Location = new System.Drawing.Point(85, 338);
+      this.cbDebug.Location = new System.Drawing.Point(85, 341);
       this.cbDebug.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbDebug.Name = "cbDebug";
       this.cbDebug.Size = new System.Drawing.Size(131, 21);
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       // lbScreen
       // 
       this.lbScreen.AutoSize = true;
-      this.lbScreen.Location = new System.Drawing.Point(6, 315);
+      this.lbScreen.Location = new System.Drawing.Point(6, 318);
       this.lbScreen.Name = "lbScreen";
       this.lbScreen.Size = new System.Drawing.Size(67, 13);
       this.lbScreen.TabIndex = 5;
@@ -147,7 +147,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbScreen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbScreen.Enabled = false;
       this.cbScreen.FormattingEnabled = true;
-      this.cbScreen.Location = new System.Drawing.Point(85, 312);
+      this.cbScreen.Location = new System.Drawing.Point(85, 315);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
       this.cbScreen.Size = new System.Drawing.Size(375, 21);
@@ -176,10 +176,11 @@ namespace MediaPortal.Configuration.Sections
             "Show last active module when starting / resuming from standby",
             "Automatically skip commercials for videos with ComSkip data available",
             "Use screenselector to choose on which screen MP should start",
-            "Allow remember last focused item on supported window/skin"});
+            "Allow remember last focused item on supported window/skin",
+            "Enable file existance cache (improves performance on some systems)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 274);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 289);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       // 

@@ -122,7 +122,8 @@ namespace MediaPortal.Util
 
     private const int CONNECT_UPDATE_PROFILE = 0x00000001;
     private const int RESOURCETYPE_DISK = 0x1;
-    private const int FileLookUpCacheThreadScanningIntervalMSecs = 1000;
+
+    private const int FileLookUpCacheThreadScanningIntervalMSecs = 5000;
 
     private static CRCTool crc = null;
 
@@ -2482,17 +2483,8 @@ namespace MediaPortal.Util
       var files = new List<string>();
       try
       {
-        files.AddRange(Directory.GetFiles(sDir, "*.*", SearchOption.AllDirectories));
+        files.AddRange(NativeFileSystemOperations.GetFiles(sDir));
         AddFoldersLookedUp(sDir);
-
-        foreach (var dir in Directory.GetDirectories(sDir, "*.*", SearchOption.AllDirectories))
-        {
-          string dir2Lower = dir.ToLower();
-          if (HasFolderBeenScanned(dir))
-          {
-            AddFoldersLookedUp(dir);
-          }
-        }
       }
       catch (Exception)
       {
@@ -2531,30 +2523,43 @@ namespace MediaPortal.Util
         foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
       }
 
-      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy || s.StartsWith(dirCopy));
-
-      if (!hasFolderBeenScanned)
-      {
-        // eg. takes care of this sequence
-        // 1:         \\thumbs\tv
-        // 2:					\\thumbs\tv\recorded
-        bool parentFolderFound = true;
-        while (!hasFolderBeenScanned && parentFolderFound)
-        {
-          string parentDir = GetParentDirectory(dir);
-          parentFolderFound = (!string.IsNullOrEmpty(parentDir));
-          if (parentFolderFound)
-          {
-            parentDir = parentDir.ToLower();
-            hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == parentDir);
-          }
-          //Log.Debug("hasFolderBeenScanned parentDir {0} found {1}", parentDir, hasFolderBeenScanned);
-          dir = parentDir;
-        }
-      }
-     
+      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy);     
       return hasFolderBeenScanned;
     }
+
+    /// <summary>
+    /// Determines if a folder already has a watcher on it
+    /// </summary>
+    /// <param name="dir">directory to test for watcher</param>
+    /// <returns></returns>
+    private static bool IsFolderAlreadyWatched(string dir)
+    {
+      bool isFolderAlreadyWatched = false;
+
+      HashSet<string> _watcherKeyCopy;
+
+      _watcherKeyCopy = new HashSet<string>(_watchers.Keys);
+      if (!_watcherKeyCopy.Contains(dir))
+      {
+        foreach (string path in _watcherKeyCopy)
+        {
+          if (dir.Length >= path.Length)
+          {
+            if (dir.StartsWith(path))
+            {
+              isFolderAlreadyWatched = true;
+              break;
+            }
+          }
+        }
+      }
+      else
+      {
+        isFolderAlreadyWatched = true;
+      }
+      return isFolderAlreadyWatched;
+    }
+
 
     private static void AddFoldersLookedUp(string dir)
     {
@@ -2563,8 +2568,12 @@ namespace MediaPortal.Util
         lock (_foldersLookedUpLock)
         {
           //Log.Debug("AddFoldersLookedUp {0}", dir);
-          _foldersLookedUp.Add(dir);
-          _lastTimeFolderWasAdded = DateTime.Now;
+          //make sure we don't add the same one again
+          if (!_foldersLookedUp.Contains(dir))
+          {
+            _foldersLookedUp.Add(dir);
+            _lastTimeFolderWasAdded = DateTime.Now;
+          }
         }
       }
     }
@@ -2598,14 +2607,16 @@ namespace MediaPortal.Util
     private static void fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
-
-      if (watcher != null)
+      if (!e.FullPath.Contains("db3-journal"))
       {
-        Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
-        FileLookUpItem fileLookUpItem = new FileLookUpItem();
-        fileLookUpItem.Exists = true;
-        fileLookUpItem.Filename = e.FullPath;
-        UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);
+        if (watcher != null)
+        {
+          Log.Debug("fileSystemWatcher_Created file {0}", e.FullPath);
+          FileLookUpItem fileLookUpItem = new FileLookUpItem();
+          fileLookUpItem.Exists = true;
+          fileLookUpItem.Filename = e.FullPath;
+          UpdateLookUpCacheItem(fileLookUpItem, e.FullPath);
+        }
       }
     }
 
@@ -2613,10 +2624,13 @@ namespace MediaPortal.Util
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
 
-      if (watcher != null)
+      if (!e.FullPath.Contains("db3-journal"))
       {
-        Log.Debug("fileSystemWatcher_Deleted file {0}", e.FullPath);
-        DoInsertNonExistingFileIntoCache(e.FullPath);
+        if (watcher != null)
+        {
+          Log.Debug("fileSystemWatcher_Deleted file {0}", e.FullPath);
+          DoInsertNonExistingFileIntoCache(e.FullPath);
+        }
       }
     }
 
@@ -2682,7 +2696,7 @@ namespace MediaPortal.Util
       {
         using (Settings xmlreader = new MPSettings())
         {
-          _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("general", "fileexistscache", true);
+          _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("general", "fileexistscache", false);
         }
       }
       return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
@@ -2752,13 +2766,17 @@ namespace MediaPortal.Util
               foreach (string dir in folders)
               {
                 if (!string.IsNullOrEmpty(dir))
-                {                  
-                  UpdateWatchers(dir);
+                {
+                  if (!IsFolderAlreadyWatched(dir))
+                  {
+                    UpdateWatchers(dir);
+                  }
                 }
               }
               _lastTimeFolderWasAdded = DateTime.MinValue;
-              Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);                      
+              Log.Debug("FileLookUpCacheThread items : {0}", _fileLookUpCache.Count);
             }
+
 
             /*string[] keyCopy = _watchers.Keys.ToArray();
             foreach (string key in keyCopy)
@@ -2932,29 +2950,43 @@ namespace MediaPortal.Util
 
     private static void AddWatcher(string dir)
     {
-      try
-      {        
-        FileSystemWatcher fsw = new FileSystemWatcher(dir);
-        fsw.IncludeSubdirectories = true;
-        fsw.EnableRaisingEvents = true;
-        fsw.Created += new FileSystemEventHandler(fileSystemWatcher_Created);
-        fsw.Deleted += new FileSystemEventHandler(fileSystemWatcher_Deleted);
-        fsw.Error += new ErrorEventHandler(fileSystemWatcher_Error);
-
-        fsw.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;        
-
-        lock (_watchersLock)
-        {
-          if (!_watchers.ContainsKey(dir))
-          {
-            _watchers.Add(dir, fsw);
-          }
-        }
-        Log.Debug("AddWatcher {0}", dir);
-      }
-      catch (Exception ex)
+      bool bAlreadyWatched = false;
+      lock (_watchersLock)
       {
-        Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);
+        bAlreadyWatched=IsFolderAlreadyWatched(dir);
+      }
+      // if this folders parent is already watched then that watcher already covers it.
+      if (!bAlreadyWatched)
+      {
+        if (!Directory.Exists(dir))
+        {
+          return;
+        }
+        try
+        {
+          FileSystemWatcher fsw = new FileSystemWatcher(dir);
+          // if this is changed then IsFolderAlreadyWatched needs to be modified.
+          fsw.IncludeSubdirectories = true;
+          fsw.EnableRaisingEvents = true;
+          fsw.Created += new FileSystemEventHandler(fileSystemWatcher_Created);
+          fsw.Deleted += new FileSystemEventHandler(fileSystemWatcher_Deleted);
+          fsw.Error += new ErrorEventHandler(fileSystemWatcher_Error);
+
+          fsw.NotifyFilter = NotifyFilters.FileName | NotifyFilters.DirectoryName;
+
+          lock (_watchersLock)
+          {
+            if (!_watchers.ContainsKey(dir))
+            {
+              _watchers.Add(dir, fsw);
+            }
+          }
+          Log.Debug("AddWatcher {0}", dir);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("AddWatcher exception on dir={0}, ex={1}", dir, ex);
+        }
       }
     }
 
@@ -3037,14 +3069,20 @@ namespace MediaPortal.Util
       if (!String.IsNullOrEmpty(path))
       {
         string dir2Lower = path.ToLower();
-        
-        if (!HasFolderBeenScanned(dir2Lower))
+        if (Path.IsPathRooted(dir2Lower))
         {
-          Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
-          IEnumerable<string> files = DirSearch(dir2Lower);
-          foreach (string file in files)
+          if (!HasFolderBeenScanned(dir2Lower))
           {
-            DoInsertExistingFileIntoCache(file);
+            Log.Debug("InsertFilesIntoCacheAsynch: pre-scanning dir : {0}", path);
+            IEnumerable<string> files = DirSearch(dir2Lower);
+            foreach (string file in files)
+            {
+              DoInsertExistingFileIntoCache(file);
+            }
+            lock (_watchersLock)
+            {
+              UpdateWatchers(dir2Lower);
+            }
           }
         }
         /*else
