@@ -189,7 +189,7 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))!=0)
+              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))==0)
               {
                 string fName = Path.Combine(directory, findData.cFileName);
                 fi.Add(fName);
@@ -225,6 +225,8 @@ namespace MediaPortal.Util
         //remove the leading \\
         directory = directory.Substring(2);
       }
+      Log.Debug("Searching "+directory);
+
       try
       {
         findHandle = FindFirstFile(prefix + directory + @"\*", out findData);
@@ -235,8 +237,9 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) != 0)
+              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
               {
+                Log.Debug(Path.Combine(directory, findData.cFileName));
                 FileInformation fileInfo = new FileInformation();
                 long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) + findData.ftCreationTime.dwLowDateTime;
                 long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) + findData.ftLastWriteTime.dwLowDateTime;
