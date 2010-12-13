@@ -168,10 +168,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Gentle.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="..\..\..\Common-MP-TVE3\Gentle.config">
+      <Link>Gentle.config</Link>
     </None>
+    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Service1.resx">
