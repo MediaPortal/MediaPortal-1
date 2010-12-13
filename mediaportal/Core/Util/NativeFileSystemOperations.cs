@@ -117,6 +117,7 @@ namespace MediaPortal.Util
               if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))==0)
               {
                 string fName = Path.Combine(directory, findData.cFileName);
+                if (prefix == UNCPrefix) fName = @"\\"+fName;
                 fi.Add(fName);
               }
             }
@@ -167,6 +168,7 @@ namespace MediaPortal.Util
                 long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) + findData.ftCreationTime.dwLowDateTime;
                 long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) + findData.ftLastWriteTime.dwLowDateTime;
                 fileInfo.Name = Path.Combine(directory, findData.cFileName);
+                if (prefix == UNCPrefix) fileInfo.Name = @"\\" + fileInfo.Name;
                 fileInfo.Length = (((long)findData.nFileSizeHigh) << 32) + findData.nFileSizeLow;
                 fileInfo.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
                 fileInfo.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
