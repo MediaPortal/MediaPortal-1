@@ -1618,8 +1618,6 @@ namespace MediaPortal.GUI.Music
       {
         if (CurrentTrackTag != null)
         {
-          bool InfoNeeded = false;
-
           if (PreviousTrackTag != null)
           {
             if (CurrentTrackTag.Artist != PreviousTrackTag.Artist)
@@ -1635,39 +1633,67 @@ namespace MediaPortal.GUI.Music
               DoUpdateArtistInfo(null,null);
             }
 
-            if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeTagInfo.Count < 1)
-            {
-              InfoNeeded = true;
+            if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeAlbumInfo.Count < 1)
+            { // album has changed or we don't have top tracks for album so try and update
               if (LblBestAlbumTracks != null)
               {
                 LblBestAlbumTracks.Visible = false;
               }
-              if (LblBestTagTracks != null)
-              {
-                LblBestTagTracks.Visible = false;
-              }
               facadeAlbumInfo.Clear();
-              facadeTagInfo.Clear();
-              ToggleTopTrackRatings(false, PopularityRating.unknown);
+              UpdateAlbumInfo();
             }
           }
           else
-          {
-            DoUpdateArtistInfo(null,null);
-            InfoNeeded = true;
+          { // there is no previous track so update all info
+            // similar tracks will be updated anyway for all track changes
+            if (LblBestAlbumTracks != null)
+            {
+              LblBestAlbumTracks.Visible = false;
+            }
+            facadeAlbumInfo.Clear();
+            UpdateArtistInfo();
+            UpdateAlbumInfo();
           }
+          
+          // track has changed so always look up similar tracks
+          if (LblBestTagTracks != null)
+          {
+            LblBestTagTracks.Visible = false;
+          }
+          facadeTagInfo.Clear();
+          UpdateTagInfo();
 
+          // non-text values default to 0 and datetime.minvalue so
+          // set the appropriate properties to string.empty
+          
           // Duration
-          string strDuration = CurrentTrackTag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration);
-
+          string strDuration = CurrentTrackTag.Duration <= 0 ? string.Empty : MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration);
           // Track
           string strTrack = CurrentTrackTag.Track <= 0 ? string.Empty : CurrentTrackTag.Track.ToString();
-
           // Year
           string strYear = CurrentTrackTag.Year <= 1900 ? string.Empty : CurrentTrackTag.Year.ToString();
-
           // Rating
           string strRating = (Convert.ToDecimal(2 * CurrentTrackTag.Rating + 1)).ToString();
+          // Bitrate
+          string strBitrate = CurrentTrackTag.BitRate <= 0 ? string.Empty : CurrentTrackTag.BitRate.ToString();
+          // Disc ID
+          string strDiscID = CurrentTrackTag.DiscID <= 0 ? string.Empty : CurrentTrackTag.DiscID.ToString();
+          // Disc Total
+          string strDiscTotal = CurrentTrackTag.DiscTotal <= 0 ? string.Empty : CurrentTrackTag.DiscTotal.ToString();
+          // Times played
+          string strTimesPlayed = CurrentTrackTag.TimesPlayed <= 0 ? string.Empty : CurrentTrackTag.TimesPlayed.ToString();
+          // track total
+          string strTrackTotal = CurrentTrackTag.TrackTotal <= 0 ? string.Empty : CurrentTrackTag.TrackTotal.ToString();
+          // BPM
+          string strBPM = CurrentTrackTag.BPM <= 0 ? string.Empty : CurrentTrackTag.BPM.ToString();
+          // Channels
+          string strChannels = CurrentTrackTag.Channels <= 0 ? string.Empty : CurrentTrackTag.Channels.ToString();
+          // Sample Rate
+          string strSampleRate = CurrentTrackTag.SampleRate <=0 ? string.Empty : CurrentTrackTag.SampleRate.ToString();
+          // Date Last Played
+          string strDateLastPlayed = CurrentTrackTag.DateTimePlayed == DateTime.MinValue ? string.Empty : CurrentTrackTag.DateTimePlayed.ToShortDateString();
+          // Date Added
+          string strDateAdded = CurrentTrackTag.DateTimeModified == DateTime.MinValue ? string.Empty : CurrentTrackTag.DateTimeModified.ToShortDateString();
 
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
@@ -1679,30 +1705,23 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
           GUIPropertyManager.SetProperty("#duration", strDuration);
           GUIPropertyManager.SetProperty("#Play.Current.AlbumArtist", CurrentTrackTag.AlbumArtist);
-          GUIPropertyManager.SetProperty("#Play.Current.BitRate", CurrentTrackTag.BitRate.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.BitRate", strBitrate);
           GUIPropertyManager.SetProperty("#Play.Current.Comment", CurrentTrackTag.Comment);
           GUIPropertyManager.SetProperty("#Play.Current.Composer", CurrentTrackTag.Composer);
           GUIPropertyManager.SetProperty("#Play.Current.Conductor", CurrentTrackTag.Conductor);
-          GUIPropertyManager.SetProperty("#Play.Current.DiscID", CurrentTrackTag.DiscID.ToString());
-          GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", CurrentTrackTag.DiscTotal.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.DiscID", strDiscID);
+          GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", strDiscTotal);
           GUIPropertyManager.SetProperty("#Play.Current.Lyrics", CurrentTrackTag.Lyrics);
-          GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", CurrentTrackTag.TimesPlayed.ToString());
-          GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", CurrentTrackTag.TrackTotal.ToString());
+          GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", strTimesPlayed);
+          GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", strTrackTotal);
           GUIPropertyManager.SetProperty("#Play.Current.FileType", CurrentTrackTag.FileType);
           GUIPropertyManager.SetProperty("#Play.Current.Codec", CurrentTrackTag.Codec);
           GUIPropertyManager.SetProperty("#Play.Current.BitRateMode", CurrentTrackTag.BitRateMode);
-          GUIPropertyManager.SetProperty("#Play.Current.BPM", CurrentTrackTag.BPM.ToString());
-          GUIPropertyManager.SetProperty("#Play.Current.Channels", CurrentTrackTag.Channels.ToString());
-          GUIPropertyManager.SetProperty("#Play.Current.SampleRate", CurrentTrackTag.SampleRate.ToString());
-          GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", CurrentTrackTag.DateTimePlayed.ToShortDateString());
-          GUIPropertyManager.SetProperty("#Play.Current.DateAdded", CurrentTrackTag.DateTimeModified.ToShortDateString());
-
-          if (InfoNeeded)
-          {
-            UpdateAlbumInfo();
-            UpdateTagInfo();
-          }
-          
+          GUIPropertyManager.SetProperty("#Play.Current.BPM", strBPM);
+          GUIPropertyManager.SetProperty("#Play.Current.Channels", strChannels);
+          GUIPropertyManager.SetProperty("#Play.Current.SampleRate", strSampleRate);
+          GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", strDateLastPlayed);
+          GUIPropertyManager.SetProperty("#Play.Current.DateAdded", strDateAdded);
           
           AlbumInfo _albumInfo = new AlbumInfo();
           if (MusicDatabase.Instance.GetAlbumInfo(CurrentTrackTag.Album,CurrentTrackTag.AlbumArtist, ref _albumInfo))
@@ -1746,7 +1765,7 @@ namespace MediaPortal.GUI.Music
           }
         }
         else
-        {
+        { // there is no current track so blank all properties
           GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
           GUIPropertyManager.SetProperty("#Play.Current.Track", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Album", string.Empty);
