@@ -817,7 +817,7 @@ namespace TvLibrary.Implementations.DVB
         return false;
       _pmtVersion = -1;
       _pmtPid = pmtPid;
-      _pmtRequested = true; // requested
+      _pmtRequested = true; // requested      
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
@@ -1132,7 +1132,13 @@ namespace TvLibrary.Implementations.DVB
               _channelInfo.network_pmt_PID = channel.PmtPid;
 
               // always set pcr_pid despite useless database info, as it's required for setup HW filtering ( ambass )
+              bool updateDB = channel.PcrPid != _channelInfo.pcr_pid;
               channel.PcrPid = _channelInfo.pcr_pid;
+
+              if (updateDB)
+              {
+                PersistPCRtoDataBase(channel);
+              }
 
               // update any service scrambled / unscambled changes
               if (_channelInfo.scrambled == channel.FreeToAir)
@@ -1208,6 +1214,22 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       return false;
+    }
+
+    private void PersistPCRtoDataBase(DVBBaseChannel channel) {
+      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;      
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
+                                                         CurrentDVBChannel.ServiceId);
+
+      TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
+                                                    CurrentDVBChannel.ServiceId);
+      currentDetail.PcrPid = channel.PcrPid;      
+
+      TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
+      Log.Log.Debug("Updated PCR Pid to {0:X}!", channel.PcrPid);
+      td.Persist();
     }
 
     #endregion
@@ -1327,7 +1349,7 @@ namespace TvLibrary.Implementations.DVB
         TvBusinessLayer layer = new TvBusinessLayer();
         Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
                                                            CurrentDVBChannel.ServiceId);
-        TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, CurrentDVBChannel.Name,
+        TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
                                                       CurrentDVBChannel.ServiceId);
         currentDetail.PmtPid = pmtPid;
         CurrentDVBChannel.PmtPid = pmtPid;
