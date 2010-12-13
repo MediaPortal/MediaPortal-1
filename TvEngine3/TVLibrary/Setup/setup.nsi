@@ -440,7 +440,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
 
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
-  File "${svn_TVServer}\TvService\Gentle.config"
+  File "${svn_Common_MP_TVE3}\Gentle.config"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
@@ -628,7 +628,7 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
-  File "${svn_TVServer}\TvPlugin\TvPlugin\Gentle.config"
+  File "${svn_Common_MP_TVE3}\Gentle.config"
 
   ; The Plugins
   SetOutPath "$MPdir.Plugins\Windows"
