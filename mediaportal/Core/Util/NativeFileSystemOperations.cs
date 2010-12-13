@@ -114,7 +114,7 @@ namespace MediaPortal.Util
 
   #endregion //Enums
 
-  class NativeFileSystemOperations
+  public class NativeFileSystemOperations
   {
 
     #region Imports
@@ -160,13 +160,14 @@ namespace MediaPortal.Util
       }
       return ret;
     }
+
     /// <summary>
     /// Gets all the filenames in a directory.
     /// Does not include subdirectories.
     /// </summary>
     /// <param name="directory">The directory to parse</param>
     /// <returns>A string array of the filenames</returns>
-    public static string [] GetFiles(string directory)
+    public static string[] GetFiles(string directory)
     {
       List<string> fi = new List<string>();
       IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
@@ -176,6 +177,7 @@ namespace MediaPortal.Util
       if (directory.StartsWith(@"\\"))
       {
         prefix = UNCPrefix;
+        directory = directory.Substring(2);
       }
       try
       {
@@ -187,15 +189,70 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              string fName = Path.Combine(directory, findData.cFileName);
-              fi.Add(fName);
+              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))!=0)
+              {
+                string fName = Path.Combine(directory, findData.cFileName);
+                fi.Add(fName);
+              }
             }
           } while (FindNextFile(findHandle, out findData));
           FindClose(findHandle);
           findHandle = IntPtr.Zero;
         }
       }
-      finally 
+      finally
+      {
+        if (findHandle.ToInt32() > 0) FindClose(findHandle);
+      }
+      return fi.ToArray();
+    }
+    /// <summary>
+    /// Gets all the filenames in a directory.
+    /// Does not include subdirectories.
+    /// </summary>
+    /// <param name="directory">The directory to parse</param>
+    /// <returns>A string array of the filenames</returns>
+    public static FileInformation[] GetFileInformation(string directory)
+    {
+      List<FileInformation> fi = new List<FileInformation>();
+      IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+      string prefix = fileSystemPrefix;
+      IntPtr findHandle = new IntPtr(0);
+      WIN32_FIND_DATA findData;
+      if (directory.StartsWith(@"\\"))
+      {
+        prefix = UNCPrefix;
+        //remove the leading \\
+        directory = directory.Substring(2);
+      }
+      try
+      {
+        findHandle = FindFirstFile(prefix + directory + @"\*", out findData);
+        if (findHandle != INVALID_HANDLE_VALUE)
+        {
+          do
+          {
+            //only pick up files
+            if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
+            {
+              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) != 0)
+              {
+                FileInformation fileInfo = new FileInformation();
+                long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) + findData.ftCreationTime.dwLowDateTime;
+                long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) + findData.ftLastWriteTime.dwLowDateTime;
+                fileInfo.Name = Path.Combine(directory, findData.cFileName);
+                fileInfo.Length = (((long)findData.nFileSizeHigh) << 32) + findData.nFileSizeLow;
+                fileInfo.CreationTime = DateTime.FromFileTimeUtc(ftCreationTime);
+                fileInfo.ModificationTime = DateTime.FromFileTimeUtc(ftLastWriteTime);
+                fi.Add(fileInfo);
+              }
+            }
+          } while (FindNextFile(findHandle, out findData));
+          FindClose(findHandle);
+          findHandle = IntPtr.Zero;
+        }
+      }
+      finally
       {
         if (findHandle.ToInt32() > 0) FindClose(findHandle);
       }

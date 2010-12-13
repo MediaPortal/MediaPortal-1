@@ -2483,7 +2483,12 @@ namespace MediaPortal.Util
       var files = new List<string>();
       try
       {
-        files.AddRange(NativeFileSystemOperations.GetFiles(sDir));
+        // Let network drives get looked up lazily
+        // It makes for much better performance
+        if (!IsNetwork(sDir))
+        {
+          files.AddRange(NativeFileSystemOperations.GetFiles(sDir));
+        }
         AddFoldersLookedUp(sDir);
       }
       catch (Exception)
