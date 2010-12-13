@@ -214,7 +214,7 @@ namespace SetupTv.Sections
 
       // Series formats
       _formatString[1] = new string[5];
-      _formatString[1][0] = @"%channel%\%title% %date%\%title% [- S%series%] [- E%episode%] [- %name%]";
+      _formatString[1][0] = @"%channel%\%title%\%title% - %date% [- S%series%] [- E%episode%] [- %name%]";
       _formatString[1][1] = @"%channel%\%title% (%starthh%%startmm% - %endhh%%endmm% %date%)\%title%";
       _formatString[1][2] = @"%title%\%title% - S%series%E%episode% - %name%";
       _formatString[1][3] = @"%title% - %channel%\%title% - %date% - %start%";
