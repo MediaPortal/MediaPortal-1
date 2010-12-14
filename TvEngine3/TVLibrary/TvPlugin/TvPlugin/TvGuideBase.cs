@@ -156,6 +156,7 @@ namespace TvPlugin
     private bool _recalculateProgramOffset;
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
+    private bool _guideContinuousScroll = false;
 
     private GUILabelControl _titleDarkTemplate;
     private GUILabelControl _titleTemplate;
@@ -244,6 +245,7 @@ namespace TvPlugin
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
         _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
+        _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
       }
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
@@ -2720,6 +2722,12 @@ namespace TvPlugin
       return iProgramCount;
     }
 
+    private bool GuideScrollContinuous()
+    {
+      // Returns true if the guide is allowed to continuously scroll from top to bottom and bottom to top.
+      return _guideContinuousScroll;
+    }
+
     private void OnDown(bool updateScreen)
     {
       if (updateScreen)
@@ -2784,11 +2792,21 @@ namespace TvPlugin
           // more channels than rows?
           if (_channelList.Count > _channelCount)
           {
-            // scroll down
-            _channelOffset++;
-            if (_channelOffset >= _channelList.Count - 1)
+            if (GuideScrollContinuous())
             {
-              _channelOffset = 0;
+              _channelOffset++;
+              // We're at the bottom of the last page of channels.  Position to first channel in guide.
+              if (_channelOffset >= _channelList.Count - 1)
+              {
+                _channelOffset = 0;
+              }
+            }
+            else
+            {
+              if (_channelOffset + _channelCount <= _channelList.Count - 1)
+              {
+                _channelOffset++;
+              }
             }
           }
         }
@@ -2890,7 +2908,8 @@ namespace TvPlugin
           }
           // If the time interval spin control is not visible then consider scrolling the guide top to bottom.
           if (_channelOffset == 0 && _channelList.Count > _channelCount &&
-            !GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
+            !GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible &&
+            GuideScrollContinuous())
           {
             // We're at the top of the first page of channels.  Position to last channel in guide.
             _channelOffset = _channelList.Count - 1;
@@ -2961,11 +2980,23 @@ namespace TvPlugin
           {
             if (_channelList.Count > _channelCount)
             {
-              _channelOffset++;
-              if (_channelOffset >= _channelList.Count - 1)
+              if (GuideScrollContinuous())
               {
-                _channelOffset = 0;
+                _channelOffset++;
+                // We're at the bottom of the last page of channels.  Position to first channel in guide.
+                if (_channelOffset >= _channelList.Count - 1)
+                {
+                  _channelOffset = 0;
+                }
               }
+              else
+              {
+                if (_channelOffset + _channelCount <= _channelList.Count - 1)
+                {
+                  _channelOffset++;
+                }
+              }
+
               if (updateScreen)
               {
                 Update(false);
@@ -2985,7 +3016,7 @@ namespace TvPlugin
                 Update(false);
               }
             }
-            else if (_channelOffset == 0 && _channelList.Count > _channelCount)
+            else if (_channelOffset == 0 && _channelList.Count > _channelCount && GuideScrollContinuous())
             {
               // We're at the top of the first page of channels.  Position to last channel in guide.
               _channelOffset = _channelList.Count - 1;
@@ -3784,8 +3815,17 @@ namespace TvPlugin
       if (_singleChannelView)
         Steps = _channelCount; // all available rows
       else
-        Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
-      // only number of additional avail channels
+      {
+        if (GuideScrollContinuous())
+        {
+          Steps = _channelCount; // all available rows
+        }
+        else
+        {
+          // only number of additional avail channels
+          Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
+        }
+      }
 
       UnFocus();
       for (int i = 0; i < Steps; ++i)
