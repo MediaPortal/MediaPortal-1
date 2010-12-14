@@ -2644,6 +2644,7 @@ namespace MediaPortal.Configuration.Sections
       Util.Utils.FileDelete(strThumb);
       Util.Utils.FileDelete(largeThumb);
 
+      // Create thumbs for URL files
       if (bIsUrl)
       {
         IMDBFetcher.DownloadCoverArt(Thumbs.MovieTitle, strImageUrl, titleExt);
@@ -2672,14 +2673,17 @@ namespace MediaPortal.Configuration.Sections
         }
       }
       catch (Exception) {}
-      // Create new thumbs
+      // Create new thumbs for local user files
       try
       {
-        if (Util.Picture.CreateThumbnail(strImageUrl, strThumb, (int)Thumbs.ThumbResolution,
-                                         (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+        if (!bIsUrl)
         {
-          Util.Picture.CreateThumbnail(strImageUrl, largeThumb, (int)Thumbs.ThumbLargeResolution,
-                                       (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          if (Util.Picture.CreateThumbnail(strImageUrl, strThumb, (int)Thumbs.ThumbResolution,
+                                           (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall))
+          {
+            Util.Picture.CreateThumbnail(strImageUrl, largeThumb, (int)Thumbs.ThumbLargeResolution,
+                                         (int)Thumbs.ThumbLargeResolution, 0, Thumbs.SpeedThumbsLarge);
+          }
         }
       }
       catch (Exception) {}
