@@ -101,7 +101,7 @@ namespace TvLibrary.Streaming
       try
       {
         IList<IPAddress> preferedAddresses = GetDefGatewayNetAddresses();
-        IPHostEntry local = Dns.GetHostEntry(hostName);
+        IPHostEntry local = Dns.GetHostByName(hostName);
         IPAddress selectedAddress = null;
 
         foreach (IPAddress ipaddress in local.AddressList)
