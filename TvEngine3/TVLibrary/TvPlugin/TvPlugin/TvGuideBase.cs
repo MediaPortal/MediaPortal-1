@@ -477,6 +477,7 @@ namespace TvPlugin
             {
               _cursorX = 0;
               SetFocus();
+              updateSingleChannelNumber();
               UpdateVerticalScrollbar();
             }
             return;
@@ -2199,12 +2200,6 @@ namespace TvPlugin
         if (Utils.datetolong(program.EndTime) > iEnd)
           bEndsAfter = true;
 
-        if (iProgram == _cursorY - 1 && iChannel == _cursorX)
-        {
-          _currentProgram = program;
-          SetProperties();
-        }
-
         DateTime dtBlokStart = new DateTime();
         dtBlokStart = _viewingTime;
         dtBlokStart = dtBlokStart.AddMilliseconds(-dtBlokStart.Millisecond);
@@ -3044,8 +3039,8 @@ namespace TvPlugin
           {
             Program prog = (Program)control.Data;
 
-            if (DateTime.Now < prog.EndTime && _currentProgram.StartTime < prog.StartTime || _singleChannelView)
-            {
+            if (_singleChannelView)
+              {
               _cursorY = x;
               bOK = true;
               break;
@@ -3053,8 +3048,7 @@ namespace TvPlugin
 
             bool isvalid = false;
             DateTime time = DateTime.Now;
-            if ((_currentProgram.StartTime >= prog.StartTime && _currentProgram.StartTime < prog.EndTime) ||
-              (_currentProgram.EndTime <= prog.EndTime && _currentProgram.EndTime > prog.StartTime))
+            if (time < prog.EndTime) // present & future
             {
               if (m_dtStartTime <= prog.StartTime)
               {
@@ -3070,7 +3064,7 @@ namespace TvPlugin
               }
             }
             // this one will skip past programs
-            if (_currentProgram.StartTime < DateTime.Now && DateTime.Now < prog.EndTime)
+            else if (time > _currentProgram.EndTime) // history
             {
               if (prog.EndTime > m_dtStartTime)
               {
