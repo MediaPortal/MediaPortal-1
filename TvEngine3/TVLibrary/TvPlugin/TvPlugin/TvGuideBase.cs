@@ -2747,20 +2747,12 @@ namespace TvPlugin
         if (_cursorX + 1 < _channelCount)
         {
           _cursorX++;
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
         else
         {
           if (_cursorX + _programOffset + 1 < _totalProgramCount)
           {
             _programOffset++;
-            if (updateScreen)
-            {
-              Update(false);
-            }
           }
         }
         if (updateScreen)
@@ -2865,18 +2857,10 @@ namespace TvPlugin
         if (_cursorX > 0)
         {
           _cursorX--;
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
         else if (_programOffset > 0)
         {
           _programOffset--;
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
 
         if (updateScreen)
@@ -2896,10 +2880,6 @@ namespace TvPlugin
           if (_channelOffset > 0)
           {
             _channelOffset--;
-            if (updateScreen)
-            {
-              Update(false);
-            }
           }
           // If the time interval spin control is not visible then consider scrolling the guide top to bottom.
           if (_channelOffset == 0 && _channelList.Count > _channelCount &&
@@ -2908,22 +2888,15 @@ namespace TvPlugin
           {
             // We're at the top of the first page of channels.  Position to last channel in guide.
             _channelOffset = _channelList.Count - 1;
-            if (updateScreen)
-            {
-              Update(false);
-            }
           }
         }
         else
         {
           _cursorX--;
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
         if (updateScreen)
         {
+          Update(false);
           SetFocus();
           SetProperties();
         }
