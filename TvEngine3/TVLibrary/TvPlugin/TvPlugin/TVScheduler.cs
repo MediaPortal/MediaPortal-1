@@ -602,6 +602,12 @@ namespace TvPlugin
             {
               continue;
             }
+
+            //Test if this is an instance of a series recording, if so skip it.
+            if (rec.ReferencedSchedule() != null)
+            {
+              continue;
+            }
             item = Schedule2ListItem(rec);
             item.TVTag = rec;
             listSchedules.Add(item);
