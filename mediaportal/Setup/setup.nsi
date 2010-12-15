@@ -475,12 +475,6 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base"
   ;filter used for SVCD and VCD playback
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
-  ##### MAYBE used by VideoEditor
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\CLDump.ax"                                 "$MPdir.Base\CLDump.ax"           "$MPdir.Base"
-  ;filter for analog tv and videoeditor
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\PDMpgMux.ax"                               "$MPdir.Base\PDMpgMux.ax"         "$MPdir.Base"
-  ; used for shoutcast
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\shoutcastsource.ax"                        "$MPdir.Base\shoutcastsource.ax"  "$MPdir.Base"
   ; used for channels with two mono languages in one stereo streams
   !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
