@@ -114,13 +114,13 @@ namespace TvLibrary.Implementations.Analog.Components
       //connect capture filter -> tee sink filter
       IPin pin = DsFindPin.ByDirection(_teeSink, PinDirection.Input, 0);
       hr = graphBuilder.Connect(capture.VBIPin, pin);
-      Marshal.ReleaseComObject(pin);
+      Release.ComObject(pin);
       if (hr != 0)
       {
         //failed...
         Log.Log.Error("analog: unable  to connect capture->tee/sink");
         graphBuilder.RemoveFilter(_teeSink);
-        Marshal.ReleaseComObject(_teeSink);
+        Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
         return false;
       }
@@ -168,7 +168,7 @@ namespace TvLibrary.Implementations.Analog.Components
               //failed...
               Log.Log.Error("analog:Unable to add WST Codec filter");
               graphBuilder.RemoveFilter(_teeSink);
-              Marshal.ReleaseComObject(_teeSink);
+              Release.ComObject(_teeSink);
               _teeSink = _filterWstDecoder = null;
               return false;
             }
@@ -194,7 +194,7 @@ namespace TvLibrary.Implementations.Analog.Components
                 //failed...
                 Log.Log.Error("analog:Unable to add VBI Codec filter");
                 graphBuilder.RemoveFilter(_teeSink);
-                Marshal.ReleaseComObject(_teeSink);
+                Release.ComObject(_teeSink);
                 _teeSink = _filterWstDecoder = null;
                 return false;
               }
@@ -208,7 +208,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         Log.Log.Error("analog: unable to find WST Codec or VBI Codec filter");
         graphBuilder.RemoveFilter(_teeSink);
-        Marshal.ReleaseComObject(_teeSink);
+        Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
         return false;
       }
@@ -216,16 +216,16 @@ namespace TvLibrary.Implementations.Analog.Components
       IPin pinOut = DsFindPin.ByDirection(_teeSink, PinDirection.Output, 0);
       pin = DsFindPin.ByDirection(_filterWstDecoder, PinDirection.Input, 0);
       hr = graphBuilder.Connect(pinOut, pin);
-      Marshal.ReleaseComObject(pin);
-      Marshal.ReleaseComObject(pinOut);
+      Release.ComObject(pin);
+      Release.ComObject(pinOut);
       if (hr != 0)
       {
         //failed
         Log.Log.Error("analog: unable  to tee/sink->wst codec");
         graphBuilder.RemoveFilter(_filterWstDecoder);
         graphBuilder.RemoveFilter(_teeSink);
-        Marshal.ReleaseComObject(_filterWstDecoder);
-        Marshal.ReleaseComObject(_teeSink);
+        Release.ComObject(_filterWstDecoder);
+        Release.ComObject(_teeSink);
         _teeSink = _filterWstDecoder = null;
         _teeSink = null;
         graph.Teletext.Name = null;

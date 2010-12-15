@@ -208,6 +208,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_mDPlugsArray[iplg] != null)
           {
+            Log.Log.Debug("Closing MDAPI plugin instance : {0}{1}", _cardFolder, iplg);
             _mDPlugsArray[iplg].Close();
             _mDPlugsArray[iplg] = null;
           }
@@ -949,8 +950,8 @@ namespace TvLibrary.Implementations.DVB
     public void Close()
     {
       if (mdapiFilter != null)
-      {
-        Marshal.FinalReleaseComObject(mdapiFilter);
+      {        
+        Release.ComObject("mdapiFilter", mdapiFilter);
       }
       mdapiFilter = null;
       _changeChannel = null;

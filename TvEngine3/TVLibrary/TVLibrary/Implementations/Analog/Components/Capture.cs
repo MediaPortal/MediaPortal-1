@@ -599,7 +599,7 @@ namespace TvLibrary.Implementations.Analog.Components
         if (pinVBI != null)
         {
           Log.Log.WriteFile("analog: VideoPortVBI pin found");
-          Marshal.ReleaseComObject(pinVBI);
+          Release.ComObject(pinVBI);
           return;
         }
         pinVBI = FilterGraphTools.GetPinByCategoryAndDirection(_filterVideoCapture, PinCategory.VBI, 0,

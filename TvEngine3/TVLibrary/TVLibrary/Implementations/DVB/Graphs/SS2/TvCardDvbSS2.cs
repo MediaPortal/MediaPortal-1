@@ -1120,68 +1120,17 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId())
         return;
 
-      if (_epgGrabbing)
-      {
-        _epgGrabbing = false;
-        if (_epgGrabberCallback != null && _epgGrabbing)
-        {
-          _epgGrabberCallback.OnEpgCancelled();
-        }
-      }
-      Log.Log.WriteFile("ss2:Decompose");
-      // Decompose the graph
-      //hr = (_graphBuilder as IMediaControl).StopWhenReady();
-      ((IMediaControl)_graphBuilder).Stop();
-      FreeAllSubChannels();
-      FilterGraphTools.RemoveAllFilters(_graphBuilder);
-      _interfaceChannelScan = null;
-      _interfaceEpgGrabber = null;
+      base.Dispose();
+      
+      Log.Log.WriteFile("ss2:Decompose");      
+      
       _interfaceB2C2DataCtrl = null;
       _interfaceB2C2TunerCtrl = null;
-      if (_filterMpeg2DemuxTif != null)
-      {
-        Release.ComObject("MPEG2 demux filter", _filterMpeg2DemuxTif);
-        _filterMpeg2DemuxTif = null;
-      }
+      
       if (_filterB2C2Adapter != null)
       {
         Release.ComObject("tuner filter", _filterB2C2Adapter);
         _filterB2C2Adapter = null;
-      }
-      if (_filterTIF != null)
-      {
-        Release.ComObject("TIF filter", _filterTIF);
-        _filterTIF = null;
-      }
-      //if (_filterSectionsAndTables != null)
-      //{
-      //  Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
-      //}
-      if (_filterTsWriter != null)
-      {
-        Release.ComObject("_filterMpTsAnalyzer", _filterTsWriter);
-        _filterTsWriter = null;
-      }
-      if (_infTeeMain != null)
-      {
-        Release.ComObject("_infTeeMain", _infTeeMain);
-        _infTeeMain = null;
-      }
-      _rotEntry.Dispose();
-      if (_capBuilder != null)
-      {
-        Release.ComObject("capture builder", _capBuilder);
-        _capBuilder = null;
-      }
-      if (_graphBuilder != null)
-      {
-        Release.ComObject("graph builder", _graphBuilder);
-        _graphBuilder = null;
-      }
-      if (_tunerDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_tunerDevice);
-        _tunerDevice = null;
       }
     }
 

@@ -233,7 +233,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterTvTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTvTuner) > 0) {}
+        while (Release.ComObject(_filterTvTuner) > 0) {}
         _filterTvTuner = null;
       }
       DevicesInUse.Instance.Remove(_tunerDevice);

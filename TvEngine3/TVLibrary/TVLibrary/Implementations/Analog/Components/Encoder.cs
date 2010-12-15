@@ -170,12 +170,12 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_filterVideoEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterVideoEncoder) > 0) {}
+        while (Release.ComObject(_filterVideoEncoder) > 0) {}
         _filterVideoEncoder = null;
       }
       if (_filterAudioEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterAudioEncoder) > 0) {}
+        while (Release.ComObject(_filterAudioEncoder) > 0) {}
         _filterAudioEncoder = null;
       }
       if (_filterMpeg2Demux != null)

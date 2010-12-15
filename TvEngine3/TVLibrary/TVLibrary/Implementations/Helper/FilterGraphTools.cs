@@ -273,7 +273,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (filter != null)
         {
-          Marshal.ReleaseComObject(filter);
+          Release.ComObject(filter);
           filter = null;
         }
       }
@@ -368,9 +368,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (bindCtx != null)
-          Marshal.ReleaseComObject(bindCtx);
+          Release.ComObject(bindCtx);
         if (moniker != null)
-          Marshal.ReleaseComObject(moniker);
+          Release.ComObject(moniker);
       }
 
       return filter;
@@ -407,7 +407,7 @@ namespace TvLibrary.Implementations.DVB
             break;
           }
         }
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
 
       return filter;
@@ -448,9 +448,9 @@ namespace TvLibrary.Implementations.DVB
             break;
           }
 
-          Marshal.ReleaseComObject(filters[0]);
+          Release.ComObject(filters[0]);
         }
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
 
       return filter;
@@ -490,7 +490,7 @@ namespace TvLibrary.Implementations.DVB
       if (pin != null)
       {
         int hr = graphBuilder.Render(pin);
-        Marshal.ReleaseComObject(pin);
+        Release.ComObject(pin);
 
         return (hr >= 0);
       }
@@ -604,13 +604,13 @@ namespace TvLibrary.Implementations.DVB
               break;
             }
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          Release.ComObject(pPins[0]);
           DsUtils.FreePinInfo(ppinfo);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        Release.ComObject(ppEnum);
       }
 
       return pRet;
@@ -671,15 +671,15 @@ namespace TvLibrary.Implementations.DVB
                 nextFilters.Add(subfilter);
 
               DsUtils.FreePinInfo(ppinfo);
-              Marshal.ReleaseComObject(connectedPin);
+              Release.ComObject(connectedPin);
             }
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          Release.ComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        Release.ComObject(ppEnum);
       }
       return nextFilters;
     }
@@ -735,12 +735,12 @@ namespace TvLibrary.Implementations.DVB
               iIndex--;
             }
           }
-          Marshal.ReleaseComObject(pPins[0]);
+          Release.ComObject(pPins[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(ppEnum);
+        Release.ComObject(ppEnum);
       }
 
       return pRet;
@@ -776,13 +776,13 @@ namespace TvLibrary.Implementations.DVB
           }
           finally
           {
-            Marshal.ReleaseComObject(pins[0]);
+            Release.ComObject(pins[0]);
           }
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(enumPins);
+        Release.ComObject(enumPins);
       }
     }
 
@@ -819,12 +819,12 @@ namespace TvLibrary.Implementations.DVB
           {
             Log.Log.WriteFile("Error while disconnecting all pins: ", ex);
           }
-          Marshal.ReleaseComObject(filters[0]);
+          Release.ComObject(filters[0]);
         }
       }
       finally
       {
-        Marshal.ReleaseComObject(enumFilters);
+        Release.ComObject(enumFilters);
       }
     }
 
@@ -861,7 +861,7 @@ namespace TvLibrary.Implementations.DVB
           filter.QueryFilterInfo(out info);
           Log.Log.Write("Remove filter from graph: {0}", info.achName);
           graphBuilder.RemoveFilter(filter);
-          while (Marshal.ReleaseComObject(filter) > 0) ;
+          while (Release.ComObject(filter) > 0);          
         }
       }
       catch (Exception)
@@ -873,7 +873,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (enumFilters != null)
         {
-          Marshal.ReleaseComObject(enumFilters);
+          Release.ComObject(enumFilters);
         }
       }
     }
@@ -930,9 +930,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (stream != null)
-          Marshal.ReleaseComObject(stream);
+          Release.ComObject(stream);
         if (storage != null)
-          Marshal.ReleaseComObject(storage);
+          Release.ComObject(storage);
       }
     }
 
@@ -990,9 +990,9 @@ namespace TvLibrary.Implementations.DVB
       finally
       {
         if (stream != null)
-          Marshal.ReleaseComObject(stream);
+          Release.ComObject(stream);
         if (storage != null)
-          Marshal.ReleaseComObject(storage);
+          Release.ComObject(storage);
       }
     }
 
@@ -1049,7 +1049,7 @@ namespace TvLibrary.Implementations.DVB
         DsError.ThrowExceptionForHR(hr);
 
         if (filterInfo.pGraph != null)
-          Marshal.ReleaseComObject(filterInfo.pGraph);
+          Release.ComObject(filterInfo.pGraph);
 
         hr = ((ISpecifyPropertyPages)filter).GetPages(out caGuid);
         DsError.ThrowExceptionForHR(hr);
@@ -1098,7 +1098,7 @@ namespace TvLibrary.Implementations.DVB
         Type type = Type.GetTypeFromCLSID(clsid);
         object o = Activator.CreateInstance(type);
         retval = true;
-        Marshal.ReleaseComObject(o);
+        Release.ComObject(o);
       }
       catch {}
       return retval;
@@ -1174,8 +1174,8 @@ namespace TvLibrary.Implementations.DVB
       }
       finally
       {
-        Marshal.ReleaseComObject(sourcePin);
-        Marshal.ReleaseComObject(destPin);
+        Release.ComObject(sourcePin);
+        Release.ComObject(destPin);
       }
     }
 
@@ -1524,7 +1524,7 @@ namespace TvLibrary.Implementations.DVB
       if (filter == null)
         return -1;
       object o = incRefCountCOM(filter);
-      int refcount = Marshal.ReleaseComObject(o);
+      int refcount = Release.ComObject(o);
       return refcount;
     }
 
@@ -1544,13 +1544,14 @@ namespace TvLibrary.Implementations.DVB
 
       bool connected = connectedToPin != null;
       if (connected)
-        Marshal.ReleaseComObject(connectedToPin);
+        Release.ComObject(connectedToPin);        
 
       int hr = pin.QueryPinInfo(out pinInfo);
       if (hr == 0)
       {
         if (pinInfo.filter != null)
-          Marshal.ReleaseComObject(pinInfo.filter);
+          Release.ComObject(pinInfo.filter);            
+
       }
       return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected,
                            getRefCount(pin), getRefCountCOM(pin));
@@ -1580,7 +1581,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         if (filterInfo.pGraph != null)
-          Marshal.ReleaseComObject(filterInfo.pGraph);
+          Release.ComObject(filterInfo.pGraph);
       }
       return String.Format(filterInfo.achName);
     }
@@ -1599,7 +1600,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr == 0)
       {
         if (pinInfo.filter != null)
-          Marshal.ReleaseComObject(pinInfo.filter);
+          Release.ComObject(pinInfo.filter);
       }
       return String.Format(pinInfo.name);
     }

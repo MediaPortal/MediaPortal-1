@@ -442,22 +442,22 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("HDPVR:  All filters removed");
       if (_filterCrossBar != null)
       {
-        while (Marshal.ReleaseComObject(_filterCrossBar) > 0) { }
+        while (Release.ComObject(_filterCrossBar) > 0) { }
         _filterCrossBar = null;
       }
       if (_filterCapture != null)
       {
-        while (Marshal.ReleaseComObject(_filterCapture) > 0) { }
+        while (Release.ComObject(_filterCapture) > 0) { }
         _filterCapture = null;
       }
       if (_filterEncoder != null)
       {
-        while (Marshal.ReleaseComObject(_filterEncoder) > 0) { }
+        while (Release.ComObject(_filterEncoder) > 0) { }
         _filterEncoder = null;
       }
       if (_filterTsWriter != null)
       {
-        while (Marshal.ReleaseComObject(_filterTsWriter) > 0) { }
+        while (Release.ComObject(_filterTsWriter) > 0) { }
         _filterTsWriter = null;
       }
       _rotEntry.Dispose();

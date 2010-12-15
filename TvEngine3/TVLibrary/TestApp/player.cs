@@ -234,8 +234,8 @@ namespace TestApp
         Log.WriteFile("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
         return false;
       }
-      Marshal.ReleaseComObject(pinTsOut);
-      Marshal.ReleaseComObject(pinDemuxIn);
+      Release.ComObject(pinTsOut);
+      Release.ComObject(pinDemuxIn);
 
       #endregion
 
@@ -304,22 +304,22 @@ namespace TestApp
 
       if (_pinAudio != null)
       {
-        Marshal.ReleaseComObject(_pinAudio);
+        Release.ComObject(_pinAudio);
         _pinAudio = null;
       }
       if (_pinVideo != null)
       {
-        Marshal.ReleaseComObject(_pinVideo);
+        Release.ComObject(_pinVideo);
         _pinVideo = null;
       }
       if (_mpegDemux != null)
       {
-        Marshal.ReleaseComObject(_mpegDemux);
+        Release.ComObject(_mpegDemux);
         _mpegDemux = null;
       }
       if (_tsFileSource != null)
       {
-        Marshal.ReleaseComObject(_tsFileSource);
+        Release.ComObject(_tsFileSource);
         _tsFileSource = null;
       }
       if (_rotEntry != null)
@@ -330,7 +330,7 @@ namespace TestApp
 
       if (_graphBuilder != null)
       {
-        Marshal.ReleaseComObject(_graphBuilder);
+        Release.ComObject(_graphBuilder);
         _graphBuilder = null;
       }
     }

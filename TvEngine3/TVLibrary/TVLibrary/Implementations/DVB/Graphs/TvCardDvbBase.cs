@@ -1797,7 +1797,7 @@ namespace TvLibrary.Implementations.DVB
           break;
         }
       }
-
+     
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
       {
@@ -1838,19 +1838,19 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterTuner != null)
       {
-        while (Marshal.ReleaseComObject(_filterTuner) > 0) ;
+        while (Release.ComObject(_filterTuner) > 0) ;
         _filterTuner = null;
       }
       if (_filterCapture != null)
       {
-        while (Marshal.ReleaseComObject(_filterCapture) > 0) ;
+        while (Release.ComObject(_filterCapture) > 0) ;
         _filterCapture = null;
       }
       if (_filterWinTvUsb != null)
       {
         Log.Log.Info("  Stopping WinTVCI module");
         winTvCiHandler.Shutdown();
-        while (Marshal.ReleaseComObject(_filterWinTvUsb) > 0) ;
+        while (Release.ComObject(_filterWinTvUsb) > 0) ;
         _filterWinTvUsb = null;
       }
       if (_filterTIF != null)
@@ -1911,7 +1911,7 @@ namespace TvLibrary.Implementations.DVB
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          while (Marshal.ReleaseComObject(stat) > 0) ;
+          while (Release.ComObject(stat) > 0) ;
         }
         _tunerStatistics.Clear();
       }

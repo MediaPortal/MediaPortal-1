@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
@@ -252,7 +253,16 @@ namespace TvLibrary.Implementations
             Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
           }
           IBaseFilter tmp;
-          graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
+          try
+          {
+            graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
+          }
+          catch (InvalidComObjectException)
+          {
+            //ignore bad card
+            Log.Log.WriteFile("cannot add filter {0} to graph", devices[i].Name);
+            continue;
+          }
           //Use the Microsoft Network Provider method first but only if available
           if (genericNP)
           {
@@ -343,13 +353,13 @@ namespace TvLibrary.Implementations
             Release.ComObject("tmp filter", tmp);
           }
         }
-        FilterGraphTools.RemoveAllFilters(graphBuilder);
+        FilterGraphTools.RemoveAllFilters(graphBuilder);        
         Release.ComObject("dvbc provider", networkDVBC);
         Release.ComObject("atsc provider", networkATSC);
         Release.ComObject("dvbs provider", networkDVBS);
         Release.ComObject("dvbt provider", networkDVBT);
         rotEntry.Dispose();
-        Release.ComObject("graph builder", graphBuilder);
+        Release.ComObject("graph builder", graphBuilder);        
       }
       //Analogue TV devices
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSTVTuner);

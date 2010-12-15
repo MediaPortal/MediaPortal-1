@@ -46,7 +46,7 @@ namespace TvService
   public partial class Service1 : ServiceBase
   {
     private bool _priorityApplied;
-    private Thread _tvServiceThread = null;
+    private Thread _tvServiceThread = null;    
     private static Thread _unhandledExceptionInThread = null;
    
     /// <summary>
@@ -183,9 +183,11 @@ namespace TvService
         }
 
         _tvServiceThread.Start();
-        //when running as a thread this should be removed (work for 1.2 beta rel.) --> 
-        _tvServiceThread.Join();//wait for thread to finish.
-        
+
+        while (!TvServiceThread.Started)
+        {
+          Thread.Sleep(20);
+        }        
       }      
     }
 
@@ -263,7 +265,7 @@ namespace TvService
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
     protected override void OnStop()
-    {      
+    {                 
       if (_tvServiceThread != null && _tvServiceThread.IsAlive)
       {        
 
@@ -276,11 +278,10 @@ namespace TvService
 
   public class TvServiceThread : IPowerEventHandler
   {
-
-    #region variables
+    #region variables    
 
     private EventWaitHandle _InitializedEvent;
-    private bool _started;    
+    private static bool _started;    
     private TVController _controller;
     private readonly List<PowerEventHandler> _powerEventHandlers;
     private PluginLoader _plugins;
@@ -331,6 +332,11 @@ namespace TvService
       {
         Log.Write(ex);
       }
+    }
+
+    public static bool Started
+    {
+      get { return _started; }
     }
 
     #region IPowerEventHandler implementation
@@ -759,7 +765,7 @@ namespace TvService
 
     public void OnStop()
     {
-      if (!_started)
+      if (!Started)
         return;
       Log.WriteFile("TV Service: stopping");
 
@@ -793,7 +799,7 @@ namespace TvService
       //System.Diagnostics.Debugger.Launch();
       try
       {
-        if (!_started)
+        if (!Started)
         {
           Log.Info("TV service: Starting");
 
@@ -822,19 +828,18 @@ namespace TvService
           {
             _InitializedEvent.Set();
           }           
-          Log.Info("TV service: Started");
-
-          //when running as a thread this is needed (work for 1.2 beta rel.) --> 
-          /*while (true)
+          Log.Info("TV service: Started");                    
+          while (true)
           {
             Thread.Sleep(1000);
-          }*/          
+          }
         }
       }      
       catch (Exception ex)
       {
-        //wait for thread to exit.
-        Log.Info("TvService Thread aborted : {0}", ex);
+        //wait for thread to exit. eg. when stopping tvservice       
+        //Log.Info("TvService Thread aborted : {0}", ex);
+        _started = true; // otherwise the onstop code will not complete.
         OnStop();
       }
     }

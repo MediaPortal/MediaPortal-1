@@ -89,7 +89,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (_filterTvAudioTuner != null)
         {
-          while (Marshal.ReleaseComObject(_filterTvAudioTuner) > 0) { }
+          while (Release.ComObject(_filterTvAudioTuner) > 0) { }
           _filterTvAudioTuner = null;
         }
         if (_audioDevice != null)
