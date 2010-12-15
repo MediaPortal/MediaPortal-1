@@ -336,6 +336,14 @@ namespace MediaPortal.GUI.Video
       {
         Reset();
       }
+       if (!IsVideoWindow(PreviousWindowId) && IsFolderPinProtected(_cachedDir))
+      {
+        //when the user left MyVideos completely make sure that we don't use the cache
+        //if folder is pin protected and reload the dir completly including PIN request etc.
+        _cachedItems.Clear();
+        _cachedDir = null;
+      }
+
       if (VideoState.StartWindow != GetID)
       {
         GUIWindowManager.ReplaceWindow(VideoState.StartWindow);
