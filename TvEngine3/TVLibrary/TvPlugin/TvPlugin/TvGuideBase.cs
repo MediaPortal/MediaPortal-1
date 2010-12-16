@@ -1671,7 +1671,10 @@ namespace TvPlugin
       if (_recalculateProgramOffset)
       {
         _programs = new List<Program>();
-        DateTime dtStart = _viewingTime;
+
+        DateTime dtStart = DateTime.Now;
+        dtStart = dtStart.AddDays(-1);
+
         DateTime dtEnd = dtStart.AddDays(30);
 
         TvBusinessLayer layer = new TvBusinessLayer();
