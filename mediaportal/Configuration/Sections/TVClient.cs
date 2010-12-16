@@ -111,6 +111,7 @@ namespace MediaPortal.Configuration.Sections
                                               "Title", // Show episodeName
                                               "Number + Title" // Show number and title
                                             };
+    private MPCheckBox cbContinuousGuideScroll;
 
     private bool _SingleSeat;
 
@@ -144,6 +145,7 @@ namespace MediaPortal.Configuration.Sections
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+        cbContinuousGuideScroll.Checked = xmlreader.GetValueAsBool("mytv", "continuousGuideScroll", false);
         cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
@@ -322,6 +324,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("myradio", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         //currently we use the same checkbox for radio but different settings in config file
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
+        xmlwriter.SetValueAsBool("mytv", "continuousGuideScroll", cbContinuousGuideScroll.Checked);
         xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
 
         xmlwriter.SetValueAsBool("tvservice", "isWakeOnLanEnabled", mpCheckBoxIsWakeOnLanEnabled.Checked);
@@ -370,15 +373,16 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPageGeneralSettings = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox900 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.mpLabelWOLTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpTextBoxMacAddress = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpLabel400 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpCheckBoxIsAutoMacAddressEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpCheckBoxIsWakeOnLanEnabled = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpLabelWOLTimeOut = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpNumericTextBoxWOLTimeOut = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbContinuousGuideScroll = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbShowChannelStateIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelShowEpisodeinfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboboxShowEpisodeInfo = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -474,15 +478,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.enableAudioDualMonoModes);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAudioOverLang);
       this.mpGroupBox1.Controls.Add(this.mpCheckBoxPrefAC3);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 301);
+      this.mpGroupBox1.Location = new System.Drawing.Point(16, 338);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(432, 75);
       this.mpGroupBox1.TabIndex = 9;
@@ -498,16 +500,13 @@ namespace MediaPortal.Configuration.Sections
       this.enableAudioDualMonoModes.Name = "enableAudioDualMonoModes";
       this.enableAudioDualMonoModes.Size = new System.Drawing.Size(386, 30);
       this.enableAudioDualMonoModes.TabIndex = 12;
-      this.enableAudioDualMonoModes.Text =
-        "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
-        ", you can switch between them)";
+      this.enableAudioDualMonoModes.Text = "Enable AudioDualMono mode switching\r\n(if 1 audio stream contains 2x mono channels" +
+          ", you can switch between them)";
       this.enableAudioDualMonoModes.UseVisualStyleBackColor = true;
       // 
       // mpCheckBoxPrefAudioOverLang
       // 
-      this.mpCheckBoxPrefAudioOverLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpCheckBoxPrefAudioOverLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAudioOverLang.AutoSize = true;
       this.mpCheckBoxPrefAudioOverLang.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxPrefAudioOverLang.Location = new System.Drawing.Point(239, 18);
@@ -519,9 +518,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpCheckBoxPrefAC3
       // 
-      this.mpCheckBoxPrefAC3.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpCheckBoxPrefAC3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.mpCheckBoxPrefAC3.AutoSize = true;
       this.mpCheckBoxPrefAC3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpCheckBoxPrefAC3.Location = new System.Drawing.Point(9, 18);
@@ -540,7 +537,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControlTVGeneral.Location = new System.Drawing.Point(0, 2);
       this.tabControlTVGeneral.Name = "tabControlTVGeneral";
       this.tabControlTVGeneral.SelectedIndex = 0;
-      this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 430);
+      this.tabControlTVGeneral.Size = new System.Drawing.Size(472, 445);
       this.tabControlTVGeneral.TabIndex = 11;
       // 
       // tabPageGeneralSettings
@@ -553,7 +550,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageGeneralSettings.Location = new System.Drawing.Point(4, 22);
       this.tabPageGeneralSettings.Name = "tabPageGeneralSettings";
       this.tabPageGeneralSettings.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageGeneralSettings.Size = new System.Drawing.Size(464, 404);
+      this.tabPageGeneralSettings.Size = new System.Drawing.Size(464, 419);
       this.tabPageGeneralSettings.TabIndex = 0;
       this.tabPageGeneralSettings.Text = "General settings";
       this.tabPageGeneralSettings.UseVisualStyleBackColor = true;
@@ -568,12 +565,45 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsAutoMacAddressEnabled);
       this.mpGroupBox900.Controls.Add(this.mpCheckBoxIsWakeOnLanEnabled);
       this.mpGroupBox900.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox900.Location = new System.Drawing.Point(16, 272);
+      this.mpGroupBox900.Location = new System.Drawing.Point(16, 286);
       this.mpGroupBox900.Name = "mpGroupBox900";
       this.mpGroupBox900.Size = new System.Drawing.Size(431, 126);
       this.mpGroupBox900.TabIndex = 14;
       this.mpGroupBox900.TabStop = false;
       this.mpGroupBox900.Text = "Wake-On-Lan";
+      // 
+      // mpNumericTextBoxWOLTimeOut
+      // 
+      this.mpNumericTextBoxWOLTimeOut.AutoCompleteCustomSource.AddRange(new string[] {
+            "10",
+            "20",
+            "30",
+            "40",
+            "50",
+            "60",
+            "70",
+            "80",
+            "90"});
+      this.mpNumericTextBoxWOLTimeOut.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+      this.mpNumericTextBoxWOLTimeOut.Enabled = false;
+      this.mpNumericTextBoxWOLTimeOut.Location = new System.Drawing.Point(126, 42);
+      this.mpNumericTextBoxWOLTimeOut.MaxLength = 4;
+      this.mpNumericTextBoxWOLTimeOut.Name = "mpNumericTextBoxWOLTimeOut";
+      this.mpNumericTextBoxWOLTimeOut.Size = new System.Drawing.Size(45, 20);
+      this.mpNumericTextBoxWOLTimeOut.TabIndex = 9;
+      this.mpNumericTextBoxWOLTimeOut.Tag = "Default timeout is 10 seconds";
+      this.mpNumericTextBoxWOLTimeOut.Text = "10";
+      this.mpNumericTextBoxWOLTimeOut.Value = 10;
+      this.mpNumericTextBoxWOLTimeOut.WordWrap = false;
+      // 
+      // mpLabelWOLTimeOut
+      // 
+      this.mpLabelWOLTimeOut.AutoSize = true;
+      this.mpLabelWOLTimeOut.Location = new System.Drawing.Point(41, 45);
+      this.mpLabelWOLTimeOut.Name = "mpLabelWOLTimeOut";
+      this.mpLabelWOLTimeOut.Size = new System.Drawing.Size(72, 13);
+      this.mpLabelWOLTimeOut.TabIndex = 8;
+      this.mpLabelWOLTimeOut.Text = "WOL timeout:";
       // 
       // mpTextBoxMacAddress
       // 
@@ -604,8 +634,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsAutoMacAddressEnabled.TabIndex = 1;
       this.mpCheckBoxIsAutoMacAddressEnabled.Text = "Auto-configure server MAC Address";
       this.mpCheckBoxIsAutoMacAddressEnabled.UseVisualStyleBackColor = true;
-      this.mpCheckBoxIsAutoMacAddressEnabled.CheckedChanged +=
-        new System.EventHandler(this.mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged);
+      this.mpCheckBoxIsAutoMacAddressEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsAutoMacAddressEnabled_CheckedChanged);
       // 
       // mpCheckBoxIsWakeOnLanEnabled
       // 
@@ -617,49 +646,15 @@ namespace MediaPortal.Configuration.Sections
       this.mpCheckBoxIsWakeOnLanEnabled.TabIndex = 0;
       this.mpCheckBoxIsWakeOnLanEnabled.Text = "Wake up TV Server as needed";
       this.mpCheckBoxIsWakeOnLanEnabled.UseVisualStyleBackColor = true;
-      this.mpCheckBoxIsWakeOnLanEnabled.CheckedChanged +=
-        new System.EventHandler(this.mpCheckBoxIsWakeOnLanEnabled_CheckedChanged);
-      // 
-      // mpLabelWOLTimeOut
-      // 
-      this.mpLabelWOLTimeOut.AutoSize = true;
-      this.mpLabelWOLTimeOut.Location = new System.Drawing.Point(41, 45);
-      this.mpLabelWOLTimeOut.Name = "mpLabelWOLTimeOut";
-      this.mpLabelWOLTimeOut.Size = new System.Drawing.Size(72, 13);
-      this.mpLabelWOLTimeOut.TabIndex = 8;
-      this.mpLabelWOLTimeOut.Text = "WOL timeout:";
-      // 
-      // mpNumericTextBoxWOLTimeOut
-      // 
-      this.mpNumericTextBoxWOLTimeOut.AutoCompleteCustomSource.AddRange(new string[] {
-            "10",
-            "20",
-            "30",
-            "40",
-            "50",
-            "60",
-            "70",
-            "80",
-            "90"});
-      this.mpNumericTextBoxWOLTimeOut.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-      this.mpNumericTextBoxWOLTimeOut.Enabled = false;
-      this.mpNumericTextBoxWOLTimeOut.Location = new System.Drawing.Point(126, 42);
-      this.mpNumericTextBoxWOLTimeOut.MaxLength = 4;
-      this.mpNumericTextBoxWOLTimeOut.Name = "mpNumericTextBoxWOLTimeOut";
-      this.mpNumericTextBoxWOLTimeOut.Size = new System.Drawing.Size(45, 20);
-      this.mpNumericTextBoxWOLTimeOut.TabIndex = 9;
-      this.mpNumericTextBoxWOLTimeOut.Tag = "Default timeout is 10 seconds";
-      this.mpNumericTextBoxWOLTimeOut.Text = "10";
-      this.mpNumericTextBoxWOLTimeOut.Value = 10;
-      this.mpNumericTextBoxWOLTimeOut.WordWrap = false;
+      this.mpCheckBoxIsWakeOnLanEnabled.CheckedChanged += new System.EventHandler(this.mpCheckBoxIsWakeOnLanEnabled_CheckedChanged);
       // 
       // grpTsReader
       // 
       this.grpTsReader.Controls.Add(this.cbRelaxTsReader);
       this.grpTsReader.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.grpTsReader.Location = new System.Drawing.Point(16, 213);
+      this.grpTsReader.Location = new System.Drawing.Point(16, 231);
       this.grpTsReader.Name = "grpTsReader";
-      this.grpTsReader.Size = new System.Drawing.Size(431, 53);
+      this.grpTsReader.Size = new System.Drawing.Size(431, 47);
       this.grpTsReader.TabIndex = 12;
       this.grpTsReader.TabStop = false;
       this.grpTsReader.Text = "TsReader options";
@@ -679,16 +674,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox6
       // 
+      this.mpGroupBox6.Controls.Add(this.cbContinuousGuideScroll);
       this.mpGroupBox6.Controls.Add(this.cbShowChannelStateIcons);
       this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
       this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
       this.mpGroupBox6.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox6.Location = new System.Drawing.Point(16, 134);
+      this.mpGroupBox6.Location = new System.Drawing.Point(16, 127);
       this.mpGroupBox6.Name = "mpGroupBox6";
-      this.mpGroupBox6.Size = new System.Drawing.Size(431, 73);
+      this.mpGroupBox6.Size = new System.Drawing.Size(431, 96);
       this.mpGroupBox6.TabIndex = 12;
       this.mpGroupBox6.TabStop = false;
       this.mpGroupBox6.Text = "Guide";
+      // 
+      // cbContinuousGuideScroll
+      // 
+      this.cbContinuousGuideScroll.AutoSize = true;
+      this.cbContinuousGuideScroll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbContinuousGuideScroll.Location = new System.Drawing.Point(22, 40);
+      this.cbContinuousGuideScroll.Name = "cbContinuousGuideScroll";
+      this.cbContinuousGuideScroll.Size = new System.Drawing.Size(210, 17);
+      this.cbContinuousGuideScroll.TabIndex = 2;
+      this.cbContinuousGuideScroll.Text = "Loop guide seemlessly (top and bottom)";
+      this.cbContinuousGuideScroll.UseVisualStyleBackColor = true;
       // 
       // cbShowChannelStateIcons
       // 
@@ -706,7 +713,7 @@ namespace MediaPortal.Configuration.Sections
       // labelShowEpisodeinfo
       // 
       this.labelShowEpisodeinfo.AutoSize = true;
-      this.labelShowEpisodeinfo.Location = new System.Drawing.Point(19, 47);
+      this.labelShowEpisodeinfo.Location = new System.Drawing.Point(19, 68);
       this.labelShowEpisodeinfo.Name = "labelShowEpisodeinfo";
       this.labelShowEpisodeinfo.Size = new System.Drawing.Size(97, 13);
       this.labelShowEpisodeinfo.TabIndex = 1;
@@ -717,7 +724,7 @@ namespace MediaPortal.Configuration.Sections
       this.comboboxShowEpisodeInfo.BorderColor = System.Drawing.Color.Empty;
       this.comboboxShowEpisodeInfo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboboxShowEpisodeInfo.FormattingEnabled = true;
-      this.comboboxShowEpisodeInfo.Location = new System.Drawing.Point(126, 43);
+      this.comboboxShowEpisodeInfo.Location = new System.Drawing.Point(126, 64);
       this.comboboxShowEpisodeInfo.Name = "comboboxShowEpisodeInfo";
       this.comboboxShowEpisodeInfo.Size = new System.Drawing.Size(229, 21);
       this.comboboxShowEpisodeInfo.TabIndex = 1;
@@ -728,7 +735,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox5.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox5.Location = new System.Drawing.Point(16, 75);
       this.mpGroupBox5.Name = "mpGroupBox5";
-      this.mpGroupBox5.Size = new System.Drawing.Size(431, 53);
+      this.mpGroupBox5.Size = new System.Drawing.Size(431, 45);
       this.mpGroupBox5.TabIndex = 11;
       this.mpGroupBox5.TabStop = false;
       this.mpGroupBox5.Text = "Group options";
@@ -751,17 +758,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageAudioLanguages.Location = new System.Drawing.Point(4, 22);
       this.tabPageAudioLanguages.Name = "tabPageAudioLanguages";
       this.tabPageAudioLanguages.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageAudioLanguages.Size = new System.Drawing.Size(464, 382);
+      this.tabPageAudioLanguages.Size = new System.Drawing.Size(464, 419);
       this.tabPageAudioLanguages.TabIndex = 3;
       this.tabPageAudioLanguages.Text = "Audio settings";
       this.tabPageAudioLanguages.UseVisualStyleBackColor = true;
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.mpLabel5);
       this.groupBox2.Controls.Add(this.mpLabel1);
       this.groupBox2.Controls.Add(this.mpButtonDownAudioLang);
@@ -798,9 +803,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonDownAudioLang
       // 
-      this.mpButtonDownAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonDownAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonDownAudioLang.Location = new System.Drawing.Point(289, 255);
       this.mpButtonDownAudioLang.Name = "mpButtonDownAudioLang";
       this.mpButtonDownAudioLang.Size = new System.Drawing.Size(46, 20);
@@ -811,9 +814,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonUpAudioLang
       // 
-      this.mpButtonUpAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonUpAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonUpAudioLang.Location = new System.Drawing.Point(237, 255);
       this.mpButtonUpAudioLang.Name = "mpButtonUpAudioLang";
       this.mpButtonUpAudioLang.Size = new System.Drawing.Size(46, 20);
@@ -824,9 +825,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonAddAudioLang
       // 
-      this.mpButtonAddAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonAddAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonAddAudioLang.Location = new System.Drawing.Point(202, 40);
       this.mpButtonAddAudioLang.Name = "mpButtonAddAudioLang";
       this.mpButtonAddAudioLang.Size = new System.Drawing.Size(28, 20);
@@ -837,9 +836,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpButtonRemoveAudioLang
       // 
-      this.mpButtonRemoveAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonRemoveAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpButtonRemoveAudioLang.Location = new System.Drawing.Point(202, 66);
       this.mpButtonRemoveAudioLang.Name = "mpButtonRemoveAudioLang";
       this.mpButtonRemoveAudioLang.Size = new System.Drawing.Size(28, 20);
@@ -852,15 +849,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpListViewPreferredAudioLang.AllowDrop = true;
       this.mpListViewPreferredAudioLang.AllowRowReorder = true;
-      this.mpListViewPreferredAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListViewPreferredAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                      {
-                                                             this.columnHeader2,
-                                                             this.columnHeader6
-                                                      });
+      this.mpListViewPreferredAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewPreferredAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader2,
+            this.columnHeader6});
       this.mpListViewPreferredAudioLang.FullRowSelect = true;
       this.mpListViewPreferredAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredAudioLang.HideSelection = false;
@@ -870,8 +863,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpListViewPreferredAudioLang.TabIndex = 1;
       this.mpListViewPreferredAudioLang.UseCompatibleStateImageBehavior = false;
       this.mpListViewPreferredAudioLang.View = System.Windows.Forms.View.Details;
-      this.mpListViewPreferredAudioLang.SelectedIndexChanged +=
-        new System.EventHandler(this.mpListView2_SelectedIndexChanged);
+      this.mpListViewPreferredAudioLang.SelectedIndexChanged += new System.EventHandler(this.mpListView2_SelectedIndexChanged);
       // 
       // columnHeader2
       // 
@@ -887,16 +879,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpListViewAvailAudioLang.AllowDrop = true;
       this.mpListViewAvailAudioLang.AllowRowReorder = true;
-      this.mpListViewAvailAudioLang.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListViewAvailAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                  {
-                                                         this.columnHeader1,
-                                                         this.columnHeader5
-                                                  });
+      this.mpListViewAvailAudioLang.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpListViewAvailAudioLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader5});
       this.mpListViewAvailAudioLang.FullRowSelect = true;
       this.mpListViewAvailAudioLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailAudioLang.HideSelection = false;
@@ -924,7 +912,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageSubtitles.Location = new System.Drawing.Point(4, 22);
       this.tabPageSubtitles.Name = "tabPageSubtitles";
       this.tabPageSubtitles.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageSubtitles.Size = new System.Drawing.Size(464, 382);
+      this.tabPageSubtitles.Size = new System.Drawing.Size(464, 419);
       this.tabPageSubtitles.TabIndex = 2;
       this.tabPageSubtitles.Text = "Subtitle settings";
       this.tabPageSubtitles.UseVisualStyleBackColor = true;
@@ -966,10 +954,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.mpLabel6);
       this.mpGroupBox3.Controls.Add(this.mpLabel7);
       this.mpGroupBox3.Controls.Add(this.mpButtonDownSubLang);
@@ -1048,11 +1034,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpListViewPreferredSubLang.AllowDrop = true;
       this.mpListViewPreferredSubLang.AllowRowReorder = true;
-      this.mpListViewPreferredSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                    {
-                                                           this.columnHeader4,
-                                                           this.columnHeader8
-                                                    });
+      this.mpListViewPreferredSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader4,
+            this.columnHeader8});
       this.mpListViewPreferredSubLang.FullRowSelect = true;
       this.mpListViewPreferredSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewPreferredSubLang.HideSelection = false;
@@ -1077,11 +1061,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.mpListViewAvailSubLang.AllowDrop = true;
       this.mpListViewAvailSubLang.AllowRowReorder = true;
-      this.mpListViewAvailSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                                {
-                                                       this.columnHeader3,
-                                                       this.columnHeader7
-                                                });
+      this.mpListViewAvailSubLang.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader3,
+            this.columnHeader7});
       this.mpListViewAvailSubLang.FullRowSelect = true;
       this.mpListViewAvailSubLang.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListViewAvailSubLang.HideSelection = false;
@@ -1109,17 +1091,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
       this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(464, 382);
+      this.tabPage1.Size = new System.Drawing.Size(464, 419);
       this.tabPage1.TabIndex = 4;
       this.tabPage1.Text = "Notifier";
       this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // mpGroupBox8
       // 
-      this.mpGroupBox8.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox8.Controls.Add(this.chkRecnotifications);
       this.mpGroupBox8.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox8.Location = new System.Drawing.Point(16, 166);
@@ -1142,10 +1122,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox7
       // 
-      this.mpGroupBox7.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox7.Controls.Add(this.txtNotifyAfter);
       this.mpGroupBox7.Controls.Add(this.labelNotifyTimeout);
       this.mpGroupBox7.Controls.Add(this.checkBoxNotifyPlaySound);
@@ -1162,10 +1140,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtNotifyAfter
       // 
-      this.txtNotifyAfter.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtNotifyAfter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtNotifyAfter.BorderColor = System.Drawing.Color.Empty;
       this.txtNotifyAfter.Location = new System.Drawing.Point(164, 73);
       this.txtNotifyAfter.Name = "txtNotifyAfter";
@@ -1184,10 +1160,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxNotifyPlaySound
       // 
-      this.checkBoxNotifyPlaySound.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxNotifyPlaySound.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxNotifyPlaySound.AutoSize = true;
       this.checkBoxNotifyPlaySound.Checked = true;
       this.checkBoxNotifyPlaySound.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -1210,10 +1184,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtNotifyBefore
       // 
-      this.txtNotifyBefore.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtNotifyBefore.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.txtNotifyBefore.BorderColor = System.Drawing.Color.Empty;
       this.txtNotifyBefore.Location = new System.Drawing.Point(164, 47);
       this.txtNotifyBefore.Name = "txtNotifyBefore";
@@ -1237,7 +1209,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.Controls.Add(this.tabControlTVGeneral);
       this.Name = "TVClient";
-      this.Size = new System.Drawing.Size(510, 435);
+      this.Size = new System.Drawing.Size(510, 450);
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.mpGroupBox1.ResumeLayout(false);
@@ -1266,6 +1238,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox7.ResumeLayout(false);
       this.mpGroupBox7.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     private void mpListView2_SelectedIndexChanged(object sender, EventArgs e) { }
