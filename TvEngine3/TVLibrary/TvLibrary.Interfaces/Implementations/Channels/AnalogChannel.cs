@@ -385,6 +385,10 @@ namespace TvLibrary.Implementations
              analogChannel.Frequency != Frequency;
     }
 
+    /// <summary>
+    /// Checks if the given channel is FTA. (Not scrambled)
+    /// </summary>
+    /// <returns>true, if the channel is FTA</returns>
     public bool FreeToAir
     {
       get { return true; }
