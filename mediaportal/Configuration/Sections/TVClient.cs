@@ -111,7 +111,7 @@ namespace MediaPortal.Configuration.Sections
                                               "Title", // Show episodeName
                                               "Number + Title" // Show number and title
                                             };
-    private MPCheckBox cbContinuousGuideScroll;
+    private MPCheckBox cbContinuousScrollGuide;
 
     private bool _SingleSeat;
 
@@ -145,7 +145,7 @@ namespace MediaPortal.Configuration.Sections
         enableAudioDualMonoModes.Checked = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
         cbHideAllChannels.Checked = xmlreader.GetValueAsBool("mytv", "hideAllChannelsGroup", false);
         cbShowChannelStateIcons.Checked = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
-        cbContinuousGuideScroll.Checked = xmlreader.GetValueAsBool("mytv", "continuousGuideScroll", false);
+        cbContinuousScrollGuide.Checked = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
         cbRelaxTsReader.Checked = xmlreader.GetValueAsBool("mytv", "relaxTsReader", false);
 
         mpCheckBoxIsWakeOnLanEnabled.Checked = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
@@ -324,7 +324,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("myradio", "hideAllChannelsGroup", cbHideAllChannels.Checked);
         //currently we use the same checkbox for radio but different settings in config file
         xmlwriter.SetValueAsBool("mytv", "showChannelStateIcons", cbShowChannelStateIcons.Checked);
-        xmlwriter.SetValueAsBool("mytv", "continuousGuideScroll", cbContinuousGuideScroll.Checked);
+        xmlwriter.SetValueAsBool("mytv", "continuousScrollGuide", cbContinuousScrollGuide.Checked);
         xmlwriter.SetValueAsBool("mytv", "relaxTsReader", cbRelaxTsReader.Checked);
 
         xmlwriter.SetValueAsBool("tvservice", "isWakeOnLanEnabled", mpCheckBoxIsWakeOnLanEnabled.Checked);
@@ -382,7 +382,7 @@ namespace MediaPortal.Configuration.Sections
       this.grpTsReader = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.cbRelaxTsReader = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.cbContinuousGuideScroll = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.cbContinuousScrollGuide = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbShowChannelStateIcons = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.labelShowEpisodeinfo = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboboxShowEpisodeInfo = new MediaPortal.UserInterface.Controls.MPComboBox();
@@ -674,7 +674,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox6
       // 
-      this.mpGroupBox6.Controls.Add(this.cbContinuousGuideScroll);
+      this.mpGroupBox6.Controls.Add(this.cbContinuousScrollGuide);
       this.mpGroupBox6.Controls.Add(this.cbShowChannelStateIcons);
       this.mpGroupBox6.Controls.Add(this.labelShowEpisodeinfo);
       this.mpGroupBox6.Controls.Add(this.comboboxShowEpisodeInfo);
@@ -686,16 +686,16 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox6.TabStop = false;
       this.mpGroupBox6.Text = "Guide";
       // 
-      // cbContinuousGuideScroll
+      // cbContinuousScrollGuide
       // 
-      this.cbContinuousGuideScroll.AutoSize = true;
-      this.cbContinuousGuideScroll.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.cbContinuousGuideScroll.Location = new System.Drawing.Point(22, 40);
-      this.cbContinuousGuideScroll.Name = "cbContinuousGuideScroll";
-      this.cbContinuousGuideScroll.Size = new System.Drawing.Size(210, 17);
-      this.cbContinuousGuideScroll.TabIndex = 2;
-      this.cbContinuousGuideScroll.Text = "Loop guide seamlessly (top and bottom)";
-      this.cbContinuousGuideScroll.UseVisualStyleBackColor = true;
+      this.cbContinuousScrollGuide.AutoSize = true;
+      this.cbContinuousScrollGuide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbContinuousScrollGuide.Location = new System.Drawing.Point(22, 40);
+      this.cbContinuousScrollGuide.Name = "cbContinuousScrollGuide";
+      this.cbContinuousScrollGuide.Size = new System.Drawing.Size(210, 17);
+      this.cbContinuousScrollGuide.TabIndex = 2;
+      this.cbContinuousScrollGuide.Text = "Loop guide seamlessly (top and bottom)";
+      this.cbContinuousScrollGuide.UseVisualStyleBackColor = true;
       // 
       // cbShowChannelStateIcons
       // 
