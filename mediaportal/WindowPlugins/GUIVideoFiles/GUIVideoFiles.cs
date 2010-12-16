@@ -1809,31 +1809,31 @@ namespace MediaPortal.GUI.Video
       // Do sorting
       switch (selectedOption)
       {
-        case 0: // By name
+        //
+        // ****** Watch out for fallthrough of empty cases if reordering CASE *******
+        //
+        case 0: // By name == 103
+        
+        case 103:
           IOrderedEnumerable<object> sortedPlayList = GetSortedPlayListbyName(playFiles);
           // Add all files in temporary playlist
           AddToPlayList(tmpPlayList, sortedPlayList);
           break;
-        
-        case 103:
-          goto case 0;
 
-        case 1: // By date (date modified)
+        case 1: // By date (date modified) == 104
+        
+        case 104:
           sortedPlayList = GetSortedPlayListbyDate(playFiles);
           AddToPlayList(tmpPlayList, sortedPlayList);
           break;
 
-        case 104:
-          goto case 1;
-
-        case 2: // Shuffle
+        case 2: // Shuffle == 191
+        
+        case 191:
           sortedPlayList = GetSortedPlayListbyName(playFiles);
           AddToPlayList(tmpPlayList, sortedPlayList);
           tmpPlayList.Shuffle();
           break;
-
-        case 191:
-          goto case 2;
       }
       // Play movies
       PlayMovieFromPlayList(false);
