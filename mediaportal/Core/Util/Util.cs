@@ -2612,7 +2612,7 @@ namespace MediaPortal.Util
     private static void fileSystemWatcher_Created(object sender, FileSystemEventArgs e)
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
-      if (!e.FullPath.Contains("db3-journal"))
+      if (!e.FullPath.ToLower().Contains("db3-journal"))
       {
         if (watcher != null)
         {
@@ -2629,7 +2629,7 @@ namespace MediaPortal.Util
     {
       FileSystemWatcher watcher = sender as FileSystemWatcher;
 
-      if (!e.FullPath.Contains("db3-journal"))
+      if (!e.FullPath.ToLower().Contains("db3-journal"))
       {
         if (watcher != null)
         {

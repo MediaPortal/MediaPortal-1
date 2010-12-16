@@ -890,10 +890,12 @@ namespace MediaPortal.Music.Database
 
       foreach (string Share in _shares)
       {
+        //dummy call to stop lots of watchers being created unnecessarily
+        Util.Utils.FileExistsInCache(Path.Combine(Share, "folder.jpg"));
         // Get all the files for the given Share / Path
         try
         {
-          foreach (FileInfo file in GetFilesRecursive(new DirectoryInfo(Share)))
+          foreach (FileInformation file in GetFilesRecursive(new DirectoryInfo(Share)))
           {
             allFilesCount++;
 
@@ -913,7 +915,7 @@ namespace MediaPortal.Music.Database
 
             _processCount++;
 
-            AddUpdateSong(file.FullName);
+            AddUpdateSong(file.Name);
           }
         }
         catch (Exception ex)
@@ -1018,7 +1020,7 @@ namespace MediaPortal.Music.Database
     /// </summary>
     /// <param name="dirInfo"></param>
     /// <returns></returns>
-    private IEnumerable<FileInfo> GetFilesRecursive(DirectoryInfo dirInfo)
+    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo)
     {
       return GetFilesRecursive(dirInfo, "*.*");
     }
@@ -1026,8 +1028,8 @@ namespace MediaPortal.Music.Database
     /// <summary>
     /// Build an Iterator over the given Directory, returning all files recursively
     /// </summary>
-    /// <param name="dirInfo"></param>
-    /// <param name="searchPattern"></param>
+    /// <param name="dirInfo">DirectoryInfo for the directory we want files returned for</param>
+    /// <param name="searchPattern">This parameter is ignored in the current implementation</param>
     /// <returns></returns>
     /// 
     /// A much more elegant way would be using the method below, but it is not allowed to have a yield inside a try / catch,
@@ -1050,11 +1052,11 @@ namespace MediaPortal.Music.Database
     ///    yield return fi;
     ///  }
     /// }
-    private IEnumerable<FileInfo> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
+    private IEnumerable<FileInformation> GetFilesRecursive(DirectoryInfo dirInfo, string searchPattern)
     {
       Queue<DirectoryInfo> directories = new Queue<DirectoryInfo>();
       directories.Enqueue(dirInfo);
-      Queue<FileInfo> files = new Queue<FileInfo>();
+      Queue<FileInformation> files = new Queue<FileInformation>();
       while (files.Count > 0 || directories.Count > 0)
       {
         if (files.Count > 0)
@@ -1069,12 +1071,13 @@ namespace MediaPortal.Music.Database
             musicFolders.Add(dir.FullName);
 
             DirectoryInfo[] newDirectories = dir.GetDirectories();
-            FileInfo[] newFiles = dir.GetFiles(searchPattern);
+            FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName, !_excludeHiddenFiles);// dir.GetFiles(searchPattern);
+            string[] newFiles2 = MediaPortal.Util.NativeFileSystemOperations.GetFiles(dir.FullName);
             foreach (DirectoryInfo di in newDirectories)
             {
               directories.Enqueue(di);
             }
-            foreach (FileInfo file in newFiles)
+            foreach (FileInformation file in newFiles)
             {
               files.Enqueue(file);
             }
@@ -1092,9 +1095,9 @@ namespace MediaPortal.Music.Database
     /// Should the file be included in the list to be added
     /// </summary>
     /// <param name="fileInfo"></param>
-    private bool CheckFileForInclusion(FileInfo fileInfo)
+    private bool CheckFileForInclusion(FileInformation fileInfo)
     {
-      string file = fileInfo.FullName;
+      string file = fileInfo.Name;
       bool fileinCluded = false;
       try
       {
@@ -1118,13 +1121,13 @@ namespace MediaPortal.Music.Database
 
         
         // Provide an easy way to exclude problematic or unwanted files from the scan
-        if (_excludeHiddenFiles)
-        {
-          if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-          {
-            return false;
-          }
-        }
+        //if (_excludeHiddenFiles)
+        //{
+        //  if ((fileInfo.Attributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+        //  {
+        //    return false;
+        //  }
+        //}
 
         // Only get files with the required extension
         if (_supportedExtensions.IndexOf(ext) == -1)
@@ -1145,7 +1148,7 @@ namespace MediaPortal.Music.Database
         // Only Add files to the list, if they have been Created / Updated after the Last Import date
         if (_updateSinceLastImport && !_singleFolderScan)
         {
-          if (fileInfo.CreationTime > _lastImport || fileInfo.LastWriteTime > _lastImport)
+          if (fileInfo.CreationTime > _lastImport || fileInfo.ModificationTime > _lastImport)
           {
             _songsProcessed++;
             fileinCluded = true;

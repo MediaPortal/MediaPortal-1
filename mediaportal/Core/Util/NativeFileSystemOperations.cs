@@ -94,6 +94,16 @@ namespace MediaPortal.Util
     /// <returns>A string array of the filenames</returns>
     public static string[] GetFiles(string directory)
     {
+      return GetFiles(directory, true);
+    }
+    /// <summary>
+    /// Gets all the filenames in a directory.
+    /// Does not include subdirectories.
+    /// </summary>
+    /// <param name="directory">The directory to parse</param>
+    /// <returns>A string array of the filenames</returns>
+    public static string[] GetFiles(string directory, bool includeSystemAndHidden)
+    {
       List<string> fi = new List<string>();
       IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
       string prefix = fileSystemPrefix;
@@ -114,7 +124,7 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))==0)
+              if (includeSystemAndHidden || (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))==0)
               {
                 string fName = Path.Combine(directory, findData.cFileName);
                 if (prefix == UNCPrefix) fName = @"\\"+fName;
@@ -140,6 +150,16 @@ namespace MediaPortal.Util
     /// <returns>A string array of the filenames</returns>
     public static FileInformation[] GetFileInformation(string directory)
     {
+      return GetFileInformation(directory, true);
+    }
+    /// <summary>
+    /// Gets all the filenames in a directory.
+    /// Does not include subdirectories.
+    /// </summary>
+    /// <param name="directory">The directory to parse</param>
+    /// <returns>A string array of the filenames</returns>
+    public static FileInformation[] GetFileInformation(string directory, bool includeSystemAndHidden)
+    {
       List<FileInformation> fi = new List<FileInformation>();
       IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
       string prefix = fileSystemPrefix;
@@ -162,7 +182,7 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if ((findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
+              if (includeSystemAndHidden || (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
               {
                 FileInformation fileInfo = new FileInformation();
                 long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) + findData.ftCreationTime.dwLowDateTime;
