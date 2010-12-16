@@ -94,8 +94,8 @@ namespace MediaPortal.GUI.Video
               return;
             }
             // Last defence survived, so lets grab what we can from TMDB and get out of here
-            pictureCount = tmdbSearch.Count;
-            
+            pictureCount = imdbSearch.Count + thumb;
+
             int pictureIndeximdb = 0;
             thumbUrls = new string[pictureCount];
 

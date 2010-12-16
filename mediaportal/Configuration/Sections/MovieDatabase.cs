@@ -305,11 +305,11 @@ namespace MediaPortal.Configuration.Sections
           cbTitle.SelectedIndex = i;
           ComboBoxItemMovie item = (ComboBoxItemMovie)cbTitle.SelectedItem;
           CurrentMovie.ID = item.Movie.ID;
-          string strFilenameAndPath = "";
+          string strFilenameAndPath = string.Empty;
 
           if (listViewFiles.Items.Count > 0)
           {
-            strFilenameAndPath = listViewFiles.Items[0].ToString();
+            strFilenameAndPath = listViewFiles.Items[0].Text;
           }
           // Delete covers
           FanArt.DeleteCovers(CurrentMovie.Title, CurrentMovie.ID);
@@ -374,10 +374,10 @@ namespace MediaPortal.Configuration.Sections
         cbActor.Items.Clear();
         _actTable.Clear();
         _actTable.Dispose();
-        tbBirthDate.Text = "";
-        tbBirthPlace.Text = "";
-        tbBiography.Text = "";
-        tbThumbLoc.Text = "";
+        tbBirthDate.Text = string.Empty;
+        tbBirthPlace.Text = string.Empty;
+        tbBiography.Text = string.Empty;
+        tbThumbLoc.Text = string.Empty;
         if (pictureBoxActor.Image != null)
         {
           pictureBoxActor.Image.Dispose();
@@ -782,7 +782,7 @@ namespace MediaPortal.Configuration.Sections
           for (int i = 0; i < actors.Length; ++i)
           {
             string actor;
-            string role = "";
+            string role = string.Empty;
             int pos = actors[i].IndexOf(" as ");
 
             if (pos >= 0)
@@ -1045,7 +1045,7 @@ namespace MediaPortal.Configuration.Sections
           // We will take first file, other files is not relevant as it should be rest of the same set
           // TODO - Maybe to put some kind of checking so user doesn't have opportunity to select different named files
           string path;
-          Util.Utils.Split(listViewFiles.Items[0].ToString(), out path, out filename);
+          Util.Utils.Split(listViewFiles.Items[0].Text, out path, out filename);
           // Remember last used file filter
           _lastExt = findFile.FilterIndex;
           // Put in the title -> filename - Users wish
@@ -1156,7 +1156,7 @@ namespace MediaPortal.Configuration.Sections
                         MessageBoxIcon.Exclamation);
         return;
       }
-      string strFilenameAndPath = "";
+      string strFilenameAndPath = string.Empty;
       if (listViewFiles.Items.Count > 0)
       {
         strFilenameAndPath = listViewFiles.Items[0].Text;
@@ -1191,7 +1191,7 @@ namespace MediaPortal.Configuration.Sections
       // Search by IMDB ID number 
       if (_refreshByImdBid == false)
       {
-        movieDetails.IMDBNumber = "";
+        movieDetails.IMDBNumber = string.Empty;
         movieDetails.SearchString = tbTitle.Text;
         GetInfoFromIMDB(ref movieDetails, false);
       }
@@ -1202,7 +1202,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // Fanart
-      string fileArtMovie = "";
+      string fileArtMovie = string.Empty;
       FanArt.GetFanArtfilename(movieDetails.Title, 0, out fileArtMovie);
       pictureBoxFanArt.ImageLocation = fileArtMovie;
       // End fanart
@@ -1586,7 +1586,7 @@ namespace MediaPortal.Configuration.Sections
                                                   MessageBoxButtons.YesNo, MessageBoxIcon.Question);
       if (dialogResult == DialogResult.Yes)
       {
-        string strFilenameAndPath = "";
+        string strFilenameAndPath = string.Empty;
         if (listViewFiles.Items.Count > 0)
         {
           strFilenameAndPath = listViewFiles.Items[0].Text;
@@ -2978,7 +2978,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Some cleanup before start
-        tbFASearchString.Text = "";
+        tbFASearchString.Text = string.Empty;
         fanartListBox.Items.Clear();
         // Set refresh status for background worker
         _isRefreshing = true;
@@ -3300,11 +3300,11 @@ namespace MediaPortal.Configuration.Sections
       try
       {
         // Clear previous infos
-        tbBirthDate.Text = "";
-        tbBirthPlace.Text = "";
-        tbMiniBiography.Text = "";
-        tbBiography.Text = "";
-        tbThumbLoc.Text = "";
+        tbBirthDate.Text = string.Empty;
+        tbBirthPlace.Text = string.Empty;
+        tbMiniBiography.Text = string.Empty;
+        tbBiography.Text = string.Empty;
+        tbThumbLoc.Text = string.Empty;
         // Also picture if exists
         if (pictureBoxActor.Image != null)
         {
@@ -3352,8 +3352,8 @@ namespace MediaPortal.Configuration.Sections
           }
           else
           {
-            imdbActor.ThumbnailUrl = "";
-            tbThumbLoc.Text = "";
+            imdbActor.ThumbnailUrl = string.Empty;
+            tbThumbLoc.Text = string.Empty;
           }
           // Update actor info
           VideoDatabase.SetActorInfo(imdbActor.id, imdbActor);
@@ -3470,11 +3470,11 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          tbBirthDate.Text = "";
-          tbBirthPlace.Text = "";
-          tbMiniBiography.Text = "";
-          tbBiography.Text = "";
-          tbThumbLoc.Text = "";
+          tbBirthDate.Text = string.Empty;
+          tbBirthPlace.Text = string.Empty;
+          tbMiniBiography.Text = string.Empty;
+          tbBiography.Text = string.Empty;
+          tbThumbLoc.Text = string.Empty;
           if (pictureBoxActor.Image != null)
           {
             pictureBoxActor.Image.Dispose();
@@ -3822,7 +3822,7 @@ namespace MediaPortal.Configuration.Sections
     // IMDB film page link click if somebody wants to know more about movie
     private void linkLabelIMDBNumber_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
-      if (tbIMDBNr.Text != "")
+      if (tbIMDBNr.Text != string.Empty)
       {
         string url = "http://www.imdb.com/title/" + tbIMDBNr.Text;
         Process.Start(url);

@@ -74,10 +74,10 @@ namespace MediaPortal.Util
       // Get Main Movie page and find default poster link
       string defaultPosterPageLinkURL = "http://www.imdb.com/title/" + imdbID;
       string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
-      Match posterPageLink = Regex.Match(strBodyPicDefault, @"/rg/action-box-title/primary-photo/media/.*?[^""]*");
+      Match posterPageLink = Regex.Match(strBodyPicDefault, @"id=""img_primary"">.*?src='/rg/title-overview/primary/images.*?href=""(?<defaultPic>.*?)""",RegexOptions.Singleline);
 
       // Now parse default cover picture html page to get default cover
-      strBodyPicDefault = GetPage("http://www.imdb.com" + posterPageLink.Value, "utf-8");
+      strBodyPicDefault = GetPage("http://www.imdb.com" + posterPageLink.Groups["defaultPic"].Value, "utf-8");
       Match jpgDefault = Regex.Match(strBodyPicDefault, @"<img[\s]id=.*?alt=.*?src=""(?<jpg>.*?jpg)");
 
       if (jpgDefault.Success)

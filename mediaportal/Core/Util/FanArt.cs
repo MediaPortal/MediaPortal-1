@@ -25,6 +25,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using MediaPortal.Configuration;
+using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 
 namespace MediaPortal.Util
@@ -106,7 +107,9 @@ namespace MediaPortal.Util
       if (Directory.Exists(configDir))
       {
         string dbFile = configDir + title + " " + index + ext;
-        // DBView file
+        //
+        // DB view file
+        //
         if (isUrl == false)
         {
           File.Copy(localFile, dbFile, true);
@@ -124,8 +127,7 @@ namespace MediaPortal.Util
         //
         // Share view file
         //
-        // If not DVD video
-        if (share)
+         if (share) // If not DVD video
         {
           if (!filename.ToUpper().Contains("VIDEO_TS"))
           {
@@ -136,8 +138,7 @@ namespace MediaPortal.Util
               File.Copy(dbFile, _fileMovie, true);
             }
           }
-            // DVD Video
-          else
+          else // DVD Video
           {
             SetDVD_fileMovie(configDir, path, index, ext);
             if (dbFile.ToLower() != _fileMovie.ToLower())
@@ -188,7 +189,9 @@ namespace MediaPortal.Util
                     title;
           random = false;
         }
+        // Download fanart xml 
         string tmdbXml = GetPage(tmdbUrl, "utf-8", out strAbsUrl);
+
         string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
 
         // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
@@ -413,7 +416,7 @@ namespace MediaPortal.Util
       _fileMovie = configDir + titleFolder + " " + fileIndex + ext;
     }
 
-    // Randomize fanarts array list
+    // Randomize fanart array list
     private void ShuffleFanart(ref ArrayList faArray)
     {
       Random rnd = new Random();
@@ -573,7 +576,7 @@ namespace MediaPortal.Util
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strUrl);
-
+        req.Timeout = 10000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 
@@ -584,9 +587,9 @@ namespace MediaPortal.Util
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        //Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message, ex.StackTrace);
+        Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode, ex.Message, ex.StackTrace);
       }
       finally
       {
