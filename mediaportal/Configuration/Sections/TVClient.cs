@@ -694,7 +694,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbContinuousGuideScroll.Name = "cbContinuousGuideScroll";
       this.cbContinuousGuideScroll.Size = new System.Drawing.Size(210, 17);
       this.cbContinuousGuideScroll.TabIndex = 2;
-      this.cbContinuousGuideScroll.Text = "Loop guide seemlessly (top and bottom)";
+      this.cbContinuousGuideScroll.Text = "Loop guide seamlessly (top and bottom)";
       this.cbContinuousGuideScroll.UseVisualStyleBackColor = true;
       // 
       // cbShowChannelStateIcons
