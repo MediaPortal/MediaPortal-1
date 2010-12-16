@@ -458,7 +458,7 @@ namespace TvPlugin
           {
             if (_cursorX >= 0)
             {
-              OnUp(true);
+              OnUp(true, false);
               updateSingleChannelNumber();
               UpdateVerticalScrollbar();
               return;
@@ -2720,12 +2720,6 @@ namespace TvPlugin
       return iProgramCount;
     }
 
-    private bool GuideScrollContinuous()
-    {
-      // Returns true if the guide is allowed to continuously scroll from top to bottom and bottom to top.
-      return _guideContinuousScroll;
-    }
-
     private void OnDown(bool updateScreen)
     {
       if (updateScreen)
@@ -2771,35 +2765,8 @@ namespace TvPlugin
 
       if (_cursorY == 0)
       {
-        // if there are more channels to focus
-        if (_cursorX + 1 < Math.Min(_channelList.Count, _channelCount))
-        {
-          _cursorX++;
-        }
-        else
-        {
-          // reached end of screen
-          // more channels than rows?
-          if (_channelList.Count > _channelCount)
-          {
-            if (GuideScrollContinuous())
-            {
-              _channelOffset++;
-              // We're at the bottom of the last page of channels.  Position to first channel in guide.
-              if (_channelOffset >= _channelList.Count - 1)
-              {
-                _channelOffset = 0;
-              }
-            }
-            else
-            {
-              if (_channelOffset + _channelCount <= _channelList.Count - 1)
-              {
-                _channelOffset++;
-              }
-            }
-          }
-        }
+        MoveDown();
+
         if (updateScreen)
         {
           Update(false);
@@ -2819,7 +2786,62 @@ namespace TvPlugin
       _lastCommandTime = AnimationTimer.TickCount;
     }
 
-    private void OnUp(bool updateScreen)
+    private void MoveDown()
+    {
+      // Move the cursor only if there are more channels in the view.
+      if (_cursorX + 1 < Math.Min(_channelList.Count, _channelCount))
+      {
+        _cursorX++;
+      }
+      else
+      {
+        // reached end of screen
+        // more channels than rows?
+        if (_channelList.Count > _channelCount)
+        {
+          // Advance to next channel.
+          _channelOffset++;
+
+          // Guide may be allowed to loop continuously bottom to top.
+          if (_guideContinuousScroll)
+          {
+            // We're at the bottom of the last page of channels.
+            if (_channelOffset >= _channelList.Count)
+            {
+              // Position to first channel in guide without moving the cursor (implements continuous loops of channels).
+              _channelOffset = 0;
+            }
+          }
+          else
+          {
+            // Are we at the bottom of the lst page of channels?
+            if (_channelOffset > 0 && _channelOffset >= _channelList.Count - _cursorX)
+            {
+              // We're at the bottom of the last page of channels.
+              // Reposition the guide to the top only after the key/button has been released and pressed again.
+              if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+              {
+                _channelOffset = 0;
+                _cursorX = 0;
+              }
+              else
+              {
+                // If the key is continually being held (we're not meeting the loop delay test) then we need to back up since
+                // we already advanced.
+                _channelOffset--;
+              }
+            }
+          }
+        }
+        else if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+        {
+          // Move the highlight back to the top of the list only after the key/button has been released and pressed again.
+          _cursorX = 0;
+        }
+      }
+    }
+
+    private void OnUp(bool updateScreen, bool isPaging)
     {
       if (updateScreen)
       {
@@ -2835,7 +2857,7 @@ namespace TvPlugin
         GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
         return;
       }
-      if (!_singleChannelView && _cursorY == 0 && _cursorX == 0)
+      if (!_singleChannelView && _cursorY == 0 && _cursorX == 0 && !isPaging)
       {
         // Only focus the control if it is visible.
         if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
@@ -2884,10 +2906,8 @@ namespace TvPlugin
           {
             _channelOffset--;
           }
-          // If the time interval spin control is not visible then consider scrolling the guide top to bottom.
-          if (_channelOffset == 0 && _channelList.Count > _channelCount &&
-            !GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible &&
-            GuideScrollContinuous())
+          // Guide may be allowed to loop continuously bottom to top.
+          if (_channelOffset == 0 && _channelList.Count > _channelCount && _guideContinuousScroll)
           {
             // We're at the top of the first page of channels.  Position to last channel in guide.
             _channelOffset = _channelList.Count - 1;
@@ -2942,37 +2962,10 @@ namespace TvPlugin
         iMaxSearch--;
         if (DirectionIsDown == true)
         {
-          // increase only if more
-          if (_cursorX + 1 < Math.Min(_channelCount, _channelList.Count))
+          MoveDown();
+          if (updateScreen)
           {
-            _cursorX++;
-          }
-          else
-          {
-            if (_channelList.Count > _channelCount)
-            {
-              if (GuideScrollContinuous())
-              {
-                _channelOffset++;
-                // We're at the bottom of the last page of channels.  Position to first channel in guide.
-                if (_channelOffset >= _channelList.Count - 1)
-                {
-                  _channelOffset = 0;
-                }
-              }
-              else
-              {
-                if (_channelOffset + _channelCount <= _channelList.Count - 1)
-                {
-                  _channelOffset++;
-                }
-              }
-
-              if (updateScreen)
-              {
-                Update(false);
-              }
-            }
+            Update(false);
           }
         }
         else // Direction "Up"
@@ -2987,7 +2980,7 @@ namespace TvPlugin
                 Update(false);
               }
             }
-            else if (_channelOffset == 0 && _channelList.Count > _channelCount && GuideScrollContinuous())
+            else if (_channelOffset == 0 && _channelList.Count > _channelCount && _guideContinuousScroll)
             {
               // We're at the top of the first page of channels.  Position to last channel in guide.
               _channelOffset = _channelList.Count - 1;
@@ -3772,7 +3765,7 @@ namespace TvPlugin
       UnFocus();
       for (int i = 0; i < _channelCount; ++i)
       {
-        OnUp(false);
+        OnUp(false, true);
       }
       Correct();
       Update(false);
@@ -3786,14 +3779,22 @@ namespace TvPlugin
         Steps = _channelCount; // all available rows
       else
       {
-        if (GuideScrollContinuous())
+        if (_guideContinuousScroll)
         {
           Steps = _channelCount; // all available rows
         }
         else
         {
-          // only number of additional avail channels
-          Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
+          // If we're on the last channel in the guide then allow one step to get back to top of guide.
+          if (_channelOffset + (_cursorX + 1) == _channelList.Count)
+          {
+            Steps = 1;
+          }
+          else
+          {
+            // only number of additional avail channels
+            Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
+          }
         }
       }
 
