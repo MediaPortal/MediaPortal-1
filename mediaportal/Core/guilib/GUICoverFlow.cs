@@ -127,7 +127,7 @@ namespace MediaPortal.GUI.Library
     // Define the controls
     private List<GUIListItem> _listItems = new List<GUIListItem>();
     private List<GUIAnimation> _frame = new List<GUIAnimation>();
-    private List<GUIAnimation> _frameFocus = new List<GUIAnimation>();
+    private GUIAnimation _frameFocus = null;
     private GUILabelControl _label1 = null;
     private GUILabelControl _label2 = null;
     private GUIFont _font1 = null;
@@ -142,11 +142,12 @@ namespace MediaPortal.GUI.Library
     // Cover flow status
     private float _position = 0.0f;
     private FlowDirection _direction = FlowDirection.RIGHT;
+    private int _nextFrameIndex = 0;
 
     // Card spinning
-    float _selectedSpinAngle = 0.0f;
-    float _spinAnglePosition = 0.0f;
-    Action _queuedAction = null;
+    private float _selectedSpinAngle = 0.0f;
+    private float _spinAnglePosition = 0.0f;
+    private Action _queuedAction = null;
 
     // Search            
     private DateTime _timerKey = DateTime.Now;
@@ -185,6 +186,18 @@ namespace MediaPortal.GUI.Library
                                               _foregroundWidth, _foregroundHeight, _foregroundTextureName);
       _imageForeground.ParentControl = this;
       _imageForeground.DimColor = DimColor;
+
+      // Create a single focus frame for the card that is in focus.
+      _frameFocus = LoadAnimationControl(0, 0,
+                                         0, 0,
+                                         _cardWidth, _cardHeight,
+                                         _frameFocusName);
+      _frameFocus.ParentControl = null;
+      _frameFocus.DimColor = DimColor;
+      _frameFocus.FlipY = _flipY;
+      _frameFocus.DiffuseFileName = _diffuseFilename;
+      _frameFocus.MaskFileName = _maskFilename;
+      _frameFocus.AllocResources();
 
       // Create the card labels.
       int y = _positionY + _label1OffsetY;
@@ -1026,6 +1039,7 @@ namespace MediaPortal.GUI.Library
     private void RenderCard(float timePassed, int index, bool shouldFocus)
     {
       if (index < 0 || index >= _listItems.Count) return;
+
       // The selected card may have its front or back shown.
       if (index == SelectedListItemIndex)
       {
@@ -1168,7 +1182,8 @@ namespace MediaPortal.GUI.Library
       // Render the card frame.
       if (_showFrame)
       {
-        GUIAnimation frame = (itemFocused ? _frameFocus[index] : _frame[index]);
+        // Choose a frame for the card from the collection of frames for rendered cards.
+        GUIAnimation frame = (itemFocused ? _frameFocus : _frame[GetNextAvailableFrameIndex()]);
         frame.Focus = itemFocused;
         frame.Width = _frameWidth;
         frame.Height = _frameHeight;
@@ -1193,13 +1208,50 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Returns the next available frame index for rendering a card frame.
+    /// </summary>
+    private int GetNextAvailableFrameIndex()
+    {
+      // If there are not enough card frames then lazily add one.
+      // We only create enough frames for the cards that fit in the window.
+      if (_nextFrameIndex >= _frame.Count)
+      {
+        // Create a card frame (non-focus) to be reused across the card collection.
+        GUIAnimation anim = LoadAnimationControl(0, 0,
+                                                 0, 0,
+                                                 _frameWidth, _frameHeight,
+                                                 _frameName);
+        anim.ParentControl = null;
+        anim.DimColor = DimColor;
+        anim.FlipY = _flipY;
+        anim.DiffuseFileName = _diffuseFilename;
+        anim.MaskFileName = _maskFilename;
+        anim.AllocResources();
+        _frame.Add(anim);
+      }
+
+      int returnValue = _nextFrameIndex;
+      _nextFrameIndex++;
+
+      return returnValue;
+    }
+
+    /// <summary>
+    /// Resets next available frame index for the next render frame.
+    /// </summary>
+    private void ResetNextAvailableFrameIndex()
+    {
+      _nextFrameIndex = 0;
+    }
+
+    /// <summary>
     /// Draws the back of a single item of the cover flow.
     /// </summary>
     /// <param name="timePassed"></param>
     /// <param name="index">The index of the card in the entire set.</param>
     /// <param name="shouldFocus">True if the card should be in focus.</param>
     /// <param name="position">The index of the card from the edge of the control, 0 is the visible card farthest from the center card; position values increase toward the center card.</param>
-    private void RenderCardBack(float timePassed, int index, bool itemFocused)
+    private void RenderCardBack(float timePassed, int index, bool shouldFocus)
     {
       // The back of the card must be rendered 180 degrees from the front.
       GUIGraphicsContext.PushMatrix();
@@ -1215,7 +1267,9 @@ namespace MediaPortal.GUI.Library
       // Render the card frame.
       if (_showFrame)
       {
-        GUIAnimation frame = (itemFocused ? _frameFocus[index] : _frame[index]);
+        bool itemFocused = (shouldFocus == true);
+
+        GUIAnimation frame = (itemFocused ? _frameFocus : _frame[GetNextAvailableFrameIndex()]);
         frame.Focus = itemFocused;
         frame.Width = _frameWidth;
         frame.Height = _frameHeight;
@@ -1636,6 +1690,9 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
+      // Prepare for using the reusable card frames during this render pass.
+      ResetNextAvailableFrameIndex();
+
       // Render the background.
       if (_imageBackground != null && _showBackground)
       {
@@ -1922,34 +1979,6 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private void OnCardAdded()
     {
-      // Add a card frame for the new card.
-      // Focus frame.
-      GUIAnimation anim = null;
-      anim = LoadAnimationControl(0, 0,
-                                  0, 0,
-                                  _frameWidth, _frameHeight,
-                                  _frameName);
-      anim.ParentControl = null;
-      anim.DimColor = DimColor;
-      anim.FlipY = _flipY;
-      anim.DiffuseFileName = _diffuseFilename;
-      anim.MaskFileName = _maskFilename;
-      anim.AllocResources();
-      _frame.Add(anim);
-
-      // Add a card frame for the new card.
-      // Non-focus frame.
-      anim = LoadAnimationControl(0, 0,
-                                  0, 0,
-                                  _cardWidth, _cardHeight,
-                                  _frameFocusName);
-      anim.ParentControl = null;
-      anim.DimColor = DimColor;
-      anim.FlipY = _flipY;
-      anim.DiffuseFileName = _diffuseFilename;
-      anim.MaskFileName = _maskFilename;
-      anim.AllocResources();
-      _frameFocus.Add(anim);
     }
 
     /// <summary>
@@ -1957,13 +1986,9 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     private void OnCardDeleted()
     {
-      // Remove the card frame.
+      // Free up some memory, remove the card frame (the focus frame never gets removed).
       _frame[_frame.Count - 1].Dispose();
       _frame.RemoveAt(_frame.Count - 1);
-
-      // Remove the card focus frame.
-      _frameFocus[_frameFocus.Count - 1].Dispose();
-      _frameFocus.RemoveAt(_frameFocus.Count - 1);
     }
 
     /// <summary>
