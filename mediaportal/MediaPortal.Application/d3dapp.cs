@@ -427,6 +427,7 @@ namespace MediaPortal
             this.Menu = null;
             Rectangle newBounds = GUIGraphicsContext.currentScreen.Bounds;
             this.Bounds = newBounds;
+            this.ClientSize = newBounds.Size;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferWidth=Screen.PrimaryScreen.Bounds.Width;
             //GUIGraphicsContext.DX9Device.PresentationParameters.BackBufferHeight=Screen.PrimaryScreen.Bounds.Height;
             Log.Info("D3D: Client size: {0}x{1} - Screen: {2}x{3}",
