@@ -374,6 +374,8 @@ Section "MediaPortal core files (required)" SecCore
   !else
 	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
   !endif
+  SetOutPath "$MPdir.Base\defaults"
+  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\defaults\*"
   SetOutPath "$MPdir.Base\MovieThumbnailer"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
