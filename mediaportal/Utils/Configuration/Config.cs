@@ -32,16 +32,16 @@ namespace MediaPortal.Configuration
     public enum Dir
     {
       // Path holding Path Information
-      Base,
-      Log,
-      Skin,
-      Language,
-      Database,
-      Plugins,
-      Thumbs,
-      Cache,
-      Weather,
-      Config,
+      Base = 0,
+      Log = 1,
+      Skin = 2,
+      Language = 3,
+      Database = 4,
+      Plugins = 5,
+      Thumbs = 6,
+      Cache = 7,
+      Weather = 8,
+      Config = 10,
     }
 
     #endregion
