@@ -41,9 +41,7 @@ namespace MediaPortal.Configuration
       Thumbs,
       Cache,
       Weather,
-      CustomInputDevice,
       Config,
-      CustomInputDefault,
     }
 
     #endregion
@@ -343,8 +341,6 @@ namespace MediaPortal.Configuration
 
       Set(Dir.Cache, Path.Combine(commonAppData, @"cache\"));
       Set(Dir.Config, commonAppData);
-      Set(Dir.CustomInputDevice, Path.Combine(commonAppData, @"InputDeviceMappings\"));
-      Set(Dir.CustomInputDefault, Path.Combine(baseDir, @"InputDeviceMappings\defaults\"));
       Set(Dir.Database, Path.Combine(commonAppData, @"database\"));
       Set(Dir.Language, Path.Combine(commonAppData, @"language\"));
       Set(Dir.Log, Path.Combine(commonAppData, @"log\"));

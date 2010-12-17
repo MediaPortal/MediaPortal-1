@@ -2146,9 +2146,11 @@ namespace MediaPortal.Configuration.Sections
         {
           X10mapping = "Other X10";
         }
-        if (File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, X10mapping + ".xml")))
+
+        string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, X10mapping + ".xml");
+        if (File.Exists(pathCustom))
         {
-          File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, X10mapping + ".xml"));
+          File.Delete(pathCustom);
         }
         checkBoxX10ExtendedLogging.Checked = false;
 

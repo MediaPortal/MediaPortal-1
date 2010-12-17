@@ -31,6 +31,7 @@ using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.UserInterface.Controls;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.InputDevices;
 
 namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 {
@@ -3182,13 +3183,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     {
       try
       {
-        Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
+        Directory.CreateDirectory(InputHandler.CustomizedMappingsDirectory);
       }
       catch
       {
         Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
-      XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
+      XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile), Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
       writer.IndentChar = '\t';

@@ -61,8 +61,6 @@ Var MPdir.Base
 Var MPdir.Config
 Var MPdir.Plugins
 Var MPdir.Log
-Var MPdir.CustomInputDevice
-Var MPdir.CustomInputDefault
 Var MPdir.Skin
 Var MPdir.Language
 Var MPdir.Database
@@ -122,8 +120,6 @@ Var MPdir.Cache
 
   StrCpy $MPdir.Plugins             "$MPdir.Base\plugins"
   StrCpy $MPdir.Log                 "$MPdir.Config\log"
-  StrCpy $MPdir.CustomInputDevice   "$MPdir.Config\InputDeviceMappings"
-  StrCpy $MPdir.CustomInputDefault  "$MPdir.Base\InputDeviceMappings\defaults"
   StrCpy $MPdir.Skin                "$MPdir.Config\skin"
   StrCpy $MPdir.Language            "$MPdir.Config\language"
   StrCpy $MPdir.Database            "$MPdir.Config\database"
@@ -165,8 +161,6 @@ Var MPdir.Cache
   ${ReadMPdir} Config
   ${ReadMPdir} Plugins
   ${ReadMPdir} Log
-  ${ReadMPdir} CustomInputDevice
-  ${ReadMPdir} CustomInputDefault
   ${ReadMPdir} Skin
   ${ReadMPdir} Language
   ${ReadMPdir} Database
@@ -236,8 +230,6 @@ Var MPdir.Cache
   ${LOG_TEXT} "INFO" "          Config:  $MPdir.Config"
   ${LOG_TEXT} "INFO" "          Plugins: $MPdir.Plugins"
   ${LOG_TEXT} "INFO" "          Log: $MPdir.Log"
-  ${LOG_TEXT} "INFO" "          CustomInputDevice: $MPdir.CustomInputDevice"
-  ${LOG_TEXT} "INFO" "          CustomInputDefault: $MPdir.CustomInputDefault"
   ${LOG_TEXT} "INFO" "          Skin: $MPdir.Skin"
   ${LOG_TEXT} "INFO" "          Language: $MPdir.Language"
   ${LOG_TEXT} "INFO" "          Database: $MPdir.Database"

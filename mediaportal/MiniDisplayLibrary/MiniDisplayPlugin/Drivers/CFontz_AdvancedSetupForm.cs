@@ -158,7 +158,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       try
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "CFontz_Keypad.xml")))
+        if (!File.Exists(CFontz.DefaultMappingPath))
         {
           CFontz.AdvancedSettings.CreateDefaultKeyPadMapping();
         }

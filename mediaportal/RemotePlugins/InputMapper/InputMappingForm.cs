@@ -809,6 +809,9 @@ namespace MediaPortal.InputDevices
 
     private void LoadMapping(string xmlFile, bool defaults)
     {
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+
       try
       {
         groupBoxLayer.Enabled = false;
@@ -816,10 +819,10 @@ namespace MediaPortal.InputDevices
         groupBoxAction.Enabled = false;
         treeMapping.Nodes.Clear();
         XmlDocument doc = new XmlDocument();
-        string path = Config.GetFolder(Config.Dir.Base) + "\\InputDeviceMappings\\defaults\\" + xmlFile;
-        if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+        string path = pathDefault;
+        if (!defaults && File.Exists(pathCustom))
         {
-          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+          path = pathCustom;
         }
         if (!File.Exists(path))
         {
@@ -1013,18 +1016,21 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Error(ex);
-        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
+        File.Delete(pathCustom);
         LoadMapping(xmlFile, true);
       }
     }
 
     private bool SaveMapping(string xmlFile)
     {
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
+
 #if !DEBUG
       try
 #endif
       {
-        DirectoryInfo dir = Directory.CreateDirectory(Config.GetFolder(Config.Dir.CustomInputDevice));
+        DirectoryInfo dir = Directory.CreateDirectory(InputHandler.CustomizedMappingsDirectory);
       }
 #if !DEBUG
       catch
@@ -1035,7 +1041,7 @@ namespace MediaPortal.InputDevices
       //try
 #endif
       {
-        XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile), Encoding.UTF8);
+        XmlTextWriter writer = new XmlTextWriter(pathCustom, Encoding.UTF8);
         writer.Formatting = Formatting.Indented;
         writer.Indentation = 1;
         writer.IndentChar = (char)9;
@@ -1841,9 +1847,10 @@ namespace MediaPortal.InputDevices
 
     private void buttonDefault_Click(object sender, EventArgs e)
     {
-      if (File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml")))
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, inputClassName + ".xml");
+      if (File.Exists(pathCustom))
       {
-        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, inputClassName + ".xml"));
+        File.Delete(pathCustom);
       }
       LoadMapping(inputClassName + ".xml", true);
     }

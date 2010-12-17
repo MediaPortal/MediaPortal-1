@@ -70,12 +70,6 @@ namespace MediaPortal.Tests.Core.Util
     }
 
     [Test]
-    public void TestCustomInputDeviceDirName()
-    {
-      DoTest(Config.Dir.CustomInputDevice);
-    }
-
-    [Test]
     public void TestConfigDirName()
     {
       DoTest(Config.Dir.Config);

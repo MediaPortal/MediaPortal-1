@@ -384,8 +384,6 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
 
   # special MP directories
-  SetOutPath "$MPdir.CustomInputDefault"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\InputDeviceMappings\defaults\*"
   SetOutPath "$MPdir.Language"
   File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
   SetOutPath "$MPdir.Plugins"

@@ -2,15 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MediaPortal.Configuration;
 using MediaPortal.GUI.View;
 
 namespace MediaPortal.GUI.Library
 {
   public class ViewHandler
   {
+    #region Fields
+
     protected ViewDefinition currentView;
     protected int currentLevel = 0;
     protected List<ViewDefinition> views = new List<ViewDefinition>();
+
+    #endregion
+
+    #region Public Static Properties
+
+    /// <summary>
+    /// Returns the path to the directory, which contains all available default view definition files.
+    /// </summary>
+    public static string DefaultsDirectory
+    {
+      get { return Config.GetSubFolder(Config.Dir.Base, @"Defaults"); }
+    }
+
+    #endregion
+
+    #region Public Virtual Properties
 
     public virtual int MaxLevels
     {
@@ -104,5 +123,7 @@ namespace MediaPortal.GUI.Library
         return definition.Where;
       }
     }
+
+    #endregion
   }
 }

@@ -281,11 +281,14 @@ namespace MediaPortal.InputDevices
       try
       {
         doc = new XmlDocument();
-        string path = Config.GetFile(Config.Dir.CustomInputDefault, xmlFile);
+        string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, xmlFile);
+        string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile);
 
-        if (!defaults && File.Exists(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile)))
+        string path = pathDefault;
+
+        if (!defaults && File.Exists(pathCustom))
         {
-          path = Config.GetFile(Config.Dir.CustomInputDevice, xmlFile);
+          path = pathCustom;
           Log.Info("RemoteLearning Path problem 1 - " + path);
         }
         if (!File.Exists(path))
@@ -329,7 +332,7 @@ namespace MediaPortal.InputDevices
       catch (Exception ex)
       {
         Log.Info(ex.Message);
-        File.Delete(Config.GetFile(Config.Dir.CustomInputDevice, xmlFile));
+        File.Delete(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile));
         LoadMapping(m_sRemoteModel + ".xml", true);
       }
     }
@@ -340,7 +343,7 @@ namespace MediaPortal.InputDevices
       {
         try
         {
-          string directory = Config.GetFolder(Config.Dir.CustomInputDevice);
+          string directory = InputHandler.CustomizedMappingsDirectory;
           DirectoryInfo dir = Directory.CreateDirectory(directory);
           doc.Save(directory + "\\" + xmlFile);
         }

@@ -159,7 +159,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       try
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")))
+        if (!File.Exists(MatrixMX.DefaultMappingPath))
         {
           MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping();
         }

@@ -66,6 +66,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     private DateTime SettingsLastModTime;
     private object ThreadMutex = new object();
 
+    #region Public Static Properties
+
+    public static string DefaultMappingPath = Path.Combine(InputHandler.DefaultsDirectory, "MatrixMX_Keypad.xml");
+    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory, "MatrixMX_Keypad.xml");
+
+    #endregion
+
     private void AdvancedSettings_OnSettingsChanged()
     {
       Log.Info("MatrixMX.AdvancedSettings_OnSettingsChanged(): called");
@@ -766,7 +773,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info(
             "MatrixMX.AdvancedSettings.CreateDefaultKeyPadMapping(): remote mapping file does not exist - Creating default mapping file",
             new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+          XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.DefaultsDirectory, str + ".xml"),
                                                    Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;
@@ -1478,14 +1485,14 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         try
         {
-          if (this.TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")) < 3)
+          if (this.TestXmlVersion(DefaultMappingPath) < 3)
           {
             Log.Info(
               "MatrixMX.MODisplay.SetupKeypad(): Deleting MatrixMX_Keypad mapping file with the wrong version stamp.",
               new object[0]);
-            File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml"));
+            File.Delete(DefaultMappingPath);
           }
-          if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")))
+          if (!File.Exists(DefaultMappingPath))
           {
             Log.Info("MatrixMX.Setup(): Creating default MatrixMX_Keypad mapping file");
             if (!AdvancedSettings.CreateDefaultKeyPadMapping())
@@ -1544,7 +1551,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
       public int TestXmlVersion(string xmlPath)
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "MatrixMX_Keypad.xml")))
+        if (!File.Exists(DefaultMappingPath))
         {
           return 3;
         }

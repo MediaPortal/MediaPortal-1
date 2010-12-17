@@ -37,10 +37,8 @@ namespace MediaPortal.GUI.Video
   /// </summary>
   public class VideoViewHandler : ViewHandler
   {
-    private string defaultVideoViews = Config.GetFile(Config.Dir.Base, "defaultVideoViews.xml");
-    private string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
-
-    
+    private readonly string defaultVideoViews = Path.Combine(DefaultsDirectory, "VideoViews.xml");
+    private readonly string customVideoViews = Config.GetFile(Config.Dir.Config, "VideoViews.xml");
 
     public VideoViewHandler()
     {

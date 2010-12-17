@@ -40,11 +40,33 @@ namespace MediaPortal.InputDevices
   /// </summary>
   public class InputHandler
   {
+    #region Private Fields
+
     private int _xmlVersion = 3;
     private ArrayList _remote;
     private int _currentLayer = 1;
     private bool _isLoaded = false;
     private bool _basicHome = false;
+
+    #endregion
+
+    #region Public Properties
+
+    /// <summary>
+    /// Returns the path to the directory, which contains all available default input device mappings.
+    /// </summary>
+    public static string DefaultsDirectory
+    {
+      get { return Config.GetSubFolder(Config.Dir.Base, @"Defaults\InputDeviceMappings"); }
+    }
+
+    /// <summary>
+    /// Returns the path to the directory, which contains the customized mappings directory.
+    /// </summary>
+    public static string CustomizedMappingsDirectory
+    {
+      get { return Config.GetSubFolder(Config.Dir.Config, @"InputDeviceMappings"); }
+    }
 
     /// <summary>
     /// Mapping successful loaded
@@ -62,6 +84,9 @@ namespace MediaPortal.InputDevices
       get { return _currentLayer; }
     }
 
+    #endregion
+
+    #region Nested Classes
 
     /// <summary>
     /// Condition/action class
@@ -137,8 +162,7 @@ namespace MediaPortal.InputDevices
         focus = newFocus;
       }
     }
-
-
+    
     /// <summary>
     /// Button/mapping class
     /// </summary>
@@ -171,6 +195,9 @@ namespace MediaPortal.InputDevices
       }
     }
 
+    #endregion
+
+    #region Constructor
 
     /// <summary>
     /// Constructor: Initializes mappings from XML file
@@ -186,6 +213,9 @@ namespace MediaPortal.InputDevices
       LoadMapping(xmlPath);
     }
 
+    #endregion
+
+    #region Implementation
 
     /// <summary>
     /// Get version of XML mapping file 
@@ -228,8 +258,8 @@ namespace MediaPortal.InputDevices
     public string GetXmlPath(string deviceXmlName)
     {
       string path = string.Empty;
-      string pathCustom = Config.GetFile(Config.Dir.CustomInputDevice, deviceXmlName + ".xml");
-      string pathDefault = Config.GetFile(Config.Dir.CustomInputDefault, deviceXmlName + ".xml");
+      string pathDefault = Path.Combine(InputHandler.DefaultsDirectory, deviceXmlName + ".xml");
+      string pathCustom = Path.Combine(InputHandler.CustomizedMappingsDirectory, deviceXmlName + ".xml");
 
       if (File.Exists(pathCustom) && CheckXmlFile(pathCustom))
       {
@@ -480,7 +510,6 @@ namespace MediaPortal.InputDevices
       return true;
     }
 
-
     /// <summary>
     /// Get mappings for a given button code based on the current conditions
     /// </summary>
@@ -561,5 +590,7 @@ namespace MediaPortal.InputDevices
       }
       return null;
     }
+
+    #endregion
   }
 }

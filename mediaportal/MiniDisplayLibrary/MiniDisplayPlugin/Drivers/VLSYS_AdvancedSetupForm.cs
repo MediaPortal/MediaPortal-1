@@ -200,7 +200,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     {
       try
       {
-        if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")))
+        if (!File.Exists(VLSYS_Mplay.DefaultMappingPath))
         {
           VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping();
         }

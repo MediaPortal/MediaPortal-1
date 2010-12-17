@@ -45,14 +45,6 @@
   <Dir id = "Log">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Log\</Path>
   </Dir>
-      <!-- The Path were the Custom Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDevice">
-    <Path>%ProgramData%\Team MediaPortal\MediaPortal\InputDeviceMappings\</Path>
-  </Dir>
-  <!-- The Path were the Default Inputdevice Mappings are located. -->
-  <Dir id = "CustomInputDefault">
-    <Path>InputDeviceMappings\defaults\</Path>
-  </Dir>
   <!-- The Path were the skins are located -->
   <Dir id = "Skin">
     <Path>%ProgramData%\Team MediaPortal\MediaPortal\Skin\</Path>

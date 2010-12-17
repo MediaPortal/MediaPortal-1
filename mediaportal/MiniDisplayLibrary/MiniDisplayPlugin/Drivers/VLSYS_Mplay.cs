@@ -123,6 +123,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 
     #endregion
 
+    #region Public Static Properties
+
+    public static string DefaultMappingPath = Path.Combine(InputHandler.DefaultsDirectory, "VLSYS_Mplay.xml");
+    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory, "VLSYS_Mplay.xml");
+
+    #endregion
+
     private void AdjustSettingForDetectedDisplay()
     {
       if ((MPlay_Model.Equals("ME7") || MPlay_Model.Equals("MP7")) || (MPlay_Model == "MR2"))
@@ -1760,13 +1767,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       {
         try
         {
-          if (TestXmlVersion(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")) < 3)
+          if (TestXmlVersion(DefaultMappingPath) < 3)
           {
             Log.Info("VLSYS_Mplay.Setup(): Deleting VLSYS_Mplay mapping file with the wrong version stamp.",
                      new object[0]);
-            File.Delete(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml"));
+            File.Delete(DefaultMappingPath);
           }
-          if (!File.Exists(Config.GetFile(Config.Dir.CustomInputDefault, "VLSYS_Mplay.xml")))
+          if (!File.Exists(DefaultMappingPath))
           {
             Log.Info("VLSYS_Mplay.Setup(): Creating default VLSYS_Mplay mapping file");
             if (!AdvancedSettings.CreateDefaultRemoteMapping())
@@ -2496,7 +2503,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           Log.Info(
             "VLSYS_Mplay.AdvancedSettings.CreateDefaultRemoteMapping(): remote mapping file does not exist - Creating default mapping file",
             new object[0]);
-          XmlTextWriter writer = new XmlTextWriter(Config.GetFile(Config.Dir.CustomInputDefault, str + ".xml"),
+          XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.DefaultsDirectory, str + ".xml"),
                                                    Encoding.UTF8);
           writer.Formatting = Formatting.Indented;
           writer.Indentation = 1;

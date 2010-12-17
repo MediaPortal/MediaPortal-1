@@ -37,8 +37,8 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class MusicViewHandler : ViewHandler
   {
-    private string defaultMusicViews = Config.GetFile(Config.Dir.Base, "defaultMusicViews.xml");
-    private string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
+    private readonly string defaultMusicViews = Path.Combine(DefaultsDirectory, "MusicViews.xml");
+    private readonly string customMusicViews = Config.GetFile(Config.Dir.Config, "MusicViews.xml");
 
     private int previousLevel = 0;
 

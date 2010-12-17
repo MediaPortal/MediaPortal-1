@@ -28,6 +28,7 @@ using System.Runtime.Serialization.Formatters.Soap;
 using System.Windows.Forms;
 using System.Xml;
 using MediaPortal.GUI.View;
+using MediaPortal.GUI.Library;
 
 #pragma warning disable 108
 
@@ -675,8 +676,8 @@ namespace MediaPortal.Configuration.Sections
       string[] sortBy
       )
     {
+      string defaultViews = Path.Combine(ViewHandler.DefaultsDirectory, mediaType + "Views.xml");
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
-      string defaultViews = Config.GetFile(Config.Dir.Base, "default" + mediaType + "Views.xml");
       Selections = selections;
       Sqloperators = sqloperators;
       ViewsAs = viewsAs;
