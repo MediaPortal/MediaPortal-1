@@ -2847,29 +2847,10 @@ namespace TvPlugin
       {
         UnFocus();
       }
-      _lastCommandTime = AnimationTimer.TickCount;
 
-      if (!_singleChannelView && _cursorY == -1)
-      {
-        _cursorX = -1;
-        _cursorY = 0;
-        GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
-        GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
-        return;
-      }
-      if (!_singleChannelView && _cursorY == 0 && _cursorX == 0 && !isPaging)
-      {
-        // Only focus the control if it is visible.
-        if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
-        {
-          _cursorX = -1;
-          GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
-          return;
-        }
-      }
       if (_singleChannelView)
       {
-        if (_cursorX == 0 && _programOffset == 0 && _cursorY == 0)
+        if (_cursorX == 0 && _cursorY == 0)
         {
           // Don't focus the control when it is not visible.
           if (GetControl((int)Controls.SPINCONTROL_DAY).IsVisible)
@@ -2877,8 +2858,10 @@ namespace TvPlugin
             _cursorX = -1;
             GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
           }
+          _lastCommandTime = AnimationTimer.TickCount;
           return;
         }
+
         if (_cursorX > 0)
         {
           _cursorX--;
@@ -2895,35 +2878,43 @@ namespace TvPlugin
           UpdateCurrentProgram();
           SetProperties();
         }
+        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
-
-      if (_cursorY == 0)
+      else
       {
-        if (_cursorX == 0)
+        if (_cursorY == -1)
         {
-          if (_channelOffset > 0)
+          _cursorX = -1;
+          _cursorY = 0;
+          GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
+          GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
+          _lastCommandTime = AnimationTimer.TickCount;
+          return;
+        }
+
+        if (_cursorY == 0 && _cursorX == 0 && !isPaging)
+        {
+          // Only focus the control if it is visible.
+          if (GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Visible)
           {
-            _channelOffset--;
-          }
-          // Guide may be allowed to loop continuously bottom to top.
-          if (_channelOffset == 0 && _channelList.Count > _channelCount && _guideContinuousScroll)
-          {
-            // We're at the top of the first page of channels.  Position to last channel in guide.
-            _channelOffset = _channelList.Count - 1;
+            _cursorX = -1;
+            GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
+            _lastCommandTime = AnimationTimer.TickCount;
+            return;
           }
         }
-        else
-        {
-          _cursorX--;
-        }
+      }
+
+      if (_cursorY == 0 && _cursorX > 0)
+      {
+        _cursorX--;
         if (updateScreen)
         {
           Update(false);
           SetFocus();
           SetProperties();
         }
-        return;
       }
 
       // not on tvguide button
@@ -2931,6 +2922,45 @@ namespace TvPlugin
       {
         // if cursor is on a program in guide, try to find the "best time matching" program in new channel
         SetBestMatchingProgram(updateScreen, false);
+      }
+      _lastCommandTime = AnimationTimer.TickCount;
+    }
+
+    private void MoveUp()
+    {
+      if (_cursorX == 0)
+      {
+        if (_guideContinuousScroll)
+        {
+          if (_channelOffset == 0 && _channelList.Count > _channelCount)
+          {
+            // We're at the top of the first page of channels.  Position to last channel in guide.
+            _channelOffset = _channelList.Count - 1;
+          }
+        }
+        else
+        {
+          if (_channelOffset > 0)
+          {
+            // Somewhere in the middle of the guide; just scroll up.
+            _channelOffset--;
+          }
+          // Are we at the top of the first page of channels?
+          else if (_channelOffset == 0 && _cursorX == 0)
+          {
+            // We're at the top of the first page of channels.
+            // Reposition the guide to the bottom only after the key/button has been released and pressed again.
+            if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+            {
+              _channelOffset = _channelList.Count - _channelCount;
+              _cursorX = _channelCount - 1;
+            }
+          }
+        }
+      }
+      else
+      {
+        _cursorX--;
       }
     }
 
@@ -2963,41 +2993,14 @@ namespace TvPlugin
         if (DirectionIsDown == true)
         {
           MoveDown();
-          if (updateScreen)
-          {
-            Update(false);
-          }
         }
         else // Direction "Up"
         {
-          if (_cursorX == 0)
-          {
-            if (_channelOffset > 0)
-            {
-              _channelOffset--;
-              if (updateScreen)
-              {
-                Update(false);
-              }
-            }
-            else if (_channelOffset == 0 && _channelList.Count > _channelCount && _guideContinuousScroll)
-            {
-              // We're at the top of the first page of channels.  Position to last channel in guide.
-              _channelOffset = _channelList.Count - 1;
-              if (updateScreen)
-              {
-                Update(false);
-              }
-            }
-            else
-            {
-              break;
-            }
-          }
-          else
-          {
-            _cursorX--;
-          }
+          MoveUp();
+        }
+        if (updateScreen)
+        {
+          Update(false);
         }
 
         for (int x = 1; x < ColID; x++)
