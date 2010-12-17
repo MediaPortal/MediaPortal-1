@@ -481,7 +481,7 @@ namespace TvPlugin
       }
       return base.OnMessage(message);
     }
-
+    
     protected override void OnShowContextMenu()
     {
       int iItem = GetSelectedItemNo();
@@ -948,6 +948,7 @@ namespace TvPlugin
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count));
 
+      SwitchLayout();
       OnSort();
       UpdateProperties();
     }
