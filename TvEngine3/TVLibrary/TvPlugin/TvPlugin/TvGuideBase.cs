@@ -2850,7 +2850,7 @@ namespace TvPlugin
 
       if (_singleChannelView)
       {
-        if (_cursorX == 0 && _cursorY == 0)
+        if (_cursorX == 0 && _cursorY == 0 && !isPaging)
         {
           // Don't focus the control when it is not visible.
           if (GetControl((int)Controls.SPINCONTROL_DAY).IsVisible)
@@ -2906,9 +2906,31 @@ namespace TvPlugin
         }
       }
 
-      if (_cursorY == 0 && _cursorX > 0)
+      if (_cursorY == 0)
       {
-        _cursorX--;
+        if (_cursorX == 0)
+        {
+          if (_channelOffset > 0)
+          {
+            // Somewhere in the middle of the guide; just scroll up.
+            _channelOffset--;
+          }
+          else if (_channelOffset == 0)
+          {
+            // We're at the top of the first page of channels.
+            // Reposition the guide to the bottom only after the key/button has been released and pressed again.
+            if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+            {
+              _channelOffset = _channelList.Count - _channelCount;
+              _cursorX = _channelCount - 1;
+            }
+          }
+        }
+        else if (_cursorX > 0)
+        {
+          _cursorX--;
+        }
+
         if (updateScreen)
         {
           Update(false);
@@ -2936,6 +2958,11 @@ namespace TvPlugin
           {
             // We're at the top of the first page of channels.  Position to last channel in guide.
             _channelOffset = _channelList.Count - 1;
+          }
+          else if (_channelOffset > 0)
+          {
+            // Somewhere in the middle of the guide; just scroll up.
+            _channelOffset--;
           }
         }
         else
