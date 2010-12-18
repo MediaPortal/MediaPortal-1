@@ -89,7 +89,7 @@ namespace MpeCore
     {
       get
       {
-        return string.Format("{0}\\V2\\{1}\\{2}\\", MpeInstaller.TransformInRealPath("%Installer%"),
+        return string.Format("{0}\\V2\\{1}\\{2}\\", Util.InstallerConfigDir,
                              GeneralInfo.Id, GeneralInfo.Version);
       }
     }
