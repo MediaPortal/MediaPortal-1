@@ -762,7 +762,6 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
           {
-            string[] subFiles = g_Player.SubtitleFiles;
             int subStreamsCount = g_Player.SubtitleStreams;
             if (subStreamsCount > 0)
             {

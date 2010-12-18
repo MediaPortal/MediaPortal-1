@@ -1103,22 +1103,11 @@ namespace MediaPortal.GUI.Video
         string strName = g_Player.AudioType(i);
         // formats right label2 to '[active]'
         string strActive = (currentAudioStream == i) ? strActiveLabel : null;
-        int ipos = strLang.IndexOf("(");
+        int ipos = strLang.IndexOf("[");
         if (ipos > 0)
         {
           strLang = strLang.Substring(0, ipos);
         }
-
-        if (strName != null && !strName.Equals("") && !strName.Equals(strLang))
-        {
-          if (strLang != null && !strLang.Equals(""))
-            // formats to 'Audio language [name]'
-            strItem = String.Format(strLang + " [" + strName + "]");
-          else
-            // formats to 'Audio name'
-            strItem = String.Format(strName);
-        }
-        else
           // formats to 'Language'
           strItem = String.Format(strLang);
 
@@ -1169,22 +1158,11 @@ namespace MediaPortal.GUI.Video
         string strName = g_Player.SubtitleName(i);
         // formats right label2 to '[active]'
         string strActive = (currentSubtitleStream == i) ? strActiveLabel : null;
-        int ipos = strLang.IndexOf("(");
+        int ipos = strLang.IndexOf("[");
         if (ipos > 0)
         {
           strLang = strLang.Substring(0, ipos);
         }
-        
-        if (strName != null && !strName.Equals("") && !strName.Equals(strLang))
-        {
-          if (strLang != null && !strLang.Equals(""))
-            // formats to 'Subtitle language [name]'
-            strItem = String.Format(strLang + " [" + strName + "]");
-          else
-            // formats to 'Subtitle name'
-            strItem = String.Format(strName);
-        }
-        else
           // formats to 'Language'
           strItem = String.Format(strLang);
 

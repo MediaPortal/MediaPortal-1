@@ -1999,6 +1999,11 @@ namespace MediaPortal.Player
       return Strings.Unknown;
     }
 
+    public override string SubtitleName(int iStream)
+    {
+      return "";
+    }
+
     public void AddPreferedCodecs(IGraphBuilder _graphBuilder)
     {
       // add preferred video & audio codecs
