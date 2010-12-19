@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+// parts of the code are based on MPC-HC audio renderer source code
+
 #pragma once 
 
 #include "MpAudioRenderer.h"
