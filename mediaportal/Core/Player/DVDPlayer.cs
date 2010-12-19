@@ -35,7 +35,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-
+using MediaPortal.Player.PostProcessing;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using DirectX.Capture;
@@ -1904,10 +1904,10 @@ namespace MediaPortal.Player
             channelInfo = noc + "." + "0";
           }
 
-          details = " (" + attr.AudioFormat
+          details = " [" + attr.AudioFormat
                     + " " + channelInfo
                     + " - " + attr.dwFrequency + " Hz " +
-                    + +attr.bQuantization + " bits)";
+                    + +attr.bQuantization + " bits]";
         }
 
         foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
@@ -2079,6 +2079,17 @@ namespace MediaPortal.Player
           //_log.Debug("DVDPlayer:EnableSubtitle:Setting subpicture state to enabled {0}", value);
         }
         catch {}
+      }
+    }
+
+    // <summary>
+    /// Property to Get Postprocessing
+    /// </summary>
+    public override bool HasPostprocessing
+    {
+      get
+      { 
+        return PostProcessingEngine.GetInstance().HasPostProcessing;
       }
     }
 

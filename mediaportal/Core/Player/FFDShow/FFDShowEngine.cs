@@ -36,7 +36,6 @@ namespace MediaPortal.Player.Subtitles
   public class FFDShowEngine : SubSettings, ISubEngine, IPostProcessingEngine
   {
     private FFDShowAPI ffdshowAPI;
-    private string[] subFiles = null;
     private bool hasPostProcessing = false;
 
     protected override void LoadAdvancedSettings(Settings xmlreader)

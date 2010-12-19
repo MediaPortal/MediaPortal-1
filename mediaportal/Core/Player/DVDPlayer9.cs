@@ -30,6 +30,8 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;
+using MediaPortal.Player.PostProcessing;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.Player
 {
@@ -41,7 +43,7 @@ namespace MediaPortal.Player
     private const uint VFW_E_DVD_DECNOTENOUGH = 0x8004027B;
     private const uint VFW_E_DVD_RENDERFAIL = 0x8004027A;
 
-    private VMR9Util _vmr9 = null;    
+    private VMR9Util _vmr9 = null;
 
     /// <summary> create the used COM components and get the interfaces. </summary>    
     protected override bool GetInterfaces(string path)
@@ -277,7 +279,22 @@ namespace MediaPortal.Player
           Cleanup();
           return false;
         }
-        
+
+        #region PostProcessingEngine Detection
+
+        PostProcessingEngine.engine = new FFDShowEngine();
+        PostProcessingEngine.engine.LoadPostProcessing(_graphBuilder);
+        string tmpstr;
+        IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+        if (!postengine.LoadPostProcessing(_graphBuilder))
+        {
+          tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
+          Log.Info("DVDPlayer9: {0} postprocessing configured in MP but misconfigured!", tmpstr);
+          PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+        }
+
+        #endregion
+
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
         _basicAudio = (IBasicAudio)_graphBuilder;
@@ -302,7 +319,7 @@ namespace MediaPortal.Player
         return false;
       }
     }
-    
+
     /// <summary> do cleanup and release DirectShow. </summary>
     protected override void CloseInterfaces()
     {
