@@ -1181,7 +1181,11 @@ namespace MediaPortal.GUI.Library
             }
             catch (Exception ex)
             {
-              Log.Error("GUIWindow:OnWindowLoaded id:{0} ex:{1} {2} {3}", atrb.ID, ex.Message, ex.StackTrace,
+              Log.Error("GUIWindow:OnWindowLoaded '{0}' control id:{1} ex:{2} {3} {4}",
+                        _windowXmlFileName, 
+                        atrb.ID, 
+                        ex.Message, 
+                        ex.StackTrace,
                         this.ToString());
             }
           }
