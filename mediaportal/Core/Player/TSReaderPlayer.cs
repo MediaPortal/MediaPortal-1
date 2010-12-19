@@ -760,7 +760,7 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get the name for a subtitle stream
+    /// Property to get the language for a subtitle stream
     /// </summary>
     public override string SubtitleLanguage(int iStream)
     {
@@ -772,6 +772,14 @@ namespace MediaPortal.Player
       {
         return Strings.Unknown;
       }
+    }
+
+    /// <summary>
+    /// Property to get the name for a subtitle stream
+    /// </summary>
+    public override string SubtitleName(int iStream)
+    {
+      return SubtitleLanguage(iStream);
     }
 
     /// <summary>
