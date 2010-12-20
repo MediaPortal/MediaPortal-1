@@ -284,12 +284,9 @@ namespace MediaPortal.Player
 
         PostProcessingEngine.engine = new FFDShowEngine();
         PostProcessingEngine.engine.LoadPostProcessing(_graphBuilder);
-        string tmpstr;
         IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
         if (!postengine.LoadPostProcessing(_graphBuilder))
         {
-          tmpstr = postengine.ToString().Substring(postengine.ToString().LastIndexOf(".") + 1);
-          Log.Info("DVDPlayer9: {0} postprocessing configured in MP but misconfigured!", tmpstr);
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
         }
 
