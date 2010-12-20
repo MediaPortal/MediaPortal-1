@@ -936,8 +936,12 @@ namespace MediaPortal.GUI.Music
         return strThumb;
       }
 
-      return tag.CoverArtFile;
-      //return string.Empty;
+      if(!string.IsNullOrEmpty(tag.CoverArtFile))
+      {
+        return tag.CoverArtFile;
+      }
+      
+      return string.Empty;
     }
     
     protected override void OnShowSort()
