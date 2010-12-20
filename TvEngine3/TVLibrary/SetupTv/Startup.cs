@@ -130,7 +130,7 @@ namespace SetupTv
 
         if (param.StartsWith("--Deploy"))
         {
-          switch (param.Substring(0, 11))
+          switch (param.Substring(0, 12))
           {
             case "--DeployMode":
               Log.Debug("---- started in Deploy mode ----");
