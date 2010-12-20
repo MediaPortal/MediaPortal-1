@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Media.Animation;
 using MediaPortal.Profile;
 using Microsoft.DirectX.Direct3D;
@@ -100,8 +101,6 @@ namespace MediaPortal.GUI.Library
     protected State _currentState = State.Idle; // current State of the animation
     protected State _nextState = State.Idle; // what follows when _currentState ends
     protected State _mouseState = State.Idle; // autoscrolling with the mouse 
-    protected Viewport _newViewport = new Viewport(); // own viewport for scrolling
-    protected Viewport _oldViewport; // storage of the currrent Viewport 
     protected int _animationTime = 0; // duration for a scroll animation
     protected int _focusPosition = 0; // current position of the focus bar 
     protected bool _fixedScroll = true; // fix scrollbar in the middle of menu
@@ -1380,24 +1379,22 @@ namespace MediaPortal.GUI.Library
       {
         _hoverImage.Render(timePassed);
       }
-      _oldViewport = GUIGraphicsContext.DX9Device.Viewport;
+      Rectangle clipRect = new Rectangle();
       if (!_horizontal)
       {
-        _newViewport.X = _positionX;
-        _newViewport.Y = _positionY + _buttonOffset;
-        _newViewport.Width = Width;
-        _newViewport.Height = Height - 2 * _buttonOffset;
+        clipRect.X = _positionX;
+        clipRect.Y = _positionY + _buttonOffset;
+        clipRect.Width = Width;
+        clipRect.Height = Height - 2 * _buttonOffset;
       }
       else
       {
-        _newViewport.X = _positionX + _buttonOffset;
-        _newViewport.Y = _positionY;
-        _newViewport.Width = Width - 2 * _buttonOffset;
-        _newViewport.Height = Height;
+        clipRect.X = _positionX + _buttonOffset;
+        clipRect.Y = _positionY;
+        clipRect.Width = Width - 2 * _buttonOffset;
+        clipRect.Height = Height;
       }
-      _newViewport.MinZ = 0.0f;
-      _newViewport.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = _newViewport;
+      GUIGraphicsContext.BeginClip(clipRect);
 
       if (_currentState != State.Idle)
       {
@@ -1411,7 +1408,7 @@ namespace MediaPortal.GUI.Library
       {
         button.Render(timePassed);
       }
-      GUIGraphicsContext.DX9Device.Viewport = _oldViewport;
+      GUIGraphicsContext.EndClip();
       if (_currentState != State.Idle)
       {
         AnimationFinished(timePassed);

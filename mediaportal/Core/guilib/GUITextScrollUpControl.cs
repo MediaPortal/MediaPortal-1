@@ -201,7 +201,6 @@ namespace MediaPortal.GUI.Library
           _offset = 0;
         }
 
-        Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
         if (GUIGraphicsContext.graphics != null)
         {
           GUIGraphicsContext.graphics.SetClip(new Rectangle(_positionX, _positionY,
@@ -220,14 +219,12 @@ namespace MediaPortal.GUI.Library
             return;
           }
 
-          Viewport newviewport = new Viewport();
-          newviewport.X = _positionX;
-          newviewport.Y = _positionY;
-          newviewport.Width = _width;
-          newviewport.Height = (int)(_height * _lineSpacing);
-          newviewport.MinZ = 0.0f;
-          newviewport.MaxZ = 1.0f;
-          GUIGraphicsContext.DX9Device.Viewport = newviewport;
+          Rectangle clipRect = new Rectangle();
+          clipRect.X = _positionX;
+          clipRect.Y = _positionY;
+          clipRect.Width = _width;
+          clipRect.Height = (int)(_height * _lineSpacing);
+          GUIGraphicsContext.BeginClip(clipRect);
         }
         long color = _textColor;
         if (Dimmed)
@@ -344,7 +341,7 @@ namespace MediaPortal.GUI.Library
         }
         else
         {
-          GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+          GUIGraphicsContext.EndClip();
         }
         base.Render(timePassed);
       }

@@ -767,27 +767,6 @@ namespace MediaPortal.GUI.Library
         _scrollPosititionXOffset = _itemWidth - _scrollCounter;
       }
 
-      Viewport oldview = GUIGraphicsContext.DX9Device.Viewport;
-      Viewport view = new Viewport();
-      float fx = (float)_positionX;
-      float fy = (float)_positionY;
-
-      if (fx <= 0)
-      {
-        fx = 0;
-      }
-      if (fy <= 0)
-      {
-        fy = 0;
-      }
-      view.X = (int)fx;
-      view.Y = (int)fy;
-      view.Width = _columns * _itemWidth;
-      view.Height = _itemHeight;
-      view.MinZ = 0.0f;
-      view.MaxZ = 1.0f;
-      //      GUIGraphicsContext.DX9Device.Viewport = view;
-
       int iStartItem = 30000;
       int iEndItem = -1;
       dwPosY = _positionY;
@@ -883,8 +862,6 @@ namespace MediaPortal.GUI.Library
       {
         RenderItem(focusedItemNr, timePassed, true, focuseddwPosX, focuseddwPosY, focusedItem);
       }
-
-      GUIGraphicsContext.DX9Device.Viewport = oldview;
 
       //
       _frames = 6;
@@ -2160,21 +2137,9 @@ namespace MediaPortal.GUI.Library
       {
         fwidth = ((float)maxX) - fPosCX;
       }
-      Viewport newviewport = new Viewport();
-      Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-      newviewport.X = (int)fPosCX;
-      newviewport.Y = (int)fPosCY;
-      newviewport.Width = (int)(fwidth);
-      newviewport.Height = (int)(fHeight);
-      newviewport.MinZ = 0.0f;
-      newviewport.MaxZ = 1.0f;
-      //GUIGraphicsContext.DX9Device.Viewport = newviewport;
-
       if (!bScroll || fTextWidth <= fMaxWidth)
       {
         _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)fMaxWidth);
-
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
         return;
       }
       else
@@ -2287,8 +2252,6 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
       }
     }
 

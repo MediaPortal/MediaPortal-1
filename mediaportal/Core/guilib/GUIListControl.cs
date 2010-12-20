@@ -1194,16 +1194,13 @@ namespace MediaPortal.GUI.Library
         fPosCY = 0;
       }
 
-      Viewport newviewport, oldviewport;
-      newviewport = new Viewport();
-      oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-      newviewport.X = (int)fPosCX;
-      newviewport.Y = (int)fPosCY;
-      newviewport.Width = (int)(fwidth);
-      newviewport.Height = (int)(fHeight);
-      newviewport.MinZ = 0.0f;
-      newviewport.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = newviewport;
+      Rectangle clipRect = new Rectangle();
+      clipRect.X = (int)fPosCX;
+      clipRect.Y = (int)fPosCY;
+      clipRect.Width = (int)(fwidth);
+      clipRect.Height = (int)(fHeight);
+      GUIGraphicsContext.BeginClip(clipRect);
+
       // scroll
       int iItem = _cursorX + _offset;
       _brackedText = strTextToRender;
@@ -1301,7 +1298,7 @@ namespace MediaPortal.GUI.Library
           font.DrawText(fPosX, fPosY, dwTextColor, strTextToRender, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
         }
       }
-      GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+      GUIGraphicsContext.EndClip();
     }
 
     /// <summary>

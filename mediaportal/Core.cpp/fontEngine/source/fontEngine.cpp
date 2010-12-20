@@ -132,6 +132,7 @@ int                         textureCount;
 
 static bool inPresentTextures=false; 
 static vector<int> texturesToBeRemoved;
+bool clipEnabled = false;
 
 TCHAR logFile[MAX_PATH];
 static bool pathInitialized=false;
@@ -277,6 +278,24 @@ void FontEngineSetAlphaBlend(DWORD alphaBlend)
     m_pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE ,alphaBlend);
     m_alphaBlend = alphaBlend;
   }
+}
+
+//*******************************************************************************************************************
+
+void FontEngineSetClipEnable()
+{
+  // Set the state of the FontEngine to render with clipping using the SetScissorRect() rectangle.
+  // The called FontEngine draw function will disable clipping; the user must set the clip rectangle
+  // prior to each FontEngine draw function if subsequent clipping is desired.
+  clipEnabled = true;
+}
+
+//*******************************************************************************************************************
+
+void FontEngineSetClipDisable()
+{
+  // Set the state of the FontEngine to render without clipping.
+  clipEnabled = false;
 }
 
 //*******************************************************************************************************************
@@ -486,7 +505,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   if (textureNo < 0 || textureNo>=MAX_TEXTURES) 
 	  return;
 
-  //save original viewport
+  // Avoid drawing textures outside the viewport.
   D3DVIEWPORT9 viewport;
   m_pDevice->GetViewport(&viewport);
 
@@ -495,7 +514,22 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
     (x >= viewport.X+viewport.Width) || 
     (y >= viewport.Y+viewport.Height)) 
   {
-    return;  // nothing to do everthing outside the view
+    return;
+  }
+
+  // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    if ((x+nw <= clipRect.left) || 
+      (y+nh <=clipRect.top) || 
+      (x >= clipRect.right) || 
+      (y >= clipRect.bottom)) 
+    {
+      return;
+    }
   }
 
   TEXTURE_DATA_T* texture;
@@ -531,17 +565,7 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
   if (needRedraw)
   {
-    D3DVIEWPORT9 viewportWholeScreen;
-    viewportWholeScreen.X=0;
-    viewportWholeScreen.Y=0;
-    viewportWholeScreen.Width =m_iScreenWidth;
-    viewportWholeScreen.Height=m_iScreenHeight;
-    viewportWholeScreen.MaxZ = 1.0; 
-    viewportWholeScreen.MinZ = 0.0;
-    m_pDevice->SetViewport(&viewportWholeScreen);
-
     FontEnginePresentTextures();
-    m_pDevice->SetViewport(&viewport);
   }
 
   texture=&textureData[textureNo];
@@ -572,37 +596,66 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
   float ty1=voff;
   float ty2=voff+vmax;
 
-  if (viewport.X>0 || viewport.Y>0)
+  if (clipEnabled)
   {
-    float w=(xpos2-xpos) ;
-    float h=(ypos2-ypos) ;
-    if (xpos <	viewport.X)                  // clipping on left side
-    {
-      float off=viewport.X - xpos;
-      xpos=(float)viewport.X;
-      tx1 += ((off / w) * umax);
-      if (tx1>=1.0f) tx1=1.0f;
-    }
-    if (xpos2 >	viewport.X+viewport.Width)   // clipping on right side
-    {
-      float off= (viewport.X+viewport.Width) - xpos2;
-      xpos2=(float)viewport.X+(float)viewport.Width;
-      tx2 += ((off / w) * umax); 
-      if (tx2 >=1.0f) tx2=1.0f;
-    }
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
 
-    if (ypos <	viewport.Y)                 // clipping top
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
     {
-      float off=viewport.Y - ypos;
-      ypos=(float)viewport.Y;
-      ty1 += ( (off / h) * vmax );
-    }
-    if (ypos2 >	viewport.Y+viewport.Height) // clipping button
-    {
-      float off= (viewport.Y+viewport.Height) - ypos2;
-      ypos2=(float)viewport.Y+(float)viewport.Height;
-      ty2 += ( (off / h) * vmax );
-      if (ty2>=1.0f) ty2=1.0f;
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
+      
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
+        }
+      }
+
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+      }
+
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+      }
     }
   }
 
@@ -692,10 +745,39 @@ void FontEngineDrawTexture(int textureNo,float x, float y, float nw, float nh, f
 
 
 //*******************************************************************************************************************
-void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
+                            int color, float m[3][4],
+                            int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
 {
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
+
+  // Avoid drawing textures outside the viewport.
+  D3DVIEWPORT9 viewport;
+  m_pDevice->GetViewport(&viewport);
+
+  if ((x+nw <= viewport.X) || 
+    (y+nh <=viewport.Y) || 
+    (x >= viewport.X+viewport.Width) || 
+    (y >= viewport.Y+viewport.Height)) 
+  {
+    return;
+  }
+
+  // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    if ((x+nw <= clipRect.left) || 
+      (y+nh <=clipRect.top) || 
+      (x >= clipRect.right) || 
+      (y >= clipRect.bottom)) 
+    {
+      return;
+    }
+  }
 
   bool ignoreTextureBlending = false;
   if (textureNo1 == textureNo2 && uoff2 == 0 && voff2 == 0 && umax2 == 0 && vmax2 == 0)
@@ -725,6 +807,86 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   float tx2_2=umax2;
   float ty1_2=voff2;
   float ty2_2=vmax2; 
+
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
+    {
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
+      
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
+
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
+        }
+        if (tx1_2 >= 1.0f)
+        {
+          tx1_2 = 1.0f;
+        }
+      }
+
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+        if (tx2_2 >= 1.0f)
+        {
+          tx2_2 = 1.0f;
+        }
+      }
+
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
+        }
+      }
+    }
+  }
+
   xpos-=0.5f;
   ypos-=0.5f;
   xpos2-=0.5f;
@@ -796,6 +958,16 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
   m_pDevice->SetRenderState( D3DRS_SRCBLEND, D3DBLEND_SRCALPHA );
   m_pDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA );
 
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  }
 
   if (!ignoreTextureBlending)
   {
@@ -822,10 +994,16 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
 
   m_pDevice->SetTexture(0, NULL);
   m_pDevice->SetTexture(1, NULL);
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
-void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax, int color, float m[3][4], int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
+void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, float nh, float uoff, float voff, float umax, float vmax,
+                                 int color, float m[3][4],
+                                 int textureNo2, float uoff2, float voff2, float umax2, float vmax2)
 {
   // textureNo1 - main image
   // textureNo2 - diffuse image
@@ -834,9 +1012,7 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
 
-  TransformMatrix matrix(m);
-
-  //save original viewport
+  // Avoid drawing textures outside the viewport.
   D3DVIEWPORT9 viewport;
   m_pDevice->GetViewport(&viewport);
 
@@ -845,20 +1021,26 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
     (x >= viewport.X+viewport.Width) || 
     (y >= viewport.Y+viewport.Height)) 
   {
-    return;  // nothing to do everthing outside the view
+    return;
   }
 
-  D3DVIEWPORT9 viewportWholeScreen;
-  viewportWholeScreen.X=0;
-  viewportWholeScreen.Y=0;
-  viewportWholeScreen.Width =m_iScreenWidth;
-  viewportWholeScreen.Height=m_iScreenHeight;
-  viewportWholeScreen.MaxZ = 1.0; 
-  viewportWholeScreen.MinZ = 0.0;
-  m_pDevice->SetViewport(&viewportWholeScreen);
+  // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
 
+    if ((x+nw <= clipRect.left) || 
+      (y+nh <=clipRect.top) || 
+      (x >= clipRect.right) || 
+      (y >= clipRect.bottom)) 
+    {
+      return;
+    }
+  }
+
+  TransformMatrix matrix(m);
   FontEnginePresentTextures();
-  m_pDevice->SetViewport(&viewport);
 
   TEXTURE_DATA_T* texture1;
   TEXTURE_DATA_T* texture2;
@@ -878,7 +1060,87 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
   float tx1_2=uoff2;
   float tx2_2=umax2;
   float ty1_2=voff2;
-  float ty2_2=vmax2; 
+  float ty2_2=vmax2;
+
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
+    {
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
+      
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
+
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
+        }
+        if (tx1_2 >= 1.0f)
+        {
+          tx1_2 = 1.0f;
+        }
+      }
+
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+        if (tx2_2 >= 1.0f)
+        {
+          tx2_2 = 1.0f;
+        }
+      }
+
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
+        }
+      }
+    }
+  }
+
   xpos-=0.5f;
   ypos-=0.5f;
   xpos2-=0.5f;
@@ -946,6 +1208,17 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
   m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
   m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  }
+
   // This stage simply selects color and alpha from texture1.
   // Choose the alpha and color from the current texture (texture1).
   m_pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_SELECTARG1);
@@ -970,6 +1243,10 @@ void FontEngineDrawMaskedTexture(int textureNo1,float x, float y, float nw, floa
 
   m_pDevice->SetTexture(0, NULL);
   m_pDevice->SetTexture(1, NULL);
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -986,6 +1263,33 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   if (textureNo1 < 0 || textureNo1>=MAX_TEXTURES) return;
   if (textureNo2 < 0 || textureNo2>=MAX_TEXTURES) return;
   if (textureNo3 < 0 || textureNo3>=MAX_TEXTURES) return;
+
+  // Avoid drawing textures outside the viewport.
+  D3DVIEWPORT9 viewport;
+  m_pDevice->GetViewport(&viewport);
+
+  if ((x+nw <= viewport.X) || 
+    (y+nh <=viewport.Y) || 
+    (x >= viewport.X+viewport.Width) || 
+    (y >= viewport.Y+viewport.Height)) 
+  {
+    return;
+  }
+
+  // If clipping is enabled, avoid drawing textures completely outside the clip rectangle.
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    if ((x+nw <= clipRect.left) || 
+      (y+nh <=clipRect.top) || 
+      (x >= clipRect.right) || 
+      (y >= clipRect.bottom)) 
+    {
+      return;
+    }
+  }
 
   TransformMatrix matrix(m);
   FontEnginePresentTextures();
@@ -1016,6 +1320,101 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   float tx2_3=umax3;
   float ty1_3=voff3;
   float ty2_3=vmax3; 
+
+  if (clipEnabled)
+  {
+    RECT clipRect;
+    m_pDevice->GetScissorRect(&clipRect);
+
+    // This clipping is done algorthimically for the texture being drawn.
+    // This texture is maintained in the list of textures managed by the FontEngine.
+    // Since the FontEngine does not store clip rectangles with the textures we cannot use the hardware to perform
+    // the clipping.
+    if (clipRect.top > 0 || clipRect.left > 0)
+    {
+      float w = xpos2 - xpos;
+      float h = ypos2 - ypos;
+      
+      // Clipping on left side.
+      if (xpos <	clipRect.left)
+      {
+        float off = clipRect.left - xpos;
+        xpos = (float)clipRect.left;
+        tx1 += ((off / w) * umax);
+        tx1_2 += ((off / w) * umax);
+        tx1_3 += ((off / w) * umax);
+
+        if (tx1 >= 1.0f)
+        {
+          tx1 = 1.0f;
+        }
+        if (tx1_2 >= 1.0f)
+        {
+          tx1_2 = 1.0f;
+        }
+        if (tx1_3 >= 1.0f)
+        {
+          tx1_3 = 1.0f;
+        }
+      }
+
+      // Clipping on right side.
+      if (xpos2 >	clipRect.right)
+      {
+        float off = (clipRect.right) - xpos2;
+        xpos2 = clipRect.right;
+        tx2 += ((off / w) * umax); 
+        tx2_2 += ((off / w) * umax); 
+        tx2_3 += ((off / w) * umax); 
+
+        if (tx2 >= 1.0f)
+        {
+          tx2 = 1.0f;
+        }
+        if (tx2_2 >= 1.0f)
+        {
+          tx2_2 = 1.0f;
+        }
+        if (tx2_3 >= 1.0f)
+        {
+          tx2_3 = 1.0f;
+        }
+      }
+
+      // Clipping top.
+      if (ypos <	clipRect.top)
+      {
+        float off = clipRect.top - ypos;
+        ypos = (float)clipRect.top;
+        ty1 += ((off / h) * vmax);
+        ty1_2 += ((off / h) * vmax);
+        ty1_3 += ((off / h) * vmax);
+      }
+
+      // Clipping bottom.
+      if (ypos2 >	clipRect.bottom)
+      {
+        float off = clipRect.bottom - ypos2;
+        ypos2 = (float)clipRect.bottom;
+        ty2 += ((off / h) * vmax);
+        ty2_2 += ((off / h) * vmax);
+        ty2_3 += ((off / h) * vmax);
+
+        if (ty2 >= 1.0f)
+        {
+          ty2=1.0f;
+        }
+        if (ty2_2 >= 1.0f)
+        {
+          ty2_2=1.0f;
+        }
+        if (ty2_3 >= 1.0f)
+        {
+          ty2_3=1.0f;
+        }
+      }
+    }
+  }
 
   xpos-=0.5f;
   ypos-=0.5f;
@@ -1092,6 +1491,16 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   m_pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
   m_pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
+  // If clipping is enabled then set the render pipeline to apply the SetScissorRect() setting.
+  // The caller must have already called SetScissorRect() to set the clipping rectangle.
+  if (clipEnabled)
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, TRUE);
+  }
+  else
+  {
+    m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
+  }
 
   m_pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
   m_pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
@@ -1122,6 +1531,10 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
   m_pDevice->SetTexture(0, NULL);
   m_pDevice->SetTexture(1, NULL);
   m_pDevice->SetTexture(2, NULL);
+
+  // Important - the scissor test (for clipping) must be disabled before return.
+  // Clipping may not be defined other FontEngine calls that draw textures.
+  m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 }
 
 //*******************************************************************************************************************
@@ -1319,7 +1732,6 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   if (fontData[fontNumber].pVertexBuffer==NULL) return;
   if (textVoid==NULL) return;
 
-  //TEXTURE_DATA_T* texture;
   TransformMatrix matrix(m);
 
   WCHAR* text = (WCHAR*)textVoid;
@@ -1338,9 +1750,6 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   float fScaleY = font->fTextureHeight / font->fTextureScale;
   float fSpacing= 2 * font->fSpacingPerChar;
 
-  D3DVIEWPORT9 viewport,orgViewPort;
-  m_pDevice->GetViewport(&viewport);
-  memcpy(&orgViewPort,&viewport, sizeof(orgViewPort));
   unsigned int off=(int)(fontData[fontNumber].fSpacingPerChar+1);
 
   if (maxWidth <=0) 
@@ -1349,11 +1758,6 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
   }
 
   float totalWidth = 0;
-  float minX = viewport.X;
-  float minY = viewport.Y;
-  float maxX = viewport.X + viewport.Width;
-  float maxY = viewport.Y + viewport.Height;
-
   float lineWidths[MAX_TEXT_LINES];
   int lineNr=0;
   for (int i=0; i < (int)wcslen(text);++i)
@@ -1423,30 +1827,56 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
     float xpos2 = xpos + w;
     float ypos2 = ypos + h;
 
-    // Inside viewport?
-    if(xpos1 < maxX && xpos2 >= minX &&
-      ypos1 < maxY && ypos2 >= minY)
+    // Check if inside viewport.
+    // Avoid drawing text that is not inside the viewport.
+    D3DVIEWPORT9 viewport;
+    m_pDevice->GetViewport(&viewport);
+
+    if(xpos1 < (viewport.X + viewport.Width) && xpos2 >= viewport.X &&
+      ypos1 < (viewport.Y + viewport.Height) && ypos2 >= viewport.Y)
     {
-      // Perform clipping
-      if(xpos1 < minX)
+      if (clipEnabled)
       {
-        tx1 += (minX - xpos1) / fScaleX;
-        xpos1 += minX - xpos1;
-      }
-      if(xpos2 > maxX)
-      {
-        tx2 -= (xpos2 - maxX) / fScaleX;
-        xpos2 -= xpos2 - maxX;
-      }
-      if(ypos1 < minY)
-      {
-        ty1 += (minY - ypos1) / fScaleY;
-        ypos1 += minY - ypos1;
-      }
-      if(ypos2 > maxY)
-      {
-        ty2 -= (ypos2 - maxY) / fScaleY;
-        ypos2 -= ypos2 - maxY;
+        // Get the clip rectangle.
+        RECT clipRect;
+        m_pDevice->GetScissorRect(&clipRect);
+        float minX = clipRect.left;
+        float minY = clipRect.top;
+        float maxX = clipRect.right;
+        float maxY = clipRect.bottom;
+
+        // A clip rectangle is defined.  Deteremine if the character is inside the clip rectangle.
+        // If the character is inside the clip rectangle then clip it as necessary at the clip rectangle boundary.
+        // If the character is not inside the clip rectangle then move on to the next character (continue).
+        if (xpos1 < maxX && xpos2 >= minX &&
+          ypos1 < maxY && ypos2 >= minY)
+        {
+          // Clipping is performed manually here, not in the render pipeline (we don't set SCISSORTESTENABLE).
+          if(xpos1 < minX)
+          {
+            tx1 += (minX - xpos1) / fScaleX;
+            xpos1 += minX - xpos1;
+          }
+          if(xpos2 > maxX)
+          {
+            tx2 -= (xpos2 - maxX) / fScaleX;
+            xpos2 -= xpos2 - maxX;
+          }
+          if(ypos1 < minY)
+          {
+            ty1 += (minY - ypos1) / fScaleY;
+            ypos1 += minY - ypos1;
+          }
+          if(ypos2 > maxY)
+          {
+            ty2 -= (ypos2 - maxY) / fScaleY;
+            ypos2 -= ypos2 - maxY;
+          }
+        }
+        else
+        {
+          continue;
+        }
       }
 
       int alpha1=intColor;
@@ -1486,20 +1916,10 @@ void UpdateVertex(TransformMatrix& matrix, FONT_DATA_T* pFont, CUSTOMVERTEX* pVe
       font->dwNumTriangles += 2;
       if (font->iv > (MaxNumfontVertices-12))
       {
-        //reset viewport
-        D3DVIEWPORT9 viewportWholeScreen;
-        viewportWholeScreen.X=0;
-        viewportWholeScreen.Y=0;
-        viewportWholeScreen.Width =m_iScreenWidth;
-        viewportWholeScreen.Height=m_iScreenHeight;
-        m_pDevice->SetViewport(&viewportWholeScreen);
-
         FontEnginePresentTextures();
         FontEnginePresent3D(fontNumber);
         font->dwNumTriangles = 0;
         font->iv = 0;
-        //restore viewport
-        m_pDevice->SetViewport(&orgViewPort);
       }
     }
     totalWidth += (w - fSpacing);
@@ -1528,6 +1948,7 @@ void FontEnginePresent3D(int fontNumber)
       }
 
       FontEngineSetAlphaBlend(1);
+      m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 
       m_pDevice->SetTexture(0, font->pTexture);
       m_pDevice->SetStreamSource(0, font->pVertexBuffer, 0, sizeof(CUSTOMVERTEX) );

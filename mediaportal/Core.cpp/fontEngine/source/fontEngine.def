@@ -20,3 +20,5 @@ FontEngineDrawTexture2			@15
 FontEngineDrawMaskedTexture     @16
 FontEngineDrawMaskedTexture2    @17
 FontEngineSetAlphaBlend         @18
+FontEngineSetClipEnable      @19
+FontEngineSetClipDisable      @20

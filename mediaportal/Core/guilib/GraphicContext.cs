@@ -52,6 +52,12 @@ namespace MediaPortal.GUI.Library
   /// </summary>
   public class GUIGraphicsContext
   {
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetClipEnable();
+
+    [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern unsafe void FontEngineSetClipDisable();
+
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
     
@@ -1935,5 +1941,29 @@ namespace MediaPortal.GUI.Library
 
     #endregion
 
+    /// <summary>
+    /// Returns the current clip rectangle.
+    /// </summary>
+    public static Rectangle GetClipRect()
+    {
+      return DX9Device.ScissorRectangle;
+    }
+
+    /// <summary>
+    /// Set the clip rectangle as specified and enables the FontEngine to use clipping.
+    /// </summary>
+    public static void BeginClip(Rectangle rect)
+    {
+      DX9Device.ScissorRectangle = rect;
+      FontEngineSetClipEnable();
+    }
+
+    /// <summary>
+    /// Disables the FontEngine from using clipping.
+    /// </summary>
+    public static void EndClip()
+    {
+      FontEngineSetClipDisable();
+    }
   }
 }

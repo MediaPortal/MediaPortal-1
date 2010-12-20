@@ -500,16 +500,12 @@ namespace MediaPortal.GUI.Library
       {
         return true;
       }
-
-      Viewport oldviewport = GUIGraphicsContext.DX9Device.Viewport;
       if (GUIGraphicsContext.graphics != null)
       {
         GUIGraphicsContext.graphics.SetClip(new Rectangle((int)fPosCX, (int)fPosCY, (int)(fMaxWidth), (int)(fHeight)));
       }
       else
       {
-        Viewport newviewport;
-        newviewport = new Viewport();
         if (fMaxWidth < 1)
         {
           return true;
@@ -518,14 +514,12 @@ namespace MediaPortal.GUI.Library
         {
           return true;
         }
-
-        newviewport.X = (int)fPosCX;
-        newviewport.Y = (int)fPosCY;
-        newviewport.Width = (int)(fMaxWidth);
-        newviewport.Height = (int)(fHeight);
-        newviewport.MinZ = 0.0f;
-        newviewport.MaxZ = 1.0f;
-        GUIGraphicsContext.DX9Device.Viewport = newviewport;
+        Rectangle clipRect = new Rectangle();
+        clipRect.X = (int)fPosCX;
+        clipRect.Y = (int)fPosCY;
+        clipRect.Width = (int)(fMaxWidth);
+        clipRect.Height = (int)(fHeight);
+        GUIGraphicsContext.BeginClip(clipRect);
       }
       // scroll
       string wszOrgText = wszText;
@@ -595,7 +589,7 @@ namespace MediaPortal.GUI.Library
               }
               else
               {
-                GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+                GUIGraphicsContext.EndClip();
               }
 
               return true;
@@ -698,7 +692,7 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+        GUIGraphicsContext.EndClip();
       }
       return bResult;
     }

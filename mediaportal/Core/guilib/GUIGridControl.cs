@@ -19,6 +19,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Drawing;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
 
@@ -161,22 +162,20 @@ namespace MediaPortal.GUI.Library
       ScrollToSelectedItem(timePassed);
       int offsetX = _positionX + _scrollPositionX;
       int offsetY = _positionY + _scrollPositionY;
-      Viewport newviewport, oldviewport;
-      newviewport = new Viewport();
-      oldviewport = GUIGraphicsContext.DX9Device.Viewport;
-      newviewport.X = _positionX;
-      newviewport.Y = _positionY;
-      newviewport.Width = _width;
-      newviewport.Height = _height;
-      newviewport.MinZ = 0.0f;
-      newviewport.MaxZ = 1.0f;
-      GUIGraphicsContext.DX9Device.Viewport = newviewport;
+
+      Rectangle clipRect = new Rectangle();
+      clipRect.X = _positionX;
+      clipRect.Y = _positionY;
+      clipRect.Width = _width;
+      clipRect.Height = _height;
+      GUIGraphicsContext.BeginClip(clipRect);
+
       for (int row = 0; row < _rows.Count; ++row)
       {
         _rows[row].Render(offsetX, ref offsetY, timePassed);
       }
 
-      GUIGraphicsContext.DX9Device.Viewport = oldviewport;
+      GUIGraphicsContext.EndClip();
       base.Render(timePassed);
     }
 

@@ -45,7 +45,6 @@ namespace MediaPortal.GUI.Library
     private bool _registeredForEvent = false;
 
     private GUIFont _font = null;
-    private bool _useViewPort = true;
     private bool _propertyHasChanged = false;
     private bool _reCalculate = false;
     private FontRenderContext _context;
@@ -264,12 +263,6 @@ namespace MediaPortal.GUI.Library
         {
           _font.DrawTextEx(xpos, ypos, c, label, ref _context, width);
         }
-    }
-
-    public bool UseViewPort
-    {
-      get { return _useViewPort; }
-      set { _useViewPort = value; }
     }
 
     /// <summary>
