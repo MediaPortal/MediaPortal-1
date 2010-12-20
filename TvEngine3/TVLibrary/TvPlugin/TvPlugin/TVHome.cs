@@ -2449,7 +2449,7 @@ namespace TvPlugin
       }
 
       Channel infoChannel;
-      if (g_Player.IsTimeShifting || g_Player.IsTV)
+      if (Navigator.Channel.IsTv)
       {
         infoChannel = Navigator.Channel;
       }
