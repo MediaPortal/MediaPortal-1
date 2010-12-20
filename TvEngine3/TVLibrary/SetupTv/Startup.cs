@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.Collections.Specialized;
@@ -107,6 +108,46 @@ namespace SetupTv
         System.Environment.Exit(0);
       }
 
+      string DeploySql = string.Empty;
+      string DeployPwd = string.Empty;
+
+      foreach (string param in arguments)
+      {
+        switch (param.ToLowerInvariant())
+        {
+          case "/delete-db":
+            startupMode = StartupMode.DbCleanup;
+            break;
+
+          case "/configure-db":
+            startupMode = StartupMode.DbConfig;
+            break;
+
+          case "/debugoptions":
+            debugOptions = true;
+            break;
+        }
+
+        if (param.StartsWith("--Deploy"))
+        {
+          switch (param.Substring(1, 12))
+          {
+            case "--DeployMode":
+              Log.Debug("---- started in Deploy mode ----");
+              startupMode = StartupMode.DeployMode;
+              break;
+
+            case "--DeploySql:":
+              DeploySql = param.Split(':')[1].ToLower();
+              break;
+
+            case "--DeployPwd:":
+              DeployPwd = param.Split(':')[1];
+              break;
+          }
+        }
+      }
+
       Application.SetCompatibleTextRenderingDefault(false);
 
       // set working dir from application.exe
@@ -114,9 +155,6 @@ namespace SetupTv
       applicationPath = System.IO.Path.GetFullPath(applicationPath);
       applicationPath = System.IO.Path.GetDirectoryName(applicationPath);
       System.IO.Directory.SetCurrentDirectory(applicationPath);
-
-      string DeploySql = string.Empty;
-      string DeployPwd = string.Empty;
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
@@ -129,35 +167,6 @@ namespace SetupTv
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
       Application.ThreadException += Application_ThreadException;
-
-      foreach (string param in arguments)
-      {
-        if (param == "--delete-db" || param == "-d" || param == @"/d")
-        {
-          startupMode = StartupMode.DbCleanup;
-        }
-        if (param == "--configure-db" || param == "-c" || param == @"/c")
-        {
-          startupMode = StartupMode.DbConfig;
-        }
-        if (param == "--DebugOptions")
-        {
-          debugOptions = true;
-        }
-        if (param == "--DeployMode")
-        {
-          Log.Debug("---- started in Deploy mode ----");
-          startupMode = StartupMode.DeployMode;
-        }
-        if (param.StartsWith("--DeploySql"))
-        {
-          DeploySql = param.Split(':')[1].ToLower();
-        }
-        if (param.StartsWith("--DeployPwd"))
-        {
-          DeployPwd = param.Split(':')[1];
-        }
-      }
 
       //test connection with database
       Log.Info("---- check connection with database ----");

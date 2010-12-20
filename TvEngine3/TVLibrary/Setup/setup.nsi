@@ -499,7 +499,7 @@ ${MementoSectionEnd}
   #---------------------------------------------------------------------------
   ${If} $UnInstallMode == 1
   ${OrIf} $UnInstallMode == 2
-    ExecWait '"$INSTDIR\SetupTv.exe" --delete-db'
+    ExecWait '"$INSTDIR\SetupTv.exe" /Delete-db'
   ${EndIf}
 
   #---------------------------------------------------------------------------
