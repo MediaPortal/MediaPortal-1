@@ -793,7 +793,6 @@ namespace MediaPortal.GUI.Library
         fy = 0;
       }
 
-      Rectangle defaultClipRect = GUIGraphicsContext.GetClipRect();
       Rectangle clipRect = new Rectangle();
       clipRect.X = (int)fx;
       clipRect.Y = (int)fy;
