@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.54 ----------- instance 0x%x", this);
+      Log("---------- v1.4.55 ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.54 ----------- instance 0x%x", this);
+      Log("---------- v0.0.55 ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -2491,6 +2491,7 @@ int MPEVRCustomPresenter::MeasureScanLines(LONGLONG startTime, double *times, do
   }
 
   //Looping wait until next vsync
+  Log("MeasureScanLines: wait for vsync: scanline: %d", line);
   while ((int)rasterStatus.ScanLine >= line) 
   {
     line = rasterStatus.ScanLine;
@@ -2517,7 +2518,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     D3DRASTER_STATUS rasterStatus;
 
     LONGLONG startTime = 0;
-    LONGLONG startTimeLR =0;
+    LONGLONG startTimeLR = 0;
     LONGLONG endTime = 0;
     UINT line = 0;
     UINT startLine = 0;
@@ -2533,7 +2534,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
       SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     }
 
-    //m_maxScanLine = m_displayMode.Height;
+    m_maxScanLine = 0;
     const int maxScanLineSamples = 1000;
     const int maxFrameSamples = 8;
     double times[maxScanLineSamples*2];
@@ -2550,32 +2551,45 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     double sumRefCyc = 0.0;
     double aveRefCyc = 0.0;
 
+    //Wait for vsync
+    line = 0;
+    m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+    while (rasterStatus.ScanLine >= line) 
+    {
+      line = rasterStatus.ScanLine;
+      m_pD3DDev->GetRasterStatus(0, &rasterStatus);
+      if (rasterStatus.ScanLine > m_maxScanLine) 
+      {
+        m_maxScanLine = rasterStatus.ScanLine;
+      }
+    }
+
+    Log("Starting frame loops: start scanline: %d", rasterStatus.ScanLine);
+
     startTime = GetCurrentTimestamp();
     startTimeLR = startTime;
   
     // Now we're at the start of a vsync
     for (int i = 0; i < maxFrameSamples; i++)
-    {
-      
-      // make sure we are near the start of the frame, otherwise wait for next vsync
-      line = 0;
+    {      
+      //Skip over vertical blanking period
       m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      while ( (line <= rasterStatus.ScanLine && rasterStatus.ScanLine > 100) || rasterStatus.ScanLine < 10)
+      while (rasterStatus.ScanLine < 10)
       {
-        line = rasterStatus.ScanLine;
         m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       } 
       startLine = rasterStatus.ScanLine;
       startTime = GetCurrentTimestamp();
 
       // make a few measurements
+      Log("Starting Frame: %d, start scanline: %d", i, startLine);
       sampleCount = MeasureScanLines(startTimeLR, times, scanLines, maxScanLineSamples);
       // Now we're at the next vsync
       m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       endLine = rasterStatus.ScanLine;
       endTime = GetCurrentTimestamp();
 
-      Log("Frame: %d, start scanline: %d, end scanline: %d, maxScanline: %d", i, startLine, endLine, m_maxScanLine);
+      Log("Ending Frame: %d, start scanline: %d, end scanline: %d, maxScanline: %d", i, startLine, endLine, m_maxScanLine);
 
       cycFrac = ((double)endLine - (double)startLine)/(double)(m_maxScanLine + 1);
       estRefreshCyc[i] = (double)(endTime - startTime) / (1.0 + cycFrac); // in hns units
@@ -2688,11 +2702,11 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
       m_estRefreshLock = false;
     }
 
-    Log("Display cycle from Windows: %.6f ms", m_dD3DRefreshCycle);
     Log("Raw est display cycle, linReg: %.6f ms, simple: %.6f ms, diff: %.6f ", frameTime/10000.0, simpleFrameTime/10000.0, currError);
     Log("Measured display cycle: %.6f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
     Log("Maximum scanline: %d", m_maxScanLine);
     Log("Measured scanline time: %.6f us", (m_dDetectedScanlineTime * 1000.0));
+    Log("Display (from windows): %d x %d @ %.6f Hz | Measured refresh rate: %.6f Hz", m_displayMode.Width, m_displayMode.Height, m_dD3DRefreshRate, 1000.0/m_dEstRefreshCycle);
     
   }
   return m_estRefreshLock;
