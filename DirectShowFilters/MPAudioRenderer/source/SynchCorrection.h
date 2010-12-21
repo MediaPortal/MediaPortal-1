@@ -76,6 +76,7 @@ private:
   double m_dlastAdjustment;
 
   double m_dAudioDelay;
+  double m_dBiasAdjustmentDelay;
 
   int m_iBiasDir;
   double m_dAVmult;

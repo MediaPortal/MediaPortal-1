@@ -42,6 +42,7 @@ void SynchCorrection::Reset()
   m_dAVmult = 1.0;
   m_ullTotalTime = 0;
   m_dlastAdjustment = 1.0;
+  m_dBiasAdjustmentDelay=0;
   m_bQualityMode = false;
   m_iQualityDir = 0;
   m_bQualityCorrectionOn = false;
@@ -129,7 +130,11 @@ double SynchCorrection::GetAdjustment()
 
 void SynchCorrection::SetBias(double bias)
 {
+  // handle intrastream bias change
+  double currentDrift = TotalAudioDrift(m_dAVmult);
+  Reset();
   m_Bias.SetAdjuster(bias);
+  m_dBiasAdjustmentDelay=currentDrift;
 }
 
 double SynchCorrection::GetBias()
@@ -163,7 +168,7 @@ double SynchCorrection::TotalAudioDrift(double AVMult)
 double SynchCorrection::GetRequiredAdjustment(double sampleTime, double AVMult, double bias, double adjustment)
 {
   double ret = AVMult * bias * adjustment;
-  double totalAudioDrift = TotalAudioDrift(AVMult) + m_dAudioDelay;
+  double totalAudioDrift = TotalAudioDrift(AVMult) + m_dAudioDelay + m_dBiasAdjustmentDelay;
 
   if (ret > 1.0 - QUALITY_BIAS_LIMIT &&  ret < 1.0 + QUALITY_BIAS_LIMIT) 
 	m_bQualityMode = true;
