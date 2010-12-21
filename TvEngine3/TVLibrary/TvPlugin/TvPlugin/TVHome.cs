@@ -90,7 +90,8 @@ namespace TvPlugin
     {
       WasPlaying = 1,
       CardChange = 2,
-      SeekToEnd = 4
+      SeekToEnd = 4,
+      SeekToEndAfterPlayback = 8
     }
 
     //heartbeat related stuff
@@ -1798,10 +1799,10 @@ namespace TvPlugin
       {
         g_Player.SetAudioDualMonoMode(eAudioDualMonoMode.STEREO);
       }
-    }
+    }               
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
-    {
+    {           
       // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
@@ -1827,7 +1828,7 @@ namespace TvPlugin
     }
 
     private void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {
+    {      
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio)
       {
         return;
@@ -3316,6 +3317,11 @@ namespace TvPlugin
           return true; // "success"
         }
 
+        if (card != null && card.NrOfOtherUsersTimeshiftingOnCard > 0)
+        {
+          _status.Set(LiveTvStatus.SeekToEndAfterPlayback);
+        }
+
         if (cardChanged)
         {
           _status.Set(LiveTvStatus.CardChange);
@@ -3351,6 +3357,13 @@ namespace TvPlugin
         if (!g_Player.Playing || _status.IsSet(LiveTvStatus.CardChange))
         {
           StartPlay();
+
+          // if needed seek to end
+          if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
+          {
+            double dTime = g_Player.Duration - 5;
+            g_Player.SeekAbsolute(dTime);            
+          }
         }
         try
         {
@@ -3531,8 +3544,8 @@ namespace TvPlugin
         {
           //singleseat or  multiseat rtsp streaming....
           if (!useRtsp || (useRtsp && zapping))
-          {
-            g_Player.SeekAbsolute(duration);
+          {            
+            g_Player.SeekAbsolute(duration);            
           }
         }
         catch (Exception e)

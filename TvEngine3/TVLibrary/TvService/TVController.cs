@@ -28,6 +28,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.Reflection;
 using TvLibrary;
+using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
@@ -1982,8 +1983,15 @@ namespace TvService
           if (_cards[cardId].TimeShifter.Stop(ref user))
           {
             result = true;
-            Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
-            _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+
+            //we must not stop streaming if subchannel is still in use.
+
+            ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
+            if (!context.ContainsUsersForSubchannel(user.SubChannel))
+            {
+              Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
+              _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
+            }
           }
 
           if (_epgGrabber != null && AllCardsIdle)
@@ -2614,10 +2622,11 @@ namespace TvService
         }
 
         Log.Write("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
-
+        TvBusinessLayer layer = new TvBusinessLayer();
         //keep tuning each card until we are succesful                
         for (int i = 0; i < maxCards; i++)
         {
+          int nrOfOtherUsersTimeshiftingOnCard = 0;
           if (i > 0)
           {
             Log.Write("Controller: Timeshifting failed, lets try next available card.");
@@ -2662,7 +2671,7 @@ namespace TvService
           //todo : if the owner is changing channel to a new transponder, then kick any leeching users.
           ITvCardHandler tvcard = _cards[cardInfo.Id];
           bool isTS = tvcard.TimeShifter.IsAnySubChannelTimeshifting;
-
+          bool skipCard = false;
           if (isTS)
           {
             IUser[] users = tvcard.Users.GetUsers();
@@ -2670,9 +2679,12 @@ namespace TvService
             {
               IUser u = users[j];
               if (user.Name.Equals(u.Name))
+              {
                 continue;
-              IChannel tmpChannel = tvcard.CurrentChannel(ref u);
+              }
 
+              IChannel tmpChannel = tvcard.CurrentChannel(ref u);              
+              
               if (tmpChannel == null)
               {
                 tvcard.Users.RemoveUser(u);
@@ -2688,7 +2700,40 @@ namespace TvService
                           cardInfo.Card.Name, user.Name);
                 StopTimeShifting(ref u, TvStoppedReason.OwnerChangedTS);
               }
+              else
+              {
+                DVBBaseChannel dvbBaseChannel = tmpChannel as DVBBaseChannel;
+                if (dvbBaseChannel != null)
+                {                  
+                  TuningDetail userChannel = layer.GetChannel(dvbBaseChannel);
+                  bool isOnSameChannel = (idChannel == userChannel.IdChannel);
+
+                  if (isOnSameChannel)
+                  {
+                    if (tvcard.Users.IsOwner(userCopy))
+                    {
+                      if (i < maxCards)
+                      {
+                        Log.Write("Controller: skipping card:{0} since other users are present on the same channel.",
+                                  userCopy.CardId);
+                        skipCard = true;
+                        break; //try next card  
+                      }
+                    }
+                    else
+                    {                      
+                      nrOfOtherUsersTimeshiftingOnCard++;
+                      userCopy.SubChannel = u.SubChannel;
+                    } 
+                  }                  
+                }
+              }
             }
+          }
+
+          if (skipCard)
+          {
+            continue;
           }
 
           //tune to the new channel                  
@@ -2717,6 +2762,7 @@ namespace TvService
           }
           Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", userCopy.CardId, timeshiftFileName);
           card = GetVirtualCard(userCopy);
+          card.NrOfOtherUsersTimeshiftingOnCard = nrOfOtherUsersTimeshiftingOnCard;
           RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
           UpdateChannelStatesForUsers();
 

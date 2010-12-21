@@ -36,6 +36,7 @@ namespace TvControl
   {
     #region variables
 
+    private int _nrOfOtherUsersTimeshiftingOnCard = 0;
     private string _server;
     private string _recordingFolder;
     private string _timeShiftFolder;
@@ -85,7 +86,7 @@ namespace TvControl
       _server = Dns.GetHostName();
       _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
                                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-    }
+    }        
 
     #endregion
 
@@ -1476,6 +1477,12 @@ namespace TvControl
           HandleFailure();
         }
       }
+    }
+
+    public int NrOfOtherUsersTimeshiftingOnCard
+    {
+      get { return _nrOfOtherUsersTimeshiftingOnCard; }
+      set { _nrOfOtherUsersTimeshiftingOnCard = value; }
     }
 
     #endregion
