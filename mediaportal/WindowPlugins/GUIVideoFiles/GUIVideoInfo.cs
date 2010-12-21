@@ -535,7 +535,7 @@ namespace MediaPortal.GUI.Video
       }
 
       btnWatched.Selected = (currentMovie.Watched != 0);
-      currentMovie.SetProperties();
+      currentMovie.SetProperties(false);
 
       if (imgCoverArt != null)
       {
@@ -680,7 +680,7 @@ namespace MediaPortal.GUI.Video
       {
         Log.Error("GUIVideoInfo: Error creating new thumbs for {0} - {1}", currentMovie.ThumbURL, ex2.Message);
       }
-      currentMovie.SetProperties();
+      currentMovie.SetProperties(false);
     }
 
     private void AmazonLookupThread()

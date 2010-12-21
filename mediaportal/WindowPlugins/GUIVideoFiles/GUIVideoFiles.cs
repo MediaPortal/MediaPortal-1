@@ -1391,11 +1391,14 @@ namespace MediaPortal.GUI.Video
 
     private void SetMovieProperties(string path)
     {
+      bool isFile = false;
+      if (Util.Utils.IsVideo(path))
+        isFile = true;
       IMDBMovie info = new IMDBMovie();
       if (path == "..")
       {
         info.Reset();
-        info.SetProperties();
+        info.SetProperties(true);
         return;
       }
       bool isDirectory = false;
@@ -1437,6 +1440,7 @@ namespace MediaPortal.GUI.Video
         if (info.IsEmpty && File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO")) //still empty and is ripped DVD
         {
           VideoDatabase.GetMovieInfo(path + @"\VIDEO_TS\VIDEO_TS.IFO", ref info);
+          isFile = true;
         }
         if (info.IsEmpty)
         {
@@ -1449,11 +1453,13 @@ namespace MediaPortal.GUI.Video
               info.Watched = 1;
           }
         }
-        if (isMultiMovieFolder)
+        if (isMultiMovieFolder || !isFile)
         {
           info.Reset();
+          info.SetProperties(true);
+          return;
         }
-        info.SetProperties();
+        info.SetProperties(false);
       }
       catch (Exception) {}
     }

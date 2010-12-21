@@ -273,6 +273,7 @@ namespace MediaPortal.Video.Database
       _mStrDirector = string.Empty;
       _mStrWritingCredits = string.Empty;
       _mStrGenre = string.Empty;
+      _mStrgenre = string.Empty;
       _mStrTagLine = string.Empty;
       _mStrPlotOutline = string.Empty;
       _mStrPlot = string.Empty;
@@ -295,7 +296,7 @@ namespace MediaPortal.Video.Database
       _mIWatched = 0;
     }
 
-    public void SetProperties()
+    public void SetProperties(bool isFolder)
     {
       // Title suffix for problem with covers and movie with the same name
       string strThumb = GetStrThumb();
@@ -319,9 +320,13 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
       string strValue = "no";
-      if (Watched > 0)
+      if (Watched > 0 && !isFolder)
       {
         strValue = "yes";
+      }
+      if (isFolder)
+      {
+        strValue = string.Empty;
       }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
     }

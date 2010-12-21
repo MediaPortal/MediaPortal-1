@@ -760,7 +760,7 @@ namespace MediaPortal.GUI.Video
       {
         movie = new IMDBMovie();
       }
-      movie.SetProperties();
+      movie.SetProperties(false);
       if (movie.ID >= 0)
       {
         string coverArtImage;
