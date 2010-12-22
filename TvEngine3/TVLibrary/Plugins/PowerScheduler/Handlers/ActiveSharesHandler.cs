@@ -238,8 +238,8 @@ namespace TvEngine.PowerScheduler.Handlers
               _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
             }
           }
+          return true;
         }
-        return true;
       }
       catch (Exception ex)
       {
