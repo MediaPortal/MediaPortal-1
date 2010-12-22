@@ -2490,7 +2490,7 @@ namespace TvPlugin
         Log.Debug("UpdateCurrentEpgValues: no EPG data, returning");
         return;
       }
-      Log.Debug("UpdateCurrentEpgValues: setting all values to EPG content");
+      //Log.Debug("UpdateCurrentEpgValues: setting all values to EPG content");
       GUIPropertyManager.SetProperty("#TV.View.title", current.Title);
       GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(current));
       GUIPropertyManager.SetProperty("#TV.View.start",
