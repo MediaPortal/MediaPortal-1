@@ -259,14 +259,25 @@ namespace MediaPortal.GUI.Library
     public override void AddAnimations(List<VisualEffect> animations)
     {
       //base.AddAnimations(animations);
-      _layoutList.AddAnimations(animations);
-      _layoutAlbum.AddAnimations(animations);
-      _layoutFilmStrip.AddAnimations(animations);
-      _layoutPlayList.AddAnimations(animations);
-      _layoutThumbnail.AddAnimations(animations);
-      _layoutCoverFlow.AddAnimations(animations);
+      if (_layoutList != null) {
+        _layoutList.AddAnimations(animations);
+      }
+      if (_layoutAlbum != null) {
+        _layoutAlbum.AddAnimations(animations);
+      }
+      if (_layoutFilmStrip != null) {
+        _layoutFilmStrip.AddAnimations(animations);
+      }
+      if (_layoutPlayList != null) {
+        _layoutPlayList.AddAnimations(animations);
+      }
+      if (_layoutThumbnail != null) {
+        _layoutThumbnail.AddAnimations(animations);
+      }
+      if (_layoutCoverFlow != null) {
+        _layoutCoverFlow.AddAnimations(animations);
+      }
     }
-
 
     /// <summary>
     /// Render. This will render the current selected layout 

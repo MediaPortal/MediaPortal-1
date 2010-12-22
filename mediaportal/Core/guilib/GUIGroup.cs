@@ -330,11 +330,11 @@ namespace MediaPortal.GUI.Library
       Children.Add(cntl);
       if (cntl is GUIButtonControl)
       {
-        if (_buttons == null)
+        if (_controls == null)
         {
-          _buttons = new List<GUIButtonControl>();
+          _controls = new List<GUIControl>();
         }
-        _buttons.Add((GUIButtonControl)cntl);
+        _controls.Add((GUIControl)cntl);
       }
     }
 
@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Library
     private Animator _animator;
     private int _beginInitCount = 0;
     private GUIControlCollection _children;
-    private List<GUIButtonControl> _buttons = null;
+    private List<GUIControl> _controls = null;
     private Point[] _positions = null;
     private Point[] _modPositions = null;
     private bool _first = true;
@@ -515,7 +515,7 @@ namespace MediaPortal.GUI.Library
     public override void UpdateVisibility()
     {
       base.UpdateVisibility();
-      if (_buttons == null)
+      if (_controls == null)
       {
         return;
       }
@@ -549,17 +549,17 @@ namespace MediaPortal.GUI.Library
         if (!_first && CheckButtonsModifiedPosition())
             _first = true;
 
-        for (int i = 0; i < _buttons.Count; i++)
+        for (int i = 0; i < _controls.Count; i++)
         {
           //buttons[i].UpdateVisibility();
-          bool bWasvisible = _buttons[i].IsVisible;
+          bool bWasvisible = _controls[i].IsVisible;
           //if (bWasvisible)
           //  bWasvisible = _buttons[i].VisibleFromSkinCondition;
 
-          int bVisCon = _buttons[i].GetVisibleCondition();
-          bool bVisible = _buttons[i].IsVisible;
+          int bVisCon = _controls[i].GetVisibleCondition();
+          bool bVisible = _controls[i].IsVisible;
           if (bVisCon != 0)
-            bVisible = GUIInfoManager.GetBool(bVisCon, _buttons[i].ParentID);
+            bVisible = GUIInfoManager.GetBool(bVisCon, _controls[i].ParentID);
           
           if (_first && !bVisible)
           {
@@ -608,46 +608,68 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private int Spacing(System.Windows.Controls.Orientation orientation)
+    {
+      StackLayout layout = _layout as StackLayout;
+      int spacing = 0;
+      if (null != layout)
+      {
+        if (orientation == System.Windows.Controls.Orientation.Vertical)
+          spacing = (int)System.Math.Truncate(layout.Spacing.Height);
+        else if (orientation == System.Windows.Controls.Orientation.Horizontal)
+          spacing = (int)System.Math.Truncate(layout.Spacing.Width);
+      }
+      return spacing;
+    }
+
     private void ShiftControlsUp(int index)
     {
-      for (int i = index; i < _buttons.Count; i++)
+      int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
+
+      for (int i = index; i < _controls.Count; i++)
       {
-        if (i + 1 < _buttons.Count)
+        if (i + 1 < _controls.Count)
         {
-          _buttons[i + 1].YPosition -= _buttons[i].Height;
+          _controls[i + 1].YPosition -= (_controls[i].Height + spacing);
         }
       }
     }
 
     private void ShiftControlsDown(int index)
     {
-      for (int i = index; i < _buttons.Count; i++)
+      int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
+
+      for (int i = index; i < _controls.Count; i++)
       {
-        if (i + 1 < _buttons.Count)
+        if (i + 1 < _controls.Count)
         {
-          _buttons[i + 1].YPosition += _buttons[i].Height;
+          _controls[i + 1].YPosition += (_controls[i].Height + spacing);
         }
       }
     }
 
     private void ShiftControlsRight(int index)
     {
-      for (int i = index; i < _buttons.Count; i++)
+      int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
+
+      for (int i = index; i < _controls.Count; i++)
       {
-        if (i + 1 < _buttons.Count)
+        if (i + 1 < _controls.Count)
         {
-          _buttons[i + 1].XPosition += _buttons[i].Width;
+          _controls[i + 1].XPosition += (_controls[i].Width + spacing);
         }
       }
     }
 
     private void ShiftControlsLeft(int index)
     {
-      for (int i = index; i < _buttons.Count; i++)
+      int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
+
+      for (int i = index; i < _controls.Count; i++)
       {
-        if (i + 1 < _buttons.Count)
+        if (i + 1 < _controls.Count)
         {
-          _buttons[i + 1].XPosition -= _buttons[i].Width;
+          _controls[i + 1].XPosition -= (_controls[i].Width + spacing);
         }
       }
     }
@@ -656,12 +678,12 @@ namespace MediaPortal.GUI.Library
     {
       if (_positions == null)
       {
-        _positions = new Point[_buttons.Count];
+        _positions = new Point[_controls.Count];
       }
-      for (int i = 0; i < _buttons.Count; i++)
+      for (int i = 0; i < _controls.Count; i++)
       {
-        _positions[i].X = _buttons[i].XPosition;
-        _positions[i].Y = _buttons[i].YPosition;
+        _positions[i].X = _controls[i].XPosition;
+        _positions[i].Y = _controls[i].YPosition;
       }
     }
 
@@ -673,8 +695,8 @@ namespace MediaPortal.GUI.Library
       }
       for (int i = 0; i < _positions.Length; i++)
       {
-        _buttons[i].XPosition = (int)_positions[i].X;
-        _buttons[i].YPosition = (int)_positions[i].Y;
+        _controls[i].XPosition = (int)_positions[i].X;
+        _controls[i].YPosition = (int)_positions[i].Y;
       }
     }
 
@@ -682,20 +704,20 @@ namespace MediaPortal.GUI.Library
     {
         if (_modPositions == null)
         {
-          _modPositions = new Point[_buttons.Count];
+          _modPositions = new Point[_controls.Count];
         }
-        for (int i = 0; i < _buttons.Count; i++)
+        for (int i = 0; i < _controls.Count; i++)
         {
-          _modPositions[i].X = _buttons[i].XPosition;
-          _modPositions[i].Y = _buttons[i].YPosition;
+          _modPositions[i].X = _controls[i].XPosition;
+          _modPositions[i].Y = _controls[i].YPosition;
         }
     }
 
     private bool CheckButtonsModifiedPosition()
     {
-        for (int i = 0; i < _buttons.Count; i++)
+        for (int i = 0; i < _controls.Count; i++)
         {
-            if (_modPositions[i].X != _buttons[i].XPosition || _modPositions[i].Y != _buttons[i].YPosition)
+            if (_modPositions[i].X != _controls[i].XPosition || _modPositions[i].Y != _controls[i].YPosition)
             {
                 return true;
             }
