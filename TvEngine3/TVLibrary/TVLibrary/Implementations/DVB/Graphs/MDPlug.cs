@@ -383,33 +383,6 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-
-    /*public void PauseDecoding(IChannel currentChannel, bool pause)
-    {
-      if (currentChannel == null)
-      {
-        Log.Log.Info("mdplug: PauseDecoding: no channel to pause");
-        return;
-      }      
-
-      MDPlug[] plugins = getPlugins();      
-
-      if (plugins == null || plugins.Length == 0)
-      {
-        Log.Log.Info("mdplug: PauseDecoding: no MD plugins has been defined for card folder {0}.", _cardFolder);
-        return;
-      }
-
-      foreach (MDPlug plugin in plugins)
-      {
-        if (plugin != null && plugin.IsDecodingChannel(currentChannel))
-        {
-          Log.Log.Info("mdplug: PauseDecoding: pausing channel '{0}'", currentChannel.Name);
-          plugin.PauseDecoding(pause);
-        }
-      }
-    }*/
-
     /// <summary>
     /// Sends the current channel to the mdapifilter
     /// </summary>    
@@ -440,9 +413,6 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Info("mdplug: SetChannel update channel {0}.", currentChannel.Name);
           myPlugin.SetChannel(currentChannel, channelInfo);
-          
-          myPlugin.PauseDecoding(false);              
-
           return;
         }
         else
@@ -488,7 +458,6 @@ namespace TvLibrary.Implementations.DVB
                    currentChannel.Name, slotNumber, plugins.Length);
 
       freePlugin.SetChannel(currentChannel, channelInfo);
-      freePlugin.PauseDecoding(false);            
     }
 
     private MDPlug FindFreeSlot(MDPlug[] plugins, IChannel currentChannel, out int slotNumber)
@@ -594,9 +563,6 @@ namespace TvLibrary.Implementations.DVB
       /// <remarks>fn should point to a buffer allocated to at least the length of MAX_PATH (=260)</remarks>
       [PreserveSig]
       int ChangeChannelTP82_Ex([In] IntPtr tp82, [In] IntPtr tPids2Dec);
-
-      [PreserveSig]
-      int PauseDecoding(byte onOff);
     }
 
     #endregion
@@ -968,7 +934,6 @@ namespace TvLibrary.Implementations.DVB
             || _decodingCounter <= 0)
         {
           Log.Log.Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
-          PauseDecoding(true);
           _decodingChannel = null;
           _decodingCounter = 0;
         }
@@ -1466,20 +1431,6 @@ namespace TvLibrary.Implementations.DVB
       }
       Marshal.FreeHGlobal(lparam);
       Marshal.FreeHGlobal(lparam2);
-    }
-
-    public void PauseDecoding (bool pause)
-    {
-      Log.Log.Debug("PauseDecoding : {0}", pause);
-
-      if (pause)
-      {        
-        _changeChannel_Ex.PauseDecoding(1);
-      }
-      else
-      {
-        _changeChannel_Ex.PauseDecoding(0);
-      }      
     }
 
     #endregion
