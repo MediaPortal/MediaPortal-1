@@ -1222,6 +1222,8 @@ namespace TvLibrary.Implementations.DVB
       TvBusinessLayer layer = new TvBusinessLayer();
       Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
                                                          CurrentDVBChannel.ServiceId);
+      if (dbChannel == null)
+        return;
 
       TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
                                                     CurrentDVBChannel.ServiceId);
