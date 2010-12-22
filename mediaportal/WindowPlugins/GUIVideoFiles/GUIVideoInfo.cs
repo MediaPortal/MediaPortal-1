@@ -411,10 +411,12 @@ namespace MediaPortal.GUI.Video
       {
         if (currentMovie.Watched > 0)
         {
+          GUIPropertyManager.SetProperty("#iswatched", "no");
           currentMovie.Watched = 0;
         }
         else
         {
+          GUIPropertyManager.SetProperty("#iswatched", "yes");
           currentMovie.Watched = 1;
         }
         VideoDatabase.SetMovieInfoById(currentMovie.ID, ref currentMovie);
