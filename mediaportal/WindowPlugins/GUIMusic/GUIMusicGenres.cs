@@ -1021,7 +1021,14 @@ namespace MediaPortal.GUI.Music
     {
       List<Song> songs = GetSongsForSelection();
       List<PlayListItem> pl = ConvertSongsToPlaylist(songs);
-      pl.Sort(new TrackComparer());
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+      if(selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
+      }
       base.AddItemsToPlaylist(pl, clearPlaylist);
     }
     
@@ -1033,7 +1040,14 @@ namespace MediaPortal.GUI.Music
     {
       List<Song> songs = GetSongsForSelection();
       List<PlayListItem> pl = ConvertSongsToPlaylist(songs);
-      pl.Sort(new TrackComparer());
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+      if(selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
+      }
       base.InsertItemsToPlaylist(pl);
     }
 

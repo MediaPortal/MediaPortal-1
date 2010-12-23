@@ -348,6 +348,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void LoadDirectory(string strNewDirectory)
     {
+      DateTime dtStart = DateTime.Now;
       GUIWaitCursor.Show();
 
       try
@@ -419,6 +420,8 @@ namespace MediaPortal.GUI.Music
         GUIWaitCursor.Hide();
         Log.Error("GUIMusicFiles: An error occured while loading the directory {0}", ex.Message);
       }
+      TimeSpan ts = DateTime.Now.Subtract(dtStart);
+      Log.Debug("Folder: {0} : took : {1} s to load", strNewDirectory, ts.TotalSeconds);
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -1402,7 +1405,14 @@ namespace MediaPortal.GUI.Music
     {
       List<PlayListItem> pl = new List<PlayListItem>();
       AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl);
-      pl.Sort(new TrackComparer());
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+      if (selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
+      }
       base.AddItemsToPlaylist(pl, clearPlaylist);
     }
     
@@ -1410,7 +1420,14 @@ namespace MediaPortal.GUI.Music
     {
       List<PlayListItem> pl = new List<PlayListItem>();
       AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl);
-      pl.Sort(new TrackComparer());
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+      if (selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
+      }
       base.InsertItemsToPlaylist(pl);
     }
     
