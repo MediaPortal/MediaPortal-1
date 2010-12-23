@@ -1036,15 +1036,22 @@ namespace MediaPortal.Configuration.Sections
       }
       else if (selection.Equals("FFDShow"))
       {
-        IBaseFilter ffdshow = (DirectShowLib.IBaseFilter)ClassId.CoCreateInstance(ClassId.FFDShowVideo);
-        if (ffdshow == null)
+        DirectShowLib.IBaseFilter ffdshow = null;
+        try
+        {
+          ffdshow = (DirectShowLib.IBaseFilter)ClassId.CoCreateInstance(ClassId.FFDShowVideo);
+          DirectShowPropertyPage page = new DirectShowPropertyPage(ffdshow);
+          page.Show(this);
+        }
+        catch (Exception)
         {
           MessageBox.Show("FFDShow is not installed, please download it and install it from http://ffdshow-tryout.sourceforge.net/");
-          return;
         }
-        IffdshowBase ffdshowBase = ffdshow as IffdshowBase;
-        DirectShowPropertyPage page = new DirectShowPropertyPage(ffdshow);
-        page.Show(this);
+        finally
+        {
+          if (ffdshow != null)
+            Marshal.ReleaseComObject(ffdshow);
+        }
       }
       else if (selection.Equals("DirectVobSub"))
       {

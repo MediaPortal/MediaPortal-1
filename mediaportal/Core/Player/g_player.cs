@@ -2363,33 +2363,8 @@ namespace MediaPortal.Player
       }
     }
 
-    public static string[] SubtitleFiles
-    {
-      get
-      {
-        if (_player == null) return new string[] { };
-        return _player.SubtitleFiles;
-      }
-    }
-
-    public static string SubtitleFile
-    {
-      get
-      {
-        if (_player == null) return null;
-        return _player.SubtitleFile;
-      }
-      set
-      {
-        if (_player == null) return;
-        _player.SubtitleFile = value;
-      }
-    }
-    
-
     /// <summary>
     /// Property to get/set the current subtitle stream
-    /// Returns -1 if no subtitle stream is active
     /// </summary>
     public static int CurrentSubtitleStream
     {

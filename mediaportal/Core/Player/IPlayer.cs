@@ -524,20 +524,6 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
-    /// Property to get the total number of subtitle files
-    /// </summary>
-    public virtual string[] SubtitleFiles
-    {
-        get { return new string[] {}; }
-    }
-
-    public virtual string SubtitleFile
-    {
-        get { return null; }
-        set { }
-    }
-
-    /// <summary>
     /// Property to get/set the current subtitle stream
     /// </summary>
     public virtual int CurrentSubtitleStream
