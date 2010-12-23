@@ -1045,7 +1045,7 @@ namespace MediaPortal.Configuration.Sections
         }
         catch (Exception)
         {
-          MessageBox.Show("FFDShow is not installed, please download it and install it from http://ffdshow-tryout.sourceforge.net/");
+          MessageBox.Show("FFDShow is not installed, please download and install it from http://ffdshow-tryout.sourceforge.net/");
         }
         finally
         {
