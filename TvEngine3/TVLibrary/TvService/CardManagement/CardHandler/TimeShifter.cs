@@ -357,6 +357,7 @@ namespace TvService
               if (FreeDiskSpace < DiskSpaceNeeded)
               // TimeShifter need at least this free disk space otherwise, it will not start.
               {
+                Stop(ref user);
                 return TvResult.NoFreeDiskSpace;
               }
             }
@@ -372,17 +373,25 @@ namespace TvService
           {
             Log.Error("card: unable to connect to slave controller at:{0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            Stop(ref user);
             return TvResult.UnknownError;
           }
 
           ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
           if (context == null)
+          {
+            Stop(ref user);
             return TvResult.UnknownChannel;
+          }
+            
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
           if (subchannel == null)
+          {
+            Stop(ref user);
             return TvResult.UnknownChannel;
+          }
 
           _subchannel = subchannel;
 
