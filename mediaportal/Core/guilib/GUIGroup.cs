@@ -328,14 +328,6 @@ namespace MediaPortal.GUI.Library
       }
       cntl.DimColor = DimColor;
       Children.Add(cntl);
-      if (cntl is GUIButtonControl)
-      {
-        if (_controls == null)
-        {
-          _controls = new List<GUIControl>();
-        }
-        _controls.Add((GUIControl)cntl);
-      }
     }
 
     void IAddChild.AddText(string text) {}
@@ -443,7 +435,6 @@ namespace MediaPortal.GUI.Library
     private Animator _animator;
     private int _beginInitCount = 0;
     private GUIControlCollection _children;
-    private List<GUIControl> _controls = null;
     private Point[] _positions = null;
     private Point[] _modPositions = null;
     private bool _first = true;
@@ -515,7 +506,7 @@ namespace MediaPortal.GUI.Library
     public override void UpdateVisibility()
     {
       base.UpdateVisibility();
-      if (_controls == null)
+      if (Children == null)
       {
         return;
       }
@@ -549,17 +540,17 @@ namespace MediaPortal.GUI.Library
         if (!_first && CheckButtonsModifiedPosition())
             _first = true;
 
-        for (int i = 0; i < _controls.Count; i++)
+        for (int i = 0; i < Children.Count; i++)
         {
           //buttons[i].UpdateVisibility();
-          bool bWasvisible = _controls[i].IsVisible;
+          bool bWasvisible = Children[i].IsVisible;
           //if (bWasvisible)
           //  bWasvisible = _buttons[i].VisibleFromSkinCondition;
 
-          int bVisCon = _controls[i].GetVisibleCondition();
-          bool bVisible = _controls[i].IsVisible;
+          int bVisCon = Children[i].GetVisibleCondition();
+          bool bVisible = Children[i].IsVisible;
           if (bVisCon != 0)
-            bVisible = GUIInfoManager.GetBool(bVisCon, _controls[i].ParentID);
+            bVisible = GUIInfoManager.GetBool(bVisCon, Children[i].ParentID);
           
           if (_first && !bVisible)
           {
@@ -626,11 +617,11 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < _controls.Count; i++)
+      for (int i = index; i < Children.Count; i++)
       {
-        if (i + 1 < _controls.Count)
+        if (i + 1 < Children.Count)
         {
-          _controls[i + 1].YPosition -= (_controls[i].Height + spacing);
+          Children[i + 1].YPosition -= (Children[i].Height + spacing);
         }
       }
     }
@@ -639,11 +630,11 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Vertical);
 
-      for (int i = index; i < _controls.Count; i++)
+      for (int i = index; i < Children.Count; i++)
       {
-        if (i + 1 < _controls.Count)
+        if (i + 1 < Children.Count)
         {
-          _controls[i + 1].YPosition += (_controls[i].Height + spacing);
+          Children[i + 1].YPosition += (Children[i].Height + spacing);
         }
       }
     }
@@ -652,11 +643,11 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < _controls.Count; i++)
+      for (int i = index; i < Children.Count; i++)
       {
-        if (i + 1 < _controls.Count)
+        if (i + 1 < Children.Count)
         {
-          _controls[i + 1].XPosition += (_controls[i].Width + spacing);
+          Children[i + 1].XPosition += (Children[i].Width + spacing);
         }
       }
     }
@@ -665,11 +656,11 @@ namespace MediaPortal.GUI.Library
     {
       int spacing = Spacing(System.Windows.Controls.Orientation.Horizontal);
 
-      for (int i = index; i < _controls.Count; i++)
+      for (int i = index; i < Children.Count; i++)
       {
-        if (i + 1 < _controls.Count)
+        if (i + 1 < Children.Count)
         {
-          _controls[i + 1].XPosition -= (_controls[i].Width + spacing);
+          Children[i + 1].XPosition -= (Children[i].Width + spacing);
         }
       }
     }
@@ -678,12 +669,12 @@ namespace MediaPortal.GUI.Library
     {
       if (_positions == null)
       {
-        _positions = new Point[_controls.Count];
+        _positions = new Point[Children.Count];
       }
-      for (int i = 0; i < _controls.Count; i++)
+      for (int i = 0; i < Children.Count; i++)
       {
-        _positions[i].X = _controls[i].XPosition;
-        _positions[i].Y = _controls[i].YPosition;
+        _positions[i].X = Children[i].XPosition;
+        _positions[i].Y = Children[i].YPosition;
       }
     }
 
@@ -695,8 +686,8 @@ namespace MediaPortal.GUI.Library
       }
       for (int i = 0; i < _positions.Length; i++)
       {
-        _controls[i].XPosition = (int)_positions[i].X;
-        _controls[i].YPosition = (int)_positions[i].Y;
+        Children[i].XPosition = (int)_positions[i].X;
+        Children[i].YPosition = (int)_positions[i].Y;
       }
     }
 
@@ -704,20 +695,20 @@ namespace MediaPortal.GUI.Library
     {
         if (_modPositions == null)
         {
-          _modPositions = new Point[_controls.Count];
+          _modPositions = new Point[Children.Count];
         }
-        for (int i = 0; i < _controls.Count; i++)
+        for (int i = 0; i < Children.Count; i++)
         {
-          _modPositions[i].X = _controls[i].XPosition;
-          _modPositions[i].Y = _controls[i].YPosition;
+          _modPositions[i].X = Children[i].XPosition;
+          _modPositions[i].Y = Children[i].YPosition;
         }
     }
 
     private bool CheckButtonsModifiedPosition()
     {
-        for (int i = 0; i < _controls.Count; i++)
+        for (int i = 0; i < Children.Count; i++)
         {
-            if (_modPositions[i].X != _controls[i].XPosition || _modPositions[i].Y != _controls[i].YPosition)
+            if (_modPositions[i].X != Children[i].XPosition || _modPositions[i].Y != Children[i].YPosition)
             {
                 return true;
             }
