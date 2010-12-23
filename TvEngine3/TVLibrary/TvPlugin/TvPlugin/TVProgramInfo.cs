@@ -775,9 +775,9 @@ namespace TvPlugin
         rec.PreRecordInterval = RecordingIntervalValues[dlg.SelectedLabel];
         rec.Persist();
         currentSchedule = rec;
+        
+        Schedule assocSchedule = Schedule.RetrieveSpawnedSchedule(rec.IdSchedule, rec.StartTime);
 
-        Schedule assocSchedule = Schedule.RetrieveOnce(rec.IdChannel, CurrentProgram.Title, CurrentProgram.StartTime,
-                                                       CurrentProgram.EndTime);
         if (assocSchedule != null)
         {
           assocSchedule.PreRecordInterval = rec.PreRecordInterval;
