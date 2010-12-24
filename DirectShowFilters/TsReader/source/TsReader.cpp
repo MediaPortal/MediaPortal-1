@@ -1323,7 +1323,7 @@ STDMETHODIMP CTsReaderFilter::Info( long lIndex,AM_MEDIA_TYPE **ppmt,DWORD *pdwF
       *pdwFlags=0;
   }
   if (plcid) *plcid=0;
-  if (pdwGroup) *pdwGroup=0;
+  if (pdwGroup) *pdwGroup=1;
   if (ppObject) *ppObject=NULL;
   if (ppUnk) *ppUnk=NULL;
   if (ppszName)
