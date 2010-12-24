@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.Library
     private GUIControlCollection _children;
     private Point[] _positions = null;
     private Point[] _modPositions = null;
+    private bool[] _visibilityState = null;
     private bool _first = true;
 
     [XMLSkinElement("layout")] private ILayout _layout;
@@ -529,7 +530,7 @@ namespace MediaPortal.GUI.Library
         bool isVisible = IsVisible;
         int visCon = GetVisibleCondition();
         if (isVisible && visCon != 0) isVisible = GUIInfoManager.GetBool(visCon, ParentID);
-        //bool isVisible = GUIInfoManager.GetBool(GetVisibleCondition(), ParentID);
+
         if (!isVisible)
         {
           RestoreButtonsPosition();
@@ -540,19 +541,21 @@ namespace MediaPortal.GUI.Library
         if (!_first && CheckButtonsModifiedPosition())
             _first = true;
 
+        if (_first)
+          StoreButtonsVisibilityState();
+
         for (int i = 0; i < Children.Count; i++)
         {
-          //buttons[i].UpdateVisibility();
-          bool bWasvisible = Children[i].IsVisible;
-          //if (bWasvisible)
-          //  bWasvisible = _buttons[i].VisibleFromSkinCondition;
+          Children[i].UpdateVisibility();
+
+          bool bWasVisible = _visibilityState[i];
 
           int bVisCon = Children[i].GetVisibleCondition();
-          bool bVisible = Children[i].IsVisible;
+          bool bIsVisible = Children[i].IsVisible;
           if (bVisCon != 0)
-            bVisible = GUIInfoManager.GetBool(bVisCon, Children[i].ParentID);
+            bIsVisible = GUIInfoManager.GetBool(bVisCon, Children[i].ParentID);
           
-          if (_first && !bVisible)
+          if (_first && !bIsVisible)
           {
             if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
             {
@@ -563,8 +566,10 @@ namespace MediaPortal.GUI.Library
               ShiftControlsLeft(i);
             }
           }
-          if (!bWasvisible && bVisible)
+          if (!bWasVisible && bIsVisible)
           {
+            _visibilityState[i] = true;
+
             if (!_first)
             {
               if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
@@ -576,10 +581,13 @@ namespace MediaPortal.GUI.Library
                 ShiftControlsRight(i);
               }
             }
-
           }
-          else if (bWasvisible && !bVisible)
+          else if (bWasVisible && !bIsVisible)
           {
+            if (Children[i].IsEffectAnimating(AnimationType.Hidden))
+              continue;
+            _visibilityState[i] = false;
+
             if (!_first)
             {
               if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
@@ -591,7 +599,6 @@ namespace MediaPortal.GUI.Library
                 ShiftControlsLeft(i);
               }
             }
-
           }
         }
         _first = false;
@@ -701,6 +708,18 @@ namespace MediaPortal.GUI.Library
         {
           _modPositions[i].X = Children[i].XPosition;
           _modPositions[i].Y = Children[i].YPosition;
+        }
+    }
+
+    private void StoreButtonsVisibilityState()
+    {
+        if (_visibilityState == null)
+        {
+          _visibilityState = new bool[Children.Count];
+        }
+        for (int i = 0; i < Children.Count; i++)
+        {
+          _visibilityState[i] = Children[i].IsVisible;
         }
     }
 
