@@ -1135,25 +1135,28 @@ namespace MediaPortal.GUI.Music
       switch (filter.Where)
       {
         case "artist":
-          MusicDatabase.Instance.GetSongsByArtist(strArtist, ref songs);
+          m_database.GetSongsByArtist(strArtist, ref songs);
           break;
         case "albumartist":
-          MusicDatabase.Instance.GetSongsByAlbumArtist(strAlbumArtist, ref songs);
+          m_database.GetSongsByAlbumArtist(strAlbumArtist, ref songs);
           break;
         case "album":
-          MusicDatabase.Instance.GetSongsByAlbumArtistAlbum(strAlbumArtist, s.Album, ref songs);
+          m_database.GetSongsByAlbumArtistAlbum(strAlbumArtist, s.Album, ref songs);
           break;
         case "genre":
-          MusicDatabase.Instance.GetSongsByGenre(strGenre, ref songs);
+          m_database.GetSongsByGenre(strGenre, ref songs);
           break;
         case "year":
-          MusicDatabase.Instance.GetSongsByYear(s.Year, ref songs);
+          m_database.GetSongsByYear(s.Year, ref songs);
           break;
         case "composer":
-          MusicDatabase.Instance.GetSongsByComposer(strComposer, ref songs);
+          m_database.GetSongsByComposer(strComposer, ref songs);
           break;
         case "conductor":
-          MusicDatabase.Instance.GetSongsByComposer(s.Conductor, ref songs);
+          m_database.GetSongsByComposer(s.Conductor, ref songs);
+          break;
+        case "disc#":
+          m_database.GetSongsByAlbumArtistAlbumDisc(s.AlbumArtist, s.Album, s.DiscId, ref songs);
           break;
         default:
           Log.Debug("GUIMusicGenres: GetSongsForFolder - could not determine type for {0}", s.ToShortString());
