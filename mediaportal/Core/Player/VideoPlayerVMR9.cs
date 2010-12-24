@@ -170,6 +170,7 @@ namespace MediaPortal.Player
 
         //Set High Resolution Output > 2 channels
         IBaseFilter baseFilter = null;
+        bool FFDShowLoaded = false;
         graphBuilder.FindFilterByName("WMAudio Decoder DMO", out baseFilter);
         if (baseFilter != null && wmvAudio != false) //Also check configuration option enabled
         {
@@ -185,6 +186,20 @@ namespace MediaPortal.Player
           else
           {
             Log.Info("VideoPlayerVMR9: WMAudio Decoder now set for > 2 audio channels");
+          }
+          if (!FFDShowLoaded)
+          {
+            IBaseFilter FFDShowAudio = DirectShowUtil.GetFilterByName(graphBuilder, "ffdshow Audio Decoder");
+            if (FFDShowAudio != null)
+            {
+              DirectShowUtil.ReleaseComObject(FFDShowAudio);
+              FFDShowAudio = null;
+            }
+            else
+            {
+              DirectShowUtil.AddFilterToGraph(graphBuilder, "ffdshow Audio Decoder");
+            }
+            FFDShowLoaded = true;
           }
           DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
         }
