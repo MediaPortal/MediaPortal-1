@@ -1152,6 +1152,16 @@ namespace MediaPortal.Video.Database
         }
         Log.Info("Removing movie:{0}", lMovieId);
 
+        // Delete movie file stop time data
+        ArrayList files = new ArrayList();
+        VideoDatabase.GetFiles((int)lMovieId, ref files);
+
+        foreach (string file in files)
+        {
+          int fileId = VideoDatabase.GetFileId(file);
+          VideoDatabase.DeleteMovieStopTime(fileId);
+        }
+
         string strSQL = String.Format("delete from genrelinkmovie where idmovie={0}", lMovieId);
         m_db.Execute(strSQL);
 

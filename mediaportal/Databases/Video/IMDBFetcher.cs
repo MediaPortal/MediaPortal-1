@@ -356,6 +356,15 @@ namespace MediaPortal.Video.Database
             //
             // Save details to database
             //
+            // Check resume table if there is an entry that file is played
+            string file = moviePath + @"\" + _movieDetails.File;
+            int idFile = VideoDatabase.GetFileId(file);
+
+            if (idFile >= 0 && VideoDatabase.GetMovieStopTime(idFile) > 0)
+            {
+              _movieDetails.Watched = 1;
+            }
+
             VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
             OnProgress(line1, _movieDetails.Title, string.Empty, 100); // **Progress bar end details
           }

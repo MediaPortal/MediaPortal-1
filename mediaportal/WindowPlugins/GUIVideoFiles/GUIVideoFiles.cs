@@ -578,6 +578,7 @@ namespace MediaPortal.GUI.Video
       if (useCache && _cachedDir == _currentFolder)
       {
         itemlist = _cachedItems;
+        SelectDVDHandler selectDvdHandler = new SelectDVDHandler();
 
         foreach (GUIListItem item in itemlist)
         {
@@ -585,9 +586,36 @@ namespace MediaPortal.GUI.Video
           {
             item.IsPlayed = true;
           }
+          else if (_markWatchedFiles && 
+                  (item.IsFolder && selectDvdHandler.IsDvdDirectory(item.Path) || Util.Utils.IsVideo(item.Path)))
+          {
+            string file = item.Path;
+            if (item.IsFolder)
+              file = selectDvdHandler.GetFolderVideoFile(item.Path);
+            // Check db for watched status for played movie or changed status in movie info window
+            IMDBMovie movie = new IMDBMovie();
+            VideoDatabase.GetMovieInfo(file, ref movie);
 
+            if (!movie.IsEmpty)
+            {
+              if (movie.Watched > 0)
+              {
+                item.IsPlayed = true;
+              }
+              else
+              {
+                item.IsPlayed = false;
+              }
+            }
+            // Check resume table if there is an entry that file is played
+            int idFile = VideoDatabase.GetFileId(file);
+
+            if (idFile >= 0 && VideoDatabase.GetMovieStopTime(idFile) > 0)
+            {
+              item.IsPlayed = true;
+            }
+          }
           //Do NOT add OnItemSelected event handler here, because its still there...
-
           facadeLayout.Add(item);
         }
       }
@@ -1266,14 +1294,19 @@ namespace MediaPortal.GUI.Video
 
     #endregion
 
-    private void SetMovieUnwatched(string movieFileName)
+    private void SetMovieUnwatched(string movieFileName, bool isFolder)
     {
-      if (VideoDatabase.HasMovieInfo(movieFileName))
+      SelectDVDHandler isDvdFolder = new SelectDVDHandler();
+
+      if (isFolder && isDvdFolder.IsDvdDirectory(movieFileName))
+        movieFileName = isDvdFolder.GetFolderVideoFile(movieFileName);
+
+       if (VideoDatabase.HasMovieInfo(movieFileName))
       {
-        IMDBMovie movieDetails = new IMDBMovie();
-        int idMovie = VideoDatabase.GetMovieInfo(movieFileName, ref movieDetails);
-        movieDetails.Watched = 0;
-        VideoDatabase.SetWatched(movieDetails);
+         IMDBMovie movieDetails = new IMDBMovie();
+         int idMovie = VideoDatabase.GetMovieInfo(movieFileName, ref movieDetails);
+          movieDetails.Watched = 0;
+         VideoDatabase.SetWatched(movieDetails);
       }
       int idFile = VideoDatabase.GetFileId(movieFileName);
       VideoDatabase.DeleteMovieStopTime(idFile);
@@ -1660,6 +1693,16 @@ namespace MediaPortal.GUI.Video
       }
       if (_markWatchedFiles) // save a little performance
       {
+        // Update db view watched status for played movie
+        IMDBMovie movie = new IMDBMovie();
+        VideoDatabase.GetMovieInfo(filename, ref movie);
+
+        if (!movie.IsEmpty)
+        {
+          movie.Watched = 1;
+          VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
+        }
+
         if (VideoState.StartWindow == GetID) // Is play initiator share or dbview?
         {
           LoadDirectory(_currentFolder, true, watchedMovies);
@@ -1667,14 +1710,6 @@ namespace MediaPortal.GUI.Video
         }
         else
         {
-          // Update db view watched status for played movie
-          IMDBMovie movie = new IMDBMovie();
-          VideoDatabase.GetMovieInfo(filename, ref movie);
-          if (!movie.IsEmpty)
-          {
-            movie.Watched = 1;
-            VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
-          }
           UpdateButtonStates();
         }
       }
@@ -1949,7 +1984,18 @@ namespace MediaPortal.GUI.Video
               //
               // Play all
               //
-              dlg.AddLocalizedString(1204); // Play All in selected folder
+              SelectDVDHandler checkIfIsDvd = new SelectDVDHandler();
+              if (!checkIfIsDvd.IsDvdDirectory(item.Path))
+              {
+                dlg.AddLocalizedString(1204); // Play All in selected folder
+              }
+              else
+              {
+                if (item.IsPlayed)
+                {
+                  dlg.AddLocalizedString(830); //Reset watched status for DVD folder
+                }
+              }
               //
               dlg.AddLocalizedString(102); //Scan            
             }
@@ -2070,7 +2116,7 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 830: // Reset watched status
-          SetMovieUnwatched(item.Path);
+          SetMovieUnwatched(item.Path, item.IsFolder);
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
           break;

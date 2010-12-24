@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Threading;
 using MediaPortal.Dialogs;
@@ -413,6 +414,15 @@ namespace MediaPortal.GUI.Video
         {
           GUIPropertyManager.SetProperty("#iswatched", "no");
           currentMovie.Watched = 0;
+          // Delete movie file stop time data
+          ArrayList files = new ArrayList();
+          VideoDatabase.GetFiles(currentMovie.ID, ref files);
+
+          foreach (string file in files)
+          {
+            int fileId = VideoDatabase.GetFileId(file);
+            VideoDatabase.DeleteMovieStopTime(fileId);
+          }
         }
         else
         {

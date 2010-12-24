@@ -221,8 +221,8 @@ namespace MediaPortal.GUI.Video
         pItem = (GUIListItem)items[x];
         string file = string.Empty;
         bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
-
-        if (pItem.IsFolder)
+        // Skip DVD backup folder
+        if (pItem.IsFolder && !IsDvdDirectory(pItem.Path))
         {
           if (pItem.Label == "..")
           {
@@ -245,18 +245,24 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
+        // If folder is DVD backup folder then take it for watched status
+        else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
+        {
+          file = GetFolderVideoFile(pItem.Path);
+        }
+
         else if (!pItem.IsFolder ||
                  (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
         {
           file = pItem.Path;
         }
+
         else
         {
           continue;
         }
 
-
-        if (!string.IsNullOrEmpty(file))
+         if (!string.IsNullOrEmpty(file))
         {
           byte[] resumeData = null;
           int fileId = VideoDatabase.GetFileId(file);
@@ -269,17 +275,16 @@ namespace MediaPortal.GUI.Video
             {
               pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
             }
-            //strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movieDetails.Title);
-            // Title suffix for problem with covers and movie with the same name
+            
             string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-
+            //Watched status for movies in the database
             if (movieDetails.Watched > 0 && markWatchedFiles)
             {
               foundWatched = true;
             }
           }
-          // do not double check
+          // Watched status for videos not in the database (look up by file entry and theirs stop time or resume data)
           if (!foundWatched && markWatchedFiles)
           {
             if (fileId >= 0)
@@ -298,7 +303,8 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-          if (!pItem.IsFolder)
+          
+          if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path) && foundWatched))
           {
             pItem.IsPlayed = foundWatched;
           }
@@ -325,6 +331,15 @@ namespace MediaPortal.GUI.Video
           }
         } // <-- file == empty
       } // of for (int x = 0; x < items.Count; ++x)
+    }
+
+    public bool IsDvdDirectory(string path)
+    {
+      if (File.Exists(path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+      {
+        return true;
+      }
+      return false;
     }
 
     private bool IsFolderPinProtected(string folder)
