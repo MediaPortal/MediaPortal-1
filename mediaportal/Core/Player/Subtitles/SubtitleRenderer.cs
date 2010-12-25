@@ -413,7 +413,7 @@ namespace MediaPortal.Player.Subtitles
             }
 
             int pitch;
-            using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
+            using (GraphicsStream a = texture.LockRectangle(0, LockFlags.Discard, out pitch))
             {
               // Quick copy of content
               unsafe
@@ -429,7 +429,7 @@ namespace MediaPortal.Player.Subtitles
                 }
               }
               a.Close();
-            }            
+            }
 
             texture.UnlockRectangle(0);
             subtitle.texture = texture;
@@ -471,7 +471,7 @@ namespace MediaPortal.Player.Subtitles
           Log.Debug("Content: ");
           if (content.Trim().Length > 0) // debug log subtitles
           {
-            StringTokenizer st = new StringTokenizer(content, new char[] {'\n'});
+            StringTokenizer st = new StringTokenizer(content, new char[] { '\n' });
             while (st.HasMore)
             {
               Log.Debug(st.NextToken());
@@ -479,7 +479,7 @@ namespace MediaPortal.Player.Subtitles
           }
           else
           {
-            Log.Debug("Page: <BLANK PAGE>");            
+            Log.Debug("Page: <BLANK PAGE>");
           }
         }
       }
@@ -510,7 +510,7 @@ namespace MediaPortal.Player.Subtitles
                   _activeSubPage);
 
         Subtitle subtitle = new Subtitle();
-        
+
         // TODO - RenderText should directly draw to a D3D texture
         subtitle.subBitmap = RenderText(sub.lc);
         subtitle.timeOut = sub.timeOut;
@@ -526,10 +526,10 @@ namespace MediaPortal.Player.Subtitles
         try
         {
           // allocate new texture
-          texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width, 
+          texture = new Texture(GUIGraphicsContext.DX9Device, subtitle.subBitmap.Width,
             subtitle.subBitmap.Height, 1, Usage.Dynamic, Format.A8R8G8B8, Pool.Default);
           int pitch;
-          using (GraphicsStream a = texture.LockRectangle(0, LockFlags.None, out pitch))
+          using (GraphicsStream a = texture.LockRectangle(0, LockFlags.Discard, out pitch))
           {
             BitmapData bd = subtitle.subBitmap.LockBits(new Rectangle(0, 0, subtitle.subBitmap.Width,
                                                                       subtitle.subBitmap.Height), ImageLockMode.ReadOnly,
@@ -549,12 +549,12 @@ namespace MediaPortal.Player.Subtitles
               }
             }
 
-
             texture.UnlockRectangle(0);
             subtitle.subBitmap.UnlockBits(bd);
             subtitle.subBitmap.SafeDispose();
             subtitle.subBitmap = null;
             subtitle.texture = texture;
+            a.Close();
           }
         }
         catch (Exception e)
@@ -571,8 +571,6 @@ namespace MediaPortal.Player.Subtitles
         Log.Error("Problem processing text subtitle");
         Log.Error(e);
       }
-
-      return;
     }
 
     public static Bitmap RenderText(LineContent[] lc)
@@ -682,25 +680,25 @@ namespace MediaPortal.Player.Subtitles
         return;
       }
 
-      if (_clearOnNextRender)
-      {
-        //Log.Debug("SubtitleRenderer: clearOnNextRender");
-        _clearOnNextRender = false;
-        if (_subTexture != null)
-        {
-          _subTexture.SafeDispose();
-        }
-        _subTexture = null;
-        _currentSubtitle = null;
-      }
-
-      if (_renderSubtitles == false)
-      {
-        return;
-      }
-
       lock (_subtitleLock)
       {
+        if (_clearOnNextRender)
+        {
+          //Log.Debug("SubtitleRenderer: clearOnNextRender");
+          _clearOnNextRender = false;
+          if (_subTexture != null)
+          {
+            _subTexture.SafeDispose();
+          }
+          _subTexture = null;
+          _currentSubtitle = null;
+        }
+
+        if (_renderSubtitles == false)
+        {
+          return;
+        }
+
         // ugly temp!
         bool timeForNext = false;
         if (_subtitles.Count > 0)
