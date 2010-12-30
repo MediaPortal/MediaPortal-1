@@ -2140,6 +2140,18 @@ namespace TvPlugin
       int channelNum = 0;
       Channel channel = tvGuideChannel.channel;
 
+      if (!_byIndex)
+      {
+        foreach (TuningDetail detail in channel.ReferringTuningDetail())
+        {
+          channelNum = detail.ChannelNumber;
+        }
+      }
+      else
+      {
+        channelNum = _channelList.IndexOf(tvGuideChannel) + 1;
+      }
+
       GUIButton3PartControl img = GetControl(iChannel + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
       if (img != null)
       {
