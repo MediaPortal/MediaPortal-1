@@ -1666,7 +1666,7 @@ namespace MediaPortal.GUI.Library
 
       _cameras.Clear();
       _cameras.Add(new Point(Width / 2, Height / 2));
-      UpdateCameraPosition(_cameras[0]);
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
       // reset the final transform and window transforms
       UpdateFinalTransform(_guiTransform);
     }
@@ -1757,19 +1757,28 @@ namespace MediaPortal.GUI.Library
 
     public static void SetCameraPosition(Point camera)
     {
-      // offset the camera from our current location (this is in XML coordinates) and scale it up to
-      // the screen resolution
-      Point cam = new Point(camera.X, camera.Y);
-
+      // Position the camera relative to the default camera location (the geometric center of the screen).
+      // The default camera is always camera [0].
+      Point cam = new Point(
+        _cameras[0].X + camera.X,
+        _cameras[0].Y + camera.Y);
 
       _cameras.Add(cam);
-      UpdateCameraPosition(_cameras[0]);
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
     }
 
     public static void RestoreCameraPosition()
     {
-      _cameras.RemoveAt(0);
-      UpdateCameraPosition(_cameras[0]);
+      // It's an error to remove the default camera.
+      if (_cameras.Count > 1)
+      {
+        _cameras.RemoveAt(_cameras.Count - 1);
+      }
+      else
+      {
+        Log.Error("GUIGraphicsContext: RestoreCameraPosition() - attempt to remove the default camera; calls to set a camera position should not be made from Render().");
+      }
+      UpdateCameraPosition(_cameras[_cameras.Count-1]);
     }
 
     public static void UpdateCameraPosition(Point camera)

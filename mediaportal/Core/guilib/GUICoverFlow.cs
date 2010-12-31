@@ -46,6 +46,9 @@ namespace MediaPortal.GUI.Library
   {
     #region Skin variables
 
+    [XMLSkinElement("camera")] private bool _hasCamera = false;
+    [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
+    [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
     [XMLSkinElement("selectedCard")] protected int _selectedCard = 0;
     [XMLSkinElement("cardWidth")] protected int _cardWidth = 64;
     [XMLSkinElement("cardHeight")] protected int _cardHeight = 64;
@@ -171,6 +174,9 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
+
+      HasCamera = _hasCamera;
+      Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
 
       _font1 = GUIFontManager.GetFont(_fontName1);
       _font2 = GUIFontManager.GetFont(_fontName2);

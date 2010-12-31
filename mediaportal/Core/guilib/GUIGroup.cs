@@ -40,6 +40,13 @@ namespace MediaPortal.GUI.Library
     public GUIGroup(int parentId)
       : base(parentId) {}
 
+    public override void FinalizeConstruction()
+    {
+      HasCamera = _hasCamera;
+      Camera = new System.Drawing.Point(_cameraXPos, _cameraYPos);
+      base.FinalizeConstruction();
+    }
+
     #endregion Constructors
 
     #region Methods
@@ -443,6 +450,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("layout")] private ILayout _layout;
 
     [XMLSkinElement("animation")] private Animator.AnimationType _animatorType = Animator.AnimationType.None;
+
+    [XMLSkinElement("camera")] private bool _hasCamera = false;
+    [XMLSkin("camera", "xpos")] protected int _cameraXPos = 0;
+    [XMLSkin("camera", "ypos")] protected int _cameraYPos = 0;
 
     private bool _startAnimation;
 
