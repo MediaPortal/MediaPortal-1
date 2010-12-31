@@ -987,6 +987,7 @@ void FontEngineDrawTexture2(int textureNo1,float x, float y, float nw, float nh,
 
     // Disable the remainder of the texture stages.
     m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
   }
 
   m_pDevice->SetTexture(0, texture1->pTexture);
@@ -1246,6 +1247,7 @@ void FontEngineDrawMaskedTexture(int textureNo1, float x, float y, float nw, flo
 
   // Disable the remainder of the texture stages.
   m_pDevice->SetTextureStageState(3, D3DTSS_COLOROP, D3DTOP_DISABLE);
+  m_pDevice->SetTextureStageState(3, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
   m_pDevice->SetTexture(0, texture1->pTexture);
   m_pDevice->SetTexture(1, texture2->pTexture);
@@ -1545,6 +1547,7 @@ void FontEngineDrawMaskedTexture2(int textureNo1,float x, float y, float nw, flo
 
   // Disable the remainder of the texture stages.
   m_pDevice->SetTextureStageState(4, D3DTSS_COLOROP, D3DTOP_DISABLE);
+  m_pDevice->SetTextureStageState(4, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
   m_pDevice->SetTexture(0, texture1->pTexture);
   m_pDevice->SetTexture(1, texture2->pTexture);
@@ -1592,6 +1595,7 @@ void FontEnginePresentTextures()
     m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
     m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+    m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
     for (int i=0; i < textureCount; ++i)
     {
@@ -2006,6 +2010,7 @@ void FontEnginePresent3D(int fontNumber)
       m_pDevice->SetTextureStageState(1, D3DTSS_ALPHAARG2, D3DTA_CURRENT);
 
       m_pDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
+      m_pDevice->SetTextureStageState(2, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
 
       FontEngineSetAlphaBlend(1);
       m_pDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
