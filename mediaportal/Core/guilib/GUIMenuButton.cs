@@ -235,6 +235,7 @@ namespace MediaPortal.GUI.Library
       GUILocalizeStrings.LocalizeLabel(ref _label);
       GUILocalizeStrings.LocalizeLabel(ref _prefixText);
       GUILocalizeStrings.LocalizeLabel(ref _suffixText);
+      GUILocalizeStrings.LocalizeLabel(ref _dialogTitle);
 
       if (_hoverFilename != string.Empty)
       {

@@ -49,6 +49,11 @@
         <id>23</id>
         <width>450</width>
         <label>1652</label>
+        <mode>dialoglist</mode>
+        <dialogTitle>1652</dialogTitle>
+        <dialogShowNumbers>no</dialogShowNumbers>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>#(string.format('{0}:', L(1652)))</valuePrefixText>
       </control>
       <control>
         <description>Temperature Units</description>
