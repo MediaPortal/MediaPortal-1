@@ -332,7 +332,13 @@ namespace MediaPortal.GUI.Settings
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue("weather", "temperature", btnTemperatureSelect.SelectedItemLabel);
+        string ts = "F"; // Farenheit
+        if (btnTemperatureSelect.SelectedItemLabel.CompareTo("Celsius") == 0)
+        {
+          ts = "C"; // Celsius
+        }
+
+        xmlwriter.SetValue("weather", "temperature", ts);
       }
     }
 
