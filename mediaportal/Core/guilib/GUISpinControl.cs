@@ -224,6 +224,15 @@ namespace MediaPortal.GUI.Library
           {
             wszText = (string)_listLabels[_intValue];
           }
+          if (_prefixText.Length > 0)
+          {
+            wszText = _prefixText + " " + wszText;
+          }
+
+          if (_suffixText.Length > 0)
+          {
+            wszText = wszText + " " + _suffixText;
+          }
         }
         else
         {
@@ -884,6 +893,11 @@ namespace MediaPortal.GUI.Library
       }
       string strLabel = (string)_listLabels[_intValue];
       return strLabel;
+    }
+
+    public int GetItemCount()
+    {
+      return _listLabels.Count;
     }
 
     public override bool Focus

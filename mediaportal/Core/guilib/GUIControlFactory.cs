@@ -919,6 +919,8 @@ namespace MediaPortal.GUI.Library
           return typeof (GUISpinControl);
         case ("spinbutton"):
           return typeof (GUISpinButton);
+        case ("menubutton"):
+          return typeof(GUIMenuButton);
         case ("checkmark"):
           return typeof (GUICheckMarkControl);
         case ("checkbutton"):
