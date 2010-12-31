@@ -44,7 +44,16 @@
         <type>button</type>
         <id>5</id>
         <label>1028</label>
+        <ondown>6</ondown>
+      </control>
+      <control>
+        <description>weather settings</description>
+        <type>button</type>
+        <id>6</id>
+        <label>5</label>
         <ondown>2</ondown>
+        <hyperlink>17</hyperlink>
+        <visible>control.isvisible(5)</visible>
       </control>
     </control>
     <control>

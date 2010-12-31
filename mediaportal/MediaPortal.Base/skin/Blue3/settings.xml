@@ -77,6 +77,14 @@
         <width>197</width>
         <label>2</label>
         <hyperlink>14</hyperlink>
+      </control>
+      <control>
+        <description>Weather</description>
+        <type>button</type>
+        <id>12</id>
+        <width>197</width>
+        <label>8</label>
+        <hyperlink>17</hyperlink>
         <ondown>99</ondown>
       </control>
       <control>

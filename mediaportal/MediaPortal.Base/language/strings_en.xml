@@ -1039,6 +1039,13 @@
     <String id="1600">Do you want to power off?</String>
     <String id="1601">Do you want to suspend?</String>
     <String id="1602">Do you want to hibernate?</String>
+    <String id="1650">Add Location</String>
+    <String id="1651">Remove Location</String>
+    <String id="1652">Default Location</String>
+    <String id="1653">Temperature Units</String>
+    <String id="1654">Wind Speed Units</String>
+    <String id="1655">Refresh Interval</String>
+    <String id="1656">mins</String>    
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Hard drive</String>
     <String id="1952">Fan</String>

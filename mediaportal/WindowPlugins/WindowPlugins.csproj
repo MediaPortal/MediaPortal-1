@@ -183,6 +183,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
     </Reference>
@@ -237,6 +238,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="GUISettings\Weather\GUISettingsWeather.cs" />
     <Compile Include="StateBase.cs" />
     <Compile Include="WindowPluginBase.cs" />
     <Compile Include="GUIDisc\GUIDisc.cs" />
