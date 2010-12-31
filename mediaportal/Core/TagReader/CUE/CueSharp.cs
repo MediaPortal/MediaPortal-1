@@ -41,6 +41,8 @@ namespace MediaPortal.TagReader
     private string[] m_Garbage = new string[0];
     private string m_Performer = "";
     private string m_Songwriter = "";
+    private string m_Genre = "";
+    private int m_Year;
     private string m_Title = "";
     private Track[] m_Tracks = new Track[0];
 
@@ -112,6 +114,24 @@ namespace MediaPortal.TagReader
     {
       get { return m_Songwriter; }
       set { m_Songwriter = value; }
+    }
+    
+    /// <summary>
+    /// Genre of album; stored within a comment (REM) field
+    /// </summary>
+    public string Genre
+    {
+      get { return m_Genre; }
+      set { m_Genre = value; }
+    }
+    
+    /// <summary>
+    /// Year of album; stored within a comment (REM) field
+    /// </summary>
+    public int Year
+    {
+      get { return m_Year; }
+      set { m_Year = value; }
     }
 
     /// <summary>
@@ -196,7 +216,7 @@ namespace MediaPortal.TagReader
         cueLines = tr.ReadToEnd().Split(delimiters);
 
         // close the stream
-        tr.Close();  
+        tr.Close();
       }
       
 
@@ -244,7 +264,7 @@ namespace MediaPortal.TagReader
 
     private void ParseCue(string[] file)
     {
-      //-1 means still global, 
+      //-1 means still global,
       //all others are track specific
       int trackOn = -1;
       AudioFile currentFile = new AudioFile();
@@ -325,8 +345,39 @@ namespace MediaPortal.TagReader
       {
         if (line.Trim() != "")
         {
-          m_Comments = (string[])ResizeArray(m_Comments, m_Comments.Length + 1);
-          m_Comments[m_Comments.Length - 1] = line;
+          // GENRE and DATE fields are stored in comments so check for these
+          // if they are stored globally for CUE sheet
+          string commentType;
+          if (line.IndexOf(' ') > 0)
+          {
+             commentType = line.Substring(0, line.IndexOf(' ')).ToUpper();
+          }
+          else
+          {
+            commentType = "OTHER";
+          }
+          
+          switch (commentType)
+          {
+            case "GENRE":
+              // remove GENRE from comment and assign the rest to genre field
+              line = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
+              m_Genre = line;
+              break;
+            case "DATE":
+              // remove DATE from comment and assign the rest to year field
+              line = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
+              int year;
+              if (Int32.TryParse(line,out year))
+              {
+                m_Year = year;
+              }
+              break;
+            default:
+              m_Comments = (string[])ResizeArray(m_Comments, m_Comments.Length + 1);
+              m_Comments[m_Comments.Length - 1] = line;
+              break;
+          }
         }
       }
       else
@@ -545,7 +596,7 @@ namespace MediaPortal.TagReader
     }
 
     /// <summary>
-    /// Parses the TRACK command. 
+    /// Parses the TRACK command.
     /// </summary>
     /// <param name="line">The line in the cue file that contains the TRACK command.</param>
     /// <param name="trackOn">The track currently processing.</param>
@@ -684,7 +735,7 @@ namespace MediaPortal.TagReader
     /// <param name="indexIndex">The index of the Index you wish to remove.</param>
     public void RemoveIndex(int trackIndex, int indexIndex)
     {
-      //Note it is the index of the Index you want to delete, 
+      //Note it is the index of the Index you want to delete,
       //which may or may not correspond to the number of the index.
       m_Tracks[trackIndex].RemoveIndex(indexIndex);
     }
@@ -710,8 +761,8 @@ namespace MediaPortal.TagReader
         tw.WriteLine(this.ToString());
 
         //close the writer stream
-        tw.Close(); 
-      }      
+        tw.Close();
+      }
     }
 
     /// <summary>
@@ -793,7 +844,7 @@ namespace MediaPortal.TagReader
 
       t = ((lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Minutes * 60) +
            lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Seconds) -
-          ((lastTrackIndex(m_Tracks[0]).Minutes * 60) + lastTrackIndex(m_Tracks[0]).Seconds);
+        ((lastTrackIndex(m_Tracks[0]).Minutes * 60) + lastTrackIndex(m_Tracks[0]).Seconds);
 
       ulong lDiscId = (((uint)n % 0xff) << 24 | (uint)t << 8 | (uint)m_Tracks.Length);
       return String.Format("{0:x8}", lDiscId);

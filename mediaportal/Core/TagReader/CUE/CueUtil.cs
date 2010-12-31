@@ -107,7 +107,7 @@ namespace MediaPortal.TagReader
     public static string buildCueFakeTrackFileName(string cueFileName, Track track)
     {
       string res = cueFileName.Substring(0, cueFileName.Length - CUE_FILE_EXT.Length - 1) + "." +
-                   CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
+        CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
 
       if (System.IO.Path.HasExtension(track.DataFile.Filename))
       {
@@ -253,8 +253,7 @@ namespace MediaPortal.TagReader
           musicTagCache.Duration = cueIndexToIntTime(nextTrack.Indices[0]) - cueIndexToIntTime(track.Indices[0]);
         }
 
-        string fname = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) + System.IO.Path.DirectorySeparatorChar +
-                       track.DataFile.Filename;
+        string fname = Path.Combine(Path.GetDirectoryName(cueFakeTrack.CueFileName), track.DataFile.Filename);
 
         try
         {
@@ -274,7 +273,7 @@ namespace MediaPortal.TagReader
           if (musicTagCache.Duration == 0)
           {
             musicTagCache.Duration = (int)tagCache.Properties.Duration.TotalSeconds -
-                                     cueIndexToIntTime(track.Indices[0]);
+              cueIndexToIntTime(track.Indices[0]);
           }
         }
         catch (Exception ex)
@@ -302,26 +301,58 @@ namespace MediaPortal.TagReader
           }
         }
 
-        if (track.Performer != null && !String.Empty.Equals(track.Performer))
+        if (string.IsNullOrEmpty(musicTagCache.Artist))
         {
-          musicTagCache.Artist = track.Performer;
-        }
-        else
-        {
-          musicTagCache.Artist = cueSheetCache.Performer;
+          // if track has a performer set use this value for artist tag
+          // else use global performer defined for cue sheet
+          if (!string.IsNullOrEmpty(track.Performer))
+          {
+            musicTagCache.Artist = track.Performer;
+          }
+          else
+          {
+            musicTagCache.Artist = cueSheetCache.Performer;
+          }
         }
 
-        musicTagCache.Album = cueSheetCache.Title;
+        if (string.IsNullOrEmpty(musicTagCache.Album))
+        {
+          musicTagCache.Album = cueSheetCache.Title;
+        }
 
-        if (cueSheetCache.Performer != null)
+        if(string.IsNullOrEmpty(musicTagCache.AlbumArtist))
         {
-          musicTagCache.AlbumArtist = cueSheetCache.Performer;
-          musicTagCache.HasAlbumArtist = true;
+          if (!string.IsNullOrEmpty(cueSheetCache.Performer))
+          {
+            musicTagCache.AlbumArtist = cueSheetCache.Performer;
+            musicTagCache.HasAlbumArtist = true;
+          }
+          else
+          {
+            musicTagCache.HasAlbumArtist = false;
+          }
         }
-        else
+        
+        // let tagged genre override cuesheet genre
+        if (string.IsNullOrEmpty(musicTagCache.Genre) &&
+            !string.IsNullOrEmpty(cueSheetCache.Genre))
         {
-          musicTagCache.HasAlbumArtist = false;
+          musicTagCache.Genre = cueSheetCache.Genre;
         }
+        
+        // let tagged year override cuesheet year
+        if (musicTagCache.Year == 0 && cueSheetCache.Year != 0)
+        {
+          musicTagCache.Year = cueSheetCache.Year;
+        }
+        
+        // let tagged composer override cuesheet songwriter
+        if (string.IsNullOrEmpty(musicTagCache.Composer) &&
+            !string.IsNullOrEmpty(cueSheetCache.Songwriter))
+        {
+          musicTagCache.Composer = cueSheetCache.Songwriter;
+        }
+        
 
         //musicTagCache.CoverArtImageBytes = pics[0].Data.Data;
         musicTagCache.FileName = cueFakeTrackFileName;
