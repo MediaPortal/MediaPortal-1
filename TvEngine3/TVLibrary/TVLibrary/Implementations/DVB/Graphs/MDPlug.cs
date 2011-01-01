@@ -1027,7 +1027,7 @@ namespace TvLibrary.Implementations.DVB
       _mDPlugTProg82.Tp_id = (ushort)dvbChannel.TransportId;
       _mDPlugTProg82.SID_pid = (ushort)dvbChannel.ServiceId;
       _mDPlugTProg82.PMT_pid = (ushort)dvbChannel.PmtPid;
-      _mDPlugTProg82.PCR_pid = (ushort)dvbChannel.PcrPid;
+      _mDPlugTProg82.PCR_pid = (ushort)channelInfo.pcrPid;
       _mDPlugTProg82.Video_pid = 0;
       _mDPlugTProg82.Audio_pid = 0;
       _mDPlugTProg82.TeleText_pid = 0;

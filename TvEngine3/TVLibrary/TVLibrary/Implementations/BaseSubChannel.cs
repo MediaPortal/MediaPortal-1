@@ -74,7 +74,6 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Handles the after tune observer event.
     /// </summary>
-    /// <param name="pidType">Type of the pid</param>
     protected void OnAfterTuneEvent()
     {
       if (AfterTuneEvent != null)

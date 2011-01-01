@@ -38,10 +38,7 @@ namespace TvLibrary.Channels
     private int _serviceId;
     private int _transportId;
     private int _pmtPid;
-    private int _pcrPid;
     private int _lcn;
-    private int _videoPid;
-    private int _audioPid;
     private bool _isRadio;
     private bool _isTv;
     private bool _freeToAir;
@@ -60,13 +57,10 @@ namespace TvLibrary.Channels
       _serviceId = chan._serviceId;
       _transportId = chan._transportId;
       _pmtPid = chan._pmtPid;
-      _pcrPid = chan._pcrPid;
       _lcn = chan._lcn;
       _isRadio = chan._isRadio;
       _isTv = chan._isTv;
       _freeToAir = chan._freeToAir;
-      _videoPid = chan._videoPid;
-      _audioPid = chan._audioPid;
     }
 
     ///<summary>
@@ -77,13 +71,10 @@ namespace TvLibrary.Channels
       _channelName = "";
       _providerName = "";
       _pmtPid = -1;
-      _pcrPid = -1;
       _networkId = -1;
       _serviceId = -1;
       _transportId = -1;
       _lcn = 10000;
-      _audioPid = -1;
-      _videoPid = -1;
     }
 
     #region properties
@@ -95,16 +86,6 @@ namespace TvLibrary.Channels
     {
       get { return _lcn; }
       set { _lcn = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the PCR pid.
-    /// </summary>
-    /// <value>The PCR pid.</value>
-    public int PcrPid
-    {
-      get { return _pcrPid; }
-      set { _pcrPid = value; }
     }
 
     /// <summary>
@@ -197,24 +178,6 @@ namespace TvLibrary.Channels
       set { _freeToAir = value; }
     }
 
-    /// <summary>
-    /// gets/sets the AudioPid
-    /// </summary>
-    public int AudioPid
-    {
-      get { return _audioPid; }
-      set { _audioPid = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the VideoPid
-    /// </summary>
-    public int VideoPid
-    {
-      get { return _videoPid; }
-      set { _videoPid = value; }
-    }
-
     #endregion
 
     /// <summary>
@@ -271,10 +234,6 @@ namespace TvLibrary.Channels
       {
         return false;
       }
-      if (ch.PcrPid != PcrPid)
-      {
-        return false;
-      }
       if (ch.PmtPid != PmtPid)
       {
         return false;
@@ -288,14 +247,6 @@ namespace TvLibrary.Channels
         return false;
       }
       if (ch.TransportId != TransportId)
-      {
-        return false;
-      }
-      if (ch.VideoPid != VideoPid)
-      {
-        return false;
-      }
-      if (ch.AudioPid != AudioPid)
       {
         return false;
       }
@@ -315,8 +266,8 @@ namespace TvLibrary.Channels
     public override int GetHashCode()
     {
       return base.GetHashCode() ^ _channelName.GetHashCode() ^ _providerName.GetHashCode() ^ _pmtPid.GetHashCode() ^
-             _pcrPid.GetHashCode() ^ _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^
-             _lcn.GetHashCode() ^ _videoPid.GetHashCode() ^ _audioPid.GetHashCode();
+              _networkId.GetHashCode() ^ _serviceId.GetHashCode() ^ _transportId.GetHashCode() ^
+             _lcn.GetHashCode();
     }
 
     /// <summary>

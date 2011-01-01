@@ -854,7 +854,7 @@ namespace TvLibrary.Implementations.DVB
         hwPids.Add(0x11); //SDT
         hwPids.Add(0x12); //EPG
 
-        Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcr_pid);
+        Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcrPid);
         Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
 
         if (info.network_pmt_PID >= 0 && ((DVBBaseChannel)_currentChannel).ServiceId >= 0)
@@ -913,9 +913,9 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
               _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, pidInfo.pid);
-              if (info.pcr_pid > 0 && info.pcr_pid != pidInfo.pid)
+              if (info.pcrPid > 0 && info.pcrPid != pidInfo.pid)
               {
-                hwPids.Add((ushort)info.pcr_pid);
+                hwPids.Add((ushort)info.pcrPid);
               }
             }
 
@@ -1131,15 +1131,6 @@ namespace TvLibrary.Implementations.DVB
               _channelInfo.DecodePmt(_pmtData);
               _channelInfo.network_pmt_PID = channel.PmtPid;
 
-              // always set pcr_pid despite useless database info, as it's required for setup HW filtering ( ambass )
-              bool updateDB = channel.PcrPid != _channelInfo.pcr_pid;
-              channel.PcrPid = _channelInfo.pcr_pid;
-
-              if (updateDB)
-              {
-                PersistPCRtoDataBase(channel);
-              }
-
               // update any service scrambled / unscambled changes
               if (_channelInfo.scrambled == channel.FreeToAir)
               {
@@ -1214,24 +1205,6 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       return false;
-    }
-
-    private void PersistPCRtoDataBase(DVBBaseChannel channel) {
-      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;      
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
-                                                         CurrentDVBChannel.ServiceId);
-      if (dbChannel == null)
-        return;
-
-      TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
-                                                    CurrentDVBChannel.ServiceId);
-      currentDetail.PcrPid = channel.PcrPid;      
-
-      TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
-      Log.Log.Debug("Updated PCR Pid to {0:X}!", channel.PcrPid);
-      td.Persist();
     }
 
     #endregion

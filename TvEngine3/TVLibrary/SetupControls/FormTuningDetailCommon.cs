@@ -36,7 +36,6 @@ namespace SetupControls
       int switchFrequency = 0;
       int diseqc = 0;
       int bandwidth = 8;
-      int pcrPid = -1;
       int pmtPid = -1;
       int networkId = -1;
       int serviceId = -1;
@@ -45,8 +44,6 @@ namespace SetupControls
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int videoPid = -1;
-      int audioPid = -1;
       int band = 0;
       int satIndex = -1;
       var innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
@@ -57,8 +54,8 @@ namespace SetupControls
                                     channelType, channelNumber, (int)channelFrequency, country, false, false,
                                     networkId, transportId, serviceId, pmtPid, true,
                                     modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                                    bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
-                                    audioInputType, false, tunerSource, videoPid, audioPid, band,
+                                    bandwidth, majorChannel, minorChannel, videoInputType,
+                                    audioInputType, false, tunerSource, band,
                                     satIndex,
                                     innerFecRate, pilot, rollOff, url, 0);
     }

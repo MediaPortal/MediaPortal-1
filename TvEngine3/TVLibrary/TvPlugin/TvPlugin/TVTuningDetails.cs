@@ -128,10 +128,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.TuningDetails.InnerFecRate", detail.InnerFecRate.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Modulation", detail.Modulation.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.NetworkId", detail.NetworkId.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", detail.PcrPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.PmtPid", detail.PmtPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", detail.AudioPid.ToString());
-          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", detail.VideoPid.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Polarisation", detail.Polarisation.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Provider", detail.Provider);
           GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());

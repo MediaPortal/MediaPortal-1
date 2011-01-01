@@ -105,7 +105,6 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.ServiceId = info.serviceID;
       dvbsChannel.TransportId = info.transportStreamID;
       dvbsChannel.PmtPid = info.network_pmt_PID;
-      dvbsChannel.PcrPid = info.pcr_pid;
       dvbsChannel.DisEqc = tuningChannel.DisEqc;
       dvbsChannel.BandType = tuningChannel.BandType;
       dvbsChannel.FreeToAir = !info.scrambled;
@@ -114,8 +113,6 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
       dvbsChannel.Pilot = tuningChannel.Pilot;
       dvbsChannel.Rolloff = tuningChannel.Rolloff;
-      dvbsChannel.VideoPid = info.videoPid;
-      dvbsChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }

@@ -107,7 +107,6 @@ namespace TvLibrary.Implementations.DVB
           dvbsChannel.ServiceId = info.serviceID;
           dvbsChannel.TransportId = info.transportStreamID;
           dvbsChannel.PmtPid = info.network_pmt_PID;
-          dvbsChannel.PcrPid = info.pcr_pid;
           dvbsChannel.DisEqc = tuningChannels.DisEqc;
           dvbsChannel.BandType = tuningChannels.BandType;
           dvbsChannel.FreeToAir = !info.scrambled;
@@ -131,7 +130,6 @@ namespace TvLibrary.Implementations.DVB
           dvbcChannel.ServiceId = info.serviceID;
           dvbcChannel.TransportId = info.transportStreamID;
           dvbcChannel.PmtPid = info.network_pmt_PID;
-          dvbcChannel.PcrPid = info.pcr_pid;
           dvbcChannel.FreeToAir = !info.scrambled;
           Log.Log.Write("Found:{0}", dvbcChannel);
           return dvbcChannel;
@@ -152,7 +150,6 @@ namespace TvLibrary.Implementations.DVB
           dvbtChannel.ServiceId = info.serviceID;
           dvbtChannel.TransportId = info.transportStreamID;
           dvbtChannel.PmtPid = info.network_pmt_PID;
-          dvbtChannel.PcrPid = info.pcr_pid;
           dvbtChannel.FreeToAir = !info.scrambled;
           Log.Log.Write("Found:{0}", dvbtChannel);
           return dvbtChannel;
@@ -177,20 +174,7 @@ namespace TvLibrary.Implementations.DVB
           atscChannel.ServiceId = info.serviceID;
           atscChannel.TransportId = info.transportStreamID;
           atscChannel.PmtPid = info.network_pmt_PID;
-          atscChannel.PcrPid = info.pcr_pid;
           atscChannel.FreeToAir = !info.scrambled;
-          foreach (PidInfo pid in info.pids)
-          {
-            if (pid.isAC3Audio || pid.isEAC3Audio)
-            {
-              if (pid.pid > 0)
-              {
-                atscChannel.AudioPid = pid.pid;
-              }
-            }
-            if (pid.isVideo)
-              atscChannel.VideoPid = pid.pid;
-          }
           Log.Log.Write("Found:{0}", atscChannel);
           return atscChannel;
       }
