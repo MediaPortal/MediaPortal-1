@@ -162,9 +162,10 @@ namespace TvService
     {
       if (_tvServiceThread == null)
       {
-        if(!(args != null && args[0] == "/DEBUG"))
+        if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
+        {
           RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
-
+        }
         TvServiceThread tvServiceThread = new TvServiceThread();
         ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
         _tvServiceThread = new Thread(tvServiceThreadStart);
