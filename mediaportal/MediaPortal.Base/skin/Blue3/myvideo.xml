@@ -163,7 +163,7 @@
 			            <mode>dialoglist</mode>
 			            <dialogTitle>792</dialogTitle>
 			            <valueTextInButton>yes</valueTextInButton>
-			            <valuePrefixText>#(string.format('{0}:', L(95)))</valuePrefixText>
+			            <valuePrefixText>95</valuePrefixText>
 					</control>
 					<control>
 						<description>Sort</description>

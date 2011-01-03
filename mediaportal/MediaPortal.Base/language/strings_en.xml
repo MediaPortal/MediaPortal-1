@@ -57,8 +57,10 @@
     <String id="69">Loading skin ({0})...</String>
     <String id="70">Loading window plugins...</String>
     <String id="71">Initialising window manager...</String>
-    <String id="100">Layout: Icons</String>
-    <String id="101">Layout: List</String>
+    <String id="95">Layout:</String>
+    <String id="95">Sort by:</String>
+    <String id="100">Icons</String>
+    <String id="101">List</String>
     <String id="102">Scan</String>
     <String id="103">Sort by: Name</String>
     <String id="104">Sort by: Date</String>
@@ -373,7 +375,7 @@
     <String id="414">No review for this album</String>
     <String id="415">Downloading thumbnail...</String>
     <String id="416">Not available</String>
-    <String id="417">Layout: Big Icons</String>
+    <String id="417">Big Icons</String>
     <String id="418" prefix="My ">Videos/Genres</String>
     <String id="419" prefix="My ">Videos/Actors</String>
     <String id="420" prefix="My ">Videos/Years</String>
@@ -483,7 +485,7 @@
     <String id="525">Skip step already defined</String>    
     <String id="527">Sort by: Watched</String>
     <String id="528">Album Artists</String>
-    <String id="529">Layout: Big Icon List</String>
+    <String id="529">Big Icon List</String>
     <String id="530">Photo disc inserted - do you want to open it?</String>
     <String id="531">Video disc inserted - do you want to open it?</String>
     <String id="532">Audio disc inserted - do you want to open it?</String>
@@ -658,7 +660,7 @@
     <String id="730">This schedule is recording. If you delete</String>
     <String id="731">the schedule then the recording is stopped.</String>
     <String id="732">Are you sure?</String>
-    <String id="733">Layout: Filmstrip</String>
+    <String id="733">Filmstrip</String>
     <String id="734">Image:</String>
     <String id="735">Rotate 90°</String>
     <String id="736">No data available</String>
@@ -711,7 +713,7 @@
     <String id="784">Rotate 270°</String>
     <String id="789">Now: </String>
     <String id="790">Next: </String>
-    <String id="791">Layout: Cover Flow</String>
+    <String id="791">Cover Flow</String>
 	<String id="792">Layouts Menu</String>
     <String id="798">low</String>
     <String id="799">high</String>
