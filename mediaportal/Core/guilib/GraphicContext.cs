@@ -993,19 +993,17 @@ namespace MediaPortal.GUI.Library
       get { return m_bOverlay; }
       set
       {
-        m_bOverlay = value;
-        if (!m_bOverlay)
+        if (m_bOverlay != value)
         {
-          m_RectVideo.Width = 1;
-          m_RectVideo.Height = 1;
-        }
-        if (!ShowBackground)
-        {
-          m_bOverlay = false;
-        }
-        if (OnVideoWindowChanged != null)
-        {
-          OnVideoWindowChanged();
+          m_bOverlay = value;
+          if (!ShowBackground)
+          {
+            m_bOverlay = false;
+          }
+          if (!m_bOverlay)
+          {
+            VideoWindow = new Rectangle(0,0,1,1);
+          }
         }
       }
     }
