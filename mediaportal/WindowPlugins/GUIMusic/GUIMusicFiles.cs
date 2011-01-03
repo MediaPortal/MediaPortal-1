@@ -428,18 +428,7 @@ namespace MediaPortal.GUI.Music
     {
       if (control == btnPlayCd)
       {
-        for (char c = 'C'; c <= 'Z'; c++)
-        {
-          if ((Util.Utils.GetDriveType(c + ":") & 5) == 5)
-          {
-            // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
-            if (Util.Utils.GetDriveSerial(c + ":") != string.Empty)
-            {
-              OnPlayCD(c + ":");
-              break;
-            }
-          }
-        }
+        PlayCD();
       }
 
       base.OnClicked(controlId, control, actionType);
@@ -450,7 +439,7 @@ namespace MediaPortal.GUI.Music
       switch (message.Message)
       {
         case GUIMessage.MessageType.GUI_MSG_PLAY_AUDIO_CD:
-          OnPlayCD(message.Label);
+          PlayCD(message.Label);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
@@ -472,7 +461,7 @@ namespace MediaPortal.GUI.Music
           break;
 
         case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
-          OnPlayCD(message.Label);
+          PlayCD(message.Label);
           break;
 
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
@@ -1212,7 +1201,7 @@ namespace MediaPortal.GUI.Music
       else
       {
         GUIDialogNotify dlgNotify =
-        (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
         if (null != dlgNotify)
         {
           dlgNotify.SetHeading(GUILocalizeStrings.Get(313));
@@ -1382,8 +1371,8 @@ namespace MediaPortal.GUI.Music
         { // we have a CD track so look up info
           if(!GetCDInfo(ref pItem, CDLookupAlreadyFailed))
           { // if CD info fails set failure flag to prevent further lookups
-            Log.Error("Looking up CD Track: {0}",pItem.Label);
-            CDLookupAlreadyFailed = false;
+            Log.Error("Error looking up CD Track: {0}",pItem.Label);
+            CDLookupAlreadyFailed = true;
           }
         }
         else
@@ -1404,16 +1393,25 @@ namespace MediaPortal.GUI.Music
     private void AddSelectionToPlaylist(bool clearPlaylist)
     {
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl);
-      
-      // only apply further sort if a folder has been selected
-      // if user has selected a track then add in order displayed
       GUIListItem selectedItem = facadeLayout.SelectedListItem;
-      if (selectedItem.IsFolder)
-      {
-        pl.Sort(new TrackComparer());
+      if (selectedItem.IsFolder && IsCD(selectedItem.Path))
+      { // deal with the special case of user selecting the actual CD drive
+        // to play within shares view.   Need to ensure GetCDInfo is called
+        PlayCD(selectedItem.Path);
       }
-      base.AddItemsToPlaylist(pl, clearPlaylist);
+      else
+      { // selection is anything other than a CD drive 
+        // so recursively add contents
+        AddFolderToPlaylist(selectedItem, ref pl);
+        
+        // only apply further sort if a folder has been selected
+        // if user has selected a track then add in order displayed
+        if (selectedItem.IsFolder)
+        {
+          pl.Sort(new TrackComparer());
+        }
+        base.AddItemsToPlaylist(pl, clearPlaylist);
+      }
     }
     
     private void InsertSelectionToPlaylist()
@@ -1451,17 +1449,6 @@ namespace MediaPortal.GUI.Music
           AddFolderToPlaylist(subItem, ref pl);
         }
       }
-      else if(IsCD(item.Path))
-      { // CD Info is only loaded when the CD folder is opened
-        // catch scenario that user adds root folder (whole drive)
-        // to playlist
-        String strExtension = Path.GetExtension(item.Path).ToLower();
-        if(strExtension == ".cda")
-        {
-          GetCDInfo(ref item, false);
-          pl.Add(ConvertItemToPlaylist(item));
-        }
-      }
       else
       { // add tracks
         if (PlayAllOnSingleItemPlayNow)
@@ -1480,7 +1467,7 @@ namespace MediaPortal.GUI.Music
             }
           }
           else
-          { // selected item was a folder so contents will get 
+          { // selected item was a folder so contents will get
             // recursively added so just add item to playlist
             pl.Add(ConvertItemToPlaylist(item));
           }
@@ -1543,9 +1530,8 @@ namespace MediaPortal.GUI.Music
     }
 
     /// <summary>
-    /// This is actually called from genres (database view)
-    /// but needs access to all the CD code here so just get all files on CD
-    /// and then add them to playlist
+    /// This will locate the first CD drive on the system and attempt to play
+    /// This is also called from within GUIMusicGenres
     /// </summary>
     public void PlayCD()
     {
@@ -1558,29 +1544,34 @@ namespace MediaPortal.GUI.Music
           break;
         }
       }
-      List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strFirstCDDrive);
-      GetTagInfo(ref itemlist);
-      
-      List<PlayListItem> pl = new List<PlayListItem>();
-      foreach(GUIListItem i in itemlist)
-      {
-        pl.Add(ConvertItemToPlaylist(i));
-      }
-      base.AddItemsToPlaylist(pl, true);
+      PlayCD(strFirstCDDrive);
     }
-    
-    private void OnPlayCD(string strDriveLetter)
+
+    /// <summary>
+    /// Attempt to play CD drive
+    /// </summary>
+    /// <param name="strDrive">Drive Letter of CD drive</param>
+    private void PlayCD(string strDrive)
     {
-      if (strDriveLetter.Length < 2)
+      if (strDrive.Length == 1)
       {
-        return;
+        strDrive = strDrive + ":";
       }
-      strDriveLetter = strDriveLetter.Substring(0,2);
-      LoadDirectory(strDriveLetter);
-      if(facadeLayout.Count > 0)
+      // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
+      if (Util.Utils.GetDriveSerial(strDrive) != string.Empty)
       {
-        facadeLayout.SelectedListItemIndex = 1;
-        AddSelectionToPlaylist(true);
+        List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDrive);
+        GetTagInfo(ref itemlist);
+        
+        List<PlayListItem> pl = new List<PlayListItem>();
+        foreach(GUIListItem i in itemlist)
+        {
+          if (i.Label != "..")
+          {
+            pl.Add(ConvertItemToPlaylist(i));
+          }
+        }
+        base.AddItemsToPlaylist(pl, true);
       }
     }
 
@@ -1598,7 +1589,7 @@ namespace MediaPortal.GUI.Music
       if (CDLookupAlreadyFailed || !Win32API.IsConnectedToInternet())
       { // no point in keep trying if previous call failed
         Log.Debug("MusicFiles: CD lookup already failed or not connected to internet");
-        return cdInfoSuccessful;
+        return false;
       }
 
       try
@@ -1720,7 +1711,6 @@ namespace MediaPortal.GUI.Music
             tag.Duration = track.Duration;
             tag.Title = track.Title;
             tag.Track = track.TrackNumber;
-            pItem.Label = track.Title;
           }
           pItem.MusicTag = tag;
         }

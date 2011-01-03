@@ -2083,7 +2083,9 @@ namespace MediaPortal.GUI.Music
         pl.Add(pItem);
       }
       
-      if (iCurrentItemCount == 0)
+      // not null check is needed here because we can play a CD from menu button
+      // without a facade item being selected
+      if (iCurrentItemCount == 0 && facadeLayout.SelectedListItem != null)
       { // if playlist has been cleared before calling this
         // or there is nothing in existing playlist then
         // start playback

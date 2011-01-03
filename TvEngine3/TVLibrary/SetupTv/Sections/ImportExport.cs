@@ -159,7 +159,6 @@ namespace SetupTv.Sections
           XmlNode nodeTune = xmlDoc.CreateElement("tune");
           AddAttribute(nodeTune, "IdChannel", detail.IdChannel);
           AddAttribute(nodeTune, "IdTuning", detail.IdTuning);
-          AddAttribute(nodeTune, "AudioPid", detail.AudioPid);
           AddAttribute(nodeTune, "Bandwidth", detail.Bandwidth);
           AddAttribute(nodeTune, "ChannelNumber", detail.ChannelNumber);
           AddAttribute(nodeTune, "ChannelType", detail.ChannelType);
@@ -172,7 +171,6 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "Modulation", detail.Modulation);
           AddAttribute(nodeTune, "Name", detail.Name);
           AddAttribute(nodeTune, "NetworkId", detail.NetworkId);
-          AddAttribute(nodeTune, "PcrPid", detail.PcrPid);
           AddAttribute(nodeTune, "PmtPid", detail.PmtPid);
           AddAttribute(nodeTune, "Polarisation", detail.Polarisation);
           AddAttribute(nodeTune, "Provider", detail.Provider);
@@ -181,7 +179,6 @@ namespace SetupTv.Sections
           AddAttribute(nodeTune, "Symbolrate", detail.Symbolrate);
           AddAttribute(nodeTune, "TransportId", detail.TransportId);
           AddAttribute(nodeTune, "TuningSource", detail.TuningSource);
-          AddAttribute(nodeTune, "VideoPid", detail.VideoPid);
           AddAttribute(nodeTune, "VideoSource", detail.VideoSource);
           AddAttribute(nodeTune, "AudioSource", detail.AudioSource);
           AddAttribute(nodeTune, "IsVCRSignal", detail.IsVCRSignal);
@@ -434,7 +431,6 @@ namespace SetupTv.Sections
                 int modulation = Int32.Parse(nodeTune.Attributes["Modulation"].Value);
                 name = nodeTune.Attributes["Name"].Value;
                 int networkId = Int32.Parse(nodeTune.Attributes["NetworkId"].Value);
-                int pcrPid = Int32.Parse(nodeTune.Attributes["PcrPid"].Value);
                 int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
                 int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);
                 string provider = GetNodeAttribute(nodeTune, "Provider", "");
@@ -483,13 +479,10 @@ namespace SetupTv.Sections
                     atscChannel.IsTv = isTv;
                     atscChannel.Name = name;
                     atscChannel.NetworkId = networkId;
-                    atscChannel.PcrPid = pcrPid;
                     atscChannel.PmtPid = pmtPid;
                     atscChannel.Provider = provider;
                     atscChannel.ServiceId = serviceId;
                     atscChannel.TransportId = transportId;
-                    atscChannel.AudioPid = audioPid;
-                    atscChannel.VideoPid = videoPid;
                     atscChannel.ModulationType = (ModulationType)modulation;
                     layer.AddTuningDetails(dbChannel, atscChannel);
                     Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
@@ -504,7 +497,6 @@ namespace SetupTv.Sections
                     dvbcChannel.IsTv = isTv;
                     dvbcChannel.Name = name;
                     dvbcChannel.NetworkId = networkId;
-                    dvbcChannel.PcrPid = pcrPid;
                     dvbcChannel.PmtPid = pmtPid;
                     dvbcChannel.Provider = provider;
                     dvbcChannel.ServiceId = serviceId;
@@ -525,7 +517,6 @@ namespace SetupTv.Sections
                     dvbsChannel.IsTv = isTv;
                     dvbsChannel.Name = name;
                     dvbsChannel.NetworkId = networkId;
-                    dvbsChannel.PcrPid = pcrPid;
                     dvbsChannel.PmtPid = pmtPid;
                     dvbsChannel.Provider = provider;
                     dvbsChannel.ServiceId = serviceId;
@@ -538,8 +529,6 @@ namespace SetupTv.Sections
                     dvbsChannel.Pilot = (Pilot)pilot;
                     dvbsChannel.Rolloff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;
-                    dvbsChannel.VideoPid = videoPid;
-                    dvbsChannel.AudioPid = audioPid;
                     layer.AddTuningDetails(dbChannel, dvbsChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
                     break;
@@ -552,13 +541,10 @@ namespace SetupTv.Sections
                     dvbtChannel.IsTv = isTv;
                     dvbtChannel.Name = name;
                     dvbtChannel.NetworkId = networkId;
-                    dvbtChannel.PcrPid = pcrPid;
                     dvbtChannel.PmtPid = pmtPid;
                     dvbtChannel.Provider = provider;
                     dvbtChannel.ServiceId = serviceId;
                     dvbtChannel.TransportId = transportId;
-                    dvbtChannel.VideoPid = videoPid;
-                    dvbtChannel.AudioPid = audioPid;
                     dvbtChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbtChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
@@ -568,7 +554,6 @@ namespace SetupTv.Sections
                     break;
                   case 7: //DVBIPChannel
                     DVBIPChannel dvbipChannel = new DVBIPChannel();
-                    dvbipChannel.AudioPid = audioPid;
                     dvbipChannel.FreeToAir = fta;
                     dvbipChannel.Frequency = frequency;
                     dvbipChannel.IsRadio = isRadio;
@@ -576,13 +561,11 @@ namespace SetupTv.Sections
                     dvbipChannel.LogicalChannelNumber = channelNumber;
                     dvbipChannel.Name = name;
                     dvbipChannel.NetworkId = networkId;
-                    dvbipChannel.PcrPid = pcrPid;
                     dvbipChannel.PmtPid = pmtPid;
                     dvbipChannel.Provider = provider;
                     dvbipChannel.ServiceId = serviceId;
                     dvbipChannel.TransportId = transportId;
                     dvbipChannel.Url = url;
-                    dvbipChannel.VideoPid = videoPid;
                     layer.AddTuningDetails(dbChannel, dvbipChannel);
                     Log.Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
                     break;

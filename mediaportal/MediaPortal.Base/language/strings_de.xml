@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -45,8 +45,8 @@
     <String id="69">Lade Skin ({0})...</String>
     <String id="70">Lade Anzeigeplugins...</String>
     <String id="71">Initialisiere Fenstermanager...</String>
-    <String id="100">Ansicht: Symbole klein</String>
-    <String id="101">Ansicht: Liste</String>
+    <String id="100">Layout: Symbole klein</String>
+    <String id="101">Layout: Liste</String>
     <String id="102">Neue Dateien suchen / hinzufügen</String>
     <String id="103">Sortiere: Name</String>
     <String id="104">Sortiere: Datum</String>
@@ -359,7 +359,7 @@
     <String id="414">Kein Kommentar zum Album vorhanden!</String>
     <String id="415">Lade Vorschau...</String>
     <String id="416">Nicht verfügbar</String>
-    <String id="417">Ansicht: Symbole groß</String>
+    <String id="417">Layout: Symbole groß</String>
     <String id="418" prefix="Meine ">Videos/Genres</String>
     <String id="419" prefix="Meine ">Videos/Schauspieler</String>
     <String id="420" prefix="Meine ">Videos/Jahr</String>
@@ -399,7 +399,7 @@
     <String id="454">Reihe 4:</String>
     <String id="455">Reihen:</String>
     <String id="456">Modus:</String>
-    <String id="457">Anordnung ändern</String>
+    <String id="457">Ansicht ändern</String>
     <String id="458">B/Markierung</String>
     <String id="459">Untertitel</String>
     <String id="460">Sprache/Kanal</String>
@@ -463,7 +463,7 @@
     <String id="519">Untertitel aus</String>
     <String id="527">Sortiere: Gesehen</String>
     <String id="528">Album Interpret</String>
-    <String id="529">Ansicht: Cover-Liste</String>
+    <String id="529">Layout: Cover-Liste</String>
     <String id="530">Foto-CD eingelegt! Öffnen?</String>
     <String id="531">Film-CD eingelegt! Öffnen?</String>
     <String id="532">Musik-CD eingelegt! Öffnen?</String>
@@ -631,11 +631,11 @@
     <String id="726">Titel</String>
     <String id="727">Live-TV im Hintergrund</String>
     <String id="728">Start nicht möglich</String>
-    <String id="729">Stellen sie sicher, dass sie VMR9 benutzen und etwas abgespielt wird</String>
+    <String id="729">Video abspielen oder TV einschalten</String>
     <String id="730">Diese Sendung wird derzeit aufgenommen.</String>
     <String id="731">Beim Löschen wird die Aufnahme beendet!</String>
     <String id="732">Sicher?</String>
-    <String id="733">Ansicht: Cover</String>
+    <String id="733">Layout: Cover</String>
     <String id="734">Bild</String>
     <String id="735">Drehen 90°</String>
     <String id="736">Keine Programminformationen verfügbar</String>

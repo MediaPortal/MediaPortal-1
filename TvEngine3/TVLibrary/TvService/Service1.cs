@@ -125,10 +125,13 @@ namespace TvService
         ti.Uninstall(null);
         return;
       }
+      // When using /DEBUG switch (in visual studio) the TvService is not run as a service
+      // Make sure the real TvService is disabled before debugging with /DEBUG
       if (opt != null && opt.ToUpperInvariant() == "/DEBUG")
       {
         Service1 s = new Service1();
-        s.DoStart(null);       
+        s.DoStart(new string[] {"/DEBUG"});
+        do { Thread.Sleep(100); } while (true);
       }
 
       // More than one user Service may run within the same process. To add
@@ -159,8 +162,10 @@ namespace TvService
     {
       if (_tvServiceThread == null)
       {
-        RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
-
+        if (!(args != null && args.Length > 0 && args[0] == "/DEBUG"))
+        {
+          RequestAdditionalTime(60000); // starting database can be slow so increase default timeout        
+        }
         TvServiceThread tvServiceThread = new TvServiceThread();
         ThreadStart tvServiceThreadStart = new ThreadStart(tvServiceThread.OnStart);
         _tvServiceThread = new Thread(tvServiceThreadStart);
@@ -817,7 +822,6 @@ namespace TvService
           _powerEventThread.Name = "PowerEventThread";
           _powerEventThread.IsBackground = true;
           _powerEventThread.Start();
-          //currentProcess.PriorityClass = ProcessPriorityClass.High;
           _controller = new TVController();
           _controller.Init();
           StartPlugins();
@@ -838,7 +842,7 @@ namespace TvService
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       
-        //Log.Info("TvService Thread aborted : {0}", ex);
+        Log.Error("TvService OnStart failed : {0}", ex.ToString());
         _started = true; // otherwise the onstop code will not complete.
         OnStop();
       }

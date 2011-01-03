@@ -57,13 +57,10 @@ namespace TvDatabase
     [TableColumn("bandwidth", NotNull = true)] private int bandwidth;
     [TableColumn("majorChannel", NotNull = true)] private int majorChannel;
     [TableColumn("minorChannel", NotNull = true)] private int minorChannel;
-    [TableColumn("pcrPid", NotNull = true)] private int pcrPid;
     [TableColumn("videoSource", NotNull = true)] private int videoSource;
     [TableColumn("audioSource", NotNull = true)] private int audioSource;
     [TableColumn("isVCRSignal", NotNull = true)] private bool isVCRSignal;
     [TableColumn("tuningSource", NotNull = true)] private int tuningSource;
-    [TableColumn("videoPid", NotNull = true)] private int videoPid;
-    [TableColumn("audioPid", NotNull = true)] private int audioPid;
     [TableColumn("band", NotNull = true)] private int band;
     [TableColumn("satIndex", NotNull = true)] private int satIndex;
     [TableColumn("innerFecRate", NotNull = true)] private int innerFecRate;
@@ -82,8 +79,8 @@ namespace TvDatabase
     public TuningDetail(int idChannel, string name, string provider, int channelType, int channelNumber, int frequency,
                         int countryId, bool isRadio, bool isTv, int networkId, int transportId, int serviceId,
                         int pmtPid, bool freeToAir, int modulation, int polarisation, int symbolrate, int diseqc,
-                        int switchingFrequency, int bandwidth, int majorChannel, int minorChannel, int pcrPid,
-                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource, int videoPid, int audioPid,
+                        int switchingFrequency, int bandwidth, int majorChannel, int minorChannel,
+                        int videoSource, int audioSource, bool isVCRSignal, int tuningSource,
                         int band,
                         int satIndex, int innerFecRate, int pilot, int rollOff, string url, int bitrate)
     {
@@ -110,13 +107,10 @@ namespace TvDatabase
       this.bandwidth = bandwidth;
       this.majorChannel = majorChannel;
       this.minorChannel = minorChannel;
-      this.pcrPid = pcrPid;
       this.videoSource = videoSource;
       this.audioSource = audioSource;
       this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
-      this.audioPid = audioPid;
-      this.videoPid = videoPid;
       this.band = band;
       this.satIndex = satIndex;
       this.innerFecRate = innerFecRate;
@@ -161,13 +155,10 @@ namespace TvDatabase
       this.bandwidth = bandwidth;
       this.majorChannel = majorChannel;
       this.minorChannel = minorChannel;
-      this.pcrPid = pcrPid;
       this.videoSource = videoSource;
       this.audioSource = audioSource;
       this.isVCRSignal = isVCRSignal;
       this.tuningSource = tuningSource;
-      this.audioPid = audioPid;
-      this.videoPid = videoPid;
       this.band = band;
       this.satIndex = satIndex;
       this.innerFecRate = innerFecRate;
@@ -510,19 +501,6 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Property relating to database column pcrPid
-    /// </summary>
-    public int PcrPid
-    {
-      get { return pcrPid; }
-      set
-      {
-        isChanged |= pcrPid != value;
-        pcrPid = value;
-      }
-    }
-
-    /// <summary>
     /// Property relating to database column videoSource
     /// </summary>
     public int VideoSource
@@ -574,31 +552,6 @@ namespace TvDatabase
       }
     }
 
-    /// <summary>
-    /// Property relating to database column videoPid
-    /// </summary>
-    public int VideoPid
-    {
-      get { return videoPid; }
-      set
-      {
-        isChanged |= videoPid != value;
-        videoPid = value;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column audioPid
-    /// </summary>
-    public int AudioPid
-    {
-      get { return audioPid; }
-      set
-      {
-        isChanged |= audioPid != value;
-        audioPid = value;
-      }
-    }
 
     /// <summary>
     /// Property relating to database column band

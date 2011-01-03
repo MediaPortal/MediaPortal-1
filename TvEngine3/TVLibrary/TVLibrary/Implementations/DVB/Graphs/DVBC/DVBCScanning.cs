@@ -104,7 +104,6 @@ namespace TvLibrary.Implementations.DVB
       dvbcChannel.ServiceId = info.serviceID;
       dvbcChannel.TransportId = info.transportStreamID;
       dvbcChannel.PmtPid = info.network_pmt_PID;
-      dvbcChannel.PcrPid = info.pcr_pid;
       dvbcChannel.FreeToAir = !info.scrambled;
       Log.Log.Write("Found: {0}", dvbcChannel);
       return dvbcChannel;

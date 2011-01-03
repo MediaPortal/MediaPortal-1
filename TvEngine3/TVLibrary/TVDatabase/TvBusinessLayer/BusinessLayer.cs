@@ -638,13 +638,10 @@ namespace TvDatabase
             atscChannel.IsTv = detail.IsTv;
             atscChannel.Name = detail.Name;
             atscChannel.NetworkId = detail.NetworkId;
-            atscChannel.PcrPid = detail.PcrPid;
             atscChannel.PmtPid = detail.PmtPid;
             atscChannel.Provider = detail.Provider;
             atscChannel.ServiceId = detail.ServiceId;
             atscChannel.TransportId = detail.TransportId;
-            atscChannel.VideoPid = detail.VideoPid;
-            atscChannel.AudioPid = detail.AudioPid;
             atscChannel.ModulationType = (ModulationType)detail.Modulation;
             return atscChannel;
           case 2: //DVBCChannel
@@ -656,7 +653,6 @@ namespace TvDatabase
             dvbcChannel.IsTv = detail.IsTv;
             dvbcChannel.Name = detail.Name;
             dvbcChannel.NetworkId = detail.NetworkId;
-            dvbcChannel.PcrPid = detail.PcrPid;
             dvbcChannel.PmtPid = detail.PmtPid;
             dvbcChannel.Provider = detail.Provider;
             dvbcChannel.ServiceId = detail.ServiceId;
@@ -675,7 +671,6 @@ namespace TvDatabase
             dvbsChannel.IsTv = detail.IsTv;
             dvbsChannel.Name = detail.Name;
             dvbsChannel.NetworkId = detail.NetworkId;
-            dvbsChannel.PcrPid = detail.PcrPid;
             dvbsChannel.PmtPid = detail.PmtPid;
             dvbsChannel.Provider = detail.Provider;
             dvbsChannel.ServiceId = detail.ServiceId;
@@ -688,8 +683,6 @@ namespace TvDatabase
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.Rolloff = (RollOff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
-            dvbsChannel.VideoPid = detail.VideoPid;
-            dvbsChannel.AudioPid = detail.AudioPid;
             return dvbsChannel;
           case 4: //DVBTChannel
             DVBTChannel dvbtChannel = new DVBTChannel();
@@ -700,13 +693,10 @@ namespace TvDatabase
             dvbtChannel.IsTv = detail.IsTv;
             dvbtChannel.Name = detail.Name;
             dvbtChannel.NetworkId = detail.NetworkId;
-            dvbtChannel.PcrPid = detail.PcrPid;
             dvbtChannel.PmtPid = detail.PmtPid;
             dvbtChannel.Provider = detail.Provider;
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
-            dvbtChannel.VideoPid = detail.VideoPid;
-            dvbtChannel.AudioPid = detail.AudioPid;
             dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
             return dvbtChannel;
           case 7: //DVBIPChannel
@@ -716,13 +706,10 @@ namespace TvDatabase
             dvbipChannel.IsTv = detail.IsTv;
             dvbipChannel.Name = detail.Name;
             dvbipChannel.NetworkId = detail.NetworkId;
-            dvbipChannel.PcrPid = detail.PcrPid;
             dvbipChannel.PmtPid = detail.PmtPid;
             dvbipChannel.Provider = detail.Provider;
             dvbipChannel.ServiceId = detail.ServiceId;
             dvbipChannel.TransportId = detail.TransportId;
-            dvbipChannel.VideoPid = detail.VideoPid;
-            dvbipChannel.AudioPid = detail.AudioPid;
             dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbipChannel.Url = detail.Url;
             return dvbipChannel;
@@ -765,14 +752,11 @@ namespace TvDatabase
             atscChannel.IsTv = detail.IsTv;
             atscChannel.Name = channel.Name; //detail.Name;
             atscChannel.NetworkId = detail.NetworkId;
-            atscChannel.PcrPid = detail.PcrPid;
             atscChannel.PmtPid = detail.PmtPid;
             atscChannel.Provider = detail.Provider;
             atscChannel.ServiceId = detail.ServiceId;
             //atscChannel.SymbolRate = detail.Symbolrate;
             atscChannel.TransportId = detail.TransportId;
-            atscChannel.AudioPid = detail.AudioPid;
-            atscChannel.VideoPid = detail.VideoPid;
             atscChannel.ModulationType = (ModulationType)detail.Modulation;
             tvChannels.Add(atscChannel);
             break;
@@ -785,7 +769,6 @@ namespace TvDatabase
             dvbcChannel.IsTv = detail.IsTv;
             dvbcChannel.Name = channel.Name; //detail.Name;
             dvbcChannel.NetworkId = detail.NetworkId;
-            dvbcChannel.PcrPid = detail.PcrPid;
             dvbcChannel.PmtPid = detail.PmtPid;
             dvbcChannel.Provider = detail.Provider;
             dvbcChannel.ServiceId = detail.ServiceId;
@@ -805,7 +788,6 @@ namespace TvDatabase
             dvbsChannel.IsTv = detail.IsTv;
             dvbsChannel.Name = channel.Name; //detail.Name;
             dvbsChannel.NetworkId = detail.NetworkId;
-            dvbsChannel.PcrPid = detail.PcrPid;
             dvbsChannel.PmtPid = detail.PmtPid;
             dvbsChannel.Provider = detail.Provider;
             dvbsChannel.ServiceId = detail.ServiceId;
@@ -818,8 +800,6 @@ namespace TvDatabase
             dvbsChannel.Pilot = (Pilot)detail.Pilot;
             dvbsChannel.Rolloff = (RollOff)detail.RollOff;
             dvbsChannel.LogicalChannelNumber = detail.ChannelNumber;
-            dvbsChannel.VideoPid = detail.VideoPid;
-            dvbsChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbsChannel);
             break;
           case 4: //DVBTChannel
@@ -831,14 +811,11 @@ namespace TvDatabase
             dvbtChannel.IsTv = detail.IsTv;
             dvbtChannel.Name = channel.Name; //detail.Name;
             dvbtChannel.NetworkId = detail.NetworkId;
-            dvbtChannel.PcrPid = detail.PcrPid;
             dvbtChannel.PmtPid = detail.PmtPid;
             dvbtChannel.Provider = detail.Provider;
             dvbtChannel.ServiceId = detail.ServiceId;
             dvbtChannel.TransportId = detail.TransportId;
             dvbtChannel.LogicalChannelNumber = detail.ChannelNumber;
-            dvbtChannel.VideoPid = detail.VideoPid;
-            dvbtChannel.AudioPid = detail.AudioPid;
             tvChannels.Add(dvbtChannel);
             break;
           case 7: //DVBIPChannel
@@ -848,13 +825,10 @@ namespace TvDatabase
             dvbipChannel.IsTv = detail.IsTv;
             dvbipChannel.Name = detail.Name;
             dvbipChannel.NetworkId = detail.NetworkId;
-            dvbipChannel.PcrPid = detail.PcrPid;
             dvbipChannel.PmtPid = detail.PmtPid;
             dvbipChannel.Provider = detail.Provider;
             dvbipChannel.ServiceId = detail.ServiceId;
             dvbipChannel.TransportId = detail.TransportId;
-            dvbipChannel.VideoPid = detail.VideoPid;
-            dvbipChannel.AudioPid = detail.AudioPid;
             dvbipChannel.LogicalChannelNumber = detail.ChannelNumber;
             dvbipChannel.Url = detail.Url;
             tvChannels.Add(dvbipChannel);
@@ -935,7 +909,6 @@ namespace TvDatabase
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
-      int pcrPid = -1;
       int pmtPid = -1;
       int networkId = -1;
       int serviceId = -1;
@@ -944,8 +917,6 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int videoPid = -1;
-      int audioPid = -1;
       int band = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
@@ -1026,7 +997,6 @@ namespace TvDatabase
       DVBBaseChannel dvbChannel = tvChannel as DVBBaseChannel;
       if (dvbChannel != null)
       {
-        pcrPid = dvbChannel.PcrPid;
         pmtPid = dvbChannel.PmtPid;
         networkId = dvbChannel.NetworkId;
         serviceId = dvbChannel.ServiceId;
@@ -1037,16 +1007,14 @@ namespace TvDatabase
         isRadio = dvbChannel.IsRadio;
         isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
-        videoPid = dvbChannel.VideoPid;
-        audioPid = dvbChannel.AudioPid;
       }
 
       TuningDetail detail = new TuningDetail(channel.IdChannel, channelName, provider,
                                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                                              networkId, transportId, serviceId, pmtPid, freeToAir,
                                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, videoPid, audioPid, band,
+                                             bandwidth, majorChannel, minorChannel, videoInputType,
+                                             audioInputType, isVCRSignal, tunerSource, band,
                                              satIndex,
                                              innerFecRate, pilot, rollOff, url, 0);
       detail.Persist();
@@ -1072,7 +1040,6 @@ namespace TvDatabase
       int diseqc = 0;
       int bandwidth = 8;
       bool freeToAir = true;
-      int pcrPid = -1;
       int pmtPid = -1;
       int networkId = -1;
       int serviceId = -1;
@@ -1081,8 +1048,6 @@ namespace TvDatabase
       int majorChannel = -1;
       string provider = "";
       int channelType = 0;
-      int videoPid = -1;
-      int audioPid = -1;
       int band = 0;
       int satIndex = -1;
       int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
@@ -1162,7 +1127,6 @@ namespace TvDatabase
       DVBBaseChannel dvbChannel = tvChannel as DVBBaseChannel;
       if (dvbChannel != null)
       {
-        pcrPid = dvbChannel.PcrPid;
         pmtPid = dvbChannel.PmtPid;
         networkId = dvbChannel.NetworkId;
         serviceId = dvbChannel.ServiceId;
@@ -1173,8 +1137,6 @@ namespace TvDatabase
         isRadio = dvbChannel.IsRadio;
         isTv = dvbChannel.IsTv;
         freeToAir = dvbChannel.FreeToAir;
-        videoPid = dvbChannel.VideoPid;
-        audioPid = dvbChannel.AudioPid;
       }
 
       detail.Name = channelName;
@@ -1198,13 +1160,10 @@ namespace TvDatabase
       detail.Bandwidth = bandwidth;
       detail.MajorChannel = majorChannel;
       detail.MinorChannel = minorChannel;
-      detail.PcrPid = pcrPid;
       detail.VideoSource = videoInputType;
       detail.AudioSource = audioInputType;
       detail.IsVCRSignal = isVCRSignal;
       detail.TuningSource = tunerSource;
-      detail.VideoPid = videoPid;
-      detail.AudioPid = audioPid;
       detail.Band = band;
       detail.SatIndex = satIndex;
       detail.InnerFecRate = innerFecRate;
@@ -1234,7 +1193,6 @@ namespace TvDatabase
       const int diseqc = 0;
       const int bandwidth = 8;
       const bool freeToAir = true;
-      const int pcrPid = -1;
       const int pmtPid = -1;
       const int networkId = -1;
       const int serviceId = -1;
@@ -1243,8 +1201,6 @@ namespace TvDatabase
       const int majorChannel = -1;
       const string provider = "";
       const int channelType = 5;
-      const int videoPid = -1;
-      const int audioPid = -1;
       const int band = 0;
       const int satIndex = -1;
       const int innerFecRate = (int)BinaryConvolutionCodeRate.RateNotSet;
@@ -1258,8 +1214,8 @@ namespace TvDatabase
                                              channelType, channelNumber, (int)channelFrequency, country, isRadio, isTv,
                                              networkId, transportId, serviceId, pmtPid, freeToAir,
                                              modulation, polarisation, symbolRate, diseqc, switchFrequency,
-                                             bandwidth, majorChannel, minorChannel, pcrPid, videoInputType,
-                                             audioInputType, isVCRSignal, tunerSource, videoPid, audioPid, band,
+                                             bandwidth, majorChannel, minorChannel, videoInputType,
+                                             audioInputType, isVCRSignal, tunerSource, band,
                                              satIndex,
                                              innerFecRate, pilot, rollOff, url, bitrate);
       detail.Persist();

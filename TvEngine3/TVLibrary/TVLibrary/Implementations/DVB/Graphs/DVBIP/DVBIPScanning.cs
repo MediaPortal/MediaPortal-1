@@ -102,10 +102,7 @@ namespace TvLibrary.Implementations.DVB
       dvbipChannel.ServiceId = info.serviceID;
       dvbipChannel.TransportId = info.transportStreamID;
       dvbipChannel.PmtPid = info.network_pmt_PID;
-      dvbipChannel.PcrPid = info.pcr_pid;
       dvbipChannel.FreeToAir = !info.scrambled;
-      dvbipChannel.VideoPid = info.videoPid;
-      dvbipChannel.AudioPid = info.audioPid;
       Log.Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
     }
