@@ -2575,7 +2575,10 @@ namespace TvService
 
       string intialTimeshiftingFilename = "";
 
-      VirtualCard initialCard = GetVirtualCard(user);
+      VirtualCard initialCard = null;
+
+      if (user.CardId != -1)
+        initialCard = GetVirtualCard(user);
       
       if (initialCard != null && initialCard.TimeShiftFileName != null)
       {
