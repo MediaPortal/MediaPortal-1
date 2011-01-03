@@ -394,6 +394,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScalePosToScreenResolution(ref _textOffsetX, ref _textOffsetY);
     }
 
+    /// <summary>
+    /// Gets and sets whether or not the control has focus.
+    /// </summary>
     public override bool Focus
     {
       get { return IsFocused; }
@@ -505,7 +508,6 @@ namespace MediaPortal.GUI.Library
       int labelWidth = _width - (2 * _textOffsetX);
       if (labelWidth <= 0)
       {
-        base.Render(timePassed);
         return;
       }
       _labelControl.Width = labelWidth;
@@ -670,6 +672,9 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SetPosition(_positionX, _positionY);
     }
 
+    /// <summary>
+    /// Refreshes the control.
+    /// </summary>
     public void Refresh()
     {
       Update();
@@ -830,6 +835,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Adds a new menu entry composed of a label and integer value.
+    /// </summary>
+    /// <param name="label"></param>
+    /// <param name="value"></param>
     public void AddItem(string label, int value)
     {
       switch (_buttonMode)
@@ -849,6 +859,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Adds a range of integer value menu entries.
+    /// </summary>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
     public void AddItemRange(int start, int end)
     {
       switch (_buttonMode)
@@ -868,6 +883,10 @@ namespace MediaPortal.GUI.Library
       _isRangeSet = true;
     }
 
+    /// <summary>
+    /// Returns the number of menu entries.
+    /// </summary>
+    /// <returns></returns>
     public int GetItemCount()
     {
       int returnVal = 0;
@@ -883,6 +902,9 @@ namespace MediaPortal.GUI.Library
       return returnVal;
     }
 
+    /// <summary>
+    /// Remove all of the menu entries.
+    /// </summary>
     public void ClearMenu()
     {
       switch (_buttonMode)
@@ -899,6 +921,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Gets and sets the label of the selected menu item.
+    /// </summary>
     public string SelectedItemLabel
     {
       get
@@ -924,6 +949,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Gets and sets the value of the selected menu item.
+    /// </summary>
     public int SelectedItemValue
     {
       get
@@ -949,6 +977,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Gets and sets the selected menu item by menu entry index.
+    /// </summary>
     public override int SelectedItem
     {
       get
@@ -991,6 +1022,40 @@ namespace MediaPortal.GUI.Library
             SpinValue = value;
             break;
         }
+      }
+    }
+
+    private int FindItemByValue(int value)
+    {
+      int item = 0;
+
+      // Find the menu item with the specified value.
+      // This algorithm chooses the first match.  It's a programming error to have to menu entries with the same value.
+      for (int i = 0; i < _listMenuValues.Count; i++)
+      {
+        if ((int)_listMenuValues[i] == value)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
+    /// <summary>
+    /// Set the selected menu item entry by finding the entry 
+    /// </summary>
+    /// <param name="value"></param>
+    public void SetSelectedItemByValue(int value)
+    {
+      switch (_buttonMode)
+      {
+        case ButtonMode.BUTTON_MODE_DIALOG_LIST:
+          _listSelected = FindItemByValue(value);
+          break;
+        case ButtonMode.BUTTON_MODE_SPIN_LIST:
+          SpinValue = value;
+          break;
       }
     }
 
@@ -1085,18 +1150,27 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the text horizontal alignment in the button.
+    /// </summary>
     public Alignment TextAlignment
     {
       get { return _textAlignment; }
       set { _textAlignment = value; }
     }
 
+    /// <summary>
+    /// Set the text vertical alignment in the button.
+    /// </summary>
     public VAlignment TextVAlignment
     {
       get { return _textVAlignment; }
       set { _textVAlignment = value; }
     }
 
+    /// <summary>
+    /// Set the color to use when the control is dimmed.
+    /// </summary>
     public override int DimColor
     {
       get { return base.DimColor; }
@@ -1122,6 +1196,17 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the border for the focused texture.
+    /// </summary>
+    /// <param name="border"></param>
+    /// <param name="position"></param>
+    /// <param name="repeat"></param>
+    /// <param name="rotate"></param>
+    /// <param name="texture"></param>
+    /// <param name="colorKey"></param>
+    /// <param name="hasCorners"></param>
+    /// <param name="cornerRotate"></param>
     public void SetBorderTF(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
       string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
@@ -1137,6 +1222,17 @@ namespace MediaPortal.GUI.Library
         _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
     }
 
+    /// <summary>
+    /// Set the border for the non-focused texture.
+    /// </summary>
+    /// <param name="border"></param>
+    /// <param name="position"></param>
+    /// <param name="repeat"></param>
+    /// <param name="rotate"></param>
+    /// <param name="texture"></param>
+    /// <param name="colorKey"></param>
+    /// <param name="hasCorners"></param>
+    /// <param name="cornerRotate"></param>
     public void SetBorderTNF(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
       string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
@@ -1152,6 +1248,17 @@ namespace MediaPortal.GUI.Library
         _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
     }
 
+    /// <summary>
+    /// Set the border for the hover image.
+    /// </summary>
+    /// <param name="border"></param>
+    /// <param name="position"></param>
+    /// <param name="repeat"></param>
+    /// <param name="rotate"></param>
+    /// <param name="texture"></param>
+    /// <param name="colorKey"></param>
+    /// <param name="hasCorners"></param>
+    /// <param name="cornerRotate"></param>
     public void SetBorderH(string border, GUIImage.BorderPosition position, bool repeat, bool rotate,
       string texture, long colorKey, bool hasCorners, bool cornerRotate)
     {
@@ -1167,25 +1274,38 @@ namespace MediaPortal.GUI.Library
         _borderTextureFileNameH, _borderColorKeyH, _borderHasCornersH, _borderCornerTextureRotateH);
     }
 
+    /// <summary>
+    /// Gets and sets the focused texture tile fill setting.
+    /// </summary>
     public bool TileFillTF
     {
       get { return _imageFocused.TileFill; }
       set { _imageFocused.TileFill = value; }
     }
 
+    /// <summary>
+    /// Gets and sets the non-focused texture tile fill setting.
+    /// </summary>
     public bool TileFillTNF
     {
       get { return _imageNonFocused.TileFill; }
       set { _imageNonFocused.TileFill = value; }
     }
 
+    /// <summary>
+    /// Gets and sets the hover image tile fill setting.
+    /// </summary>
     public bool TileFillH
     {
       get { return _hoverImage.TileFill; }
       set { _hoverImage.TileFill = value; }
     }
 
-    public void SetFocusedTextureMask(string mask)
+    /// <summary>
+    /// Sets the texture mask for the focused texture.
+    /// </summary>
+    /// <param name="mask"></param>
+    public void SetTextureMaskTF(string mask)
     {
       if (null != _imageFocused)
       {
@@ -1194,7 +1314,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public void SetNonFocusedTextureMask(string mask)
+    /// <summary>
+    /// Sets the texture mask for the non-focused texture.
+    /// </summary>
+    /// <param name="mask"></param>
+    public void SetTextureMaskNF(string mask)
     {
       if (null != _imageNonFocused)
       {
@@ -1203,7 +1327,11 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public void SetHoverTextureMask(string mask)
+    /// <summary>
+    /// Sets the texture mask for the hover image.
+    /// </summary>
+    /// <param name="mask"></param>
+    public void SetTextureMaskH(string mask)
     {
       if (null != _hoverImage)
       {
@@ -1272,18 +1400,27 @@ namespace MediaPortal.GUI.Library
       return _spinControl.GetMinimum();
     }
 
+    /// <summary>
+    /// Offsets the default X position of the spin control in the button.
+    /// </summary>
     public int SpinOffsetX
     {
       get { return _spinOffsetX; }
       set { _spinOffsetX = value; }
     }
 
+    /// <summary>
+    /// Offsets the default Y position of the spin control in the button.
+    /// </summary>
     public int SpinOffsetY
     {
       get { return _spinOffsetY; }
       set { _spinOffsetY = value; }
     }
 
+    /// <summary>
+    /// The vertical alignment of the spin control in the button.
+    /// </summary>
     public VAlignment SpinVAlignment
     {
       get { return _spinVAlignment; }
