@@ -103,32 +103,32 @@ namespace MediaPortal.GUI.Settings
         // Respond to the correct control.  The value is retrived directly from the control by the called handler.
         if (message.SenderControlId == btnAddLocation.GetID)
         {
-          OnAddLocation();
+          AddLocation();
           msgHandled = true;
         }
         else if (message.SenderControlId == btnRemoveLocation.GetID)
         {
-          OnRemoveLocation();
+          RemoveLocation();
           msgHandled = true;
         }
         else if (message.TargetControlId == btnDefaultLocation.GetID)
         {
-          OnDefaultLocation();
+          SetDefaultLocation();
           msgHandled = true;
         }
         else if (message.TargetControlId == btnTemperatureSelect.GetID)
         {
-          OnTemperatureSelect();
+          SetTemperatureSelect();
           msgHandled = true;
         }
         else if (message.TargetControlId == btnWindSpeedSelect.GetID)
         {
-          OnWindSpeedSelect();
+          SetWindSpeedSelect();
           msgHandled = true;
         }
         else if (message.TargetControlId == btnRefreshInterval.GetID)
         {
-          OnRefreshInterval();
+          SetRefreshInterval();
           msgHandled = true;
         }
       }
@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Settings
 
     #region WeatherSettings
 
-    private void OnAddLocation()
+    private void AddLocation()
     {
       string city = "";
       if (!GetKeyboard(ref city) || String.IsNullOrEmpty(city))
@@ -189,7 +189,7 @@ namespace MediaPortal.GUI.Settings
             availableLocations.Add(loc);
 
             SaveLocations();
-            OnDefaultLocation(); // Reset the default location as necessary
+            SetDefaultLocation(); // Reset the default location as necessary
             InitDefaultLocation(); // Refresh default location button as necessary
           }
         }
@@ -265,7 +265,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void OnRemoveLocation()
+    private void RemoveLocation()
     {
       if (availableLocations.Count > 0)
       {
@@ -288,7 +288,7 @@ namespace MediaPortal.GUI.Settings
             LocationInfo loc = (LocationInfo)availableLocations[dialogCitySelect.SelectedLabel];
             availableLocations.Remove(loc);
             SaveLocations();
-            OnDefaultLocation(); // Reset the default location as necessary
+            SetDefaultLocation(); // Reset the default location as necessary
             InitDefaultLocation(); // Refresh default location button as necessary
           }
         }
@@ -304,7 +304,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void OnDefaultLocation()
+    private void SetDefaultLocation()
     {
       string defaultLocationCode = "";
       for (int i = 0; i < availableLocations.Count; i++)
@@ -328,7 +328,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void OnTemperatureSelect()
+    private void SetTemperatureSelect()
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
@@ -342,7 +342,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void OnWindSpeedSelect()
+    private void SetWindSpeedSelect()
     {
       int newWindUnit = 0;
       if (btnWindSpeedSelect.SelectedItemLabel == GUILocalizeStrings.Get(561))
@@ -372,7 +372,7 @@ namespace MediaPortal.GUI.Settings
       }
     }
 
-    private void OnRefreshInterval()
+    private void SetRefreshInterval()
     {
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
