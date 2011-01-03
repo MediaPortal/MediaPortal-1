@@ -871,7 +871,7 @@ namespace MediaPortal.GUI.Pictures
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
-      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, textLine);
+      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(95) + textLine);
 
       if (null != facadeLayout)
         facadeLayout.EnableScrollLabel = method == SortMethod.Name;
