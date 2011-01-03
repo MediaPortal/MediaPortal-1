@@ -78,12 +78,6 @@ namespace MediaPortal.GUI.Video
           {
             layouts = new Layout[handler.Views.Count,50];
 
-            ArrayList viewStrings = new ArrayList();
-            viewStrings.Add("List");
-            viewStrings.Add("Icons");
-            viewStrings.Add("Big Icons");
-            viewStrings.Add("Filmstrip");
-
             for (int i = 0; i < handler.Views.Count; ++i)
             {
               for (int j = 0; j < handler.Views[i].Filters.Count; ++j)

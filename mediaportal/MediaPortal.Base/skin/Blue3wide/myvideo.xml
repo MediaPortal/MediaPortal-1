@@ -156,11 +156,15 @@
           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>Switch Layout</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>2</id>
-            <label>100</label>
+            <label>792</label>
             <onright>50</onright>
             <onup>17</onup>
+            <mode>dialoglist</mode>
+            <dialogTitle>792</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>#(string.format('{0}:', L(95)))</valuePrefixText>
           </control>
           <control>
             <description>Sort</description>

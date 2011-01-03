@@ -22,14 +22,10 @@ namespace WindowPlugins
 
     #region SkinControls
 
-    [SkinControl(50)]
-    protected GUIFacadeControl facadeLayout = null;
-    [SkinControl(2)]
-    protected GUIButtonControl btnLayouts = null;
-    [SkinControl(3)]
-    protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(5)]
-    protected GUIButtonControl btnViews = null;
+    [SkinControl(50)] protected GUIFacadeControl facadeLayout = null;
+    [SkinControl(2)] protected GUIMenuButton btnLayouts = null;
+    [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
+    [SkinControl(5)] protected GUIButtonControl btnViews = null;
 
     #endregion
 
@@ -109,19 +105,87 @@ namespace WindowPlugins
         return;
       }
       facadeLayout.CurrentLayout = CurrentLayout;
-      UpdateButtonStates();
+      PresentLayout();
+    }
+
+    public void PresentLayout()
+    {
+      GUIControl.HideControl(GetID, facadeLayout.GetID);
+      int iControl = facadeLayout.GetID;
+      GUIControl.ShowControl(GetID, iControl);
+      GUIControl.FocusControl(GetID, iControl);
+    }
+
+    protected override void OnPageLoad()
+    {
+      InitLayoutSelections();
+      base.OnPageLoad();
+    }
+
+    private void InitLayoutSelections()
+    {
+      btnLayouts.ClearMenu();
+
+      // Add the allowed layouts to choose from to the menu.
+      int totalLayouts = Enum.GetValues(typeof(GUIFacadeControl.Layout)).Length;
+      for (int i = 0; i < totalLayouts; i++)
+      {
+        string layoutName = Enum.GetName(typeof(GUIFacadeControl.Layout), i);
+        GUIFacadeControl.Layout layout = GetLayoutNumber(layoutName);
+        if (AllowLayout(layout))
+        {
+          if (!facadeLayout.IsNullLayout(layout))
+          {
+            btnLayouts.AddItem(GUIFacadeControl.GetLayoutLocalizedName(layout), (int)layout);
+          }
+        }
+      }
+
+      // Have the menu select the currently selected layout.
+      btnLayouts.SetSelectedItemByValue((int)CurrentLayout);
+    }
+
+    private void SetLayout()
+    {
+      // Set the selected layout.
+      SwitchToNextAllowedLayout(btnLayouts.SelectedItemValue);
+
+      // Update properties.
+      if (handler != null)
+      {
+        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+      }
+    }
+
+    public override bool OnMessage(GUIMessage message)
+    {
+      bool msgHandled = false;
+
+      // Depending on the mode, handle the GUI_MSG_ITEM_SELECT message from the dialog menu and
+      // the GUI_MSG_CLICKED message from the spin control.
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT ||
+          message.Message == GUIMessage.MessageType.GUI_MSG_CLICKED)
+      {
+        // Respond to the correct control.  The value is retrived directly from the control by the called handler.
+        if (message.TargetControlId == btnLayouts.GetID)
+        {
+          SetLayout();
+          SelectCurrentItem();
+
+          // Refocus on the layout button control.
+          GUIControl.FocusControl(GetID, message.TargetControlId);
+
+          msgHandled = true;
+        }
+      }
+
+      msgHandled = msgHandled | base.OnMessage(message);
+      return msgHandled;
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
-      if (control == btnLayouts)
-      {
-        OnShowLayouts();
-        SelectCurrentItem();
-        GUIControl.FocusControl(GetID, controlId);
-      }
-
       if (control == btnSortBy)
       {
         OnShowSort();
@@ -153,65 +217,6 @@ namespace WindowPlugins
       }
     }
 
-    protected virtual void OnShowLayouts()
-    {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-      {
-        return;
-      }
-      dlg.Reset();
-      dlg.SetHeading(792); // Layouts menu
-      int dlgItems = 0;
-      int totalLayouts = Enum.GetValues(typeof(GUIFacadeControl.Layout)).Length;
-      bool[] allowedLayouts = new bool[totalLayouts];
-      for (int i = 0; i < totalLayouts; i++)
-      {
-        string layoutName = Enum.GetName(typeof(GUIFacadeControl.Layout), i);
-        GUIFacadeControl.Layout layout = GetLayoutNumber(layoutName);
-        if (AllowLayout(layout))
-        {
-          if (!facadeLayout.IsNullLayout(layout))
-          {
-            dlg.Add(GUIFacadeControl.GetLayoutLocalizedName(layout));
-            dlgItems++;
-            allowedLayouts[i] = true;
-          }
-        }
-      }
-      dlg.SelectedLabel = -1;
-      for (int i = 0; i <= (int)CurrentLayout; i++)
-      {
-        if (allowedLayouts[i])
-        {
-          dlg.SelectedLabel++;
-        }
-      }
-      if (dlg.SelectedLabel >= dlgItems)
-      {
-        dlg.SelectedLabel = dlgItems;
-      }
-
-      dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1)
-      {
-        return;
-      }
-      int iSelectedLayout = dlg.SelectedLabel;
-      int allowedItemsFound = -1;
-      for (int i = 0; i < allowedLayouts.Length; i++)
-      {
-        if (allowedLayouts[i])
-        {
-          iSelectedLayout = i;
-          allowedItemsFound++;
-          if (allowedItemsFound == dlg.SelectedLabel)
-            break;
-        }
-      }
-      SwitchToNexAllowedLayout(iSelectedLayout);
-    }
-
     protected virtual void OnInfo(int iItem) {}
 
     protected virtual void OnClick(int iItem) {}
@@ -229,62 +234,17 @@ namespace WindowPlugins
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
       }
-      UpdateButtonStates();
     }
 
     protected virtual void UpdateButtonStates()
     {
-      if (handler != null)
-      {
-        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
-      }
-
-      if (facadeLayout == null)
-      {
-        return;
-      }
-
-      GUIControl.HideControl(GetID, facadeLayout.GetID);
-      int iControl = facadeLayout.GetID;
-      GUIControl.ShowControl(GetID, iControl);
-      GUIControl.FocusControl(GetID, iControl);
-
-
-      string strLine = string.Empty;
-      Layout layout = CurrentLayout;
-      switch (layout)
-      {
-        case Layout.List:
-          strLine = GUILocalizeStrings.Get(101);
-          break;
-        case Layout.SmallIcons:
-          strLine = GUILocalizeStrings.Get(100);
-          break;
-        case Layout.LargeIcons:
-          strLine = GUILocalizeStrings.Get(417);
-          break;
-        case Layout.AlbumView:
-          strLine = GUILocalizeStrings.Get(529);
-          break;
-        case Layout.Filmstrip:
-          strLine = GUILocalizeStrings.Get(733);
-          break;
-        case Layout.Playlist:
-          strLine = GUILocalizeStrings.Get(101);
-          break;
-        case Layout.CoverFlow:
-          strLine = GUILocalizeStrings.Get(791);
-          break;
-      }
-      GUIControl.SetControlLabel(GetID, btnLayouts.GetID, strLine);
-
       if (btnSortBy != null)
       {
         btnSortBy.IsAscending = CurrentSortAsc;
       }
     }
 
-    protected virtual void SwitchToNexAllowedLayout(int iSelectedLayout)
+    protected virtual void SwitchToNextAllowedLayout(int iSelectedLayout)
     {
       int totalLayouts = Enum.GetValues(typeof(Layout)).Length - 1;
       
@@ -456,6 +416,5 @@ namespace WindowPlugins
       get { return m_bSortAscending; }
       set { m_bSortAscending = value; }
     }
-
   }
 }

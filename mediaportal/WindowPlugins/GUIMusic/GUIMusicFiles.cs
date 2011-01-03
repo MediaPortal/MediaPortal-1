@@ -1091,7 +1091,7 @@ namespace MediaPortal.GUI.Music
       
       if (AllowLayout(CurrentLayout) == false)
       {
-        SwitchToNexAllowedLayout((int)CurrentLayout + 1);  //switch to next valid one
+        SwitchToNextAllowedLayout((int)CurrentLayout + 1);  //switch to next valid one
       }
       else
       {
