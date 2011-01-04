@@ -153,7 +153,7 @@
             <description>View-As button</description>
             <type>menubutton</type>
             <id>2</id>
-            <label>499</label>
+            <label>457</label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>20</ondown>

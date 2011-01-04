@@ -158,7 +158,7 @@
             <description>Switch Layout</description>
             <type>menubutton</type>
             <id>2</id>
-            <label>792</label>
+            <label>95</label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>3</ondown>
