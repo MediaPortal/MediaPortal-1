@@ -344,22 +344,32 @@ namespace MediaPortal.GUI.Music
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
+      if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.EncodeTrack(facadeLayout, GetID);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
+      if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.EncodeDisc(facadeLayout, GetID);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)
+      if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.Cancel();
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM)
+      {
+        // when adding item only add a single item
+        // so override add all setting
+        bool existingPlayAll = PlayAllOnSingleItemPlayNow;
+        PlayAllOnSingleItemPlayNow = false;
+        AddSelectionToPlaylist(false);
+        PlayAllOnSingleItemPlayNow = existingPlayAll;
         return;
       }
       base.OnAction(action);
@@ -438,6 +448,9 @@ namespace MediaPortal.GUI.Music
           break;
         case MusicSort.SortMethod.AlbumArtist:
           strLine = GUILocalizeStrings.Get(269); // Also display Artist for AlbumArtist
+          break;
+        case MusicSort.SortMethod.DiscID:
+          strLine = GUILocalizeStrings.Get(1205);
           break;
       }
 
