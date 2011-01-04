@@ -443,7 +443,7 @@ namespace MediaPortal.GUI.Music
 
       if (btnSortBy != null)
       {
-        btnSortBy.Label = GUILocalizeStrings.Get(95) + strLine;
+        btnSortBy.Label = GUILocalizeStrings.Get(96) + strLine;
       }
 
       if (null != facadeLayout)

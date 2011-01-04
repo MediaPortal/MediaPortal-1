@@ -154,25 +154,33 @@
           <posY>121</posY>
           <control>
             <description>Switch Layout</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>2</id>
-             <posX>71</posX>
+            <posX>71</posX>
             <posY>121</posY>
-            <label>100</label>
+            <label>792</label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>5</ondown>
+            <mode>dialoglist</mode>
+            <dialogTitle>792</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>95</valuePrefixText>
           </control>
           <control>
             <description>Switch View</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>5</id>
             <posX>71</posX>
             <posY>163</posY>
-            <label>457</label>
+            <label>499</label>
             <onright>50</onright>
             <onup>2</onup>
             <ondown>3</ondown>
+            <mode>dialoglist</mode>
+            <dialogTitle>499</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>97</valuePrefixText>
           </control>
           <control>
             <description>Sort</description>

@@ -155,21 +155,29 @@
       <layout>StackLayout</layout>
       <control>
         <description>Switch Layout</description>
-        <type>button</type>
+        <type>menubutton</type>
         <id>2</id>
-        <label>100</label>
+        <label>792</label>
         <onright>50</onright>
         <onup>17</onup>
         <ondown>5</ondown>
+        <mode>dialoglist</mode>
+        <dialogTitle>792</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>95</valuePrefixText>
       </control>
       <control>
         <description>Switch View</description>
-        <type>button</type>
+        <type>menubutton</type>
         <id>5</id>
-        <label>457</label>
+        <label>499</label>
         <onright>50</onright>
         <onup>2</onup>
         <ondown>3</ondown>
+        <mode>dialoglist</mode>
+        <dialogTitle>499</dialogTitle>
+        <valueTextInButton>yes</valueTextInButton>
+        <valuePrefixText>97</valuePrefixText>
       </control>
       <control>
         <description>Sort</description>

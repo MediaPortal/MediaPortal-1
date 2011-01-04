@@ -519,6 +519,9 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageLoad()
     {
+      InitViewSelections();
+      UpdateButtonStates();
+
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         virtualDirectory.Reset();
@@ -914,7 +917,7 @@ namespace MediaPortal.GUI.Pictures
           textLine = GUILocalizeStrings.Get(105);
           break;
       }
-      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(95) + textLine);
+      GUIControl.SetControlLabel(GetID, btnSortBy.GetID, GUILocalizeStrings.Get(96) + textLine);
 
       if (null != facadeLayout)
         facadeLayout.EnableScrollLabel = method == SortMethod.Name;
