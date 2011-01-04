@@ -126,7 +126,12 @@ namespace WindowPlugins
     {
       base.OnPageLoad();
       InitLayoutSelections();
-      InitViewSelections();
+
+      // Some implementations of this class may not have a views button.
+      if (btnViews != null)
+      {
+        InitViewSelections();
+      }
     }
 
     protected virtual void InitLayoutSelections()
@@ -197,7 +202,7 @@ namespace WindowPlugins
 
           msgHandled = true;
         }
-        else if (message.TargetControlId == btnViews.GetID)
+        else if (btnViews != null && message.TargetControlId == btnViews.GetID)
         {
           // Set the new view.
           SetView(btnViews.SelectedItemValue);
