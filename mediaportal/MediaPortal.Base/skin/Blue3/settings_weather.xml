@@ -54,7 +54,7 @@
         <dialogTitle>1652</dialogTitle>
         <dialogShowNumbers>no</dialogShowNumbers>
         <valueTextInButton>yes</valueTextInButton>
-        <valuePrefixText>#(string.format('{0}:', L(1652)))</valuePrefixText>
+        <valuePrefixText join=" ">#(string.format('{0}:', L(1652)))</valuePrefixText>
         <textureFocus>list_sub_focus.png</textureFocus>
         <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
         <animation effect="zoom" start="100,100" end="102,102" time="100">focus</animation>
