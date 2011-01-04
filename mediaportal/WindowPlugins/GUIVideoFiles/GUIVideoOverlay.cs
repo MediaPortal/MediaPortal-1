@@ -436,7 +436,8 @@ namespace MediaPortal.GUI.Video
 
     public override void Dispose()
     {
-      GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
+      // this is causing Mantis 3128: No video preview in MyVideos in some situations.
+      //GUIGraphicsContext.OnVideoWindowChanged -= new VideoWindowChangedHandler(OnVideoChanged);
 
       _videoRectangle.SafeDispose();
       _videoWindow.SafeDispose();
