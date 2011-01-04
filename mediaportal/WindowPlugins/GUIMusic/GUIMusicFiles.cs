@@ -1392,26 +1392,25 @@ namespace MediaPortal.GUI.Music
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
     protected override void AddSelectionToPlaylist(bool clearPlaylist)
     {
-      List<PlayListItem> pl = new List<PlayListItem>();
       GUIListItem selectedItem = facadeLayout.SelectedListItem;
-      if (selectedItem.IsFolder && IsCD(selectedItem.Path))
-      { // deal with the special case of user selecting the actual CD drive
-        // to play within shares view.   Need to ensure GetCDInfo is called
+      
+      if(IsCD(selectedItem.Path) && selectedItem.Path.Length == 2)
+      { // if user selects the drive itself from shares view for a CD
+        // then treat as CD rather than normal share folder
         PlayCD(selectedItem.Path);
+        return;
       }
-      else
-      { // selection is anything other than a CD drive 
-        // so recursively add contents
-        AddFolderToPlaylist(selectedItem, ref pl);
-        
-        // only apply further sort if a folder has been selected
-        // if user has selected a track then add in order displayed
-        if (selectedItem.IsFolder)
-        {
-          pl.Sort(new TrackComparer());
-        }
-        base.AddItemsToPlaylist(pl, clearPlaylist);
+
+      List<PlayListItem> pl = new List<PlayListItem>();      
+      AddFolderToPlaylist(selectedItem, ref pl);
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      if (selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
       }
+      base.AddItemsToPlaylist(pl, clearPlaylist);
     }
     
     private void InsertSelectionToPlaylist()
@@ -1440,10 +1439,16 @@ namespace MediaPortal.GUI.Music
       { // skip these navigation entries
         return;
       }
-      
       if(item.IsFolder)
       { // recursively add sub folders
         List<GUIListItem> subFolders = _virtualDirectory.GetDirectoryExt(item.Path);
+        
+        if (item.Label == "CD_ROOT_FOLDER")
+        { // when playing a CD we need to lookup CD details
+          // item.label should only be set to CD_ROOT_FOLDER only 
+          // when playing a CD without opening that folder so perform lookup
+          GetTagInfo(ref subFolders);
+        }
         foreach(GUIListItem subItem in subFolders)
         {
           AddFolderToPlaylist(subItem, ref pl);
@@ -1454,7 +1459,14 @@ namespace MediaPortal.GUI.Music
         if (PlayAllOnSingleItemPlayNow)
         {
           GUIListItem selectedItem = facadeLayout.SelectedListItem;
-          if (!selectedItem.IsFolder)
+          if (selectedItem == null)
+          { // this should only occur when using the play CD button
+            // on menu in which case no item might be selected
+            // if this is the case then the whole folder will have been
+            // requested to play so add the individual tracks
+            pl.Add(ConvertItemToPlaylist(item));
+          }
+          else if (!selectedItem.IsFolder)
           { // we have a track selected so add any other tracks which
             // are on showing on the facade
             for(int i = 0; i < facadeLayout.Count; i++)
@@ -1560,17 +1572,14 @@ namespace MediaPortal.GUI.Music
       // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
       if (Util.Utils.GetDriveSerial(strDrive) != string.Empty)
       {
-        List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDrive);
-        GetTagInfo(ref itemlist);
-        
         List<PlayListItem> pl = new List<PlayListItem>();
-        foreach(GUIListItem i in itemlist)
-        {
-          if (i.Label != "..")
-          {
-            pl.Add(ConvertItemToPlaylist(i));
-          }
-        }
+        GUIListItem item = new GUIListItem("CD_ROOT_FOLDER");
+        item.IsFolder = true;
+        item.Path = strDrive;
+        AddFolderToPlaylist(item, ref pl);
+          
+        pl.Sort(new TrackComparer());
+
         base.AddItemsToPlaylist(pl, true);
       }
     }
