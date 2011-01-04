@@ -124,12 +124,12 @@ namespace WindowPlugins
 
     protected override void OnPageLoad()
     {
+      base.OnPageLoad();
       InitLayoutSelections();
       InitViewSelections();
-      base.OnPageLoad();
     }
 
-    private void InitLayoutSelections()
+    protected virtual void InitLayoutSelections()
     {
       btnLayouts.ClearMenu();
 
@@ -152,7 +152,7 @@ namespace WindowPlugins
       btnLayouts.SetSelectedItemByValue((int)CurrentLayout);
     }
 
-    private void InitViewSelections()
+    protected virtual void InitViewSelections()
     {
       btnViews.ClearMenu();
 
@@ -270,7 +270,7 @@ namespace WindowPlugins
       }
     }
 
-    private void SetLayout(Layout layout)
+    protected virtual void SetLayout(Layout layout)
     {
       // Set the selected layout.
       SwitchToNextAllowedLayout(layout);
@@ -309,7 +309,7 @@ namespace WindowPlugins
       SwitchLayout();
     }
 
-    private void SetView(int selectedViewId)
+    protected virtual void SetView(int selectedViewId)
     {
       bool isVideoWindow = (this.GetID == (int)Window.WINDOW_VIDEOS || this.GetID == (int)Window.WINDOW_VIDEO_TITLE);
 

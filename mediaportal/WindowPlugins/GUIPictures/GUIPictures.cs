@@ -441,7 +441,7 @@ namespace MediaPortal.GUI.Pictures
       SaveSettings();
     }
 
-    private void InitViewSelections()
+    protected override void InitViewSelections()
     {
       btnViews.ClearMenu();
 
@@ -519,14 +519,14 @@ namespace MediaPortal.GUI.Pictures
 
     protected override void OnPageLoad()
     {
-      InitViewSelections();
-      UpdateButtonStates();
-
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         virtualDirectory.Reset();
       }
       base.OnPageLoad();
+      InitViewSelections();
+      UpdateButtonStates();
+
       GUITextureManager.CleanupThumbs();
       // LoadSettings();
       LoadFolderSettings(currentFolder);
@@ -679,11 +679,11 @@ namespace MediaPortal.GUI.Pictures
       return base.OnMessage(message);
     }
 
-    private void SetView(int selectedViewId)
+    protected override void SetView(int selectedViewId)
     {
       switch (selectedViewId)
       {
-        case 134: // Shares
+        case 0: // Shares
           if (disp != Display.Files)
           {
             disp = Display.Files;
@@ -691,7 +691,7 @@ namespace MediaPortal.GUI.Pictures
           }
           break;
 
-        case 636: // Date
+        case 1: // Date
           if (disp != Display.Date)
           {
             disp = Display.Date;

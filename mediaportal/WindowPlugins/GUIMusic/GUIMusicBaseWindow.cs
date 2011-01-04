@@ -965,11 +965,40 @@ namespace MediaPortal.GUI.Music
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(104); // date
 
-      // !!! this does not work yet, because we need to change
-      //       the order of MusicSort.SortMethod items OR
-      //       the order which the methods are added to the dialog above
-      // set the focus to currently used sort method
-      //dlg.SelectedLabel = (int)CurrentSortMethod;
+      switch (CurrentSortMethod)
+      {
+        case MusicSort.SortMethod.Name:
+          dlg.SelectedLabel = 0;  // Value is the order in which the option was added to the menu above.
+          break;
+        case MusicSort.SortMethod.Artist:
+        case MusicSort.SortMethod.AlbumArtist:
+          dlg.SelectedLabel = 1;
+          break;
+        case MusicSort.SortMethod.Album:
+          dlg.SelectedLabel = 2;
+          break;
+        case MusicSort.SortMethod.Track:
+          dlg.SelectedLabel = 3;
+          break;
+        case MusicSort.SortMethod.Title:
+          dlg.SelectedLabel = 4;
+          break;
+        case MusicSort.SortMethod.Filename:
+          dlg.SelectedLabel = 5;
+          break;
+        case MusicSort.SortMethod.Rating:
+          dlg.SelectedLabel = 6;
+          break;
+        case MusicSort.SortMethod.Duration:
+          dlg.SelectedLabel = 7;
+          break;
+        case MusicSort.SortMethod.Size:
+          dlg.SelectedLabel = 8;
+          break;
+        case MusicSort.SortMethod.Date:
+          dlg.SelectedLabel = 9;
+          break;
+      }
 
       // show dialog and wait for result
       dlg.DoModal(GetID);
