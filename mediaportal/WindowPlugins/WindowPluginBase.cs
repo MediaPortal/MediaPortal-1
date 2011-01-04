@@ -25,7 +25,7 @@ namespace WindowPlugins
     [SkinControl(50)] protected GUIFacadeControl facadeLayout = null;
     [SkinControl(2)] protected GUIMenuButton btnLayouts = null;
     [SkinControl(3)] protected GUISortButtonControl btnSortBy = null;
-    [SkinControl(5)] protected GUIButtonControl btnViews = null;
+    [SkinControl(5)] protected GUIMenuButton btnViews = null;
 
     #endregion
 
@@ -106,6 +106,12 @@ namespace WindowPlugins
       }
       facadeLayout.CurrentLayout = CurrentLayout;
       PresentLayout();
+
+      // The layout may be automatically switched via selection of a new view.
+      // Here we need to ensure that the layout menu button reflects the proper state (this is redundant when the
+      // layout button was used to change the layout).  Need to call facadeLayout to get the current layout since the
+      // CurrentLayout getter is algorithmic.
+      btnLayouts.SetSelectedItemByValue((int)facadeLayout.CurrentLayout);
     }
 
     public void PresentLayout()
@@ -119,6 +125,7 @@ namespace WindowPlugins
     protected override void OnPageLoad()
     {
       InitLayoutSelections();
+      InitViewSelections();
       base.OnPageLoad();
     }
 
@@ -145,15 +152,27 @@ namespace WindowPlugins
       btnLayouts.SetSelectedItemByValue((int)CurrentLayout);
     }
 
-    private void SetLayout()
+    private void InitViewSelections()
     {
-      // Set the selected layout.
-      SwitchToNextAllowedLayout(btnLayouts.SelectedItemValue);
+      btnViews.ClearMenu();
 
-      // Update properties.
-      if (handler != null)
+      // Add the view options to the menu.
+      int index = 0;
+      btnViews.AddItem(GUILocalizeStrings.Get(134), index++); // Shares
+
+      foreach (ViewDefinition view in handler.Views)
       {
-        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+        btnViews.AddItem(view.LocalizedName, index++);
+      }
+
+      // Have the menu select the currently selected view.
+      if (this.GetID == (int)Window.WINDOW_VIDEOS || this.GetID == (int)Window.WINDOW_MUSIC_FILES)
+      {
+        btnViews.SetSelectedItemByValue(0);
+      }
+      else if (this.GetID == (int)Window.WINDOW_VIDEO_TITLE || this.GetID == (int)Window.WINDOW_MUSIC_GENRE)
+      {
+        btnViews.SetSelectedItemByValue(handler.CurrentViewIndex + 1);
       }
     }
 
@@ -169,10 +188,22 @@ namespace WindowPlugins
         // Respond to the correct control.  The value is retrived directly from the control by the called handler.
         if (message.TargetControlId == btnLayouts.GetID)
         {
-          SetLayout();
+          // Set the new layout and select the currently selected item in the layout.
+          SetLayout((Layout)btnLayouts.SelectedItemValue);
           SelectCurrentItem();
 
           // Refocus on the layout button control.
+          GUIControl.FocusControl(GetID, message.TargetControlId);
+
+          msgHandled = true;
+        }
+        else if (message.TargetControlId == btnViews.GetID)
+        {
+          // Set the new view.
+          SetView(btnViews.SelectedItemValue);
+          SelectCurrentItem();
+
+          // Refocus on the view button control.
           GUIControl.FocusControl(GetID, message.TargetControlId);
 
           msgHandled = true;
@@ -189,11 +220,6 @@ namespace WindowPlugins
       if (control == btnSortBy)
       {
         OnShowSort();
-      }
-
-      if (control == btnViews)
-      {
-        OnShowViews();
       }
 
       if (control == facadeLayout)
@@ -244,8 +270,21 @@ namespace WindowPlugins
       }
     }
 
-    protected virtual void SwitchToNextAllowedLayout(int iSelectedLayout)
+    private void SetLayout(Layout layout)
     {
+      // Set the selected layout.
+      SwitchToNextAllowedLayout(layout);
+
+      // Update properties.
+      if (handler != null)
+      {
+        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+      }
+    }
+
+    protected virtual void SwitchToNextAllowedLayout(Layout selectedLayout)
+    {
+      int iSelectedLayout = (int)selectedLayout;
       int totalLayouts = Enum.GetValues(typeof(Layout)).Length - 1;
       
       if (iSelectedLayout > totalLayouts)
@@ -254,7 +293,6 @@ namespace WindowPlugins
       bool shouldContinue = true;
       do
       {
-        Layout selectedLayout = (Layout)iSelectedLayout;
         if (!AllowLayout(selectedLayout) || facadeLayout.IsNullLayout(selectedLayout))
         {
           iSelectedLayout++;
@@ -271,44 +309,13 @@ namespace WindowPlugins
       SwitchLayout();
     }
 
-    protected virtual void OnShowSort() {}
-
-    protected virtual void OnShowViews()
+    private void SetView(int selectedViewId)
     {
-      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
-      if (dlg == null)
-      {
-        return;
-      }
-      dlg.Reset();
-      dlg.SetHeading(499); // Views menu
-
-      dlg.AddLocalizedString(134); // Shares
-      foreach (ViewDefinition view in handler.Views)
-      {
-        dlg.Add(view.LocalizedName);
-      }
       bool isVideoWindow = (this.GetID == (int)Window.WINDOW_VIDEOS || this.GetID == (int)Window.WINDOW_VIDEO_TITLE);
-      // set the focus to currently used view
-      if (this.GetID == (int)Window.WINDOW_VIDEOS || this.GetID == (int)Window.WINDOW_MUSIC_FILES)
-      {
-        dlg.SelectedLabel = 0;
-      }
-      else if (this.GetID == (int)Window.WINDOW_VIDEO_TITLE || this.GetID == (int)Window.WINDOW_MUSIC_GENRE)
-      {
-        dlg.SelectedLabel = handler.CurrentViewIndex + 1;
-      }
 
-      // show dialog and wait for result
-      dlg.DoModal(GetID);
-      if (dlg.SelectedId == -1)
+      switch (selectedViewId)
       {
-        return;
-      }
-
-      switch (dlg.SelectedId)
-      {
-        case 134: // Shares
+        case 0: // Shares
           {
             int nNewWindow;
             if (isVideoWindow)
@@ -347,7 +354,7 @@ namespace WindowPlugins
 
         default: // a db view
           {
-            ViewDefinition selectedView = (ViewDefinition)handler.Views[dlg.SelectedLabel - 1];
+            ViewDefinition selectedView = (ViewDefinition)handler.Views[selectedViewId - 1];
             handler.CurrentView = selectedView.Name;
             StateBase.View = selectedView.Name;
             int nNewWindow;
@@ -379,6 +386,8 @@ namespace WindowPlugins
           break;
       }
     }
+
+    protected virtual void OnShowSort() {}
 
     protected virtual void LoadDirectory(string path) {}
 

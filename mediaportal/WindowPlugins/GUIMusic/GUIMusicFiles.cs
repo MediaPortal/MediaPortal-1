@@ -1091,7 +1091,10 @@ namespace MediaPortal.GUI.Music
       
       if (AllowLayout(CurrentLayout) == false)
       {
-        SwitchToNextAllowedLayout((int)CurrentLayout + 1);  //switch to next valid one
+        // Switch to next valid layout.
+        string layoutName = Enum.GetName(typeof(GUIFacadeControl.Layout), (int)CurrentLayout + 1);
+        GUIFacadeControl.Layout nextLayout = GetLayoutNumber(layoutName);
+        SwitchToNextAllowedLayout(nextLayout);
       }
       else
       {

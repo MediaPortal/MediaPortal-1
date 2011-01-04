@@ -164,7 +164,7 @@
             <mode>dialoglist</mode>
             <dialogTitle>792</dialogTitle>
             <valueTextInButton>yes</valueTextInButton>
-            <valuePrefixText>95</valuePrefixText>            
+            <valuePrefixText>95</valuePrefixText>
           </control>
           <control>
             <description>Sort</description>
@@ -177,12 +177,18 @@
           </control>
           <control>
             <description>Switch View</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>5</id>
             <label>457</label>
             <onright>50</onright>
             <onup>3</onup>
             <ondown>6</ondown>
+            <!--
+            <mode>dialoglist</mode>
+            <dialogTitle>499</dialogTitle>
+            -->
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>97</valuePrefixText>
           </control>
           <control>
             <description>Play DVD</description>
@@ -194,13 +200,13 @@
             <ondown>20</ondown>
           </control>
           <!--<control>
-        <description>Eject Disc</description>
-        <type>button</type>
-        <id>7</id>
-        <label>654</label>
-        <action>100</action>
-        <onright>50</onright>
-      </control>-->
+            <description>Eject Disc</description>
+            <type>button</type>
+            <id>7</id>
+            <label>654</label>
+            <action>100</action>
+            <onright>50</onright>
+          </control>-->
           <control>
             <description>Current Playlist</description>
             <type>button</type>
@@ -276,8 +282,6 @@
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
     </control>
-
-
     <control>
       <id>1</id>
       <type>image</type>
