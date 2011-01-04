@@ -49,7 +49,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("valueTextInButton")] protected bool _valueTextInButton = false;
     [XMLSkinElement("valuePrefixText")] protected string _prefixText = "";
+    [XMLSkin("valuePrefixText", "join")] protected string _prefixTextJoin = "";
     [XMLSkinElement("valueSuffixText")] protected string _suffixText = "";
+    [XMLSkin("valueSuffixText", "join")] protected string _suffixTextJoin = "";
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
@@ -231,6 +233,9 @@ namespace MediaPortal.GUI.Library
         _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
       TileFillTNF = _textureNoFocusTileFill;
       _imageNonFocused.MaskFileName = _strMaskTNF;
+
+      _prefixText = _prefixText + _prefixTextJoin;
+      _suffixText = _suffixTextJoin + _suffixText;
 
       GUILocalizeStrings.LocalizeLabel(ref _label);
       GUILocalizeStrings.LocalizeLabel(ref _prefixText);
@@ -590,12 +595,12 @@ namespace MediaPortal.GUI.Library
 
         if (_prefixText.Length > 0)
         {
-          labelText = _prefixText + " " + labelText;
+          labelText = _prefixText + labelText;
         }
 
         if (_suffixText.Length > 0)
         {
-          labelText = labelText + " " + _suffixText;
+          labelText = labelText + _suffixText;
         }
       }
 
