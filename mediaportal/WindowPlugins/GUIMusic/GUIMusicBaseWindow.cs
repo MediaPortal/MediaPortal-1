@@ -2026,6 +2026,13 @@ namespace MediaPortal.GUI.Music
     
     
     #region playlist management
+
+    /// <summary>
+    /// Adds the songs for the selected GUIListItem and determines
+    /// what tracks need to be added to the playlist
+    /// </summary>
+    /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
+    protected virtual void AddSelectionToPlaylist(bool clearPlaylist) { }
     
     /// <summary>
     /// Just helper method to turn the enum in MusicState into

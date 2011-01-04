@@ -1017,7 +1017,7 @@ namespace MediaPortal.GUI.Music
     /// what tracks need to be added to the playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    private void AddSelectionToPlaylist(bool clearPlaylist)
+    protected override void AddSelectionToPlaylist(bool clearPlaylist)
     {
       List<Song> songs = GetSongsForSelection();
       List<PlayListItem> pl = ConvertSongsToPlaylist(songs);

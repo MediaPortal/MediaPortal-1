@@ -1390,7 +1390,7 @@ namespace MediaPortal.GUI.Music
     /// Will add the current folder (and any sub-folders) to playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    private void AddSelectionToPlaylist(bool clearPlaylist)
+    protected override void AddSelectionToPlaylist(bool clearPlaylist)
     {
       List<PlayListItem> pl = new List<PlayListItem>();
       GUIListItem selectedItem = facadeLayout.SelectedListItem;
