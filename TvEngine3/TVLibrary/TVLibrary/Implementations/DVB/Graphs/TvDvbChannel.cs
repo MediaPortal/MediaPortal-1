@@ -820,6 +820,7 @@ namespace TvLibrary.Implementations.DVB
       _pmtRequested = true; // requested      
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
+
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
@@ -1318,19 +1319,22 @@ namespace TvLibrary.Implementations.DVB
     private void PersistPMTtoDataBase(int pmtPid)
     {
       // check if PMT has changed, in this case update tuning details
-      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
-      if (pmtPid != CurrentDVBChannel.PmtPid && !alwaysUsePATLookup)
+      DVBBaseChannel currentDvbChannel = _currentChannel as DVBBaseChannel;
+      if (currentDvbChannel != null && pmtPid != currentDvbChannel.PmtPid && !alwaysUsePATLookup)
       {
         TvBusinessLayer layer = new TvBusinessLayer();
-        Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
-                                                           CurrentDVBChannel.ServiceId);
-        TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
-                                                      CurrentDVBChannel.ServiceId);
-        currentDetail.PmtPid = pmtPid;
-        CurrentDVBChannel.PmtPid = pmtPid;
-        TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
-        Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
-        td.Persist();
+        TuningDetail currentDetail = layer.GetChannel(currentDvbChannel.Provider, currentDvbChannel.ServiceId);
+        if (currentDetail != null)
+        {
+          currentDetail.PmtPid = pmtPid;
+          Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
+          currentDetail.Persist();
+          currentDvbChannel.PmtPid = pmtPid;          
+        }
+        else
+        {
+          Log.Log.Debug("PMT {0:X} could not be persisted to DB, no tuningdetails found!", pmtPid);
+        }
       }
     }
 
