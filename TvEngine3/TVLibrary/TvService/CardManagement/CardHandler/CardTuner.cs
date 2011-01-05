@@ -484,22 +484,25 @@ namespace TvService
         if (_cardHandler.DataBaseCard.Enabled == false)
           return false;
 
-        try
+        if (_cardHandler.IsLocal == false)
         {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return false;
-
-          if (_cardHandler.IsLocal == false)
+          try
           {
-            return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
+            RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
+            if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
+              return false;
+
+            if (_cardHandler.IsLocal == false)
+            {
+              return RemoteControl.Instance.CanTune(_cardHandler.DataBaseCard.IdCard, channel);
+            }
           }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
+          catch (Exception)
+          {
+            Log.Error("card: unable to connect to slave controller at:{0}",
+                      _cardHandler.DataBaseCard.ReferencedServer().HostName);
+            return false;
+          }
         }
         return _cardHandler.Card.CanTune(channel);
       }

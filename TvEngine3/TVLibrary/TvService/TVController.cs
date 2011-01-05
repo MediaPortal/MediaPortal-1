@@ -181,7 +181,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer());
+      _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer(), this);
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -3381,7 +3381,7 @@ namespace TvService
         return null;
 
       Dictionary<int, ChannelState> channelStatesList = new Dictionary<int, ChannelState>();
-      ChannelStates channelStates = new ChannelStates();
+      ChannelStates channelStates = new ChannelStates(layer, this);
 
       if (channelStates != null)
       {
@@ -3641,13 +3641,14 @@ namespace TvService
 
     private void UpdateChannelStatesForUsers()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+
       //System.Diagnostics.Debugger.Launch();
       // this section makes sure that all users are updated in regards to channel states.      
-      ChannelStates channelStates = new ChannelStates();
+      ChannelStates channelStates = new ChannelStates(layer, this);
 
       if (channelStates != null)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
         IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
         // populating _tvChannelListGroups is only done once as is therefor cached.

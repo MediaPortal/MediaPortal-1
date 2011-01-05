@@ -4045,21 +4045,27 @@ namespace TvPlugin
         {
           if (TVHome.Navigator.CurrentGroup != null)
           {
-            foreach (GroupMap chan in TVHome.Navigator.CurrentGroup.ReferringGroupMap())
+            TvBusinessLayer layer = new TvBusinessLayer();
+            IList<Channel> channels = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
+            foreach (Channel chan in channels)
             {
               TvGuideChannel tvGuidChannel = new TvGuideChannel();
-              tvGuidChannel.channel = chan.ReferencedChannel();
+              tvGuidChannel.channel = chan;
 
               if (tvGuidChannel.channel.VisibleInGuide && tvGuidChannel.channel.IsTv)
               {
-                if (_byIndex)
+                if (_showChannelNumber)
                 {
-                  tvGuidChannel.channelNum = _channelList.Count + 1;
-                }
-                else
-                {
-                  foreach (TuningDetail detail in tvGuidChannel.channel.ReferringTuningDetail())
-                    tvGuidChannel.channelNum = detail.ChannelNumber;
+
+                  if (_byIndex)
+                  {
+                    tvGuidChannel.channelNum = _channelList.Count + 1;
+                  }
+                  else
+                  {
+                    foreach (TuningDetail detail in tvGuidChannel.channel.ReferringTuningDetail())
+                      tvGuidChannel.channelNum = detail.ChannelNumber;
+                  }
                 }
                 tvGuidChannel.strLogo = GetChannelLogo(tvGuidChannel.channel.DisplayName);
                 _channelList.Add(tvGuidChannel);

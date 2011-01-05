@@ -888,7 +888,7 @@ namespace TvService
                 DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
                 RecDetail.Schedule.ProgramName);      
       //get list of all cards we can use todo the recording      
-      ICardAllocation allocation = new AdvancedCardAllocation(_layer);
+      ICardAllocation allocation = new AdvancedCardAllocation(_layer, _tvController);
       TvResult tvResult;
       List<CardDetail> freeCards = allocation.GetFreeCardsForChannel(_tvController.CardCollection,
                                                                           RecDetail.Channel, ref user, out tvResult);

@@ -33,12 +33,12 @@ namespace TvService
 {
   public class ChannelStates : CardAllocationBase
   {
-    protected override bool LogEnabled
-    {
-      get { return false; }
-    }
-
     #region private members   
+
+    public ChannelStates(TvBusinessLayer businessLayer, TVController controller) : base(businessLayer, controller)
+    {
+      LogEnabled = false;
+    }
 
     private static void UpdateChannelStateUserBasedOnCardOwnership(ITvCardHandler tvcard, IList<IUser> allUsers,
                                                                    Channel ch)
@@ -167,8 +167,10 @@ namespace TvService
 
         Dictionary<int, ChannelState> TSandRecStates = null;        
 
-        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;        
+        Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
 
+        IDictionary<int, IList<int>> channelMapping = GetChannelMapping();
+        IDictionary<int, IList<IChannel>> tuningChannelMapping = GetTuningChannels();
         foreach (Channel ch in channels)
         {
           if (!ch.VisibleInGuide)
@@ -178,8 +180,8 @@ namespace TvService
           }
 
           //get the tuning details for the channel
-          List<IChannel> tuningDetails = layer.GetTuningChannelByName(ch);
-
+          IList<IChannel> tuningDetails;
+          tuningChannelMapping.TryGetValue(ch.IdChannel, out tuningDetails);
           bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
           if (!isValidTuningDetails)
           {
@@ -211,7 +213,7 @@ namespace TvService
               }
 
               //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-              bool isChannelMappedToCard = IsChannelMappedToCard(ch, cardHandler.DataBaseCard.DevicePath);
+              bool isChannelMappedToCard = IsChannelMappedToCard(ch, cardHandler.DataBaseCard, channelMapping);
               if (!isChannelMappedToCard)
               {
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
@@ -235,7 +237,10 @@ namespace TvService
           //only query once
           if (TSandRecStates == null)
           {
+            Stopwatch stopwatchTsRec = Stopwatch.StartNew();
             TSandRecStates = tvController.GetAllTimeshiftingAndRecordingChannels();
+            stopwatchTsRec.Stop();
+            Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec", stopwatchTsRec.ElapsedMilliseconds);
           }
           UpdateRecOrTSChannelStateForUsers(ch, allUsers, TSandRecStates);
         }
@@ -257,6 +262,59 @@ namespace TvService
         stopwatch.Stop();
         Log.Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);
       }
+    }
+
+    private IDictionary<int, IList<IChannel>> GetTuningChannels()
+    {
+      Stopwatch stopwatch = Stopwatch.StartNew();
+      Dictionary<int, IList<IChannel>> result = new Dictionary<int, IList<IChannel>>();
+      IList<TuningDetail> tuningDetails = TuningDetail.ListAll();
+      foreach (TuningDetail tuningDetail in tuningDetails)
+      {
+        IList<IChannel> tuningChannels;
+        result.TryGetValue(tuningDetail.IdChannel, out tuningChannels);
+        if (tuningChannels == null)
+        {
+          tuningChannels = new List<IChannel>();
+          result.Add(tuningDetail.IdChannel, tuningChannels);
+        }
+        tuningChannels.Add(_businessLayer.GetTuningChannel(tuningDetail));
+      }
+      stopwatch.Stop();
+      Log.Info("ChannelStates.GetTuningChannels took {0} msec", stopwatch.ElapsedMilliseconds);
+      return result;
+    }
+
+    private static IDictionary<int, IList<int>> GetChannelMapping()
+    {
+      Stopwatch stopwatch = Stopwatch.StartNew();
+      Dictionary<int, IList<int>> result = new Dictionary<int, IList<int>>();
+      IList<ChannelMap> channelMaps = ChannelMap.ListAll();
+      foreach (ChannelMap map in channelMaps)
+      {
+        IList<int> cards;
+        result.TryGetValue(map.IdChannel, out cards);
+        if (cards == null)
+        {
+          cards = new List<int>();
+          result.Add(map.IdChannel, cards);
+        }
+        if (!cards.Contains(map.IdCard))
+        {
+          cards.Add(map.IdCard);
+        }
+      }
+      stopwatch.Stop();
+      Log.Info("ChannelStates.GetChannelMapping took {0} msec", stopwatch.ElapsedMilliseconds);
+      return result;
+    }
+
+    private bool IsChannelMappedToCard(Channel dbChannel, Card card, IDictionary<int, IList<int>> channelMapping)
+    {
+      //check if channel is mapped to this card and that the mapping is not for "Epg Only"
+      IList<int> cards;
+      channelMapping.TryGetValue(dbChannel.IdChannel, out cards);
+      return cards != null && cards.Contains(card.IdCard);
     }
 
     private static void RemoveAllTunableChannelStates(IList<IUser> allUsers)
