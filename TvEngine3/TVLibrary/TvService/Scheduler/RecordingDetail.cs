@@ -63,7 +63,7 @@ namespace TvService
       User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
       User.CardId = -1;
       User.SubChannel = -1;
-      User.IsAdmin = true;      
+      User.IsAdmin = true;
 
       _schedule = schedule;
       _channel = channel;
@@ -185,9 +185,9 @@ namespace TvService
         }
         catch (Exception e)
         {
-          Log.Error("RecordingDetail: exception occured {0}", e);            
+          Log.Error("RecordingDetail: exception occured {0}", e);
         }
-        
+
         return isRecording;
       }
     }
@@ -218,7 +218,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting;
-      if (!this.IsSerie)
+      if (!IsSerie)
       {
         Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("moviesformat", "%title%");
