@@ -342,7 +342,6 @@ namespace SetupTv.Sections
       if (e.Label != null)
       {
         Channel channel = ((GroupMap)listView1.Items[e.Item].Tag).ReferencedChannel();
-        channel.Name = e.Label;
         channel.DisplayName = e.Label;
         channel.Persist();
       }

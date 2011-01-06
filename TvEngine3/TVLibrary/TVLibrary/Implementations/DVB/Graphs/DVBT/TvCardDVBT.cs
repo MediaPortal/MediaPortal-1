@@ -316,5 +316,15 @@ namespace TvLibrary.Implementations.DVB
       return true;
     }
 
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      DVBTChannel channel = new DVBTChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
+    }
+
   }
 }

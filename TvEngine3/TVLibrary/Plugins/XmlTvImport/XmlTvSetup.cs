@@ -658,8 +658,8 @@ namespace SetupTv.Sections
                 {
                   if (displayName != null)
                   {
-                    Channel channel = new Channel(displayName, false, false, -1, new DateTime(), false, new DateTime(),
-                                                  -1, false, id, false, displayName);
+                    Channel channel = new Channel(false, false, -1, new DateTime(), false, new DateTime(),
+                                                  -1, false, id, displayName);
                     channels.Add(channel);
                   }
                 }

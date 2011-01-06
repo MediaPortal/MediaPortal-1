@@ -253,8 +253,11 @@ namespace TvDatabase
         return null;
       }
       //do we know a channel with these tuning details?
-      Channel dbChannel = _layer.GetChannelByTuningDetail(dvbChannel.NetworkId, dvbChannel.TransportId,
-                                                          dvbChannel.ServiceId);
+      Channel dbChannel = null;
+      TuningDetail tuningDetail = _layer.GetTuningDetail(dvbChannel);
+      if (tuningDetail != null)
+        dbChannel = tuningDetail.ReferencedChannel();
+
       if (dbChannel == null)
       {
         Log.Epg("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,

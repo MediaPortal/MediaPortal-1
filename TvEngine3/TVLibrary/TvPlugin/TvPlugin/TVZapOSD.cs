@@ -356,7 +356,7 @@ namespace TvPlugin
       {
         VirtualCard card;
         TvServer server = new TvServer();
-        imgRecIcon.IsVisible = server.IsRecording(channelName, out card);
+        imgRecIcon.IsVisible = server.IsRecording(idChannel, out card);
       }
 
       if (lblCurrentChannel != null)

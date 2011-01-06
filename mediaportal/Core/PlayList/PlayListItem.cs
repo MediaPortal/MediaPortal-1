@@ -29,12 +29,10 @@ namespace MediaPortal.Playlists
     {
       Unknown,
       Audio,
-      Radio,
       AudioStream,
       VideoStream,
       Video,
       DVD,
-      TV,
       Pictures
     }
 

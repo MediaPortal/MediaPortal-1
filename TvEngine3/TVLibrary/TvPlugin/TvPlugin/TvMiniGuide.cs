@@ -210,8 +210,8 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
-                                           DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
+          Channel newChannel = new Channel(false, true, 0, DateTime.MinValue, false,
+                                           DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(newChannel);
@@ -260,8 +260,7 @@ namespace TvPlugin
                 Channel changeChannel = null;
                 if (AutoZap)
                 {
-                  string selectedChan = SelectedChannel.DisplayName;
-                  if ((TVHome.Navigator.CurrentChannel != selectedChan) || g_Player.IsTVRecording)
+                  if ((TVHome.Navigator.Channel.IdChannel != SelectedChannel.IdChannel) || g_Player.IsTVRecording)
                   {
                     List<Channel> tvChannelList = GetChannelListByGroup();
                     if (tvChannelList != null)
@@ -499,38 +498,41 @@ namespace TvPlugin
 
       Dictionary<int, ChannelState> tvChannelStatesList = null;
 
-      benchClock.Reset();
-      benchClock.Start();
-
-      if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) ||
-          (!g_Player.IsTV && !g_Player.Playing))
+      if (TVHome.ShowChannelStateIcons())
       {
-        //we have no way of using the cached channelstates on the server in the following situations.
-        // 1) when the "all channels" group is selected - too many channels.
-        // 2) when user is not timeshifting - no user object on the server.
-        User currentUser = new User();
-        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                          currentUser);
-      }
-      else
-      {
-        // use the more speedy approach
-        // ask the server of the cached list of channel states corresponding to the user.
-        tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesCached(TVHome.Card.User);
+        benchClock.Reset();
+        benchClock.Start();
 
-        if (tvChannelStatesList == null)
+        if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) ||
+            (!g_Player.IsTV && !g_Player.Playing))
         {
-          //slow approach.
+          //we have no way of using the cached channelstates on the server in the following situations.
+          // 1) when the "all channels" group is selected - too many channels.
+          // 2) when user is not timeshifting - no user object on the server.
+          User currentUser = new User();
           tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                            TVHome.Card.User);
+                                                                            currentUser);
         }
-      }
+        else
+        {
+          // use the more speedy approach
+          // ask the server of the cached list of channel states corresponding to the user.
+          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesCached(TVHome.Card.User);
 
-      benchClock.Stop();
-      if (tvChannelStatesList != null)
-      {
-        Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms",
-                  Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
+          if (tvChannelStatesList == null)
+          {
+            //slow approach.
+            tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
+                                                                              TVHome.Card.User);
+          }
+        }
+
+        benchClock.Stop();
+        if (tvChannelStatesList != null)
+        {
+          Log.Debug("TvMiniGuide: FillChannelList - {0} channel states for group retrieved in {1} ms",
+                    Convert.ToString(tvChannelStatesList.Count), benchClock.ElapsedMilliseconds.ToString());
+        }
       }
 
       for (int i = 0; i < tvChannelList.Count; i++)

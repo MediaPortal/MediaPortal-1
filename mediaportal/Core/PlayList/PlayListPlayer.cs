@@ -150,8 +150,7 @@ namespace MediaPortal.Playlists
             PlayListItem item = GetCurrentItem();
             if (item != null)
             {
-              if (item.Type != PlayListItem.PlayListItemType.Radio ||
-                  item.Type != PlayListItem.PlayListItemType.AudioStream)
+              if (item.Type != PlayListItem.PlayListItemType.AudioStream)
               {
                 Reset();
                 _currentPlayList = PlayListType.PLAYLIST_NONE;
@@ -485,15 +484,6 @@ namespace MediaPortal.Playlists
         }
 
         //Log.Debug("PlaylistPlayer: Play - {0}", item.FileName);
-        if (item.Type == PlayListItem.PlayListItemType.Radio)
-        {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO, 0, 0, 0, 0, 0, null);
-          msg.Label = item.Description;
-          GUIGraphicsContext.SendMessage(msg);
-          item.Played = true;
-          return true;
-        }
-
         bool playResult = false;
         if (_currentPlayList == PlayListType.PLAYLIST_MUSIC_VIDEO)
         {

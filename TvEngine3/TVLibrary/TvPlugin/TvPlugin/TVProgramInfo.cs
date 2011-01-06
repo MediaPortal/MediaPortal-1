@@ -1043,7 +1043,7 @@ namespace TvPlugin
         TvServer server = new TvServer();
         VirtualCard card;
         if (TVHome.Navigator.Channel.IdChannel == program.IdChannel &&
-            server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
+            server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
         {
           Schedule schedFromDB = Schedule.Retrieve(card.RecordingScheduleId);
           if (schedFromDB.IsManual)
@@ -1209,9 +1209,9 @@ namespace TvPlugin
             GUIListItem item = new GUIListItem(conflict.ProgramName);
             item.Label2 = GetRecordingDateTime(conflict);
             Channel channel = Channel.Retrieve(conflict.IdChannel);
-            if (channel != null && !string.IsNullOrEmpty(channel.Name))
+            if (channel != null && !string.IsNullOrEmpty(channel.DisplayName))
             {
-              item.Label3 = channel.Name;
+              item.Label3 = channel.DisplayName;
             }
             else
             {

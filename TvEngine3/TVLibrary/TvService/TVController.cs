@@ -1314,7 +1314,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsRecording(string channelName, out VirtualCard card)
+    public bool IsRecording(int idChannel, out VirtualCard card)
     {
       card = null;
       Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
@@ -1331,7 +1331,7 @@ namespace TvService
           IUser user = users[i];
           if (tvcard.CurrentChannelName(ref user) == null)
             continue;
-          if (tvcard.CurrentChannelName(ref user) == channelName)
+          if (tvcard.CurrentDbChannel(ref user) == idChannel)
           {
             if (tvcard.Recorder.IsRecording(ref user))
             {
@@ -2242,7 +2242,14 @@ namespace TvService
       {
         if (!IsRecordingValid(rec.IdRecording))
         {
-          DeleteRecording(rec.IdRecording);
+          try
+          {
+            rec.Delete();
+          }
+          catch (Exception e)
+          {
+            Log.Error("Controller: Can't delete invalid recording", e);
+          }
           foundInvalidRecording = true;
         }
       }
@@ -2708,7 +2715,7 @@ namespace TvService
                 DVBBaseChannel dvbBaseChannel = tmpChannel as DVBBaseChannel;
                 if (dvbBaseChannel != null)
                 {                  
-                  TuningDetail userChannel = layer.GetChannel(dvbBaseChannel);
+                  TuningDetail userChannel = layer.GetTuningDetail(dvbBaseChannel);
                   bool isOnSameChannel = (idChannel == userChannel.IdChannel);
 
                   if (isOnSameChannel)

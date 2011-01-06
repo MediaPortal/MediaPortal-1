@@ -256,7 +256,7 @@ namespace TvControl
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    bool IsRecording(string channelName, out VirtualCard card);
+    bool IsRecording(int idChannel, out VirtualCard card);
 
     /// <summary>
     /// Determines if any card is currently busy recording

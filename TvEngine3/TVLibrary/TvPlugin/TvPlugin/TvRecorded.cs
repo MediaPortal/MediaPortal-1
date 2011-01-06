@@ -1429,17 +1429,7 @@ namespace TvPlugin
 
     private void DeleteInvalidRecordings()
     {
-      if (RemoteControl.Instance.DeleteInvalidRecordings())
-      {
-        CacheManager.Clear();
-        LoadDirectory();
-        while (_iSelectedItem >= GetItemCount() && _iSelectedItem > 0)
-        {
-          _iSelectedItem--;
-        }
-
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
-      }
+      RemoteControl.Instance.DeleteInvalidRecordings();
     }
 
     private void UpdateProperties()

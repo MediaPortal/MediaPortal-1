@@ -367,5 +367,15 @@ namespace TvLibrary.Implementations.DVB
         return base.DevicePath + "(" + _sequence + ")";
       }
     }
+
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      DVBIPChannel channel = new DVBIPChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
+    }
   }
 }

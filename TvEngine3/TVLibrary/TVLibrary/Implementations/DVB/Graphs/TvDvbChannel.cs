@@ -1322,14 +1322,20 @@ namespace TvLibrary.Implementations.DVB
       DVBBaseChannel currentDvbChannel = _currentChannel as DVBBaseChannel;
       if (currentDvbChannel != null && pmtPid != currentDvbChannel.PmtPid && !alwaysUsePATLookup)
       {
+        currentDvbChannel.PmtPid = pmtPid;
         TvBusinessLayer layer = new TvBusinessLayer();
-        TuningDetail currentDetail = layer.GetChannel(currentDvbChannel.Provider, currentDvbChannel.ServiceId);
+        TuningDetail currentDetail = layer.GetTuningDetail(currentDvbChannel);
         if (currentDetail != null)
         {
-          currentDetail.PmtPid = pmtPid;
-          Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
-          currentDetail.Persist();
-          currentDvbChannel.PmtPid = pmtPid;          
+          try
+          {
+            currentDetail.PmtPid = pmtPid;
+            currentDetail.Persist();
+            Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
+          } catch (Exception e)
+          {
+            Log.Log.Error("PMT {0:X} could not be persisted to DB!", pmtPid, e);
+          }
         }
         else
         {

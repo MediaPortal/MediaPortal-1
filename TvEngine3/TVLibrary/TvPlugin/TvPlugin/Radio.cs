@@ -161,7 +161,7 @@ namespace TvPlugin
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
         if (_currentChannel != null)
         {
-            xmlwriter.SetValue("myradio", "channel", _currentChannel.Name);
+            xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
         }
         
       }
@@ -247,7 +247,11 @@ namespace TvPlugin
 
 
       TvBusinessLayer layer = new TvBusinessLayer();
-      _currentChannel = layer.GetChannelByName(currentchannelName);            
+      IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
+      if (channels != null && channels.Count > 0)
+      {
+        _currentChannel = channels[0];
+      }
 
       SelectCurrentItem();
       LoadDirectory(currentFolder);
@@ -858,8 +862,14 @@ namespace TvPlugin
       }
       else
       {
-        if (TVHome.Navigator.CurrentChannel == _currentChannel.Name && g_Player.IsRadio && g_Player.Playing)
-          return;
+        if (g_Player.IsRadio && g_Player.Playing)
+        {
+          Channel currentlyPlaying = TVHome.Navigator.Channel;
+          if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
+          {
+            return;
+          }
+        }
         TVHome.ViewChannel(_currentChannel);
       }
     }

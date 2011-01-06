@@ -701,23 +701,6 @@ namespace TvPlugin
             }
           }
           break;
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_VIEW_CHANNEL:
-          Log.Info("tv home msg view chan:{0}", message.Label);
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-          }
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_STOP_VIEWING:
-          {
-            Log.Info("tv home msg stop chan:{0}", message.Label);
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel ch = layer.GetChannelByName(message.Label);
-            ViewChannel(ch);
-          }
-          break;
       }
       return base.OnMessage(message);
     }
@@ -1760,16 +1743,6 @@ namespace TvPlugin
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_RECORDER_TUNE_RADIO:
-          {
-            TvBusinessLayer layer = new TvBusinessLayer();
-            Channel channel = layer.GetChannelByName(message.Label);
-            if (channel != null)
-            {
-              ViewChannelAndCheck(channel);
-            }
-            break;
-          }
         case GUIMessage.MessageType.GUI_MSG_STOP_SERVER_TIMESHIFTING:
           {
             User user = new User();
@@ -1879,7 +1852,7 @@ namespace TvPlugin
       TvServer server = new TvServer();
 
       VirtualCard card;
-      if (false == server.IsRecording(channel.Name, out card))
+      if (false == server.IsRecording(channel.IdChannel, out card))
       {
         bool alreadyRec = (lastActiveRecChannelId == Navigator.Channel.IdChannel);
         if (!alreadyRec)
@@ -1982,9 +1955,9 @@ namespace TvPlugin
       // Update navigator with information from the Recorder
       // TODO: This should ideally be handled using events. Recorder should fire an event
       // when the current channel changes. This is a temporary workaround //Vic
-      string currchan = Navigator.CurrentChannel; // Remember current channel
+      Channel currchan = Navigator.Channel; // Remember current channel
       Navigator.UpdateCurrentChannel();
-      bool channelchanged = currchan != Navigator.CurrentChannel;
+      bool channelchanged = currchan.IdChannel != Navigator.Channel.IdChannel;
 
       UpdateProgressPercentageBar();
 
@@ -2261,7 +2234,7 @@ namespace TvPlugin
         string label;
         TvServer server = new TvServer();
         VirtualCard vc;
-        if (server.IsRecording(Navigator.Channel.Name, out vc))
+        if (server.IsRecording(Navigator.Channel.IdChannel, out vc))
         {
           if (!isTimeShifting)
           {
@@ -3039,7 +3012,7 @@ namespace TvPlugin
       }
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      string caption = GUILocalizeStrings.Get(605) + " - " + channel.Name;
+      string caption = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName;
       // +GUILocalizeStrings.Get(1512); ("tune last?")
       pDlgNotify.SetHeading(caption); //my tv
       StringBuilder sbMessage = new StringBuilder();

@@ -48,7 +48,7 @@ namespace SetupTv.Sections
 
     public new DialogResult ShowDialog(IWin32Window owner)
     {
-      Text = "Preview " + _channel.Name;
+      Text = "Preview " + _channel.DisplayName;
 
       TvServer server = new TvServer();
       IUser user = new User("setuptv", false);
@@ -60,7 +60,7 @@ namespace SetupTv.Sections
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.Name, user.CardId, user.SubChannel, user.Name,
+      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, user.SubChannel, user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);

@@ -93,7 +93,7 @@ namespace TvPlugin
     private int _cursorX = 0;
     private string _currentTitle = String.Empty;
     private string _currentTime = String.Empty;
-    private string _currentChannel = String.Empty;
+    private Channel _currentChannel = null;
     private long _currentStartTime = 0;
     private long _currentEndTime = 0;
     private Program _currentProgram = null;
@@ -162,7 +162,13 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _currentChannel = xmlreader.GetValueAsString("RadioGuideBase", "channel", String.Empty);
+        String channelName = xmlreader.GetValueAsString("RadioGuideBase", "channel", String.Empty);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        IList<Channel> channels = layer.GetChannelsByName(channelName);
+        if (channels != null && channels.Count > 0)
+        {
+          _currentChannel = channels[0];
+        }
         _cursorX = xmlreader.GetValueAsInt("RadioGuideBase", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("RadioGuideBase", "yoffset", 0);
       }
@@ -174,7 +180,7 @@ namespace TvPlugin
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("RadioGuideBase", "channel", _currentChannel);
+        xmlwriter.SetValue("RadioGuideBase", "channel", _currentChannel.DisplayName);
         xmlwriter.SetValue("RadioGuideBase", "ypos", _cursorX.ToString());
         xmlwriter.SetValue("RadioGuideBase", "yoffset", _channelOffset.ToString());
       }
@@ -547,12 +553,12 @@ namespace TvPlugin
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
-                  _currentChannel = TVHome.Navigator.CurrentChannel; //contains the display name
+                  _currentChannel = TVHome.Navigator.Channel;
                   GetChannels();
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = (Channel)_channelList[i];
-                    if (chan.DisplayName.Equals(_currentChannel))
+                    if (chan.IdChannel == _currentChannel.IdChannel)
                     {
                       _cursorX = i;
                       break;
@@ -1064,7 +1070,7 @@ namespace TvPlugin
           GUIButton3PartControl img = (GUIButton3PartControl)GetControl(_cursorX + (int)Controls.IMG_CHAN1);
           if (null != img)
           {
-            _currentChannel = img.Label1;
+            _currentChannel = (Channel) img.Data;
           }
         }
         UpdateVerticalScrollbar();
@@ -1091,13 +1097,12 @@ namespace TvPlugin
         channel = 0;
       }
       Channel chan = (Channel)_channelList[channel];
-      string strChannel = chan.DisplayName;
-      if (strChannel == null)
+      if (chan == null)
       {
         return;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, strChannel);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, chan.DisplayName);
       if (string.IsNullOrEmpty(strLogo))      
       {
         strLogo = "defaultMyRadioBig.png";
@@ -1123,7 +1128,7 @@ namespace TvPlugin
         _currentEndTime = 0;
         _currentTitle = String.Empty;
         _currentTime = String.Empty;
-        _currentChannel = strChannel;
+        _currentChannel = chan;
         GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
       else if (_currentProgram != null)
@@ -1142,7 +1147,7 @@ namespace TvPlugin
         _currentEndTime = Utils.datetolong(_currentProgram.EndTime);
         _currentTitle = _currentProgram.Title;
         _currentTime = strTime;
-        _currentChannel = strChannel;
+        _currentChannel = chan;
 
         bool bRecording = _currentProgram.IsRecording || _currentProgram.IsRecordingOncePending;
         if (bRecording)
@@ -1508,6 +1513,7 @@ namespace TvPlugin
             img.TexutureIcon = strLogo;
           }
           img.Label1 = channel.DisplayName;
+          img.Data = channel;
           img.IsVisible = true;
         }
       }
@@ -1521,6 +1527,7 @@ namespace TvPlugin
             img.TexutureIcon = "defaultMyRadioBig.png";
           }
           img.Label1 = channel.DisplayName;
+          img.Data = channel;
           img.IsVisible = true;
         }
       }
@@ -2388,13 +2395,13 @@ namespace TvPlugin
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
 
-        if (_currentChannel.Length > 0)
+        if (_currentChannel != null)
         {
           dlg.AddLocalizedString(938); // View this channel
         }
 
         dlg.AddLocalizedString(939); // Switch mode
-        if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
+        if (_currentProgram != null && _currentChannel != null && _currentTitle.Length > 0)
         {
           dlg.AddLocalizedString(264); // Record
         }
@@ -2475,7 +2482,7 @@ namespace TvPlugin
           }
 
           // clicked the show we're currently watching
-          if (TVHome.Navigator.CurrentChannel == _currentChannel)
+          if (TVHome.Navigator.Channel.IdChannel == _currentChannel.IdChannel)
           {
             Log.Debug("RadioGuide: clicked on a currently running show");
             GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -2693,8 +2700,8 @@ namespace TvPlugin
 
       if (_channelList.Count == 0)
       {
-        Channel newChannel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
-                                         DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
+        Channel newChannel = new Channel(false, true, 0, DateTime.MinValue, false,
+                                         DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
         for (int i = 0; i < 10; ++i)
         {
           _channelList.Add(newChannel);
@@ -3104,7 +3111,7 @@ namespace TvPlugin
         ;
         if (null != img)
         {
-          _currentChannel = img.Label1;
+          _currentChannel = (Channel) img.Data;
         }
       }
     }

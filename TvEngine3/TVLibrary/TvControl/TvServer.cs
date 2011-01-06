@@ -158,20 +158,20 @@ namespace TvControl
     }
 
     /// <summary>
-    /// Determines whether the specified channel name is recording.
+    /// Determines whether the specified channel is recording.
     /// </summary>
-    /// <param name="channelName">Name of the channel.</param>
+    /// <param name="idChannel">The id of the channel.</param>
     /// <param name="card">The vcard.</param>
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsRecording(string channelName, out VirtualCard card)
+    public bool IsRecording(int idChannel, out VirtualCard card)
     {
       VirtualCard vc = card = null;
       try
       {
         bool result = WaitFor<bool>.Run(VirtualCard.CommandTimeOut,
-                                        () => RemoteControl.Instance.IsRecording(channelName, out vc));
+                                        () => RemoteControl.Instance.IsRecording(idChannel, out vc));
         card = vc;
         return result;
       }

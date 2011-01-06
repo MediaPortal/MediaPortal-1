@@ -146,7 +146,7 @@ namespace TvPlugin
     [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
     [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
 
-    private string lastChannelWithNoSignal = string.Empty;
+    private int lastChannelWithNoSignal = -1;
     private VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
 
@@ -943,7 +943,7 @@ namespace TvPlugin
         Program prog = channel.CurrentProgram;
         VirtualCard card;
         TvServer server = new TvServer();
-        if (server.IsRecording(channel.Name, out card))
+        if (server.IsRecording(channel.IdChannel, out card))
         {
           _dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           _dlgYesNo.SetHeading(1449); // stop recording
@@ -1588,7 +1588,7 @@ namespace TvPlugin
       if (!g_Player.IsTVRecording)
       {
         VirtualCard vc;
-        if (server.IsRecording(TVHome.Navigator.Channel.Name, out vc))
+        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out vc))
         {
           dlg.AddLocalizedString(265); //stop rec.
         }
@@ -2227,9 +2227,8 @@ namespace TvPlugin
       int counter = 0;
       foreach (ChannelLinkageMap map in linkages)
       {
-        string channelName = map.DisplayName;
-        GUIListItem item = new GUIListItem(channelName);
-        if (channelName == TVHome.Navigator.CurrentChannel) //contains the display name
+        GUIListItem item = new GUIListItem(map.DisplayName);
+        if (map.IdLinkedChannel == TVHome.Navigator.Channel.IdChannel)
         {
           selected = counter;
         }
@@ -2381,7 +2380,7 @@ namespace TvPlugin
 
       if (!VideoRendererStatistics.IsVideoFound)
       {
-        if ((lastChannelWithNoSignal != TVHome.Navigator.CurrentChannel) ||
+        if ((lastChannelWithNoSignal != TVHome.Navigator.Channel.IdChannel) ||
             (videoState != VideoRendererStatistics.VideoState))
         {
           if (!_zapOsdVisible)
@@ -2402,7 +2401,7 @@ namespace TvPlugin
                 message.Label = GUILocalizeStrings.Get(1036);
                 break;
             }
-            lastChannelWithNoSignal = TVHome.Navigator.CurrentChannel;
+            lastChannelWithNoSignal = TVHome.Navigator.Channel.IdChannel;
             videoState = VideoRendererStatistics.VideoState;
             OnMessage(message);
           }
@@ -2410,7 +2409,7 @@ namespace TvPlugin
       }
       else
       {
-        lastChannelWithNoSignal = string.Empty;
+        lastChannelWithNoSignal = -1;
         videoState = VideoRendererStatistics.State.VideoPresent;
       }
 
@@ -2537,7 +2536,7 @@ namespace TvPlugin
 		 // Set recorder status
         VirtualCard card;
         var server = new TvServer();
-        if (server.IsRecording(TVHome.Navigator.CurrentChannel, out card))
+        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
         {
             ShowControl(GetID, (int)Control.REC_LOGO);
         }

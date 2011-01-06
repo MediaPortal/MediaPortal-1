@@ -185,21 +185,9 @@ namespace TvDatabase
     // This is really needed
     public Channel AddNewChannel(string name)
     {
-      Channel newChannel = new Channel(name, false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1),
-                                       -1, true, "", true, name);
+      Channel newChannel = new Channel(false, false, 0, new DateTime(2000, 1, 1), false, new DateTime(2000, 1, 1),
+                                       -1, true, "", name);
       return newChannel;
-    }
-
-    public Channel AddChannel(string provider, string name)
-    {
-      Channel channel = GetChannelByName(provider, name);
-      if (channel != null)
-      {
-        channel.Name = name;
-        return channel;
-      }
-
-      return AddNewChannel(name);
     }
 
     public ChannelGroup CreateGroup(string groupName)
@@ -318,92 +306,6 @@ namespace TvDatabase
       channel.Remove();
     }
 
-    public TuningDetail GetChannel(DVBBaseChannel channel)
-    {
-      int channelType;
-
-      if (channel is DVBTChannel)
-      {
-        channelType = 4;
-      }
-      else if (channel is DVBSChannel)
-      {
-        channelType = 3;
-      }
-      else if (channel is DVBCChannel)
-      {
-        channelType = 2;
-      }
-      else if (channel is DVBIPChannel)
-      {
-        channelType = 7;
-      }
-      else // must be ATSCChannel  or AnalogChannel
-      {
-        channelType = 1;
-      }
-
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
-      sb.AddConstraint(Operator.Equals, "name", channel.Name);
-      sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
-      sb.AddConstraint(Operator.Equals, "networkId", channel.NetworkId);
-      sb.AddConstraint(Operator.Equals, "transportId", channel.TransportId);
-      sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
-      sb.AddConstraint(Operator.Equals, "channelType", channelType);
-
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
-      if (channels == null)
-      {
-        return null;
-      }
-      if (channels.Count == 0)
-      {
-        return null;
-      }
-      return channels[0];
-    }
-
-    public TuningDetail GetChannel(string provider, string name, int serviceId)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
-      sb.AddConstraint(Operator.Equals, "name", name);
-      sb.AddConstraint(Operator.Equals, "provider", provider);
-      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
-      if (details == null)
-      {
-        return null;
-      }
-      if (details.Count == 0)
-      {
-        return null;
-      }
-      TuningDetail detail = details[0];
-      return detail;
-    }
-
-    public TuningDetail GetChannel(string provider, int serviceId)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));      
-      sb.AddConstraint(Operator.Equals, "provider", provider);
-      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
-      if (details == null)
-      {
-        return null;
-      }
-      if (details.Count == 0)
-      {
-        return null;
-      }
-      TuningDetail detail = details[0];
-      return detail;
-    }
-
-
     public Channel GetChannel(int idChannel)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
@@ -444,69 +346,16 @@ namespace TvDatabase
       return detail.ReferencedChannel();
     }
 
-    public TuningDetail GetAtscChannel(ATSCChannel channel)
+    public TuningDetail GetTuningDetail(int networkId, int serviceId, int channelType)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
-      sb.AddConstraint(Operator.Equals, "name", channel.Name);
-      sb.AddConstraint(Operator.Equals, "provider", channel.Provider);
-      sb.AddConstraint(Operator.Equals, "networkId", channel.MajorChannel);
-      sb.AddConstraint(Operator.Equals, "transportId", channel.MinorChannel);
-      sb.AddConstraint(Operator.Equals, "serviceId", channel.ServiceId);
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "networkId", networkId);
+      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
+      sb.AddConstraint(Operator.Equals, "channelType", channelType);
 
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<TuningDetail> channels = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
-      if (channels == null)
-      {
-        return null;
-      }
-      if (channels.Count == 0)
-      {
-        return null;
-      }
-      return channels[0];
-    }
-
-    public IList<Channel> GetChannelsByName(string name)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddConstraint(Operator.Equals, "name", name);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-      if (channels == null)
-      {
-        return null;
-      }
-      if (channels.Count == 0)
-      {
-        return null;
-      }
-      return channels;
-    }
-
-    public Channel GetChannelByName(string name)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
-      sb.AddConstraint(Operator.Equals, "name", name);
-      SqlStatement stmt = sb.GetStatement(true);
-      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
-      if (channels == null)
-      {
-        return null;
-      }
-      if (channels.Count == 0)
-      {
-        return null;
-      }
-      return channels[0];
-    }
-
-    public Channel GetChannelByName(string provider, string name)
-    {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
-      sb.AddConstraint(Operator.Equals, "name", name);
-      sb.AddConstraint(Operator.Equals, "provider", provider);
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+
       if (details == null)
       {
         return null;
@@ -515,8 +364,92 @@ namespace TvDatabase
       {
         return null;
       }
-      TuningDetail detail = details[0];
-      return detail.ReferencedChannel();
+      return details[0];
+    }
+
+    public TuningDetail GetTuningDetail(int networkId, int transportId, int serviceId, int channelType)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "networkId", networkId);
+      sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
+      sb.AddConstraint(Operator.Equals, "transportId", transportId);
+      sb.AddConstraint(Operator.Equals, "channelType", channelType);
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+
+      if (details == null)
+      {
+        return null;
+      }
+      if (details.Count == 0)
+      {
+        return null;
+      }
+      return details[0];
+    }
+
+    public IList<TuningDetail> GetTuningDetailsByName(string name, int channelType)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "name", name);
+      sb.AddConstraint(Operator.Equals, "channelType", channelType);
+      
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+      return details;
+    }
+
+    public static int GetChannelType(DVBBaseChannel channel)
+    {
+      int channelType;
+
+      if (channel is DVBTChannel)
+      {
+        channelType = 4;
+      }
+      else if (channel is DVBSChannel)
+      {
+        channelType = 3;
+      }
+      else if (channel is DVBCChannel)
+      {
+        channelType = 2;
+      }
+      else if (channel is DVBIPChannel)
+      {
+        channelType = 7;
+      }
+      else // must be ATSCChannel
+      {
+        channelType = 1;
+      }
+      return channelType;
+    }
+    public TuningDetail GetTuningDetail(DVBBaseChannel channel)
+    {
+      int channelType = GetChannelType(channel);
+      return GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId, channelType);
+    }
+
+    public IList<Channel> GetChannelsByName(string name)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
+      sb.AddConstraint(Operator.Equals, "displayName", name);
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+      return channels;
+    }
+
+    public IList<Channel> GetChannelsInGroup(ChannelGroup group)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlStatement origStmt = sb.GetStatement(true);
+      string sql = "select c.* from channel c inner join groupmap gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
+                   group.IdGroup + ") order by gm.SortOrder asc";
+      SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
+                                                    typeof(Channel));
+      return ObjectFactory.GetCollection<Channel>(statement.Execute());
     }
 
     /// <summary>
@@ -636,7 +569,7 @@ namespace TvDatabase
       return null;
     }
 
-    public List<IChannel> GetTuningChannelByName(Channel channel)
+    public List<IChannel> GetTuningChannelsByDbChannel(Channel channel)
     {
       List<IChannel> tvChannels = new List<IChannel>();
       IList<TuningDetail> tuningDetails = channel.ReferringTuningDetail();
@@ -1088,13 +1021,12 @@ namespace TvDatabase
       detail.Pilot = pilot;
       detail.RollOff = rollOff;
       detail.Url = url;
-      detail.Persist();
       return detail;
     }
 
     public TuningDetail AddWebStreamTuningDetails(Channel channel, string url, int bitrate)
     {
-      string channelName = channel.Name;
+      string channelName = channel.DisplayName;
       const long channelFrequency = 0;
       const int channelNumber = 0;
       const int country = 31;
@@ -1177,11 +1109,11 @@ namespace TvDatabase
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       if (provider == "mysql")
       {
-        return original.Replace("'", "\\'");
+        return original.Replace("\\","\\\\").Replace("'", "\\'");
       }
       else
       {
-        return original.Replace("'", "''");
+        return original.Replace("\\", "\\\\").Replace("'", "''");
       }
     }
 

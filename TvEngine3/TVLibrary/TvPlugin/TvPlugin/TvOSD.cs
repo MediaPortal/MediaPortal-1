@@ -444,11 +444,11 @@ namespace TvPlugin
             {
               if (iControl == btnPreviousProgram.GetID)
               {
-                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+                Program prog = GetChannel().GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
                   prog =
-                    TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(
+                    GetChannel().GetProgramAt(
                       prog.StartTime.Subtract(new TimeSpan(0, 1, 0)));
                   if (prog != null)
                   {
@@ -459,10 +459,10 @@ namespace TvPlugin
               }
               if (iControl == btnNextProgram.GetID)
               {
-                Program prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);
+                Program prog = GetChannel().GetProgramAt(m_dateTime);
                 if (prog != null)
                 {
-                  prog = TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(prog.EndTime.AddMinutes(+1));
+                  prog = GetChannel().GetProgramAt(prog.EndTime.AddMinutes(+1));
                   if (prog != null)
                   {
                     m_dateTime = prog.StartTime.AddMinutes(1);
@@ -775,7 +775,7 @@ namespace TvPlugin
       {
         string strChannel = GetChannelName();
         strTime = strChannel;
-        Program prog = TVHome.Navigator.GetChannel(strChannel).CurrentProgram;
+        Program prog = TVHome.Navigator.Channel.CurrentProgram;
         if (prog != null)
         {
           strTime = String.Format("{0}-{1}",
@@ -1427,6 +1427,18 @@ namespace TvPlugin
       }
     }
 
+    private Channel GetChannel()
+    {
+      if (g_Player.IsTVRecording)
+      {
+        Recording rec = TvRecorded.ActiveRecording();
+        return rec.ReferencedChannel();
+      }
+      else
+      {
+        return TVHome.Navigator.ZapChannel;
+      }
+    }
     private string GetChannelName()
     {
       if (g_Player.IsTVRecording)
@@ -1437,7 +1449,7 @@ namespace TvPlugin
       else
       {
         string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
-        Channel tmpChannel = TVHome.Navigator.GetChannel(tmpDisplayName);
+        Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
         if (tmpChannel != null)
         {
@@ -1512,7 +1524,7 @@ namespace TvPlugin
         }
 
         // next program
-        Channel chan = TVHome.Navigator.GetChannel(GetChannelName());
+        Channel chan = GetChannel();
         if (chan != null)
         {
           prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
@@ -1613,7 +1625,7 @@ namespace TvPlugin
           VirtualCard card;
           TvServer server = new TvServer();
 
-          if (server.IsRecording(GetChannelName(), out card))
+          if (server.IsRecording(GetChannel().IdChannel, out card))
           {
             if (g_Player.IsTVRecording)
             {
@@ -1641,7 +1653,7 @@ namespace TvPlugin
       if (!g_Player.IsTVRecording)
       {
         double fPercent;
-        Program prog = TVHome.Navigator.GetChannel(GetChannelName()).CurrentProgram;
+        Program prog = GetChannel().CurrentProgram;
 
         if (prog == null)
         {

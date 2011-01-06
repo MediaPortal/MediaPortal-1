@@ -122,7 +122,7 @@ namespace TvPlugin
     private int _cursorX = 0;
     private string _currentTitle = String.Empty;
     private string _currentTime = String.Empty;
-    private string _currentChannel = String.Empty;
+    private Channel _currentChannel = null;
     private bool _currentRecOrNotify = false;
     private long _currentStartTime = 0;
     private long _currentEndTime = 0;
@@ -236,7 +236,13 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _currentChannel = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
+        String channelName = xmlreader.GetValueAsString("tvguide", "channel", String.Empty);
+        TvBusinessLayer layer = new TvBusinessLayer();
+        IList<Channel> channels = layer.GetChannelsByName(channelName);
+        if (channels != null && channels.Count > 0)
+        {
+          _currentChannel = channels[0];
+        }
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
         _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
@@ -749,11 +755,11 @@ namespace TvPlugin
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
                 {
-                  _currentChannel = TVHome.Navigator.CurrentChannel; //contains the display name
+                  _currentChannel = TVHome.Navigator.Channel;
                   for (int i = 0; i < _channelList.Count; i++)
                   {
                     Channel chan = ((TvGuideChannel)_channelList[i]).channel;
-                    if (chan.DisplayName.Equals(_currentChannel))
+                    if (chan.IdChannel == _currentChannel.IdChannel)
                     {
                       _cursorX = i;
                       break;
@@ -948,7 +954,7 @@ namespace TvPlugin
         {
           _updateTimerRecExpected = DateTime.Now;
           VirtualCard card;
-          if (_server.IsRecording(_recordingExpected.Name, out card))
+          if (_server.IsRecording(_recordingExpected.IdChannel, out card))
           {
             _recordingExpected = null;
             GetChannels(true);
@@ -1413,7 +1419,7 @@ namespace TvPlugin
           GUIButton3PartControl img = GetControl(_cursorX + (int)Controls.IMG_CHAN1) as GUIButton3PartControl;
           if (null != img)
           {
-            _currentChannel = img.Label1;
+            _currentChannel = (Channel) img.Data;
           }
         }
         UpdateVerticalScrollbar();
@@ -1457,21 +1463,23 @@ namespace TvPlugin
         channel = 0;
       }
       Channel chan = (Channel)_channelList[channel].channel;
-      string strChannel = chan.DisplayName;
-      if (strChannel == null)
+      if (chan == null)
       {
         return;
       }
+      string strChannel = chan.DisplayName;
 
       if (!_singleChannelView)
       {
         string strLogo = GetChannelLogo(strChannel);
         GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
         GUIPropertyManager.SetProperty("#TV.Guide.ChannelName", strChannel);
-
-        IList<TuningDetail> detail = chan.ReferringTuningDetail();
-        int channelNum = detail[0].ChannelNumber;
-        GUIPropertyManager.SetProperty("#TV.Guide.ChannelNumber", channelNum + "");
+        if (_showChannelNumber)
+        {
+          IList<TuningDetail> detail = chan.ReferringTuningDetail();
+          int channelNum = detail[0].ChannelNumber;
+          GUIPropertyManager.SetProperty("#TV.Guide.ChannelNumber", channelNum + "");
+        }
       }
 
       if (_cursorY == 0 || _currentProgram == null)
@@ -1495,7 +1503,7 @@ namespace TvPlugin
         _currentEndTime = 0;
         _currentTitle = String.Empty;
         _currentTime = String.Empty;
-        _currentChannel = strChannel;
+        _currentChannel = chan;
         GUIControl.HideControl(GetID, (int)Controls.IMG_REC_PIN);
       }
       else if (_currentProgram != null)
@@ -1528,7 +1536,7 @@ namespace TvPlugin
         _currentEndTime = Utils.datetolong(_currentProgram.EndTime);
         _currentTitle = _currentProgram.Title;
         _currentTime = strTime;
-        _currentChannel = strChannel;
+        _currentChannel = chan;
 
         bool bSeries = _currentProgram.IsRecordingSeries || _currentProgram.IsRecordingSeriesPending || _currentProgram.IsPartialRecordingSeriesPending;
         bool bConflict = _currentProgram.HasConflict;
@@ -1615,6 +1623,7 @@ namespace TvPlugin
               img.TexutureIcon = strLogo;
             }
             img.Label1 = tvChan.DisplayName;
+            img.Data = tvChan;
             img.IsVisible = true;
           }
         }
@@ -2122,10 +2131,10 @@ namespace TvPlugin
       }
     }
 
-    private bool IsRecordingNoEPG(string channelName)
+    private bool IsRecordingNoEPG(Channel channel)
     {
       VirtualCard vc = null;
-      _server.IsRecording(channelName, out vc);
+      _server.IsRecording(channel.IdChannel, out vc);
 
       if (vc != null)
       {
@@ -2167,6 +2176,7 @@ namespace TvPlugin
         {
           img.Label1 = channel.DisplayName;
         }
+        img.Data = channel;
         img.IsVisible = true;
       }
 
@@ -2233,7 +2243,7 @@ namespace TvPlugin
 
         if (noEPG && !bRecording)
         {
-          bRecording = IsRecordingNoEPG(channel.Name);
+          bRecording = IsRecordingNoEPG(channel);
         }
 
         bool bProgramIsHD = program.Description.Contains(_hdtvProgramText);
@@ -3279,7 +3289,7 @@ namespace TvPlugin
         ;
         if (null != img)
         {
-          _currentChannel = img.Label1;
+          _currentChannel = (Channel) img.Data;
         }
       }
     }
@@ -3406,7 +3416,7 @@ namespace TvPlugin
         dlg.Reset();
         dlg.SetHeading(GUILocalizeStrings.Get(924)); //Menu
         
-        if (_currentChannel.Length > 0)
+        if (_currentChannel != null)
         {
           dlg.AddLocalizedString(938); // View this channel
         }
@@ -3420,11 +3430,11 @@ namespace TvPlugin
 
         bool isRecordingNoEPG = false;
 
-        if (_currentProgram != null && _currentChannel.Length > 0 && _currentTitle.Length > 0)
+        if (_currentProgram != null && _currentChannel != null && _currentTitle.Length > 0)
         {
           if (_currentProgram.IdProgram == 0) // no EPG program recording., only allow to stop it.
           {
-            isRecordingNoEPG = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
+            isRecordingNoEPG = IsRecordingNoEPG(_currentProgram.ReferencedChannel());
             if (isRecordingNoEPG)
             {
               dlg.AddLocalizedString(629); // stop non EPG Recording
@@ -3487,7 +3497,7 @@ namespace TvPlugin
             OnSwitchMode();
             break;
           case 629: //stop recording
-            Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
+            Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
             TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule);
             Update(true); //remove RED marker
             break;
@@ -3594,7 +3604,7 @@ namespace TvPlugin
           {
             string fileName = "";
             bool isRec = _currentProgram.IsRecording;
-            bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel().Name);
+            bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel());
 
             Recording rec = null;
             if (isRec)
@@ -3603,7 +3613,7 @@ namespace TvPlugin
             }
             else if (isRecNOepg)
             {
-              Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel().Name);
+              Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
 
               if (schedule != null)
               {
@@ -3679,7 +3689,7 @@ namespace TvPlugin
             else //not recording
             {
               // clicked the show we're currently watching
-              if (TVHome.Navigator.CurrentChannel == _currentChannel && g_Player.Playing)
+              if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.IdChannel == _currentChannel.IdChannel && g_Player.Playing)
               {
                 Log.Debug("TVGuide: clicked on a currently running show");
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
@@ -4078,8 +4088,8 @@ namespace TvPlugin
         if (_channelList.Count == 0)
         {
           TvGuideChannel tvGuidChannel = new TvGuideChannel();
-          tvGuidChannel.channel = new Channel(GUILocalizeStrings.Get(911), false, true, 0, DateTime.MinValue, false,
-                                              DateTime.MinValue, 0, true, "", true, GUILocalizeStrings.Get(911));
+          tvGuidChannel.channel = new Channel(false, true, 0, DateTime.MinValue, false,
+                                              DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
           {
             _channelList.Add(tvGuidChannel);

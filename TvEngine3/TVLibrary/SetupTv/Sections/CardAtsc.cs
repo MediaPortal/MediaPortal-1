@@ -260,7 +260,9 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             ATSCChannel channel = (ATSCChannel)channels[i];
-            TuningDetail currentDetail = layer.GetChannel(channel);
+            //No support for channel moving, or merging with existing channels here.
+            //We do not know how ATSC works to correctly implement this.
+            TuningDetail currentDetail = layer.GetTuningDetail(channel);
             if (currentDetail != null)
               if (channel.Frequency != currentDetail.Frequency)
                 currentDetail = null;

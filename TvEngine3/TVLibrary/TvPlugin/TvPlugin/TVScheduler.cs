@@ -905,7 +905,7 @@ namespace TvPlugin
       string fileName = "";
       if (isSchedRec)
       {
-        bool isCardRec = server.IsRecording(rec.ReferencedChannel().Name, out card);
+        bool isCardRec = server.IsRecording(rec.ReferencedChannel().IdChannel, out card);
         if (isCardRec && card != null)
         {
           fileName = card.RecordingFileName;

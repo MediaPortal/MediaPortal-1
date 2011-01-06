@@ -169,7 +169,7 @@ namespace TvService
           Log.Info("Controller: find card for channel {0}", dbChannel.DisplayName);
         }
         //get the tuning details for the channel
-        List<IChannel> tuningDetails = _businessLayer.GetTuningChannelByName(dbChannel);
+        List<IChannel> tuningDetails = _businessLayer.GetTuningChannelsByDbChannel(dbChannel);
 
         bool isValidTuningDetails = IsValidTuningDetails(tuningDetails);
         if (!isValidTuningDetails)
