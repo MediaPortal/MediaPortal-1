@@ -996,6 +996,7 @@
     <String id="1202">Ordina per: Automatico</String>
     <String id="1203">Episodio imminente (attivi:{0})</String>
     <String id="1204">Riproduci tutti i video nella cartella</String>
+    <String id="1205">Ordina per: Disco #</String>
     <String id="1211">Riproduci il video da {0}</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
