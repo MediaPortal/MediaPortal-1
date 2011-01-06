@@ -265,16 +265,16 @@ namespace TvService
                             "%endmm%"
                           };
       string[] TagValues = {
-                             _schedule.ReferencedChannel().DisplayName,
-                             Program.Title,
-                             Program.EpisodeName,
-                             Program.SeriesNum,
-                             Program.EpisodeNum,
-                             Program.EpisodePart,
+                             _schedule.ReferencedChannel().DisplayName.Trim(),
+                             Program.Title.Trim(),
+                             Program.EpisodeName.Trim(),
+                             Program.SeriesNum.Trim(),
+                             Program.EpisodeNum.Trim(),
+                             Program.EpisodePart.Trim(),
                              Program.StartTime.ToString("yyyy-MM-dd"),
                              Program.StartTime.ToShortTimeString(),
                              Program.EndTime.ToShortTimeString(),
-                             Program.Genre,
+                             Program.Genre.Trim(),
                              Program.StartTime.ToString("dd"),
                              Program.StartTime.ToString("MM"),
                              Program.StartTime.ToString("yyyy"),
