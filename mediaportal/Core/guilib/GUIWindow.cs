@@ -870,7 +870,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     private void SetControlVisibility()
     {
       // reset our info manager caches
@@ -1290,23 +1289,14 @@ namespace MediaPortal.GUI.Library
         {
           if (!_isSkinLoaded)
           {
-            if (GUIGraphicsContext.IsFullScreenVideo)
+            if (GUIGraphicsContext.IsFullScreenVideo ||
+              GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO ||
+              GetID == (int)Window.WINDOW_TVFULLSCREEN ||
+              GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
             {
               return;
             }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_TVFULLSCREEN)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
-            {
-              return; //SV Added by SteveV 2006-09-07
-            }
-
+            
             // Print an error message
             GUIFont font = GUIFontManager.GetFont(0);
             if (font != null)
@@ -1541,10 +1531,9 @@ namespace MediaPortal.GUI.Library
               }
 
               InitControls();
-
               UpdateOverlayAllowed();
               GUIGraphicsContext.Overlay = _isOverlayAllowed;
-
+              
               // set topbar autohide 
               switch (_autoHideTopbarType)
               {
@@ -1609,9 +1598,6 @@ namespace MediaPortal.GUI.Library
                 DeInitControls();
                 Dispose();
                 GUITextureManager.CleanupThumbs();
-                //GC.Collect();
-                //GC.Collect();
-                //GC.Collect();
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 _shouldRestore = true;
