@@ -120,6 +120,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.showClosedCaptions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -193,6 +194,17 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Show subtitles (overrides disc defaults)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // showClosedCaptions
+      // 
+      this.showClosedCaptions.AutoSize = true;
+      this.showClosedCaptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showClosedCaptions.Location = new System.Drawing.Point(242, 19);
+      this.showClosedCaptions.Name = "showClosedCaptions";
+      this.showClosedCaptions.Size = new System.Drawing.Size(153, 17);
+      this.showClosedCaptions.TabIndex = 5;
+      this.showClosedCaptions.Text = "Show Closed Captions (CC)";
+      this.showClosedCaptions.UseVisualStyleBackColor = true;
       // 
       // DVD
       // 
