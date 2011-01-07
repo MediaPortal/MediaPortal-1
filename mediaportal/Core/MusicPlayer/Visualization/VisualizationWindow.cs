@@ -2028,7 +2028,7 @@ namespace MediaPortal.Visualization
 
       try
       {
-        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && !Viz.IsWinampVis())
+        if ((_EnableStatusOverlays || !FullScreen) && !IsWmpVis() && Viz != null && !Viz.IsWinampVis())
         {
           if (DialogWindowIsActive)
           {
@@ -2119,7 +2119,6 @@ namespace MediaPortal.Visualization
                 gBackBuf.ReleaseHdc(hBackBufDC);
               }
 
-
               if (!FullScreen && CurrentThumbImage != null)
               {
                 DoThumbnailOverlayFading(gBackBuf);
@@ -2148,19 +2147,25 @@ namespace MediaPortal.Visualization
                 }
               }
 
-              catch (Exception) {}
+              catch (Exception ex) 
+              {
+                Log.Error("RenderVisualization: {0}", ex);
+              }
             }
           }
 
           return sleepMS;
         }
-        else
+        else if (Viz != null)
         {
           sleepMS = Viz.RenderVisualization();
         }
       }
 
-      catch (Exception) {}
+      catch (Exception ex) 
+      {
+        Log.Error("RenderVisualization: {0}", ex);
+      }
 
       return sleepMS;
     }
