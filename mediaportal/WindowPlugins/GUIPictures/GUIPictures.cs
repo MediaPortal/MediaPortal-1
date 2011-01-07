@@ -455,7 +455,9 @@ namespace MediaPortal.GUI.Pictures
         foreach (string ext in Util.Utils.VideoExtensions)
           virtualDirectory.AddExtension(ext);
       }
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
     }
+
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -584,6 +586,23 @@ namespace MediaPortal.GUI.Pictures
       {
         OnSlideShowRecursive();
       }
+    }
+
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.PHOTO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+            {
+              currentFolder = message.Label;
+              OnSlideShowRecursive();
+            }
+          }
+          break;
+      }        
     }
 
     public override bool OnMessage(GUIMessage message)

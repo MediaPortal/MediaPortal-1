@@ -163,8 +163,6 @@ namespace MediaPortal.Configuration.Sections
     private GroupBox groupBox2;
     private ComboBox PlayNowJumpToCmbBox;
     private Label label8;
-    private MPGroupBox mpGroupBox2;
-    private MPLabel labelAutoPlay;
     private CheckBox GaplessPlaybackChkBox;
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
@@ -192,7 +190,6 @@ namespace MediaPortal.Configuration.Sections
     private RadioButton radioPlay;
     private Label lblPlayMode;
     private CheckBox checkBoxAddAll;
-    private MPComboBox autoPlayComboBox;
 
     #endregion
 
@@ -207,10 +204,7 @@ namespace MediaPortal.Configuration.Sections
 
       // Set available media players
       audioPlayerComboBox.Items.Clear();
-      audioPlayerComboBox.Items.AddRange(PlayerOptions);
-
-      autoPlayComboBox.Items.Clear();
-      autoPlayComboBox.Items.AddRange(autoPlayOptions);
+      audioPlayerComboBox.Items.AddRange(PlayerOptions);      
 
       PlayNowJumpToCmbBox.Items.Clear();
       PlayNowJumpToCmbBox.Items.AddRange(JumpToOptions);
@@ -379,23 +373,6 @@ namespace MediaPortal.Configuration.Sections
         checkBoxAddAll.Checked = xmlreader.GetValueAsBool("musicfiles", "addall", true);
 
         // Misc Settings
-        string autoPlayText = xmlreader.GetValueAsString("audioplayer", "autoplay", "Ask");
-
-        switch (autoPlayText)
-        {
-          case "No":
-            autoPlayComboBox.Text = autoPlayOptions[1];
-            break;
-
-          case "Ask":
-            autoPlayComboBox.Text = autoPlayOptions[2];
-            break;
-
-          default:
-            autoPlayComboBox.Text = autoPlayOptions[0];
-            break;
-        }
-
         string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", JumpToValue3);
 
         switch (playNowJumpTo)
@@ -565,25 +542,6 @@ namespace MediaPortal.Configuration.Sections
 
 
         // Misc Settings
-        string autoPlayText;
-
-        if (autoPlayComboBox.Text == autoPlayOptions[1])
-        {
-          autoPlayText = "No";
-        }
-
-        else if (autoPlayComboBox.Text == autoPlayOptions[2])
-        {
-          autoPlayText = "Ask";
-        }
-
-        else
-        {
-          autoPlayText = "Yes";
-        }
-
-        xmlwriter.SetValue("audioplayer", "autoplay", autoPlayText);
-
         string playNowJumpTo = string.Empty;
 
         switch (PlayNowJumpToCmbBox.Text)
@@ -784,9 +742,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2 = new System.Windows.Forms.GroupBox();
       this.PlayNowJumpToCmbBox = new System.Windows.Forms.ComboBox();
       this.label8 = new System.Windows.Forms.Label();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxAddAll = new System.Windows.Forms.CheckBox();
       this.lblPlayMode = new System.Windows.Forms.Label();
@@ -808,7 +763,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxVizOptions.SuspendLayout();
       this.MiscTabPg.SuspendLayout();
       this.groupBox2.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
@@ -1499,7 +1453,6 @@ namespace MediaPortal.Configuration.Sections
       // MiscTabPg
       // 
       this.MiscTabPg.Controls.Add(this.groupBox2);
-      this.MiscTabPg.Controls.Add(this.mpGroupBox2);
       this.MiscTabPg.Location = new System.Drawing.Point(4, 22);
       this.MiscTabPg.Name = "MiscTabPg";
       this.MiscTabPg.Size = new System.Drawing.Size(464, 374);
@@ -1511,7 +1464,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.groupBox2.Controls.Add(this.PlayNowJumpToCmbBox);
       this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Location = new System.Drawing.Point(16, 100);
+      this.groupBox2.Location = new System.Drawing.Point(14, 13);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(432, 64);
       this.groupBox2.TabIndex = 1;
@@ -1536,38 +1489,6 @@ namespace MediaPortal.Configuration.Sections
       this.label8.TabIndex = 0;
       this.label8.Text = "Jump on \"Play now\":";
       this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
-      // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
-      this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(432, 69);
-      this.mpGroupBox2.TabIndex = 0;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Audio CD";
-      // 
-      // labelAutoPlay
-      // 
-      this.labelAutoPlay.AutoSize = true;
-      this.labelAutoPlay.Location = new System.Drawing.Point(39, 28);
-      this.labelAutoPlay.Name = "labelAutoPlay";
-      this.labelAutoPlay.Size = new System.Drawing.Size(69, 13);
-      this.labelAutoPlay.TabIndex = 0;
-      this.labelAutoPlay.Text = "Autoplay CD:";
-      // 
-      // autoPlayComboBox
-      // 
-      this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.autoPlayComboBox.Location = new System.Drawing.Point(114, 25);
-      this.autoPlayComboBox.Name = "autoPlayComboBox";
-      this.autoPlayComboBox.Size = new System.Drawing.Size(293, 21);
-      this.autoPlayComboBox.TabIndex = 1;
       // 
       // label4
       // 
@@ -1629,8 +1550,6 @@ namespace MediaPortal.Configuration.Sections
       this.MiscTabPg.ResumeLayout(false);
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }

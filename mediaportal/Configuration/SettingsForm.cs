@@ -579,6 +579,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(general, new GeneralWatchdog(), true));
       AddSection(new ConfigPage(general, new GeneralDaemonTools(), true));
       AddSection(new ConfigPage(general, new GeneralFileMenu(), true));
+      AddSection(new ConfigPage(general, new GeneralAutoplay(), true));
 
       GeneralDynamicRefreshRate dynRRConfig = new GeneralDynamicRefreshRate();
       AddSection(new ConfigPage(general, dynRRConfig, true));

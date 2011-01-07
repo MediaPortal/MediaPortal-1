@@ -254,6 +254,9 @@
     <Compile Include="Sections\BaseViews.Designer.cs">
       <DependentUpon>BaseViews.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\GeneralAutoplay.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Sections\DVDZoom.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -608,6 +611,10 @@
     <EmbeddedResource Include="Sections\BaseViews.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralAutoplay.resx">
+      <DependentUpon>GeneralAutoplay.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>

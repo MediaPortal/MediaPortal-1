@@ -139,8 +139,7 @@ namespace MediaPortal.GUI.Music
     private string _startDirectory = string.Empty;
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
-    private bool _useFileMenu = false;
-    private string _autoPlayCD = "No";
+    private bool _useFileMenu = false;    
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -153,6 +152,40 @@ namespace MediaPortal.GUI.Music
     public GUIMusicFiles()
     {
       GetID = (int) Window.WINDOW_MUSIC_FILES;
+    }
+
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.AUDIO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.AUDIO_CD ||
+              message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+              PlayCD(message.Label);            
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+          MusicCD = null;
+          if (g_Player.Playing && g_Player.IsMusic && message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
+          {
+            Log.Info("GUIMusicFiles: Stop since media is ejected");
+            g_Player.Stop();
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+          }
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            if (Util.Utils.IsDVD(currentFolder))
+            {
+              currentFolder = string.Empty;
+              LoadDirectory(currentFolder);
+            }
+          }
+          break;
+      }
     }
 
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when
@@ -261,12 +294,11 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
-        _autoPlayCD = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);        
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
-      
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
     }
 
     public override bool Init()
@@ -1138,7 +1170,7 @@ namespace MediaPortal.GUI.Music
       return false;
     }
     
-    #region Handlers
+    #region Handlers    
 
     /// <summary>
     /// Queue the selected folder for scanning
@@ -1650,7 +1682,7 @@ namespace MediaPortal.GUI.Music
               else if (cds.Length > 1)
               {
                 // If we have "Autoplay" set to "Yes", we get the first element of the list, to avoid user input.
-                if ((_discId == cds[0].DiscId) || (_autoPlayCD == "Yes"))
+                if ((_discId == cds[0].DiscId))
                 {
                   _discId = cds[0].DiscId;
                   MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);

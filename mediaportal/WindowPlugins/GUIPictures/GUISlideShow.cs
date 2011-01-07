@@ -737,7 +737,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (_currentSlide == null)
           {
-            int totalFrames = (_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames;
+            int totalFrames = unchecked((_speed * (int)(1.0/ TIME_PER_FRAME)) + _slideShowTransistionFrames);
             if (_useKenBurns)
             {
               totalFrames = _kenBurnTransistionSpeed * 30;
@@ -2701,7 +2701,7 @@ namespace MediaPortal.GUI.Pictures
       }
       else
       {
-        albumart = albumart + "folder.jpg";
+        albumart = Util.Utils.GetFolderThumbForDir(albumart);
         if (!Util.Utils.FileExistsInCache(albumart))
         {
           albumart = string.Empty;
