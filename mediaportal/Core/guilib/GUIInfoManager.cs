@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using MediaPortal.Configuration;
 using MediaPortal.Player;
-using MediaPortal.Profile;
+using MediaPortal.Time;
+using MediaPortal.Utils.Time;
 
 namespace MediaPortal.GUI.Library
 {
@@ -147,7 +147,9 @@ namespace MediaPortal.GUI.Library
     public const int WEATHER_IS_FETCHED = 103;
 
     public const int SYSTEM_TIME = 110;
+    public const int SYSTEM_TIME_IS_BETWEEN = 1100;
     public const int SYSTEM_DATE = 111;
+    public const int SYSTEM_DATE_IS_BETWEEN = 1110;
     public const int SYSTEM_CPU_TEMPERATURE = 112;
     public const int SYSTEM_GPU_TEMPERATURE = 113;
     public const int SYSTEM_FAN_SPEED = 114;
@@ -369,6 +371,8 @@ namespace MediaPortal.GUI.Library
     private static int MULTI_INFO_END = 50000; // 10000 references is all we have for now
     private static int COMBINED_VALUES_START = 100000;
 
+    private const int FramesPerCheck = 500;
+
     #endregion
 
     #region variables
@@ -385,6 +389,11 @@ namespace MediaPortal.GUI.Library
 
     private static int m_nextWindowID;
     private static int m_prevWindowID;
+
+    //60 seconds check
+    private static readonly Dictionary<GUIInfo, bool> LastReturnValues = new Dictionary<GUIInfo, bool>();
+    private static int _renderFrameCount;
+    private static DateTime _lastSixtySecondsStart = DateTime.Now.AddMinutes(-1);
 
     #endregion
 
@@ -632,9 +641,28 @@ namespace MediaPortal.GUI.Library
         {
           ret = SYSTEM_DATE;
         }
+        else if (strTest.Substring(0, 21) == "system.date.isbetween")
+        {
+          String withoutBlanks = strTest.Replace(" ", String.Empty);
+          int param1 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(22, 5));
+          int param2 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(28, 5));
+          return AddMultiInfo(new GUIInfo(bNegate ? -SYSTEM_DATE_IS_BETWEEN : SYSTEM_DATE_IS_BETWEEN, param1, param2));
+        }
         else if (strTest == "system.time")
         {
           ret = SYSTEM_TIME;
+        }
+        else if (strTest.Substring(0,21) == "system.time.isbetween")
+        {
+          String withoutBlanks = strTest.Replace(" ", String.Empty);
+          int param1 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(22, 5));
+          int param2 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(28, 5));
+
+          var guiInfo = new GUIInfo(bNegate ? -SYSTEM_TIME_IS_BETWEEN : SYSTEM_TIME_IS_BETWEEN, param1, param2);
+          int index = AddMultiInfo(guiInfo);
+          if (!LastReturnValues.ContainsKey(m_multiInfo[index - MULTI_INFO_START]))
+          LastReturnValues.Add(m_multiInfo[index - MULTI_INFO_START], false);
+          return index;
         }
         else if (strTest == "system.cputemperature")
         {
@@ -2187,6 +2215,35 @@ namespace MediaPortal.GUI.Library
       return bReturn;
     }
 
+    private static bool IsTimeForRefresh()
+    {      
+      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindowEx).HasWindowVisibilityUpdated)
+      {
+        _renderFrameCount++;
+      }
+
+      if (_renderFrameCount == FramesPerCheck )
+      {        
+          return true;
+      }
+
+      //init visibility
+      if (_renderFrameCount == 1)
+      {
+        _renderFrameCount = FramesPerCheck - 1;
+        return true;
+      }
+
+      if (_renderFrameCount < FramesPerCheck)
+      {
+        return false;
+      }
+
+      _renderFrameCount = 2;
+      _lastSixtySecondsStart = DateTime.Now;
+      return false;
+    }
+
     /// \brief Examines the multi information sent and returns true or false accordingly.
     private static bool GetMultiInfoBool(GUIInfo info, int dwContextWindow)
     {
@@ -2330,6 +2387,35 @@ namespace MediaPortal.GUI.Library
           }
            */
           return false;
+        case SYSTEM_DATE_IS_BETWEEN:
+          {
+            if (IsTimeForRefresh())
+            {
+              string startDate = SkinSettings.GetSkinString(info.m_data1);
+              string endDate = SkinSettings.GetSkinString(info.m_data2);
+              var dateRange = new DateRange(startDate, endDate);
+              bReturn = dateRange.IsInRange(DateTime.Now);
+              LastReturnValues[info] = bReturn;
+              break;
+            }
+            LastReturnValues.TryGetValue(info, out bReturn);
+            break;
+          }
+        case SYSTEM_TIME_IS_BETWEEN:
+          {
+
+              if (IsTimeForRefresh())
+              {
+                string startDate = SkinSettings.GetSkinString(info.m_data1);
+                string endDate = SkinSettings.GetSkinString(info.m_data2);
+                var timeRange = new TimeRange(startDate, endDate);
+                bReturn = timeRange.IsInRange(DateTime.Now);
+                LastReturnValues[info] = bReturn;
+                break;
+              }
+              LastReturnValues.TryGetValue(info, out bReturn);
+          break;
+          }
         case WINDOW_NEXT:
           bReturn = (info.m_data1 == m_nextWindowID);
           break;
