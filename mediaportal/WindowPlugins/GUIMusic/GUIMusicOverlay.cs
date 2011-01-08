@@ -139,8 +139,7 @@ namespace MediaPortal.GUI.Music
     {
       if (!g_Player.Playing ||
           g_Player.IsVideo || g_Player.IsDVD || g_Player.IsTVRecording || g_Player.IsTV ||
-          (!g_Player.IsRadio && !g_Player.IsMusic) ||
-           !_visualisationEnabled)
+          (!g_Player.IsRadio && !g_Player.IsMusic))
       {
         _fileName = string.Empty;
         OnUpdateState(false);
