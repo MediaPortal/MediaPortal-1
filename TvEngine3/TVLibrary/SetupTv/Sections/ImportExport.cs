@@ -418,7 +418,6 @@ namespace SetupTv.Sections
               }
               foreach (XmlNode nodeTune in tuningList)
               {
-                int audioPid = Int32.Parse(nodeTune.Attributes["AudioPid"].Value);
                 int bandwidth = Int32.Parse(nodeTune.Attributes["Bandwidth"].Value);
                 int channelNumber = Int32.Parse(nodeTune.Attributes["ChannelNumber"].Value);
                 int channelType = Int32.Parse(nodeTune.Attributes["ChannelType"].Value);
@@ -439,7 +438,6 @@ namespace SetupTv.Sections
                 int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
                 int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
                 int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
-                int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
                 int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
                 int audioSource = Int32.Parse(GetNodeAttribute(nodeTune, "AudioSource", "0"));
                 bool isVCRSignal = (GetNodeAttribute(nodeChannel, "IsVCRSignal", "False") == "True");
