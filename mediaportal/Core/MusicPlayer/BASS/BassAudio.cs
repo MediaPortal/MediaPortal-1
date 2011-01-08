@@ -3167,7 +3167,7 @@ namespace MediaPortal.Player
         }
       }
 
-      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted)
+      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
         NeedUpdate = true;
         SetVideoWindow();
@@ -3236,10 +3236,11 @@ namespace MediaPortal.Player
         _sourceRectangle = _videoRectangle;
       }
 
-      if (!GUIWindowManager.IsRouted)
+      if (!GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
         VizWindow.Visible = _State == PlayState.Playing;
       }
+      else {VizWindow.Visible = false;}
     }
 
     #endregion
