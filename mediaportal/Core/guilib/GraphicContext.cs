@@ -1503,11 +1503,6 @@ namespace MediaPortal.GUI.Library
         case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
         case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
         case (int)GUIWindow.Window.WINDOW_TV_CONFLICTS:
-        case (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN:
-        case (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO:
-        case (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS:
-        case (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS:
-        case (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS:
         case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
         case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
           return true;
