@@ -2167,7 +2167,6 @@ namespace MediaPortal.Player
 
       int stream = GetCurrentStream();
 
-      bool doFade = false;
       bool result = true;
       Speed = 1; // Set playback Speed to normal speed
 
@@ -2278,7 +2277,7 @@ namespace MediaPortal.Player
             Bass.BASS_ChannelStop(oldStream);
           }
 
-          doFade = true;
+          _CrossFading = _CrossFadeIntervalMS > 0 ? true : false;
           stream = GetNextStream();
 
           if (stream != 0 || StreamIsPlaying(stream))
@@ -2406,10 +2405,8 @@ namespace MediaPortal.Player
 
             StreamEventSyncHandles[CurrentStreamIndex] = RegisterPlaybackEvents(stream, CurrentStreamIndex);
 
-            if (doFade && _CrossFadeIntervalMS > 0)
+            if (_CrossFading)
             {
-              _CrossFading = true;
-
               // Reduce the stream volume to zero so we can fade it in...
               Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0);
 
