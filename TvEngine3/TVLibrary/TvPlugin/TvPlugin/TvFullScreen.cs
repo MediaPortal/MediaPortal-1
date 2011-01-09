@@ -1655,66 +1655,6 @@ namespace TvPlugin
             break;
           }
 
-          //TV Channels not needed anymore after MiniEPG
-          /*case 915: //TVChannels
-          {
-            dlg.Reset();
-            dlg.SetHeading(GUILocalizeStrings.Get(915));//TV Channels
-            int selected = 0;
-            int i = 0;
-            foreach (TVChannel channel in TVHome.Navigator.CurrentGroup.TvChannels)
-            {
-              GUIListItem pItem = new GUIListItem(channel.Name);
-              string logo = Utils.GetCoverArt(Thumbs.TVChannel, channel.Name);
-              if (System.IO.File.Exists(logo))
-              {
-                pItem.IconImage = logo;
-              }
-              dlg.Add(pItem);
-              if (channel.Name == TVHome.Navigator.CurrentTVChannel.Name)
-              {
-                selected = i;
-              }
-              i++;
-            }
-            dlg.SelectedLabel = selected;
-            _isDialogVisible = true;
-
-            dlg.DoModal(GetID);
-            _isDialogVisible = false;
-
-
-            if (dlg.SelectedLabel == -1) return;
-            ChangeChannelNr(dlg.SelectedLabel + 1);
-          }
-          break;*/
-
-          //Groups not used anymore
-          /*case 971: //group
-          {
-            dlg.Reset();
-            dlg.SetHeading(GUILocalizeStrings.Get(971));//Group
-            foreach (TVGroup group in TVHome.Navigator.Groups)
-            {
-              dlg.Add(group.GroupName);
-            }
-
-            _isDialogVisible = true;
-
-            dlg.DoModal(GetID);
-            _isDialogVisible = false;
-
-
-            if (dlg.SelectedLabel == -1) return;
-            int selectedItem = dlg.SelectedLabel;
-            if (selectedItem >= 0 && selectedItem < TVHome.Navigator.Groups.Count)
-            {
-              TVGroup group = (TVGroup)TVHome.Navigator.Groups[selectedItem];
-              TVHome.Navigator.SetCurrentGroup(group.GroupName);
-            }
-          }
-          break;*/
-
         case 941: // Change aspect ratio
           ShowAspectRatioMenu();
           break;
@@ -1735,21 +1675,6 @@ namespace TvPlugin
           ShowAudioDualMonoModeMenu(dualMonoMode);
           break;
 
-          // msn related can be removed
-          //case 12902: // MSN Messenger
-          //  Log.Debug("MSN CHAT:ON");
-          //  _msnWindowVisible = true;
-          //  GUIWindowManager.VisibleOsd = GUIWindow.Window.WINDOW_TVMSNOSD;
-          //  //@_msnWindow.DoModal(GetID, null);
-          //  _msnWindowVisible = false;
-          //  GUIWindowManager.IsOsdVisible = false;
-          //  break;
-
-          // msn related can be removed
-          //case 902: // Online contacts
-          //  GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MSN);
-          //  break;
-
         case 1441: // Fullscreen teletext
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_FULLSCREEN_TELETEXT);
           break;
@@ -1757,7 +1682,6 @@ namespace TvPlugin
         case 970:
           // switch back to previous window
           _isOsdVisible = false;
-          //_msnWindowVisible = false;     // msn related can be removed
           GUIWindowManager.IsOsdVisible = false;
           GUIGraphicsContext.IsFullScreenVideo = false;
           GUIWindowManager.ShowPreviousWindow();
@@ -1974,12 +1898,12 @@ namespace TvPlugin
         dlg.SetHeading(882);
 
         dlg.ShowQuickNumbers = true;
-        dlg.AddLocalizedString(886); //Default
+        dlg.AddLocalizedString(886); // Default
         dlg.AddLocalizedString(993); // Custom
-        dlg.AddLocalizedString(893); //Portable
-        dlg.AddLocalizedString(883); //Low
-        dlg.AddLocalizedString(884); //Medium
-        dlg.AddLocalizedString(885); //High
+        dlg.AddLocalizedString(893); // Portable
+        dlg.AddLocalizedString(883); // Low
+        dlg.AddLocalizedString(884); // Medium
+        dlg.AddLocalizedString(885); // High
         QualityType _newQuality = TVHome.Card.QualityType;
         switch (_newQuality)
         {
@@ -2200,9 +2124,9 @@ namespace TvPlugin
       dlg.SetHeading(200059); // audio dual mono mode 
 
       dlg.AddLocalizedString(200060); // stereo 
-      dlg.AddLocalizedString(200061); //Left channel to the left and right speakers
-      dlg.AddLocalizedString(200062); //Right channel to the left and right speakers
-      dlg.AddLocalizedString(200063); //Mix both
+      dlg.AddLocalizedString(200061); // Left channel to the left and right speakers
+      dlg.AddLocalizedString(200062); // Right channel to the left and right speakers
+      dlg.AddLocalizedString(200063); // Mix both
 
       dlg.SelectedLabel = (int)dualMonoMode;
 
@@ -2454,12 +2378,6 @@ namespace TvPlugin
         updateGUI = true;
       }
 
-      // msn related can be removed
-      //if (_msnWindowVisible != _screenState.MsnVisible)
-      //{
-      //  _screenState.MsnVisible = _msnWindowVisible;
-      //  updateGUI = true;
-      //}
       if (_isDialogVisible != _screenState.ContextMenuVisible)
       {
         _screenState.ContextMenuVisible = _isDialogVisible;
@@ -2532,18 +2450,17 @@ namespace TvPlugin
 
     private void UpdateGUI()
     {
-
-		 // Set recorder status
-        VirtualCard card;
-        var server = new TvServer();
-        if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
-        {
-            ShowControl(GetID, (int)Control.REC_LOGO);
-        }
-        else
-        {
-            HideControl(GetID, (int)Control.REC_LOGO);
-        }
+      // Set recorder status
+      VirtualCard card;
+      var server = new TvServer();
+      if (server.IsRecording(TVHome.Navigator.Channel.IdChannel, out card))
+      {
+        ShowControl(GetID, (int)Control.REC_LOGO);
+      }
+      else
+      {
+        HideControl(GetID, (int)Control.REC_LOGO);
+      }
 
       int speed = g_Player.Speed;
       HideControl(GetID, (int)Control.IMG_2X);

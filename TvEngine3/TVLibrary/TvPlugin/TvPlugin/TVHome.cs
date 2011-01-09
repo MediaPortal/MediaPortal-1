@@ -301,10 +301,10 @@ namespace TvPlugin
         NameValueCollection appSettings = ConfigurationManager.AppSettings;
         appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
 
-        //Make sure that we have valid hostname for the TV server
+        // Make sure that we have valid hostname for the TV server
         SetRemoteControlHostName();
 
-        //Wake up the TV server, if required
+        // Wake up the TV server, if required
         HandleWakeUpTvServer();
         startHeartBeatThread();
 
@@ -367,29 +367,25 @@ namespace TvPlugin
       switch (action.wID)
       {
         case Action.ActionType.ACTION_RECORD:
-          //record current program on current channel
-          //are we watching tv?                    
+          // record current program on current channel
+          // are we watching tv?                    
           ManualRecord(Navigator.Channel);
           break;
-
         case Action.ActionType.ACTION_PREV_CHANNEL:
           OnPreviousChannel();
           break;
         case Action.ActionType.ACTION_PAGE_DOWN:
           OnPreviousChannel();
           break;
-
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           OnNextChannel();
           break;
         case Action.ActionType.ACTION_PAGE_UP:
           OnNextChannel();
           break;
-
-        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL: // mPod
+        case Action.ActionType.ACTION_LAST_VIEWED_CHANNEL:
           OnLastViewedChannel();
           break;
-
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           {
             // goto home 
@@ -400,7 +396,6 @@ namespace TvPlugin
             GUIWindowManager.ShowPreviousWindow();
             return;
           }
-
         case Action.ActionType.ACTION_KEY_PRESSED:
           {
             if ((char)action.m_key.KeyChar == '0')
@@ -468,9 +463,8 @@ namespace TvPlugin
         RemoteControl.Clear();
       }
 
-
-      //stop the old recorder.
-      //DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.DataSourceOnly;
+      // stop the old recorder.
+      // DatabaseManager.Instance.DefaultQueryStrategy = QueryStrategy.DataSourceOnly;
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);
 
@@ -486,7 +480,7 @@ namespace TvPlugin
 
       base.OnPageLoad();
 
-      //set video window position
+      // set video window position
       if (videoWindow != null)
       {
         GUIGraphicsContext.VideoWindow = new Rectangle(videoWindow.XPosition, videoWindow.YPosition, videoWindow.Width,
@@ -549,7 +543,7 @@ namespace TvPlugin
         if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
         {
           Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
-          //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
+          // if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
           if (useDelay)
           {
             Thread tvDelayThread = new Thread(TvDelayThread);
@@ -576,7 +570,7 @@ namespace TvPlugin
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      //if we're switching to another plugin
+      // if we're switching to another plugin
       if (!GUIGraphicsContext.IsTvWindow(newWindowId))
       {
         //and we're not playing which means we dont timeshift tv
@@ -619,7 +613,7 @@ namespace TvPlugin
       {
         if (Card.IsTimeShifting && g_Player.IsTV && g_Player.Playing)
         {
-          //tv off
+          // tv off
           g_Player.Stop();
           Log.Warn("TVHome.OnClicked(): EndTvOff {0} ms", benchClock.ElapsedMilliseconds.ToString());
           benchClock.Stop();
@@ -630,7 +624,7 @@ namespace TvPlugin
           // tv on
           Log.Info("TVHome:turn tv on {0}", Navigator.CurrentChannel);
 
-          //stop playing anything
+          // stop playing anything
           if (g_Player.Playing)
           {
             if (g_Player.IsTV && !g_Player.IsTVRecording)
@@ -692,8 +686,8 @@ namespace TvPlugin
           break;
         case GUIMessage.MessageType.GUI_MSG_RESUME_TV:
           {
-            if (_autoTurnOnTv && !wasPrevWinTVplugin())
             // we only want to resume TV if previous window is NOT a tvplugin based one. (ex. tvguide.)
+            if (_autoTurnOnTv && !wasPrevWinTVplugin())
             {
               //restart viewing...  
               Log.Info("tv home msg resume tv:{0}", Navigator.CurrentChannel);
@@ -756,7 +750,7 @@ namespace TvPlugin
     {
       TvBusinessLayer layer = new TvBusinessLayer();
       TvServer server = new TvServer();
-      if (manual) //till manual stop
+      if (manual) // until manual stop
       {
         Schedule newSchedule = new Schedule(channel.IdChannel,
                                             GUILocalizeStrings.Get(413) + " (" + channel.DisplayName + ")",
@@ -764,14 +758,12 @@ namespace TvPlugin
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         newSchedule.RecommendedCard = Card.Id;
-        //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
-
         newSchedule.Persist();
         server.OnNewSchedule();
       }
-      else //current program
+      else // current program
       {
-        //lets find any canceled episodes that match this one we want to create, if found uncancel it.
+        // lets find any canceled episodes that match this one we want to create, if found uncancel it.
         Schedule existingParentSchedule = Schedule.RetrieveSeries(channel.IdChannel, channel.CurrentProgram.Title,
                                                                   channel.CurrentProgram.StartTime,
                                                                   channel.CurrentProgram.EndTime);
@@ -794,8 +786,6 @@ namespace TvPlugin
         newSchedule.PreRecordInterval = Int32.Parse(layer.GetSetting("preRecordInterval", "5").Value);
         newSchedule.PostRecordInterval = Int32.Parse(layer.GetSetting("postRecordInterval", "5").Value);
         newSchedule.RecommendedCard = Card.Id;
-        //added by joboehl - Enables the server to use the current card as the prefered on for recording. 
-
         newSchedule.Persist();
         server.OnNewSchedule();
       }
@@ -1232,7 +1222,6 @@ namespace TvPlugin
       String macAddress;
       byte[] hwAddress;
 
-      //Get settings from MediaPortal.xml
       using (Settings xmlreader = new MPSettings())
       {
         isWakeOnLanEnabled = xmlreader.GetValueAsBool("tvservice", "isWakeOnLanEnabled", false);
@@ -1240,24 +1229,21 @@ namespace TvPlugin
         intTimeOut = xmlreader.GetValueAsInt("tvservice", "WOLTimeOut", 10);
       }
 
-      //isWakeOnlanEnabled
       if (isWakeOnLanEnabled)
       {
-        //Check for multi-seat installation
         if (!IsSingleSeat())
         {
           WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
 
-          //isAutoMacAddressEnabled
           if (isAutoMacAddressEnabled)
           {
             IPAddress ipAddress = null;
 
-            //Check if we already have a valid IP address stored in RemoteControl.HostName,
-            //otherwise try to resolve the IP address
+            // Check if we already have a valid IP address stored in RemoteControl.HostName,
+            // otherwise try to resolve the IP address
             if (!IPAddress.TryParse(RemoteControl.HostName, out ipAddress))
             {
-              //Get IP address of the TV server
+              // Get IP address of the TV server
               try
               {
                 IPAddress[] ips;
@@ -1271,7 +1257,7 @@ namespace TvPlugin
                   Log.Debug("    {0}", ip);
                 }
 
-                //Use first valid IP address
+                // Use first valid IP address
                 ipAddress = ips[0];
               }
               catch (Exception ex)
@@ -1280,10 +1266,10 @@ namespace TvPlugin
               }
             }
 
-            //Check for valid IP address
+            // Check for valid IP address
             if (ipAddress != null)
             {
-              //Update the MAC address if possible
+              // Update the MAC address if possible
               hwAddress = wakeOnLanManager.GetHardwareAddress(ipAddress);
 
               if (wakeOnLanManager.IsValidEthernetAddress(hwAddress))
@@ -1291,7 +1277,7 @@ namespace TvPlugin
                 Log.Debug("TVHome: WOL - Valid auto MAC address: {0:x}:{1:x}:{2:x}:{3:x}:{4:x}:{5:x}"
                           , hwAddress[0], hwAddress[1], hwAddress[2], hwAddress[3], hwAddress[4], hwAddress[5]);
 
-                //Store MAC address
+                // Store MAC address
                 macAddress = BitConverter.ToString(hwAddress).Replace("-", ":");
 
                 Log.Debug("TVHome: WOL - Store MAC address: {0}", macAddress);
@@ -1306,7 +1292,7 @@ namespace TvPlugin
             }
           }
 
-          //Use stored MAC address
+          // Use stored MAC address
           using (Settings xmlreader = new MPSettings())
           {
             macAddress = xmlreader.GetValueAsString("tvservice", "macAddress", null);
@@ -1318,7 +1304,7 @@ namespace TvPlugin
           {
             hwAddress = wakeOnLanManager.GetHwAddrBytes(macAddress);
 
-            //Finally, start up the TV server
+            // Finally, start up the TV server
             Log.Info("TVHome: WOL - Start the TV server");
 
             if (wakeOnLanManager.WakeupSystem(hwAddress, RemoteControl.HostName, intTimeOut))
@@ -1467,7 +1453,6 @@ namespace TvPlugin
                     errMsg = GUILocalizeStrings.Get(1516);
                     break;
                 }
-
                 NotifyUser(errMsg);
               }
             }
@@ -1485,14 +1470,13 @@ namespace TvPlugin
     /// <param name="errMsg">The error messages</param>
     private static void NotifyUser(string errMsg)
     {
-      //show dialogue only on main thread.
+      // show dialogue only on main thread.
       if (GUIGraphicsContext.form.InvokeRequired)
       {
         ShowDlgMessageAsynchDelegate d = new ShowDlgMessageAsynchDelegate(NotifyUser);
         GUIGraphicsContext.form.Invoke(d, errMsg);
         return;
       }
-
 
       GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
 
