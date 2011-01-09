@@ -346,7 +346,7 @@ namespace TvLibrary.Implementations.DVB
         }
         dvbsLocator.put_Modulation(tuneChannel.ModulationType);
         Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
-        dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+        dvbsLocator.put_InnerFECRate(tuneChannel.InnerFecRate);
         Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
         _tuneRequest.put_Locator(locator);
 
