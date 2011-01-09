@@ -430,6 +430,18 @@
     <Compile Include="RedEye\RedEye.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Ripper\CDDrive.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\CDDriveEvents.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\DeviceVolumeMonitor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Ripper\Win32Functions.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TagReader\CUE\CueFakeTrack.cs" />
     <Compile Include="TagReader\CUE\CueSharp.cs" />
     <Compile Include="TagReader\CUE\CueTrackFileGUIListItemBuilder.cs" />
@@ -1116,9 +1128,6 @@
     <Compile Include="Player\VideoPlayerVMR9.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Player\VMR7.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Player\VMR9.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -1148,19 +1157,6 @@
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
     <Compile Include="Ripper\AutoPlay.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\CDDrive.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\CDDriveEvents.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\DeviceVolumeMonitor.cs" />
-    <Compile Include="Ripper\RemovableDrive.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Ripper\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SerialUIR\CommBase.cs">
