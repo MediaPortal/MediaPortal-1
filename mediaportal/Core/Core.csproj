@@ -496,7 +496,6 @@
     <Compile Include="Util\StopWatch.cs" />
     <Compile Include="Util\ThumbExtractor.cs" />
     <Compile Include="Util\TMDBCoversSearch.cs" />
-    <Compile Include="Util\TVProgramDescription.cs" />
     <Compile Include="Util\UnhandledExceptionLogger.cs" />
     <Compile Include="UserInterfaceControls\MPTabPage.cs">
       <SubType>Component</SubType>

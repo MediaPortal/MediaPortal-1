@@ -187,6 +187,11 @@ namespace TvPlugin
     // EPG Channel
     private static Channel _lastTvChannel = null;
 
+    // notification
+    protected static int _notifyTVTimeout = 15;
+    protected static bool _playNotifyBeep = true;
+    protected static int _preNotifyConfig = 60;
+
     #endregion
 
     #region events
@@ -1165,6 +1170,10 @@ namespace TvPlugin
         _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
         _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
         _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
+
+        _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
+        _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
+        _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
       }
       settingsLoaded = true;
     }
@@ -1735,6 +1744,35 @@ namespace TvPlugin
               Card.StopTimeShifting();
             }
             ;
+            break;
+          }
+        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM: 
+          {
+            //if (GUIGraphicsContext.IsFullScreenVideo) return;
+            GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+            TVProgramDescription notify = message.Object as TVProgramDescription;
+            if (notify == null)
+            {
+              return;
+            }
+            int minUntilStart = _preNotifyConfig / 60;
+            if (minUntilStart > 1)
+            {
+              dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
+            }
+            else
+            {
+              dialogNotify.SetHeading(1019); // Program is about to begin
+            }
+            dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
+            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
+            dialogNotify.SetImage(strLogo);
+            dialogNotify.TimeOut = _notifyTVTimeout;
+            if (_playNotifyBeep)
+            {
+              MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
+            }
+            dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
             break;
           }
       }

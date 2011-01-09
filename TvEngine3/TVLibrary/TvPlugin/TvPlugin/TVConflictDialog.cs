@@ -20,13 +20,13 @@
 
 using System;
 using System.Globalization;
-using System.IO;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-namespace MediaPortal.Dialogs
+namespace TvPlugin
 {
-  public class GUIDialogTVConflict : GUIDialogWindow
+  public class TVConflictDialog: GUIDialogWindow
   {
     #region Enums
 
@@ -53,7 +53,7 @@ namespace MediaPortal.Dialogs
 
     #region Constructors/Destructors
 
-    public GUIDialogTVConflict()
+    public TVConflictDialog()
     {
       GetID = (int)Window.WINDOW_DIALOG_TVCONFLICT;
     }
@@ -79,8 +79,8 @@ namespace MediaPortal.Dialogs
 
     public void AddConflictRecording(GUIListItem item)
     {
-      string logo = Util.Utils.GetCoverArt(Thumbs.TVChannel, item.Label3);
-      if (!Util.Utils.FileExistsInCache(logo))      
+      string logo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, item.Label3);
+      if (!MediaPortal.Util.Utils.FileExistsInCache(logo))      
       {
         logo = "defaultVideoBig.png";
       }
@@ -112,7 +112,7 @@ namespace MediaPortal.Dialogs
     private static string GetRecordingDateTime(TVProgramDescription rec)
     {
       return String.Format("{0} {1} - {2}",
-                           Util.Utils.GetShortDayString(rec.StartTime),
+                           MediaPortal.Util.Utils.GetShortDayString(rec.StartTime),
                            rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                            rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }

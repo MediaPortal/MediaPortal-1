@@ -110,8 +110,6 @@ namespace MediaPortal.GUI.Video
     private GUIDialogMenu dlg;
     private GUIVideoOSD _osdWindow = null;
     private bool NotifyDialogVisible = false;
-    private int _notifyTVTimeout = 15;
-    private bool _playNotifyBeep = true;
     private DateTime _volumeTimer = DateTime.MinValue;
     private DateTime _forbiddenTimer = DateTime.MinValue;
     private PlayListPlayer playlistPlayer;
@@ -160,8 +158,6 @@ namespace MediaPortal.GUI.Video
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         m_iMaxTimeOSDOnscreen = 1000 * xmlreader.GetValueAsInt("movieplayer", "osdtimeout", 5);
-        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
-        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
 
         string aspectRatioText = xmlreader.GetValueAsString(key1, "defaultar", "Normal");
         GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(aspectRatioText);
@@ -1044,27 +1040,6 @@ namespace MediaPortal.GUI.Video
     {
       _needToClearScreen = true;
 
-      #region case GUI_MSG_NOTIFY_TV_PROGRAM
-
-      //if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
-      //{
-      //  dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
-      //  TVProgram notify = message.Object as TVProgram;
-      //  if (notify == null) return true;
-      //  dialogNotify.SetHeading(1016);
-      //  dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-      //  string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-      //  dialogNotify.SetImage(strLogo);
-      //  dialogNotify.TimeOut = _notifyTVTimeout;
-      //  NotifyDialogVisible = true;
-      //  if ( _playNotifyBeep )
-      //    MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
-      //  dialogNotify.DoModal(GetID);
-      //  NotifyDialogVisible = false;
-      //}
-
-      #endregion
-
       if (_isOsdVisible)
       {
         return OnOsdMessage(message);
@@ -1101,8 +1076,6 @@ namespace MediaPortal.GUI.Video
             _isVolumeVisible = false;
             _isForbiddenVisible = false;
             NotifyDialogVisible = false;
-            _notifyTVTimeout = 15;
-            _playNotifyBeep = true;
             _volumeTimer = DateTime.MinValue;
             _forbiddenTimer = DateTime.MinValue;
 

@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.Util
+namespace TvPlugin
 {
   /// <summary>
   /// Class which holds all details about a TV program

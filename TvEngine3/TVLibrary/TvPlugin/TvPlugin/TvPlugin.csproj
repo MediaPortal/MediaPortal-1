@@ -132,6 +132,7 @@
     <Compile Include="teletext\TvFullscreenTeletext.cs" />
     <Compile Include="teletext\TvTeletextBase.cs" />
     <Compile Include="TvChannelSettings.cs" />
+    <Compile Include="TVConflictDialog.cs" />
     <Compile Include="TVConflicts.cs" />
     <Compile Include="TvCropManager.cs" />
     <Compile Include="TvCropSettings.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="TvOSD.cs" />
     <Compile Include="TVOverlay.cs" />
     <Compile Include="TVPriorities.cs" />
+    <Compile Include="TVProgramDescription.cs" />
     <Compile Include="TVProgramInfo.cs" />
     <Compile Include="TvRecorded.cs" />
     <Compile Include="TVRecordedInfo.cs" />

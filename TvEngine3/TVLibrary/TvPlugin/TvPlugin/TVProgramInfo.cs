@@ -1196,8 +1196,8 @@ namespace TvPlugin
       bool skipConflictingEpisodes = false;
       if (conflicts.Count > 0)
       {
-        GUIDialogTVConflict dlg =
-          (GUIDialogTVConflict)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_TVCONFLICT);
+        TVConflictDialog dlg =
+          (TVConflictDialog)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_TVCONFLICT);
         if (dlg != null)
         {
           dlg.Reset();
