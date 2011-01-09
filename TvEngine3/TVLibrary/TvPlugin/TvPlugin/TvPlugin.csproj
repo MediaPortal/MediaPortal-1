@@ -139,7 +139,6 @@
     <Compile Include="TvFullScreen.cs" />
     <Compile Include="TVGuide.cs" />
     <Compile Include="TvGuideBase.cs" />
-    <Compile Include="TVGuideDialog.cs" />
     <Compile Include="TVHome.cs" />
     <Compile Include="TVHomeNavigator.cs" />
     <Compile Include="TvMiniGuide.cs" />

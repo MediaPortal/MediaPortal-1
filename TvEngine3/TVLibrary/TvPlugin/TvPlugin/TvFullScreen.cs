@@ -1628,18 +1628,10 @@ namespace TvPlugin
       }
       switch (dlg.SelectedId)
       {
-        case 4: //TVGuide
+        case 4: // TVGuide
           {
-            TVGuideDialog dlgTvGuide = (TVGuideDialog)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_TVGUIDE);
-
-            dlgTvGuide.GroupChanged = false;
-            // do this in loop to reopen guide after change
-            do
-            {
-              _isDialogVisible = true;
-              dlgTvGuide.DoModal(GetID);
-              _isDialogVisible = false;
-            } while (dlgTvGuide.GroupChanged == true);
+            TvNewScheduleSearch.SearchFor = TvNewScheduleSearch.SearchType.KeyWord;
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TVGUIDE);
             break;
           }
 
@@ -1710,7 +1702,7 @@ namespace TvPlugin
           ShowLinkedChannelsMenu(linkages);
           break;
 
-        case 200041: // tuning details
+        case 200041: // Tuning details
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_TUNING_DETAILS);
           break;
 
@@ -1718,7 +1710,7 @@ namespace TvPlugin
           ShowQualitySettingsMenu();
           break;
 
-        case 368: //IMDB
+        case 368: // IMDB
           OnGetIMDBInfo();
           break;
 
