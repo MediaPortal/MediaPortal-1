@@ -21,58 +21,46 @@
 namespace TvLibrary.Interfaces
 {
   /// <summary>
-  /// Audio stream types
+  /// Video stream types
   /// </summary>
-  public enum AudioStreamType
+  public enum VideoStreamType
   {
     /// <summary>
-    /// mpeg 1 audio
+    /// MPEG2 video
     /// </summary>
-    Mpeg1,
+    MPEG2,
     /// <summary>
-    /// mpeg 2 audio
+    /// MPEG4 video video
     /// </summary>
-    Mpeg2,
+    MPEG4,
     /// <summary>
-    /// ac3 audio
+    /// H264 video video
     /// </summary>
-    AC3,
+    H264,
     /// <summary>
-    /// aac audio
+    /// unknown video
     /// </summary>
-    AAC,
-    /// <summary>
-    /// latm aac audio
-    /// </summary>
-    LATMAAC,
-    /// <summary>
-    /// ac3 audio
-    /// </summary>
-    EAC3,
-    /// <summary>
-    /// unknown audio
-    /// </summary>
-    Unknown,
+    Unknown
   }
 
   /// <summary>
-  /// interface which describes a single audio stream
+  /// interface which describes a single video stream
   /// </summary>
-  public interface IAudioStream
+  public interface IVideoStream
   {
     /// <summary>
-    /// gets/sets the Audio language
+    /// gets/sets the video stream type
     /// </summary>
-    string Language { get; set; }
+    VideoStreamType StreamType { get; set; }
 
     /// <summary>
-    /// gets/sets the audio stream type
-    /// </summary>
-    AudioStreamType StreamType { get; set; }
-
-    /// <summary>
-    /// gets/sets the audio stream PID
+    /// gets/sets the video stream PID
     /// </summary>
     int Pid { get; set; }
+
+    /// <summary>
+    /// gets/sets the channel's PCR PID
+    /// </summary>
+    int PcrPid { get; set; }
   }
 }

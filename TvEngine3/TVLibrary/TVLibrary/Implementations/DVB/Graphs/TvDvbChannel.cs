@@ -721,20 +721,44 @@ namespace TvLibrary.Implementations.DVB
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    public override int GetCurrentVideoStream
+    public override IVideoStream GetCurrentVideoStream
     {
       get
       {
+        VideoStream stream = null;
+
         if (_channelInfo == null)
-          return -1;
+          return stream;
+
+        stream = new VideoStream();
+        stream.PcrPid = _channelInfo.pcrPid;
+
         foreach (PidInfo info in _channelInfo.pids)
         {
           if (info.isVideo)
           {
-            return info.stream_type;
+            stream.Pid = info.pid;
+            
+            if (info.IsMpeg2Video)
+            {
+              stream.StreamType = VideoStreamType.MPEG2;
+            }
+            else if (info.IsMpeg4Video)
+            {
+              stream.StreamType = VideoStreamType.MPEG4;
+            }
+            else if (info.IsH264Video)
+            {
+              stream.StreamType = VideoStreamType.H264;
+            }
+            else
+            {
+              stream.StreamType = VideoStreamType.Unknown;
+            }
+			return stream;
           }
         }
-        return -1;
+        return stream;
       }
     }
 

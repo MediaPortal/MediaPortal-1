@@ -309,9 +309,13 @@ namespace TvLibrary.Implementations.Analog
     /// Returns the video format (always returns MPEG2). 
     /// </summary>
     /// <value>The number of channels decrypting.</value>
-    public override int GetCurrentVideoStream
+    public override IVideoStream GetCurrentVideoStream
     {
-      get { return 2; }
+      get 
+      {
+        VideoStream stream = new VideoStream();
+        return stream; 
+      }
     }
 
     #endregion

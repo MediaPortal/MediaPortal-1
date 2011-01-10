@@ -370,11 +370,11 @@ namespace TvControl
     /// Gets the current video stream format.
     /// </summary>
     /// <value>The available audio streams.</value>
-    public int GetCurrentVideoStream(User user)
+    public IVideoStream GetCurrentVideoStream(User user)
     {
       if (User.CardId < 0)
       {
-        return -1;
+        return null;
       }
       try
       {
@@ -385,7 +385,7 @@ namespace TvControl
       {
         HandleFailure();
       }
-      return -1;
+      return null;
     }
 
     /// <summary>

@@ -630,7 +630,7 @@ namespace TvLibrary.Implementations
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    public abstract int GetCurrentVideoStream { get; }
+    public abstract IVideoStream GetCurrentVideoStream { get; }
 
     /// <summary>
     /// returns the list of available audio streams

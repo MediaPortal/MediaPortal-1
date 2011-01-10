@@ -310,7 +310,6 @@ namespace TvControl
     /// </summary>
     bool EpgGrabberEnabled { get; set; }
 
-
     /// <summary>
     /// Returns the SQl connection string to the database
     /// </summary>
@@ -714,8 +713,7 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
-    int GetCurrentVideoStream(IUser user);
-
+    IVideoStream GetCurrentVideoStream(IUser user);
 
     /// <summary>
     /// Start timeshifting.

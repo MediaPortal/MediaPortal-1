@@ -61,7 +61,7 @@ namespace TvService
     IChannel CurrentChannel(ref IUser user);
     int CurrentDbChannel(ref IUser user);
     string CurrentChannelName(ref IUser user);
-    int GetCurrentVideoStream(IUser user);
+    IVideoStream GetCurrentVideoStream(IUser user);
     bool IsScrambled(ref IUser user);
 
     void StopCard(IUser user);

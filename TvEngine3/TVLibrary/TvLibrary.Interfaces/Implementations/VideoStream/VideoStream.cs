@@ -19,37 +19,34 @@
 #endregion
 
 using System;
-using DirectShowLib;
 using TvLibrary.Interfaces;
 
-namespace TvLibrary.Implementations.DVB
+namespace TvLibrary.Implementations
 {
   /// <summary>
-  /// class describing an analog audio stream
+  /// class which holds the video stream details for a channel
   /// </summary>
   [Serializable]
-  public class AnalogAudioStream : IAudioStream
+  public class VideoStream : IVideoStream
   {
     #region variables
 
-    private string _language;
-    private AudioStreamType _streamType;
-    private TVAudioMode _audioMode;
-    private int _audioPid;
+    private VideoStreamType _streamType;
+    private int _videoPid;
+    private int _pcrPid;
 
     #endregion
 
     #region ctor
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AnalogAudioStream"/> class.
+    /// Initializes a new instance of the <see cref="VideoStream"/> class.
     /// </summary>
-    public AnalogAudioStream()
+    public VideoStream()
     {
-      _language = "";
-      _streamType = AudioStreamType.Mpeg2;
-      _audioMode = TVAudioMode.Stereo;
-      _audioPid = -1;
+      _streamType = VideoStreamType.MPEG2;
+      _videoPid = -1;
+      _pcrPid = -1;
     }
 
     #endregion
@@ -57,41 +54,30 @@ namespace TvLibrary.Implementations.DVB
     #region properties
 
     /// <summary>
-    /// gets/sets  Audio language
+    /// gets/sets the video stream type
     /// </summary>
-    public string Language
-    {
-      get { return _language; }
-      set { _language = value; }
-    }
-
-    /// <summary>
-    /// gets/sets the audio stream type
-    /// </summary>
-    public AudioStreamType StreamType
+    public VideoStreamType StreamType
     {
       get { return _streamType; }
       set { _streamType = value; }
     }
 
     /// <summary>
-    /// Gets or sets the audio mode.
+    /// gets/sets the video pid for this stream
     /// </summary>
-    /// <value>The audio mode.</value>
-    public TVAudioMode AudioMode
+    public int Pid
     {
-      get { return _audioMode; }
-      set { _audioMode = value; }
+      get { return _videoPid; }
+      set { _videoPid = value; }
     }
 
     /// <summary>
-    /// Gets the audio stream PID.
+    /// gets/sets the video pid for this stream
     /// </summary>
-    /// <value>Audio PID.</value>
-    public int Pid
+    public int PcrPid
     {
-      get { return _audioPid; }
-      set { _audioPid = value; }
+      get { return _pcrPid; }
+      set { _pcrPid = value; }
     }
 
     #endregion
@@ -105,27 +91,16 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public override bool Equals(object obj)
     {
-      AnalogAudioStream stream = obj as AnalogAudioStream;
+      VideoStream stream = obj as VideoStream;
       if (stream == null)
       {
         return false;
       }
-      if (_language == stream.Language && _streamType == stream.StreamType && AudioMode == stream.AudioMode)
+      if (_streamType == stream.StreamType && _videoPid == stream.Pid && _pcrPid == stream.Pid)
       {
         return true;
       }
       return false;
-    }
-
-    /// <summary>
-    /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
-    /// </summary>
-    /// <returns>
-    /// A hash code for the current <see cref="T:System.Object"></see>.
-    /// </returns>
-    public override int GetHashCode()
-    {
-      return base.GetHashCode() ^ _language.GetHashCode() ^ _streamType.GetHashCode() ^ _audioMode.GetHashCode();
     }
 
     /// <summary>
@@ -136,8 +111,18 @@ namespace TvLibrary.Implementations.DVB
     /// </returns>
     public override string ToString()
     {
-      return String.Format("mode:{0} type:{1} language:{2}",
-                           AudioMode, StreamType, Language);
+      return String.Format("pid:{0:X} type:{1} pcr:{2}", Pid, StreamType, PcrPid);
+    }
+
+    /// <summary>
+    /// Serves as a hash function for a particular type. <see cref="M:System.Object.GetHashCode"></see> is suitable for use in hashing algorithms and data structures like a hash table.
+    /// </summary>
+    /// <returns>
+    /// A hash code for the current <see cref="T:System.Object"></see>.
+    /// </returns>
+    public override int GetHashCode()
+    {
+      return base.GetHashCode() ^ _streamType.GetHashCode() ^ _videoPid.GetHashCode() ^ _pcrPid;
     }
   }
 }

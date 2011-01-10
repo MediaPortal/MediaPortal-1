@@ -1217,10 +1217,10 @@ namespace TvService
     /// Returns the video stream currently associated with the card. 
     /// </summary>
     /// <returns>stream_type</returns>
-    public int GetCurrentVideoStream(IUser user)
+    public IVideoStream GetCurrentVideoStream(IUser user)
     {
       if (ValidateTvControllerParams(user))
-        return -1;
+        return null;
       return _cards[user.CardId].GetCurrentVideoStream(user);
     }
 

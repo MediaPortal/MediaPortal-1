@@ -81,11 +81,13 @@
     <Compile Include="Implementations\Analog\GraphComponents\Tuner.cs" />
     <Compile Include="Implementations\Channels\DVBIPChannel.cs" />
     <Compile Include="Implementations\Channels\RadioWebStreamChannel.cs" />
+    <Compile Include="Implementations\VideoStream\VideoStream.cs" />
     <Compile Include="Interfaces\ICiMenuActions.cs" />
     <Compile Include="Interfaces\ICiMenuCallbacks.cs" />
     <Compile Include="Interfaces\IDiSEqCMotor.cs" />
     <Compile Include="Interfaces\ITVChannelLinkage.cs" />
     <Compile Include="Interfaces\ITvSubChannel.cs" />
+    <Compile Include="Interfaces\IVideoStream.cs" />
     <Compile Include="Interfaces\TvPluginCallback.cs" />
     <Compile Include="RtspClient.cs" />
     <Compile Include="ScanParameters.cs" />
