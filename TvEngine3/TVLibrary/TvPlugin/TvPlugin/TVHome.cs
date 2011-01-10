@@ -93,8 +93,8 @@ namespace TvPlugin
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
     }
-
-    //heartbeat related stuff
+    
+    private Channel _resumeChannel = null;
     private static bool? _isSingleSeat = null; //nullable
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -113,8 +113,7 @@ namespace TvPlugin
     private static string _timeshiftingpath = "";
     private static bool _preferAC3 = false;
     private static bool _preferAudioTypeOverLang = false;
-    private static bool _autoFullScreen = false;
-    private static bool _autoFullScreenOnly = false;
+    private static bool _autoFullScreen = false;    
     private static bool _suspended = false;
     private static bool _showlastactivemodule = false;
     private static bool _showlastactivemoduleFullscreen = false;
@@ -127,7 +126,7 @@ namespace TvPlugin
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
     private static bool _connected = false;
-    private static bool _isAnyCardRecording = false;
+    private static bool _isAnyCardRecording = false;        
     protected static TvServer _server;
 
     private static ManualResetEvent _waitForBlackScreen = null;
@@ -515,55 +514,21 @@ namespace TvPlugin
       if (channel != null)
       {
         Log.Info("tv home init:{0}", channel.DisplayName);
-        if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+        if (!_suspended)
         {
-          if (!wasPrevWinTVplugin())
-          {
-            _userChannelChanged = false;
-          }
-
-          ViewChannelAndCheck(channel);
+          AutoTurnOnTv(channel);          
         }
-
+        else
+        {
+          _resumeChannel = channel;
+        }
         GUIPropertyManager.SetProperty("#TV.Guide.Group", Navigator.CurrentGroup.GroupName);
         Log.Info("tv home init:{0} done", channel.DisplayName);
       }
 
-      // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
-      // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
-      bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended && _autoTurnOnTv);
-      bool useDelay = false;
-
-      if (!_suspended && !showlastActModFS)
+      if (!_suspended)
       {
-        useDelay = true;
-        showlastActModFS = false;
-      }
-      else if (!_suspended)
-      {
-        showlastActModFS = true;
-      }
-      if (!showlastActModFS && (g_Player.IsTV || g_Player.IsTVRecording))
-      {
-        if (_autoFullScreen && !g_Player.FullScreen && (!wasPrevWinTVplugin()))
-        {
-          Log.Debug("TVHome.OnPageLoad(): setting autoFullScreen");
-          // if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
-          if (useDelay)
-          {
-            Thread tvDelayThread = new Thread(TvDelayThread);
-            tvDelayThread.Start();
-          }
-          else //no delay needed here, since this is when the system is being used normally
-          {
-            g_Player.ShowFullScreenWindow();
-          }
-        }
-        else if (_autoFullScreenOnly && !g_Player.FullScreen && (PreviousWindowId == (int)Window.WINDOW_TVFULLSCREEN))
-        {
-          Log.Debug("TVHome.OnPageLoad(): autoFullScreenOnly set, returning to previous window");
-          GUIWindowManager.ShowPreviousWindow();
-        }
+        AutoFullScreenTv();
       }
 
       _onPageLoadDone = true;
@@ -571,6 +536,60 @@ namespace TvPlugin
 
       UpdateGUIonPlaybackStateChange();
       doProcess();
+    }    
+
+    private void AutoTurnOnTv(Channel channel)
+    {
+      if (_autoTurnOnTv && !_playbackStopped && !wasPrevWinTVplugin())
+      {
+        if (!wasPrevWinTVplugin())
+        {
+          _userChannelChanged = false;
+        }
+        ViewChannelAndCheck(channel);
+      }            
+    }
+
+    private void AutoFullScreenTv()
+    {
+      if (_autoFullScreen)
+      {
+        // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
+        // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
+        if (!_suspended)
+        {          
+          bool isTvOrRec = (g_Player.IsTV || g_Player.IsTVRecording);
+          if (isTvOrRec)
+          {
+            Log.Debug("GUIGraphicsContext.IsFullScreenVideo {0}", GUIGraphicsContext.IsFullScreenVideo);
+            bool wasFullScreenTV = (PreviousWindowId == (int) Window.WINDOW_TVFULLSCREEN);
+            
+            if (!wasFullScreenTV)
+            {              
+              if (!wasPrevWinTVplugin())
+              {
+                Log.Debug("TVHome.AutoFullScreenTv(): setting autoFullScreen");
+                bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended &&
+                                         _autoTurnOnTv);
+                if (!showlastActModFS)
+                {                 
+                  //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
+                  Thread tvDelayThread = new Thread(TvDelayThread);
+                  tvDelayThread.Start();
+                }
+                else
+                {               
+                  g_Player.ShowFullScreenWindow();
+                }
+              }             
+              else
+              {             
+                g_Player.ShowFullScreenWindow();
+              }
+            }            
+          }
+        }
+      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -710,7 +729,7 @@ namespace TvPlugin
       if (!Connected || _suspended || ts.TotalMilliseconds < 1000)
       {
         return;
-      }
+      }      
 
       UpdateRecordingIndicator();
       UpdateStateOfRecButton();
@@ -1167,8 +1186,7 @@ namespace TvPlugin
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
-        _autoFullScreenOnly = xmlreader.GetValueAsBool("mytv", "autofullscreenonly", false);
+        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);        
         _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
 
         _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
@@ -1388,7 +1406,7 @@ namespace TvPlugin
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        stopHeartBeatThread();
+        stopHeartBeatThread();        
       }
       catch (Exception) { }
     }
@@ -1639,6 +1657,7 @@ namespace TvPlugin
       catch (Exception) { }
       finally
       {
+        _ServerNotConnectedHandled = false;        
         _suspended = true;
       }
     }
@@ -1646,14 +1665,27 @@ namespace TvPlugin
     private void OnResume()
     {
       Log.Debug("TVHome.OnResume()");
-      Connected = false;
-      RemoteControl.OnRemotingDisconnected +=
-        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
-      HandleWakeUpTvServer();
-      startHeartBeatThread();
-      _notifyManager.Start();
-      _suspended = false;
+      try
+      {
+        Connected = false;
+        RemoteControl.OnRemotingDisconnected +=
+          new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
+        RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+        HandleWakeUpTvServer();
+        startHeartBeatThread();
+        _notifyManager.Start();
+        if (_resumeChannel != null)
+        {
+          Log.Debug("TVHome.OnResume() - automatically turning on TV: {0}", _resumeChannel.DisplayName);
+          AutoTurnOnTv(_resumeChannel);
+          AutoFullScreenTv();
+          _resumeChannel = null;
+        }
+      }
+      finally
+      {
+        _suspended = false;
+      }            
     }
 
     public void Start()
@@ -1705,9 +1737,10 @@ namespace TvPlugin
       int act = GUIWindowManager.ActiveWindow;
       int prev = GUIWindowManager.GetWindow(act).PreviousWindowId;
 
-      //plz any newly added ID's to this list.
+      //plz add any newly added ID's to this list.
 
       result = (
+
                  prev == (int)Window.WINDOW_TV_CROP_SETTINGS ||
                  prev == (int)Window.WINDOW_SETTINGS_SORT_CHANNELS ||
                  prev == (int)Window.WINDOW_SETTINGS_TV_EPG ||
@@ -1723,7 +1756,8 @@ namespace TvPlugin
                  prev == (int)Window.WINDOW_SETTINGS_RECORDINGS ||
                  prev == (int)Window.WINDOW_SCHEDULER ||
                  prev == (int)Window.WINDOW_SEARCHTV ||
-                 prev == (int)Window.WINDOW_TV_TUNING_DETAILS
+                 prev == (int)Window.WINDOW_TV_TUNING_DETAILS ||
+                 prev == (int)Window.WINDOW_TV
                );
       if (!result && prev == (int)Window.WINDOW_FULLSCREEN_VIDEO && g_Player.IsTVRecording)
       {
@@ -3215,7 +3249,7 @@ namespace TvPlugin
     public static bool ViewChannelAndCheck(Channel channel)
     {
       bool checkResult;
-      bool doContinue;
+      bool doContinue;      
 
       if (!Connected)
       {
@@ -3380,7 +3414,8 @@ namespace TvPlugin
         Log.Debug("TvPlugin:ViewChannelandCheckV2 Exception {0}", ex.ToString());
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
-        Card.StopTimeShifting();
+        g_Player.Stop();
+        Card.StopTimeShifting();        
         return false;
       }
       finally
