@@ -30,6 +30,10 @@ namespace TvPluginTests.IPlayerStubs
     private const string LANG_DANENG = "daneng";
     #endregion
 
+    public override void Dispose()
+    {      
+    }
+
     public override int AudioStreams
     {
       get { return 1; }

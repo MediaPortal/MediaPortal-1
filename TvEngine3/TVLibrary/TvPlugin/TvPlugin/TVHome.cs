@@ -93,7 +93,7 @@ namespace TvPlugin
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
     }
-    
+
     private Channel _resumeChannel = null;
     private static bool? _isSingleSeat = null; //nullable
     private Thread heartBeatTransmitterThread = null;
@@ -113,7 +113,7 @@ namespace TvPlugin
     private static string _timeshiftingpath = "";
     private static bool _preferAC3 = false;
     private static bool _preferAudioTypeOverLang = false;
-    private static bool _autoFullScreen = false;    
+    private static bool _autoFullScreen = false;
     private static bool _suspended = false;
     private static bool _showlastactivemodule = false;
     private static bool _showlastactivemoduleFullscreen = false;
@@ -126,7 +126,7 @@ namespace TvPlugin
     private static bool _ServerNotConnectedHandled = false;
     private static bool _recoverTV = false;
     private static bool _connected = false;
-    private static bool _isAnyCardRecording = false;        
+    private static bool _isAnyCardRecording = false;
     protected static TvServer _server;
 
     private static ManualResetEvent _waitForBlackScreen = null;
@@ -516,7 +516,7 @@ namespace TvPlugin
         Log.Info("tv home init:{0}", channel.DisplayName);
         if (!_suspended)
         {
-          AutoTurnOnTv(channel);          
+          AutoTurnOnTv(channel);
         }
         else
         {
@@ -536,7 +536,7 @@ namespace TvPlugin
 
       UpdateGUIonPlaybackStateChange();
       doProcess();
-    }    
+    }
 
     private void AutoTurnOnTv(Channel channel)
     {
@@ -547,7 +547,7 @@ namespace TvPlugin
           _userChannelChanged = false;
         }
         ViewChannelAndCheck(channel);
-      }            
+      }
     }
 
     private void AutoFullScreenTv()
@@ -557,36 +557,36 @@ namespace TvPlugin
         // if using showlastactivemodule feature and last module is fullscreen while returning from powerstate, then do not set fullscreen here (since this is done by the resume last active module feature)
         // we depend on the onresume method, thats why tvplugin now impl. the IPluginReceiver interface.      
         if (!_suspended)
-        {          
+        {
           bool isTvOrRec = (g_Player.IsTV || g_Player.IsTVRecording);
           if (isTvOrRec)
           {
             Log.Debug("GUIGraphicsContext.IsFullScreenVideo {0}", GUIGraphicsContext.IsFullScreenVideo);
-            bool wasFullScreenTV = (PreviousWindowId == (int) Window.WINDOW_TVFULLSCREEN);
-            
+            bool wasFullScreenTV = (PreviousWindowId == (int)Window.WINDOW_TVFULLSCREEN);
+
             if (!wasFullScreenTV)
-            {              
+            {
               if (!wasPrevWinTVplugin())
               {
                 Log.Debug("TVHome.AutoFullScreenTv(): setting autoFullScreen");
                 bool showlastActModFS = (_showlastactivemodule && _showlastactivemoduleFullscreen && !_suspended &&
                                          _autoTurnOnTv);
                 if (!showlastActModFS)
-                {                 
+                {
                   //if we are resuming from standby with tvhome, we want this in fullscreen, but we need a delay for it to work.
                   Thread tvDelayThread = new Thread(TvDelayThread);
                   tvDelayThread.Start();
                 }
                 else
-                {               
+                {
                   g_Player.ShowFullScreenWindow();
                 }
-              }             
+              }
               else
-              {             
+              {
                 g_Player.ShowFullScreenWindow();
               }
-            }            
+            }
           }
         }
       }
@@ -729,7 +729,7 @@ namespace TvPlugin
       if (!Connected || _suspended || ts.TotalMilliseconds < 1000)
       {
         return;
-      }      
+      }
 
       UpdateRecordingIndicator();
       UpdateStateOfRecButton();
@@ -1186,7 +1186,7 @@ namespace TvPlugin
 
         _preferAC3 = xmlreader.GetValueAsBool("tvservice", "preferac3", false);
         _preferAudioTypeOverLang = xmlreader.GetValueAsBool("tvservice", "preferAudioTypeOverLang", true);
-        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);        
+        _autoFullScreen = xmlreader.GetValueAsBool("mytv", "autofullscreen", false);
         _showChannelStateIcons = xmlreader.GetValueAsBool("mytv", "showChannelStateIcons", true);
 
         _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
@@ -1406,7 +1406,7 @@ namespace TvPlugin
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        stopHeartBeatThread();        
+        stopHeartBeatThread();
       }
       catch (Exception) { }
     }
@@ -1657,7 +1657,7 @@ namespace TvPlugin
       catch (Exception) { }
       finally
       {
-        _ServerNotConnectedHandled = false;        
+        _ServerNotConnectedHandled = false;
         _suspended = true;
       }
     }
@@ -1685,7 +1685,7 @@ namespace TvPlugin
       finally
       {
         _suspended = false;
-      }            
+      }
     }
 
     public void Start()
@@ -1780,7 +1780,7 @@ namespace TvPlugin
             ;
             break;
           }
-        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM: 
+        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           {
             //if (GUIGraphicsContext.IsFullScreenVideo) return;
             GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
@@ -1828,10 +1828,10 @@ namespace TvPlugin
       {
         g_Player.SetAudioDualMonoMode(eAudioDualMonoMode.STEREO);
       }
-    }               
+    }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
-    {           
+    {
       // when we are watching TV and suddenly decides to watch a audio/video etc., we want to make sure that the TV is stopped on server.
       GUIWindow currentWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
 
@@ -1857,7 +1857,7 @@ namespace TvPlugin
     }
 
     private void OnPlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
-    {      
+    {
       if (type != g_Player.MediaType.TV && type != g_Player.MediaType.Radio)
       {
         return;
@@ -2813,7 +2813,7 @@ namespace TvPlugin
       else if (idxFirstAc3 > -1)
       {
         //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
-        if (_preferAudioTypeOverLang || (idxStreamIndexmpeg == -1 && _preferAudioTypeOverLang))
+        if (_preferAudioTypeOverLang || idxStreamIndexmpeg == -1)
         {
           idx = idxFirstAc3;
           Log.Info(
@@ -2976,7 +2976,10 @@ namespace TvPlugin
 
         stream.Language = g_Player.AudioLanguage(i);
         string[] lang = stream.Language.Split('(');
-        stream.Language = lang[1].Substring(0, lang[1].Length - 1);
+        if (lang.Length > 1)
+        {
+          stream.Language = lang[1].Substring(0, lang[1].Length - 1);
+        }
         streamsList.Add(stream);
       }
       return streamsList.ToArray();
@@ -3249,7 +3252,7 @@ namespace TvPlugin
     public static bool ViewChannelAndCheck(Channel channel)
     {
       bool checkResult;
-      bool doContinue;      
+      bool doContinue;
 
       if (!Connected)
       {
@@ -3391,7 +3394,7 @@ namespace TvPlugin
           if (_status.IsSet(LiveTvStatus.SeekToEndAfterPlayback))
           {
             double dTime = g_Player.Duration - 5;
-            g_Player.SeekAbsolute(dTime);            
+            g_Player.SeekAbsolute(dTime);
           }
         }
         try
@@ -3415,7 +3418,7 @@ namespace TvPlugin
         _doingChannelChange = false;
         Card.User.Name = new User().Name;
         g_Player.Stop();
-        Card.StopTimeShifting();        
+        Card.StopTimeShifting();
         return false;
       }
       finally
@@ -3574,8 +3577,8 @@ namespace TvPlugin
         {
           //singleseat or  multiseat rtsp streaming....
           if (!useRtsp || (useRtsp && zapping))
-          {            
-            g_Player.SeekAbsolute(duration);            
+          {
+            g_Player.SeekAbsolute(duration);
           }
         }
         catch (Exception e)
