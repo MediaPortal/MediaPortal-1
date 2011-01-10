@@ -103,15 +103,11 @@ namespace TvLibrary.Implementations.Analog
         return false;
       if (channel.IsRadio)
       {
-        if (_tuner == null)
+        if (string.IsNullOrEmpty(_configuration.Graph.Tuner.Name))
         {
           BuildGraph();
         }
-        if (_tuner != null)
-        {
-          return _tuner.SupportsFMRadio;
-        }
-        return false;
+        return (_configuration.Graph.Tuner.RadioMode & RadioMode.FM) != 0;
       }
       return true;
     }
