@@ -118,7 +118,7 @@ namespace SetupTv.Sections
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(304, 13);
       this.mpLabel3.TabIndex = 6;
-      this.mpLabel3.Text = "Please chose, which items should be included in the export file.";
+      this.mpLabel3.Text = "Please choose which items should be included in the export file.";
       // 
       // exportButton
       // 
@@ -228,7 +228,7 @@ namespace SetupTv.Sections
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(331, 13);
       this.mpLabel2.TabIndex = 12;
-      this.mpLabel2.Text = "Please chose, which items should be included during the import.";
+      this.mpLabel2.Text = "Please choose which items should be included during the import.";
       // 
       // importButton
       // 
