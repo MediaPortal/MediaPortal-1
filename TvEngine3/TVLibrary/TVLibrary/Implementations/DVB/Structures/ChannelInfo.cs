@@ -174,7 +174,6 @@ namespace TvLibrary.Implementations.DVB.Structures
     /// </summary>
     public int audioPid;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ChannelInfo"/> class.
     /// </summary>

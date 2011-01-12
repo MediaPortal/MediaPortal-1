@@ -627,38 +627,41 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
+        DVBAudioStream stream = null;
         List<IAudioStream> streams = new List<IAudioStream>();
         foreach (PidInfo info in _channelInfo.pids)
         {
           if (info.isAC3Audio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
             stream.StreamType = AudioStreamType.AC3;
-            streams.Add(stream);
           }
           else if (info.isEAC3Audio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
             stream.StreamType = AudioStreamType.EAC3;
-            streams.Add(stream);
           }
           else if (info.isAudio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
+
             if (info.IsMpeg1Audio)
               stream.StreamType = AudioStreamType.Mpeg1;
-            if (info.IsMpeg2Audio)
+            else if (info.IsMpeg2Audio)
               stream.StreamType = AudioStreamType.Mpeg2;
-            if (info.IsAACAudio)
+            else if (info.IsAACAudio)
               stream.StreamType = AudioStreamType.AAC;
-            stream.StreamType = info.IsLATMAACAudio ? AudioStreamType.LATMAAC : AudioStreamType.Unknown;
+            else if (info.IsLATMAACAudio)
+              stream.StreamType = AudioStreamType.LATMAAC;
+            else
+              stream.StreamType = AudioStreamType.Unknown;
+          }
+          if (stream != null)
+          {
+            stream.Language = info.language;
+            stream.Pid = info.pid;
             streams.Add(stream);
+            stream = null;
           }
         }
         return streams;
