@@ -137,7 +137,7 @@ namespace TvPlugin
             audioPids += stream.Pid + " (" + stream.StreamType + ") ";
           }
 		  
-          videoPid = videoStream.Pid.ToString() + "(" + videoStream.StreamType + ")";
+          videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
 
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
