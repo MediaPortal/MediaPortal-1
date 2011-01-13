@@ -56,8 +56,9 @@ namespace MediaPortal.GUI.Library
     /// Enum of all standard windows in MP
     /// 
     /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-    /// ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-    /// (Windows that may not be jumped to directly via InputMapper)
+    /// if window may not be jumped to directly via InputMapper,
+    /// add it to blacklist in InputMappingForm!!!
+    /// (windows with DIALOG in the enum name are blacklisted automatically)
     /// </summary>
     public enum Window
     {
@@ -148,6 +149,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_NOTIFY = 2016,
       WINDOW_DIALOG_TVCONFLICT = 2017,
       WINDOW_DIALOG_CIMENU = 2018,
+      WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
       WINDOW_WEATHER = 2600,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
@@ -175,9 +177,10 @@ namespace MediaPortal.GUI.Library
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
-      // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-      // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-      // (Windows that may not be jumped to directly via InputMapper)
+      /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
+      /// if window may not be jumped to directly via InputMapper,
+      /// add it to blacklist in InputMappingForm!!!
+      /// (windows with DIALOG in the enum name are blacklisted automatically)
     }
 
     #endregion

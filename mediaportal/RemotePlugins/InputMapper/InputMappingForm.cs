@@ -203,23 +203,6 @@ namespace MediaPortal.InputDevices
           switch ((int)Enum.Parse(typeof (GUIWindow.Window), wnd.ToString()))
           {
             case (int)GUIWindow.Window.WINDOW_ARTIST_INFO:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_DATETIME:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_EXIF:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_FILE:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_FILESTACKING:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_MENU_BOTTOM_RIGHT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_OK:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_PROGRESS:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_RATING:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_SELECT2:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_TEXT:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_TVGUIDE:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_YES_NO:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_PLAY_STOP:
-            case (int)GUIWindow.Window.WINDOW_DIALOG_LASTFM:
             case (int)GUIWindow.Window.WINDOW_INVALID:
             case (int)GUIWindow.Window.WINDOW_MINI_GUIDE:
             case (int)GUIWindow.Window.WINDOW_TV_CROP_SETTINGS:

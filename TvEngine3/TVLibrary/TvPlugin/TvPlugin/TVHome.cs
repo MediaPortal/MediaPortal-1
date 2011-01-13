@@ -1782,31 +1782,71 @@ namespace TvPlugin
           }
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           {
-            //if (GUIGraphicsContext.IsFullScreenVideo) return;
-            GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
+            TVNotifyYesNoDialog tvNotifyDlg = (TVNotifyYesNoDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO);
+
             TVProgramDescription notify = message.Object as TVProgramDescription;
             if (notify == null)
             {
               return;
             }
             int minUntilStart = _preNotifyConfig / 60;
-            if (minUntilStart > 1)
+            if (notify.StartTime > DateTime.Now)
             {
-              dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
+              if (minUntilStart > 1)
+              {
+                tvNotifyDlg.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
+              }
+              else
+              {
+                tvNotifyDlg.SetHeading(1019); // Program is about to begin
+              }
             }
             else
             {
-              dialogNotify.SetHeading(1019); // Program is about to begin
+              tvNotifyDlg.SetHeading(String.Format(GUILocalizeStrings.Get(1206), (DateTime.Now - notify.StartTime).Minutes.ToString()));
             }
-            dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-            dialogNotify.SetImage(strLogo);
-            dialogNotify.TimeOut = _notifyTVTimeout;
+            tvNotifyDlg.SetLine(1, notify.Title);
+            tvNotifyDlg.SetLine(2, notify.Description);
+            tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), notify.Channel.DisplayName));
+            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel.DisplayName);
+            tvNotifyDlg.SetImage(strLogo);
+            tvNotifyDlg.TimeOut = _notifyTVTimeout;
             if (_playNotifyBeep)
             {
               MediaPortal.Util.Utils.PlaySound("notify.wav", false, true);
             }
-            dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
+            tvNotifyDlg.SetDefaultToYes(false);
+            tvNotifyDlg.DoModal(GUIWindowManager.ActiveWindow);
+
+            if (tvNotifyDlg.IsConfirmed)
+            {
+              try 
+              {
+                MediaPortal.Player.g_Player.Stop();
+
+                Channel c = notify.Channel;
+                if (c.IsTv)
+                {
+                  MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV);
+                  TVHome.ViewChannelAndCheck(c);
+                  if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == c.IdChannel)
+                  {
+                    g_Player.ShowFullScreenWindow();
+                  }
+                }
+                else if (c.IsRadio)
+                {
+                  MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO);
+                  TVHome.ViewChannelAndCheck(c);
+                }
+              }
+              catch (Exception e)
+              {
+                Log.Error("TVHome: TVNotification: Error on starting channel {0} after notification: {1} {2} {3}", notify.Channel.DisplayName, e.Message, e.Source, e.StackTrace);
+              }
+
+            }
+
             break;
           }
       }

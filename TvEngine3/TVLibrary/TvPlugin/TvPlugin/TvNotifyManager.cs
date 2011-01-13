@@ -242,7 +242,7 @@ namespace TvPlugin
               program.Notify = false;
               program.Persist();
               TVProgramDescription tvProg = new TVProgramDescription();
-              tvProg.Channel = program.ReferencedChannel().DisplayName;
+              tvProg.Channel = program.ReferencedChannel();
               tvProg.Title = program.Title;
               tvProg.Description = program.Description;
               tvProg.Genre = program.Genre;

@@ -37,7 +37,8 @@ namespace MediaPortal.Dialogs
     private int iYesKey = -1;
     private int iNoKey = -1;
     //bool needRefresh = false;
-    private DateTime vmr7UpdateTimer = DateTime.Now;
+    private int _timeOutInSeconds = 0;
+    private DateTime timeStart = DateTime.Now;
 
     public GUIDialogYesNo()
     {
@@ -49,6 +50,45 @@ namespace MediaPortal.Dialogs
       return Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
     }
 
+    public override void DoModal(int dwParentId)
+    {
+      timeStart = DateTime.Now;
+      base.DoModal(dwParentId);
+    }
+
+    public override bool ProcessDoModal()
+    {
+      bool result = base.ProcessDoModal();
+      TimeSpan timeElapsed = DateTime.Now - timeStart;
+      if (TimeOut > 0)
+      {
+        if (timeElapsed.TotalSeconds >= TimeOut)
+        {
+          GUIMessage msgConfirm = new GUIMessage();
+          msgConfirm.Message = GUIMessage.MessageType.GUI_MSG_CLICKED;
+          msgConfirm.SenderControlId = m_DefaultYes ? btnYes.GetID : btnNo.GetID;
+          OnMessage(msgConfirm);
+          return false;
+        }
+      }
+      return result;
+    }
+
+    public override void PageDestroy()
+    {
+      _timeOutInSeconds = 0;
+      base.PageDestroy();
+    }
+
+    public override void Reset()
+    {
+      base.Reset();
+      _timeOutInSeconds = 0;
+      m_bConfirmed = false;
+      m_DefaultYes = false;
+      iYesKey = -1;
+      iNoKey = -1;
+    }
 
     public override void OnAction(Action action)
     {
@@ -205,5 +245,12 @@ namespace MediaPortal.Dialogs
     {
       m_DefaultYes = bYesNo;
     }
+
+    public int TimeOut
+    {
+      get { return _timeOutInSeconds; }
+      set { _timeOutInSeconds = value; }
+    }
+
   }
 }

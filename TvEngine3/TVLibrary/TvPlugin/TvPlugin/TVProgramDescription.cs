@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using TvDatabase;
 
 namespace TvPlugin
 {
@@ -29,7 +30,7 @@ namespace TvPlugin
   {
     #region Variables
 
-    private string _channelName = string.Empty;
+    private Channel _channel = null;
     private string _genre = string.Empty;
     private string _title = string.Empty;
     private string _description = string.Empty;
@@ -41,12 +42,12 @@ namespace TvPlugin
     #region Properties
 
     /// <summary>
-    /// Property to get/set the name of this tv program
+    /// Property to get/set the Channel of the tv program
     /// </summary>
-    public string Channel
+    public Channel Channel
     {
-      get { return _channelName; }
-      set { _channelName = value; }
+      get { return _channel; }
+      set { _channel = value; }
     }
 
     /// <summary>

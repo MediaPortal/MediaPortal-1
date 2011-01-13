@@ -123,8 +123,6 @@ namespace TvPlugin
     private bool _messageBoxVisible = false;
     private DateTime _msgTimer = DateTime.Now;
     private int _msgBoxTimeout = 0;
-    private int _notifyTVTimeout = 15;
-    private bool _playNotifyBeep = true;
     private bool _needToClearScreen = false;
     private bool _useVMR9Zap = false;
     private bool _immediateSeekIsRelative = true;
@@ -214,8 +212,6 @@ namespace TvPlugin
       using (Settings xmlreader = new MPSettings())
       {
         _useVMR9Zap = xmlreader.GetValueAsBool("general", "useVMR9ZapOSD", false);
-        _notifyTVTimeout = xmlreader.GetValueAsInt("movieplayer", "notifyTVTimeout", 10);
-        _playNotifyBeep = xmlreader.GetValueAsBool("movieplayer", "notifybeep", true);
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
@@ -1081,30 +1077,6 @@ namespace TvPlugin
 
       #endregion
 
-      #region case GUI_MSG_NOTIFY_TV_PROGRAM
-
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM)
-      {
-        _dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-        ///@
-        /*
-        Program notify = message.Object as Program;
-        if (notify == null) return true;
-        _dialogNotify.SetHeading(1016);
-        _dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-        string logo = Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-        _dialogNotify.SetImage(logo);
-        _dialogNotify.TimeOut = _notifyTVTimeout;
-        _notifyDialogVisible = true;
-        if (_playNotifyBeep)
-          Utils.PlaySound("notify.wav", false, true);
-        _dialogNotify.DoModal(GetID);
-        _notifyDialogVisible = false;
-         * */
-      }
-
-      #endregion
-
       #region case GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING
 
       if (message.Message == GUIMessage.MessageType.GUI_MSG_RECORDER_ABOUT_TO_START_RECORDING)
@@ -1202,7 +1174,7 @@ namespace TvPlugin
 
       #endregion
 
-      #region case GUI_MSG_NOTIFY_TV_PROGRAM
+      #region case GUI_MSG_TV_ERROR_NOTIFY
 
       // TEST for TV error handling
       if (message.Message == GUIMessage.MessageType.GUI_MSG_TV_ERROR_NOTIFY)
