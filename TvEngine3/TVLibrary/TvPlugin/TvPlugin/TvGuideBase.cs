@@ -3604,22 +3604,13 @@ namespace TvPlugin
           {
             string fileName = "";
             bool isRec = _currentProgram.IsRecording;
-            bool isRecNOepg = IsRecordingNoEPG(_currentProgram.ReferencedChannel());
 
             Recording rec = null;
             if (isRec)
             {
               rec = Recording.ActiveRecording(_currentProgram.Title, _currentProgram.IdChannel);
             }
-            else if (isRecNOepg)
-            {
-              Schedule schedule = Schedule.FindNoEPGSchedule(_currentProgram.ReferencedChannel());
 
-              if (schedule != null)
-              {
-                rec = Recording.ActiveRecording(schedule.IdSchedule);
-              }
-            }
 
             if (rec != null)
             {
