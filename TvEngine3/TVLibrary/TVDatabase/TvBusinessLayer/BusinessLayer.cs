@@ -2737,18 +2737,20 @@ namespace TvDatabase
       // as he decided to keep them before. That's why they are in the db
       foreach (Schedule schedule in schedulesList)
       {
-        //Only consider the individual episodes and only ones that are still to be recorded.
-        if (schedule.ScheduleType != (int)ScheduleRecordingType.Once || DateTime.Now > schedule.EndTime)
+        List<Schedule> episodes = GetRecordingTimes(schedule);
+        foreach (Schedule episode in episodes)
         {
-          continue;
+          if (DateTime.Now > episode.EndTime)
+          {
+            continue;
+          }
+          if (episode.IsSerieIsCanceled(episode.StartTime))
+          {
+            continue;
+          }
+          List<Schedule> overlapping;
+          AssignSchedulesToCard(episode, cardSchedules, out overlapping);
         }
-        if (schedule.IsSerieIsCanceled(schedule.StartTime))
-        {
-          continue;
-        }
-        List<Schedule> overlapping;
-        ;
-        AssignSchedulesToCard(schedule, cardSchedules, out overlapping);
       }
 
       List<Schedule> newEpisodes = GetRecordingTimes(rec);
