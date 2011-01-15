@@ -981,7 +981,7 @@ namespace MediaPortal
           GUIGraphicsContext.DX9Device = new Device(graphicsSettings.AdapterOrdinal,
                                                     graphicsSettings.DevType,
                                                     windowed ? ourRenderTarget : this,
-                                                    createFlags | CreateFlags.MultiThreaded,
+                                                    createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve,
                                                     presentParams);
         }
 
@@ -1196,7 +1196,7 @@ namespace MediaPortal
 
       int hr = m_d3dEx.CreateDeviceEx(graphicsSettings.AdapterOrdinal, graphicsSettings.DevType,
                                       windowed ? ourRenderTarget.Handle : this.Handle,
-                                      createFlags | CreateFlags.MultiThreaded, ref param,
+                                      createFlags | CreateFlags.MultiThreaded | CreateFlags.FpuPreserve, ref param,
                                       windowed ? IntPtr.Zero : prt, out dev);
       GUIGraphicsContext.DX9Device = new Device(dev);
 
