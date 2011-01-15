@@ -1497,6 +1497,9 @@ namespace TvService
 
       public int Compare(CardDetail first, CardDetail second)
       {
+        if (first == second)
+          return 0;
+
         if (first.Id == _recommendedCard)
         {
           return -1;
