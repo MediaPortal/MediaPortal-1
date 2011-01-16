@@ -712,7 +712,7 @@ namespace MediaPortal.GUI.Music
                 case MusicSort.SortMethod.Title:
                 case MusicSort.SortMethod.Artist:
                 case MusicSort.SortMethod.Album:
-                case MusicSort.SortMethod.AlbumArtist
+                case MusicSort.SortMethod.AlbumArtist:
                 case MusicSort.SortMethod.DiscID:
                 case MusicSort.SortMethod.Composer:    
                   duration = Util.Utils.SecondsToHMSString(tag.Duration);
