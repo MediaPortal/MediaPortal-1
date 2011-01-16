@@ -298,6 +298,7 @@ namespace MediaPortal.Music.Database
                   song.Album = "#";
                   song.AlbumArtist = "#";
                   song.Genre = "#";
+                  song.Composer = "#";
                 }
                 song.Title = "#";
                 song.Duration = specialCharCount;
