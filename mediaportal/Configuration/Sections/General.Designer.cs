@@ -177,7 +177,7 @@ namespace MediaPortal.Configuration.Sections
             "Automatically skip commercials for videos with ComSkip data available",
             "Use screenselector to choose on which screen MP should start",
             "Allow remember last focused item on supported window/skin",
-            "Enable file existance cache (improves performance on some systems)"});
+            "Enable file existence cache (improves performance on some systems)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
       this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 289);
