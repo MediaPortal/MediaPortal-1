@@ -395,7 +395,7 @@ namespace MediaPortal.GUI.Music
             {
               if(tag1.AlbumArtist == tag2.AlbumArtist)
               {
-                return (int)(disc1 - disc2)
+                return (int)(disc1 - disc2);
               }
               else
               {
@@ -413,7 +413,7 @@ namespace MediaPortal.GUI.Music
             {
               if(tag1.AlbumArtist == tag2.AlbumArtist)
               {
-                return (int)(disc2 - disc1)
+                return (int)(disc2 - disc1);
               }
               else
               {
