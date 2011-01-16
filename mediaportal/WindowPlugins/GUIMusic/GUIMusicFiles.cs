@@ -1413,6 +1413,9 @@ namespace MediaPortal.GUI.Music
           if (tag != null)
           {
             pItem.MusicTag = tag;
+            pItem.Duration = tag.Duration;
+            pItem.Year = tag.Year;
+            pItem.Rating = tag.Rating;
           }
         }
       }
@@ -1474,13 +1477,7 @@ namespace MediaPortal.GUI.Music
       if(item.IsFolder)
       { // recursively add sub folders
         List<GUIListItem> subFolders = _virtualDirectory.GetDirectoryExt(item.Path);
-        
-        if (item.Label == "CD_ROOT_FOLDER")
-        { // when playing a CD we need to lookup CD details
-          // item.label should only be set to CD_ROOT_FOLDER only 
-          // when playing a CD without opening that folder so perform lookup
-          GetTagInfo(ref subFolders);
-        }
+        GetTagInfo(ref subFolders);
         foreach(GUIListItem subItem in subFolders)
         {
           AddFolderToPlaylist(subItem, ref pl);
@@ -1750,8 +1747,12 @@ namespace MediaPortal.GUI.Music
           {
             tag.Artist = track.Artist == null ? MusicCD.Artist : track.Artist;
             tag.Duration = track.Duration;
+            pItem.Duration = track.Duration;
             tag.Title = track.Title;
             tag.Track = track.TrackNumber;
+            tag.Genre = MusicCD.Genre;
+            tag.Year = MusicCD.Year;
+            pItem.Year = MusicCD.Year;
           }
           pItem.MusicTag = tag;
         }
