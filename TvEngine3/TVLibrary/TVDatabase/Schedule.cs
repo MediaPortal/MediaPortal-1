@@ -494,33 +494,27 @@ namespace TvDatabase
       return newList;
     }
 
-    public static Schedule FindNoEPGSchedule(string channelName)
+    public static Schedule FindNoEPGSchedule(Channel channel)
     {
-      //channelName
-      IList<Channel> channels = Channel.ListAllByName(channelName);
+      int idChannel = channel.IdChannel;
 
-      foreach (Channel ch in channels)
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
+
+      // 
+      sb.AddConstraint(Operator.Equals, "scheduleType", 0);
+      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
+      sb.AddConstraint(Operator.Equals, "idParentSchedule", -1);
+      sb.AddConstraint(Operator.Equals, "series", false);
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
+
+      // execute the statement/query and create a collection of User instances from the result set
+      IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
+      if (getList.Count != 0)
       {
-        int idChannel = ch.IdChannel;
-
-        //select * from 'foreigntable'
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Schedule));
-
-        // 
-        sb.AddConstraint(Operator.Equals, "scheduleType", 0);
-        sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
-        sb.AddConstraint(Operator.Equals, "idParentSchedule", -1);
-        sb.AddConstraint(Operator.Equals, "series", false);
-        // passing true indicates that we'd like a list of elements, i.e. that no primary key
-        // constraints from the type being retrieved should be added to the statement
-        SqlStatement stmt = sb.GetStatement(true);
-
-        // execute the statement/query and create a collection of User instances from the result set
-        IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
-        if (getList.Count != 0)
-        {
-          return getList[0];
-        }
+        return getList[0];
       }
       return null;
     }

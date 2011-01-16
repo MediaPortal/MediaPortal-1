@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Video
       g_Player.PlayBackEnded += new g_Player.EndedHandler(OnPlayBackEnded);
       g_Player.PlayBackStarted += new g_Player.StartedHandler(OnPlayBackStarted);
       g_Player.PlayBackChanged += new g_Player.ChangedHandler(OnPlayBackChanged);
-
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
       LoadSettings();      
     }    
 
@@ -419,6 +419,7 @@ namespace MediaPortal.GUI.Video
           }
           LoadDirectory(_currentFolder);
           break;
+
         case GUIMessage.MessageType.GUI_MSG_REMOVE_REMOVABLE_DRIVE:
           if (!Util.Utils.IsRemovable(message.Label))
           {
@@ -439,14 +440,13 @@ namespace MediaPortal.GUI.Video
             LoadDirectory(_currentFolder);
           }
           break;
-
         case GUIMessage.MessageType.GUI_MSG_PLAY_DVD:
           OnPlayDVD(message.Label, GetID);
           break;
       }
       return base.OnMessage(message);
     }
-
+    
     private void LoadFolderSettings(string folderName)
     {
       if (folderName == string.Empty)
@@ -1293,6 +1293,42 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.VIDEO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.DVD)
+              OnPlayDVD(message.Label, GetID);
+            else if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.VCD ||
+                      message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+              OnPlayFiles((System.Collections.ArrayList)message.Object);
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+          if (g_Player.Playing && g_Player.IsVideo && message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
+          {
+            Log.Info("GUIVideoFiles: Stop since media is ejected");
+            g_Player.Stop();
+            _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP).Clear();
+            _playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+          }
+
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            if (Util.Utils.IsDVD(_currentFolder))
+            {
+              _currentFolder = string.Empty;
+              LoadDirectory(_currentFolder);
+            }
+          }
+          break;
+      }
+    }
 
     private void SetMovieUnwatched(string movieFileName, bool isFolder)
     {

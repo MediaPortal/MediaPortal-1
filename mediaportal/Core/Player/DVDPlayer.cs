@@ -118,7 +118,7 @@ namespace MediaPortal.Player
     protected DvdDomain _currDomain;
     protected IBasicAudio _basicAudio = null;
     protected IMediaPosition _mediaPos = null;
-    private VMR7Util _vmr7 = null;
+    
     protected int _speed = 1;
     protected double _currentTime = 0;
     protected bool _visible = true;
@@ -431,13 +431,7 @@ namespace MediaPortal.Player
         _dvdInfo = null;
         _basicVideo = null;
         _basicAudio = null;
-        _mediaPos = null;
-
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-        }
-        _vmr7 = null;
+        _mediaPos = null;        
 
         if (_dvdbasefilter != null)
         {
@@ -562,9 +556,7 @@ namespace MediaPortal.Player
         {
           Marshal.ThrowExceptionForHR(hr);
         }
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-        _vmr7 = new VMR7Util();
-        _vmr7.AddVMR7(_graphBuilder);
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);        
 
         try
         {
@@ -1466,11 +1458,7 @@ namespace MediaPortal.Player
     }
 
     protected virtual void OnProcess()
-    {
-      if (_vmr7 != null)
-      {
-        _vmr7.Process();
-      }
+    {      
       if (_videoWin != null)
       {
         if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)

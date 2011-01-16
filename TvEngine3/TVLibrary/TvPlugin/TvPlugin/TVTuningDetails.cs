@@ -22,6 +22,8 @@ using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using TvDatabase;
+using TvLibrary.Interfaces;
+using TvControl;
 
 namespace TvPlugin
 {
@@ -122,6 +124,21 @@ namespace TvPlugin
               GUIPropertyManager.SetProperty("#TV.TuningDetails.ChannelType", "DVB-T");
               break;
           }
+
+          IUser user = TVHome.Card.User;
+          IVideoStream videoStream = TVHome.Card.GetCurrentVideoStream((User)user);
+          IAudioStream[] audioStreams = TVHome.Card.AvailableAudioStreams;
+
+          String audioPids = String.Empty;
+          String videoPid = String.Empty;		  
+
+          foreach (IAudioStream stream in audioStreams)
+          {
+            audioPids += stream.Pid + " (" + stream.StreamType + ") ";
+          }
+		  
+          videoPid = videoStream.Pid.ToString() + " (" + videoStream.StreamType + ")";
+
           GUIPropertyManager.SetProperty("#TV.TuningDetails.CountryId", detail.CountryId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.FreeToAir", detail.FreeToAir.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.Frequency", detail.Frequency.ToString());
@@ -134,6 +151,9 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.TuningDetails.ServiceId", detail.ServiceId.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.SymbolRate", detail.Symbolrate.ToString());
           GUIPropertyManager.SetProperty("#TV.TuningDetails.TransportId", detail.TransportId.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.PcrPid", videoStream.PcrPid.ToString());
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.VideoPid", videoPid);
+          GUIPropertyManager.SetProperty("#TV.TuningDetails.AudioPid", audioPids);
         }
       }
     }

@@ -996,6 +996,7 @@
     <String id="1202">Sorter etter: Auto</String>
     <String id="1203">Kommende episode (aktiv: {0})</String>
     <String id="1204">Spill av alle videoene i valgte folder</String>
+    <String id="1205">Sorter etter: Disk#</String>
     <String id="1211">Gjenoppta avspilling fra {0}</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>

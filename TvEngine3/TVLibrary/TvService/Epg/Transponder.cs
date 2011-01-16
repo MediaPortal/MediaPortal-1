@@ -143,7 +143,7 @@ namespace TvService
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       Channels[Index].Persist();
-      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].Name);
+      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ namespace TvService
                 TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
-        Log.Write(" {0}", c.Name);
+        Log.Write(" {0}", c.DisplayName);
       }
     }
 

@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -163,7 +163,9 @@
     <Compile Include="Threading\Work.cs" />
     <Compile Include="Threading\WorkEventArgs.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
+    <Compile Include="Time\BasicDate.cs" />
     <Compile Include="Time\BasicTime.cs" />
+    <Compile Include="Time\DateRange.cs" />
     <Compile Include="Time\TimeZoneDate.cs" />
     <Compile Include="Time\TimeZoneInfo.cs" />
     <Compile Include="Time\TimeRange.cs" />

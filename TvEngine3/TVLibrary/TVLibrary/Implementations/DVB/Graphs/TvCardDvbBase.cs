@@ -87,7 +87,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// base class for DVB cards
   /// </summary>
-  public class TvCardDvbBase : TvCardBase, IDisposable
+  public abstract class TvCardDvbBase : TvCardBase, IDisposable
   {
     #region constants
 
@@ -2353,11 +2353,7 @@ namespace TvLibrary.Implementations.DVB
               }
               if (epgChannel == null)
               {
-                DVBBaseChannel dvbChan = new DVBBaseChannel();
-                dvbChan.NetworkId = (int)networkid;
-                dvbChan.TransportId = (int)transportid;
-                dvbChan.ServiceId = (int)channelid;
-                dvbChan.Name = channelName;
+                DVBBaseChannel dvbChan = CreateChannel((int)networkid, (int)transportid, (int) channelid, channelName);
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
                 epgChannels.Add(epgChannel);
@@ -2397,10 +2393,7 @@ namespace TvLibrary.Implementations.DVB
             {
               _interfaceEpgGrabber.GetEPGChannel(x, ref networkid, ref transportid, ref serviceid);
               EpgChannel epgChannel = new EpgChannel();
-              DVBBaseChannel chan = new DVBBaseChannel();
-              chan.NetworkId = networkid;
-              chan.TransportId = transportid;
-              chan.ServiceId = serviceid;
+              DVBBaseChannel chan = CreateChannel(networkid, transportid, serviceid, "");
               epgChannel.Channel = chan;
               uint eventCount;
               _interfaceEpgGrabber.GetEPGEventCount(x, out eventCount);
@@ -2564,5 +2557,7 @@ namespace TvLibrary.Implementations.DVB
     public void ReloadCardConfiguration() {}
 
     #endregion
+
+    protected abstract DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name);
   }
 }

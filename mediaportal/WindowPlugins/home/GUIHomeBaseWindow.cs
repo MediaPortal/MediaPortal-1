@@ -52,9 +52,6 @@ namespace MediaPortal.GUI.Home
     protected bool _fixedScroll = true; // fix scrollbar in the middle of menu
     protected bool _enableAnimation = true;
     protected DateTime _updateTimer = DateTime.MinValue;
-    protected int _notifyTVTimeout = 15;
-    protected bool _playNotifyBeep = true;
-    protected int _preNotifyConfig = 60;
     protected GUIOverlayWindow _overlayWin = null;
     private static bool _addedGlobalMessageHandler = false;
 
@@ -84,9 +81,6 @@ namespace MediaPortal.GUI.Home
         _fixedScroll = xmlreader.GetValueAsBool("home", "scrollfixed", true); // fix scrollbar in the middle of menu
         _useMyPlugins = xmlreader.GetValueAsBool("home", "usemyplugins", true); // use previous menu handling
         _enableAnimation = xmlreader.GetValueAsBool("home", "enableanimation", true);
-        _notifyTVTimeout = xmlreader.GetValueAsInt("mytv", "notifyTVTimeout", 15);
-        _playNotifyBeep = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
-        _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
       }
     }
 
@@ -260,34 +254,6 @@ namespace MediaPortal.GUI.Home
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
-          //if (GUIGraphicsContext.IsFullScreenVideo) return;
-          GUIDialogNotify dialogNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-          TVProgramDescription notify = message.Object as TVProgramDescription;
-          if (notify == null)
-          {
-            return;
-          }
-          int minUntilStart = _preNotifyConfig / 60;
-          if (minUntilStart > 1)
-          {
-            dialogNotify.SetHeading(String.Format(GUILocalizeStrings.Get(1018), minUntilStart));
-          }
-          else
-          {
-            dialogNotify.SetHeading(1019); // Program is about to begin
-          }
-          dialogNotify.SetText(String.Format("{0}\n{1}", notify.Title, notify.Description));
-          string strLogo = Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel);
-          dialogNotify.SetImage(strLogo);
-          dialogNotify.TimeOut = _notifyTVTimeout;
-          if (_playNotifyBeep)
-          {
-            Util.Utils.PlaySound("notify.wav", false, true);
-          }
-          dialogNotify.DoModal(GUIWindowManager.ActiveWindow);
-          break;
-
         case GUIMessage.MessageType.GUI_MSG_NOTIFY:
           ShowNotify(message.Label, message.Label2, message.Label3);
           break;

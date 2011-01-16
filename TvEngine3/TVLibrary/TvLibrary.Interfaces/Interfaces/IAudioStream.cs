@@ -69,5 +69,10 @@ namespace TvLibrary.Interfaces
     /// gets/sets the audio stream type
     /// </summary>
     AudioStreamType StreamType { get; set; }
+
+    /// <summary>
+    /// gets/sets the audio stream PID
+    /// </summary>
+    int Pid { get; set; }
   }
 }

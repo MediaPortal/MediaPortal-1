@@ -36,6 +36,7 @@
     <String id="1016">Reminder: Program is about to start</String>
     <String id="1018">Program starts in {0} minutes</String>
     <String id="1019">Program is about to begin</String>
+    <String id="1206">Program is now running for {0} minutes</String>
     <String id="2013">Favorites</String>
     <String id="2039">milliliter</String>
     <String id="2040">milliliter</String>

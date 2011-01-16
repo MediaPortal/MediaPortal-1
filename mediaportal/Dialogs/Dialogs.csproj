@@ -187,7 +187,6 @@
     <Compile Include="Dialogs\GUIDialogText.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Dialogs\GUIDialogTVConflict.cs" />
     <Compile Include="Dialogs\GUIDialogWindow.cs" />
     <Compile Include="Dialogs\GUIDialogYesNo.cs">
       <SubType>Code</SubType>

@@ -239,7 +239,7 @@ namespace TvService
       Channel channel = _currentTransponder.CurrentChannel;
 
       Log.Epg("EpgCard: grab epg on card: #{0} transponder: #{1} ch:{2} ", _card.IdCard,
-              TransponderList.Instance.CurrentIndex, channel.Name);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName);
 
       _state = EpgState.Idle;
       _isRunning = true;
@@ -255,7 +255,7 @@ namespace TvService
         return;
       }
       Log.Epg("EpgCard: unable to grab epg transponder: {0} ch: {1} started on {2}",
-              TransponderList.Instance.CurrentIndex, channel.Name, _user.CardId);
+              TransponderList.Instance.CurrentIndex, channel.DisplayName, _user.CardId);
       Log.Epg("{0}", _currentTransponder.Tuning.ToString());
     }
 

@@ -400,7 +400,6 @@ namespace SetupTv.Sections
       if (e.Label != null)
       {
         Channel channel = (Channel)mpListView1.Items[e.Item].Tag;
-        channel.Name = e.Label;
         channel.DisplayName = e.Label;
         channel.Persist();
       }

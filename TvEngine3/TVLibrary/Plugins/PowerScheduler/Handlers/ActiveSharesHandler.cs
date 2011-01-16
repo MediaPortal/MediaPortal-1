@@ -238,6 +238,7 @@ namespace TvEngine.PowerScheduler.Handlers
               _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
             }
           }
+          Log.Debug("{0}: Share monitoring is enabled.", HandlerName);
           return true;
         }
       }
@@ -245,6 +246,7 @@ namespace TvEngine.PowerScheduler.Handlers
       {
         Log.Error("{0}: Error >{1}< loading shares to monitor", HandlerName, ex.Message);
       }
+      Log.Debug("{0}: Share monitoring is disabled.", HandlerName);
       return false;
     }
 
@@ -289,10 +291,6 @@ namespace TvEngine.PowerScheduler.Handlers
           }
           Log.Debug("{0}: have not found any matching connections - will allow standby", HandlerName);
           return false;
-        }
-        else
-        {
-          Log.Debug("{0}: Standby permitted. Share monitoring is disabled.", HandlerName);
         }
         return false;
       }

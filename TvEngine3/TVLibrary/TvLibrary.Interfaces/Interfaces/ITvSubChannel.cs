@@ -88,7 +88,7 @@ namespace TvLibrary.Interfaces
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    int GetCurrentVideoStream { get; }
+    IVideoStream GetCurrentVideoStream { get; }
 
     #region teletext
 

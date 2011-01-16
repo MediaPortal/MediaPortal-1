@@ -346,7 +346,7 @@ namespace TvLibrary.Implementations.DVB
         }
         dvbsLocator.put_Modulation(tuneChannel.ModulationType);
         Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
-        dvbsLocator.put_InnerFECRate(dvbsChannel.InnerFecRate);
+        dvbsLocator.put_InnerFECRate(tuneChannel.InnerFecRate);
         Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
         _tuneRequest.put_Locator(locator);
 
@@ -424,6 +424,16 @@ namespace TvLibrary.Implementations.DVB
       if ((channel as DVBSChannel) == null)
         return false;
       return true;
+    }
+
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      DVBSChannel channel = new DVBSChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
     }
   }
 }

@@ -137,7 +137,6 @@ namespace MediaPortal.Topbar
     {
       if (!m_bEnabled ||
           GUIGraphicsContext.DisableTopBar ||
-          GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_WEBBROWSER ||
           GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MOVIE_CALIBRATION ||
           GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_UI_CALIBRATION ||
           MediaPortal.Player.g_Player.IsDVDMenu)

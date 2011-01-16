@@ -627,38 +627,41 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
+        DVBAudioStream stream = null;
         List<IAudioStream> streams = new List<IAudioStream>();
         foreach (PidInfo info in _channelInfo.pids)
         {
           if (info.isAC3Audio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
             stream.StreamType = AudioStreamType.AC3;
-            streams.Add(stream);
           }
           else if (info.isEAC3Audio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
             stream.StreamType = AudioStreamType.EAC3;
-            streams.Add(stream);
           }
           else if (info.isAudio)
           {
-            DVBAudioStream stream = new DVBAudioStream();
-            stream.Language = info.language;
-            stream.Pid = info.pid;
+            stream = new DVBAudioStream();
+
             if (info.IsMpeg1Audio)
               stream.StreamType = AudioStreamType.Mpeg1;
-            if (info.IsMpeg2Audio)
+            else if (info.IsMpeg2Audio)
               stream.StreamType = AudioStreamType.Mpeg2;
-            if (info.IsAACAudio)
+            else if (info.IsAACAudio)
               stream.StreamType = AudioStreamType.AAC;
-            stream.StreamType = info.IsLATMAACAudio ? AudioStreamType.LATMAAC : AudioStreamType.Unknown;
+            else if (info.IsLATMAACAudio)
+              stream.StreamType = AudioStreamType.LATMAAC;
+            else
+              stream.StreamType = AudioStreamType.Unknown;
+          }
+          if (stream != null)
+          {
+            stream.Language = info.language;
+            stream.Pid = info.pid;
             streams.Add(stream);
+            stream = null;
           }
         }
         return streams;
@@ -721,20 +724,44 @@ namespace TvLibrary.Implementations.DVB
     /// false we record in program stream mode
     /// </summary>
     /// <value>true for transport stream, false for program stream.</value>
-    public override int GetCurrentVideoStream
+    public override IVideoStream GetCurrentVideoStream
     {
       get
       {
+        VideoStream stream = null;
+
         if (_channelInfo == null)
-          return -1;
+          return stream;
+
+        stream = new VideoStream();
+        stream.PcrPid = _channelInfo.pcrPid;
+
         foreach (PidInfo info in _channelInfo.pids)
         {
           if (info.isVideo)
           {
-            return info.stream_type;
+            stream.Pid = info.pid;
+            
+            if (info.IsMpeg2Video)
+            {
+              stream.StreamType = VideoStreamType.MPEG2;
+            }
+            else if (info.IsMpeg4Video)
+            {
+              stream.StreamType = VideoStreamType.MPEG4;
+            }
+            else if (info.IsH264Video)
+            {
+              stream.StreamType = VideoStreamType.H264;
+            }
+            else
+            {
+              stream.StreamType = VideoStreamType.Unknown;
+            }
+			return stream;
           }
         }
-        return -1;
+        return stream;
       }
     }
 
@@ -820,6 +847,7 @@ namespace TvLibrary.Implementations.DVB
       _pmtRequested = true; // requested      
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
+
       Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
@@ -1318,19 +1346,28 @@ namespace TvLibrary.Implementations.DVB
     private void PersistPMTtoDataBase(int pmtPid)
     {
       // check if PMT has changed, in this case update tuning details
-      DVBBaseChannel CurrentDVBChannel = _currentChannel as DVBBaseChannel;
-      if (pmtPid != CurrentDVBChannel.PmtPid && !alwaysUsePATLookup)
+      DVBBaseChannel currentDvbChannel = _currentChannel as DVBBaseChannel;
+      if (currentDvbChannel != null && pmtPid != currentDvbChannel.PmtPid && !alwaysUsePATLookup)
       {
+        currentDvbChannel.PmtPid = pmtPid;
         TvBusinessLayer layer = new TvBusinessLayer();
-        Channel dbChannel = layer.GetChannelByTuningDetail(CurrentDVBChannel.NetworkId, CurrentDVBChannel.TransportId,
-                                                           CurrentDVBChannel.ServiceId);
-        TuningDetail currentDetail = layer.GetChannel(CurrentDVBChannel.Provider, dbChannel.Name,
-                                                      CurrentDVBChannel.ServiceId);
-        currentDetail.PmtPid = pmtPid;
-        CurrentDVBChannel.PmtPid = pmtPid;
-        TvDatabase.TuningDetail td = layer.UpdateTuningDetails(dbChannel, CurrentDVBChannel, currentDetail);
-        Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
-        td.Persist();
+        TuningDetail currentDetail = layer.GetTuningDetail(currentDvbChannel);
+        if (currentDetail != null)
+        {
+          try
+          {
+            currentDetail.PmtPid = pmtPid;
+            currentDetail.Persist();
+            Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
+          } catch (Exception e)
+          {
+            Log.Log.Error("PMT {0:X} could not be persisted to DB!", pmtPid, e);
+          }
+        }
+        else
+        {
+          Log.Log.Debug("PMT {0:X} could not be persisted to DB, no tuningdetails found!", pmtPid);
+        }
       }
     }
 

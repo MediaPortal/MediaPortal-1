@@ -239,6 +239,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("AlbumArtist");
             sortStrings.Add("Year");
             sortStrings.Add("Disc#");
+            sortStrings.Add("Composer");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {
@@ -1017,7 +1018,7 @@ namespace MediaPortal.GUI.Music
     /// what tracks need to be added to the playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    private void AddSelectionToPlaylist(bool clearPlaylist)
+    protected override void AddSelectionToPlaylist(bool clearPlaylist)
     {
       List<Song> songs = GetSongsForSelection();
       List<PlayListItem> pl = ConvertSongsToPlaylist(songs);

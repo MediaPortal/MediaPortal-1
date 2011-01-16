@@ -130,7 +130,6 @@ namespace SetupTv.Sections
           continue;
 
         XmlNode nodechannel = xmlDoc.CreateElement("channel");
-        AddAttribute(nodechannel, "Name", channel.Name);
         AddAttribute(nodechannel, "GrabEpg", channel.GrabEpg);
         AddAttribute(nodechannel, "IdChannel", channel.IdChannel);
         AddAttribute(nodechannel, "IsRadio", channel.IsRadio);
@@ -205,7 +204,7 @@ namespace SetupTv.Sections
         foreach (Schedule schedule in schedules)
         {
           XmlNode nodeSchedule = xmlDoc.CreateElement("schedule");
-          AddAttribute(nodeSchedule, "ChannelName", schedule.ReferencedChannel().Name);
+          AddAttribute(nodeSchedule, "ChannelName", schedule.ReferencedChannel().DisplayName);
           AddAttribute(nodeSchedule, "ProgramName", schedule.ProgramName);
           AddAttribute(nodeSchedule, "StartTime", schedule.StartTime);
           AddAttribute(nodeSchedule, "EndTime", schedule.EndTime);
@@ -240,7 +239,7 @@ namespace SetupTv.Sections
           foreach (GroupMap map in maps)
           {
             XmlNode nodeMap = xmlDoc.CreateElement("map");
-            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().Name);
+            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
             AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
             nodeGroupMap.AppendChild(nodeMap);
           }
@@ -265,7 +264,7 @@ namespace SetupTv.Sections
           foreach (RadioGroupMap map in maps)
           {
             XmlNode nodeMap = xmlDoc.CreateElement("map");
-            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().Name);
+            AddAttribute(nodeMap, "ChannelName", map.ReferencedChannel().DisplayName);
             AddAttribute(nodeMap, "SortOrder", map.SortOrder.ToString());
             nodeRadioGroupMap.AppendChild(nodeMap);
           }
@@ -373,9 +372,10 @@ namespace SetupTv.Sections
               // using AddChannel would incorrectly "merge" these totally different channels.
               // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
               Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
-              if (mergeChannels)
+              IList<Channel> foundExistingChannels = layer.GetChannelsByName(name);
+              if (mergeChannels && (foundExistingChannels != null && foundExistingChannels.Count > 0))
               {
-                dbChannel = layer.GetChannelByName(name) ?? layer.AddChannel("", name);
+                dbChannel = foundExistingChannels[0];
               }
               else
               {
@@ -418,7 +418,6 @@ namespace SetupTv.Sections
               }
               foreach (XmlNode nodeTune in tuningList)
               {
-                int audioPid = Int32.Parse(nodeTune.Attributes["AudioPid"].Value);
                 int bandwidth = Int32.Parse(nodeTune.Attributes["Bandwidth"].Value);
                 int channelNumber = Int32.Parse(nodeTune.Attributes["ChannelNumber"].Value);
                 int channelType = Int32.Parse(nodeTune.Attributes["ChannelType"].Value);
@@ -439,7 +438,6 @@ namespace SetupTv.Sections
                 int symbolrate = Int32.Parse(nodeTune.Attributes["Symbolrate"].Value);
                 int transportId = Int32.Parse(nodeTune.Attributes["TransportId"].Value);
                 int tuningSource = Int32.Parse(GetNodeAttribute(nodeTune, "TuningSource", "0"));
-                int videoPid = Int32.Parse(GetNodeAttribute(nodeTune, "VideoPid", "-1"));
                 int videoSource = Int32.Parse(GetNodeAttribute(nodeTune, "VideoSource", "0"));
                 int audioSource = Int32.Parse(GetNodeAttribute(nodeTune, "AudioSource", "0"));
                 bool isVCRSignal = (GetNodeAttribute(nodeChannel, "IsVCRSignal", "False") == "True");
@@ -604,10 +602,11 @@ namespace SetupTv.Sections
               XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
               foreach (XmlNode nodeMap in mappingList)
               {
-                Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
+                IList<Channel> channels = layer.GetChannelsByName(nodeMap.Attributes["ChannelName"].Value);
                 int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
-                if (channel != null)
+                if (channels != null && channels.Count > 0)
                 {
+                  Channel channel = channels[0];
                   if (!channel.GroupNames.Contains(group.GroupName))
                   {
                     GroupMap map = new GroupMap(group.IdGroup, channel.IdChannel, sortOrder);
@@ -651,10 +650,11 @@ namespace SetupTv.Sections
               XmlNodeList mappingList = nodeChannelGroup.SelectNodes("mappings/map");
               foreach (XmlNode nodeMap in mappingList)
               {
-                Channel channel = layer.GetChannelByName(nodeMap.Attributes["ChannelName"].Value);
+                IList<Channel> channels = layer.GetChannelsByName(nodeMap.Attributes["ChannelName"].Value);
                 int sortOrder = Int32.Parse(GetNodeAttribute(nodeMap, "SortOrder", "9999"));
-                if (channel != null)
+                if (channels != null && channels.Count > 0)
                 {
+                  Channel channel = channels[0];
                   if (!channel.GroupNames.Contains(group.GroupName))
                   {
                     RadioGroupMap map = new RadioGroupMap(group.IdGroup, channel.IdChannel, sortOrder);
@@ -695,7 +695,11 @@ namespace SetupTv.Sections
               string channel = nodeSchedule.Attributes["ChannelName"].Value;
               if (!string.IsNullOrEmpty(channel))
               {
-                idChannel = layer.GetChannelByName(channel).IdChannel;
+                IList<Channel> channels = layer.GetChannelsByName(channel);
+                if (channels != null && channels.Count > 0)
+                {
+                  idChannel = channels[0].IdChannel;
+                }
               }
               DateTime startTime = DateTime.ParseExact(nodeSchedule.Attributes["StartTime"].Value, "yyyy-M-d H:m:s",
                                                        CultureInfo.InvariantCulture);

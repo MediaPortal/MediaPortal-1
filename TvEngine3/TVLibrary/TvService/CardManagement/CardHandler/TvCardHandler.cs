@@ -891,10 +891,10 @@ namespace TvService
     /// Gets the current video stream.
     /// </summary>
     /// <returns></returns>
-    public int GetCurrentVideoStream(IUser user)
+    public IVideoStream GetCurrentVideoStream(IUser user)
     {
       if (_dbsCard.Enabled == false)
-        return -1;
+        return null;
       if (IsLocal == false)
       {
         try
@@ -905,16 +905,16 @@ namespace TvService
         catch (Exception)
         {
           Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
-          return -1;
+          return null;
         }
       }
       ITvCardContext context = _card.Context as ITvCardContext;
       if (context == null)
-        return -1;
+        return null;
       context.GetUser(ref user);
       ITvSubChannel subchannel = _card.GetSubChannel(user.SubChannel);
       if (subchannel == null)
-        return -1;
+        return null;
       return subchannel.GetCurrentVideoStream;
     }
 

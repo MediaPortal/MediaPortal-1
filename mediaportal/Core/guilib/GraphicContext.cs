@@ -941,14 +941,6 @@ namespace MediaPortal.GUI.Library
       {
         if (!m_RectVideo.Equals(value))
         {
-          if (m_RectVideo.Width == 0)
-          {
-            m_RectVideo.Width = 1;
-          }
-          if (m_RectVideo.Height == 0)
-          {
-            m_RectVideo.Height = 1;
-          }
           m_RectVideo = value;
           if (OnVideoWindowChanged != null)
           {
@@ -1003,6 +995,10 @@ namespace MediaPortal.GUI.Library
           if (!m_bOverlay)
           {
             VideoWindow = new Rectangle(0,0,1,1);
+          }
+          if (OnVideoWindowChanged != null)
+          {
+            OnVideoWindowChanged();
           }
         }
       }
@@ -1487,83 +1483,30 @@ namespace MediaPortal.GUI.Library
     /// false: does not belong to the my tv plugin</returns>
     public static bool IsTvWindow(int windowId)
     {
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TVGUIDE)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_SCHEDULER)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_SEARCHTV)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TELETEXT)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_CONFLICTS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_MAIN)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_AUTO)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_COMPRESS_SETTINGS)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL)
-      {
-        return true;
-      }
-      if (windowId == (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO)
-      {
-        return true;
-      }
+      GUIWindow window = GUIWindowManager.GetWindow(windowId);
 
+      if (window != null && window.IsTv)
+      {
+        return true;
+      }
+      switch (windowId)
+      {
+        case (int)GUIWindow.Window.WINDOW_TV:
+        case (int)GUIWindow.Window.WINDOW_TVFULLSCREEN:
+        case (int)GUIWindow.Window.WINDOW_TVGUIDE:
+        case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+        case (int)GUIWindow.Window.WINDOW_RECORDEDTVCHANNEL:
+        case (int)GUIWindow.Window.WINDOW_RECORDEDTVGENRE:
+        case (int)GUIWindow.Window.WINDOW_SCHEDULER:
+        case (int)GUIWindow.Window.WINDOW_SEARCHTV:
+        case (int)GUIWindow.Window.WINDOW_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
+        case (int)GUIWindow.Window.WINDOW_TV_CONFLICTS:
+        case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
+        case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
+          return true;
+      }
       return false;
     }
 

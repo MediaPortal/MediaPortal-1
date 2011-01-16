@@ -254,25 +254,34 @@ namespace MediaPortal.Music.Database
       {
         AlbumInfo album = aAlbumInfo.Clone();
         string strTmp;
-        //				strTmp = album.Album; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Album = strTmp;
-        //				strTmp = album.Genre; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Genre = strTmp;
-        //				strTmp = album.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); album.Artist = strTmp;
+        
+        strTmp = album.Album;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Album = strTmp;
+        
+        strTmp = album.Artist;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
+        album.Artist = strTmp;
+        
         strTmp = album.Tones;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Tones = strTmp == "unknown" ? "" : strTmp;
+        
         strTmp = album.Styles;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Styles = strTmp == "unknown" ? "" : strTmp;
+        
         strTmp = album.Review;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Review = strTmp == "unknown" ? "" : strTmp;
+        
         strTmp = album.Image;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Image = strTmp == "unknown" ? "" : strTmp;
+        
         strTmp = album.Tracks;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Tracks = strTmp == "unknown" ? "" : strTmp;
-        //strTmp=album.Path  ;RemoveInvalidChars(ref strTmp);album.Path=strTmp;
 
         if (null == MusicDbClient)
         {
@@ -316,40 +325,55 @@ namespace MediaPortal.Music.Database
       {
         ArtistInfo artist = aArtistInfo.Clone();
         string strTmp;
-        //strTmp = artist.Artist; DatabaseUtility.RemoveInvalidChars(ref strTmp); artist.Artist = strTmp;
+        
+        strTmp = artist.Artist; 
+        DatabaseUtility.RemoveInvalidChars(ref strTmp); 
+        artist.Artist = strTmp;
+        
         strTmp = artist.Born;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Born = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.YearsActive;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.YearsActive = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Genres;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Genres = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Instruments;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Instruments = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Tones;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Tones = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Styles;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Styles = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.AMGBio;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.AMGBio = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Image;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Image = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Albums;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Albums = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Compilations;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Compilations = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Singles;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Singles = strTmp == "unknown" ? "" : strTmp;
+
         strTmp = artist.Misc;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Misc = strTmp == "unknown" ? "" : strTmp;

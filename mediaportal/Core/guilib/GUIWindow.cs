@@ -56,8 +56,9 @@ namespace MediaPortal.GUI.Library
     /// Enum of all standard windows in MP
     /// 
     /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-    /// ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-    /// (Windows that may not be jumped to directly via InputMapper)
+    /// if window may not be jumped to directly via InputMapper,
+    /// add it to blacklist in InputMappingForm!!!
+    /// (windows with DIALOG in the enum name are blacklisted automatically)
     /// </summary>
     public enum Window
     {
@@ -70,31 +71,20 @@ namespace MediaPortal.GUI.Library
       WINDOW_MUSIC = 5,
       WINDOW_VIDEOS = 6,
       WINDOW_SYSTEM_INFORMATION = 7,
-      WINDOW_SETTINGS_GENERAL = 8,
       WINDOW_SETTINGS_SCREEN = 9,
       WINDOW_UI_CALIBRATION = 10,
       WINDOW_MOVIE_CALIBRATION = 11,
       WINDOW_SETTINGS_SLIDESHOW = 12,
-      WINDOW_SETTINGS_FILTER = 13,
       WINDOW_SETTINGS_MUSIC = 14,
-      WINDOW_SETTINGS_SUBTITLES = 15,
-      WINDOW_SETTINGS_SCREENSAVER = 16,
       WINDOW_SETTINGS_WEATHER = 17,
-      WINDOW_SETTINGS_OSD = 18,
       WINDOW_SCRIPTS = 20,
       WINDOW_VIDEO_GENRE = 21,
       WINDOW_VIDEO_ACTOR = 22,
       WINDOW_VIDEO_YEAR = 23,
-      WINDOW_SETTINGS_PROGRAMS = 24,
       WINDOW_VIDEO_TITLE = 25,
-      WINDOW_SETTINGS_CACHE = 26,
-      WINDOW_SETTINGS_AUTORUN = 27,
       WINDOW_VIDEO_PLAYLIST = 28,
-      WINDOW_SETTINGS_LCD = 29,
       WINDOW_RADIO = 30,
       WINDOW_SETTINGS_GUI = 31,
-      WINDOW_MSN = 32,
-      WINDOW_MSN_CHAT = 33,
       WINDOW_MYPLUGINS = 34,
       WINDOW_SECOND_HOME = 35,
       WINDOW_DIALOG_YES_NO = 100,
@@ -102,12 +92,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_PLAY_STOP = 102,
       WINDOW_MUSIC_PLAYLIST = 500,
       WINDOW_MUSIC_FILES = 501,
-      WINDOW_MUSIC_ALBUM = 502,
-      WINDOW_MUSIC_ARTIST = 503,
       WINDOW_MUSIC_GENRE = 504,
-      WINDOW_MUSIC_TOP100 = 505,
-      WINDOW_MUSIC_FAVORITES = 506,
-      WINDOW_MUSIC_YEARS = 507,
       WINDOW_MUSIC_COVERART_GRABBER_RESULTS = 508,
       WINDOW_MUSIC_COVERART_GRABBER_PROGRESS = 509,
       WINDOW_MUSIC_PLAYING_NOW = 510,
@@ -122,39 +107,11 @@ namespace MediaPortal.GUI.Library
       WINDOW_RECORDEDTVCHANNEL = 606,
       WINDOW_TV_SCHEDULER_PRIORITIES = 607,
       WINDOW_TV_CONFLICTS = 608,
-      WINDOW_TV_COMPRESS_MAIN = 609,
-      WINDOW_TV_COMPRESS_SETTINGS = 610,
-      WINDOW_TV_COMPRESS_AUTO = 611,
-      WINDOW_TV_COMPRESS_COMPRESS = 612,
-      WINDOW_TV_COMPRESS_COMPRESS_STATUS = 613,
       WINDOW_VIDEO_ARTIST_INFO = 614,
       WINDOW_WIZARD_WELCOME = 615,
-      WINDOW_WIZARD_WELCOME_TVE2 = 711,
-      WINDOW_WIZARD_CARDS_DETECTED = 616,
-      WINDOW_WIZARD_DVBT_COUNTRY = 617,
-      WINDOW_WIZARD_DVBT_SCAN = 618,
-      WINDOW_WIZARD_DVBC_COUNTRY = 619,
-      WINDOW_WIZARD_DVBC_SCAN = 620,
-      WINDOW_WIZARD_DVBS_SELECT_LNB = 621,
-      WINDOW_WIZARD_DVBS_SELECT_DETAILS = 622,
-      WINDOW_WIZARD_DVBS_SELECT_TRANSPONDER = 623,
-      WINDOW_WIZARD_DVBS_SCAN = 624,
-      WINDOW_WIZARD_ATSC_SCAN = 625,
-      WINDOW_WIZARD_ANALOG_COUNTRY = 626,
-      WINDOW_WIZARD_ANALOG_CITY = 627,
-      WINDOW_WIZARD_ANALOG_IMPORTED = 628,
-      WINDOW_WIZARD_ANALOG_MANUAL_TUNE = 629,
-      WINDOW_WIZARD_ANALOG_TUNE = 630,
-      WINDOW_WIZARD_ANALOG_RENAME = 631,
-      WINDOW_WIZARD_ANALOG_SCAN_RADIO = 632,
-      WINDOW_WIZARD_ANALOG_RENAME_RADIO = 633,
       WINDOW_WIZARD_REMOTE = 634,
-      WINDOW_WIZARD_EPG_SELECT = 635,
       WINDOW_WIZARD_GENERAL = 636,
       WINDOW_WIZARD_FINISHED = 699,
-      WINDOW_WIZARD_FINISHED_TVE2 = 710,
-      WINDOW_SETTINGS_TVE2 = 712,
-      WINDOW_SETTINGS_TV_TVE2 = 713,
       WINDOW_SETTINGS_TV = 700,
       WINDOW_SETTINGS_RECORDINGS = 701,
       WINDOW_SETTINGS_SORT_CHANNELS = 702,
@@ -162,24 +119,17 @@ namespace MediaPortal.GUI.Library
       WINDOW_SETTINGS_DVD = 704,
       WINDOW_SETTINGS_SKIN = 705,
       WINDOW_SETTINGS_TV_EPG = 706,
-      WINDOW_SETTINGS_TV_EPG_MAPPING = 707,
       WINDOW_SETTINGS_SKIPSTEPS = 708, // by rtv
       WINDOW_SETTINGS_TVENGINE = 709,
       WINDOW_TV_SEARCH = 747,
       WINDOW_TV_SEARCHTYPE = 746,
       WINDOW_TV_PROGRAM_INFO = 748,
       WINDOW_TV_NO_SIGNAL = 749,
-      WINDOW_MY_RECIPIES = 750,
-      WINDOW_STATUS = 755,
-      WINDOW_STATUS_DETAILS = 756,
-      WINDOW_STATUS_PREFS = 757,
       WINDOW_DIALOG_FILE = 758,
       WINDOW_TV_RECORDED_INFO = 759,
-      WINDOW_MY_BURNER = 760,
       WINDOW_DIALOG_TVGUIDE = 761,
       WINDOW_RADIO_GUIDE = 762,
       WINDOW_RECORDEDRADIO = 763,
-      WINDOW_EXTENSIONS = 800,
       WINDOW_VIRTUAL_KEYBOARD = 1002,
       WINDOW_DIALOG_SELECT = 2000,
       WINDOW_MUSIC_INFO = 2001,
@@ -200,33 +150,25 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_NOTIFY = 2016,
       WINDOW_DIALOG_TVCONFLICT = 2017,
       WINDOW_DIALOG_CIMENU = 2018,
+      WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
       WINDOW_WEATHER = 2600,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
-      WINDOW_MSNOSD = 2902,
-      WINDOW_VIDEO_EDITOR = 2959,
-      WINDOW_VIDEO_EDITOR_COMPRESSSETTINGS = 2960,
       WINDOW_VIDEO_OVERLAY = 3000,
       WINDOW_DVD = 3001, // for keymapping
       WINDOW_TV_OVERLAY = 3002,
       WINDOW_TVOSD = 3003,
       WINDOW_TOPBAR = 3005,
-      WINDOW_TVMSNOSD = 3006,
       WINDOW_TVZAPOSD = 3007,
       WINDOW_VIDEO_OVERLAY_TOP = 3008,
       WINDOW_MINI_GUIDE = 3009,
-      WINDOW_ACTIONMENU = 3010,
       WINDOW_TV_CROP_SETTINGS = 3011,
       WINDOW_TV_TUNING_DETAILS = 3012, // gemx 
-      WINDOW_WEBBROWSER = 5500,
       WINDOW_PSCLIENTPLUGIN_UNATTENDED = 6666, // dero
       WINDOW_WIKIPEDIA = 4711,
       WINDOW_TELETEXT = 7700,
       WINDOW_FULLSCREEN_TELETEXT = 7701,
-      WINDOW_CARTOONS = 7800,
       WINDOW_DIALOG_TEXT = 7900,
-      WINDOW_SUNCLOCK = 8000,
-      WINDOW_TRAILERS = 5900,
       WINDOW_TETRIS = 7776,
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
@@ -236,9 +178,10 @@ namespace MediaPortal.GUI.Library
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
 
-      // IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
-      // ADD DIALOGS TO InputMappingForm.cs BLACKLIST!!!
-      // (Windows that may not be jumped to directly via InputMapper)
+      /// IMPORTANT!!! WHEN ADDING NEW WINDOW IDs,
+      /// if window may not be jumped to directly via InputMapper,
+      /// add it to blacklist in InputMappingForm!!!
+      /// (windows with DIALOG in the enum name are blacklisted automatically)
     }
 
     #endregion
@@ -281,6 +224,7 @@ namespace MediaPortal.GUI.Library
     private bool _windowAllocated;
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
+    private bool _hasWindowVisibilityUpdated;
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
@@ -906,7 +850,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
     private void SetControlVisibility()
     {
       // reset our info manager caches
@@ -1326,23 +1269,14 @@ namespace MediaPortal.GUI.Library
         {
           if (!_isSkinLoaded)
           {
-            if (GUIGraphicsContext.IsFullScreenVideo)
+            if (GUIGraphicsContext.IsFullScreenVideo ||
+              GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO ||
+              GetID == (int)Window.WINDOW_TVFULLSCREEN ||
+              GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
             {
               return;
             }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_TVFULLSCREEN)
-            {
-              return;
-            }
-            if (GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
-            {
-              return; //SV Added by SteveV 2006-09-07
-            }
-
+            
             // Print an error message
             GUIFont font = GUIFontManager.GetFont(0);
             if (font != null)
@@ -1368,10 +1302,12 @@ namespace MediaPortal.GUI.Library
           }
 
           UpdateOverlayAllowed();
+          _hasWindowVisibilityUpdated = true;
           foreach (GUIControl control in Children)
           {
             control.UpdateVisibility();
             control.DoRender(timePassed, currentTime);
+            _hasWindowVisibilityUpdated = false;
           }
 
           GUIWaitCursor.Render();
@@ -1577,10 +1513,9 @@ namespace MediaPortal.GUI.Library
               }
 
               InitControls();
-
               UpdateOverlayAllowed();
               GUIGraphicsContext.Overlay = _isOverlayAllowed;
-
+              
               // set topbar autohide 
               switch (_autoHideTopbarType)
               {
@@ -1645,9 +1580,6 @@ namespace MediaPortal.GUI.Library
                 DeInitControls();
                 Dispose();
                 GUITextureManager.CleanupThumbs();
-                //GC.Collect();
-                //GC.Collect();
-                //GC.Collect();
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 _shouldRestore = true;
@@ -1985,6 +1917,12 @@ namespace MediaPortal.GUI.Library
     public bool WindowLoaded
     {
       get { return _windowLoaded; }
+    }
+
+    public bool HasWindowVisibilityUpdated
+    {
+      get { return _hasWindowVisibilityUpdated; }
+
     }
 
     #endregion Properties

@@ -28,6 +28,10 @@ namespace TvPluginTests.IPlayerStubs
     private const string LANG_UNKNOWN = "unknown";
     #endregion
 
+    public override void Dispose()
+    {
+    }
+
     public override int AudioStreams
     {
       get { return 1; }

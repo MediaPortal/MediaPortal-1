@@ -258,14 +258,6 @@ namespace TvLibrary.Implementations.DVB
                 info.scrambled = (freeCAMode != 0);
                 info.network_pmt_PID = pmtPid;
 
-                if (!IsKnownServiceType(info.serviceType))
-                {
-                  if (hasVideo == 1)
-                    info.serviceType = (int)ServiceType.Video;
-                  else if (hasAudio == 1)
-                    info.serviceType = (int)ServiceType.Audio;
-                }
-
                 if (IsKnownServiceType(info.serviceType))
                 {
                   if (info.service_name.Length == 0)

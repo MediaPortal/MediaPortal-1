@@ -888,7 +888,7 @@ namespace TvService
                 DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
                 RecDetail.Schedule.ProgramName);      
       //get list of all cards we can use todo the recording      
-      ICardAllocation allocation = new AdvancedCardAllocation(_layer);
+      ICardAllocation allocation = new AdvancedCardAllocation(_layer, _tvController);
       TvResult tvResult;
       List<CardDetail> freeCards = allocation.GetFreeCardsForChannel(_tvController.CardCollection,
                                                                           RecDetail.Channel, ref user, out tvResult);
@@ -1047,7 +1047,7 @@ namespace TvService
           _tvController.StopTimeShifting(ref user);
         }
 
-        Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.Name,
+        Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.ProgramName);
 
@@ -1386,7 +1386,7 @@ namespace TvService
           _tvController.StopTimeShifting(ref user);
         }
 
-        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.Name, recording.RecordingStartDateTime,
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.DisplayName, recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.ProgramName);
 
         if (_tvController.StopRecording(ref user))
@@ -1419,7 +1419,7 @@ namespace TvService
 
     private void RetryStopRecord(RecordingDetail recording) {
       Log.Write("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}",
-                recording.Channel.Name, recording.RecordingStartDateTime, recording.EndTime,
+                recording.Channel.DisplayName, recording.RecordingStartDateTime, recording.EndTime,
                 recording.Schedule.ProgramName);
       recording.Recording.EndTime = recording.Recording.EndTime.AddMinutes(1);
       //lets try and stop the recording in 1 min. again.
@@ -1497,6 +1497,9 @@ namespace TvService
 
       public int Compare(CardDetail first, CardDetail second)
       {
+        if (first == second)
+          return 0;
+
         if (first.Id == _recommendedCard)
         {
           return -1;

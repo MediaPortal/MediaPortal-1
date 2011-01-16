@@ -35,6 +35,10 @@ namespace TvPluginTests.IPlayerStubs
     private const string LANG_DEUSWE = "deuswe";
     #endregion
 
+    public override void Dispose()
+    {
+    }
+
     public override int AudioStreams
     {
       get { return 5; }

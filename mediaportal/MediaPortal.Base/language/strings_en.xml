@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programmes</String>
@@ -715,7 +715,7 @@
     <String id="789">Now: </String>
     <String id="790">Next: </String>
     <String id="791">Cover Flow</String>
-	<String id="792">Layouts Menu</String>
+    <String id="792">Layouts Menu</String>
     <String id="798">low</String>
     <String id="799">high</String>
     <String id="800">Starts with</String>
@@ -729,8 +729,8 @@
     <String id="808">Ingredients</String>
     <String id="809">Directions</String>
     <String id="810">Card</String>
-	<String id="811">Recorded Radio</String>
-	<String id="812">Radio Stations</String>
+    <String id="811">Recorded Radio</String>
+    <String id="812">Radio Stations</String>
     <String id="820">Delete unwatched recording?</String>
     <String id="830">Reset watched status</String>
     <String id="831">Eject removable drive</String>
@@ -996,9 +996,13 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Set-up Wizard</String>
     <String id="1201">Play video from beginning</String>
-    <String id="1202">Sort by : Auto</String>
+    <String id="1202">Sort by: Auto</String>
     <String id="1203">Upcoming episodes (active:{0})</String>
-	<String id="1204">Play all videos in selected folder</String>
+    <String id="1204">Play all videos in selected folder</String>
+    <String id="1205">Sort by: Disc#</String>
+    <String id="1206">Programme is now running for {0} minutes</String>
+    <String id="1207">Switch to {0} now?</String>
+    <String id="1208">Sort by: Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
@@ -1282,8 +1286,8 @@
     <String id="2611">Czech</String>
     <String id="2612">Hungarian</String>
     <String id="2613">Russian</String>
-	<String id="2614">Ukrainian</String>
-	<String id="2615">German</String>
+    <String id="2614">Ukrainian</String>
+    <String id="2615">German</String>
     <String id="2650">Reloading fonts - please wait...</String>
     <String id="2700">Open CI menu</String>
     <String id="2997">h</String>
@@ -1563,16 +1567,16 @@
     <String id="14003">Installed extensions</String>
     <String id="14004">Online extensions</String>
     <String id="14005">Install extension</String>
-    <String id="14006">UnInstall extension</String>	
+    <String id="14006">UnInstall extension</String>
     <String id="14007">ReInstall extension</String>
     <String id="14008">Revoke last action</String>
     <String id="14009">On next restart this action will be executed</String>
     <String id="14010">Download extension</String>
     <String id="14011">Select an option</String>
-    <String id="14012">Not supported MediaPortal version !(Needed version {0})</String>	
-    <String id="14013">Do you want continue ?</String>		
-    <String id="14014">Updating online info</String>			
-    <String id="14015">Updates</String>	
+    <String id="14012">Not supported MediaPortal version !(Needed version {0})</String>
+    <String id="14013">Do you want continue ?</String>
+    <String id="14014">Updating online info</String>
+    <String id="14015">Updates</String>
     <String id="14016">Download</String>
     <String id="14017">Rating</String>
     <String id="14018">Install Update</String>
@@ -1766,7 +1770,7 @@
     <String id="100509">Music/Lookup/Progress</String>
     <String id="100510">Music/Now playing</String>
     <String id="100511">Music/Fullscreen</String>
-	<String id="100512">LastFM Love/Ban</String>
+    <String id="100512">LastFM Love/Ban</String>
     <String id="100600">TV/Guide</String>
     <String id="100601">TV/Scheduler</String>
     <String id="100602">TV/fullscreen</String>
@@ -1870,7 +1874,7 @@
     <String id="107777" prefix="My ">Sudoku</String>
     <String id="107890" prefix="My ">Last.fm radio</String>
     <String id="107900">Dialog Text</String>
-    <String id="108888">Music menu</String>	
+    <String id="108888">Music menu</String>
     <String id="109000">MiniDisplay - Setup</String>
     <String id="109001">MiniDisplay - Setup - Backlight</String>
     <String id="109002">MiniDisplay - Setup - Display Control</String>
@@ -1878,6 +1882,7 @@
     <String id="109004">MiniDisplay - Setup - Equalizer</String>
     <String id="109005">MiniDisplay - Setup - Keypad</String>
     <String id="109006">MiniDisplay - Setup - Remote Control</String>
+    <String id="102019">TV notification</String>
     <String id="200000">Please select your EPG grabber. Note if your country is</String>
     <String id="200001">not listed then you will need to supply the EPG manually</String>
     <String id="200002">You can now map the EPG channels to your TV channels</String>
@@ -1900,7 +1905,7 @@
     <String id="200020">Finish</String>
     <String id="200021">TV Set-up - EPG</String>
     <String id="990000">Weekly on this channel</String>
-    <String id="990001">{0} on channel {1}</String>	
+    <String id="990001">{0} on channel {1}</String>
     <String id="200022">MediaPortal has found the following TV cards:</String>
     <String id="200023">Press the Next button to configure these cards</String>
     <String id="200024">TV Set-up</String>
@@ -1949,22 +1954,22 @@
     <String id="200070">Please check firewall</String>
     <String id="200071">Delete this folder and all subfolders?</String>
     <String id="200072">Upcoming episodes</String>
-	<String id="200073">Postprocessing</String>
-	<String id="200074">Postprocess picture</String>
-	<String id="200075">Resize</String>
-	<String id="200076">Subtitle files</String>
-	<String id="200077">Deinterlace</String>
-	<String id="200078">Crop</String>
-	<String id="200079">Vertical crop</String>
-	<String id="200080">Horizontal crop</String>
-	<String id="200081">VIDEO MENU</String>
-	<String id="200082">AUDIO MENU</String>
-	<String id="200083">SUBTITLES MENU</String>
-	<String id="200084">Video Menu</String>
-	<String id="200085">Audio Menu</String>
-	<String id="200086">MAIN MENU</String>
-	<String id="200087">Mute</String>
-	<String id="200090">Edition</String>
-	<String id="200091">Chapter</String>
+    <String id="200073">Postprocessing</String>
+    <String id="200074">Postprocess picture</String>
+    <String id="200075">Resize</String>
+    <String id="200076">Subtitle files</String>
+    <String id="200077">Deinterlace</String>
+    <String id="200078">Crop</String>
+    <String id="200079">Vertical crop</String>
+    <String id="200080">Horizontal crop</String>
+    <String id="200081">VIDEO MENU</String>
+    <String id="200082">AUDIO MENU</String>
+    <String id="200083">SUBTITLES MENU</String>
+    <String id="200084">Video Menu</String>
+    <String id="200085">Audio Menu</String>
+    <String id="200086">MAIN MENU</String>
+    <String id="200087">Mute</String>
+    <String id="200090">Edition</String>
+    <String id="200091">Chapter</String>
   </Section>
 </Language>

@@ -164,8 +164,7 @@ namespace MediaPortal.Player
 
     /// <summary> audio interface used to control volume. </summary>
     protected IBasicAudio _basicAudio = null;
-
-    private VMR7Util _vmr7 = null;
+    
     private DateTime _elapsedTimer = DateTime.Now;
     private DateTime _FFRWtimer = DateTime.Now;
     protected const int WM_GRAPHNOTIFY = 0x00008001; // message from graph
@@ -1377,11 +1376,7 @@ namespace MediaPortal.Player
     }
 
     protected virtual void OnProcess()
-    {
-      if (_vmr7 != null)
-      {
-        _vmr7.Process();
-      }
+    {      
     }
 
 #if DEBUG
@@ -1597,9 +1592,7 @@ namespace MediaPortal.Player
       object comobj = null;
       try
       {
-        _graphBuilder = (IGraphBuilder)new FilterGraph();
-        _vmr7 = new VMR7Util();
-        _vmr7.AddVMR7(_graphBuilder);
+        _graphBuilder = (IGraphBuilder)new FilterGraph();        
         TsReader reader = new TsReader();
         _fileSource = (IBaseFilter)reader;
         ((ITSReader)reader).SetTsReaderCallback(this);
@@ -1755,12 +1748,7 @@ namespace MediaPortal.Player
           }
           _fileSource = null;
         }
-        if (_vmr7 != null)
-        {
-          _vmr7.RemoveVMR7();
-        }
-        _vmr7 = null;
-
+        
         if (_graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(_graphBuilder);

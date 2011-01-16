@@ -35,19 +35,10 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox showSubtitlesCheckBox;
     private MPLabel label1;
     private MPLabel defaultAudioLanguagelabel;
-    private MPGroupBox mpGroupBox2;
     private IContainer components = null;
-    private MPComboBox autoPlayComboBox;
-    private MPLabel labelAutoPlay;
 
     private string m_strDefaultRegionLanguage = "English";
     private MPCheckBox showClosedCaptions;
-
-    private string[] autoPlayOptions = new string[]
-                                         {
-                                           "Autoplay, never ask", "Don't autoplay, never ask",
-                                           "Ask every time a DVD is inserted"
-                                         };
 
     public DVD()
       : this("DVD Discs/Images") { }
@@ -65,10 +56,7 @@ namespace MediaPortal.Configuration.Sections
                                      : CultureInfo.CurrentCulture.Parent.EnglishName;
 
       Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
-      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
-
-      autoPlayComboBox.Items.Clear();
-      autoPlayComboBox.Items.AddRange(autoPlayOptions);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);      
     }
 
     /// <summary>
@@ -99,21 +87,7 @@ namespace MediaPortal.Configuration.Sections
                                                                                   m_strDefaultRegionLanguage);
 
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", false);
-        showClosedCaptions.Checked = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
-
-        string autoPlayText = xmlreader.GetValueAsString("dvdplayer", "autoplay", "Ask");
-        switch (autoPlayText)
-        {
-          case "No":
-            autoPlayComboBox.Text = autoPlayOptions[1];
-            break;
-          case "Ask":
-            autoPlayComboBox.Text = autoPlayOptions[2];
-            break;
-          default:
-            autoPlayComboBox.Text = autoPlayOptions[0];
-            break;
-        }
+        showClosedCaptions.Checked = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);        
       }
     }
 
@@ -129,23 +103,6 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("dvdplayer", "showsubtitles", showSubtitlesCheckBox.Checked);
         xmlwriter.SetValueAsBool("dvdplayer", "showclosedcaptions", showClosedCaptions.Checked);
-
-        string autoPlayText;
-
-        if (autoPlayComboBox.Text == autoPlayOptions[1])
-        {
-          autoPlayText = "No";
-        }
-        else if (autoPlayComboBox.Text == autoPlayOptions[2])
-        {
-          autoPlayText = "Ask";
-        }
-        else
-        {
-          autoPlayText = "Yes";
-        }
-
-        xmlwriter.SetValue("dvdplayer", "autoplay", autoPlayText);
       }
     }
 
@@ -163,12 +120,8 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.labelAutoPlay = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.autoPlayComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.showClosedCaptions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
-      this.mpGroupBox2.SuspendLayout();
       this.SuspendLayout();
       // 
       // groupBox1
@@ -242,40 +195,6 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.Text = "Show subtitles (overrides disc defaults)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
       // 
-      // mpGroupBox2
-      // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
-      this.mpGroupBox2.Controls.Add(this.autoPlayComboBox);
-      this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox2.Location = new System.Drawing.Point(0, 110);
-      this.mpGroupBox2.Name = "mpGroupBox2";
-      this.mpGroupBox2.Size = new System.Drawing.Size(472, 60);
-      this.mpGroupBox2.TabIndex = 2;
-      this.mpGroupBox2.TabStop = false;
-      this.mpGroupBox2.Text = "Autoplay";
-      // 
-      // labelAutoPlay
-      // 
-      this.labelAutoPlay.AutoSize = true;
-      this.labelAutoPlay.Location = new System.Drawing.Point(16, 28);
-      this.labelAutoPlay.Name = "labelAutoPlay";
-      this.labelAutoPlay.Size = new System.Drawing.Size(77, 13);
-      this.labelAutoPlay.TabIndex = 0;
-      this.labelAutoPlay.Text = "Autoplay DVD:";
-      // 
-      // autoPlayComboBox
-      // 
-      this.autoPlayComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.autoPlayComboBox.BorderColor = System.Drawing.Color.Empty;
-      this.autoPlayComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.autoPlayComboBox.Location = new System.Drawing.Point(168, 24);
-      this.autoPlayComboBox.Name = "autoPlayComboBox";
-      this.autoPlayComboBox.Size = new System.Drawing.Size(288, 21);
-      this.autoPlayComboBox.TabIndex = 1;
-      // 
       // showClosedCaptions
       // 
       this.showClosedCaptions.AutoSize = true;
@@ -289,14 +208,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // DVD
       // 
-      this.Controls.Add(this.mpGroupBox2);
       this.Controls.Add(this.groupBox1);
       this.Name = "DVD";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
-      this.mpGroupBox2.ResumeLayout(false);
-      this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
 
     }

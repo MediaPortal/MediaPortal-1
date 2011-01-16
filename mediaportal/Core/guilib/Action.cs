@@ -154,8 +154,6 @@ namespace MediaPortal.GUI.Library
       ACTION_TOGGLE_WINDOWED_FULLSCREEN = 104,
       ACTION_PAUSE_PICTURE = 105,
       ACTION_CONTEXT_MENU = 106,
-      ACTION_SHOW_MSN_WINDOW = 107,
-      ACTION_SHOW_MSN_OSD = 108,
       ACTION_HOME = 109, // home
       ACTION_END = 110, // end
       ACTION_LAST_VIEWED_CHANNEL = 111, // switches TV to the last viewed channel / mPod

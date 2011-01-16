@@ -329,5 +329,15 @@ namespace TvLibrary.Implementations.DVB
         return false;
       return true;
     }
+
+    protected override DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name)
+    {
+      ATSCChannel channel = new ATSCChannel();
+      channel.NetworkId = networkid;
+      channel.TransportId = transportid;
+      channel.ServiceId = serviceid;
+      channel.Name = name;
+      return channel;
+    }
   }
 }

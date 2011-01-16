@@ -232,9 +232,6 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             DVBIPChannel channel = (DVBIPChannel)channels[i];
-            //TuningDetail currentDetail = layer.GetChannel(channel);
-//            if (channel.Name.IndexOf("Unknown") == 0)
-//            {
             if (channels.Length > 1)
             {
               if (channel.Name.IndexOf("Unknown") == 0)
@@ -246,8 +243,9 @@ namespace SetupTv.Sections
             {
               channel.Name = name;
             }
-//            }
-            TuningDetail currentDetail = layer.GetChannel(channel.Provider, channel.Name, channel.ServiceId);
+            //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
+            //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
+            TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
             if (currentDetail == null)
             {
               //add new channel
@@ -258,17 +256,16 @@ namespace SetupTv.Sections
               {
                 dbChannel.SortOrder = channel.LogicalChannelNumber;
               }
+              dbChannel.IsTv = channel.IsTv;
+              dbChannel.IsRadio = channel.IsRadio;
+              dbChannel.Persist();
             }
             else
             {
               exists = true;
               dbChannel = currentDetail.ReferencedChannel();
             }
-
-            dbChannel.IsTv = channel.IsTv;
-            dbChannel.IsRadio = channel.IsRadio;
-            dbChannel.Persist();
-
+            
             layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
 
             if (checkBoxCreateGroups.Checked)

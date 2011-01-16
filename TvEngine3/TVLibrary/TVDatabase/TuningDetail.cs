@@ -666,7 +666,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Error("Exception in TuningDetail.Persist() with Message {0}", ex.Message);
+          Log.Error("Exception in TuningDetail.Persist() with Exception {0}", ex);
           return;
         }
         isChanged = false;

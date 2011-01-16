@@ -625,5 +625,28 @@ namespace MediaPortal.GUI.Video
       }
       selectDVDHandler.OnPlayDVD(drive, GetID);
     }
+
+    protected void OnPlayFiles(System.Collections.ArrayList filesList)
+    {
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO_TEMP).Clear();
+      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Clear();
+
+      foreach (string file in filesList)
+      {
+        PlayListItem item = new PlayListItem();
+        item.FileName = file;
+        item.Type = PlayListItem.PlayListItemType.Video;
+        item.Description = file;
+        playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Add(item);
+      }
+
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
+      {
+        playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
+        playlistPlayer.Reset();
+        playlistPlayer.Play(0);
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
+      }
+    }
   }
 }

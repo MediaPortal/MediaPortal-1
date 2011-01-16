@@ -2983,8 +2983,7 @@ namespace MediaPortal.Player
 
     public static bool ShowFullScreenWindowVideoDefault()
     {
-      // If current player has no video, then fail
-      if (!HasVideo && !HasViz)
+      if (!HasVideo && !IsMusic)
       {
         return false;
       }

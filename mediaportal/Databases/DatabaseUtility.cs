@@ -383,33 +383,6 @@ namespace MediaPortal.Database
     public static void RemoveInvalidChars(ref string strTxt)
     {
       strTxt = FilterText(strTxt);
-      //if (strTxt == null)
-      //{
-      //  strTxt = Strings.Unknown;
-      //  return;
-      //}
-      //if (strTxt.Length == 0)
-      //{
-      //  strTxt = Strings.Unknown;
-      //  return;
-      //}
-      //string strReturn = string.Empty;
-      //for (int i = 0; i < (int)strTxt.Length; ++i)
-      //{
-      //  char k = strTxt[i];
-      //  if (k == '\'')
-      //  {
-      //    strReturn += "'";
-      //  }
-      //  if ((byte)k == 0)// remove 0-bytes from the string
-      //    k = (char)32;
-
-      //  strReturn += k;
-      //}
-      //strReturn = strReturn.Trim();
-      //if (strReturn == string.Empty)
-      //  strReturn = Strings.Unknown;
-      //strTxt = strReturn;
     }
 
     private static string FilterText(string strTxt)

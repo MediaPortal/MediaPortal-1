@@ -122,8 +122,8 @@ namespace SetupTv.Sections.Helpers
 
           Channel ch = _allChannels[i];
 
-          if (ch.Name != null &&
-              (filterText.Equals("") || ContainsCaseInvariant(ch.Name, filterText)))
+          if (ch.DisplayName != null &&
+              (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText)))
           {
             _listView.Invoke(new MethodInvoker(delegate()
             {

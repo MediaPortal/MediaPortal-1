@@ -362,88 +362,8 @@
     </action>
   </window>
   <window>
-    <id>502</id>
-    <description>My Music album specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>503</id>
-    <description>My Music artist specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
     <id>504</id>
     <description>My Music genre specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>505</id>
-    <description>My Music top 100 specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>506</id>
-    <description>My Music favorites specific actions</description>
-    <action>
-      <id>33</id>
-      <key>F1</key>
-      <sound />
-      <description>Toggle between Playlist and Filelist</description>
-    </action>
-    <action>
-      <id>34</id>
-      <key>Y</key>
-      <sound />
-      <description>Add Item to the Playlist</description>
-    </action>
-  </window>
-  <window>
-    <id>507</id>
-    <description>My Music years specific actions</description>
     <action>
       <id>33</id>
       <key>F1</key>
@@ -527,12 +447,7 @@
       <description>Toggle the OSD</description>
     </action>
     <action>
-      <id>108</id>
-      <key>C</key>
-      <sound />
-      <description>Toggle the MSN OSD</description>
-    </action>
-    <action>
+
       <id>58</id>
       <key>0</key>
       <sound />
@@ -1067,12 +982,6 @@
       <key>Y</key>
       <sound />
       <description>Toggle the OSD</description>
-    </action>
-    <action>
-      <id>108</id>
-      <key>C</key>
-      <sound />
-      <description>Toggle the MSN OSD</description>
     </action>
     <action>
       <id>95</id>

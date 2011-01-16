@@ -298,6 +298,8 @@ namespace MediaPortal.GUI.Music
           return MusicSort.SortMethod.Year;
         case "disc#":
           return MusicSort.SortMethod.DiscID;
+        case "composer":
+          return MusicSort.SortMethod.Composer;
       }
       if (!string.IsNullOrEmpty(s))
       {
@@ -344,22 +346,32 @@ namespace MediaPortal.GUI.Music
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
+      if (action.wID == Action.ActionType.ACTION_IMPORT_TRACK)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.EncodeTrack(facadeLayout, GetID);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
+      if (action.wID == Action.ActionType.ACTION_IMPORT_DISC)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.EncodeDisc(facadeLayout, GetID);
         return;
       }
-      else if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)
+      if (action.wID == Action.ActionType.ACTION_CANCEL_IMPORT)
       {
         MusicImport.MusicImport ripper = new MusicImport.MusicImport();
         ripper.Cancel();
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM)
+      {
+        // when adding item only add a single item
+        // so override add all setting
+        bool existingPlayAll = PlayAllOnSingleItemPlayNow;
+        PlayAllOnSingleItemPlayNow = false;
+        AddSelectionToPlaylist(false);
+        PlayAllOnSingleItemPlayNow = existingPlayAll;
         return;
       }
       base.OnAction(action);
@@ -410,7 +422,7 @@ namespace MediaPortal.GUI.Music
           strLine = GUILocalizeStrings.Get(104);
           break;
         case MusicSort.SortMethod.Year:
-          strLine = GUILocalizeStrings.Get(104); // Also display Date for Year
+          strLine = GUILocalizeStrings.Get(366);
           break;
         case MusicSort.SortMethod.Size:
           strLine = GUILocalizeStrings.Get(105);
@@ -438,6 +450,12 @@ namespace MediaPortal.GUI.Music
           break;
         case MusicSort.SortMethod.AlbumArtist:
           strLine = GUILocalizeStrings.Get(269); // Also display Artist for AlbumArtist
+          break;
+        case MusicSort.SortMethod.DiscID:
+          strLine = GUILocalizeStrings.Get(1205);
+          break;
+        case MusicSort.SortMethod.Composer:
+          strLine = GUILocalizeStrings.Get(1208);
           break;
       }
 
@@ -689,37 +707,21 @@ namespace MediaPortal.GUI.Music
               switch (CurrentSortMethod)
               {
                 case MusicSort.SortMethod.Name:
+                case MusicSort.SortMethod.Track:
+                case MusicSort.SortMethod.Duration:
+                case MusicSort.SortMethod.Title:
+                case MusicSort.SortMethod.Artist:
+                case MusicSort.SortMethod.Album:
+                case MusicSort.SortMethod.AlbumArtist:
+                case MusicSort.SortMethod.DiscID:
+                case MusicSort.SortMethod.Composer:    
                   duration = Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
                 case MusicSort.SortMethod.Date:
-                  duration = Convert.ToString(tag.Duration);
-                  break;
                 case MusicSort.SortMethod.Size:
-                  duration = Convert.ToString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Track:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Duration:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Title:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Artist:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Album:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
                 case MusicSort.SortMethod.Filename:
-                  duration = Convert.ToString(tag.Duration);
-                  break;
                 case MusicSort.SortMethod.Rating:
                   duration = Convert.ToString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.AlbumArtist:
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
                   break;
               }
 
@@ -960,10 +962,13 @@ namespace MediaPortal.GUI.Music
       dlg.AddLocalizedString(266); // track
       dlg.AddLocalizedString(268); // title
       dlg.AddLocalizedString(363); // filename
+      dlg.AddLocalizedString(366); // year
       dlg.AddLocalizedString(367); // rating
       dlg.AddLocalizedString(267); // duration
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(1205); // disc#
+      dlg.AddLocalizedString(1208); // composer
 
       switch (CurrentSortMethod)
       {
@@ -1027,6 +1032,9 @@ namespace MediaPortal.GUI.Music
         case 363:
           CurrentSortMethod = MusicSort.SortMethod.Filename;
           break;
+        case 366:
+          CurrentSortMethod = MusicSort.SortMethod.Year;
+          break;
         case 367:
           CurrentSortMethod = MusicSort.SortMethod.Rating;
           break;
@@ -1039,6 +1047,12 @@ namespace MediaPortal.GUI.Music
         case 104:
           CurrentSortMethod = MusicSort.SortMethod.Date;
           break;
+        case 1205:
+          CurrentSortMethod = MusicSort.SortMethod.DiscID;
+          break;
+        case 1208:
+          CurrentSortMethod = MusicSort.SortMethod.Composer;
+          break;          
         default:
           CurrentSortMethod = MusicSort.SortMethod.Name;
           break;
@@ -2042,6 +2056,13 @@ namespace MediaPortal.GUI.Music
     
     
     #region playlist management
+
+    /// <summary>
+    /// Adds the songs for the selected GUIListItem and determines
+    /// what tracks need to be added to the playlist
+    /// </summary>
+    /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
+    protected virtual void AddSelectionToPlaylist(bool clearPlaylist) { }
     
     /// <summary>
     /// Just helper method to turn the enum in MusicState into

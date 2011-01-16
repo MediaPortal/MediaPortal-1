@@ -211,7 +211,7 @@ namespace SetupTv.Sections
             {
               Channel ch = Channel.Retrieve(u.IdChannel);
 
-              if (ch.Name == client.Description)
+              if (ch.DisplayName == client.Description)
               {
                 user.CardId = card.IdCard;
                 break;

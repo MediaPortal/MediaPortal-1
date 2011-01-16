@@ -181,7 +181,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
-      _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer());
+      _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer(), this);
     }
 
     public Dictionary<int, ITvCardHandler> CardCollection
@@ -1217,10 +1217,10 @@ namespace TvService
     /// Returns the video stream currently associated with the card. 
     /// </summary>
     /// <returns>stream_type</returns>
-    public int GetCurrentVideoStream(IUser user)
+    public IVideoStream GetCurrentVideoStream(IUser user)
     {
       if (ValidateTvControllerParams(user))
-        return -1;
+        return null;
       return _cards[user.CardId].GetCurrentVideoStream(user);
     }
 
@@ -1314,7 +1314,7 @@ namespace TvService
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    public bool IsRecording(string channelName, out VirtualCard card)
+    public bool IsRecording(int idChannel, out VirtualCard card)
     {
       card = null;
       Dictionary<int, ITvCardHandler>.Enumerator en = _cards.GetEnumerator();
@@ -1331,7 +1331,7 @@ namespace TvService
           IUser user = users[i];
           if (tvcard.CurrentChannelName(ref user) == null)
             continue;
-          if (tvcard.CurrentChannelName(ref user) == channelName)
+          if (tvcard.CurrentDbChannel(ref user) == idChannel)
           {
             if (tvcard.Recorder.IsRecording(ref user))
             {
@@ -2242,7 +2242,14 @@ namespace TvService
       {
         if (!IsRecordingValid(rec.IdRecording))
         {
-          DeleteRecording(rec.IdRecording);
+          try
+          {
+            rec.Delete();
+          }
+          catch (Exception e)
+          {
+            Log.Error("Controller: Can't delete invalid recording", e);
+          }
           foundInvalidRecording = true;
         }
       }
@@ -2708,7 +2715,7 @@ namespace TvService
                 DVBBaseChannel dvbBaseChannel = tmpChannel as DVBBaseChannel;
                 if (dvbBaseChannel != null)
                 {                  
-                  TuningDetail userChannel = layer.GetChannel(dvbBaseChannel);
+                  TuningDetail userChannel = layer.GetTuningDetail(dvbBaseChannel);
                   bool isOnSameChannel = (idChannel == userChannel.IdChannel);
 
                   if (isOnSameChannel)
@@ -3381,7 +3388,7 @@ namespace TvService
         return null;
 
       Dictionary<int, ChannelState> channelStatesList = new Dictionary<int, ChannelState>();
-      ChannelStates channelStates = new ChannelStates();
+      ChannelStates channelStates = new ChannelStates(layer, this);
 
       if (channelStates != null)
       {
@@ -3641,13 +3648,14 @@ namespace TvService
 
     private void UpdateChannelStatesForUsers()
     {
+      TvBusinessLayer layer = new TvBusinessLayer();
+
       //System.Diagnostics.Debugger.Launch();
       // this section makes sure that all users are updated in regards to channel states.      
-      ChannelStates channelStates = new ChannelStates();
+      ChannelStates channelStates = new ChannelStates(layer, this);
 
       if (channelStates != null)
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
         IList<ChannelGroup> groups = ChannelGroup.ListAll();
 
         // populating _tvChannelListGroups is only done once as is therefor cached.

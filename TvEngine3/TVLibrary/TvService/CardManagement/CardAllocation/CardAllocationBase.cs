@@ -21,6 +21,7 @@
 #region usings 
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Channels;
@@ -31,11 +32,23 @@ using TvLibrary.Log;
 
 namespace TvService
 {
-  public class CardAllocationBase
-  {    
-    protected virtual bool LogEnabled
+  public abstract class CardAllocationBase
+  {
+    private bool _logEnabled = true;
+    public bool LogEnabled
     {
-      get { return true; }
+      get { return _logEnabled; }
+      set { _logEnabled = value; }
+    }
+
+    protected readonly TvBusinessLayer _businessLayer;
+
+    protected readonly TVController Controller;
+
+    protected CardAllocationBase(TvBusinessLayer businessLayer, TVController controller)
+    {
+      _businessLayer = businessLayer;
+      Controller = controller;
     }
 
     #region protected members            
@@ -101,23 +114,14 @@ namespace TvService
       return isCamAlreadyDecodingChannel;
     }
 
-    protected bool IsChannelMappedToCard(Channel dbChannel, string devicePath)
+    protected bool IsChannelMappedToCard(Channel dbChannel, Card card)
     {
       //check if channel is mapped to this card and that the mapping is not for "Epg Only"
-      bool isChannelMappedToCard = false;
-
-      List<ChannelMap> channelMaps = dbChannel.ReferringChannelMap() as List<ChannelMap>;
-
-      if (channelMaps != null)
-      {
-        ChannelMap channelMap = channelMaps.Find(m => !m.EpgOnly && m.ReferencedCard().DevicePath == devicePath);
-        isChannelMappedToCard = (channelMap != null);
-      }      
-     
+      bool isChannelMappedToCard = _businessLayer.IsChannelMappedToCard(dbChannel, card, false);
       return isChannelMappedToCard;
     }
 
-    protected bool IsValidTuningDetails(List<IChannel> tuningDetails)
+    protected bool IsValidTuningDetails(IList<IChannel> tuningDetails)
     {
       bool isValid = (tuningDetails != null && tuningDetails.Count > 0);
       return isValid;

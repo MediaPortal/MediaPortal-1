@@ -27,7 +27,7 @@ namespace TvLibrary.Channels
   /// base class for DVB channels
   /// </summary>
   [Serializable]
-  public class DVBBaseChannel : IChannel
+  public abstract class DVBBaseChannel : IChannel
   {
     #region variables
 

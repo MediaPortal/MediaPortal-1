@@ -398,7 +398,6 @@ namespace SetupTv.Sections
       if (e.Label != null)
       {
         Channel channel = (Channel)mpListView1.Items[e.Item].Tag;
-        channel.Name = e.Label;
         channel.DisplayName = e.Label;
         channel.Persist();
       }
@@ -592,8 +591,8 @@ namespace SetupTv.Sections
           continue;
         if (string.IsNullOrEmpty(item.Description))
           item.Description = item.FileName;
-        Channel channel = new Channel(item.Description, true, false, 0, Schedule.MinSchedule, false,
-                                      Schedule.MinSchedule, 10000, true, "", true, item.Description);
+        Channel channel = new Channel(true, false, 0, Schedule.MinSchedule, false,
+                                      Schedule.MinSchedule, 10000, true, "", item.Description);
         channel.Persist();
         layer.AddWebStreamTuningDetails(channel, item.FileName, 0);
         layer.AddChannelToRadioGroup(channel, TvConstants.RadioGroupNames.AllChannels);

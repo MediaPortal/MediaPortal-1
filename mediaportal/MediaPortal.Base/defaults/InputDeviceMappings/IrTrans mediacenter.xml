@@ -231,8 +231,5 @@
 		<button name="My Radio" code="radio">
 			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="30" sound="click.wav" />
 		</button>
-		<button name="Messenger" code="messenger">
-			<action layer="0" condition="*" conproperty="-1" command="WINDOW" cmdproperty="32" sound="click.wav" />
-		</button>
 	</remote>
 </mappings>

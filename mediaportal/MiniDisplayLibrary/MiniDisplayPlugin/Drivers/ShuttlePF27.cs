@@ -185,7 +185,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         // Show television icon if on any tv screen
         if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TV ||
             (GUIWindowManager.ActiveWindow >= (int)GUIWindow.Window.WINDOW_TVGUIDE &&
-             GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_TV_COMPRESS_COMPRESS_STATUS))
+             GUIWindowManager.ActiveWindow <= (int)GUIWindow.Window.WINDOW_TV_CONFLICTS))
         {
           icons += (uint)Icon.Television;
         }

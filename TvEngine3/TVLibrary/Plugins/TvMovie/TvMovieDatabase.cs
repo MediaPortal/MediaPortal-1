@@ -844,7 +844,7 @@ namespace TvEngine
             string newStart = mapping.TimeSharingStart;
             string newEnd = mapping.TimeSharingEnd;
             string newStation = mapping.StationName;
-            string newChannel = Channel.Retrieve(mapping.IdChannel).Name;
+            string newChannel = Channel.Retrieve(mapping.IdChannel).DisplayName;
             int newIdChannel = mapping.IdChannel;
 
             mappingList.Add(new Mapping(newChannel, newIdChannel, newStation, newStart, newEnd));
@@ -1095,32 +1095,6 @@ namespace TvEngine
       }
       catch (Exception) { }
       return 0;
-    }
-
-    /// <summary>
-    /// Delete ALL programs for the given channel
-    /// </summary>
-    /// <param name="channel">The channel name</param>
-    private void ClearPrograms(string channel)
-    {
-      try
-      {
-        Channel progChannel = null;
-        IList<Channel> allChannels = Channel.ListAll();
-        foreach (Channel ch in allChannels)
-        {
-          if (ch.Name == channel)
-          {
-            progChannel = ch;
-            break;
-          }
-        }
-        TvBLayer.RemoveAllPrograms(progChannel.IdChannel);
-      }
-      catch (Exception ex)
-      {
-        Log.Info("TvMovieDatabase: ClearPrograms failed - {0}", ex.Message);
-      }
     }
 
     /// <summary>

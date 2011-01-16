@@ -24,6 +24,7 @@ using DirectShowLib;
 using TvLibrary.Implementations.Analog.Components;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
+using TvLibrary.Implementations;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -258,9 +259,13 @@ namespace TvLibrary.Implementations.Analog
     /// Retursn the video format (always returns MPEG2). 
     /// </summary>
     /// <value>The number of channels decrypting.</value>
-    public override int GetCurrentVideoStream
+    public override IVideoStream GetCurrentVideoStream
     {
-      get { return 2; }
+      get 
+      {
+        VideoStream stream = new VideoStream();
+        return stream; 
+      }
     }
 
     #endregion

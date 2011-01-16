@@ -139,8 +139,7 @@ namespace MediaPortal.GUI.Music
     private string _startDirectory = string.Empty;
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
-    private bool _useFileMenu = false;
-    private string _autoPlayCD = "No";
+    private bool _useFileMenu = false;    
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -153,6 +152,40 @@ namespace MediaPortal.GUI.Music
     public GUIMusicFiles()
     {
       GetID = (int) Window.WINDOW_MUSIC_FILES;
+    }
+
+    private void GUIWindowManager_OnNewMessage(GUIMessage message)
+    {
+      switch (message.Message)
+      {
+        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
+          if (message.Param1 == (int)Ripper.AutoPlay.MediaType.AUDIO)
+          {
+            if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.AUDIO_CD ||
+              message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+              PlayCD(message.Label);            
+          }
+          break;
+
+        case GUIMessage.MessageType.GUI_MSG_VOLUME_REMOVED:
+          MusicCD = null;
+          if (g_Player.Playing && g_Player.IsMusic && message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
+          {
+            Log.Info("GUIMusicFiles: Stop since media is ejected");
+            g_Player.Stop();
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP).Clear();
+            playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+          }
+          if (GUIWindowManager.ActiveWindow == GetID)
+          {
+            if (Util.Utils.IsDVD(currentFolder))
+            {
+              currentFolder = string.Empty;
+              LoadDirectory(currentFolder);
+            }
+          }
+          break;
+      }
     }
 
     // Make sure we get all of the ACTION_PLAY events (OnAction only receives the ACTION_PLAY event when
@@ -261,12 +294,11 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
-        _autoPlayCD = xmlreader.GetValueAsString("audioplayer", "autoplay", "No");
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);        
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
-      
+      GUIWindowManager.Receivers += new SendMessageHandler(GUIWindowManager_OnNewMessage);
     }
 
     public override bool Init()
@@ -1141,7 +1173,7 @@ namespace MediaPortal.GUI.Music
       return false;
     }
     
-    #region Handlers
+    #region Handlers    
 
     /// <summary>
     /// Queue the selected folder for scanning
@@ -1384,6 +1416,9 @@ namespace MediaPortal.GUI.Music
           if (tag != null)
           {
             pItem.MusicTag = tag;
+            pItem.Duration = tag.Duration;
+            pItem.Year = tag.Year;
+            pItem.Rating = tag.Rating;
           }
         }
       }
@@ -1393,28 +1428,27 @@ namespace MediaPortal.GUI.Music
     /// Will add the current folder (and any sub-folders) to playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    private void AddSelectionToPlaylist(bool clearPlaylist)
+    protected override void AddSelectionToPlaylist(bool clearPlaylist)
     {
-      List<PlayListItem> pl = new List<PlayListItem>();
       GUIListItem selectedItem = facadeLayout.SelectedListItem;
-      if (selectedItem.IsFolder && IsCD(selectedItem.Path))
-      { // deal with the special case of user selecting the actual CD drive
-        // to play within shares view.   Need to ensure GetCDInfo is called
+      
+      if(IsCD(selectedItem.Path) && selectedItem.Path.Length == 2)
+      { // if user selects the drive itself from shares view for a CD
+        // then treat as CD rather than normal share folder
         PlayCD(selectedItem.Path);
+        return;
       }
-      else
-      { // selection is anything other than a CD drive 
-        // so recursively add contents
-        AddFolderToPlaylist(selectedItem, ref pl);
-        
-        // only apply further sort if a folder has been selected
-        // if user has selected a track then add in order displayed
-        if (selectedItem.IsFolder)
-        {
-          pl.Sort(new TrackComparer());
-        }
-        base.AddItemsToPlaylist(pl, clearPlaylist);
+
+      List<PlayListItem> pl = new List<PlayListItem>();      
+      AddFolderToPlaylist(selectedItem, ref pl);
+      
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      if (selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
       }
+      base.AddItemsToPlaylist(pl, clearPlaylist);
     }
     
     private void InsertSelectionToPlaylist()
@@ -1443,10 +1477,10 @@ namespace MediaPortal.GUI.Music
       { // skip these navigation entries
         return;
       }
-      
       if(item.IsFolder)
       { // recursively add sub folders
         List<GUIListItem> subFolders = _virtualDirectory.GetDirectoryExt(item.Path);
+        GetTagInfo(ref subFolders);
         foreach(GUIListItem subItem in subFolders)
         {
           AddFolderToPlaylist(subItem, ref pl);
@@ -1457,7 +1491,14 @@ namespace MediaPortal.GUI.Music
         if (PlayAllOnSingleItemPlayNow)
         {
           GUIListItem selectedItem = facadeLayout.SelectedListItem;
-          if (!selectedItem.IsFolder)
+          if (selectedItem == null)
+          { // this should only occur when using the play CD button
+            // on menu in which case no item might be selected
+            // if this is the case then the whole folder will have been
+            // requested to play so add the individual tracks
+            pl.Add(ConvertItemToPlaylist(item));
+          }
+          else if (!selectedItem.IsFolder)
           { // we have a track selected so add any other tracks which
             // are on showing on the facade
             for(int i = 0; i < facadeLayout.Count; i++)
@@ -1563,17 +1604,14 @@ namespace MediaPortal.GUI.Music
       // Only try to play a CD if we got a valid Serial Number, which means a CD is inserted.
       if (Util.Utils.GetDriveSerial(strDrive) != string.Empty)
       {
-        List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(strDrive);
-        GetTagInfo(ref itemlist);
-        
         List<PlayListItem> pl = new List<PlayListItem>();
-        foreach(GUIListItem i in itemlist)
-        {
-          if (i.Label != "..")
-          {
-            pl.Add(ConvertItemToPlaylist(i));
-          }
-        }
+        GUIListItem item = new GUIListItem("CD_ROOT_FOLDER");
+        item.IsFolder = true;
+        item.Path = strDrive;
+        AddFolderToPlaylist(item, ref pl);
+          
+        pl.Sort(new TrackComparer());
+
         base.AddItemsToPlaylist(pl, true);
       }
     }
@@ -1644,7 +1682,7 @@ namespace MediaPortal.GUI.Music
               else if (cds.Length > 1)
               {
                 // If we have "Autoplay" set to "Yes", we get the first element of the list, to avoid user input.
-                if ((_discId == cds[0].DiscId) || (_autoPlayCD == "Yes"))
+                if ((_discId == cds[0].DiscId))
                 {
                   _discId = cds[0].DiscId;
                   MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
@@ -1712,8 +1750,12 @@ namespace MediaPortal.GUI.Music
           {
             tag.Artist = track.Artist == null ? MusicCD.Artist : track.Artist;
             tag.Duration = track.Duration;
+            pItem.Duration = track.Duration;
             tag.Title = track.Title;
             tag.Track = track.TrackNumber;
+            tag.Genre = MusicCD.Genre;
+            tag.Year = MusicCD.Year;
+            pItem.Year = MusicCD.Year;
           }
           pItem.MusicTag = tag;
         }

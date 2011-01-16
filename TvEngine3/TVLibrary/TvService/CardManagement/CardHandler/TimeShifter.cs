@@ -729,7 +729,7 @@ if (!WaitForUnScrambledSignal(ref user))
       {
         dvbSubchannel.GetStreamQualityCounters(out totalTSpackets, out discontinuityCounter);
       }
-    }    
+    }
 
     public void OnBeforeTune()
     {

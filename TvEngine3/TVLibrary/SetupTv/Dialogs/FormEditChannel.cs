@@ -63,7 +63,6 @@ namespace SetupTv.Dialogs
         MessageBox.Show("Please enter a name for this channel");
         return;
       }
-      _channel.Name = textBoxName.Text;
       _channel.DisplayName = textBoxName.Text;
       _channel.VisibleInGuide = checkBoxVisibleInTvGuide.Checked;
       _channel.IsTv = _isTv;
@@ -88,7 +87,7 @@ namespace SetupTv.Dialogs
         detail.IsTv = _isTv;
         if (string.IsNullOrEmpty(detail.Name))
         {
-          detail.Name = _channel.Name;
+          detail.Name = _channel.DisplayName;
         }
         detail.Persist();
       }
@@ -109,8 +108,8 @@ namespace SetupTv.Dialogs
       if (_channel == null)
       {
         _newChannel = true;
-        _channel = new Channel("", false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
-                               true, "");
+        _channel = new Channel(false, true, 0, Schedule.MinSchedule, true, Schedule.MinSchedule, 10000, true, "",
+                               "");
       }
       textBoxName.Text = _channel.DisplayName;
       checkBoxVisibleInTvGuide.Checked = _channel.VisibleInGuide;

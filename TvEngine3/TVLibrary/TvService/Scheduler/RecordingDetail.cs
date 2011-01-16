@@ -63,7 +63,7 @@ namespace TvService
       User.Name = string.Format("scheduler{0}", schedule.IdSchedule);
       User.CardId = -1;
       User.SubChannel = -1;
-      User.IsAdmin = true;      
+      User.IsAdmin = true;
 
       _schedule = schedule;
       _channel = channel;
@@ -185,9 +185,9 @@ namespace TvService
         }
         catch (Exception e)
         {
-          Log.Error("RecordingDetail: exception occured {0}", e);            
+          Log.Error("RecordingDetail: exception occured {0}", e);
         }
-        
+
         return isRecording;
       }
     }
@@ -218,7 +218,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
 
       Setting setting;
-      if (!this.IsSerie)
+      if (!IsSerie)
       {
         Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("moviesformat", "%title%");
@@ -265,16 +265,16 @@ namespace TvService
                             "%endmm%"
                           };
       string[] TagValues = {
-                             _schedule.ReferencedChannel().DisplayName,
-                             Program.Title,
-                             Program.EpisodeName,
-                             Program.SeriesNum,
-                             Program.EpisodeNum,
-                             Program.EpisodePart,
+                             _schedule.ReferencedChannel().DisplayName.Trim(),
+                             Program.Title.Trim(),
+                             Program.EpisodeName.Trim(),
+                             Program.SeriesNum.Trim(),
+                             Program.EpisodeNum.Trim(),
+                             Program.EpisodePart.Trim(),
                              Program.StartTime.ToString("yyyy-MM-dd"),
                              Program.StartTime.ToShortTimeString(),
                              Program.EndTime.ToShortTimeString(),
-                             Program.Genre,
+                             Program.Genre.Trim(),
                              Program.StartTime.ToString("dd"),
                              Program.StartTime.ToString("MM"),
                              Program.StartTime.ToString("yyyy"),

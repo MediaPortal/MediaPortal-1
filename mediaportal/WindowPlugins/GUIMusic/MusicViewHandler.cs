@@ -244,15 +244,26 @@ namespace MediaPortal.GUI.Music
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
         string table = GetTable(defCurrent.Where);
 
+        // Now we need to check the previous filters, if we were already on the tracks table previously
+        // In this case the from clause must contain the tracks table only
+        bool isUsingTrackTable = false;
+        string allPrevColumns = string.Empty;
+        for (int i = CurrentLevel; i > -1; i--)
+        {
+          FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
+          
+          allPrevColumns += " " + GetField(filter.Where) +" ,";
+          if (GetTable(filter.Where) != table)
+          {
+            isUsingTrackTable = true;
+          }
+        }
+        allPrevColumns = allPrevColumns.Remove(allPrevColumns.Length - 1, 1); // remove extra trailing comma
+
         if (defCurrent.SqlOperator == "group")
         {
-          // get previous filter to find out the length of the substr search
-          FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
-          int previousRestriction = 0;
-          if (defPrevious.SqlOperator == "group")
-          {
-            previousRestriction = Convert.ToInt16(defPrevious.Restriction);
-          }
+          // in an odd scenario here as we have a group operator
+          // but not at the first level of view
 
           // Build correct table for search
           string searchTable = GetTable(defCurrent.Where);
@@ -264,25 +275,48 @@ namespace MediaPortal.GUI.Music
             searchTable = "tracks";
             countField = "strAlbumArtist";
           }
-          sql = String.Format("select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {2}), * from {3} {4} {5}",
-                              searchField, previousRestriction + Convert.ToInt16(defCurrent.Restriction), countField,
-                              searchTable, whereClause, orderClause);
+          
+          if (isUsingTrackTable && searchTable != "tracks")
+          { // have the messy case where previous filters in view
+            // do not use the same table as the current level
+            // which means we can not just lookup values in search table
+            
+            string joinSQL;
+            if (IsMultipleValueField(searchField))
+            {
+              joinSQL = string.Format("and tracks.{1} like '%| '||{0}.{1}||' |%' ",
+                                      searchTable, searchField);
+            }
+            else
+            {
+              joinSQL = string.Format("and tracks.{1} = {0}.{1} ",
+                                      searchTable, searchField);
+            }
+            
+            whereClause = whereClause.Replace("group by ix", "");
+            whereClause = string.Format(" where exists ( " +
+                                        "    select 0 " +
+                                        "    from tracks " +
+                                        "    {0} " +
+                                        "    {1} " +
+                                        ") " + 
+                                        "group by ix "
+                                        , whereClause, joinSQL);
+          }
 
+          sql = String.Format("select UPPER(SUBSTR({0},1,{1})) IX, Count(distinct {2}) from {3} {4} {5}",
+                              searchField, Convert.ToInt16(defCurrent.Restriction), countField,
+                              searchTable, whereClause, orderClause);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
         }
         else
         {
-          // Now we need to check the previous filters, if we were already on the tracks table previously
-          // In this case the from clause must contain the tracks table only
           string from = String.Format("{1} from {0}", table, GetField(defCurrent.Where));
-          for (int i = CurrentLevel; i > -1; i--)
+
+          if (isUsingTrackTable && table != "album" && defCurrent.Where != "Disc#")
           {
-            FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
-            if (filter.Where != table)
-            {
-              from = String.Format("{0} from tracks", GetField(defCurrent.Where));
-              break;
-            }
+            from = String.Format("{0} from tracks", allPrevColumns);
+            table = "tracks";
           }
 
           // When searching for an album, we need to retrieve the AlbumArtist as well, because we could have same album names for different artists
@@ -306,7 +340,7 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        // get previous filter to see, if we had an album 
+        // get previous filter to see, if we had an album
         FilterDefinition defPrevious = (FilterDefinition)currentView.Filters[CurrentLevel - 1];
         if (defPrevious.Where == "album")
         {
@@ -350,19 +384,6 @@ namespace MediaPortal.GUI.Music
 
     private void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)
     {
-      // Clear the WhereClause, if the previous levels contained grouping. otherwise we get wrong results
-      if (CurrentLevel != filterLevel)
-      {
-        if (filterLevel > 0)
-        {
-          FilterDefinition filterPrevious = (FilterDefinition)currentView.Filters[filterLevel - 1];
-          if (filterPrevious.SqlOperator == "group")
-          {
-            whereClause = "";
-          }
-        }
-      }
-
       if (filter.SqlOperator == "group")
       {
         // Don't need to include the grouping value, when it was on the first level
@@ -375,16 +396,78 @@ namespace MediaPortal.GUI.Music
         {
           whereClause += " and ";
         }
-        // Was the value selected a "#"? Then we have the group of special chars and need to search for values < A
-        if (filter.SelectedValue == "#")
+
+        restrictionLength += Convert.ToInt16(filter.Restriction);
+        
+        // muliple value fields are stored in one database field in tracks
+        // table but on different rows in other tables
+        if (IsMultipleValueField(GetField(filter.Where)))
         {
-          whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+          bool usingTracksTable = true;
+          if (GetTable(CurrentLevelWhere) != "tracks")
+          {
+            usingTracksTable = false;
+          }
+          if(!usingTracksTable)
+          { // current level is not using tracks table so check whether
+            // any filters above this one are using a different table
+            // and if so data will be taken from tracks table
+            FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
+            string table = GetTable(defRoot.Where);
+            for (int i = CurrentLevel; i > -1; i--)
+            {
+              FilterDefinition prevFilter = (FilterDefinition)currentView.Filters[i];
+              if (GetTable(prevFilter.Where) != table)
+              {
+                usingTracksTable = true;
+                break;
+              }
+            }
+          }
+
+          // now we know if we are using the tracks table or not we can
+          // figure out how to format multiple value fields
+          if (usingTracksTable)
+          {
+            if (filter.SelectedValue == "#")
+            {  // need a special case here were user selects # from grouped menu
+              // as multiple values can be stored in the same field
+              whereClause += String.Format(" exists ( " +
+                                           "   select 0 from {0} " +
+                                           "   where  {1} < 'A' " +
+                                           "   and    tracks.{1} like '%| '||{0}.{1}||' |%' " +
+                                           " ) ", GetTable(filter.Where), GetField(filter.Where));
+            }
+            else
+            {
+              whereClause += String.Format(" ({0} like '| {1}%' or '| {2}%')", GetField(filter.Where),
+                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+            }
+          }
+          else
+          {
+            if (filter.SelectedValue == "#")
+            {
+              whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+            }
+            else
+            {
+              whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
+                                           filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+            }
+          }
         }
         else
-        {
-          restrictionLength += Convert.ToInt16(filter.Restriction);
-          whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
-                                       filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+        { // we are looking for fields which do not contain multiple values
+          if (filter.SelectedValue == "#")
+          {  // deal with non standard characters
+            whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
+          }
+          else
+          {
+            whereClause += String.Format(" ({0} like '{1}%' or '{2}%')", GetField(filter.Where),
+                                         filter.SelectedValue.PadRight(restrictionLength), filter.SelectedValue);
+          }
         }
       }
       else
@@ -507,7 +590,7 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="field"></param>
     /// <returns></returns>
-    private bool IsMultipleValueField(string field)
+    private static bool IsMultipleValueField(string field)
     {
       switch (field)
       {
@@ -522,7 +605,7 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private string GetTable(string where)
+    private static string GetTable(string where)
     {
       if (where == "album")
       {
@@ -583,7 +666,7 @@ namespace MediaPortal.GUI.Music
       return null;
     }
 
-    private string GetField(string where)
+    private static string GetField(string where)
     {
       if (where == "album")
       {
@@ -648,7 +731,7 @@ namespace MediaPortal.GUI.Music
       return null;
     }
 
-    private string GetFieldValue(Song song, string where)
+    public static string GetFieldValue(Song song, string where)
     {
       if (where == "album")
       {
@@ -713,7 +796,7 @@ namespace MediaPortal.GUI.Music
       return "";
     }
 
-    private string GetSortField(FilterDefinition filter)
+    private static string GetSortField(FilterDefinition filter)
     {
       // Don't allow anything else but the fieldnames itself on Multiple Fields
       if (filter.Where == "artist" || filter.Where == "albumartist" || filter.Where == "genre" ||

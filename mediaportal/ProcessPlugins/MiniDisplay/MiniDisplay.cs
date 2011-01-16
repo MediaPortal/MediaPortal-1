@@ -513,6 +513,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       switch (dialogWindow)
       {
         case GUIWindow.Window.WINDOW_DIALOG_YES_NO:
+        case GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO:
           {
             GUIDialogYesNo window = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)dialogWindow);
             DialogTitle = string.Empty;

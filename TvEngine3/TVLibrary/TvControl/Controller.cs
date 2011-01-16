@@ -256,7 +256,7 @@ namespace TvControl
     /// <returns>
     /// 	<c>true</c> if the specified channel name is recording; otherwise, <c>false</c>.
     /// </returns>
-    bool IsRecording(string channelName, out VirtualCard card);
+    bool IsRecording(int idChannel, out VirtualCard card);
 
     /// <summary>
     /// Determines if any card is currently busy recording
@@ -309,7 +309,6 @@ namespace TvControl
     /// Enable or disable the epg-grabber
     /// </summary>
     bool EpgGrabberEnabled { get; set; }
-
 
     /// <summary>
     /// Returns the SQl connection string to the database
@@ -714,8 +713,7 @@ namespace TvControl
     /// </summary>
     /// <param name="user">The user.</param>
     /// <returns>List containing all audio streams</returns>
-    int GetCurrentVideoStream(IUser user);
-
+    IVideoStream GetCurrentVideoStream(IUser user);
 
     /// <summary>
     /// Start timeshifting.

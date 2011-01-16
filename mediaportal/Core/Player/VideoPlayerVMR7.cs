@@ -213,8 +213,7 @@ namespace MediaPortal.Player
     {
       get { return chaptersname; }
     }
-
-    private VMR7Util vmr7 = null;
+    
     protected g_Player.MediaType _mediaType;
 
     public VideoPlayerVMR7()
@@ -639,11 +638,7 @@ namespace MediaPortal.Player
     }
 
     protected virtual void OnProcess()
-    {
-      if (vmr7 != null)
-      {
-        vmr7.Process();
-      }
+    {      
     }
 
     public override int PositionX
