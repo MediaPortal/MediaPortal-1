@@ -239,6 +239,7 @@ namespace MediaPortal.GUI.Music
             sortStrings.Add("AlbumArtist");
             sortStrings.Add("Year");
             sortStrings.Add("Disc#");
+            sortStrings.Add("Composer");
 
             for (int i = 0; i < handler.Views.Count; ++i)
             {

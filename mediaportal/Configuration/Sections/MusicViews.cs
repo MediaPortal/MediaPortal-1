@@ -80,7 +80,8 @@ namespace MediaPortal.Configuration.Sections
                                   "Album",
                                   "Filename",
                                   "Rating",
-                                  "Disc#"
+                                  "Disc#",
+                                  "Composer"
                                 };
 
     public MusicViews()
