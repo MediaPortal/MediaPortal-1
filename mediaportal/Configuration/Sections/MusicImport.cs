@@ -120,7 +120,7 @@ namespace MediaPortal.Configuration.Sections
     /// 
     /// </summary>
     public MusicImport()
-      : this("Music Import") {}
+      : this("Music Ripping") {}
 
     /// <summary>
     /// 
@@ -486,7 +486,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageImportSettings.Padding = new System.Windows.Forms.Padding(3);
       this.tabPageImportSettings.Size = new System.Drawing.Size(464, 374);
       this.tabPageImportSettings.TabIndex = 0;
-      this.tabPageImportSettings.Text = "Import Settings";
+      this.tabPageImportSettings.Text = "Rip Settings";
       this.tabPageImportSettings.UseVisualStyleBackColor = true;
       // 
       // groupBoxGeneralSettings
