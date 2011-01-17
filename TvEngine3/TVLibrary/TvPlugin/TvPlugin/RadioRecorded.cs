@@ -884,31 +884,19 @@ namespace TvPlugin
                                             Utils.GetThumbExtension());
 
         // Get the channel logo for the small icons
-        string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
+        string StationLogo = Utils.GetCoverArt(Thumbs.Radio, strChannelName);
         if (!string.IsNullOrEmpty(StationLogo))            
         {
           SmallThumb = StationLogo;
         }
 
+        item.IconImage = item.ThumbnailImage = item.IconImageBig = SmallThumb;
         // Display previews only if the option to create them is active
-        if (!string.IsNullOrEmpty(PreviewThumb))                              
+        if (string.IsNullOrEmpty(PreviewThumb))                              
         {
-          // Search a larger one
-          string PreviewThumbLarge = Utils.ConvertToLargeCoverArt(PreviewThumb);
-          if (!string.IsNullOrEmpty(PreviewThumbLarge))                                        
-          {
-            PreviewThumb = PreviewThumbLarge;
-          }
-          item.ThumbnailImage = item.IconImageBig = PreviewThumb;
-        }
-        else
-        {
-          // Fallback to Logo/Default icon
-          item.IconImageBig = SmallThumb;
           item.ThumbnailImage = String.Empty;
         }
-        item.IconImage = SmallThumb;
-
+        
         //Mark the recording with a "rec. symbol" if it is an active recording.
         if (IsRecordingActual(aRecording))
         {
@@ -1016,6 +1004,12 @@ namespace TvPlugin
         return false;
       }
 
+      // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
+      GUIPropertyManager.RemovePlayerProperties();
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", pItem.Label);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", pItem.Label);
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", pItem.ThumbnailImage);
+      
       Recording rec = (Recording)pItem.TVTag;
       IList<Recording> itemlist = Recording.ListAll();
 
@@ -1329,7 +1323,7 @@ namespace TvPlugin
         string strLogo = "";
 
         GUIPropertyManager.SetProperty("#Radio.Recorded.Channel", GetRecordingDisplayName(rec));
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, GetRecordingDisplayName(rec));
+        strLogo = Utils.GetCoverArt(Thumbs.Radio, GetRecordingDisplayName(rec));
 
         if (!string.IsNullOrEmpty(strLogo))                                                
         {
