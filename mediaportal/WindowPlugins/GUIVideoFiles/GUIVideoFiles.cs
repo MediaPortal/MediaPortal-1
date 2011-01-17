@@ -2301,15 +2301,7 @@ namespace MediaPortal.GUI.Video
       {
         return true;
       }
-      if (windowId == (int)Window.WINDOW_VIDEO_ACTOR)
-      {
-        return true;
-      }
       if (windowId == (int)Window.WINDOW_VIDEO_ARTIST_INFO)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_GENRE)
       {
         return true;
       }
@@ -2322,10 +2314,6 @@ namespace MediaPortal.GUI.Video
         return true;
       }
       if (windowId == (int)Window.WINDOW_VIDEO_TITLE)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_YEAR)
       {
         return true;
       }
@@ -2353,15 +2341,7 @@ namespace MediaPortal.GUI.Video
       {
         return true;
       }
-      if (windowId == (int)Window.WINDOW_VIDEO_ACTOR)
-      {
-        return true;
-      }
       if (windowId == (int)Window.WINDOW_VIDEO_ARTIST_INFO)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_GENRE)
       {
         return true;
       }
@@ -2370,10 +2350,6 @@ namespace MediaPortal.GUI.Video
         return true;
       }
       if (windowId == (int)Window.WINDOW_VIDEO_PLAYLIST)
-      {
-        return true;
-      }
-      if (windowId == (int)Window.WINDOW_VIDEO_YEAR)
       {
         return true;
       }
