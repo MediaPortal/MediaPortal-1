@@ -31,19 +31,31 @@
     <String id="30">Października</String>
     <String id="31">Listopada</String>
     <String id="32">Grudnia</String>
+    <String id="33">Sty</String>
+    <String id="34">Lut</String>
+    <String id="35">Mar</String>
+    <String id="36">Kwi</String>
+    <String id="37">Maj</String>
+    <String id="38">Cze</String>
+    <String id="39">Lip</String>
+    <String id="40">Sie</String>
+    <String id="41">Wrz</String>
+    <String id="42">Paź</String>
+    <String id="43">Lis</String>
+    <String id="44">Gru</String>
     <String id="50" prefix="Moje ">DVD</String>
     <String id="51">Odtwarzaj dysk</String>
     <String id="60">Czekam na start serwisu TV</String>
     <String id="61">Czekam {0} sekund przed startem</String>
     <String id="62">Uruchamiam DirectX</String>
     <String id="63">Uruchamiam urządzenia wejścia</String>
-    <String id="64">Uruchamiam wtyczki...</String>
+    <String id="64">Uruchamiam dodatki...</String>
     <String id="65">Ładuję keymap.xml...</String>
     <String id="66">Ładuję znaki...</String>
     <String id="67">Buforuję grafiki...</String>
     <String id="68">Ładuję czcionki</String>
     <String id="69">Ładuję skórę ({0})...</String>
-    <String id="70">Ładuję wtyczki okien...</String>
+    <String id="70">Ładuję dodatki okien...</String>
     <String id="71">Startuję menedżer okien...</String>
     <String id="100">Widok: Ikony</String>
     <String id="101">Widok: Lista</String>
@@ -234,7 +246,7 @@
     <String id="287">Napisy</String>
     <String id="288">Czcionka</String>
     <String id="289">Rozmiar</String>
-    <String id="290">Amplifikacja głośności (dB)</String>
+    <String id="290">Wzmocnienie głośności (dB)</String>
     <String id="291">Obraz</String>
     <String id="292">Dźwięk</String>
     <String id="293">Napisy</String>
@@ -243,7 +255,7 @@
     <String id="296">Wyczyść zakładki</String>
     <String id="297">AVDelay</String>
     <String id="298">Suwak</String>
-    <String id="299">Biblioteka:</String>
+    <String id="299">Czas:</String>
     <String id="300">1. Język</String>
     <String id="301">2. Głośność</String>
     <String id="302">3. Strumień</String>
@@ -352,6 +364,8 @@
     <String id="405">Punkt rosy</String>
     <String id="406">Wilgotność</String>
     <String id="407">Silne</String>
+    <String id="408">Wprowadź nazwę miasta</String>
+    <String id="409">Usuń lokację</String>
     <String id="410">Łączenie z Weather.com</String>
     <String id="411">Pobieranie pogody dla:</String>
     <String id="412">Błąd podczas pobierania pogody</String>
@@ -439,7 +453,7 @@
     <String id="495">Opcje sortowania</String>
     <String id="496">Opcje</String>
     <String id="497">Użytkownik</String>
-    <String id="498">Akcie</String>
+    <String id="498">Akcje</String>
     <String id="499">Menu widoków</String>
     <String id="500">Menu pliku</String>
     <String id="501">Ustaw jako cel</String>
@@ -461,6 +475,12 @@
     <String id="517">Błąd krytyczny, operacja została przerwana</String>
     <String id="518">Czy usunąć ten utwór?</String>
     <String id="519">Napisy wyłączone</String>
+    <String id="520">Nie znaleziono lokacji</String>
+    <String id="521">Wartość nie jest liczbą całkowitą</String>
+    <String id="522">Tylko wartości dodatnie!</String>
+    <String id="523">Zerowy krok jest niedozwolony!</String>
+    <String id="524">3 godziny jest maksymalnym krokiem!</String>
+    <String id="525">Kroki przewijania są już zdefiniowane</String> 
     <String id="527">Sortuj: Oglądane</String>
     <String id="528">Artyści albumów</String>
     <String id="529">Widok: Lista Dużych Ikon</String>
@@ -500,6 +520,9 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
+    <String id="566">Szybka informacja o pogodzie</String>
+    <String id="567">Dodaj miasto</String>
+    <String id="568">Usuń miasto</String>
     <String id="590">Str. 100</String>
     <String id="591">Str. 200</String>
     <String id="592">Str. 300</String>
@@ -635,7 +658,7 @@
     <String id="730">Zaplanowane zadanie jest nagrywane. Jeśli usuniesz</String>
     <String id="731">to zadanie to nagrywanie zostanie zatrzymane.</String>
     <String id="732">Czy na pewno?</String>
-    <String id="733">Widok: Przezrocze</String>
+    <String id="733">Widok: Przeźrocze</String>
     <String id="734">Obraz:</String>
     <String id="735">Obróć</String>
     <String id="736">Brak danych</String>
@@ -688,6 +711,7 @@
     <String id="784">Obróć o 270 stopni</String>
     <String id="789">Teraz:</String>
     <String id="790">Następny:</String>
+    <String id="791">Widok: Cover Flow</String>
     <String id="798">niski</String>
     <String id="799">wysoki</String>
     <String id="800">Rozpoczyna</String>
@@ -701,6 +725,8 @@
     <String id="808">Składniki</String>
     <String id="809">Kierunki</String>
     <String id="810">Karta</String>
+    <String id="811">Nagrania Radio</String>
+    <String id="812">Radiostacje</String>
     <String id="820">Usunąć nieobejrzane nagrania?</String>
     <String id="830">Wyczyść status obejrzane</String>
     <String id="831">Wyjmij napęd wymienny.</String>
@@ -851,7 +877,7 @@
     <String id="996">wybrane nagrania?</String>
     <String id="997">Zakończono</String>
     <String id="998">XviD</String>
-    <String id="999">Ten plugin pozwala Ci na konwertowanie Twoich</String>
+    <String id="999">Ten dodatek pozwala Ci na konwertowanie Twoich</String>
     <String id="1000">nagrań z formatu dvr-ms na mpg, xvid lub wmv</String>
     <String id="1001">Musisz mieć zainstalowany dekoder</String>
     <String id="1002">Elecard MPEG2</String>
@@ -882,7 +908,7 @@
     <String id="1027" prefix="Moje ">DVD</String>
     <String id="1028">Miasto</String>
     <String id="1029">Język napisów</String>
-    <String id="1030">Wyłącz</String>
+    <String id="1030">Zamknij system</String>
     <String id="1031">Uruchom ponownie</String>
     <String id="1032">Stan wstrzymania</String>
     <String id="1033">Programy są w tej chwili nagrywane</String>
@@ -965,6 +991,9 @@
     <String id="1197">Wyłącz DXVA</String>
     <String id="1198">Nawigator DVD</String>
     <String id="1200">Kreator konfiguracji</String>
+    <String id="1201">Odtwarzaj wideo od początku</String>
+    <String id="1202">Sortuj: Automatycznie</String>
+    <String id="1211">Rozpocznij odtwarzanie od {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1300" prefix="Moje ">Programy TV</String>
     <String id="1440" prefix="Moja ">Telegazeta</String>
     <String id="1441">Telegazeta</String>
@@ -1222,8 +1251,8 @@
     <String id="2516" prefix="Moja ">Wikipedia</String>
     <String id="2550">Naprawdę chcesz zatrzymać telewizję?</String>
     <String id="2551">(bufor timehift zostanie utracony)</String>
-    <String id="2552">Tak</String>
-    <String id="2553">Nie</String>
+    <String id="2552">Zatrzymaj</String>
+    <String id="2553">Odtwarzaj</String>
     <String id="2599">Niezdefiniowany</String>
     <String id="2600">Angielski</String>
     <String id="2601">Niemiecki</String>
@@ -1240,6 +1269,7 @@
     <String id="2612">Węgierski</String>
     <String id="2613">Rosyjski</String>
     <String id="2614">Ukraiński</String>
+    <String id="2615">Niemiecki</String>
     <String id="2650">Ładowanie czcionek - proszę czekać...</String>
     <String id="2700">Otwórz menu CI</String>
     <String id="2997">godz</String>
@@ -1375,6 +1405,7 @@
     <String id="6039">Kodek audio AAC</String>
     <String id="6040">Wczoraj</String>
     <String id="6041">Dwa dni temu</String>
+    <String id="6042">Wprowadź liczbę sekund dla kroku przewijania</String>
     <String id="6050">Bieżący tydzień</String>
     <String id="6060">Bieżący miesiąc</String>
     <String id="6070">Bieżący rok</String>
@@ -1391,7 +1422,7 @@
     <String id="8009">Całość jako nieprzeczytane</String>
     <String id="8010">Brak zdefiniowanych skrzynek</String>
     <String id="8011">Idź do ustawień i zdefiniuj przynajmniej</String>
-    <String id="8012">1 skrzynkę aby używać pluginu pocztowego.</String>
+    <String id="8012">1 skrzynkę aby używać dodatku obsługującego pocztę.</String>
     <String id="8013">Brak odpowiedzi z serwera</String>
     <String id="8014">Serwer'{0}'nie odpowiada!</String>
     <String id="8015">Sprawdź konfigurację skrzynki'{0}'</String>
@@ -1422,7 +1453,7 @@
     <String id="9010">Marka sprzętu:</String>
     <String id="9011">Komentarz:</String>
     <String id="9100" prefix="Mój">Miniwyświetlacz</String>
-    <String id="9101">Wtyczka nie jest skonfigurowana.</String>
+    <String id="9101">Dodatek nie jest skonfigurowany.</String>
     <String id="9102">Uruchom najpierw Konfigurację MediaPortalu!</String>
     <String id="9103">Opcje klawiatury</String>
     <String id="9104">Opcje wyświetlania</String>
@@ -1513,16 +1544,16 @@
     <String id="13033">Ostatnio uruchamiane</String>
     <String id="13034">Tytuł</String>
     <String id="13041">Pokaż informacje o pliku</String>
-    <String id="14001" prefix="Moje">Wtyczki</String>
+    <String id="14001" prefix="Moje">Dodatki</String>
     <String id="14002">Widok</String>
-    <String id="14003">Zainstalowane wtyczki</String>
-    <String id="14004">Wtyczki online</String>
+    <String id="14003">Zainstalowane dodatki</String>
+    <String id="14004">Dodatki online</String>
     <String id="14005">Zainstaluj</String>
     <String id="14006">Odinstaluj</String>
     <String id="14007">Zainstaluj ponownie</String>
     <String id="14008">Anuluj ostatnią operację</String>
     <String id="14009">Operacja zostanie przeprowadzona po\rnastępnym uruchomieniu</String>
-    <String id="14010">ciągnij wtyczkę</String>
+    <String id="14010">Ściągnij dodatek</String>
     <String id="14011">Wybierz opcję</String>
     <String id="14012">Nie obsługuje tej wersji MP (potrzebna wesja {0})</String>
     <String id="14013">Czy chcesz kontynuować?</String>
@@ -1781,7 +1812,7 @@
     <String id="100760">Nagrywarka</String>
     <String id="100761">Przewodnik TV</String>
     <String id="100762">Przewodnik Radio</String>
-    <String id="100800" prefix="Moje">Wtyczki</String>
+    <String id="100800" prefix="Moje">Dodatki</String>
     <String id="101000">klawiatura</String>
     <String id="101002">Wirtualna klawiatura standardowa</String>
     <String id="101003">Wirtualna klawiatura sieciowa</String>
@@ -1820,6 +1851,7 @@
     <String id="106666">Harmonogram zasilania czeka</String>
     <String id="107700">Telewizja/Telegazeta</String>
     <String id="107701">Telewizja/Telegazeta</String>
+    <String id="107776">Tetris</String>
     <String id="107777">Sudoku</String>
     <String id="107890">Radio Last.fm</String>
     <String id="108888">Menu Muzyka</String>
@@ -1899,5 +1931,8 @@
     <String id="200070">Sprawdź firewall</String>
     <String id="200071">Usunąć ten folder i jego podfoldery?</String>
     <String id="200072">Nadchodzące odcinki</String>
+    <String id="200091">Rozdział</String>
+    <String id="990000">Cotygodniowo na tym kanale</String>
+    <String id="990001">{0} na kanale {1}</String>	
   </Section>
 </Language>
