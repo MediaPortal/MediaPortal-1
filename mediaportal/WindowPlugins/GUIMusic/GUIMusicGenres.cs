@@ -74,7 +74,6 @@ namespace MediaPortal.GUI.Music
     #region Base variables
 
     private DirectoryHistory m_history = new DirectoryHistory();
-    private string m_strNewView = string.Empty;
     private int m_iItemSelected = -1;
     //viewDefaultLayouts stores the default layout (list, album, filmstrip etc)
     //with first dimension being view number and second dimension
@@ -147,7 +146,6 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      m_strNewView = string.Empty;
       GUIWindowManager.Receivers += new SendMessageHandler(this.OnThreadMessage);
       return Load(GUIGraphicsContext.Skin + @"\mymusicgenres.xml");
     }
@@ -310,7 +308,7 @@ namespace MediaPortal.GUI.Music
           {
             handler.CurrentLevel--;
             m_iItemSelected = -1;
-            LoadDirectory((handler.CurrentLevel + 1).ToString());
+            LoadDirectory("db_view");
             return;
           }
         }
@@ -324,7 +322,7 @@ namespace MediaPortal.GUI.Music
         {
           handler.CurrentLevel--;
           m_iItemSelected = -1;
-          LoadDirectory((handler.CurrentLevel + 1).ToString());
+          LoadDirectory("db_view");
           return;
         }
       }
@@ -375,7 +373,7 @@ namespace MediaPortal.GUI.Music
       }
 
 
-      LoadDirectory(m_strNewView);
+      LoadDirectory("db_view");
 
       if (facadeLayout.Count <= 0)
       {
@@ -635,15 +633,8 @@ namespace MediaPortal.GUI.Music
         }
 
         m_iItemSelected = -1;
-        //set level if no path is set
-        if (item.Path == "")
-        {
-          LoadDirectory((handler.CurrentLevel + 1).ToString());
-        }
-        else
-        {
-          LoadDirectory(item.Path);
-        }
+        LoadDirectory("db_view");
+
       }
       else
       {
@@ -753,7 +744,7 @@ namespace MediaPortal.GUI.Music
           break;
         case 718: // Clear top 100
           m_database.ResetTop100();
-          LoadDirectory(m_strNewView);
+          LoadDirectory("db_view");
           break;
       }
     }
@@ -765,25 +756,47 @@ namespace MediaPortal.GUI.Music
       facadeLayout.Filter(kindOfSearch, data);
     }
 
-    // this is actually loading a database view not a directory
-    protected override void LoadDirectory(string strNewView)
+    /// <summary>
+    /// this is actually loading a database view not a directory
+    /// and this is done via view handler so parameter is not used
+    /// but is needed to override method in base class
+    /// </summary>
+    /// <param name="strNotUsed">Used to implement method in base class but not used</param>
+    protected override void LoadDirectory(string strNotUsed)
     {
       GUIWaitCursor.Show();
       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
+      
+      int previousLevel = ((MusicViewHandler)handler).PreviousLevel;
+      string strSelectedItem = string.Empty;
+      
       if (SelectedItem != null)
       {
+        // if there is an item selected and we are loading a new view
+        // then store the existing value so when we navigate back up through
+        // the view levels we can focus on the item we had selected
+        // we can not use current level in the name for the directory history
+        // as current level gets updated before LoadDirectory is called
+        // therefore use previous level which is set by the music view handler
+        // when that returns (ie. that will be level of the view user has
+        // made selection from as it has not been cleared yet)
         if (SelectedItem.IsFolder && SelectedItem.Label != "..")
         {
-          m_history.Set(SelectedItem.Label, handler.CurrentLevel.ToString());
+          m_history.Set(SelectedItem.Label, handler.LocalizedCurrentView + "." +
+                        previousLevel.ToString());
         }
       }
-      m_strNewView = strNewView;
 
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       string strObjects = string.Empty;
 
       List<Song> songs = ((MusicViewHandler)handler).Execute();
+      
+      if(previousLevel > handler.CurrentLevel)
+      { // only need to lookup values when navigating back up through the view
+        strSelectedItem = m_history.Get(handler.LocalizedCurrentView + "." + handler.CurrentLevel.ToString());
+      }
       
       #region handle pin protected share
 
@@ -857,8 +870,7 @@ namespace MediaPortal.GUI.Music
         item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
         facadeLayout.Add(item);
       }
-
-      string strSelectedItem = m_history.Get(m_strNewView);
+      
       int iItem = 0;
 
       for (int i = 0; i < facadeLayout.Count; ++i)
