@@ -29,6 +29,8 @@ using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using TvEngine.PowerScheduler.Interfaces;
 
+using System.Threading;
+
 namespace TvEngine.PowerScheduler.Handlers
 {
   /// <summary>
@@ -110,7 +112,7 @@ namespace TvEngine.PowerScheduler.Handlers
 
     #region Variables
 
-    private Timer timer; // The timer event executes every second to refresh the values in adapters.
+    private System.Timers.Timer timer; // The timer event executes every second to refresh the values in adapters.
     private Int32 idleLimit; // Minimum transferrate considered as network activity in KB/s.
 
     private ArrayList monitoredAdapters = new ArrayList(); // The list of monitored adapters on the computer.
@@ -157,7 +159,8 @@ namespace TvEngine.PowerScheduler.Handlers
             if (enabled) // Start
             {
               Log.Debug("NetworkMonitorHandler: networkMonitor started");
-              StartNetworkMonitor();
+              Thread netmonThr = new Thread(new ThreadStart(StartNetworkMonitor));
+              netmonThr.Start();
             }
             else // Stop
             {
@@ -178,27 +181,34 @@ namespace TvEngine.PowerScheduler.Handlers
 
     private void StartNetworkMonitor()
     {
-      monitoredAdapters.Clear();
-
-      PerformanceCounterCategory category =
-        new PerformanceCounterCategory("Network Interface");
-
-      // Enumerates network adapters installed on the computer.
-      foreach (string name in category.GetInstanceNames())
+      try
       {
-        // This one exists on every computer.
-        if (name == "MS TCP Loopback interface") continue;
+        monitoredAdapters.Clear();
 
-        // Create an instance of NetworkAdapter class.        
-        NetworkAdapter adapter = new NetworkAdapter(name);
+        PerformanceCounterCategory category =
+          new PerformanceCounterCategory("Network Interface");
 
-        monitoredAdapters.Add(adapter); // Add it to monitored adapters
+        // Enumerates network adapters installed on the computer.
+        foreach (string name in category.GetInstanceNames())
+        {
+          // This one exists on every computer.
+          if (name == "MS TCP Loopback interface") continue;
+
+          // Create an instance of NetworkAdapter class.        
+          NetworkAdapter adapter = new NetworkAdapter(name);
+
+          monitoredAdapters.Add(adapter); // Add it to monitored adapters
+        }
+
+        // Create and enable the timer 
+        timer = new System.Timers.Timer(MonitorInteval * 1000);
+        timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
+        timer.Enabled = true;
       }
-
-      // Create and enable the timer 
-      timer = new Timer(MonitorInteval * 1000);
-      timer.Elapsed += new ElapsedEventHandler(timer_Elapsed);
-      timer.Enabled = true;
+      catch (Exception netmonEx)
+      {
+        Log.Error("NetworkMonitorHandler: networkMonitor died -> {0}", netmonEx.Message);
+      }
     }
 
     // Disable the timer, and clear the monitoredAdapters list.
