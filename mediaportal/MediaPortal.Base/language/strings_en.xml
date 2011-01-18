@@ -1001,6 +1001,8 @@
     <String id="1207">Switch to {0} now?</String>
     <String id="1208">Sort by: Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
+    <String id="1220">Sort by: Date Created</String>
+    <String id="1221">Sort by: Date Modified</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1961,5 +1963,5 @@
     <String id="200087">Mute</String>
     <String id="200090">Edition</String>
     <String id="200091">Chapter</String>
-  </Section>
+	</Section>
 </Language>

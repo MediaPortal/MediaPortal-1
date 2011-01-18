@@ -112,8 +112,10 @@ namespace MediaPortal.GUI.Video
     {
       switch (s.Trim().ToLower())
       {
-        case "date":
-          return VideoSort.SortMethod.Date;
+        case "modified":
+          return VideoSort.SortMethod.Modified;
+        case "created":
+          return VideoSort.SortMethod.Created;		  
         case "label":
           return VideoSort.SortMethod.Label;
         case "name":
@@ -299,8 +301,11 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Name:
           strLine = GUILocalizeStrings.Get(365);
           break;
-        case VideoSort.SortMethod.Date:
-          strLine = GUILocalizeStrings.Get(104);
+        case VideoSort.SortMethod.Modified:
+          strLine = GUILocalizeStrings.Get(1221);
+          break;
+        case VideoSort.SortMethod.Created:
+          strLine = GUILocalizeStrings.Get(1220);
           break;
         case VideoSort.SortMethod.Size:
           strLine = GUILocalizeStrings.Get(105);
@@ -427,14 +432,18 @@ namespace MediaPortal.GUI.Video
           }
           if (item.FileInfo != null && !item.IsFolder)
           {
-            strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-                      item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            if (CurrentSortMethod == VideoSort.SortMethod.Modified) 
+              strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + 
+                        item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            else
+              strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + 
+                        item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           if (CurrentSortMethod == VideoSort.SortMethod.Name)
           {
             item.Label2 = strSize1;
           }
-          else if (CurrentSortMethod == VideoSort.SortMethod.Date)
+          else if (CurrentSortMethod == VideoSort.SortMethod.Modified || CurrentSortMethod == VideoSort.SortMethod.Created)
           {
             item.Label2 = strDate;
           }
@@ -457,7 +466,8 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(365); // name
-      dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(1221); // date modified
+      dlg.AddLocalizedString(1220); // date created 
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(366); // year
       dlg.AddLocalizedString(367); // rating
@@ -474,13 +484,19 @@ namespace MediaPortal.GUI.Video
         return;
       }
 
+      CurrentSortAsc = true;
       switch (dlg.SelectedId)
       {
         case 365:
           CurrentSortMethod = VideoSort.SortMethod.Name;
           break;
-        case 104:
-          CurrentSortMethod = VideoSort.SortMethod.Date;
+        case 1221:
+          CurrentSortMethod = VideoSort.SortMethod.Modified;
+          CurrentSortAsc = false;
+          break;
+        case 1220:
+          CurrentSortMethod = VideoSort.SortMethod.Created;
+          CurrentSortAsc = false;
           break;
         case 105:
           CurrentSortMethod = VideoSort.SortMethod.Size;
