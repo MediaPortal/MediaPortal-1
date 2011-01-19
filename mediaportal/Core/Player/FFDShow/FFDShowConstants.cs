@@ -467,6 +467,11 @@ namespace FFDShow
             IDFF_subSearchDir = 822,
             IDFF_subSearchHeuristic = 856,
             IDFF_subWatch = 826,
+            IDFF_subSSA = 861,
+            IDFF_subFiles = 3546, // Enable subtitle files
+            IDFF_subPGS = 3545, // Enable bluray subtitles
+            IDFF_subText = 3547, // Enable text subtitles
+            IDFF_subEmbeddedPriority = 3559,
             IDFF_subStereoscopic = 833,
             IDFF_subStereoscopicPar = 834, // stereoscopic paralax <-10%,10%> of picture width,
             IDFF_subDefLang = 836,
@@ -484,7 +489,6 @@ namespace FFDShow
             IDFF_subMinDurationLine = 843,
             IDFF_subMinDurationChar = 844,
             IDFF_subTextpin = 845,
-            IDFF_subTextpinSSA = 861,
             IDFF_subShowEmbedded = 857, //id of displayed embedded subtitle, 0 if none,
             //IDFF_subFoundEmbedded=859,
             IDFF_subFix = 846,
