@@ -215,6 +215,7 @@ namespace MediaPortal.GUI.Library
     protected double _lastCommandTime = 0;
 
     protected List<GUIButtonControl> _listButtons = null;
+    protected List<GUIFadeLabel> _listLabels = null;
 
     private int _xPositionThumbNailLow = 0;
     private int _yPositionThumbNailLow = 0;
@@ -238,9 +239,6 @@ namespace MediaPortal.GUI.Library
     private GUISpinControl _controlUpDown = null;
 
     private List<GUIListItem> _listItems = new List<GUIListItem>();
-    private int _scrollPosition = 0;
-    private int _scrollPosititionX = 0;
-    private int _lastItem = -1;
     private int _frames = 6;
     private int _sleeper = 0;
     private bool _refresh = false;
@@ -262,6 +260,8 @@ namespace MediaPortal.GUI.Library
 
     protected GUIAnimation _frameNoFocusControl = null;
     protected GUIAnimation _frameFocusControl = null;
+
+    protected List<VisualEffect> _allAnimations = new List<VisualEffect>();
 
     public GUIThumbnailPanel(int dwParentID)
       : base(dwParentID) { }
@@ -381,10 +381,6 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-
-      _scrollPosition = 0;
-      _scrollPosititionX = 0;
-      _lastItem = -1;
 
       _scrollOffset = 0.0f;
       _timeElapsed = 0.0f;
@@ -510,7 +506,14 @@ namespace MediaPortal.GUI.Library
         }
         if (fTextPosY >= _positionY && _renderFocusText)
         {
-          RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff + _zoomYPixels, dwColor, pItem.Label, true);
+          _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff + _zoomYPixels);
+          _listLabels[iButton].Width = _textureWidth;
+          _listLabels[iButton].Height = _textureHeight;
+          _listLabels[iButton].TextColor = dwColor;
+          _listLabels[iButton].Label = pItem.Label;
+          _listLabels[iButton].AllowScrolling = true;
+          _listLabels[iButton].Render(timePassed);
         }
       }
       else
@@ -540,7 +543,14 @@ namespace MediaPortal.GUI.Library
         }
         if (fTextPosY >= _positionY && _renderUnfocusText)
         {
-          RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, false);
+          _listLabels[iButton].XPosition = dwPosX + _textXOff;
+          _listLabels[iButton].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
+          _listLabels[iButton].Width = _textureWidth;
+          _listLabels[iButton].Height = _textureHeight;
+          _listLabels[iButton].TextColor = dwColor;
+          _listLabels[iButton].Label = pItem.Label;
+          _listLabels[iButton].AllowScrolling = false;
+          _listLabels[iButton].Render(timePassed);
         }
       }
 
@@ -1924,8 +1934,19 @@ namespace MediaPortal.GUI.Library
       }
       _listButtons = null;
 
+      if (_listLabels != null)
+      {
+        for (int i = 0; i < _listLabels.Count; ++i)
+        {
+          GUIFadeLabel cntl = _listLabels[i];
+          cntl.SafeDispose();
+        }
+      }
+      _listLabels = null;
+
       // Create new buttoncontrols
       _listButtons = new List<GUIButtonControl>();
+      _listLabels = new List<GUIFadeLabel>();
       for (int i = 0; i < _columnCount * _rowCount; ++i)
       {
         GUIButtonControl btn = new GUIButtonControl(_parentControlId, _controlId, _positionX, _positionY, _textureWidth,
@@ -1938,6 +1959,15 @@ namespace MediaPortal.GUI.Library
         btn.AllocResources();
 
         _listButtons.Add(btn);
+
+        GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, _shadowAngle, _shadowDistance, _shadowColor, " | ");
+        fadelabel.DimColor = DimColor;
+        fadelabel.ParentControl = this;
+        fadelabel.AllowScrolling = false;
+        //fadelabel.AllowFadeIn = false;
+        fadelabel.AllocResources();
+
+        _listLabels.Add(fadelabel);
       }
     }
 
@@ -1950,13 +1980,21 @@ namespace MediaPortal.GUI.Library
       _controlUpDown.DimColor = DimColor;
       _verticalScrollBar.AllocResources();
       _verticalScrollBar.DimColor = DimColor;
+
+      _allAnimations.AddRange(Animations);
+      _allAnimations.AddRange(ThumbAnimations);
+      
       if (_showFrame)
       {
         _frameFocusControl.AllocResources();
         _frameNoFocusControl.AllocResources();
         _frameFocusControl.DimColor = DimColor;
         _frameNoFocusControl.DimColor = DimColor;
+
+        _frameFocusControl.SetAnimations(_allAnimations);
+        _frameNoFocusControl.SetAnimations(_allAnimations);
       }
+      
       Calculate();
     }
 
@@ -1964,8 +2002,10 @@ namespace MediaPortal.GUI.Library
     {
       _listItems.DisposeAndClear();
       _listButtons.DisposeAndClear();
+      _listLabels.DisposeAndClear();
 
       _listButtons = null;
+      _listLabels = null;
       base.Dispose();
       _controlUpDown.SafeDispose();
       _verticalScrollBar.SafeDispose();
@@ -2249,181 +2289,11 @@ namespace MediaPortal.GUI.Library
       _lastCommandTime = AnimationTimer.TickCount;
     }
 
-
-    private void RenderText(float fPosX, float fPosY, long dwTextColor, string wszText, bool bScroll)
-    {
-      float fwidth, fWidth = 0, fHeight = 0;
-      float fMaxWidth = _itemWidth - (_itemWidth / 10.0f);
-      float fPosCX = fPosX;
-      float fPosCY = fPosY;
-      if (fPosCX < 0)
-      {
-        fPosCX = 0.0f;
-      }
-      if (fPosCY < 0)
-      {
-        fPosCY = 0.0f;
-      }
-      if (fPosCY > GUIGraphicsContext.Height)
-      {
-        fPosCY = (float)GUIGraphicsContext.Height;
-      }
-      fHeight = 60.0f;
-      if (fHeight + fPosCY >= GUIGraphicsContext.Height)
-      {
-        fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-      }
-      if (fHeight <= 0)
-      {
-        return;
-      }
-
-      fwidth = fMaxWidth - 5.0f;
-
-      if (fPosCX <= 0)
-      {
-        fPosCX = 0;
-      }
-      if (fPosCY <= 0)
-      {
-        fPosCY = 0;
-      }
-      int viewportMaxY = GUIGraphicsContext.DX9Device.Viewport.Height + GUIGraphicsContext.DX9Device.Viewport.Y;
-      if (fPosCY + fHeight > viewportMaxY)
-      {
-        fHeight = (float)viewportMaxY - fPosCY;
-      }
-      if (!bScroll)
-      {
-        _font.DrawTextWidth(fPosX, fPosY, dwTextColor, wszText, (int)(fMaxWidth), Alignment.ALIGN_LEFT);
-        return;
-      }
-
-      float fTextHeight = 0, fTextWidth = 0;
-      _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
-
-      if (fTextWidth <= fMaxWidth)
-      {
-        _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)(fMaxWidth));
-        return;
-      }
-      else
-      {
-        // scroll
-        _brackedText = wszText;
-        _brackedText += (" " + _suffix + " ");
-        _font.GetTextExtent(_brackedText, ref fTextWidth, ref fTextHeight);
-
-        int iItem = _cursorX + _cursorY * _columnCount + _offset;
-        if (fTextWidth > fMaxWidth)
-        {
-          fMaxWidth += 50.0f;
-          _scrollText = "";
-          if (_lastItem != iItem)
-          {
-            _scrollPosition = 0;
-            _lastItem = iItem;
-            _scrollPosititionX = 0;
-            _scrollOffset = 0.0f;
-            _timeElapsed = 0.0f;
-            _scrollContinuosly = false;
-          }
-          if (((int)_timeElapsed > _scrollStartDelay) || _scrollContinuosly)
-          {
-            //if (_scrollContinuosly)
-            //{
-            //  _scrollPosititionX = _currentFrame;
-            //}
-            //else
-            //{
-            //  _scrollPosititionX = _currentFrame - (25 + 12);              
-            //}
-
-            // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
-            if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
-            {
-              // Advance one pixel every 3 or 2 frames
-              if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
-              {
-                _scrollPosititionX++;
-              }
-            }
-            else
-            {
-              // advance 1 - 3 pixels every frame
-              _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
-            }
-
-            char wTmp;
-            if (_scrollPosition >= _brackedText.Length)
-            {
-              wTmp = ' ';
-            }
-            else
-            {
-              wTmp = _brackedText[_scrollPosition];
-            }
-
-            _font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
-            if (_scrollPosititionX - _scrollOffset >= fWidth)
-            {
-              ++_scrollPosition;
-              if (_scrollPosition > _brackedText.Length)
-              {
-                _scrollPosition = 0;
-                _scrollPosititionX = 0;
-                _scrollOffset = 0.0f;
-                _timeElapsed = 0.0f;
-                _scrollContinuosly = true;
-              }
-              else
-              {
-                _scrollOffset += fWidth;
-              }
-            }
-            int ipos = 0;
-            for (int i = 0; i < _brackedText.Length; i++)
-            {
-              if (i + _scrollPosition < _brackedText.Length)
-              {
-                _scrollText += _brackedText[i + _scrollPosition];
-              }
-              else
-              {
-                if (ipos == 0)
-                {
-                  _scrollText += ' ';
-                }
-                else
-                {
-                  _scrollText += _brackedText[ipos - 1];
-                }
-                ipos++;
-              }
-            }
-            if (fPosY >= 0.0)
-            {
-              _font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _scrollText,
-                             Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
-            }
-          }
-          else
-          {
-            if (fPosY >= 0.0)
-            {
-              _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
-            }
-          }
-        }
-      }
-    }
-
     public string ScrollySuffix
     {
       get { return _suffix; }
       set { _suffix = value; }
     }
-
 
     private void OnPageUp()
     {
@@ -2509,6 +2379,16 @@ namespace MediaPortal.GUI.Library
           btn.Height = _textureHeight;
           btn.Width = _textureWidth;
           btn.DoUpdate();
+        }
+      }
+
+      if (_listLabels != null)
+      {
+        foreach (GUIFadeLabel fadelabel in _listLabels)
+        {
+          fadelabel.Height = _textureHeight;
+          fadelabel.Width = _textureWidth;
+          fadelabel.DoUpdate();
         }
       }
     }
@@ -3233,6 +3113,14 @@ namespace MediaPortal.GUI.Library
         foreach (GUIListItem item in _listItems)
         {
           item.DimColor = value;
+        }
+
+        if (_listLabels != null)
+        {
+          foreach (GUIFadeLabel fadelabel in _listLabels)
+          {
+            fadelabel.DimColor = DimColor;
+          }
         }
       }
     }

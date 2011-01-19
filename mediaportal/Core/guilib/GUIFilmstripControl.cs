@@ -164,9 +164,6 @@ namespace MediaPortal.GUI.Library
     private int _lowThumbNailPositionHeight = 0;
 
     private List<GUIListItem> _listItems = new List<GUIListItem>();
-    private int _scrollPosition = 0;
-    private int _scrollPosititionX = 0;
-    private int _lastItem = -1;
     private int _frames = 0;
     private bool _refresh = false;
     protected GUIVerticalScrollbar _horizontalScrollbar = null;
@@ -186,6 +183,10 @@ namespace MediaPortal.GUI.Library
 
     private List<GUIAnimation> _imageFolder = new List<GUIAnimation>();
     private List<GUIAnimation> _imageFolderFocus = new List<GUIAnimation>();
+
+    protected List<GUIFadeLabel> _listLabels = new List<GUIFadeLabel>();
+
+    protected List<VisualEffect> _allAnimations = new List<VisualEffect>();
 
     // Search            
     private DateTime _timerKey = DateTime.Now;
@@ -271,6 +272,14 @@ namespace MediaPortal.GUI.Library
         anim.MaskFileName = _frameFocusMask;
         anim.SetAnimations(ThumbAnimations);
         _frameFocusControl.Add(anim);
+
+        // for label
+        GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, 0, 0, 0, " | ");
+        fadelabel.ParentControl = this;
+        fadelabel.AllowScrolling = false;
+        fadelabel.DimColor = DimColor;
+        //fadelabel.AllowFadeIn = false;
+        _listLabels.Add(fadelabel);
       }
 
       _upDownControl = new GUISpinControl(_controlId, 0, _spinControlPositionX, _spinControlPositionY, _spinControlWidth,
@@ -356,10 +365,6 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-
-      _scrollPosition = 0;
-      _scrollPosititionX = 0;
-      _lastItem = -1;
 
       _scrollOffset = 0.0f;
       _timeElapsed = 0.0f;
@@ -486,7 +491,7 @@ namespace MediaPortal.GUI.Library
           pImage.FlipY = _flipY;
           pImage.DiffuseFileName = _diffuseFileName;
           pImage.MaskFileName = _textureMask;
-          pImage.SetAnimations(ThumbAnimations);
+          pImage.SetAnimations(_allAnimations);
           pImage.AllocResources();
 
           pItem.Thumbnail = pImage;
@@ -554,7 +559,7 @@ namespace MediaPortal.GUI.Library
             pImage.FlipX = _flipX;
             pImage.FlipY = _flipY;
             pImage.DiffuseFileName = _diffuseFileName;
-            pImage.SetAnimations(ThumbAnimations);
+            pImage.SetAnimations(_allAnimations);
             pItem.IconBig = pImage;
             int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
@@ -664,7 +669,16 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.AddTransform(tm);
         }
-        RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, true);
+        
+        _listLabels[itemNumber].XPosition = dwPosX + _textXOff;
+        _listLabels[itemNumber].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
+        _listLabels[itemNumber].Width = _textureWidth;
+        _listLabels[itemNumber].Height = _textureHeight;
+        _listLabels[itemNumber].TextColor = dwColor;
+        _listLabels[itemNumber].Label = pItem.Label;
+        _listLabels[itemNumber].AllowScrolling = true;
+        _listLabels[itemNumber].Render(timePassed);
+
         if (tm != null)
         {
           GUIGraphicsContext.RemoveTransform();
@@ -703,7 +717,14 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.AddTransform(tm);
         }
-        RenderText((float)dwPosX + _textXOff, fTextPosY + _textYOff, dwColor, pItem.Label, false);
+        _listLabels[itemNumber].XPosition = dwPosX + _textXOff;
+        _listLabels[itemNumber].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
+        _listLabels[itemNumber].Width = _textureWidth;
+        _listLabels[itemNumber].Height = _textureHeight;
+        _listLabels[itemNumber].TextColor = dwColor;
+        _listLabels[itemNumber].Label = pItem.Label;
+        _listLabels[itemNumber].AllowScrolling = false;
+        _listLabels[itemNumber].Render(timePassed);
         if (tm != null)
         {
           GUIGraphicsContext.RemoveTransform();
@@ -1745,6 +1766,7 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus[i].PreAllocResources();
         _frameControl[i].PreAllocResources();
         _frameFocusControl[i].PreAllocResources();
+        _listLabels[i].PreAllocResources();
       }
       if (_horizontalScrollbar != null)
       {
@@ -1786,6 +1808,12 @@ namespace MediaPortal.GUI.Library
       {
         _frameFocusControl[i].Width = _textureWidth;
         _frameFocusControl[i].Height = _textureHeight;
+      }
+
+      for (int i = 0; i < _listLabels.Count; ++i)
+      {
+        _listLabels[i].Width = _textureWidth;
+        _listLabels[i].Height = _textureHeight;
       }
 
       float fWidth = 0, fHeight = 0;
@@ -1831,17 +1859,28 @@ namespace MediaPortal.GUI.Library
       {
         _upDownControl.AllocResources();
       }
+
+      _allAnimations.AddRange(Animations);
+      _allAnimations.AddRange(ThumbAnimations);
+
       for (int i = 0; i < _imageFolder.Count; ++i)
       {
         _imageFolder[i].AllocResources();
         _imageFolderFocus[i].AllocResources();
         _frameControl[i].AllocResources();
         _frameFocusControl[i].AllocResources();
+        _listLabels[i].AllocResources();
+
+        _imageFolder[i].SetAnimations(_allAnimations);
+        _imageFolderFocus[i].SetAnimations(_allAnimations);
+        _frameControl[i].SetAnimations(_allAnimations);
+        _frameFocusControl[i].SetAnimations(_allAnimations);
       }
       if (_horizontalScrollbar != null)
       {
         _horizontalScrollbar.AllocResources();
       }
+
       Calculate();
 
       _upDownControl.ParentID = GetID;
@@ -1861,7 +1900,8 @@ namespace MediaPortal.GUI.Library
       _frameControl.DisposeAndClear();
       _frameFocusControl.DisposeAndClear();
       _imageFolder.DisposeAndClear();
-      _imageFolderFocus.DisposeAndClear();      
+      _imageFolderFocus.DisposeAndClear();
+      _listLabels.DisposeAndClear();
       base.Dispose();
     }
 
@@ -2072,189 +2112,6 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-
-    private void RenderText(float fPosX, float fPosY, long dwTextColor, string wszText, bool bScroll)
-    {
-      if (_font == null)
-      {
-        return;
-      }
-      if (wszText == null)
-      {
-        return;
-      }
-      if (wszText == string.Empty)
-      {
-        return;
-      }
-
-      float fTextHeight = 0, fTextWidth = 0;
-      float fwidth, fWidth = 0, fHeight = 0;
-      _font.GetTextExtent(wszText, ref fTextWidth, ref fTextHeight);
-      float fMaxWidth = _itemWidth - _itemWidth / 10.0f;
-      float fPosCX = fPosX;
-      float fPosCY = fPosY;
-      //GUIGraphicsContext.Correct(ref fPosCX, ref fPosCY);
-      if (fPosCX < 0)
-      {
-        fPosCX = 0.0f;
-      }
-      if (fPosCY < 0)
-      {
-        fPosCY = 0.0f;
-      }
-      if (fPosCY > GUIGraphicsContext.Height)
-      {
-        fPosCY = (float)GUIGraphicsContext.Height;
-      }
-      fHeight = 60.0f;
-      if (fHeight + fPosCY >= GUIGraphicsContext.Height)
-      {
-        fHeight = GUIGraphicsContext.Height - fPosCY - 1;
-      }
-      if (fHeight <= 0)
-      {
-        return;
-      }
-
-      fwidth = fMaxWidth - 5.0f;
-      if (fPosCX < 0)
-      {
-        fPosCX = 0.0f;
-      }
-      if (fPosCY < 0)
-      {
-        fPosCY = 0.0f;
-      }
-
-      int minX = _positionX;
-      if (fPosCX < minX)
-      {
-        fPosCX = minX;
-      }
-      int maxX = _positionX + _columns * _itemWidth;
-      if (fwidth + fPosCX > maxX)
-      {
-        fwidth = ((float)maxX) - fPosCX;
-      }
-      if (!bScroll || fTextWidth <= fMaxWidth)
-      {
-        _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)fMaxWidth);
-        return;
-      }
-      else
-      {
-        // scroll
-        _brackedText = wszText;
-        _brackedText += (" " + _suffix + " ");
-        _font.GetTextExtent(_brackedText, ref fTextWidth, ref fTextHeight);
-
-        int iItem = _cursorX + _offset;
-        if (fTextWidth > fMaxWidth)
-        {
-          fMaxWidth += 50.0f;
-          _scollText = "";
-          if (_lastItem != iItem)
-          {
-            _scrollPosition = 0;
-            _lastItem = iItem;
-            _scrollPosititionX = 0;
-            _scrollOffset = 0.0f;
-            _timeElapsed = 0.0f;
-            _scrollContinuosly = false;
-          }
-
-          if (((int)_timeElapsed > _scrollStartDelay) || _scrollContinuosly)
-          {
-            //if (_scrollContinuosly)
-            //{
-            //  _scrollPosititionX = _currentFrame;
-            //}
-            //else
-            //{
-            //  _scrollPosititionX = _currentFrame - (25 + 12);
-            //}
-
-            // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
-            if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
-            {
-              // Advance one pixel every 3 or 2 frames
-              if (_frameLimiter % (4 - GUIGraphicsContext.ScrollSpeedHorizontal) == 0)
-              {
-                _scrollPosititionX++;
-              }
-            }
-            else
-            {
-              // advance 1 - 3 pixels every frame
-              _scrollPosititionX = _scrollPosititionX + (GUIGraphicsContext.ScrollSpeedHorizontal - 2);
-            }
-
-            char wTmp;
-            if (_scrollPosition >= _brackedText.Length)
-            {
-              wTmp = ' ';
-            }
-            else
-            {
-              wTmp = _brackedText[_scrollPosition];
-            }
-
-            _font.GetTextExtent(wTmp.ToString(), ref fWidth, ref fHeight);
-            if (_scrollPosititionX - _scrollOffset >= fWidth)
-            {
-              ++_scrollPosition;
-              if (_scrollPosition > _brackedText.Length)
-              {
-                _scrollPosition = 0;
-                _scrollPosititionX = 0;
-                _scrollOffset = 0.0f;
-                _timeElapsed = 0.0f;
-                _scrollContinuosly = true;
-              }
-              else
-              {
-                _scrollOffset += fWidth;
-              }
-            }
-            int ipos = 0;
-            for (int i = 0; i < _brackedText.Length; i++)
-            {
-              if (i + _scrollPosition < _brackedText.Length)
-              {
-                _scollText += _brackedText[i + _scrollPosition];
-              }
-              else
-              {
-                if (ipos == 0)
-                {
-                  _scollText += ' ';
-                }
-                else
-                {
-                  _scollText += _brackedText[ipos - 1];
-                }
-                ipos++;
-              }
-            }
-            if (fPosY >= 0.0)
-            {
-              //              _font.DrawText((int) (fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _scollText, GUIControl.Alignment.ALIGN_LEFT, (int) (fMaxWidth - 50f));
-              _font.DrawText((int)(fPosX - _scrollPosititionX + _scrollOffset), fPosY, dwTextColor, _scollText,
-                             Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f + _scrollPosititionX - _scrollOffset));
-            }
-          }
-          else
-          {
-            if (fPosY >= 0.0)
-            {
-              _font.DrawText(fPosX, fPosY, dwTextColor, wszText, Alignment.ALIGN_LEFT, (int)(fMaxWidth - 50f));
-            }
-          }
-        }
-      }
-    }
-
     public string ScrollySuffix
     {
       get { return _suffix; }
@@ -2267,7 +2124,6 @@ namespace MediaPortal.GUI.Library
         _suffix = value;
       }
     }
-
 
     private void OnPageUp()
     {
@@ -2326,7 +2182,6 @@ namespace MediaPortal.GUI.Library
       _textureWidth = iWidth;
       _textureHeight = iHeight;
 
-
       for (int i = 0; i < _imageFolder.Count; ++i)
       {
         _imageFolder[i].Height = _textureHeight;
@@ -2337,10 +2192,13 @@ namespace MediaPortal.GUI.Library
         _frameControl[i].Height = _textureHeight;
         _frameFocusControl[i].Width = _textureWidth;
         _frameFocusControl[i].Height = _textureHeight;
+        _listLabels[i].Width = _textureWidth;
+        _listLabels[i].Height = _textureHeight;
         _frameControl[i].Refresh();
         _frameFocusControl[i].Refresh();
         _imageFolder[i].Refresh();
         _imageFolderFocus[i].Refresh();
+        _listLabels[i].DoUpdate();
       }
     }
 
@@ -3254,6 +3112,7 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus[i].StorePosition();
         _frameControl[i].StorePosition();
         _frameFocusControl[i].StorePosition();
+        _listLabels[i].StorePosition();
       }
       if (_horizontalScrollbar != null)
       {
@@ -3287,6 +3146,7 @@ namespace MediaPortal.GUI.Library
         _imageFolderFocus[i].ReStorePosition();
         _frameControl[i].ReStorePosition();
         _frameFocusControl[i].ReStorePosition();
+        _listLabels[i].ReStorePosition();
       }
       if (_horizontalScrollbar != null)
       {
@@ -3433,6 +3293,7 @@ namespace MediaPortal.GUI.Library
           _imageFolderFocus[i].DimColor = value;
           _frameControl[i].DimColor = value;
           _frameFocusControl[i].DimColor = value;
+          _listLabels[i].DimColor = value;
         }
         if (_horizontalScrollbar != null)
         {
