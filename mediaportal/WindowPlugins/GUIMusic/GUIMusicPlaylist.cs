@@ -784,6 +784,12 @@ namespace MediaPortal.GUI.Music
         playlistPlayer.Reset();
       }
       ClearScrobbleStartTrack();
+
+      if (g_Player.Playing && g_Player.IsMusic)
+      {
+        g_Player.Stop();
+      }
+
       LoadFacade();
       UpdateButtonStates();
       GUIControl.FocusControl(GetID, btnNowPlaying.GetID);

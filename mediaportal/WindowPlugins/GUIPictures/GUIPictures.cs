@@ -277,8 +277,9 @@ namespace MediaPortal.GUI.Pictures
     private enum SortMethod
     {
       Name = 0,
-      Date = 1,
-      Size = 2
+      Modified = 1,
+      Created = 2,
+      Size = 3
     }
 
     private enum Display
@@ -929,8 +930,11 @@ namespace MediaPortal.GUI.Pictures
         case SortMethod.Name:
           textLine = GUILocalizeStrings.Get(103);
           break;
-        case SortMethod.Date:
-          textLine = GUILocalizeStrings.Get(104);
+        case SortMethod.Modified:
+          textLine = GUILocalizeStrings.Get(1221);
+          break;
+        case SortMethod.Created:
+          textLine = GUILocalizeStrings.Get(1220);
           break;
         case SortMethod.Size:
           textLine = GUILocalizeStrings.Get(105);
@@ -1117,7 +1121,8 @@ namespace MediaPortal.GUI.Pictures
           }
 
 
-        case SortMethod.Date:
+        case SortMethod.Modified:
+        case SortMethod.Created:
           if (item1.FileInfo == null)
           {
             return -1;
@@ -1127,17 +1132,34 @@ namespace MediaPortal.GUI.Pictures
             return -1;
           }
 
-          item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
-                         item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
-                         item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          if (sortAsc)
+          if (method == SortMethod.Modified)
           {
-            return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
+                           item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           else
           {
-            return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
+            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+          }
+
+          if (sortAsc)
+          {
+            if (method == SortMethod.Modified)
+              return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+          }
+          else
+          {
+            if (method == SortMethod.Modified)
+              return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
 
         case SortMethod.Size:
@@ -1573,7 +1595,8 @@ namespace MediaPortal.GUI.Pictures
       dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(103); // name
-      dlg.AddLocalizedString(104); // date
+      dlg.AddLocalizedString(1221); // date modified
+      dlg.AddLocalizedString(1220); // date created
       dlg.AddLocalizedString(105); // size
 
       // set the focus to currently used sort method
@@ -1586,13 +1609,17 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
+      CurrentSortAsc = true;
       switch (dlg.SelectedId)
       {
         case 103:
           mapSettings.SortBy = (int)SortMethod.Name;
           break;
-        case 104:
-          mapSettings.SortBy = (int)SortMethod.Date;
+        case 1220:
+          mapSettings.SortBy = (int)SortMethod.Created;
+          break;
+        case 1221:
+          mapSettings.SortBy = (int)SortMethod.Modified;
           break;
         case 105:
           mapSettings.SortBy = (int)SortMethod.Size;

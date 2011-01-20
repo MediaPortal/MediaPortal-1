@@ -671,6 +671,13 @@ namespace MediaPortal.GUI.Video
         videoInfo.FolderForThumbs = string.Empty;
         GUIWindowManager.ActivateWindow((int)Window.WINDOW_VIDEO_INFO);
       }
+      // F3 key actor info action
+      if (movie.ActorID >= 0)
+      {
+        IMDBActor actor = VideoDatabase.GetActorInfo(movie.ActorID);
+        if (actor != null)
+          OnVideoArtistInfo(actor);
+      }
     }
 
     private void OnVideoArtistInfo(IMDBActor actor)

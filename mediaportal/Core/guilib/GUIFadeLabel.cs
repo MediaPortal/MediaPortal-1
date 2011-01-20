@@ -237,26 +237,9 @@ namespace MediaPortal.GUI.Library
       string strLabel = (string)_listLabels[_currentLabelIndex];
 
       // Add the wrap string (will be stripped later if not needed).
-      strLabel += _wrapString;
+      // SE: why add here? add later, if label itself is wider than width
+      //strLabel += _wrapString;
 
-      //Get the text height to compute vertical position.
-/*      float fTextHeight = 0, fTextWidth = 0;
-      if (_font == null)
-      {
-        return;
-      }
-      _font.GetTextExtent(strLabel, ref fTextWidth, ref fTextHeight);
-
-      int ypos = _positionY;
-      if (VAlignment.ALIGN_BOTTOM == _textVAlignment)
-      {
-        ypos += (int)(_height - fTextHeight);
-      }
-      else if (VAlignment.ALIGN_MIDDLE == _textVAlignment)
-      {
-        ypos += (int)((_height - fTextHeight) / 2);
-      }
-*/
       _labelControl.Width = _width;
       _labelControl.Height = _height;
       _labelControl.Label = strLabel;
@@ -284,16 +267,19 @@ namespace MediaPortal.GUI.Library
       {
         if (_labelControl.TextWidth < _width)
         {
-          if (WrapAround())
-          {
-            // Remove the wrap string since we are not scrolling.
-            StripWrapString(_labelControl);
-          }
+          // Remove the wrap string since we are not scrolling.
+          // SE: not needed since we're adding wrap string later
+          //if (WrapAround())
+          //{
+          //  StripWrapString(_labelControl);
+          //}
           _labelControl.Render(timePassed);
           base.Render(timePassed);
           return;
         }
       }
+
+      strLabel += _wrapString;
 
       timeElapsed += timePassed;
       _currentFrame = (int)(timeElapsed / TimeSlice);
@@ -325,8 +311,12 @@ namespace MediaPortal.GUI.Library
           _fadeIn = false;
         }
       }
-        // no fading
-      else
+      else if (_fadeIn && !_allowScrolling)
+      {
+        _fadeIn = false;
+      }
+      //no fading
+      if (!_fadeIn)
       {
         long color = _textColor;
         if (Dimmed)
@@ -349,9 +339,12 @@ namespace MediaPortal.GUI.Library
           _scrollPosition = 0;
           _scrollPosititionX = 0;
           _scrollOffset = 0.0f;
-          _fadeIn = true && _allowFadeIn;
+          // SE: this looks stupid, don't fade in on each wrap
+          //_fadeIn = true && _allowFadeIn;
           _currentFrame = 0;
-          timeElapsed = 0.0f;
+          // SE: also don't wait on each wrap if not needed
+          if (!WrapAround() || _listLabels.Count > 1)
+            timeElapsed = 0.0f;
           _currentFrame = 0;
         }
       }
@@ -535,8 +528,7 @@ namespace MediaPortal.GUI.Library
       fMaxWidth += 50.0f;
       string szText = "";
 
-      //if (_currentFrame > 12 + 25)
-      if ((int)timeElapsed > _scrollStartDelay)
+      if (timeElapsed > _scrollStartDelay)
       {
         // doscroll (after having waited some frames)
         string wTmp = "";
@@ -795,7 +787,14 @@ namespace MediaPortal.GUI.Library
     public bool AllowScrolling
     {
       get { return _allowScrolling; }
-      set { _allowScrolling = value; }
+      set
+      {
+        if (!value)
+        {
+          timeElapsed = 0.0f;
+        }
+        _allowScrolling = value;
+      }
     }
 
     /// <summary>

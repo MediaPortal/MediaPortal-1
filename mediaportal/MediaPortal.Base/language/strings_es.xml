@@ -31,6 +31,18 @@
     <String id="30">Octubre</String>
     <String id="31">Noviembre</String>
     <String id="32">Diciembre</String>
+    <String id="33">Ene</String>
+    <String id="34">Feb</String>
+    <String id="35">Mar</String>
+    <String id="36">Abr</String>
+    <String id="37">May</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Ago</String>
+    <String id="41">Sep</String>
+    <String id="42">Oct</String>
+    <String id="43">Nov</String>
+    <String id="44">Dic</String>
     <String id="50" prefix="Mis ">DVDs</String>
     <String id="51">Reproducir disco</String>
     <String id="60">Esperando inicio del servicio de TV...</String>
@@ -321,7 +333,7 @@
     <String id="374">Nublado</String>
     <String id="375">Nieve</String>
     <String id="376">Lluvia</String>
-    <String id="377">Ligero</String>
+    <String id="377">Ligera</String>
     <String id="378">AM</String>
     <String id="379">PM</String>
     <String id="380">Lluvia suave</String>
@@ -352,6 +364,8 @@
     <String id="405">Condensación</String>
     <String id="406">Humedad</String>
     <String id="407">Fuerte</String>
+    <String id="408">Introduzca el nombre de una ciudad</String>
+    <String id="409">Eliminar Localización</String>
     <String id="410">Accediendo a Weather.com</String>
     <String id="411">Obteniendo el Tiempo para:</String>
     <String id="412">No se ha podido obtener los datos del Tiempo</String>
@@ -455,12 +469,18 @@
     <String id="511">Siempre</String>
     <String id="512">Nunca</String>
     <String id="513">Elemento protegido - acción no completada</String>
-    <String id="514">Error creando carpeta, acción no completada</String>
-    <String id="515">Error borrando carpeta, acción no completada</String>
-    <String id="516">Imposible borrar archivo destino, acción no completada</String>
+    <String id="514">Error creando carpeta - acción no completada</String>
+    <String id="515">Error borrando carpeta - acción no completada</String>
+    <String id="516">Imposible borrar archivo destino - acción no completada</String>
     <String id="517">Error fatal - acción no completada</String>
     <String id="518">¿Borrar esta canción?</String>
     <String id="519">Quitar subtítulos</String>
+    <String id="520">No se encontraron localizaciones</String>
+    <String id="521">No es un número entero válido</String>
+    <String id="522">¡Sólo valores positivos!</String>
+    <String id="523">¡No está permitido un salto de cero!</String>
+    <String id="524">¡El máximo es un salto de 3 horas!</String>
+    <String id="525">Ya está definido un intervalo de salto</String>
     <String id="527">Ordenar por: Visto</String>
     <String id="528">Artistas</String>
     <String id="529">Ver: Lista de iconos grandes</String>
@@ -500,6 +520,9 @@
     <String id="563">kn</String>
     <String id="564">m/s</String>
     <String id="565">bft</String>
+    <String id="566">Información de Tiempo Rápida</String>
+    <String id="567">Añadir Ciudad</String>
+    <String id="568">Quitar Ciudad</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -595,8 +618,8 @@
     <String id="684">Cancelado</String>
     <String id="685">Ordenar por: Estado</String>
     <String id="686">Nacido</String>
-    <String id="687">Años activo</String>
-    <String id="688">Instrumentos</String>
+    <String id="687">Años activo:</String>
+    <String id="688">Instrumentos:</String>
     <String id="689">Bio.</String>
     <String id="690">Discografía (Álbums)</String>
     <String id="691">Discografía (compilaciones, cajas)</String>
@@ -616,12 +639,12 @@
     <String id="711">Actualizar desde v#old -&gt;v#new ?</String>
     <String id="712">Atrás</String>
     <String id="713">Autoplay</String>
-    <String id="714">Disco insertado, ¿quieres reproducirlo?</String>
-    <String id="715">CD insertado, ¿quieres reproducirlo?</String>
+    <String id="714">Disco insertado, ¿quiere reproducirlo?</String>
+    <String id="715">CD insertado, ¿quiere reproducirlo?</String>
     <String id="716">Satélite</String>
     <String id="717">Tiempo</String>
     <String id="718">Limpiar Top 100</String>
-    <String id="719">¿Estás seguro de querer reiniciar el top 100?</String>
+    <String id="719">¿Está seguro de querer reiniciar la lista top 100?</String>
     <String id="720">Mostrar: Duración</String>
     <String id="721">Mostrar: Veces reproducido</String>
     <String id="722">Imposible reproducir disco</String>
@@ -688,6 +711,7 @@
     <String id="784">Rotar 270°</String>
     <String id="789">Ahora: </String>
     <String id="790">A continuación: </String>
+    <String id="791">Diseño: Flujo de Portadas</String>
     <String id="798">bajo</String>
     <String id="799">alto</String>
     <String id="800">Empieza con</String>
@@ -701,6 +725,8 @@
     <String id="808">Ingredientes</String>
     <String id="809">Direcciones</String>
     <String id="810">Tarjeta</String>
+    <String id="811">Radio Grabada</String>
+    <String id="812">Emisoras de Radio</String>
     <String id="820">¿Desea eliminar la grabación no vista?</String>
     <String id="830">Reiniciar el estado de visto</String>
     <String id="831">Desconectar unidad externa</String>
@@ -743,7 +769,7 @@
     <String id="884">Medio</String>
     <String id="885">Alto</String>
     <String id="886">Por defecto</String>
-    <String id="887">Especifica el número de episodios para mantener</String>
+    <String id="887">Especifica el número de episodios a conservar</String>
     <String id="888">Administrador de episodios</String>
     <String id="889">Todos los episodios</String>
     <String id="890">Reproducir CD</String>
@@ -893,7 +919,7 @@
     <String id="1038">Grabación avanzada</String>
     <String id="1039">No grabar</String>
     <String id="1040">Avísame</String>
-    <String id="1041">Próximos programas</String>
+    <String id="1041">Próximos episodios (activo:{0})</String>
     <String id="1042">Mantener hasta</String>
     <String id="1043">Hasta que se vea</String>
     <String id="1044">Hasta que se necesite espacio</String>
@@ -966,7 +992,7 @@
     <String id="1198">Navegador DVD</String>
     <String id="1200">Asistente de config.</String>
     <String id="1201">Reproducir vídeo desde el principio</String>
-    <String id="1202">Ordenar por: Auto</String>
+    <String id="1202">Ordenar por: Automático</String>
     <String id="1211">Reanudar reproducción desde {0}</String>
     <String id="1300" prefix="Mis ">Series de TV</String>
     <String id="1440" prefix="Mi ">TeleTexto</String>
@@ -1243,6 +1269,7 @@
     <String id="2612">Húngaro</String>
     <String id="2613">Ruso</String>
     <String id="2614">Ucraniano</String>
+    <String id="2615">Alemán</String>
     <String id="2650">Recargando fuentes - por favor espere...</String>
     <String id="2700">Abrir menú CI</String>
     <String id="2997">h</String>
@@ -1283,8 +1310,8 @@
     <String id="4505">Buscando {0}...</String>
     <String id="4506">[Vacío]</String>
     <String id="4507">Capturador de portadas abortado por usuario</String>
-    <String id="4508">Captura de portada completada correctamente</String>
-    <String id="4509">Captura de portada completada con errores</String>
+    <String id="4508">Captura de portadas completada correctamente</String>
+    <String id="4509">Captura de portadas completada con errores</String>
     <String id="4510">{0} imágenes de portadas actualizadas</String>
     <String id="4511">Captura de portadas finalizada</String>
     <String id="4512">Todas las portadas actualizadas</String>
@@ -1378,6 +1405,7 @@
     <String id="6039">Codec de Audio LATM AAC</String>
     <String id="6040">Ayer</String>
     <String id="6041">Hace dos días</String>
+    <String id="6042">Introduzca un intervalo de salto en segundos</String>
     <String id="6050">Esta semana</String>
     <String id="6060">Este mes</String>
     <String id="6070">Este año</String>
@@ -1823,8 +1851,10 @@
     <String id="106666">Espera de la programación de apagado</String>
     <String id="107700" prefix="Mi ">TV/Teletexto</String>
     <String id="107701" prefix="Mi ">TV/Teletexto</String>
+    <String id="107776" prefix="Mi">Tetris</String>
     <String id="107777" prefix="Mi ">Sudoku</String>
     <String id="107890" prefix="Mi ">Last.fm radio</String>
+    <String id="107900">Diálogo de Texto</String>
     <String id="108888">Menú de música</String>
     <String id="109000">MiniDisplay - Configuración</String>
     <String id="109001">MiniDisplay - Configuración - Luz de fondo</String>
@@ -1854,6 +1884,8 @@
     <String id="200019">Pulsa el botón Terminar para cerrar el asistente</String>
     <String id="200020">Terminar</String>
     <String id="200021">Configuración de TV - Guía Electrónica</String>
+    <String id="990000">Semanalmente en este canal</String>
+    <String id="990001">{0} en el canal {1}</String>
     <String id="200022">MediaPortal ha encontrado las siguientes sintonizadoras de TV:</String>
     <String id="200023">Pulse el botón Siguiente para configurar estas sintonizadoras</String>
     <String id="200024">Configuración de TV</String>
@@ -1902,5 +1934,6 @@
     <String id="200070">Por favor, compruebe el firewall</String>
     <String id="200071">¿Borrar esta carpeta y todas sus subcarpetas?</String>
     <String id="200072">Próximos episodios</String>
+    <String id="200091">Capítulo</String>
   </Section>
 </Language>

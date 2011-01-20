@@ -363,6 +363,12 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      // Radio Properties are set already in Play routine
+      if (g_Player.IsRadio)
+      {
+        return;
+      }
+
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
       GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));

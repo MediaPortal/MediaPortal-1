@@ -571,7 +571,7 @@ namespace TvPlugin
         {
           Channel channel = item.MusicTag as Channel;   
 
-          if (channel != null)
+          if ((channel != null) && (_currentChannel != null))
           {
             if (channel.IdChannel == _currentChannel.IdChannel)
             {

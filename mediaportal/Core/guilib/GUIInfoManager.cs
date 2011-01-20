@@ -1780,18 +1780,6 @@ namespace MediaPortal.GUI.Library
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_VIDEOS;
       }
-      else if (strWindow.Equals("myvideogenres"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_GENRE;
-      }
-      else if (strWindow.Equals("myvideoactors"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_ACTOR;
-      }
-      else if (strWindow.Equals("myvideoyears"))
-      {
-        wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_YEAR;
-      }
       else if (strWindow.Equals("myvideotitles"))
       {
         wWindowID = (int)GUIWindow.Window.WINDOW_VIDEO_TITLE;

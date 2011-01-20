@@ -178,6 +178,7 @@ namespace FFDShow
 
     #region Variables
     private static string ffdshowRegKey = @"SOFTWARE\GNU\ffdshow";
+    private static string ffdshowDXVARegKey = @"SOFTWARE\GNU\ffdshow_dxva";
     private static string ffdshowAudioRegKey = @"SOFTWARE\GNU\ffdshow_audio";
 
     private uint FFDShowAPIRemoteId = 32786;
@@ -620,6 +621,132 @@ namespace FFDShow
       }
     }
 
+    public bool subEmbeddedPriority
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subEmbeddedPriority);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subEmbeddedPriority, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subEmbeddedPriority, 0);
+      }
+    }
+
+    public bool subSSA
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subSSA);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subSSA, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subSSA, 0);
+      }
+    }
+
+    public bool subPGS
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPGS);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPGS, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPGS, 0);
+      }
+    }
+
+    public bool subFiles
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subFiles);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subFiles, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subFiles, 0);
+      }
+    }
+
+    public bool subVobsub
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subVobsub);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subVobsub, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subVobsub, 0);
+      }
+    }
+
+    public bool subText
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subText);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subText, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subText, 0);
+      }
+    }
+
+    public bool subTextpin
+    {
+      get
+      {
+        int value = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subTextpin);
+        if (value == 1)
+          return true;
+        else return false;
+      }
+      set
+      {
+        if (value)
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subTextpin, 1);
+        else
+          setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subTextpin, 0);
+      }
+    }
+
     /// <summary>
     /// Enable/disable crop and zoom
     /// </summary>
@@ -864,6 +991,7 @@ namespace FFDShow
     {
       get
       {
+        subEmbeddedPriority = true;
         Streams subtitleStreams = new Streams();
         if (ffdshowAPIMode == FFDShowAPIMode.DirectShowMode && streamSelect != null)
         {
@@ -2077,6 +2205,24 @@ namespace FFDShow
       get
       {
         using (RegistryKey preferencesKey = Registry.CurrentUser.OpenSubKey(ffdshowRegKey))
+        {
+          if (preferencesKey != null)
+          {
+            return preferencesKey.GetSubKeyNames();
+          }
+          else return null;
+        }
+      }
+    }
+
+    /// <summary>
+    /// List of FFDShow video presets DXVA
+    /// </summary>
+    public static string[] VideoPresetsDXVA
+    {
+      get
+      {
+        using (RegistryKey preferencesKey = Registry.CurrentUser.OpenSubKey(ffdshowDXVARegKey))
         {
           if (preferencesKey != null)
           {

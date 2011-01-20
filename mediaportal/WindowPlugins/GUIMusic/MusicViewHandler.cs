@@ -46,6 +46,11 @@ namespace MediaPortal.GUI.Music
     private int restrictionLength = 0; // used to sum up the length of all restrictions
 
     private Song currentSong = null; // holds the current Song selected in the list
+    
+    public int PreviousLevel
+    {
+      get { return previousLevel; }
+    }
 
     public MusicViewHandler()
     {
@@ -88,7 +93,7 @@ namespace MediaPortal.GUI.Music
     {
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
       definition.SelectedValue = GetFieldValue(song, definition.Where).ToString();
-      if (currentLevel + 1 < currentView.Filters.Count)
+      if (currentLevel < currentView.Filters.Count)
       {
         currentLevel++;
       }
@@ -144,6 +149,9 @@ namespace MediaPortal.GUI.Music
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          
+          previousLevel = currentLevel;
+          
           return songs;
         }
 
@@ -200,6 +208,9 @@ namespace MediaPortal.GUI.Music
                   songs.Add(song);
                 }
               }
+              
+              previousLevel = currentLevel;
+              
               return songs;
             }
             else if (defRoot.Where == "recently added")
@@ -364,7 +375,7 @@ namespace MediaPortal.GUI.Music
       {
         if (currentLevel < MaxLevels - 1)
         {
-          if (previousLevel <= currentLevel)
+          if (previousLevel < currentLevel)
           {
             FilterDefinition fd = (FilterDefinition)currentView.Filters[currentLevel];
             fd.SelectedValue = GetFieldValue(songs[0], fd.Where);
@@ -377,6 +388,7 @@ namespace MediaPortal.GUI.Music
           songs = Execute();
         }
       }
+
       previousLevel = currentLevel;
       
       return songs;
