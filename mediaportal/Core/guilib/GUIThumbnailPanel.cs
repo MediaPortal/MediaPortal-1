@@ -261,7 +261,7 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _frameNoFocusControl = null;
     protected GUIAnimation _frameFocusControl = null;
 
-    protected List<VisualEffect> _allAnimations = new List<VisualEffect>();
+    protected List<VisualEffect> _allThumbAnimations = new List<VisualEffect>();
 
     public GUIThumbnailPanel(int dwParentID)
       : base(dwParentID) { }
@@ -346,7 +346,7 @@ namespace MediaPortal.GUI.Library
       _frameNoFocusControl.ParentControl = this;
       _frameNoFocusControl.DimColor = DimColor;
       _frameNoFocusControl.MaskFileName = _frameNoFocusMask;
-      _frameNoFocusControl.SetAnimations(ThumbAnimations);
+      _frameNoFocusControl.SetAnimations(_allThumbAnimations);
 
 
       _frameFocusControl = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth,
@@ -355,7 +355,7 @@ namespace MediaPortal.GUI.Library
       _frameFocusControl.ParentControl = this;
       _frameFocusControl.DimColor = DimColor;
       _frameFocusControl.MaskFileName = _frameFocusMask;
-      _frameFocusControl.SetAnimations(ThumbAnimations);
+      _frameFocusControl.SetAnimations(_allThumbAnimations);
     }
 
     public override void ScaleToScreenResolution()
@@ -1981,8 +1981,10 @@ namespace MediaPortal.GUI.Library
       _verticalScrollBar.AllocResources();
       _verticalScrollBar.DimColor = DimColor;
 
-      _allAnimations.AddRange(Animations);
-      _allAnimations.AddRange(ThumbAnimations);
+      if (ThumbAnimations == null || ThumbAnimations.Count < 1)
+        _allThumbAnimations.Add(new VisualEffect());
+      else
+        _allThumbAnimations.AddRange(ThumbAnimations);
       
       if (_showFrame)
       {
@@ -1991,8 +1993,8 @@ namespace MediaPortal.GUI.Library
         _frameFocusControl.DimColor = DimColor;
         _frameNoFocusControl.DimColor = DimColor;
 
-        _frameFocusControl.SetAnimations(_allAnimations);
-        _frameNoFocusControl.SetAnimations(_allAnimations);
+        _frameFocusControl.SetAnimations(_allThumbAnimations);
+        _frameNoFocusControl.SetAnimations(_allThumbAnimations);
       }
       
       Calculate();
