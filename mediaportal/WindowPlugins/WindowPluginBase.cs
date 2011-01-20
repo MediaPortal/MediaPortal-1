@@ -119,6 +119,7 @@ namespace WindowPlugins
       {
         OnShowLayouts();
         SelectCurrentItem();
+        UpdateButtonStates();
         GUIControl.FocusControl(GetID, controlId);
       }
 
@@ -229,7 +230,6 @@ namespace WindowPlugins
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
       }
-      UpdateButtonStates();
     }
 
     protected virtual void UpdateButtonStates()

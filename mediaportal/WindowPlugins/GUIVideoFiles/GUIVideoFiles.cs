@@ -741,6 +741,7 @@ namespace MediaPortal.GUI.Video
 
       if (!itemSelected)
       {
+        UpdateButtonStates();
         SelectCurrentItem();
       }
 
