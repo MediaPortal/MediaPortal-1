@@ -899,6 +899,7 @@ namespace MediaPortal.GUI.Music
       }
       
       SwitchLayout();
+      UpdateButtonStates();
       GUIWaitCursor.Hide();
     }
 

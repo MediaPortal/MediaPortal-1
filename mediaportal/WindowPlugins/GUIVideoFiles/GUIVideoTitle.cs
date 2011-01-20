@@ -507,6 +507,7 @@ namespace MediaPortal.GUI.Video
       OnSort();
 
       SwitchLayout();
+      UpdateButtonStates();
 
       // quite ugly to loop again to search the selected item...
       for (int i = 0; i < facadeLayout.Count; ++i)

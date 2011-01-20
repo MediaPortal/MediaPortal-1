@@ -109,7 +109,6 @@ namespace WindowPlugins
         return;
       }
       facadeLayout.CurrentLayout = CurrentLayout;
-      UpdateButtonStates();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -211,6 +210,8 @@ namespace WindowPlugins
         }
       }
       SwitchToNexAllowedLayout(iSelectedLayout);
+
+      UpdateButtonStates();
     }
 
     protected virtual void OnInfo(int iItem) {}
