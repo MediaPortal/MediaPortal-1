@@ -963,7 +963,7 @@ namespace MediaPortal.GUI.Video
                 (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILESTACKING);
               if (null != dlg)
               {
-                dlg.SetNumberOfFiles(movies.Count);
+                dlg.SetFiles(movies);
                 dlg.DoModal(GetID);
                 selectedFileIndex = dlg.SelectedFile;
                 if (selectedFileIndex < 1)
@@ -2744,7 +2744,7 @@ namespace MediaPortal.GUI.Video
             (GUIDialogFileStacking)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_FILESTACKING);
           if (null != dlg)
           {
-            dlg.SetNumberOfFiles(movies.Count);
+            dlg.SetFiles(movies);
             dlg.DoModal(GUIWindowManager.ActiveWindow);
             selectedFileIndex = dlg.SelectedFile;
             if (selectedFileIndex < 1)

@@ -6,6 +6,19 @@
   <controls>
     <import>common.dialog.xml</import>
     <control>
+      <description>Movie Title value</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>210</posX>
+      <posY>362</posY>
+      <width>295</width>
+      <label>#stackedMovie.Selected</label>
+      <font>font12</font>
+      <align>center</align>
+      <animation effect="fade" time="150">WindowOpen</animation>
+      <animation effect="fade" time="150">WindowClose</animation>
+    </control>
+    <control>
       <description>CD1</description>
       <type>button</type>
       <id>101</id>
