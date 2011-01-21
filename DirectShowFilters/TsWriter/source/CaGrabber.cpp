@@ -45,6 +45,7 @@ CCaGrabber::~CCaGrabber(void)
 
 STDMETHODIMP CCaGrabber::Reset()
 {
+  CEnterCriticalSection enter(m_section);
 	LogDebug("cagrabber: reset");
 	CSectionDecoder::Reset();
 	CSectionDecoder::SetPid(1);
@@ -52,6 +53,7 @@ STDMETHODIMP CCaGrabber::Reset()
 	m_iCaVersion=-1;
 	return S_OK;
 }
+
 STDMETHODIMP CCaGrabber::SetCallBack( ICACallback* callback)
 {
 	CEnterCriticalSection enter(m_section);
@@ -62,24 +64,18 @@ STDMETHODIMP CCaGrabber::SetCallBack( ICACallback* callback)
 
 void CCaGrabber::OnTsPacket(byte* tsPacket)
 {
+  CEnterCriticalSection enter(m_section);
 	if (m_pCallback==NULL) return;
-
-  int pid=((tsPacket[1] & 0x1F) <<8)+tsPacket[2];
-  if (pid != 1) return;
-	CEnterCriticalSection enter(m_section);
 	CSectionDecoder::OnTsPacket(tsPacket);
-
 }
 
 void CCaGrabber::OnNewSection(CSection& section)
 {
 	try
 	{
+    // CEnterCriticalSection already done in OnTsPacket
 		if (section.table_id!=1) return; 	
 		if (section.version_number == m_iCaVersion) return;
-	  CEnterCriticalSection enter(m_section);
-
-		if (section.section_length<0 || section.section_length>=MAX_SECTION_LENGTH) return;
 
 		LogDebug("cagrabber: got ca version:%d %d", section.version_number,m_iCaVersion);
 		m_iCaVersion=section.version_number;
@@ -89,11 +85,8 @@ void CCaGrabber::OnNewSection(CSection& section)
 		if (memcmp(m_caData,m_caPrevData,m_iCaLength)!=0)
 		{
 			memcpy(m_caPrevData,m_caData,m_iCaLength);
-			if (m_pCallback!=NULL)
-			{
-				LogDebug("cagrabber: do calback");
-				m_pCallback->OnCaReceived();
-			}
+			LogDebug("cagrabber: do callback");
+			m_pCallback->OnCaReceived(); // Null callback already checked in OnTsPacket
 			m_pCallback=NULL;
 		}
 	}
