@@ -1381,7 +1381,7 @@ namespace MediaPortal.GUI.Video
         return true;
       }
 
-      GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+      GUIDialogYesNo dlg = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_YES_NO);
       if (dlg == null)
       {
         return true;
@@ -1392,6 +1392,9 @@ namespace MediaPortal.GUI.Video
         dlg.SetLine(1, 429);
         dlg.SetLine(2, movieDetails.DVDLabel);
         dlg.SetLine(3, movieDetails.Title);
+        dlg.SetYesLabel(GUILocalizeStrings.Get(186)); //OK
+        dlg.SetNoLabel(GUILocalizeStrings.Get(222)); //Cancel
+        dlg.SetDefaultToYes(true);
         dlg.DoModal(GUIWindowManager.ActiveWindow);
         if (dlg.IsConfirmed)
         {
