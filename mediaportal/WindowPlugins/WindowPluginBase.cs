@@ -246,6 +246,8 @@ namespace WindowPlugins
           OnQueueItem(iItem);
         }
       }
+
+      UpdateButtonStates();
     }
 
     protected virtual void OnInfo(int iItem) {}

@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Library
 
     protected List<GUIFadeLabel> _listLabels = new List<GUIFadeLabel>();
 
-    protected List<VisualEffect> _allAnimations = new List<VisualEffect>();
+    protected List<VisualEffect> _allThumbAnimations = new List<VisualEffect>();
 
     // Search            
     private DateTime _timerKey = DateTime.Now;
@@ -237,7 +237,7 @@ namespace MediaPortal.GUI.Library
         anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
         anim.MaskFileName = _imageFolderMask;
-        anim.SetAnimations(ThumbAnimations);
+        //anim.SetAnimations(ThumbAnimations);
         _imageFolder.Add(anim);
 
         anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight,
@@ -248,7 +248,7 @@ namespace MediaPortal.GUI.Library
         anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
         anim.MaskFileName = _imageFolderFocusMask;
-        anim.SetAnimations(ThumbAnimations);
+        //anim.SetAnimations(ThumbAnimations);
         _imageFolderFocus.Add(anim);
 
         anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight,
@@ -259,7 +259,7 @@ namespace MediaPortal.GUI.Library
         //anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
         anim.MaskFileName = _frameMask;
-        anim.SetAnimations(ThumbAnimations);
+        //anim.SetAnimations(ThumbAnimations);
         _frameControl.Add(anim);
 
         anim = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _itemWidth, _itemHeight,
@@ -270,7 +270,7 @@ namespace MediaPortal.GUI.Library
         //anim.FlipY = _flipY;
         anim.DiffuseFileName = _diffuseFileName;
         anim.MaskFileName = _frameFocusMask;
-        anim.SetAnimations(ThumbAnimations);
+        //anim.SetAnimations(ThumbAnimations);
         _frameFocusControl.Add(anim);
 
         // for label
@@ -491,7 +491,7 @@ namespace MediaPortal.GUI.Library
           pImage.FlipY = _flipY;
           pImage.DiffuseFileName = _diffuseFileName;
           pImage.MaskFileName = _textureMask;
-          pImage.SetAnimations(_allAnimations);
+          pImage.SetAnimations(_allThumbAnimations);
           pImage.AllocResources();
 
           pItem.Thumbnail = pImage;
@@ -559,7 +559,7 @@ namespace MediaPortal.GUI.Library
             pImage.FlipX = _flipX;
             pImage.FlipY = _flipY;
             pImage.DiffuseFileName = _diffuseFileName;
-            pImage.SetAnimations(_allAnimations);
+            pImage.SetAnimations(_allThumbAnimations);
             pItem.IconBig = pImage;
             int xOff = (_thumbNailWidth + 2 * iOverSized - pImage.RenderWidth) / 2;
             int yOff = (_thumbNailHeight + 2 * iOverSized - pImage.RenderHeight) / 2;
@@ -1860,8 +1860,10 @@ namespace MediaPortal.GUI.Library
         _upDownControl.AllocResources();
       }
 
-      _allAnimations.AddRange(Animations);
-      _allAnimations.AddRange(ThumbAnimations);
+      if (ThumbAnimations == null || ThumbAnimations.Count < 1)
+        _allThumbAnimations.Add(new VisualEffect());
+      else
+        _allThumbAnimations.AddRange(ThumbAnimations);
 
       for (int i = 0; i < _imageFolder.Count; ++i)
       {
@@ -1871,10 +1873,10 @@ namespace MediaPortal.GUI.Library
         _frameFocusControl[i].AllocResources();
         _listLabels[i].AllocResources();
 
-        _imageFolder[i].SetAnimations(_allAnimations);
-        _imageFolderFocus[i].SetAnimations(_allAnimations);
-        _frameControl[i].SetAnimations(_allAnimations);
-        _frameFocusControl[i].SetAnimations(_allAnimations);
+        _imageFolder[i].SetAnimations(_allThumbAnimations);
+        _imageFolderFocus[i].SetAnimations(_allThumbAnimations);
+        _frameControl[i].SetAnimations(_allThumbAnimations);
+        _frameFocusControl[i].SetAnimations(_allThumbAnimations);
       }
       if (_horizontalScrollbar != null)
       {

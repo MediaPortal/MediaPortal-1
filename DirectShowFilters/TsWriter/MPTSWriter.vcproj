@@ -329,14 +329,6 @@
 					>
 				</File>
 				<File
-					RelativePath=".\source\PesDecoder.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\source\PesPacket.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\source\VideoAudioScrambledAnalyzer.cpp"
 					>
 				</File>
@@ -423,14 +415,6 @@
 				>
 				<File
 					RelativePath=".\source\PcrDecoder.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\PesDecoder.h"
-					>
-				</File>
-				<File
-					RelativePath=".\source\PesPacket.h"
 					>
 				</File>
 				<File

@@ -39,6 +39,8 @@ namespace MediaPortal.Dialogs
     //bool needRefresh = false;
     private int _timeOutInSeconds = 0;
     private DateTime timeStart = DateTime.Now;
+    private string _btnNoLabel = GUILocalizeStrings.Get(106); //No
+    private string _btnYesLabel = GUILocalizeStrings.Get(107); //Yes
 
     public GUIDialogYesNo()
     {
@@ -47,7 +49,11 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
+      bool result = Load(GUIGraphicsContext.Skin + @"\dialogYesNo.xml");
+
+      SaveDefaultBtnLabels();
+
+      return result;
     }
 
     public override void DoModal(int dwParentId)
@@ -77,6 +83,7 @@ namespace MediaPortal.Dialogs
     public override void PageDestroy()
     {
       _timeOutInSeconds = 0;
+      RestoreDefaultBtnLabels();
       base.PageDestroy();
     }
 
@@ -84,6 +91,7 @@ namespace MediaPortal.Dialogs
     {
       base.Reset();
       _timeOutInSeconds = 0;
+      RestoreDefaultBtnLabels();
       m_bConfirmed = false;
       m_DefaultYes = false;
       iYesKey = -1;
@@ -244,6 +252,28 @@ namespace MediaPortal.Dialogs
     public void SetDefaultToYes(bool bYesNo)
     {
       m_DefaultYes = bYesNo;
+    }
+
+    public void SetYesLabel(string label)
+    {
+      btnYes.Label = label;
+    }
+
+    public void SetNoLabel(string label)
+    {
+      btnNo.Label = label;
+    }
+
+    protected void SaveDefaultBtnLabels()
+    {
+      _btnNoLabel = btnNo.Label;
+      _btnYesLabel = btnYes.Label;
+    }
+
+    protected void RestoreDefaultBtnLabels()
+    {
+      btnNo.Label = _btnNoLabel;
+      btnYes.Label = _btnYesLabel;
     }
 
     public int TimeOut
