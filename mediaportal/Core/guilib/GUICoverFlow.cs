@@ -143,6 +143,7 @@ namespace MediaPortal.GUI.Library
     private float _position = 0.0f;
     private FlowDirection _direction = FlowDirection.RIGHT;
     private int _nextFrameIndex = 0;
+    private bool _reAllocate = false;
 
     // Card spinning
     private float _selectedSpinAngle = 0.0f;
@@ -375,6 +376,9 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref _scrollbarOffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label1OffsetY);
       GUIGraphicsContext.ScaleVertical(ref _label2OffsetY);
+
+      // Reallocate the card images using the new sizes.
+      _reAllocate = true;
     }
 
     public override void Animate(float timePassed, Animator animator)
@@ -1121,6 +1125,8 @@ namespace MediaPortal.GUI.Library
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
           pCard.DimColor = DimColor;
+          pCard.Width = _cardWidth;
+          pCard.Height = _cardHeight;
 
           // Center the image horizontally in the card.
           pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
@@ -1170,6 +1176,8 @@ namespace MediaPortal.GUI.Library
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
           pCard.DimColor = DimColor;
+          pCard.Width = _cardWidth;
+          pCard.Height = _cardHeight;
 
           // Center the image horizontally in the card.
           pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
@@ -1688,6 +1696,21 @@ namespace MediaPortal.GUI.Library
       {
         base.Render(timePassed);
         return;
+      }
+
+      // Reallocation of the card images occur (for example) when the window size changes.
+      // Force all of the card images to be recreated.
+      if (_reAllocate)
+      {
+        for (int i = 0; i < _listItems.Count; i++)
+        {
+          GUIListItem pItem = _listItems[i];
+          pItem.Thumbnail.SafeDispose();
+          pItem.Thumbnail = null;
+          pItem.IconBig.SafeDispose();
+          pItem.IconBig = null;
+        }
+        _reAllocate = false;
       }
 
       // Prepare for using the reusable card frames during this render pass.
