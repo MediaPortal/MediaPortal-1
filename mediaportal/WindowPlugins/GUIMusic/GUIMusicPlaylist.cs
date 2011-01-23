@@ -653,21 +653,34 @@ namespace MediaPortal.GUI.Music
         PlayListItem pi = pl[i];
         GUIListItem pItem = new GUIListItem(pi.Description);
         MusicTag tag = (MusicTag)pi.MusicTag;
+        bool dirtyTag = false;
         if(tag != null)
         {
           pItem.MusicTag = tag;
+          if (tag.Title == ("unknown") || tag.Title.IndexOf("unknown") > 0 || tag.Title == string.Empty)
+          {
+            dirtyTag = true;
+          }
         }
+        else
+        {
+          dirtyTag = true;
+        }
+        
+        if (tag != null && !dirtyTag)
+        {
+          int playCount = tag.TimesPlayed;
+          string duration = Util.Utils.SecondsToHMSString(tag.Duration);
+          pItem.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
+          pItem.Label2 = duration;
+        }
+            
         pItem.Path = pi.FileName;
         pItem.IsFolder = false;
         
         if(pi.Duration > 0)
         {
           totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, pi.Duration));
-          pItem.Label2 = Util.Utils.SecondsToHMSString(pi.Duration);
-        }
-        else
-        {
-          pItem.Label2 = string.Empty;
         }
 
         if (pi.Played)
@@ -681,9 +694,30 @@ namespace MediaPortal.GUI.Music
         
         facadeLayout.Add(pItem);
       }
-      
-      SetLabels();
-      
+
+      int iTotalItems = facadeLayout.Count;
+			if (iTotalItems > 0)
+			{
+			  GUIListItem rootItem = facadeLayout[0];
+			  if (rootItem.Label == "..")
+			  {
+			    iTotalItems--;
+			  }
+			}
+
+			//set object count label, total duration
+			GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+			if (totalPlayingTime.TotalSeconds > 0)
+			{
+			  GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
+			}
+			else
+			{
+			  GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+			}
+			
+      SelectCurrentItem();
       UpdateButtonStates();
     }
 
@@ -724,7 +758,7 @@ namespace MediaPortal.GUI.Music
       }
     }
     
-    protected override void SetLabels()
+    protected void SetLabels()
     {
       if (facadeLayout != null)
       {
@@ -756,13 +790,6 @@ namespace MediaPortal.GUI.Music
               item.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
               item.Label2 = duration;
             }
-          }
-
-          for (int i = 0; i < facadeLayout.Count; ++i)
-          {
-            GUIListItem item = facadeLayout[i];
-
-            ((MusicViewHandler)handler).SetLabel(item.AlbumInfoTag as Song, ref item);
           }
         }
         catch (Exception ex)

@@ -94,6 +94,21 @@ namespace MediaPortal.GUI.Music
       
       string strSize1 = "";
       string strSize2 = "";
+      string strAlbum1 = "";
+      string strAlbum2 = "";
+      string strAlbumArtist1 = "";
+      string strAlbumArtist2 = "";
+      string strArtist1 = "";
+      string strArtist2 = "";
+      int iDisc1 = 0;
+      int iDisc2 = 0;
+      int iTrack1 = 0;
+      int iTrack2 = 0;
+      int iRating1 = 0;
+      int iRating2 = 0;
+      int iDuration1 = 0;
+      int iDuration2 = 0;
+      
       if (item1.FileInfo != null)
       {
         strSize1 = Util.Utils.GetSize(item1.FileInfo.Length);
@@ -134,8 +149,6 @@ namespace MediaPortal.GUI.Music
               time2 = tag2.DateTimeModified;
             }
 
-            item1.Label2 = time1.ToShortDateString();
-            item2.Label2 = time2.ToShortDateString();
             if (bAscending)
             {
               return DateTime.Compare(time1, time2);
@@ -148,10 +161,6 @@ namespace MediaPortal.GUI.Music
           else
           {
             // Do sorting on File Date. Needed for Shares View
-            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
-                           item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
-                           item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
             if (bAscending)
             {
               return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
@@ -163,9 +172,6 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Year:
-          item1.Label2 = item1.Year.ToString();
-          item2.Label2 = item2.Year.ToString();
-
           // When sorting on Year, we need to take also the Label into account and sort on that as well
           string compVal1 = item1.Year.ToString() + item1.Label;
           string compVal2 = item2.Year.ToString() + item2.Label;
@@ -189,8 +195,6 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Rating:
-          int iRating1 = 0;
-          int iRating2 = 0;
           if (tag1 != null)
           {
             iRating1 = tag1.Rating;
@@ -227,25 +231,21 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Track:
-          int iTrack1 = 0;
-          int iTrack2 = 0;
-          int iDisk1 = 0;
-          int iDisk2 = 0;
           if (tag1 != null)
           {
             iTrack1 = tag1.Track;
-            iDisk1 = tag1.DiscID;
+            iDisc1 = tag1.DiscID;
           }
           if (tag2 != null)
           {
             iTrack2 = tag2.Track;
-            iDisk2 = tag2.DiscID;
+            iDisc2 = tag2.DiscID;
           }
           if (bAscending)
           {
-            if (iDisk1 != iDisk2)
+            if (iDisc1 != iDisc2)
             {
-              return iDisk1.CompareTo(iDisk2);
+              return iDisc1.CompareTo(iDisc2);
             }
             else
             {
@@ -254,9 +254,9 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            if (iDisk1 != iDisk2)
+            if (iDisc1 != iDisc2)
             {
-              return iDisk2.CompareTo(iDisk1);
+              return iDisc2.CompareTo(iDisc1);
             }
             else
             {
@@ -265,8 +265,6 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Duration:
-          int iDuration1 = 0;
-          int iDuration2 = 0;
           if (tag1 != null)
           {
             iDuration1 = tag1.Duration;
@@ -305,63 +303,107 @@ namespace MediaPortal.GUI.Music
           }
 
         case SortMethod.Artist:
-          string artist1 = "";
-          string artist2 = "";
           if (tag1 != null)
           {
-            artist1 = tag1.Artist;
+            strArtist1 = tag1.Artist;
           }
           if (tag2 != null)
           {
-            artist2 = tag2.Artist;
+            strArtist2 = tag2.Artist;
           }
           if (bAscending)
           {
-            return String.Compare(artist1, artist2, true);
+            return String.Compare(strArtist1, strArtist2, true);
           }
           else
           {
-            return String.Compare(artist2, artist1, true);
+            return String.Compare(strArtist2, strArtist1, true);
           }
 
         case SortMethod.AlbumArtist:
-          string albumartist1 = "";
-          string albumartist2 = "";
           if (tag1 != null)
           {
-            albumartist1 = tag1.AlbumArtist;
+            strAlbumArtist1 = tag1.AlbumArtist;
           }
           if (tag2 != null)
           {
-            albumartist2 = tag2.AlbumArtist;
+            strAlbumArtist2 = tag2.AlbumArtist;
           }
           if (bAscending)
           {
-            return String.Compare(albumartist1, albumartist2, true);
+            return String.Compare(strAlbumArtist1, strAlbumArtist2, true);
           }
           else
           {
-            return String.Compare(albumartist2, albumartist1, true);
+            return String.Compare(strAlbumArtist2, strAlbumArtist1, true);
           }
 
         case SortMethod.Album:
-          string strAlbum1 = "";
-          string strAlbum2 = "";
+        case SortMethod.DiscID:
+          //sort by album => album artist => disc# => track
           if (tag1 != null)
           {
             strAlbum1 = tag1.Album;
+            strAlbumArtist1 = tag1.AlbumArtist;
+            iDisc1 = tag1.DiscID;
+            iTrack1 = tag1.Track;
           }
           if (tag2 != null)
           {
             strAlbum2 = tag2.Album;
+            strAlbumArtist2 = tag2.AlbumArtist;
+            iDisc2 = tag2.DiscID;
+            iTrack2 = tag2.Track;
           }
           if (bAscending)
           {
-            return String.Compare(strAlbum1, strAlbum2, true);
+            if(strAlbum1 == strAlbum2)
+            {
+              if(strAlbumArtist1 == strAlbumArtist2)
+              {
+                if(iDisc1 == iDisc2)
+                {
+                  return (iTrack1 - iTrack2);
+                }
+                else
+                {
+                  return (iDisc1 - iDisc2);
+                }
+              }
+              else
+              {
+                return String.Compare(strAlbumArtist1, strAlbumArtist2, true);
+              }
+            }
+            else
+            {
+              return String.Compare(strAlbum1, strAlbum2, true);
+            }
           }
           else
           {
-            return String.Compare(strAlbum2, strAlbum1, true);
+            if(strAlbum1 == strAlbum2)
+            {
+              if(strAlbumArtist1 == strAlbumArtist2)
+              {
+                if(iDisc1 == iDisc2)
+                {
+                  return (iTrack2 - iTrack1);
+                }
+                else
+                {
+                  return (iDisc2 - iDisc1);
+                }
+              }
+              else
+              {
+                return String.Compare(strAlbumArtist2, strAlbumArtist1, true);
+              }
+            }
+            else
+            {
+              return String.Compare(strAlbum2, strAlbum1, true);
+            }
           }
 
 
@@ -376,55 +418,6 @@ namespace MediaPortal.GUI.Music
           {
             return String.Compare(strFile2, strFile1, true);
           }
-
-        case SortMethod.DiscID:
-          // sort to by album then album artist then disc#
-          int disc1 = 0;
-          int disc2 = 0;
-          if (tag1 != null)
-          {
-            disc1 = tag1.DiscID;
-          }
-          if (tag2 != null)
-          {
-            disc2 = tag2.DiscID;
-          }
-          if (bAscending)
-          {
-            if(tag1.Album == tag2.Album)
-            {
-              if(tag1.AlbumArtist == tag2.AlbumArtist)
-              {
-                return (int)(disc1 - disc2);
-              }
-              else
-              {
-                return string.Compare(tag1.AlbumArtist, tag2.AlbumArtist);
-              }
-            }
-            else
-            {
-              return string.Compare(tag1.Album, tag2.Album);
-            }
-          }
-          else
-          {
-            if(tag1.Album == tag2.Album)
-            {
-              if(tag1.AlbumArtist == tag2.AlbumArtist)
-              {
-                return (int)(disc2 - disc1);
-              }
-              else
-              {
-                return string.Compare(tag2.AlbumArtist, tag1.AlbumArtist);
-              }
-            }
-            else
-            {
-              return string.Compare(tag2.Album, tag1.Album);
-            }
-          }
           
         case SortMethod.Composer:
           string strComposer1 = "";
@@ -437,7 +430,7 @@ namespace MediaPortal.GUI.Music
           {
             strComposer2 = tag2.Composer;
           }
-  
+          
           if (bAscending)
           {
             return String.Compare(strComposer1, strComposer2, true);
@@ -445,7 +438,7 @@ namespace MediaPortal.GUI.Music
           else
           {
             return String.Compare(strComposer2, strComposer1, true);
-          }          
+          }
       }
       return 0;
     }

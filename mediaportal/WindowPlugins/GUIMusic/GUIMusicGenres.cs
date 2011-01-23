@@ -276,11 +276,8 @@ namespace MediaPortal.GUI.Music
       set
       {
         FilterDefinition def = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-        if (def.DefaultSort.ToLower() == "year")
-        {
-          sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.Year;
-        }
-        else if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
+
+        if ((def.Where == "albumartist" || def.Where == "album") && value == MusicSort.SortMethod.Artist)
         {
           sortby[handler.Views.IndexOf(handler.View), handler.CurrentLevel] = MusicSort.SortMethod.AlbumArtist;
         }
@@ -401,15 +398,6 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings settings = new Profile.MPSettings())
       {
         playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
-      }
-
-      if (btnSortBy != null)
-      {
-        if (!_showSortButton)
-        {
-          btnSortBy.Visible = false;
-          btnSortBy.Dispose();
-        }
       }
 
       // When we return from Fullscreen Music (the Visualisation screen), the page is reloaded again
@@ -764,187 +752,187 @@ namespace MediaPortal.GUI.Music
     /// <param name="strNotUsed">Used to implement method in base class but not used</param>
     protected override void LoadDirectory(string strNotUsed)
     {
-      GUIWaitCursor.Show();
-      GUIListItem SelectedItem = facadeLayout.SelectedListItem;
-      
-      int previousLevel = ((MusicViewHandler)handler).PreviousLevel;
-      string strSelectedItem = string.Empty;
-      
-      if (SelectedItem != null)
-      {
-        // if there is an item selected and we are loading a new view
-        // then store the existing value so when we navigate back up through
-        // the view levels we can focus on the item we had selected
-        // we can not use current level in the name for the directory history
-        // as current level gets updated before LoadDirectory is called
-        // therefore use previous level which is set by the music view handler
-        // when that returns (ie. that will be level of the view user has
-        // made selection from as it has not been cleared yet)
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
-        {
-          m_history.Set(SelectedItem.Label, handler.LocalizedCurrentView + "." +
-                        previousLevel.ToString());
-        }
-      }
+			GUIWaitCursor.Show();
+			GUIListItem SelectedItem = facadeLayout.SelectedListItem;
+			
+			int previousLevel = ((MusicViewHandler)handler).PreviousLevel;
+			string strSelectedItem = string.Empty;
+			
+			if (SelectedItem != null)
+			{
+				// if there is an item selected and we are loading a new view
+				// then store the existing value so when we navigate back up through
+				// the view levels we can focus on the item we had selected
+				// we can not use current level in the name for the directory history
+				// as current level gets updated before LoadDirectory is called
+				// therefore use previous level which is set by the music view handler
+				// when that returns (ie. that will be level of the view user has
+				// made selection from as it has not been cleared yet)
+				if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+				{
+					m_history.Set(SelectedItem.Label, handler.LocalizedCurrentView + "." +
+					              previousLevel.ToString());
+				}
+			}
 
-      GUIControl.ClearControl(GetID, facadeLayout.GetID);
+			List<Song> songs = ((MusicViewHandler)handler).Execute();
+			
+			GUIControl.ClearControl(GetID, facadeLayout.GetID);
+			SwitchLayout();			
 
-      string strObjects = string.Empty;
+			List<GUIListItem> itemsToAdd = new List<GUIListItem>();
+			
+			TimeSpan totalPlayingTime = new TimeSpan();
+			
+			if(previousLevel > handler.CurrentLevel)
+			{ // only need to lookup values when navigating back up through the view
+				strSelectedItem = m_history.Get(handler.LocalizedCurrentView + "." + handler.CurrentLevel.ToString());
+			}
+			
+			#region handle pin protected share
 
-      List<Song> songs = ((MusicViewHandler)handler).Execute();
-      
-      if(previousLevel > handler.CurrentLevel)
-      { // only need to lookup values when navigating back up through the view
-        strSelectedItem = m_history.Get(handler.LocalizedCurrentView + "." + handler.CurrentLevel.ToString());
-      }
-      
-      #region handle pin protected share
+			if (songs.Count > 0) // some songs in there?
+			{
+				Song song = songs[0];
+				if (song.FileName.Length > 0) // does a filename exits
+				{
+					foreach (Share share in _shareList)
+					{
+						if (song.FileName.Contains(share.Path)) // compare it with shares
+						{
+							if (share.Pincode != -1) // does it have a pincode?
+							{
+								GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
+								GUIWindowManager.SendMessage(msg); // ask for the userinput
+								int iPincode = -1;
+								try
+								{
+									iPincode = Int32.Parse(msg.Label);
+								}
+								catch (Exception) {}
+								if (iPincode != share.Pincode)
+								{
+									songs.Clear();
+								}
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			#endregion
 
-      if (songs.Count > 0) // some songs in there?
-      {
-        Song song = songs[0];
-        if (song.FileName.Length > 0) // does a filename exits
-        {
-          foreach (Share share in _shareList)
-          {
-            if (song.FileName.Contains(share.Path)) // compare it with shares
-            {
-              if (share.Pincode != -1) // does it have a pincode?
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_PASSWORD, 0, 0, 0, 0, 0, 0);
-                GUIWindowManager.SendMessage(msg); // ask for the userinput
-                int iPincode = -1;
-                try
-                {
-                  iPincode = Int32.Parse(msg.Label);
-                }
-                catch (Exception) {}
-                if (iPincode != share.Pincode)
-                {
-                  songs.Clear();
-                }
-                break;
-              }
-            }
-          }
-        }
-      }
-      
-      #endregion
+			if (handler.CurrentLevel > 0)
+			{ // add ".." folder item if not at bottom level of view
+				GUIListItem pItem = new GUIListItem("..");
+				pItem.Path = string.Empty;
+				pItem.IsFolder = true;
+				Util.Utils.SetDefaultIcons(pItem);
+				itemsToAdd.Add(pItem);
+			}
 
-      if (handler.CurrentLevel > 0)
-      { // add ".." folder item if not at bottom level of view
-        GUIListItem pItem = new GUIListItem("..");
-        pItem.Path = string.Empty;
-        pItem.IsFolder = true;
-        Util.Utils.SetDefaultIcons(pItem);
-        facadeLayout.Add(pItem);
-      }
+			for (int i = 0; i < songs.Count; ++i)
+			{
+				Song song = songs[i];
+				GUIListItem item = new GUIListItem();
 
-      for (int i = 0; i < songs.Count; ++i)
-      {
-        Song song = songs[i];
-        GUIListItem item = new GUIListItem();
-        item.Label = song.Title;
-        if (handler.CurrentLevel + 1 < handler.MaxLevels)
-        {
-          item.IsFolder = true;
-        }
-        else
-        {
-          item.IsFolder = false;
-        }
-        item.Path = song.FileName;
-        item.Duration = song.Duration;
+				MusicTag tag = new MusicTag();
+				tag = song.ToMusicTag();
+				item.AlbumInfoTag = song;
+				item.MusicTag = tag;
 
-        MusicTag tag = new MusicTag();
-        tag = song.ToMusicTag();
-        item.Duration = tag.Duration;
-        tag.TimesPlayed = song.TimesPlayed;
+				if (handler.CurrentLevel + 1 < handler.MaxLevels)
+				{
+					item.IsFolder = true;
+					item.Label = MusicViewHandler.GetFieldValue(song, handler.CurrentLevelWhere);
+					SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);
+				}
+				else
+				{
+					item.IsFolder = false;
+					if(!GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod))
+					{
+						item.Label = song.Title;
+					}
+				}
+				
+				if(tag != null)
+				{
+				  if (tag.Duration > 0)
+				  {
+				    totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+				  }
+				}
+				
+				item.Path = song.FileName;
 
-        item.Rating = song.Rating;
-        item.Year = song.Year;
-        item.AlbumInfoTag = song;
-        item.MusicTag = tag;
-        item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-        item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-        facadeLayout.Add(item);
-      }
-      
-      int iItem = 0;
+				if (!string.IsNullOrEmpty(_currentPlaying) && item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+				{
+					item.Selected = true;
+				}
+				
+				item.Duration = song.Duration;
+				tag.TimesPlayed = song.TimesPlayed;
+				item.Rating = song.Rating;
+				item.Year = song.Year;
+				item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+				item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
+				itemsToAdd.Add(item);
+			}
+			
+			itemsToAdd.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
 
-      for (int i = 0; i < facadeLayout.Count; ++i)
-      {
-        GUIListItem item = facadeLayout[i];
-        if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
-        {
-          item.Selected = true;
-          break;
-        }
-      }
-      OnSort();
-      for (int i = 0; i < facadeLayout.Count; ++i)
-      {
-        GUIListItem item = facadeLayout[i];
-        if (item.Label == strSelectedItem)
-        {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
-          break;
-        }
-        iItem++;
-      }
-      if (m_iItemSelected >= 0)
-      {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, m_iItemSelected);
-      }
-      
-      SwitchLayout();
+			int iItem = 0; // used to hold index of item to select			
+			bool itemSelected = false;			
+			for(int i = 0; i < itemsToAdd.Count; ++i)
+			{
+				if (!itemSelected && itemsToAdd[i].Label == strSelectedItem)
+				{
+					iItem = i;
+					itemSelected = true;
+				}			  
+				facadeLayout.Add(itemsToAdd[i]);
+			}
+			
+			int iTotalItems = facadeLayout.Count;
+			if (iTotalItems > 0)
+			{
+			  GUIListItem rootItem = facadeLayout[0];
+			  if (rootItem.Label == "..")
+			  {
+			    iTotalItems--;
+			  }
+			}
+
+			//set object count label, total duration
+			GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+			if (totalPlayingTime.TotalSeconds > 0)
+			{
+			  GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
+			}
+			else
+			{
+			  GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+			}
+
+			if (itemSelected)
+			{
+				GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
+			}
+			else if (m_iItemSelected >= 0)
+			{
+				GUIControl.SelectItemControl(GetID, facadeLayout.GetID, m_iItemSelected);
+			}
+			else
+			{
+			  SelectCurrentItem();
+			}
+			
       UpdateButtonStates();
-      GUIWaitCursor.Hide();
-    }
-
-    protected override void SetLabels()
-    {
-      ////base.SetLabels();
-      ////for (int i = 0; i < facadeLayout.Count; ++i)
-      ////{
-      ////    GUIListItem item = facadeLayout[i];
-      ////    handler.SetLabel(item.AlbumInfoTag as Song, ref item);
-      ////}
-
-
-      // SV
-      // "Top100" can be renamed so this won't work...
-      //if (handler.CurrentView == "Top100")
-
-      // So we do this instead...
-      if (!IsSortableView(handler.View, handler.CurrentLevel))
-      {
-        for (int i = 0; i < facadeLayout.Count; ++i)
-        {
-          GUIListItem item = facadeLayout[i];
-          MusicTag tag = (MusicTag)item.MusicTag;
-          if (tag != null)
-          {
-            int playCount = tag.TimesPlayed;
-            string duration = Util.Utils.SecondsToHMSString(playCount * tag.Duration);
-            item.Label = string.Format("{0:00}. {1} - {2}", playCount, tag.Artist, tag.Title);
-            item.Label2 = duration;
-          }
-        }
-      }
-
-      else
-      {
-        base.SetLabels();
-      }
-
-      for (int i = 0; i < facadeLayout.Count; ++i)
-      {
-        GUIListItem item = facadeLayout[i];
-        ((MusicViewHandler)handler).SetLabel(item.AlbumInfoTag as Song, ref item);
-      }
-    }
+			GUIWaitCursor.Hide();
+		}
 
     private void OnThreadMessage(GUIMessage message)
     {
@@ -998,31 +986,91 @@ namespace MediaPortal.GUI.Music
       base.item_OnItemSelected(item,parent);
     }
 
-    protected override void OnSort()
-    {
-      SetLabels();
+		private static void SetSortLabel(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod, String CurrentLevelWhere)
+		{
+			MusicTag tag = (MusicTag)item.MusicTag;
+			if(tag == null)
+			{
+				item.Label2 = string.Empty;
+				return;
+			}
 
-      bool isSortable = true;
+			switch (CurrentSortMethod)
+			{
+				case MusicSort.SortMethod.Date:
+					item.Label2 = tag.DateTimeModified.ToShortDateString();
+					break;
+				case MusicSort.SortMethod.Artist:
+					if(CurrentLevelWhere != "artist")
+					{
+						item.Label2 = tag.Artist;
+					}
+					break;
+				case MusicSort.SortMethod.Album:
+					if(CurrentLevelWhere != "album")
+					{
+						item.Label2 = tag.Album;
+					}
+					break;
+				case MusicSort.SortMethod.Rating:
+					if(CurrentLevelWhere != "rating")
+					{
+						item.Label2 = tag.Rating > 0 ? tag.Rating.ToString() : string.Empty;
+					}
+					break;
+				case MusicSort.SortMethod.AlbumArtist:
+					if(CurrentLevelWhere != "albumartist")
+					{
+						item.Label2 = tag.AlbumArtist;
+					}
+					break;
+				case MusicSort.SortMethod.Year:
+					if(CurrentLevelWhere != "year")
+					{
+						item.Label2 = tag.Year.ToString();
+					}
+					break;
+				case MusicSort.SortMethod.DiscID:
+					item.Label = tag.Album;
+					item.Label2 = tag.DiscID.ToString();
+					break;
+				default:
+					item.Label2 = string.Empty;
+					break;
+			}
+		}
 
-      // "Top100" can be renamed so this won't work...
-      // isSortable = handler.CurrentView != "Top100";
+		protected override void OnSort()
+		{
+			bool isSortable = true;
+			isSortable = IsSortableView(handler.View, handler.CurrentLevel);
 
-      // So we do this instead...
-      isSortable = IsSortableView(handler.View, handler.CurrentLevel);
+			if (isSortable)
+			{
+				// set labels
+				for(int i = 0; i < facadeLayout.Count; ++i)
+				{
+					GUIListItem item = facadeLayout[i];
+					if(item.IsFolder)
+					{
+						SetSortLabel(ref item, CurrentSortMethod, handler.CurrentLevelWhere);
+					}
+					else
+					{
+						GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod);
+					}
+				}
+				facadeLayout.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
+			}
 
-      if (isSortable)
-      {
-        facadeLayout.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
-      }
+			UpdateButtonStates();
+			SelectCurrentItem();
 
-      UpdateButtonStates();
-      SelectCurrentItem();
-
-      if (btnSortBy != null)
-      {
-        btnSortBy.Disabled = !isSortable;
-      }
-    }
+			if (btnSortBy != null)
+			{
+				btnSortBy.Disabled = !isSortable;
+			}
+		}
     
     #region playlist management
     

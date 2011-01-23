@@ -139,7 +139,7 @@ namespace MediaPortal.GUI.Music
     private string _startDirectory = string.Empty;
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
-    private bool _useFileMenu = false;    
+    private bool _useFileMenu = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -162,8 +162,8 @@ namespace MediaPortal.GUI.Music
           if (message.Param1 == (int)Ripper.AutoPlay.MediaType.AUDIO)
           {
             if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.AUDIO_CD ||
-              message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
-              PlayCD(message.Label);            
+                message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
+              PlayCD(message.Label);
           }
           break;
 
@@ -294,7 +294,7 @@ namespace MediaPortal.GUI.Music
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
-        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);        
+        MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
       }
 
       GUIWindowManager.OnNewAction += new OnActionHandler(GUIWindowManager_OnNewAction);
@@ -358,15 +358,6 @@ namespace MediaPortal.GUI.Music
       {
         btnSearch.Disabled = true;
       }
-
-      if (btnSortBy != null)
-      {
-        if (!_showSortButton)
-        {
-          btnSortBy.Visible = false;
-          btnSortBy.Dispose();
-        }
-      }
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -397,53 +388,99 @@ namespace MediaPortal.GUI.Music
         {
           SaveFolderSettings(currentFolder);
         }
+
+        GUIControl.ClearControl(GetID, facadeLayout.GetID);
+        
         if (strNewDirectory != currentFolder || _mapSettings == null)
         {
           LoadFolderSettings(strNewDirectory);
         }
 
         currentFolder = strNewDirectory;
-        GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
         List<GUIListItem> itemlist = _virtualDirectory.GetDirectoryExt(currentFolder);
 
         string strSelectedItem = _dirHistory.Get(currentFolder);
+
         int iItem = 0;
-        GetTagInfo(ref itemlist);
-        foreach (GUIListItem item in itemlist)
-        {
-          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
-          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
-          facadeLayout.Add(item);
-        }
-        OnSort();
         bool itemSelected = false;
-        for (int i = 0; i < facadeLayout.Count; ++i)
+        TimeSpan totalPlayingTime = new TimeSpan();
+
+        GetTagInfo(ref itemlist);
+        
+        itemlist.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
+        
+        for(int i = 0; i < itemlist.Count; ++i)
         {
-          GUIListItem item = facadeLayout[i];
-          if (item.Label == strSelectedItem)
-          {
-            GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
-            itemSelected = true;
-            break;
+          GUIListItem item = itemlist[i];
+          
+          if(!item.IsFolder)
+          {  // labels for folders are set by the virtual directory
+            GUIMusicBaseWindow.SetTrackLabels(ref item, CurrentSortMethod);
           }
-          iItem++;
-        }
-        for (int i = 0; i < facadeLayout.Count; ++i)
-        {
-          GUIListItem item = facadeLayout[i];
-          if (item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
+          
+          MusicTag tag = (MusicTag)item.MusicTag;
+          if(tag != null)
+          {
+            if(tag.Duration > 0)
+            {
+              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
+            }            
+          }
+          
+          if (!itemSelected && item.Label == strSelectedItem)
+          {
+            itemSelected = true;
+            iItem = i;
+          }
+          
+          if(!string.IsNullOrEmpty(_currentPlaying) && item.Path.Equals(_currentPlaying, StringComparison.OrdinalIgnoreCase))
           {
             item.Selected = true;
-            break;
+          }
+
+          item.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+          item.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);          
+
+          facadeLayout.Add(item);
+        }
+        
+        int iTotalItems = facadeLayout.Count;
+        if (iTotalItems > 0)
+        {
+          GUIListItem rootItem = facadeLayout[0];
+          if (rootItem.Label == "..")
+          {
+            iTotalItems--;
           }
         }
 
-        //set selected item
-        if (_selectedItem >= 0 && !itemSelected)
+        //set object count label, total duration
+        GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
+
+        if (totalPlayingTime.TotalSeconds > 0)
+        {
+          GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#totalduration", string.Empty);
+        }
+        
+        if(itemSelected)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, iItem);
+        }
+        else if (_selectedItem >= 0)
         {
           GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);
         }
+        else
+        {
+          SelectCurrentItem();
+        }
+
+        UpdateButtonStates();
 
         GUIWaitCursor.Hide();
       }
@@ -1170,7 +1207,7 @@ namespace MediaPortal.GUI.Music
       return false;
     }
     
-    #region Handlers    
+    #region Handlers
 
     /// <summary>
     /// Queue the selected folder for scanning
@@ -1436,7 +1473,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      List<PlayListItem> pl = new List<PlayListItem>();      
+      List<PlayListItem> pl = new List<PlayListItem>();
       AddFolderToPlaylist(selectedItem, ref pl);
       
       // only apply further sort if a folder has been selected
@@ -1606,7 +1643,7 @@ namespace MediaPortal.GUI.Music
         item.IsFolder = true;
         item.Path = strDrive;
         AddFolderToPlaylist(item, ref pl);
-          
+        
         pl.Sort(new TrackComparer());
 
         base.AddItemsToPlaylist(pl, true);
