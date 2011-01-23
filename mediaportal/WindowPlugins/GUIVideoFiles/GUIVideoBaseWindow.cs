@@ -658,10 +658,10 @@ namespace MediaPortal.GUI.Video
 
       if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_VIDEO).Count > 0)
       {
+        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
         playlistPlayer.Reset();
         playlistPlayer.Play(0);
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_VIDEO_PLAYLIST);
       }
     }
   }
