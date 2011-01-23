@@ -919,7 +919,7 @@
     <String id="1037" prefix="My ">TV - Program information</String>
     <String id="1038">Advanced record</String>
     <String id="1039">Don't record</String>
-    <String id="1040">Alert me</String>
+    <String id="1040">Set reminder</String>
     <String id="1041">Upcoming episodes</String>
     <String id="1042">Keep until</String>
     <String id="1043">Until watched</String>
@@ -1001,6 +1001,7 @@
     <String id="1207">Switch to {0} now?</String>
     <String id="1208">Sort by: Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
+    <String id="1212">Cancel reminder</String>
     <String id="1220">Sort by: Date Created</String>
     <String id="1221">Sort by: Date Modified</String>
     <String id="1300" prefix="My ">TV Shows</String>
