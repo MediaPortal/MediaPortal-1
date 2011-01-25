@@ -1225,49 +1225,29 @@ namespace MediaPortal.Player
         _mediaInfo = new MediaInfoWrapper(strFile);
         Starting = true;
 
-
-        // Partial fix for mantis 0002825 and 0002919:
-        //      - only take care of singleseat and UNC path ( where TS file is used )
-        //      - missing checks for rtsp. Will be done after 1.1.0 using the stream name
-        //                    as distinguo:  stream-tv-* and stream-radio-*
-        //                    we will also use *.radio.ts and *.tv.ts
-
-        // Exception for ts files with no video stream = radio
-        bool checkTSisRadio = Path.GetExtension(strFile).ToLower() == ".ts" && MediaInfoWrapper.MediaInfoExist() &&
-                              !_mediaInfo.hasVideo;
-
-        if (checkTSisRadio)
+        if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
         {
-          Log.Debug("g_Player.Play - TS file detected as radio...");
-          type = MediaType.Radio;
-        }
-        // End of fix
-        else
-        {
-          if (Util.Utils.IsVideo(strFile) || Util.Utils.IsLiveTv(strFile)) //video, tv, rtsp
+          if (type == MediaType.Unknown)
           {
-            if (type == MediaType.Unknown)
-            {
-              Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
-              type = MediaType.Video;
-            }
-            // refreshrate change done here.
-            RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
+            Log.Debug("g_Player.Play - Mediatype Unknown, forcing detection as Video");
+            type = MediaType.Video;
+          }
+          // refreshrate change done here.
+          RefreshRateChanger.AdaptRefreshRate(strFile, (RefreshRateChanger.MediaType)(int)type);
 
-            if (RefreshRateChanger.RefreshRateChangePending)
+          if (RefreshRateChanger.RefreshRateChangePending)
+          {
+            TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
+            if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
             {
-              TimeSpan ts = DateTime.Now - RefreshRateChanger.RefreshRateChangeExecutionTime;
-              if (ts.TotalSeconds > RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX)
-              {
-                Log.Info(
-                  "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
-                  RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
-                RefreshRateChanger.ResetRefreshRateState();
-              }
-              else
-              {
-                return true;
-              }
+              Log.Info(
+                "g_Player.Play - waited {0}s for refreshrate change, but it never took place (check your config). Proceeding with playback.",
+                RefreshRateChanger.WAIT_FOR_REFRESHRATE_RESET_MAX);
+              RefreshRateChanger.ResetRefreshRateState();
+            }
+            else
+            {
+              return true;
             }
           }
         }

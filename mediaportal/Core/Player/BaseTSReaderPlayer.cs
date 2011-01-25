@@ -1429,6 +1429,7 @@ namespace MediaPortal.Player
     public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
                                     int bitrate, int isInterlaced)
     {
+      _isRadio = false;
       _videoFormat.IsValid = true;
       _videoFormat.streamType = (VideoStreamType)streamType;
       _videoFormat.width = width;

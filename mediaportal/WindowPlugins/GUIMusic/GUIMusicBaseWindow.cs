@@ -65,7 +65,6 @@ namespace MediaPortal.GUI.Music
     public static bool _createMissingFolderThumbCache = true;
     public static bool _createMissingFolderThumbs = false;
     public bool _useFolderThumbs = true;
-    public bool _showSortButton = false;
 
     protected MusicSort.SortMethod currentSortMethod = MusicSort.SortMethod.Name;
     protected string m_strPlayListPath = string.Empty;
@@ -75,28 +74,28 @@ namespace MediaPortal.GUI.Music
     
     protected List<Share> _shareList = new List<Share>();
 
-    private const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
-    private const string albumTrackTag = "[%track%. ][%artist% - ][%title%]";
+    private static readonly string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
 
-    private string[] _sortModes = {
+    private static readonly string[] _sortModes = {
       "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
-      "Rating"
-    };
+      "Rating","Album Artist", "Year", "DiscID", "Composer"
+    };  
 
-    private string[] _defaultSortTags1 = {
+    private static readonly string[] _defaultSortTags1 = {
       defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-      defaultTrackTag, defaultTrackTag, defaultTrackTag, albumTrackTag,
+      defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+      defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
       defaultTrackTag, defaultTrackTag
     };
 
-    private string[] _defaultSortTags2 = {
-      "%duration%", "%year%", "%filesize%", "%duration%", "%duration%",
-      "%duration%"
-        , "%duration%", "%duration%", "%filesize%", "%rating%"
+    private static readonly string[] _defaultSortTags2 = {
+      "%duration%", "%date%", "%filesize%", "%duration%", "%duration%",
+      "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%",
+      "%duration%", "%year%", "%disc#%", "%duration%"
     };
 
-    private string[] _sortTags1 = new string[20];
-    private string[] _sortTags2 = new string[20];
+    private static string[] _sortTags1 = new string[20];
+    private static string[] _sortTags2 = new string[20];
     protected PlayListPlayer playlistPlayer;
 
     protected PlayNowJumpToType PlayNowJumpTo = PlayNowJumpToType.None;
@@ -185,7 +184,6 @@ namespace MediaPortal.GUI.Music
         _createMissingFolderThumbCache = xmlreader.GetValueAsBool("thumbnails", "musicfolderondemand", true);
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
-        _showSortButton = xmlreader.GetValueAsBool("musicfiles", "showSortButton", true);
 
         String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode", "play");
         if (strPlayMode == "playlist")
@@ -670,174 +668,71 @@ namespace MediaPortal.GUI.Music
 
     protected virtual void OnSort()
     {
-      SetLabels();
       facadeLayout.Sort(new MusicSort(CurrentSortMethod, CurrentSortAsc));
       UpdateButtonStates();
       SelectCurrentItem();
     }
 
-    protected virtual void SetLabels()
-    {
-      MusicSort.SortMethod method = CurrentSortMethod;
-      TimeSpan totalPlayingTime = new TimeSpan();
+		protected static bool SetTrackLabels(ref GUIListItem item, MusicSort.SortMethod CurrentSortMethod)
+		{
+			if(item.MusicTag == null)
+			{
+				return false;
+			}
+			
+			MusicTag tag = (MusicTag)item.MusicTag;
 
-      for (int i = 0; i < facadeLayout.Count; ++i)
-      {
-        GUIListItem item = facadeLayout[i];
-        MusicTag tag = (MusicTag)item.MusicTag;
-        if (tag != null)
-        {
-          string trackNr = String.Format("{0:##00}", tag.Track);
-          string fileSize = Util.Utils.GetSize(item.Size);
-          string year = tag.Year.ToString();
-          string filename = Util.Utils.GetFilename(item.Path);
+			string trackNr = tag.Track >0 ? String.Format("{0:##00}", tag.Track) : string.Empty;
+			string fileSize = Util.Utils.GetSize(item.Size);
+			string year = tag.Year >= 1900 ? tag.Year.ToString() : string.Empty;
+			string filename = Util.Utils.GetFilename(item.Path);
+			string duration = Util.Utils.SecondsToHMSString(tag.Duration);
+			string rating = tag.Rating.ToString();
+			string discID = tag.DiscID > 0 ? tag.DiscID.ToString() : string.Empty;
+			string date = tag.DateTimeModified.ToShortDateString();
 
-          // For an index view, don't translate the duration
-          string duration = "";
-
-          // eliminates bug mentioned in http://forum.team-mediaportal.com/mymusic_list_shows_song_length_just_full-t28125.html
-          // testing on MusicState.Startwindow is a bit dirty, but there is no other way to determine Shares View
-          // Handler.View is null when program starts but is never set another time
-          // so it is not possible to check if shares view is selected
-          if ((handler.View != null) && (MusicState.StartWindow != 501))
-          {
-            FilterDefinition filter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-            if (filter.SqlOperator != "group")
-            {
-              switch (CurrentSortMethod)
-              {
-                case MusicSort.SortMethod.Name:
-                case MusicSort.SortMethod.Track:
-                case MusicSort.SortMethod.Duration:
-                case MusicSort.SortMethod.Title:
-                case MusicSort.SortMethod.Artist:
-                case MusicSort.SortMethod.Album:
-                case MusicSort.SortMethod.AlbumArtist:
-                case MusicSort.SortMethod.DiscID:
-                case MusicSort.SortMethod.Composer:    
-                  duration = Util.Utils.SecondsToHMSString(tag.Duration);
-                  break;
-                case MusicSort.SortMethod.Date:
-                case MusicSort.SortMethod.Size:
-                case MusicSort.SortMethod.Filename:
-                case MusicSort.SortMethod.Rating:
-                  duration = Convert.ToString(tag.Duration);
-                  break;
-              }
-
-              if (tag.Duration > 0)
-              {
-                totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
-              }
-            }
-            else
-            {
-              duration = Convert.ToString(tag.Duration);
-            }
-          }
-          else
-          {
-            duration = Util.Utils.SecondsToHMSString(tag.Duration);
-
-            if (tag.Duration > 0)
-            {
-              totalPlayingTime = totalPlayingTime.Add(new TimeSpan(0, 0, tag.Duration));
-            }
-          }
-
-          string rating = tag.Rating.ToString();
-          if (tag.Track <= 0)
-          {
-            trackNr = "";
-          }
-          if (tag.Year < 1900)
-          {
-            year = "";
-          }
-
-          string date = "";
-          if (item.FileInfo != null)
-          {
-            date = item.FileInfo.ModificationTime.ToShortDateString() + " " +
-              item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-          }
-          ;
-
-          string line1, line2;
-          if (method == MusicSort.SortMethod.AlbumArtist)
-          {
-            line1 = _sortTags1[(int)MusicSort.SortMethod.Artist]; // Use Artist sort string for AlbumArtist
-            line2 = _sortTags2[(int)MusicSort.SortMethod.Artist];
-          }
-          else
-          {
-            line1 = _sortTags1[(int)method];
-            line2 = _sortTags2[(int)method];
-          }
-          line1 = Util.Utils.ReplaceTag(line1, "%track%", trackNr);
-          line2 = Util.Utils.ReplaceTag(line2, "%track%", trackNr);
-          line1 = Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
-          line2 = Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
-          if (handler.View != null)
-          {
-            FilterDefinition tempfilter = (FilterDefinition)handler.View.Filters[handler.CurrentLevel];
-            if (tempfilter.Where == "albumartist")
-            {
-              line1 = Util.Utils.ReplaceTag(line1, "%artist%", tag.AlbumArtist);
-              line2 = Util.Utils.ReplaceTag(line2, "%artist%", tag.AlbumArtist);
-            }
-            else
-            {
-              line1 = Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
-              line2 = Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
-            }
-          }
-          else
-          {
-            line1 = Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
-            line2 = Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
-          }
-          line1 = Util.Utils.ReplaceTag(line1, "%album%", tag.Album);
-          line2 = Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
-          line1 = Util.Utils.ReplaceTag(line1, "%title%", tag.Title);
-          line2 = Util.Utils.ReplaceTag(line2, "%title%", tag.Title);
-          line1 = Util.Utils.ReplaceTag(line1, "%year%", year);
-          line2 = Util.Utils.ReplaceTag(line2, "%year%", year);
-          line1 = Util.Utils.ReplaceTag(line1, "%filename%", filename);
-          line2 = Util.Utils.ReplaceTag(line2, "%filename%", filename);
-          line1 = Util.Utils.ReplaceTag(line1, "%rating%", rating);
-          line2 = Util.Utils.ReplaceTag(line2, "%rating%", rating);
-          line1 = Util.Utils.ReplaceTag(line1, "%duration%", duration);
-          line2 = Util.Utils.ReplaceTag(line2, "%duration%", duration);
-          line1 = Util.Utils.ReplaceTag(line1, "%date%", date);
-          line2 = Util.Utils.ReplaceTag(line2, "%date%", date);
-          item.Label = line1;
-          item.Label2 = line2;
-        }
-      }
-
-      int iTotalItems = facadeLayout.Count;
-      if (facadeLayout.Count > 0)
-      {
-        GUIListItem rootItem = facadeLayout[0];
-        if (rootItem.Label == "..")
-        {
-          iTotalItems--;
-        }
-      }
-
-      //set object count label, total duration
-      GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
-
-      if (totalPlayingTime.TotalSeconds > 0)
-      {
-        GUIPropertyManager.SetProperty("#totalduration", Util.Utils.SecondsToHMSString((int)totalPlayingTime.TotalSeconds));
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#totalduration", string.Empty);
-      }
-    }
+			string line1, line2;
+			if (CurrentSortMethod == MusicSort.SortMethod.AlbumArtist)
+			{
+				line1 = _sortTags1[(int)MusicSort.SortMethod.Artist]; // Use Artist sort string for AlbumArtist
+				line2 = _sortTags2[(int)MusicSort.SortMethod.Artist];
+			}
+			else
+			{
+				line1 = _sortTags1[(int)CurrentSortMethod];
+				line2 = _sortTags2[(int)CurrentSortMethod];
+			}
+			line1 = Util.Utils.ReplaceTag(line1, "%track%", trackNr);
+			line2 = Util.Utils.ReplaceTag(line2, "%track%", trackNr);
+			line1 = Util.Utils.ReplaceTag(line1, "%filesize%", fileSize);
+			line2 = Util.Utils.ReplaceTag(line2, "%filesize%", fileSize);
+			line1 = Util.Utils.ReplaceTag(line1, "%albumartist%", tag.AlbumArtist);
+			line2 = Util.Utils.ReplaceTag(line2, "%albumartist%", tag.AlbumArtist);
+			line1 = Util.Utils.ReplaceTag(line1, "%artist%", tag.Artist);
+			line2 = Util.Utils.ReplaceTag(line2, "%artist%", tag.Artist);
+			line1 = Util.Utils.ReplaceTag(line1, "%album%", tag.Album);
+			line2 = Util.Utils.ReplaceTag(line2, "%album%", tag.Album);
+			line1 = Util.Utils.ReplaceTag(line1, "%title%", tag.Title);
+			line2 = Util.Utils.ReplaceTag(line2, "%title%", tag.Title);
+			line1 = Util.Utils.ReplaceTag(line1, "%year%", year);
+			line2 = Util.Utils.ReplaceTag(line2, "%year%", year);
+			line1 = Util.Utils.ReplaceTag(line1, "%filename%", filename);
+			line2 = Util.Utils.ReplaceTag(line2, "%filename%", filename);
+			line1 = Util.Utils.ReplaceTag(line1, "%rating%", rating);
+			line2 = Util.Utils.ReplaceTag(line2, "%rating%", rating);
+			line1 = Util.Utils.ReplaceTag(line1, "%duration%", duration);
+			line2 = Util.Utils.ReplaceTag(line2, "%duration%", duration);
+			line1 = Util.Utils.ReplaceTag(line1, "%date%", date);
+			line2 = Util.Utils.ReplaceTag(line2, "%date%", date);
+			line1 = Util.Utils.ReplaceTag(line1, "%disc#%", discID);
+			line2 = Util.Utils.ReplaceTag(line2, "%disc#%", discID);
+			line1 = Util.Utils.ReplaceTag(line1, "%composer%", tag.Composer);
+			line2 = Util.Utils.ReplaceTag(line2, "%composer%", tag.Composer);
+			item.Label = line1;
+			item.Label2 = line2;
+			
+			return true;
+		}
 
     protected virtual void OnRetrieveCoverArt(GUIListItem item)
     {
