@@ -1865,6 +1865,13 @@ public class MediaPortalApp : D3DApp, IRender
         Log.Info("Main: Resetting DX9 device");
 
         int activeWin = GUIWindowManager.ActiveWindow;
+        if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow()) {
+          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          {
+            activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+          }
+        }
+
         if (GUIGraphicsContext.DX9ExRealDeviceLost)
         {
           activeWin = (int)GUIWindow.Window.WINDOW_HOME;
