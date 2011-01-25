@@ -144,7 +144,6 @@ namespace TvPlugin.teletext
         if (btnSubPage != null)
         {
           currentSubPageNumber = BCD(btnSubPage.SelectedItem + 1) - 1;
-          Log.Info("MS TEST subpage selected item={0}, bcd={1}", btnSubPage.SelectedItem, currentSubPageNumber);
           RequestUpdate(false);
         }
       }

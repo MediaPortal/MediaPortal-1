@@ -620,7 +620,7 @@ namespace TvPlugin
       int maxSubs = TVHome.Card.SubPageCount(currentPageNumber) - 1;
       maxSubs = maxSubs < -1 ? -1 : maxSubs;
 
-      Log.Info("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
+      //Log.Info("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
 
       // Check if the page is available
       if (maxSubs < 0) // we don't have anything yet...
