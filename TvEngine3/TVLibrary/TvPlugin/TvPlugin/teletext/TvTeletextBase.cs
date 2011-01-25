@@ -78,14 +78,35 @@ namespace TvPlugin
     protected bool _rememberLastValues;
     protected int _percentageOfMaximumHeight;
     protected bool _redrawForeground = true;
+    protected bool _showFirstAvailableSubPage = false;
+    protected DateTime _trottling = DateTime.MinValue;
 
     #endregion
 
-    #region Property
+    #region Properties
 
     public override bool IsTv
     {
-      get { return true; }
+      get 
+      { 
+        return true;
+      }
+    }
+
+    public bool Waiting
+    {
+      get
+      { 
+        return _waiting;
+      }
+      set
+      { 
+        if (_waiting != value) {
+          _waiting = value;
+          //_renderer.Waiting = value;
+          RequestUpdate(false);
+        }
+      }
     }
 
     #endregion
@@ -99,6 +120,7 @@ namespace TvPlugin
     protected void InitializeWindow(bool fullscreenMode)
     {
       LoadSettings();
+      _showFirstAvailableSubPage = false;
       _numberOfRequestedUpdates = 0;
 
       lblMessage.Label = "";
@@ -111,6 +133,7 @@ namespace TvPlugin
 
       // Remember the start time
       _startTime = DateTime.MinValue;
+      _trottling = DateTime.MinValue;
 
       // Initialize the render
       _renderer = new TeletextPageRenderer();
@@ -119,6 +142,8 @@ namespace TvPlugin
       _renderer.HiddenMode = _hiddenMode;
       _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       _renderer.PercentageOfMaximumHeight = _percentageOfMaximumHeight;
+
+      _waiting = false;
 
       // Create an update thread and set it's priority to lowest
       _updateThreadStop = false;
@@ -131,7 +156,7 @@ namespace TvPlugin
       // Load the mp logo page into teletext data array
       LoadLogoPage();
       // Request an update
-      _numberOfRequestedUpdates++;
+      RequestUpdate();
     }
 
     protected void Join()
@@ -226,7 +251,7 @@ namespace TvPlugin
           _hiddenMode = !_hiddenMode;
           _renderer.HiddenMode = _hiddenMode;
           // Rerender the image
-          _numberOfRequestedUpdates++;
+          RequestUpdate(false);
           break;
         case Action.ActionType.ACTION_SHOW_INDEXPAGE:
           // Index page
@@ -248,11 +273,11 @@ namespace TvPlugin
       if (currentSubPageNumber < 0x79)
       {
         currentSubPageNumber++;
-        while ((currentSubPageNumber & 0x0F) > 9)
+        while (((currentSubPageNumber + 1) & 0x0F) > 9)
         {
           currentSubPageNumber++;
         }
-        _numberOfRequestedUpdates++;
+        RequestUpdate(false);
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
     }
@@ -265,11 +290,11 @@ namespace TvPlugin
       if (currentSubPageNumber > 0)
       {
         currentSubPageNumber--;
-        while ((currentSubPageNumber % 0x0F) > 9)
+        while (((currentSubPageNumber + 1) & 0x0F) > 9)
         {
           currentSubPageNumber--;
         }
-        _numberOfRequestedUpdates++;
+        RequestUpdate(false);
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
     }
@@ -292,7 +317,7 @@ namespace TvPlugin
         }
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
         return;
@@ -317,7 +342,7 @@ namespace TvPlugin
         }
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
         return;
@@ -350,11 +375,14 @@ namespace TvPlugin
         {
           currentPageNumber = 0x899;
         }
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         inputLine = "";
       }
-      _numberOfRequestedUpdates++;
+      else
+      {
+        RequestUpdate(false);
+      }
     }
 
     /// <summary>
@@ -392,7 +420,7 @@ namespace TvPlugin
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
         currentSubPageNumber = 0;
         inputLine = "";
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
         return;
       }
@@ -408,15 +436,29 @@ namespace TvPlugin
     public override void Process()
     {
       TimeSpan ts = DateTime.Now - _startTime;
+
+      // Only check when no requested updates
+      if (_numberOfRequestedUpdates > 0)
+      {
+        return;
+      }
       // Only every second, we check
       if (ts.TotalMilliseconds < 1000)
       {
         return;
       }
+
+      if (_trottling != DateTime.MinValue && DateTime.Now > _trottling)
+      {
+        currentSubPageNumber = 0; // start from beginning
+        _trottling = DateTime.MinValue;
+        _showFirstAvailableSubPage = true;
+      }
+
       // Still waiting for a page, then request an update again
       if (_waiting)
       {
-        _numberOfRequestedUpdates++;
+        RequestUpdate(_showFirstAvailableSubPage);
         _startTime = DateTime.Now;
         return;
       }
@@ -438,24 +480,33 @@ namespace TvPlugin
       {
         currentPageNumber = 0x899;
       }
-      int NumberOfSubpages = TVHome.Card.SubPageCount(currentPageNumber);
-      if (currentSubPageNumber < NumberOfSubpages)
+      int NumberOfSubpages = TVHome.Card.SubPageCount(currentPageNumber) - 1;
+      NumberOfSubpages = NumberOfSubpages < -1 ? -1 : NumberOfSubpages;
+      if (currentSubPageNumber <= NumberOfSubpages)
       {
         currentSubPageNumber++;
-        while ((currentSubPageNumber & 0x0F) > 9)
+        while (((currentSubPageNumber + 1) & 0x0F) > 9)
         {
           currentSubPageNumber++;
         }
       }
-      if (currentSubPageNumber == NumberOfSubpages)
+      if (currentSubPageNumber > NumberOfSubpages)
       {
-        currentSubPageNumber = 0;
+        byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, 0);
+        if (page == null && _trottling == DateTime.MinValue)
+        {
+          _trottling = DateTime.Now.AddMilliseconds(tsRotation.TotalMilliseconds);
+        }
+        else
+        {
+          currentSubPageNumber = 0;
+        }
       }
 
       Log.Info("dvb-teletext page updated. {0:X}/{1:X} total:{2} rotspeed:{3}", currentPageNumber, currentSubPageNumber,
                NumberOfSubpages, tsRotation.TotalMilliseconds);
       // Request the update
-      _numberOfRequestedUpdates++;
+      RequestUpdate(false);
     }
 
     /// <summary>
@@ -544,7 +595,7 @@ namespace TvPlugin
         imgTeletextForeground.IsVisible = false;
         if (!imgTeletextForeground.LockMemoryImageTexture(out bitmap))
           return;
-        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
+        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber, _waiting);
         imgTeletextForeground.UnLockMemoryImageTexture();
         imgTeletextForeground.IsVisible = true;
       }
@@ -553,7 +604,7 @@ namespace TvPlugin
         imgTeletextBackground.IsVisible = false;
         if (!imgTeletextBackground.LockMemoryImageTexture(out bitmap))
           return;
-        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber);
+        _renderer.RenderPage(ref bitmap, receivedPage, receivedPageNumber, receivedSubPageNumber, _waiting);
         imgTeletextBackground.UnLockMemoryImageTexture();
         imgTeletextBackground.IsVisible = true;
       }
@@ -566,45 +617,106 @@ namespace TvPlugin
     protected void GetNewPage()
     {
       int sub = currentSubPageNumber;
-      int maxSubs = TVHome.Card.SubPageCount(currentPageNumber);
-      Log.Info("dvb-teletext: GetNewPage");
+      int maxSubs = TVHome.Card.SubPageCount(currentPageNumber) - 1;
+      maxSubs = maxSubs < -1 ? -1 : maxSubs;
+
+      Log.Info("dvb-teletext: GetNewPage: page = {0}, subpage = {1}, maxsubpages = {2}", currentPageNumber, currentSubPageNumber, maxSubs);
 
       // Check if the page is available
-      if (maxSubs <= 0)
+      if (maxSubs < 0) // we don't have anything yet...
       {
-        if (receivedPage != null && !_waiting)
+        bool wasWaiting = _waiting;
+        _waiting = true;
+        _renderer.SubPageSelectText = "";
+        if (receivedPage != null)// && !wasWaiting)
         {
           Redraw();
-          Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
+          Log.Info("dvb-teletext: nothing, received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
         return;
       }
-      if (sub >= maxSubs)
+      if (sub > maxSubs)
       {
-        sub = maxSubs - 1;
+        if (_trottling == DateTime.MinValue)
+          sub = maxSubs;
       }
-      // Get the page
-      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, sub);
+      if (sub < 0)
+      {
+        sub = 0;
+      }
+      currentSubPageNumber = sub;
+      _renderer.SubPageSelectText = Convert.ToString(currentSubPageNumber + 1, 16);
+
+      // Try to get the page
+      byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, currentSubPageNumber);
+      if (page == null && _showFirstAvailableSubPage)
+      {
+        page = GetExistingTeletextPage(currentSubPageNumber + 1, maxSubs, ref currentSubPageNumber);
+      }
+
       // Was the page available, then render it. Otherwise render the last page again and update the header line, if
       // it was for the first time
       if (page != null)
       {
+        _startTime = DateTime.Now;
+        _trottling = DateTime.MinValue;
         receivedPage = page;
         receivedPageNumber = currentPageNumber;
         receivedSubPageNumber = currentSubPageNumber;
-        Redraw();
         _waiting = false;
+        _showFirstAvailableSubPage = false;
+        Redraw();
         Log.Info("dvb-teletext: select page {0:X} / subpage {1:X}", currentPageNumber, currentSubPageNumber);
       }
       else
       {
-        if (receivedPage != null && !_waiting)
+        bool wasWaiting = _waiting;
+        _waiting = true;
+        if (receivedPage != null)// && !wasWaiting)
         {
           Redraw();
           Log.Info("dvb-teletext: received page {0:X} / subpage {1:X}", receivedPageNumber, receivedSubPageNumber);
         }
-        _waiting = true;
       }
+    }
+
+    protected byte[] GetExistingTeletextPage(int startSubPage, int maxSubPage, ref int foundPage)
+    {
+      for (int i = startSubPage; i <= maxSubPage; i++)
+      {
+        byte[] page = TVHome.Card.GetTeletextPage(currentPageNumber, i);
+        if (page != null)
+        {
+          foundPage = i;
+          return page;
+        }
+      }
+      return null;
+    }
+
+    protected void RequestUpdate()
+    {
+      RequestUpdate(true);
+    }
+
+    protected void RequestUpdate(bool anySubPage)
+    {
+      _showFirstAvailableSubPage = anySubPage;
+      _numberOfRequestedUpdates++;
+    }
+
+    #endregion
+
+    #region Helper
+
+    protected int Decimal(int bcd)
+    {
+      return ((bcd >> 4) * 10) + bcd % 16;
+    }
+
+    protected int BCD(int dec)
+    {
+      return ((dec / 10) << 4) + (dec % 10);
     }
 
     #endregion

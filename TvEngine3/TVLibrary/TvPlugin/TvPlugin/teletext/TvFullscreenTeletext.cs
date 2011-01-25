@@ -80,7 +80,7 @@ namespace TvPlugin
           _transparentMode = !_transparentMode;
           _renderer.TransparentMode = _transparentMode;
           // Rerender the image
-          _numberOfRequestedUpdates++;
+          RequestUpdate(false);
           break;
       }
       base.OnAction(action);
