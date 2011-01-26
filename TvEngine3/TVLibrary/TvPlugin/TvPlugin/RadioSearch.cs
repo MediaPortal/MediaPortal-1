@@ -589,19 +589,21 @@ namespace TvPlugin
                                       program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               item = new GUIListItem();
-              item.IsFolder = false;
+              
               //check if we are filtering for specific show or just letter
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
                   item.Label = program.Title;
                   item.Label2 = String.Empty;
+                  item.IsFolder = true;
               }
               else
               {
                   //searching for specific show so add episode data to display
                   item.Label = TVUtil.GetDisplayTitle(program);
                   item.Label2 = strTime;
+                  item.IsFolder = false;
               }
               item.Path = program.Title;
               item.TVTag = program;
@@ -734,7 +736,7 @@ namespace TvPlugin
                                              program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
-              item.IsFolder = false;
+              
 
               //check if we are filtering for specific show or just letter
               if (filterShow == String.Empty)
@@ -742,12 +744,13 @@ namespace TvPlugin
                   //not searching for episode data so show just title
                   item.Label = program.Title;
                   item.Label2 = String.Empty;
+                  item.IsFolder = true;
               }
               else
               {
                   //searching for specific show so add episode data to display
                   item.Label = TVUtil.GetDisplayTitle(program);
-                  
+                  item.IsFolder = false;
                   //moved this if statement but can not see it is doing anything?
                   //if (program.StartTime > DateTime.MinValue)
                   //{
@@ -816,23 +819,8 @@ namespace TvPlugin
               }
               if (filterLetter != "#")
               {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
+                programs.Add(program);
+                
                 if (filterShow != String.Empty)
                 {
                   if (program.Title == filterShow)
@@ -862,24 +850,9 @@ namespace TvPlugin
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
-              //check if we are filtering for specific show or just letter
-              if (filterShow == String.Empty)
-              {
-                  //not searching for episode data so show just title
-                  item.Label = program.Title;
-                  item.Label2 = String.Empty;
-              }
-              else
-              {
-                  //searching for specific show so add episode data to display
-                  item.Label = TVUtil.GetDisplayTitle(program);
-
-                  //moved this if statement but can not see it is doing anything?
-                  //if (program.StartTime > DateTime.MinValue)
-                  //{
-                  item.Label2 = strTime;
-                  //}
-              }
+              item.Label = TVUtil.GetDisplayTitle(program);
+              item.Label2 = strTime;
+              
 
               item.Path = program.Title;
               item.TVTag = program;
@@ -1153,32 +1126,32 @@ namespace TvPlugin
           }
           else
           {
-            if (item.IsFolder)
+            Program program = item.TVTag as Program;
+            if (filterShow == String.Empty)
             {
-              if (filterShow != String.Empty)
+              if (item.Label == "..")
               {
-                filterShow = String.Empty;
+                currentLevel = 0;
+                currentGenre = String.Empty;
               }
               else
               {
-                filterLetter = "#";
-                filterShow = String.Empty;
-                filterEpisode = String.Empty;
-                currentGenre = String.Empty;
-                currentLevel = 0;
+                filterShow = program.Title;
               }
               Update();
             }
             else
             {
-              Program program = item.TVTag as Program;
-              if (filterShow == String.Empty)
+              if (item.Label == "..")
               {
-                filterShow = program.Title;
+                filterShow = String.Empty;
                 Update();
-                return;
               }
-              OnRecord(program);
+              else
+              {
+                OnRecord(program);
+              }
+              
             }
           }
           break;
@@ -1382,7 +1355,7 @@ namespace TvPlugin
         prog = item.TVTag as Program;
       }
       
-      if (filterShow == String.Empty || item.Label == ".." || item.IsFolder || prog == null)
+      if (item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;
