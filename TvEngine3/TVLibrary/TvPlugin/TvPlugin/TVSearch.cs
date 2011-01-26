@@ -34,7 +34,7 @@ namespace TvPlugin
 {
   /// <summary>
   /// </summary>
-  public class TvSearch : GUIInternalWindow, IComparer<GUIListItem>
+  public class TvSearch : GUIInternalWindow
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;
@@ -362,7 +362,7 @@ namespace TvPlugin
       int currentItemId = 0;
       listView.Clear();
       titleView.Clear();
-    
+      Dictionary<int, Channel> channelMap = GetChannelMap();
       if (chosenSortMethod == SortMethod.Auto)
       {
         if (filterShow == String.Empty)
@@ -618,7 +618,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -771,7 +771,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -867,7 +867,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -1005,81 +1005,9 @@ namespace TvPlugin
 
     private void OnSort()
     {
-      listView.Sort(this);
-      titleView.Sort(this);
-    }
-
-    public int Compare(GUIListItem item1, GUIListItem item2)
-    {
-      if (item1 == item2)
-      {
-        return 0;
-      }
-      if (item1 == null)
-      {
-        return -1;
-      }
-      if (item2 == null)
-      {
-        return -1;
-      }
-      if (item1.IsFolder && item1.Label == "..")
-      {
-        return -1;
-      }
-      if (item2.IsFolder && item2.Label == "..")
-      {
-        return 1;
-      }
-
-      Program prog1 = item1.TVTag as Program;
-      Program prog2 = item2.TVTag as Program;
-
-      int iComp = 0;
-      switch (currentSortMethod)
-      {
-        case SortMethod.Name:
-          if (sortAscending)
-          {
-            iComp = String.Compare(item1.Label, item2.Label, true);
-          }
-          else
-          {
-            iComp = String.Compare(item2.Label, item1.Label, true);
-          }
-          return iComp;
-
-        case SortMethod.Channel:
-          if (prog1 != null && prog2 != null)
-          {
-            if (sortAscending)
-            {
-              iComp = String.Compare(prog1.ReferencedChannel().DisplayName, prog2.ReferencedChannel().DisplayName, true);
-            }
-            else
-            {
-              iComp = String.Compare(prog2.ReferencedChannel().DisplayName, prog1.ReferencedChannel().DisplayName, true);
-            }
-            return iComp;
-          }
-          return 0;
-
-        case SortMethod.Date:
-          if (prog1 != null && prog2 != null)
-          {
-            if (sortAscending)
-            {
-              iComp = prog1.StartTime.CompareTo(prog2.StartTime);
-            }
-            else
-            {
-              iComp = prog2.StartTime.CompareTo(prog1.StartTime);
-            }
-            return iComp;
-          }
-          return 0;
-      }
-      return iComp;
+      Comparer c = new Comparer(currentSortMethod, sortAscending);
+      listView.Sort(c);
+      titleView.Sort(c);
     }
 
     #endregion
@@ -1185,7 +1113,7 @@ namespace TvPlugin
       }
     }
 
-    private void SetChannelLogo(Program prog, ref GUIListItem item)
+    private void SetChannelLogo(Program prog, ref GUIListItem item, Dictionary<int, Channel> channelMap)
     {
       string strLogo = String.Empty;
 
@@ -1195,7 +1123,8 @@ namespace TvPlugin
       }
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))             
       {
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
+        Channel channel = channelMap[prog.IdChannel];
+        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       }
       
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) {
@@ -1443,5 +1372,109 @@ namespace TvPlugin
     {
       TVHome.UpdateProgressPercentageBar();
     }
+
+    private static Dictionary<int, Channel> GetChannelMap()
+    {
+      Dictionary<int, Channel>  channelMap = new Dictionary<int, Channel>();
+      IList<Channel> channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        channelMap.Add(channel.IdChannel, channel);
+      }
+      return channelMap;
+    }
+
+    private class Comparer : IComparer<GUIListItem>
+    {
+      private Dictionary<int, Channel> channelMap;
+      private SortMethod currentSortMethod;
+      private bool sortAscending;
+      public Comparer(SortMethod currentSortMethod, bool sortAscending)
+      {
+        channelMap = new Dictionary<int, Channel>();
+        this.currentSortMethod = currentSortMethod;
+        this.sortAscending = sortAscending;
+        if (currentSortMethod == SortMethod.Channel)
+        {
+          channelMap = GetChannelMap();
+        }
+      }
+      public int Compare(GUIListItem item1, GUIListItem item2)
+      {
+        if (item1 == item2)
+        {
+          return 0;
+        }
+        if (item1 == null)
+        {
+          return -1;
+        }
+        if (item2 == null)
+        {
+          return -1;
+        }
+        if (item1.IsFolder && item1.Label == "..")
+        {
+          return -1;
+        }
+        if (item2.IsFolder && item2.Label == "..")
+        {
+          return 1;
+        }
+
+        Program prog1 = item1.TVTag as Program;
+        Program prog2 = item2.TVTag as Program;
+
+        int iComp = 0;
+        switch (currentSortMethod)
+        {
+          case SortMethod.Name:
+            if (sortAscending)
+            {
+              iComp = String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              iComp = String.Compare(item2.Label, item1.Label, true);
+            }
+            return iComp;
+
+          case SortMethod.Channel:
+            if (prog1 != null && prog2 != null)
+            {
+              Channel ch1 = channelMap[prog1.IdChannel];
+              Channel ch2 = channelMap[prog2.IdChannel];
+              if (sortAscending)
+              {
+                iComp = String.Compare(ch1.DisplayName, ch2.DisplayName, true);
+              }
+              else
+              {
+                iComp = String.Compare(ch2.DisplayName, ch1.DisplayName, true);
+              }
+              return iComp;
+            }
+            return 0;
+
+          case SortMethod.Date:
+            if (prog1 != null && prog2 != null)
+            {
+              if (sortAscending)
+              {
+                iComp = prog1.StartTime.CompareTo(prog2.StartTime);
+              }
+              else
+              {
+                iComp = prog2.StartTime.CompareTo(prog1.StartTime);
+              }
+              return iComp;
+            }
+            return 0;
+        }
+        return iComp;
+      }
+    }
   }
+
+
 }
