@@ -649,7 +649,6 @@ namespace TvPlugin
 
     private void SetLabels()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       bool showSeries = btnSeries.Selected;
 
       for (int i = 0; i < GetItemCount(); ++i)
@@ -688,8 +687,8 @@ namespace TvPlugin
 
             case (int)ScheduleRecordingType.WorkingDays:
               strTime = String.Format("{0}-{1} {2}-{3}",
-                                      GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWorkingDay)),
-                                      GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWorkingDay)),
+                                      GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWorkingDay)),
+                                      GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWorkingDay)),
                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               strType = GUILocalizeStrings.Get(648);
@@ -698,8 +697,8 @@ namespace TvPlugin
 
             case (int)ScheduleRecordingType.Weekends:
               strTime = String.Format("{0}-{1} {2}-{3}",
-                                      GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWeekendDay)),
-                                      GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWeekendDay)),
+                                      GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWeekendDay)),
+                                      GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWeekendDay)),
                                       rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                       rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
               strType = GUILocalizeStrings.Get(649);
@@ -1029,7 +1028,6 @@ namespace TvPlugin
 
     private void ChangeType(Schedule rec)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
       if (dlg != null)
       {
@@ -1044,8 +1042,8 @@ namespace TvPlugin
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
         switch ((ScheduleRecordingType)rec.ScheduleType)
         {
           case ScheduleRecordingType.Once:
@@ -1164,7 +1162,6 @@ namespace TvPlugin
 
     private string GetScheduleType(Schedule schedule, int type)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       ScheduleRecordingType ScheduleType = (ScheduleRecordingType)type;
       string strType = String.Empty;
       switch (ScheduleType)
@@ -1183,10 +1180,10 @@ namespace TvPlugin
           strType = GUILocalizeStrings.Get(647); //Once
           break;
         case ScheduleRecordingType.WorkingDays:
-          strType = GUILocalizeStrings.Get(weekEndTool.GetText(DayType.WorkingDays)); //Working Days
+          strType = GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.WorkingDays)); //Working Days
           break;
         case ScheduleRecordingType.Weekends:
-          strType = GUILocalizeStrings.Get(weekEndTool.GetText(DayType.WeekendDays)); //Weekend Days
+          strType = GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.WeekendDays)); //Weekend Days
           break;
         case ScheduleRecordingType.Weekly:
           strType = GUILocalizeStrings.Get(679); //Weekly

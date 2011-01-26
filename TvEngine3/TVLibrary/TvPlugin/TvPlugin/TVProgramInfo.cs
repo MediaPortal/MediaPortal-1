@@ -1310,7 +1310,6 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       if (CurrentProgram == null)
       {
         return;
@@ -1331,8 +1330,8 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(i);
         }
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
         dlg.AddLocalizedString(990000); // 990000=Weekly everytime on this channel
 
         dlg.DoModal(GetID);

@@ -19,6 +19,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace TvDatabase
 {
@@ -66,114 +68,124 @@ namespace TvDatabase
   /// </summary>
   public class WeekEndTool
   {
-    private readonly bool _deltaInWorkingDay; // Is there a delta in the first working days?
-    //  False= week starts on Monday.
-    //  True=  week starts on Sunday.
+    #region public method
 
-    /// <summary>
-    /// Interal constructor
-    /// </summary>
-    /// <param name="deltaInWorkingDay">Delta for working day</param>
-    internal WeekEndTool(bool deltaInWorkingDay)
+    private static int GetDayIndex(DayOfWeek day)
     {
-      _deltaInWorkingDay = deltaInWorkingDay;
+      return ((int)day + 7 - (int)GetFirstWorkingDay()) % 7;
     }
 
-    #region public method
+    private static DayOfWeek GetDayByIndex(int dayIndex)
+    {
+      return (DayOfWeek)((dayIndex + (int)GetFirstWorkingDay()) % 7);
+    }
 
     /// <summary>
     /// Returns true if the day is a weekend day
     /// </summary>
     /// <value>true for weekend day, false for working day.</value>
-    public bool IsWeekend(DayOfWeek Today)
+    public static bool IsWeekend(DayOfWeek today)
     {
-      return ((!_deltaInWorkingDay && (Today == DayOfWeek.Saturday || Today == DayOfWeek.Sunday))
-              || (_deltaInWorkingDay && (Today == DayOfWeek.Friday || Today == DayOfWeek.Saturday)));
+      int index = GetDayIndex(today);
+      return index == 5 || index == 6;
+    }
+
+    private static DayOfWeek GetFirstWorkingDay()
+    {
+      return Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
     }
 
     /// <summary>
     /// Returns true if the day is a working day
     /// </summary>
     /// <value>true for working day, false for weekend day.</value>
-    public bool IsWorkingDay(DayOfWeek Today)
+    public static bool IsWorkingDay(DayOfWeek today)
     {
-      return ((!_deltaInWorkingDay && (Today != DayOfWeek.Saturday && Today != DayOfWeek.Sunday))
-              || (_deltaInWorkingDay && (Today != DayOfWeek.Friday && Today != DayOfWeek.Saturday)));
+      return !IsWeekend(today);
     }
 
+    private static int GetText(DayOfWeek dayOfWeek)
+    {
+      switch (dayOfWeek)
+      {
+        case DayOfWeek.Monday:
+          return 657;
+        case DayOfWeek.Tuesday:
+          return 658;
+        case DayOfWeek.Wednesday:
+          return 659;
+        case DayOfWeek.Thursday:
+          return 660;
+        case DayOfWeek.Friday:
+          return 661;
+        case DayOfWeek.Saturday:
+          return 662;
+        case DayOfWeek.Sunday:
+          return 663;
+        default:
+          return -1;
+      }
+    }
     /// <summary>
     /// Returns the localiztion text of a specified week day type
     /// </summary>
-    public int GetText(DayType Day)
+    public static int GetText(DayType dayType)
     {
-      if (!_deltaInWorkingDay) // Working days starting on Monday
+      switch (dayType)
       {
-        if (Day == DayType.FirstWorkingDay)
-          return 657; //657=Mon
-        if (Day == DayType.LastWorkingDay)
-          return 661; //661=Fri
-        if (Day == DayType.FirstWeekendDay)
-          return 662; //662=Sat
-        if (Day == DayType.LastWeekendDay)
-          return 663; //663=Sun
-        if (Day == DayType.WorkingDays)
-          return 680; //680=Mon-Fri
-        if (Day == DayType.Record_WorkingDays)
-          return 672; //672=Record Mon-Fri
-        if (Day == DayType.WeekendDays)
-          return 1050; //1050=Sat-sun
-        if (Day == DayType.Record_WeekendDays)
-          return 1051; //1051=Record Sat-Sun
+        case DayType.FirstWorkingDay:
+          return GetText(GetDayByIndex(0));
+        case DayType.LastWorkingDay:
+          return GetText(GetDayByIndex(4));
+        case DayType.FirstWeekendDay:
+          return GetText(FirstWeekendDay);
+        case DayType.LastWeekendDay:
+          return GetText(SecondWeekendDay);
+        case DayType.WorkingDays:
+          return 680;
+        case DayType.Record_WorkingDays:
+          return 672;
+        case DayType.WeekendDays:
+          return 1050;
+        case DayType.Record_WeekendDays:
+          return 1051;
+        default:
+          return -1;
+
       }
-      else
-      {
-        // Working days starting on Sunday
-        if (Day == DayType.FirstWorkingDay)
-          return 663; //663=Sun
-        if (Day == DayType.LastWorkingDay)
-          return 660; //660=Thu
-        if (Day == DayType.FirstWeekendDay)
-          return 661; //661=Fri
-        if (Day == DayType.LastWeekendDay)
-          return 662; //662=Sat
-        if (Day == DayType.WorkingDays)
-          return 1059; //1059=Sun-Thu
-        if (Day == DayType.Record_WorkingDays)
-          return 1057; //1057=Record Sun-Thu
-        if (Day == DayType.WeekendDays)
-          return 1060; //1060=Fri-Sat
-        if (Day == DayType.Record_WeekendDays)
-          return 1058; //1058=Record Fri-Sat
-      }
-      return -1;
     }
 
     /// <summary>
     /// Is this the first day of the weekend?
     /// </summary>
     /// <value>true for the first weekend day.</value>
-    public bool IsFirstWeekendDay(DayOfWeek Today)
+    public static bool IsFirstWeekendDay(DayOfWeek today)
     {
-      return (!_deltaInWorkingDay && (Today == DayOfWeek.Saturday))
-             || (_deltaInWorkingDay && (Today == DayOfWeek.Friday));
+      return today == FirstWeekendDay;
     }
 
     /// <summary>
     /// Returns the value of the first weekend day.
     /// </summary>
     /// <value>the first weekend day</value>
-    public DayOfWeek FirstWeekendDay
+    public static DayOfWeek FirstWeekendDay
     {
-      get { return !_deltaInWorkingDay ? (DayOfWeek.Saturday) : (DayOfWeek.Friday); }
+      get
+      {
+        return GetDayByIndex(5);
+      }
     }
 
     /// <summary>
     /// Returns the value of the second weekend day.
     /// </summary>
     /// <value>the second weekend day</value>
-    public DayOfWeek SecondWeekendDay
+    public static DayOfWeek SecondWeekendDay
     {
-      get { return !_deltaInWorkingDay ? (DayOfWeek.Sunday) : (DayOfWeek.Saturday); }
+      get
+      {
+        return GetDayByIndex(6);
+      }
     }
 
     /// <summary>
@@ -181,9 +193,14 @@ namespace TvDatabase
     /// numbers suitable for use in SQL queries
     /// </summary>
     /// <value>the weekend days list</value>
-    public string SqlWeekendDays
+    public static string SqlWeekendDays
     {
-      get { return !_deltaInWorkingDay ? "1,7" : "6,7"; }
+      get
+      {
+        int firstWeekend = (int) FirstWeekendDay + 1;
+        int secondWeekend = (int) SecondWeekendDay + 1;
+        return "" + firstWeekend + "," + secondWeekend;
+      }
     }
 
     /// <summary>
@@ -191,9 +208,22 @@ namespace TvDatabase
     /// numbers suitable for use in SQL queries
     /// </summary>
     /// <value>the working days list</value>
-    public string SqlWorkingDays
+    public static string SqlWorkingDays
     {
-      get { return !_deltaInWorkingDay ? "2,3,4,5,6" : "1,2,3,4,5"; }
+      get
+      {
+        string result = "";
+        for (int i = 0; i < 5; i++)
+        {
+          int sqlDayNumber = (int)GetDayByIndex(i) + 1;
+          if (i != 0)
+          {
+            result += ",";
+          }
+          result += sqlDayNumber;
+        }
+        return result;
+      }
     }
 
     #endregion

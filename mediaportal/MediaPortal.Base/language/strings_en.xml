@@ -603,7 +603,7 @@
     <String id="669">Sort by: Genre</String>
     <String id="670">Sort by: Bit-rate</String>
     <String id="671">Sort by: Watched</String>
-    <String id="672">Record Mon-Fri</String>
+    <String id="672">Record Weekdays</String>
     <String id="673">Scroll speed</String>
     <String id="674">GUI Settings</String>
     <String id="675">Example:</String>
@@ -611,7 +611,7 @@
     <String id="677">times</String>
     <String id="678">Sort by: Genre</String>
     <String id="679">Weekly</String>
-    <String id="680">Mon-Fri</String>
+    <String id="680">Weekdays</String>
     <String id="681">Waiting</String>
     <String id="682">Recording</String>
     <String id="683">Finished</String>
@@ -929,17 +929,13 @@
     <String id="1047">Start in fullscreen mode</String>
     <String id="1048">Settings</String>
     <String id="1049">Hibernate</String>
-    <String id="1050">Sat-Sun</String>
-    <String id="1051">Record Sat-Sun</String>
+    <String id="1050">Weekends</String>
+    <String id="1051">Record Weekends</String>
     <String id="1052">Songs</String>
     <String id="1053">Unknown caller</String>
     <String id="1054">(recording)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(unavailable)</String>
-    <String id="1057">Record Sun-Thu</String>
-    <String id="1058">Record Fri-Sat</String>
-    <String id="1059">Sun-Thu</String>
-    <String id="1060">Fri-Sat</String>
     <String id="1061">Removable</String>
     <String id="1062">Object</String>
     <String id="1064">Bookmarks</String>

@@ -585,16 +585,12 @@ namespace TvDatabase
 
     private static void AddWeekendsConstraint(SqlBuilder sb, string timeField)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
-
-      AddWeekdayConstraint(sb, timeField, weekEndTool.SqlWeekendDays);
+      AddWeekdayConstraint(sb, timeField, WeekEndTool.SqlWeekendDays);
     }
 
     private static void AddWorkingDaysConstraint(SqlBuilder sb, string timeField)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
-
-      AddWeekdayConstraint(sb, timeField, weekEndTool.SqlWorkingDays);
+      AddWeekdayConstraint(sb, timeField, WeekEndTool.SqlWorkingDays);
     }
 
     #endregion

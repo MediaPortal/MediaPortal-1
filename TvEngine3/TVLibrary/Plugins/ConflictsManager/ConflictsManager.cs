@@ -522,7 +522,6 @@ namespace TvEngine
     /// <returns>a collection containing the Weekends schedules</returns>
     private void getWeekendsSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -533,7 +532,7 @@ namespace TvEngine
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if (weekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
+          if (WeekEndTool.IsWeekend(tempDate.DayOfWeek) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = schedule.Clone();
 
@@ -575,7 +574,6 @@ namespace TvEngine
     /// <returns>a collection containing the WorkingDays schedules</returns>
     private void getWorkingDaysSchedules(IList<Schedule> schedulesList, IList<Schedule> refFillList)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       foreach (Schedule schedule in schedulesList)
       {
         ScheduleRecordingType scheduleType = (ScheduleRecordingType)schedule.ScheduleType;
@@ -586,7 +584,7 @@ namespace TvEngine
         for (int i = 0; i <= 30; i++)
         {
           tempDate = DateTime.Now.AddDays(i);
-          if ((weekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
+          if ((WeekEndTool.IsWorkingDay(tempDate.DayOfWeek)) && (tempDate.Date >= schedule.StartTime.Date))
           {
             Schedule tempSchedule = schedule.Clone();
 

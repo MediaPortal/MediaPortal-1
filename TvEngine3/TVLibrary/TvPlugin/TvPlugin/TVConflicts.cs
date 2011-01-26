@@ -219,7 +219,6 @@ namespace TvPlugin
 
     private void SetLabels()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       for (int i = 0; i < GetItemCount(); ++i)
       {
         GUIListItem item = GetItem(i);
@@ -255,8 +254,8 @@ namespace TvPlugin
 
           case (int)ScheduleRecordingType.WorkingDays:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWorkingDay)),
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWorkingDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWorkingDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWorkingDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(648);
@@ -265,8 +264,8 @@ namespace TvPlugin
 
           case (int)ScheduleRecordingType.Weekends:
             strTime = String.Format("{0}-{1} {2}-{3}",
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.FirstWeekendDay)),
-                                    GUILocalizeStrings.Get(weekEndTool.GetText(DayType.LastWeekendDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.FirstWeekendDay)),
+                                    GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.LastWeekendDay)),
                                     rec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                     rec.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
             strType = GUILocalizeStrings.Get(649);
