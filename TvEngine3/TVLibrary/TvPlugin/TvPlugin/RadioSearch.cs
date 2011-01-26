@@ -163,10 +163,6 @@ namespace TvPlugin
         }
         //btnLetter.AddSubItem("#");  // => will be everything beside a-z
       }
-      if (currentSearchMode == SearchMode.Description)
-      {
-        currentSearchMode = SearchMode.Title;
-      }
       Update();
 
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
@@ -1436,6 +1432,7 @@ namespace TvPlugin
       if (currentSearchMode == SearchMode.Description)
       {
         if (btnSearchDescription != null) btnSearchDescription.Selected = true;
+        if (btnViewBy != null) btnViewBy.Label = GUILocalizeStrings.Get(1521);
       }
     }
 
