@@ -1194,14 +1194,14 @@ namespace TvPlugin
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
 
-      if (!File.Exists(strLogo) || strLogo == String.Empty)
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         strLogo = Utils.GetCoverArt(Thumbs.Radio, prog.ReferencedChannel().DisplayName);
       }
 
-      if (!File.Exists(strLogo))
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        strLogo = "defaultVideoBig.png";
+        strLogo = "defaultMyradioBig.png";
       }
 
       item.ThumbnailImage = strLogo;
@@ -1400,15 +1400,13 @@ namespace TvPlugin
         lblChannel.Label = prog.ReferencedChannel().DisplayName;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
-      if (File.Exists(strLogo))
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, prog.ReferencedChannel().DisplayName);
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        GUIPropertyManager.SetProperty("#Radio.Search.thumb", strLogo);
+        strLogo = "defaultMyradioBig.png";
       }
-      else
-      {
-        GUIPropertyManager.SetProperty("#Radio.Search.thumb", "defaultVideoBig.png");
-      }
+      
+      GUIPropertyManager.SetProperty("#Radio.Search.thumb", strLogo);
     }
 
     private void UpdateButtonStates()

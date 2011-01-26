@@ -1193,12 +1193,12 @@ namespace TvPlugin
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
-      if (string.IsNullOrEmpty(strLogo))             
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))             
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
       }
-      else
-      {
+      
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) {
         strLogo = "defaultVideoBig.png";
       }
 
@@ -1399,14 +1399,12 @@ namespace TvPlugin
       }
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
-      if (string.IsNullOrEmpty(strLogo))                   
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", "defaultVideoBig.png");
+        strLogo = "defaultVideoBig.png";
       }
-      else
-      {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);        
-      }
+
+      GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);
     }
 
     private void UpdateButtonStates()
