@@ -355,7 +355,6 @@ Section "MediaPortal core files (required)" SecCore
     /x MediaPortalDirs.xml \
     /x wikipedia.xml \
     /x mtn.c \
-	/x log4net.config \
     "
 	
   #Special build for Heise needs some files excluded.
@@ -410,8 +409,7 @@ Section "MediaPortal core files (required)" SecCore
   File /nonfatal "${MEDIAPORTAL.BASE}\eHome Infrared Transceiver List XP.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\keymap.xml"
   File /nonfatal "${MEDIAPORTAL.BASE}\wikipedia.xml"
-  File /nonfatal "${MEDIAPORTAL.BASE}\log4net.config"
-  
+
   SetOutPath "$MPdir.Config\scripts\MovieInfo"
   File /nonfatal "${MEDIAPORTAL.BASE}\scripts\MovieInfo\IMDB.csscript"
 
@@ -523,7 +521,6 @@ SectionEnd
   Delete "$MPdir.Config\eHome Infrared Transceiver List XP.xml"
   Delete "$MPdir.Config\keymap.xml"
   Delete "$MPdir.Config\wikipedia.xml"
-  Delete "$MPdir.Config\log4net.config"
 
   Delete "$MPdir.Config\Installer\cleanup.xml"
   RMDir "$MPdir.Config\Installer"
