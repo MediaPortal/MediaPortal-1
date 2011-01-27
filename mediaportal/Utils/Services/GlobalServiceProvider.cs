@@ -18,6 +18,7 @@
 
 #endregion
 
+using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.Threading;
 
@@ -110,7 +111,8 @@ namespace MediaPortal.Services
 
     private static ILog LogServiceRequested(ServiceProvider services)
     {
-      ILog log = new LogImpl();
+      //ILog log = new LogImpl();
+      ILog log = new Log4netLogger();
       services.Add<ILog>(log);
       return log;
     }

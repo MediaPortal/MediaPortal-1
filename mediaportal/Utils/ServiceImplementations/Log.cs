@@ -47,7 +47,7 @@ namespace MediaPortal.ServiceImplementations
 
     public static void Info(LogType type, string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().Info(type, format, arg);
+      //GlobalServiceProvider.Get<ILog>().Info(type, format, arg);
     }
 
     public static void Error(string format, params object[] arg)
@@ -62,7 +62,7 @@ namespace MediaPortal.ServiceImplementations
 
     public static void Error(LogType type, string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().Error(type, format, arg);
+      //GlobalServiceProvider.Get<ILog>().Error(type, format, arg);
     }
 
     public static void Warn(string format, params object[] arg)
@@ -72,7 +72,7 @@ namespace MediaPortal.ServiceImplementations
 
     public static void Warn(LogType type, string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().Warn(type, format, arg);
+      //GlobalServiceProvider.Get<ILog>().Warn(type, format, arg);
     }
 
     public static void Debug(string format, params object[] arg)
@@ -82,10 +82,10 @@ namespace MediaPortal.ServiceImplementations
 
     public static void Debug(LogType type, string format, params object[] arg)
     {
-      GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
+      //GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
     }
 
-    public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
+    /*public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
     {
       GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
     }
@@ -94,7 +94,7 @@ namespace MediaPortal.ServiceImplementations
     {
       GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
     }
-
+    */
     public static void SetLogLevel(Level logLevel)
     {
       GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);

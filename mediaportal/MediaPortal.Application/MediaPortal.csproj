@@ -259,6 +259,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="MediaPortal.exe.manifest" />
     <None Include="PostBuild.bat" />
     <Compile Include="..\..\Common-MP-TVE3\SolutionInfo.cs">
