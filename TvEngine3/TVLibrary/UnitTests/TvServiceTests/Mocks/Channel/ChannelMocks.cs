@@ -13,7 +13,7 @@ namespace TVServiceTests.Mocks.Channel
       List<ChannelMap> channelMaps = new List<ChannelMap>();
       channelMaps.Add(channelMap);
       TvDatabase.Channel channel = Isolate.Fake.Instance<TvDatabase.Channel>();
-      Isolate.WhenCalled(() => channel.Name).WillReturn("Test Channel");
+      Isolate.WhenCalled(() => channel.DisplayName).WillReturn("Test Channel");
       Isolate.WhenCalled(() => channel.ReferringChannelMap()).WillReturn(channelMaps);
       return channel;
     }
