@@ -82,7 +82,6 @@ namespace MediaPortal.Configuration.Sections
     private ColumnHeader columnHeader8;
     private TabPage tabPage1;
     private MPGroupBox mpGroupBox7;
-    private MPCheckBox chkTVnotifications;
     private MPLabel mpLabel2;
     private MPTextBox txtNotifyBefore;
     private MPGroupBox mpGroupBox8;
@@ -155,7 +154,6 @@ namespace MediaPortal.Configuration.Sections
         mpTextBoxMacAddress.Text = xmlreader.GetValueAsString("tvservice", "macAddress", "00:00:00:00:00:00");
 
         chkRecnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
-        chkTVnotifications.Checked = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         txtNotifyBefore.Text = xmlreader.GetValueAsString("mytv", "notifyTVBefore", "300");
         txtNotifyAfter.Text = xmlreader.GetValueAsString("mytv", "notifyTVTimeout", "15");
         checkBoxNotifyPlaySound.Checked = xmlreader.GetValueAsBool("mytv", "notifybeep", true);
@@ -167,7 +165,6 @@ namespace MediaPortal.Configuration.Sections
         comboboxShowEpisodeInfo.SelectedIndex = showEpisodeinfo;
       }
 
-      chkTVnotifications_CheckedChanged(null, null);
       mpCheckBoxIsWakeOnLanEnabled_CheckedChanged(null, null);
 
       // Enable this Panel if the TvPlugin exists in the plug-in Directory
@@ -333,7 +330,6 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("tvservice", "macAddress", mpTextBoxMacAddress.Text);
 
         xmlwriter.SetValueAsBool("mytv", "enableRecNotifier", chkRecnotifications.Checked);
-        xmlwriter.SetValueAsBool("mytv", "enableTvNotifier", chkTVnotifications.Checked);
         xmlwriter.SetValue("mytv", "notifyTVBefore", txtNotifyBefore.Text);
         xmlwriter.SetValue("mytv", "notifyTVTimeout", txtNotifyAfter.Text);
         xmlwriter.SetValueAsBool("mytv", "notifybeep", checkBoxNotifyPlaySound.Checked);
@@ -428,7 +424,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxNotifyPlaySound = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtNotifyBefore = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.chkTVnotifications = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.mpGroupBox2.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.tabControlTVGeneral.SuspendLayout();
@@ -1129,7 +1124,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox7.Controls.Add(this.checkBoxNotifyPlaySound);
       this.mpGroupBox7.Controls.Add(this.mpLabel2);
       this.mpGroupBox7.Controls.Add(this.txtNotifyBefore);
-      this.mpGroupBox7.Controls.Add(this.chkTVnotifications);
       this.mpGroupBox7.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.mpGroupBox7.Location = new System.Drawing.Point(16, 16);
       this.mpGroupBox7.Name = "mpGroupBox7";
@@ -1192,18 +1186,6 @@ namespace MediaPortal.Configuration.Sections
       this.txtNotifyBefore.Size = new System.Drawing.Size(229, 20);
       this.txtNotifyBefore.TabIndex = 7;
       this.txtNotifyBefore.Text = "300";
-      // 
-      // chkTVnotifications
-      // 
-      this.chkTVnotifications.AutoSize = true;
-      this.chkTVnotifications.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.chkTVnotifications.Location = new System.Drawing.Point(22, 19);
-      this.chkTVnotifications.Name = "chkTVnotifications";
-      this.chkTVnotifications.Size = new System.Drawing.Size(336, 17);
-      this.chkTVnotifications.TabIndex = 0;
-      this.chkTVnotifications.Text = "Enabled (shows a notification when a TV program is about to start)";
-      this.chkTVnotifications.UseVisualStyleBackColor = true;
-      this.chkTVnotifications.CheckedChanged += new System.EventHandler(this.chkTVnotifications_CheckedChanged);
       // 
       // TVClient
       // 
@@ -1364,26 +1346,6 @@ namespace MediaPortal.Configuration.Sections
           mplistView.Items.RemoveAt(index);
           mplistView.Items.Insert(index - 1, item);
         }
-      }
-    }
-
-    private void chkTVnotifications_CheckedChanged(object sender, EventArgs e)
-    {
-      if (chkTVnotifications.Checked)
-      {
-        txtNotifyAfter.Enabled = true;
-        txtNotifyBefore.Enabled = true;
-        checkBoxNotifyPlaySound.Enabled = true;
-        labelNotifyTimeout.Enabled = true;
-        mpLabel2.Enabled = true;
-      }
-      else
-      {
-        txtNotifyAfter.Enabled = false;
-        txtNotifyBefore.Enabled = false;
-        checkBoxNotifyPlaySound.Enabled = false;
-        labelNotifyTimeout.Enabled = false;
-        mpLabel2.Enabled = false;
       }
     }
 

@@ -32,6 +32,8 @@ namespace SetupTv.Sections
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestChannels));
       this.mpLabelChannel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.lblIgnored = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.txtIgnored = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.lblDisc = new MediaPortal.UserInterface.Controls.MPLabel();
       this.txtDisc = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.lblFirstFail = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -97,6 +99,8 @@ namespace SetupTv.Sections
       // 
       this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Controls.Add(this.lblIgnored);
+      this.mpGroupBox1.Controls.Add(this.txtIgnored);
       this.mpGroupBox1.Controls.Add(this.lblDisc);
       this.mpGroupBox1.Controls.Add(this.txtDisc);
       this.mpGroupBox1.Controls.Add(this.lblFirstFail);
@@ -122,6 +126,25 @@ namespace SetupTv.Sections
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Status:";
       // 
+      // lblIgnored
+      // 
+      this.lblIgnored.AutoSize = true;
+      this.lblIgnored.Location = new System.Drawing.Point(222, 156);
+      this.lblIgnored.Name = "lblIgnored";
+      this.lblIgnored.Size = new System.Drawing.Size(46, 13);
+      this.lblIgnored.TabIndex = 80;
+      this.lblIgnored.Text = "Ignored:";
+      // 
+      // txtIgnored
+      // 
+      this.txtIgnored.Location = new System.Drawing.Point(268, 151);
+      this.txtIgnored.Name = "txtIgnored";
+      this.txtIgnored.ReadOnly = true;
+      this.txtIgnored.Size = new System.Drawing.Size(46, 20);
+      this.txtIgnored.TabIndex = 79;
+      this.txtIgnored.Text = "0";
+      this.txtIgnored.Value = 0;
+      // 
       // lblDisc
       // 
       this.lblDisc.AutoSize = true;
@@ -133,7 +156,7 @@ namespace SetupTv.Sections
       // 
       // txtDisc
       // 
-      this.txtDisc.Location = new System.Drawing.Point(266, 173);
+      this.txtDisc.Location = new System.Drawing.Point(268, 172);
       this.txtDisc.Name = "txtDisc";
       this.txtDisc.ReadOnly = true;
       this.txtDisc.Size = new System.Drawing.Size(46, 20);
@@ -265,7 +288,7 @@ namespace SetupTv.Sections
       // lblTotal
       // 
       this.lblTotal.AutoSize = true;
-      this.lblTotal.Location = new System.Drawing.Point(222, 155);
+      this.lblTotal.Location = new System.Drawing.Point(350, 176);
       this.lblTotal.Name = "lblTotal";
       this.lblTotal.Size = new System.Drawing.Size(34, 13);
       this.lblTotal.TabIndex = 70;
@@ -273,7 +296,7 @@ namespace SetupTv.Sections
       // 
       // txtTotal
       // 
-      this.txtTotal.Location = new System.Drawing.Point(266, 151);
+      this.txtTotal.Location = new System.Drawing.Point(394, 172);
       this.txtTotal.Name = "txtTotal";
       this.txtTotal.ReadOnly = true;
       this.txtTotal.Size = new System.Drawing.Size(46, 20);
@@ -643,5 +666,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader cardName;
     private System.Windows.Forms.ColumnHeader subchannels;
     private MediaPortal.UserInterface.Controls.MPCheckBox chkSynch;
+    private MediaPortal.UserInterface.Controls.MPLabel lblIgnored;
+    private MediaPortal.UserInterface.Controls.MPNumericTextBox txtIgnored;
   }
 }

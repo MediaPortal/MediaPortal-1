@@ -119,7 +119,6 @@ namespace TvPlugin
     [SkinControl(2)] protected GUIButtonControl btnRecord = null;
     [SkinControl(3)] protected GUIButtonControl btnAdvancedRecord = null;
     [SkinControl(4)] protected GUIButtonControl btnKeep = null;
-    [SkinControl(5)] protected GUIToggleButtonControl btnNotify = null;
     [SkinControl(11)]
     protected GUILabelControl lblUpcomingEpsiodes = null;
     [SkinControl(10)] protected GUIListControl lstUpcomingEpsiodes = null;
@@ -128,7 +127,6 @@ namespace TvPlugin
     [SkinControl(8)] protected GUIButtonControl btnPreRecord = null;
     [SkinControl(9)] protected GUIButtonControl btnPostRecord = null;
 
-    private bool _notificationEnabled;
     private static Program currentProgram;
     private static Program initialProgram;
     private static Schedule currentSchedule;
@@ -158,10 +156,6 @@ namespace TvPlugin
 
     private void LoadSettings()
     {
-      using (Settings xmlreader = new MPSettings())
-      {
-        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
-      }
     }
 
     #endregion
@@ -260,10 +254,6 @@ namespace TvPlugin
       if (control == btnAdvancedRecord)
       {
         OnAdvancedRecord();
-      }
-      if (control == btnNotify)
-      {
-        OnNotify();
       }
       if (control == lstUpcomingEpsiodes)
       {
@@ -481,17 +471,6 @@ namespace TvPlugin
         //check if we are recording this program
         CheckRecordingStatus();
 
-        if (_notificationEnabled)
-        {
-          btnNotify.Disabled = false;
-          btnNotify.Selected = CurrentProgram.Notify;
-        }
-        else
-        {
-          btnNotify.Selected = false;
-          btnNotify.Disabled = true;
-        }
-
         PopulateListviewWithUpcomingEpisodes(lastSelectedProgram);
       }
       catch (Exception ex)
@@ -611,7 +590,7 @@ namespace TvPlugin
         }
         else
         {
-          if (episode.Notify && _notificationEnabled)
+          if (episode.Notify)
           {
             item.PinImage = Thumbs.TvNotifyIcon;
           }
@@ -1310,7 +1289,6 @@ namespace TvPlugin
 
     private void OnAdvancedRecord()
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       if (CurrentProgram == null)
       {
         return;
@@ -1331,8 +1309,8 @@ namespace TvPlugin
         {
           dlg.AddLocalizedString(i);
         }
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
         dlg.AddLocalizedString(990000); // 990000=Weekly everytime on this channel
 
         dlg.DoModal(GetID);
@@ -1405,25 +1383,6 @@ namespace TvPlugin
         }
       }
       Update();
-    }
-
-    private void OnNotify()
-    {
-      if (CurrentProgram == null)
-      {
-        return;
-      }
-
-      CurrentProgram.Notify = !CurrentProgram.Notify;
-
-      // get the right db instance of current prog before we store it
-      // currentProgram is not a ref to the real entity
-      Program modifiedProg = Program.RetrieveByTitleTimesAndChannel(CurrentProgram.Title, CurrentProgram.StartTime,
-                                                                    CurrentProgram.EndTime, CurrentProgram.IdChannel);
-      modifiedProg.Notify = CurrentProgram.Notify;
-      modifiedProg.Persist();
-      Update();
-      TvNotifyManager.OnNotifiesChanged();
     }
 
     private void OnKeep()

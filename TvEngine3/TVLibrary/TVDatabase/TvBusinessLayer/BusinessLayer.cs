@@ -2882,10 +2882,9 @@ namespace TvDatabase
 
       if (rec.ScheduleType == (int)ScheduleRecordingType.WorkingDays)
       {
-        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
         for (int i = 0; i < days; ++i)
         {
-          if (weekEndTool.IsWorkingDay(dtDay.DayOfWeek))
+          if (WeekEndTool.IsWorkingDay(dtDay.DayOfWeek))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;
@@ -2920,11 +2919,10 @@ namespace TvDatabase
         IList<Program> progList = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
                                                               rec.ReferencedChannel());
 
-        WeekEndTool weekEndTool = Setting.GetWeekEndTool();
         foreach (Program prog in progList)
         {
           if ((rec.IsRecordingProgram(prog, false)) &&
-              (weekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
+              (WeekEndTool.IsWeekend(prog.StartTime.DayOfWeek)))
           {
             Schedule recNew = rec.Clone();
             recNew.ScheduleType = (int)ScheduleRecordingType.Once;

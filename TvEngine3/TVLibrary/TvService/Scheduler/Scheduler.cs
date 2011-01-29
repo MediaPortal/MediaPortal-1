@@ -773,8 +773,7 @@ namespace TvService
     {
       isTimeToRecord = false;
       RecordingDetail newRecording = null;
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
-      if (weekEndTool.IsWorkingDay(currentTime.DayOfWeek))
+      if (WeekEndTool.IsWorkingDay(currentTime.DayOfWeek))
       {
         newRecording = CreateNewRecordingDetail(schedule, currentTime);
         isTimeToRecord = (newRecording != null);
@@ -786,8 +785,7 @@ namespace TvService
     {
       isTimeToRecord = false;
       RecordingDetail newRecording = null;
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
-      if (weekEndTool.IsWeekend(currentTime.DayOfWeek))
+      if (WeekEndTool.IsWeekend(currentTime.DayOfWeek))
       {
         newRecording = CreateNewRecordingDetail(schedule, currentTime);
         isTimeToRecord = (newRecording != null);

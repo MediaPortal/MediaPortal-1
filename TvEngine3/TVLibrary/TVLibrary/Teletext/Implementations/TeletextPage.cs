@@ -174,18 +174,17 @@ namespace TvLibrary.Teletext
         //invalid subpage 
         return;
       }
+
       if (SubPageExists(subPageNumber))
       {
         if (PageDiffers(pageData, subPageNumber))
         {
-          Trace.WriteLine(String.Format("page:{0:X}/{1:X} updated {2}", pageNumber, subPageNumber, vbiLines));
           isUpdate = true;
           UpdatePage(subPageNumber, pageData);
         }
       }
 
-
-      if (_numberOfSubPages > 0 && subPageNumber != _numberOfSubPages)
+      if (_numberOfSubPages > 0 && subPageNumber != _previousSubPageNumber)
       {
         _rotationTime = DateTime.Now - _lastTimeRoulated;
         if (RotationTime.TotalSeconds < 1)
@@ -193,51 +192,30 @@ namespace TvLibrary.Teletext
         if (RotationTime.TotalSeconds > 15)
           _rotationTime = new TimeSpan(0, 0, 15);
       }
-      if (subPageNumber == _numberOfSubPages + 1)
-      {
-        //received a new subpage        
-        //if (pageNumber == 0x600)
-        // Trace.WriteLine(String.Format(" subpage added total:{0} prev:{1}", _numberOfSubPages, _previousSubPageNumber));
 
+      if (subPageNumber > _numberOfSubPages)
+      {
+        // new subpage received
+        if (!SubPageExists(subPageNumber))
+        {
+          AllocPage(subPageNumber, pageData);
+        }
         _lastTimeRoulated = DateTime.Now;
         _lastTimeReceived = DateTime.Now;
         _numberOfSubPages = subPageNumber;
         _previousSubPageNumber = subPageNumber;
-        if (!SubPageExists(subPageNumber))
-        {
-          AllocPage(subPageNumber, pageData);
-        }
-        _lastTimeReceived = DateTime.Now;
         isNew = true;
-        return;
-      }
-
-      if (subPageNumber > _numberOfSubPages)
-      {
-        _lastTimeRoulated = DateTime.Now;
-        _lastTimeReceived = DateTime.Now;
-        _numberOfSubPages++;
-        subPageNumber = _numberOfSubPages;
-        _previousSubPageNumber = subPageNumber;
-        if (!SubPageExists(subPageNumber))
-        {
-          AllocPage(subPageNumber, pageData);
-        }
-        _lastTimeReceived = DateTime.Now;
-        isNew = true;
-
         return;
       }
 
       if (subPageNumber == _previousSubPageNumber)
       {
         //same subpage received
-        //if (pageNumber == 0x600) Trace.WriteLine("Same subpage");
-        _lastTimeReceived = DateTime.Now;
         if (!SubPageExists(subPageNumber))
         {
           AllocPage(subPageNumber, pageData);
         }
+        _lastTimeReceived = DateTime.Now;
 
         return;
       }
@@ -245,46 +223,45 @@ namespace TvLibrary.Teletext
       if (subPageNumber < _previousSubPageNumber)
       {
         _lastTimeReceived = DateTime.Now;
+        _lastTimeRoulated = DateTime.Now;
         if (_previousSubPageNumber == _numberOfSubPages)
         {
           //normal roulation
-          //if (pageNumber == 0x600)
-          //Trace.WriteLine(String.Format(" from {0}->0", _previousSubPageNumber, subPageNumber));
-          _lastTimeRoulated = DateTime.Now;
-          _previousSubPageNumber = subPageNumber;
           if (!SubPageExists(subPageNumber))
           {
             AllocPage(subPageNumber, pageData);
           }
+          _previousSubPageNumber = subPageNumber;
         }
         else
         {
-          //          Trace.WriteLine(String.Format(" from {0}->{1} remove subs", _previousSubPageNumber, subPageNumber));
           //subpage removed
           for (int i = _previousSubPageNumber + 1; i <= 0x80; ++i)
           {
             FreePage(i);
           }
+
           _numberOfSubPages = _previousSubPageNumber;
           _previousSubPageNumber = subPageNumber;
-          isDeleted = true;
 
           if (!SubPageExists(subPageNumber))
           {
             AllocPage(subPageNumber, pageData);
           }
+
+          isDeleted = true;
         }
       }
       else
       {
-        //if (pageNumber == 0x600)
-        //Trace.WriteLine(String.Format(" from {0}->{1}", _previousSubPageNumber, subPageNumber));
         _lastTimeReceived = DateTime.Now;
+        _lastTimeRoulated = DateTime.Now;
         if (!SubPageExists(subPageNumber))
         {
           AllocPage(subPageNumber, pageData);
         }
       }
+
       _previousSubPageNumber = subPageNumber;
       _lastTimeReceived = DateTime.Now;
     }

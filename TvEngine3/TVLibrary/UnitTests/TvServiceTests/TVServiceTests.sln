@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvControl", "..\..\TvContro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TVLibrary", "..\..\TVLibrary\TVLibrary.csproj", "{59C2EBC8-0FEA-4B2E-B5D1-476347332331}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBase", "..\..\Plugins\PluginBase\PluginBase.csproj", "{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -77,6 +81,22 @@ Global
 		{59C2EBC8-0FEA-4B2E-B5D1-476347332331}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59C2EBC8-0FEA-4B2E-B5D1-476347332331}.Release|x86.ActiveCfg = Release|x86
 		{59C2EBC8-0FEA-4B2E-B5D1-476347332331}.Release|x86.Build.0 = Release|x86
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Debug|x86.ActiveCfg = Debug|x86
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Debug|x86.Build.0 = Debug|x86
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Release|x86.ActiveCfg = Release|x86
+		{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}.Release|x86.Build.0 = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.ActiveCfg = Debug|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.Build.0 = Debug|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.ActiveCfg = Release|x86
+		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

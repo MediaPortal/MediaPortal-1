@@ -55,6 +55,7 @@ namespace SetupTv.Sections
     private int _rndTo;
     private bool _running;
     private int _succeeded;
+    private int _ignored;
     private int _total;
     private int _tunedelay;
     private bool _usersShareChannels;
@@ -149,7 +150,7 @@ namespace SetupTv.Sections
       while (_running)
       {
         try
-        {          
+        {
           List<List<Channel>> channelChunks = null;
 
           if (_usersShareChannels)
@@ -235,6 +236,7 @@ namespace SetupTv.Sections
         txtDisc.Value = 0;
         _total = 0;
         _succeeded = 0;
+        _ignored = 0;
         _failed = 0;
         _avg = 0;
         _firstFail = 0;
@@ -272,7 +274,7 @@ namespace SetupTv.Sections
       int nextRowIndexForDiscUpdate = -1;
       try
       {
-        _users[user.Name] = true;        
+        _users[user.Name] = true;
         foreach (Channel ch in channels)
         {
           if (!_running)
@@ -302,7 +304,7 @@ namespace SetupTv.Sections
         }
         catch (Exception)
         {
-          
+
         }
         _users[user.Name] = false;
       }
@@ -330,9 +332,8 @@ namespace SetupTv.Sections
       Random rnd = new Random();
       if (channel != null)
       {
-        VirtualCard card = new VirtualCard(user);
         TvResult result;
-        long mSecsElapsed = 0;        
+        long mSecsElapsed = 0;
         try
         {
           if (_tunedelay > 0)
@@ -354,6 +355,7 @@ namespace SetupTv.Sections
               }
             }
           }
+          VirtualCard card = null;
           if (chkSynch.Checked)
           {
             lock (_lock)
@@ -363,41 +365,46 @@ namespace SetupTv.Sections
           }
           else
           {
-            user = StartTimeshifting(channel, user, nextRowIndexForDiscUpdate, out mSecsElapsed, out result, out card);            
+            user = StartTimeshifting(channel, user, nextRowIndexForDiscUpdate, out mSecsElapsed, out result, out card);
           }
           if (result == TvResult.Succeeded)
           {
-            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(card.Id), "");
-            user.CardId = card.Id;
+            int cardId = -1;
+            if (card != null)
+            {
+              cardId = card.Id;
+            }
+            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(cardId), "");
+            user.CardId = cardId;
             _succeeded++;
-          }          
+          }
           else if (result == TvResult.CardIsDisabled ||
                    result == TvResult.AllCardsBusy ||
                    result == TvResult.CardIsDisabled ||
-                    result == TvResult.ChannelNotMappedToAnyCard            
+                    result == TvResult.ChannelNotMappedToAnyCard
             )
           {
             string err = GetErrMsgFromTVResult(result);
             nextRowIndexForDiscUpdate = -1;
             nextRowIndexForDiscUpdate = Add2Log("INF", channel.DisplayName, mSecsElapsed, user.Name, "N/A", err);
-            _succeeded++;
+            _ignored++;
           }
           else
           {
             string err = GetErrMsgFromTVResult(result);
-            nextRowIndexForDiscUpdate = -1;            
+            nextRowIndexForDiscUpdate = -1;
             if (_firstFail == 0 && _running)
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), err);            
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
           nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), e.Message);
-          _succeeded++;
+          _ignored++;
           if (_firstFail == 0 && _running)
           {
             _firstFail = _total + 2;
@@ -419,9 +426,10 @@ namespace SetupTv.Sections
       }
     }
 
-    private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed, out TvResult result, out VirtualCard card) {
+    private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed, out TvResult result, out VirtualCard card)
+    {
       Stopwatch sw = Stopwatch.StartNew();
-      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);          
+      UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
       result = RemoteControl.Instance.StartTimeShifting(ref user, channel.IdChannel, out card);
       mSecsElapsed = sw.ElapsedMilliseconds;
       _avg += mSecsElapsed;
@@ -493,7 +501,7 @@ namespace SetupTv.Sections
         {
           Invoke(new UpdateDiscontinuityCounterDelegate(UpdateDiscontinuityCounter), new object[] { user, nextRowIndexForDiscUpdate });
           return;
-        }        
+        }
       }
 
       if (nextRowIndexForDiscUpdate > 0)
@@ -538,7 +546,7 @@ namespace SetupTv.Sections
           item.SubItems.Add(name);
           item.SubItems.Add(card);
           item.SubItems.Add("wait..");
-          item.SubItems.Add(details);          
+          item.SubItems.Add(details);
         }
       }
       return itemNr;
@@ -564,6 +572,7 @@ namespace SetupTv.Sections
     {
       if (_running)
       {
+        txtIgnored.Value = _ignored;
         txtSucceded.Value = _succeeded;
         txtFailed.Value = _failed;
         txtTotal.Value = _total;
@@ -575,6 +584,7 @@ namespace SetupTv.Sections
         Application.DoEvents();
         Log.Debug("TestChannels: Succeeded={0}", _succeeded);
         Log.Debug("TestChannels: Failed={0}", _failed);
+        Log.Debug("TestChannels: Ignored={0}", _ignored);
         Log.Debug("TestChannels: Total={0}", _total);
         Log.Debug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
         Log.Debug("TestChannels: First Fail={0}", _firstFail);
@@ -605,7 +615,7 @@ namespace SetupTv.Sections
             item.SubItems.Add("");
             item.SubItems.Add("");
             item.SubItems.Add("");
-            item.SubItems.Add("");   
+            item.SubItems.Add("");
           }
           else
           {
@@ -650,7 +660,7 @@ namespace SetupTv.Sections
 
           IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null)
-          {            
+          {
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -664,7 +674,7 @@ namespace SetupTv.Sections
             continue;
           }
           if (usersForCard.Length == 0)
-          {            
+          {
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -736,7 +746,7 @@ namespace SetupTv.Sections
           // If we haven't found a user that fits, than it is a hybrid card which is inactive
           // This means that the card is idle.
           if (!userFound)
-          {            
+          {
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
@@ -779,7 +789,7 @@ namespace SetupTv.Sections
         {
           lineColor = Color.Red;
         }
-      }      
+      }
 
       item.UseItemStyleForSubItems = false;
 
@@ -824,6 +834,9 @@ namespace SetupTv.Sections
       buffer.Append(lblFirstFail.Text + txtFirstFail.Text);
       buffer.Append(Environment.NewLine);
 
+      buffer.Append(lblIgnored.Text + txtIgnored.Text);
+      buffer.Append(Environment.NewLine);
+
       buffer.Append(lblTotal.Text + txtTotal.Text);
       buffer.Append(Environment.NewLine);
 
@@ -843,6 +856,9 @@ namespace SetupTv.Sections
       buffer.Append(Environment.NewLine);
 
       buffer.Append(chkRepeatTest.Text + ":" + chkRepeatTest.Checked);
+      buffer.Append(Environment.NewLine);
+
+      buffer.Append(chkSynch.Text + ":" + chkSynch.Checked);
       buffer.Append(Environment.NewLine);
 
       buffer.Append(Environment.NewLine);

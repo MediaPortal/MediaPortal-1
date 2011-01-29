@@ -195,8 +195,6 @@ namespace SetupTv.Sections
 
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
-      comboBoxFirstWorkingDay.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstWorkingDay", "0").Value);
-      //default is Monday=0       
       comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
       // default EpisodeName
       //checkBoxCreateTagInfoXML.Checked = true; // (layer.GetSetting("createtaginfoxml", "yes").Value == "yes");
@@ -279,10 +277,6 @@ namespace SetupTv.Sections
 
       setting = layer.GetSetting("autodeletewatchedrecordings", "no");
       setting.Value = checkBoxAutoDelete.Checked ? "yes" : "no";
-      setting.Persist();
-
-      setting = layer.GetSetting("FirstWorkingDay", "0"); //default is Monday=0
-      setting.Value = comboBoxFirstWorkingDay.SelectedIndex.ToString();
       setting.Persist();
 
       //setting = layer.GetSetting("createtaginfoxml", "yes");

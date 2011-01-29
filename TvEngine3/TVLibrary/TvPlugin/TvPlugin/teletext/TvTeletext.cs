@@ -96,7 +96,7 @@ namespace TvPlugin.teletext
           // Subpage up
           if (btnSubPage != null)
           {
-            btnSubPage.SelectedItem = currentSubPageNumber;
+            btnSubPage.SelectedItem = Decimal(currentSubPageNumber + 1) - 1;
           }
           break;
       }
@@ -113,21 +113,21 @@ namespace TvPlugin.teletext
       {
         currentPageNumber = 0x100;
         currentSubPageNumber = 0;
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
       if (control == btnPage200)
       {
         currentPageNumber = 0x200;
         currentSubPageNumber = 0;
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
       if (control == btnPage300)
       {
         currentPageNumber = 0x300;
         currentSubPageNumber = 0;
-        _numberOfRequestedUpdates++;
+        RequestUpdate();
         _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       }
       if (control == btnHidden)
@@ -136,15 +136,15 @@ namespace TvPlugin.teletext
         {
           _hiddenMode = btnHidden.Selected;
           _renderer.HiddenMode = btnHidden.Selected;
-          _numberOfRequestedUpdates++;
+          RequestUpdate(false);
         }
       }
       if (control == btnSubPage)
       {
         if (btnSubPage != null)
         {
-          currentSubPageNumber = btnSubPage.SelectedItem;
-          _numberOfRequestedUpdates++;
+          currentSubPageNumber = BCD(btnSubPage.SelectedItem + 1) - 1;
+          RequestUpdate(false);
         }
       }
       if (control == btnFullscreen)

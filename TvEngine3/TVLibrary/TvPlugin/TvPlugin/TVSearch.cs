@@ -34,7 +34,7 @@ namespace TvPlugin
 {
   /// <summary>
   /// </summary>
-  public class TvSearch : GUIInternalWindow, IComparer<GUIListItem>
+  public class TvSearch : GUIInternalWindow
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;
@@ -162,10 +162,6 @@ namespace TvPlugin
           btnLetter.AddSubItem(k.ToString());
         }
         //btnLetter.AddSubItem("#");  // => will be everything beside a-z
-      }
-      if (currentSearchMode == SearchMode.Description)
-      {
-        currentSearchMode = SearchMode.Title;
       }
       Update();
 
@@ -366,7 +362,7 @@ namespace TvPlugin
       int currentItemId = 0;
       listView.Clear();
       titleView.Clear();
-    
+      Dictionary<int, Channel> channelMap = GetChannelMap();
       if (chosenSortMethod == SortMethod.Auto)
       {
         if (filterShow == String.Empty)
@@ -589,19 +585,21 @@ namespace TvPlugin
                                       program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               item = new GUIListItem();
-              item.IsFolder = false;
+              
               //check if we are filtering for specific show or just letter
               if (filterShow == String.Empty)
               {
                   //not searching for episode data so show just title
                   item.Label = program.Title;
                   item.Label2 = String.Empty;
+                  item.IsFolder = true;
               }
               else
               {
                   //searching for specific show so add episode data to display
                   item.Label = TVUtil.GetDisplayTitle(program);
                   item.Label2 = strTime;
+                  item.IsFolder = false;
               }
               item.Path = program.Title;
               item.TVTag = program;
@@ -620,7 +618,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -734,7 +732,7 @@ namespace TvPlugin
                                              program.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
               GUIListItem item = new GUIListItem();
-              item.IsFolder = false;
+              
 
               //check if we are filtering for specific show or just letter
               if (filterShow == String.Empty)
@@ -742,12 +740,13 @@ namespace TvPlugin
                   //not searching for episode data so show just title
                   item.Label = program.Title;
                   item.Label2 = String.Empty;
+                  item.IsFolder = true;
               }
               else
               {
                   //searching for specific show so add episode data to display
                   item.Label = TVUtil.GetDisplayTitle(program);
-                  
+                  item.IsFolder = false;
                   //moved this if statement but can not see it is doing anything?
                   //if (program.StartTime > DateTime.MinValue)
                   //{
@@ -772,7 +771,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -816,23 +815,8 @@ namespace TvPlugin
               }
               if (filterLetter != "#")
               {
-                bool add = true;
-                foreach (Program prog in programs)
-                {
-                  if (prog.Title == program.Title)
-                  {
-                    add = false;
-                  }
-                }
-                if (!add && filterShow == String.Empty)
-                {
-                  continue;
-                }
-                if (add)
-                {
-                  programs.Add(program);
-                }
-
+                programs.Add(program);
+                
                 if (filterShow != String.Empty)
                 {
                   if (program.Title == filterShow)
@@ -862,24 +846,9 @@ namespace TvPlugin
 
               GUIListItem item = new GUIListItem();
               item.IsFolder = false;
-              //check if we are filtering for specific show or just letter
-              if (filterShow == String.Empty)
-              {
-                  //not searching for episode data so show just title
-                  item.Label = program.Title;
-                  item.Label2 = String.Empty;
-              }
-              else
-              {
-                  //searching for specific show so add episode data to display
-                  item.Label = TVUtil.GetDisplayTitle(program);
-
-                  //moved this if statement but can not see it is doing anything?
-                  //if (program.StartTime > DateTime.MinValue)
-                  //{
-                  item.Label2 = strTime;
-                  //}
-              }
+              item.Label = TVUtil.GetDisplayTitle(program);
+              item.Label2 = strTime;
+              
 
               item.Path = program.Title;
               item.TVTag = program;
@@ -898,7 +867,7 @@ namespace TvPlugin
                 }
               }
               Utils.SetDefaultIcons(item);
-              SetChannelLogo(program, ref item);
+              SetChannelLogo(program, ref item, channelMap);
               listView.Add(item);
               titleView.Add(item);
               itemCount++;
@@ -1036,81 +1005,9 @@ namespace TvPlugin
 
     private void OnSort()
     {
-      listView.Sort(this);
-      titleView.Sort(this);
-    }
-
-    public int Compare(GUIListItem item1, GUIListItem item2)
-    {
-      if (item1 == item2)
-      {
-        return 0;
-      }
-      if (item1 == null)
-      {
-        return -1;
-      }
-      if (item2 == null)
-      {
-        return -1;
-      }
-      if (item1.IsFolder && item1.Label == "..")
-      {
-        return -1;
-      }
-      if (item2.IsFolder && item2.Label == "..")
-      {
-        return 1;
-      }
-
-      Program prog1 = item1.TVTag as Program;
-      Program prog2 = item2.TVTag as Program;
-
-      int iComp = 0;
-      switch (currentSortMethod)
-      {
-        case SortMethod.Name:
-          if (sortAscending)
-          {
-            iComp = String.Compare(item1.Label, item2.Label, true);
-          }
-          else
-          {
-            iComp = String.Compare(item2.Label, item1.Label, true);
-          }
-          return iComp;
-
-        case SortMethod.Channel:
-          if (prog1 != null && prog2 != null)
-          {
-            if (sortAscending)
-            {
-              iComp = String.Compare(prog1.ReferencedChannel().DisplayName, prog2.ReferencedChannel().DisplayName, true);
-            }
-            else
-            {
-              iComp = String.Compare(prog2.ReferencedChannel().DisplayName, prog1.ReferencedChannel().DisplayName, true);
-            }
-            return iComp;
-          }
-          return 0;
-
-        case SortMethod.Date:
-          if (prog1 != null && prog2 != null)
-          {
-            if (sortAscending)
-            {
-              iComp = prog1.StartTime.CompareTo(prog2.StartTime);
-            }
-            else
-            {
-              iComp = prog2.StartTime.CompareTo(prog1.StartTime);
-            }
-            return iComp;
-          }
-          return 0;
-      }
-      return iComp;
+      Comparer c = new Comparer(currentSortMethod, sortAscending);
+      listView.Sort(c);
+      titleView.Sort(c);
     }
 
     #endregion
@@ -1153,32 +1050,32 @@ namespace TvPlugin
           }
           else
           {
-            if (item.IsFolder)
+            Program program = item.TVTag as Program;
+            if (filterShow == String.Empty)
             {
-              if (filterShow != String.Empty)
+              if (item.Label == "..")
               {
-                filterShow = String.Empty;
+                currentLevel = 0;
+                currentGenre = String.Empty;
               }
               else
               {
-                filterLetter = "#";
-                filterShow = String.Empty;
-                filterEpisode = String.Empty;
-                currentGenre = String.Empty;
-                currentLevel = 0;
+                filterShow = program.Title;
               }
               Update();
             }
             else
             {
-              Program program = item.TVTag as Program;
-              if (filterShow == String.Empty)
+              if (item.Label == "..")
               {
-                filterShow = program.Title;
+                filterShow = String.Empty;
                 Update();
-                return;
               }
-              OnRecord(program);
+              else
+              {
+                OnRecord(program);
+              }
+              
             }
           }
           break;
@@ -1216,7 +1113,7 @@ namespace TvPlugin
       }
     }
 
-    private void SetChannelLogo(Program prog, ref GUIListItem item)
+    private void SetChannelLogo(Program prog, ref GUIListItem item, Dictionary<int, Channel> channelMap)
     {
       string strLogo = String.Empty;
 
@@ -1224,12 +1121,13 @@ namespace TvPlugin
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
-      if (string.IsNullOrEmpty(strLogo))             
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))             
       {
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
+        Channel channel = channelMap[prog.IdChannel];
+        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       }
-      else
-      {
+      
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) {
         strLogo = "defaultVideoBig.png";
       }
 
@@ -1240,7 +1138,6 @@ namespace TvPlugin
 
     private void OnRecord(Program program)
     {
-      WeekEndTool weekEndTool = Setting.GetWeekEndTool();
       TvServer server = new TvServer();
       if (program == null)
       {
@@ -1262,8 +1159,8 @@ namespace TvPlugin
         {
           dlg.Add(GUILocalizeStrings.Get(i));
         }
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WorkingDays)));
-        dlg.Add(GUILocalizeStrings.Get(weekEndTool.GetText(DayType.Record_WeekendDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WorkingDays)));
+        dlg.Add(GUILocalizeStrings.Get(WeekEndTool.GetText(DayType.Record_WeekendDays)));
         dlg.Add(GUILocalizeStrings.Get(990000));  // 990000=Weekly everytime on this channel
 
         dlg.DoModal(GetID);
@@ -1380,7 +1277,7 @@ namespace TvPlugin
         prog = item.TVTag as Program;
       }
       
-      if (filterShow == String.Empty || item.Label == ".." || item.IsFolder || prog == null)
+      if (item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;
@@ -1431,14 +1328,12 @@ namespace TvPlugin
       }
 
       string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
-      if (string.IsNullOrEmpty(strLogo))                   
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", "defaultVideoBig.png");
+        strLogo = "defaultVideoBig.png";
       }
-      else
-      {
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);        
-      }
+
+      GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);
     }
 
     private void UpdateButtonStates()
@@ -1461,6 +1356,7 @@ namespace TvPlugin
       if (currentSearchMode == SearchMode.Description)
       {
         if (btnSearchDescription != null) btnSearchDescription.Selected = true;
+        if (btnViewBy != null) btnViewBy.Label = GUILocalizeStrings.Get(1521);
       }
     }
 
@@ -1476,5 +1372,109 @@ namespace TvPlugin
     {
       TVHome.UpdateProgressPercentageBar();
     }
+
+    private static Dictionary<int, Channel> GetChannelMap()
+    {
+      Dictionary<int, Channel>  channelMap = new Dictionary<int, Channel>();
+      IList<Channel> channels = Channel.ListAll();
+      foreach (Channel channel in channels)
+      {
+        channelMap.Add(channel.IdChannel, channel);
+      }
+      return channelMap;
+    }
+
+    private class Comparer : IComparer<GUIListItem>
+    {
+      private Dictionary<int, Channel> channelMap;
+      private SortMethod currentSortMethod;
+      private bool sortAscending;
+      public Comparer(SortMethod currentSortMethod, bool sortAscending)
+      {
+        channelMap = new Dictionary<int, Channel>();
+        this.currentSortMethod = currentSortMethod;
+        this.sortAscending = sortAscending;
+        if (currentSortMethod == SortMethod.Channel)
+        {
+          channelMap = GetChannelMap();
+        }
+      }
+      public int Compare(GUIListItem item1, GUIListItem item2)
+      {
+        if (item1 == item2)
+        {
+          return 0;
+        }
+        if (item1 == null)
+        {
+          return -1;
+        }
+        if (item2 == null)
+        {
+          return -1;
+        }
+        if (item1.IsFolder && item1.Label == "..")
+        {
+          return -1;
+        }
+        if (item2.IsFolder && item2.Label == "..")
+        {
+          return 1;
+        }
+
+        Program prog1 = item1.TVTag as Program;
+        Program prog2 = item2.TVTag as Program;
+
+        int iComp = 0;
+        switch (currentSortMethod)
+        {
+          case SortMethod.Name:
+            if (sortAscending)
+            {
+              iComp = String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              iComp = String.Compare(item2.Label, item1.Label, true);
+            }
+            return iComp;
+
+          case SortMethod.Channel:
+            if (prog1 != null && prog2 != null)
+            {
+              Channel ch1 = channelMap[prog1.IdChannel];
+              Channel ch2 = channelMap[prog2.IdChannel];
+              if (sortAscending)
+              {
+                iComp = String.Compare(ch1.DisplayName, ch2.DisplayName, true);
+              }
+              else
+              {
+                iComp = String.Compare(ch2.DisplayName, ch1.DisplayName, true);
+              }
+              return iComp;
+            }
+            return 0;
+
+          case SortMethod.Date:
+            if (prog1 != null && prog2 != null)
+            {
+              if (sortAscending)
+              {
+                iComp = prog1.StartTime.CompareTo(prog2.StartTime);
+              }
+              else
+              {
+                iComp = prog2.StartTime.CompareTo(prog1.StartTime);
+              }
+              return iComp;
+            }
+            return 0;
+        }
+        return iComp;
+      }
+    }
   }
+
+
 }

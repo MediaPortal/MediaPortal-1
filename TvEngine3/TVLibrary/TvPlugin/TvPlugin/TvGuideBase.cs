@@ -152,7 +152,6 @@ namespace TvPlugin
     private bool _useNewRecordingButtonColor = false;
     private bool _useNewPartialRecordingButtonColor = false;
     private bool _useNewNotifyButtonColor = false;
-    private bool _notificationEnabled = false;
     private bool _recalculateProgramOffset;
     private bool _useHdProgramIcon = false;
     private string _hdtvProgramText = String.Empty;
@@ -249,7 +248,6 @@ namespace TvPlugin
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
-        _notificationEnabled = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
       }
@@ -1614,7 +1612,7 @@ namespace TvPlugin
 
       if (!_currentRecOrNotify && _currentProgram != null)
       {
-        if (ShouldNotifyProgram(_currentProgram))
+        if (_currentProgram.Notify)
         {
           _currentRecOrNotify = true;
         }
@@ -2005,7 +2003,7 @@ namespace TvPlugin
         img.SetPosition(img.XPosition, img.YPosition);
 
         img.TexutureIcon = String.Empty;
-        if (ShouldNotifyProgram(program))
+        if (program.Notify)
         {
           GUIButton3PartControl buttonNotifyTemplate = GetControl((int)Controls.BUTTON_PROGRAM_NOTIFY) as GUIButton3PartControl;
           if (buttonNotifyTemplate != null)
@@ -2398,7 +2396,7 @@ namespace TvPlugin
           img.RenderRight = false;
 
           img.TexutureIcon = String.Empty;
-          if (ShouldNotifyProgram(program))
+          if (program.Notify)
           {
             if (_programNotifyTemplate != null)
             {
@@ -3445,7 +3443,7 @@ namespace TvPlugin
           dlg.AddLocalizedString(1041); //Upcoming episodes
         }
         
-        if (_notificationEnabled && _currentProgram != null && _currentProgram.StartTime > DateTime.Now)
+        if (_currentProgram != null && _currentProgram.StartTime > DateTime.Now)
         {
           if(_currentProgram.Notify)
           {
@@ -4195,16 +4193,6 @@ namespace TvPlugin
           scrollbar.Percentage = percentage;
         }
       }
-    }
-
-    /// <summary>
-    /// returns true if Mediaportal should send a notification when the program specified is about to start
-    /// </summary>
-    /// <param name="program">Program</param>
-    /// <returns>true : MP shows a notification when program is about to start</returns>
-    private bool ShouldNotifyProgram(Program program)
-    {
-      return _notificationEnabled && program.Notify;
     }
 
     protected int CalcDays()

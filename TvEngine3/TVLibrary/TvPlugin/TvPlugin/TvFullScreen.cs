@@ -148,6 +148,7 @@ namespace TvPlugin
     private VideoRendererStatistics.State videoState = VideoRendererStatistics.State.VideoPresent;
     private List<Geometry.Type> _allowedArModes = new List<Geometry.Type>();
 
+    private bool _settingsLoaded;
     #endregion
 
     #region enums
@@ -218,6 +219,12 @@ namespace TvPlugin
       Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
 
+      SettingsLoaded = false;
+
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
+      g_Player.PlayBackChanged += new g_Player.ChangedHandler(g_Player_PlayBackChanged);
+
       Log.Debug("TvFullScreen:Init");
       return true;
     }
@@ -268,6 +275,8 @@ namespace TvPlugin
           GUIGraphicsContext.ARType = Utils.GetAspectRatio(strValue);
         }
       }
+
+      SettingsLoaded = true;
     }
 
     //		public string ZapChannel
@@ -1370,7 +1379,8 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
-            LoadSettings();
+            if (!SettingsLoaded)
+              LoadSettings();
             GUIGraphicsContext.IsFullScreenVideo = true;
             ///@
             GUIGraphicsContext.VideoWindow = new Rectangle(GUIGraphicsContext.OverScanLeft,
@@ -3424,5 +3434,36 @@ namespace TvPlugin
       }
       return false;
     }
+
+    private void g_Player_PlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    #region Properties
+    private bool SettingsLoaded
+    {
+      get
+      {
+        return _settingsLoaded;
+      }
+      set
+      {
+        _settingsLoaded = value;
+        //maybe additional logic?
+      }
+    }
+    #endregion
+
   }
 }

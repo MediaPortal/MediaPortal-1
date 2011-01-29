@@ -232,8 +232,10 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
+
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
@@ -245,11 +247,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -262,8 +265,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
       IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
@@ -276,11 +280,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -293,8 +298,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
       IChannel tuningDetail1 = GetScrambledTuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
@@ -307,11 +313,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -325,8 +332,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
 
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
       tuningDetails.Add(tuningDetail1);
@@ -338,11 +346,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -357,8 +366,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
@@ -371,11 +381,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -388,8 +399,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(cardType);
 
       tuningDetails.Add(tuningDetail1);
@@ -402,11 +414,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardNotPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -420,8 +433,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
 
       DVBCardMocks dvbCardMocks = GetCardMockByCardType(CardType.DvbC, tuningDetails, user);
       ITvCardHandler cardHandler1 = dvbCardMocks.GetMockedCardHandler();
@@ -430,11 +444,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -447,8 +462,9 @@ namespace CardAllocationTests
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();;
+      TVController controller = Fakes.FakeTVController();
 
       //we need to pick a different cardtype here-
       CardType cardTypeDifferent = cardType;
@@ -478,11 +494,12 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
 
-      SetupChannelMapping(cardHandler1, channelMap);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
@@ -495,14 +512,17 @@ namespace CardAllocationTests
 
     #region advanced multiple card tests
 
+   
+
     [Test]
     public void Test2AvailIdleDVBTCardsForFTAChannel()
     {
       Dictionary<int, ITvCardHandler> cards = new Dictionary<int, ITvCardHandler>();
       List<IChannel> tuningDetails = new List<IChannel>();
 
-      IUser user = Isolate.Fake.Instance<User>();
-      TvBusinessLayer businessLayer = Isolate.Fake.Instance<TvBusinessLayer>();
+      IUser user = Fakes.FakeUser();
+      TvBusinessLayer businessLayer = Fakes.FakeTvBusinessLayer();
+      TVController controller = Fakes.FakeTVController();
       IChannel tuningDetail1 = GetFTATuningDetailBasedOnCardType(CardType.DvbT);      
 
       tuningDetails.Add(tuningDetail1);
@@ -520,18 +540,23 @@ namespace CardAllocationTests
 
       ChannelMap channelMap;
       Channel channel = ChannelMocks.GetChannel(out channelMap);
-      Isolate.WhenCalled(() => businessLayer.GetTuningChannelByName(channel)).WillReturn(tuningDetails);
+      Isolate.WhenCalled(() => businessLayer.GetTuningChannelsByDbChannel(channel)).WillReturn(tuningDetails);      
 
-      SetupChannelMapping(cardHandler1, channelMap);
-      SetupChannelMapping(cardHandler2, channelMap);
+      TVControllerMocks.CardPresent(cardHandler1.DataBaseCard.IdCard, controller);
+      TVControllerMocks.CardPresent(cardHandler2.DataBaseCard.IdCard, controller);
 
-      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer);
+      SetupChannelMapping(cardHandler1, channelMap, businessLayer, channel);
+      SetupChannelMapping(cardHandler2, channelMap, businessLayer, channel);
+
+      AdvancedCardAllocation allocation = new AdvancedCardAllocation(businessLayer, controller);
 
       TvResult result;
       List<CardDetail> availCards = allocation.GetFreeCardsForChannel(cards, channel, ref user, out result);
 
       Assert.AreEqual(2, availCards.Count, "The number of cards returned is not as expected");
     }
+
+   
 
     #region common
     #endregion
@@ -543,10 +568,14 @@ namespace CardAllocationTests
 
     //TODO: move these helpers to other static classes
 
-    private void SetupChannelMapping(ITvCardHandler cardHandler1, ChannelMap channelMap)
+    private void SetupChannelMapping(ITvCardHandler cardHandler1, ChannelMap channelMap, TvBusinessLayer businessLayer, Channel channel)
     {
       Isolate.WhenCalled(() => channelMap.EpgOnly).WillReturn(false);
-      Isolate.WhenCalled(() => channelMap.ReferencedCard().DevicePath).WillReturn(cardHandler1.DataBaseCard.DevicePath);      
+      Isolate.WhenCalled(() => channelMap.ReferencedCard().DevicePath).WillReturn(cardHandler1.DataBaseCard.DevicePath);
+
+      TvDatabase.Card card = cardHandler1.DataBaseCard;
+      Isolate.WhenCalled(() => businessLayer.IsChannelMappedToCard(channel, card, false)).WillReturn(true);      
+
     }
 
     private DVBCardMocks GetCardMockByCardType(CardType cardType, List<IChannel> tuningDetails, IUser user)

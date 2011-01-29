@@ -38,8 +38,6 @@ namespace SetupTv.Sections
       this.lblMaxFreeCards = new System.Windows.Forms.Label();
       this.groupBoxScheduler = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.checkBoxPreventDupes = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.comboBoxFirstWorkingDay = new System.Windows.Forms.ComboBox();
-      this.label12 = new System.Windows.Forms.Label();
       this.comboBoxEpisodeKey = new System.Windows.Forms.ComboBox();
       this.labelEpisodeKey = new System.Windows.Forms.Label();
       this.checkboxSchedulerPriority = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -204,15 +202,13 @@ namespace SetupTv.Sections
       this.groupBoxScheduler.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScheduler.Controls.Add(this.checkBoxPreventDupes);
-      this.groupBoxScheduler.Controls.Add(this.comboBoxFirstWorkingDay);
-      this.groupBoxScheduler.Controls.Add(this.label12);
       this.groupBoxScheduler.Controls.Add(this.comboBoxEpisodeKey);
       this.groupBoxScheduler.Controls.Add(this.labelEpisodeKey);
       this.groupBoxScheduler.Controls.Add(this.checkboxSchedulerPriority);
       this.groupBoxScheduler.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxScheduler.Location = new System.Drawing.Point(15, 180);
       this.groupBoxScheduler.Name = "groupBoxScheduler";
-      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 166);
+      this.groupBoxScheduler.Size = new System.Drawing.Size(418, 130);
       this.groupBoxScheduler.TabIndex = 14;
       this.groupBoxScheduler.TabStop = false;
       this.groupBoxScheduler.Text = "Scheduler";
@@ -223,7 +219,7 @@ namespace SetupTv.Sections
       this.checkBoxPreventDupes.Checked = true;
       this.checkBoxPreventDupes.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkBoxPreventDupes.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 90);
+      this.checkBoxPreventDupes.Location = new System.Drawing.Point(15, 55);
       this.checkBoxPreventDupes.Name = "checkBoxPreventDupes";
       this.checkBoxPreventDupes.Size = new System.Drawing.Size(335, 30);
       this.checkBoxPreventDupes.TabIndex = 13;
@@ -231,27 +227,6 @@ namespace SetupTv.Sections
           "peated broadcasts";
       this.checkBoxPreventDupes.UseVisualStyleBackColor = true;
       this.checkBoxPreventDupes.CheckedChanged += new System.EventHandler(this.checkBoxPreventDupes_CheckedChanged);
-      // 
-      // comboBoxFirstWorkingDay
-      // 
-      this.comboBoxFirstWorkingDay.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxFirstWorkingDay.FormattingEnabled = true;
-      this.comboBoxFirstWorkingDay.Items.AddRange(new object[] {
-            "Monday",
-            "Sunday"});
-      this.comboBoxFirstWorkingDay.Location = new System.Drawing.Point(93, 22);
-      this.comboBoxFirstWorkingDay.Name = "comboBoxFirstWorkingDay";
-      this.comboBoxFirstWorkingDay.Size = new System.Drawing.Size(67, 21);
-      this.comboBoxFirstWorkingDay.TabIndex = 12;
-      // 
-      // label12
-      // 
-      this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(12, 25);
-      this.label12.Name = "label12";
-      this.label12.Size = new System.Drawing.Size(75, 13);
-      this.label12.TabIndex = 1;
-      this.label12.Text = "First workday: ";
       // 
       // comboBoxEpisodeKey
       // 
@@ -261,7 +236,7 @@ namespace SetupTv.Sections
       this.comboBoxEpisodeKey.Items.AddRange(new object[] {
             "Episode Title",
             "Episode Number"});
-      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 132);
+      this.comboBoxEpisodeKey.Location = new System.Drawing.Point(93, 97);
       this.comboBoxEpisodeKey.Name = "comboBoxEpisodeKey";
       this.comboBoxEpisodeKey.Size = new System.Drawing.Size(137, 21);
       this.comboBoxEpisodeKey.TabIndex = 13;
@@ -269,7 +244,7 @@ namespace SetupTv.Sections
       // labelEpisodeKey
       // 
       this.labelEpisodeKey.AutoSize = true;
-      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 135);
+      this.labelEpisodeKey.Location = new System.Drawing.Point(12, 100);
       this.labelEpisodeKey.Name = "labelEpisodeKey";
       this.labelEpisodeKey.Size = new System.Drawing.Size(71, 13);
       this.labelEpisodeKey.TabIndex = 1;
@@ -281,7 +256,7 @@ namespace SetupTv.Sections
       this.checkboxSchedulerPriority.Checked = true;
       this.checkboxSchedulerPriority.CheckState = System.Windows.Forms.CheckState.Checked;
       this.checkboxSchedulerPriority.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(15, 58);
+      this.checkboxSchedulerPriority.Location = new System.Drawing.Point(15, 23);
       this.checkboxSchedulerPriority.Name = "checkboxSchedulerPriority";
       this.checkboxSchedulerPriority.Size = new System.Drawing.Size(342, 17);
       this.checkboxSchedulerPriority.TabIndex = 8;
@@ -979,8 +954,6 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBoxRecordSettings;
     private System.Windows.Forms.TextBox textBoxRecordingFormat;
     private System.Windows.Forms.Button buttonChangeChannel;
-    private System.Windows.Forms.ComboBox comboBoxFirstWorkingDay;
-    private System.Windows.Forms.Label label12;
     private System.Windows.Forms.ComboBox comboBoxEpisodeKey;
     private System.Windows.Forms.Label labelEpisodeKey;
     private System.Windows.Forms.Button buttonSameRecFolder;

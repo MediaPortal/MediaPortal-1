@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
 
@@ -695,77 +696,36 @@ namespace MediaPortal.GUI.Library
 
     private static void RemoveDoubleHistory(int newWindow)
     {      
-      int index = -1;      
       List<int> search = new List<int>();
       List<int> data = new List<int>();
       
-      // use temporary list and add also current active window for
-      // pattern search data. reverse list for search
+      // use temporary list and DO NOT add also current active window for
+      // pattern search data, beacause it is already in _listHistory.
+      // reverse list for search
       data.AddRange(_listHistory);
-      data.Add(newWindow);
       data.Reverse();
       if (data.Count > 3)
       {
-        search.Add(data[0]);
-        search.Add(data[1]);
-        while (index !=0 && search.Count < data.Count)
+        if (data[0] == data[2] && data[1] == data[3])
         {
-          index = SearchPattern(search, data);
-          switch (index)
-          {
-            case 0:
-              break;
-            case 2:
-                for (int count = 0; count < search.Count; count++)
-                {
-                  _listHistory.RemoveAt(_listHistory.Count - 1);
-                }
-                index = 0;
-              break;
-            default:
-              search.Add(data[search.Count]);                            
-              break;
-          }          
-        }        
-      }
-    }
-
-    private static int SearchPattern(List<int> search, List<int> data)
-    {
-      int matches = 0;
-      for (int i = 0; i < data.Count; i++)
-      {
-        if (search[0] == data[i] && data.Count - i >= search.Count)
-        {
-          bool ismatch = true;
-          for (int j = 1; j < search.Count; j++)
-          {
-            if (data[i + j] != search[j])
-            {
-              ismatch = false;
-              break;
-            }
-          }
-          if (ismatch)
-          {
-            matches++;
-            i += search.Count - 1;
-          }          
+          _listHistory[_listHistory.Count - 4] = _listHistory[_listHistory.Count - 2];
+          _listHistory[_listHistory.Count - 3] = _listHistory[_listHistory.Count - 1];
+          _listHistory.RemoveRange(_listHistory.Count - 2, 2);
         }
-        else
-          break;
       }
-      return matches;
     }
 
     private static void AddNewWindowToHistory(int WindowId)
     {
-      if (_listHistory.Count > 15)
+      if (WindowId > -1)
       {
-        _listHistory.RemoveAt(0);
+        if (_listHistory.Count > 15)
+        {
+          _listHistory.RemoveAt(0);
+        }
+        _listHistory.Add(WindowId);
+        RemoveDoubleHistory(WindowId);
       }
-      _listHistory.Add(WindowId);
-      RemoveDoubleHistory(WindowId);
     }
 
     private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter)
@@ -837,7 +797,14 @@ namespace MediaPortal.GUI.Library
             _listHistory.RemoveAt(_listHistory.Count - 1);
           }
           // Get previous window id (previous to the last active window) id
-          _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          {
+            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+          }
+          else
+          {
+            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+          }
           if (_listHistory.Count > 0)
           {
             _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
@@ -848,7 +815,14 @@ namespace MediaPortal.GUI.Library
           if (replaceWindow)
           {
             // activate HOME window
-            newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+            if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+            {
+              newWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+            }
+            else
+            {
+              newWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+            }
           }
           // (re)load            
           newWindow = GetWindow(newWindowId, false);
@@ -896,7 +870,7 @@ namespace MediaPortal.GUI.Library
       if (!HasPreviousWindow())
       {
         // if _listhistory count gets corrupted, go home          
-        if (_startWithBasicHome)
+        if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
           _listHistory.Add((int)GUIWindow.Window.WINDOW_SECOND_HOME);
         else
           _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);

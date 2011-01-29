@@ -39,8 +39,13 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("lefttexture")] private string _leftTextureName;
     [XMLSkinElement("midtexture")] private string _midTextureName;
     [XMLSkinElement("righttexture")] private string _rightTextureName;
-    [XMLSkinElement("innerheight")] private int _innerheight=-1;
-    [XMLSkinElement("offset")] private int _offset =-1;
+    [XMLSkinElement("innerheight")] private int _innerheight = -1;
+    [XMLSkinElement("offset")] private int _offset = -1;
+    [XMLSkinElement("onlymidtexture")] private bool _onlyMidTexture = false;
+    [XMLSkinElement("midheight")] private int _midHeight = 0;
+    [XMLSkinElement("midwidth")] private int _midWidth = 0;
+    [XMLSkinElement("midoffsetX")] private int _midOffsetX = -1;
+    [XMLSkinElement("midoffsetY")] private int _midOffsetY = -1;
 
     private GUIAnimation _imageBackGround = null;
     private GUIAnimation _imageLeft = null;
@@ -202,43 +207,72 @@ namespace MediaPortal.GUI.Library
 
       int offset = (_offset != -1) ? _offset : 12; // Legacy offset
       GUIGraphicsContext.ScaleHorizontal(ref offset);
+
+      int iWidthMid = (_midWidth != 0) ? _midWidth : _imageMid.TextureWidth;
+      int iHeightMid = (_midHeight != 0) ? _midHeight : _imageMid.TextureHeight;
+      GUIGraphicsContext.ScaleHorizontal(ref iWidthMid);
+      GUIGraphicsContext.ScaleVertical(ref iHeightMid);
+
+      int midOffsetX = (_midOffsetX != -1) ? _midOffsetX : 0;
+      int midOffsetY = (_midOffsetY != -1) ? _midOffsetY : 0;
+      GUIGraphicsContext.ScaleHorizontal(ref midOffsetX);
+      GUIGraphicsContext.ScaleVertical(ref midOffsetY);
+
       float fWidth = _percentage;
       if (fWidth > 100.0f)
       {
         fWidth = 100.0f;
       }
 
-      fWidth *= (float)(_imageBackGround.Width - 2 * offset - iWidthLeft - iWidthRight);
-      fWidth /= 100.0f;
-
-
-
-      int iXPos = offset + _imageBackGround.XPosition;
-
-      int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
-
-      _imageLeft.SetPosition(iXPos, iYPos);
-      _imageLeft.Height = iHeightLeft;
-      _imageLeft.Width = iWidthLeft;
-      _imageLeft.SetPosition(iXPos, iYPos);
-      _imageLeft.Render(timePassed);
-
-      iXPos += iWidthLeft;
-      if (_percentage > 0 && fWidth > 1)
+      if (_onlyMidTexture)
       {
-        _imageMid.SetPosition(iXPos, iYPos);
-        _imageMid.Height = iHeightLeft; 
-        _imageMid.Width = (int)Math.Abs(fWidth);
-        _imageMid.SetPosition(iXPos, iYPos);
-        _imageMid.Render(timePassed);
-        iXPos += (int)fWidth;
+        fWidth *= (float)(iWidthMid);
+        fWidth /= 100.0f;
+
+        int iXPos = _imageBackGround.XPosition + midOffsetX;
+        int iYPos = _imageBackGround.YPosition + midOffsetY;
+
+        if (_percentage > 0 && fWidth > 1) {
+          _imageMid.SetPosition(iXPos, iYPos);
+          _imageMid.Height = iHeightMid;
+          _imageMid.Width = (int)Math.Abs(fWidth);
+          _imageMid.SetPosition(iXPos, iYPos);
+          _imageMid.Render(timePassed);
+        }
+      }
+      else
+      {
+        fWidth *= (float)(_imageBackGround.Width - 2 * offset - iWidthLeft - iWidthRight);
+        fWidth /= 100.0f;
+
+        int iXPos = offset + _imageBackGround.XPosition;
+
+        int iYPos = _imageBackGround.YPosition + (iBkgHeight - iHeightLeft) / 2;
+
+        _imageLeft.SetPosition(iXPos, iYPos);
+        _imageLeft.Height = iHeightLeft;
+        _imageLeft.Width = iWidthLeft;
+        _imageLeft.SetPosition(iXPos, iYPos);
+        _imageLeft.Render(timePassed);
+
+        iXPos += iWidthLeft;
+        if (_percentage > 0 && fWidth > 1)
+        {
+          _imageMid.SetPosition(iXPos, iYPos);
+          _imageMid.Height = iHeightLeft;
+          _imageMid.Width = (int)Math.Abs(fWidth);
+          _imageMid.SetPosition(iXPos, iYPos);
+          _imageMid.Render(timePassed);
+          iXPos += (int)fWidth;
+        }
+
+        _imageRight.SetPosition(iXPos, iYPos);
+        _imageRight.Height = iHeightRight;
+        _imageRight.Width = iWidthRight;
+        _imageRight.SetPosition(iXPos, iYPos);
+        _imageRight.Render(timePassed);
       }
 
-      _imageRight.SetPosition(iXPos, iYPos);
-      _imageRight.Height = iHeightRight;
-      _imageRight.Width = iWidthRight;
-      _imageRight.SetPosition(iXPos, iYPos);
-      _imageRight.Render(timePassed);
       base.Render(timePassed);
     }
 

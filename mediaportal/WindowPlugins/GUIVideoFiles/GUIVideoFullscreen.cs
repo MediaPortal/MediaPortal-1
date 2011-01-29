@@ -118,6 +118,7 @@ namespace MediaPortal.GUI.Video
     private FullScreenState screenState = new FullScreenState();
     private bool _immediateSeekIsRelative = true;
     private int _immediateSeekValue = 10;
+    private bool _settingsLoaded;
 
     public GUIVideoFullscreen()
     {
@@ -134,6 +135,13 @@ namespace MediaPortal.GUI.Video
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
+
+      SettingsLoaded = false;
+
+      g_Player.PlayBackEnded += new g_Player.EndedHandler(g_Player_PlayBackEnded);
+      g_Player.PlayBackStopped += new g_Player.StoppedHandler(g_Player_PlayBackStopped);
+      g_Player.PlayBackChanged += new g_Player.ChangedHandler(g_Player_PlayBackChanged);
+
       return bResult;
     }
 
@@ -196,6 +204,8 @@ namespace MediaPortal.GUI.Video
           }
         }
       }
+
+      SettingsLoaded = true;
     }
 
     #endregion
@@ -1057,7 +1067,9 @@ namespace MediaPortal.GUI.Video
             HideControl(GetID, (int)Control.LABEL_ROW3);
             HideControl(GetID, (int)Control.BLUE_BAR);
 
-            LoadSettings();
+            if (!SettingsLoaded)
+              LoadSettings();
+
             GUIWindowManager.IsOsdVisible = false;
             _isOsdVisible = false;
             _isPauseOsdVisible = false;
@@ -2155,6 +2167,36 @@ namespace MediaPortal.GUI.Video
       return -1;
     }
 
+    void g_Player_PlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
+    {
+      SettingsLoaded = false; // we should reload
+    }
+
+    #endregion
+
+    #region Properties
+    private bool SettingsLoaded
+    {
+      get
+      {
+        return _settingsLoaded;
+      }
+      set
+      {
+        _settingsLoaded = value;
+        //maybe additional logic?
+      }
+    }
     #endregion
 
     #region IRenderLayer
