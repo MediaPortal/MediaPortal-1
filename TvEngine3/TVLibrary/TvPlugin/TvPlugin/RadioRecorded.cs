@@ -1058,7 +1058,7 @@ namespace TvPlugin
         TVHome.Card.StopTimeShifting();
       }
 
-      return TVUtil.PlayRecording(rec);
+      return TVUtil.PlayRecording(rec, stoptime);
     }
 
     private void OnDeleteRecording(int iItem)
