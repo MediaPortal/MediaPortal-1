@@ -981,7 +981,28 @@ namespace MediaPortal.GUI.Video
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0,
                                               (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
               OnMessage(msg); // retrieve the selected list item
-              g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              if (g_Player.SupportsCC) // Subtitle CC
+              { 
+                if (g_Player.SupportsCC && msg.Param1 == 0)
+                {
+                  msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
+                                              (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
+                  g_Player.EnableSubtitle = false;
+                  g_Player.CurrentSubtitleStream = - 1;
+                  Log.Info("Subtitle CC selected ");
+                }
+                else
+                { 
+                  Log.Info("Subtitle stream selected " + msg.Label);
+                  g_Player.CurrentSubtitleStream = msg.Param1 - 1; // set the current subtitle
+                  g_Player.EnableSubtitle = true;
+                }
+              }
+              else
+              {
+                Log.Info("Subtitle stream selected " + msg.Label);
+                g_Player.CurrentSubtitleStream = msg.Param1; // set the current subtitle
+              }
               PopulateSubTitles();
             }
           }
@@ -1151,11 +1172,27 @@ namespace MediaPortal.GUI.Video
 
       // cycle through each subtitle and add it to our list control
       int currentSubtitleStream = g_Player.CurrentSubtitleStream;
+      if (g_Player.SupportsCC) // The current subtitle CC is not in the list, add it on top of it
+      {
+        string strActive = (g_Player.SupportsCC) ? strActiveLabel : null;
+        string CC1 = "CC1";
+
+        // create a list item object to add to the list
+        GUIListItem pItem = new GUIListItem();
+        pItem.Label = CC1;
+
+        if (currentSubtitleStream == -1)
+          if (strActive != null) pItem.Label = "CC1" + " " + strActiveLabel;
+
+        // add it ...
+        GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
+                                         (int)Controls.OSD_SUBTITLE_LIST, 0, 0, pItem);
+        OnMessage(msg2);
+      }
       for (int i = 0; i < subStreamsCount; ++i)
       {
         string strItem;
         string strLang = g_Player.SubtitleLanguage(i);
-        string strName = g_Player.SubtitleName(i);
         // formats right label2 to '[active]'
         string strActive = (currentSubtitleStream == i) ? strActiveLabel : null;
         int ipos = strLang.IndexOf("[");
@@ -1178,9 +1215,27 @@ namespace MediaPortal.GUI.Video
       }
 
       // set the current active subtitle as the selected item in the list control
-      GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-                      (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
-      OnMessage(msgSet);
+      if (g_Player.SupportsCC)
+      {
+        if (currentSubtitleStream == -1)
+        {
+          GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+            (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
+          OnMessage(msgSet);
+        }
+        else
+        {
+          GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+            (int)Controls.OSD_SUBTITLE_LIST, currentSubtitleStream + 1, 0, null);
+          OnMessage(msgSet);
+        }
+      }
+      else
+      {
+        GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
+          (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
+        OnMessage(msgSet);
+      }
     }
 
     public override void ResetAllControls()
