@@ -56,6 +56,15 @@ namespace MediaPortal.Dialogs
       return result;
     }
 
+    // since we save some values on init (after skin load), and LoadSkin method is not virtual,
+    // also, the status whether skin was loaded is private, so we cannot get that one either
+    // we need set this to false
+    // otherwise, skin is not loaded until first show
+    public override bool SupportsDelayedLoad
+    {
+      get { return false; }
+    }
+
     public override void DoModal(int dwParentId)
     {
       timeStart = DateTime.Now;
