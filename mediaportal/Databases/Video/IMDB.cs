@@ -825,7 +825,7 @@ namespace MediaPortal.Video.Database
         parser.resetPosition();
         if ((parser.skipToEndOf("<td id=\"overview-top\">")) &&
             (parser.skipToEndOf("<p>")) &&
-            (parser.extractTo("</p>", ref value)))
+            (parser.extractTo("See full bio</a>", ref value)))
         {
           value = new HTMLUtil().ConvertHTMLToAnsi(value);
           actor.MiniBiography = Util.Utils.stripHTMLtags(value);
@@ -858,6 +858,7 @@ namespace MediaPortal.Video.Database
         // Person is movie director or an actor/actress
         bool isActorPass = false;
         bool isDirectorPass = false;
+        parser.resetPosition();
 
         if (director)
         {
