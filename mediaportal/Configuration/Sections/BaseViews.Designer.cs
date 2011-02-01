@@ -43,16 +43,16 @@
       this.groupBox.Controls.Add(this.lblActionCodes);
       this.groupBox.Controls.Add(this.btnDelete);
       this.groupBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox.Location = new System.Drawing.Point(0, 0);
+      this.groupBox.Location = new System.Drawing.Point(6, 0);
       this.groupBox.Name = "groupBox";
-      this.groupBox.Size = new System.Drawing.Size(472, 408);
+      this.groupBox.Size = new System.Drawing.Size(462, 408);
       this.groupBox.TabIndex = 0;
       this.groupBox.TabStop = false;
       // 
       // btnAdd
       // 
       this.btnAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnAdd.Location = new System.Drawing.Point(284, 172);
+      this.btnAdd.Location = new System.Drawing.Point(274, 172);
       this.btnAdd.Name = "btnAdd";
       this.btnAdd.Size = new System.Drawing.Size(83, 22);
       this.btnAdd.TabIndex = 5;
@@ -216,7 +216,7 @@
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.lblActionCodes.Location = new System.Drawing.Point(16, 364);
       this.lblActionCodes.Name = "lblActionCodes";
-      this.lblActionCodes.Size = new System.Drawing.Size(440, 29);
+      this.lblActionCodes.Size = new System.Drawing.Size(430, 29);
       this.lblActionCodes.TabIndex = 7;
       this.lblActionCodes.Text = "Use the \"Ins\" and \"Del\" key to insert and delete lines. Drag the rows to change o" +
           "rder";
@@ -225,7 +225,7 @@
       // btnDelete
       // 
       this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.btnDelete.Location = new System.Drawing.Point(373, 172);
+      this.btnDelete.Location = new System.Drawing.Point(363, 172);
       this.btnDelete.Name = "btnDelete";
       this.btnDelete.Size = new System.Drawing.Size(83, 22);
       this.btnDelete.TabIndex = 6;

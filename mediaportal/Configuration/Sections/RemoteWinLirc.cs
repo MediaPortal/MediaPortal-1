@@ -130,32 +130,30 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.IRDelayTextBox);
       this.groupBox1.Controls.Add(this.IRDelayLabel);
       this.groupBox1.Controls.Add(this.browsePathToWinlircButton);
       this.groupBox1.Controls.Add(this.pathToWinlircTextBox);
       this.groupBox1.Controls.Add(this.PathToWinlircLabel);
       this.groupBox1.Controls.Add(this.inputCheckBox);
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 112);
+      this.groupBox1.Size = new System.Drawing.Size(462, 112);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "General settings";
       // 
       // IRDelayTextBox
       // 
-      this.IRDelayTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.IRDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.IRDelayTextBox.BorderColor = System.Drawing.Color.Empty;
       this.IRDelayTextBox.Location = new System.Drawing.Point(168, 76);
       this.IRDelayTextBox.Name = "IRDelayTextBox";
-      this.IRDelayTextBox.Size = new System.Drawing.Size(288, 20);
+      this.IRDelayTextBox.Size = new System.Drawing.Size(278, 20);
       this.IRDelayTextBox.TabIndex = 5;
       this.IRDelayTextBox.Text = "300";
       // 
@@ -169,27 +167,24 @@ namespace MediaPortal.Configuration.Sections
       // 
       // browsePathToWinlircButton
       // 
-      this.browsePathToWinlircButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.browsePathToWinlircButton.Location = new System.Drawing.Point(384, 51);
+      this.browsePathToWinlircButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browsePathToWinlircButton.Location = new System.Drawing.Point(374, 51);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(72, 22);
       this.browsePathToWinlircButton.TabIndex = 3;
       this.browsePathToWinlircButton.Text = "Browse";
+      this.browsePathToWinlircButton.UseVisualStyleBackColor = true;
       this.browsePathToWinlircButton.Click += new System.EventHandler(this.browsePathToWinlircButton_Click);
       // 
       // pathToWinlircTextBox
       // 
-      this.pathToWinlircTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.pathToWinlircTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pathToWinlircTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pathToWinlircTextBox.Location = new System.Drawing.Point(168, 52);
       this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
-      this.pathToWinlircTextBox.Size = new System.Drawing.Size(208, 20);
+      this.pathToWinlircTextBox.Size = new System.Drawing.Size(198, 20);
       this.pathToWinlircTextBox.TabIndex = 2;
-      this.pathToWinlircTextBox.Text = "";
       // 
       // PathToWinlircLabel
       // 
@@ -201,56 +196,59 @@ namespace MediaPortal.Configuration.Sections
       // 
       // inputCheckBox
       // 
+      this.inputCheckBox.AutoSize = true;
+      this.inputCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.inputCheckBox.Location = new System.Drawing.Point(16, 24);
       this.inputCheckBox.Name = "inputCheckBox";
-      this.inputCheckBox.Size = new System.Drawing.Size(248, 16);
+      this.inputCheckBox.Size = new System.Drawing.Size(246, 17);
       this.inputCheckBox.TabIndex = 0;
       this.inputCheckBox.Text = "Enable WINLIRC for output to external devices";
+      this.inputCheckBox.UseVisualStyleBackColor = true;
       this.inputCheckBox.CheckedChanged += new System.EventHandler(this.inputCheckBox_CheckedChanged);
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.infoTextBox);
-      this.groupBox2.Location = new System.Drawing.Point(0, 120);
+      this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox2.Location = new System.Drawing.Point(6, 120);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 288);
+      this.groupBox2.Size = new System.Drawing.Size(462, 288);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Information";
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
+      this.infoTextBox.BorderColor = System.Drawing.Color.Empty;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
       this.infoTextBox.Location = new System.Drawing.Point(16, 24);
       this.infoTextBox.Multiline = true;
       this.infoTextBox.Name = "infoTextBox";
       this.infoTextBox.ReadOnly = true;
-      this.infoTextBox.Size = new System.Drawing.Size(440, 248);
+      this.infoTextBox.Size = new System.Drawing.Size(430, 248);
       this.infoTextBox.TabIndex = 0;
-      this.infoTextBox.Text = "";
       this.infoTextBox.WordWrap = false;
       // 
-      // WINLIRC
+      // RemoteWinLirc
       // 
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Name = "WINLIRC";
+      this.Name = "RemoteWinLirc";
       this.Size = new System.Drawing.Size(472, 408);
       this.Load += new System.EventHandler(this.WINLIRC_Load);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
+      this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion

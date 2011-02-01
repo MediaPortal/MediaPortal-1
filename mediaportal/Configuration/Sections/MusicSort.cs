@@ -31,9 +31,6 @@ namespace MediaPortal.Configuration.Sections
   public class MusicSort : SectionSettings
   {
     private IContainer components = null;
-    private MPComboBox comboBox1;
-    private MPTextBox tbSortRight;
-    private MPTextBox tbSortLeft;
 
     private const string defaultTrackTag = "[%track%. ][%artist% - ][%title%]";
     private const string defaultFileTag = "[%filename%]";
@@ -57,18 +54,19 @@ namespace MediaPortal.Configuration.Sections
     };
 
     private string[] sortTags1 = new string[20];
-    private MPTabControl tabControl1;
-    private MPTabPage tabPage1;
     private MPGroupBox groupBox3;
     private MPGroupBox groupBox4;
     private MPLabel label15;
+    private MPLabel label18;
     private MPLabel label16;
     private MPLabel label17;
-    private MPLabel label18;
     private MPTextBox textBoxSample;
     private MPLabel label19;
+    private MPTextBox tbSortRight;
     private MPLabel label20;
+    private MPTextBox tbSortLeft;
     private MPLabel label21;
+    private MPComboBox comboBox1;
     private MPLabel label38;
     private string[] sortTags2 = new string[20];
 
@@ -202,11 +200,6 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.tbSortRight = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.tbSortLeft = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.tabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.groupBox4 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label15 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -215,65 +208,15 @@ namespace MediaPortal.Configuration.Sections
       this.label17 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBoxSample = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label19 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbSortRight = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label20 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.tbSortLeft = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.label21 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label38 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.tabControl1.SuspendLayout();
-      this.tabPage1.SuspendLayout();
       this.groupBox3.SuspendLayout();
       this.groupBox4.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // tbSortRight
-      // 
-      this.tbSortRight.BorderColor = System.Drawing.Color.Empty;
-      this.tbSortRight.Location = new System.Drawing.Point(345, 71);
-      this.tbSortRight.Name = "tbSortRight";
-      this.tbSortRight.Size = new System.Drawing.Size(71, 20);
-      this.tbSortRight.TabIndex = 4;
-      this.tbSortRight.Text = "%duration%";
-      this.tbSortRight.TextChanged += new System.EventHandler(this.tbSortRight_TextChanged);
-      // 
-      // tbSortLeft
-      // 
-      this.tbSortLeft.BorderColor = System.Drawing.Color.Empty;
-      this.tbSortLeft.Location = new System.Drawing.Point(96, 71);
-      this.tbSortLeft.Name = "tbSortLeft";
-      this.tbSortLeft.Size = new System.Drawing.Size(248, 20);
-      this.tbSortLeft.TabIndex = 3;
-      this.tbSortLeft.Text = "%track%. %artist% - %title%";
-      this.tbSortLeft.TextChanged += new System.EventHandler(this.tbSortLeft_TextChanged);
-      // 
-      // comboBox1
-      // 
-      this.comboBox1.BorderColor = System.Drawing.Color.Empty;
-      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBox1.FormattingEnabled = true;
-      this.comboBox1.Location = new System.Drawing.Point(96, 21);
-      this.comboBox1.Name = "comboBox1";
-      this.comboBox1.Size = new System.Drawing.Size(88, 21);
-      this.comboBox1.TabIndex = 0;
-      this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
-      // 
-      // tabControl1
-      // 
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Location = new System.Drawing.Point(0, 8);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(472, 400);
-      this.tabControl1.TabIndex = 1;
-      // 
-      // tabPage1
-      // 
-      this.tabPage1.Controls.Add(this.groupBox3);
-      this.tabPage1.Location = new System.Drawing.Point(4, 22);
-      this.tabPage1.Name = "tabPage1";
-      this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage1.Size = new System.Drawing.Size(464, 374);
-      this.tabPage1.TabIndex = 0;
-      this.tabPage1.Text = "Track Format Masks";
-      this.tabPage1.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
@@ -289,10 +232,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.Controls.Add(this.comboBox1);
       this.groupBox3.Controls.Add(this.label38);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox3.Location = new System.Drawing.Point(16, 16);
+      this.groupBox3.Location = new System.Drawing.Point(6, 0);
       this.groupBox3.Name = "groupBox3";
-      this.groupBox3.Size = new System.Drawing.Size(432, 282);
-      this.groupBox3.TabIndex = 2;
+      this.groupBox3.Size = new System.Drawing.Size(462, 282);
+      this.groupBox3.TabIndex = 3;
       this.groupBox3.TabStop = false;
       // 
       // groupBox4
@@ -360,7 +303,7 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxSample.Location = new System.Drawing.Point(96, 102);
       this.textBoxSample.Name = "textBoxSample";
       this.textBoxSample.ReadOnly = true;
-      this.textBoxSample.Size = new System.Drawing.Size(320, 20);
+      this.textBoxSample.Size = new System.Drawing.Size(350, 20);
       this.textBoxSample.TabIndex = 19;
       // 
       // label19
@@ -372,6 +315,15 @@ namespace MediaPortal.Configuration.Sections
       this.label19.TabIndex = 18;
       this.label19.Text = "Sorting mode:";
       // 
+      // tbSortRight
+      // 
+      this.tbSortRight.BorderColor = System.Drawing.Color.Empty;
+      this.tbSortRight.Location = new System.Drawing.Point(345, 71);
+      this.tbSortRight.Name = "tbSortRight";
+      this.tbSortRight.Size = new System.Drawing.Size(71, 20);
+      this.tbSortRight.TabIndex = 4;
+      this.tbSortRight.Text = "%duration%";
+      // 
       // label20
       // 
       this.label20.AutoSize = true;
@@ -381,6 +333,15 @@ namespace MediaPortal.Configuration.Sections
       this.label20.TabIndex = 0;
       this.label20.Text = "Use blockquotes [ ] to specify optional fields.";
       // 
+      // tbSortLeft
+      // 
+      this.tbSortLeft.BorderColor = System.Drawing.Color.Empty;
+      this.tbSortLeft.Location = new System.Drawing.Point(96, 71);
+      this.tbSortLeft.Name = "tbSortLeft";
+      this.tbSortLeft.Size = new System.Drawing.Size(248, 20);
+      this.tbSortLeft.TabIndex = 3;
+      this.tbSortLeft.Text = "%track%. %artist% - %title%";
+      // 
       // label21
       // 
       this.label21.AutoSize = true;
@@ -389,6 +350,16 @@ namespace MediaPortal.Configuration.Sections
       this.label21.Size = new System.Drawing.Size(45, 13);
       this.label21.TabIndex = 5;
       this.label21.Text = "Sample:";
+      // 
+      // comboBox1
+      // 
+      this.comboBox1.BorderColor = System.Drawing.Color.Empty;
+      this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.comboBox1.FormattingEnabled = true;
+      this.comboBox1.Location = new System.Drawing.Point(96, 21);
+      this.comboBox1.Name = "comboBox1";
+      this.comboBox1.Size = new System.Drawing.Size(88, 21);
+      this.comboBox1.TabIndex = 0;
       // 
       // label38
       // 
@@ -402,12 +373,10 @@ namespace MediaPortal.Configuration.Sections
       // MusicSort
       // 
       this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-      this.Controls.Add(this.tabControl1);
+      this.Controls.Add(this.groupBox3);
       this.DoubleBuffered = true;
       this.Name = "MusicSort";
       this.Size = new System.Drawing.Size(472, 408);
-      this.tabControl1.ResumeLayout(false);
-      this.tabPage1.ResumeLayout(false);
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.groupBox4.ResumeLayout(false);

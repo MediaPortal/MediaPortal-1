@@ -36,7 +36,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralKeyboardControl()
-      : base("Keyboard default shortcuts")
+      : base("Keyboard Default Shortcuts")
     {
       // This call is required by the Windows Form Designer.
       InitializeComponent();

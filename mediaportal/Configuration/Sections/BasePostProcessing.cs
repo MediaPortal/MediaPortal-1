@@ -90,38 +90,32 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxActivatedFilters
       // 
-      this.groupBoxActivatedFilters.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxActivatedFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxActivatedFilters.Controls.Add(this.labelPropertiesHint);
       this.groupBoxActivatedFilters.Controls.Add(this.bSetup);
       this.groupBoxActivatedFilters.Controls.Add(this.cLBDSFilter);
       this.groupBoxActivatedFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxActivatedFilters.Location = new System.Drawing.Point(0, 25);
+      this.groupBoxActivatedFilters.Location = new System.Drawing.Point(6, 25);
       this.groupBoxActivatedFilters.Name = "groupBoxActivatedFilters";
-      this.groupBoxActivatedFilters.Size = new System.Drawing.Size(472, 166);
+      this.groupBoxActivatedFilters.Size = new System.Drawing.Size(462, 166);
       this.groupBoxActivatedFilters.TabIndex = 0;
       this.groupBoxActivatedFilters.TabStop = false;
       this.groupBoxActivatedFilters.Text = "Activated filters";
       // 
       // labelPropertiesHint
       // 
-      this.labelPropertiesHint.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelPropertiesHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelPropertiesHint.AutoSize = true;
       this.labelPropertiesHint.Location = new System.Drawing.Point(134, 140);
       this.labelPropertiesHint.Name = "labelPropertiesHint";
-      this.labelPropertiesHint.Size = new System.Drawing.Size(278, 13);
+      this.labelPropertiesHint.Size = new System.Drawing.Size(265, 13);
       this.labelPropertiesHint.TabIndex = 3;
       this.labelPropertiesHint.Text = "Use this button to edit the settings of the selected filter.";
       // 
       // bSetup
       // 
-      this.bSetup.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.bSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bSetup.Location = new System.Drawing.Point(16, 135);
       this.bSetup.Name = "bSetup";
       this.bSetup.Size = new System.Drawing.Size(112, 22);
@@ -132,56 +126,47 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cLBDSFilter
       // 
-      this.cLBDSFilter.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.cLBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.cLBDSFilter.FormattingEnabled = true;
       this.cLBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.cLBDSFilter.Name = "cLBDSFilter";
-      this.cLBDSFilter.Size = new System.Drawing.Size(440, 100);
+      this.cLBDSFilter.Size = new System.Drawing.Size(430, 94);
       this.cLBDSFilter.TabIndex = 1;
       this.cLBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.cLBDSFilter_MouseDoubleClick);
       // 
       // groupBoxAvailableFilters
       // 
-      this.groupBoxAvailableFilters.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAvailableFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAvailableFilters.Controls.Add(this.lBDSFilter);
       this.groupBoxAvailableFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAvailableFilters.Location = new System.Drawing.Point(0, 197);
+      this.groupBoxAvailableFilters.Location = new System.Drawing.Point(6, 197);
       this.groupBoxAvailableFilters.Name = "groupBoxAvailableFilters";
-      this.groupBoxAvailableFilters.Size = new System.Drawing.Size(472, 211);
+      this.groupBoxAvailableFilters.Size = new System.Drawing.Size(462, 211);
       this.groupBoxAvailableFilters.TabIndex = 1;
       this.groupBoxAvailableFilters.TabStop = false;
       this.groupBoxAvailableFilters.Text = "Available filters";
       // 
       // lBDSFilter
       // 
-      this.lBDSFilter.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.lBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.lBDSFilter.FormattingEnabled = true;
       this.lBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.lBDSFilter.Name = "lBDSFilter";
-      this.lBDSFilter.Size = new System.Drawing.Size(440, 173);
+      this.lBDSFilter.Size = new System.Drawing.Size(430, 173);
       this.lBDSFilter.TabIndex = 4;
       this.lBDSFilter.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.lBDSFilter_MouseDoubleClick);
       // 
       // labelWarning
       // 
-      this.labelWarning.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
-                                                       System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelWarning.ForeColor = System.Drawing.Color.Red;
       this.labelWarning.Location = new System.Drawing.Point(0, 0);
       this.labelWarning.Name = "labelWarning";
@@ -190,17 +175,18 @@ namespace MediaPortal.Configuration.Sections
       this.labelWarning.Text = "USE THIS AT YOUR OWN RISK!";
       this.labelWarning.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       // 
-      // PostProcessing
+      // BasePostProcessing
       // 
       this.Controls.Add(this.groupBoxAvailableFilters);
       this.Controls.Add(this.groupBoxActivatedFilters);
       this.Controls.Add(this.labelWarning);
-      this.Name = "PostProcessing";
+      this.Name = "BasePostProcessing";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxActivatedFilters.ResumeLayout(false);
       this.groupBoxActivatedFilters.PerformLayout();
       this.groupBoxAvailableFilters.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion

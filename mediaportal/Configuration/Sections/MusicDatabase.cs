@@ -265,12 +265,12 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.startButton);
       this.groupBox1.Controls.Add(this.sharesListBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 339);
+      this.groupBox1.Size = new System.Drawing.Size(462, 339);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Scan music shares";
+      this.groupBox1.Text = "Scan music folders";
       // 
       // comboBoxDateAdded
       // 
@@ -454,7 +454,7 @@ namespace MediaPortal.Configuration.Sections
       // startButton
       // 
       this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.startButton.Location = new System.Drawing.Point(246, 307);
+      this.startButton.Location = new System.Drawing.Point(236, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
       this.startButton.TabIndex = 12;

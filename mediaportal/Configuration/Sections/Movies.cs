@@ -92,6 +92,8 @@ namespace MediaPortal.Configuration.Sections
     private Label label2;
     private MPComboBox comboBoxPlayAll;
     private MPLabel mpSubEngineCommentLabel;
+    private MPGroupBox mpGroupBoxComSkip;
+    private MPCheckBox comSkipCheckBox;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
@@ -146,6 +148,8 @@ namespace MediaPortal.Configuration.Sections
         subPaths.Text = xmlreader.GetValueAsString("subtitles", "paths", @".\,.\Subtitles\");
         showSubtitlesCheckBox.Checked = xmlreader.GetValueAsBool("subtitles", "enabled", false);
         checkBoxShowWatched.Checked = xmlreader.GetValueAsBool("movies", "markwatched", true);
+
+        comSkipCheckBox.Checked = xmlreader.GetValueAsBool("comskip", "automaticskip", false);
 
         try
         {
@@ -222,6 +226,8 @@ namespace MediaPortal.Configuration.Sections
 
         xmlwriter.SetValueAsBool("movies", "markwatched", checkBoxShowWatched.Checked);
         xmlwriter.SetValueAsBool("movies", "eachFolderIsMovie", checkBoxEachFolderIsMovie.Checked);
+
+        xmlwriter.SetValueAsBool("comskip", "automaticskip", comSkipCheckBox.Checked);
 
         xmlwriter.SetValue("subtitles", "engine", subEnginesCombo.SelectedItem);
         xmlwriter.SetValue("subtitles", "paths", subPaths.Text);
@@ -321,6 +327,8 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpGroupBoxComSkip = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.comSkipCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       tabPage3 = new MediaPortal.UserInterface.Controls.MPTabPage();
       mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -340,6 +348,7 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.SuspendLayout();
       this.mpTabPage1.SuspendLayout();
       this.mpGroupBox4.SuspendLayout();
+      this.mpGroupBoxComSkip.SuspendLayout();
       this.SuspendLayout();
       // 
       // tabPage3
@@ -709,6 +718,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpGroupBoxComSkip);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
       this.tabPage1.Name = "tabPage1";
@@ -897,6 +907,30 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 7;
       // 
+      // mpGroupBoxComSkip
+      // 
+      this.mpGroupBoxComSkip.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxComSkip.Controls.Add(this.comSkipCheckBox);
+      this.mpGroupBoxComSkip.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxComSkip.Location = new System.Drawing.Point(16, 206);
+      this.mpGroupBoxComSkip.Name = "mpGroupBoxComSkip";
+      this.mpGroupBoxComSkip.Size = new System.Drawing.Size(432, 49);
+      this.mpGroupBoxComSkip.TabIndex = 11;
+      this.mpGroupBoxComSkip.TabStop = false;
+      this.mpGroupBoxComSkip.Text = "Commercial skip";
+      // 
+      // comSkipCheckBox
+      // 
+      this.comSkipCheckBox.AutoSize = true;
+      this.comSkipCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.comSkipCheckBox.Location = new System.Drawing.Point(19, 20);
+      this.comSkipCheckBox.Name = "comSkipCheckBox";
+      this.comSkipCheckBox.Size = new System.Drawing.Size(354, 17);
+      this.comSkipCheckBox.TabIndex = 8;
+      this.comSkipCheckBox.Text = "Automatically skip commercials for videos with ComSkip data available";
+      this.comSkipCheckBox.UseVisualStyleBackColor = true;
+      // 
       // Movies
       // 
       this.Controls.Add(this.tabControl1);
@@ -919,6 +953,8 @@ namespace MediaPortal.Configuration.Sections
       this.tabControl1.ResumeLayout(false);
       this.mpTabPage1.ResumeLayout(false);
       this.mpGroupBox4.ResumeLayout(false);
+      this.mpGroupBoxComSkip.ResumeLayout(false);
+      this.mpGroupBoxComSkip.PerformLayout();
       this.ResumeLayout(false);
 
     }

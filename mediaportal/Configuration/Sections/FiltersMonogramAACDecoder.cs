@@ -80,17 +80,16 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (FiltersMonogramAACDecoder));
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersMonogramAACDecoder));
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.mpGradientLabel1 = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.volumeTrackBar = new System.Windows.Forms.TrackBar();
       this.labelVolume = new MediaPortal.UserInterface.Controls.MPLabel();
       this.labelSpeakerOut = new MediaPortal.UserInterface.Controls.MPLabel();
       this.comboBoxSpeakerOutput = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).BeginInit();
@@ -115,9 +114,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpGradientLabel1.Size = new System.Drawing.Size(472, 8);
       this.mpGradientLabel1.TabIndex = 4;
       this.mpGradientLabel1.TextColor = System.Drawing.SystemColors.ControlText;
-      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
-                                                               System.Drawing.FontStyle.Regular,
-                                                               System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // mpGroupBox1
       // 
@@ -128,12 +125,30 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.labelSpeakerOut);
       this.mpGroupBox1.Controls.Add(this.comboBoxSpeakerOutput);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(6, 79);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 74);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(458, 144);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 144);
       this.mpGroupBox1.TabIndex = 2;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "AAC Audio Decoder Settings";
+      // 
+      // mpLabel2
+      // 
+      this.mpLabel2.AutoSize = true;
+      this.mpLabel2.Location = new System.Drawing.Point(400, 111);
+      this.mpLabel2.Name = "mpLabel2";
+      this.mpLabel2.Size = new System.Drawing.Size(44, 13);
+      this.mpLabel2.TabIndex = 6;
+      this.mpLabel2.Text = "10.0 dB";
+      // 
+      // mpLabel1
+      // 
+      this.mpLabel1.AutoSize = true;
+      this.mpLabel1.Location = new System.Drawing.Point(74, 111);
+      this.mpLabel1.Name = "mpLabel1";
+      this.mpLabel1.Size = new System.Drawing.Size(47, 13);
+      this.mpLabel1.TabIndex = 5;
+      this.mpLabel1.Text = "-10.0 dB";
       // 
       // volumeTrackBar
       // 
@@ -164,56 +179,35 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerOutput
       // 
-      this.comboBoxSpeakerOutput.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerOutput.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerOutput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerOutput.Items.AddRange(new object[]
-                                                  {
-                                                    "No channel mixing",
-                                                    "Mix to mono (1 channel)",
-                                                    "Mix to stereo (2 channels)",
-                                                    "Mix to 2.1 (3 channels)",
-                                                    "Mix to quadrophonic (4 channels)",
-                                                    "Mix to 5.1 (6 channels)"
-                                                  });
+      this.comboBoxSpeakerOutput.Items.AddRange(new object[] {
+            "No channel mixing",
+            "Mix to mono (1 channel)",
+            "Mix to stereo (2 channels)",
+            "Mix to 2.1 (3 channels)",
+            "Mix to quadrophonic (4 channels)",
+            "Mix to 5.1 (6 channels)"});
       this.comboBoxSpeakerOutput.Location = new System.Drawing.Point(103, 50);
       this.comboBoxSpeakerOutput.Name = "comboBoxSpeakerOutput";
-      this.comboBoxSpeakerOutput.Size = new System.Drawing.Size(316, 21);
+      this.comboBoxSpeakerOutput.Size = new System.Drawing.Size(320, 21);
       this.comboBoxSpeakerOutput.TabIndex = 1;
       // 
-      // mpLabel1
-      // 
-      this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(74, 111);
-      this.mpLabel1.Name = "mpLabel1";
-      this.mpLabel1.Size = new System.Drawing.Size(47, 13);
-      this.mpLabel1.TabIndex = 5;
-      this.mpLabel1.Text = "-10.0 dB";
-      // 
-      // mpLabel2
-      // 
-      this.mpLabel2.AutoSize = true;
-      this.mpLabel2.Location = new System.Drawing.Point(400, 111);
-      this.mpLabel2.Name = "mpLabel2";
-      this.mpLabel2.Size = new System.Drawing.Size(44, 13);
-      this.mpLabel2.TabIndex = 6;
-      this.mpLabel2.Text = "10.0 dB";
-      // 
-      // MonogramAACDecoderFilter
+      // FiltersMonogramAACDecoder
       // 
       this.Controls.Add(this.mpGradientLabel1);
       this.Controls.Add(this.pictureBox1);
       this.Controls.Add(this.mpGroupBox1);
-      this.Name = "MonogramAACDecoderFilter";
+      this.Name = "FiltersMonogramAACDecoder";
       this.Size = new System.Drawing.Size(472, 408);
       ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion
