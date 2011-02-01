@@ -613,9 +613,6 @@
     <EmbeddedResource Include="Sections\BaseFileExtensions.resx">
       <DependentUpon>BaseFileExtensions.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\BasePostProcessing.resx">
-      <DependentUpon>BasePostProcessing.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\BaseShares.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BaseShares.cs</DependentUpon>
@@ -651,15 +648,6 @@
     <EmbeddedResource Include="Sections\DVDZoom.resx">
       <DependentUpon>DVDZoom.cs</DependentUpon>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteDirectInput.resx">
-      <DependentUpon>RemoteDirectInput.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteRedEye.resx">
-      <DependentUpon>RemoteRedEye.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\RemoteSerialUIR.resx">
-      <DependentUpon>RemoteSerialUIR.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\TVDebugOptions.resx">
       <DependentUpon>TVDebugOptions.cs</DependentUpon>
