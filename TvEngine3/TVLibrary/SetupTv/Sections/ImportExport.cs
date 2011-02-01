@@ -359,7 +359,7 @@ namespace SetupTv.Sections
                                     CultureInfo.InvariantCulture);
               bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
               bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
-              string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
+              string displayName = GetNodeAttribute(nodeChannel, "DisplayName", "Unkown");
 
               // Only import TV or radio channels if the corresponding checkbox was checked
               if ((isTv && !importtv) || (isRadio && !importradio))
