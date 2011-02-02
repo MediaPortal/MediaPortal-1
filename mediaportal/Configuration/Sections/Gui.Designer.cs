@@ -97,7 +97,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       // listLoopDelayUpDown
       // 
-      this.listLoopDelayUpDown.Enabled = false;
       this.listLoopDelayUpDown.Location = new System.Drawing.Point(149, 20);
       this.listLoopDelayUpDown.Maximum = new decimal(new int[] {
             100000,
