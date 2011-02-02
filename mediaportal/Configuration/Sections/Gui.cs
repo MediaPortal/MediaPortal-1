@@ -49,10 +49,8 @@ namespace MediaPortal.Configuration.Sections
                                             // 3 Enable file existance cache
                                             new string[] {"gui", "enableSkinSoundEffects", "true"},
                                             // 4 Enable skin sound effects
-                                            new string[] {"gui", "setLoopDelayWhenScrollingLists", "true"},
-                                            // 5 Set loop delay when scrolling lists
                                             new string[] {"gui", "mousesupport", "false"},
-                                            // 6 Show special mouse controls (scrollbars, etc)      
+                                            // 5 Show special mouse controls (scrollbars, etc)      
                                           };
 
     /// <summary> 
@@ -97,10 +95,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void settingsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
     {
-      if (sectionEntries[e.Index][1].Equals("setLoopDelayWhenScrollingLists"))
-      {
-        listLoopDelayUpDown.Enabled = e.NewValue == CheckState.Checked;
-      }
     }
   }
 }

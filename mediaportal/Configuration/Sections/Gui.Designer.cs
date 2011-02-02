@@ -79,7 +79,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.labelLoopDelayMs);
       this.groupBox1.Controls.Add(this.listLoopDelayUpDown);
       this.groupBox1.Controls.Add(this.labelLoopDelay);
-      this.groupBox1.Location = new System.Drawing.Point(9, 135);
+      this.groupBox1.Location = new System.Drawing.Point(9, 121);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(445, 52);
       this.groupBox1.TabIndex = 15;
@@ -134,11 +134,10 @@ namespace MediaPortal.Configuration.Sections
             "Hide file extensions like .mp3, .avi, .mpg,...",
             "Enable file existence cache (improves performance on some systems)",
             "Enable skin sound effects",
-            "Set loop delay when scrolling lists",
             "Show special mouse controls (scrollbars, etc)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 109);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 94);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       // 
