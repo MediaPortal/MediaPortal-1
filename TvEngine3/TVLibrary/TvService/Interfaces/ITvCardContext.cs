@@ -143,5 +143,6 @@ namespace TvService
 
     void OnStopUser(IUser user);
     void OnZap(IUser user);
+    void UserNextAvailableSubchannel(IUser user);
   }
 }

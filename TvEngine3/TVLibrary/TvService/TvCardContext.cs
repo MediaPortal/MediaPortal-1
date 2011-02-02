@@ -295,6 +295,28 @@ namespace TvService
       return TvStoppedReason.UnknownReason;
     }
 
+    public void UserNextAvailableSubchannel(IUser user)
+    {
+      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      if (existingUser != null)
+      {
+        int nextSubchannel = -1;
+        foreach (IUser u in _users)
+        {
+          if (u.SubChannel > nextSubchannel)
+          {
+            nextSubchannel = u.SubChannel;
+          }
+        }
+
+        if (nextSubchannel >= 0)
+        {
+          existingUser.SubChannel = nextSubchannel + 1;  
+        }
+        
+      }
+    }
+
     /// <summary>
     ///   Gets the users.
     /// </summary>
