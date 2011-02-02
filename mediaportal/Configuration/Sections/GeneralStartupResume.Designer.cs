@@ -77,9 +77,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxStartupResumeSettings.Controls.Add(this.cbScreen);
       this.groupBoxStartupResumeSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxStartupResumeSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxStartupResumeSettings.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxStartupResumeSettings.Location = new System.Drawing.Point(6, 0);
       this.groupBoxStartupResumeSettings.Name = "groupBoxStartupResumeSettings";
-      this.groupBoxStartupResumeSettings.Size = new System.Drawing.Size(466, 396);
+      this.groupBoxStartupResumeSettings.Size = new System.Drawing.Size(462, 396);
       this.groupBoxStartupResumeSettings.TabIndex = 1;
       this.groupBoxStartupResumeSettings.TabStop = false;
       this.groupBoxStartupResumeSettings.Text = "Startup/resume settings";
@@ -187,7 +187,7 @@ namespace MediaPortal.Configuration.Sections
       this.cbScreen.Location = new System.Drawing.Point(85, 246);
       this.cbScreen.MinimumSize = new System.Drawing.Size(100, 0);
       this.cbScreen.Name = "cbScreen";
-      this.cbScreen.Size = new System.Drawing.Size(375, 21);
+      this.cbScreen.Size = new System.Drawing.Size(371, 21);
       this.cbScreen.TabIndex = 6;
       // 
       // settingsCheckedListBox
@@ -209,10 +209,10 @@ namespace MediaPortal.Configuration.Sections
             "Apply workaround to fix MediaPortal freezing on resume on some systems",
             "Restart MediaPortal on resume (avoids stuttering playback with nvidia)",
             "Show last active module when starting / resuming from standby",
-            "Use screenselector to choose on which screen MP should start"});
+            "Use screen selector to choose on which screen MP should start"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 214);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 214);
       this.settingsCheckedListBox.TabIndex = 0;
       this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       // 

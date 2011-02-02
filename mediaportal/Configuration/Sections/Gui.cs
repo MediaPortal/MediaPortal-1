@@ -76,6 +76,8 @@ namespace MediaPortal.Configuration.Sections
                                                                          bool.Parse(currentSection[2])));
 
         }
+
+        listLoopDelayUpDown.Value = xmlreader.GetValueAsInt("gui", "listLoopDelay", 100);
       }
     }
 
@@ -88,6 +90,16 @@ namespace MediaPortal.Configuration.Sections
           string[] currentSection = sectionEntries[index];
           xmlwriter.SetValueAsBool(currentSection[0], currentSection[1], settingsCheckedListBox.GetItemChecked(index));
         }
+
+        xmlwriter.SetValue("gui", "listLoopDelay", listLoopDelayUpDown.Value);
+      }
+    }
+
+    private void settingsCheckedListBox_ItemCheck(object sender, ItemCheckEventArgs e)
+    {
+      if (sectionEntries[e.Index][1].Equals("setLoopDelayWhenScrollingLists"))
+      {
+        listLoopDelayUpDown.Enabled = e.NewValue == CheckState.Checked;
       }
     }
   }

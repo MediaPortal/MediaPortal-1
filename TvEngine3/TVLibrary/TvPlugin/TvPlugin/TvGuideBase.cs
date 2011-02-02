@@ -64,7 +64,7 @@ namespace TvPlugin
     private const int GUIDE_COMPONENTID_START = 50000;
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
 
-    protected const int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
+    private int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
 
     #endregion
 
@@ -250,6 +250,7 @@ namespace TvPlugin
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
+        _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
       }
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));

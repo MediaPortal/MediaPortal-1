@@ -49,22 +49,79 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBoxGuiSettings = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.labelLoopDelayMs = new System.Windows.Forms.Label();
+      this.listLoopDelayUpDown = new System.Windows.Forms.NumericUpDown();
+      this.labelLoopDelay = new System.Windows.Forms.Label();
       this.settingsCheckedListBox = new System.Windows.Forms.CheckedListBox();
       this.groupBoxGuiSettings.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.listLoopDelayUpDown)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBoxGuiSettings
       // 
-      this.groupBoxGuiSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+      this.groupBoxGuiSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxGuiSettings.Controls.Add(this.groupBox1);
       this.groupBoxGuiSettings.Controls.Add(this.settingsCheckedListBox);
       this.groupBoxGuiSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxGuiSettings.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxGuiSettings.Location = new System.Drawing.Point(6, 0);
       this.groupBoxGuiSettings.Name = "groupBoxGuiSettings";
-      this.groupBoxGuiSettings.Size = new System.Drawing.Size(466, 137);
+      this.groupBoxGuiSettings.Size = new System.Drawing.Size(462, 396);
       this.groupBoxGuiSettings.TabIndex = 1;
       this.groupBoxGuiSettings.TabStop = false;
       this.groupBoxGuiSettings.Text = "GUI settings";
+      // 
+      // groupBox1
+      // 
+      this.groupBox1.Controls.Add(this.labelLoopDelayMs);
+      this.groupBox1.Controls.Add(this.listLoopDelayUpDown);
+      this.groupBox1.Controls.Add(this.labelLoopDelay);
+      this.groupBox1.Location = new System.Drawing.Point(9, 135);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(445, 52);
+      this.groupBox1.TabIndex = 15;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "List behavior";
+      // 
+      // labelLoopDelayMs
+      // 
+      this.labelLoopDelayMs.AutoSize = true;
+      this.labelLoopDelayMs.Location = new System.Drawing.Point(207, 22);
+      this.labelLoopDelayMs.Name = "labelLoopDelayMs";
+      this.labelLoopDelayMs.Size = new System.Drawing.Size(63, 13);
+      this.labelLoopDelayMs.TabIndex = 17;
+      this.labelLoopDelayMs.Text = "milliseconds";
+      // 
+      // listLoopDelayUpDown
+      // 
+      this.listLoopDelayUpDown.Enabled = false;
+      this.listLoopDelayUpDown.Location = new System.Drawing.Point(149, 20);
+      this.listLoopDelayUpDown.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+      this.listLoopDelayUpDown.Name = "listLoopDelayUpDown";
+      this.listLoopDelayUpDown.Size = new System.Drawing.Size(52, 20);
+      this.listLoopDelayUpDown.TabIndex = 15;
+      this.listLoopDelayUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+      this.listLoopDelayUpDown.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      // 
+      // labelLoopDelay
+      // 
+      this.labelLoopDelay.AutoSize = true;
+      this.labelLoopDelay.Location = new System.Drawing.Point(6, 22);
+      this.labelLoopDelay.Name = "labelLoopDelay";
+      this.labelLoopDelay.Size = new System.Drawing.Size(138, 13);
+      this.labelLoopDelay.TabIndex = 16;
+      this.labelLoopDelay.Text = "Loop delay for scrolling lists:";
       // 
       // settingsCheckedListBox
       // 
@@ -81,8 +138,9 @@ namespace MediaPortal.Configuration.Sections
             "Show special mouse controls (scrollbars, etc)"});
       this.settingsCheckedListBox.Location = new System.Drawing.Point(6, 20);
       this.settingsCheckedListBox.Name = "settingsCheckedListBox";
-      this.settingsCheckedListBox.Size = new System.Drawing.Size(454, 109);
+      this.settingsCheckedListBox.Size = new System.Drawing.Size(450, 109);
       this.settingsCheckedListBox.TabIndex = 0;
+      this.settingsCheckedListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.settingsCheckedListBox_ItemCheck);
       // 
       // Gui
       // 
@@ -92,6 +150,9 @@ namespace MediaPortal.Configuration.Sections
       this.Name = "Gui";
       this.Size = new System.Drawing.Size(472, 402);
       this.groupBoxGuiSettings.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.listLoopDelayUpDown)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -100,5 +161,9 @@ namespace MediaPortal.Configuration.Sections
 
     private MediaPortal.UserInterface.Controls.MPGroupBox groupBoxGuiSettings;
     private System.Windows.Forms.CheckedListBox settingsCheckedListBox;
+    private System.Windows.Forms.GroupBox groupBox1;
+    private System.Windows.Forms.NumericUpDown listLoopDelayUpDown;
+    private System.Windows.Forms.Label labelLoopDelay;
+    private System.Windows.Forms.Label labelLoopDelayMs;
   }
 }

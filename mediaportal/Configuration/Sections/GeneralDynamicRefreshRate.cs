@@ -211,10 +211,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources =
-        new System.ComponentModel.ComponentResourceManager(typeof (GeneralDynamicRefreshRate));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 =
-        new System.Windows.Forms.DataGridViewCellStyle();
+      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GeneralDynamicRefreshRate));
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
       this.groupBoxRR = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.defaultHz = new System.Windows.Forms.ComboBox();
       this.mpButtonDefault = new MediaPortal.UserInterface.Controls.MPButton();
@@ -238,11 +236,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxRR
       // 
-      this.groupBoxRR.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxRR.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxRR.Controls.Add(this.defaultHz);
       this.groupBoxRR.Controls.Add(this.mpButtonDefault);
       this.groupBoxRR.Controls.Add(this.buttonRemove);
@@ -256,9 +252,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxRR.Controls.Add(this.chkEnableDynamicRR);
       this.groupBoxRR.Controls.Add(this.linkLabelWiki);
       this.groupBoxRR.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxRR.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxRR.Location = new System.Drawing.Point(6, 0);
       this.groupBoxRR.Name = "groupBoxRR";
-      this.groupBoxRR.Size = new System.Drawing.Size(460, 402);
+      this.groupBoxRR.Size = new System.Drawing.Size(462, 402);
       this.groupBoxRR.TabIndex = 7;
       this.groupBoxRR.TabStop = false;
       this.groupBoxRR.Text = "Dynamic Refresh Rate Setup";
@@ -316,33 +312,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.dataGridViewRR.AllowUserToAddRows = false;
       this.dataGridViewRR.AllowUserToDeleteRows = false;
-      this.dataGridViewRR.ColumnHeadersHeightSizeMode =
-        System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-      this.dataGridViewRR.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[]
-                                             {
-                                               this.gridColType,
-                                               this.gridColFramerates,
-                                               this.gridColRR,
-                                               this.gridColAction
-                                             });
-      dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
-      dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-      dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
-                                                            System.Drawing.FontStyle.Regular,
-                                                            System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-      dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle3;
+      this.dataGridViewRR.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dataGridViewRR.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.gridColType,
+            this.gridColFramerates,
+            this.gridColRR,
+            this.gridColAction});
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.TopLeft;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+      this.dataGridViewRR.DefaultCellStyle = dataGridViewCellStyle1;
       this.dataGridViewRR.Location = new System.Drawing.Point(19, 214);
       this.dataGridViewRR.Name = "dataGridViewRR";
       this.dataGridViewRR.RowHeadersVisible = false;
       this.dataGridViewRR.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
       this.dataGridViewRR.Size = new System.Drawing.Size(434, 115);
       this.dataGridViewRR.TabIndex = 17;
-      this.dataGridViewRR.CellValueChanged +=
-        new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRR_CellValueChanged);
+      this.dataGridViewRR.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewRR_CellValueChanged);
       // 
       // gridColType
       // 
@@ -429,9 +419,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // linkLabelWiki
       // 
-      this.linkLabelWiki.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabelWiki.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabelWiki.AutoSize = true;
       this.linkLabelWiki.Location = new System.Drawing.Point(341, 373);
       this.linkLabelWiki.Name = "linkLabelWiki";
@@ -439,8 +427,7 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabelWiki.TabIndex = 10;
       this.linkLabelWiki.TabStop = true;
       this.linkLabelWiki.Text = "more info in the wiki ...";
-      this.linkLabelWiki.LinkClicked +=
-        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelWiki_LinkClicked);
+      this.linkLabelWiki.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabelWiki_LinkClicked);
       // 
       // GeneralDynamicRefreshRate
       // 
@@ -452,6 +439,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxRR.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridViewRR)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

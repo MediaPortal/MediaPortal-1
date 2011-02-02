@@ -27,6 +27,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
+using MediaPortal.Profile;
 
 // used for Keys definition
 // used for loopDelay
@@ -94,7 +95,6 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
     
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
-    [XMLSkinElement("loopDelayMs")] protected int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
     
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
 
@@ -192,10 +192,11 @@ namespace MediaPortal.GUI.Library
 
     protected double _scrollOffsetX = 0.0f;
     protected double _timeElapsed = 0.0f;
-    protected bool _scrollContinuosly = false;
+    protected bool _scrollContinuously = false;
 
     protected bool _drawFocus = true;
     protected double _lastCommandTime = 0;
+    protected int _loopDelay = 0;
 
     private bool _wordWrapping = false;
     private int _frameLimiter = 1;
@@ -313,6 +314,11 @@ namespace MediaPortal.GUI.Library
       _verticalScrollbar.SendNotifies = false;
       _verticalScrollbar.DimColor = DimColor;
       _upDownControl.WindowId = WindowId;
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 100);
+      }
     }
 
     public override void ScaleToScreenResolution()
@@ -1219,9 +1225,9 @@ namespace MediaPortal.GUI.Library
           _scrollPosititionX = 0;
           _scrollOffsetX = 0.0f;
           _timeElapsed = 0.0f;
-          _scrollContinuosly = false;
+          _scrollContinuously = false;
         }
-        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuosly)
+        if ((int)_timeElapsed > _scrollStartDelay || _scrollContinuously)
         {
           // Add an especially slow setting for far distance + small display + bad eyes + foreign language combination
           if (GUIGraphicsContext.ScrollSpeedHorizontal < 3)
@@ -1258,7 +1264,7 @@ namespace MediaPortal.GUI.Library
               _scrollPosititionX = 0;
               _scrollOffsetX = 0.0f;
               _timeElapsed = 0.0f;
-              _scrollContinuosly = true;
+              _scrollContinuously = true;
             }
             else
             {
