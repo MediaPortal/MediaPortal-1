@@ -210,7 +210,7 @@ namespace MediaPortal.Util
           }
         }
 
-        enableGuiSounds = xmlreader.GetValueAsBool("general", "enableguisounds", true);
+        enableGuiSounds = xmlreader.GetValueAsBool("gui", "enableguisounds", true);
       }
     }
 

@@ -41,13 +41,13 @@ namespace MediaPortal.Configuration.Sections
                                           {                                            
                                             new string[] {"gui", "allowRememberLastFocusedItem", "true"},
                                             // 0 Allow remember last focused item on supported window/skin
-                                            new string[] {"gui", "autoSizeWindowModeToSkin", "true"},
+                                            new string[] {"gui", "autosize", "true"},
                                             // 1 Autosize window mode to skin dimensions
                                             new string[] {"gui", "hideextensions", "true"},
                                             // 2 Hide file extensions like .mp3, .avi, .mpg,...
                                             new string[] {"gui", "fileexistscache", "false"},
                                             // 3 Enable file existance cache
-                                            new string[] {"gui", "enableSkinSoundEffects", "true"},
+                                            new string[] {"gui", "enableguisounds", "true"},
                                             // 4 Enable skin sound effects
                                             new string[] {"gui", "mousesupport", "false"},
                                             // 5 Show special mouse controls (scrollbars, etc)      

@@ -1007,7 +1007,7 @@ namespace MediaPortal.GUI.Library
         using (Settings xmlreader = new MPSettings())
         {
           xmlreader.SetValue("general", "skinobsoletecount", 0);
-          bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+          bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
           if (autosize && !GUIGraphicsContext.Fullscreen)
           {
             try

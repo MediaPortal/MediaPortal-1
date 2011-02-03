@@ -2108,7 +2108,7 @@ namespace MediaPortal
         Rectangle newBounds = new Rectangle(oldBounds.X, oldBounds.Y, oldBounds.Width, oldBounds.Height);
         using (Settings xmlreader = new MPSettings())
         {
-          bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+          bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
           if (autosize && !GUIGraphicsContext.Fullscreen)
           {
             newBounds.Height = GUIGraphicsContext.SkinSize.Height;
