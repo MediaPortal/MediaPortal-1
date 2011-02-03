@@ -2171,7 +2171,7 @@ namespace MediaPortal.Configuration.Sections
     private void linkLabelDownloadX10_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
       Settings xmlreader = new MPSettings();
-      string language = xmlreader.GetValueAsString("skin", "language", "");
+      string language = xmlreader.GetValueAsString("gui", "language", "");
       if (language == "English")
       {
         Process.Start("http://www.snapstream.net/download/Firefly_Drivers.aspx");

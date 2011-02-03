@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (Settings xmlreader = new MPSettings())
       {
-        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        strLanguage = xmlreader.GetValueAsString("gui", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
         if (splashScreen != null)

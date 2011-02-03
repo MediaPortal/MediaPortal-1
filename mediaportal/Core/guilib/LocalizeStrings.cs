@@ -90,7 +90,7 @@ namespace MediaPortal.GUI.Library
       bool isPrefixEnabled = true;
       using (Settings reader = new MPSettings())
       {
-        isPrefixEnabled = reader.GetValueAsBool("general", "myprefix", true);
+        isPrefixEnabled = reader.GetValueAsBool("gui", "myprefix", true);
       }
 
       string directory = Config.GetFolder(Config.Dir.Language);

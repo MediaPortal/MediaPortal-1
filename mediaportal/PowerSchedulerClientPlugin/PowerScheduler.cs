@@ -669,7 +669,7 @@ namespace MediaPortal.Plugins.Process
         bool basicHome;
         using (Settings xmlreader = new MPSettings())
         {
-          basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+          basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
         }
 
         int homeWindow = basicHome ? (int)GUIWindow.Window.WINDOW_SECOND_HOME : (int)GUIWindow.Window.WINDOW_HOME;

@@ -169,7 +169,7 @@ namespace WindowPlugins.GUISettings
       {
         xmlwriter.SetValueAsBool("general", "startfullscreen", btnFullscreen.Selected);
         xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
-        xmlwriter.SetValue("skin", "language", btnLanguage.Label);
+        xmlwriter.SetValue("gui", "language", btnLanguage.Label);
         xmlwriter.SetValue("skin", "name", btnSkin.Label);
         Config.SkinName = btnSkin.Label;
       }
@@ -198,7 +198,7 @@ namespace WindowPlugins.GUISettings
       string currentLanguage = string.Empty;
       using (Settings xmlreader = new MPSettings())
       {
-        currentLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        currentLanguage = xmlreader.GetValueAsString("gui", "language", "English");
       }
       btnLanguage.Label = currentLanguage;
     }

@@ -76,7 +76,7 @@ namespace TvPlugin
       bool basicHome;
       using (Settings xmlreader = new MPSettings())
       {
-        basicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        basicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       }
 
       int homeWindow = basicHome ? (int)Window.WINDOW_SECOND_HOME : (int)Window.WINDOW_HOME;

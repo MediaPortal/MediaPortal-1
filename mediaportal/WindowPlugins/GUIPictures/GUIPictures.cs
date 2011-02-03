@@ -409,7 +409,7 @@ namespace MediaPortal.GUI.Pictures
           disp = (Display)xmlreader.GetValueAsInt("pictures", "lastview", (int)disp);
         }
         _switchRemovableDrives = xmlreader.GetValueAsBool("pictures", "SwitchRemovableDrives", true);
-        //_hideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
+        //_hideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
       }
 
       if (currentFolder.Length > 0 && currentFolder == m_strDirectoryStart)

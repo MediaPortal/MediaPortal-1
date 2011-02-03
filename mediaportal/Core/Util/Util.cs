@@ -171,7 +171,7 @@ namespace MediaPortal.Util
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        m_bHideExtensions = xmlreader.GetValueAsBool("general", "hideextensions", true);
+        m_bHideExtensions = xmlreader.GetValueAsBool("gui", "hideextensions", true);
         string artistNamePrefixes = xmlreader.GetValueAsString("musicfiles", "artistprefixes", "The, Les, Die");
         _artistNamePrefixes = artistNamePrefixes.Split(',');
 
@@ -2701,7 +2701,7 @@ namespace MediaPortal.Util
       {
         using (Settings xmlreader = new MPSettings())
         {
-          _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("general", "fileexistscache", false);
+          _fileLookUpCacheEnabled = xmlreader.GetValueAsBool("gui", "fileexistscache", false);
         }
       }
       return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
