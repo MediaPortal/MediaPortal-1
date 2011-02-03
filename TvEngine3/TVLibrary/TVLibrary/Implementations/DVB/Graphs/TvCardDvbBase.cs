@@ -143,7 +143,7 @@ namespace TvLibrary.Implementations.DVB
     protected IBaseFilter _infTeeMain;
 
     /// <summary>
-    /// Second inf tee
+    /// Main inf tee
     /// </summary>
     protected IBaseFilter _infTeeSecond;
 
@@ -226,7 +226,14 @@ namespace TvLibrary.Implementations.DVB
     /// Channel scan interface
     /// </summary>
     protected ITsChannelScan _interfaceChannelScan;
-
+    /// <summary>
+    /// Internal Network provider instance
+    /// </summary>
+    protected IDvbNetworkProvider _interfaceNetworkProvider;
+    /// <summary>
+    /// Indicates if the internal network provider is used
+    /// </summary>
+    protected bool useInternalNetworkProvider;
     /// <summary>
     /// Channel linkage scanner interface
     /// </summary>
@@ -273,6 +280,9 @@ namespace TvLibrary.Implementations.DVB
       _minChannel = -1;
       _maxChannel = -1;
       _supportsSubChannels = true;
+      Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
+      useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId);
+
     }
 
     #endregion
@@ -479,30 +489,37 @@ namespace TvLibrary.Implementations.DVB
         }
         if (performTune)
         {
-          // HW provider supported tuning methods (i.e. TeVii API)
-          if (_conditionalAccess != null && 
-            _conditionalAccess.HWProvider != null && 
-            _conditionalAccess.HWProvider is ICustomTuning &&
-            (_conditionalAccess.HWProvider as ICustomTuning).SupportsTuningForChannel(channel))
+          if (useInternalNetworkProvider)
           {
-            Log.Log.WriteFile("dvb:Custom tune method detected");
-            bool res = (_conditionalAccess.HWProvider as ICustomTuning).CustomTune(channel, _parameters);
-            Log.Log.WriteFile("dvb:Custom tune method finished with result {0}", res);
-            if (!res)
-            {
-              throw new TvException("Unable to tune to channel");
-            }
+            PerformInternalNetworkProviderTuning(channel);
           }
           else
           {
-            Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-            int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
-            Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
-            if (hr != 0)
+            // HW provider supported tuning methods (i.e. TeVii API)
+            if (_conditionalAccess != null &&
+                _conditionalAccess.HWProvider != null &&
+                _conditionalAccess.HWProvider is ICustomTuning &&
+                (_conditionalAccess.HWProvider as ICustomTuning).SupportsTuningForChannel(channel))
             {
-              Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
-                                DsError.GetErrorText(hr));
-              throw new TvException("Unable to tune to channel");
+              Log.Log.WriteFile("dvb:Custom tune method detected");
+              bool res = (_conditionalAccess.HWProvider as ICustomTuning).CustomTune(channel, _parameters);
+              Log.Log.WriteFile("dvb:Custom tune method finished with result {0}", res);
+              if (!res)
+              {
+                throw new TvException("Unable to tune to channel");
+              }
+            }
+            else
+            {
+              Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+              int hr = ((ITuner) _filterNetworkProvider).put_TuneRequest(tuneRequest);
+              Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
+              if (hr != 0)
+              {
+                Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                                  DsError.GetErrorText(hr));
+                throw new TvException("Unable to tune to channel");
+              }
             }
           }
         }
@@ -523,6 +540,168 @@ namespace TvLibrary.Implementations.DVB
       }
 
       return _mapSubChannels[subChannelId];
+    }
+
+    /// <summary>
+    /// Performs a tuning using the internal network provider
+    /// </summary>
+    /// <param name="channel">Channel to tune</param>
+    private void PerformInternalNetworkProviderTuning(IChannel channel)
+    {
+      Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
+      int hr = 0;
+      int undefinedValue = -1;
+      if (channel is DVBTChannel)
+      {
+        DVBTChannel dvbtChannel = channel as DVBTChannel;
+        FrequencySettings fSettings = new FrequencySettings
+                                        {
+                                          Multiplier = 1000,
+                                          Frequency = (uint)(dvbtChannel.Frequency),
+                                          Bandwidth = (uint)dvbtChannel.BandWidth,
+                                          Polarity = Polarisation.NotSet,
+                                          Range = (uint)undefinedValue
+                                        };
+        hr = _interfaceNetworkProvider.TuneDVBT(fSettings);
+      }
+      if (channel is DVBSChannel)
+      {
+        DVBSChannel dvbsChannel = channel as DVBSChannel;
+        if (dvbsChannel.ModulationType == ModulationType.ModNotSet)
+        {
+          dvbsChannel.ModulationType = ModulationType.ModQpsk;
+        }
+        int lowOsc;
+        int hiOsc;
+        int lnbSwitch;
+        BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
+        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+        if (lnbSwitch == 0)
+        {
+          lnbSwitch = 18000;
+        }
+        FrequencySettings fSettings = new FrequencySettings
+                                        {
+                                          Multiplier = 1000,
+                                          Frequency = (uint)dvbsChannel.Frequency,
+                                          Bandwidth = (uint)undefinedValue,
+                                          Polarity = dvbsChannel.Polarisation,
+                                          Range = (uint)undefinedValue
+                                        };
+        DigitalDemodulator2Settings dSettings = new DigitalDemodulator2Settings
+                                                  {
+                                                    InnerFECRate = dvbsChannel.InnerFecRate,
+                                                    InnerFECMethod = FECMethod.MethodNotSet,
+                                                    Modulation = dvbsChannel.ModulationType,
+                                                    OuterFECMethod = FECMethod.MethodNotSet,
+                                                    OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                    Pilot = Pilot.NotSet,
+                                                    RollOff = RollOff.NotSet,
+                                                    SpectralInversion = SpectralInversion.NotSet,
+                                                    SymbolRate = (uint)dvbsChannel.SymbolRate,
+                                                    TransmissionMode = TransmissionMode.ModeNotSet
+                                                  };
+        LnbInfoSettings lSettings = new LnbInfoSettings
+                                      {
+                                        LnbSwitchFrequency = (uint)lnbSwitch * 1000,
+                                        LowOscillator = (uint)lowOsc * 1000,
+                                        HighOscillator = (uint)hiOsc * 1000
+                                      };
+        DiseqcSatelliteSettings sSettings = new DiseqcSatelliteSettings
+                                              {
+                                                ToneBurstEnabled = 0,
+                                                Diseq10Selection = LNB_Source.LNBSourceNotSet,
+                                                Diseq11Selection = DiseqC11Switches.Switch_NOT_SET,
+                                                Enabled = 0
+                                              };
+        hr = _interfaceNetworkProvider.TuneDVBS(fSettings, dSettings, lSettings, sSettings);
+      }
+      if (channel is DVBCChannel)
+      {
+        DVBCChannel dvbcChannel = channel as DVBCChannel;
+        FrequencySettings fSettings = new FrequencySettings
+                                        {
+                                          Multiplier = 1000,
+                                          Frequency = (uint)dvbcChannel.Frequency,
+                                          Bandwidth = (uint)undefinedValue,
+                                          Polarity = Polarisation.NotSet,
+                                          Range = (uint)undefinedValue
+                                        };
+        DigitalDemodulatorSettings dSettings = new DigitalDemodulatorSettings
+                                                 {
+                                                   InnerFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                   InnerFECMethod = FECMethod.MethodNotSet,
+                                                   Modulation = dvbcChannel.ModulationType,
+                                                   OuterFECMethod = FECMethod.MethodNotSet,
+                                                   OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                   SpectralInversion = SpectralInversion.NotSet,
+                                                   SymbolRate = (uint)dvbcChannel.SymbolRate
+                                                 };
+
+        hr = _interfaceNetworkProvider.TuneDVBC(fSettings, dSettings);
+      }
+      if (channel is ATSCChannel)
+      {
+        ATSCChannel atscChannel = channel as ATSCChannel;
+        if (atscChannel.ModulationType == ModulationType.Mod256Qam)
+        {
+          FrequencySettings fSettings = new FrequencySettings
+                                          {
+                                            Multiplier = 1000,
+                                            Frequency = (uint)atscChannel.Frequency,
+                                            Bandwidth = (uint)undefinedValue,
+                                            Polarity = Polarisation.NotSet,
+                                            Range = (uint)undefinedValue
+                                          };
+          DigitalDemodulatorSettings dSettings = new DigitalDemodulatorSettings
+                                                   {
+                                                     InnerFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                     InnerFECMethod = FECMethod.MethodNotSet,
+                                                     Modulation = atscChannel.ModulationType,
+                                                     OuterFECMethod = FECMethod.MethodNotSet,
+                                                     OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                     SpectralInversion = SpectralInversion.NotSet,
+                                                     SymbolRate = (uint)undefinedValue
+                                                   };
+
+          hr = _interfaceNetworkProvider.TuneATSC((uint)undefinedValue, fSettings, dSettings);
+        }
+        else
+        {
+          FrequencySettings fSettings = new FrequencySettings
+                                          {
+                                            Multiplier = (uint)undefinedValue,
+                                            Frequency = (uint)undefinedValue,
+                                            Bandwidth = (uint)undefinedValue,
+                                            Polarity = Polarisation.NotSet,
+                                            Range = (uint)undefinedValue
+                                          };
+          DigitalDemodulatorSettings dSettings = new DigitalDemodulatorSettings
+                                                   {
+                                                     InnerFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                     InnerFECMethod = FECMethod.MethodNotSet,
+                                                     Modulation = atscChannel.ModulationType,
+                                                     OuterFECMethod = FECMethod.MethodNotSet,
+                                                     OuterFECRate = BinaryConvolutionCodeRate.RateNotSet,
+                                                     SpectralInversion = SpectralInversion.NotSet,
+                                                     SymbolRate = (uint)undefinedValue
+                                                   };
+
+          hr = _interfaceNetworkProvider.TuneATSC((uint)undefinedValue, fSettings, dSettings);
+        }
+      }
+      Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
+      if (hr != 0)
+      {
+        Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                          HResult.GetDXErrorString(hr));
+        //remove subchannel.
+        /*if (newSubChannel)
+            {
+            _mapSubChannels.Remove(subChannelId);
+            }*/
+        throw new TvException("Unable to tune to channel");
+      }
     }
 
     /// <summary>
@@ -808,6 +987,20 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void AddNetworkProviderFilter(Guid networkProviderClsId)
     {
+      Log.Log.WriteFile("dvb:AddNetworkProviderFilter");
+      if (useInternalNetworkProvider)
+      {
+        const string networkProviderName = "MediaPortal Network Provider";
+        Guid internalNetworkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
+        Log.Log.WriteFile("dvb:Add {0}", networkProviderName);
+        _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, internalNetworkProviderClsId,
+                                                                     networkProviderName);
+        _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
+        string hash = TvCardCollection.GetHash(_tunerDevice.DevicePath);
+        _interfaceNetworkProvider.ConfigureLogging(TvCardCollection.GetFileName(_tunerDevice.DevicePath), hash,
+                                                   LogLevelOption.Debug);
+        return;
+      }
       _isATSC = false;
       _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
       Log.Log.WriteFile("dvb:AddNetworkProviderFilter");
@@ -886,15 +1079,12 @@ namespace TvLibrary.Implementations.DVB
     /// Checks if the WinTV USB CI module is installed
     /// if so it adds it to the directshow graph
     /// in the following way:
-    /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[WinTvCI Filter]->[InfTee]
+    /// [Network Provider]->[Tuner Filter]->[Capture Filter]->[WinTvCI Filter]
     /// alternaively like this:
-    /// [Network Provider]->[Tuner Filter]->[WinTvCI Filter]->[InfTee]
+    /// [Network Provider]->[Tuner Filter]->[WinTvCI Filter]
     /// </summary>
-    /// <param name="captureFilter">The capture filter.</param>
-    /// <returns>
-    /// true if graph building succeeded, else false
-    /// </returns>
-    protected bool AddWinTvCIModule(IBaseFilter captureFilter)
+    /// <param name="lastFilter">A reference to the last filter.</param>
+    protected void AddWinTvCIModule(ref IBaseFilter lastFilter)
     {
       //check if the hauppauge wintv usb CI module is installed
       DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
@@ -919,13 +1109,7 @@ namespace TvLibrary.Implementations.DVB
       if (usbWinTvDevice == null)
       {
         Log.Log.Info("dvb:  WinTv CI module not detected.");
-        if (tunerOnly)
-          Log.Log.Info("dvb:  Render [tuner]->[inftee]");
-        else
-          Log.Log.Info("dvb:  Render [capture]->[inftee]");
-        //no wintv ci usb module found. Render [Tuner] or [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        return;
       }
       //wintv ci usb module found
       Log.Log.Info("dvb:  WinTv CI module detected");
@@ -951,13 +1135,7 @@ namespace TvLibrary.Implementations.DVB
       if (tuner != cardmoniker)
       {
         Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
-        if (tunerOnly)
-          Log.Log.Info("dvb:  Render [tuner]->[inftee]");
-        else
-          Log.Log.Info("dvb:  Render [capture]->[inftee]");
-        //Render [Tuner] or [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        return;
       }
       Log.Log.Info("dvb:  Adding WinTv CI to graph");
       //add filter to graph
@@ -969,10 +1147,7 @@ namespace TvLibrary.Implementations.DVB
       catch (Exception)
       {
         Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
-        //cannot add filter to graph...
-        //Render [Tuner] or [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        return;
       }
       if (hr != 0)
       {
@@ -985,9 +1160,7 @@ namespace TvLibrary.Implementations.DVB
           _graphBuilder.RemoveFilter(tmpCiFilter);
           Release.ComObject("WintvUsbCI module", tmpCiFilter);
         }
-        //Render [Tuner] or [Capture]->[InfTee]
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        return;
       }
       //Check if WinTV CI is plugged in to USB port if not remove filter from graph.
       winTvCiHandler = new WinTvCiModule(tmpCiFilter);
@@ -1000,86 +1173,26 @@ namespace TvLibrary.Implementations.DVB
         _graphBuilder.RemoveFilter(tmpCiFilter);
         Release.ComObject("WintvUsbCI module", tmpCiFilter);
         Log.Log.Info("dvb:  WinTv CI not plugged in or driver not installed correctly!");
-        //Render [Tuner] or [Capture]->[InfTee]
-        if (tunerOnly)
-          Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
-        else
-          Log.Log.Info("dvb:  Render [Capture]->[InfTee]");
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        return (hr == 0);
+        return;
       }
       //WinTV-CI tray icon no longer required as it is now fully native supported
-      if (tunerOnly)
-      {
-        //now render [Tuner]->[WinTv USB]
-        Log.Log.Info("dvb:  Render [Tuner]->[WinTvUSB]");
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter);
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:  Render [Tuner]->[WinTvUSB] failed");
-          winTvCiHandler.Shutdown();
-          _graphBuilder.RemoveFilter(tmpCiFilter);
-          Release.ComObject("WintvUsbCI module", tmpCiFilter);
-          //Render [Capture]->[InfTee]
-          Log.Log.Info("dvb:  Render [Tuner]->[InfTee-Main]");
-          hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-          if (hr != 0)
-          {
-            Log.Log.Error("dvb:  Render [Tuner]->[InfTee-Main] failed");
-            return false;
-          }
-          return (hr == 0);
-        }
-      }
-      else
-      {
-        //now render [Capture]->[WinTv USB]
-        Log.Log.Info("dvb:  Render [Capture]->[WinTvUSB]");
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter);
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:  Render [Capture]->[WinTvUSB] failed");
-          winTvCiHandler.Shutdown();
-          _graphBuilder.RemoveFilter(tmpCiFilter);
-          Release.ComObject("WintvUsbCI module", tmpCiFilter);
-          //Render [Capture]->[InfTee]
-          Log.Log.Info("dvb:  Render [Capture]->[InfTee-Main]");
-          hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-          if (hr != 0)
-          {
-            Log.Log.Error("dvb:  Render [Capture]->[InfTee-Main] failed");
-            return false;
-          }
-          return (hr == 0);
-        }
-      }
-      //Finally render [WinTvCi]->[InfTee]
-      Log.Log.Info("dvb:  Render [WinTvUSB]->[InfTee-Main]");
-      hr = _capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain);
+      //now render ..->[WinTv USB]
+      Log.Log.Info("dvb:  Render ...->[WinTvUSB]");
+      hr = _capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
       if (hr != 0)
       {
-        Log.Log.Error("dvb:  Render [WinTvUSB]->[InfTee-Main] failed");
+        Log.Log.Error("dvb:  Render ...->[WinTvUSB] failed");
         winTvCiHandler.Shutdown();
         _graphBuilder.RemoveFilter(tmpCiFilter);
         Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        if (tunerOnly)
-          Log.Log.Info("dvb:  Render [Tuner]->[InfTee]");
-        else
-          Log.Log.Info("dvb:  Render [Capture]->[InfTee]");
-        hr = _capBuilder.RenderStream(null, null, captureFilter, null, _infTeeMain);
-        if (hr != 0)
-        {
-          if (tunerOnly)
-            Log.Log.Error("dvb:  Render [Tuner]->[InfTee] failed");
-          else
-            Log.Log.Error("dvb:  Render [Capture]->[InfTee] failed");
-          return false;
-        }
+        return;
       }
       _filterWinTvUsb = tmpCiFilter;
       _deviceWinTvUsb = usbWinTvDevice;
       DevicesInUse.Instance.Add(usbWinTvDevice);
-      return (hr == 0);
+      Log.Log.WriteFile("dvb:  Setting lastFilter to WinTV CI");
+      lastFilter = _filterWinTvUsb;
+      return;
     }
 
     /// <summary>
@@ -1090,26 +1203,24 @@ namespace TvLibrary.Implementations.DVB
     /// alternaively like this:
     /// [Network Provider]->[Tuner Filter]->[Digital Devices Common Interface]->[InfTee]
     /// </summary>
-    /// <param name="captureFilter">The capture filter.</param>
-    /// <param name="captureDevice">The active DsDevice.</param>
+    /// <param name="lastFilter">A reference to the last filter.</param>
     /// <returns>
     /// true if hardware found and graph building succeeded, else false
     /// </returns>
-    protected bool AddDigitalDevicesCIModule(IBaseFilter captureFilter, DsDevice captureDevice)
+    protected bool AddDigitalDevicesCIModule(ref IBaseFilter lastFilter)
     {
       FilterInfo pInfo;
       IBaseFilter tmpCiFilter = null;
-      String CardName = String.Empty;
       String CiDeviceName = String.Empty;
       bool filterSuccess = false;
 
-      captureFilter.QueryFilterInfo(out pInfo);
+      lastFilter.QueryFilterInfo(out pInfo);
       //Log.Log.Debug(pInfo.achName);
 
-      if (captureDevice == null)
+      if (_captureDevice == null)
         return false;
 
-     if (!captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
+      if (!_captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
         return false;
 
       try
@@ -1135,7 +1246,7 @@ namespace TvLibrary.Implementations.DVB
             String filterName = tunerOnly ? "Tuner" : "Capture";
             //now render [Tuner/Capture]->[CI]
             Log.Log.Info("dvb:  Render [{0}]->[{1}]", filterName, CiDeviceName);
-            if (_capBuilder.RenderStream(null, null, captureFilter, null, tmpCiFilter) != 0)
+            if (_capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter) != 0)
             {
               Log.Log.Info("dvb:  Render [{0}]->[{1}] failed", filterName, CiDeviceName);
               _graphBuilder.RemoveFilter(tmpCiFilter);
@@ -1155,20 +1266,13 @@ namespace TvLibrary.Implementations.DVB
         if (DDCIDevice == null)
           return false;
 
-
-        //Finally render [CI]->[InfTee]
-        Log.Log.Info("dvb:  Render [{0}]->[InfTee-Main]", CiDeviceName);
-        if (_capBuilder.RenderStream(null, null, tmpCiFilter, null, _infTeeMain) != 0)
-        {
-          Log.Log.Error("dvb:  Render [{0}]->[InfTee-Main] failed", CiDeviceName);
-          return false;
-        }
+        Log.Log.WriteFile("dvb:  Setting lastFilter to Digital Devices CI");
+        lastFilter = tmpCiFilter;
         _filterDigitalDevicesCI = tmpCiFilter;
         _deviceDigitalDevicesCI = DDCIDevice;
-        DevicesInUse.Instance.Add(DDCIDevice);
 
         filterSuccess = true;
-        return filterSuccess;
+        return true;
       }
       catch (Exception ex)
       {
@@ -1189,15 +1293,15 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Finds the correct bda tuner/capture filters and adds them to the graph
     /// Creates a graph like
-    /// [NetworkProvider]->[Tuner]->[Capture]->[Inftee]->[Demuxer]
+    /// [NetworkProvider]->[Tuner]->[Capture]->[TsWriter]
     /// or if no capture filter is present:
-    /// [NetworkProvider]->[Tuner]->[Inftee]->[Demuxer]
+    /// [NetworkProvider]->[Tuner]->[TsWriter]
     /// When a wintv ci module is found the graph will look like:
-    /// [NetworkProvider]->[Tuner]->[Capture]->[WinTvCiUSB]->[Inftee]->[Demuxer]
+    /// [NetworkProvider]->[Tuner]->[Capture]->[WinTvCiUSB]->[TsWriter]
     /// or if no capture filter is present:
-    /// [NetworkProvider]->[Tuner]->[InfTee]->[WinTvCiUSB]->[Inftee]->[Demuxer]
+    /// [NetworkProvider]->[Tuner]->[WinTvCiUSB]->[TsWriter]
     /// </summary>
-    /// <param name="device"></param>
+    /// <param name="device">Tuner device</param>
     protected void AddAndConnectBDABoardFilters(DsDevice device)
     {
       if (!CheckThreadId())
@@ -1254,7 +1358,7 @@ namespace TvLibrary.Implementations.DVB
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
-        Log.Log.Info("dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!"); 
+        Log.Log.Info("dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
         Log.Log.Error("dvb:  No TVTuner installed");
         throw new TvException("No TVTuner installed");
       }
@@ -1296,53 +1400,104 @@ namespace TvLibrary.Implementations.DVB
       {
         skipCaptureFilter = true;
       }
+      Log.Log.WriteFile("dvb:  Setting lastFilter to Tuner filter");
+      IBaseFilter lastFilter = _filterTuner;
 
       if (false == skipCaptureFilter)
       {
         Log.Log.WriteFile("dvb:  Find BDA receiver");
         Log.Log.WriteFile("dvb:  match Capture by Tuner device path");
-        AddBDARendererToGraph(device);
+        AddBDARendererToGraph(device, ref lastFilter);
         if (_filterCapture == null)
         {
           Log.Log.WriteFile("dvb:  Match by device path failed - trying alternative method");
           matchDevicePath = false;
           Log.Log.WriteFile("dvb:  match Capture filter by Tuner device connection");
-          AddBDARendererToGraph(device);
+          AddBDARendererToGraph(device, ref lastFilter);
         }
       }
-      if (_filterCapture == null)
+      // Add additional filters after the capture/tuner device
+      AddWinTvCIModule(ref lastFilter);
+      AddDigitalDevicesCIModule(ref lastFilter);
+      AddMdPlugs(ref lastFilter);
+      // Now connect the required filters if not using the internal network provider
+      if (!useInternalNetworkProvider)
       {
-        Log.Log.WriteFile("dvb:  Single BDA filter implementation...");
-        // render [Tuner]->[Inf Tee]
-        tunerOnly = true;
-        if (AddWinTvCIModule(_filterTuner))
-        {
-          Log.Log.WriteFile("dvb:  OK");
-        }
-        else
-        {
-          Log.Log.Error("dvb:  Render->main inftee demux failed");
-          _graphBuilder.RemoveFilter(_filterTuner);
-          Release.ComObject("bda receiver", _filterTuner);
-          throw new TvException("No Tv Receiver filter found");
-        }
-        Log.Log.WriteFile("dvb:  using only tv tuner filter...");
-        ConnectMpeg2DemuxToInfTee();
-        AddTsWriterFilterToGraph();
-        _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
-        //,_cardUsesRealCAM);
-        return;
+        // Connect the inf tee and demux to the last filter (saves one inf tee)
+        ConnectMpeg2DemuxToInfTee(ref lastFilter);
+        // Connect and add the filters to the demux
+        AddBdaTransportFiltersToGraph();
       }
-      ConnectMpeg2DemuxToInfTee();
-      AddTsWriterFilterToGraph();
+      // Render the last filter with the tswriter
+      if (!ConnectTsWriter(lastFilter))
+      {
+        throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
+      }
+      Log.Log.WriteFile("dvb: Checking for hardware specific extensions");
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
+    }
+
+    /// <summary>
+    /// Connects the ts writer to the last given filter
+    /// </summary>
+    /// <param name="lastFilter">Last filter in the graph</param>
+    /// <returns>true, if successful ; false otherwise</returns>
+    protected bool ConnectTsWriter(IBaseFilter lastFilter)
+    {
+      int hr;
+      Log.Log.Info("dvb:  Render ..->[TsWriter]");
+      //no wintv ci usb module found. Render [Tuner] or [Capture]->[InfTee]
+      hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
+      return (hr == 0);
+
+    }
+
+    /// <summary>
+    /// Add MD Plugs
+    /// </summary>
+    /// <param name="lastFilter">Last Filter in the graph</param>
+    protected void AddMdPlugs(ref IBaseFilter lastFilter)
+    {
+      int hr = -1;
+      if (_cardType == CardType.DvbIP)
+      {
+        _mdplugs = MDPlugs.Create(Name, DevicePath);
+      }
+      else
+      {
+        DsDevice dv = _captureDevice ?? _tunerDevice;
+        string DisplayMoniker;
+        dv.Mon.GetDisplayName(null, null, out DisplayMoniker);
+        _mdplugs = MDPlugs.Create(dv.Name, DisplayMoniker);
+      }
+      if (_mdplugs != null)
+      {
+        _infTeeSecond = (IBaseFilter)new InfTee();
+        hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee Second");
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:Add second InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  second InfTee");
+        }
+        Log.Log.WriteFile("dvb:  Render ...->[inftee] second ");
+        hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTeeSecond);
+        if (hr != 0)
+        {
+          Log.Log.Error("dvb:Unable to connect InfTee second returns:0x{0:X}", hr);
+          throw new TvExceptionGraphBuildingFailed("Could not connect InfTee second Filter to last Filter");
+        }
+        lastFilter = _infTeeSecond;
+        _mdplugs.Connectmdapifilter(_graphBuilder, ref lastFilter);
+      }
     }
 
     /// <summary>
     /// adds the BDA renderer filter to the graph by elimination
     /// then tries to match tuner &amp; render filters if successful then connects them.
     /// </summary>
-    protected void AddBDARendererToGraph(DsDevice device)
+    /// <param name="device">Tuner device</param>
+    /// <param name="currentLastFilter">The current last filter if we add multiple captures</param>
+    protected void AddBDARendererToGraph(DsDevice device, ref IBaseFilter currentLastFilter)
     {
       if (!CheckThreadId())
         return;
@@ -1403,34 +1558,17 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
           // render [Capture]->[Inf Tee]
-          if (AddDigitalDevicesCIModule(tmp, devices[i]))
-          {
-            _filterCapture = tmp;
-            _captureDevice = devices[i];
-            DevicesInUse.Instance.Add(devices[i]);
-            Log.Log.WriteFile("dvb:  OK");
-            break;
-          }
-
-          if (AddWinTvCIModule(tmp))
-          {
-            _filterCapture = tmp;
-            _captureDevice = devices[i];
-            DevicesInUse.Instance.Add(devices[i]);
-            Log.Log.WriteFile("dvb:  OK");
-            break;
-          }
-          Log.Log.Error("dvb:  Render->main inftee demux failed");
-          _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("bda receiver", tmp);
+          _filterCapture = tmp;
+          _captureDevice = devices[i];
+          DevicesInUse.Instance.Add(devices[i]);
+          Log.Log.WriteFile("dvb:  Setting lastFilter to Capture device");
+          currentLastFilter = _filterCapture;
+          break;
         }
-        else
-        {
-          // Try another...
-          Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
-          _graphBuilder.RemoveFilter(tmp);
-          Release.ComObject("bda receiver", tmp);
-        }
+        // Try another...
+        Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
+        _graphBuilder.RemoveFilter(tmp);
+        Release.ComObject("bda receiver", tmp);
       }
     }
 
@@ -1451,104 +1589,42 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.WriteFile("dvb:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer for tif");
       }
-      //multi demux
-
-#if MULTI_DEMUX
-      _filterMpeg2DemuxAnalyzer = (IBaseFilter)new MPEG2Demultiplexer();
-
-      hr = _graphBuilder.AddFilter(_filterMpeg2DemuxAnalyzer, "Analyzer MPEG2 Demultiplexer");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("dvb:AddMpeg2DemuxerDemux returns:0x{0:X}", hr);
-        throw new TvException("Unable to add MPEG2 demultiplexer for analyzer");
-      }
-
-      _filterMpeg2DemuxTs = (IBaseFilter)new MPEG2Demultiplexer();
-      hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTs, "Timeshift MPEG2 Demultiplexer");
-      if (hr != 0)
-      {
-        Log.Log.WriteFile("dvb:AddMpeg2DemuxerDemux returns:0x{0:X}", hr);
-        throw new TvException("Unable to add MPEG2 demultiplexer for analyzer");
-      }
-#endif
-      Log.Log.WriteFile("dvb:add Inf Tee filter");
-      _infTeeMain = (IBaseFilter)new InfTee();
-      hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
-      if (hr != 0)
-      {
-        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-        throw new TvException("Unable to add  mainInfTee");
-      }
     }
 
     /// <summary>
     /// Connects the mpeg2 demuxers to the inf tee filter.
     /// </summary>
-    protected void ConnectMpeg2DemuxToInfTee()
+    protected void ConnectMpeg2DemuxToInfTee(ref IBaseFilter lastFilter)
     {
-      //multi demux
-      int hr;
-      if (_cardType == TvLibrary.Interfaces.CardType.DvbIP)
-      {
-        _mdplugs = MDPlugs.Create(Name, DevicePath);
-      }
-      else
-      {
-        DsDevice dv = _captureDevice ?? _tunerDevice;
-        string DisplayMoniker;
-        dv.Mon.GetDisplayName(null, null, out DisplayMoniker);
-        _mdplugs = MDPlugs.Create(dv.Name, DisplayMoniker);
-      }
-      if (_mdplugs != null)
-      {
-        Log.Log.WriteFile("dvb:add 2nd Inf Tee filter");
-        _infTeeSecond = (IBaseFilter)new InfTee();
-        hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee 2");
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:Add 2nd InfTee returns:0x{0:X}", hr);
-          throw new TvException("Unable to add  _infTeeSecond");
-        }
-        _mdplugs.Connectmdapifilter(_graphBuilder, ref _infTeeMain, ref _infTeeSecond, ref _filterMpeg2DemuxTif);
-      }
-      else
-      {
-        //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
-        Log.Log.WriteFile("dvb:  Render [inftee]->[demux]");
-        IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
-        IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
-        hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-        Release.ComObject("maintee pin0", mainTeeOut);
-        Release.ComObject("tifdemux pinin", demuxPinIn);
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
-          throw new TvException("Unable to add  mainInfTee");
-        }
-      }
-
-#if MULTI_DEMUX
-      mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 1);
-      demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxAnalyzer, PinDirection.Input, 0);
-      hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
-      Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("analyzer demux pinin", demuxPinIn);
+      Log.Log.WriteFile("dvb:add Inf Tee filter");
+      _infTeeMain = (IBaseFilter)new InfTee();
+      int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
-      mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 2);
-      demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTs, PinDirection.Input, 0);
+      Log.Log.WriteFile("dvb:  Render ...->[inftee]");
+      hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTeeMain);
+      if(hr!=0)
+      {
+        Log.Log.Error("dvb:Unable to connect InfTee returns:0x{0:X}", hr);
+        throw new TvExceptionGraphBuildingFailed("Could not connect InfTee Filter to last Filter");
+      }
+      Log.Log.WriteFile("dvb:  Setting lastFilter to Inf Tee");
+      lastFilter = _infTeeMain;
+      //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
+      Log.Log.WriteFile("dvb:  Render [inftee]->[demux]");
+      IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
+      IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
       Release.ComObject("maintee pin0", mainTeeOut);
-      Release.ComObject("mpg demux pinin", demuxPinIn);
+      Release.ComObject("tifdemux pinin", demuxPinIn);
       if (hr != 0)
       {
-        Log.Log.WriteFile("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
-#endif
     }
 
     /// <summary>
@@ -1565,35 +1641,6 @@ namespace TvLibrary.Implementations.DVB
         {
           Log.Log.Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
-        }
-        IBaseFilter tee = _infTeeMain;
-        if (_infTeeSecond != null)
-          tee = _infTeeSecond;
-        IPin pinTee = DsFindPin.ByDirection(tee, PinDirection.Output, 1);
-        if (pinTee == null)
-        {
-          if (hr != 0)
-          {
-            Log.Log.Error("dvb:  Unable to find pin#2 on inftee filter");
-            throw new TvException("unable to find pin#2 on inftee filter");
-          }
-        }
-        IPin pin = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
-        if (pin == null)
-        {
-          if (hr != 0)
-          {
-            Log.Log.Error("dvb:  Unable to find pin on ts analyzer filter");
-            throw new TvException("unable to find pin on ts analyzer filter");
-          }
-        }
-        Log.Log.Info("dvb:  Render [InfTee]->[TsWriter]");
-        hr = _graphBuilder.Connect(pinTee, pin);
-        Release.ComObject("pinTsWriterIn", pin);
-        if (hr != 0)
-        {
-          Log.Log.Error("dvb:  Unable to connect inftee to analyzer filter :0x{0:X}", hr);
-          throw new TvException("unable to connect inftee to analyzer filter");
         }
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
         _interfaceEpgGrabber = (ITsEpgScanner)_filterTsWriter;
@@ -1833,7 +1880,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_infTeeSecond != null)
       {
-        Release.ComObject("_infTeeSecond filter", _infTeeSecond);
+        Release.ComObject("second inftee filter", _infTeeSecond);
         _infTeeSecond = null;
       }
       if (_filterTuner != null)
@@ -2084,7 +2131,7 @@ namespace TvLibrary.Implementations.DVB
       UpdateSignalQuality(false);
     }
 
-//public bool SignalPresent()
+    //public bool SignalPresent()
 
     #endregion
 
@@ -2554,10 +2601,11 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Reloads the card configuration
     /// </summary>
-    public void ReloadCardConfiguration() {}
+    public void ReloadCardConfiguration() { }
 
     #endregion
 
     protected abstract DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name);
   }
 }
+

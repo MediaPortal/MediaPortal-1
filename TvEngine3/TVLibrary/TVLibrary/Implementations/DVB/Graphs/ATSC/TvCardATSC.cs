@@ -69,8 +69,12 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
-        CreateTuningSpace();
-        AddMpeg2DemuxerToGraph();
+        AddTsWriterFilterToGraph();
+        if (!useInternalNetworkProvider)
+        {
+          CreateTuningSpace();
+          AddMpeg2DemuxerToGraph();
+        }
         AddAndConnectBDABoardFilters(_device);
         AddBdaTransportFiltersToGraph();
         string graphName = _device.Name + " - ATSC Graph.grf";
@@ -242,6 +246,10 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
+      if(useInternalNetworkProvider)
+      {
+        return true;
+      }
       if (_previousChannel == null || _previousChannel.IsDifferentTransponder(atscChannel))
       {
         Log.Log.WriteFile("atsc:using new channel tuning settings");
@@ -249,7 +257,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = _tuningSpace.CreateTuneRequest(out request);
         if (hr != 0)
           Log.Log.WriteFile("atsc: Failed - CreateTuneRequest");
-        _tuneRequest = (IATSCChannelTuneRequest)request;
+        _tuneRequest = request;
         IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest)_tuneRequest;
         ILocator locator;
         hr = _tuningSpace.get_DefaultLocator(out locator);

@@ -76,10 +76,13 @@ namespace TvLibrary.Implementations.DVB
         _rotEntry = new DsROTEntry(_graphBuilder);
         // Method names should be self explanatory
         AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
-        CreateTuningSpace();
-        AddMpeg2DemuxerToGraph();
+        AddTsWriterFilterToGraph();
+        if (!useInternalNetworkProvider)
+        {
+          CreateTuningSpace();
+          AddMpeg2DemuxerToGraph();
+        }
         AddAndConnectBDABoardFilters(_device);
-        AddBdaTransportFiltersToGraph();
         string graphName = _device.Name + " - DVBS Graph.grf";
         FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
         GetTunerSignalStatistics();
@@ -274,8 +277,11 @@ namespace TvLibrary.Implementations.DVB
         Tune(subChannelId, channel);
       }
 
-      if (_dvbsChannel.ServiceId < 0 || _dvbsChannel.NetworkId < 0 || _dvbsChannel.TransportId < 0)
+      if (_filterTIF != null && _dvbsChannel != null && (_dvbsChannel.ServiceId < 0 || _dvbsChannel.NetworkId < 0 || _dvbsChannel.TransportId < 0))
+      {
         _filterTIF.Stop();
+      }
+
     }
 
     private bool BeforeTune(ref int subChannelId, IChannel channel)
@@ -303,6 +309,23 @@ namespace TvLibrary.Implementations.DVB
       if (_mapSubChannels.ContainsKey(subChannelId) == false)
       {
         subChannelId = GetNewSubChannel(channel);
+      }
+      if (useInternalNetworkProvider)
+      {
+        //set the DisEqC parameters 
+        if (_conditionalAccess != null)
+        {
+          //int hr2 = ((IMediaControl)_graphBuilder).Pause();
+          _diseqCsucceded = _conditionalAccess.SendDiseqcCommand(_parameters, dvbsChannel);
+          //hr2 = ((IMediaControl)_graphBuilder).Run();
+
+          //move diseqc motor to correct satellite
+          if (dvbsChannel != null && dvbsChannel.SatelliteIndex > 0 && _conditionalAccess.DiSEqCMotor != null)
+          {
+            _conditionalAccess.DiSEqCMotor.GotoPosition((byte)dvbsChannel.SatelliteIndex);
+          }
+        }
+        return true;
       }
 
       if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbsChannel))
