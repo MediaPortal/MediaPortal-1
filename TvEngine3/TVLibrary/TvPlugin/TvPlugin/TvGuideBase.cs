@@ -2847,8 +2847,12 @@ namespace TvPlugin
             }
             else
             {
-              // Advance to next channel.
+              // Advance to next channel, wrap around if at end of list.
               _channelOffset++;
+              if (_channelOffset >= _channelList.Count)
+              {
+                _channelOffset = 0;
+              }
             }
           }
           else
