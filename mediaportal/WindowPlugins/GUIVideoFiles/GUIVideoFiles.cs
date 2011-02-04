@@ -1194,6 +1194,15 @@ namespace MediaPortal.GUI.Video
       if ((VideoDatabase.GetMovieInfo(strFile, ref movieDetails) == -1) ||
           (movieDetails.IsEmpty))
       {
+        // Check Internet connection
+        if (!Win32API.IsConnectedToInternet())
+        {
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          return;
+        }
         // Movie is not in the database
         if (bFoundFile)
         {

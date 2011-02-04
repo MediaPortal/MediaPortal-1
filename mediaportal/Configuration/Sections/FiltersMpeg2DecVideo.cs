@@ -115,10 +115,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSettings
       // 
-      this.groupBoxSettings.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSettings.Controls.Add(this.checkBoxOutputInterlaced);
       this.groupBoxSettings.Controls.Add(this.buttonReset);
       this.groupBoxSettings.Controls.Add(this.buttonTvDefaults);
@@ -136,9 +134,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSettings.Controls.Add(this.trackBarContrast);
       this.groupBoxSettings.Controls.Add(this.trackBarBrightness);
       this.groupBoxSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxSettings.Location = new System.Drawing.Point(0, 0);
+      this.groupBoxSettings.Location = new System.Drawing.Point(6, 0);
       this.groupBoxSettings.Name = "groupBoxSettings";
-      this.groupBoxSettings.Size = new System.Drawing.Size(472, 405);
+      this.groupBoxSettings.Size = new System.Drawing.Size(462, 405);
       this.groupBoxSettings.TabIndex = 0;
       this.groupBoxSettings.TabStop = false;
       this.groupBoxSettings.Text = "Settings";
@@ -153,8 +151,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxOutputInterlaced.TabIndex = 15;
       this.checkBoxOutputInterlaced.Text = "Set interlaced flag for output";
       this.checkBoxOutputInterlaced.UseVisualStyleBackColor = true;
-      this.checkBoxOutputInterlaced.CheckedChanged +=
-        new System.EventHandler(this.checkBoxOutputInterlaced_CheckedChanged);
+      this.checkBoxOutputInterlaced.CheckedChanged += new System.EventHandler(this.checkBoxOutputInterlaced_CheckedChanged);
       // 
       // buttonReset
       // 
@@ -178,17 +175,15 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelNote
       // 
-      this.labelNote.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelNote.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.labelNote.Location = new System.Drawing.Point(13, 362);
       this.labelNote.Name = "labelNote";
-      this.labelNote.Size = new System.Drawing.Size(440, 40);
+      this.labelNote.Size = new System.Drawing.Size(430, 40);
       this.labelNote.TabIndex = 12;
       this.labelNote.Text = "Note: Using a non-planar output format, bob deinterlacer, or adjusting color prop" +
-                            "erties may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if ne" +
-                            "cessary.";
+          "erties may degrade performance. \"Auto\" deinterlacer will switch to \"Blend\" if ne" +
+          "cessary.";
       // 
       // labelSaturation
       // 
@@ -224,22 +219,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDeinterlace
       // 
-      this.comboBoxDeinterlace.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDeinterlace.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDeinterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeinterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDeinterlace.Items.AddRange(new object[]
-                                                {
-                                                  "Auto",
-                                                  "Weave",
-                                                  "Blend",
-                                                  "Bob",
-                                                  "Field Shift"
-                                                });
+      this.comboBoxDeinterlace.Items.AddRange(new object[] {
+            "Auto",
+            "Weave",
+            "Blend",
+            "Bob",
+            "Field Shift"});
       this.comboBoxDeinterlace.Location = new System.Drawing.Point(131, 103);
       this.comboBoxDeinterlace.Name = "comboBoxDeinterlace";
-      this.comboBoxDeinterlace.Size = new System.Drawing.Size(322, 21);
+      this.comboBoxDeinterlace.Size = new System.Drawing.Size(312, 21);
       this.comboBoxDeinterlace.TabIndex = 11;
       // 
       // labelDeinterlaceMethod
@@ -278,68 +270,60 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarSaturation
       // 
-      this.trackBarSaturation.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarSaturation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarSaturation.LargeChange = 10;
       this.trackBarSaturation.Location = new System.Drawing.Point(131, 268);
       this.trackBarSaturation.Maximum = 200;
       this.trackBarSaturation.Name = "trackBarSaturation";
-      this.trackBarSaturation.Size = new System.Drawing.Size(330, 45);
+      this.trackBarSaturation.Size = new System.Drawing.Size(320, 45);
       this.trackBarSaturation.TabIndex = 9;
       this.trackBarSaturation.TickFrequency = 25;
       this.trackBarSaturation.Value = 100;
       // 
       // trackBarHue
       // 
-      this.trackBarHue.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarHue.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarHue.LargeChange = 15;
       this.trackBarHue.Location = new System.Drawing.Point(131, 228);
       this.trackBarHue.Maximum = 360;
       this.trackBarHue.Name = "trackBarHue";
-      this.trackBarHue.Size = new System.Drawing.Size(330, 45);
+      this.trackBarHue.Size = new System.Drawing.Size(320, 45);
       this.trackBarHue.TabIndex = 7;
       this.trackBarHue.TickFrequency = 45;
       this.trackBarHue.Value = 180;
       // 
       // trackBarContrast
       // 
-      this.trackBarContrast.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarContrast.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarContrast.LargeChange = 10;
       this.trackBarContrast.Location = new System.Drawing.Point(131, 188);
       this.trackBarContrast.Maximum = 200;
       this.trackBarContrast.Name = "trackBarContrast";
-      this.trackBarContrast.Size = new System.Drawing.Size(330, 45);
+      this.trackBarContrast.Size = new System.Drawing.Size(320, 45);
       this.trackBarContrast.TabIndex = 5;
       this.trackBarContrast.TickFrequency = 25;
       this.trackBarContrast.Value = 100;
       // 
       // trackBarBrightness
       // 
-      this.trackBarBrightness.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarBrightness.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBrightness.LargeChange = 16;
       this.trackBarBrightness.Location = new System.Drawing.Point(131, 148);
       this.trackBarBrightness.Maximum = 256;
       this.trackBarBrightness.Name = "trackBarBrightness";
-      this.trackBarBrightness.Size = new System.Drawing.Size(330, 45);
+      this.trackBarBrightness.Size = new System.Drawing.Size(320, 45);
       this.trackBarBrightness.TabIndex = 3;
       this.trackBarBrightness.TickFrequency = 32;
       this.trackBarBrightness.Value = 128;
       // 
-      // MPEG2DecVideoFilter
+      // FiltersMPEG2DecVideo
       // 
       this.Controls.Add(this.groupBoxSettings);
-      this.Name = "MPEG2DecVideoFilter";
+      this.Name = "FiltersMPEG2DecVideo";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBoxSettings.ResumeLayout(false);
       this.groupBoxSettings.PerformLayout();
@@ -348,6 +332,7 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.trackBarContrast)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.trackBarBrightness)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

@@ -84,6 +84,7 @@ namespace SetupTv.Sections
 
     private void FormPreview_Resize(object sender, EventArgs e)
     {
+      if(_player != null)
       _player.ResizeToParent();
     }
   }

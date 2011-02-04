@@ -72,12 +72,12 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.label1);
       this.mpGroupBox1.Controls.Add(this.checkboxMpNonsquare);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(3, 3);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(466, 323);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 323);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
-      this.mpGroupBox1.Text = "Video Renderer - Advanced settings";
+      this.mpGroupBox1.Text = "Video renderer - advanced settings";
       // 
       // radioButtonEVR
       // 
@@ -193,6 +193,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.BackColor = System.Drawing.SystemColors.Window;
       this.Controls.Add(this.mpGroupBox1);
       this.Name = "FiltersVideoRenderer";
       this.Size = new System.Drawing.Size(472, 391);

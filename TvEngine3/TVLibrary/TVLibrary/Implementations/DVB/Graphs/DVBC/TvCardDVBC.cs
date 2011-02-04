@@ -67,10 +67,13 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
-        CreateTuningSpace();
-        AddMpeg2DemuxerToGraph();
+        AddTsWriterFilterToGraph();
+        if (!useInternalNetworkProvider)
+        {
+          CreateTuningSpace();
+          AddMpeg2DemuxerToGraph();
+        }
         AddAndConnectBDABoardFilters(_device);
-        AddBdaTransportFiltersToGraph();
         string graphName = _device.Name + " - DVBC Graph.grf";
         FilterGraphTools.SaveGraphFile(_graphBuilder, graphName);
         GetTunerSignalStatistics();
@@ -257,6 +260,10 @@ namespace TvLibrary.Implementations.DVB
         {
           subChannelId = GetNewSubChannel(channel);
         }
+      }
+      if (useInternalNetworkProvider)
+      {
+        return true;
       }
 
       if (_previousChannel == null || _previousChannel.IsDifferentTransponder(dvbcChannel))

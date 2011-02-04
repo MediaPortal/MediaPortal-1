@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Library
     private int _frameLimiter = 1;
     protected double _scrollOffset = 0.0f;
     protected double _timeElapsed = 0.0f;
-    protected bool _scrollContinuosly = false;
+    protected bool _scrollContinuously = false;
     protected List<GUIAnimation> _frameControl = new List<GUIAnimation>();
     protected List<GUIAnimation> _frameFocusControl = new List<GUIAnimation>();
 

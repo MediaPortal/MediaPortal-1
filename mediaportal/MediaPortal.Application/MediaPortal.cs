@@ -797,8 +797,8 @@ public class MediaPortalApp : D3DApp, IRender
         m_strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Blue3");
         Config.SkinName = m_strSkin;
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
-        GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("general", "mousesupport", false);
-        GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("general",
+        GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("gui", "mousesupport", false);
+        GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("gui",
                                                                                    "allowRememberLastFocusedItem", false);
         GUIGraphicsContext.DBLClickAsRightClick =
           xmlreader.GetValueAsBool("general", "dblclickasrightclick", false);
@@ -1529,7 +1529,7 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (Settings xmlreader = new MPSettings())
       {
-        mylang = xmlreader.GetValueAsString("skin", "language", "English");
+        mylang = xmlreader.GetValueAsString("gui", "language", "English");
       }
     }
     catch
@@ -1749,9 +1749,9 @@ public class MediaPortalApp : D3DApp, IRender
     using (Settings xmlreader = new MPSettings())
     {
       _useLongDateFormat = xmlreader.GetValueAsBool("home", "LongTimeFormat", false);
-      _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
-      _useOnlyOneHome = xmlreader.GetValueAsBool("general", "useonlyonehome", false);
-      bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+      _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+      _useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
+      bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
       if (autosize && !GUIGraphicsContext.Fullscreen)
       {
         if (GUIGraphicsContext.currentScreen.Bounds.Width > GUIGraphicsContext.SkinSize.Width)

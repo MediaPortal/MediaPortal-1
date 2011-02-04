@@ -347,7 +347,6 @@ namespace SetupTv.Sections
               Channel dbChannel;
               XmlNodeList tuningList = nodeChannel.SelectNodes("TuningDetails/tune");
               XmlNodeList mappingList = nodeChannel.SelectNodes("mappings/map");
-              string name = nodeChannel.Attributes["Name"].Value;
               bool grabEpg = (GetNodeAttribute(nodeChannel, "GrabEpg", "True") == "True");
               bool isRadio = (GetNodeAttribute(nodeChannel, "IsRadio", "False") == "True");
               bool isTv = (GetNodeAttribute(nodeChannel, "IsTv", "True") == "True");
@@ -360,7 +359,7 @@ namespace SetupTv.Sections
                                     CultureInfo.InvariantCulture);
               bool visibileInGuide = (GetNodeAttribute(nodeChannel, "VisibleInGuide", "True") == "True");
               bool FreeToAir = (GetNodeAttribute(nodeChannel, "FreeToAir", "True") == "True");
-              string displayName = GetNodeAttribute(nodeChannel, "DisplayName", name);
+              string displayName = GetNodeAttribute(nodeChannel, "DisplayName", "Unkown");
 
               // Only import TV or radio channels if the corresponding checkbox was checked
               if ((isTv && !importtv) || (isRadio && !importradio))
@@ -371,15 +370,15 @@ namespace SetupTv.Sections
               // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
               // using AddChannel would incorrectly "merge" these totally different channels.
               // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
-              Log.Info("TvChannels: Adding {0}. channel: {1} ({2})", channelCount, name, displayName);
-              IList<Channel> foundExistingChannels = layer.GetChannelsByName(name);
+              Log.Info("TvChannels: Adding {0}. channel: {1}", channelCount, displayName);
+              IList<Channel> foundExistingChannels = layer.GetChannelsByName(displayName);
               if (mergeChannels && (foundExistingChannels != null && foundExistingChannels.Count > 0))
               {
                 dbChannel = foundExistingChannels[0];
               }
               else
               {
-                dbChannel = layer.AddNewChannel(name);
+                dbChannel = layer.AddNewChannel(displayName);
               }
 
               dbChannel.GrabEpg = grabEpg;
@@ -428,7 +427,7 @@ namespace SetupTv.Sections
                 int majorChannel = Int32.Parse(nodeTune.Attributes["MajorChannel"].Value);
                 int minorChannel = Int32.Parse(nodeTune.Attributes["MinorChannel"].Value);
                 int modulation = Int32.Parse(nodeTune.Attributes["Modulation"].Value);
-                name = nodeTune.Attributes["Name"].Value;
+                string name = nodeTune.Attributes["Name"].Value;
                 int networkId = Int32.Parse(nodeTune.Attributes["NetworkId"].Value);
                 int pmtPid = Int32.Parse(nodeTune.Attributes["PmtPid"].Value);
                 int polarisation = Int32.Parse(nodeTune.Attributes["Polarisation"].Value);

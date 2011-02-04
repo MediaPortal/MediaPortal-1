@@ -115,12 +115,12 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.showClosedCaptions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.defaultAudioLanguagelabel = new MediaPortal.UserInterface.Controls.MPLabel();
       this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.defaultAudioLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.defaultSubtitleLanguageComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.showSubtitlesCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.showClosedCaptions = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -135,12 +135,23 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.defaultSubtitleLanguageComboBox);
       this.groupBox1.Controls.Add(this.showSubtitlesCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 104);
+      this.groupBox1.Size = new System.Drawing.Size(462, 104);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Language Settings";
+      // 
+      // showClosedCaptions
+      // 
+      this.showClosedCaptions.AutoSize = true;
+      this.showClosedCaptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.showClosedCaptions.Location = new System.Drawing.Point(242, 19);
+      this.showClosedCaptions.Name = "showClosedCaptions";
+      this.showClosedCaptions.Size = new System.Drawing.Size(153, 17);
+      this.showClosedCaptions.TabIndex = 5;
+      this.showClosedCaptions.Text = "Show Closed Captions (CC)";
+      this.showClosedCaptions.UseVisualStyleBackColor = true;
       // 
       // defaultAudioLanguagelabel
       // 
@@ -168,7 +179,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultAudioLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultAudioLanguageComboBox.Location = new System.Drawing.Point(168, 68);
       this.defaultAudioLanguageComboBox.Name = "defaultAudioLanguageComboBox";
-      this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(288, 21);
+      this.defaultAudioLanguageComboBox.Size = new System.Drawing.Size(278, 21);
       this.defaultAudioLanguageComboBox.Sorted = true;
       this.defaultAudioLanguageComboBox.TabIndex = 4;
       // 
@@ -180,7 +191,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultSubtitleLanguageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultSubtitleLanguageComboBox.Location = new System.Drawing.Point(168, 44);
       this.defaultSubtitleLanguageComboBox.Name = "defaultSubtitleLanguageComboBox";
-      this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(288, 21);
+      this.defaultSubtitleLanguageComboBox.Size = new System.Drawing.Size(278, 21);
       this.defaultSubtitleLanguageComboBox.Sorted = true;
       this.defaultSubtitleLanguageComboBox.TabIndex = 2;
       // 
@@ -194,17 +205,6 @@ namespace MediaPortal.Configuration.Sections
       this.showSubtitlesCheckBox.TabIndex = 0;
       this.showSubtitlesCheckBox.Text = "Show subtitles (overrides disc defaults)";
       this.showSubtitlesCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // showClosedCaptions
-      // 
-      this.showClosedCaptions.AutoSize = true;
-      this.showClosedCaptions.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.showClosedCaptions.Location = new System.Drawing.Point(242, 19);
-      this.showClosedCaptions.Name = "showClosedCaptions";
-      this.showClosedCaptions.Size = new System.Drawing.Size(153, 17);
-      this.showClosedCaptions.TabIndex = 5;
-      this.showClosedCaptions.Text = "Show Closed Captions (CC)";
-      this.showClosedCaptions.UseVisualStyleBackColor = true;
       // 
       // DVD
       // 

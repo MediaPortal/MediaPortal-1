@@ -161,6 +161,7 @@ namespace TvLibrary.Implementations.DVB
     private readonly IntPtr _ptrDisEqc;
     private readonly DiSEqCMotor _disEqcMotor;
     private readonly bool _useDISEqCMotor;
+    private IBaseFilter _infTeeMain;
 
     #endregion
 
@@ -882,10 +883,13 @@ namespace TvLibrary.Implementations.DVB
         }
         // call checklock once, the return value dont matter
         _interfaceB2C2TunerCtrl.CheckLock();
-        AddMpeg2DemuxerToGraph();
-        ConnectInfTeeToSS2();
-        ConnectMpeg2DemuxToInfTee();
         AddTsWriterFilterToGraph();
+        IBaseFilter lastFilter;
+        ConnectInfTeeToSS2(out lastFilter);
+        AddMdPlugs(ref lastFilter);
+        if(!ConnectTsWriter(lastFilter)){
+          throw new TvExceptionGraphBuildingFailed("Graph building failed");
+        }
         SendHwPids(new List<ushort>());
         _graphState = GraphState.Created;
       }
@@ -901,8 +905,17 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Connects the SS2 filter to the infTee
     /// </summary>
-    private void ConnectInfTeeToSS2()
+    private void ConnectInfTeeToSS2(out IBaseFilter lastFilter)
     {
+      Log.Log.WriteFile("dvb:add Inf Tee filter");
+      _infTeeMain = (IBaseFilter)new InfTee();
+      int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
+      if (hr != 0)
+      {
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
+        throw new TvException("Unable to add  mainInfTee");
+      }
+
       Log.Log.WriteFile("ss2:ConnectMainTee()");
       IPin pinOut = DsFindPin.ByDirection(_filterB2C2Adapter, PinDirection.Output, 2);
       IPin pinIn = DsFindPin.ByDirection(_infTeeMain, PinDirection.Input, 0);
@@ -916,7 +929,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("ss2:unable to find pin 0 of _infTeeMain");
         throw new TvException("unable to find pin 0 of _infTeeMain");
       }
-      int hr = _graphBuilder.Connect(pinOut, pinIn);
+      hr = _graphBuilder.Connect(pinOut, pinIn);
       Release.ComObject("b2c2pin2", pinOut);
       Release.ComObject("mpeg2demux pinin", pinIn);
       if (hr != 0)
@@ -924,6 +937,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("ss2:unable to connect b2c2->_infTeeMain");
         throw new TvException("unable to connect b2c2->_infTeeMain");
       }
+      lastFilter = _infTeeMain;
     }
 
     /// <summary>

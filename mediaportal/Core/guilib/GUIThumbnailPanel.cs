@@ -26,8 +26,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using Microsoft.DirectX.Direct3D;
 using MediaPortal.ExtensionMethods;
-// used for Keys definition
-// used for loopDelay
+using MediaPortal.Profile;
 
 namespace MediaPortal.GUI.Library
 {
@@ -211,8 +210,8 @@ namespace MediaPortal.GUI.Library
     protected int _lowTextureHeight;
     protected int _lowTextureWidth;
 
-    protected int _loopDelay = 250; // wait at the last item this amount of msec until loop to the first item
     protected double _lastCommandTime = 0;
+    protected int _loopDelay = 0;
 
     protected List<GUIButtonControl> _listButtons = null;
     protected List<GUIFadeLabel> _listLabels = null;
@@ -248,7 +247,7 @@ namespace MediaPortal.GUI.Library
 
     protected double _scrollOffset = 0.0f;
     protected double _timeElapsed = 0.0f;
-    protected bool _scrollContinuosly = false;
+    protected bool _scrollContinuously = false;
     private int _frameLimiter = 1;
     // Search
     private DateTime _keyTimer = DateTime.Now;
@@ -356,6 +355,11 @@ namespace MediaPortal.GUI.Library
       _frameFocusControl.DimColor = DimColor;
       _frameFocusControl.MaskFileName = _frameFocusMask;
       _frameFocusControl.SetAnimations(_allThumbAnimations);
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 100);
+      }
     }
 
     public override void ScaleToScreenResolution()

@@ -500,7 +500,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        _startWithBasicHome = xmlreader.GetValueAsBool("general", "startbasichome", false);
+        _startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
       }
       //no active window yet
       _activeWindowId = -1;
@@ -1007,7 +1007,7 @@ namespace MediaPortal.GUI.Library
         using (Settings xmlreader = new MPSettings())
         {
           xmlreader.SetValue("general", "skinobsoletecount", 0);
-          bool autosize = xmlreader.GetValueAsBool("general", "autosize", true);
+          bool autosize = xmlreader.GetValueAsBool("gui", "autosize", true);
           if (autosize && !GUIGraphicsContext.Fullscreen)
           {
             try

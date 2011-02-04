@@ -1191,6 +1191,9 @@ namespace MediaPortal.Configuration.Sections
       // Search by IMDB ID number 
       if (_refreshByImdBid == false)
       {
+        // Clean old actors info
+        if (CurrentMovie.ID > 0)
+          VideoDatabase.RemoveActorsForMovie(CurrentMovie.ID);
         movieDetails.IMDBNumber = string.Empty;
         movieDetails.SearchString = tbTitle.Text;
         GetInfoFromIMDB(ref movieDetails, false);

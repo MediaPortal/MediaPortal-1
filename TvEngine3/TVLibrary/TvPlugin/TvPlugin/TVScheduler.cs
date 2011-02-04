@@ -918,9 +918,16 @@ namespace TvPlugin
           break;
 
         case 1048: ////settings
-          TVProgramInfo.CurrentRecording = item.MusicTag as Schedule;
-          //if (TVProgramInfo.CurrentProgram != null)
-          GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
+          Schedule schedule = item.MusicTag as Schedule;
+          if (schedule == null)
+          {
+            schedule = item.TVTag as Schedule;
+          }
+          if (schedule != null)
+          {
+            TVProgramInfo.CurrentRecording = schedule;           
+            GUIWindowManager.ActivateWindow((int)Window.WINDOW_TV_PROGRAM_INFO);
+          }
           return;
         case 882: ////Quality settings
           TvPriorities.OnSetQuality(rec);

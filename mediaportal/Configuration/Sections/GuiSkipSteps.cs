@@ -31,14 +31,26 @@ using MediaPortal.UserInterface.Controls;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public class GeneralSkipSteps : SectionSettings
+  public class GuiSkipSteps : SectionSettings
   {
     private IContainer components = null;
-
-    private MPTabControl tabControlSkipSteps;
-    private MPGroupBox groupBoxSkipSteps;
-    private MPCheckBox checkBoxStep16;
+    private SortedList _stepList = new SortedList();
+    private MPGroupBox mpGroupBox1;
+    private Label labelError2;
+    private MPGroupBox mpGroupBox2;
+    private MPRadioButton mpRadioButton2;
+    private MPRadioButton mpRadioButton1;
+    private MPTextBox textBoxImmediateSkipSteps;
+    private MPLabel mpLabel1;
+    private MPGroupBox groupBoxTimeout;
+    private MPNumericUpDown numericUpDownSkipTimeout;
+    private MPLabel labelSkipTimeout;
     private MPButton buttonResetSkipSteps;
+    private MPGroupBox groupBoxSkipSteps;
+    private Label labelError;
+    private MPTextBox textBoxManualSkipSteps;
+    private MPLabel label1;
+    private MPCheckBox checkBoxStep16;
     private MPCheckBox checkBoxStep4;
     private MPCheckBox checkBoxStep15;
     private MPCheckBox checkBoxStep12;
@@ -54,27 +66,12 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxStep3;
     private MPCheckBox checkBoxStep2;
     private MPCheckBox checkBoxStep1;
-    private MPGroupBox groupBoxTimeout;
-    private MPLabel labelSkipTimeout;
-    private MPNumericUpDown numericUpDownSkipTimeout;
-    private MPTextBox textBoxManualSkipSteps;
-    private MPLabel label1;
-    private Label labelError;
-    private MPTabPage tabPageSteps;
-    private SortedList _stepList = new SortedList();
-    private MPGroupBox mpGroupBox1;
-    private MPRadioButton mpRadioButton1;
-    private MPRadioButton mpRadioButton2;
-    private MPLabel mpLabel1;
-    private MPGroupBox mpGroupBox2;
-    private MPTextBox textBoxImmediateSkipSteps;
-    private Label labelError2;
     private const string DEFAULT_SETTING = "15,30,60,180,300,600,900,1800,3600,7200";
 
-    public GeneralSkipSteps()
+    public GuiSkipSteps()
       : this("Skip steps") {}
 
-    public GeneralSkipSteps(string name)
+    public GuiSkipSteps(string name)
       : base(name)
     {
       // This call is required by the Windows Form Designer.
@@ -177,8 +174,6 @@ namespace MediaPortal.Configuration.Sections
 
     private void InitializeComponent()
     {
-      this.tabControlSkipSteps = new MediaPortal.UserInterface.Controls.MPTabControl();
-      this.tabPageSteps = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labelError2 = new System.Windows.Forms.Label();
       this.mpGroupBox2 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -210,8 +205,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep3 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep2 = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.checkBoxStep1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.tabControlSkipSteps.SuspendLayout();
-      this.tabPageSteps.SuspendLayout();
       this.mpGroupBox1.SuspendLayout();
       this.mpGroupBox2.SuspendLayout();
       this.groupBoxTimeout.SuspendLayout();
@@ -219,49 +212,19 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkipSteps.SuspendLayout();
       this.SuspendLayout();
       // 
-      // tabControlSkipSteps
-      // 
-      this.tabControlSkipSteps.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControlSkipSteps.Controls.Add(this.tabPageSteps);
-      this.tabControlSkipSteps.Location = new System.Drawing.Point(0, 0);
-      this.tabControlSkipSteps.Name = "tabControlSkipSteps";
-      this.tabControlSkipSteps.SelectedIndex = 0;
-      this.tabControlSkipSteps.Size = new System.Drawing.Size(472, 509);
-      this.tabControlSkipSteps.TabIndex = 0;
-      // 
-      // tabPageSteps
-      // 
-      this.tabPageSteps.Controls.Add(this.mpGroupBox1);
-      this.tabPageSteps.Controls.Add(this.groupBoxTimeout);
-      this.tabPageSteps.Controls.Add(this.buttonResetSkipSteps);
-      this.tabPageSteps.Controls.Add(this.groupBoxSkipSteps);
-      this.tabPageSteps.Location = new System.Drawing.Point(4, 22);
-      this.tabPageSteps.Name = "tabPageSteps";
-      this.tabPageSteps.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPageSteps.Size = new System.Drawing.Size(464, 483);
-      this.tabPageSteps.TabIndex = 0;
-      this.tabPageSteps.Text = "Player steps";
-      this.tabPageSteps.UseVisualStyleBackColor = true;
-      // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.labelError2);
       this.mpGroupBox1.Controls.Add(this.mpGroupBox2);
       this.mpGroupBox1.Controls.Add(this.textBoxImmediateSkipSteps);
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 320);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 304);
       this.mpGroupBox1.Name = "mpGroupBox1";
       this.mpGroupBox1.Size = new System.Drawing.Size(347, 77);
-      this.mpGroupBox1.TabIndex = 2;
+      this.mpGroupBox1.TabIndex = 5;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Immediate skip steps (up / down)";
       // 
@@ -307,7 +270,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpRadioButton1.TabStop = true;
       this.mpRadioButton1.Text = "Relative (%)";
       this.mpRadioButton1.UseVisualStyleBackColor = true;
-      this.mpRadioButton1.CheckedChanged += new System.EventHandler(this.textBoxImmediateSkipSteps_TextChanged);
       // 
       // textBoxImmediateSkipSteps
       // 
@@ -317,7 +279,6 @@ namespace MediaPortal.Configuration.Sections
       this.textBoxImmediateSkipSteps.Name = "textBoxImmediateSkipSteps";
       this.textBoxImmediateSkipSteps.Size = new System.Drawing.Size(55, 20);
       this.textBoxImmediateSkipSteps.TabIndex = 6;
-      this.textBoxImmediateSkipSteps.TextChanged += new System.EventHandler(this.textBoxImmediateSkipSteps_TextChanged);
       // 
       // mpLabel1
       // 
@@ -330,47 +291,39 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxTimeout
       // 
-      this.groupBoxTimeout.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTimeout.Controls.Add(this.numericUpDownSkipTimeout);
       this.groupBoxTimeout.Controls.Add(this.labelSkipTimeout);
       this.groupBoxTimeout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxTimeout.Location = new System.Drawing.Point(16, 274);
+      this.groupBoxTimeout.Location = new System.Drawing.Point(6, 258);
       this.groupBoxTimeout.Name = "groupBoxTimeout";
-      this.groupBoxTimeout.Size = new System.Drawing.Size(428, 40);
-      this.groupBoxTimeout.TabIndex = 1;
+      this.groupBoxTimeout.Size = new System.Drawing.Size(462, 40);
+      this.groupBoxTimeout.TabIndex = 4;
       this.groupBoxTimeout.TabStop = false;
       this.groupBoxTimeout.Text = "Timeout";
       // 
       // numericUpDownSkipTimeout
       // 
-      this.numericUpDownSkipTimeout.Increment = new decimal(new int[]
-                                                              {
-                                                                100,
-                                                                0,
-                                                                0,
-                                                                0
-                                                              });
+      this.numericUpDownSkipTimeout.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
       this.numericUpDownSkipTimeout.Location = new System.Drawing.Point(213, 14);
-      this.numericUpDownSkipTimeout.Maximum = new decimal(new int[]
-                                                            {
-                                                              10000,
-                                                              0,
-                                                              0,
-                                                              0
-                                                            });
+      this.numericUpDownSkipTimeout.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
       this.numericUpDownSkipTimeout.Name = "numericUpDownSkipTimeout";
       this.numericUpDownSkipTimeout.Size = new System.Drawing.Size(56, 20);
       this.numericUpDownSkipTimeout.TabIndex = 1;
-      this.numericUpDownSkipTimeout.Value = new decimal(new int[]
-                                                          {
-                                                            1500,
-                                                            0,
-                                                            0,
-                                                            0
-                                                          });
+      this.numericUpDownSkipTimeout.Value = new decimal(new int[] {
+            1500,
+            0,
+            0,
+            0});
       // 
       // labelSkipTimeout
       // 
@@ -383,23 +336,18 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonResetSkipSteps
       // 
-      this.buttonResetSkipSteps.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonResetSkipSteps.Location = new System.Drawing.Point(369, 374);
+      this.buttonResetSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonResetSkipSteps.Location = new System.Drawing.Point(376, 358);
       this.buttonResetSkipSteps.Name = "buttonResetSkipSteps";
       this.buttonResetSkipSteps.Size = new System.Drawing.Size(75, 23);
-      this.buttonResetSkipSteps.TabIndex = 2;
+      this.buttonResetSkipSteps.TabIndex = 6;
       this.buttonResetSkipSteps.Text = "Defaults";
       this.buttonResetSkipSteps.UseVisualStyleBackColor = true;
-      this.buttonResetSkipSteps.Click += new System.EventHandler(this.buttonResetSkipSteps_Click);
       // 
       // groupBoxSkipSteps
       // 
-      this.groupBoxSkipSteps.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSkipSteps.Controls.Add(this.labelError);
       this.groupBoxSkipSteps.Controls.Add(this.textBoxManualSkipSteps);
       this.groupBoxSkipSteps.Controls.Add(this.label1);
@@ -420,10 +368,10 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep2);
       this.groupBoxSkipSteps.Controls.Add(this.checkBoxStep1);
       this.groupBoxSkipSteps.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxSkipSteps.Location = new System.Drawing.Point(16, 16);
+      this.groupBoxSkipSteps.Location = new System.Drawing.Point(6, 0);
       this.groupBoxSkipSteps.Name = "groupBoxSkipSteps";
-      this.groupBoxSkipSteps.Size = new System.Drawing.Size(428, 252);
-      this.groupBoxSkipSteps.TabIndex = 0;
+      this.groupBoxSkipSteps.Size = new System.Drawing.Size(462, 252);
+      this.groupBoxSkipSteps.TabIndex = 3;
       this.groupBoxSkipSteps.TabStop = false;
       this.groupBoxSkipSteps.Text = "Skip steps (left / right)";
       // 
@@ -436,17 +384,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxManualSkipSteps
       // 
-      this.textBoxManualSkipSteps.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxManualSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxManualSkipSteps.BorderColor = System.Drawing.Color.Empty;
       this.textBoxManualSkipSteps.Location = new System.Drawing.Point(158, 222);
       this.textBoxManualSkipSteps.Name = "textBoxManualSkipSteps";
-      this.textBoxManualSkipSteps.Size = new System.Drawing.Size(264, 20);
+      this.textBoxManualSkipSteps.Size = new System.Drawing.Size(298, 20);
       this.textBoxManualSkipSteps.TabIndex = 17;
       this.textBoxManualSkipSteps.Text = "15,30,60,180,300,600,900,1800,3600,7200";
-      this.textBoxManualSkipSteps.TextChanged += new System.EventHandler(this.textBoxManualSkipSteps_TextChanged);
       // 
       // label1
       // 
@@ -467,7 +412,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep16.TabIndex = 15;
       this.checkBoxStep16.Text = "+/- 3 h";
       this.checkBoxStep16.UseVisualStyleBackColor = true;
-      this.checkBoxStep16.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep4
       // 
@@ -479,7 +423,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep4.TabIndex = 3;
       this.checkBoxStep4.Text = "+/- 45 sec";
       this.checkBoxStep4.UseVisualStyleBackColor = true;
-      this.checkBoxStep4.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep15
       // 
@@ -493,7 +436,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep15.TabIndex = 14;
       this.checkBoxStep15.Text = "+/- 2 h";
       this.checkBoxStep15.UseVisualStyleBackColor = true;
-      this.checkBoxStep15.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep12
       // 
@@ -505,7 +447,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep12.TabIndex = 11;
       this.checkBoxStep12.Text = "+/- 45 min";
       this.checkBoxStep12.UseVisualStyleBackColor = true;
-      this.checkBoxStep12.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep11
       // 
@@ -519,7 +460,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep11.TabIndex = 10;
       this.checkBoxStep11.Text = "+/- 30 min";
       this.checkBoxStep11.UseVisualStyleBackColor = true;
-      this.checkBoxStep11.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep10
       // 
@@ -533,7 +473,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep10.TabIndex = 9;
       this.checkBoxStep10.Text = "+/- 15 min";
       this.checkBoxStep10.UseVisualStyleBackColor = true;
-      this.checkBoxStep10.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep9
       // 
@@ -547,7 +486,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep9.TabIndex = 8;
       this.checkBoxStep9.Text = "+/- 10 min";
       this.checkBoxStep9.UseVisualStyleBackColor = true;
-      this.checkBoxStep9.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep5
       // 
@@ -561,7 +499,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep5.TabIndex = 4;
       this.checkBoxStep5.Text = "+/- 1 min";
       this.checkBoxStep5.UseVisualStyleBackColor = true;
-      this.checkBoxStep5.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep6
       // 
@@ -575,7 +512,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep6.TabIndex = 5;
       this.checkBoxStep6.Text = "+/- 3 min";
       this.checkBoxStep6.UseVisualStyleBackColor = true;
-      this.checkBoxStep6.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep14
       // 
@@ -587,7 +523,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep14.TabIndex = 13;
       this.checkBoxStep14.Text = "+/- 1,5 h";
       this.checkBoxStep14.UseVisualStyleBackColor = true;
-      this.checkBoxStep14.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep8
       // 
@@ -599,7 +534,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep8.TabIndex = 7;
       this.checkBoxStep8.Text = "+/- 7 min";
       this.checkBoxStep8.UseVisualStyleBackColor = true;
-      this.checkBoxStep8.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep13
       // 
@@ -613,7 +547,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep13.TabIndex = 12;
       this.checkBoxStep13.Text = "+/- 1 h";
       this.checkBoxStep13.UseVisualStyleBackColor = true;
-      this.checkBoxStep13.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep7
       // 
@@ -627,7 +560,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep7.TabIndex = 6;
       this.checkBoxStep7.Text = "+/- 5 min";
       this.checkBoxStep7.UseVisualStyleBackColor = true;
-      this.checkBoxStep7.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep3
       // 
@@ -641,7 +573,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep3.TabIndex = 2;
       this.checkBoxStep3.Text = "+/- 30 sec";
       this.checkBoxStep3.UseVisualStyleBackColor = true;
-      this.checkBoxStep3.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep2
       // 
@@ -655,7 +586,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep2.TabIndex = 1;
       this.checkBoxStep2.Text = "+/- 15 sec";
       this.checkBoxStep2.UseVisualStyleBackColor = true;
-      this.checkBoxStep2.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
       // checkBoxStep1
       // 
@@ -667,15 +597,15 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxStep1.TabIndex = 0;
       this.checkBoxStep1.Text = "+/- 5 sec";
       this.checkBoxStep1.UseVisualStyleBackColor = true;
-      this.checkBoxStep1.Click += new System.EventHandler(this.checkBoxStep_Click);
       // 
-      // GeneralSkipSteps
+      // GuiSkipSteps
       // 
-      this.Controls.Add(this.tabControlSkipSteps);
-      this.Name = "GeneralSkipSteps";
+      this.Controls.Add(this.mpGroupBox1);
+      this.Controls.Add(this.groupBoxTimeout);
+      this.Controls.Add(this.buttonResetSkipSteps);
+      this.Controls.Add(this.groupBoxSkipSteps);
+      this.Name = "GuiSkipSteps";
       this.Size = new System.Drawing.Size(472, 476);
-      this.tabControlSkipSteps.ResumeLayout(false);
-      this.tabPageSteps.ResumeLayout(false);
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.mpGroupBox2.ResumeLayout(false);
@@ -686,6 +616,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkipSteps.ResumeLayout(false);
       this.groupBoxSkipSteps.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     private void textBoxManualSkipSteps_TextChanged(object sender, EventArgs e)

@@ -3816,49 +3816,43 @@ namespace TvService
         //if (!CardPresent(user.CardId)) return TvResult.CardIsDisabled;
 
         //on tune we need to remember to remove the previous subchannel before tuning the next one.
-        // but only if the subchannel is free, meaning not recording and no other users attached.                  
+        // but only if the subchannel is free, meaning not recording and no other users attached.                          
+
         if (_cards[user.CardId].Card.SubChannels.Length > 0)
         {
+          ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
+          context.GetUser(ref user);
+          
           bool isRec = _cards[user.CardId].Recorder.IsRecordingAnyUser();
-          if (!isRec)
+          
+                                  
+          IUser[] users = context.Users;
+
+          bool otherUserFoundOnSameCh = false;
+          int userSubCh = user.SubChannel;                                    
+          int userChannelId = user.IdChannel;                        
+
+          //lets find if any other users are sharing that same subchannel/channel
+          bool conflictingSubchannelFound = false;          
+          if (userChannelId > -1)
           {
-            ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
-            IUser[] users = context.Users;
-
-            int userSubCh = -1;
-            int userChannelId = -1;
-            bool otherUserFoundOnSameCh = false;
-
-            //lets find the current user, if he has a subchannel and what channel it is.
             foreach (IUser userObj in users)
             {
-              if (userObj.Name.Equals(user.Name))
+              if (!userObj.Name.Equals(user.Name))
               {
-                if (userSubCh == -1)
+                if (userObj.IdChannel == userChannelId)
                 {
-                  userChannelId = userObj.IdChannel;
-                  userSubCh = userObj.SubChannel;
-                  break;
+                  otherUserFoundOnSameCh = true;                    
+                }
+                if (userSubCh == userObj.SubChannel && userChannelId > 0)
+                {
+                  conflictingSubchannelFound = true;                  
                 }
               }
             }
-
-            //lets find if any other users are sharing that same subchannel/channel
-            if (userChannelId > -1)
-            {
-              foreach (IUser userObj in users)
-              {
-                if (!userObj.Name.Equals(user.Name))
-                {
-                  if (userObj.IdChannel == userChannelId)
-                  {
-                    otherUserFoundOnSameCh = true;
-                    break;
-                  }
-                }
-              }
-            }
-
+          }
+          if (!isRec)
+          {
             if (userSubCh > -1)
             {
               if (otherUserFoundOnSameCh)
@@ -3870,8 +3864,13 @@ namespace TvService
                 _cards[user.CardId].Card.FreeSubChannelContinueGraph(userSubCh);
               }
             }
+          }          
+
+          if (conflictingSubchannelFound)
+          {
+            context.UserNextAvailableSubchannel(user);
           }
-        }
+        }                
 
         Fire(this, new TvServerEventArgs(TvServerEventType.StartZapChannel, GetVirtualCard(user), (User)user, channel));
 

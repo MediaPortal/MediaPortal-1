@@ -2417,7 +2417,22 @@ namespace MediaPortal.Player
       }
     }
 
-    public static void SetVideoWindow()
+    public static bool SupportsCC
+    {
+      get
+      {
+        if (IsDVD)
+        {
+          if (_player is DVDPlayer)
+          {
+            return ((DVDPlayer)_player).SupportsCC;
+          }
+        }
+        return false;
+      }
+    }
+
+      public static void SetVideoWindow()
     {
       if (_player == null)
       {
@@ -2598,15 +2613,39 @@ namespace MediaPortal.Player
     /// </summary>
     public static void SwitchToNextSubtitle()
     {
-      if (EnableSubtitle)
+      if (!SupportsCC)
       {
-        if (CurrentSubtitleStream < SubtitleStreams - 1)
+        if (EnableSubtitle)
         {
-          CurrentSubtitleStream++;
+          if (CurrentSubtitleStream < SubtitleStreams - 1)
+          {
+            CurrentSubtitleStream++;
+          }
+          else
+          {
+            EnableSubtitle = false;
+          }
         }
         else
         {
+          CurrentSubtitleStream = 0;
+          EnableSubtitle = true;
+        }
+      }
+      else if (EnableSubtitle && SupportsCC)
+      {
+        if (CurrentSubtitleStream == -1)
+        {
           EnableSubtitle = false;
+        }
+        else if (CurrentSubtitleStream < SubtitleStreams - 1)
+        {
+          CurrentSubtitleStream++;
+        }
+        else if (SupportsCC)
+        {
+          EnableSubtitle = false;
+          CurrentSubtitleStream = -1;
         }
       }
       else

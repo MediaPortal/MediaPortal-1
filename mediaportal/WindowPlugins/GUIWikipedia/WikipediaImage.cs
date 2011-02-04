@@ -75,7 +75,7 @@ namespace Wikipedia
       if (language == "Default")
       {
         Settings xmlreader = new MPSettings();
-        language = xmlreader.GetValueAsString("skin", "language", "English");
+        language = xmlreader.GetValueAsString("gui", "language", "English");
       }
 
       Settings detailxmlreader = new Settings(Config.GetFile(Config.Dir.Config, "wikipedia.xml"));

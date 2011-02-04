@@ -22,15 +22,15 @@ using MediaPortal.Profile;
 
 namespace MediaPortal.Configuration.Sections
 {
-  public partial class GeneralWatchdog : SectionSettings
+  public partial class GuiScreensaver : SectionSettings
   {
     #region ctor
 
-    public GeneralWatchdog()
-      : this("Watchdog") {}
+    public GuiScreensaver()
+      : this("Screensaver") {}
 
-    public GeneralWatchdog(string name)
-      : base("Watchdog")
+    public GuiScreensaver(string name)
+      : base(name)
     {
       InitializeComponent();
     }
@@ -43,9 +43,9 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        checkBoxEnableWatchdog.Checked = xmlreader.GetValueAsBool("general", "watchdogEnabled", false);
-        checkBoxAutoRestart.Checked = xmlreader.GetValueAsBool("general", "restartOnError", true);
-        numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "restart delay", 10);
+        checkBoxEnableScreensaver.Checked = xmlreader.GetValueAsBool("general", "IdleTimer", true);
+        numericUpDownDelay.Value = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
+        radioBtnBlankScreen.Checked = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
       }
     }
 
@@ -53,12 +53,17 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlreader = new MPSettings())
       {
-        xmlreader.SetValueAsBool("general", "watchdogEnabled", checkBoxEnableWatchdog.Checked);
-        xmlreader.SetValueAsBool("general", "restartOnError", checkBoxAutoRestart.Checked);
-        xmlreader.SetValue("general", "restart delay", numericUpDownDelay.Value);
+        xmlreader.SetValueAsBool("general", "IdleTimer", checkBoxEnableScreensaver.Checked);
+        xmlreader.SetValue("general", "IdleTimeValue", numericUpDownDelay.Value);
+        xmlreader.SetValueAsBool("general", "IdleBlanking", radioBtnBlankScreen.Checked);
       }
     }
 
     #endregion
+
+    private void checkBoxEnableScreensaver_CheckedChanged(object sender, System.EventArgs e)
+    {
+      groupBoxIdleAction.Enabled = numericUpDownDelay.Enabled = checkBoxEnableScreensaver.Checked;
+    }
   }
 }

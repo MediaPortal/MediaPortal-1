@@ -254,6 +254,27 @@
     <Compile Include="Sections\BaseViews.Designer.cs">
       <DependentUpon>BaseViews.cs</DependentUpon>
     </Compile>
+    <Compile Include="Sections\GeneralStartupResume.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GeneralStartupResume.Designer.cs">
+      <DependentUpon>GeneralStartupResume.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Sections\GuiScrollSpeed.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GuiHomeScreen.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\GuiLanguage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Gui.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Sections\Gui.Designer.cs">
+      <DependentUpon>Gui.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sections\GeneralAutoplay.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -269,17 +290,11 @@
     <Compile Include="Sections\GeneralDynamicRefreshRate.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralWatchdog.cs">
+    <Compile Include="Sections\GuiScreensaver.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralWatchdog.Designer.cs">
-      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\GeneralScreensaver.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GeneralScreensaver.Designer.cs">
-      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+    <Compile Include="Sections\GuiScreensaver.Designer.cs">
+      <DependentUpon>GuiScreensaver.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MovieCodec.cs">
       <SubType>UserControl</SubType>
@@ -415,7 +430,7 @@
     <Compile Include="Sections\GeneralDaemonTools.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralFileMenu.cs">
+    <Compile Include="Sections\GuiFileMenu.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralKeyboardControl.cs">
@@ -424,16 +439,10 @@
     <Compile Include="Sections\GeneralKeys.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralSkin.cs">
+    <Compile Include="Sections\GuiSkin.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralStartupDelay.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GeneralStartupDelay.Designer.cs">
-      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\GeneralThumbs.cs">
+    <Compile Include="Sections\GuiThumbs.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralVolume.cs">
@@ -484,10 +493,10 @@
     <Compile Include="Subdialogs\DlgProgress.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralOSD.cs">
+    <Compile Include="Sections\GuiOSD.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GeneralSkipSteps.cs">
+    <Compile Include="Sections\GuiSkipSteps.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\MusicMisc.cs">
@@ -612,6 +621,26 @@
       <SubType>Designer</SubType>
       <DependentUpon>BaseViews.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GeneralStartupResume.resx">
+      <DependentUpon>GeneralStartupResume.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GuiScrollSpeed.resx">
+      <DependentUpon>GuiScrollSpeed.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GuiHomeScreen.resx">
+      <DependentUpon>GuiHomeScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\GuiLanguage.resx">
+      <DependentUpon>GuiLanguage.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Sections\Gui.resx">
+      <DependentUpon>Gui.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralAutoplay.resx">
       <DependentUpon>GeneralAutoplay.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -628,12 +657,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>GeneralDynamicRefreshRate.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralWatchdog.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GeneralWatchdog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralScreensaver.resx">
-      <DependentUpon>GeneralScreensaver.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiScreensaver.resx">
+      <DependentUpon>GuiScreensaver.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MovieCodec.resx">
@@ -757,8 +782,8 @@
       <DependentUpon>GeneralDaemonTools.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralFileMenu.resx">
-      <DependentUpon>GeneralFileMenu.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiFileMenu.resx">
+      <DependentUpon>GuiFileMenu.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralKeyboardControl.resx">
@@ -769,17 +794,13 @@
       <DependentUpon>GeneralKeys.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralSkin.resx">
-      <DependentUpon>GeneralSkin.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiSkin.resx">
+      <DependentUpon>GuiSkin.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralStartupDelay.resx">
-      <DependentUpon>GeneralStartupDelay.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiThumbs.resx">
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralThumbs.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>GeneralThumbs.cs</DependentUpon>
+      <DependentUpon>GuiThumbs.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralVolume.resx">
       <DependentUpon>GeneralVolume.cs</DependentUpon>
@@ -817,13 +838,13 @@
       <DependentUpon>DlgProgress.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralOSD.resx">
-      <DependentUpon>GeneralOSD.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiOSD.resx">
+      <DependentUpon>GuiOSD.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GeneralSkipSteps.resx">
+    <EmbeddedResource Include="Sections\GuiSkipSteps.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>GeneralSkipSteps.cs</DependentUpon>
+      <DependentUpon>GuiSkipSteps.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicMisc.resx">
       <DependentUpon>MusicMisc.cs</DependentUpon>

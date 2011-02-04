@@ -64,7 +64,7 @@ namespace TvPlugin
     private const int GUIDE_COMPONENTID_START = 50000;
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
 
-    protected const int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
+    private int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
 
     #endregion
 
@@ -250,6 +250,7 @@ namespace TvPlugin
         _timePerBlock = xmlreader.GetValueAsInt("tvguide", "timeperblock", 30);
         _hdtvProgramText = xmlreader.GetValueAsString("mytv", "hdtvProgramText", "(HDTV)");
         _guideContinuousScroll = xmlreader.GetValueAsBool("mytv", "continuousScrollGuide", false);
+        _loopDelay = xmlreader.GetValueAsInt("gui", "listLoopDelay", 0);
       }
       _useNewRecordingButtonColor =
         Utils.FileExistsInCache(Path.Combine(GUIGraphicsContext.Skin, @"media\tvguide_recButton_Focus_middle.png"));
@@ -2774,7 +2775,6 @@ namespace TvPlugin
           SetFocus();
           GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = false;
         }
-        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2798,7 +2798,6 @@ namespace TvPlugin
           SetProperties();
           Update(false);
         }
-        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2812,7 +2811,6 @@ namespace TvPlugin
           SetFocus();
           SetProperties();
         }
-        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
 
@@ -2822,7 +2820,6 @@ namespace TvPlugin
         // if cursor is on a program in guide, try to find the "best time matching" program in new channel
         SetBestMatchingProgram(updateScreen, true);
       }
-      _lastCommandTime = AnimationTimer.TickCount;
     }
 
     private void MoveDown()
@@ -2831,6 +2828,7 @@ namespace TvPlugin
       if (_cursorX + 1 < Math.Min(_channelList.Count, _channelCount))
       {
         _cursorX++;
+        _lastCommandTime = AnimationTimer.TickCount;
       }
       else
       {
@@ -2838,9 +2836,6 @@ namespace TvPlugin
         // more channels than rows?
         if (_channelList.Count > _channelCount)
         {
-          // Advance to next channel.
-          _channelOffset++;
-
           // Guide may be allowed to loop continuously bottom to top.
           if (_guideContinuousScroll)
           {
@@ -2850,11 +2845,20 @@ namespace TvPlugin
               // Position to first channel in guide without moving the cursor (implements continuous loops of channels).
               _channelOffset = 0;
             }
+            else
+            {
+              // Advance to next channel, wrap around if at end of list.
+              _channelOffset++;
+              if (_channelOffset >= _channelList.Count)
+              {
+                _channelOffset = 0;
+              }
+            }
           }
           else
           {
             // Are we at the bottom of the lst page of channels?
-            if (_channelOffset > 0 && _channelOffset >= _channelList.Count - _cursorX)
+            if (_channelOffset > 0 && _channelOffset >= (_channelList.Count-1) - _cursorX)
             {
               // We're at the bottom of the last page of channels.
               // Reposition the guide to the top only after the key/button has been released and pressed again.
@@ -2862,13 +2866,14 @@ namespace TvPlugin
               {
                 _channelOffset = 0;
                 _cursorX = 0;
+                _lastCommandTime = AnimationTimer.TickCount;
               }
-              else
-              {
-                // If the key is continually being held (we're not meeting the loop delay test) then we need to back up since
-                // we already advanced.
-                _channelOffset--;
-              }
+            }
+            else
+            {
+              // Advance to next channel.
+              _channelOffset++;
+              _lastCommandTime = AnimationTimer.TickCount;
             }
           }
         }
@@ -2876,6 +2881,7 @@ namespace TvPlugin
         {
           // Move the highlight back to the top of the list only after the key/button has been released and pressed again.
           _cursorX = 0;
+          _lastCommandTime = AnimationTimer.TickCount;
         }
       }
     }
@@ -2897,7 +2903,6 @@ namespace TvPlugin
             _cursorX = -1;
             GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
           }
-          _lastCommandTime = AnimationTimer.TickCount;
           return;
         }
 
@@ -2917,7 +2922,6 @@ namespace TvPlugin
           UpdateCurrentProgram();
           SetProperties();
         }
-        _lastCommandTime = AnimationTimer.TickCount;
         return;
       }
       else
@@ -2928,7 +2932,6 @@ namespace TvPlugin
           _cursorY = 0;
           GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
           GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
-          _lastCommandTime = AnimationTimer.TickCount;
           return;
         }
 
@@ -2939,7 +2942,6 @@ namespace TvPlugin
           {
             _cursorX = -1;
             GetControl((int)Controls.SPINCONTROL_TIME_INTERVAL).Focus = true;
-            _lastCommandTime = AnimationTimer.TickCount;
             return;
           }
         }
@@ -2984,7 +2986,6 @@ namespace TvPlugin
         // if cursor is on a program in guide, try to find the "best time matching" program in new channel
         SetBestMatchingProgram(updateScreen, false);
       }
-      _lastCommandTime = AnimationTimer.TickCount;
     }
 
     private void MoveUp()
@@ -3010,6 +3011,7 @@ namespace TvPlugin
           {
             // Somewhere in the middle of the guide; just scroll up.
             _channelOffset--;
+            _lastCommandTime = AnimationTimer.TickCount;
           }
           // Are we at the top of the first page of channels?
           else if (_channelOffset == 0 && _cursorX == 0)
@@ -3020,6 +3022,7 @@ namespace TvPlugin
             {
               _channelOffset = _channelList.Count - _channelCount;
               _cursorX = _channelCount - 1;
+              _lastCommandTime = AnimationTimer.TickCount;
             }
           }
         }
@@ -3027,6 +3030,7 @@ namespace TvPlugin
       else
       {
         _cursorX--;
+        _lastCommandTime = AnimationTimer.TickCount;
       }
     }
 

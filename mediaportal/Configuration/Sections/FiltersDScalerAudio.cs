@@ -91,10 +91,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.textBoxAudioOffset);
       this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
       this.groupBox1.Controls.Add(this.checkBoxMPEGOverSPDIF);
@@ -102,53 +100,53 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.checkBoxSPDIF);
       this.groupBox1.Controls.Add(this.checkBoxDynamicRange);
       this.groupBox1.Controls.Add(this.label3);
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 168);
+      this.groupBox1.Size = new System.Drawing.Size(462, 168);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
       // 
       // textBoxAudioOffset
       // 
-      this.textBoxAudioOffset.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAudioOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAudioOffset.BorderColor = System.Drawing.Color.Empty;
       this.textBoxAudioOffset.Location = new System.Drawing.Point(168, 132);
       this.textBoxAudioOffset.Name = "textBoxAudioOffset";
-      this.textBoxAudioOffset.Size = new System.Drawing.Size(288, 20);
+      this.textBoxAudioOffset.Size = new System.Drawing.Size(278, 20);
       this.textBoxAudioOffset.TabIndex = 6;
       this.textBoxAudioOffset.Text = "0";
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerConfig.Items.AddRange(new object[]
-                                                  {
-                                                    "Stereo",
-                                                    "Dolby Stereo",
-                                                    "4.0 (2 Front + 2 Rear)",
-                                                    "4.1 (2 Front + 2 Rear + 1 Sub)",
-                                                    "5.0 (3 Front + 2 Rear)",
-                                                    "5.1 (3 Front + 2 Rear + 1 Sub)"
-                                                  });
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
+            "Stereo",
+            "Dolby Stereo",
+            "4.0 (2 Front + 2 Rear)",
+            "4.1 (2 Front + 2 Rear + 1 Sub)",
+            "5.0 (3 Front + 2 Rear)",
+            "5.1 (3 Front + 2 Rear + 1 Sub)"});
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
-      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(288, 21);
+      this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(278, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
       // 
       // checkBoxMPEGOverSPDIF
       // 
+      this.checkBoxMPEGOverSPDIF.AutoSize = true;
+      this.checkBoxMPEGOverSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxMPEGOverSPDIF.Location = new System.Drawing.Point(16, 104);
       this.checkBoxMPEGOverSPDIF.Name = "checkBoxMPEGOverSPDIF";
-      this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(152, 16);
+      this.checkBoxMPEGOverSPDIF.Size = new System.Drawing.Size(148, 17);
       this.checkBoxMPEGOverSPDIF.TabIndex = 4;
       this.checkBoxMPEGOverSPDIF.Text = "MPEG Audio over S/PDIF";
+      this.checkBoxMPEGOverSPDIF.UseVisualStyleBackColor = true;
       // 
       // label5
       // 
@@ -160,19 +158,25 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxSPDIF
       // 
+      this.checkBoxSPDIF.AutoSize = true;
+      this.checkBoxSPDIF.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxSPDIF.Location = new System.Drawing.Point(16, 56);
       this.checkBoxSPDIF.Name = "checkBoxSPDIF";
-      this.checkBoxSPDIF.Size = new System.Drawing.Size(144, 16);
+      this.checkBoxSPDIF.Size = new System.Drawing.Size(147, 17);
       this.checkBoxSPDIF.TabIndex = 2;
       this.checkBoxSPDIF.Text = "Use S/PDIF for AC3/DTS";
+      this.checkBoxSPDIF.UseVisualStyleBackColor = true;
       // 
       // checkBoxDynamicRange
       // 
+      this.checkBoxDynamicRange.AutoSize = true;
+      this.checkBoxDynamicRange.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDynamicRange.Location = new System.Drawing.Point(16, 80);
       this.checkBoxDynamicRange.Name = "checkBoxDynamicRange";
-      this.checkBoxDynamicRange.Size = new System.Drawing.Size(136, 16);
+      this.checkBoxDynamicRange.Size = new System.Drawing.Size(136, 17);
       this.checkBoxDynamicRange.TabIndex = 3;
       this.checkBoxDynamicRange.Text = "Dynamic Range Control";
+      this.checkBoxDynamicRange.UseVisualStyleBackColor = true;
       // 
       // label3
       // 
@@ -182,13 +186,15 @@ namespace MediaPortal.Configuration.Sections
       this.label3.TabIndex = 0;
       this.label3.Text = "Speaker config:";
       // 
-      // DScalerAudioFilter
+      // FiltersDScalerAudio
       // 
       this.Controls.Add(this.groupBox1);
-      this.Name = "DScalerAudioFilter";
+      this.Name = "FiltersDScalerAudio";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
+
     }
 
     #endregion

@@ -1,6 +1,6 @@
 namespace MediaPortal.Configuration.Sections
 {
-  partial class GeneralScreensaver
+  partial class GuiScreensaver
   {
     /// <summary> 
     /// Required designer variable.
@@ -134,9 +134,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScreenSaver.Controls.Add(this.label4);
       this.groupBoxScreenSaver.Controls.Add(this.label3);
       this.groupBoxScreenSaver.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxScreenSaver.Location = new System.Drawing.Point(3, 3);
+      this.groupBoxScreenSaver.Location = new System.Drawing.Point(6, 0);
       this.groupBoxScreenSaver.Name = "groupBoxScreenSaver";
-      this.groupBoxScreenSaver.Size = new System.Drawing.Size(461, 221);
+      this.groupBoxScreenSaver.Size = new System.Drawing.Size(462, 221);
       this.groupBoxScreenSaver.TabIndex = 17;
       this.groupBoxScreenSaver.TabStop = false;
       this.groupBoxScreenSaver.Text = "Idle timer";
@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxIdleAction.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxIdleAction.Location = new System.Drawing.Point(18, 152);
       this.groupBoxIdleAction.Name = "groupBoxIdleAction";
-      this.groupBoxIdleAction.Size = new System.Drawing.Size(427, 53);
+      this.groupBoxIdleAction.Size = new System.Drawing.Size(428, 53);
       this.groupBoxIdleAction.TabIndex = 17;
       this.groupBoxIdleAction.TabStop = false;
       this.groupBoxIdleAction.Text = "Idle action";
@@ -179,12 +179,12 @@ namespace MediaPortal.Configuration.Sections
       this.radioBtnBlankScreen.Text = "Blank the screen (prevent Burn-In)";
       this.radioBtnBlankScreen.UseVisualStyleBackColor = true;
       // 
-      // GeneralScreensaver
+      // GuiScreensaver
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.Controls.Add(this.groupBoxScreenSaver);
-      this.Name = "GeneralScreensaver";
+      this.Name = "GuiScreensaver";
       this.Size = new System.Drawing.Size(468, 226);
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).EndInit();
       this.groupBoxScreenSaver.ResumeLayout(false);

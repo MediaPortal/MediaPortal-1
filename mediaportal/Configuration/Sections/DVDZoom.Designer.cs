@@ -46,9 +46,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.aspectRatioLabel);
       this.mpGroupBox1.Controls.Add(this.pixelRatioCheckBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(0, 3);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(472, 138);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 138);
       this.mpGroupBox1.TabIndex = 2;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "Aspect Ratio";
@@ -83,7 +83,7 @@ namespace MediaPortal.Configuration.Sections
             "4:3 Letterbox"});
       this.displayModeComboBox.Location = new System.Drawing.Point(168, 71);
       this.displayModeComboBox.Name = "displayModeComboBox";
-      this.displayModeComboBox.Size = new System.Drawing.Size(288, 21);
+      this.displayModeComboBox.Size = new System.Drawing.Size(278, 21);
       this.displayModeComboBox.TabIndex = 4;
       // 
       // defaultZoomModeComboBox
@@ -94,7 +94,7 @@ namespace MediaPortal.Configuration.Sections
       this.defaultZoomModeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.defaultZoomModeComboBox.Location = new System.Drawing.Point(168, 98);
       this.defaultZoomModeComboBox.Name = "defaultZoomModeComboBox";
-      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(288, 21);
+      this.defaultZoomModeComboBox.Size = new System.Drawing.Size(278, 21);
       this.defaultZoomModeComboBox.TabIndex = 3;
       // 
       // aspectRatioComboBox
@@ -110,7 +110,7 @@ namespace MediaPortal.Configuration.Sections
             "Follow stream"});
       this.aspectRatioComboBox.Location = new System.Drawing.Point(168, 44);
       this.aspectRatioComboBox.Name = "aspectRatioComboBox";
-      this.aspectRatioComboBox.Size = new System.Drawing.Size(288, 21);
+      this.aspectRatioComboBox.Size = new System.Drawing.Size(278, 21);
       this.aspectRatioComboBox.TabIndex = 2;
       // 
       // aspectRatioLabel

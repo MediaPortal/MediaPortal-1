@@ -318,6 +318,15 @@ namespace MediaPortal.GUI.Video
       base.OnClicked(controlId, control, actionType);
       if (control == btnRefresh)
       {
+        // Check Internet connection
+        if (!Win32API.IsConnectedToInternet())
+        {
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          return;
+        }
         string title = currentMovie.Title;
         int id = currentMovie.ID;
         string file = currentMovie.Path + "\\" + currentMovie.File;

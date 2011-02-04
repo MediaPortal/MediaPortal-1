@@ -82,10 +82,23 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
 
-        AddMpeg2DemuxerToGraph();
-        AddStreamSourceFilter(_defaultUrl);
-        ConnectMpeg2DemuxToInfTee();
+        _infTeeMain = (IBaseFilter)new InfTee();
+        int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
+        if (hr != 0)
+        {
+          Log.Log.Error("dvbip:Add main InfTee returns:0x{0:X}", hr);
+          throw new TvException("Unable to add  mainInfTee");
+        }
+
         AddTsWriterFilterToGraph();
+        AddStreamSourceFilter(_defaultUrl);
+        IBaseFilter lastFilter = _filterStreamSource;
+        AddMdPlugs(ref lastFilter);
+        if (!ConnectTsWriter(lastFilter))
+        {
+          throw new TvExceptionGraphBuildingFailed("Graph building failed");
+        }
+
         _conditionalAccess = new ConditionalAccess(_filterStreamSource, _filterTsWriter, null, this);
         _graphState = GraphState.Created;
       }

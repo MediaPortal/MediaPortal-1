@@ -201,11 +201,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.checkBoxRTS);
       this.groupBox1.Controls.Add(this.checkBoxDTR);
       this.groupBox1.Controls.Add(this.label8);
@@ -231,9 +229,9 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.internalCommandsButton);
       this.groupBox1.Controls.Add(this.inputCheckBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 336);
+      this.groupBox1.Size = new System.Drawing.Size(462, 336);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
@@ -274,15 +272,14 @@ namespace MediaPortal.Configuration.Sections
       // 
       // ParityCombo
       // 
+      this.ParityCombo.BorderColor = System.Drawing.Color.Empty;
       this.ParityCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.ParityCombo.Items.AddRange(new object[]
-                                        {
-                                          "None",
-                                          "Odd",
-                                          "Even",
-                                          "Mark",
-                                          "Space"
-                                        });
+      this.ParityCombo.Items.AddRange(new object[] {
+            "None",
+            "Odd",
+            "Even",
+            "Mark",
+            "Space"});
       this.ParityCombo.Location = new System.Drawing.Point(120, 136);
       this.ParityCombo.Name = "ParityCombo";
       this.ParityCombo.Size = new System.Drawing.Size(88, 21);
@@ -291,12 +288,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonNoneCodes
       // 
-      this.buttonNoneCodes.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonNoneCodes.Location = new System.Drawing.Point(280, 22);
+      this.buttonNoneCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonNoneCodes.Location = new System.Drawing.Point(269, 14);
       this.buttonNoneCodes.Name = "buttonNoneCodes";
-      this.buttonNoneCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonNoneCodes.Size = new System.Drawing.Size(56, 23);
       this.buttonNoneCodes.TabIndex = 20;
       this.buttonNoneCodes.Text = "Mini";
       this.buttonNoneCodes.UseVisualStyleBackColor = true;
@@ -304,12 +299,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonDefaultCodes
       // 
-      this.buttonDefaultCodes.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonDefaultCodes.Location = new System.Drawing.Point(344, 22);
+      this.buttonDefaultCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefaultCodes.Location = new System.Drawing.Point(329, 14);
       this.buttonDefaultCodes.Name = "buttonDefaultCodes";
-      this.buttonDefaultCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonDefaultCodes.Size = new System.Drawing.Size(65, 23);
       this.buttonDefaultCodes.TabIndex = 21;
       this.buttonDefaultCodes.Text = "Extended";
       this.buttonDefaultCodes.UseVisualStyleBackColor = true;
@@ -317,12 +310,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonAllCodes
       // 
-      this.buttonAllCodes.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAllCodes.Location = new System.Drawing.Point(408, 22);
+      this.buttonAllCodes.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonAllCodes.Location = new System.Drawing.Point(398, 14);
       this.buttonAllCodes.Name = "buttonAllCodes";
-      this.buttonAllCodes.Size = new System.Drawing.Size(56, 16);
+      this.buttonAllCodes.Size = new System.Drawing.Size(56, 23);
       this.buttonAllCodes.TabIndex = 22;
       this.buttonAllCodes.Text = "All";
       this.buttonAllCodes.UseVisualStyleBackColor = true;
@@ -330,50 +321,45 @@ namespace MediaPortal.Configuration.Sections
       // 
       // label7
       // 
-      this.label7.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.label7.Location = new System.Drawing.Point(224, 24);
+      this.label7.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.label7.Location = new System.Drawing.Point(214, 19);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(32, 16);
+      this.label7.Size = new System.Drawing.Size(50, 21);
       this.label7.TabIndex = 19;
       this.label7.Text = "Learn:";
       // 
       // ActionsCheckList
       // 
-      this.ActionsCheckList.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.ActionsCheckList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.ActionsCheckList.CheckOnClick = true;
       this.ActionsCheckList.Location = new System.Drawing.Point(224, 40);
       this.ActionsCheckList.Name = "ActionsCheckList";
-      this.ActionsCheckList.Size = new System.Drawing.Size(240, 289);
+      this.ActionsCheckList.Size = new System.Drawing.Size(230, 289);
       this.ActionsCheckList.TabIndex = 23;
       // 
       // label6
       // 
       this.label6.Location = new System.Drawing.Point(16, 222);
       this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(88, 32);
+      this.label6.Size = new System.Drawing.Size(98, 32);
       this.label6.TabIndex = 14;
       this.label6.Text = "Delay between commands (msec):";
       // 
       // CommandDelayCombo
       // 
+      this.CommandDelayCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommandDelayCombo.Items.AddRange(new object[]
-                                              {
-                                                "150",
-                                                "200",
-                                                "250",
-                                                "300",
-                                                "250",
-                                                "400",
-                                                "450",
-                                                "500"
-                                              });
+      this.CommandDelayCombo.Items.AddRange(new object[] {
+            "150",
+            "200",
+            "250",
+            "300",
+            "250",
+            "400",
+            "450",
+            "500"});
       this.CommandDelayCombo.Location = new System.Drawing.Point(120, 224);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(88, 21);
@@ -390,26 +376,24 @@ namespace MediaPortal.Configuration.Sections
       // 
       // LearningTimeoutCombo
       // 
+      this.LearningTimeoutCombo.BorderColor = System.Drawing.Color.Empty;
       this.LearningTimeoutCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.LearningTimeoutCombo.Items.AddRange(new object[]
-                                                 {
-                                                   "1",
-                                                   "2",
-                                                   "3",
-                                                   "4",
-                                                   "5",
-                                                   "6",
-                                                   "7",
-                                                   "8",
-                                                   "9",
-                                                   "10"
-                                                 });
+      this.LearningTimeoutCombo.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"});
       this.LearningTimeoutCombo.Location = new System.Drawing.Point(120, 264);
       this.LearningTimeoutCombo.Name = "LearningTimeoutCombo";
       this.LearningTimeoutCombo.Size = new System.Drawing.Size(88, 21);
       this.LearningTimeoutCombo.TabIndex = 17;
-      this.LearningTimeoutCombo.SelectedIndexChanged +=
-        new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
+      this.LearningTimeoutCombo.SelectedIndexChanged += new System.EventHandler(this.LearningTimeoutCombo_SelectedIndexChanged);
       // 
       // label4
       // 
@@ -421,42 +405,41 @@ namespace MediaPortal.Configuration.Sections
       // 
       // IRLengthCombo
       // 
+      this.IRLengthCombo.BorderColor = System.Drawing.Color.Empty;
       this.IRLengthCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.IRLengthCombo.Items.AddRange(new object[]
-                                          {
-                                            "1",
-                                            "2",
-                                            "3",
-                                            "4",
-                                            "5",
-                                            "6",
-                                            "7",
-                                            "8",
-                                            "9",
-                                            "10",
-                                            "11",
-                                            "12",
-                                            "13",
-                                            "14",
-                                            "15",
-                                            "16",
-                                            "17",
-                                            "18",
-                                            "19",
-                                            "20",
-                                            "21",
-                                            "22",
-                                            "23",
-                                            "24",
-                                            "25",
-                                            "26",
-                                            "27",
-                                            "28",
-                                            "29",
-                                            "30",
-                                            "31",
-                                            "32"
-                                          });
+      this.IRLengthCombo.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32"});
       this.IRLengthCombo.Location = new System.Drawing.Point(120, 184);
       this.IRLengthCombo.Name = "IRLengthCombo";
       this.IRLengthCombo.Size = new System.Drawing.Size(88, 21);
@@ -469,18 +452,17 @@ namespace MediaPortal.Configuration.Sections
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(64, 16);
       this.label3.TabIndex = 6;
-      this.label3.Text = "HandShake";
+      this.label3.Text = "Handshake";
       // 
       // HandShakeCombo
       // 
+      this.HandShakeCombo.BorderColor = System.Drawing.Color.Empty;
       this.HandShakeCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.HandShakeCombo.Items.AddRange(new object[]
-                                           {
-                                             "None",
-                                             "CtsRts",
-                                             "DsrDtr",
-                                             "XonXoff"
-                                           });
+      this.HandShakeCombo.Items.AddRange(new object[] {
+            "None",
+            "CtsRts",
+            "DsrDtr",
+            "XonXoff"});
       this.HandShakeCombo.Location = new System.Drawing.Point(16, 136);
       this.HandShakeCombo.Name = "HandShakeCombo";
       this.HandShakeCombo.Size = new System.Drawing.Size(88, 21);
@@ -491,29 +473,28 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.label2.Location = new System.Drawing.Point(120, 72);
       this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(56, 16);
+      this.label2.Size = new System.Drawing.Size(64, 16);
       this.label2.TabIndex = 3;
       this.label2.Text = "Baud Rate";
       // 
       // BaudRateCombo
       // 
+      this.BaudRateCombo.BorderColor = System.Drawing.Color.Empty;
       this.BaudRateCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.BaudRateCombo.Items.AddRange(new object[]
-                                          {
-                                            "300",
-                                            "600",
-                                            "1200",
-                                            "2400",
-                                            "4800",
-                                            "9600",
-                                            "14400",
-                                            "19200",
-                                            "28800",
-                                            "38400",
-                                            "56000",
-                                            "57600",
-                                            "115200"
-                                          });
+      this.BaudRateCombo.Items.AddRange(new object[] {
+            "300",
+            "600",
+            "1200",
+            "2400",
+            "4800",
+            "9600",
+            "14400",
+            "19200",
+            "28800",
+            "38400",
+            "56000",
+            "57600",
+            "115200"});
       this.BaudRateCombo.Location = new System.Drawing.Point(120, 88);
       this.BaudRateCombo.Name = "BaudRateCombo";
       this.BaudRateCombo.Size = new System.Drawing.Size(88, 21);
@@ -545,18 +526,17 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommPortCombo
       // 
+      this.CommPortCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommPortCombo.Items.AddRange(new object[]
-                                          {
-                                            "COM1:",
-                                            "COM2:",
-                                            "COM3:",
-                                            "COM4:",
-                                            "COM5:",
-                                            "COM6:",
-                                            "COM7:",
-                                            "COM8:"
-                                          });
+      this.CommPortCombo.Items.AddRange(new object[] {
+            "COM1:",
+            "COM2:",
+            "COM3:",
+            "COM4:",
+            "COM5:",
+            "COM6:",
+            "COM7:",
+            "COM8:"});
       this.CommPortCombo.Location = new System.Drawing.Point(16, 88);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(88, 21);
@@ -587,41 +567,38 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox2.Location = new System.Drawing.Point(0, 344);
+      this.groupBox2.Location = new System.Drawing.Point(6, 344);
       this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(472, 64);
+      this.groupBox2.Size = new System.Drawing.Size(462, 64);
       this.groupBox2.TabIndex = 1;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Device Status";
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
-      this.statusLabel.Size = new System.Drawing.Size(448, 32);
+      this.statusLabel.Size = new System.Drawing.Size(438, 32);
       this.statusLabel.TabIndex = 0;
       // 
-      // SerialUIR
+      // RemoteSerialUIR
       // 
       this.Controls.Add(this.groupBox2);
       this.Controls.Add(this.groupBox1);
-      this.Name = "SerialUIR";
+      this.Name = "RemoteSerialUIR";
       this.Size = new System.Drawing.Size(472, 408);
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
+
     }
 
     #endregion

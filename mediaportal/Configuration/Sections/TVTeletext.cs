@@ -84,23 +84,21 @@ namespace MediaPortal.Configuration.Sections
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.FontSizeValueLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.FontSizeLbl = new MediaPortal.UserInterface.Controls.MPLabel();
       this.cbHiddenMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbRememberValue = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.cbTransparentMode = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.radioButton1 = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.nudFontSize = new MediaPortal.UserInterface.Controls.MPNumericUpDown();
       this.groupBox1.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).BeginInit();
       this.SuspendLayout();
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.nudFontSize);
       this.groupBox1.Controls.Add(this.FontSizeValueLbl);
       this.groupBox1.Controls.Add(this.FontSizeLbl);
@@ -108,16 +106,34 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.cbRememberValue);
       this.groupBox1.Controls.Add(this.cbTransparentMode);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 127);
+      this.groupBox1.Size = new System.Drawing.Size(462, 127);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Settings";
+      // 
+      // nudFontSize
+      // 
+      this.nudFontSize.Location = new System.Drawing.Point(72, 97);
+      this.nudFontSize.Minimum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+      this.nudFontSize.Name = "nudFontSize";
+      this.nudFontSize.Size = new System.Drawing.Size(56, 20);
+      this.nudFontSize.TabIndex = 1;
+      this.nudFontSize.Value = new decimal(new int[] {
+            80,
+            0,
+            0,
+            0});
+      // 
+      // FontSizeValueLbl
+      // 
       this.FontSizeValueLbl.AutoSize = true;
-      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
-                                                           System.Drawing.FontStyle.Regular,
-                                                           System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.FontSizeValueLbl.Location = new System.Drawing.Point(134, 99);
       this.FontSizeValueLbl.Name = "FontSizeValueLbl";
       this.FontSizeValueLbl.Size = new System.Drawing.Size(105, 13);
@@ -177,24 +193,6 @@ namespace MediaPortal.Configuration.Sections
       this.radioButton1.TabIndex = 0;
       this.radioButton1.UseVisualStyleBackColor = true;
       // 
-      this.nudFontSize.Location = new System.Drawing.Point(72, 97);
-      this.nudFontSize.Minimum = new decimal(new int[]
-                                               {
-                                                 50,
-                                                 0,
-                                                 0,
-                                                 0
-                                               });
-      this.nudFontSize.Name = "nudFontSize";
-      this.nudFontSize.Size = new System.Drawing.Size(56, 20);
-      this.nudFontSize.TabIndex = 1;
-      this.nudFontSize.Value = new decimal(new int[]
-                                             {
-                                               80,
-                                               0,
-                                               0,
-                                               0
-                                             });
       // TVTeletext
       // 
       this.Controls.Add(this.groupBox1);
@@ -204,6 +202,7 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

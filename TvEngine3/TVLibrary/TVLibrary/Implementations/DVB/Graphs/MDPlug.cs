@@ -220,8 +220,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Connect all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
     /// </summary>
-    public void Connectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain, ref IBaseFilter infTeeSecond,
-                                   ref IBaseFilter filterMpeg2DemuxTif)
+    public void Connectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter lastFilter)
     {
       MDPlug[] _mDPlugs = getPlugins();
       int iplg;
@@ -244,15 +243,15 @@ namespace TvLibrary.Implementations.DVB
       iplg = 0;
       filtername = "mdapifilter" + iplg;
 
-      Log.Log.Info("mdplugs: connect maintee->{0}", filtername);
-      IPin mainTeeOut = DsFindPin.ByDirection(infTeeMain, PinDirection.Output, 0);
+      Log.Log.Info("mdplugs: connect lastFilter->{0}", filtername);
+      IPin mainTeeOut = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
       IPin mdApiInFirst = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Input, 0);
       hr = graphBuilder.Connect(mainTeeOut, mdApiInFirst);
-      Release.ComObject("maintee pin0", mainTeeOut);
+      Release.ComObject("lastFilter pin0", mainTeeOut);
       Release.ComObject("mdapifilter0 pinin", mdApiInFirst);
       if (hr != 0)
       {
-        Log.Log.Info("unable to connect maintee->{0}", filtername);
+        Log.Log.Info("unable to connect lastFilter->{0}", filtername);
       }
       if (_instanceNumber > 1)
       {
@@ -271,85 +270,8 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       filtername = "mdapifilter" + iplg;
-      Log.Log.Info("mdplugs: connect {0}->2nd tee", filtername);
-      IPin mdApiOutLast = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
-      IPin secondTeeIn = DsFindPin.ByDirection(infTeeSecond, PinDirection.Input, 0);
-      hr = graphBuilder.Connect(mdApiOutLast, secondTeeIn);
-      Release.ComObject("mdApiLast pinout", mdApiOutLast);
-      Release.ComObject("secondTee pinin", secondTeeIn);
-      if (hr != 0)
-      {
-        Log.Log.Info("unable to connect {0}->2nd tee", filtername);
-      }
-      Log.Log.WriteFile("mdplugs:  Render [inftee2]->[demux]");
-      IPin secondTeeOut = DsFindPin.ByDirection(infTeeSecond, PinDirection.Output, 0);
-      IPin demuxPinIn = DsFindPin.ByDirection(filterMpeg2DemuxTif, PinDirection.Input, 0);
-      hr = graphBuilder.Connect(secondTeeOut, demuxPinIn);
-      Release.ComObject("secondTee pin0", secondTeeOut);
-      Release.ComObject("tifdemux pinin", demuxPinIn);
-      if (hr != 0)
-      {
-        Log.Log.Info("unable to connect [inftee2]->[demux]");
-      }
-    }
-
-    /// <summary>
-    /// Remove all mdapifilters between [inftee main] and [TIF MPEG2 Demultiplexer]
-    /// </summary>
-    public void Disconnectmdapifilter(IFilterGraph2 graphBuilder, ref IBaseFilter infTeeMain,
-                                      ref IBaseFilter infTeeSecond, ref IBaseFilter filterMpeg2DemuxTif)
-    {
-      int iplg;
-
-      MDPlug[] plugins = getPlugins();
-      Log.Log.Info("mdplugs: disconnect and reconnecting pins");
-
-      IPin mainTeeOut = DsFindPin.ByDirection(infTeeMain, PinDirection.Output, 0);
-      IPin mpegDemuxIn = DsFindPin.ByDirection(filterMpeg2DemuxTif, PinDirection.Input, 0);
-
-      IPin teeSecoundIn = DsFindPin.ByDirection(infTeeSecond, PinDirection.Input, 0);
-      IPin teeSecoundOut = DsFindPin.ByDirection(infTeeSecond, PinDirection.Output, 0);
-
-      Log.Log.Info("Disconnecting main pin");
-      graphBuilder.Disconnect(mainTeeOut);
-      Log.Log.Info("Disconnecting mpeg demux pin");
-      graphBuilder.Disconnect(mpegDemuxIn);
-      Log.Log.Info("Disconnecting secound tee");
-      graphBuilder.Disconnect(teeSecoundIn);
-      graphBuilder.Disconnect(teeSecoundOut);
-
-      Log.Log.Info("Reconnecting MainTee to MpegDemux");
-      graphBuilder.Connect(mainTeeOut, mpegDemuxIn);
-      Release.ComObject("Releasing maintee out", mainTeeOut);
-      Release.ComObject("Releasing mpegdemux pinin", mpegDemuxIn);
-      Release.ComObject("Releasing teeSecound pinin", teeSecoundIn);
-      Release.ComObject("Releasing teeSecound  pinOut", teeSecoundOut);
-
-      //Last Part Remove Filters from Graph.
-      //capture -> maintee -> mdapi(n)-> secondtee -> demux
-      for (iplg = 0; iplg < _instanceNumber; iplg++)
-      {
-        string filtername = "mdapifilter" + iplg;
-        Log.Log.Info("mdplugs: remove {0}", filtername);
-
-        IPin mdOut = DsFindPin.ByDirection(plugins[iplg].mdapiFilter, PinDirection.Output, 0);
-        IPin mdIn = DsFindPin.ByDirection(plugins[iplg].mdapiFilter, PinDirection.Input, 0);
-        graphBuilder.Disconnect(mdOut);
-        graphBuilder.Disconnect(mdIn);
-        Release.ComObject("Releasing  pinout", mdOut);
-        Release.ComObject("Releasing  pinin", mdIn);
-
-        int hr = graphBuilder.RemoveFilter(plugins[iplg].mdapiFilter);
-        if (hr != 0)
-        {
-          Log.Log.Error("mdplugs:Remove {0} returns:0x{1:X}", filtername, hr);
-          throw new TvException("Unable to remove " + filtername);
-        }
-
-        Log.Log.Info("Filter should now be totally removed from graph hr :{0}", hr);
-      }
-
-      Log.Log.Info("Graph should be clean of MDAPI Filters..");
+      Log.Log.Info("mdplugs: Setting last filter to {0}", filtername);
+      lastFilter = _mDPlugs[iplg].mdapiFilter;
     }
 
     /// <summary>

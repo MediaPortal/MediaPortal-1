@@ -136,6 +136,7 @@ namespace MediaPortal.Player
     private string _defaultAudioLanguage = "";
     private string _defaultSubtitleLanguage = "";
     protected bool _forceSubtitles = true;
+    protected bool _showClosedCaptions = false;
     protected bool _freeNavigator = false;
     protected int _UOPs;
     protected int buttonCount = 0;
@@ -286,6 +287,7 @@ namespace MediaPortal.Player
           _defaultAudioLanguage = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
           _defaultSubtitleLanguage = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
           _forceSubtitles = xmlreader.GetValueAsBool("dvdplayer", "showsubtitles", true);
+          _showClosedCaptions = xmlreader.GetValueAsBool("dvdplayer", "showclosedcaptions", false);
         }
 
         SetDefaultLanguages();
@@ -1938,6 +1940,15 @@ namespace MediaPortal.Player
       {
         int pulStreamsAvailable, pulCurrentStream;
         bool pbIsDisabled;
+        if (_line21Decoder != null)
+        {
+          AMLine21CCState state = AMLine21CCState.Off;
+          _line21Decoder.GetServiceState(out state);
+          if (state == AMLine21CCState.On)
+          {
+            return -1;
+          }
+        }
         int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
         if (hr != 0)
         {
@@ -1951,7 +1962,22 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SelectSubpictureStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr = 0;
+          if (_line21Decoder != null)
+          {
+            if (value == -1)
+            {
+              hr = _line21Decoder.SetServiceState(AMLine21CCState.On);
+            }
+            else
+            {
+              hr = _line21Decoder.SetServiceState(AMLine21CCState.Off);
+            }
+          }
+          if (value != -1)
+          {
+            hr = _dvdCtrl.SelectSubpictureStream(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
           if (hr != 0)
           {
             Log.Error("DVDPlayer:CurrentSubtitleStream:Unable to set current subpicture with code {0}", hr);
@@ -2046,6 +2072,15 @@ namespace MediaPortal.Player
       {
         int pulStreamsAvailable, pulCurrentStream;
         bool pbIsDisabled;
+        if (_line21Decoder != null)
+        {
+          AMLine21CCState state;
+          _line21Decoder.GetServiceState(out state);
+          if (state == AMLine21CCState.On)
+          {
+            return true;
+          }
+        }
         int hr = _dvdInfo.GetCurrentSubpicture(out pulStreamsAvailable, out pulCurrentStream, out pbIsDisabled);
         if (hr != 0)
         {
@@ -2059,7 +2094,21 @@ namespace MediaPortal.Player
       {
         try
         {
-          int hr = _dvdCtrl.SetSubpictureState(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          int hr;
+          AMLine21CCState state = AMLine21CCState.Off;
+          if (CurrentSubtitleStream == -1)
+          {
+            state = value ? AMLine21CCState.On : AMLine21CCState.Off;
+            hr = _dvdCtrl.SetSubpictureState(false, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
+          else
+          {
+            hr = _dvdCtrl.SetSubpictureState(value, DvdCmdFlags.Flush | DvdCmdFlags.SendEvents, out _cmdOption);
+          }
+          if (_line21Decoder != null)
+          {
+            hr = _line21Decoder.SetServiceState(state);
+          }
           if (hr != 0)
           {
             Log.Error("DVDPlayer:EnableSubtitle:Unable to set subpicture state (enabled/disabled) with code {0}", hr);
@@ -2081,7 +2130,22 @@ namespace MediaPortal.Player
       }
     }
 
-    protected virtual void SetVideoPosition(Rectangle destination)
+    public bool SupportsCC
+    {
+      get
+      { 
+        if (_showClosedCaptions)
+        {
+          return (_line21Decoder != null);
+        }
+        else
+        {
+          return false;
+        }
+      }
+    }
+
+      protected virtual void SetVideoPosition(Rectangle destination)
     {
       if (_videoWin != null)
       {

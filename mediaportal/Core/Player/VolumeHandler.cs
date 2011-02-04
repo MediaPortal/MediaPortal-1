@@ -196,7 +196,7 @@ namespace MediaPortal.Player
         msg.Label3 = Instance.IsMuted.ToString();
         GUIGraphicsContext.SendMessage(msg);
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);
@@ -223,7 +223,7 @@ namespace MediaPortal.Player
         GUIGraphicsContext.SendMessage(msg);
 
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN && _showVolumeOSD ||
             GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO && _showVolumeOSD)
         {
           Action showVolume = new Action(Action.ActionType.ACTION_SHOW_VOLUME, 0, 0);

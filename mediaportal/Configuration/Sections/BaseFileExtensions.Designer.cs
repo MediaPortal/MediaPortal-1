@@ -72,16 +72,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.Controls.Add(this.extensionsListBox);
       this.groupBox1.Controls.Add(this.extensionTextBox);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(0, 0);
+      this.groupBox1.Location = new System.Drawing.Point(6, 0);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(472, 408);
+      this.groupBox1.Size = new System.Drawing.Size(462, 408);
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       // 
       // resetButton
       // 
       this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.resetButton.Location = new System.Drawing.Point(384, 144);
+      this.resetButton.Location = new System.Drawing.Point(374, 144);
       this.resetButton.Name = "resetButton";
       this.resetButton.Size = new System.Drawing.Size(72, 22);
       this.resetButton.TabIndex = 6;
@@ -95,14 +95,14 @@ namespace MediaPortal.Configuration.Sections
                   | System.Windows.Forms.AnchorStyles.Right)));
       this.label1.Location = new System.Drawing.Point(16, 24);
       this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(440, 32);
+      this.label1.Size = new System.Drawing.Size(430, 32);
       this.label1.TabIndex = 0;
       this.label1.Text = "Files matching an extension listed below will be considered a known media type.";
       // 
       // addButton
       // 
       this.addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.addButton.Location = new System.Drawing.Point(384, 64);
+      this.addButton.Location = new System.Drawing.Point(374, 64);
       this.addButton.Name = "addButton";
       this.addButton.Size = new System.Drawing.Size(72, 22);
       this.addButton.TabIndex = 2;
@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.removeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.removeButton.Enabled = false;
-      this.removeButton.Location = new System.Drawing.Point(384, 88);
+      this.removeButton.Location = new System.Drawing.Point(374, 88);
       this.removeButton.Name = "removeButton";
       this.removeButton.Size = new System.Drawing.Size(72, 22);
       this.removeButton.TabIndex = 4;
@@ -130,7 +130,7 @@ namespace MediaPortal.Configuration.Sections
       this.extensionsListBox.Location = new System.Drawing.Point(16, 88);
       this.extensionsListBox.Name = "extensionsListBox";
       this.extensionsListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-      this.extensionsListBox.Size = new System.Drawing.Size(360, 303);
+      this.extensionsListBox.Size = new System.Drawing.Size(350, 303);
       this.extensionsListBox.Sorted = true;
       this.extensionsListBox.TabIndex = 3;
       this.extensionsListBox.SelectedIndexChanged += new System.EventHandler(this.extensionsListBox_SelectedIndexChanged);
@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
       this.extensionTextBox.BorderColor = System.Drawing.Color.Empty;
       this.extensionTextBox.Location = new System.Drawing.Point(16, 64);
       this.extensionTextBox.Name = "extensionTextBox";
-      this.extensionTextBox.Size = new System.Drawing.Size(360, 20);
+      this.extensionTextBox.Size = new System.Drawing.Size(350, 20);
       this.extensionTextBox.TabIndex = 1;
       this.extensionTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.extensionTextBox_KeyDown);
       this.extensionTextBox.Leave += new System.EventHandler(this.extensionTextBox_Leave);

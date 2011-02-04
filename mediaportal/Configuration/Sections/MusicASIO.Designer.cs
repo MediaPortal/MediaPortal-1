@@ -31,13 +31,13 @@ namespace MediaPortal.Configuration.Sections
       this.asioDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btSettings = new MediaPortal.UserInterface.Controls.MPButton();
       this.lbBalance = new MediaPortal.UserInterface.Controls.MPLabel();
       this.hScrollBarBalance = new System.Windows.Forms.HScrollBar();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.lbNumberOfChannels = new MediaPortal.UserInterface.Controls.MPLabel();
       this.useASIOCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.btSettings = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpGroupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -49,7 +49,7 @@ namespace MediaPortal.Configuration.Sections
       this.asioDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.asioDeviceComboBox.Location = new System.Drawing.Point(81, 65);
       this.asioDeviceComboBox.Name = "asioDeviceComboBox";
-      this.asioDeviceComboBox.Size = new System.Drawing.Size(262, 21);
+      this.asioDeviceComboBox.Size = new System.Drawing.Size(292, 21);
       this.asioDeviceComboBox.TabIndex = 5;
       this.asioDeviceComboBox.SelectedIndexChanged += new System.EventHandler(this.asioDeviceComboBox_SelectedIndexChanged);
       // 
@@ -76,17 +76,27 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.Controls.Add(this.asioDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.useASIOCheckBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox1.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox1.Location = new System.Drawing.Point(6, 0);
       this.mpGroupBox1.Name = "mpGroupBox1";
-      this.mpGroupBox1.Size = new System.Drawing.Size(432, 241);
+      this.mpGroupBox1.Size = new System.Drawing.Size(462, 241);
       this.mpGroupBox1.TabIndex = 1;
       this.mpGroupBox1.TabStop = false;
       this.mpGroupBox1.Text = "General settings";
       // 
+      // btSettings
+      // 
+      this.btSettings.Location = new System.Drawing.Point(379, 64);
+      this.btSettings.Name = "btSettings";
+      this.btSettings.Size = new System.Drawing.Size(75, 23);
+      this.btSettings.TabIndex = 13;
+      this.btSettings.Text = "Settings";
+      this.btSettings.UseVisualStyleBackColor = true;
+      this.btSettings.Click += new System.EventHandler(this.btSettings_Click);
+      // 
       // lbBalance
       // 
       this.lbBalance.AutoSize = true;
-      this.lbBalance.Location = new System.Drawing.Point(371, 169);
+      this.lbBalance.Location = new System.Drawing.Point(398, 164);
       this.lbBalance.Name = "lbBalance";
       this.lbBalance.Size = new System.Drawing.Size(28, 13);
       this.lbBalance.TabIndex = 12;
@@ -114,7 +124,7 @@ namespace MediaPortal.Configuration.Sections
       // mpLabel1
       // 
       this.mpLabel1.AutoSize = true;
-      this.mpLabel1.Location = new System.Drawing.Point(19, 169);
+      this.mpLabel1.Location = new System.Drawing.Point(27, 164);
       this.mpLabel1.Name = "mpLabel1";
       this.mpLabel1.Size = new System.Drawing.Size(49, 13);
       this.mpLabel1.TabIndex = 7;
@@ -133,23 +143,13 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.useASIOCheckBox.AutoSize = true;
       this.useASIOCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.useASIOCheckBox.Location = new System.Drawing.Point(87, 24);
+      this.useASIOCheckBox.Location = new System.Drawing.Point(10, 24);
       this.useASIOCheckBox.Name = "useASIOCheckBox";
       this.useASIOCheckBox.Size = new System.Drawing.Size(197, 17);
       this.useASIOCheckBox.TabIndex = 2;
       this.useASIOCheckBox.Text = "Use ASIO (available with BASS only)";
       this.useASIOCheckBox.UseVisualStyleBackColor = true;
       this.useASIOCheckBox.CheckedChanged += new System.EventHandler(this.useASIOCheckBox_CheckedChanged);
-      // 
-      // btSettings
-      // 
-      this.btSettings.Location = new System.Drawing.Point(351, 63);
-      this.btSettings.Name = "btSettings";
-      this.btSettings.Size = new System.Drawing.Size(75, 23);
-      this.btSettings.TabIndex = 13;
-      this.btSettings.Text = "Settings";
-      this.btSettings.UseVisualStyleBackColor = true;
-      this.btSettings.Click += new System.EventHandler(this.btSettings_Click);
       // 
       // MusicASIO
       // 

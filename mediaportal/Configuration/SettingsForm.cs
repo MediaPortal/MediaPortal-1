@@ -184,7 +184,7 @@ namespace MediaPortal.Configuration
       string strLanguage;
       using (Settings xmlreader = new MPSettings())
       {
-        strLanguage = xmlreader.GetValueAsString("skin", "language", "English");
+        strLanguage = xmlreader.GetValueAsString("gui", "language", "English");
         hintShowCount = xmlreader.GetValueAsInt("general", "ConfigModeHintCount", 0);
 
         if (splashScreen != null)
@@ -209,6 +209,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(null, project, false));
 
       AddTabGeneral();
+      AddTabGui();
       AddTabMovies();
       AddTabDvd();
       AddTabTelevision();
@@ -460,8 +461,11 @@ namespace MediaPortal.Configuration
       SectionSettings picture = new Pictures();
       AddSection(new ConfigPage(null, picture, false));
 
+      Log.Info("  add picture shares section");
       AddSection(new ConfigPage(picture, new PictureShares(), false));
+      Log.Info("  add picture thumbs section");
       AddSection(new ConfigPage(picture, new PictureThumbs(), true));
+      Log.Info("  add picture extensions section");
       AddSection(new ConfigPage(picture, new PictureExtensions(), true));
     }
 
@@ -544,6 +548,10 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(dvd, new DVDZoom(), true));
       Log.Info("  add DVD postprocessing section");
       AddSection(new ConfigPage(dvd, new DVDPostProcessing(), true));
+      Log.Info("  add DVD daemon tools section");
+      AddSection(new ConfigPage(dvd, new GeneralDaemonTools(), true));
+      Log.Info("  add DVD autoplay section");
+      AddSection(new ConfigPage(dvd, new GeneralAutoplay(), true));
     }
 
     private void AddTabGeneral()
@@ -557,35 +565,50 @@ namespace MediaPortal.Configuration
       General general = new General();
       AddSection(new ConfigPage(null, general, false));
 
-      //add skins section
-      Log.Info("add skins section");
-      if (splashScreen != null)
-      {
-        splashScreen.SetInformation("Adding skins section...");
-      }
-
-      GeneralSkin skinConfig = new GeneralSkin();
-      AddSection(new ConfigPage(general, skinConfig, false));
-
-      AddSection(new ConfigPage(general, new GeneralThumbs(), false));
+      Log.Info("  add general volume section");
       AddSection(new ConfigPage(general, new GeneralVolume(), false));
-
+      Log.Info("  add general keyboard section");
       AddSection(new ConfigPage(general, new GeneralKeyboardControl(), true));
+      Log.Info("  add general keys section");
       AddSection(new ConfigPage(general, new Keys(), true));
-      AddSection(new ConfigPage(general, new GeneralScreensaver(), true));
-      AddSection(new ConfigPage(general, new GeneralOSD(), true));
-      AddSection(new ConfigPage(general, new GeneralSkipSteps(), true));
-      AddSection(new ConfigPage(general, new GeneralStartupDelay(), true));
-      AddSection(new ConfigPage(general, new GeneralWatchdog(), true));
-      AddSection(new ConfigPage(general, new GeneralDaemonTools(), true));
-      AddSection(new ConfigPage(general, new GeneralFileMenu(), true));
-      AddSection(new ConfigPage(general, new GeneralAutoplay(), true));
-
-      GeneralDynamicRefreshRate dynRRConfig = new GeneralDynamicRefreshRate();
-      AddSection(new ConfigPage(general, dynRRConfig, true));
+      Log.Info("  add general dynamic refresh section");
+      AddSection(new ConfigPage(general, new GeneralDynamicRefreshRate(), true));
+      Log.Info("  add general startup resume section");
+      AddSection(new ConfigPage(general, new GeneralStartupResume(), false));
 
       // Removed because of various issues with DVD playback
       // AddSection(new ConfigPage(general, new GeneralCDSpeed(), true));
+    }
+
+    private void AddTabGui()
+    {
+      Log.Info("add gui section");
+      if (splashScreen != null)
+      {
+        splashScreen.SetInformation("Adding GUI section...");
+      }
+
+      Gui gui = new Gui();
+      AddSection(new ConfigPage(null, gui, false));
+
+      Log.Info("  add gui skin section");
+      AddSection(new ConfigPage(gui, new GuiSkin(), false));
+      Log.Info("  add gui home screen section");
+      AddSection(new ConfigPage(gui, new GuiHomeScreen(), false));
+      Log.Info("  add gui language section");
+      AddSection(new ConfigPage(gui, new GuiLanguage(), false));
+      Log.Info("  add gui scroll speed section");
+      AddSection(new ConfigPage(gui, new GuiScrollSpeed(), false));
+      Log.Info("  add gui thumbs section");
+      AddSection(new ConfigPage(gui, new GuiThumbs(), false));
+      Log.Info("  add general screensaver section");
+      AddSection(new ConfigPage(gui, new GuiScreensaver(), true));
+      Log.Info("  add gui file menu section");
+      AddSection(new ConfigPage(gui, new GuiFileMenu(), true));
+      Log.Info("  add gui osd section");
+      AddSection(new ConfigPage(gui, new GuiOSD(), true));
+      Log.Info("  add gui skip steps section");
+      AddSection(new ConfigPage(gui, new GuiSkipSteps(), true));
     }
 
     private void AddTabThirdPartyChecks()
