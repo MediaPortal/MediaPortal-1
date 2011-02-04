@@ -514,8 +514,8 @@ namespace MediaPortal.GUI.Library
       {
         m_iMaxFPS = xmlReader.GetValueAsInt("screen", "GuiRenderFps", 50);
         SyncFrameTime();
-        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("general", "ScrollSpeedDown", 4);
-        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("general", "ScrollSpeedRight", 3);
+        m_iScrollSpeedVertical = xmlReader.GetValueAsInt("gui", "ScrollSpeedDown", 4);
+        m_iScrollSpeedHorizontal = xmlReader.GetValueAsInt("gui", "ScrollSpeedRight", 3);
         m_bAnimations = xmlReader.GetValueAsBool("general", "animations", true);
         turnOffMonitor = xmlReader.GetValueAsBool("general", "turnoffmonitor", false);
 
