@@ -704,6 +704,21 @@ namespace TvDatabase
       newMap.Persist();
       return newMap;
     }
+    
+    /// <summary>
+    /// Gets a list of radio channels sorted by their group
+    /// </summary>
+    /// <returns>a list of TVDatabase Channels</returns>
+    public List<Channel> GetRadioGuideChannelsForGroup(int groupID)
+    {
+      SqlBuilder sb1 = new SqlBuilder(StatementType.Select, typeof (Channel));
+      SqlStatement stmt1 = sb1.GetStatement(true);
+      SqlStatement ManualJoinSQL = new SqlStatement(stmt1.StatementType, stmt1.Command,
+                                                    String.Format(
+                                                      "select c.* from Channel c inner join RadioGroupMap g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and isRadio = 1 order by g.sortOrder",
+                                                      groupID), typeof (Channel));
+      return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
+    }    
 
     /// <summary>
     /// Gets a list of tv channels sorted by their group

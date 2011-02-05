@@ -18,7 +18,7 @@
       <posY>650</posY>
       <width>106</width>
       <height>75</height>
-      <texture>radio_logo.png</texture>
+      <texture>-</texture>
     </control>
     <control>
       <description>Date</description>
@@ -30,7 +30,7 @@
       <label>#date | #time</label>
     </control>
     <control>
-      <description>Guide Text Label</description>
+      <description>Guide Group Label</description>
       <type>label</type>
       <id>11</id>
       <posX>97</posX>
@@ -38,18 +38,42 @@
       <width>1688</width>
       <font>font14</font>
       <align>left</align>
-      <label>533</label>
+      <label>#Radio.Guide.Group</label>
     </control>
     <control>
       <description>TVGUIDE Panel</description>
       <type>image</type>
       <id>2</id>
-      <posX>106</posX>
+      <posX>146</posX>
+      <!--posX>106</posX-->
       <posY>112</posY>
-      <width>1137</width>
+      <width>1097</width>
+      <!--width>1137</width-->
       <height>425</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture>-</texture>
+    </control>
+    <control>
+      <description>Single Channel Label</description>
+      <type>label</type>
+      <id>32</id>
+      <posX>1150</posX>
+      <posY>40</posY>
+      <font>font14</font>
+      <align>right</align>
+      <textcolor>FFFFFFFF</textcolor>
+    </control>
+    <control>
+      <description>Single Channel Image</description>
+      <type>image</type>
+      <id>33</id>
+      <posX>1155</posX>
+      <posY>25</posY>
+      <width>53</width>
+      <height>37</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <zoom>yes</zoom>
+      <texture>defaultVideoBig.png</texture>
     </control>
     <!-- Timeheader background must be dedfined before Timeheader label template -->
     <!-- b/c Timeheader is on the background and will be rendered first -->
@@ -82,7 +106,8 @@
       <showrange>no</showrange>
       <orientation>horizontal</orientation>
       <align>center</align>
-      <onleft>6</onleft>
+	  <onup>21</onup>
+      <onleft>60</onleft>
       <onright>8</onright>
       <textureUp>arrow_round_right_nofocus.png</textureUp>
       <textureDown>arrow_round_left_nofocus.png</textureDown>
@@ -104,16 +129,19 @@
       <textureDown>arrow_round_left_nofocus.png</textureDown>
       <textureUpFocus>arrow_round_right_focus.png</textureUpFocus>
       <textureDownFocus>arrow_round_left_focus.png</textureDownFocus>
-      <onleft>6</onleft>
+      <onup>21</onup>
+	  <onleft>6</onleft>
       <onright>8</onright>
     </control>
     <control>
       <description>Channel template</description>
       <type>image</type>
       <id>20</id>
-      <posX>39</posX>
+      <posX>79</posX>
+      <!--posX>39</posX-->
       <posY>81</posY>
-      <width>302</width>
+      <width>262</width>
+      <!--width>302</width-->
       <height>43</height>
     </control>
     <control>
@@ -147,7 +175,7 @@
       <posY>523</posY>
       <width>622</width>
       <font>font14</font>
-      <label>#Radio.Guide.Title</label>
+      <label>#Radio.Guide.CompositeTitle</label>
     </control>
     <control>
       <description>Current program time</description>
@@ -191,6 +219,8 @@
 		<label>-</label>
 		<font>font10</font>
 		<textcolor>FF101010</textcolor>
+        <posX>10</posX>
+        <posY>6</posY>
 	</control>	-->
     <control>
       <description>template for program title light area</description>
@@ -200,6 +230,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ccffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <control>
       <description>vertical timeline</description>
@@ -219,6 +251,8 @@
       <label>-</label>
       <font>font14</font>
       <textcolor>ffffffff</textcolor>
+      <posX>10</posX>
+      <posY>6</posY>
     </control>
     <!--	<control>
 		<description>template for genre  dark area</description>
@@ -228,31 +262,34 @@
 		<label>-</label>
 		<font>font13</font>
 		<textcolor>FFFFFFFF</textcolor>
+        <posX>10</posX>
+        <posY>6</posY>
 	</control> -->
-    <!--<control>
-      <description>Horizontal scrollbar</description>
-      <type>hscrollbar</type>
-      <id>28</id>
-      <posX>108</posX>
-      <posY>498</posY>
-      <width>1063</width>
-      <height>25</height>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+    <control>
+      <description>TV background</description>
+      <type>image</type>
+      <id>98</id>
+      <posX>78</posX>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
+      <visible>Player.HasVideo</visible>
     </control>
     <control>
-      <description>Vertical scrollbar</description>
-      <type>vscrollbar</type>
-      <id>29</id>
-      <posX>1182</posX>
-      <posY>156</posY>
-      <width>35</width>
-      <height>367</height>
-      <visible>yes</visible>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
-    </control> -->
+      <description>TV preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>Player.HasVideo</visible>
+    </control>
     <control>
       <description>record pin</description>
       <type>image</type>
@@ -262,5 +299,34 @@
       <texture>tvguide_record_button.png</texture>
       <visible>no</visible>
     </control>
+     <control>
+      <description>TvGroup button</description>
+      <type>button</type>
+      <id>100</id>
+      <posX>32</posX>
+      <posY>83</posY>
+      <width>45</width>
+      <height>425</height>
+      <textureFocus>small_vbutton_focus.png</textureFocus>
+      <textureNoFocus>small_vbutton_nofocus.png</textureNoFocus>
+      <label></label>
+      <onleft>60</onleft>
+      <onright>6</onright>
+      <onup>6</onup>
+      <ondown>6</ondown>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">focus</animation>
+     <animation effect="zoom" start="100,100" end="100,100" time="0">unfocus</animation>
+    </control>
+    <control>
+      <description>TvGroup button label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>70</posX>
+      <posY>90</posY>
+      <label>#Radio.Guide.ChangeGroup</label>
+      <font>font12</font>
+      <textcolor>FFFFFFFF</textcolor>
+      <animation effect="rotate" end="-90" time="0">WindowOpen</animation>
+      </control>
   </controls>
 </window>
