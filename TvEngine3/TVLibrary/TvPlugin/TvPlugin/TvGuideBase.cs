@@ -26,7 +26,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using MediaPortal.Configuration;
+using System.Windows.Media.Animation;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.Video;
@@ -36,7 +36,6 @@ using MediaPortal.Util;
 using MediaPortal.Video.Database;
 using TvControl;
 using TvDatabase;
-using System.Windows.Media.Animation;
 using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
@@ -50,7 +49,7 @@ namespace TvPlugin
   {
     #region constants
 
-    class TvGuideChannel
+    class GuideChannel
     {
       public Channel channel;
       public int channelNum;
@@ -65,6 +64,8 @@ namespace TvPlugin
     // Start for numbering IDs of automaticaly generated TVguide components for channels and programs
 
     private int _loopDelay = 100; // wait at the last item this amount of msec until loop to the first item
+    
+    private static string SkinPropertyPrefix = "#TV";
 
     #endregion
 
@@ -100,7 +101,7 @@ namespace TvPlugin
       BUTTON_PROGRAM_RECORD = 38,
       BUTTON_PROGRAM_PARTIAL_RECORD = 39,
 
-      TVGROUP_BUTTON = 100
+      CHANNEL_GROUP_BUTTON = 100
     } ;
 
     #endregion
@@ -111,7 +112,7 @@ namespace TvPlugin
     private DateTime _updateTimerRecExpected = DateTime.Now;
     private DateTime _viewingTime = DateTime.Now;
     private int _channelOffset = 0;
-    private List<TvGuideChannel> _channelList = new List<TvGuideChannel>();
+    private List<GuideChannel> _channelList = new List<GuideChannel>();
     private IList<Schedule> _recordingList = new List<Schedule>();
     private Dictionary<int, GUIButton3PartControl> _controls = new Dictionary<int, GUIButton3PartControl>();
 
@@ -175,17 +176,17 @@ namespace TvPlugin
     protected double _lastCommandTime = 0;
 
     /// <summary>
-    /// Logic to decide if tvgroup button is available and visible
+    /// Logic to decide if channel group button is available and visible
     /// </summary>
-    protected bool TvGroupButtonAvail
+    protected bool GroupButtonAvail
     {
       get
       {
-        // show/hide tvgroup button
-        GUIButtonControl btnTvGroup = GetControl((int)Controls.TVGROUP_BUTTON) as GUIButtonControl;
+        // show/hide channel group button
+        GUIButtonControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
 
         // visible only if more than one group? and not in single channel, and button exists in skin!
-        return (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView && btnTvGroup != null);
+        return (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView && btnChannelGroup != null);
       }
     }
 
@@ -283,7 +284,7 @@ namespace TvPlugin
       if (_cursorX >= 0 ||
           focusedId == (int)Controls.SPINCONTROL_DAY ||
           focusedId == (int)Controls.SPINCONTROL_TIME_INTERVAL ||
-          focusedId == (int)Controls.TVGROUP_BUTTON
+          focusedId == (int)Controls.CHANNEL_GROUP_BUTTON
          )
       {
         return focusedId;
@@ -551,11 +552,11 @@ namespace TvPlugin
           break;
           // TV group changing actions
         case Action.ActionType.ACTION_TVGUIDE_NEXT_GROUP:
-          OnChangeTvGroup(1);
+          OnChangeChannelGroup(1);
           break;
 
         case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
-          OnChangeTvGroup(-1);
+          OnChangeChannelGroup(-1);
           break;
       }
       base.OnAction(action);
@@ -582,10 +583,10 @@ namespace TvPlugin
     }
 
     /// <summary>
-    /// changes the current tv group and refreshes guide display
+    /// changes the current channel group and refreshes guide display
     /// </summary>
     /// <param name="Direction"></param>
-    protected virtual void OnChangeTvGroup(int Direction)
+    protected virtual void OnChangeChannelGroup(int Direction)
     {
       // in single channel view there would be errors when changing group
       if (_singleChannelView) return;
@@ -615,7 +616,7 @@ namespace TvPlugin
         // update list
         GUIWaitCursor.Show();
         TVHome.Navigator.SetCurrentGroup(newIndex);
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
         _cursorY = 1; // cursor should be on the program guide item
         _channelOffset = 0;
@@ -776,7 +777,7 @@ namespace TvPlugin
                   _currentChannel = TVHome.Navigator.Channel;
                   for (int i = 0; i < _channelList.Count; i++)
                   {
-                    Channel chan = ((TvGuideChannel)_channelList[i]).channel;
+                    Channel chan = ((GuideChannel)_channelList[i]).channel;
                     if (chan.IdChannel == _currentChannel.IdChannel)
                     {
                       _cursorX = i;
@@ -899,9 +900,9 @@ namespace TvPlugin
               SetFocus();
               return true;
             }
-            if (iControl == (int)Controls.TVGROUP_BUTTON)
+            if (iControl == (int)Controls.CHANNEL_GROUP_BUTTON)
             {
-              OnSelectGroup();
+              OnSelectChannelGroup();
               return true;
             }
             if (iControl >= GUIDE_COMPONENTID_START)
@@ -928,7 +929,7 @@ namespace TvPlugin
     /// <summary>
     /// Shows channel group selection dialog
     /// </summary>
-    protected virtual void OnSelectGroup()
+    protected virtual void OnSelectChannelGroup()
     {
       // only if more groups present and not in singleChannelView
       if (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView)
@@ -1304,13 +1305,13 @@ namespace TvPlugin
             day = GUILocalizeStrings.Get(663);
             break;
         }
-        GUIPropertyManager.SetProperty("#TV.Guide.View.SDOW", day);
-        GUIPropertyManager.SetProperty("#TV.Guide.View.Month", _viewingTime.Month.ToString());
-        GUIPropertyManager.SetProperty("#TV.Guide.View.Day", _viewingTime.Day.ToString());
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.View.SDOW", day);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.View.Month", _viewingTime.Month.ToString());
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.View.Day", _viewingTime.Day.ToString());
 
         //day = String.Format("{0} {1}-{2}", day, _viewingTime.Day, _viewingTime.Month);
         day = Utils.GetShortDayString(_viewingTime);
-        GUIPropertyManager.SetProperty("#TV.Guide.Day", day);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Day", day);
 
         //2004 03 31 22 20 00
         string strStart = String.Format("{0}{1:00}{2:00}{3:00}{4:00}{5:00}",
@@ -1393,7 +1394,7 @@ namespace TvPlugin
           {
             if (chan < _channelList.Count)
             {
-              TvGuideChannel tvGuideChannel = (TvGuideChannel)_channelList[chan];
+              GuideChannel tvGuideChannel = (GuideChannel)_channelList[chan];
               RenderChannel(ref programs, iChannel, tvGuideChannel, iStart, iEnd, selectCurrentShow);
               // remember bottom y position from last visible button
               GUIButton3PartControl imgBut = GetControl((int)Controls.IMG_CHAN1 + iChannel) as GUIButton3PartControl;
@@ -1490,32 +1491,32 @@ namespace TvPlugin
       if (!_singleChannelView)
       {
         string strLogo = GetChannelLogo(strChannel);
-        GUIPropertyManager.SetProperty("#TV.Guide.thumb", strLogo);
-        GUIPropertyManager.SetProperty("#TV.Guide.ChannelName", strChannel);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.thumb", strLogo);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelName", strChannel);
         if (_showChannelNumber)
         {
           IList<TuningDetail> detail = chan.ReferringTuningDetail();
           int channelNum = detail[0].ChannelNumber;
-          GUIPropertyManager.SetProperty("#TV.Guide.ChannelNumber", channelNum + "");
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
       }
 
       if (_cursorY == 0 || _currentProgram == null)
       {
-        GUIPropertyManager.SetProperty("#TV.Guide.Title", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.CompositeTitle", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.SubTitle", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Episode", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.EpisodeDetail", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Date", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.StarRating", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Classification", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.Duration", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.DurationMins", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.EpisodeDetail", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Date", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.StarRating", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", String.Empty);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", String.Empty);
 
         _currentStartTime = 0;
         _currentEndTime = 0;
@@ -1530,24 +1531,24 @@ namespace TvPlugin
                                        _currentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                        _currentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        GUIPropertyManager.SetProperty("#TV.Guide.Title", _currentProgram.Title);
-        GUIPropertyManager.SetProperty("#TV.Guide.CompositeTitle", TVUtil.GetDisplayTitle(_currentProgram));
-        GUIPropertyManager.SetProperty("#TV.Guide.Time", strTime);
-        GUIPropertyManager.SetProperty("#TV.Guide.Description", _currentProgram.Description);
-        GUIPropertyManager.SetProperty("#TV.Guide.Genre", _currentProgram.Genre);
-        GUIPropertyManager.SetProperty("#TV.Guide.Duration", GetDuration(_currentProgram));
-        GUIPropertyManager.SetProperty("#TV.Guide.DurationMins", GetDurationAsMinutes(_currentProgram));
-        GUIPropertyManager.SetProperty("#TV.Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
-        GUIPropertyManager.SetProperty("#TV.Guide.Episode", _currentProgram.EpisodeNumber);
-        GUIPropertyManager.SetProperty("#TV.Guide.SubTitle", _currentProgram.EpisodeName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Title", _currentProgram.Title);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.CompositeTitle", TVUtil.GetDisplayTitle(_currentProgram));
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Time", strTime);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Description", _currentProgram.Description);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Genre", _currentProgram.Genre);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Duration", GetDuration(_currentProgram));
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.DurationMins", GetDurationAsMinutes(_currentProgram));
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.TimeFromNow", GetStartTimeFromNow(_currentProgram));
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Episode", _currentProgram.EpisodeNumber);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.SubTitle", _currentProgram.EpisodeName);
 
         if (_currentProgram.Classification == "")
         {
-          GUIPropertyManager.SetProperty("#TV.Guide.Classification", "No Rating");
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", "No Rating");
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.Guide.Classification", _currentProgram.Classification);
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Classification", _currentProgram.Classification);
         }
 
         _currentStartTime = Utils.datetolong(_currentProgram.StartTime);
@@ -2161,7 +2162,7 @@ namespace TvPlugin
       return false;
     }
 
-    private void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, TvGuideChannel tvGuideChannel,
+    private void RenderChannel(ref Dictionary<int, List<Program>> mapPrograms, int iChannel, GuideChannel tvGuideChannel,
                                long iStart, long iEnd, bool selectCurrentShow)
     {
       int channelNum = 0;
@@ -2930,7 +2931,7 @@ namespace TvPlugin
         {
           _cursorX = -1;
           _cursorY = 0;
-          GetControl((int)Controls.TVGROUP_BUTTON).Focus = false;
+          GetControl((int)Controls.CHANNEL_GROUP_BUTTON).Focus = false;
           GetControl((int)Controls.SPINCONTROL_DAY).Focus = true;
           return;
         }
@@ -3231,27 +3232,27 @@ namespace TvPlugin
       String GroupButtonText = " ";
 
       // show/hide tvgroup button
-      GUIButtonControl btnTvGroup = GetControl((int)Controls.TVGROUP_BUTTON) as GUIButtonControl;
+      GUIButtonControl btnTvGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
 
       if (btnTvGroup != null)
-        btnTvGroup.Visible = TvGroupButtonAvail;
+        btnTvGroup.Visible = GroupButtonAvail;
 
       // set min index for focus handling
-      if (TvGroupButtonAvail)
+      if (GroupButtonAvail)
       {
         MinYIndex = -1; // allow focus of button
         GroupButtonText = String.Format("{0}: {1}", GUILocalizeStrings.Get(971), TVHome.Navigator.CurrentGroup.GroupName);
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
       }
       else
       {
-        GUIPropertyManager.SetProperty("#TV.Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
         MinYIndex = 0;
       }
 
       // Set proper text for group change button; Empty string to hide text if only 1 group
       // (split between button and rotated label due to focusing issue of rotated buttons)
-      GUIPropertyManager.SetProperty("#TV.Guide.ChangeGroup", GroupButtonText); // existing string "group"
+      GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChangeGroup", GroupButtonText); // existing string "group"
     }
 
     private void OnRight()
@@ -3355,7 +3356,7 @@ namespace TvPlugin
         GUIControl.UnfocusControl(GetID, (int)Controls.SPINCONTROL_TIME_INTERVAL);
 
         if (_cursorY == -1)
-          controlid = (int)Controls.TVGROUP_BUTTON;
+          controlid = (int)Controls.CHANNEL_GROUP_BUTTON;
         else
           controlid = (int)Controls.IMG_CHAN1 + _cursorX;
 
@@ -3512,7 +3513,7 @@ namespace TvPlugin
             OnGetIMDBInfo();
             break;
           case 971: //group
-            OnSelectGroup();
+            OnSelectChannelGroup();
             break;
           case 1040: // set reminder
           case 1212: // cancel reminder
@@ -4074,7 +4075,7 @@ namespace TvPlugin
     {
       if (refresh || _channelList == null)
       {
-        _channelList = new List<TvGuideChannel>();
+        _channelList = new List<GuideChannel>();
       }
 
       if (_channelList.Count == 0)
@@ -4087,7 +4088,7 @@ namespace TvPlugin
             IList<Channel> channels = layer.GetTVGuideChannelsForGroup(TVHome.Navigator.CurrentGroup.IdGroup);
             foreach (Channel chan in channels)
             {
-              TvGuideChannel tvGuidChannel = new TvGuideChannel();
+              GuideChannel tvGuidChannel = new GuideChannel();
               tvGuidChannel.channel = chan;
 
               if (tvGuidChannel.channel.VisibleInGuide && tvGuidChannel.channel.IsTv)
@@ -4115,7 +4116,7 @@ namespace TvPlugin
 
         if (_channelList.Count == 0)
         {
-          TvGuideChannel tvGuidChannel = new TvGuideChannel();
+          GuideChannel tvGuidChannel = new GuideChannel();
           tvGuidChannel.channel = new Channel(false, true, 0, DateTime.MinValue, false,
                                               DateTime.MinValue, 0, true, "", GUILocalizeStrings.Get(911));
           for (int i = 0; i < 10; ++i)
