@@ -815,6 +815,25 @@ namespace TvPlugin
         return;
       }
       _currentChannel = (Channel)item.MusicTag;
+      
+      Play();
+    }
+      
+    public static void Play ()
+    {
+      // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
+      GUIPropertyManager.RemovePlayerProperties();
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
+      
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
+      if (string.IsNullOrEmpty(strLogo))
+      {
+          strLogo = "defaultMyRadioBig.png";
+      }
+      
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
+
       if (g_Player.Playing)
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
@@ -826,7 +845,7 @@ namespace TvPlugin
       if (_currentChannel.IsWebstream())
       {
         g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", item.Label);
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       }
       else
       {

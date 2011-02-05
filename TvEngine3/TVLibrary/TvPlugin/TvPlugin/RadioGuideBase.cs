@@ -3551,7 +3551,7 @@ namespace TvPlugin
           case 1213: // listen to station
 
             Log.Debug("viewch channel:{0}", _currentChannel);
-            TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+            Radio.Play();
             if (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel)
             {
               g_Player.ShowFullScreenWindow();
@@ -3689,7 +3689,7 @@ namespace TvPlugin
 
                   case 1213: // listen to this station
                     {
-                      TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                      Radio.Play();
                       if (g_Player.Playing)
                       {
                         g_Player.ShowFullScreenWindow();
@@ -3706,7 +3706,7 @@ namespace TvPlugin
 
               if (string.IsNullOrEmpty(fileName))
               {
-                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                Radio.Play();
                 if (g_Player.Playing)
                 {
                   g_Player.ShowFullScreenWindow();
@@ -3745,7 +3745,7 @@ namespace TvPlugin
                   case 938:
                     Log.Debug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                    Radio.Play();
                     GUIWaitCursor.Hide();
                     if (g_Player.Playing)
                     {
@@ -3765,7 +3765,7 @@ namespace TvPlugin
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                TVHome.ViewChannelAndCheck(_currentProgram.ReferencedChannel());
+                Radio.Play();
                 GUIWaitCursor.Hide();
                 if (g_Player.Playing)
                 {
