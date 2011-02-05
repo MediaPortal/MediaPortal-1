@@ -603,7 +603,7 @@
     <String id="669">Ordina per: Genere</String>
     <String id="670">Ordina per: Bitrate</String>
     <String id="671">Ordina per: Visto</String>
-    <String id="672">Registra Lun-Ven</String>
+    <String id="672">Registra giorni feriali</String>
     <String id="673">Velocità scorrimento</String>
     <String id="674">Impostazioni I.U.</String>
     <String id="675">Esempio:</String>
@@ -611,7 +611,7 @@
     <String id="677">volte</String>
     <String id="678">Ordina per: Genere</String>
     <String id="679">Settimanale</String>
-    <String id="680">Lun-Ven</String>
+    <String id="680">Giorni feriali</String>
     <String id="681">In attesa</String>
     <String id="682">Registrazione in corso</String>
     <String id="683">Finito</String>
@@ -919,7 +919,7 @@
     <String id="1037" prefix="La mia ">TV - Informazioni programma</String>
     <String id="1038">Registrazione avanzata</String>
     <String id="1039">Non registrare</String>
-    <String id="1040">Avvisami</String>
+    <String id="1040">Imposta notifica</String>
     <String id="1041">Prossimi episodi</String>
     <String id="1042">Mantieni fino a</String>
     <String id="1043">Quando visto</String>
@@ -929,17 +929,13 @@
     <String id="1047">Inizia a schermo intero</String>
     <String id="1048">Impostazioni</String>
     <String id="1049">Sospendi</String>
-    <String id="1050">Sab-Dom</String>
-    <String id="1051">Registra Sab-Dom</String>
+    <String id="1050">Fine settimana</String>
+    <String id="1051">Registra fine settimana</String>
     <String id="1052">Brani</String>
     <String id="1053">Chiamante sconosciuto</String>
     <String id="1054">(rec)</String>
     <String id="1055">(in onda)</String>
     <String id="1056">(non disponibile)</String>
-    <String id="1057">Registra Dom-Gio</String>
-    <String id="1058">Registra Ven-Sab</String>
-    <String id="1059">Dom-Gio</String>
-    <String id="1060">Ven-Sab</String>
     <String id="1061">Rimovibile</String>
     <String id="1062">Oggetto</String>
     <String id="1064">Segnalibri</String>
@@ -996,8 +992,17 @@
     <String id="1202">Ordina per: Automatico</String>
     <String id="1203">Episodio imminente (attivi:{0})</String>
     <String id="1204">Riproduci tutti i video nella cartella</String>
-    <String id="1205">Ordina per: Disco #</String>
+    <String id="1205">Ordina per: # disco</String>
+    <String id="1206">Il programma sta andando da {0} minuti</String>
+    <String id="1207">Cambiare su {0} adesso ?</String>
+    <String id="1208">Ordina per: Compositore</String>
     <String id="1211">Riproduci il video da {0}</String>
+    <String id="1212">Cancellare la notifica</String>
+    <String id="1213">Ascolta questa stazione</String>
+    <String id="1220">Ordina per: Data creazione</String>
+    <String id="1221">Ordina per: Data modifica</String>
+    <String id="1230">Aggiunto in data:</String>
+    <String id="1231">Ultima riproduzione:</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
     <String id="1441">Televideo</String>
@@ -1869,6 +1874,7 @@
     <String id="109004">MiniDisplay - Configurazione - Equalizzatore</String>
     <String id="109005">MiniDisplay - Configurazione - Tastiera</String>
     <String id="109006">MiniDisplay - Configurazione - Telecomando</String>
+    <String id="102019">Avviso TV</String>
     <String id="200000">Per favore seleziona il tuo Grabber EPG (Guida Elettronica Programmi). Nota che se la tua nazione non</String>
     <String id="200001">è in elenco dovrai inserire l'EPG manualmente</String>
     <String id="200002">Ora puoi far corrispondere i canali EPG ai tuoi canali TV</String>
