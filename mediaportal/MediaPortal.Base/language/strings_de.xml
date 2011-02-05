@@ -968,6 +968,9 @@
     <String id="1201">Video von Anfang an wiedergeben</String>
     <String id="1202">Sortieren: Auto</String>
     <String id="1211">Wiedergabe bei {0} fortsetzen</String>
+    <String id="1212">Nicht erinnern</String>
+    <String id="1230">Hinzugefügt am:</String>
+    <String id="1231">Zuletzt gehört am:</String>
     <String id="1300" prefix="Meine ">TV Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Language name="English" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="My ">Programmes</String>
@@ -1000,6 +1000,8 @@
     <String id="1212">Cancel reminder</String>
     <String id="1220">Sort by: Date Created</String>
     <String id="1221">Sort by: Date Modified</String>
+    <String id="1230">Date added:</String>
+    <String id="1231">Last played:</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
