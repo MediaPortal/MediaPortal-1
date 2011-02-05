@@ -1837,7 +1837,8 @@ namespace TvPlugin
                 else if (c.IsRadio)
                 {
                   MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO);
-                  TVHome.ViewChannelAndCheck(c);
+                  Radio.CurrentChannel = c;
+                  Radio.Play();
                 }
               }
               catch (Exception e)
