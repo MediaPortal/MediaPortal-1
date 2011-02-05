@@ -30,54 +30,13 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class which implements scanning for tv/radio channels for DVB-S BDA cards
   /// </summary>
-  public class DVBSScanning : DvbBaseScanning, ITVScanning, IDisposable
+  public class DVBSScanning : DvbBaseScanning
   {
-    private readonly TvCardDVBS _card;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DVBSScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DVBSScanning(TvCardDVBS card)
-      : base(card)
-    {
-      _card = card;
-    }
-
-    /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected override ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Sets the hw pids.
-    /// </summary>
-    /// <param name="pids">The pids.</param>
-    protected override void SetHwPids(List<ushort> pids)
-    {
-      _card.SendHwPids(pids);
-    }
-
-    /// <summary>
-    /// Resets the signal update.
-    /// </summary>
-    protected override void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
-    }
+    public DVBSScanning(TvCardDvbBase card): base(card) { }
 
     /// <summary>
     /// Creates the new channel.
@@ -95,12 +54,8 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.Polarisation = tuningChannel.Polarisation;
       dvbsChannel.SwitchingFrequency = tuningChannel.SwitchingFrequency;
       dvbsChannel.Frequency = tuningChannel.Frequency;
-      dvbsChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
-                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
-                          info.serviceType == (int)ServiceType.H264Stream ||
-                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
-                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
-      dvbsChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
+      dvbsChannel.IsTv = IsTvService(info.serviceType);
+      dvbsChannel.IsRadio = IsRadioService(info.serviceType);
       dvbsChannel.NetworkId = info.networkID;
       dvbsChannel.ServiceId = info.serviceID;
       dvbsChannel.TransportId = info.transportStreamID;
