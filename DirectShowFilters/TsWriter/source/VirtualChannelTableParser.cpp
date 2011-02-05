@@ -188,9 +188,8 @@ void CVirtualChannelTableParser::OnNewSection(int pid, int tableId, CSection& ne
 	  info.ServiceId= program_number;
 	  info.TransportId = channel_TSID;		
       info.FreeCAMode = access_controlled;
-
-	  if (service_type==1||service_type==2) info.ServiceType=1;//ATSC video
-	  if (service_type==3) info.ServiceType=2;//ATSC audio
+	  info.ServiceType = service_type;
+	  
 	  switch (modulation_mode)
 	  {
 		  case 0: //reserved
