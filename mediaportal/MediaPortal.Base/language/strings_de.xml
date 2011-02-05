@@ -688,6 +688,8 @@
     <String id="784">Drehen 270°</String>
     <String id="789">Jetzt: </String>
     <String id="790">Gleich: </String>
+    <String id="791">Layout: Cover Flow</String>
+    <String id="792">Layout</String>
     <String id="798">niedrig</String>
     <String id="799">hoch</String>
     <String id="800">Fängt an mit</String>
@@ -909,10 +911,6 @@
     <String id="1054">(wird aufgenommen)</String>
     <String id="1055">(puffern)</String>
     <String id="1056">(nicht verfügbar)</String>
-    <String id="1057">Sontags bis Donnerstags</String>
-    <String id="1058">Freitags und Samstags</String>
-    <String id="1059">Sonntag - Donnerstag</String>
-    <String id="1060">Fr+Sa</String>
     <String id="1061">Wechseldatenspeicher</String>
     <String id="1062">Objekt</String>
     <String id="1064">Lesezeichen</String>
@@ -967,8 +965,16 @@
     <String id="1200">Einrichtungs-Assistent</String>
     <String id="1201">Video von Anfang an wiedergeben</String>
     <String id="1202">Sortieren: Auto</String>
+    <String id="1203">Kommende Episoden (aktiv: {0})</String>
+    <String id="1204">Alle Videos im gewählten Ordner abspielen</String>
+    <String id="1205">Sortieren: Disc#</String>
+    <String id="1206">Programm läuft jetzt seit {0} Minuten</String>
+    <String id="1207">Jetzt auf {0} umschalten?</String>
+    <String id="1208">Sortieren: Komponist</String>
     <String id="1211">Wiedergabe bei {0} fortsetzen</String>
     <String id="1212">Nicht erinnern</String>
+    <String id="1220">Sortieren: Erstellungsdatum</String>
+    <String id="1221">Sortieren: Änderungsdatum</String>
     <String id="1230">Hinzugefügt am:</String>
     <String id="1231">Zuletzt gehört am:</String>
     <String id="1300" prefix="Meine ">TV Serien</String>
@@ -1810,6 +1816,7 @@
     <String id="102015">Mini Menü</String>
     <String id="102016">Benachrichtigung</String>
     <String id="102018">CI-Menü</String>
+    <String id="102019">TV-Benachrichtigung</String>
     <String id="102600" prefix="Mein ">Wetter</String>
     <String id="102700" prefix="Meine ">Nachrichten</String>
     <String id="102900">Bildschirm-Schoner</String>
