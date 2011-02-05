@@ -48,7 +48,7 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return _card.Name;
+        return _card.IdCard + " - " + _card.Name;
       }
     }
 

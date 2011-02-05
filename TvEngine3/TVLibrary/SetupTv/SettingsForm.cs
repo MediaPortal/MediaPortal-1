@@ -234,7 +234,6 @@ namespace SetupTv
     {
       foreach (Server server in dbsServers)
       {
-        int cardNo = 1;
         bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
                         server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
                         +
@@ -248,47 +247,47 @@ namespace SetupTv
           if (dbsCard.Enabled == true && RemoteControl.Instance.CardPresent(dbsCard.IdCard))
           {
             CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+            int cardId = dbsCard.IdCard;
             string cardName = dbsCard.Name;
             switch (type)
             {
               case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+                cardName = String.Format("{0} Analog {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-T {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-C {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-S {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+                cardName = String.Format("{0} ATSC {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.DvbIP:
-                cardName = String.Format("{0} DVB-IP {1}", cardNo, cardName);
+                cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
                 break;
               case CardType.RadioWebStream:
-                cardName = String.Format("{0} {1}", cardNo, cardName);
+                cardName = String.Format("{0} {1}", cardId, cardName);
                 InfoPage RadioWebStreamInfo = new InfoPage(cardName);
                 RadioWebStreamInfo.InfoText =
                   "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
                 AddChildSection(cardPage, RadioWebStreamInfo, 1);
                 break;
               case CardType.Unknown:
-                cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+                cardName = String.Format("{0} Unknown {1}", cardId, cardName);
                 AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
                 break;
             }
           }
-          cardNo++;
         }
         if (isLocal)
         {
