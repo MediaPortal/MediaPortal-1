@@ -3682,7 +3682,7 @@ namespace TvPlugin
                       Recording recDB = Recording.Retrieve(fileName);
                       if (recDB != null)
                       {
-                        TVUtil.PlayRecording(recDB);
+                        TVUtil.PlayRecording(recDB, 0, g_Player.MediaType.Radio);
                       }
                     }
                     return;

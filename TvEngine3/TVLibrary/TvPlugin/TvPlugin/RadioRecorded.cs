@@ -1058,7 +1058,7 @@ namespace TvPlugin
         TVHome.Card.StopTimeShifting();
       }
 
-      return TVUtil.PlayRecording(rec, stoptime);
+      return TVUtil.PlayRecording(rec, stoptime, g_Player.MediaType.Radio);
     }
 
     private void OnDeleteRecording(int iItem)
