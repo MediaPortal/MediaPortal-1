@@ -3664,8 +3664,8 @@ namespace TvPlugin
 
               dlg.Reset();
               dlg.SetHeading(_currentProgram.Title);
-              dlg.AddLocalizedString(1213); //Play recording from beginning
-              dlg.AddLocalizedString(938); //View this channel
+              dlg.AddLocalizedString(979); //Play recording from beginning
+              dlg.AddLocalizedString(1213); //Listen to this station
               dlg.DoModal(GetID);
 
               if (dlg.SelectedLabel == -1)
@@ -3727,7 +3727,7 @@ namespace TvPlugin
 
                 dlg.Reset();
                 dlg.SetHeading(_currentProgram.Title);
-                dlg.AddLocalizedString(938); //View this channel
+                dlg.AddLocalizedString(1213); //Listen to this Station
                 dlg.AddLocalizedString(1041); //Upcoming episodes
                 dlg.DoModal(GetID);
 
@@ -3742,7 +3742,7 @@ namespace TvPlugin
                     ShowProgramInfo();
                     Log.Debug("RadioGuide: show episodes or repeatings for current show");
                     break;
-                  case 938:
+                  case 1213:
                     Log.Debug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
                     Radio.Play();
