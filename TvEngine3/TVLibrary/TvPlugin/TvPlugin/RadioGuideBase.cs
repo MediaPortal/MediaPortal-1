@@ -3682,6 +3682,18 @@ namespace TvPlugin
                       Recording recDB = Recording.Retrieve(fileName);
                       if (recDB != null)
                       {
+                        GUIPropertyManager.RemovePlayerProperties();
+                        GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", recDB.Description);
+                        GUIPropertyManager.SetProperty("#Play.Current.Album", recDB.ReferencedChannel().DisplayName);
+                        GUIPropertyManager.SetProperty("#Play.Current.Title", recDB.Description);
+                        
+                        string strLogo = Utils.GetCoverArt(Thumbs.Radio, recDB.ReferencedChannel().DisplayName);
+                        if (string.IsNullOrEmpty(strLogo))
+                        {
+                          strLogo = "defaultMyRadioBig.png";
+                        }
+                        
+                        GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
                         TVUtil.PlayRecording(recDB, 0, g_Player.MediaType.Radio);
                       }
                     }
