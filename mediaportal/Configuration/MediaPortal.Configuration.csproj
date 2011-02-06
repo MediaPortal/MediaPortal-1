@@ -263,9 +263,6 @@
     <Compile Include="Sections\GuiControls.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Sections\GuiHomeScreen.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Sections\GuiLanguage.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -624,10 +621,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GuiControls.resx">
       <DependentUpon>GuiControls.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GuiHomeScreen.resx">
-      <DependentUpon>GuiHomeScreen.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GuiLanguage.resx">

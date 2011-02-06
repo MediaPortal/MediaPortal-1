@@ -34,6 +34,17 @@ namespace MediaPortal.Configuration.Sections
 {
   public partial class Gui : SectionSettings
   {
+    // IMPORTANT: the enumeration depends on the correct order of items in homeComboBox.
+    // The order is chosen to allow compositing SelectedIndex from bitmapped flags.
+    [Flags]
+    private enum HomeUsageEnum
+    {
+      PreferClassic = 0,
+      PreferBasic = 1,
+      UseBoth = 0,
+      UseOnlyOne = 2,
+    }
+
     private string SkinDirectory;
 
     public Gui()
@@ -199,6 +210,12 @@ namespace MediaPortal.Configuration.Sections
         //  //MessageBox.Show(String.Format("The selected skin {0} does not exist!", currentSkin), "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
         //  Log.Debug("GeneralSkin: Current skin {0} not selected.", currentSkin);
         //}
+
+        bool startWithBasicHome = xmlreader.GetValueAsBool("gui", "startbasichome", false);
+        bool useOnlyOneHome = xmlreader.GetValueAsBool("gui", "useonlyonehome", false);
+        //homeComboBox.SelectedIndex = useOnlyOneHome ? (startWithBasicHome ? 3 : 2) : (startWithBasicHome ? 1 : 0);
+        homeComboBox.SelectedIndex = (int)((useOnlyOneHome ? HomeUsageEnum.UseOnlyOne : HomeUsageEnum.UseBoth) |
+                                           (startWithBasicHome ? HomeUsageEnum.PreferBasic : HomeUsageEnum.PreferClassic));
       }
     }
 
@@ -229,6 +246,8 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("skin", "name", selectedSkin);
         Config.SkinName = selectedSkin;
         xmlwriter.SetValue("general", "skinobsoletecount", 0);
+        xmlwriter.SetValueAsBool("gui", "useonlyonehome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
+        xmlwriter.SetValueAsBool("gui", "startbasichome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
       }
     }
 
