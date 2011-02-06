@@ -148,7 +148,8 @@ namespace MediaPortal.GUI.Music
 
       if (g_Player.Playing)
       {
-        if (g_Player.CurrentFile.Contains(".tsbuffer")) // timeshifting via TVServer ?
+        if (g_Player.CurrentFile.EndsWith(".tsbuffer", StringComparison.InvariantCultureIgnoreCase) ||
+            g_Player.CurrentFile.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase))
         {
           PlayListItem pitem = playlistPlayer.GetCurrentItem();
           if (pitem != null)
