@@ -148,7 +148,7 @@ namespace MediaPortal.GUI.Music
 
       if (g_Player.Playing)
       {
-        if (g_Player.CurrentFile.EndsWith(".tsbuffer", StringComparison.InvariantCultureIgnoreCase) ||
+        if (g_Player.CurrentFile.Contains(".tsbuffer") ||
             g_Player.CurrentFile.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase))
         {
           PlayListItem pitem = playlistPlayer.GetCurrentItem();
