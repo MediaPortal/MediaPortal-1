@@ -1808,7 +1808,17 @@ namespace TvPlugin
             tvNotifyDlg.SetLine(1, notify.Title);
             tvNotifyDlg.SetLine(2, notify.Description);
             tvNotifyDlg.SetLine(4, String.Format(GUILocalizeStrings.Get(1207), notify.Channel.DisplayName));
-            string strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, notify.Channel.DisplayName);
+            Channel c = notify.Channel;
+            string strLogo = string.Empty;
+            if (c.IsTv)
+            {
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.TVChannel, c.DisplayName);
+            }
+            else if (c.IsRadio)
+            {
+              strLogo = MediaPortal.Util.Utils.GetCoverArt(Thumbs.Radio, c.DisplayName);
+            }
+            
             tvNotifyDlg.SetImage(strLogo);
             tvNotifyDlg.TimeOut = _notifyTVTimeout;
             if (_playNotifyBeep)
@@ -1824,7 +1834,6 @@ namespace TvPlugin
               {
                 MediaPortal.Player.g_Player.Stop();
 
-                Channel c = notify.Channel;
                 if (c.IsTv)
                 {
                   MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_TV);
