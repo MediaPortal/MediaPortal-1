@@ -231,6 +231,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         Release.ComObject("video capture filter", _filterVideoCapture);
         _filterVideoCapture = null;
+        _analogVideoDecoder = null;
       }
       _filterAudioCapture = null;
       if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
