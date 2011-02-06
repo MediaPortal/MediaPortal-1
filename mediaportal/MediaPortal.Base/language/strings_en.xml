@@ -1823,6 +1823,7 @@
     <String id="100760">Burner</String>
     <String id="100761">TV guide</String>
     <String id="100762">Radio guide</String>
+    <String id="100763">Recorded Radio</String>
     <String id="100800" prefix="My ">Extensions</String>
     <String id="101000">keyboard</String>
     <String id="101002">Virtual Standard Keyboard</String>
