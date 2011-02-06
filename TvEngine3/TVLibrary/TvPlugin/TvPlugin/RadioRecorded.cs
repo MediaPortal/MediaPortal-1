@@ -102,6 +102,7 @@ namespace TvPlugin
 
     protected override void LoadSettings()
     {
+      base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
         string strTmp = xmlreader.GetValueAsString("radiorecorded", "sort", "channel");
