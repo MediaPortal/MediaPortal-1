@@ -233,7 +233,7 @@ namespace MediaPortal.Configuration.Sections
 
         if (ddplusaudioCodec == string.Empty)
         {
-          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Mpeg2Audio);
+          ArrayList availableDDPLUSAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.DDPLUS);
           if (availableDDPLUSAudioFilters.Count > 0)
           {
             bool ffdshowFound = false;
