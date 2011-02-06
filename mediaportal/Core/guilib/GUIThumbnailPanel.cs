@@ -451,6 +451,7 @@ namespace MediaPortal.GUI.Library
       btn.Width = _textureWidth;
       btn.Height = _textureHeight;
 
+      bool clipping = false;
       if (bFocus && Focus)
       {
         Rectangle clipRect = new Rectangle();
@@ -466,7 +467,8 @@ namespace MediaPortal.GUI.Library
         {
           clipRect.Y = 0;
         }
-        GUIGraphicsContext.BeginClip(clipRect);
+        GUIGraphicsContext.BeginClip(clipRect, false);
+        clipping = true;
       }
 
       float fTextPosY = (float)dwPosY + (float)_textureHeight;
@@ -506,6 +508,11 @@ namespace MediaPortal.GUI.Library
           btn.Focus = true;
           btn.SetPosition(dwPosX, dwPosY);
           //if (true == _showTexture) btn.Render(timePassed);
+
+          if (clipping)
+          {
+            GUIGraphicsContext.EndClip();
+          }
           return;
         }
         if (fTextPosY >= _positionY && _renderFocusText)
@@ -543,6 +550,10 @@ namespace MediaPortal.GUI.Library
             _frameFocusControl.Render(timePassed);
           }
 
+          if (clipping)
+          {
+            GUIGraphicsContext.EndClip();
+          }
           return;
         }
         if (fTextPosY >= _positionY && _renderUnfocusText)
@@ -745,7 +756,10 @@ namespace MediaPortal.GUI.Library
         btn.Height = _textureHeight;
       }
 
-//      GUIGraphicsContext.DisableClipRect();  //////////////////////////////////////////////
+      if (clipping)
+      {
+        GUIGraphicsContext.EndClip();
+      }
     }
 
 
@@ -875,7 +889,6 @@ namespace MediaPortal.GUI.Library
         }
 
         // render main panel
-
 
         for (int iRow = 0; iRow < _rowCount; iRow++)
         {

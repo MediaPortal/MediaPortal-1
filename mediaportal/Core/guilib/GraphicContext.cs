@@ -193,6 +193,9 @@ namespace MediaPortal.GUI.Library
     private static Stack<Matrix> _projectionMatrixStack = new Stack<Matrix>();
     private static Stack<FinalTransformBucket> _finalTransformStack = new Stack<FinalTransformBucket>();
 
+    // Stack for managing clip rectangles.
+    private static Stack<Rectangle> _clipRectangleStack = new Stack<Rectangle>();
+
     /// <summary>
     /// This internal class contains the information needed to place the final transform on a stack.
     /// PushMatrix() and PopMatrix() manage the stack.
@@ -1891,20 +1894,73 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Set the clip rectangle as specified and enables the FontEngine to use clipping.
+    /// Sets a clip region. Set the clip rectangle as specified and enables the FontEngine to use clipping.
     /// </summary>
+    /// <param name="rect"></param>
     public static void BeginClip(Rectangle rect)
     {
-      DX9Device.ScissorRectangle = rect;
+      BeginClip(rect, true);
+    }
+
+    /// <summary>
+    /// Sets a clip region. Set the clip rectangle as specified and enables the FontEngine to use clipping.  If constrain is true then
+    /// nested calls will clip the specified clip rectangle at the parents clip rectangle.
+    /// </summary>
+    /// <param name="rect"></param>
+    /// <param name="constrain"></param>
+    public static void BeginClip(Rectangle rect, bool constrain)
+    {
+      Rectangle r3 = rect;
+
+      if (constrain && _clipRectangleStack.Count > 0)
+      {
+        // Default behavior for nested clipping is handled by not disturbing the outer clip rectangle.
+        // Nested clip rectangles are themselves clipped at the boundary of the outer clip rectangle.
+        Rectangle r1 = _clipRectangleStack.Peek();
+        Rectangle r2 = rect;
+        r3 = r1;  // Default result is the clip rectangle on the top of the stack.
+
+        bool intersect = !(r2.Left > r1.Right ||
+                           r2.Right < r1.Left ||
+                           r2.Top > r1.Bottom ||
+                           r2.Bottom < r1.Top);
+
+        if (intersect)
+        {
+          int x = Math.Max(r1.Left, r2.Left);
+          int y = Math.Max(r1.Top, r2.Top);
+
+          r3 = new Rectangle(
+            x,
+            y,
+            Math.Min(r1.Right, r2.Right) - x,
+            Math.Min(r1.Bottom, r2.Bottom) - y);
+        }
+      }
+
+      // Place the clip rectangle on the top of the stack and set it as the current clip rectangle.
+      _clipRectangleStack.Push(r3);
+      DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
       FontEngineSetClipEnable();
     }
 
     /// <summary>
-    /// Disables the FontEngine from using clipping.
+    /// Removes a clip region. Disables the FontEngine from using current clipping context.
     /// </summary>
     public static void EndClip()
     {
-      FontEngineSetClipDisable();
+      // Remove the current clip rectangle.
+      _clipRectangleStack.Pop();
+
+      // If the clip stack is empty then tell the font engine to stop clipping otherwise restore the current clip rectangle.
+      if (_clipRectangleStack.Count == 0)
+      {
+        FontEngineSetClipDisable();
+      }
+      else
+      {
+        DX9Device.ScissorRectangle = _clipRectangleStack.Peek();
+      }
     }
   }
 }
