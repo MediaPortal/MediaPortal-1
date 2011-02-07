@@ -903,7 +903,19 @@ namespace MediaPortal.Util
         }
         else
         {
-          myBitmap = new Bitmap(iWidth, iHeight, aDrawingImage.PixelFormat);
+          PixelFormat format = aDrawingImage.PixelFormat;
+          switch (format)
+          {
+            case PixelFormat.Format1bppIndexed:
+            case PixelFormat.Format4bppIndexed:
+            case PixelFormat.Format8bppIndexed:
+            case PixelFormat.Undefined:
+            case PixelFormat.Format16bppArgb1555:
+            case PixelFormat.Format16bppGrayScale:
+              format = PixelFormat.Format32bppRgb;
+              break;
+          }
+          myBitmap = new Bitmap(iWidth, iHeight, format);
           //myBitmap.SetResolution(aDrawingImage.HorizontalResolution, aDrawingImage.VerticalResolution);
           using (Graphics g = Graphics.FromImage(myBitmap))
           {
