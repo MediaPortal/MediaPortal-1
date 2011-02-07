@@ -1823,6 +1823,7 @@
     <String id="100760" prefix="Min ">Brenner</String>
     <String id="100761" prefix="Min ">TV guide</String>
     <String id="100762" prefix="Min ">Radio guide</String>
+    <String id="100763">Radio-opptak</String>
     <String id="100800" prefix="Mine ">Utvidelser</String>
     <String id="101000">Tastatur</String>
     <String id="101002">Virituelt tastatur</String>
@@ -1896,7 +1897,7 @@
     <String id="200019">Trykk "Avslutt" for å lukke assistenten.</String>
     <String id="200020">Avslutt</String>
     <String id="200021">TV-oppsett - EPG</String>
-    <String id="990000">Ujentlig på denne kanalen</String>
+    <String id="990000">Ukentlig på denne kanalen</String>
     <String id="990001">{0} på kanal {1}</String>
     <String id="200022">MediaPortal har funnet følgende TV-kort</String>
     <String id="200023">Trykk "Neste" for å konfiguere disse kortene</String>
