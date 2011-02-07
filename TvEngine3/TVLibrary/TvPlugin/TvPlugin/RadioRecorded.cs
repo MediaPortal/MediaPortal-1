@@ -304,27 +304,32 @@ namespace TvPlugin
 
     protected override void OnShowSort()
     {
-      switch (_currentSortMethod)
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
       {
-        case SortMethod.Channel:
-          _currentSortMethod = SortMethod.Date;
-          break;
-        case SortMethod.Date:
-          _currentSortMethod = SortMethod.Name;
-          break;
-        case SortMethod.Name:
-          _currentSortMethod = SortMethod.Genre;
-          break;
-        case SortMethod.Genre:
-          _currentSortMethod = SortMethod.Played;
-          break;
-        case SortMethod.Played:
-          _currentSortMethod = SortMethod.Duration;
-          break;
-        case SortMethod.Duration:
-          _currentSortMethod = SortMethod.Channel;
-          break;
+        return;
       }
+      dlg.Reset();
+      dlg.SetHeading(495); //Sort Options
+      dlg.AddLocalizedString(620); //channel
+      dlg.AddLocalizedString(621); //date
+      dlg.AddLocalizedString(268); //title
+      dlg.AddLocalizedString(678); //genre
+      dlg.AddLocalizedString(671); //watched
+      dlg.AddLocalizedString(1017); //duration
+
+
+      // set the focus to currently used sort method
+      dlg.SelectedLabel = (int)_currentSortMethod;
+
+      // show dialog and wait for result
+      dlg.DoModal(GetID);
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+
+      _currentSortMethod = (SortMethod)dlg.SelectedLabel;
       OnSort();
     }
 
