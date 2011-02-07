@@ -777,7 +777,7 @@ namespace TvPlugin
                                                       rec.EndTime, rec.IdChannel);
             if (program != null)
             {
-                item.Label2 = Utils.GetNamedDate(rec.StartTime);
+              item.Label2 = Utils.GetNamedDateStartEnd(rec.StartTime, rec.EndTime);
             }
             else
             {
