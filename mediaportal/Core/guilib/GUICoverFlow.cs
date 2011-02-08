@@ -104,6 +104,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbarWidth")] protected int _scrollbarWidth = 400;
     [XMLSkinElement("scrollbarHeight")] protected int _scrollbarHeight = 15;
     [XMLSkinElement("showScrollbar")] protected bool _showScrollbar = true;
+    [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = true;
+    [XMLSkinElement("thumbZoom")] protected bool _zoom = false;
+    [XMLSkinElement("cardAlign")] protected Alignment _imageAlignment = Alignment.ALIGN_CENTER;
+    [XMLSkinElement("cardVAlign")] protected VAlignment _imageVAlignment = VAlignment.ALIGN_BOTTOM;
     [XMLSkin("cards", "flipY")] protected bool _flipY = false;
     [XMLSkin("cards", "diffuse")] protected string _diffuseFilename = "";
     [XMLSkin("cards", "mask")] protected string _maskFilename = "";
@@ -230,11 +234,11 @@ namespace MediaPortal.GUI.Library
       int scrollbarHeight = _scrollbarHeight;
       GUIGraphicsContext.ScaleHorizontal(ref scrollbarWidth);
       GUIGraphicsContext.ScaleVertical(ref scrollbarHeight);
-      int scrollbarPosX = _positionX + (_width / 2) - (_scrollbarWidth / 2);
+      int scrollbarPosX = _positionX + (_width / 2) - (scrollbarWidth / 2);
 
       _horizontalScrollbar = new GUIHorizontalScrollbar(_controlId, 0,
                                                         scrollbarPosX, _positionY + _scrollbarOffsetY,
-                                                        _scrollbarWidth, _scrollbarHeight,
+                                                        scrollbarWidth, scrollbarHeight,
                                                         _scrollbarBackgroundTextureName, _scrollbarLeftTextureName,
                                                         _scrollbarRightTextureName);
       _horizontalScrollbar.ParentControl = this;
@@ -1094,8 +1098,10 @@ namespace MediaPortal.GUI.Library
                                pItem.ThumbnailImage, 0x0);
 
           pCard.ParentControl = null; // We want to be able to treat each card as a control.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1125,8 +1131,10 @@ namespace MediaPortal.GUI.Library
           }
 
           // Ensure our card is setup as we expect because other views (filmstrip) may have changed these values.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1152,8 +1160,10 @@ namespace MediaPortal.GUI.Library
                                pItem.IconImageBig, 0x0);
 
           pCard.ParentControl = null; // We want to be able to treat each card as a control.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1176,8 +1186,10 @@ namespace MediaPortal.GUI.Library
           }
 
           // Ensure our card is setup as we expect because other views (filmstrip) may have changed these values.
-          pCard.KeepAspectRatio = true;
-          pCard.Zoom = !pItem.IsFolder;
+          pCard.KeepAspectRatio = _keepAspectRatio;
+          pCard.ZoomFromTop = !pItem.IsFolder && _zoom;
+          pCard.ImageAlignment = _imageAlignment;
+          pCard.ImageVAlignment = _imageVAlignment;
           pCard.FlipY = _flipY;
           pCard.DiffuseFileName = _diffuseFilename;
           pCard.MaskFileName = _maskFilename;
@@ -1764,7 +1776,7 @@ namespace MediaPortal.GUI.Library
       {
         // Set the location for the origin of the cover flow to the horizontal center of the window.
         GUIGraphicsContext.LoadIdentity();
-        GUIGraphicsContext.Translate(Width / 2, YPosition, 0);
+        GUIGraphicsContext.Translate(XPosition + Width / 2, YPosition, 0);
 
         // Calculate the fractional position of the selected card as it animates from the left or right stack.
         // These fractional components are used to adjust the rendered position and angle of the card.
