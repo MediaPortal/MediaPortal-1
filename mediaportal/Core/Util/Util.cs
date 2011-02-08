@@ -1406,7 +1406,7 @@ namespace MediaPortal.Util
       return proc;
     }
 
-    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
+    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bHidden)
     {
       if (strProgram == null) return null;
       if (strProgram.Length == 0) return null;
@@ -1419,9 +1419,12 @@ namespace MediaPortal.Util
       procInfo.FileName = strFileName;
       procInfo.WorkingDirectory = strWorkingDir;
       procInfo.Arguments = strParams;
-      if (bMinimized)
+  
+      if (bHidden)
       {
-        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+        // A hidden window can process messages from the system or from other windows, but it cannot process input from the user or display output.
+        // Set to hidden to avoid losing focus.
+        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
       }
       return StartProcess(procInfo, bWaitForExit);
