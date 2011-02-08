@@ -857,7 +857,7 @@ namespace TvPlugin
             return;
           }
         }
-        TVHome.ViewChannel(_currentChannel);
+        TVHome.ViewChannelAndCheck(_currentChannel);
       }
     }
 
