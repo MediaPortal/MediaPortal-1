@@ -307,11 +307,9 @@ namespace SetupTv.Sections
       try
       {
         ListViewItem item;
-        int cardNo = 0;
         int off = 0;
         foreach (Card card in _cards)
         {
-          cardNo++;
           IUser user = new User();
           user.CardId = card.IdCard;
           if (off >= mpListView1.Items.Count)
@@ -333,7 +331,7 @@ namespace SetupTv.Sections
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
           {
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[1].Text = "n/a";
             item.SubItems[2].Text = "n/a";
             item.SubItems[3].Text = "";
@@ -346,13 +344,13 @@ namespace SetupTv.Sections
           }
 
           VirtualCard vcard = new VirtualCard(user);
-          item.SubItems[0].Text = cardNo.ToString();
+          item.SubItems[0].Text = card.IdCard.ToString();
           item.SubItems[0].Tag = card.IdCard;
           item.SubItems[1].Text = vcard.Type.ToString();
 
           if (card.Enabled == false)
           {
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[1].Text = vcard.Type.ToString();
             item.SubItems[2].Text = "disabled";
             item.SubItems[3].Text = "";
@@ -392,7 +390,7 @@ namespace SetupTv.Sections
             }
             userFound = true;
             vcard = new VirtualCard(usersForCard[i]);
-            item.SubItems[0].Text = cardNo.ToString();
+            item.SubItems[0].Text = card.IdCard.ToString();
             item.SubItems[0].Tag = card.IdCard;
             item.SubItems[1].Text = vcard.Type.ToString();
             if (vcard.IsTimeShifting) tmp = "Timeshifting";

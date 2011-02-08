@@ -167,6 +167,7 @@ namespace MediaPortal.Configuration.Sections
       this.languageComboBox.Name = "languageComboBox";
       this.languageComboBox.Size = new System.Drawing.Size(325, 21);
       this.languageComboBox.TabIndex = 1;
+      this.languageComboBox.DropDownClosed += new System.EventHandler(this.languageComboBox_DropDownClosed);
       // 
       // label2
       // 

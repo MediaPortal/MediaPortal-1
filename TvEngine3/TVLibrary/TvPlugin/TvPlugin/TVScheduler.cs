@@ -204,18 +204,28 @@ namespace TvPlugin
       }
       if (control == btnSortBy) // sort by
       {
-        switch (currentSortMethod)
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
         {
-          case SortMethod.Channel:
-            currentSortMethod = SortMethod.Date;
-            break;
-          case SortMethod.Date:
-            currentSortMethod = SortMethod.Name;
-            break;
-          case SortMethod.Name:
-            currentSortMethod = SortMethod.Channel;
-            break;
+          return;
         }
+        dlg.Reset();
+        dlg.SetHeading(495); //Sort Options
+        dlg.AddLocalizedString(620); //channel
+        dlg.AddLocalizedString(621); //date
+        dlg.AddLocalizedString(268); //title
+
+        // set the focus to currently used sort method
+        dlg.SelectedLabel = (int)currentSortMethod;
+
+        // show dialog and wait for result
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+
+        currentSortMethod = (SortMethod)dlg.SelectedLabel;
         OnSort();
       }
       if (control == listSchedules)
@@ -777,7 +787,7 @@ namespace TvPlugin
                                                       rec.EndTime, rec.IdChannel);
             if (program != null)
             {
-                item.Label2 = Utils.GetNamedDate(rec.StartTime);
+              item.Label2 = Utils.GetNamedDateStartEnd(rec.StartTime, rec.EndTime);
             }
             else
             {

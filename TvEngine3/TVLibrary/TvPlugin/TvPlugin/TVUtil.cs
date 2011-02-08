@@ -379,13 +379,18 @@ namespace TvPlugin
 
     public static bool PlayRecording(Recording rec, double startOffset)
     {
+      return PlayRecording(rec, startOffset, g_Player.MediaType.Recording);
+    }
+    
+    public static bool PlayRecording(Recording rec, double startOffset, g_Player.MediaType mediaType)
+    {
       string fileName = GetFileNameForRecording(rec);
 
       bool useRTSP = TVHome.UseRTSP();
       string chapters = useRTSP ? TVHome.TvServer.GetChaptersForFileName(rec.IdRecording) : null;
-    
+
       Log.Info("PlayRecording:{0} - using rtsp mode:{1}", fileName, useRTSP);
-      if (g_Player.Play(fileName, g_Player.MediaType.Recording, chapters))
+      if (g_Player.Play(fileName, mediaType, chapters))
       {
         if (Utils.IsVideo(fileName) && !g_Player.IsRadio)
         {

@@ -61,7 +61,6 @@ namespace TvLibrary.Implementations.Analog
     private DsROTEntry _rotEntry;
     private ICaptureGraphBuilder2 _capBuilder;
     private IBaseFilter _tsFileSink;
-    private Hauppauge _haupPauge;
     private IQuality _qualityControl;
     private Configuration _configuration;
 
@@ -494,12 +493,31 @@ namespace TvLibrary.Implementations.Analog
       mediaCtl.Stop();
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
       Log.Log.WriteFile("analog:All filters removed");
-      _tuner.Dispose();
-      _crossbar.Dispose();
-      _tvAudio.Dispose();
-      _capture.Dispose();
-      _encoder.Dispose();
-      _teletext.Dispose();
+      if (_tuner != null)
+      {
+        _tuner.Dispose();
+        _tunerDevice = null;
+      }
+      if (_crossbar != null)
+      {
+        _crossbar.Dispose();
+      }
+      if (_tvAudio != null)
+      {
+        _tvAudio.Dispose();
+      }
+      if (_capture != null)
+      {
+        _capture.Dispose();
+      }
+      if (_encoder != null)
+      {
+        _encoder.Dispose();
+      }
+      if (_teletext != null)
+      {
+        _teletext.Dispose();
+      }
       if (_tsFileSink != null)
       {
         Release.ComObject("tsFileSink filter", _tsFileSink);
@@ -508,7 +526,6 @@ namespace TvLibrary.Implementations.Analog
       _rotEntry.Dispose();
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
-      DevicesInUse.Instance.Remove(_tunerDevice);
       _graphState = GraphState.Idle;
       Log.Log.WriteFile("analog: dispose completed");
     }
@@ -604,16 +621,16 @@ namespace TvLibrary.Implementations.Analog
           {
             if (_capture.VideoCaptureName.Contains("Hauppauge"))
             {
-              _haupPauge = new Hauppauge(_capture.VideoFilter, string.Empty);
-              _haupPauge.SetStream(103);
-              _haupPauge.SetAudioBitRate(384);
-              _haupPauge.SetVideoBitRate(6000, 8000, true);
+              Hauppauge _hauppauge = new Hauppauge(_capture.VideoFilter, string.Empty);
+              _hauppauge.SetStream(103);
+              _hauppauge.SetAudioBitRate(384);
+              _hauppauge.SetVideoBitRate(6000, 8000, true);
               int min, max;
               bool vbr;
-              _haupPauge.GetVideoBitRate(out min, out max, out vbr);
+              _hauppauge.GetVideoBitRate(out min, out max, out vbr);
               Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
-              _haupPauge.Dispose();
-              _haupPauge = null;
+              _hauppauge.Dispose();
+              _hauppauge = null;
             }
           }
         }

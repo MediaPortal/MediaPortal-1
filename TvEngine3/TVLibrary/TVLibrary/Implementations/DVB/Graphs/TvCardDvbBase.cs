@@ -87,7 +87,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// base class for DVB cards
   /// </summary>
-  public abstract class TvCardDvbBase : TvCardBase, IDisposable
+  public abstract class TvCardDvbBase : TvCardBase, IDisposable, ITVCard
   {
     #region constants
 
@@ -304,6 +304,8 @@ namespace TvLibrary.Implementations.DVB
     {
       return DoTune(subChannelId, channel, true);
     }
+
+    public abstract ITVScanning ScanningInterface { get; }
 
     /// <summary>
     /// Tunes the specified channel.
@@ -927,6 +929,8 @@ namespace TvLibrary.Implementations.DVB
       }
       _graphState = GraphState.Created;        
     }
+
+    public abstract bool CanTune(IChannel channel);
 
     /// <summary>
     /// Methods which stops the graph
@@ -2608,4 +2612,3 @@ namespace TvLibrary.Implementations.DVB
     protected abstract DVBBaseChannel CreateChannel(int networkid, int transportid, int serviceid, string name);
   }
 }
-

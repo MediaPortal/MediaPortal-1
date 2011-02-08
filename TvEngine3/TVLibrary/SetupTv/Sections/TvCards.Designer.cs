@@ -65,6 +65,7 @@ namespace SetupTv.Sections
       this.colType = new System.Windows.Forms.ColumnHeader();
       this.colCAM = new System.Windows.Forms.ColumnHeader();
       this.colCAMLimit = new System.Windows.Forms.ColumnHeader();
+      this.colId = new System.Windows.Forms.ColumnHeader();
       this.colName = new System.Windows.Forms.ColumnHeader();
       this.colInit = new System.Windows.Forms.ColumnHeader();
       this.colGrabEpg = new System.Windows.Forms.ColumnHeader();
@@ -83,6 +84,7 @@ namespace SetupTv.Sections
       this.label2 = new System.Windows.Forms.Label();
       this.label1 = new System.Windows.Forms.Label();
       this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.colDevicePath = new System.Windows.Forms.ColumnHeader();
       this.contextMenuStrip2.SuspendLayout();
       this.contextMenuStrip1.SuspendLayout();
       this.tabPage2.SuspendLayout();
@@ -239,7 +241,7 @@ namespace SetupTv.Sections
       this.tabPage2.Location = new System.Drawing.Point(4, 22);
       this.tabPage2.Name = "tabPage2";
       this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage2.Size = new System.Drawing.Size(457, 378);
+      this.tabPage2.Size = new System.Drawing.Size(460, 384);
       this.tabPage2.TabIndex = 1;
       this.tabPage2.Text = "Hybrid cards";
       this.tabPage2.UseVisualStyleBackColor = true;
@@ -383,9 +385,11 @@ namespace SetupTv.Sections
             this.colType,
             this.colCAM,
             this.colCAMLimit,
+            this.colId,
             this.colName,
             this.colInit,
-            this.colGrabEpg});
+            this.colGrabEpg,
+            this.colDevicePath});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
       this.mpListView1.FullRowSelect = true;
       this.mpListView1.HideSelection = false;
@@ -424,6 +428,10 @@ namespace SetupTv.Sections
       // 
       this.colCAMLimit.Text = "CAM Limit";
       this.colCAMLimit.Width = 65;
+      // 
+      // colId
+      // 
+      this.colId.Text = "Id";
       // 
       // colName
       // 
@@ -481,7 +489,7 @@ namespace SetupTv.Sections
       this.tabPage3.Location = new System.Drawing.Point(4, 22);
       this.tabPage3.Name = "tabPage3";
       this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-      this.tabPage3.Size = new System.Drawing.Size(457, 378);
+      this.tabPage3.Size = new System.Drawing.Size(460, 384);
       this.tabPage3.TabIndex = 2;
       this.tabPage3.Text = "WinTV-CI";
       this.tabPage3.UseVisualStyleBackColor = true;
@@ -612,6 +620,10 @@ namespace SetupTv.Sections
       this.tabControl1.TabIndex = 3;
       this.tabControl1.SelectedIndexChanged += new System.EventHandler(this.tabControl1_SelectedIndexChanged);
       // 
+      // colDevicePath
+      // 
+      this.colDevicePath.Text = "Device Path";
+      // 
       // TvCards
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -690,5 +702,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.Label label26;
     private System.Windows.Forms.NumericUpDown iptvUpDown;
     private System.Windows.Forms.Label label25;
+    private System.Windows.Forms.ColumnHeader colId;
+    private System.Windows.Forms.ColumnHeader colDevicePath;
   }
 }

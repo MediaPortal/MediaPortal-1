@@ -591,14 +591,10 @@ namespace MediaPortal.Configuration
       Gui gui = new Gui();
       AddSection(new ConfigPage(null, gui, false));
 
-      Log.Info("  add gui skin section");
-      AddSection(new ConfigPage(gui, new GuiSkin(), false));
-      Log.Info("  add gui home screen section");
-      AddSection(new ConfigPage(gui, new GuiHomeScreen(), false));
       Log.Info("  add gui language section");
       AddSection(new ConfigPage(gui, new GuiLanguage(), false));
-      Log.Info("  add gui scroll speed section");
-      AddSection(new ConfigPage(gui, new GuiScrollSpeed(), false));
+      Log.Info("  add gui controls section");
+      AddSection(new ConfigPage(gui, new GuiControls(), false));
       Log.Info("  add gui thumbs section");
       AddSection(new ConfigPage(gui, new GuiThumbs(), false));
       Log.Info("  add general screensaver section");

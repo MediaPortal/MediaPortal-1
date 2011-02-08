@@ -682,13 +682,25 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get
       {
         if (!CheckThreadId())
           return null;
-        return new DVBSS2canning(this);
+        switch (CardType)
+        {
+
+          case CardType.DvbT:
+            return new DVBTScanning(this);
+          case CardType.DvbS:
+            return new DVBSScanning(this);
+          case CardType.DvbC:
+            return new DVBCScanning(this);
+          case CardType.Atsc:
+            return new ATSCScanning(this);
+        }
+        return null;
       }
     }
 
@@ -709,7 +721,7 @@ namespace TvLibrary.Implementations.DVB
     /// Method to check if card can tune to the channel specified
     /// </summary>
     /// <returns>true if card can tune to the channel otherwise false</returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if (_cardType == CardType.DvbS)
       {

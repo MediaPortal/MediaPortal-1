@@ -240,6 +240,7 @@ namespace MediaPortal.Dialogs
     {
       base.Reset();
       Percentage = 0;
+      _canceled = false;
       DisplayProgressBar = true;
       ShowWaitCursor = false;
       SetHeading(string.Empty);

@@ -1001,8 +1001,11 @@
     <String id="1208">Sort by: Composer</String>
     <String id="1211">Resume playback from {0}</String> <!--{0} is replaced by last stop time in HMS format-->
     <String id="1212">Cancel reminder</String>
+    <String id="1213">Listen to this Station</String>
     <String id="1220">Sort by: Date Created</String>
     <String id="1221">Sort by: Date Modified</String>
+    <String id="1230">Date added:</String>
+    <String id="1231">Last played:</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1830,6 +1833,7 @@
     <String id="100760">Burner</String>
     <String id="100761">TV guide</String>
     <String id="100762">Radio guide</String>
+    <String id="100763">Recorded Radio</String>
     <String id="100800" prefix="My ">Extensions</String>
     <String id="101000">keyboard</String>
     <String id="101002">Virtual Standard Keyboard</String>

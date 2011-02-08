@@ -603,7 +603,7 @@
     <String id="669">Sorter etter: Sjanger</String>
     <String id="670">Sorter etter: Bitrate</String>
     <String id="671">Sorter etter: Sett</String>
-    <String id="672">Spill inn Man-Fre</String>
+    <String id="672">Spill inn på ukedager</String>
     <String id="673">Rullehastighet</String>
     <String id="674">GUI-innstillinger</String>
     <String id="675">Eksempel:</String>
@@ -611,7 +611,7 @@
     <String id="677">ganger</String>
     <String id="678">Sorter etter: Sjanger</String>
     <String id="679">Ukentlig</String>
-    <String id="680">Man-Fre</String>
+    <String id="680">Ukedager</String>
     <String id="681">Venter</String>
     <String id="682">Tar opp</String>
     <String id="683">Ferdig</String>
@@ -929,17 +929,13 @@
     <String id="1047">Start i fullskjermsmodus</String>
     <String id="1048">Innstillinger</String>
     <String id="1049">Dvalemodus</String>
-    <String id="1050">Lør-Søn</String>
-    <String id="1051">Ta opp Lør-Søn</String>
+    <String id="1050">Helg</String>
+    <String id="1051">Ta opp i helgen</String>
     <String id="1052">Sanger</String>
     <String id="1053">Ukjent innringer</String>
     <String id="1054">(opptak)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(utilgjengelig)</String>
-    <String id="1057">Ta opp Søn-Tor</String>
-    <String id="1058">Ta opp Fre-Lør</String>
-    <String id="1059">Søn-Tor</String>
-    <String id="1060">Fre-Lør</String>
     <String id="1061">Eksterne</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmerker</String>
@@ -993,11 +989,20 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Oppsettsassistent</String>
     <String id="1201">Spill av video fra begynnelsen</String>
-    <String id="1202">Sorter etter: Auto</String>
+    <String id="1202">Sorter etter: Automatisk</String>
     <String id="1203">Kommende episode (aktiv: {0})</String>
     <String id="1204">Spill av alle videoene i valgte folder</String>
     <String id="1205">Sorter etter: Disk#</String>
+    <String id="1206">Programmet kjører for {0} minutter</String>
+    <String id="1207">Bytte til {0} nå?</String>
+    <String id="1208">Sorter etter: Komponist</String>
     <String id="1211">Gjenoppta avspilling fra {0}</String>
+    <String id="1212">Avbryt påminnelse</String>
+    <String id="1213">Lytt til denne kanalen</String>
+    <String id="1220">Sorter etter: Dato lagret</String>
+    <String id="1221">Sorter etter: Endret dato</String>
+    <String id="1230">Dato lagt til</String>
+    <String id="1231">Sist avspilt</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
@@ -1818,6 +1823,7 @@
     <String id="100760" prefix="Min ">Brenner</String>
     <String id="100761" prefix="Min ">TV guide</String>
     <String id="100762" prefix="Min ">Radio guide</String>
+    <String id="100763">Radio-opptak</String>
     <String id="100800" prefix="Mine ">Utvidelser</String>
     <String id="101000">Tastatur</String>
     <String id="101002">Virituelt tastatur</String>
@@ -1869,6 +1875,7 @@
     <String id="109004">Mini Display - Oppsett - Equalizer</String>
     <String id="109005">Mini Display - Oppsett - KeyPad</String>
     <String id="109006">Mini Display - Oppsett - Fjernkontroll</String>
+    <String id="102019">TV påminnelse</String>
     <String id="200000">Vennligst velg din EPG-grabber. Husk at hvis ditt land</String>
     <String id="200001">ikke er på listen må du legge inn EPG manuellt</String>
     <String id="200002">Nå kan du kartlegge EPG-kanalene til dine TV-kanaler</String>
@@ -1890,7 +1897,7 @@
     <String id="200019">Trykk "Avslutt" for å lukke assistenten.</String>
     <String id="200020">Avslutt</String>
     <String id="200021">TV-oppsett - EPG</String>
-    <String id="990000">Ujentlig på denne kanalen</String>
+    <String id="990000">Ukentlig på denne kanalen</String>
     <String id="990001">{0} på kanal {1}</String>
     <String id="200022">MediaPortal har funnet følgende TV-kort</String>
     <String id="200023">Trykk "Neste" for å konfiguere disse kortene</String>

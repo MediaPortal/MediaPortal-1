@@ -340,6 +340,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearTVThumbs.TabIndex = 1;
       this.buttonClearTVThumbs.Text = "Clear TV/Videos thumbs";
       this.buttonClearTVThumbs.UseVisualStyleBackColor = true;
+      this.buttonClearTVThumbs.Click += new System.EventHandler(this.buttonClearTVThumbs_Click);
       // 
       // checkBoxTVThumbs
       // 
@@ -375,6 +376,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearPictureThumbs.TabIndex = 1;
       this.buttonClearPictureThumbs.Text = "Clear picture cache";
       this.buttonClearPictureThumbs.UseVisualStyleBackColor = true;
+      this.buttonClearPictureThumbs.Click += new System.EventHandler(this.buttonClearPictureThumbs_Click);
       // 
       // checkBoxPicThumbOnDemand
       // 
@@ -408,6 +410,7 @@ namespace MediaPortal.Configuration.Sections
       this.buttonClearMusicCache.TabIndex = 1;
       this.buttonClearMusicCache.Text = "Delete all music thumbs";
       this.buttonClearMusicCache.UseVisualStyleBackColor = true;
+      this.buttonClearMusicCache.Click += new System.EventHandler(this.buttonClearMusicCache_Click);
       // 
       // checkBoxFolderThumbOnDemand
       // 
@@ -594,6 +597,7 @@ namespace MediaPortal.Configuration.Sections
       this.trackBarQuality.Size = new System.Drawing.Size(45, 116);
       this.trackBarQuality.TabIndex = 4;
       this.trackBarQuality.Value = 3;
+      this.trackBarQuality.ValueChanged += new System.EventHandler(this.trackBarQuality_ValueChanged);
       // 
       // GuiThumbs
       // 

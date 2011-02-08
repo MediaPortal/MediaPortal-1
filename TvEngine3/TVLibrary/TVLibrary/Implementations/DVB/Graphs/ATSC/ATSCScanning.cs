@@ -29,45 +29,35 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Class which implements scanning for tv/radio channels for ATSC BDA cards
   /// </summary>
-  public class ATSCScanning : DvbBaseScanning, ITVScanning, IDisposable
+  public class ATSCScanning : DvbBaseScanning
   {
-    private readonly TvCardATSC _card;
+    /// <summary>
+    /// ATSC service types - see A/53 part 1
+    /// </summary>
+    protected enum AtscServiceType
+    {
+      /// <summary>
+      /// Analog Television (See A/65 [9])
+      /// </summary>
+      AnalogTelevision = 0x01,
+      /// <summary>
+      /// ATSC Digital Television (See A/53-3 [2])
+      /// </summary>
+      DigitalTelevision = 0x02,
+      /// <summary>
+      /// ATSC Audio (See A/53-3 [2])
+      /// </summary>
+      Audio = 0x03
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ATSCScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public ATSCScanning(TvCardATSC card)
+    public ATSCScanning(TvCardDvbBase card)
       : base(card)
     {
-      _card = card;
       _enableWaitForVCT = true;
-    }
-
-    /// <summary>
-    /// returns the tv card used
-    /// </summary>
-    /// <value></value>
-    public ITVCard TvCard
-    {
-      get { return _card; }
-    }
-
-    /// <summary>
-    /// Gets the analyzer.
-    /// </summary>
-    /// <returns></returns>
-    protected override ITsChannelScan GetAnalyzer()
-    {
-      return _card.StreamAnalyzer;
-    }
-
-    /// <summary>
-    /// Resets the signal update.
-    /// </summary>
-    protected override void ResetSignalUpdate()
-    {
-      _card.ResetSignalUpdate();
     }
 
     /// <summary>
@@ -87,12 +77,8 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.PhysicalChannel = tuningChannel.PhysicalChannel;
       atscChannel.MajorChannel = info.majorChannel;
       atscChannel.MinorChannel = info.minorChannel;
-      atscChannel.IsTv = (info.serviceType == (int)ServiceType.Video ||
-                          info.serviceType == (int)ServiceType.Mpeg2HDStream ||
-                          info.serviceType == (int)ServiceType.H264Stream ||
-                          info.serviceType == (int)ServiceType.AdvancedCodecHDVideoStream ||
-                          info.serviceType == (int)ServiceType.Mpeg4OrH264Stream);
-      atscChannel.IsRadio = (info.serviceType == (int)ServiceType.Audio);
+      atscChannel.IsTv = IsTvService(info.serviceType);
+      atscChannel.IsRadio = IsRadioService(info.serviceType);
       atscChannel.NetworkId = info.networkID;
       atscChannel.ServiceId = info.serviceID;
       atscChannel.TransportId = info.transportStreamID;
@@ -100,6 +86,34 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.FreeToAir = !info.scrambled;
       Log.Log.Write("atsc:Found: {0}", atscChannel);
       return atscChannel;
+    }
+
+    protected override void SetNameForUnknownChannel(IChannel channel, ChannelInfo info)
+    {
+      if (((ATSCChannel)channel).Frequency > 0)
+      {
+        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+                     ((ATSCChannel)channel).Frequency, info.serviceID);
+        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
+                                          info.serviceID);
+      }
+      else
+      {
+        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+                     ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
+        info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
+                                          info.serviceID);
+      }
+    }
+
+    protected override bool IsRadioService(int serviceType)
+    {
+      return serviceType == (int) AtscServiceType.Audio;
+    }
+
+    protected override bool IsTvService(int serviceType)
+    {
+      return serviceType == (int)AtscServiceType.AnalogTelevision || serviceType == (int) AtscServiceType.DigitalTelevision;
     }
   }
 }

@@ -306,7 +306,7 @@ namespace TvLibrary.Implementations.DVB
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     /// <value></value>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get { return new ATSCScanning(this); }
     }
@@ -331,7 +331,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>
     /// true if card can tune to the channel otherwise false
     /// </returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as ATSCChannel) == null)
         return false;

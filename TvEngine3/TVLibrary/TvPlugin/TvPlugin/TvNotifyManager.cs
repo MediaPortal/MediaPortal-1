@@ -23,8 +23,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using Gentle.Framework;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -40,7 +38,6 @@ namespace TvPlugin
     private Timer _timer;
     // flag indicating that notifies have been added/changed/removed
     private static bool _notifiesListChanged;
-    private static bool _enableTVNotification;
     private static bool _enableRecNotification;
     private static bool _busy;
     private int _preNotifyConfig;
@@ -57,10 +54,8 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-        _enableTVNotification = xmlreader.GetValueAsBool("mytv", "enableTvNotifier", false);
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
-        //_enableNotifyOnRecFailed = xmlreader.GetValueAsBool("mytv", "enableTvOnRecFailed", true);
       }
 
       _busy = false;
@@ -224,40 +219,37 @@ namespace TvPlugin
 
     private void ProcessNotifies(DateTime preNotifySecs)
     {
-      if (_enableTVNotification)
+      if (_notifiesListChanged)
       {
-        if (_notifiesListChanged)
+        LoadNotifies();
+        _notifiesListChanged = false;
+      }
+      if (_notifiesList != null && _notifiesList.Count > 0)
+      {
+        foreach (Program program in _notifiesList)
         {
-          LoadNotifies();
-          _notifiesListChanged = false;
-        }
-        if (_notifiesList != null && _notifiesList.Count > 0)
-        {
-          foreach (Program program in _notifiesList)
+          if (preNotifySecs > program.StartTime)
           {
-            if (preNotifySecs > program.StartTime)
-            {
-              Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,
-                       program.StartTime);
-              program.Notify = false;
-              program.Persist();
-              TVProgramDescription tvProg = new TVProgramDescription();
-              tvProg.Channel = program.ReferencedChannel();
-              tvProg.Title = program.Title;
-              tvProg.Description = program.Description;
-              tvProg.Genre = program.Genre;
-              tvProg.StartTime = program.StartTime;
-              tvProg.EndTime = program.EndTime;
+            Log.Info("Notify {0} on {1} start {2}", program.Title, program.ReferencedChannel().DisplayName,
+                     program.StartTime);
+            program.Notify = false;
+            program.Persist();
+            TVProgramDescription tvProg = new TVProgramDescription();
+            tvProg.Channel = program.ReferencedChannel();
+            tvProg.Title = program.Title;
+            tvProg.Description = program.Description;
+            tvProg.Genre = program.Genre;
+            tvProg.StartTime = program.StartTime;
+            tvProg.EndTime = program.EndTime;
 
-              _notifiesList.Remove(program);
-              Log.Info("send notify");
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
-              msg.Object = tvProg;
-              GUIGraphicsContext.SendMessage(msg);
-              msg = null;
-              Log.Info("send notify done");
-              return;
-            }
+            _notifiesList.Remove(program);
+            Log.Info("send notify");
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM, 0, 0, 0, 0, 0, null);
+            msg.Object = tvProg;
+            GUIGraphicsContext.SendMessage(msg);
+            msg = null;
+            Log.Info("send notify done");
+            return;
           }
         }
       }
@@ -398,16 +390,16 @@ namespace TvPlugin
     {
       try
       {
-        if (!TVHome.Connected || (!_enableTVNotification && !_enableRecNotification))
+        if (!TVHome.Connected)
         {
           return;
         }
-        ;
+        
         if (_busy)
         {
           return;
         }
-        ;
+
         _busy = true;
 
         if (_actualRecordings == null)
@@ -419,7 +411,7 @@ namespace TvPlugin
         {
           return;
         }
-        ;
+
       
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         ProcessNotifies(preNotifySecs);

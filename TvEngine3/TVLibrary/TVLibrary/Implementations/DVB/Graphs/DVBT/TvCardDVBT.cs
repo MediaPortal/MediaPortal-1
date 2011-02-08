@@ -30,7 +30,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles DVB-T BDA cards
   /// </summary>
-  public class TvCardDVBT : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardDVBT : TvCardDvbBase
   {
     #region variables
 
@@ -286,7 +286,7 @@ namespace TvLibrary.Implementations.DVB
     /// returns the ITVScanning interface used for scanning channels
     /// </summary>
     /// <value></value>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get
       {
@@ -316,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>
     /// true if card can tune to the channel otherwise false
     /// </returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as DVBTChannel) == null)
         return false;

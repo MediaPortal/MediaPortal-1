@@ -242,6 +242,7 @@ namespace SetupTv.Sections
             item.SubItems.Add(card.DecryptLimit.ToString());
           else
             item.SubItems.Add("");
+          item.SubItems.Add(card.IdCard.ToString());
           item.SubItems.Add(card.Name);
           //check if card is really available before setting to enabled.
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
@@ -269,6 +270,7 @@ namespace SetupTv.Sections
           {
             item.SubItems.Add("");
           }
+          item.SubItems.Add(card.DevicePath);
           item.Tag = card;
         }
       }

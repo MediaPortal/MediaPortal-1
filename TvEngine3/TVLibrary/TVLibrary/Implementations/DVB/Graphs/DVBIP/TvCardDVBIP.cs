@@ -138,7 +138,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="channel">channel</param>
     /// <returns>true if DVBIPChannel</returns>
-    public bool CanTune(IChannel channel)
+    public override bool CanTune(IChannel channel)
     {
       if ((channel as DVBIPChannel) == null) return false;
       return true;
@@ -147,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// ScanningInterface
     /// </summary>
-    public ITVScanning ScanningInterface
+    public override ITVScanning ScanningInterface
     {
       get
       {

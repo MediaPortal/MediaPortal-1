@@ -260,10 +260,7 @@
     <Compile Include="Sections\GeneralStartupResume.Designer.cs">
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\GuiScrollSpeed.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GuiHomeScreen.cs">
+    <Compile Include="Sections\GuiControls.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GuiLanguage.cs">
@@ -437,9 +434,6 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GeneralKeys.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\GuiSkin.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Sections\GuiThumbs.cs">
@@ -625,12 +619,8 @@
       <DependentUpon>GeneralStartupResume.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GuiScrollSpeed.resx">
-      <DependentUpon>GuiScrollSpeed.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GuiHomeScreen.resx">
-      <DependentUpon>GuiHomeScreen.cs</DependentUpon>
+    <EmbeddedResource Include="Sections\GuiControls.resx">
+      <DependentUpon>GuiControls.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GuiLanguage.resx">
@@ -792,10 +782,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GeneralKeys.resx">
       <DependentUpon>GeneralKeys.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\GuiSkin.resx">
-      <DependentUpon>GuiSkin.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\GuiThumbs.resx">

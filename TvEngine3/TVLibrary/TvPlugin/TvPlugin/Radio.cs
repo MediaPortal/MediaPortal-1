@@ -20,8 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
@@ -69,8 +67,34 @@ namespace TvPlugin
     private int selectedItemIndex = -1;
     private bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
-    public static RadioChannelGroup selectedGroup;
+    private static RadioChannelGroup selectedGroup;
+    public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
 
+    #endregion
+    
+    #region properties
+    
+    public static Channel CurrentChannel {
+      get { return _currentChannel; }
+      set { _currentChannel = value; }
+    }
+    
+    public static RadioChannelGroup SelectedGroup {
+      get { 
+        if(selectedGroup == null)
+        { // if user is at the root level then no group is selected
+          // this then causes issues in guide as it does not know what
+          // group to show so return the first available one
+          return AllRadioGroups[0];
+        }
+        else
+        {
+          return selectedGroup;
+        }
+      }
+      set { selectedGroup = value; }
+    }
+    
     #endregion
 
     #region SkinControls
@@ -86,7 +110,7 @@ namespace TvPlugin
     }
 
     public override bool Init()
-    {
+    {      
       return Load(GUIGraphicsContext.Skin + @"\MyRadio.xml");
     }
 
@@ -252,7 +276,19 @@ namespace TvPlugin
       {
         _currentChannel = channels[0];
       }
-
+      
+      if(AllRadioGroups.Count == 0)
+      {
+        IList<RadioChannelGroup> allGroups = RadioChannelGroup.ListAll();
+        
+        foreach (RadioChannelGroup group in allGroups) {
+          if(!(hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels)))
+          {
+            AllRadioGroups.Add(group);
+          }
+        }
+      }
+      
       SelectCurrentItem();
       LoadDirectory(currentFolder);
 
@@ -302,62 +338,6 @@ namespace TvPlugin
       }
     }
 
-    //bool ViewByIcon
-    //{
-    //  get
-    //  {
-    //    if (currentView != View.List) return true;
-    //    return false;
-    //  }
-    //}
-
-    //bool ViewByLargeIcon
-    //{
-    //  get
-    //  {
-    //    if (currentView == View.LargeIcons) return true;
-    //    return false;
-    //  }
-    //}
-
-    //GUIListItem GetSelectedItem()
-    //{
-    //  if (ViewByIcon)
-    //    return thumbnailView.SelectedListItem;
-    //  else
-    //    return listView.SelectedListItem;
-    //}
-
-    //GUIListItem GetItem(int itemIndex)
-    //{
-    //  if (ViewByIcon)
-    //  {
-    //    if (itemIndex >= thumbnailView.Count) return null;
-    //    return thumbnailView[itemIndex];
-    //  }
-    //  else
-    //  {
-    //    if (itemIndex >= listView.Count) return null;
-    //    return listView[itemIndex];
-    //  }
-    //}
-
-    //int GetSelectedItemNo()
-    //{
-    //  if (ViewByIcon)
-    //    return thumbnailView.SelectedListItemIndex;
-    //  else
-    //    return listView.SelectedListItemIndex;
-    //}
-
-    //int GetItemCount()
-    //{
-    //  if (ViewByIcon)
-    //    return thumbnailView.Count;
-    //  else
-    //    return listView.Count;
-    //}
-
     protected override void UpdateButtonStates()
     {
       string strLine = string.Empty;
@@ -398,19 +378,7 @@ namespace TvPlugin
           return true;
       }
       return false;
-    }
-
-    //void ShowThumbPanel()
-    //{
-    //  int itemIndex = facadeView.SelectedListItemIndex;
-    //  thumbnailView.ShowBigIcons(ViewByLargeIcon);
-    //  if (itemIndex > -1)
-    //  {
-    //    GUIControl.SelectItemControl(GetID, listView.GetID, itemIndex);
-    //    GUIControl.SelectItemControl(GetID, thumbnailView.GetID, itemIndex);
-    //  }
-    //  UpdateButtons();
-    //}    
+    }  
 
     protected override void LoadDirectory(string strNewDirectory)
     {
@@ -847,6 +815,25 @@ namespace TvPlugin
         return;
       }
       _currentChannel = (Channel)item.MusicTag;
+      
+      Play();
+    }
+      
+    public static void Play ()
+    {
+      // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
+      GUIPropertyManager.RemovePlayerProperties();
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
+      
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
+      if (string.IsNullOrEmpty(strLogo))
+      {
+          strLogo = "defaultMyRadioBig.png";
+      }
+      
+      GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
+
       if (g_Player.Playing)
       {
         if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
@@ -858,7 +845,7 @@ namespace TvPlugin
       if (_currentChannel.IsWebstream())
       {
         g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", item.Label);
+        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       }
       else
       {
@@ -883,7 +870,71 @@ namespace TvPlugin
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
     }
+    
+    public static void UpdateCurrentChannel()
+    {
+      Channel newChannel = null;
+      //if current card is watching tv then use that channel
+      int id;
+      if (TVHome.Connected)
+      {
+        if (TVHome.Card.IsTimeShifting || TVHome.Card.IsRecording)
+        {
+          id = TVHome.Card.IdChannel;
+          if (id >= 0)
+          {
+            newChannel = Channel.Retrieve(id);
+          }
+        }
+        else
+        {
+          // else if any card is recording
+          // then get & use that channel
+          if (TVHome.IsAnyCardRecording)
+          {
+            TvServer server = new TvServer();          
+            for (int i = 0; i < server.Count; ++i)
+            {
+              User user = new User();
+              VirtualCard card = server.CardByIndex(user, i);
+              if (card.IsRecording)
+              {
+                id = card.IdChannel;
+                if (id >= 0)
+                {
+                  newChannel = Channel.Retrieve(id);
+                  break;
+                }
+              }
+            }
+          }
+        }
+        if (newChannel == null)
+        {
+          newChannel = _currentChannel;
+        }
 
+        int currentChannelId = 0;
+        int newChannelId = 0;
+
+        if (_currentChannel != null)
+        {
+          currentChannelId = _currentChannel.IdChannel;
+        }
+
+        if (newChannel != null)
+        {
+          newChannelId = newChannel.IdChannel;
+        }
+
+        if (currentChannelId != newChannelId)
+        {
+          _currentChannel = newChannel;
+          //_currentChannel.CurrentGroup = selectedGroup;
+        }
+      }
+    }    
+    
     #region ISetupForm Members
 
     public bool CanEnable()
