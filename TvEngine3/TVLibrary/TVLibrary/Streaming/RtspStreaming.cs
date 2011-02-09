@@ -45,10 +45,10 @@ namespace TvLibrary.Streaming
     private static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream);
+    private static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream, int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddMpegFile(string streamName, string fileName);
+    private static extern void StreamAddMpegFile(string streamName, string fileName, int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamRemove(string streamName);
@@ -276,11 +276,11 @@ namespace TvLibrary.Streaming
         Log.Log.WriteFile("RTSP: add stream {0} file:{1}", stream.Name, stream.FileName);
         if (stream.Card != null)
         {
-          StreamAddTimeShiftFile(stream.Name, stream.FileName, false);
+          StreamAddTimeShiftFile(stream.Name, stream.FileName, false, (stream.IsTv ? 0 : 1));
         }
         else
         {
-          StreamAddMpegFile(stream.Name, stream.FileName);
+          StreamAddMpegFile(stream.Name, stream.FileName,0);
         }
         _streams[stream.Name] = stream;
       }

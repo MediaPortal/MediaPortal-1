@@ -577,6 +577,16 @@ namespace TvLibrary.Implementations.DVB
         _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                               _parameters.MaximumFileSize);
         _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
+
+        if (CurrentChannel == null)
+        {
+          Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
+          return false;
+        }
+
+        //  Set the channel type (0=tv, 1=radio)
+        _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
         Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
         _startTimeShifting = false;
         SetTimeShiftPids();

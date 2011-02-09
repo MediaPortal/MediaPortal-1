@@ -9,12 +9,26 @@
 #include "MultiFileWriter.h"
 #include "packetsync.h" 
 
-const int WRITE_BUFFER_SIZE = 188*10;
+#define TS_PACKET_SIZE	188
+#define THROTTLE_MAXIMUM_RADIO_PACKETS			10		//	Throttle to 10 for radio
+#define THROTTLE_MAXIMUM_TV_PACKETS				172		//	Throttle to 172 fo tv for reduced disk IOs
+
+
+//	Incremental buffer sizes
+#define NUMBER_THROTTLE_BUFFER_SIZES	20
+
+
+enum ChannelType
+{
+	TV = 0,
+	Radio = 1,
+};
+
 
 class CMultiWriterFileSink: public MediaSink,public CPacketSync 
 {
 public:
-  static CMultiWriterFileSink* createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False);
+  static CMultiWriterFileSink* createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False, int channelType = 0);
   // "bufferSize" should be at least as large as the largest expected
   //   input frame.
   // "oneFilePerFrame" - if True - specifies that each input frame will
@@ -26,6 +40,7 @@ public:
   void addData(unsigned char* data, unsigned dataSize,struct timeval presentationTime);
   // (Available in case a client wants to add extra data to the output file)
 
+  void SetChannelType(int channelType);
 	virtual void OnTsPacket(byte* tsPacket);
   void ClearStreams();
 protected:
@@ -50,6 +65,11 @@ protected:
   bool    m_bStartPcrFound;
   	byte*	m_pWriteBuffer;
 	int     m_iWriteBufferPos;
+	int		m_iWriteBufferSize;
+  int				m_iWriteBufferThrottle;
+  BOOL				m_bThrottleAtMax;
+  ChannelType		m_eChannelType;
+  int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
 
 private: // redefined virtual functions:
   CCritSec m_Lock;

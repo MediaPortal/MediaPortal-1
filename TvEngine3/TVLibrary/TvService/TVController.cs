@@ -1856,8 +1856,19 @@ namespace TvService
             if (File.Exists(fileName))
             {
               _streamer.Start();
+
+              //  Default to tv
+              bool isTv = true;
+
+              ITvSubChannel subChannel = _cards[cardId].Card.GetSubChannel(user.SubChannel);
+
+              if (subChannel != null && subChannel.CurrentChannel != null)
+                isTv = subChannel.CurrentChannel.IsTv;
+              else
+                Log.Error("SubChannel or CurrentChannel is null when starting streaming");
+
               RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
-                                                 _cards[cardId].Card);
+                                                 _cards[cardId].Card, isTv);
               _streamer.AddStream(stream);
             }
             else

@@ -163,6 +163,17 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
                                    parameters.MaximumFileSize);
       _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
+
+      //  Set the channel type
+      if (CurrentChannel == null)
+      {
+        Log.Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
+        return false;
+      }
+
+      //  0=tv, 1=radio
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _mpRecord.StartTimeShifting(_subChannelId);
       _dateTimeShiftStarted = DateTime.Now;
       return true;

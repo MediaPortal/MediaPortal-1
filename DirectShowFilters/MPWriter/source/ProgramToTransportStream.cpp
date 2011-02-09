@@ -76,6 +76,16 @@ void CProgramToTransportStream::SetTimeShiftParams( int minFiles, int maxFiles, 
 	m_maxFiles=maxFiles;
 	m_maxFileSize=maxFileSize;
 }
+void CProgramToTransportStream::SetChannelType(int channelType)
+{
+	if(m_outputSink == NULL)
+	{
+		LogDebug("CProgramToTransportStream::SetChannelType() - Error, tried to set channel type before initialization");
+		return;
+	}
+
+	m_outputSink->SetChannelType(channelType);
+}
 void CProgramToTransportStream::ClearStreams()
 {
 	LogDebug("CProgramToTransportStream::ClearStreams()");

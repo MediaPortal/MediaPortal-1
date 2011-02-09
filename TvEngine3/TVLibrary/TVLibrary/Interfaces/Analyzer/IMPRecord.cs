@@ -165,6 +165,15 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int DeleteAllChannels();
+
+    /// <summary>
+    /// Sets the type of channel we are timeshifting
+    /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
+    /// <param name="channelType">Channel type (0=tv, 1=radio)</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetChannelType(int subChannelId, int channelType);
   }
 
   /// <summary>

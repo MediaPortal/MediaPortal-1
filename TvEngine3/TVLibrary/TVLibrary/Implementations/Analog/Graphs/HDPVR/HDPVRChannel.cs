@@ -203,6 +203,15 @@ namespace TvLibrary.Implementations.Analog
                                             parameters.MaximumFileSize);
       _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
 
+      if (CurrentChannel == null)
+      {
+        Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
+        return false;
+      }
+
+      //  Set the channel type (0=tv, 1=radio)
+      _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
       _tsFilterInterface.AnalyzerSetVideoPid(_subChannelId, 0x1011);
