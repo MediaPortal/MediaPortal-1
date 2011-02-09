@@ -1994,6 +1994,7 @@ namespace MediaPortal.GUI.Library
           QueueAnimation(AnimationType.Hidden);
       }
       _visibilityInitialized = true;
+      GUIWindow.HasWindowVisibilityUpdated = false;
     }
 
     public virtual void SetInitialVisibility()

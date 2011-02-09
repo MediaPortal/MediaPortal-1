@@ -2205,7 +2205,7 @@ namespace MediaPortal.GUI.Library
 
     private static bool IsTimeForRefresh()
     {      
-      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindowEx).HasWindowVisibilityUpdated)
+      if (GUIWindow.HasWindowVisibilityUpdated)
       {
         _renderFrameCount++;
       }

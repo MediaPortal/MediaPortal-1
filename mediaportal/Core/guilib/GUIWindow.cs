@@ -216,7 +216,7 @@ namespace MediaPortal.GUI.Library
     private bool _windowAllocated;
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
-    private bool _hasWindowVisibilityUpdated;
+    private static bool _hasWindowVisibilityUpdated;
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
@@ -1298,8 +1298,7 @@ namespace MediaPortal.GUI.Library
           foreach (GUIControl control in Children)
           {
             control.UpdateVisibility();
-            control.DoRender(timePassed, currentTime);
-            _hasWindowVisibilityUpdated = false;
+            control.DoRender(timePassed, currentTime); 
           }
 
           GUIWaitCursor.Render();
@@ -1911,10 +1910,10 @@ namespace MediaPortal.GUI.Library
       get { return _windowLoaded; }
     }
 
-    public bool HasWindowVisibilityUpdated
+    public static bool HasWindowVisibilityUpdated
     {
       get { return _hasWindowVisibilityUpdated; }
-
+      set { _hasWindowVisibilityUpdated = value; }
     }
 
     #endregion Properties
