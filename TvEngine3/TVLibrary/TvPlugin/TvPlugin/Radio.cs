@@ -340,6 +340,8 @@ namespace TvPlugin
 
     protected override void UpdateButtonStates()
     {
+      base.UpdateButtonStates();
+      
       string strLine = string.Empty;
       switch (currentSortMethod)
       {
