@@ -595,12 +595,7 @@ namespace MediaPortal.GUI.Music
 
       if (_autoShuffleOnLoad)
       {
-        //PseudoRandomNumberGenerator r = new PseudoRandomNumberGenerator();
-        //int shuffleCount = r.Next() % 50;
-        //for (int i = 0; i < shuffleCount; ++i)
-        {
-          playlist.Shuffle();
-        }
+        playlist.Shuffle();
       }
 
       playlistPlayer.CurrentPlaylistName = Path.GetFileNameWithoutExtension(strPlayList);
@@ -760,10 +755,18 @@ namespace MediaPortal.GUI.Music
     
     public static string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {
-      if (isfolder)
+      // attempt to load folder.jpg
+      if (!Util.Utils.IsAVStream(filename))
       {
         string strFolderThumb = string.Empty;
-        strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
+        if (isfolder)
+        {
+          strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
+        }
+        else
+        {
+          strFolderThumb = Util.Utils.GetLocalFolderThumb(filename);
+        }
 
         if (Util.Utils.FileExistsInCache(strFolderThumb))
         {
@@ -776,49 +779,23 @@ namespace MediaPortal.GUI.Music
             FolderThumbCacher thumbworker = new FolderThumbCacher(filename, false);
           }
         }
-        return string.Empty;
       }
-
+      
       string strAlbumName = string.Empty;
       string strArtistName = string.Empty;
       if (tag != null)
       {
-        if (tag.Album.Length > 0)
+        if (!string.IsNullOrEmpty(tag.Album))
         {
           strAlbumName = tag.Album;
         }
-        if (tag.Artist.Length > 0)
+        if (!string.IsNullOrEmpty(tag.Artist))
         {
           strArtistName = tag.Artist;
         }
       }
-      if (!isfolder && strAlbumName.Length == 0 && strArtistName.Length == 0 && !Util.Utils.IsAVStream(filename))
-      {
-        FileInfo fI = new FileInfo(filename);
-        string dir = fI.Directory.FullName;
 
-        if (dir.Length > 0)
-        {
-          string strFolderThumb = string.Empty;
-          strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(dir);
-
-          if (Util.Utils.FileExistsInCache(strFolderThumb))
-          {
-            return strFolderThumb;
-          }
-          else
-          {
-            if (_createMissingFolderThumbCache)
-            {
-              FolderThumbCacher thumbworker = new FolderThumbCacher(dir, false);
-            }
-          }
-        }
-        
-        return string.Empty;
-      }
-
-      // use covert art thumbnail for albums
+      // attempt to pick up album thumb if already scanned 
       string strThumb = Util.Utils.GetAlbumThumbName(strArtistName, strAlbumName);
       if (Util.Utils.FileExistsInCache(strThumb))
       {
@@ -832,11 +809,8 @@ namespace MediaPortal.GUI.Music
         }
         return strThumb;
       }
-
-      if(!string.IsNullOrEmpty(tag.CoverArtFile))
-      {
-        return tag.CoverArtFile;
-      }
+      
+      //TODO: consider lookup of embedded artwork
       
       return string.Empty;
     }
