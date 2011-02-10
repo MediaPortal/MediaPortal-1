@@ -1268,7 +1268,7 @@ namespace MediaPortal.Util
       if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
                            "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
-                             "\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
+                             "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
 
       StackRegExpressions = new Regex[]
