@@ -610,7 +610,7 @@ namespace TvPlugin
           break;
 
         case Action.ActionType.ACTION_NEXT_SUBTITLE:
-          if (g_Player.SubtitleStreams > 0)
+          if (g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
           {
             _statusVisible = true;
             _statusTimeOutTimer = DateTime.Now;
@@ -620,8 +620,15 @@ namespace TvPlugin
             g_Player.SwitchToNextSubtitle();
             if (g_Player.EnableSubtitle)
             {
-              msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream),
-                                        g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+              if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
+              {
+                msg.Label = "CC1";
+              }
+              else
+              {
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.SubtitleLanguage(g_Player.CurrentSubtitleStream),
+                                          g_Player.CurrentSubtitleStream + 1, g_Player.SubtitleStreams);
+              }
             }
             else
             {
@@ -1543,7 +1550,7 @@ namespace TvPlugin
 
       // SubTitle stream, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
-      if (g_Player.SubtitleStreams > 0)
+      if (g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
       {
         dlg.AddLocalizedString(462);
       }
@@ -2156,6 +2163,11 @@ namespace TvPlugin
 
       dlg.AddLocalizedString(519); // disable Subtitles
 
+      if (g_Player.SupportsCC)
+      {
+        dlg.Add("CC1");
+      }
+
       // get the number of subtitles in the current movie
       int nbSubStreams = g_Player.SubtitleStreams;
       // cycle through each subtitle and add it to our list control
@@ -2175,8 +2187,15 @@ namespace TvPlugin
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
       if (g_Player.EnableSubtitle && nbSubStreams > 0)
       {
-        int subStream = g_Player.CurrentSubtitleStream;
-        if (subStream != -1) dlg.SelectedLabel = subStream + 1;
+        if (g_Player.SupportsCC)
+        {
+          dlg.SelectedLabel = g_Player.CurrentSubtitleStream + 2;
+        }
+        else
+        {
+          int subStream = g_Player.CurrentSubtitleStream;
+          if (subStream != -1) dlg.SelectedLabel = subStream + 1;
+        }
       }
       else
         dlg.SelectedLabel = 0;
@@ -2194,12 +2213,22 @@ namespace TvPlugin
       {
         g_Player.EnableSubtitle = false;
       }
+      else if (g_Player.SupportsCC && dlg.SelectedLabel == 1 && g_Player.CurrentSubtitleStream != -1)
+      {
+        g_Player.CurrentSubtitleStream = -1;
+        g_Player.EnableSubtitle = true;
+      }
       else
-      { 
-        if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + 1)
+      {
+        int i = 1;
+        if (g_Player.SupportsCC)
         {
-          Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - 1));
-          g_Player.CurrentSubtitleStream = dlg.SelectedLabel - 1;
+          i = 2;
+        }
+        if (dlg.SelectedLabel != g_Player.CurrentSubtitleStream + i)
+        {
+          Log.Info("Subtitle stream selected : " + (dlg.SelectedLabel - i));
+          g_Player.CurrentSubtitleStream = dlg.SelectedLabel - i;
         }
         g_Player.EnableSubtitle = true;
       }

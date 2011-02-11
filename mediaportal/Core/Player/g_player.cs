@@ -2421,11 +2421,15 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (IsDVD)
+        if (IsDVD || IsTV)
         {
           if (_player is DVDPlayer)
           {
             return ((DVDPlayer)_player).SupportsCC;
+          }
+          if (_player is TSReaderPlayer)
+          {
+            return ((TSReaderPlayer)_player).SupportsCC;
           }
         }
         return false;

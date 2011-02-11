@@ -149,6 +149,7 @@ namespace MediaPortal.Player
     protected SubtitleSelector _subSelector = null;
     protected SubtitleRenderer _dvbSubRenderer = null;
     protected AudioSelector _audioSelector = null;
+    protected IAMLine21Decoder _line21Decoder = null;
 
     /// <summary> control interface. </summary>
     protected IMediaControl _mediaCtrl = null;
@@ -1094,6 +1095,11 @@ namespace MediaPortal.Player
 
     public override void Stop()
     {
+      using (MPSettings xmlwriter = new MPSettings())
+      {
+        Log.Debug("TSReaderPlayer: Saving subtitle index: {0} ", CurrentSubtitleStream);
+        xmlwriter.SetValue("tvservice", "lastsubtitleindex", CurrentSubtitleStream);
+      }
       Stop(false);
     }
 
