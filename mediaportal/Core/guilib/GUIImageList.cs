@@ -50,6 +50,10 @@ namespace MediaPortal.GUI.Library
     public override void FinalizeConstruction()
     {
       base.FinalizeConstruction();
+
+      GUIGraphicsContext.ScaleHorizontal(ref _textureWidth);
+      GUIGraphicsContext.ScaleVertical(ref _textureHeight);
+
       for (int i = 0; i < SubItemCount; ++i)
       {
         string strTexture = (string)GetSubItem(i);
@@ -139,6 +143,8 @@ namespace MediaPortal.GUI.Library
             texture = _itemList.Count - 1;
           }
         }
+
+        if (texture < 0 || texture >= _itemList.Count || _itemList.Count <= 0) return;
 
         GUIImage img = (GUIImage)_itemList[texture];
         img.SetPosition(startx, _positionY);
