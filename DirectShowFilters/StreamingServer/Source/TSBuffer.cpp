@@ -160,7 +160,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 		{
 			LogDebug("TSBuffer::Require() - Failed to read buffer file");
 			
-			delete readBuffer;
+			delete[] readBuffer;
 
 			return hr;
 		}
@@ -181,7 +181,7 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 		bytesAvailable += m_lTSBufferItemSize;
 	}
 
-	delete readBuffer;
+	delete[] readBuffer;
 
 	return S_OK;
 }

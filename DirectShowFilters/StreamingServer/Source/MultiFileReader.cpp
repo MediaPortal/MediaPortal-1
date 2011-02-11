@@ -341,7 +341,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 		filesRemoved = *((long*)(readBuffer + sizeof(__int64) + sizeof(long)));
 	}
 
-	delete readBuffer;
+	delete[] readBuffer;
 
     // If no files added or removed, break the loop !
     if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
@@ -374,7 +374,7 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
 		filesRemoved2 = *((long*)(readBuffer + sizeof(long)));
 	}
 
-	delete readBuffer;
+	delete[] readBuffer;
 
     if ((filesAdded2 != filesAdded) || (filesRemoved2 != filesRemoved))
     {
