@@ -1120,6 +1120,19 @@ namespace MediaPortal.Video.Database
           //		Log.Error("dbs:{0}", strSQL);
           m_db.Execute(strSQL);
         }
+        // Double single quota fix (after scan and executing DatabaseUtility.RemoveInvalidChars method, movie info can contain double single quota
+        // which looks ugly on screen and also produce wrong cover thumb filename which leads to duplication of cover
+        // for the same movie ie. That's Life{x}L.jpg  and That''s Life{x}L.jpg, this is only visible and reproducable after scan,
+        // after is OK)
+        {
+          details1.PlotOutline = details1.PlotOutline.Replace("''", "'");
+          details1.Plot = details1.Plot.Replace("''", "'");
+          details1.TagLine = details1.TagLine.Replace("''", "'");
+          details1.WritingCredits = details1.WritingCredits.Replace("''", "'");
+          details1.Genre = details1.Genre.Replace("''", "'");
+          details1.Title = details1.Title.Replace("''", "'");
+          details1.UserReview = details1.UserReview.Replace("''", "'");
+        }
       }
       catch (Exception ex)
       {
