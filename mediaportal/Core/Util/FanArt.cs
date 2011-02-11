@@ -26,7 +26,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
-using MediaPortal.Profile;
 
 namespace MediaPortal.Util
 {
@@ -36,19 +35,19 @@ namespace MediaPortal.Util
   public class FanArt
   {
     private ArrayList _fanartList = new ArrayList();
-    private string _fileArt = "";
-    private string _fileArtDefault = "";
-    private string _fileMovie = "";
-    private string _fanartURL = "";
-       
+    private string _fileFanArt = string.Empty;
+    private string _fileFanArtDefault = string.Empty;
+    private string _fileMovie = string.Empty;
+    private string _fanartUrl = string.Empty;
+
     public int Count
     {
       get { return _fanartList.Count; }
     }
 
-    public string DefaultFanartURL
+    public string DefaultFanartUrl
     {
-      get { return _fanartURL; }
+      get { return _fanartUrl; }
     }
 
     public string this[int index]
@@ -62,7 +61,7 @@ namespace MediaPortal.Util
 
     public string FanartTitleFile
     {
-      get { return _fileArtDefault; }
+      get { return _fileFanArtDefault; }
     }
 
     public string FanartMovieFile
@@ -70,8 +69,11 @@ namespace MediaPortal.Util
       get { return _fileMovie; }
     }
 
+    # region Public methods
+
     /// <summary>
-    /// Use this to set local fanart. Parameter title should begin with file:// or http://
+    /// Use this to set local user fanart. Parameter title should begin with file:// or http://
+    /// Parameter index is the fanart file index (from 0 to 4) ie. Fanart{0}.jpg -> index = 0
     /// </summary>
     /// <param name="path"></param>
     /// <param name="filename"></param>
@@ -79,17 +81,17 @@ namespace MediaPortal.Util
     /// <param name="localFile"></param>
     /// <param name="index"></param>
     /// <param name="share"></param>
-    public void GetLocalFanart(string path, string filename, string title, string localFile, int index, bool share) 
+    public void GetLocalFanart(string path, string filename, string title, string localFile, int index, bool share)
     {
       if (localFile == string.Empty)
       {
         return;
       }
       bool isUrl = true;
-      string ext = localFile.Substring(localFile.LastIndexOf(".")); // url or local file extension
 
       filename = Path.GetFileNameWithoutExtension(filename);
       filename = Utils.RemoveTrailingSlash(filename);
+
       if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
       {
         localFile = localFile.Replace("file://", "");
@@ -103,14 +105,14 @@ namespace MediaPortal.Util
       // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
       string configDir;
       GetFanArtFolder(out configDir);
-      // Check if FanArt directory Exists
+      
       if (Directory.Exists(configDir))
       {
-        string dbFile = configDir + title + " " + index + ext;
+        string dbFile = SetFanArtFileName(title, index);
         //
-        // DB view file
+        // Database view file
         //
-        if (isUrl == false)
+        if (!isUrl)
         {
           File.Copy(localFile, dbFile, true);
         }
@@ -122,17 +124,19 @@ namespace MediaPortal.Util
             webClient.DownloadFile(localFile, dbFile);
             webClient.Dispose();
           }
-          catch (Exception){}
+          catch (Exception) {}
         }
         //
         // Share view file
         //
-         if (share) // If not DVD video
+        if (share)
         {
+          // Regular video
           if (!filename.ToUpper().Contains("VIDEO_TS"))
           {
-            string fileclean = GetFileclean(filename);
-            _fileMovie = configDir + fileclean + " " + index + ext;
+            string fileclean = CleanFilename(filename);
+            _fileMovie = SetFanArtFileName(fileclean, index);
+
             if (dbFile.ToLower() != _fileMovie.ToLower())
             {
               File.Copy(dbFile, _fileMovie, true);
@@ -140,7 +144,7 @@ namespace MediaPortal.Util
           }
           else // DVD Video
           {
-            SetDVD_fileMovie(configDir, path, index, ext);
+            SetDvdMovieFile(path, index);
             if (dbFile.ToLower() != _fileMovie.ToLower())
             {
               File.Copy(dbFile, _fileMovie, true);
@@ -151,8 +155,8 @@ namespace MediaPortal.Util
     }
 
     /// <summary>
-    /// Use this to find and set fanart from TMDB website. Parameter countFA is the number of downloaded
-    /// and saved fanart from founded collection of movie fanart.
+    /// Use this to find and set fanart from TMDB website using it's API. Parameter countFA is the wanted
+    /// number of downloaded and saved fanart from founded movie fanart collection (max 5).
     /// </summary>
     /// <param name="path"></param>
     /// <param name="filename"></param>
@@ -161,7 +165,8 @@ namespace MediaPortal.Util
     /// <param name="random"></param>
     /// <param name="countFA"></param>
     /// <param name="share"></param>
-    public void GetWebFanart(string path, string filename, string imdbTT, string title, bool random, int countFA, bool share) 
+    public void GetTmdbFanartByApi(string path, string filename, string imdbTT, string title, bool random, int countFA,
+                                  bool share)
     {
       if (!Win32API.IsConnectedToInternet())
       {
@@ -175,17 +180,22 @@ namespace MediaPortal.Util
 
       try
       {
-        string strAbsUrl = "";
-        string tmdbUrl = ""; // TMDB Fanart api URL
+        string strAbsUrl = string.Empty;
+        string tmdbUrl = string.Empty; // TMDB Fanart api URL
+        string tmdbUrlWorkaround = string.Empty; // Sometimes link conatains double "/" before ttnumber
         // Firts try by IMDB id (100% accurate) then, if fail, by movie name (first result will be taken as defult fanart, no random)
         if (imdbTT != string.Empty && imdbTT.StartsWith("tt"))
         {
           tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
                     imdbTT;
+          tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+                    imdbTT;
         }
         else
         {
           tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+                    title;
+          tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
                     title;
           random = false;
         }
@@ -202,6 +212,12 @@ namespace MediaPortal.Util
         {
           MatchCollection mcBd = Regex.Matches(tmdbXml, matchBackdrop);
           // Set fanart collection
+          if (mcBd.Count == 0)
+          {
+            // Try workaround search if no fanart count
+            tmdbXml = GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl);
+            mcBd = Regex.Matches(tmdbXml, matchBackdrop);
+          }
           if (mcBd.Count != 0)
           {
             foreach (Match mBd in mcBd)
@@ -218,68 +234,54 @@ namespace MediaPortal.Util
               }
             }
           }
-          // Exception prevention if fanart collection is lower than wanted fanarts q per movie
+          // Check if fanart collection is lower than wanted fanarts quantity per movie
           if (_fanartList.Count < countFA)
             countFA = _fanartList.Count;
-            
+
+          // We need two fanart files for different views in GUI
+          // 1st is named as movie title for database view (ie. year, actor, title..)
+          // 2nd is named as movie filename without disk number for share view (will be copied from DB fanart)  
           if (_fanartList.Count > 0)
           {
-            if (countFA == 1)
+            if (countFA == 1) //Only one fanart found
             {
-              string tempFile = (string)_fanartList[0];
+              // Title name fanart for database View in GUI
+              DownloadFanart(title, 0);
 
-              if (random)
-              {
-                var r = new Random();
-                int rnd = r.Next(_fanartList.Count);
-                tempFile = (string)_fanartList[rnd];
-              }
-                
-              // Temporary only jpg but maybe later more formats so lets prepare it
-              string ext = tempFile.Substring(tempFile.LastIndexOf("."));
-              // We need two backdrop files for different views in GUI
-              // 1st is named as movie title for database view (ie. year, actor, title..)
-              // 2nd is named as movie filename without disk number for share view
-
-              // Title named fanart for database View in GUI
-              DownloadFA(title, configDir, 0, ext);
-
-              // File name Backdrop for SHARES view
-
-              // If not DVD video
+              // File name fanart for SHARES view (if in VideoDB settings is checked that option)
               if (share)
               {
+                // Regular video
                 if (!filename.ToUpper().Contains("VIDEO_TS"))
                 {
-                  string fileclean = GetFileclean(filename);
-                  _fileMovie = configDir + fileclean + " 0" + ext;
-                  if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                    File.Copy(_fileArt, _fileMovie, true);
+                  string fileclean = CleanFilename(filename);
+                  _fileMovie = SetFanArtFileName(fileclean, 0);
+
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    File.Copy(_fileFanArt, _fileMovie, true);
                 }
-                  // DVD Video
+                // DVD Video
                 else
                 {
-                  SetDVD_fileMovie(configDir, path, 0, ext);
-                  if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                    File.Copy(_fileArt, _fileMovie, true);
+                  SetDvdMovieFile(path, 0);
+
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    File.Copy(_fileFanArt, _fileMovie, true);
                 }
               }
             }
-            else
+            else //Get max 5 fanart per movie
             {
               //Randomize order of fanarts in array
               if (_fanartList.Count > countFA && random)
                 ShuffleFanart(ref _fanartList);
 
-              _fileArtDefault = configDir + title + " 0" + ".jpg";
+              _fileFanArtDefault = SetFanArtFileName(title, 0);
 
               for (int i = 0; i < countFA; i++)
               {
-                var tempFile = (string)_fanartList[i];
-                string ext = tempFile.Substring(tempFile.LastIndexOf("."));
-                  
                 // Database view
-                DownloadFA(title, configDir, i, ext);
+                DownloadFanart(title, i);
 
                 // Share view
                 if (share)
@@ -287,25 +289,19 @@ namespace MediaPortal.Util
                   // Regular video
                   if (!filename.ToUpper().Contains("VIDEO_TS"))
                   {
-                    string fileclean = filename;
-                    var pattern = Utils.StackExpression();
-                    foreach (var t in pattern)
-                    {
-                      if (t.IsMatch(filename))
-                      {
-                        fileclean = t.Replace(filename, "");
-                      }
-                    }
-                    _fileMovie = configDir + fileclean + " " + i + ext;
-                    if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                      File.Copy(_fileArt, _fileMovie, true);
+                    string fileclean = CleanFilename(filename);
+                    _fileMovie = SetFanArtFileName(fileclean, i);
+
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                      File.Copy(_fileFanArt, _fileMovie, true);
                   }
-                    // DVD video
+                  // DVD video
                   else
                   {
-                    SetDVD_fileMovie(configDir, path, i, ext);
-                    if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                      File.Copy(_fileArt, _fileMovie, true);
+                    SetDvdMovieFile(path, i);
+
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                      File.Copy(_fileFanArt, _fileMovie, true);
                   }
                 }
               }
@@ -319,15 +315,15 @@ namespace MediaPortal.Util
 
     /// <summary>
     /// Use this to download fanart directly from TMDB with url parameter as TMDB fanart image location.
-    /// Parameter faPosition is the fanart file index ie. Fanart0.jpg -> faPosition = 0
+    /// Parameter index is the fanart file index (from 0 to 4) ie. Fanart{0}.jpg -> index = 0
     /// </summary>
     /// <param name="path"></param>
     /// <param name="filename"></param>
     /// <param name="title"></param>
     /// <param name="url"></param>
-    /// <param name="faPosition"></param>
+    /// <param name="index"></param>
     /// <param name="share"></param>
-    public void GetTMDBFanart (string path, string filename, string title, string url, int index, bool share)
+    public void GetTmdbFanartByUrl(string path, string filename, string title, string url, int index, bool share)
     {
       if (!Win32API.IsConnectedToInternet())
       {
@@ -341,104 +337,54 @@ namespace MediaPortal.Util
       {
         string configDir;
         GetFanArtFolder(out configDir);
-        string ext = ".jpg";
-        
+
         if (Directory.Exists(configDir))
         {
-          _fileArt = configDir + title + " " + index + ".jpg";
+          _fileFanArt = SetFanArtFileName(title, index);
 
           WebClient webClient = new WebClient();
           // Database view
-          webClient.DownloadFile(url, _fileArt);
+          webClient.DownloadFile(url, _fileFanArt);
           webClient.Dispose();
 
           // Share view
           if (share)
           {
-            // If not DVD video
+            // Regular video
             if (!filename.ToUpper().Contains("VIDEO_TS"))
             {
-              string fileclean = GetFileclean(filename);
-              _fileMovie = configDir + fileclean + " " + index + ext;
-              if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                File.Copy(_fileArt, _fileMovie, true);
+              string fileclean = CleanFilename(filename);
+              _fileMovie = SetFanArtFileName(fileclean, index);
+
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                File.Copy(_fileFanArt, _fileMovie, true);
             }
-              // DVD Video
+            // DVD Video
             else
             {
-              SetDVD_fileMovie(configDir, path, index, ext);
-              if (!_fileMovie.Equals(_fileArt, StringComparison.OrdinalIgnoreCase))
-                File.Copy(_fileArt, _fileMovie, true);
+              SetDvdMovieFile(path, index);
+
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                File.Copy(_fileFanArt, _fileMovie, true);
             }
           }
         }
       }
-      catch (Exception) { }
-      finally { }
-    }
-
-    private void DownloadFA(string title, string configDir, int index, string ext)
-    {
-      try
-      {
-        _fileArt = configDir + title + " " + index + ext;
-        var webClient = new WebClient();
-        webClient.DownloadFile((string)_fanartList[index], _fileArt);
-        _fanartURL = _fanartList[0].ToString();
-        webClient.Dispose();
-      }
-      catch (Exception) { }
-    }
-
-    // Remove trash text from file name
-    private string GetFileclean(string filename) 
-    {
-      string fileclean = filename;
-      // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-      var pattern = Utils.StackExpression();
-      foreach (var t in pattern)
-      {
-        if (t.IsMatch(filename))
-        {
-          fileclean = t.Replace(filename, "");
-        }
-      }
-      return fileclean;
-    }
-
-    private void SetDVD_fileMovie(string configDir, string path, int fileIndex, string ext)
-    {
-      int end = path.ToUpper().IndexOf(@"\VIDEO_TS");
-      string strTrimed = path.Substring(0, end);
-      int start = strTrimed.LastIndexOf(@"\") + 1;
-      string titleFolder = strTrimed.Substring(start);
-      //Folder name DVD backdrop for SHARES View
-      _fileMovie = configDir + titleFolder + " " + fileIndex + ext;
-    }
-
-    // Randomize fanart array list
-    private void ShuffleFanart(ref ArrayList faArray)
-    {
-      Random rnd = new Random();
-      for (int i = faArray.Count - 1; i > 0; i--)
-      {
-        int position = rnd.Next(i + 1);
-        object temp = faArray[i];
-        faArray[i] = faArray[position];
-        faArray[position] = temp;
-      }
+      catch (Exception) {}
+      finally {}
     }
 
     // Helper funct to retreive saved fanart filename
     public static void GetFanArtfilename(string title, int fileIndex, out string fileart)
     {
-      fileart = "";
+      fileart = string.Empty;
       // FanArt directory
       string configDir;
       GetFanArtFolder(out configDir);
+
       if (Directory.Exists(configDir))
       {
-        fileart = configDir + title + " " + fileIndex + ".jpg";
+        fileart = SetFanArtFileName(title, fileIndex);
         if (!File.Exists(fileart))
           fileart = "Unknown";
       }
@@ -453,15 +399,10 @@ namespace MediaPortal.Util
       }
       string titleExt = title + "{" + id + "}";
       string file = Utils.GetLargeCoverArtName(Thumbs.MovieTitle, titleExt);
-      if (File.Exists(file))
-      {
-        File.Delete(file);
-      }
+      DeleteFile(file);
+
       file = Utils.GetCoverArtName(Thumbs.MovieTitle, titleExt);
-      if (File.Exists(file))
-      {
-        File.Delete(file);
-      }
+      DeleteFile(file);
     }
 
     // Helper funct to delete fanarts
@@ -479,55 +420,40 @@ namespace MediaPortal.Util
 
       for (int i = 0; i < fanartQ; i++)
       {
-        if (File.Exists(configDir + title + " " + i + ".jpg"))
-        {
-          File.Delete(configDir + title + " " + i + ".jpg");
-        }
+        string file = SetFanArtFileName(title, i);
+        DeleteFile(file);
       }
-      
-      string fileNameArt;
-      string strPath = string.Empty;
-      Split(pathAndFilename, out strPath, out fileNameArt);
 
-      if (!fileNameArt.ToUpper().Contains("VIDEO_TS"))
+      string strFileFanart = string.Empty;
+      string strPathFanart = string.Empty;
+      Split(pathAndFilename, out strPathFanart, out strFileFanart);
+
+      if (!strFileFanart.ToUpper().Contains("VIDEO_TS"))
       {
-        string fileclean = Path.GetFileNameWithoutExtension(fileNameArt);
-        // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
-        var pattern = Utils.StackExpression();
+        string fileclean = CleanFilename(strFileFanart);
+        fileclean = Path.GetFileNameWithoutExtension(fileclean);
+        fileclean = Utils.RemoveTrailingSlash(fileclean);
 
-        foreach (var t in pattern)
-        {
-          if (t.IsMatch(fileNameArt))
-          {
-              fileclean = t.Replace(fileNameArt, "");
-          }
-        }
-        
         for (int i = 0; i < fanartQ; i++)
         {
-          string fileMovie = configDir + fileclean + " " + i + ".jpg";
-          if (File.Exists(fileMovie))
-          {
-            File.Delete(fileMovie);
-          }
+          string fileMovie = SetFanArtFileName(fileclean, i);
+          DeleteFile(fileMovie);
         }
       }
-        // DVD Video
+      // DVD Video
       else
       {
-        int end = strPath.ToUpper().IndexOf(@"\VIDEO_TS");
-        string strTrimed = strPath.Substring(0, end);
+        int end = strPathFanart.ToUpper().IndexOf(@"\VIDEO_TS");
+        string strTrimed = strPathFanart.Substring(0, end);
+
         int start = strTrimed.LastIndexOf(@"\") + 1;
         string titleFolder = strTrimed.Substring(start);
-        //Folder name DVD backdrop for SHARES View
+        //Folder name DVD fanart for SHARES View
 
         for (int i = 0; i < fanartQ; i++)
         {
-          string fileMovie = configDir + titleFolder + " " + i + ".jpg";
-          if (File.Exists(fileMovie))
-          {
-            File.Delete(fileMovie);
-          }
+          string fileMovie = SetFanArtFileName(titleFolder, i);
+          DeleteFile(fileMovie);
         }
       }
     }
@@ -539,17 +465,89 @@ namespace MediaPortal.Util
       fanartFolder = Config.GetFolder(Config.Dir.Thumbs) + @"\Skin FanArt\Scraper\Movies\";
     }
 
+    // Set fanart filename
+    public static string SetFanArtFileName(string title, int index)
+    {
+      string configDir = string.Empty;
+      GetFanArtFolder(out configDir);
+      string ext = ".jpg";
+      //
+      return configDir + title + "{" + index + "}" + ext;
+    }
+
+    #endregion
+
+    #region Private Methods
+
+    // Download and save DB view fanart
+    private void DownloadFanart(string title, int index)
+    {
+      try
+      {
+        _fileFanArt = SetFanArtFileName(title, index);
+        var webClient = new WebClient();
+        webClient.DownloadFile((string)_fanartList[index], _fileFanArt);
+        _fanartUrl = _fanartList[0].ToString();
+        webClient.Dispose();
+      }
+      catch (Exception) {}
+    }
+
+    // Remove video file DISC span text from file name
+    private static string CleanFilename(string filename)
+    {
+      string fileclean = filename;
+      // Test pattern (CD, DISC(K), Part, X-Y...) and remove it from filename
+
+      var pattern = Utils.StackExpression();
+      foreach (var t in pattern)
+      {
+        if (t.IsMatch(filename))
+        {
+          fileclean = t.Replace(filename, string.Empty);
+        }
+      }
+      return fileclean;
+    }
+
+    // Handling fanart filename for IFO DVD files
+    private void SetDvdMovieFile(string path, int fileIndex)
+    {
+      int end = path.ToUpper().IndexOf(@"\VIDEO_TS");
+      string strTrimed = path.Substring(0, end);
+      int start = strTrimed.LastIndexOf(@"\") + 1;
+      string titleFolder = strTrimed.Substring(start);
+      //Folder name DVD backdrop for SHARES View
+      _fileMovie = SetFanArtFileName(titleFolder, fileIndex);
+    }
+
+    // Randomize fanart array list
+    private void ShuffleFanart(ref ArrayList faArray)
+    {
+      Random rnd = new Random();
+      for (int i = faArray.Count - 1; i > 0; i--)
+      {
+        int position = rnd.Next(i + 1);
+        object temp = faArray[i];
+        faArray[i] = faArray[position];
+        faArray[position] = temp;
+      }
+    }
+    
     // Split path and filename
     private static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
       strFileNameAndPath = strFileNameAndPath.Trim();
-      strFileName = "";
-      strPath = "";
+      strFileName = string.Empty;
+      strPath = string.Empty;
+
       if (strFileNameAndPath.Length == 0)
       {
         return;
       }
+
       int i = strFileNameAndPath.Length - 1;
+
       while (i > 0)
       {
         char ch = strFileNameAndPath[i];
@@ -563,10 +561,18 @@ namespace MediaPortal.Util
       strFileName = strFileNameAndPath.Substring(i, strFileNameAndPath.Length - i).Trim();
     }
 
+    private static void DeleteFile(string file)
+    {
+      if (File.Exists(file))
+      {
+        File.Delete(file);
+      }
+    }
+
     // Get URL HTML body
     private string GetPage(string strUrl, string strEncode, out string absoluteUri)
     {
-      string strBody = "";
+      string strBody = string.Empty;
       absoluteUri = String.Empty;
       Stream receiveStream = null;
       StreamReader sr = null;
@@ -576,7 +582,7 @@ namespace MediaPortal.Util
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strUrl);
-        req.Timeout = 10000;
+        req.Timeout = 20000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
 
@@ -589,7 +595,8 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode, ex.Message, ex.StackTrace);
+        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode, ex.Message,
+                  ex.StackTrace);
       }
       finally
       {
@@ -620,5 +627,7 @@ namespace MediaPortal.Util
       }
       return strBody;
     }
+
+    #endregion
   }
 }

@@ -75,6 +75,14 @@ namespace MediaPortal.Util
 
         // Get all cover links and put it in the "cover" group
         MatchCollection covers = Regex.Matches(strBodyTMDB, "<image\\surl=\"(?<cover>.*?)\"");
+        if (covers.Count == 0)
+        {
+          // Try alternative approach if no covers (TMDB really sometimes doing wrong)
+          defaultPosterPageLinkUrl =
+          "http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + imdbMovieID + "/";
+          strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
+          covers = Regex.Matches(strBodyTMDB, "<image\\surl=\"(?<cover>.*?)\"");
+        }
 
         foreach (Match cover in covers)
         {

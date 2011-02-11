@@ -27,7 +27,6 @@ using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Profile;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 namespace MediaPortal.Video.Database
@@ -162,11 +161,15 @@ namespace MediaPortal.Video.Database
         if (_imdb.GetDetails(_url, ref _movieDetails))
         {
           percent = percent + step; // **Progress bar downloading details end
-          // Folder name for title (Change scraped title with folder name)
+          // Get special settings for grabbing
           Settings xmlreader = new MPSettings();
+          // Folder name for title (Change scraped title with folder name)
           bool folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          // Number of downloaded fanart per movie
           int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+          // Also add fanart for share view
           bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
+
           string moviePath = _movieDetails.Path;
             
           if (folderTitle)
@@ -284,6 +287,7 @@ namespace MediaPortal.Video.Database
           // FanArt grab
           //
           _isFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
+
           if (_isFanArt)
           {
             FanArt fanartSearch = new FanArt();
@@ -302,10 +306,10 @@ namespace MediaPortal.Video.Database
 
             if (_movieDetails.FanartURL == string.Empty)
             {
-              fanartSearch.GetWebFanart
+              fanartSearch.GetTmdbFanartByApi
                 (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);
               // Set fanart url to db
-              _movieDetails.FanartURL = fanartSearch.DefaultFanartURL;
+              _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
             }
             else // Local file or user url
             {
@@ -330,11 +334,11 @@ namespace MediaPortal.Video.Database
             line1 = GUILocalizeStrings.Get(1009); // **Progress bar downloading cover art, final step
             OnProgress(line1, _movieDetails.Title, string.Empty, percent);
             //
-            // Save cover thumbs - title suffix instead title (Cover problem for movies with the same name)
+            // Save cover thumbs
             //
             DownloadCoverArt(Thumbs.MovieTitle, _movieDetails.ThumbURL, titleExt);
             //
-            // folder.jpg for ripped DVDs
+            // Set folder.jpg for ripped DVDs
             //
             try
             {

@@ -2526,11 +2526,11 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          tbFanartLocation.Text = configDir + item.Movie.Title + " " + _fanartImgIndex + ".jpg";
+          tbFanartLocation.Text = FanArt.SetFanArtFileName(item.Movie.Title, _fanartImgIndex);
         }
         if (!_isRefreshing)
         {
-          pictureBoxFanArt.ImageLocation = configDir + item.Movie.Title + " " + _fanartImgIndex + ".jpg";
+          pictureBoxFanArt.ImageLocation = FanArt.SetFanArtFileName(item.Movie.Title, _fanartImgIndex);
           // Update cover search string
           tbCoverSearchStr.Text = tbTitle.Text;
           // FanArt Picture
@@ -2877,12 +2877,12 @@ namespace MediaPortal.Configuration.Sections
           FanArt.DeleteFanarts(listViewFiles.Items[0].Text, CurrentMovie.Title);
           // Download fanarts
           FanArt fanartSearch = new FanArt();
-          fanartSearch.GetWebFanart
+          fanartSearch.GetTmdbFanartByApi
             (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value, chbFanartShare.Checked);
 
           // Update database
-          VideoDatabase.SetFanartURL(CurrentMovie.ID, fanartSearch.DefaultFanartURL);
-          tbFanartLocation.Text = fanartSearch.DefaultFanartURL;
+          VideoDatabase.SetFanartURL(CurrentMovie.ID, fanartSearch.DefaultFanartUrl);
+          tbFanartLocation.Text = fanartSearch.DefaultFanartUrl;
           // Refresh movie
           LoadMovies(CurrentMovie.ID);
           // Update fanart picturebox image
@@ -2940,7 +2940,7 @@ namespace MediaPortal.Configuration.Sections
           if (strFile != string.Empty & strPath != string.Empty)
           {
             FanArt fanartSearch = new FanArt();
-            fanartSearch.GetTMDBFanart
+            fanartSearch.GetTmdbFanartByUrl
               (strPath, strFile, CurrentMovie.Title, fanart.Url, _fanartImgIndex, chbFanartShare.Checked);
             FanArt.GetFanArtfilename(CurrentMovie.Title, _fanartImgIndex, out strFile);
             pictureBoxFanArt.ImageLocation = strFile;
@@ -3066,11 +3066,11 @@ namespace MediaPortal.Configuration.Sections
         {
           // Find fanart
           FanArt fanartSearch = new FanArt();
-          fanartSearch.GetWebFanart
+          fanartSearch.GetTmdbFanartByApi
             (strPath, strFile, movie.IMDBNumber, movie.Title, true, (int)fanartQ.Value, chbFanartShare.Checked);
 
           // Update fanart URL in vdb
-          VideoDatabase.SetFanartURL(movie.ID, fanartSearch.DefaultFanartURL);
+          VideoDatabase.SetFanartURL(movie.ID, fanartSearch.DefaultFanartUrl);
         }
         if (_progressDialog.Count < movies.Count - 1)
           _progressDialog.Count++;
