@@ -153,6 +153,22 @@ namespace Wikipedia
       return Load(GUIGraphicsContext.Skin + @"\wikipedia.xml");
     }
 
+    protected override void OnPageLoad()
+    {
+      base.OnPageLoad();
+
+      searchtermLabel.Label = string.Empty;
+      imagedescLabel.Label = string.Empty;
+      txtArticle.Label = string.Empty;
+      language = "Default";
+      articletext = string.Empty;
+      linkArray = new ArrayList();
+      imagenameArray = new ArrayList();
+      imagedescArray = new ArrayList();
+
+      GUIControl.HideControl(GetID, buttonBack.GetID);
+    }
+
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       // we don't want the user to start another search while one is already active
@@ -182,23 +198,23 @@ namespace Wikipedia
         if (keyboard.IsConfirmed)
         {
           searchterm = keyboard.Text;
-        }
 
-        // If there was a string entered try getting the article.
-        if (searchterm != "")
-        {
-          Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
-          GetAndDisplayArticle(searchterm);
-        }
+          // If there was a string entered try getting the article.
+          if (searchterm != "")
+          {
+            Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
+            GetAndDisplayArticle(searchterm);
+          }
           // Else display an error dialog.
-        else
-        {
-          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-          dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
-          dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
-          dlg.SetLine(2, string.Empty);
-          dlg.SetLine(3, GUILocalizeStrings.Get(2501)); // Please enter a valid searchterm!
-          dlg.DoModal(GUIWindowManager.ActiveWindow);
+          else
+          {
+            GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+            dlg.SetHeading(GUILocalizeStrings.Get(257)); // Error
+            dlg.SetLine(1, GUILocalizeStrings.Get(2500)); // No searchterm entered!
+            dlg.SetLine(2, string.Empty);
+            dlg.SetLine(3, GUILocalizeStrings.Get(2501)); // Please enter a valid searchterm!
+            dlg.DoModal(GUIWindowManager.ActiveWindow);
+          }
         }
       }
       // This is the control to select the local Wikipedia site.
@@ -318,6 +334,7 @@ namespace Wikipedia
         if (buttonBack.IsVisible)
         {
           GUIControl.HideControl(GetID, buttonBack.GetID);
+          GUIControl.FocusControl(GetID, buttonSearch.GetID);
         }
       }
       base.OnClicked(controlId, control, actionType);
