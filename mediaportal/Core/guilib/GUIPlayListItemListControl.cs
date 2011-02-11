@@ -376,6 +376,11 @@ namespace MediaPortal.GUI.Library
           else
           {
             btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.None;
+            if (!_spinCanFocus)
+            {
+              btn.CurrentActiveButton = GUIPlayListButtonControl.ActiveButton.Delete;
+              return;
+            }
           }
         }
 
