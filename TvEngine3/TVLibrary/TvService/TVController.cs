@@ -2744,7 +2744,10 @@ namespace TvService
                     else
                     {                      
                       nrOfOtherUsersTimeshiftingOnCard++;
-                      userCopy.SubChannel = u.SubChannel;
+                      if (!u.IsAdmin)
+                      {
+                        userCopy.SubChannel = u.SubChannel;
+                      }
                     } 
                   }                  
                 }
