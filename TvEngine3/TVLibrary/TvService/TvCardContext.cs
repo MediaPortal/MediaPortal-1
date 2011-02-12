@@ -159,21 +159,34 @@ namespace TvService
     /// <param name = "user">The user.</param>
     public void Remove(IUser user)
     {
-      Log.Info("user:{0} remove", user.Name);
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
+      string username = user.Name;
+      Log.Info("user:{0} remove", username);
+      IUser existingUser = _users.Find(t => t.Name.Equals(username));
       if (existingUser != null)
       {
         OnStopUser(existingUser);
         _users.Remove(existingUser);
       }
 
-      if (_owner == null)
-        return;
-      if (_owner.Name == user.Name)
-        _owner = null;
-      if (_users.Count > 0)
+      if (_owner != null && _owner.Name.Equals(username))
       {
-        _owner = _users[0];
+        if (_users.Count > 0)
+        {
+          IUser existingScheduler = _users.Find(t => t.IsAdmin);
+
+          if (existingScheduler != null)
+          {
+            _owner = existingScheduler;
+          }
+          else
+          {
+            _owner = _users[0];
+          }
+        }
+        else
+        {
+          _owner = null;
+        }
       }
     }
 

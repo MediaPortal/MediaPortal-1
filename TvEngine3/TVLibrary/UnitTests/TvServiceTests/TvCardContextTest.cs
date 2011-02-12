@@ -83,6 +83,61 @@ namespace TVServiceTests
     }
 
     [Test]
+    public void RemoveUserChangeOwnerShipToSchedulerTest()
+    {
+      ITvCardContext ctx = new TvCardContext();
+
+      IUser u1 = new User("u1", false, 1);
+      IUser u2 = new User("u2", false, 1);
+      IUser scheduler = new User("scheduler", true, 1);
+      ctx.Add(u1);
+      ctx.Add(u2);
+      ctx.Add(scheduler);
+      ctx.Lock(scheduler); //set ownership
+
+      ctx.Remove(u2);
+
+      Assert.IsTrue(ctx.IsOwner(scheduler), "scheduler user is not owner");      
+    }
+
+    [Test]
+    public void RemoveUserChangeOwnerShipToUserTest()
+    {
+      ITvCardContext ctx = new TvCardContext();
+
+      IUser u1 = new User("u1", false, 1);
+      IUser u2 = new User("u2", false, 1);
+      IUser u3 = new User("u3", false, 1);      
+      ctx.Add(u1);
+      ctx.Add(u2);
+      ctx.Add(u3);
+
+      ctx.Lock(u3); //set ownership      
+      ctx.Remove(u3);
+
+      Assert.IsTrue(ctx.IsOwner(u1), "user1 user is not owner");
+    }
+
+    [Test]
+    public void RemoveSchedulerChangeOwnerShipToUserTest()
+    {
+      ITvCardContext ctx = new TvCardContext();
+
+      IUser scheduler = new User("scheduler", true, 1);
+      IUser u1 = new User("u1", false, 1);
+      IUser u2 = new User("u2", false, 1);
+
+      ctx.Add(scheduler);
+      ctx.Lock(scheduler); //set ownership      
+      ctx.Add(u1);
+      ctx.Add(u2);
+      
+      ctx.Remove(scheduler);
+
+      Assert.IsTrue(ctx.IsOwner(u1), "user1 is not owner");
+    }
+
+    [Test]
     public void RemoveAdminUserNotInHistoryTest()
     {
       ITvCardContext ctx = new TvCardContext();
