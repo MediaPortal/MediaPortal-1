@@ -1,5 +1,5 @@
 /*
- *  $Id: SubPicAllocatorPresenterImpl.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ *  $Id: SubPicAllocatorPresenterImpl.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  *  (C) 2003-2006 Gabest
  *  (C) 2006-2010 see AUTHORS
@@ -95,10 +95,10 @@ public:
 	STDMETHODIMP SetPixelShader(LPCSTR pSrcData, LPCSTR pTarget) {
 		return E_NOTIMPL;
 	}
-	STDMETHODIMP SetPixelShader2(LPCSTR pSrcData, LPCSTR pTarget, bool bScreenSpace)
-	{
-		if (!bScreenSpace)
+	STDMETHODIMP SetPixelShader2(LPCSTR pSrcData, LPCSTR pTarget, bool bScreenSpace) {
+		if (!bScreenSpace) {
 			return SetPixelShader(pSrcData, pTarget);
+		}
 		return E_NOTIMPL;
 	}
 };

@@ -1,5 +1,5 @@
 /*
- * $Id: BaseSub.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ * $Id: BaseSub.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  * (C) 2006-2010 see AUTHORS
  *
@@ -25,8 +25,7 @@
 
 #include "CompositionObject.h"
 
-enum SUBTITLE_TYPE
-{
+enum SUBTITLE_TYPE {
 	ST_DVB,
 	ST_HDMV
 };

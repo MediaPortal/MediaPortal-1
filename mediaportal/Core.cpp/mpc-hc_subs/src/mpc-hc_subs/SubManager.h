@@ -21,6 +21,7 @@ public:
 
 	int GetCount();
 	BSTR GetLanguage(int i);
+	BSTR GetTrackName(int i);
 	int GetCurrent();
 	void SetCurrent(int current);
 	BOOL GetEnable();
@@ -50,13 +51,20 @@ private:
 	void InitInternalSubs(IBaseFilter* pBF);
 	bool SelectStream(int i);
 	int GetExtCount();
+	BSTR GetLanguageHelper(int i, bool useTrackName);
 
 	CComPtr<IDirect3DDevice9> m_d3DDev;
 	CComQIPtr<ISubPicQueue> m_pSubPicQueue;
 	bool m_isSetTime;
 	CCritSec m_csSubLock; 
-	CInterfaceList<ISubStream> m_pSubStreams; //external subs
-	int m_iSubtitleSel; // if(m_iSubtitleSel&(1<<31)): disabled
+	
+	//list of subs (that are not coming from IAMStreamSelect filter, e.g. external sub files)
+	CInterfaceList<ISubStream> m_pSubStreams; 
+
+	int m_forcedSubIndex; //index of forced sub in m_pSubStreams
+
+	int m_iSubtitleSel;
+	bool m_enabled;
 	REFERENCE_TIME m_rtNow; //current time
 	double m_fps;
 	REFERENCE_TIME m_delay; 
@@ -69,6 +77,7 @@ private:
 	CComQIPtr<IAMStreamSelect> m_pSS; //graph filter with subtitles
 	CAtlArray<int> m_intSubs; //internal sub indexes on IAMStreamSelect
 	CAtlArray<CString> m_intNames; //internal sub names
+	CAtlArray<CString> m_intTrackNames; //internal track names
 	CComQIPtr<ISubStream> m_intSubStream; //current internal sub stream
 
 	CSubresync m_subresync;

@@ -62,7 +62,8 @@ namespace MediaPortal.Player.Subtitles
 
     void DelayPlus();
     void DelayMinus();
-    
+
+    bool AutoShow { get; }
   }
 
   public class SubEngine
@@ -163,6 +164,14 @@ namespace MediaPortal.Player.Subtitles
       public void DelayPlus() {}
 
       public void DelayMinus() {}
+
+      public bool AutoShow
+      {
+        get
+        {
+          return false;
+        }
+      }
 
       #endregion
     }

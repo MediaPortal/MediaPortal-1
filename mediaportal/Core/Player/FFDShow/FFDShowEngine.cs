@@ -145,6 +145,7 @@ namespace MediaPortal.Player.Subtitles
       else
         Log.Info("FFdshow interfaces found");
 
+      Enable = autoShow;
       return true;
       /*return MpcSubtitles.LoadSubtitles(
         DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device),
@@ -272,6 +273,13 @@ namespace MediaPortal.Player.Subtitles
       //MpcSubtitles.SetTime(nsSampleTime);
     }
 
+    public bool AutoShow
+    {
+      get
+      {
+        return autoShow;
+      }
+    }
     #endregion
 
     #region IPostProcessing Members

@@ -1,5 +1,5 @@
 /*
- *  $Id: SubPicQueueImpl.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ *  $Id: SubPicQueueImpl.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  *  (C) 2003-2006 Gabest
  *  (C) 2006-2010 see AUTHORS
@@ -53,13 +53,13 @@ public:
 
 	STDMETHODIMP SetFPS(double fps);
 	STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
-/*
-	STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1) = 0;
-	STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ISubPic** ppSubPic) = 0;
+	/*
+		STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1) = 0;
+		STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ISubPic** ppSubPic) = 0;
 
-	STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
-	STDMETHODIMP GetStats(int nSubPics, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
-*/
+		STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
+		STDMETHODIMP GetStats(int nSubPics, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) = 0;
+	*/
 };
 
 class CSubPicQueue : public CSubPicQueueImpl, private CAMThread

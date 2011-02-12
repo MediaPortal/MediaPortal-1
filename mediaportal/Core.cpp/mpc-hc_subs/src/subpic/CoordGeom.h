@@ -1,5 +1,5 @@
 /*
- *  $Id: CoordGeom.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ *  $Id: CoordGeom.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  *  (C) 2003-2006 Gabest
  *  (C) 2006-2010 see AUTHORS
@@ -138,7 +138,7 @@ public:
 	void operator -= (Vector& t);	// translate
 	void operator >>= (Vector& r);	// rotate
 
-//	transformations
+	//	transformations
 	Vector operator < (Vector& n);	// normal
 	Vector operator << (Vector& v);	// vector
 	Ray operator << (Ray& r);		// ray

@@ -344,6 +344,7 @@ namespace MediaPortal.Player
     protected void SelectSubtitles()
     {
       if (SubtitleStreams == 0) return;
+      if (!SubEngine.GetInstance().AutoShow) return;
       CultureInfo ci = null;
 
       using (Settings xmlreader = new MPSettings())

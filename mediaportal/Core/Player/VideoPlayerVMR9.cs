@@ -244,12 +244,6 @@ namespace MediaPortal.Player
         DirectShowUtil.ReleaseComObject(source); source = null;
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
-
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {
           Log.Error("VideoPlayer9: Failed to render file -> vmr9");
@@ -316,11 +310,6 @@ namespace MediaPortal.Player
 
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {

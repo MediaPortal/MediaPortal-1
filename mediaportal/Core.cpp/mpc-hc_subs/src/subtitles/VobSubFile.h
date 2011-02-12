@@ -1,5 +1,5 @@
 /*
- *  $Id: VobSubFile.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ *  $Id: VobSubFile.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  *  (C) 2003-2006 Gabest
  *  (C) 2006-2010 see AUTHORS
@@ -91,8 +91,7 @@ protected:
 	bool SaveMaestro(CString fn);
 
 public:
-	typedef struct
-	{
+	typedef struct {
 		__int64 filepos;
 		__int64 start, stop;
 		bool fForced;
@@ -101,8 +100,7 @@ public:
 		bool fValid;
 	} SubPos;
 
-	typedef struct
-	{
+	typedef struct {
 		int id;
 		CString name, alt;
 		CAtlArray<SubPos> subpos;

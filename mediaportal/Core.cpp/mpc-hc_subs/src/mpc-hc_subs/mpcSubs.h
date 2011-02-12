@@ -49,6 +49,7 @@ MPCSUBS_API void SaveToDisk();
 ///
 MPCSUBS_API int GetCount(); //total subtitles
 MPCSUBS_API BSTR GetLanguage(int i); //i  range from 0 to GetCount()-1
+MPCSUBS_API BSTR GetTrackName(int i); //i  range from 0 to GetCount()-1
 MPCSUBS_API int GetCurrent(); 
 MPCSUBS_API void SetCurrent(int i);
 MPCSUBS_API BOOL GetEnable();

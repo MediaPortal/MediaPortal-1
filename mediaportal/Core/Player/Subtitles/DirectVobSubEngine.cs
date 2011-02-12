@@ -108,6 +108,7 @@ namespace MediaPortal.Player.Subtitles
         }
       }
       Current = 0;
+      Enable = autoShow;
       return true;
     }
 
@@ -279,6 +280,13 @@ namespace MediaPortal.Player.Subtitles
 
     public void SetTime(long nsSampleTime) {}
 
+    public bool AutoShow
+    {
+      get
+      {
+        return autoShow;
+      }
+    }
     #endregion
   }
 
