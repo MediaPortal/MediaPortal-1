@@ -42,19 +42,19 @@ namespace SetupTv.Sections
   {
     #region private classes
 
-    private class SatteliteContext : IComparable<SatteliteContext>
+    private class SatelliteContext : IComparable<SatelliteContext>
     {
-      public string SatteliteName;
+      public string SatelliteName;
       public string Url;
       public string FileName;
-      public Satellite Satelite;
+      public Satellite Satellite;
 
-      public SatteliteContext()
+      public SatelliteContext()
       {
         Url = "";
-        Satelite = null;
+        Satellite = null;
         FileName = "";
-        SatteliteName = "";
+        SatelliteName = "";
       }
 
       public String DisplayName
@@ -64,19 +64,19 @@ namespace SetupTv.Sections
 
       public override string ToString()
       {
-        return SatteliteName;
+        return SatelliteName;
       }
 
-      public int CompareTo(SatteliteContext other)
+      public int CompareTo(SatelliteContext other)
       {
-        return SatteliteName.CompareTo(other.SatteliteName);
+        return SatelliteName.CompareTo(other.SatelliteName);
       }
 
-      #region IComparable<SatteliteContext> Members
+      #region IComparable<SatelliteContext> Members
 
-      int IComparable<SatteliteContext>.CompareTo(SatteliteContext other)
+      int IComparable<SatelliteContext>.CompareTo(SatelliteContext other)
       {
-        return SatteliteName.CompareTo(other.SatteliteName);
+        return SatelliteName.CompareTo(other.SatelliteName);
       }
 
       #endregion
@@ -223,7 +223,7 @@ namespace SetupTv.Sections
     /// Downloads new transponderlist and merges both S and S2 into one XML 
     /// </summary>
     /// <param name="context"></param>
-    private void DownloadTransponder(SatteliteContext context)
+    private void DownloadTransponder(SatelliteContext context)
     {
       if (context.Url == null)
         return;
@@ -231,7 +231,7 @@ namespace SetupTv.Sections
         return;
       if (!context.Url.ToLowerInvariant().StartsWith("http://"))
         return;
-      string itemLine = String.Format("Downloading transponders for: {0}", context.SatteliteName);
+      string itemLine = String.Format("Downloading transponders for: {0}", context.SatelliteName);
       ListViewItem item = listViewStatus.Items.Add(new ListViewItem(itemLine));
       item.EnsureVisible();
       Application.DoEvents();
@@ -442,7 +442,7 @@ namespace SetupTv.Sections
     /// Loads new xml transponder list
     /// </summary>
     /// <param name="FileName"></param>
-    private void LoadTransponders(SatteliteContext context)
+    private void LoadTransponders(SatelliteContext context)
     {
       String fileName = context.FileName;
       if (!File.Exists(fileName))
@@ -471,9 +471,9 @@ namespace SetupTv.Sections
     /// Loads all known satellites from xml file
     /// </summary>
     /// <returns></returns>
-    private static List<SatteliteContext> LoadSattelites()
+    private static List<SatelliteContext> LoadSatellites()
     {
-      List<SatteliteContext> satellites = new List<SatteliteContext>();
+      List<SatelliteContext> satellites = new List<SatelliteContext>();
       XmlDocument doc = new XmlDocument();
       doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", Log.GetPathName()));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
@@ -481,10 +481,10 @@ namespace SetupTv.Sections
       {
         foreach (XmlNode node in nodes)
         {
-          SatteliteContext ts = new SatteliteContext();
-          ts.SatteliteName = node.Attributes.GetNamedItem("name").Value;
+          SatelliteContext ts = new SatelliteContext();
+          ts.SatelliteName = node.Attributes.GetNamedItem("name").Value;
           ts.Url = node.Attributes.GetNamedItem("url").Value;
-          string name = Utils.FilterFileName(ts.SatteliteName);
+          string name = Utils.FilterFileName(ts.SatelliteName);
           ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), name);
           satellites.Add(ts);
         }
@@ -495,40 +495,40 @@ namespace SetupTv.Sections
       {
         if (Path.GetFileName(file).StartsWith("Manual_Scans"))
         {
-          SatteliteContext ts = new SatteliteContext();
-          ts.SatteliteName = Path.GetFileNameWithoutExtension(file);
+          SatelliteContext ts = new SatelliteContext();
+          ts.SatelliteName = Path.GetFileNameWithoutExtension(file);
           ts.Url = "";
           ts.FileName = file;
           satellites.Add(ts);
         }
       }
       IList<Satellite> dbSats = Satellite.ListAll();
-      foreach (SatteliteContext ts in satellites)
+      foreach (SatelliteContext ts in satellites)
       {
         foreach (Satellite dbSat in dbSats)
         {
           string name = "";
-          for (int i = 0; i < ts.SatteliteName.Length; ++i)
+          for (int i = 0; i < ts.SatelliteName.Length; ++i)
           {
-            if (ts.SatteliteName[i] >= (char)32 && ts.SatteliteName[i] < (char)127)
-              name += ts.SatteliteName[i];
+            if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
+              name += ts.SatelliteName[i];
           }
           if (String.Compare(name, dbSat.SatelliteName, true) == 0)
           {
-            ts.Satelite = dbSat;
+            ts.Satellite = dbSat;
             break;
           }
         }
-        if (ts.Satelite == null)
+        if (ts.Satellite == null)
         {
           string name = "";
-          for (int i = 0; i < ts.SatteliteName.Length; ++i)
+          for (int i = 0; i < ts.SatelliteName.Length; ++i)
           {
-            if (ts.SatteliteName[i] >= (char)32 && ts.SatteliteName[i] < (char)127)
-              name += ts.SatteliteName[i];
+            if (ts.SatelliteName[i] >= (char)32 && ts.SatelliteName[i] < (char)127)
+              name += ts.SatelliteName[i];
           }
-          ts.Satelite = new Satellite(name, ts.FileName);
-          ts.Satelite.Persist();
+          ts.Satellite = new Satellite(name, ts.FileName);
+          ts.Satellite.Persist();
         }
       }
       return satellites;
@@ -561,7 +561,7 @@ namespace SetupTv.Sections
 
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
-      List<SatteliteContext> satellites = LoadSattelites();
+      List<SatelliteContext> satellites = LoadSatellites();
       MPComboBox[] mpTrans = new MPComboBox[] {mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4};
       MPComboBox[] mpDisEqc = new MPComboBox[] {mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4};
       MPComboBox[] mpBands = new MPComboBox[] {mpBand1, mpBand2, mpBand3, mpBand4};
@@ -573,7 +573,7 @@ namespace SetupTv.Sections
         idx = ctlIndex + 1;
         curBox = mpTrans[ctlIndex];
         curBox.Items.Clear();
-        foreach (SatteliteContext ts in satellites)
+        foreach (SatelliteContext ts in satellites)
         {
           curBox.Items.Add(ts);
         }
@@ -857,25 +857,25 @@ namespace SetupTv.Sections
 
         if (mpLNB1.Checked)
           Scan(1, (BandType)mpBand1.SelectedIndex, (DisEqcType)mpDisEqc1.SelectedIndex,
-               (SatteliteContext)mpTransponder1.SelectedItem);
+               (SatelliteContext)mpTransponder1.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB2.Checked)
           Scan(2, (BandType)mpBand2.SelectedIndex, (DisEqcType)mpDisEqc2.SelectedIndex,
-               (SatteliteContext)mpTransponder2.SelectedItem);
+               (SatelliteContext)mpTransponder2.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB3.Checked)
           Scan(3, (BandType)mpBand3.SelectedIndex, (DisEqcType)mpDisEqc3.SelectedIndex,
-               (SatteliteContext)mpTransponder3.SelectedItem);
+               (SatelliteContext)mpTransponder3.SelectedItem);
         if (scanState == ScanState.Cancel)
           return;
 
         if (mpLNB4.Checked)
           Scan(4, (BandType)mpBand4.SelectedIndex, (DisEqcType)mpDisEqc4.SelectedIndex,
-               (SatteliteContext)mpTransponder4.SelectedItem);
+               (SatelliteContext)mpTransponder4.SelectedItem);
 
         listViewStatus.Items.Add(
           new ListViewItem(String.Format("Total radio channels new:{0} updated:{1}", _radioChannelsNew,
@@ -923,7 +923,7 @@ namespace SetupTv.Sections
       checkEnableDVBS2.Enabled = state;
     }
 
-    private void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatteliteContext context)
+    private void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatelliteContext context)
     {
       // all transponders to scan
       List<DVBSChannel> _channels = new List<DVBSChannel>();
@@ -938,7 +938,7 @@ namespace SetupTv.Sections
       {
         foreach (DiSEqCMotor motor in card.ReferringDiSEqCMotor())
         {
-          if (motor.IdSatellite == context.Satelite.IdSatellite)
+          if (motor.IdSatellite == context.Satellite.IdSatellite)
           {
             position = motor.Position;
             break;
@@ -1103,7 +1103,7 @@ namespace SetupTv.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              layer.AddChannelToGroup(dbChannel, context.Satelite.SatelliteName);
+              layer.AddChannelToGroup(dbChannel, context.Satellite.SatelliteName);
             }
             if (checkBoxCreateGroups.Checked)
             {
@@ -1119,7 +1119,7 @@ namespace SetupTv.Sections
             }
             if (checkBoxCreateGroupsSat.Checked)
             {
-              layer.AddChannelToRadioGroup(dbChannel, context.Satelite.SatelliteName);
+              layer.AddChannelToRadioGroup(dbChannel, context.Satellite.SatelliteName);
             }
             if (checkBoxCreateGroups.Checked)
             {
@@ -1129,14 +1129,14 @@ namespace SetupTv.Sections
 
           if (currentDetail == null)
           {
-            channel.SatelliteIndex = position; // context.Satelite.IdSatellite;
+            channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
             layer.AddTuningDetails(dbChannel, channel);
           }
           else
           {
             //update tuning details...
-            channel.SatelliteIndex = position; // context.Satelite.IdSatellite;
-            currentDetail.SatIndex = position; //context.Satelite.IdSatellite;
+            channel.SatelliteIndex = position; // context.Satellite.IdSatellite;
+            currentDetail.SatIndex = position; //context.Satellite.IdSatellite;
             TuningDetail td = layer.UpdateTuningDetails(dbChannel, channel, currentDetail);
             td.Persist();
           }
@@ -1211,9 +1211,9 @@ namespace SetupTv.Sections
       int index;
       Int32.TryParse(setting.Value, out index);
 
-      List<SatteliteContext> satellites = LoadSattelites();
+      List<SatelliteContext> satellites = LoadSatellites();
 
-      foreach (SatteliteContext sat in satellites)
+      foreach (SatelliteContext sat in satellites)
       {
         comboBoxSat.Items.Add(sat);
       }
@@ -1271,13 +1271,13 @@ namespace SetupTv.Sections
         return;
       if (checkBox1.Checked == false)
         return;
-      SatteliteContext sat = (SatteliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
+      SatelliteContext sat = (SatelliteContext)comboBoxSat.Items[comboBoxSat.SelectedIndex];
 
       Card card = Card.Retrieve(_cardNumber);
       IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
       {
-        if (motor.IdSatellite == sat.Satelite.IdSatellite)
+        if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
           RemoteControl.Instance.DiSEqCGotoPosition(_cardNumber, (byte)motor.Position);
           MessageBox.Show("Satellite moving to position:" + motor.Position, "Info", MessageBoxButtons.OK,
@@ -1298,12 +1298,12 @@ namespace SetupTv.Sections
         return;
       //store motor position..
       int index = -1;
-      SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
+      SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
       Card card = Card.Retrieve(_cardNumber);
       IList<DiSEqCMotor> motorSettings = card.ReferringDiSEqCMotor();
       foreach (DiSEqCMotor motor in motorSettings)
       {
-        if (motor.IdSatellite == sat.Satelite.IdSatellite)
+        if (motor.IdSatellite == sat.Satellite.IdSatellite)
         {
           index = motor.Position;
           break;
@@ -1312,7 +1312,7 @@ namespace SetupTv.Sections
       if (index < 0)
       {
         index = motorSettings.Count + 1;
-        DiSEqCMotor motor = new DiSEqCMotor(card.IdCard, sat.Satelite.IdSatellite, index);
+        DiSEqCMotor motor = new DiSEqCMotor(card.IdCard, sat.Satellite.IdSatellite, index);
         motor.Persist();
       }
       RemoteControl.Instance.DiSEqCStorePosition(_cardNumber, (byte)(index));
@@ -1402,7 +1402,7 @@ namespace SetupTv.Sections
       if (setting.Value == "no")
         checkBoxEnabled.Checked = false;
       comboBox1.Items.Clear();
-      SatteliteContext sat = (SatteliteContext)comboBoxSat.SelectedItem;
+      SatelliteContext sat = (SatelliteContext)comboBoxSat.SelectedItem;
       LoadTransponders(sat);
       _transponders.Sort();
       foreach (Transponder transponder in _transponders)
@@ -1600,8 +1600,8 @@ namespace SetupTv.Sections
       string itemLine = String.Format("Updating satellites...");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
       Application.DoEvents();
-      List<SatteliteContext> sats = LoadSattelites();
-      foreach (SatteliteContext sat in sats)
+      List<SatelliteContext> sats = LoadSatellites();
+      foreach (SatelliteContext sat in sats)
       {
         DownloadTransponder(sat);
       }
