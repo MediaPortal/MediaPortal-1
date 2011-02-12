@@ -548,14 +548,51 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       int idx = 0;
 
-      mpComboBoxPolarisation.Items.Add(Polarisation.LinearH);
-      mpComboBoxPolarisation.Items.Add(Polarisation.LinearV);
-      mpComboBoxPolarisation.Items.Add(Polarisation.CircularL);
-      mpComboBoxPolarisation.Items.Add(Polarisation.CircularR);
-      mpComboBoxPolarisation.Items.Add(Polarisation.Max);
-      mpComboBoxPolarisation.Items.Add(Polarisation.NotDefined);
-      mpComboBoxPolarisation.Items.Add(Polarisation.NotSet);
-      mpComboBoxPolarisation.SelectedIndex = 0;
+      mpComboBoxPolarisation.Items.AddRange(new object[] {
+          "Not Set",
+          "Not Defined",
+          "Horizontal",
+          "Vertical",
+          "Circular Left",
+          "Circular Right"});
+      mpComboBoxPolarisation.SelectedIndex = 2;
+
+      mpComboBoxMod.Items.AddRange(new object[] {
+          "Not Set",
+          "Not Defined",
+          "16 QAM",
+          "32 QAM",
+          "64 QAM",
+          "80 QAM",
+          "96 QAM",
+          "112 QAM",
+          "128 QAM",
+          "160 QAM",
+          "192 QAM",
+          "224 QAM",
+          "256 QAM",
+          "320 QAM",
+          "384 QAM",
+          "448 QAM",
+          "512 QAM",
+          "640 QAM",
+          "768 QAM",
+          "896 QAM",
+          "1024 QAM",
+          "QPSK",
+          "BPSK",
+          "OQPSK",
+          "8 VSB",
+          "16 VSB",
+          "Analog Amplitude",
+          "Analog Frequency",
+          "8 PSK",
+          "RF",
+          "16 APSK",
+          "32 APSK",
+          "QPSK2 (DVB-S2)",
+          "8 PSK2 (DVB-S2)",
+          "DirectTV"});
       mpComboBoxMod.SelectedIndex = 0;
       //mpButtonSaveList.Enabled = (_transponders.Count != 0);
 
@@ -597,7 +634,7 @@ namespace SetupTv.Sections
         curBox.Items.Add(DisEqcType.Level1BA);
         curBox.Items.Add(DisEqcType.Level1BB);
         curBox.SelectedIndex =
-          Int32.Parse(layer.GetSetting(String.Format("dvbs{0}DisEqc{1}", _cardNumber, idx), "0").Value);
+          Int32.Parse(layer.GetSetting(String.Format("dvbs{0}DiSEqC{1}", _cardNumber, idx), "0").Value);
 
         curBox = mpBands[ctlIndex];
         curBox.SelectedIndex =
@@ -798,12 +835,12 @@ namespace SetupTv.Sections
           Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
           if (card.Enabled == false)
           {
-            MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+            MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
           if (!RemoteControl.Instance.CardPresent(card.IdCard))
           {
-            MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+            MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
           }
           // Check if the card is locked for scanning.
@@ -811,7 +848,7 @@ namespace SetupTv.Sections
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
-                            "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
             return;
           }
 
@@ -923,7 +960,7 @@ namespace SetupTv.Sections
       checkEnableDVBS2.Enabled = state;
     }
 
-    private void Scan(int LNB, BandType bandType, DisEqcType disEqc, SatelliteContext context)
+    private void Scan(int lnb, BandType bandType, DisEqcType diseqc, SatelliteContext context)
     {
       // all transponders to scan
       List<DVBSChannel> _channels = new List<DVBSChannel>();
@@ -966,7 +1003,7 @@ namespace SetupTv.Sections
           DVBSChannel tuneChannel = GetManualTuning();
 
           listViewStatus.Items.Clear();
-          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1, tuneChannel.Frequency,
+          string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1, tuneChannel.Frequency,
                                       tuneChannel.Polarisation, tuneChannel.SymbolRate);
           ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
           item.EnsureVisible();
@@ -1031,8 +1068,8 @@ namespace SetupTv.Sections
           else if (tuneChannel.Polarisation == Polarisation.LinearV)
             tuneChannel.Polarisation = Polarisation.CircularR;
         }
-        tuneChannel.DisEqc = disEqc;
-        string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", LNB, 1 + index, tuneChannel.Frequency,
+        tuneChannel.DisEqc = diseqc;
+        string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1 + index, tuneChannel.Frequency,
                                     tuneChannel.Polarisation, tuneChannel.SymbolRate);
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
         item.EnsureVisible();
@@ -1051,13 +1088,13 @@ namespace SetupTv.Sections
         {
           if (RemoteControl.Instance.TunerLocked(_cardNumber) == false)
           {
-            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", LNB, scanIndex, tuneChannel.Frequency,
+            line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:No signal", lnb, scanIndex, tuneChannel.Frequency,
                                  tuneChannel.Polarisation, tuneChannel.SymbolRate);
             item.Text = line;
             item.ForeColor = Color.Red;
             continue;
           }
-          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", LNB, scanIndex, tuneChannel.Frequency,
+          line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:Nothing found", lnb, scanIndex, tuneChannel.Frequency,
                                tuneChannel.Polarisation, tuneChannel.SymbolRate);
           item.Text = line;
           item.ForeColor = Color.Red;
@@ -1168,7 +1205,7 @@ namespace SetupTv.Sections
           }
           layer.MapChannelToCard(card, dbChannel, false);
           line = String.Format("lnb:{0} {1}tp- {2} {3} {4}:New:{5} Updated:{6}",
-                               LNB, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate,
+                               lnb, 1 + index, tuneChannel.Frequency, tuneChannel.Polarisation, tuneChannel.SymbolRate,
                                newChannels, updatedChannels);
           item.Text = line;
         }
@@ -1811,9 +1848,9 @@ namespace SetupTv.Sections
     {
       DVBSChannel tuneChannel = new DVBSChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
-      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex;
+      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex - 1;
       tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
-      tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedItem;
+      tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedIndex - 1;
       return tuneChannel;
     }
 

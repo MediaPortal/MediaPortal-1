@@ -194,9 +194,9 @@ namespace SetupTv.Sections
       this.mpLabel5.AutoSize = true;
       this.mpLabel5.Location = new System.Drawing.Point(154, 31);
       this.mpLabel5.Name = "mpLabel5";
-      this.mpLabel5.Size = new System.Drawing.Size(27, 13);
+      this.mpLabel5.Size = new System.Drawing.Size(26, 13);
       this.mpLabel5.TabIndex = 99;
-      this.mpLabel5.Text = "KHz";
+      this.mpLabel5.Text = "kHz";
       // 
       // textBoxFreq
       // 

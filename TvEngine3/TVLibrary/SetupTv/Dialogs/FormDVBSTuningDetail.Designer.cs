@@ -188,8 +188,7 @@ namespace SetupTv.Dialogs
             "Not Defined",
             ".20 Roll Off",
             ".25 Roll Off",
-            ".35 Roll Off",
-            "Max"});
+            ".35 Roll Off"});
       this.comboBoxRollOff.Location = new System.Drawing.Point(276, 37);
       this.comboBoxRollOff.Name = "comboBoxRollOff";
       this.comboBoxRollOff.Size = new System.Drawing.Size(114, 21);
@@ -212,8 +211,7 @@ namespace SetupTv.Dialogs
             "Not Set",
             "Not Defined",
             "Off",
-            "On",
-            "Max"});
+            "On"});
       this.comboBoxPilot.Location = new System.Drawing.Point(276, 10);
       this.comboBoxPilot.Name = "comboBoxPilot";
       this.comboBoxPilot.Size = new System.Drawing.Size(114, 21);
@@ -248,8 +246,7 @@ namespace SetupTv.Dialogs
             "2/5",
             "6/7",
             "8/9",
-            "9/10",
-            "Max"});
+            "9/10"});
       this.comboBoxInnerFecRate.Location = new System.Drawing.Point(85, 270);
       this.comboBoxInnerFecRate.Name = "comboBoxInnerFecRate";
       this.comboBoxInnerFecRate.Size = new System.Drawing.Size(129, 21);
@@ -269,42 +266,41 @@ namespace SetupTv.Dialogs
       this.comboBoxModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxModulation.FormattingEnabled = true;
       this.comboBoxModulation.Items.AddRange(new object[] {
-            "Not Set",
-            "Not Defined",
-            "Mod16Qam",
-            "Mod32Qam",
-            "Mod64Qam",
-            "Mod80Qam",
-            "Mod96Qam",
-            "Mod112Qam",
-            "Mod128Qam",
-            "Mod160Qam",
-            "Mod192Qam",
-            "Mod224Qam",
-            "Mod256Qam",
-            "Mod320Qam",
-            "Mod384Qam",
-            "Mod448Qam",
-            "Mod512Qam",
-            "Mod640Qam",
-            "Mod768Qam",
-            "Mod896Qam",
-            "Mod1024Qam",
-            "ModQpsk",
-            "ModBpsk",
-            "ModOqpsk",
-            "Mod8Vsb",
-            "Mod16Vsb",
-            "ModAnalogAmplitude",
-            "ModAnalogFrequency",
-            "Mod8psk",
-            "ModRf",
-            "Mod16Apsk",
-            "Mod32Apsk",
-            "ModQpsk2",
-            "Mod8psk2",
-            "ModDirectTV",
-            "ModMax"});
+          "Not Set",
+          "Not Defined",
+          "16 QAM",
+          "32 QAM",
+          "64 QAM",
+          "80 QAM",
+          "96 QAM",
+          "112 QAM",
+          "128 QAM",
+          "160 QAM",
+          "192 QAM",
+          "224 QAM",
+          "256 QAM",
+          "320 QAM",
+          "384 QAM",
+          "448 QAM",
+          "512 QAM",
+          "640 QAM",
+          "768 QAM",
+          "896 QAM",
+          "1024 QAM",
+          "QPSK",
+          "BPSK",
+          "OQPSK",
+          "8 VSB",
+          "16 VSB",
+          "Analog Amplitude",
+          "Analog Frequency",
+          "8 PSK",
+          "RF",
+          "16 APSK",
+          "32 APSK",
+          "QPSK2 (DVB-S2)",
+          "8 PSK2 (DVB-S2)",
+          "DirectTV"});
       this.comboBoxModulation.Location = new System.Drawing.Point(84, 244);
       this.comboBoxModulation.Name = "comboBoxModulation";
       this.comboBoxModulation.Size = new System.Drawing.Size(129, 21);
@@ -363,9 +359,8 @@ namespace SetupTv.Dialogs
             "Not Defined",
             "Horizontal",
             "Vertical",
-            "CircularL",
-            "CircularR",
-            "Max"});
+            "Circular Left",
+            "Circular Right"});
       this.comboBoxPol.Location = new System.Drawing.Point(84, 189);
       this.comboBoxPol.Name = "comboBoxPol";
       this.comboBoxPol.Size = new System.Drawing.Size(129, 21);

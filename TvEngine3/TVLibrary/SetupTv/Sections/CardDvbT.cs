@@ -318,12 +318,12 @@ namespace SetupTv.Sections
           Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
           if (card.Enabled == false)
           {
-            MessageBox.Show(this, "Card is disabled, please enable the card before scanning");
+            MessageBox.Show(this, "Tuner is disabled. Please enable the tuner before scanning.");
             return;
           }
           if (!RemoteControl.Instance.CardPresent(card.IdCard))
           {
-            MessageBox.Show(this, "Card is not found, please make sure card is present before scanning");
+            MessageBox.Show(this, "Tuner is not found. Please make sure the tuner is present before scanning.");
             return;
           }
           // Check if the card is locked for scanning.
@@ -331,7 +331,7 @@ namespace SetupTv.Sections
           if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
           {
             MessageBox.Show(this,
-                            "Card is locked. Scanning not possible at the moment ! Perhaps you are scanning an other part of a hybrid card.");
+                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
             return;
           }
           SetButtonState();

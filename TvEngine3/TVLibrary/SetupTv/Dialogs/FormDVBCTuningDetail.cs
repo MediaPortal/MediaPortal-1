@@ -14,10 +14,42 @@ namespace SetupTv.Dialogs
     private void FormDVBCTuningDetail_Load(object sender, System.EventArgs e)
     {
       comboBoxDvbCModulation.Items.Clear();
-      foreach (ModulationType modValue in Enum.GetValues(typeof(ModulationType)))
-      {
-        comboBoxDvbCModulation.Items.Add(modValue);
-      }
+      comboBoxDvbCModulation.Items.AddRange(new object[] {
+          "Not Set",
+          "Not Defined",
+          "16 QAM",
+          "32 QAM",
+          "64 QAM",
+          "80 QAM",
+          "96 QAM",
+          "112 QAM",
+          "128 QAM",
+          "160 QAM",
+          "192 QAM",
+          "224 QAM",
+          "256 QAM",
+          "320 QAM",
+          "384 QAM",
+          "448 QAM",
+          "512 QAM",
+          "640 QAM",
+          "768 QAM",
+          "896 QAM",
+          "1024 QAM",
+          "QPSK",
+          "BPSK",
+          "OQPSK",
+          "8 VSB",
+          "16 VSB",
+          "Analog Amplitude",
+          "Analog Frequency",
+          "8 PSK",
+          "RF",
+          "16 APSK",
+          "32 APSK",
+          "QPSK2 (DVB-S2)",
+          "8 PSK2 (DVB-S2)",
+          "DirectTV"});
 
       if (TuningDetail != null)
       {
@@ -73,7 +105,7 @@ namespace SetupTv.Dialogs
       TuningDetail.PmtPid = Convert.ToInt32(textBoxDVBCPmt.Text);
       TuningDetail.Provider = textBoxDVBCProvider.Text;
       TuningDetail.FreeToAir = checkBoxDVBCfta.Checked;
-      TuningDetail.Modulation = (int)comboBoxDvbCModulation.SelectedItem;
+      TuningDetail.Modulation = (int)comboBoxDvbCModulation.SelectedItem - 1;
       TuningDetail.ChannelType = 2;
     }
 

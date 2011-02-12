@@ -133,7 +133,6 @@ namespace SetupTv.Sections
       this.mpLabel11 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.textBox1 = new System.Windows.Forms.TextBox();
       this.mpLabel12 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.mpComboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.textBox2 = new System.Windows.Forms.TextBox();
       this.mpLabel13 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.tabControl1.SuspendLayout();
@@ -640,7 +639,7 @@ namespace SetupTv.Sections
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(32, 13);
       this.label16.TabIndex = 116;
-      this.label16.Text = "MHz.";
+      this.label16.Text = "MHz";
       // 
       // textBoxLNBSwitch
       // 
@@ -717,7 +716,7 @@ namespace SetupTv.Sections
       this.mpLabel15.Name = "mpLabel15";
       this.mpLabel15.Size = new System.Drawing.Size(27, 13);
       this.mpLabel15.TabIndex = 99;
-      this.mpLabel15.Text = "KHz";
+      this.mpLabel15.Text = "kHz";
       // 
       // textBoxFreq
       // 
@@ -788,41 +787,6 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxMod.FormattingEnabled = true;
-      this.mpComboBoxMod.Items.AddRange(new object[] {
-            "Not Defined ",
-            "16 QAM ",
-            "32 QAM",
-            "64 QAM",
-            "80 QAM",
-            "96 QAM",
-            "112 QAM",
-            "128 QAM",
-            "160 QAM",
-            "192 QAM",
-            "224 QAM",
-            "256 QAM",
-            "320 QAM",
-            "384 QAM",
-            "448 QAM",
-            "512 QAM",
-            "640 QAM",
-            "768 QAM",
-            "896 QAM",
-            "1024 QAM",
-            "Qpsk",
-            "Bpsk",
-            "Oqpsk ",
-            "8Vsb ",
-            "16Vsb ",
-            "AnalogAmplitude ",
-            "AnalogFrequency ",
-            "8psk ",
-            "Rf ",
-            "16Apsk ",
-            "32Apsk",
-            "Qpsk2 ",
-            "8psk2 ",
-            "DirectTV  "});
       this.mpComboBoxMod.Location = new System.Drawing.Point(97, 87);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
@@ -1053,7 +1017,7 @@ namespace SetupTv.Sections
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(380, 13);
       this.label9.TabIndex = 38;
-      this.label9.Text = "500mA then you can not use this screen. Doing so might blow up your TV card!";
+      this.label9.Text = "500mA then you cannot use this screen. Doing so might blow up your TV card!";
       // 
       // label8
       // 
@@ -1074,7 +1038,7 @@ namespace SetupTv.Sections
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(409, 13);
       this.label7.TabIndex = 36;
-      this.label7.Text = "WARNING!!! This screen not only requires a DisEQC 1.2 compatible motor but also a" +
+      this.label7.Text = "WARNING!!! This screen not only requires a DiSEqC 1.2 compatible motor but also a" +
           " ";
       // 
       // comboBox1
@@ -1297,7 +1261,7 @@ namespace SetupTv.Sections
       this.mpLabel11.Name = "mpLabel11";
       this.mpLabel11.Size = new System.Drawing.Size(27, 13);
       this.mpLabel11.TabIndex = 99;
-      this.mpLabel11.Text = "KHz";
+      this.mpLabel11.Text = "kHz";
       // 
       // textBox1
       // 
@@ -1316,50 +1280,6 @@ namespace SetupTv.Sections
       this.mpLabel12.Size = new System.Drawing.Size(62, 13);
       this.mpLabel12.TabIndex = 94;
       this.mpLabel12.Text = "Modulation:";
-      // 
-      // mpComboBox1
-      // 
-      this.mpComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBox1.FormattingEnabled = true;
-      this.mpComboBox1.Items.AddRange(new object[] {
-            "Not Defined ",
-            "16 QAM ",
-            "32 QAM",
-            "64 QAM",
-            "80 QAM",
-            "96 QAM",
-            "112 QAM",
-            "128 QAM",
-            "160 QAM",
-            "192 QAM",
-            "224 QAM",
-            "256 QAM",
-            "320 QAM",
-            "384 QAM",
-            "448 QAM",
-            "512 QAM",
-            "640 QAM",
-            "768 QAM",
-            "896 QAM",
-            "1024 QAM",
-            "Qpsk",
-            "Bpsk",
-            "Oqpsk ",
-            "8Vsb ",
-            "16Vsb ",
-            "AnalogAmplitude ",
-            "AnalogFrequency ",
-            "8psk ",
-            "Rf ",
-            "16Apsk ",
-            "32Apsk",
-            "Qpsk2 ",
-            "8psk2 ",
-            "DirectTV  "});
-      this.mpComboBox1.Location = new System.Drawing.Point(98, 77);
-      this.mpComboBox1.Name = "mpComboBox1";
-      this.mpComboBox1.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBox1.TabIndex = 5;
       // 
       // textBox2
       // 
@@ -1477,7 +1397,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel11;
     private System.Windows.Forms.TextBox textBox1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel12;
-    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBox1;
     private System.Windows.Forms.TextBox textBox2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel13;
     private System.Windows.Forms.CheckBox checkBoxAdvancedTuning;
