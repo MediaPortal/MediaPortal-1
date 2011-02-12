@@ -52,7 +52,7 @@ namespace TvPlugin
     [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;
     [SkinControl(16)] protected GUILabelControl lblChannel = null;
     [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
-    [SkinControl(18)] protected GUIImage imgRadioLogo = null;
+    [SkinControl(18)] protected GUIImage imgChannelLogo = null;
     [SkinControl(20)] protected GUIButtonControl btnViewBy = null; // is replacing btnSearchByTitle, btnSearchByGenre
     [SkinControl(21)] protected GUIButtonControl btnSearchDescription = null; // is replacing btnSearchByDescription 
 
@@ -67,10 +67,10 @@ namespace TvPlugin
 
     private enum SortMethod
     {
+      Auto,
       Name,
-      Date,
       Channel,
-      Auto
+      Date
     }
 
     private SortMethod currentSortMethod = SortMethod.Name;
@@ -265,21 +265,30 @@ namespace TvPlugin
       }
       else if (control == btnSortBy)
       {
-        switch (chosenSortMethod)
+        GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+        if (dlg == null)
         {
-          case SortMethod.Auto:
-            chosenSortMethod = SortMethod.Name;
-            break;
-          case SortMethod.Name:
-            chosenSortMethod = SortMethod.Channel;
-            break;
-          case SortMethod.Channel:
-            chosenSortMethod = SortMethod.Date;
-            break;
-          case SortMethod.Date:
-            chosenSortMethod = SortMethod.Auto;
-            break;
+          return;
         }
+        dlg.Reset();
+        dlg.SetHeading(495); //Sort Options
+        dlg.AddLocalizedString(1202); //auto
+        dlg.AddLocalizedString(622); //name
+        dlg.AddLocalizedString(620); //channel
+        dlg.AddLocalizedString(621); //date
+        
+
+        // set the focus to currently used sort method
+        dlg.SelectedLabel = (int)chosenSortMethod;
+
+        // show dialog and wait for result
+        dlg.DoModal(GetID);
+        if (dlg.SelectedId == -1)
+        {
+          return;
+        }
+
+        chosenSortMethod = (SortMethod)dlg.SelectedLabel;
         Update();
       }
       else if (control == listView || control == titleView)
@@ -415,9 +424,9 @@ namespace TvPlugin
 
           if (filterShow == String.Empty)
           {
-            if (imgRadioLogo != null)
+            if (imgChannelLogo != null)
             {
-              imgRadioLogo.IsVisible = false;
+              imgChannelLogo.IsVisible = false;
             }
             if (titleView.SubItemCount == 2)
             {
@@ -435,9 +444,9 @@ namespace TvPlugin
           }
           else
           {
-            if (imgRadioLogo != null)
+            if (imgChannelLogo != null)
             {
-              imgRadioLogo.IsVisible = true;
+              imgChannelLogo.IsVisible = true;
             }
             if (titleView.SubItemCount == 2)
             {
@@ -463,9 +472,9 @@ namespace TvPlugin
           titleView.IsVisible = false;
           GUIControl.FocusControl(GetID, listView.GetID);
 
-          if (imgRadioLogo != null)
+          if (imgChannelLogo != null)
           {
-            imgRadioLogo.IsVisible = false;
+            imgChannelLogo.IsVisible = false;
           }
         }
 
@@ -1121,7 +1130,6 @@ namespace TvPlugin
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
-
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         Channel channel = channelMap[prog.IdChannel];
