@@ -68,6 +68,14 @@ namespace SetupTv.Sections
       this.checkBoxAdvancedTuning = new System.Windows.Forms.CheckBox();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
       this.mpGrpAdvancedTuning = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.mpLabel20 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxInnerFecRate = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel19 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxRollOff = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.mpLabel18 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpComboBoxPilot = new MediaPortal.UserInterface.Controls.MPComboBox();
+      this.label17 = new System.Windows.Forms.Label();
+      this.label15 = new System.Windows.Forms.Label();
       this.label16 = new System.Windows.Forms.Label();
       this.textBoxLNBSwitch = new System.Windows.Forms.TextBox();
       this.textBoxLNBHi = new System.Windows.Forms.TextBox();
@@ -191,10 +199,10 @@ namespace SetupTv.Sections
       // 
       // mpButtonScanTv
       // 
-      this.mpButtonScanTv.Location = new System.Drawing.Point(322, 153);
+      this.mpButtonScanTv.Location = new System.Drawing.Point(322, 149);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(112, 23);
-      this.mpButtonScanTv.TabIndex = 1;
+      this.mpButtonScanTv.TabIndex = 27;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
@@ -232,10 +240,10 @@ namespace SetupTv.Sections
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(213, 134);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(213, 130);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(91, 17);
-      this.checkBoxCreateGroups.TabIndex = 0;
+      this.checkBoxCreateGroups.TabIndex = 23;
       this.checkBoxCreateGroups.Text = "each provider";
       this.checkBoxCreateGroups.UseVisualStyleBackColor = true;
       // 
@@ -297,19 +305,19 @@ namespace SetupTv.Sections
       // mpLabel9
       // 
       this.mpLabel9.AutoSize = true;
-      this.mpLabel9.Location = new System.Drawing.Point(10, 134);
+      this.mpLabel9.Location = new System.Drawing.Point(10, 130);
       this.mpLabel9.Name = "mpLabel9";
       this.mpLabel9.Size = new System.Drawing.Size(88, 13);
-      this.mpLabel9.TabIndex = 136;
+      this.mpLabel9.TabIndex = 21;
       this.mpLabel9.Text = "Create groups for";
       // 
       // checkBoxCreateSignalGroup
       // 
       this.checkBoxCreateSignalGroup.AutoSize = true;
-      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(329, 134);
+      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(329, 130);
       this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
       this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(105, 17);
-      this.checkBoxCreateSignalGroup.TabIndex = 70;
+      this.checkBoxCreateSignalGroup.TabIndex = 24;
       this.checkBoxCreateSignalGroup.Text = "\"Digital Satellite\"";
       this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
       // 
@@ -322,17 +330,17 @@ namespace SetupTv.Sections
       this.mpLNB1.Location = new System.Drawing.Point(6, 25);
       this.mpLNB1.Name = "mpLNB1";
       this.mpLNB1.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB1.TabIndex = 135;
+      this.mpLNB1.TabIndex = 5;
       this.mpLNB1.Text = "#1";
       this.mpLNB1.UseVisualStyleBackColor = true;
       this.mpLNB1.CheckedChanged += new System.EventHandler(this.mpLNB1_CheckedChanged);
       // 
       // buttonUpdate
       // 
-      this.buttonUpdate.Location = new System.Drawing.Point(322, 179);
+      this.buttonUpdate.Location = new System.Drawing.Point(322, 175);
       this.buttonUpdate.Name = "buttonUpdate";
       this.buttonUpdate.Size = new System.Drawing.Size(112, 23);
-      this.buttonUpdate.TabIndex = 16;
+      this.buttonUpdate.TabIndex = 28;
       this.buttonUpdate.Text = "Update satellite list";
       this.buttonUpdate.UseVisualStyleBackColor = true;
       this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
@@ -344,7 +352,7 @@ namespace SetupTv.Sections
       this.mpTransponder4.Location = new System.Drawing.Point(274, 103);
       this.mpTransponder4.Name = "mpTransponder4";
       this.mpTransponder4.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder4.TabIndex = 130;
+      this.mpTransponder4.TabIndex = 20;
       // 
       // mpTransponder3
       // 
@@ -353,7 +361,7 @@ namespace SetupTv.Sections
       this.mpTransponder3.Location = new System.Drawing.Point(274, 76);
       this.mpTransponder3.Name = "mpTransponder3";
       this.mpTransponder3.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder3.TabIndex = 126;
+      this.mpTransponder3.TabIndex = 16;
       // 
       // mpTransponder2
       // 
@@ -362,7 +370,7 @@ namespace SetupTv.Sections
       this.mpTransponder2.Location = new System.Drawing.Point(274, 49);
       this.mpTransponder2.Name = "mpTransponder2";
       this.mpTransponder2.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder2.TabIndex = 122;
+      this.mpTransponder2.TabIndex = 12;
       // 
       // mpTransponder1
       // 
@@ -371,7 +379,7 @@ namespace SetupTv.Sections
       this.mpTransponder1.Location = new System.Drawing.Point(274, 22);
       this.mpTransponder1.Name = "mpTransponder1";
       this.mpTransponder1.Size = new System.Drawing.Size(160, 21);
-      this.mpTransponder1.TabIndex = 118;
+      this.mpTransponder1.TabIndex = 8;
       // 
       // mpDisEqc4
       // 
@@ -380,7 +388,7 @@ namespace SetupTv.Sections
       this.mpDisEqc4.Location = new System.Drawing.Point(47, 103);
       this.mpDisEqc4.Name = "mpDisEqc4";
       this.mpDisEqc4.Size = new System.Drawing.Size(67, 21);
-      this.mpDisEqc4.TabIndex = 128;
+      this.mpDisEqc4.TabIndex = 18;
       // 
       // mpDisEqc3
       // 
@@ -389,7 +397,7 @@ namespace SetupTv.Sections
       this.mpDisEqc3.Location = new System.Drawing.Point(47, 76);
       this.mpDisEqc3.Name = "mpDisEqc3";
       this.mpDisEqc3.Size = new System.Drawing.Size(67, 21);
-      this.mpDisEqc3.TabIndex = 124;
+      this.mpDisEqc3.TabIndex = 14;
       // 
       // mpDisEqc2
       // 
@@ -398,7 +406,7 @@ namespace SetupTv.Sections
       this.mpDisEqc2.Location = new System.Drawing.Point(47, 49);
       this.mpDisEqc2.Name = "mpDisEqc2";
       this.mpDisEqc2.Size = new System.Drawing.Size(67, 21);
-      this.mpDisEqc2.TabIndex = 120;
+      this.mpDisEqc2.TabIndex = 10;
       // 
       // mpDisEqc1
       // 
@@ -407,7 +415,7 @@ namespace SetupTv.Sections
       this.mpDisEqc1.Location = new System.Drawing.Point(47, 22);
       this.mpDisEqc1.Name = "mpDisEqc1";
       this.mpDisEqc1.Size = new System.Drawing.Size(67, 21);
-      this.mpDisEqc1.TabIndex = 116;
+      this.mpDisEqc1.TabIndex = 6;
       // 
       // mpBand4
       // 
@@ -428,7 +436,7 @@ namespace SetupTv.Sections
       this.mpBand4.Location = new System.Drawing.Point(118, 103);
       this.mpBand4.Name = "mpBand4";
       this.mpBand4.Size = new System.Drawing.Size(152, 21);
-      this.mpBand4.TabIndex = 129;
+      this.mpBand4.TabIndex = 19;
       this.mpBand4.SelectedIndexChanged += new System.EventHandler(this.mpBand4_SelectedIndexChanged);
       // 
       // mpBand3
@@ -450,7 +458,7 @@ namespace SetupTv.Sections
       this.mpBand3.Location = new System.Drawing.Point(118, 76);
       this.mpBand3.Name = "mpBand3";
       this.mpBand3.Size = new System.Drawing.Size(152, 21);
-      this.mpBand3.TabIndex = 125;
+      this.mpBand3.TabIndex = 15;
       this.mpBand3.SelectedIndexChanged += new System.EventHandler(this.mpBand3_SelectedIndexChanged);
       // 
       // mpBand2
@@ -472,7 +480,7 @@ namespace SetupTv.Sections
       this.mpBand2.Location = new System.Drawing.Point(118, 49);
       this.mpBand2.Name = "mpBand2";
       this.mpBand2.Size = new System.Drawing.Size(152, 21);
-      this.mpBand2.TabIndex = 121;
+      this.mpBand2.TabIndex = 11;
       this.mpBand2.SelectedIndexChanged += new System.EventHandler(this.mpBand2_SelectedIndexChanged);
       // 
       // mpBand1
@@ -494,7 +502,7 @@ namespace SetupTv.Sections
       this.mpBand1.Location = new System.Drawing.Point(118, 22);
       this.mpBand1.Name = "mpBand1";
       this.mpBand1.Size = new System.Drawing.Size(152, 21);
-      this.mpBand1.TabIndex = 117;
+      this.mpBand1.TabIndex = 7;
       this.mpBand1.SelectedIndexChanged += new System.EventHandler(this.mpBand1_SelectedIndexChanged);
       // 
       // mpLabel3
@@ -503,7 +511,7 @@ namespace SetupTv.Sections
       this.mpLabel3.Location = new System.Drawing.Point(115, 3);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(35, 13);
-      this.mpLabel3.TabIndex = 133;
+      this.mpLabel3.TabIndex = 3;
       this.mpLabel3.Text = "Band:";
       // 
       // mpLNB4
@@ -513,7 +521,7 @@ namespace SetupTv.Sections
       this.mpLNB4.Location = new System.Drawing.Point(6, 104);
       this.mpLNB4.Name = "mpLNB4";
       this.mpLNB4.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB4.TabIndex = 127;
+      this.mpLNB4.TabIndex = 17;
       this.mpLNB4.Text = "#4";
       this.mpLNB4.UseVisualStyleBackColor = true;
       this.mpLNB4.CheckedChanged += new System.EventHandler(this.mpLNB4_CheckedChanged);
@@ -525,7 +533,7 @@ namespace SetupTv.Sections
       this.mpLNB3.Location = new System.Drawing.Point(6, 77);
       this.mpLNB3.Name = "mpLNB3";
       this.mpLNB3.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB3.TabIndex = 123;
+      this.mpLNB3.TabIndex = 13;
       this.mpLNB3.Text = "#3";
       this.mpLNB3.UseVisualStyleBackColor = true;
       this.mpLNB3.CheckedChanged += new System.EventHandler(this.mpLNB3_CheckedChanged);
@@ -537,7 +545,7 @@ namespace SetupTv.Sections
       this.mpLNB2.Location = new System.Drawing.Point(6, 50);
       this.mpLNB2.Name = "mpLNB2";
       this.mpLNB2.Size = new System.Drawing.Size(37, 17);
-      this.mpLNB2.TabIndex = 119;
+      this.mpLNB2.TabIndex = 9;
       this.mpLNB2.Text = "#2";
       this.mpLNB2.UseVisualStyleBackColor = true;
       this.mpLNB2.CheckedChanged += new System.EventHandler(this.mpLNB2_CheckedChanged);
@@ -548,7 +556,7 @@ namespace SetupTv.Sections
       this.mpLabel5.Location = new System.Drawing.Point(271, 3);
       this.mpLabel5.Name = "mpLabel5";
       this.mpLabel5.Size = new System.Drawing.Size(47, 13);
-      this.mpLabel5.TabIndex = 131;
+      this.mpLabel5.TabIndex = 4;
       this.mpLabel5.Text = "Satellite:";
       // 
       // mpLabel8
@@ -557,7 +565,7 @@ namespace SetupTv.Sections
       this.mpLabel8.Location = new System.Drawing.Point(3, 3);
       this.mpLabel8.Name = "mpLabel8";
       this.mpLabel8.Size = new System.Drawing.Size(26, 13);
-      this.mpLabel8.TabIndex = 132;
+      this.mpLabel8.TabIndex = 1;
       this.mpLabel8.Text = "Sat:";
       // 
       // mpLabel6
@@ -566,26 +574,27 @@ namespace SetupTv.Sections
       this.mpLabel6.Location = new System.Drawing.Point(44, 3);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(47, 13);
-      this.mpLabel6.TabIndex = 132;
+      this.mpLabel6.TabIndex = 2;
       this.mpLabel6.Text = "DiSEqC:";
       // 
       // checkEnableDVBS2
       // 
       this.checkEnableDVBS2.AutoSize = true;
-      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 153);
+      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 155);
       this.checkEnableDVBS2.Name = "checkEnableDVBS2";
       this.checkEnableDVBS2.Size = new System.Drawing.Size(226, 17);
-      this.checkEnableDVBS2.TabIndex = 113;
+      this.checkEnableDVBS2.TabIndex = 25;
       this.checkEnableDVBS2.Text = "Enable DVB-S2 channels tuning/scanning";
       this.checkEnableDVBS2.UseVisualStyleBackColor = true;
+      this.checkEnableDVBS2.CheckedChanged += new System.EventHandler(this.checkEnableDVBS2_CheckedChanged);
       // 
       // checkBoxAdvancedTuning
       // 
       this.checkBoxAdvancedTuning.AutoSize = true;
-      this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(10, 173);
+      this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(10, 176);
       this.checkBoxAdvancedTuning.Name = "checkBoxAdvancedTuning";
       this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(165, 17);
-      this.checkBoxAdvancedTuning.TabIndex = 108;
+      this.checkBoxAdvancedTuning.TabIndex = 26;
       this.checkBoxAdvancedTuning.Text = "Use advanced tuning options";
       this.checkBoxAdvancedTuning.UseVisualStyleBackColor = true;
       this.checkBoxAdvancedTuning.CheckedChanged += new System.EventHandler(this.checkBoxAdvancedTuning_CheckedChanged);
@@ -593,10 +602,10 @@ namespace SetupTv.Sections
       // checkBoxCreateGroupsSat
       // 
       this.checkBoxCreateGroupsSat.AutoSize = true;
-      this.checkBoxCreateGroupsSat.Location = new System.Drawing.Point(118, 134);
+      this.checkBoxCreateGroupsSat.Location = new System.Drawing.Point(118, 130);
       this.checkBoxCreateGroupsSat.Name = "checkBoxCreateGroupsSat";
       this.checkBoxCreateGroupsSat.Size = new System.Drawing.Size(88, 17);
-      this.checkBoxCreateGroupsSat.TabIndex = 69;
+      this.checkBoxCreateGroupsSat.TabIndex = 22;
       this.checkBoxCreateGroupsSat.Text = "each satellite";
       this.checkBoxCreateGroupsSat.UseVisualStyleBackColor = true;
       // 
@@ -605,6 +614,15 @@ namespace SetupTv.Sections
       this.mpGrpAdvancedTuning.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGrpAdvancedTuning.Controls.Add(this.textBoxFreq);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel20);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpComboBoxInnerFecRate);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel19);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpComboBoxRollOff);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel18);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpComboBoxPilot);
+      this.mpGrpAdvancedTuning.Controls.Add(this.label17);
+      this.mpGrpAdvancedTuning.Controls.Add(this.label15);
       this.mpGrpAdvancedTuning.Controls.Add(this.label16);
       this.mpGrpAdvancedTuning.Controls.Add(this.textBoxLNBSwitch);
       this.mpGrpAdvancedTuning.Controls.Add(this.textBoxLNBHi);
@@ -614,8 +632,6 @@ namespace SetupTv.Sections
       this.mpGrpAdvancedTuning.Controls.Add(this.label13);
       this.mpGrpAdvancedTuning.Controls.Add(this.label10);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel14);
-      this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel15);
-      this.mpGrpAdvancedTuning.Controls.Add(this.textBoxFreq);
       this.mpGrpAdvancedTuning.Controls.Add(this.groupBox4);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel16);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpComboBoxMod);
@@ -623,52 +639,125 @@ namespace SetupTv.Sections
       this.mpGrpAdvancedTuning.Controls.Add(this.textBoxSymbolRate);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel17);
       this.mpGrpAdvancedTuning.Controls.Add(this.mpComboBoxPolarisation);
+      this.mpGrpAdvancedTuning.Controls.Add(this.mpLabel15);
       this.mpGrpAdvancedTuning.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGrpAdvancedTuning.Location = new System.Drawing.Point(1, 205);
+      this.mpGrpAdvancedTuning.Location = new System.Drawing.Point(1, 198);
       this.mpGrpAdvancedTuning.Name = "mpGrpAdvancedTuning";
-      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(449, 195);
+      this.mpGrpAdvancedTuning.Size = new System.Drawing.Size(449, 200);
       this.mpGrpAdvancedTuning.TabIndex = 112;
       this.mpGrpAdvancedTuning.TabStop = false;
       this.mpGrpAdvancedTuning.Text = "Advanced tuning options";
       this.mpGrpAdvancedTuning.Visible = false;
       // 
+      // mpLabel20
+      // 
+      this.mpLabel20.AutoSize = true;
+      this.mpLabel20.Location = new System.Drawing.Point(222, 132);
+      this.mpLabel20.Name = "mpLabel20";
+      this.mpLabel20.Size = new System.Drawing.Size(83, 13);
+      this.mpLabel20.TabIndex = 50;
+      this.mpLabel20.Text = "Inner FEC Rate:";
+      // 
+      // mpComboBoxInnerFecRate
+      // 
+      this.mpComboBoxInnerFecRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxInnerFecRate.FormattingEnabled = true;
+      this.mpComboBoxInnerFecRate.Location = new System.Drawing.Point(225, 148);
+      this.mpComboBoxInnerFecRate.Name = "mpComboBoxInnerFecRate";
+      this.mpComboBoxInnerFecRate.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxInnerFecRate.TabIndex = 51;
+      // 
+      // mpLabel19
+      // 
+      this.mpLabel19.AutoSize = true;
+      this.mpLabel19.Location = new System.Drawing.Point(345, 148);
+      this.mpLabel19.Name = "mpLabel19";
+      this.mpLabel19.Size = new System.Drawing.Size(45, 13);
+      this.mpLabel19.TabIndex = 54;
+      this.mpLabel19.Text = "Roll-Off:";
+      // 
+      // mpComboBoxRollOff
+      // 
+      this.mpComboBoxRollOff.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxRollOff.FormattingEnabled = true;
+      this.mpComboBoxRollOff.Location = new System.Drawing.Point(348, 164);
+      this.mpComboBoxRollOff.Name = "mpComboBoxRollOff";
+      this.mpComboBoxRollOff.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxRollOff.TabIndex = 55;
+      // 
+      // mpLabel18
+      // 
+      this.mpLabel18.AutoSize = true;
+      this.mpLabel18.Location = new System.Drawing.Point(345, 108);
+      this.mpLabel18.Name = "mpLabel18";
+      this.mpLabel18.Size = new System.Drawing.Size(30, 13);
+      this.mpLabel18.TabIndex = 52;
+      this.mpLabel18.Text = "Pilot:";
+      // 
+      // mpComboBoxPilot
+      // 
+      this.mpComboBoxPilot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxPilot.FormattingEnabled = true;
+      this.mpComboBoxPilot.Location = new System.Drawing.Point(348, 124);
+      this.mpComboBoxPilot.Name = "mpComboBoxPilot";
+      this.mpComboBoxPilot.Size = new System.Drawing.Size(92, 21);
+      this.mpComboBoxPilot.TabIndex = 53;
+      // 
+      // label17
+      // 
+      this.label17.AutoSize = true;
+      this.label17.Location = new System.Drawing.Point(172, 83);
+      this.label17.Name = "label17";
+      this.label17.Size = new System.Drawing.Size(29, 13);
+      this.label17.TabIndex = 38;
+      this.label17.Text = "MHz";
+      // 
+      // label15
+      // 
+      this.label15.AutoSize = true;
+      this.label15.Location = new System.Drawing.Point(172, 60);
+      this.label15.Name = "label15";
+      this.label15.Size = new System.Drawing.Size(29, 13);
+      this.label15.TabIndex = 35;
+      this.label15.Text = "MHz";
+      // 
       // label16
       // 
       this.label16.AutoSize = true;
-      this.label16.Location = new System.Drawing.Point(304, 167);
+      this.label16.Location = new System.Drawing.Point(172, 39);
       this.label16.Name = "label16";
-      this.label16.Size = new System.Drawing.Size(32, 13);
-      this.label16.TabIndex = 116;
+      this.label16.Size = new System.Drawing.Size(29, 13);
+      this.label16.TabIndex = 32;
       this.label16.Text = "MHz";
       // 
       // textBoxLNBSwitch
       // 
-      this.textBoxLNBSwitch.Location = new System.Drawing.Point(212, 164);
+      this.textBoxLNBSwitch.Location = new System.Drawing.Point(103, 81);
       this.textBoxLNBSwitch.Name = "textBoxLNBSwitch";
-      this.textBoxLNBSwitch.Size = new System.Drawing.Size(71, 20);
-      this.textBoxLNBSwitch.TabIndex = 114;
+      this.textBoxLNBSwitch.Size = new System.Drawing.Size(63, 20);
+      this.textBoxLNBSwitch.TabIndex = 37;
       // 
       // textBoxLNBHi
       // 
-      this.textBoxLNBHi.Location = new System.Drawing.Point(105, 164);
+      this.textBoxLNBHi.Location = new System.Drawing.Point(103, 58);
       this.textBoxLNBHi.Name = "textBoxLNBHi";
-      this.textBoxLNBHi.Size = new System.Drawing.Size(71, 20);
-      this.textBoxLNBHi.TabIndex = 113;
+      this.textBoxLNBHi.Size = new System.Drawing.Size(63, 20);
+      this.textBoxLNBHi.TabIndex = 34;
       // 
       // textBoxLNBLo
       // 
-      this.textBoxLNBLo.Location = new System.Drawing.Point(4, 164);
+      this.textBoxLNBLo.Location = new System.Drawing.Point(103, 36);
       this.textBoxLNBLo.Name = "textBoxLNBLo";
-      this.textBoxLNBLo.Size = new System.Drawing.Size(71, 20);
-      this.textBoxLNBLo.TabIndex = 112;
+      this.textBoxLNBLo.Size = new System.Drawing.Size(63, 20);
+      this.textBoxLNBLo.TabIndex = 31;
       // 
       // chkOverrideLNB
       // 
       this.chkOverrideLNB.AutoSize = true;
-      this.chkOverrideLNB.Location = new System.Drawing.Point(4, 125);
+      this.chkOverrideLNB.Location = new System.Drawing.Point(9, 19);
       this.chkOverrideLNB.Name = "chkOverrideLNB";
       this.chkOverrideLNB.Size = new System.Drawing.Size(186, 17);
-      this.chkOverrideLNB.TabIndex = 111;
+      this.chkOverrideLNB.TabIndex = 29;
       this.chkOverrideLNB.Text = "Override default LNB frequencies:";
       this.chkOverrideLNB.UseVisualStyleBackColor = true;
       this.chkOverrideLNB.CheckedChanged += new System.EventHandler(this.chkOverrideLNB_CheckedChanged);
@@ -676,63 +765,63 @@ namespace SetupTv.Sections
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(209, 145);
+      this.label14.Location = new System.Drawing.Point(6, 83);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(90, 13);
-      this.label14.TabIndex = 110;
+      this.label14.TabIndex = 36;
       this.label14.Text = "Switch (LNBSW):";
       // 
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(102, 145);
+      this.label13.Location = new System.Drawing.Point(6, 60);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(67, 13);
-      this.label13.TabIndex = 109;
+      this.label13.TabIndex = 33;
       this.label13.Text = "High (LOF2):";
       // 
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(4, 145);
+      this.label10.Location = new System.Drawing.Point(6, 39);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(65, 13);
-      this.label10.TabIndex = 108;
+      this.label10.TabIndex = 30;
       this.label10.Text = "Low (LOF1):";
       // 
       // mpLabel14
       // 
       this.mpLabel14.AutoSize = true;
-      this.mpLabel14.Location = new System.Drawing.Point(6, 16);
+      this.mpLabel14.Location = new System.Drawing.Point(6, 108);
       this.mpLabel14.Name = "mpLabel14";
       this.mpLabel14.Size = new System.Drawing.Size(60, 13);
-      this.mpLabel14.TabIndex = 92;
+      this.mpLabel14.TabIndex = 39;
       this.mpLabel14.Text = "Frequency:";
       // 
       // mpLabel15
       // 
       this.mpLabel15.AutoSize = true;
-      this.mpLabel15.Location = new System.Drawing.Point(152, 16);
+      this.mpLabel15.Location = new System.Drawing.Point(70, 127);
       this.mpLabel15.Name = "mpLabel15";
-      this.mpLabel15.Size = new System.Drawing.Size(27, 13);
-      this.mpLabel15.TabIndex = 99;
+      this.mpLabel15.Size = new System.Drawing.Size(26, 13);
+      this.mpLabel15.TabIndex = 41;
       this.mpLabel15.Text = "kHz";
       // 
       // textBoxFreq
       // 
-      this.textBoxFreq.Location = new System.Drawing.Point(96, 13);
+      this.textBoxFreq.Location = new System.Drawing.Point(9, 124);
       this.textBoxFreq.MaxLength = 8;
       this.textBoxFreq.Name = "textBoxFreq";
-      this.textBoxFreq.Size = new System.Drawing.Size(50, 20);
-      this.textBoxFreq.TabIndex = 3;
-      this.textBoxFreq.Text = "163000";
+      this.textBoxFreq.Size = new System.Drawing.Size(63, 20);
+      this.textBoxFreq.TabIndex = 40;
+      this.textBoxFreq.Text = "10744000";
       // 
       // groupBox4
       // 
       this.groupBox4.Controls.Add(this.scanNIT);
       this.groupBox4.Controls.Add(this.scanSingleTransponder);
       this.groupBox4.Controls.Add(this.scanPredefProvider);
-      this.groupBox4.Location = new System.Drawing.Point(250, 19);
+      this.groupBox4.Location = new System.Drawing.Point(250, 12);
       this.groupBox4.Name = "groupBox4";
       this.groupBox4.Size = new System.Drawing.Size(174, 89);
       this.groupBox4.TabIndex = 101;
@@ -745,7 +834,8 @@ namespace SetupTv.Sections
       this.scanNIT.Location = new System.Drawing.Point(7, 62);
       this.scanNIT.Name = "scanNIT";
       this.scanNIT.Size = new System.Drawing.Size(146, 17);
-      this.scanNIT.TabIndex = 0;
+      this.scanNIT.TabIndex = 58;
+      this.scanNIT.TabStop = true;
       this.scanNIT.Text = "search for transponder list";
       this.scanNIT.UseVisualStyleBackColor = true;
       this.scanNIT.CheckedChanged += new System.EventHandler(this.UpdateGUIControls);
@@ -756,7 +846,8 @@ namespace SetupTv.Sections
       this.scanSingleTransponder.Location = new System.Drawing.Point(7, 39);
       this.scanSingleTransponder.Name = "scanSingleTransponder";
       this.scanSingleTransponder.Size = new System.Drawing.Size(111, 17);
-      this.scanSingleTransponder.TabIndex = 0;
+      this.scanSingleTransponder.TabIndex = 57;
+      this.scanSingleTransponder.TabStop = true;
       this.scanSingleTransponder.Text = "single transponder";
       this.scanSingleTransponder.UseVisualStyleBackColor = true;
       this.scanSingleTransponder.CheckedChanged += new System.EventHandler(this.UpdateGUIControls);
@@ -768,7 +859,7 @@ namespace SetupTv.Sections
       this.scanPredefProvider.Location = new System.Drawing.Point(7, 16);
       this.scanPredefProvider.Name = "scanPredefProvider";
       this.scanPredefProvider.Size = new System.Drawing.Size(116, 17);
-      this.scanPredefProvider.TabIndex = 0;
+      this.scanPredefProvider.TabIndex = 56;
       this.scanPredefProvider.TabStop = true;
       this.scanPredefProvider.Text = "predefined provider";
       this.scanPredefProvider.UseVisualStyleBackColor = true;
@@ -777,56 +868,56 @@ namespace SetupTv.Sections
       // mpLabel16
       // 
       this.mpLabel16.AutoSize = true;
-      this.mpLabel16.Location = new System.Drawing.Point(9, 90);
+      this.mpLabel16.Location = new System.Drawing.Point(100, 148);
       this.mpLabel16.Name = "mpLabel16";
       this.mpLabel16.Size = new System.Drawing.Size(62, 13);
-      this.mpLabel16.TabIndex = 94;
+      this.mpLabel16.TabIndex = 48;
       this.mpLabel16.Text = "Modulation:";
       // 
       // mpComboBoxMod
       // 
       this.mpComboBoxMod.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxMod.FormattingEnabled = true;
-      this.mpComboBoxMod.Location = new System.Drawing.Point(97, 87);
+      this.mpComboBoxMod.Location = new System.Drawing.Point(103, 164);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBoxMod.TabIndex = 5;
+      this.mpComboBoxMod.TabIndex = 49;
       // 
       // mpLabel7
       // 
       this.mpLabel7.AutoSize = true;
-      this.mpLabel7.Location = new System.Drawing.Point(9, 65);
+      this.mpLabel7.Location = new System.Drawing.Point(103, 108);
       this.mpLabel7.Name = "mpLabel7";
       this.mpLabel7.Size = new System.Drawing.Size(64, 13);
-      this.mpLabel7.TabIndex = 107;
+      this.mpLabel7.TabIndex = 46;
       this.mpLabel7.Text = "Polarisation:";
       // 
       // textBoxSymbolRate
       // 
-      this.textBoxSymbolRate.Location = new System.Drawing.Point(96, 36);
+      this.textBoxSymbolRate.Location = new System.Drawing.Point(9, 164);
       this.textBoxSymbolRate.MaxLength = 5;
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
-      this.textBoxSymbolRate.Size = new System.Drawing.Size(50, 20);
-      this.textBoxSymbolRate.TabIndex = 4;
+      this.textBoxSymbolRate.Size = new System.Drawing.Size(63, 20);
+      this.textBoxSymbolRate.TabIndex = 43;
       this.textBoxSymbolRate.Text = "22000";
       // 
       // mpLabel17
       // 
       this.mpLabel17.AutoSize = true;
-      this.mpLabel17.Location = new System.Drawing.Point(6, 39);
+      this.mpLabel17.Location = new System.Drawing.Point(6, 148);
       this.mpLabel17.Name = "mpLabel17";
-      this.mpLabel17.Size = new System.Drawing.Size(65, 13);
-      this.mpLabel17.TabIndex = 97;
-      this.mpLabel17.Text = "Symbol rate:";
+      this.mpLabel17.Size = new System.Drawing.Size(70, 13);
+      this.mpLabel17.TabIndex = 42;
+      this.mpLabel17.Text = "Symbol Rate:";
       // 
       // mpComboBoxPolarisation
       // 
       this.mpComboBoxPolarisation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPolarisation.FormattingEnabled = true;
-      this.mpComboBoxPolarisation.Location = new System.Drawing.Point(97, 63);
+      this.mpComboBoxPolarisation.Location = new System.Drawing.Point(103, 124);
       this.mpComboBoxPolarisation.Name = "mpComboBoxPolarisation";
       this.mpComboBoxPolarisation.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBoxPolarisation.TabIndex = 102;
+      this.mpComboBoxPolarisation.TabIndex = 47;
       // 
       // mpGrpScanProgress
       // 
@@ -897,7 +988,7 @@ namespace SetupTv.Sections
       this.labelTunerLock.Location = new System.Drawing.Point(90, 270);
       this.labelTunerLock.Name = "labelTunerLock";
       this.labelTunerLock.Size = new System.Drawing.Size(73, 13);
-      this.labelTunerLock.TabIndex = 52;
+      this.labelTunerLock.TabIndex = 81;
       this.labelTunerLock.Text = "Tuner locked:";
       // 
       // label18
@@ -906,7 +997,7 @@ namespace SetupTv.Sections
       this.label18.Location = new System.Drawing.Point(11, 270);
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(73, 13);
-      this.label18.TabIndex = 51;
+      this.label18.TabIndex = 80;
       this.label18.Text = "Tuner locked:";
       // 
       // labelCurrentPosition
@@ -915,7 +1006,7 @@ namespace SetupTv.Sections
       this.labelCurrentPosition.Location = new System.Drawing.Point(100, 111);
       this.labelCurrentPosition.Name = "labelCurrentPosition";
       this.labelCurrentPosition.Size = new System.Drawing.Size(83, 13);
-      this.labelCurrentPosition.TabIndex = 5;
+      this.labelCurrentPosition.TabIndex = 68;
       this.labelCurrentPosition.Text = "Current position:";
       // 
       // label12
@@ -924,7 +1015,7 @@ namespace SetupTv.Sections
       this.label12.Location = new System.Drawing.Point(11, 111);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(83, 13);
-      this.label12.TabIndex = 48;
+      this.label12.TabIndex = 67;
       this.label12.Text = "Current position:";
       // 
       // buttonReset
@@ -932,7 +1023,7 @@ namespace SetupTv.Sections
       this.buttonReset.Location = new System.Drawing.Point(160, 236);
       this.buttonReset.Name = "buttonReset";
       this.buttonReset.Size = new System.Drawing.Size(66, 23);
-      this.buttonReset.TabIndex = 13;
+      this.buttonReset.TabIndex = 77;
       this.buttonReset.Text = "Reset";
       this.buttonReset.UseVisualStyleBackColor = true;
       this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
@@ -943,7 +1034,7 @@ namespace SetupTv.Sections
       this.checkBox1.Location = new System.Drawing.Point(11, 6);
       this.checkBox1.Name = "checkBox1";
       this.checkBox1.Size = new System.Drawing.Size(134, 17);
-      this.checkBox1.TabIndex = 0;
+      this.checkBox1.TabIndex = 59;
       this.checkBox1.Text = "DiSEqC Motor enabled";
       this.checkBox1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       this.checkBox1.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
@@ -956,7 +1047,7 @@ namespace SetupTv.Sections
       this.label11.Location = new System.Drawing.Point(11, 84);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(53, 13);
-      this.label11.TabIndex = 45;
+      this.label11.TabIndex = 64;
       this.label11.Text = "Step size:";
       // 
       // comboBoxStepSize
@@ -966,7 +1057,7 @@ namespace SetupTv.Sections
       this.comboBoxStepSize.Location = new System.Drawing.Point(100, 81);
       this.comboBoxStepSize.Name = "comboBoxStepSize";
       this.comboBoxStepSize.Size = new System.Drawing.Size(92, 21);
-      this.comboBoxStepSize.TabIndex = 4;
+      this.comboBoxStepSize.TabIndex = 65;
       this.comboBoxStepSize.SelectedIndexChanged += new System.EventHandler(this.comboBoxStepSize_SelectedIndexChanged);
       // 
       // buttonUp
@@ -974,7 +1065,7 @@ namespace SetupTv.Sections
       this.buttonUp.Location = new System.Drawing.Point(195, 135);
       this.buttonUp.Name = "buttonUp";
       this.buttonUp.Size = new System.Drawing.Size(66, 23);
-      this.buttonUp.TabIndex = 8;
+      this.buttonUp.TabIndex = 71;
       this.buttonUp.Text = "Move Up";
       this.buttonUp.UseVisualStyleBackColor = true;
       this.buttonUp.Click += new System.EventHandler(this.buttonUp_Click);
@@ -984,7 +1075,7 @@ namespace SetupTv.Sections
       this.buttonDown.Location = new System.Drawing.Point(195, 193);
       this.buttonDown.Name = "buttonDown";
       this.buttonDown.Size = new System.Drawing.Size(66, 23);
-      this.buttonDown.TabIndex = 10;
+      this.buttonDown.TabIndex = 73;
       this.buttonDown.Text = "Move Down";
       this.buttonDown.UseVisualStyleBackColor = true;
       this.buttonDown.Click += new System.EventHandler(this.buttonDown_Click);
@@ -994,7 +1085,7 @@ namespace SetupTv.Sections
       this.buttonGotoStart.Location = new System.Drawing.Point(232, 236);
       this.buttonGotoStart.Name = "buttonGotoStart";
       this.buttonGotoStart.Size = new System.Drawing.Size(66, 23);
-      this.buttonGotoStart.TabIndex = 14;
+      this.buttonGotoStart.TabIndex = 78;
       this.buttonGotoStart.Text = "Goto start";
       this.buttonGotoStart.UseVisualStyleBackColor = true;
       this.buttonGotoStart.Click += new System.EventHandler(this.buttonGotoStart_Click);
@@ -1004,7 +1095,7 @@ namespace SetupTv.Sections
       this.buttonStop.Location = new System.Drawing.Point(195, 164);
       this.buttonStop.Name = "buttonStop";
       this.buttonStop.Size = new System.Drawing.Size(66, 23);
-      this.buttonStop.TabIndex = 9;
+      this.buttonStop.TabIndex = 72;
       this.buttonStop.Text = "STOP";
       this.buttonStop.UseVisualStyleBackColor = true;
       this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
@@ -1015,8 +1106,8 @@ namespace SetupTv.Sections
       this.label9.ForeColor = System.Drawing.Color.Red;
       this.label9.Location = new System.Drawing.Point(11, 371);
       this.label9.Name = "label9";
-      this.label9.Size = new System.Drawing.Size(380, 13);
-      this.label9.TabIndex = 38;
+      this.label9.Size = new System.Drawing.Size(377, 13);
+      this.label9.TabIndex = 88;
       this.label9.Text = "500mA then you cannot use this screen. Doing so might blow up your TV card!";
       // 
       // label8
@@ -1026,7 +1117,7 @@ namespace SetupTv.Sections
       this.label8.Location = new System.Drawing.Point(11, 355);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(414, 13);
-      this.label8.TabIndex = 37;
+      this.label8.TabIndex = 87;
       this.label8.Text = "TV card which can deliver at least 500mA for the motor. If your TV card cannot su" +
           "pply ";
       // 
@@ -1037,7 +1128,7 @@ namespace SetupTv.Sections
       this.label7.Location = new System.Drawing.Point(11, 338);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(409, 13);
-      this.label7.TabIndex = 36;
+      this.label7.TabIndex = 86;
       this.label7.Text = "WARNING!!! This screen not only requires a DiSEqC 1.2 compatible motor but also a" +
           " ";
       // 
@@ -1048,7 +1139,7 @@ namespace SetupTv.Sections
       this.comboBox1.Location = new System.Drawing.Point(100, 54);
       this.comboBox1.Name = "comboBox1";
       this.comboBox1.Size = new System.Drawing.Size(233, 21);
-      this.comboBox1.TabIndex = 3;
+      this.comboBox1.TabIndex = 63;
       this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
       // 
       // label4
@@ -1057,7 +1148,7 @@ namespace SetupTv.Sections
       this.label4.Location = new System.Drawing.Point(11, 57);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(70, 13);
-      this.label4.TabIndex = 34;
+      this.label4.TabIndex = 62;
       this.label4.Text = "Transponder:";
       // 
       // progressBarSatQuality
@@ -1065,14 +1156,14 @@ namespace SetupTv.Sections
       this.progressBarSatQuality.Location = new System.Drawing.Point(101, 318);
       this.progressBarSatQuality.Name = "progressBarSatQuality";
       this.progressBarSatQuality.Size = new System.Drawing.Size(328, 10);
-      this.progressBarSatQuality.TabIndex = 33;
+      this.progressBarSatQuality.TabIndex = 85;
       // 
       // progressBarSatLevel
       // 
       this.progressBarSatLevel.Location = new System.Drawing.Point(101, 295);
       this.progressBarSatLevel.Name = "progressBarSatLevel";
       this.progressBarSatLevel.Size = new System.Drawing.Size(328, 10);
-      this.progressBarSatLevel.TabIndex = 32;
+      this.progressBarSatLevel.TabIndex = 83;
       // 
       // label5
       // 
@@ -1080,7 +1171,7 @@ namespace SetupTv.Sections
       this.label5.Location = new System.Drawing.Point(11, 315);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(72, 13);
-      this.label5.TabIndex = 31;
+      this.label5.TabIndex = 84;
       this.label5.Text = "Signal quality:";
       // 
       // label6
@@ -1089,7 +1180,7 @@ namespace SetupTv.Sections
       this.label6.Location = new System.Drawing.Point(11, 292);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(64, 13);
-      this.label6.TabIndex = 30;
+      this.label6.TabIndex = 82;
       this.label6.Text = "Signal level:";
       // 
       // checkBoxEnabled
@@ -1098,7 +1189,7 @@ namespace SetupTv.Sections
       this.checkBoxEnabled.Location = new System.Drawing.Point(14, 240);
       this.checkBoxEnabled.Name = "checkBoxEnabled";
       this.checkBoxEnabled.Size = new System.Drawing.Size(142, 17);
-      this.checkBoxEnabled.TabIndex = 10;
+      this.checkBoxEnabled.TabIndex = 76;
       this.checkBoxEnabled.Text = "Enable East/West Limits";
       this.checkBoxEnabled.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
       this.checkBoxEnabled.UseVisualStyleBackColor = true;
@@ -1109,7 +1200,7 @@ namespace SetupTv.Sections
       this.buttonGoto.Location = new System.Drawing.Point(352, 29);
       this.buttonGoto.Name = "buttonGoto";
       this.buttonGoto.Size = new System.Drawing.Size(88, 23);
-      this.buttonGoto.TabIndex = 2;
+      this.buttonGoto.TabIndex = 66;
       this.buttonGoto.Text = "Goto";
       this.buttonGoto.UseVisualStyleBackColor = true;
       this.buttonGoto.Click += new System.EventHandler(this.button1_Click);
@@ -1119,7 +1210,7 @@ namespace SetupTv.Sections
       this.buttonStore.Location = new System.Drawing.Point(352, 236);
       this.buttonStore.Name = "buttonStore";
       this.buttonStore.Size = new System.Drawing.Size(88, 23);
-      this.buttonStore.TabIndex = 15;
+      this.buttonStore.TabIndex = 79;
       this.buttonStore.Text = "Store position";
       this.buttonStore.UseVisualStyleBackColor = true;
       this.buttonStore.Click += new System.EventHandler(this.buttonStore_Click);
@@ -1130,7 +1221,7 @@ namespace SetupTv.Sections
       this.label3.Location = new System.Drawing.Point(11, 32);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(47, 13);
-      this.label3.TabIndex = 5;
+      this.label3.TabIndex = 60;
       this.label3.Text = "Satellite:";
       // 
       // comboBoxSat
@@ -1140,7 +1231,7 @@ namespace SetupTv.Sections
       this.comboBoxSat.Location = new System.Drawing.Point(100, 29);
       this.comboBoxSat.Name = "comboBoxSat";
       this.comboBoxSat.Size = new System.Drawing.Size(233, 21);
-      this.comboBoxSat.TabIndex = 1;
+      this.comboBoxSat.TabIndex = 61;
       this.comboBoxSat.SelectedIndexChanged += new System.EventHandler(this.comboBoxSat_SelectedIndexChanged);
       // 
       // buttonSetEastLimit
@@ -1148,7 +1239,7 @@ namespace SetupTv.Sections
       this.buttonSetEastLimit.Location = new System.Drawing.Point(352, 164);
       this.buttonSetEastLimit.Name = "buttonSetEastLimit";
       this.buttonSetEastLimit.Size = new System.Drawing.Size(88, 23);
-      this.buttonSetEastLimit.TabIndex = 12;
+      this.buttonSetEastLimit.TabIndex = 75;
       this.buttonSetEastLimit.Text = "| Set East Limit";
       this.buttonSetEastLimit.UseVisualStyleBackColor = true;
       this.buttonSetEastLimit.Click += new System.EventHandler(this.buttonSetEastLimit_Click);
@@ -1158,7 +1249,7 @@ namespace SetupTv.Sections
       this.buttonSetWestLimit.Location = new System.Drawing.Point(14, 164);
       this.buttonSetWestLimit.Name = "buttonSetWestLimit";
       this.buttonSetWestLimit.Size = new System.Drawing.Size(88, 23);
-      this.buttonSetWestLimit.TabIndex = 6;
+      this.buttonSetWestLimit.TabIndex = 69;
       this.buttonSetWestLimit.Text = "Set West Limit |";
       this.buttonSetWestLimit.UseVisualStyleBackColor = true;
       this.buttonSetWestLimit.Click += new System.EventHandler(this.buttonSetWestLimit_Click);
@@ -1168,7 +1259,7 @@ namespace SetupTv.Sections
       this.buttonMoveEast.Location = new System.Drawing.Point(267, 164);
       this.buttonMoveEast.Name = "buttonMoveEast";
       this.buttonMoveEast.Size = new System.Drawing.Size(66, 23);
-      this.buttonMoveEast.TabIndex = 11;
+      this.buttonMoveEast.TabIndex = 74;
       this.buttonMoveEast.Text = "Move East >>";
       this.buttonMoveEast.UseVisualStyleBackColor = true;
       this.buttonMoveEast.Click += new System.EventHandler(this.buttonMoveEast_Click);
@@ -1178,7 +1269,7 @@ namespace SetupTv.Sections
       this.buttonMoveWest.Location = new System.Drawing.Point(123, 164);
       this.buttonMoveWest.Name = "buttonMoveWest";
       this.buttonMoveWest.Size = new System.Drawing.Size(66, 23);
-      this.buttonMoveWest.TabIndex = 7;
+      this.buttonMoveWest.TabIndex = 70;
       this.buttonMoveWest.Text = "<< Move West";
       this.buttonMoveWest.UseVisualStyleBackColor = true;
       this.buttonMoveWest.Click += new System.EventHandler(this.buttonMoveWest_Click);
@@ -1433,5 +1524,13 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPCheckBox mpLNB1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel9;
     private System.Windows.Forms.CheckBox checkBoxCreateSignalGroup;
+    private System.Windows.Forms.Label label15;
+    private System.Windows.Forms.Label label17;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxPilot;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel19;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxRollOff;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel18;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabel20;
+    private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxInnerFecRate;
   }
 }

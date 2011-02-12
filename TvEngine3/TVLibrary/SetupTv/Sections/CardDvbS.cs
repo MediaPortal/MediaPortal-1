@@ -152,11 +152,6 @@ namespace SetupTv.Sections
 
     private ScanState scanState; // scan state
 
-    private bool _isScanning
-    {
-      get { return scanState == ScanState.Scanning || scanState == ScanState.Cancel || scanState == ScanState.Updating; }
-    }
-
     /// <summary>
     /// Returns active scan type
     /// </summary>
@@ -594,8 +589,41 @@ namespace SetupTv.Sections
           "8 PSK2 (DVB-S2)",
           "DirectTV"});
       mpComboBoxMod.SelectedIndex = 0;
-      //mpButtonSaveList.Enabled = (_transponders.Count != 0);
 
+      mpComboBoxInnerFecRate.Items.AddRange(new object[] {
+            "Not Set",
+            "Not Defined",
+            "1/2",
+            "2/3",
+            "3/4",
+            "3/5",
+            "4/5",
+            "5/6",
+            "5/11",
+            "7/8",
+            "1/4",
+            "1/3",
+            "2/5",
+            "6/7",
+            "8/9",
+            "9/10"});
+      mpComboBoxInnerFecRate.SelectedIndex = 0;
+
+      mpComboBoxPilot.Items.AddRange(new object[] {
+            "Not Set",
+            "Not Defined",
+            "Off",
+            "On"});
+      mpComboBoxPilot.SelectedIndex = 0;
+
+      mpComboBoxRollOff.Items.AddRange(new object[] {
+            "Not Set",
+            "Not Defined",
+            ".20 Roll Off",
+            ".25 Roll Off",
+            ".35 Roll Off"});
+      mpComboBoxRollOff.SelectedIndex = 0;
+      //mpButtonSaveList.Enabled = (_transponders.Count != 0);
 
       //List<SimpleFileName> satellites = fileFilters.AllFiles;
       List<SatelliteContext> satellites = LoadSatellites();
@@ -662,10 +690,6 @@ namespace SetupTv.Sections
         (layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
 
       checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
-      if (!checkEnableDVBS2.Checked)
-      {
-        checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
-      }
 
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
@@ -677,6 +701,7 @@ namespace SetupTv.Sections
       checkBoxCreateSignalGroup.Text = "\"" + TvConstants.TvGroupNames.DVBS + "\"";
 
       scanState = ScanState.Initialized;
+      SetControlStates();
     }
 
     public override void OnSectionDeActivated()
@@ -747,7 +772,6 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("dvbs" + _cardNumber + "LNB1", "false");
       setting.Value = mpLNB1.Checked ? "true" : "false";
       setting.Persist();
-
       setting = layer.GetSetting("dvbs" + _cardNumber + "LNB2", "false");
       setting.Value = mpLNB2.Checked ? "true" : "false";
       setting.Persist();
@@ -826,7 +850,7 @@ namespace SetupTv.Sections
         case ScanState.Done:
           scanState = ScanState.Initialized;
           listViewStatus.Items.Clear();
-          SetButtonState();
+          SetControlStates();
           return;
 
         case ScanState.Initialized:
@@ -852,17 +876,12 @@ namespace SetupTv.Sections
             return;
           }
 
-          SetButtonState();
-          ShowActiveGroup(1); // force progess visible
-
-          Thread scanThread = new Thread(DoScan);
-          scanThread.Name = "DVB-S scan thread";
-          scanThread.Start();
+          StartScanThread();
           break;
 
         case ScanState.Scanning:
           scanState = ScanState.Cancel;
-          SetButtonState();
+          SetControlStates();
           break;
 
         case ScanState.Cancel:
@@ -879,12 +898,12 @@ namespace SetupTv.Sections
 
     private void DoScan()
     {
+      MethodInvoker updateControls = new MethodInvoker(SetControlStates);
       try
       {
         scanState = ScanState.Scanning;
-        SetButtonState();
+        Invoke(updateControls);
         RemoteControl.Instance.EpgGrabberEnabled = false;
-        SetAllControlState(false);
 
         listViewStatus.Items.Clear();
         _tvChannelsNew = 0;
@@ -933,31 +952,9 @@ namespace SetupTv.Sections
         RemoteControl.Instance.StopCard(user);
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
-        SetAllControlState(true);
         scanState = ScanState.Done;
-        SetButtonState();
+        Invoke(updateControls);
       }
-    }
-
-    private void SetAllControlState(bool state)
-    {
-      mpTransponder1.Enabled = state;
-      mpTransponder2.Enabled = state;
-      mpTransponder3.Enabled = state;
-      mpTransponder4.Enabled = state;
-      mpDisEqc1.Enabled = state;
-      mpDisEqc2.Enabled = state;
-      mpDisEqc3.Enabled = state;
-      mpDisEqc4.Enabled = state;
-      mpBand1.Enabled = state;
-      mpBand2.Enabled = state;
-      mpBand3.Enabled = state;
-      mpBand4.Enabled = state;
-      mpLNB1.Enabled = state;
-      mpLNB2.Enabled = state;
-      mpLNB3.Enabled = state;
-      mpLNB4.Enabled = state;
-      checkEnableDVBS2.Enabled = state;
     }
 
     private void Scan(int lnb, BandType bandType, DisEqcType diseqc, SatelliteContext context)
@@ -991,8 +988,6 @@ namespace SetupTv.Sections
           foreach (Transponder t in _transponders)
           {
             DVBSChannel curChannel = t.toDVBSChannel;
-            curChannel.BandType = bandType;
-            curChannel.SatelliteIndex = position;
             _channels.Add(curChannel);
           }
           break;
@@ -1001,6 +996,9 @@ namespace SetupTv.Sections
         case ScanTypes.NIT:
           _transponders.Clear();
           DVBSChannel tuneChannel = GetManualTuning();
+          tuneChannel.DisEqc = diseqc;
+          tuneChannel.BandType = bandType;
+          tuneChannel.SatelliteIndex = position;
 
           listViewStatus.Items.Clear();
           string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1, tuneChannel.Frequency,
@@ -1014,8 +1012,6 @@ namespace SetupTv.Sections
             for (int i = 0; i < channels.Length; ++i)
             {
               DVBSChannel curChannel = (DVBSChannel)channels[i];
-              curChannel.BandType = bandType;
-              curChannel.SatelliteIndex = position;
               _channels.Add(curChannel);
               item = listViewStatus.Items.Add(new ListViewItem(curChannel.ToString()));
               item.EnsureVisible();
@@ -1053,14 +1049,23 @@ namespace SetupTv.Sections
           percent = 100f;
         progressBar1.Value = (int)percent;
 
-        // if S2 transponder and not enabled skip it
-        if (tuneChannel.Rolloff != RollOff.NotSet && !checkEnableDVBS2.Checked)
+        // If this is a DVB-S2 transponder and DVB-S2
+        // scanning is not enabled then skip it. Note that
+        // a roll-off of .35 is the default for standard
+        // DVB-S.
+        if ((tuneChannel.Rolloff == RollOff.Twenty ||
+          tuneChannel.Rolloff == RollOff.TwentyFive ||
+          tuneChannel.Pilot == Pilot.On) &&
+          !checkEnableDVBS2.Checked)
         {
           continue;
         }
 
         scanIndex++;
 
+        tuneChannel.DisEqc = diseqc;
+        tuneChannel.BandType = bandType;
+        tuneChannel.SatelliteIndex = position;
         if (bandType == BandType.Circular)
         {
           if (tuneChannel.Polarisation == Polarisation.LinearH)
@@ -1068,7 +1073,6 @@ namespace SetupTv.Sections
           else if (tuneChannel.Polarisation == Polarisation.LinearV)
             tuneChannel.Polarisation = Polarisation.CircularR;
         }
-        tuneChannel.DisEqc = diseqc;
         string line = String.Format("lnb:{0} {1}tp- {2} {3} {4}", lnb, 1 + index, tuneChannel.Frequency,
                                     tuneChannel.Polarisation, tuneChannel.SymbolRate);
         ListViewItem item = listViewStatus.Items.Add(new ListViewItem(line));
@@ -1631,8 +1635,7 @@ namespace SetupTv.Sections
     private void buttonUpdate_Click(object sender, EventArgs e)
     {
       scanState = ScanState.Updating;
-      SetButtonState();
-      ShowActiveGroup(1);
+      SetControlStates();
       listViewStatus.Items.Clear();
       string itemLine = String.Format("Updating satellites...");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
@@ -1645,7 +1648,7 @@ namespace SetupTv.Sections
       itemLine = String.Format("Update finished");
       listViewStatus.Items.Add(new ListViewItem(itemLine));
       scanState = ScanState.Initialized;
-      SetButtonState();
+      SetControlStates();
     }
 
     #region LNB selection tab
@@ -1706,6 +1709,17 @@ namespace SetupTv.Sections
       mpBand1_SelectedIndexChanged(sender, e);
     }
 
+    private void checkEnableDVBS2_CheckedChanged(object sender, EventArgs e)
+    {
+      mpComboBoxPilot.Enabled = false;
+      mpComboBoxRollOff.Enabled = false;
+      if (checkEnableDVBS2.Enabled && checkEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
+      {
+        mpComboBoxPilot.Enabled = true;
+        mpComboBoxRollOff.Enabled = true;
+      }
+    }
+
     #endregion
 
     private void checkBoxCreateGroupsSat_CheckedChanged(object sender, EventArgs e)
@@ -1737,25 +1751,21 @@ namespace SetupTv.Sections
     #region GUI handling
 
     /// <summary>
-    /// Sets correct button state 
+    /// Sets correct visibility and enabled states for UI controls.
     /// </summary>
-    private void SetButtonState()
+    private void SetControlStates()
     {
-      //mpComboBoxCountry.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
-      //mpComboBoxRegion.Enabled = !_isScanning && ActiveScanType == ScanTypes.Predefined;
-      textBoxFreq.Enabled = ActiveScanType != ScanTypes.Predefined;
-      textBoxSymbolRate.Enabled = ActiveScanType != ScanTypes.Predefined;
-      mpComboBoxMod.Enabled = ActiveScanType != ScanTypes.Predefined;
-      mpComboBoxPolarisation.Enabled = ActiveScanType != ScanTypes.Predefined;
-
-      mpButtonScanTv.Enabled = true;
-
-      int forceProgress = 0;
+      int gotoView = 1;
       switch (scanState)
       {
         default:
         case ScanState.Initialized:
+          if (mpButtonScanTv.Text != "Scan for channels" || !mpButtonScanTv.Enabled)
+          {
+            mpButtonScanTv.Enabled = true;
+          }
           mpButtonScanTv.Text = "Scan for channels";
+          gotoView = 0;
           break;
 
         case ScanState.Scanning:
@@ -1768,7 +1778,6 @@ namespace SetupTv.Sections
 
         case ScanState.Done:
           mpButtonScanTv.Text = "New scan";
-          forceProgress = 1; // leave window open
           break;
 
         case ScanState.Updating:
@@ -1777,39 +1786,73 @@ namespace SetupTv.Sections
           break;
       }
 
-      ShowActiveGroup(forceProgress);
+      bool enableScanControls = scanState == ScanState.Initialized;
+      Control[] scanControls = new Control[]
+      {
+        mpLNB1, mpLNB2, mpLNB3, mpLNB4,
+        mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4,
+        mpBand1, mpBand2, mpBand3, mpBand4,
+        mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4,
+        checkBoxCreateGroupsSat, checkBoxCreateGroups, checkBoxCreateSignalGroup,
+        checkEnableDVBS2, checkBoxAdvancedTuning, buttonUpdate
+      };
+      for (int ctlIndex = 0; ctlIndex < scanControls.Length; ctlIndex++)
+      {
+        scanControls[ctlIndex].Enabled = enableScanControls;
+      }
+
+      bool enableNonPredef = scanState == ScanState.Initialized && ActiveScanType != ScanTypes.Predefined;
+      Control[] nonPredefControls = new Control[]
+      {
+        textBoxFreq, textBoxSymbolRate,
+        mpComboBoxPolarisation, mpComboBoxMod,
+        mpComboBoxInnerFecRate
+      };
+      for (int ctlIndex = 0; ctlIndex < nonPredefControls.Length; ctlIndex++)
+      {
+        nonPredefControls[ctlIndex].Enabled = enableNonPredef;
+      }
+
+      // Only give access to the DVB-S2 fields when DVB-S2 scanning
+      // is enabled - helps prevent users who don't know what the
+      // fields are for from doing something they shouldn't.
+      mpComboBoxPilot.Enabled = false;
+      mpComboBoxRollOff.Enabled = false;
+      if (checkEnableDVBS2.Enabled && checkEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
+      {
+        mpComboBoxPilot.Enabled = true;
+        mpComboBoxRollOff.Enabled = true;
+      }
+
+      SwitchToView(gotoView);
     }
 
     /// <summary>
-    /// Show either scan option or progress
+    /// Show either scan parameters or scan progress.
     /// </summary>
-    /// <param name="ForceShowProgress">1 to force progress visible</param>
-    private void ShowActiveGroup(int ForceShowProgress)
+    /// <param name="view">0 for parameters, 1 for progress</param>
+    private void SwitchToView(int view)
     {
-      if (ForceShowProgress == 1)
+      if (view == 1)
       {
         mpGrpAdvancedTuning.Visible = false;
         mpGrpScanProgress.Visible = true;
-        checkBoxAdvancedTuning.Enabled = false;
-        checkEnableDVBS2.Enabled = false;
-        buttonUpdate.Enabled = false;
       }
       else
       {
-        mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked && !_isScanning;
-        mpGrpScanProgress.Visible = _isScanning;
-        checkBoxAdvancedTuning.Enabled = !_isScanning;
-        checkEnableDVBS2.Enabled = !_isScanning;
-        buttonUpdate.Enabled = !_isScanning;
+        mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked;
+        mpGrpScanProgress.Visible = false;
       }
 
-      if (mpGrpAdvancedTuning.Visible)
-      {
-        mpGrpAdvancedTuning.BringToFront();
-      }
       if (mpGrpScanProgress.Visible)
       {
+        mpGrpAdvancedTuning.SendToBack();
         mpGrpScanProgress.BringToFront();
+      }
+      else
+      {
+        mpGrpScanProgress.SendToBack();
+        mpGrpAdvancedTuning.BringToFront();
       }
       UpdateZOrder();
       Application.DoEvents();
@@ -1818,7 +1861,7 @@ namespace SetupTv.Sections
 
     private void UpdateGUIControls(object sender, EventArgs e)
     {
-      SetButtonState();
+      SetControlStates();
     }
 
     #endregion
@@ -1848,9 +1891,12 @@ namespace SetupTv.Sections
     {
       DVBSChannel tuneChannel = new DVBSChannel();
       tuneChannel.Frequency = Int32.Parse(textBoxFreq.Text);
-      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex - 1;
       tuneChannel.SymbolRate = Int32.Parse(textBoxSymbolRate.Text);
       tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedIndex - 1;
+      tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex - 1;
+      tuneChannel.InnerFecRate = (BinaryConvolutionCodeRate)mpComboBoxInnerFecRate.SelectedIndex - 1;
+      tuneChannel.Pilot = (Pilot)mpComboBoxPilot.SelectedIndex - 1;
+      tuneChannel.Rolloff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;
       return tuneChannel;
     }
 
@@ -1883,6 +1929,7 @@ namespace SetupTv.Sections
     private void checkBoxAdvancedTuning_CheckedChanged(object sender, EventArgs e)
     {
       mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked;
+      SetControlStates();
     }
   }
 }
