@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -811,7 +811,7 @@ namespace SetupTv.Sections
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
-                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
+                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
         Thread scanThread = new Thread(DoTvScan);
@@ -1278,10 +1278,11 @@ namespace SetupTv.Sections
       {
         string channelName = "CVBS#1 on " + card.IdCard;
         IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
-        if (tuningDetails!= null && tuningDetails.Count > 0)
+        if (tuningDetails != null && tuningDetails.Count > 0)
         {
           dbChannel = tuningDetails[0].ReferencedChannel();
-        } else
+        }
+        else
         {
           dbChannel = layer.AddNewChannel(channelName);
         }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -425,7 +425,8 @@ namespace TvLibrary.Log
               int threadId = Thread.CurrentThread.ManagedThreadId;
 
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId,
+                               logLine);
               writer.Close();
             }
           }

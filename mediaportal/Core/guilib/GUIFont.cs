@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,14 +38,14 @@ using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library
 {
-  public class FontRenderContext 
+  public class FontRenderContext
   {
     private IntPtr _ptrStr;
     private bool _outOfBounds;
 
     public FontRenderContext(GUIFont font, string t)
     {
-       string text = font.GetRTLText(t);
+      string text = font.GetRTLText(t);
 
       _outOfBounds = font.containsOutOfBoundsChar(text);
 
@@ -97,7 +97,6 @@ namespace MediaPortal.GUI.Library
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEnginePresent3D(int fontNumber);
-    
 
     #endregion
 
@@ -262,8 +261,8 @@ namespace MediaPortal.GUI.Library
       {
         _fileName = fileName;
         _fontHeight = Size;
-        _systemFont = new Font(_fileName, (float)_fontHeight, style);  
-      }      
+        _systemFont = new Font(_fileName, (float)_fontHeight, style);
+      }
     }
 
     public bool containsOutOfBoundsChar(string text)
@@ -278,6 +277,7 @@ namespace MediaPortal.GUI.Library
       }
       return false;
     }
+
     /// <summary>
     /// Draws text with a maximum width.
     /// </summary>
@@ -422,8 +422,10 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIFontManager.Renderlock)
       {
-        float fShadowXOff = (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
-        float fShadowYOff = (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowXOff =
+          (float)Math.Round((double)iShadowDistance * Math.Cos(ConvertDegreesToRadians((double)iShadowAngle)));
+        float fShadowYOff =
+          (float)Math.Round((double)iShadowDistance * Math.Sin(ConvertDegreesToRadians((double)iShadowAngle)));
         float fShadowX = fOriginX + fShadowXOff;
         float fShadowY = fOriginY + fShadowYOff;
 
@@ -815,9 +817,8 @@ namespace MediaPortal.GUI.Library
       {
         if (context == null)
         {
-
           if (string.IsNullOrEmpty(text))
-             return;
+            return;
 
           context = new FontRenderContext(this, text);
         }
@@ -832,7 +833,8 @@ namespace MediaPortal.GUI.Library
           int red = (int)((color >> 16) & 0xff);
           int green = (int)((color >> 8) & 0xff);
           int blue = (int)(color & 0xff);
-          GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth, _fontHeight);
+          GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth,
+                                  _fontHeight);
           return;
         }
 
@@ -880,15 +882,15 @@ namespace MediaPortal.GUI.Library
           return;
         }
 
- 
+
         text = GetRTLText(text);
 
         if (ID >= 0)
         {
-          if(containsOutOfBoundsChar(text))
+          if (containsOutOfBoundsChar(text))
           {
-              GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
-              return;
+            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
+            return;
           }
 
           int intColor = color.ToArgb();
@@ -1039,7 +1041,6 @@ namespace MediaPortal.GUI.Library
         }
         _fontAdded = false;
       }
-      
     }
 
     /// <summary>
@@ -1261,7 +1262,7 @@ namespace MediaPortal.GUI.Library
         }
 
 
-				_textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
+        _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
         _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
         SetFontEgine();
         _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);

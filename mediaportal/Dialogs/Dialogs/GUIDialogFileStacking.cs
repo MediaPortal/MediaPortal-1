@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ namespace MediaPortal.Dialogs
     private int m_MaxNumberOfFiles = 0;
     private const int m_indexStackItemOffset = 100;
     private ArrayList lst_FilesNames;
+
     public GUIDialogFileStacking()
     {
       GetID = (int)Window.WINDOW_DIALOG_FILESTACKING;
@@ -96,7 +97,6 @@ namespace MediaPortal.Dialogs
               DisableControl(GetID, i + m_indexStackItemOffset);
             }
             SetSkinProperties(0);
-
           }
           return true;
 
@@ -131,7 +131,7 @@ namespace MediaPortal.Dialogs
         {
           GUIControl pControl = GetControl(m_indexStackItemOffset + 1);
           distance = (pDialog.Width - pControl.Width) / (m_MaxNumberOfFiles);
-          
+
           // do not allow "loose stacking", i.e. less than half overlayed items
           if (distance > pControl.Width / 2)
           {
@@ -198,7 +198,8 @@ namespace MediaPortal.Dialogs
     {
       if (seletedID >= 0 && seletedID < m_iNumberOfFiles && seletedID < lst_FilesNames.Count)
       {
-        GUIPropertyManager.SetProperty("#stackedMovie.Selected", Path.GetFileNameWithoutExtension((string)lst_FilesNames[seletedID]));
+        GUIPropertyManager.SetProperty("#stackedMovie.Selected",
+                                       Path.GetFileNameWithoutExtension((string)lst_FilesNames[seletedID]));
         GUIPropertyManager.SetProperty("#stackedMovie.SelectedId", (seletedID + 1).ToString());
       }
       else

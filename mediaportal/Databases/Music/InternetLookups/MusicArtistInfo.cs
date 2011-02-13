@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ namespace MediaPortal.Music.Database
 
     #region ctor
 
-    public MusicArtistInfo() { }
+    public MusicArtistInfo() {}
 
     #endregion
 
@@ -287,13 +287,13 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     private bool FindPattern(string pattern, string searchString)
     {
-       Regex itemsFound = new Regex(
-          pattern,
-          RegexOptions.IgnoreCase
-          | RegexOptions.Multiline
-          | RegexOptions.IgnorePatternWhitespace
-          | RegexOptions.Compiled
-          );
+      Regex itemsFound = new Regex(
+        pattern,
+        RegexOptions.IgnoreCase
+        | RegexOptions.Multiline
+        | RegexOptions.IgnorePatternWhitespace
+        | RegexOptions.Compiled
+        );
 
       _match = itemsFound.Match(searchString);
       if (_match.Success)
@@ -363,7 +363,7 @@ namespace MediaPortal.Music.Database
         }
         util.RemoveTags(ref data);
         util.ConvertHTMLToAnsi(data, out _strGenres);
-        _strGenres = _strGenres.Trim(new[] { ' ', ',' });
+        _strGenres = _strGenres.Trim(new[] {' ', ','});
       }
 
       // Style
@@ -405,7 +405,7 @@ namespace MediaPortal.Music.Database
           }
           util.RemoveTags(ref data);
           util.ConvertHTMLToAnsi(data, out _strTones);
-          _strTones = _strTones.Trim(new[] { ' ', ',' });
+          _strTones = _strTones.Trim(new[] {' ', ','});
         }
       }
 
@@ -425,7 +425,7 @@ namespace MediaPortal.Music.Database
           }
           util.RemoveTags(ref data);
           util.ConvertHTMLToAnsi(data, out _strInstruments);
-          _strInstruments = _strInstruments.Trim(new[] { ' ', ',' });
+          _strInstruments = _strInstruments.Trim(new[] {' ', ','});
         }
       }
 
@@ -457,16 +457,14 @@ namespace MediaPortal.Music.Database
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
 
       string compilationPage = "";
       string singlesPage = "";
       string dvdPage = "";
-      string miscPage = "";    
+      string miscPage = "";
 
       // discography (albums)
       pattern = @"<td.*class=""tab_off""><a.*?href=""(.*?)"">.*Discography.*</a>";
@@ -481,7 +479,7 @@ namespace MediaPortal.Music.Database
         try
         {
           string contentinfo = AllmusicSiteScraper.GetHTTP(_match.Groups[1].Value);
-          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" + 
+          pattern = @"sorted.*? cell"">(?<year>.*?)</td>\s*?.*?</td>\s*.*?<a.*?"">(?<album>.*?)" +
                     @"</a>.*?</td>\s*.*?</td>\s*.*?"">(?<label>.*?)</td>";
 
           if (FindPattern(pattern, contentinfo))
@@ -501,18 +499,16 @@ namespace MediaPortal.Music.Database
 
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 _discographyAlbum.Add(dAlbumInfo);
               }
-              catch { }
+              catch {}
 
               _match = _match.NextMatch();
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       // Compilations
@@ -541,18 +537,16 @@ namespace MediaPortal.Music.Database
 
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 _discographyCompilations.Add(dAlbumInfo);
               }
-              catch { }
+              catch {}
 
               _match = _match.NextMatch();
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       // Singles
@@ -581,18 +575,16 @@ namespace MediaPortal.Music.Database
 
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 _discographySingles.Add(dAlbumInfo);
               }
-              catch { }
+              catch {}
 
               _match = _match.NextMatch();
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       // DVD Videos
@@ -621,18 +613,16 @@ namespace MediaPortal.Music.Database
 
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 _discographyMisc.Add(dAlbumInfo);
               }
-              catch { }
+              catch {}
 
               _match = _match.NextMatch();
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       // Other
@@ -661,18 +651,16 @@ namespace MediaPortal.Music.Database
 
               try
               {
-                string[] dAlbumInfo = { year.Trim(), albumTitle.Trim(), label.Trim() };
+                string[] dAlbumInfo = {year.Trim(), albumTitle.Trim(), label.Trim()};
                 _discographyMisc.Add(dAlbumInfo);
               }
-              catch { }
+              catch {}
 
               _match = _match.NextMatch();
             }
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       _bLoaded = true;

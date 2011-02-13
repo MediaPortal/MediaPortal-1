@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ namespace MediaPortal.GUI.Library
   public class GUIInternalWindow : GUIWindow
   {
     public bool IsVisible { get; set; }
+
     public override string GetModuleName()
     {
       return GUILocalizeStrings.Get(100000 + GetID);

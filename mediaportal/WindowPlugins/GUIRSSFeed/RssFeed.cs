@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -210,7 +210,7 @@ namespace Rss
             }
             catch (Exception e)
             {
-                Log.Error(e);
+              Log.Error(e);
             }
           }
           if (oldFeed != null)
@@ -220,38 +220,38 @@ namespace Rss
           }
           try
           {
-              HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-              feed.lastModified = response.LastModified;
-              feed.etag = response.Headers["ETag"];
-              try
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            feed.lastModified = response.LastModified;
+            feed.etag = response.Headers["ETag"];
+            try
+            {
+              if (response.ContentEncoding != "")
               {
-                  if (response.ContentEncoding != "")
-                  {
-                      feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
-                  }
+                feed.encoding = Encoding.GetEncoding(response.ContentEncoding);
+              }
 
-                  stream = response.GetResponseStream();
-              }
-              catch (Exception e)
-              {
-                  Log.Error(e);
-              }
+              stream = response.GetResponseStream();
+            }
+            catch (Exception e)
+            {
+              Log.Error(e);
+            }
           }
           catch (WebException we)
           {
-              if (oldFeed != null)
-              {
-                  oldFeed.cached = true;
-                  return oldFeed;
-              }
-              else
-              {
-                  throw we; // bad
-              }
+            if (oldFeed != null)
+            {
+              oldFeed.cached = true;
+              return oldFeed;
+            }
+            else
+            {
+              throw we; // bad
+            }
           }
           catch (Exception e)
           {
-              Log.Error(e);
+            Log.Error(e);
           }
           break;
       }

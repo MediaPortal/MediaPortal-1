@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// A datastructure for keeping track of the position of a control in a window.
   /// </summary>
-  public class CPosition : IDisposable  
+  public class CPosition : IDisposable
   {
     private GUIControl _control = null; // control to which this structure applies
     private int _positionX = 0; // x-coordinate of the control

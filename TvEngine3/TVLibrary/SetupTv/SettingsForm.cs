@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -137,8 +137,8 @@ namespace SetupTv
                   if (localHostname != server.HostName)
                   {
                     DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                       "Do you want to try the current comupter name ({1}) instead?",
-                                                       server.HostName, localHostname),
+                                                                     "Do you want to try the current comupter name ({1}) instead?",
+                                                                     server.HostName, localHostname),
                                                        "Wrong config detected",
                                                        MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                     if (dlg == DialogResult.Yes)
@@ -161,7 +161,7 @@ namespace SetupTv
                     Log.Error("Cannot connect to server {0}", server.HostName);
                     Log.Write(ex);
                     DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
-                                                       "Please check the TV Server logs for details.\n\n" + 
+                                                       "Please check the TV Server logs for details.\n\n" +
                                                        "Setup will now close.");
                     Environment.Exit(-1);
                   }

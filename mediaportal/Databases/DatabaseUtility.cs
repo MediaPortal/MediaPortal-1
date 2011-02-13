@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -148,7 +148,7 @@ namespace MediaPortal.Database
       SQLiteResultSet results;
       results =
         dbHandle.Execute("SELECT name FROM sqlite_master WHERE name='" + indexName + "' and type='index' " +
-                         "UNION "+
+                         "UNION " +
                          "SELECT name FROM sqlite_temp_master WHERE name ='" + indexName + "' and type='index'");
       if (results != null && results.Rows.Count == 1)
       {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -407,8 +407,8 @@ namespace MediaPortal.GUI.Library
       if (tag != null && tag.IndexOf('#') > -1)
       {
         lock (_properties)
-        {          
-          _properties.TryGetValue(tag, out property);                    
+        {
+          _properties.TryGetValue(tag, out property);
         }
       }
 
@@ -528,7 +528,9 @@ namespace MediaPortal.GUI.Library
       {
         // Matches a property tag and replaces it with the value for that property
         // sort the matches descending by the length of their value, to prevent a match named "#selecteditem" replacing "#selecteditem2" in the line
-        var matches = from Match aMatch in propertyExpr.Matches(line) orderby aMatch.Value.Length descending select aMatch.Value;
+        var matches = from Match aMatch in propertyExpr.Matches(line)
+                      orderby aMatch.Value.Length descending
+                      select aMatch.Value;
         foreach (string match in matches)
         {
           line = line.Replace(match, ParseProperty(match));
@@ -558,12 +560,11 @@ namespace MediaPortal.GUI.Library
           if (_properties.TryGetValue(tag, out propertyValue))
           {
             return property.Replace(tag, propertyValue);
-          }          
+          }
         }
       }
 
       return property;
     }
-
   }
 }

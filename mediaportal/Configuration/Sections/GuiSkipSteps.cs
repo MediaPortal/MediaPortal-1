@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -214,8 +214,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.labelError2);
       this.mpGroupBox1.Controls.Add(this.mpGroupBox2);
       this.mpGroupBox1.Controls.Add(this.textBoxImmediateSkipSteps);
@@ -292,8 +294,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxTimeout
       // 
-      this.groupBoxTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxTimeout.Controls.Add(this.numericUpDownSkipTimeout);
       this.groupBoxTimeout.Controls.Add(this.labelSkipTimeout);
       this.groupBoxTimeout.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -306,25 +310,31 @@ namespace MediaPortal.Configuration.Sections
       // 
       // numericUpDownSkipTimeout
       // 
-      this.numericUpDownSkipTimeout.Increment = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+      this.numericUpDownSkipTimeout.Increment = new decimal(new int[]
+                                                              {
+                                                                100,
+                                                                0,
+                                                                0,
+                                                                0
+                                                              });
       this.numericUpDownSkipTimeout.Location = new System.Drawing.Point(213, 14);
-      this.numericUpDownSkipTimeout.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
+      this.numericUpDownSkipTimeout.Maximum = new decimal(new int[]
+                                                            {
+                                                              10000,
+                                                              0,
+                                                              0,
+                                                              0
+                                                            });
       this.numericUpDownSkipTimeout.Name = "numericUpDownSkipTimeout";
       this.numericUpDownSkipTimeout.Size = new System.Drawing.Size(56, 20);
       this.numericUpDownSkipTimeout.TabIndex = 1;
-      this.numericUpDownSkipTimeout.Value = new decimal(new int[] {
-            1500,
-            0,
-            0,
-            0});
+      this.numericUpDownSkipTimeout.Value = new decimal(new int[]
+                                                          {
+                                                            1500,
+                                                            0,
+                                                            0,
+                                                            0
+                                                          });
       // 
       // labelSkipTimeout
       // 
@@ -337,7 +347,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonResetSkipSteps
       // 
-      this.buttonResetSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonResetSkipSteps.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonResetSkipSteps.Location = new System.Drawing.Point(376, 358);
       this.buttonResetSkipSteps.Name = "buttonResetSkipSteps";
       this.buttonResetSkipSteps.Size = new System.Drawing.Size(75, 23);
@@ -348,8 +360,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxSkipSteps
       // 
-      this.groupBoxSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxSkipSteps.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxSkipSteps.Controls.Add(this.labelError);
       this.groupBoxSkipSteps.Controls.Add(this.textBoxManualSkipSteps);
       this.groupBoxSkipSteps.Controls.Add(this.label1);
@@ -386,8 +400,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxManualSkipSteps
       // 
-      this.textBoxManualSkipSteps.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxManualSkipSteps.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxManualSkipSteps.BorderColor = System.Drawing.Color.Empty;
       this.textBoxManualSkipSteps.Location = new System.Drawing.Point(158, 222);
       this.textBoxManualSkipSteps.Name = "textBoxManualSkipSteps";
@@ -635,7 +651,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxSkipSteps.ResumeLayout(false);
       this.groupBoxSkipSteps.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     private void textBoxManualSkipSteps_TextChanged(object sender, EventArgs e)

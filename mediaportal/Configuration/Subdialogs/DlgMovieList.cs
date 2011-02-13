@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -151,9 +151,9 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
       this._listView1.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                        {
-                                          this._columnHeader1
-                                        });
+                                         {
+                                           this._columnHeader1
+                                         });
       this._listView1.Location = new System.Drawing.Point(8, 52);
       this._listView1.Name = "_listView1";
       this._listView1.Size = new System.Drawing.Size(446, 261);

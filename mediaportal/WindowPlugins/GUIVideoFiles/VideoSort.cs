@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace MediaPortal.GUI.Video
     {
       Name = 0,
       Modified = 1,
-	    Created = 2,
+      Created = 2,
       Size = 3,
       Year = 4,
       Rating = 5,
@@ -186,7 +186,7 @@ namespace MediaPortal.GUI.Video
 
         case SortMethod.Modified:
         case SortMethod.Created:
-		
+
           if (item1.FileInfo == null)
           {
             if (!this.TryGetFileInfo(ref item1))
@@ -205,34 +205,34 @@ namespace MediaPortal.GUI.Video
 
           if (currentSortMethod == SortMethod.Modified)
           {
-            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " + 
+            item1.Label2 = item1.FileInfo.ModificationTime.ToShortDateString() + " " +
                            item1.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " + 
+            item2.Label2 = item2.FileInfo.ModificationTime.ToShortDateString() + " " +
                            item2.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           else
           {
-            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " + 
+            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
                            item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
-            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " + 
+            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
                            item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
 
           if (sortAscending)
           {
-      			if (currentSortMethod == SortMethod.Modified)
-			        return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
-			      else 
-			        return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
+            if (currentSortMethod == SortMethod.Modified)
+              return DateTime.Compare(item1.FileInfo.ModificationTime, item2.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item1.FileInfo.CreationTime, item2.FileInfo.CreationTime);
           }
           else
           {
-			      if (currentSortMethod == SortMethod.Modified)
-			        return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
-			      else 
-			        return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
+            if (currentSortMethod == SortMethod.Modified)
+              return DateTime.Compare(item2.FileInfo.ModificationTime, item1.FileInfo.ModificationTime);
+            else
+              return DateTime.Compare(item2.FileInfo.CreationTime, item1.FileInfo.CreationTime);
           }
-          case SortMethod.Unwatched:
+        case SortMethod.Unwatched:
           {
             int ret = 0;
             if (item1.IsPlayed && !item2.IsPlayed)

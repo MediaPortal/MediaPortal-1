@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ namespace MediaPortal.Dialogs
   {
     [SkinControl(1)] protected GUIKeyboard _keyboard = null;
     [SkinControl(2)] protected GUIImage _background = null;
- 
+
     #region Base Dialog Variables
 
     private int _parentWindowId;
@@ -236,7 +236,6 @@ namespace MediaPortal.Dialogs
     }
 
     #endregion
-
   }
 
   public class StandardKeyboard : VirtualKeyboard

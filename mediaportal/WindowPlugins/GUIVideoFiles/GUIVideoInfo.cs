@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,7 +54,7 @@ namespace MediaPortal.GUI.Video
       }
 
       // Changed code - added IMDB and TMDB cover search
-	    // We will check IMPAW and IMDB to show extra covers(if nothing there last try will be TMDB)
+      // We will check IMPAW and IMDB to show extra covers(if nothing there last try will be TMDB)
       // Better for not to use all three beacuse of big number of same covers
       private void PerformRequest()
       {
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Video
           // IMPAward search
           IMPAwardsSearch impSearch = new IMPAwardsSearch();
           impSearch.SearchCovers(movie.Title, movie.IMDBNumber);
-          
+
           int thumb = 0;
 
           if (movie.ThumbURL != string.Empty)
@@ -81,7 +81,7 @@ namespace MediaPortal.GUI.Video
             thumbUrls[0] = movie.ThumbURL;
             thumb = 1;
           }
-          int pictureCount =  impSearch.Count + tmdbSearch.Count + thumb;
+          int pictureCount = impSearch.Count + tmdbSearch.Count + thumb;
           //Hugh, no covers, lets pull our last card
           if ((tmdbSearch.Count == 0) & (impSearch.Count == 0))
           {
@@ -136,12 +136,12 @@ namespace MediaPortal.GUI.Video
           // TMDB Count check and add into thumbs Deda 30.4.2010
           if ((tmdbSearch.Count > 0) && (tmdbSearch[0] != string.Empty))
           {
-              for (int i = 0; i < tmdbSearch.Count; ++i)
-              {
-                  thumbUrls[pictureIndex++] = tmdbSearch[i];
-              }
+            for (int i = 0; i < tmdbSearch.Count; ++i)
+            {
+              thumbUrls[pictureIndex++] = tmdbSearch[i];
+            }
           }
-          
+
           if (AmazonImagesDownloaded != null)
           {
             AmazonImagesDownloaded(thumbUrls);
@@ -209,7 +209,7 @@ namespace MediaPortal.GUI.Video
       {
         videoOverlay.Focused = false;
       }
-      
+
       if (currentMovie == null)
       {
         return;
@@ -531,7 +531,7 @@ namespace MediaPortal.GUI.Video
           btnReview.Selected = false;
         if (btnCast != null)
           btnCast.Selected = false;
-       }
+      }
       // cast->Review
       if (viewmode == ViewMode.Review)
       {
@@ -603,12 +603,14 @@ namespace MediaPortal.GUI.Video
               {
                 Util.Utils.DownLoadAndCacheImage(imageUrl, temporaryFilename);
               }
-              if (File.Exists(temporaryFilename)) // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
+              if (File.Exists(temporaryFilename))
+                // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
               {
                 Util.Picture.CreateThumbnail(temporaryFilename, coverArtImage, (int)Thumbs.ThumbResolution,
                                              (int)Thumbs.ThumbResolution, 0, Thumbs.SpeedThumbsSmall);
 
-                if (File.Exists(temporaryFilenameLarge)) // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
+                if (File.Exists(temporaryFilenameLarge))
+                  // Reverted from mantis : 3126 (unwanted TMP folder scan and cache entry)
                 {
                   Util.Picture.CreateThumbnail(temporaryFilenameLarge, largeCoverArtImageConvert,
                                                (int)Thumbs.ThumbLargeResolution, (int)Thumbs.ThumbLargeResolution, 0,
@@ -650,7 +652,8 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-          if (((Util.Utils.FileExistsInCache(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) || forceFolderThumb)
+          if (((Util.Utils.FileExistsInCache(largeCoverArtImage)) && (FolderForThumbs != string.Empty)) ||
+              forceFolderThumb)
             //edited by BoelShit
           {
             // copy icon to folder also;

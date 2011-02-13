@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ namespace TvService
     public static bool DeleteRecordingOnDisk(string fileNameForRec, out bool wasPendingDeletionAdded)
     {
       wasPendingDeletionAdded = false;
-      Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);      
+      Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
       bool filesDeleted = false;
       try
       {
@@ -92,7 +92,7 @@ namespace TvService
     public static bool DeleteRecordingOnDisk(string fileNameForRec)
     {
       bool wasPendingDeletionAdded = false;
-      return (DeleteRecordingOnDisk(fileNameForRec, out wasPendingDeletionAdded));      
+      return (DeleteRecordingOnDisk(fileNameForRec, out wasPendingDeletionAdded));
     }
 
     private static void AddRecordingToPendingDeletion(string fileNameForRec)
@@ -109,11 +109,13 @@ namespace TvService
       }
       catch (Exception ex2)
       {
-        Log.Error("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}", ex2.Message, fileNameForRec);
+        Log.Error("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}",
+                  ex2.Message, fileNameForRec);
       }
     }
 
-    private static void DeleteAllRelatedFiles(string fileNameForRec) {
+    private static void DeleteAllRelatedFiles(string fileNameForRec)
+    {
       string[] relatedFiles =
         Directory.GetFiles(Path.GetDirectoryName(fileNameForRec),
                            Path.GetFileNameWithoutExtension(fileNameForRec) + @".*");
@@ -155,7 +157,7 @@ namespace TvService
               while (deleteDir != Path.GetDirectoryName(checkPath) && deleteDir.Length > checkPath.Length)
               {
                 try
-                {                                    
+                {
                   bool hasSubDirs = HasSubDirs(deleteDir);
 
                   if (!hasSubDirs)
@@ -171,15 +173,15 @@ namespace TvService
                     if (hasDirAnyFilesOver1MBTotal)
                     {
                       return;
-                    }                    
-                  
+                    }
+
                     DeleteFiles(files);
                     deleteDir = DeleteDir(deleteDir);
                   }
                   else
-                  {                    
+                  {
                     return;
-                  }                  
+                  }
                 }
                 catch (Exception ex1)
                 {
@@ -193,30 +195,31 @@ namespace TvService
           {
             Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
             return;
-          }            
+          }
         }
       }
       catch (Exception ex)
       {
         Log.Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
         throw; //make sure its added to the pending deletions list later on.                  
-      }     
+      }
     }
 
     private static bool HasSubDirs(string deleteDir)
-    {      
+    {
       string[] subdirs = Directory.GetDirectories(deleteDir);
       bool hasSubDirs = (subdirs.Length > 0);
 
       if (hasSubDirs)
       {
         Log.Debug("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
-                        Convert.ToString(subdirs.Length), deleteDir);  
+                  Convert.ToString(subdirs.Length), deleteDir);
       }
       return hasSubDirs;
     }
 
-    private static string DeleteDir(string deleteDir) {
+    private static string DeleteDir(string deleteDir)
+    {
       Directory.Delete(deleteDir);
       Log.Debug("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
       DirectoryInfo di = Directory.GetParent(deleteDir);
@@ -248,10 +251,10 @@ namespace TvService
         if (hasDirAnyFilesOver1MBTotal)
         {
           Log.Debug(
-          "RecordingFileHandler: Found {0} bytes worth of data (max 1mb) in directory in recording path - not cleaning {1}",
-          fileSizesTotal, deleteDir);
+            "RecordingFileHandler: Found {0} bytes worth of data (max 1mb) in directory in recording path - not cleaning {1}",
+            fileSizesTotal, deleteDir);
           break;
-        }        
+        }
       }
 
       return hasDirAnyFilesOver1MBTotal;
@@ -264,7 +267,7 @@ namespace TvService
       {
         string fileName = Path.GetFileName(fullFilename);
         hasDirAnyImportantFiles = (!fileName.ToLower().Equals("thumbs.db"));
-        
+
         if (hasDirAnyImportantFiles)
         {
           Log.Debug(
@@ -272,7 +275,7 @@ namespace TvService
             fileName, deleteDir);
           break;
         }
-      }      
+      }
 
       return hasDirAnyImportantFiles;
     }

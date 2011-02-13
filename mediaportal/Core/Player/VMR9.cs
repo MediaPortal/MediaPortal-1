@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -767,65 +767,65 @@ namespace MediaPortal.Player
                   //Pass in the same VMR9VideoDesc structure, along with one of the GUIDs from the array.
                   //The method fills a VMR9DeinterlaceCaps structure with the mode capabilities. 
                   VMR9DeinterlaceCaps caps = new VMR9DeinterlaceCaps();
-                  caps.dwSize = Marshal.SizeOf(typeof(VMR9DeinterlaceCaps));
+                  caps.dwSize = Marshal.SizeOf(typeof (VMR9DeinterlaceCaps));
                   hr = deinterlace.GetDeinterlaceModeCaps(modes[i], ref VideoDesc, ref caps);
                   if (hr == 0)
                   {
                     Log.Debug("VMR9: AvailableDeinterlaceMode - {0}: {1}", i, modes[i]);
                     switch (caps.DeinterlaceTechnology)
                     {
-                      //The algorithm is unknown or proprietary
+                        //The algorithm is unknown or proprietary
                       case VMR9DeinterlaceTech.Unknown:
                         {
                           Log.Info("VMR9: Unknown H/W de-interlace mode");
                           break;
                         }
-                      //The algorithm creates each missing line by repeating the line above it or below it.
-                      //This method creates jagged artifacts and is not recommended.
+                        //The algorithm creates each missing line by repeating the line above it or below it.
+                        //This method creates jagged artifacts and is not recommended.
                       case VMR9DeinterlaceTech.BOBLineReplicate:
                         {
                           Log.Info("VMR9: BOB Line Replicate capable");
                           break;
                         }
-                      //The algorithm creates the missing lines by vertically stretching each video field by a factor of two.
-                      //For example, it might average two lines or use a (-1, 9, 9, -1)/16 filter across four lines.
-                      //Slight vertical adjustments are made to ensure that the resulting image does not "bob" up and down
+                        //The algorithm creates the missing lines by vertically stretching each video field by a factor of two.
+                        //For example, it might average two lines or use a (-1, 9, 9, -1)/16 filter across four lines.
+                        //Slight vertical adjustments are made to ensure that the resulting image does not "bob" up and down
                       case VMR9DeinterlaceTech.BOBVerticalStretch:
                         {
                           Log.Info("VMR9: BOB Vertical Stretch capable");
                           verticalStretch = modes[i].ToString();
                           break;
                         }
-                      //The algorithm uses median filtering to recreate the pixels in the missing lines.
+                        //The algorithm uses median filtering to recreate the pixels in the missing lines.
                       case VMR9DeinterlaceTech.MedianFiltering:
                         {
                           Log.Info("VMR9: Median Filtering capable");
                           medianFiltering = modes[i].ToString();
                           break;
                         }
-                      //The algorithm uses an edge filter to create the missing lines.
-                      //In this process, spatial directional filters are applied to determine the orientation of edges in the picture content.
-                      //Missing pixels are created by filtering along (rather than across) the detected edges.
+                        //The algorithm uses an edge filter to create the missing lines.
+                        //In this process, spatial directional filters are applied to determine the orientation of edges in the picture content.
+                        //Missing pixels are created by filtering along (rather than across) the detected edges.
                       case VMR9DeinterlaceTech.EdgeFiltering:
                         {
                           Log.Info("VMR9: Edge Filtering capable");
                           break;
                         }
-                      //The algorithm uses spatial or temporal interpolation, switching between the two on a field-by-field basis, depending on the amount of motion.
+                        //The algorithm uses spatial or temporal interpolation, switching between the two on a field-by-field basis, depending on the amount of motion.
                       case VMR9DeinterlaceTech.FieldAdaptive:
                         {
                           Log.Info("VMR9: Field Adaptive capable");
                           break;
                         }
-                      //The algorithm uses spatial or temporal interpolation, switching between the two on a pixel-by-pixel basis, depending on the amount of motion.
+                        //The algorithm uses spatial or temporal interpolation, switching between the two on a pixel-by-pixel basis, depending on the amount of motion.
                       case VMR9DeinterlaceTech.PixelAdaptive:
                         {
                           Log.Info("VMR9: Pixel Adaptive capable");
                           pixelAdaptive = modes[i].ToString();
                           break;
                         }
-                      //The algorithm identifies objects within a sequence of video fields.
-                      //Before it recreates the missing pixels, it aligns the movement axes of the individual objects in the scene to make them parallel with the time axis.
+                        //The algorithm identifies objects within a sequence of video fields.
+                        //Before it recreates the missing pixels, it aligns the movement axes of the individual objects in the scene to make them parallel with the time axis.
                       case VMR9DeinterlaceTech.MotionVectorSteered:
                         {
                           Log.Info("VMR9: Motion Vector Steered capable");
@@ -890,7 +890,7 @@ namespace MediaPortal.Player
             Log.Info("VMR9: progressive mode detected - no need to de-interlace");
           }
         }
-        //If the format type is VideoInfo, it must be a progressive frame.
+          //If the format type is VideoInfo, it must be a progressive frame.
         else
         {
           Log.Info("VMR9: no need to de-interlace this video source");

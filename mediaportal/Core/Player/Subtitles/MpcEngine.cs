@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -130,7 +130,7 @@ namespace MediaPortal.Player.Subtitles
         {
           ffdshowAPI.DoShowSubtitles = false;
           Log.Info("MPCEngine - FFDshow interfaces found -> Disable Subtitle");
-        } 
+        }
       }
 
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
@@ -222,10 +222,7 @@ namespace MediaPortal.Player.Subtitles
 
     public bool AutoShow
     {
-      get
-      {
-        return autoShow;
-      }
+      get { return autoShow; }
     }
 
     #endregion

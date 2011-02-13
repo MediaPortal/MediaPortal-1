@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -284,7 +284,7 @@ namespace TvControl
     /// </returns>
     public TvResult StartTimeShifting(ref IUser user, int idChannel, out VirtualCard card)
     {
-      card = null;      
+      card = null;
       try
       {
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card);
@@ -312,7 +312,7 @@ namespace TvControl
       card = null;
       cardChanged = false;
       try
-      {        
+      {
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, out cardChanged);
         return result;
       }
@@ -337,7 +337,7 @@ namespace TvControl
     {
       card = null;
       try
-      {        
+      {
         TvResult result = RemoteControl.Instance.StartTimeShifting(ref user, idChannel, out card, forceCardId);
         return result;
       }

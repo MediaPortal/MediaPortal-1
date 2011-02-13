@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ using System;
 
 namespace TvLibrary
 {
-
   /// <summary>
   /// Exception class for the tv library
   /// </summary>
@@ -32,14 +31,14 @@ namespace TvLibrary
     /// <summary>
     /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
     /// </summary>
-    public TvExceptionNoPMT() { }
+    public TvExceptionNoPMT() {}
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TvExceptionNoPMT"/> class.
     /// </summary>
     /// <param name="message">The message.</param>
     public TvExceptionNoPMT(string message)
-      : base(message) { }
+      : base(message) {}
 
 
     /// <summary>
@@ -48,7 +47,7 @@ namespace TvLibrary
     /// <param name="message">The message.</param>
     /// <param name="innerException">The inner exception.</param>
     public TvExceptionNoPMT(string message, Exception innerException)
-      : base(message, innerException) { }
+      : base(message, innerException) {}
   }
 
   /// <summary>

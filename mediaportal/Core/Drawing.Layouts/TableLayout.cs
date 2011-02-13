@@ -1,25 +1,20 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -63,11 +58,9 @@ namespace MediaPortal.Drawing.Layouts
       private int _rowSpan = 1;
       private int _targetCol = 0;
 
-    #region constructors
+      #region constructors
 
-      public Cell()
-      {
-      }
+      public Cell() {}
 
       public Cell(int colSpan)
       {
@@ -139,24 +132,16 @@ namespace MediaPortal.Drawing.Layouts
     #region Constructors
 
     public TableLayout()
-      : this(400)
-    {
-    }
+      : this(400) {}
 
     public TableLayout(int width)
-      : this(width, 1)
-    {
-    }
+      : this(width, 1) {}
 
     public TableLayout(int width, int columns)
-      : this(width, columns, 0)
-    {
-    }
+      : this(width, columns, 0) {}
 
     public TableLayout(int width, int columns, double spacing)
-      : this(width, columns, spacing, spacing)
-    {
-    }
+      : this(width, columns, spacing, spacing) {}
 
     public TableLayout(int width, int columns, double horizontalSpacing, double verticalSpacing)
     {
@@ -188,7 +173,7 @@ namespace MediaPortal.Drawing.Layouts
       // Default columns are all the same width.
       for (int i = 0; i < _cols; i++)
       {
-        _columns.Add( new Column((_width - (_cols-1)*_spacing.Width) / _cols));
+        _columns.Add(new Column((_width - (_cols - 1) * _spacing.Width) / _cols));
       }
     }
 
@@ -379,8 +364,8 @@ namespace MediaPortal.Drawing.Layouts
           // Columns with no span specify the exact desired width of the column.
           if (TableCell.ColSpan == 1)
           {
-            ((Column)_columns[c-1]).width = (double)child.Width;
-            ((Column)_columns[c-1]).isCalculated = false;
+            ((Column)_columns[c - 1]).width = (double)child.Width;
+            ((Column)_columns[c - 1]).isCalculated = false;
           }
 
           i++; // Advance to the next control.

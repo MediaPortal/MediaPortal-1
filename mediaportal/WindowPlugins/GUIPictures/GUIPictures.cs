@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -113,8 +113,8 @@ namespace MediaPortal.GUI.Pictures
                 int iRotate = PictureDatabase.GetRotation(item.Path);
                 Thread.Sleep(30);
 
-                bool isVideo=Util.Utils.IsVideo(item.Path);
-                bool isPicture=Util.Utils.IsPicture(item.Path);
+                bool isVideo = Util.Utils.IsVideo(item.Path);
+                bool isPicture = Util.Utils.IsPicture(item.Path);
                 if (!item.IsRemote && (isPicture || isVideo))
                 {
                   string thumbnailImage;
@@ -133,7 +133,8 @@ namespace MediaPortal.GUI.Pictures
                       iRotate = Util.Picture.GetRotateByExif(item.Path);
                       Log.Debug("Picture.GetRotateByExif = {0} for {1}", iRotate, item.Path);
                       thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbResolution,
-                                                     (int)Thumbs.ThumbResolution, iRotate, Thumbs.SpeedThumbsSmall);
+                                                              (int)Thumbs.ThumbResolution, iRotate,
+                                                              Thumbs.SpeedThumbsSmall);
                     }
                     else
                       thumbRet = Util.VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, true);
@@ -155,11 +156,12 @@ namespace MediaPortal.GUI.Pictures
                       Thread.Sleep(10);
                       bool thumbRet;
                       if (isPicture)
-                        thumbRet=Util.Picture.CreateThumbnail(item.Path, thumbnailImage, (int)Thumbs.ThumbLargeResolution,
-                                                       (int)Thumbs.ThumbLargeResolution, iRotate,
-                                                       Thumbs.SpeedThumbsLarge);
+                        thumbRet = Util.Picture.CreateThumbnail(item.Path, thumbnailImage,
+                                                                (int)Thumbs.ThumbLargeResolution,
+                                                                (int)Thumbs.ThumbLargeResolution, iRotate,
+                                                                Thumbs.SpeedThumbsLarge);
                       else
-                        thumbRet=Util.VideoThumbCreator.CreateVideoThumb(item.Path,thumbnailImage,true,true);
+                        thumbRet = Util.VideoThumbCreator.CreateVideoThumb(item.Path, thumbnailImage, true, true);
                       if (thumbRet)
                       {
                         Thread.Sleep(30);
@@ -287,6 +289,7 @@ namespace MediaPortal.GUI.Pictures
       Files = 0,
       Date = 1
     }
+
     [SkinControl(6)] protected GUIButtonControl btnSlideShow = null;
     [SkinControl(7)] protected GUIButtonControl btnSlideShowRecursive = null;
 
@@ -318,7 +321,7 @@ namespace MediaPortal.GUI.Pictures
 
     public GUIPictures()
     {
-      GetID = (int)Window.WINDOW_PICTURES;  
+      GetID = (int)Window.WINDOW_PICTURES;
     }
 
     #endregion
@@ -432,7 +435,7 @@ namespace MediaPortal.GUI.Pictures
     #region overrides
 
     public override bool Init()
-    {      
+    {
       return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
     }
 
@@ -527,39 +530,39 @@ namespace MediaPortal.GUI.Pictures
           selectedItemIndex += SlideShow._currentSlideIndex+1;*/
         int direction = GUISlideShow.SlideDirection;
         GUISlideShow.SlideDirection = 0;
-        
+
         //forward
         if (direction == 1)
         {
-            selectedItemIndex++;
+          selectedItemIndex++;
         }
         //Backward
         if (direction == -1)
         {
-            selectedItemIndex--;
+          selectedItemIndex--;
         }
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
 
         //Slide Show 
         if (SlideShow._isSlideShow)
         {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-                SlideShow._returnedFromVideoPlayback = false;
-            }
-            OnSlideShow(selectedItemIndex);
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
+          OnSlideShow(selectedItemIndex);
         }
-        //OnClick
+          //OnClick
         else if (direction != 0)
         {
-            if (SlideShow._returnedFromVideoPlayback)
-            {
-                SlideShow._returnedFromVideoPlayback = false;
-            }
-            OnClick(selectedItemIndex);
+          if (SlideShow._returnedFromVideoPlayback)
+          {
+            SlideShow._returnedFromVideoPlayback = false;
+          }
+          OnClick(selectedItemIndex);
         }
       }
-      
+
       btnSortBy.SortChanged += new SortEventHandler(SortChanged);
     }
 
@@ -603,7 +606,7 @@ namespace MediaPortal.GUI.Pictures
             }
           }
           break;
-      }        
+      }
     }
 
     public override bool OnMessage(GUIMessage message)
@@ -876,9 +879,9 @@ namespace MediaPortal.GUI.Pictures
       base.UpdateButtonStates();
 
       string textLine = string.Empty;
-      
+
       SortMethod method = (SortMethod)mapSettings.SortBy;
-      
+
       switch (method)
       {
         case SortMethod.Name:
@@ -914,11 +917,13 @@ namespace MediaPortal.GUI.Pictures
     {
       selectedItemIndex = CountOfNonImageItems + index;
     }
+
     public void IncSelectedItemIndex()
     {
       Log.Debug("GUIPictures: INC selectedItemIndex {0}", selectedItemIndex);
       selectedItemIndex ++;
     }
+
     #endregion
 
     #region folder settings
@@ -1977,9 +1982,9 @@ namespace MediaPortal.GUI.Pictures
       }
       if (Util.Utils.IsVideo(fileName))
       {
-            return String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+        return String.Format(@"{0}\{1}.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
       }
-      
+
       return String.Format(@"{0}\{1}.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 
@@ -1991,9 +1996,9 @@ namespace MediaPortal.GUI.Pictures
       }
       if (Util.Utils.IsVideo(fileName))
       {
-         return String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
+        return String.Format(@"{0}\{1}L.jpg", Thumbs.Videos, Util.Utils.EncryptLine(fileName));
       }
-        
+
       return String.Format(@"{0}\{1}L.jpg", Thumbs.Pictures, Util.Utils.EncryptLine(fileName));
     }
 

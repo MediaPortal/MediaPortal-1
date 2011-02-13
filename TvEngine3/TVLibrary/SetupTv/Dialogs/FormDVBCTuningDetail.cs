@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 using DirectShowLib.BDA;
@@ -14,42 +34,44 @@ namespace SetupTv.Dialogs
     private void FormDVBCTuningDetail_Load(object sender, System.EventArgs e)
     {
       comboBoxDvbCModulation.Items.Clear();
-      comboBoxDvbCModulation.Items.AddRange(new object[] {
-          "Not Set",
-          "Not Defined",
-          "16 QAM",
-          "32 QAM",
-          "64 QAM",
-          "80 QAM",
-          "96 QAM",
-          "112 QAM",
-          "128 QAM",
-          "160 QAM",
-          "192 QAM",
-          "224 QAM",
-          "256 QAM",
-          "320 QAM",
-          "384 QAM",
-          "448 QAM",
-          "512 QAM",
-          "640 QAM",
-          "768 QAM",
-          "896 QAM",
-          "1024 QAM",
-          "QPSK",
-          "BPSK",
-          "OQPSK",
-          "8 VSB",
-          "16 VSB",
-          "Analog Amplitude",
-          "Analog Frequency",
-          "8 PSK",
-          "RF",
-          "16 APSK",
-          "32 APSK",
-          "QPSK2 (DVB-S2)",
-          "8 PSK2 (DVB-S2)",
-          "DirectTV"});
+      comboBoxDvbCModulation.Items.AddRange(new object[]
+                                              {
+                                                "Not Set",
+                                                "Not Defined",
+                                                "16 QAM",
+                                                "32 QAM",
+                                                "64 QAM",
+                                                "80 QAM",
+                                                "96 QAM",
+                                                "112 QAM",
+                                                "128 QAM",
+                                                "160 QAM",
+                                                "192 QAM",
+                                                "224 QAM",
+                                                "256 QAM",
+                                                "320 QAM",
+                                                "384 QAM",
+                                                "448 QAM",
+                                                "512 QAM",
+                                                "640 QAM",
+                                                "768 QAM",
+                                                "896 QAM",
+                                                "1024 QAM",
+                                                "QPSK",
+                                                "BPSK",
+                                                "OQPSK",
+                                                "8 VSB",
+                                                "16 VSB",
+                                                "Analog Amplitude",
+                                                "Analog Frequency",
+                                                "8 PSK",
+                                                "RF",
+                                                "16 APSK",
+                                                "32 APSK",
+                                                "QPSK2 (DVB-S2)",
+                                                "8 PSK2 (DVB-S2)",
+                                                "DirectTV"
+                                              });
 
       if (TuningDetail != null)
       {
@@ -149,6 +171,5 @@ namespace SetupTv.Dialogs
       }
       return true;
     }
-
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,12 +43,14 @@ namespace MediaPortal.Configuration.Sections
     private string autoplayAudio;
     private string autoplayVideo;
     private string autoplayPhoto;
+
     private string[] autoPlayOptions = new string[]
                                          {
                                            "play",
                                            "do not play",
                                            "ask what to do"
                                          };
+
     public GeneralAutoplay()
       : this("Autoplay") {}
 
@@ -143,14 +145,14 @@ namespace MediaPortal.Configuration.Sections
     public override void SaveSettings()
     {
       using (Settings xmlwriter = new MPSettings())
-      {        
+      {
         if (autoPlayAudioComboBox.Text == autoPlayOptions[1])
           autoplayAudio = "No";
         else if (autoPlayAudioComboBox.Text == autoPlayOptions[2])
           autoplayAudio = "Ask";
         else
           autoplayAudio = "Yes";
-        
+
         if (autoPlayVideoComboBox.Text == autoPlayOptions[1])
           autoplayVideo = "No";
         else if (autoPlayVideoComboBox.Text == autoPlayOptions[2])
@@ -170,7 +172,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("general", "autoplay_photo", autoplayPhoto);
       }
     }
-    
+
     #region Designer generated code
 
     /// <summary>
@@ -197,8 +199,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.mpGroupBox3);
       this.groupBox1.Controls.Add(this.mpGroupBox1);
       this.groupBox1.Controls.Add(this.mpGroupBox2);
@@ -212,8 +216,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox3
       // 
-      this.mpGroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox3.Controls.Add(this.mpLabel2);
       this.mpGroupBox3.Controls.Add(this.autoPlayPhotoComboBox);
       this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -244,8 +250,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel1);
       this.mpGroupBox1.Controls.Add(this.autoPlayVideoComboBox);
       this.mpGroupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -276,8 +284,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.labelAutoPlay);
       this.mpGroupBox2.Controls.Add(this.autoPlayAudioComboBox);
       this.mpGroupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -320,7 +330,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

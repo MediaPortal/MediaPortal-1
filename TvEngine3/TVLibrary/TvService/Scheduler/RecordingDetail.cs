@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,6 +43,7 @@ namespace TvService
     private Recording _recording;
     private readonly bool _isSerie;
     private User _user;
+
     #endregion
 
     #region ctor
@@ -177,7 +178,7 @@ namespace TvService
 
         try
         {
-          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule);// Refresh();
+          Schedule _sched = Schedule.Retrieve((int)_schedule.IdSchedule); // Refresh();
           if (_sched != null)
           {
             isRecording = (DateTime.Now < EndTime.AddMinutes(_sched.PostRecordInterval));

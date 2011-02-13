@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ namespace MediaPortal.Util
       {
         return;
       }
-       _imageList.Clear();
+      _imageList.Clear();
 
       if (!string.IsNullOrEmpty(imdbMovieID) && imdbMovieID.StartsWith("tt"))
       {
@@ -79,7 +79,7 @@ namespace MediaPortal.Util
         {
           // Try alternative approach if no covers (TMDB really sometimes doing wrong)
           defaultPosterPageLinkUrl =
-          "http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + imdbMovieID + "/";
+            "http://api.themoviedb.org/2.1/Movie.getImages/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + imdbMovieID + "/";
           strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
           covers = Regex.Matches(strBodyTMDB, "<image\\surl=\"(?<cover>.*?)\"");
         }
@@ -94,15 +94,15 @@ namespace MediaPortal.Util
         }
         return;
       }
-      if (!string.IsNullOrEmpty(movieTitle)) 
+      if (!string.IsNullOrEmpty(movieTitle))
       {
         string defaultPosterPageLinkUrl =
           "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + movieTitle;
         string strBodyTMDB = GetPage(defaultPosterPageLinkUrl, "utf-8");
 
         // Get all cover links and put it in the "cover" group
-        MatchCollection covers = Regex.Matches(strBodyTMDB, 
-          "<image\\stype=\"poster\"\\surl=\"(?<cover>http://hwcdn.themoviedb.org/posters/.*?)\"");
+        MatchCollection covers = Regex.Matches(strBodyTMDB,
+                                               "<image\\stype=\"poster\"\\surl=\"(?<cover>http://hwcdn.themoviedb.org/posters/.*?)\"");
 
         foreach (Match cover in covers)
         {

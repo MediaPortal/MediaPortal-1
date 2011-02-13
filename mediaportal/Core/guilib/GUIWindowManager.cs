@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,7 +25,6 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using MediaPortal.ExtensionMethods;
-
 //using System.Reflection;
 //using System.Security;
 //using System.Runtime.InteropServices;
@@ -94,9 +93,13 @@ namespace MediaPortal.GUI.Library
     #region delegates and events
 
     public delegate void ThreadMessageHandler(object sender, GUIMessage message);
+
     public delegate void OnCallBackHandler();
+
     public delegate void PostRendererHandler(int level, float timePassed);
+
     public delegate int PostRenderActionHandler(Action action, GUIMessage msg, bool focus);
+
     public delegate void WindowActivationHandler(int windowId);
 
     public static event SendMessageHandler Receivers;
@@ -200,13 +203,13 @@ namespace MediaPortal.GUI.Library
         activewindow = GetWindow(ActiveWindow);
         if (message.SendToTargetWindow)
         {
-            pWindow = GetWindow(message.TargetWindowId);
-            if(pWindow != null && activewindow != null)
-            {
-                pWindow.OnMessage(message);
-                return;
-            }
+          pWindow = GetWindow(message.TargetWindowId);
+          if (pWindow != null && activewindow != null)
+          {
+            pWindow.OnMessage(message);
             return;
+          }
+          return;
         }
 
         // else send message to the current active window
@@ -567,10 +570,10 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.OnNewAction -= new OnActionHandler(OnActionReceived);
 
       LockAndDoOnAllRegisteredWindows(window =>
-                                          {
-                                              window.DeInit();
-                                              window.SafeDispose();
-                                          });
+                                        {
+                                          window.DeInit();
+                                          window.SafeDispose();
+                                        });
       _routedWindow = null;
       _listThreadMessages.Clear();
       _listThreadActions.Clear();
@@ -597,17 +600,21 @@ namespace MediaPortal.GUI.Library
     public static void PreInit()
     {
       LockAndDoOnAllRegisteredWindows(window =>
-      {
-          try { window.PreInit(); }
-          catch (Exception ex)
-          {
-              Log.Error("Exception in {0}.Preinit() {1}",
-                  window.GetType().ToString(), ex.ToString());
-          }
-      });
-      
+                                        {
+                                          try
+                                          {
+                                            window.PreInit();
+                                          }
+                                          catch (Exception ex)
+                                          {
+                                            Log.Error("Exception in {0}.Preinit() {1}",
+                                                      window.GetType().ToString(), ex.ToString());
+                                          }
+                                        });
+
       GUIWaitCursor.Init();
     }
+
     #endregion
 
     #region DirectX lost/restore device handling
@@ -695,10 +702,10 @@ namespace MediaPortal.GUI.Library
     }
 
     private static void RemoveDoubleHistory(int newWindow)
-    {      
+    {
       List<int> search = new List<int>();
       List<int> data = new List<int>();
-      
+
       // use temporary list and DO NOT add also current active window for
       // pattern search data, beacause it is already in _listHistory.
       // reverse list for search
@@ -752,19 +759,19 @@ namespace MediaPortal.GUI.Library
 
 
         // set nextwindow id
-         _nextWindowID = newWindowId;        
-         // get active window
-         previousWindow = GetWindow(ActiveWindow, false);
-         // store current window settings
-         if (!replaceWindow)
-         {
-           // push active window id to window stack
-           if (newWindowId != _activeWindowId && !skipHistory)
-           {
-             AddNewWindowToHistory(_activeWindowId);
-           }
-         }
-         //deactivate previous window
+        _nextWindowID = newWindowId;
+        // get active window
+        previousWindow = GetWindow(ActiveWindow, false);
+        // store current window settings
+        if (!replaceWindow)
+        {
+          // push active window id to window stack
+          if (newWindowId != _activeWindowId && !skipHistory)
+          {
+            AddNewWindowToHistory(_activeWindowId);
+          }
+        }
+        //deactivate previous window
         if (previousWindow != null)
         {
           msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0,
@@ -880,10 +887,10 @@ namespace MediaPortal.GUI.Library
       _listHistory.RemoveAt(_listHistory.Count - 1);
 
       bool isFullscreen = (
-        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
-        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
-        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
-        _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
+                            _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_TVFULLSCREEN ||
+                            _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_MUSIC ||
+                            _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO ||
+                            _previousActiveWindowId == (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT);
 
       // do not go back to fullscreen if not playing or nothing to show
       if (isFullscreen && (!Player.g_Player.Playing || (!Player.g_Player.HasVideo && !Player.g_Player.HasViz)))
@@ -910,14 +917,14 @@ namespace MediaPortal.GUI.Library
           OnPostRenderAction(null, null, false);
         }
 
-         // deactivate current window
+        // deactivate current window
         GUIWindow pWindow = GetWindow(ActiveWindow, false);
 
         // deactivate any window
         if (_routedWindow != null)
         {
           GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0,
-                                            ActiveWindow, 0, null);
+                                             ActiveWindow, 0, null);
           _routedWindow.OnMessage(msgDlg);
           _routedWindow = null;
         }
@@ -925,7 +932,7 @@ namespace MediaPortal.GUI.Library
         if (pWindow != null)
         {
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, ActiveWindow, 0, 0,
-                                            _previousActiveWindowId, 0, null);
+                                          _previousActiveWindowId, 0, null);
           pWindow.OnMessage(msg);
           if (OnDeActivateWindow != null)
           {
@@ -933,7 +940,6 @@ namespace MediaPortal.GUI.Library
           }
         }
         _activeWindowId = -1;
-        
       }
       finally
       {
@@ -963,7 +969,8 @@ namespace MediaPortal.GUI.Library
           // Deactivate the previous window.
           if (previousWindow != null)
           {
-            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0, null);
+            msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId,
+                                 0, null);
             previousWindow.OnMessage(msg);
 
             if (OnDeActivateWindow != null)
@@ -999,7 +1006,8 @@ namespace MediaPortal.GUI.Library
             OnActivateWindow(newWindow.GetID);
           }
 
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0, _previousActiveWindowId, 0, null);
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, newWindow.GetID, 0, 0,
+                               _previousActiveWindowId, 0, null);
           newWindow.OnMessage(msg);
         }
 
@@ -1099,7 +1107,6 @@ namespace MediaPortal.GUI.Library
     /// <returns>true,false</returns>
     public static bool NeedRefresh()
     {
-
       GUIWindow pWindow = GetWindow(ActiveWindow);
       bool bRefresh = _shouldRefresh;
       _shouldRefresh = false;
@@ -1122,10 +1129,10 @@ namespace MediaPortal.GUI.Library
       if (!_listWindows.TryGetValue(dwID, out win))
       {
         if (dwID != 0)
-            Log.Info("GUIWindowManager: Could not find window {0}", dwID);
-                  // surprese warning if looking for home, the assumption is that we are not fully loaded yet, however some plugins can already load some skinstate which might implicitally call GetWindow for some visibility stuff or somesuch
+          Log.Info("GUIWindowManager: Could not find window {0}", dwID);
+        // surprese warning if looking for home, the assumption is that we are not fully loaded yet, however some plugins can already load some skinstate which might implicitally call GetWindow for some visibility stuff or somesuch
       }
-      else if(tryRestoreSkin && win != null) win.DoRestoreSkin();
+      else if (tryRestoreSkin && win != null) win.DoRestoreSkin();
       return win;
     }
 
@@ -1203,20 +1210,20 @@ namespace MediaPortal.GUI.Library
 
       // else render the current active window
 
-        GUIWindow pWindow = GetWindow(ActiveWindow);
-        if (null != pWindow)
-        {
-          pWindow.Render(timePassed);
-        }
-      
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        //pWindow = GetWindow(_nextWindowID);
-        //if (null != pWindow)
-        //{
-        //    pWindow.Render(timePassed);
-        //    pWindow = null;
-        //}
-      
+      GUIWindow pWindow = GetWindow(ActiveWindow);
+      if (null != pWindow)
+      {
+        pWindow.Render(timePassed);
+      }
+
+      GUIGraphicsContext.SetScalingResolution(0, 0, false);
+      //pWindow = GetWindow(_nextWindowID);
+      //if (null != pWindow)
+      //{
+      //    pWindow.Render(timePassed);
+      //    pWindow = null;
+      //}
+
       // and call postrender
       // PostRender(timePassed);
     }
@@ -1292,12 +1299,12 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-      /// <summary>
-      /// Are we displaying pause OSD?
-      /// </summary>
-      public static bool IsPauseOsdVisible { get; set; }
+    /// <summary>
+    /// Are we displaying pause OSD?
+    /// </summary>
+    public static bool IsPauseOsdVisible { get; set; }
 
-      /// <summary>
+    /// <summary>
     /// Returns the ID of the current visible OSD
     /// <returns>GUIWindow.Window.WINDOW_INVALID if no OSD is visible</returns>
     /// <returns>GUIWindow.Window when OSD is visible</returns>
@@ -1380,26 +1387,26 @@ namespace MediaPortal.GUI.Library
     {
       lock (thisLock)
       {
-          GUIWindow existingWindow = GetWindow(windowId);
-          
-          if (existingWindow != null)
+        GUIWindow existingWindow = GetWindow(windowId);
+
+        if (existingWindow != null)
+        {
+          Log.Debug("WindowManager: Replaced {0} with {1}", existingWindow, window);
+          ISetupForm frm = window as ISetupForm;
+          if (frm != null)
           {
-            Log.Debug("WindowManager: Replaced {0} with {1}", existingWindow, window);
-            ISetupForm frm = window as ISetupForm;
-            if (frm != null)
+            for (int x = 0; x < PluginManager.SetupForms.Count; ++x)
             {
-              for (int x = 0; x < PluginManager.SetupForms.Count; ++x)
+              if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
               {
-                if (((ISetupForm)PluginManager.SetupForms[x]).GetWindowId() == windowId)
-                {
-                  Log.Debug("WindowManager: Setup...");
-                  PluginManager.SetupForms.RemoveAt(x);
-                  break;
-                  //PluginManager.SetupForms[x] = frm;
-                }
+                Log.Debug("WindowManager: Setup...");
+                PluginManager.SetupForms.RemoveAt(x);
+                break;
+                //PluginManager.SetupForms[x] = frm;
               }
             }
-            _listWindows[windowId] = window;
+          }
+          _listWindows[windowId] = window;
         }
       }
     }

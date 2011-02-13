@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,12 +40,15 @@ namespace FFDShow
   public class FFDShowAPI : IDisposable
   {
     #region Guids
+
     public static readonly Guid FFDShowVideoGuid = new Guid("04FE9017-F873-410E-871E-AB91661A4EF7");
     public static readonly Guid FFDShowVideoDXVAGuid = new Guid("0B0EFF97-C750-462C-9488-B10E7D87F1A6");
     public static readonly Guid FFDShowVideoRawGuid = new Guid("0B390488-D80F-4A68-8408-48DC199F0E97");
+
     #endregion
 
     #region Constants
+
     /// <summary>
     /// Identifier of Window messages structure that can carry string for interprocess communication
     /// </summary>
@@ -111,7 +134,7 @@ namespace FFDShow
       /// Fast forwarding or rewinding state
       /// </summary>
       FastForwardRewind = 3
-    };
+    } ;
 
     /// <summary>
     /// Running object table registration
@@ -127,7 +150,7 @@ namespace FFDShow
       /// Unregister the DirectShow graph from the running object table
       /// </summary>
       UnregisterToRot = 0
-    };
+    } ;
 
     /// <summary>
     /// File name mode
@@ -156,6 +179,7 @@ namespace FFDShow
     private const int TRUE = 1;
 
     public const int minRevision = 3640;
+
     #endregion Constants
 
     #region Structures
@@ -169,23 +193,28 @@ namespace FFDShow
       /// Unique identifier for this FFDShow instance
       /// </summary>
       public int handle;
+
       /// <summary>
       /// File name of the media being played by this instance (may be null)
       /// </summary>
       public string fileName;
     }
+
     #endregion Structures
 
     #region Variables
+
     private static string ffdshowRegKey = @"SOFTWARE\GNU\ffdshow";
     private static string ffdshowDXVARegKey = @"SOFTWARE\GNU\ffdshow_dxva";
     private static string ffdshowAudioRegKey = @"SOFTWARE\GNU\ffdshow_audio";
 
     private uint FFDShowAPIRemoteId = 32786;
+
     /// <summary>
     /// Unique identifier of the running instance of FFDShow
     /// </summary>
     protected int ffDShowInstanceHandle = 0;
+
     private int requestTimeout = 2000;
     private FFDShowReceiver receiver = null;
     private bool IsFFDShowActive = false;
@@ -199,7 +228,13 @@ namespace FFDShow
     private IffdshowBase ffdshowBase = null;
     private IffdshowDecVideo ffdshowDecVideo = null;
     private IAMStreamSelect streamSelect = null;
-    public enum FFDShowAPIMode { DirectShowMode, InterProcessMode };
+
+    public enum FFDShowAPIMode
+    {
+      DirectShowMode,
+      InterProcessMode
+    } ;
+
     private FFDShowAPIMode ffdshowAPIMode = FFDShowAPIMode.InterProcessMode;
 
     //private AutoResetEvent resetEvent = new AutoResetEvent(false);
@@ -207,13 +242,16 @@ namespace FFDShow
     #endregion Variables
 
     #region Helper methods
+
     public static string getFileName(string fileName, FileNameMode mode)
     {
       FileInfo fileInfo = new FileInfo(fileName);
       switch (mode)
       {
-        case FileNameMode.FullPath: return fileInfo.FullName;
-        case FileNameMode.FileName: return fileInfo.Name;
+        case FileNameMode.FullPath:
+          return fileInfo.FullName;
+        case FileNameMode.FileName:
+          return fileInfo.Name;
         case FileNameMode.FileNameWithoutExtension:
           string formattedFileName = fileInfo.Name;
           if (formattedFileName.LastIndexOf('.') != -1)
@@ -222,7 +260,7 @@ namespace FFDShow
         case FileNameMode.FileNameLanguage:
           string formattedFileNameLanguage = fileInfo.Name;
           //string[] words = formattedFileNameLanguage.Split(new char[] { '.', '-', '_' });
-          string[] words = formattedFileNameLanguage.Split(new char[] { '.', '_' });
+          string[] words = formattedFileNameLanguage.Split(new char[] {'.', '_'});
           if (formattedFileNameLanguage.LastIndexOf('.') != -1)
             formattedFileNameLanguage = words[words.Length - 2];
           //Log.Error("FFDSHOWAPI(getFileName): formattedFileNameLanguage \"{0}\"", formattedFileNameLanguage);
@@ -230,6 +268,7 @@ namespace FFDShow
       }
       return null;
     }
+
     #endregion
 
     #region WIN32 Class
@@ -263,24 +302,23 @@ namespace FFDShow
 
       [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
       public static extern IntPtr SendMessageTimeout(
-          IntPtr windowHandle,
-          int Msg,
-          IntPtr wParam,
-          ref COPYDATASTRUCT cds,
-          SendMessageTimeoutFlags flags,
-          int timeout,
-          out IntPtr result);
+        IntPtr windowHandle,
+        int Msg,
+        IntPtr wParam,
+        ref COPYDATASTRUCT cds,
+        SendMessageTimeoutFlags flags,
+        int timeout,
+        out IntPtr result);
 
       [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
       public static extern IntPtr SendMessageTimeout(
-          IntPtr windowHandle,
-          [MarshalAs(UnmanagedType.U4)]
-                int Msg,
-          IntPtr wParam,
-          IntPtr lParam,
-          SendMessageTimeoutFlags flags,
-          int timeout,
-          out IntPtr result);
+        IntPtr windowHandle,
+        [MarshalAs(UnmanagedType.U4)] int Msg,
+        IntPtr wParam,
+        IntPtr lParam,
+        SendMessageTimeoutFlags flags,
+        int timeout,
+        out IntPtr result);
 
       public enum SendMessageTimeoutFlags
       {
@@ -298,13 +336,12 @@ namespace FFDShow
       [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
       public static extern int GetLocaleInfo(
         // The locale identifier.
-         int Locale,
+        int Locale,
         // The information type.
-         int LCType,
+        int LCType,
         // The buffer size.
-         [In, MarshalAs(UnmanagedType.LPWStr)] string lpLCData, int cchData
-       );
-
+        [In, MarshalAs(UnmanagedType.LPWStr)] string lpLCData, int cchData
+        );
 
 
       // Import the GlobalSize function
@@ -316,40 +353,42 @@ namespace FFDShow
 
       [DllImport("User32.Dll")]
       public static extern int FindWindow(string lpClassName,
-          string lpWindowName);
+                                          string lpWindowName);
 
       [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
       public static extern IntPtr SendMessage(int hWnd, uint Msg,
-          int wParam, int lParam);
+                                              int wParam, int lParam);
 
       [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
       public static extern IntPtr PostMessage(int hWnd, uint Msg,
-          int wParam, int lParam);
+                                              int wParam, int lParam);
 
       public delegate bool CallBack(int hwnd, IntPtr lParam);
 
       [DllImport("User32.Dll")]
       public static extern int EnumWindows(CallBack x, IntPtr y);
+
       [DllImport("User32.Dll")]
       public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
+
       [DllImport("User32.Dll")]
       public static extern void GetClassName(int h, StringBuilder s, int nMaxCount);
+
       [DllImport("User32.Dll")]
       public static extern int IsWindow(int hwnd);
     }
 #pragma warning restore 1591
+
     #endregion WIN32 Class
 
     #region Base Properties
+
     /// <summary>
     /// Gets the FFDShow instance handle (number that identifies the FFDShow instance)
     /// </summary>
     public int FFDShowInstanceHandle
     {
-      get
-      {
-        return ffDShowInstanceHandle;
-      }
+      get { return ffDShowInstanceHandle; }
     }
 
     /// <summary>
@@ -357,28 +396,17 @@ namespace FFDShow
     /// </summary>
     public uint FFDShowAPIRemote
     {
-      get
-      {
-        return FFDShowAPIRemoteId;
-      }
-      set
-      {
-        FFDShowAPIRemoteId = value;
-      }
+      get { return FFDShowAPIRemoteId; }
+      set { FFDShowAPIRemoteId = value; }
     }
+
     /// <summary>
     /// Gets or sets the FFDShow registry key. Used sometimes when ffdshow is not active (for presets)
     /// </summary>
     public static string FFDShowRegKey
     {
-      get
-      {
-        return ffdshowRegKey;
-      }
-      set
-      {
-        ffdshowRegKey = value;
-      }
+      get { return ffdshowRegKey; }
+      set { ffdshowRegKey = value; }
     }
 
     /// <summary>
@@ -387,14 +415,8 @@ namespace FFDShow
     /// </summary>
     public static string FFDShowAudioRegKey
     {
-      get
-      {
-        return ffdshowAudioRegKey;
-      }
-      set
-      {
-        ffdshowAudioRegKey = value;
-      }
+      get { return ffdshowAudioRegKey; }
+      set { ffdshowAudioRegKey = value; }
     }
 
     private static int osdX = 0;
@@ -406,14 +428,8 @@ namespace FFDShow
     /// </summary>
     public static int OSDX
     {
-      get
-      {
-        return osdX;
-      }
-      set
-      {
-        osdX = value;
-      }
+      get { return osdX; }
+      set { osdX = value; }
     }
 
     /// <summary>
@@ -421,14 +437,8 @@ namespace FFDShow
     /// </summary>
     public static int OSDY
     {
-      get
-      {
-        return osdY;
-      }
-      set
-      {
-        osdY = value;
-      }
+      get { return osdY; }
+      set { osdY = value; }
     }
 
     /// <summary>
@@ -437,16 +447,9 @@ namespace FFDShow
     /// </summary>
     public static bool FFRWNoOSD
     {
-      get
-      {
-        return ffrwNoOSD;
-      }
-      set
-      {
-        ffrwNoOSD = value;
-      }
+      get { return ffrwNoOSD; }
+      set { ffrwNoOSD = value; }
     }
-
 
     #endregion Base Properties
 
@@ -534,7 +537,6 @@ namespace FFDShow
     }
 
 
-
     /// <summary>
     /// Gets or sets the video preset for the current instance. Also sets the preset as default.
     /// </summary>
@@ -587,18 +589,14 @@ namespace FFDShow
     /// </summary>
     public string ActiveAudioPreset
     {
-      get
-      {
-        return DefaultAudioPreset;
-      }
-      set
-      {
-        DefaultAudioPreset = value;
-      }
+      get { return DefaultAudioPreset; }
+      set { DefaultAudioPreset = value; }
     }
+
     #endregion Presets properties
 
     #region Enabled Properties
+
     // Show/hide subtitles
     /// <summary>
     /// Enable or disable subtitles filter
@@ -752,10 +750,7 @@ namespace FFDShow
     /// </summary>
     public bool DoCropZoom
     {
-      get
-      {
-        return (getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isCropNzoom) == 1);
-      }
+      get { return (getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isCropNzoom) == 1); }
       set
       {
         if (value)
@@ -915,9 +910,11 @@ namespace FFDShow
           setIntParam(FFDShowConstants.FFDShowDataId.IDFF_isDeinterlace, 0);
       }
     }
+
     #endregion Enabled Properties
 
     #region Subtitles/Audio streams Properties
+
     /// <summary>
     /// Subtitles/audio stream structure
     /// </summary>
@@ -927,18 +924,22 @@ namespace FFDShow
       /// Name of the stream
       /// </summary>
       public string name;
+
       /// <summary>
       /// Language name of the stream
       /// </summary>
       public string languageName;
+
       /// <summary>
       /// True if the stream is active
       /// </summary>
       public bool enabled;
+
       /// <summary>
       /// True if this is an external file
       /// </summary>
       public bool isFile;
+
       /// <summary>
       /// Constructor of a stream structure
       /// </summary>
@@ -971,7 +972,12 @@ namespace FFDShow
 
     public class Streams : SortedDictionary<int, Stream>
     {
-      public enum StreamType { EmbeddedOnly, FilesOnly }
+      public enum StreamType
+      {
+        EmbeddedOnly,
+        FilesOnly
+      }
+
       public int Size(StreamType type)
       {
         int cnt = 0;
@@ -1006,7 +1012,7 @@ namespace FFDShow
             string streamName;
             object pppunk, ppobject;
             streamSelect.Info(i, out mediaType, out flag, out langId,
-                       out group, out streamName, out pppunk, out ppobject);
+                              out group, out streamName, out pppunk, out ppobject);
             if (group == 4 || group == 2 && streamName.LastIndexOf("No ") == -1)
             {
               if ((streamName == null || streamName.Equals("")) && subtitleStreams.Count == 0)
@@ -1036,18 +1042,23 @@ namespace FFDShow
               }
               else
               {
-                langName = streamName; // If some splitter doesn't give LCID but Language is here need a little hack for parsing in VideoPlayerVRM7.
+                langName = streamName;
+                // If some splitter doesn't give LCID but Language is here need a little hack for parsing in VideoPlayerVRM7.
               }
               if (group == 4)
               {
-                Stream stream = new Stream(FFDShowAPI.getFileName(streamName, FFDShowAPI.FileNameMode.FileNameLanguage), FFDShowAPI.getFileName(langName, FFDShowAPI.FileNameMode.FileNameLanguage),
-                    (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, true);
+                Stream stream = new Stream(
+                  FFDShowAPI.getFileName(streamName, FFDShowAPI.FileNameMode.FileNameLanguage),
+                  FFDShowAPI.getFileName(langName, FFDShowAPI.FileNameMode.FileNameLanguage),
+                  (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, true);
                 subtitleStreams.Add(i, stream);
               }
               else if (group == 2)
               {
                 Stream stream = new Stream(streamName, langName,
-                    (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false, false);
+                                           (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled
+                                             ? true
+                                             : false, false);
                 subtitleStreams.Add(i, stream);
               }
             }
@@ -1060,7 +1071,7 @@ namespace FFDShow
         return subtitleStreams;
       }
     }
-  
+
     /// <summary>
     /// Gets the list of internal audio streams
     /// </summary>
@@ -1076,10 +1087,13 @@ namespace FFDShow
           if (streamsNb == 0) return audioStreams;
           for (int i = 0; i < streamsNb; i++)
           {
-            AMMediaType mediaType; AMStreamSelectInfoFlags flag; int group, langId;
-            string streamName; object pppunk, ppobject;
+            AMMediaType mediaType;
+            AMStreamSelectInfoFlags flag;
+            int group, langId;
+            string streamName;
+            object pppunk, ppobject;
             streamSelect.Info(i, out mediaType, out flag, out langId,
-                       out group, out streamName, out pppunk, out ppobject);
+                              out group, out streamName, out pppunk, out ppobject);
             if (group == 1)
             {
               String langName = "";
@@ -1107,7 +1121,9 @@ namespace FFDShow
               //Log.Error("FFDSHOWAPI(AudioStreams): langName {0}", langName);
 
               Stream stream = new Stream(streamName, langName,
-                  (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled ? true : false);
+                                         (flag & AMStreamSelectInfoFlags.Enabled) == AMStreamSelectInfoFlags.Enabled
+                                           ? true
+                                           : false);
               audioStreams.Add(i, stream);
             }
           }
@@ -1150,7 +1166,8 @@ namespace FFDShow
       string[] list = null;
       if (listString != null && listString.Length > 0)
       {
-        list = listString.Split(new string[] { "</enabled></stream><stream><id>" }, StringSplitOptions.None); ;
+        list = listString.Split(new string[] {"</enabled></stream><stream><id>"}, StringSplitOptions.None);
+        ;
         if (list != null)
         {
           for (int i = 0; i < list.Length; i++)
@@ -1160,13 +1177,15 @@ namespace FFDShow
             if (i == list.Length - 1)
               list[i] = list[i].Replace("</enabled></stream>", "");
 
-            string[] subElement = list[i].Split(new string[] { "</id><name>" }, StringSplitOptions.None);
+            string[] subElement = list[i].Split(new string[] {"</id><name>"}, StringSplitOptions.None);
             if (subElement != null)
             {
               int streamId = int.Parse(subElement[0]);
-              string[] subSubElement = subElement[1].Split(new string[] { "</name><language_name>" }, StringSplitOptions.None);
+              string[] subSubElement = subElement[1].Split(new string[] {"</name><language_name>"},
+                                                           StringSplitOptions.None);
               string streamName = subSubElement[0];
-              string[] subSubSubElement = subSubElement[1].Split(new string[] { "</language_name><enabled>" }, StringSplitOptions.None);
+              string[] subSubSubElement = subSubElement[1].Split(new string[] {"</language_name><enabled>"},
+                                                                 StringSplitOptions.None);
               string streamLanguageName = subSubSubElement[0];
               string enabled = subSubSubElement[1];
               bool isEnabled = false;
@@ -1216,14 +1235,8 @@ namespace FFDShow
     /// </summary>
     public int SubtitlesDelay
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subDelay);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subDelay, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subDelay); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subDelay, value); }
     }
 
     /// <summary>
@@ -1235,7 +1248,7 @@ namespace FFDShow
       {
         int speed1 = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subSpeed);
         int speed2 = getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subSpeed2);
-        int[] values = new int[2] { speed1, speed2 };
+        int[] values = new int[2] {speed1, speed2};
         return values;
       }
       set
@@ -1253,7 +1266,7 @@ namespace FFDShow
       get
       {
         if (ffdshowAPIMode == FFDShowAPIMode.InterProcessMode)
-          return getCustomParam(FFD_MSG.GET_CURRENT_SUBTITLES, 0);//FFDSM_GET_CURRENT_SUBTITLES);
+          return getCustomParam(FFD_MSG.GET_CURRENT_SUBTITLES, 0); //FFDSM_GET_CURRENT_SUBTITLES);
         else
         {
           if (getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subShowEmbedded) > 0) return null;
@@ -1280,16 +1293,9 @@ namespace FFDShow
     /// </summary>
     public bool SubtitlesEnabled
     {
-      get
-      {
-        return (getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isSubtitles) == 1) ? true : false;
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_isSubtitles, (value == true) ? 1 : 0);
-      }
+      get { return (getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isSubtitles) == 1) ? true : false; }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_isSubtitles, (value == true) ? 1 : 0); }
     }
-
 
 
     /// <summary>
@@ -1302,7 +1308,7 @@ namespace FFDShow
         if (ffdshowAPIMode == FFDShowAPIMode.InterProcessMode)
         {
           string[] list = null;
-          string listString = getCustomParam(FFD_MSG.GET_SUBTITLEFILESLIST, 0);//FFDSM_GET_SUBTITLEFILES);
+          string listString = getCustomParam(FFD_MSG.GET_SUBTITLEFILESLIST, 0); //FFDSM_GET_SUBTITLEFILES);
           if (listString != null)
           {
             list = listString.Split(';');
@@ -1318,13 +1324,17 @@ namespace FFDShow
           if (streamsNb == 0) return subtitleFiles.ToArray();
           for (int i = 0; i < streamsNb; i++)
           {
-            AMMediaType mediaType; AMStreamSelectInfoFlags flag; int group, langId;
-            string streamName; object pppunk, ppobject;
+            AMMediaType mediaType;
+            AMStreamSelectInfoFlags flag;
+            int group, langId;
+            string streamName;
+            object pppunk, ppobject;
             streamSelect.Info(i, out mediaType, out flag, out langId,
-                       out group, out streamName, out pppunk, out ppobject);
+                              out group, out streamName, out pppunk, out ppobject);
             if (group == 4)
             {
-              if ((streamName == null || streamName.Equals("")) && subtitleFiles.Count == 0) streamName = "No subtitle file";
+              if ((streamName == null || streamName.Equals("")) && subtitleFiles.Count == 0)
+                streamName = "No subtitle file";
               subtitleFiles.Add(streamName);
             }
           }
@@ -1338,14 +1348,8 @@ namespace FFDShow
     /// </summary>
     public int SubtitleHorizontalPosition
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosX);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosX, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosX); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosX, value); }
     }
 
     /// <summary>
@@ -1353,15 +1357,10 @@ namespace FFDShow
     /// </summary>
     public int SubtitleVerticalPosition
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosY);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosY, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosY); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_subPosY, value); }
     }
+
     /// <summary>
     /// Set the font size of subtitles on the screen
     /// </summary>
@@ -1385,9 +1384,11 @@ namespace FFDShow
         setIntParam(FFDShowConstants.FFDShowDataId.IDFF_fontYscale, value);
       }
     }
+
     #endregion Subtitles Properties
 
     #region Other Properties
+
     /// <summary>
     /// List of chapters. Slow to process : call it once
     /// </summary>
@@ -1400,7 +1401,8 @@ namespace FFDShow
         string listString = getCustomParam(FFD_MSG.GET_CHAPTERSLIST, 0);
         if (listString != null && listString.Length > 0)
         {
-          list = listString.Split(new string[] { "</name></chapter><chapter><time>" }, StringSplitOptions.None); ;
+          list = listString.Split(new string[] {"</name></chapter><chapter><time>"}, StringSplitOptions.None);
+          ;
           if (list != null)
           {
             for (int i = 0; i < list.Length; i++)
@@ -1409,7 +1411,7 @@ namespace FFDShow
                 list[i] = list[i].Replace("<chapter><time>", "");
               if (i == list.Length - 1)
                 list[i] = list[i].Replace("</name></chapter>", "");
-              string[] chapterElement = list[i].Split(new string[] { "</time><name>" }, StringSplitOptions.None);
+              string[] chapterElement = list[i].Split(new string[] {"</time><name>"}, StringSplitOptions.None);
               if (chapterElement != null)
               {
                 int chapterTime = int.Parse(chapterElement[0]);
@@ -1422,22 +1424,18 @@ namespace FFDShow
         return chaptersList;
       }
     }
+
     #endregion Other Properties
 
     #region Filters Properties
+
     /// <summary>
     ///  Set/get horizontal cropping
     /// </summary>
     public int CropHorizontal
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationX);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationX, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationX); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationX, value); }
     }
 
     /// <summary>
@@ -1445,14 +1443,8 @@ namespace FFDShow
     /// </summary>
     public int CropVertical
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationY);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationY, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationY); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_magnificationY, value); }
     }
 
     /// <summary>
@@ -1460,14 +1452,8 @@ namespace FFDShow
     /// </summary>
     public int ResizeVertical
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDy);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDy, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDy); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDy, value); }
     }
 
     /// <summary>
@@ -1475,10 +1461,7 @@ namespace FFDShow
     /// </summary>
     public bool ResizeModeFitToScreen
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeMode) == 5;
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeMode) == 5; }
       set
       {
         if (value)
@@ -1493,10 +1476,7 @@ namespace FFDShow
     /// </summary>
     public bool ResizeModeFreeResize
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeMode) == 0;
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeMode) == 0; }
       set
       {
         if (value)
@@ -1511,10 +1491,7 @@ namespace FFDShow
     /// </summary>
     public bool ResizeKeepAspectRatio
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isAspect) == 1;
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_isAspect) == 1; }
       set
       {
         if (value)
@@ -1530,14 +1507,8 @@ namespace FFDShow
     /// </summary>
     public int ResizeHorizontal
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDx);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDx, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDx); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_resizeDx, value); }
     }
 
     /// <summary>
@@ -1545,18 +1516,14 @@ namespace FFDShow
     /// </summary>
     public int AudioDelay
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_videoDelay);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_videoDelay, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_videoDelay); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_videoDelay, value); }
     }
+
     #endregion Filters Properties
 
     #region Picture Properties
+
     private bool pictureEnabled = false;
 
     /// <summary>
@@ -1564,10 +1531,7 @@ namespace FFDShow
     /// </summary>
     public int PictureGama
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_gammaCorrection);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_gammaCorrection); }
       set
       {
         if (!pictureEnabled)
@@ -1584,10 +1548,7 @@ namespace FFDShow
     /// </summary>
     public int PictureHue
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_hue);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_hue); }
       set
       {
         if (!pictureEnabled)
@@ -1604,10 +1565,7 @@ namespace FFDShow
     /// </summary>
     public int PictureSaturation
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_saturation);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_saturation); }
       set
       {
         if (!pictureEnabled)
@@ -1624,10 +1582,7 @@ namespace FFDShow
     /// </summary>
     public int PictureContrast
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumGain);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumGain); }
       set
       {
         if (!pictureEnabled)
@@ -1644,15 +1599,10 @@ namespace FFDShow
     /// </summary>
     public int PictureBrightness
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumOffset);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumOffset, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumOffset); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_lumOffset, value); }
     }
+
     #endregion Picture Properties
 
     #region PostProcessing Properties
@@ -1662,15 +1612,10 @@ namespace FFDShow
     /// </summary>
     public int PostProcessingIntensity
     {
-      get
-      {
-        return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_deblockStrength);
-      }
-      set
-      {
-        setIntParam(FFDShowConstants.FFDShowDataId.IDFF_deblockStrength, value);
-      }
+      get { return getIntParam(FFDShowConstants.FFDShowDataId.IDFF_deblockStrength); }
+      set { setIntParam(FFDShowConstants.FFDShowDataId.IDFF_deblockStrength, value); }
     }
+
     #endregion PostProcessing Properties
 
     #region Constructors
@@ -1782,6 +1727,7 @@ namespace FFDShow
       if (osdX != 0 || osdY != 0)
         updateOSD = true;
     }
+
     #endregion Constructors
 
     #region Loading
@@ -1865,7 +1811,7 @@ namespace FFDShow
                   break;
               }
             }
-            catch (ArgumentException) { }
+            catch (ArgumentException) {}
           }
           return (IsFFDShowActive = false);
         }
@@ -1941,6 +1887,7 @@ namespace FFDShow
     #endregion Loading
 
     #region Commands
+
     /// <summary>
     /// Stop video
     /// </summary>
@@ -2034,7 +1981,6 @@ namespace FFDShow
     /// </summary>
     public void toggleOSD()
     {
-
       int value = SendMessage(FFD_WPRM.GET_PARAM_VALUE_INT, (int)FFDShowConstants.FFDShowDataId.IDFF_isOSD);
       if (value == 0)
         value = 1;
@@ -2091,7 +2037,7 @@ namespace FFDShow
     {
       //TODO in directshow mode
       if (ffdshowAPIMode == FFDShowAPIMode.InterProcessMode)
-        return getCustomParam(FFD_MSG.GET_SOURCEFILE, 0);//FFDSM_GET_FILENAME);
+        return getCustomParam(FFD_MSG.GET_SOURCEFILE, 0); //FFDSM_GET_FILENAME);
       else return "NOT IMPLEMENTED";
     }
 
@@ -2242,7 +2188,7 @@ namespace FFDShow
       if (IsFFDShowActive)
       {
         string[] presetList = null;
-        string presetListString = getCustomParam(FFD_MSG.GET_PRESETLIST, 0);//FFDSM_GET_PRESETLIST);
+        string presetListString = getCustomParam(FFD_MSG.GET_PRESETLIST, 0); //FFDSM_GET_PRESETLIST);
         if (presetListString != null)
         {
           presetList = presetListString.Split(';');
@@ -2263,9 +2209,11 @@ namespace FFDShow
     {
       return AudioPresets;
     }
+
     #endregion Presets commands
 
     #region Picture grab commands
+
     /// <summary>
     /// Capture current frame to JPG file
     /// </summary>
@@ -2291,6 +2239,7 @@ namespace FFDShow
       else
         Thread.Sleep(600);
     }
+
     #endregion
 
     #region Base commands
@@ -2306,7 +2255,7 @@ namespace FFDShow
             return (int)ffdshowGlobalKey.GetValue("revision", 0);
           }
         }
-        catch (Exception) { }
+        catch (Exception) {}
         return 0;
       }
     }
@@ -2359,7 +2308,7 @@ namespace FFDShow
       receiver.ReceivedType = 0;
       IntPtr ret = new IntPtr(0);
       Win32.SendMessageTimeout(new IntPtr(ffDShowInstanceHandle), (int)type, receiver.Handle, new IntPtr((int)param),
-          Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, requestTimeout, out ret);
+                               Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, requestTimeout, out ret);
 
       if (ret.ToInt32() != TRUE)
         return null;
@@ -2374,7 +2323,11 @@ namespace FFDShow
           /*Debug.WriteLine("Timeout " + param + "/" + type);
           Debug.Flush();*/
         }
-        catch (ThreadInterruptedException) { /*Debug.WriteLine("Interrupt " + param + "/" + type); Debug.Flush();*/ };
+        catch (ThreadInterruptedException)
+        {
+          /*Debug.WriteLine("Interrupt " + param + "/" + type); Debug.Flush();*/
+        }
+        ;
       }
 
       // Check that the received string corresponds to the paramId we requested
@@ -2434,7 +2387,7 @@ namespace FFDShow
             returnedValue = Win32.SendMessage(new IntPtr(ffDShowInstanceHandle), (int)Win32.WM_COPYDATA, 0, ref cd);
 #else
       Win32.SendMessageTimeout(new IntPtr(ffDShowInstanceHandle), (int)Win32.WM_COPYDATA, receiver.Handle, ref cd,
-          Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, (int)requestTimeout, out returnedValue);
+                               Win32.SendMessageTimeoutFlags.SMTO_ABORTIFHUNG, (int)requestTimeout, out returnedValue);
 #endif
       Marshal.FreeHGlobal(cd.lpData);
       return returnedValue.ToInt32();
@@ -2449,6 +2402,7 @@ namespace FFDShow
     {
       return Win32.PostMessage(ffDShowInstanceHandle, FFDShowAPIRemote, (int)wParam, lParam).ToInt32();
     }
+
     #endregion Base commands
   }
 }

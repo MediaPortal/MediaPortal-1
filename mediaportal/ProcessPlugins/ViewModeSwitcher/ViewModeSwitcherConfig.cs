@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,13 +46,13 @@ namespace ProcessPlugins.ViewModeSwitcher
       cmbFBViewMode.SelectedItem = currentSettings.FallBackViewMode.ToString();
 
       cbVerboseLog.Checked = currentSettings.verboseLog;
-      cbShowSwitchMsg.Checked = currentSettings.ShowSwitchMsg;      
+      cbShowSwitchMsg.Checked = currentSettings.ShowSwitchMsg;
       cbUseFallbackRule.Checked = currentSettings.UseFallbackRule;
       cbDisableLBGlobaly.Checked = currentSettings.DisableLBGlobaly;
       numBlackLevel.Value = currentSettings.LBBlackLevel;
       fbosUpDown.Value = currentSettings.fboverScan;
 
-      ReBuildDataGrid();      
+      ReBuildDataGrid();
     }
 
     public void LoadSettings()
@@ -64,7 +64,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public void SaveSettings()
     {
       currentSettings.verboseLog = cbVerboseLog.Checked;
-      currentSettings.ShowSwitchMsg = cbShowSwitchMsg.Checked;      
+      currentSettings.ShowSwitchMsg = cbShowSwitchMsg.Checked;
       currentSettings.UseFallbackRule = cbUseFallbackRule.Checked;
       currentSettings.FallBackViewMode = ViewModeswitcherSettings.StringToViewMode(cmbFBViewMode.Text);
       currentSettings.DisableLBGlobaly = cbDisableLBGlobaly.Checked;
@@ -144,7 +144,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private void bCancel_Click(object sender, EventArgs e)
     {
       Close();
-    }    
+    }
 
     private void linkLabelForum_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -157,7 +157,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         Log.Warn(ex.ToString());
       }
     }
-   
+
     private void cbUseFallbackRule_CheckedChanged(object sender, EventArgs e)
     {
       cmbFBViewMode.Enabled = cbUseFallbackRule.Checked;
@@ -194,6 +194,6 @@ namespace ProcessPlugins.ViewModeSwitcher
           RefreshFormComponents(); // refresh the form
         }
       }
-    }    
+    }
   }
 }

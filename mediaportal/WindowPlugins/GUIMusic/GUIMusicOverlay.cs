@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -307,7 +307,7 @@ namespace MediaPortal.GUI.Music
           // 0001682: Music visualization it's off position when using UI Calibration
           //SetVideoWindow(new Rectangle(_videoWindow.XPosition, _videoWindow.YPosition, _videoWindow.Width, _videoWindow.Height));
         }
-        // still needed?
+          // still needed?
         else if (_videoRectangle != null) // to be compatible to the old version
         {
           SetVideoWindow(new Rectangle(_videoRectangle.XPosition, _videoRectangle.YPosition, _videoRectangle.Width,
@@ -536,7 +536,7 @@ namespace MediaPortal.GUI.Music
       if (tag == null)
       {
         tag = TagReader.TagReader.ReadTag(fileName);
-        
+
         if (tag != null)
         {
           // Mantis 3077: Handle Multiple Artists
@@ -566,7 +566,7 @@ namespace MediaPortal.GUI.Music
           }
         }
       }
-      
+
 
       string strThumb = string.Empty;
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -163,7 +163,7 @@ namespace SetupTv.Sections
         mpListViewMapped.Items.Clear();
         mpListViewChannels.Items.Clear();
 
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
         sb.AddOrderByField(true, "sortOrder");
         SqlStatement stmt = sb.GetStatement(true);
         IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
@@ -184,7 +184,7 @@ namespace SetupTv.Sections
           {
             channel = map.ReferencedChannel();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           if (channel == null)
             continue;
           if (channel.IsRadio == false)
@@ -311,11 +311,10 @@ namespace SetupTv.Sections
       List<TuningDetail> result = new List<TuningDetail>();
       foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
       {
-        
         switch (cardType)
         {
           case CardType.Analog:
-            if(tDetail.ChannelType == 0)
+            if (tDetail.ChannelType == 0)
               result.Add(tDetail);
             break;
           case CardType.Atsc:
@@ -332,8 +331,8 @@ namespace SetupTv.Sections
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
                 Log.Debug(String.Format(
-                            "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
-                            tDetail.Name));
+                  "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to map these channels.",
+                  tDetail.Name));
               }
               else
               {
@@ -374,7 +373,6 @@ namespace SetupTv.Sections
         {
           hasScrambled = true;
         }
-
       }
 
       int imageIndex;

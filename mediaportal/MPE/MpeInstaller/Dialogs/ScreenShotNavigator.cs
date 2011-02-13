@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,6 +34,7 @@ namespace MpeInstaller.Dialogs
   {
     public List<string> Urls;
     public int Index = 0;
+
     public ScreenShotNavigator()
     {
       InitializeComponent();
@@ -22,12 +43,12 @@ namespace MpeInstaller.Dialogs
       pictureBox.LoadCompleted += pictureBox_LoadCompleted;
     }
 
-    void pictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
+    private void pictureBox_LoadCompleted(object sender, AsyncCompletedEventArgs e)
     {
       progressBar1.Visible = false;
     }
 
-    void pictureBox_LoadProgressChanged(object sender, ProgressChangedEventArgs e)
+    private void pictureBox_LoadProgressChanged(object sender, ProgressChangedEventArgs e)
     {
       progressBar1.Value = e.ProgressPercentage;
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Library
 
     public static event BlackImageRenderedHandler OnBlackImageRendered;
     public static event VideoReceivedHandler OnVideoReceived;
-    
+
     // Rendering loop lock - use this when removing any D3D resources
     private static readonly object _renderLock = new object();
 
@@ -163,7 +163,7 @@ namespace MediaPortal.GUI.Library
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
     private static float lasttime = 0f;
-    private static volatile  bool vmr9RenderBusy = false;
+    private static volatile bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
     private static bool idleTimePowerSaving = false;
     private static bool turnOffMonitor = false;
@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.Library
               if (Form.ActiveForm.Handle != IntPtr.Zero)
               {
                 Win32API.SendMessageA(Form.ActiveForm.Handle, WM_SYSCOMMAND, SC_MONITORPOWER,
-                            value ? MONITOR_OFF : MONITOR_ON);
+                                      value ? MONITOR_OFF : MONITOR_ON);
               }
               else
               {
@@ -997,7 +997,7 @@ namespace MediaPortal.GUI.Library
           }
           if (!m_bOverlay)
           {
-            VideoWindow = new Rectangle(0,0,1,1);
+            VideoWindow = new Rectangle(0, 0, 1, 1);
           }
           if (OnVideoWindowChanged != null)
           {
@@ -1918,7 +1918,7 @@ namespace MediaPortal.GUI.Library
         // Nested clip rectangles are themselves clipped at the boundary of the outer clip rectangle.
         Rectangle r1 = _clipRectangleStack.Peek();
         Rectangle r2 = rect;
-        r3 = r1;  // Default result is the clip rectangle on the top of the stack.
+        r3 = r1; // Default result is the clip rectangle on the top of the stack.
 
         bool intersect = !(r2.Left > r1.Right ||
                            r2.Right < r1.Left ||

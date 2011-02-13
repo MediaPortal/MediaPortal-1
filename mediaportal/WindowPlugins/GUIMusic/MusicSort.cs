@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -91,7 +91,7 @@ namespace MediaPortal.GUI.Music
 
       MusicTag tag1 = (MusicTag)item1.MusicTag;
       MusicTag tag2 = (MusicTag)item2.MusicTag;
-      
+
       string strSize1 = "";
       string strSize2 = "";
       string strAlbum1 = "";
@@ -108,7 +108,7 @@ namespace MediaPortal.GUI.Music
       int iRating2 = 0;
       int iDuration1 = 0;
       int iDuration2 = 0;
-      
+
       if (item1.FileInfo != null)
       {
         strSize1 = Util.Utils.GetSize(item1.FileInfo.Length);
@@ -357,11 +357,11 @@ namespace MediaPortal.GUI.Music
           }
           if (bAscending)
           {
-            if(strAlbum1 == strAlbum2)
+            if (strAlbum1 == strAlbum2)
             {
-              if(strAlbumArtist1 == strAlbumArtist2)
+              if (strAlbumArtist1 == strAlbumArtist2)
               {
-                if(iDisc1 == iDisc2)
+                if (iDisc1 == iDisc2)
                 {
                   return (iTrack1 - iTrack2);
                 }
@@ -382,11 +382,11 @@ namespace MediaPortal.GUI.Music
           }
           else
           {
-            if(strAlbum1 == strAlbum2)
+            if (strAlbum1 == strAlbum2)
             {
-              if(strAlbumArtist1 == strAlbumArtist2)
+              if (strAlbumArtist1 == strAlbumArtist2)
               {
-                if(iDisc1 == iDisc2)
+                if (iDisc1 == iDisc2)
                 {
                   return (iTrack2 - iTrack1);
                 }
@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.Music
           {
             return String.Compare(strFile2, strFile1, true);
           }
-          
+
         case SortMethod.Composer:
           string strComposer1 = "";
           string strComposer2 = "";
@@ -430,7 +430,7 @@ namespace MediaPortal.GUI.Music
           {
             strComposer2 = tag2.Composer;
           }
-          
+
           if (bAscending)
           {
             return String.Compare(strComposer1, strComposer2, true);

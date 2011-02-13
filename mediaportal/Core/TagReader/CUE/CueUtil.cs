@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -107,7 +107,7 @@ namespace MediaPortal.TagReader
     public static string buildCueFakeTrackFileName(string cueFileName, Track track)
     {
       string res = cueFileName.Substring(0, cueFileName.Length - CUE_FILE_EXT.Length - 1) + "." +
-        CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
+                   CueUtil.CUE_FAKE_TRACK_FILE_EXT + "." + track.TrackNumber.ToString("00");
 
       if (System.IO.Path.HasExtension(track.DataFile.Filename))
       {
@@ -273,7 +273,7 @@ namespace MediaPortal.TagReader
           if (musicTagCache.Duration == 0)
           {
             musicTagCache.Duration = (int)tagCache.Properties.Duration.TotalSeconds -
-              cueIndexToIntTime(track.Indices[0]);
+                                     cueIndexToIntTime(track.Indices[0]);
           }
         }
         catch (Exception ex)
@@ -291,12 +291,11 @@ namespace MediaPortal.TagReader
             mi.Open(fname);
             int durationms = 0;
             int.TryParse(mi.Get(StreamKind.General, 0, "Duration"), out durationms);
-            musicTagCache.Duration = durationms/1000;
+            musicTagCache.Duration = durationms / 1000;
             mi.Close();
           }
           catch (Exception ex1)
           {
-
             Log.Warn("CueFakeTrackFile2MusicTag: Exception retrieving duration for file {0}. {1}", fname, ex1.Message);
           }
         }
@@ -320,7 +319,7 @@ namespace MediaPortal.TagReader
           musicTagCache.Album = cueSheetCache.Title;
         }
 
-        if(string.IsNullOrEmpty(musicTagCache.AlbumArtist))
+        if (string.IsNullOrEmpty(musicTagCache.AlbumArtist))
         {
           if (!string.IsNullOrEmpty(cueSheetCache.Performer))
           {
@@ -332,27 +331,27 @@ namespace MediaPortal.TagReader
             musicTagCache.HasAlbumArtist = false;
           }
         }
-        
+
         // let tagged genre override cuesheet genre
         if (string.IsNullOrEmpty(musicTagCache.Genre) &&
             !string.IsNullOrEmpty(cueSheetCache.Genre))
         {
           musicTagCache.Genre = cueSheetCache.Genre;
         }
-        
+
         // let tagged year override cuesheet year
         if (musicTagCache.Year == 0 && cueSheetCache.Year != 0)
         {
           musicTagCache.Year = cueSheetCache.Year;
         }
-        
+
         // let tagged composer override cuesheet songwriter
         if (string.IsNullOrEmpty(musicTagCache.Composer) &&
             !string.IsNullOrEmpty(cueSheetCache.Songwriter))
         {
           musicTagCache.Composer = cueSheetCache.Songwriter;
         }
-        
+
 
         //musicTagCache.CoverArtImageBytes = pics[0].Data.Data;
         musicTagCache.FileName = cueFakeTrackFileName;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,14 +40,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("label")] protected string _property = "";
     [XMLSkinElement("seperator")] protected string _seperator = "";
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
-    [XMLSkinElement("lineSpacing")]
-    protected float _lineSpacing = 1.0f;
-    [XMLSkinElement("shadowAngle")]
-    protected int _shadowAngle = 0;
-    [XMLSkinElement("shadowDistance")]
-    protected int _shadowDistance = 0;
-    [XMLSkinElement("shadowColor")]
-    protected long _shadowColor = 0xFF000000;
+    [XMLSkinElement("lineSpacing")] protected float _lineSpacing = 1.0f;
+    [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
+    [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
+    [XMLSkinElement("shadowColor")] protected long _shadowColor = 0xFF000000;
 
     #endregion
 
@@ -297,12 +293,15 @@ namespace MediaPortal.GUI.Library
               }
               if (Shadow)
               {
-                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), _textAlignment,
-                  _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy,
+                                          (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(),
+                                          _textAlignment,
+                                          _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
               }
               else
               {
-                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(), fTextWidth, _textAlignment);
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                    wszText2.Trim(), fTextWidth, _textAlignment);
               }
             }
 
@@ -320,12 +319,14 @@ namespace MediaPortal.GUI.Library
 
             if (Shadow)
             {
-              _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), _textAlignment,
-                _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+              _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                        wszText1.Trim(), _textAlignment,
+                                        _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
             }
             else
             {
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                  wszText1.Trim(), (float)dMaxWidth, _textAlignment);
             }
 
             //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
@@ -739,10 +740,7 @@ namespace MediaPortal.GUI.Library
 
     private bool Shadow
     {
-      get
-      {
-        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
-      }
+      get { return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0); }
     }
   }
 }

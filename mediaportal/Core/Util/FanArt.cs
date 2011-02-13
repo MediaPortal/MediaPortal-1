@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -105,7 +105,7 @@ namespace MediaPortal.Util
       // Check FanArt Plugin directory in MP configuration folder (it will exists if FA plugin is installed)
       string configDir;
       GetFanArtFolder(out configDir);
-      
+
       if (Directory.Exists(configDir))
       {
         string dbFile = SetFanArtFileName(title, index);
@@ -166,7 +166,7 @@ namespace MediaPortal.Util
     /// <param name="countFA"></param>
     /// <param name="share"></param>
     public void GetTmdbFanartByApi(string path, string filename, string imdbTT, string title, bool random, int countFA,
-                                  bool share)
+                                   bool share)
     {
       if (!Win32API.IsConnectedToInternet())
       {
@@ -188,15 +188,16 @@ namespace MediaPortal.Util
         {
           tmdbUrl = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
                     imdbTT;
-          tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                    imdbTT;
+          tmdbUrlWorkaround =
+            "http://api.themoviedb.org/2.1/Movie.imdbLookup/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+            imdbTT;
         }
         else
         {
           tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
                     title;
           tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                    title;
+                              title;
           random = false;
         }
         // Download fanart xml 
@@ -260,7 +261,7 @@ namespace MediaPortal.Util
                   if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
-                // DVD Video
+                  // DVD Video
                 else
                 {
                   SetDvdMovieFile(path, 0);
@@ -295,7 +296,7 @@ namespace MediaPortal.Util
                     if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
-                  // DVD video
+                    // DVD video
                   else
                   {
                     SetDvdMovieFile(path, i);
@@ -359,7 +360,7 @@ namespace MediaPortal.Util
               if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
-            // DVD Video
+              // DVD Video
             else
             {
               SetDvdMovieFile(path, index);
@@ -440,7 +441,7 @@ namespace MediaPortal.Util
           DeleteFile(fileMovie);
         }
       }
-      // DVD Video
+        // DVD Video
       else
       {
         int end = strPathFanart.ToUpper().IndexOf(@"\VIDEO_TS");
@@ -533,7 +534,7 @@ namespace MediaPortal.Util
         faArray[position] = temp;
       }
     }
-    
+
     // Split path and filename
     private static void Split(string strFileNameAndPath, out string strPath, out string strFileName)
     {
@@ -595,7 +596,8 @@ namespace MediaPortal.Util
       }
       catch (Exception ex)
       {
-        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode, ex.Message,
+        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode,
+                  ex.Message,
                   ex.StackTrace);
       }
       finally

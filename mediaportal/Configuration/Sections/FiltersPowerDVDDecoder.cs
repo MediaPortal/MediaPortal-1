@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -125,10 +125,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlace.FormattingEnabled = true;
-      this.comboBoxDeInterlace.Items.AddRange(new object[] {
-            "Auto-select",
-            "Force bob",
-            "Force weave"});
+      this.comboBoxDeInterlace.Items.AddRange(new object[]
+                                                {
+                                                  "Auto-select",
+                                                  "Force bob",
+                                                  "Force weave"
+                                                });
       this.comboBoxDeInterlace.Location = new System.Drawing.Point(52, 85);
       this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
       this.comboBoxDeInterlace.Size = new System.Drawing.Size(198, 21);
@@ -152,7 +154,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel3.Size = new System.Drawing.Size(256, 26);
       this.mpLabel3.TabIndex = 1;
       this.mpLabel3.Text = "Recommended to reduce CPU utilization. If selected De-Interlace options are contr" +
-          "olled by VMR9.";
+                           "olled by VMR9.";
       // 
       // checkBoxUIUseHVA
       // 
@@ -200,28 +202,35 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
-            "Headphones",
-            "S/PDIF Out",
-            "2 Speaker",
-            "4 Speaker",
-            "6 Speaker",
-            "7 Speaker",
-            "8 Speaker"});
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[]
+                                                  {
+                                                    "Headphones",
+                                                    "S/PDIF Out",
+                                                    "2 Speaker",
+                                                    "4 Speaker",
+                                                    "6 Speaker",
+                                                    "7 Speaker",
+                                                    "8 Speaker"
+                                                  });
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(52, 48);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(365, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
-      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
+      this.comboBoxSpeakerConfig.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // comboBoxOutPutMode
       // 
-      this.comboBoxOutPutMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxOutPutMode.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.DropDownWidth = 375;
@@ -249,10 +258,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxH264DeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxH264DeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxH264DeInterlace.FormattingEnabled = true;
-      this.comboBoxH264DeInterlace.Items.AddRange(new object[] {
-            "Auto-select",
-            "Force bob",
-            "Force weave"});
+      this.comboBoxH264DeInterlace.Items.AddRange(new object[]
+                                                    {
+                                                      "Auto-select",
+                                                      "Force bob",
+                                                      "Force weave"
+                                                    });
       this.comboBoxH264DeInterlace.Location = new System.Drawing.Point(52, 87);
       this.comboBoxH264DeInterlace.Name = "comboBoxH264DeInterlace";
       this.comboBoxH264DeInterlace.Size = new System.Drawing.Size(198, 21);
@@ -276,7 +287,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel5.Size = new System.Drawing.Size(256, 26);
       this.mpLabel5.TabIndex = 4;
       this.mpLabel5.Text = "Recommended to reduce CPU utilization. If selected De-Interlace options are contr" +
-          "olled by VMR9.";
+                           "olled by VMR9.";
       // 
       // checkBoxUIUseH264HVA
       // 
@@ -304,7 +315,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox3.ResumeLayout(false);
       this.mpGroupBox3.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

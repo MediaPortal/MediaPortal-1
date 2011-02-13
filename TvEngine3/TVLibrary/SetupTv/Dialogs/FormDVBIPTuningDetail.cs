@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Windows.Forms;
 
@@ -22,7 +42,8 @@ namespace SetupTv.Dialogs
         textBoxDVBIPPmtPid.Text = TuningDetail.PmtPid.ToString();
         textBoxDVBIPProvider.Text = TuningDetail.Provider;
         checkBoxDVBIPfta.Checked = TuningDetail.FreeToAir;
-      } else
+      }
+      else
       {
         textBoxDVBIPChannel.Text = "";
         textBoxDVBIPUrl.Text = "";
@@ -64,7 +85,10 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      if (textBoxDVBIPChannel.Text.Length == 0) { return false; }
+      if (textBoxDVBIPChannel.Text.Length == 0)
+      {
+        return false;
+      }
       int lcn, onid, tsid, sid, pmt;
       if (!Int32.TryParse(textBoxDVBIPChannel.Text, out lcn))
       {
@@ -91,9 +115,11 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
         return false;
       }
-      if (onid <= 0 && tsid < 0 && sid < 0) { return false; }
+      if (onid <= 0 && tsid < 0 && sid < 0)
+      {
+        return false;
+      }
       return true;
     }
-    
   }
 }

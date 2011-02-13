@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -150,9 +150,9 @@ namespace TvEngine.PowerScheduler
       {
         string[] shareItem = share.Split(',');
         if ((shareItem.Length.Equals(3)) &&
-           ((shareItem[0].Trim().Length > 0) ||
-            (shareItem[1].Trim().Length > 0) ||
-            (shareItem[2].Trim().Length > 0)))
+            ((shareItem[0].Trim().Length > 0) ||
+             (shareItem[1].Trim().Length > 0) ||
+             (shareItem[2].Trim().Length > 0)))
         {
           inhibitStandbyShares.Rows.Add(shareItem);
         }
@@ -260,7 +260,7 @@ namespace TvEngine.PowerScheduler
       setting = _layer.GetSetting("PowerSchedulerProcesses", "SetupTv, Configuration");
       setting.Value = textBox1.Text;
       setting.Persist();
- 
+
       // Persist share monitoring configuration for standby prevention
       setting = _layer.GetSetting("PreventStandybyWhenSharesInUse", "true");
       setting.Value = shareMonitoring.Checked.ToString();
@@ -273,7 +273,7 @@ namespace TvEngine.PowerScheduler
         shares.AppendFormat("{0},{1},{2};", row.Cells[0].Value, row.Cells[1].Value, row.Cells[2].Value);
       }
       setting.Value = shares.ToString();
-      setting.Persist();      
+      setting.Persist();
 
       setting = _layer.GetSetting("NetworkMonitorEnabled", "false");
       setting.Value = checkBox15.Checked.ToString();

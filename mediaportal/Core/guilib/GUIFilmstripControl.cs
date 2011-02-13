@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -274,7 +274,9 @@ namespace MediaPortal.GUI.Library
         _frameFocusControl.Add(anim);
 
         // for label
-        GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth, _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP, 0, 0, 0, " | ");
+        GUIFadeLabel fadelabel = new GUIFadeLabel(_parentControlId, _controlId, _positionX, _positionY, _textureWidth,
+                                                  _textureHeight, _fontName, _textColor, Alignment.ALIGN_LEFT,
+                                                  VAlignment.ALIGN_TOP, 0, 0, 0, " | ");
         fadelabel.ParentControl = this;
         fadelabel.AllowScrolling = false;
         fadelabel.DimColor = DimColor;
@@ -669,7 +671,7 @@ namespace MediaPortal.GUI.Library
         {
           GUIGraphicsContext.AddTransform(tm);
         }
-        
+
         _listLabels[itemNumber].XPosition = dwPosX + _textXOff;
         _listLabels[itemNumber].YPosition = (int)Math.Truncate(fTextPosY + _textYOff);
         _listLabels[itemNumber].Width = _textureWidth;
@@ -1311,8 +1313,9 @@ namespace MediaPortal.GUI.Library
               iItem -= (_columns);
               iPage++;
             }
-            if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset)) 
-            { // adjust in the middle
+            if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset))
+            {
+              // adjust in the middle
               int delta = _scrollStartOffset - iItem;
               if (_offset >= delta)
               {
@@ -1889,16 +1892,15 @@ namespace MediaPortal.GUI.Library
     }
 
     public override void Dispose()
-    {      
-
+    {
       _font = null;
       _upDownControl.SafeDispose();
-    
+
       _listItems.DisposeAndClear();
       _horizontalScrollbar.SafeDispose();
       _imageBackground.SafeDispose();
       _imageInfo.SafeDispose();
-    
+
       _frameControl.DisposeAndClear();
       _frameFocusControl.DisposeAndClear();
       _imageFolder.DisposeAndClear();
@@ -3325,13 +3327,13 @@ namespace MediaPortal.GUI.Library
 
     public List<GUIListItem> ListItems
     {
-        get { return _listItems; }
-        set { _listItems = value; }
+      get { return _listItems; }
+      set { _listItems = value; }
     }
 
     public void SetNeedRefresh()
     {
-        _refresh = true;
+      _refresh = true;
     }
   }
 }

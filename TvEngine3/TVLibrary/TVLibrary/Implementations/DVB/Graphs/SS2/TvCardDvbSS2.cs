@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -249,7 +249,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
         throw;
       }
-    }    
+    }
 
     /// <summary>
     /// Tunes the specified channel.
@@ -284,7 +284,7 @@ namespace TvLibrary.Implementations.DVB
           FreeSubChannel(subChannelId);
         }
         throw;
-      }   
+      }
     }
 
     private void AfterTune(int subChannelId, bool ignorePMT)
@@ -294,7 +294,7 @@ namespace TvLibrary.Implementations.DVB
       SendHwPids(new List<ushort>());
       _mapSubChannels[subChannelId].OnAfterTune();
       try
-      {        
+      {
         try
         {
           RunGraph(subChannelId);
@@ -334,7 +334,7 @@ namespace TvLibrary.Implementations.DVB
       if (((uint)hr) == 0x90010115)
       {
         Log.Log.Info("ss2:could not lock tuner after {0} attempts", lockRetries);
-        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");             
+        throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
       }
       if (lockRetries > 0)
       {
@@ -349,7 +349,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr != 0)
         {
           //Log.Log.Error("ss2:SetTunerStatus failed:0x{0:X}", hr);
-          throw new TvExceptionGraphBuildingFailed("Graph building failed");  
+          throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
       }
       return true;
@@ -690,7 +690,6 @@ namespace TvLibrary.Implementations.DVB
           return null;
         switch (CardType)
         {
-
           case CardType.DvbT:
             return new DVBTScanning(this);
           case CardType.DvbS:
@@ -899,7 +898,8 @@ namespace TvLibrary.Implementations.DVB
         IBaseFilter lastFilter;
         ConnectInfTeeToSS2(out lastFilter);
         AddMdPlugs(ref lastFilter);
-        if(!ConnectTsWriter(lastFilter)){
+        if (!ConnectTsWriter(lastFilter))
+        {
           throw new TvExceptionGraphBuildingFailed("Graph building failed");
         }
         SendHwPids(new List<ushort>());
@@ -1147,12 +1147,12 @@ namespace TvLibrary.Implementations.DVB
         return;
 
       base.Dispose();
-      
-      Log.Log.WriteFile("ss2:Decompose");      
-      
+
+      Log.Log.WriteFile("ss2:Decompose");
+
       _interfaceB2C2DataCtrl = null;
       _interfaceB2C2TunerCtrl = null;
-      
+
       if (_filterB2C2Adapter != null)
       {
         Release.ComObject("tuner filter", _filterB2C2Adapter);

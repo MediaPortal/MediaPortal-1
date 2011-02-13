@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,12 +68,12 @@ namespace Wikipedia
     /// <summary>Only called with a title string, language set to default.</summary>
     /// <param name="title">The article's title</param>
     public WikipediaArticle(string title)
-      : this(title, "Default") { }
+      : this(title, "Default") {}
 
     /// <summary>This constructor creates a new WikipediaArticle if no parameter is given.</summary>
     /// <summary>Uses an empty searchterm and the default language.</summary>
     public WikipediaArticle()
-      : this(string.Empty, "Default") { }
+      : this(string.Empty, "Default") {}
 
     #endregion
 
@@ -204,7 +204,7 @@ namespace Wikipedia
         Log.Info("Wikipedia: Empty article found. Try another Searchterm.");
         this.unparsedArticle = string.Empty;
       }
-      // Here we check if there is only a redirect as article to handle it as a special article type
+        // Here we check if there is only a redirect as article to handle it as a special article type
       else if (tempParsedArticle.IndexOf("#REDIRECT") == 0)
       {
         Log.Info("Wikipedia: #REDIRECT found.");
@@ -217,7 +217,7 @@ namespace Wikipedia
         GetWikipediaXML();
         ParseWikipediaArticle();
       }
-      // Finally a well-formed article ;-)
+        // Finally a well-formed article ;-)
       else
       {
         Log.Info("Wikipedia: Starting parsing.");
@@ -431,7 +431,8 @@ namespace Wikipedia
         Log.Debug(tempParsedArticle);
 
         MatchEvaluator myEvaluator = new MatchEvaluator(this.parseLink);
-        tempParsedArticle = Regex.Replace(tempParsedArticle, @"\[\[[^\[]*\|(?<text>.*?)\]\]|\[\[(?<text>.*?)\]\]", myEvaluator, RegexOptions.Singleline);
+        tempParsedArticle = Regex.Replace(tempParsedArticle, @"\[\[[^\[]*\|(?<text>.*?)\]\]|\[\[(?<text>.*?)\]\]",
+                                          myEvaluator, RegexOptions.Singleline);
         Log.Info("Wikipedia: Finished parsing of links and images.");
 
         // For Debug purposes it is nice to see how the whole article text is parsed until here

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Interfaces
@@ -81,7 +82,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     #endregion
 
     #region Power management wrapper methods
-    
+
     /// <summary>
     /// Set the PowerManager to allow standby
     /// </summary>
@@ -89,7 +90,7 @@ namespace TvEngine.PowerScheduler.Interfaces
     public bool AllowStandby()
     {
       // If was prevented, enable
-      if(!_standbyAllowed)
+      if (!_standbyAllowed)
         SetThreadExecutionState(ExecutionState.Continuous);
       _standbyAllowed = true;
       return true;
@@ -105,7 +106,8 @@ namespace TvEngine.PowerScheduler.Interfaces
       {
         // If was allowed, disable
         if (_standbyAllowed)
-          SetThreadExecutionState(ExecutionState.Continuous | ExecutionState.SystemRequired | ExecutionState.Awaymode_Required);
+          SetThreadExecutionState(ExecutionState.Continuous | ExecutionState.SystemRequired |
+                                  ExecutionState.Awaymode_Required);
         _standbyAllowed = false;
         return true;
       }

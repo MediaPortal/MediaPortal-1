@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -91,6 +91,7 @@ namespace System.Windows
       return _resources.GetEnumerator();
     }
     */
+
     public void RegisterName(string name, object ownerContext)
     {
       _resources[name] = ownerContext;
@@ -146,6 +147,7 @@ namespace System.Windows
       get { return _resources.Values; }
     }
     */
+
     public ResourceDictionaryCollection MergedDictionaries
     {
       get { return _mergedDictionaries; }

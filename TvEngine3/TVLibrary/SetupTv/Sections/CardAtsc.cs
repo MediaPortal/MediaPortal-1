@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -134,7 +134,7 @@ namespace SetupTv.Sections
         if (RemoteControl.Instance.IsCardInUse(_cardNumber, out user))
         {
           MessageBox.Show(this,
-                            "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
+                          "Tuner is locked. Scanning is not possible at the moment. Perhaps you are using another part of a hybrid card?");
           return;
         }
         SimpleFileName tuningFile = (SimpleFileName)mpComboBoxFrequencies.SelectedItem;

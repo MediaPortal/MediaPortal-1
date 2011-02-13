@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Gentle.Common;
+
 #endregion
 
 namespace TvEngine.PowerScheduler
@@ -103,12 +104,12 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     /// 
     private Thread _pollThread;
-    
+
     /// <summary>
     ///  How often we should reload settings
     /// </summary>
     private int _reloadInterval = 60;
-    
+
     /// <summary>
     ///  Stop poll thread 
     /// </summary>
@@ -832,7 +833,7 @@ namespace TvEngine.PowerScheduler
           try
           {
             if (reload++ == _reloadInterval)
-            { 
+            {
               reload = 0;
               CheckForStandby(true);
               // Clear cache
@@ -1051,7 +1052,6 @@ namespace TvEngine.PowerScheduler
     {
       lock (this) // to avoid clash with OnPowerEvent
       {
-
         // scenario: CheckForStandby is called right after resume, but before Resume is handled by OnPowerEvent
         // then we could mis-send the PC to hibernation again (Unattended not reset yet)
         // so, we just check for _standby
@@ -1064,7 +1064,7 @@ namespace TvEngine.PowerScheduler
         // is anybody disallowing shutdown?
         if (!DisAllowShutdown(refresh))
         {
-           _powerManager.AllowStandby();
+          _powerManager.AllowStandby();
           if (!_idle)
           {
             Log.Info("PowerScheduler: System changed from busy state to idle state");
@@ -1500,7 +1500,7 @@ namespace TvEngine.PowerScheduler
         // Start time and stop time on the same day (01:00 -> 17:00)
         ((_settings.AllowedSleepStartTime < _settings.AllowedSleepStopTime)
          &&
-        // 2 possibilities for the same day: before or after the timespan
+         // 2 possibilities for the same day: before or after the timespan
          ((Current24hHour < _settings.AllowedSleepStartTime) ||
           (Current24hHour >= _settings.AllowedSleepStopTime))
         ))
@@ -1532,7 +1532,6 @@ namespace TvEngine.PowerScheduler
     [MethodImpl(MethodImplOptions.Synchronized)]
     private DateTime NextWakeupTime(bool refresh)
     {
-
       if (!refresh && _currentNextWakeupTime != DateTime.MaxValue)
         return _currentNextWakeupTime;
 

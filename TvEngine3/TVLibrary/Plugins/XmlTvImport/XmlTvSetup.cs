@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,7 +84,7 @@ namespace SetupTv.Sections
       setting = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml");
       setting.Value = txtRemoteURL.Text;
       setting.Persist();
-      
+
       setting = layer.GetSetting("xmlTvRemoteScheduleTime", "06:30");
       DateTimeFormatInfo DTFI = new DateTimeFormatInfo();
       DTFI.ShortDatePattern = _shortTimePattern24Hrs;
@@ -140,7 +140,8 @@ namespace SetupTv.Sections
       labelStatus.Text = layer.GetSetting("xmlTvResultStatus", "").Value;
 
       chkScheduler.Checked = (layer.GetSetting("xmlTvRemoteSchedulerEnabled", "false").Value == "true");
-      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value == "true");
+      radioDownloadOnWakeUp.Checked = (layer.GetSetting("xmlTvRemoteSchedulerDownloadOnWakeUpEnabled", "false").Value ==
+                                       "true");
       radioDownloadOnSchedule.Checked = !radioDownloadOnWakeUp.Checked;
 
       txtRemoteURL.Text = layer.GetSetting("xmlTvRemoteURL", "http://www.mysite.com/TVguide.xml").Value;
@@ -852,7 +853,8 @@ namespace SetupTv.Sections
       UpdateRadioButtonsState();
     }
 
-    private void UpdateRadioButtonsState() {
+    private void UpdateRadioButtonsState()
+    {
       radioDownloadOnSchedule.Enabled = chkScheduler.Checked;
       radioDownloadOnWakeUp.Enabled = chkScheduler.Checked;
     }

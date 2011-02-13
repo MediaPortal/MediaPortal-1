@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -215,7 +215,6 @@ namespace MediaPortal.Music.Database
       BitRate = 0;
       Channels = 0;
       SampleRate = 0;
-
     }
 
     #region Getters & Setters
@@ -463,17 +462,17 @@ namespace MediaPortal.Music.Database
     public PlayListItem ToPlayListItem()
     {
       PlayListItem pli = new PlayListItem();
-      
+
       pli.Type = PlayListItem.PlayListItemType.Audio;
       pli.FileName = this.FileName;
       pli.Description = this.Title;
       pli.Duration = this.Duration;
       MusicTag tag = this.ToMusicTag();
-      pli.MusicTag = tag;  
-        
+      pli.MusicTag = tag;
+
       return pli;
     }
-    
+
     public string ToShortString()
     {
       StringBuilder s = new StringBuilder();

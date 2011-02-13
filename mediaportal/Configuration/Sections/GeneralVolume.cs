@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -225,7 +225,7 @@ namespace MediaPortal.Configuration.Sections
         StringBuilder builder = new StringBuilder();
         ArrayList valueArray = new ArrayList();
 
-        foreach (string token in ((TextBox)sender).Text.Split(new char[] { ',', ';', ' ' }))
+        foreach (string token in ((TextBox)sender).Text.Split(new char[] {',', ';', ' '}))
         {
           if (token == string.Empty)
           {
@@ -304,8 +304,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxVolumeOsd
       // 
-      this.groupBoxVolumeOsd.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxVolumeOsd.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxVolumeOsd.Controls.Add(this._useVolumeOSD);
       this.groupBoxVolumeOsd.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxVolumeOsd.Location = new System.Drawing.Point(0, 257);
@@ -328,8 +330,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxMixerControl
       // 
-      this.groupBoxMixerControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxMixerControl.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxMixerControl.Controls.Add(this._useWave);
       this.groupBoxMixerControl.Controls.Add(this._useMasterVolume);
       this.groupBoxMixerControl.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -366,8 +370,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxStartup
       // 
-      this.groupBoxStartup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxStartup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxStartup.Controls.Add(this._levelTextbox);
       this.groupBoxStartup.Controls.Add(this._useCustomLevel);
       this.groupBoxStartup.Controls.Add(this._useSystemCurrent);
@@ -382,8 +388,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _levelTextbox
       // 
-      this._levelTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this._levelTextbox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this._levelTextbox.BorderColor = System.Drawing.Color.Empty;
       this._levelTextbox.Enabled = false;
       this._levelTextbox.Location = new System.Drawing.Point(168, 69);
@@ -433,8 +441,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxScale
       // 
-      this.groupBoxScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxScale.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxScale.Controls.Add(this._useVistaHandler);
       this.groupBoxScale.Controls.Add(this._customTextbox);
       this.groupBoxScale.Controls.Add(this._useCustomHandler);
@@ -463,8 +473,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // _customTextbox
       // 
-      this._customTextbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this._customTextbox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this._customTextbox.BorderColor = System.Drawing.Color.Empty;
       this._customTextbox.Enabled = false;
       this._customTextbox.Location = new System.Drawing.Point(168, 115);
@@ -551,7 +563,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxScale.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     #endregion

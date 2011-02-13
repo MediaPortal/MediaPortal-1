@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -74,7 +74,9 @@ namespace MediaPortal.Util
       // Get Main Movie page and find default poster link
       string defaultPosterPageLinkURL = "http://www.imdb.com/title/" + imdbID;
       string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
-      Match posterPageLink = Regex.Match(strBodyPicDefault, @"id=""img_primary"">.*?src='/rg/title-overview/primary/images.*?href=""(?<defaultPic>.*?)""",RegexOptions.Singleline);
+      Match posterPageLink = Regex.Match(strBodyPicDefault,
+                                         @"id=""img_primary"">.*?src='/rg/title-overview/primary/images.*?href=""(?<defaultPic>.*?)""",
+                                         RegexOptions.Singleline);
 
       // Now parse default cover picture html page to get default cover
       strBodyPicDefault = GetPage("http://www.imdb.com" + posterPageLink.Groups["defaultPic"].Value, "utf-8");
@@ -144,9 +146,10 @@ namespace MediaPortal.Util
       string regexBlockPattern =
         @"<h5>Director[s]?:</h5>(?<directors_block>.*?)</div>|<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
       string regexPattern = @"<a\s+href=""/name/(?<idDirector>nm\d{7})/""[^>]*>(?<movieDirectors>[^<]+)</a>";
-      string block = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
+      string block =
+        Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
       strDirector = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
-      
+
       if (strDirector != string.Empty)
       {
         // Add prefix that it's director, will be removed on fetching details
@@ -156,9 +159,9 @@ namespace MediaPortal.Util
       // cast
       regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
       regexPattern = @"<td[^<]*<a\s+href=""/name/(?<imdbActorID>nm\d{7})/""[^>]*>(?<movieActors>[^<]*)</a>";
-      
+
       Match castBlock = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline);
-      
+
       // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
       if (!castBlock.Success)
         castBlock = Regex.Match(strBodyActors, @"redited\scast.*?</table>");
@@ -171,7 +174,7 @@ namespace MediaPortal.Util
 
       string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
 
-      if (strCastBlock != null) 
+      if (strCastBlock != null)
       {
         MatchCollection mc = Regex.Matches(strCastBlock, regexPattern, RegexOptions.Singleline);
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ namespace MediaPortal.Util
       }
       if (movieName == null) return;
       if (movieName == string.Empty) return;
-      
+
       _imageList.Clear();
       movieName = movieName.Replace(" ", "+");
       string resultGoogle = string.Empty;
@@ -73,7 +73,7 @@ namespace MediaPortal.Util
       string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + movieName +
                    "+poster&sa=Google+Search&sitesearch=www.impawards.com";
       IMPAwardsSearch x = new IMPAwardsSearch();
-      
+
       WebClient wc = new WebClient();
       try
       {

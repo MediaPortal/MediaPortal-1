@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -138,6 +138,7 @@ namespace MediaPortal.Configuration.Sections
     private Dictionary<string, IIMDBScriptGrabber> _grabberList;
 
     #region Variables
+
     // The LVI being edited
     private ListViewItem _editItem;
     private bool _scanning;
@@ -246,7 +247,7 @@ namespace MediaPortal.Configuration.Sections
         cbTitle.SelectedIndex = 0;
       }
     }
-    
+
     #region Scan tab
 
     private void sharesListBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -1166,7 +1167,7 @@ namespace MediaPortal.Configuration.Sections
       FanArt.DeleteCovers(title, CurrentMovie.ID);
       // Fanart delete
       FanArt.DeleteFanarts(strFilenameAndPath, title);
-      
+
       buttonLookupMovie.Enabled = false;
       btnSave.Enabled = false;
       tabControl2.Enabled = false; // Subtab options for main
@@ -1458,7 +1459,7 @@ namespace MediaPortal.Configuration.Sections
         max++;
         pbSearchCover.Maximum = max;
         ProgressBarAdvance(ref pbSearchCover, "Searching Local IMG... ", true);
-        
+
         DirectoryInfo di = new DirectoryInfo(strPath);
         FileInfo[] jpgFiles = di.GetFiles("*.jpg");
 
@@ -1478,7 +1479,7 @@ namespace MediaPortal.Configuration.Sections
       if (chbTMDBCoverSource.Checked)
       {
         ProgressBarAdvance(ref pbSearchCover, "Searching TMDB... ", true);
-        
+
         TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
         // Call is made by IMDBNumber parameter because we're targeting specific movie not guessing
         tmdbSearch.SearchCovers(tbCoverSearchStr.Text, CurrentMovie.IMDBNumber);
@@ -1498,7 +1499,7 @@ namespace MediaPortal.Configuration.Sections
       if (chbImpAwCoverSource.Checked)
       {
         ProgressBarAdvance(ref pbSearchCover, "Searching IMPAw... ", true);
-       
+
         IMPAwardsSearch impSearch = new IMPAwardsSearch();
         impSearch.SearchCovers(CurrentMovie.Title, CurrentMovie.IMDBNumber);
 
@@ -1521,7 +1522,7 @@ namespace MediaPortal.Configuration.Sections
       if (chbIMDBCoverSource.Checked)
       {
         ProgressBarAdvance(ref pbSearchCover, "Searching IMDB... ", true);
-        
+
         IMDBSearch imdbSearch = new IMDBSearch();
         // Call is made by IMDBNumber parameter because we're targeting specific movie not guessing
         imdbSearch.SearchCovers(CurrentMovie.IMDBNumber, false);
@@ -1895,7 +1896,7 @@ namespace MediaPortal.Configuration.Sections
         useFanartCheckBox.Checked = _useFanArt;
         fanartQ.Value = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
         chbFanartShare.Checked = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
-            
+
         if (_useFanArt)
         {
           fanartQ.Enabled = true;
@@ -1907,7 +1908,7 @@ namespace MediaPortal.Configuration.Sections
           chbFanartShare.Enabled = false;
         }
         SetFanartFileIndexLabel(0);
-        
+
         // Folder movie title
         _useFolderAsTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
         useFoldernameCheckBox.Checked = _useFolderAsTitle;
@@ -2730,9 +2731,9 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #region New controls code
-    
+
     #region Covers
-    
+
     // Refresh all covers
     private void btnRefreshAllCovers_Click(object sender, EventArgs e)
     {
@@ -2774,7 +2775,7 @@ namespace MediaPortal.Configuration.Sections
       bgwCover.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelWorker);
       // Start worker by passing parameter moviecollection
       bgwCover.RunWorkerAsync();
-      
+
       while (_isRefreshing)
       {
         if (!_progressDialog.CancelScan)
@@ -2788,7 +2789,6 @@ namespace MediaPortal.Configuration.Sections
           return;
         }
       }
-      
     }
 
     // Refresh covers DoWork event handler
@@ -2812,7 +2812,7 @@ namespace MediaPortal.Configuration.Sections
         {
           if (_progressDialog.Count < movies.Count - 1)
             _progressDialog.Count++;
-        continue;
+          continue;
         }
         //TMDB Search first (best covers)
         TMDBCoverSearch tmdbSearch = new TMDBCoverSearch();
@@ -2858,7 +2858,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Fanart
-    
+
     // Get FanArt list for selected movie
     private void btnSearchFanart_Click(object sender, EventArgs e)
     {
@@ -2878,7 +2878,8 @@ namespace MediaPortal.Configuration.Sections
           // Download fanarts
           FanArt fanartSearch = new FanArt();
           fanartSearch.GetTmdbFanartByApi
-            (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value, chbFanartShare.Checked);
+            (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
+             chbFanartShare.Checked);
 
           // Update database
           VideoDatabase.SetFanartURL(CurrentMovie.ID, fanartSearch.DefaultFanartUrl);
@@ -2997,7 +2998,7 @@ namespace MediaPortal.Configuration.Sections
         _progressDialog.SetPercentage(100);
         _progressDialog.Total = cbTitle.Items.Count - 1;
         _progressDialog.Count = 1;
-         _progressDialog.Show();
+        _progressDialog.Show();
         // Set bacgroundworker
         BackgroundWorker bgwFanart = new BackgroundWorker();
         bgwFanart.WorkerSupportsCancellation = true;
@@ -3006,7 +3007,7 @@ namespace MediaPortal.Configuration.Sections
         bgwFanart.RunWorkerCompleted += new RunWorkerCompletedEventHandler(CancelWorker);
         // Start worker by passing parameter moviecollection
         bgwFanart.RunWorkerAsync();
-        
+
         while (_isRefreshing)
         {
           if (!_progressDialog.CancelScan)
@@ -3016,7 +3017,8 @@ namespace MediaPortal.Configuration.Sections
           else
           {
             _isRefreshing = false;
-            bgwFanart.CancelAsync(); ;
+            bgwFanart.CancelAsync();
+            ;
             return;
           }
         }
@@ -3043,17 +3045,17 @@ namespace MediaPortal.Configuration.Sections
           e.Cancel = true;
           break;
         }
-      
+
         _progressDialog.SetLine1("Downloading fanart for: " + movie.Title);
 
         // Skip no IMDBid movie (better than fetch wrong art)
         if (CheckImdbId(movie.IMDBNumber) == false)
         {
           if (_progressDialog.Count < movies.Count - 1)
-             _progressDialog.Count++;
+            _progressDialog.Count++;
           continue;
         }
-        VideoDatabase.GetFiles(movie.ID,ref movieFiles);
+        VideoDatabase.GetFiles(movie.ID, ref movieFiles);
         string strFile = string.Empty;
         string strPath = string.Empty;
 
@@ -3177,7 +3179,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Settings
-    
+
     // Skip existing checkbox
     private void skipCheckBox_CheckedChanged(object sender, EventArgs e)
     {
@@ -3186,7 +3188,7 @@ namespace MediaPortal.Configuration.Sections
         refreshdbCheckBox.CheckState = CheckState.Unchecked;
       }
     }
-    
+
     // Folder as movie title checkbox
     private void useFoldername_CheckedChanged(object sender, EventArgs e)
     {
@@ -3296,7 +3298,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Actors
-    
+
     // ComboBox actor index change action
     private void cbActor_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -3330,7 +3332,7 @@ namespace MediaPortal.Configuration.Sections
           pictureBoxActor.ImageLocation = actdetail.ThumbnailUrl;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     // Save actor detail changes
@@ -3417,8 +3419,8 @@ namespace MediaPortal.Configuration.Sections
 
       // Actor datatable
       System.Data.DataTable actTable = new System.Data.DataTable();
-      actTable.Columns.Add("ID", typeof(string));
-      actTable.Columns.Add("Name", typeof(string));
+      actTable.Columns.Add("ID", typeof (string));
+      actTable.Columns.Add("Name", typeof (string));
 
       ArrayList actorsByMovie = new ArrayList();
       VideoDatabase.GetActorsByMovieID(movieID, ref actorsByMovie);
@@ -3607,7 +3609,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Tools
-    
+
     // Clear actors trash from the database (ie. unknown, nmxxxxx)
     private void btnClearActorsTrash_Click(object sender, EventArgs e)
     {
@@ -3675,7 +3677,7 @@ namespace MediaPortal.Configuration.Sections
       {
         return;
       }
-      
+
       ArrayList movies = new ArrayList();
       VideoDatabase.GetMovies(ref movies);
 
@@ -3817,11 +3819,11 @@ namespace MediaPortal.Configuration.Sections
 
       Cursor = Cursors.Default;
     }
-    
+
     #endregion
 
     #region Other
-    
+
     // IMDB film page link click if somebody wants to know more about movie
     private void linkLabelIMDBNumber_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
     {
@@ -3851,16 +3853,16 @@ namespace MediaPortal.Configuration.Sections
       //
       int percent = (int)((progressBar.Value / (double)progressBar.Maximum) * 100);
       progressBar.CreateGraphics().DrawString(text + percent + "%",
-                                          new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                          new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
+                                              new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
+                                              new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
     }
 
     // Progress bar draw percentage
     private void ProgressBarDrawPercentage(ref UserInterface.Controls.MPProgressBar progressBar, int percent)
     {
       progressBar.CreateGraphics().DrawString(percent + "%",
-                                                new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
-                                                new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
+                                              new Font("Arial", (float)8.25, FontStyle.Regular), Brushes.Black,
+                                              new PointF(progressBar.Width / 2 - 10, progressBar.Height / 2 - 7));
     }
 
     // Stop/Complete worker event handler
@@ -3886,7 +3888,6 @@ namespace MediaPortal.Configuration.Sections
       LoadMovies(0);
       cbTitle.SelectedIndex = 0;
       this.Enabled = true;
-      
     }
 
     // Show-hide some of the controls

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,6 +64,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       workerEvent.Set();
       return "Cropping";
     }
+
     /// <summary>
     /// Implements IAutoCrop.ToggleMode, toggling the mode
     /// of the autocropper (ie from Off-> Dynamic or similar)
@@ -256,27 +257,27 @@ namespace ProcessPlugins.ViewModeSwitcher
       //process the fallback rule if no other rule has fitted
       if (currentSettings.UseFallbackRule && currentRule == -1 && height != 100 && width != 100)
       {
-        Log.Info("ViewModeSwitcher: Processing the fallback rule!");        
+        Log.Info("ViewModeSwitcher: Processing the fallback rule!");
         Crop(currentSettings.fboverScan);
         SetAspectRatio("Fallback rule", currentSettings.FallBackViewMode);
-      }      
+      }
     }
 
     private void Crop(int crop)
     {
       if (crop > 0)
       {
-        cropSettings.Top=(int)(crop / LastSwitchedAspectRatio);
-        cropSettings.Bottom=(int)(crop / LastSwitchedAspectRatio);
-        cropSettings.Left=crop;
-        cropSettings.Right=crop;        
+        cropSettings.Top = (int)(crop / LastSwitchedAspectRatio);
+        cropSettings.Bottom = (int)(crop / LastSwitchedAspectRatio);
+        cropSettings.Left = crop;
+        cropSettings.Right = crop;
       }
       else
       {
         cropSettings.Top = currentSettings.CropTop;
         cropSettings.Bottom = currentSettings.CropBottom;
         cropSettings.Left = currentSettings.CropLeft;
-        cropSettings.Right = currentSettings.CropRight;           
+        cropSettings.Right = currentSettings.CropRight;
       }
       SetCropMode();
     }
@@ -287,7 +288,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     /// </summary>
     private void OnVideoReceived()
     {
-      if (ViewModeSwitcherEnabled && VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.VideoAspectRatioX != 0 && VMR9Util.g_vmr9.VideoAspectRatioY != 0)
+      if (ViewModeSwitcherEnabled && VMR9Util.g_vmr9 != null && VMR9Util.g_vmr9.VideoAspectRatioX != 0 &&
+          VMR9Util.g_vmr9.VideoAspectRatioY != 0)
       {
         // calculate the current aspect ratio
         float aspectRatio = (float)VMR9Util.g_vmr9.VideoAspectRatioX / (float)VMR9Util.g_vmr9.VideoAspectRatioY;
@@ -299,7 +301,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           LastDetectionResult = false;
         }
         if (!LastDetectionResult && enableLB)
-        {          
+        {
           workerEvent.Set();
         }
       }
@@ -386,7 +388,7 @@ namespace ProcessPlugins.ViewModeSwitcher
       {
         cropSettings.Top = cropV; //bounds.Top;
         cropSettings.Bottom = cropV; // GUIGraphicsContext.VideoSize.Height - (bounds.Bottom + 1);
-        cropSettings.Left = cropH;// bounds.Left;
+        cropSettings.Left = cropH; // bounds.Left;
         cropSettings.Right = cropH; // GUIGraphicsContext.VideoSize.Width - (bounds.Right + 1);
         SetCropMode();
       }
@@ -397,7 +399,7 @@ namespace ProcessPlugins.ViewModeSwitcher
         if (Math.Abs(asp - newasp) > 0.2 && LastSwitchedAspectRatio > 1.5)
           SetAspectRatio("4:3 inside 16:9", Geometry.Type.NonLinearStretch);
       }
-      
+
       frame.Dispose();
       frame = null;
     }

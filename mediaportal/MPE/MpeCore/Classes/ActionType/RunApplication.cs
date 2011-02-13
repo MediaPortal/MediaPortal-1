@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -61,15 +61,15 @@ namespace MpeCore.Classes.ActionType
       Params.Add(new SectionParam(Const_Params, "", ValueTypeEnum.String,
                                   "Command line parameters"));
       Params.Add(new SectionParam(Const_Wait, "", ValueTypeEnum.Bool,
-                            "Wait for exit "));
+                                  "Wait for exit "));
       Params.Add(new SectionParam(Const_DontRUnOnSilent, "", ValueTypeEnum.Bool,
-                            "If set to Yes the aplication don't run when the istalation is silent "));
+                                  "If set to Yes the aplication don't run when the istalation is silent "));
       Params.Add(new SectionParam(Const_Un_APP, "", ValueTypeEnum.Template,
-                            "Path to the application which should be executed when uninstall"));
+                                  "Path to the application which should be executed when uninstall"));
       Params.Add(new SectionParam(Const_Un_Params, "", ValueTypeEnum.String,
                                   "Command line parameters for uninstall app"));
       Params.Add(new SectionParam(Const_Un_Wait, "", ValueTypeEnum.Bool,
-                            "Wait for exit on uninstall "));
+                                  "Wait for exit on uninstall "));
       return Params;
     }
 
@@ -144,9 +144,8 @@ namespace MpeCore.Classes.ActionType
         myProcess.Start();
         if (item.ActionParam[Const_Un_Wait].GetValueAsBool())
           myProcess.WaitForExit();
-
       }
-      catch (Exception )
+      catch (Exception)
       {
         if (ItemProcessed != null)
           ItemProcessed(this, new InstallEventArgs("Error to start application"));
@@ -157,6 +156,4 @@ namespace MpeCore.Classes.ActionType
       return SectionResponseEnum.Ok;
     }
   }
-
-
 }

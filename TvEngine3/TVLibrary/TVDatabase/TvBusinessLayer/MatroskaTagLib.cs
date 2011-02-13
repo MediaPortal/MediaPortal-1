@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -113,25 +113,24 @@ namespace TvDatabase
         }
         try
         {
-            string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.TopDirectoryOnly);
-            foreach (string xmlFile in importFiles)
+          string[] importFiles = Directory.GetFiles(aDirectory, "*.xml", SearchOption.TopDirectoryOnly);
+          foreach (string xmlFile in importFiles)
+          {
+            try
             {
-              try
-              {
-                MatroskaTagInfo importTag = ReadTag(xmlFile);
-                foundTagInfo[xmlFile] = importTag;
-              }
-              catch (Exception ex)
-              {
-                Log.Info("Error while reading matroska informations in file {0}: {1}",xmlFile, ex);
-              }
+              MatroskaTagInfo importTag = ReadTag(xmlFile);
+              foundTagInfo[xmlFile] = importTag;
+            }
+            catch (Exception ex)
+            {
+              Log.Info("Error while reading matroska informations in file {0}: {1}", xmlFile, ex);
             }
           }
-          catch (Exception ex)
-          {
-            Log.Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
-          }
-
+        }
+        catch (Exception ex)
+        {
+          Log.Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
+        }
       }
       catch (Exception ex)
       {

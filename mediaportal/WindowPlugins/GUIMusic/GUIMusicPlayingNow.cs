@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -103,7 +103,7 @@ namespace MediaPortal.GUI.Music
       IMGLIST_FAMOUS_TRACK1 = 87,
       IMGLIST_FAMOUS_TRACK2 = 88,
       IMGLIST_FAMOUS_TRACK3 = 89,
-      
+
       LBL_FORCE_FOCUS = 888,
 
       VUMETER_LEFT = 999,
@@ -498,13 +498,13 @@ namespace MediaPortal.GUI.Music
           }
           break;
 
-         case Action.ActionType.ACTION_LASTFM_LOVE:
-           DoLastFMLove();
-           break;
+        case Action.ActionType.ACTION_LASTFM_LOVE:
+          DoLastFMLove();
+          break;
 
-         case Action.ActionType.ACTION_LASTFM_BAN:
-           DoLastFMBan();
-           break;   
+        case Action.ActionType.ACTION_LASTFM_BAN:
+          DoLastFMBan();
+          break;
       }
     }
 
@@ -692,11 +692,11 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
-      if(control == btnLastFMLove)
+      if (control == btnLastFMLove)
       {
         DoLastFMLove();
       }
-      if(control == btnLastFMBan)
+      if (control == btnLastFMBan)
       {
         DoLastFMBan();
       }
@@ -1013,13 +1013,13 @@ namespace MediaPortal.GUI.Music
         }
 
         UpdateImagePathContainer();
-        
+
         // previously focus was set all the time
         // to maintain previous functionality set focus if
         // defauly skin control is present
         if (lblForceFocus != null)
         {
-		      GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
+          GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_ALBUM_INFO));
         }
       }
     }
@@ -1042,7 +1042,7 @@ namespace MediaPortal.GUI.Music
       // will be separated by " | " so split by | then trim
       // so we will add one thumb for artist
       String[] strArtists = CurrentTrackTag.Artist.Split('|');
-      foreach(String strArtist in strArtists)
+      foreach (String strArtist in strArtists)
       {
         CurrentThumbFileName = Util.Utils.GetCoverArtName(Thumbs.MusicArtists,
                                                           Util.Utils.MakeFileName(strArtist.Trim()));
@@ -1105,13 +1105,13 @@ namespace MediaPortal.GUI.Music
             LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
             LblBestTagTracks.Visible = true;
           }
-          
+
           if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
           {
             // previously focus was set all the time
             // to maintain previous functionality set focus if
             // defauly skin control is present
-          	if (lblForceFocus != null)
+            if (lblForceFocus != null)
             {
               GUIControl.FocusControl(GetID, ((int)ControlIDs.LIST_TAG_INFO));
             }
@@ -1377,7 +1377,7 @@ namespace MediaPortal.GUI.Music
       }
 
       if (ImgCoverArt != null)
-      {        
+      {
         if (ImagePathContainer.Count > 1)
         {
           int currentImage = 0;
@@ -1390,7 +1390,7 @@ namespace MediaPortal.GUI.Music
               break;
             }
           }
-                                
+
           if (currentImage < ImagePathContainer.Count)
           {
             ImgCoverArt.SetFileName(ImagePathContainer[currentImage]);
@@ -1405,7 +1405,6 @@ namespace MediaPortal.GUI.Music
         {
           ImgCoverArt.SetFileName(ImagePathContainer[0]);
         }
-        
       }
     }
 
@@ -1557,8 +1556,9 @@ namespace MediaPortal.GUI.Music
         InfoScrobbler.AddRequest(request);
       }
       else
-      { // if internet lookups are disabled just attempt to load local thumb
-        DoUpdateArtistInfo(null,null);
+      {
+        // if internet lookups are disabled just attempt to load local thumb
+        DoUpdateArtistInfo(null, null);
       }
     }
 
@@ -1603,7 +1603,6 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackInfo()
     {
-
       if (CurrentTrackTag == null)
       {
         _trackChanged = true;
@@ -1621,20 +1620,23 @@ namespace MediaPortal.GUI.Music
           if (PreviousTrackTag != null)
           {
             if (CurrentTrackTag.Artist != PreviousTrackTag.Artist)
-            { // Based on config settings this will attempt to lookup
+            {
+              // Based on config settings this will attempt to lookup
               // artist thumbs from last.fm
               UpdateArtistInfo();
             }
             else
-            { // if artist has not changed then no point attempting
+            {
+              // if artist has not changed then no point attempting
               // to lookup artist thumbs as this would have been done
               // for first track for this artist so just jump to 
               // loading current track thumbs
-              DoUpdateArtistInfo(null,null);
+              DoUpdateArtistInfo(null, null);
             }
 
             if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeAlbumInfo.Count < 1)
-            { // album has changed or we don't have top tracks for album so try and update
+            {
+              // album has changed or we don't have top tracks for album so try and update
               if (LblBestAlbumTracks != null)
               {
                 LblBestAlbumTracks.Visible = false;
@@ -1644,7 +1646,8 @@ namespace MediaPortal.GUI.Music
             }
           }
           else
-          { // there is no previous track so update all info
+          {
+            // there is no previous track so update all info
             // similar tracks will be updated anyway for all track changes
             if (LblBestAlbumTracks != null)
             {
@@ -1654,7 +1657,7 @@ namespace MediaPortal.GUI.Music
             UpdateArtistInfo();
             UpdateAlbumInfo();
           }
-          
+
           // track has changed so always look up similar tracks
           if (LblBestTagTracks != null)
           {
@@ -1665,9 +1668,11 @@ namespace MediaPortal.GUI.Music
 
           // non-text values default to 0 and datetime.minvalue so
           // set the appropriate properties to string.empty
-          
+
           // Duration
-          string strDuration = CurrentTrackTag.Duration <= 0 ? string.Empty : MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration);
+          string strDuration = CurrentTrackTag.Duration <= 0
+                                 ? string.Empty
+                                 : MediaPortal.Util.Utils.SecondsToHMSString(CurrentTrackTag.Duration);
           // Track
           string strTrack = CurrentTrackTag.Track <= 0 ? string.Empty : CurrentTrackTag.Track.ToString();
           // Year
@@ -1681,7 +1686,9 @@ namespace MediaPortal.GUI.Music
           // Disc Total
           string strDiscTotal = CurrentTrackTag.DiscTotal <= 0 ? string.Empty : CurrentTrackTag.DiscTotal.ToString();
           // Times played
-          string strTimesPlayed = CurrentTrackTag.TimesPlayed <= 0 ? string.Empty : CurrentTrackTag.TimesPlayed.ToString();
+          string strTimesPlayed = CurrentTrackTag.TimesPlayed <= 0
+                                    ? string.Empty
+                                    : CurrentTrackTag.TimesPlayed.ToString();
           // track total
           string strTrackTotal = CurrentTrackTag.TrackTotal <= 0 ? string.Empty : CurrentTrackTag.TrackTotal.ToString();
           // BPM
@@ -1689,11 +1696,15 @@ namespace MediaPortal.GUI.Music
           // Channels
           string strChannels = CurrentTrackTag.Channels <= 0 ? string.Empty : CurrentTrackTag.Channels.ToString();
           // Sample Rate
-          string strSampleRate = CurrentTrackTag.SampleRate <=0 ? string.Empty : CurrentTrackTag.SampleRate.ToString();
+          string strSampleRate = CurrentTrackTag.SampleRate <= 0 ? string.Empty : CurrentTrackTag.SampleRate.ToString();
           // Date Last Played
-          string strDateLastPlayed = CurrentTrackTag.DateTimePlayed == DateTime.MinValue ? string.Empty : CurrentTrackTag.DateTimePlayed.ToShortDateString();
+          string strDateLastPlayed = CurrentTrackTag.DateTimePlayed == DateTime.MinValue
+                                       ? string.Empty
+                                       : CurrentTrackTag.DateTimePlayed.ToShortDateString();
           // Date Added
-          string strDateAdded = CurrentTrackTag.DateTimeModified == DateTime.MinValue ? string.Empty : CurrentTrackTag.DateTimeModified.ToShortDateString();
+          string strDateAdded = CurrentTrackTag.DateTimeModified == DateTime.MinValue
+                                  ? string.Empty
+                                  : CurrentTrackTag.DateTimeModified.ToShortDateString();
 
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
@@ -1722,50 +1733,51 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.SampleRate", strSampleRate);
           GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", strDateLastPlayed);
           GUIPropertyManager.SetProperty("#Play.Current.DateAdded", strDateAdded);
-          
+
           AlbumInfo _albumInfo = new AlbumInfo();
-          if (MusicDatabase.Instance.GetAlbumInfo(CurrentTrackTag.Album,CurrentTrackTag.AlbumArtist, ref _albumInfo))
+          if (MusicDatabase.Instance.GetAlbumInfo(CurrentTrackTag.Album, CurrentTrackTag.AlbumArtist, ref _albumInfo))
           {
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",_albumInfo.Review);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",_albumInfo.Rating.ToString());
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",_albumInfo.Genre);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",_albumInfo.Styles);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",_albumInfo.Tones);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",_albumInfo.Year.ToString());
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", _albumInfo.Review);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", _albumInfo.Rating.ToString());
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", _albumInfo.Genre);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", _albumInfo.Styles);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", _albumInfo.Tones);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", _albumInfo.Year.ToString());
           }
           else
           {
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", String.Empty);
           }
           ArtistInfo _artistInfo = new ArtistInfo();
-          if (MusicDatabase.Instance.GetArtistInfo(CurrentTrackTag.AlbumArtist,ref _artistInfo))
+          if (MusicDatabase.Instance.GetArtistInfo(CurrentTrackTag.AlbumArtist, ref _artistInfo))
           {
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",_artistInfo.AMGBio);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",_artistInfo.Born);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",_artistInfo.Genres);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",_artistInfo.Instruments);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",_artistInfo.Styles);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",_artistInfo.Tones);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",_artistInfo.YearsActive);   
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", _artistInfo.AMGBio);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", _artistInfo.Born);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", _artistInfo.Genres);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", _artistInfo.Instruments);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", _artistInfo.Styles);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", _artistInfo.Tones);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", _artistInfo.YearsActive);
           }
           else
           {
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",String.Empty);
-            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", String.Empty);
+            GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", String.Empty);
           }
         }
         else
-        { // there is no current track so blank all properties
+        {
+          // there is no current track so blank all properties
           GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
           GUIPropertyManager.SetProperty("#Play.Current.Track", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.Album", string.Empty);
@@ -1792,21 +1804,21 @@ namespace MediaPortal.GUI.Music
           GUIPropertyManager.SetProperty("#Play.Current.SampleRate", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", string.Empty);
           GUIPropertyManager.SetProperty("#Play.Current.DateAdded", string.Empty);
-          
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year",String.Empty);
-          
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones",String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive",String.Empty);
+
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", String.Empty);
+
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", String.Empty);
 
           if (PlaylistPlayer == null)
           {
@@ -1851,7 +1863,9 @@ namespace MediaPortal.GUI.Music
         string strRating = (Convert.ToDecimal(2 * NextTrackTag.Rating + 1)).ToString();
 
         // Thumb
-        string nextTrackThumb = NextTrackFileName != string.Empty ? GUIMusicBaseWindow.GetCoverArt(false, NextTrackFileName, NextTrackTag) : string.Empty;
+        string nextTrackThumb = NextTrackFileName != string.Empty
+                                  ? GUIMusicBaseWindow.GetCoverArt(false, NextTrackFileName, NextTrackTag)
+                                  : string.Empty;
 
         GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
         GUIPropertyManager.SetProperty("#Play.Next.Thumb", nextTrackThumb);
@@ -2023,7 +2037,7 @@ namespace MediaPortal.GUI.Music
     {
       MusicTag tag = null;
       Song song = new Song();
-      if(String.IsNullOrEmpty(strFile))
+      if (String.IsNullOrEmpty(strFile))
       {
         // Return an empty object
         return song.ToMusicTag();
@@ -2438,28 +2452,30 @@ namespace MediaPortal.GUI.Music
       if (_audioscrobblerEnabled)
       {
         AudioscrobblerBase.DoLoveTrackNow();
-        GUIDialogNotifyLastFM dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+        GUIDialogNotifyLastFM dlgNotifyLastFM =
+          (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
         dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-        string dlgText = GUILocalizeStrings.Get(34010)+" : " + AudioscrobblerBase.CurrentPlayingSong.Title;
+        string dlgText = GUILocalizeStrings.Get(34010) + " : " + AudioscrobblerBase.CurrentPlayingSong.Title;
         dlgNotifyLastFM.SetText(dlgText);
         dlgNotifyLastFM.TimeOut = 2;
         dlgNotifyLastFM.DoModal(GetID);
       }
     }
-    
+
     private void DoLastFMBan()
     {
       if (_audioscrobblerEnabled)
       {
         AudioscrobblerBase.DoBanTrackNow();
-        GUIDialogNotifyLastFM dlgNotifyLastFM = (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
+        GUIDialogNotifyLastFM dlgNotifyLastFM =
+          (GUIDialogNotifyLastFM)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_LASTFM);
         dlgNotifyLastFM.SetHeading(GUILocalizeStrings.Get(34000)); // last.FM
-        string dlgText = GUILocalizeStrings.Get(34011)+" : " + AudioscrobblerBase.CurrentPlayingSong.Title;
+        string dlgText = GUILocalizeStrings.Get(34011) + " : " + AudioscrobblerBase.CurrentPlayingSong.Title;
         dlgNotifyLastFM.SetText(dlgText);
         dlgNotifyLastFM.TimeOut = 2;
         dlgNotifyLastFM.DoModal(GetID);
       }
-    }    
+    }
 
     #endregion
   }

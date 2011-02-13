@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -244,37 +244,41 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public bool EnableScrollLabel {
-    get
+    public bool EnableScrollLabel
+    {
+      get
       {
         if (_layoutList != null) return _layoutList.EnableScrollLabel;
         return false;
       }
-      set
-      {
-        if (_layoutList != null) _layoutList.EnableScrollLabel = value;
-      }
+      set { if (_layoutList != null) _layoutList.EnableScrollLabel = value; }
     }
 
     public override void AddAnimations(List<VisualEffect> animations)
     {
       //base.AddAnimations(animations);
-      if (_layoutList != null) {
+      if (_layoutList != null)
+      {
         _layoutList.AddAnimations(animations);
       }
-      if (_layoutAlbum != null) {
+      if (_layoutAlbum != null)
+      {
         _layoutAlbum.AddAnimations(animations);
       }
-      if (_layoutFilmStrip != null) {
+      if (_layoutFilmStrip != null)
+      {
         _layoutFilmStrip.AddAnimations(animations);
       }
-      if (_layoutPlayList != null) {
+      if (_layoutPlayList != null)
+      {
         _layoutPlayList.AddAnimations(animations);
       }
-      if (_layoutThumbnail != null) {
+      if (_layoutThumbnail != null)
+      {
         _layoutThumbnail.AddAnimations(animations);
       }
-      if (_layoutCoverFlow != null) {
+      if (_layoutCoverFlow != null)
+      {
         _layoutCoverFlow.AddAnimations(animations);
       }
     }
@@ -576,64 +580,64 @@ namespace MediaPortal.GUI.Library
       var preSort = new List<GUIListItem>(_itemList);
       try
       {
-          _itemList.Sort(comparer);
+        _itemList.Sort(comparer);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       if (_layoutAlbum != null)
       {
-          if (HasSameItems(_layoutAlbum.ListItems, preSort))
+        if (HasSameItems(_layoutAlbum.ListItems, preSort))
+        {
+          if (_layoutAlbum.ListItems != _itemList) //if same instance of list, nothing to do except refresh
           {
-              if (_layoutAlbum.ListItems != _itemList) //if same instance of list, nothing to do except refresh
-              {
-                  _layoutAlbum.ListItems.Clear();
-                  _layoutAlbum.ListItems.AddRange(_itemList);
-              }
-              _layoutAlbum.SetNeedRefresh();
+            _layoutAlbum.ListItems.Clear();
+            _layoutAlbum.ListItems.AddRange(_itemList);
           }
-          else
-              _layoutAlbum.Sort(comparer);
+          _layoutAlbum.SetNeedRefresh();
+        }
+        else
+          _layoutAlbum.Sort(comparer);
       }
       if (_layoutList != null)
       {
-          if (HasSameItems(_layoutList.ListItems, preSort))
+        if (HasSameItems(_layoutList.ListItems, preSort))
+        {
+          if (_layoutList.ListItems != _itemList)
           {
-              if (_layoutList.ListItems != _itemList)
-              {
-                  _layoutList.ListItems.Clear();
-                  _layoutList.ListItems.AddRange(_itemList);
-              }
-              _layoutList.SetNeedRefresh();
+            _layoutList.ListItems.Clear();
+            _layoutList.ListItems.AddRange(_itemList);
           }
-          else
-              _layoutList.Sort(comparer);
+          _layoutList.SetNeedRefresh();
+        }
+        else
+          _layoutList.Sort(comparer);
       }
       if (_layoutThumbnail != null)
       {
-          if (HasSameItems(_layoutThumbnail.ListItems, preSort))
+        if (HasSameItems(_layoutThumbnail.ListItems, preSort))
+        {
+          if (_layoutThumbnail.ListItems != _itemList)
           {
-              if (_layoutThumbnail.ListItems != _itemList)
-              {
-                  _layoutThumbnail.ListItems.Clear();
-                  _layoutThumbnail.ListItems.AddRange(_itemList);
-              }
-              _layoutThumbnail.SetNeedRefresh();
+            _layoutThumbnail.ListItems.Clear();
+            _layoutThumbnail.ListItems.AddRange(_itemList);
           }
-          else
-              _layoutThumbnail.Sort(comparer);
+          _layoutThumbnail.SetNeedRefresh();
+        }
+        else
+          _layoutThumbnail.Sort(comparer);
       }
       if (_layoutFilmStrip != null)
       {
-          if (HasSameItems(_layoutFilmStrip.ListItems, preSort))
+        if (HasSameItems(_layoutFilmStrip.ListItems, preSort))
+        {
+          if (_layoutFilmStrip.ListItems != _itemList)
           {
-              if (_layoutFilmStrip.ListItems != _itemList)
-              {
-                  _layoutFilmStrip.ListItems.Clear();
-                  _layoutFilmStrip.ListItems.AddRange(_itemList);
-              }
-              _layoutFilmStrip.SetNeedRefresh();
+            _layoutFilmStrip.ListItems.Clear();
+            _layoutFilmStrip.ListItems.AddRange(_itemList);
           }
-          else
-              _layoutFilmStrip.Sort(comparer);
+          _layoutFilmStrip.SetNeedRefresh();
+        }
+        else
+          _layoutFilmStrip.Sort(comparer);
       }
       if (_layoutPlayList != null)
       {
@@ -643,7 +647,6 @@ namespace MediaPortal.GUI.Library
       {
         _layoutCoverFlow.Sort(comparer);
       }
-      
     }
 
     public void Add(GUIListItem item)
@@ -840,10 +843,9 @@ namespace MediaPortal.GUI.Library
 
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", MediaPortal.Util.Utils.GetObjectCountLabel(iTotalItems));
-
     }
 
-    new private void UpdateLayout()
+    private new void UpdateLayout()
     {
       if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
       {
@@ -1547,16 +1549,17 @@ namespace MediaPortal.GUI.Library
 
     private static bool HasSameItems(IList<GUIListItem> sequence1, IList<GUIListItem> sequence2)
     {
-        if (sequence1 == null) return sequence2 == null;
-        if (sequence2 == null) return false;
-        if (sequence1.Count != sequence2.Count) return false;
-        int items = sequence1.Count;
-        for (int i = 0; i < items; i++)
-        {
-            if (sequence1[i] != sequence2[i]) // let's be strict and require them to be the same instance, and not just same label, etc.
-                return false;
-        }
-        return true;
+      if (sequence1 == null) return sequence2 == null;
+      if (sequence2 == null) return false;
+      if (sequence1.Count != sequence2.Count) return false;
+      int items = sequence1.Count;
+      for (int i = 0; i < items; i++)
+      {
+        if (sequence1[i] != sequence2[i])
+          // let's be strict and require them to be the same instance, and not just same label, etc.
+          return false;
+      }
+      return true;
     }
   }
 }

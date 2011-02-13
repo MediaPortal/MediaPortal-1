@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -22,22 +22,20 @@ namespace MediaPortal.ExtensionMethods
 {
   public static class ArrayExtMethods
   {
-    public static void DisposeAndClear<T>(this T[] source)    
+    public static void DisposeAndClear<T>(this T[] source)
     {
       if (source != null)
       {
         for (int i = 0; i < source.Length; i++)
-        //for (int i = source.Length - 1; i >= 0; i--)
+          //for (int i = source.Length - 1; i >= 0; i--)
         {
           object o = source[i];
-          DisposeHelper.DisposeItem(o);          
+          DisposeHelper.DisposeItem(o);
         }
         /*foreach (object o in source)
         {          
         }*/
-      }      
-      
+      }
     }
-
   }
 }

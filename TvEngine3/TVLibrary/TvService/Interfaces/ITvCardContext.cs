@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,8 +35,8 @@ namespace TvService
     ///   Gets the users.
     /// </summary>
     /// <value>The users.</value>
-    IUser[] Users { get; }    
-    
+    IUser[] Users { get; }
+
     /// <summary>
     ///   Locks the card for the user specifies
     /// </summary>

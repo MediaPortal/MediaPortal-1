@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -178,9 +178,9 @@ namespace MediaPortal.Util
       env.after = after;
       // If restart is Hibernate or Suspend then do is async
       if (how == RestartOptions.Hibernate || how == RestartOptions.Suspend)
-          (new Thread(ExitWindowsDefaultThread)).Start(env);
+        (new Thread(ExitWindowsDefaultThread)).Start(env);
       else
-          ExitWindowsDefaultThread(env);
+        ExitWindowsDefaultThread(env);
     }
 
     protected static void ExitWindowsDefaultThread(object _data)

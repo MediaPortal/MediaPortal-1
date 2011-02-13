@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -189,7 +189,7 @@ namespace MediaPortal.WebEPG.Parser
             if (fieldText != null)
             {
               Regex replace = new Regex(actions[i].search);
-              string newValue = replace.Replace(fieldText, actions[i].text?? "");
+              string newValue = replace.Replace(fieldText, actions[i].text ?? "");
               PutElement(actions[i].field, newValue);
             }
           }
@@ -358,7 +358,8 @@ namespace MediaPortal.WebEPG.Parser
 
     private void PutElement(string tag, string element)
     {
-      try {
+      try
+      {
         switch (tag)
         {
           case "#DESCRIPTION":
@@ -555,7 +556,7 @@ namespace MediaPortal.WebEPG.Parser
     /// <returns>The normalized string</returns>
     private string NormalizeWhitespace(string value)
     {
-      Regex whitespace = new Regex(@"\s{2,}|[\s-[ ]]+",RegexOptions.Compiled);
+      Regex whitespace = new Regex(@"\s{2,}|[\s-[ ]]+", RegexOptions.Compiled);
 
       return whitespace.Replace(value, " ");
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -126,6 +126,7 @@ namespace TvDatabase
           return -1;
       }
     }
+
     /// <summary>
     /// Returns the localiztion text of a specified week day type
     /// </summary>
@@ -151,7 +152,6 @@ namespace TvDatabase
           return 1051;
         default:
           return -1;
-
       }
     }
 
@@ -170,10 +170,7 @@ namespace TvDatabase
     /// <value>the first weekend day</value>
     public static DayOfWeek FirstWeekendDay
     {
-      get
-      {
-        return GetDayByIndex(5);
-      }
+      get { return GetDayByIndex(5); }
     }
 
     /// <summary>
@@ -182,10 +179,7 @@ namespace TvDatabase
     /// <value>the second weekend day</value>
     public static DayOfWeek SecondWeekendDay
     {
-      get
-      {
-        return GetDayByIndex(6);
-      }
+      get { return GetDayByIndex(6); }
     }
 
     /// <summary>
@@ -197,8 +191,8 @@ namespace TvDatabase
     {
       get
       {
-        int firstWeekend = (int) FirstWeekendDay + 1;
-        int secondWeekend = (int) SecondWeekendDay + 1;
+        int firstWeekend = (int)FirstWeekendDay + 1;
+        int secondWeekend = (int)SecondWeekendDay + 1;
         return "" + firstWeekend + "," + secondWeekend;
       }
     }

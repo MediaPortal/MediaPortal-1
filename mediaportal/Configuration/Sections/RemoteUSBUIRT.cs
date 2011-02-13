@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -185,7 +185,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RemoteUSBUIRT));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (RemoteUSBUIRT));
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.SettingsPnl = new System.Windows.Forms.Panel();
       this.testSendIrBtn = new MediaPortal.UserInterface.Controls.MPButton();
@@ -224,8 +225,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.SettingsPnl);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox1.Location = new System.Drawing.Point(6, 0);
@@ -275,25 +278,31 @@ namespace MediaPortal.Configuration.Sections
       // 
       // interCommandDelayNumUpDn
       // 
-      this.interCommandDelayNumUpDn.Increment = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Increment = new decimal(new int[]
+                                                              {
+                                                                50,
+                                                                0,
+                                                                0,
+                                                                0
+                                                              });
       this.interCommandDelayNumUpDn.Location = new System.Drawing.Point(153, 106);
-      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Maximum = new decimal(new int[]
+                                                            {
+                                                              1000,
+                                                              0,
+                                                              0,
+                                                              0
+                                                            });
       this.interCommandDelayNumUpDn.Name = "interCommandDelayNumUpDn";
       this.interCommandDelayNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.interCommandDelayNumUpDn.TabIndex = 12;
-      this.interCommandDelayNumUpDn.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+      this.interCommandDelayNumUpDn.Value = new decimal(new int[]
+                                                          {
+                                                            100,
+                                                            0,
+                                                            0,
+                                                            0
+                                                          });
       // 
       // label6
       // 
@@ -308,24 +317,30 @@ namespace MediaPortal.Configuration.Sections
       // commandRepeatNumUpDn
       // 
       this.commandRepeatNumUpDn.Location = new System.Drawing.Point(153, 82);
-      this.commandRepeatNumUpDn.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.commandRepeatNumUpDn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.commandRepeatNumUpDn.Maximum = new decimal(new int[]
+                                                        {
+                                                          5,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
+      this.commandRepeatNumUpDn.Minimum = new decimal(new int[]
+                                                        {
+                                                          1,
+                                                          0,
+                                                          0,
+                                                          0
+                                                        });
       this.commandRepeatNumUpDn.Name = "commandRepeatNumUpDn";
       this.commandRepeatNumUpDn.Size = new System.Drawing.Size(48, 20);
       this.commandRepeatNumUpDn.TabIndex = 10;
-      this.commandRepeatNumUpDn.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.commandRepeatNumUpDn.Value = new decimal(new int[]
+                                                      {
+                                                        1,
+                                                        0,
+                                                        0,
+                                                        0
+                                                      });
       // 
       // label5
       // 
@@ -339,7 +354,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tunerCommandsButton
       // 
-      this.tunerCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.tunerCommandsButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.tunerCommandsButton.Location = new System.Drawing.Point(280, 53);
       this.tunerCommandsButton.Name = "tunerCommandsButton";
       this.tunerCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -350,7 +367,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // internalCommandsButton
       // 
-      this.internalCommandsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.internalCommandsButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.internalCommandsButton.Location = new System.Drawing.Point(280, 16);
       this.internalCommandsButton.Name = "internalCommandsButton";
       this.internalCommandsButton.Size = new System.Drawing.Size(160, 23);
@@ -411,8 +430,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblUSBUIRTVersion
       // 
-      this.lblUSBUIRTVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTVersion.Location = new System.Drawing.Point(200, 15);
       this.lblUSBUIRTVersion.Name = "lblUSBUIRTVersion";
       this.lblUSBUIRTVersion.Size = new System.Drawing.Size(246, 16);
@@ -436,8 +457,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.label3);
       this.groupBox2.Controls.Add(this.linkLabel1);
       this.groupBox2.Controls.Add(this.label2);
@@ -465,12 +488,15 @@ namespace MediaPortal.Configuration.Sections
       this.linkLabel1.TabIndex = 2;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "http://www.usbuirt.com";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // label2
       // 
-      this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.label2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.label2.Location = new System.Drawing.Point(16, 24);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(438, 40);
@@ -479,8 +505,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.varDLLVersion);
       this.groupBox3.Controls.Add(this.varAPIVersion);
       this.groupBox3.Controls.Add(this.lblDLLVersion);
@@ -499,8 +527,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // varDLLVersion
       // 
-      this.varDLLVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.varDLLVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.varDLLVersion.Location = new System.Drawing.Point(200, 47);
       this.varDLLVersion.Name = "varDLLVersion";
       this.varDLLVersion.Size = new System.Drawing.Size(246, 16);
@@ -509,8 +539,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // varAPIVersion
       // 
-      this.varAPIVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.varAPIVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.varAPIVersion.Location = new System.Drawing.Point(200, 31);
       this.varAPIVersion.Name = "varAPIVersion";
       this.varAPIVersion.Size = new System.Drawing.Size(246, 16);
@@ -537,8 +569,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lblUSBUIRTConfigVersion
       // 
-      this.lblUSBUIRTConfigVersion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lblUSBUIRTConfigVersion.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lblUSBUIRTConfigVersion.Location = new System.Drawing.Point(200, 63);
       this.lblUSBUIRTConfigVersion.Name = "lblUSBUIRTConfigVersion";
       this.lblUSBUIRTConfigVersion.Size = new System.Drawing.Size(246, 13);
@@ -571,7 +605,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

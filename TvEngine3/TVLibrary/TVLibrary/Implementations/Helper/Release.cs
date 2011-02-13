@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,12 +29,12 @@ namespace TvLibrary
   /// Helper class for releasing a com object
   /// </summary>
   public class Release
-  {   
+  {
     public static int ComObject(object o)
     {
       int hr = 0;
       if (o != null)
-      {        
+      {
         DsUtils.ReleaseComObject(o);
         if (hr != 0)
         {
@@ -53,11 +53,12 @@ namespace TvLibrary
     public static void ComObject(string line, object o)
     {
       if (o != null)
-      {        
+      {
         DsUtils.ReleaseComObject(o);
         //Log.Log.Debug("  Release {0} returns {1}", line, hr);
       }
     }
+
     /// <summary>
     /// Releases a com object
     /// </summary>
@@ -87,6 +88,7 @@ namespace TvLibrary
         o = default(E);
       }
     }
+
     /// <summary>
     /// Disposes a object if possible and sets the reference to null.
     /// </summary>
@@ -100,6 +102,7 @@ namespace TvLibrary
       }
       o = default(E);
     }
+
     /// <summary>
     /// Disposes a object if possible.
     /// </summary>

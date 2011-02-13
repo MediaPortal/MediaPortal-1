@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,8 +66,8 @@ namespace ProcessPlugins.ViewModeSwitcher
     {
       currentRule.Enabled = cbEnabled.Checked;
       currentRule.Name = txbName.Text;
-      currentRule.ARFrom = (float) Convert.ToDouble(txbARFrom.Text);
-      currentRule.ARTo = (float) Convert.ToDouble(txbARTo.Text);
+      currentRule.ARFrom = (float)Convert.ToDouble(txbARFrom.Text);
+      currentRule.ARTo = (float)Convert.ToDouble(txbARTo.Text);
       currentRule.MinWidth = Convert.ToInt16(txbMinWidth.Text);
       currentRule.MaxWidth = Convert.ToInt16(txbMaxWidth.Text);
       currentRule.MinHeight = Convert.ToInt16(txbMinHeight.Text);

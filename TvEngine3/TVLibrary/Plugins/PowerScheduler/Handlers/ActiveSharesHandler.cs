@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 #endregion
 
 #region Usings
+
 using System;
 using System.Management;
 using System.Collections.Generic;
@@ -27,6 +28,7 @@ using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Interfaces;
 using TvDatabase;
 using TvLibrary.Log;
+
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers
@@ -42,19 +44,20 @@ namespace TvEngine.PowerScheduler.Handlers
     {
       internal enum ShareType
       {
-        ShareOnly,                    // If anything is connected to the share, then prevent standby.
-        UserOnly,                     // If a matching user is connected to any share, then prevent standby.
-        HostOnly,                     // If a matching host is connected to any share, then prevent standby.
-        HostUsingShare,               // If a matching host is connected to the matching share, then prevent standby.
-        UserUsingShare,               // If a matching user is connected from any host to the matching share, then prevent standby.
-        UserFromHostConnected,        // If a matching user is connected to any share from the define host, then prevent standby.
-        UserFromHostUsingShare,       // All three fields must match to prevent standby.
-        Undefined,                    // Invalid share configuration. Do not prevent standby.
-      };
+        ShareOnly, // If anything is connected to the share, then prevent standby.
+        UserOnly, // If a matching user is connected to any share, then prevent standby.
+        HostOnly, // If a matching host is connected to any share, then prevent standby.
+        HostUsingShare, // If a matching host is connected to the matching share, then prevent standby.
+        UserUsingShare, // If a matching user is connected from any host to the matching share, then prevent standby.
+        UserFromHostConnected,
+        // If a matching user is connected to any share from the define host, then prevent standby.
+        UserFromHostUsingShare, // All three fields must match to prevent standby.
+        Undefined, // Invalid share configuration. Do not prevent standby.
+      } ;
 
-      string _share;
-      string _host;
-      string _user;
+      private string _share;
+      private string _host;
+      private string _user;
 
       internal readonly ShareType MonitoringType;
 
@@ -105,7 +108,8 @@ namespace TvEngine.PowerScheduler.Handlers
         {
           MonitoringType = ShareType.UserFromHostUsingShare;
         }
-        Log.Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share, MonitoringType);
+        Log.Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share,
+                  MonitoringType);
       }
 
       internal bool Equals(ServerConnection serverConnection)
@@ -133,25 +137,30 @@ namespace TvEngine.PowerScheduler.Handlers
             }
             break;
           case ShareType.HostUsingShare:
-            if (serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            if (serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) &&
+                serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
             {
               serverConnectionMatches = true;
             }
             break;
           case ShareType.UserUsingShare:
-            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) &&
+                serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
             {
               serverConnectionMatches = true;
             }
             break;
           case ShareType.UserFromHostConnected:
-            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase))
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) &&
+                serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase))
             {
               serverConnectionMatches = true;
             }
             break;
           case ShareType.UserFromHostUsingShare:
-            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) && serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) && serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
+            if (serverConnection.UserName.Equals(_user, StringComparison.OrdinalIgnoreCase) &&
+                serverConnection.ComputerName.Equals(_host, StringComparison.OrdinalIgnoreCase) &&
+                serverConnection.ShareName.Equals(_share, StringComparison.OrdinalIgnoreCase))
             {
               serverConnectionMatches = true;
             }
@@ -170,6 +179,7 @@ namespace TvEngine.PowerScheduler.Handlers
       public string ComputerName;
       public string UserName;
       public int NumberOfFiles;
+
       public ServerConnection(string shareName, string computerName, string userName, int numFiles)
       {
         ShareName = shareName;
@@ -178,22 +188,28 @@ namespace TvEngine.PowerScheduler.Handlers
         NumberOfFiles = numFiles;
       }
     }
+
     #endregion
 
     #region Variables
 
-    bool _enabled = false;
-    List<ShareMonitor> _sharesToMonitor = new List<ShareMonitor>();
-    ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
-    "SELECT ShareName, UserName, ComputerName, NumberOfFiles  FROM Win32_ServerConnection WHERE NumberOfFiles > 0");
+    private bool _enabled = false;
+    private List<ShareMonitor> _sharesToMonitor = new List<ShareMonitor>();
+
+    private ManagementObjectSearcher _searcher = new ManagementObjectSearcher(
+      "SELECT ShareName, UserName, ComputerName, NumberOfFiles  FROM Win32_ServerConnection WHERE NumberOfFiles > 0");
+
     #endregion
 
     #region Constructor
+
     public ActiveSharesHandler()
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
-        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent += new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
+        GlobalServiceProvider.Instance.Get<IPowerScheduler>().OnPowerSchedulerEvent +=
+          new PowerSchedulerEventHandler(ProcessActiveHandler_OnPowerSchedulerEvent);
     }
+
     #endregion
 
     #region private methods
@@ -231,9 +247,9 @@ namespace TvEngine.PowerScheduler.Handlers
           {
             string[] shareItem = share.Split(',');
             if ((shareItem.Length.Equals(3)) &&
-               ((shareItem[0].Trim().Length > 0) ||
-                (shareItem[1].Trim().Length > 0) ||
-                (shareItem[2].Trim().Length > 0)))
+                ((shareItem[0].Trim().Length > 0) ||
+                 (shareItem[1].Trim().Length > 0) ||
+                 (shareItem[2].Trim().Length > 0)))
             {
               _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
             }
@@ -266,9 +282,11 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       return connections;
     }
+
     #endregion
 
     #region IStandbyHandler implementation
+
     public bool DisAllowShutdown
     {
       get
@@ -284,7 +302,8 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               if (shareBeingMonitored.Equals(connection))
               {
-                Log.Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName, connection.UserName, connection.ComputerName, connection.ShareName);
+                Log.Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName,
+                          connection.UserName, connection.ComputerName, connection.ShareName);
                 return true;
               }
             }
@@ -295,13 +314,14 @@ namespace TvEngine.PowerScheduler.Handlers
         return false;
       }
     }
-    public void UserShutdownNow()
-    {
-    }
+
+    public void UserShutdownNow() {}
+
     public string HandlerName
     {
       get { return "ActiveSharesHandler"; }
     }
+
     #endregion
   }
 }

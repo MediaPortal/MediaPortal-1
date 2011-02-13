@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ namespace MediaPortal.WinampPlayer
     */
     private string[] m_supportedExtensions = new string[0];
 
-    private WinampController m_winampController = null;    
+    private WinampController m_winampController = null;
     private string m_strCurrentFile = null;
     private int m_volume = 100;
     private bool _notifyPlaying = false;
@@ -55,7 +55,7 @@ namespace MediaPortal.WinampPlayer
     public WinampPlugin() {}
 
     public override void ShowPlugin()
-    {      
+    {
       ConfigurationForm confForm = new ConfigurationForm();
       confForm.ShowDialog();
     }

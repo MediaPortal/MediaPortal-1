@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ namespace MediaPortal
               // If this is not done we get a memory leak!
               stream.Close();
               return b;
-            }                        
+            }
           }
           Log.Debug("FrameGrabber: Frame grab failed");
           return null;
@@ -139,7 +139,7 @@ namespace MediaPortal
           Log.Debug("FrameGrabber: Creating new frame grabbing surface");
 
           rgbSurface = GUIGraphicsContext.DX9Device.CreateRenderTarget(width, height, Format.A8R8G8B8,
-                                                                         MultiSampleType.None, 0, true);
+                                                                       MultiSampleType.None, 0, true);
         }
         unsafe
         {

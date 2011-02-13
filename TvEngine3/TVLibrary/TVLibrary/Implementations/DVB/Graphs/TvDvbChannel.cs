@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -355,7 +355,7 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
                             ts.TotalSeconds);
               Log.Log.Debug("Setting to 0 to search for new PMT.");
-              lookForPid = 0;              
+              lookForPid = 0;
             }
           }
         } // retry loop
@@ -408,7 +408,7 @@ namespace TvLibrary.Implementations.DVB
       if (GraphRunning())
       {
         Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);
-        
+
         bool foundPMT = WaitForPMT();
         if (!foundPMT)
         {
@@ -416,13 +416,13 @@ namespace TvLibrary.Implementations.DVB
         }
       }
       else
-      {        
+      {
         if (_teletextDecoder != null)
           _teletextDecoder.ClearBuffer();
 
         _pmtPid = -1;
         _pmtVersion = -1;
-      }      
+      }
     }
 
     /// <summary>
@@ -447,7 +447,7 @@ namespace TvLibrary.Implementations.DVB
         {
           throw new TvExceptionNoPMT("TVDvbChannel.OnGraphStarted: no PMT found");
         }
-      }            
+      }
     }
 
     /// <summary>
@@ -751,7 +751,7 @@ namespace TvLibrary.Implementations.DVB
           if (info.isVideo)
           {
             stream.Pid = info.pid;
-            
+
             if (info.IsMpeg2Video)
             {
               stream.StreamType = VideoStreamType.MPEG2;
@@ -768,7 +768,7 @@ namespace TvLibrary.Implementations.DVB
             {
               stream.StreamType = VideoStreamType.Unknown;
             }
-			return stream;
+            return stream;
           }
         }
         return stream;
@@ -1173,7 +1173,8 @@ namespace TvLibrary.Implementations.DVB
               if (_channelInfo.scrambled == channel.FreeToAir)
               {
                 channel.FreeToAir = !_channelInfo.scrambled;
-                Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.", _subChannelId, channel.FreeToAir);
+                Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.",
+                             _subChannelId, channel.FreeToAir);
               }
               if ((_mdplugs != null) && (foundCA))
               {
@@ -1267,7 +1268,8 @@ namespace TvLibrary.Implementations.DVB
 
       if (_tsFilterInterface != null)
       {
-        _tsFilterInterface.GetStreamQualityCounters(_subChannelId, out totalTsBytes, out totalRecordingBytes, out TsDiscontinuity, out recordingDiscontinuity);
+        _tsFilterInterface.GetStreamQualityCounters(_subChannelId, out totalTsBytes, out totalRecordingBytes,
+                                                    out TsDiscontinuity, out recordingDiscontinuity);
       }
 
       if (IsRecording)
@@ -1279,9 +1281,9 @@ namespace TvLibrary.Implementations.DVB
       {
         totalBytes = totalTsBytes;
         discontinuityCounter = TsDiscontinuity;
-      }            
-    }   
-    
+      }
+    }
+
     public bool PMTreceived
     {
       get { return (_pmtVersion > -1 && _channelInfo.pids.Count > 0); }
@@ -1347,7 +1349,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.Debug("Failed SendPmtToCam in callback handler");
           }
         }
-      }      
+      }
       PersistPMTtoDataBase(pmtPid);
       _pmtRequested = false; // once received, reset
       return 0;
@@ -1369,7 +1371,8 @@ namespace TvLibrary.Implementations.DVB
             currentDetail.PmtPid = pmtPid;
             currentDetail.Persist();
             Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
-          } catch (Exception e)
+          }
+          catch (Exception e)
           {
             Log.Log.Error("PMT {0:X} could not be persisted to DB!", pmtPid, e);
           }

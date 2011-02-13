@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -132,15 +132,19 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAc3DecoderSettings
       // 
-      this.groupBoxAc3DecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAc3DecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAc3DecoderSettings.Controls.Add(this.radioButtonAc3Spdif);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.radioButtonAc3Speakers);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.checkBoxAc3Lfe);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.comboBoxAc3SpeakerConfig);
       this.groupBoxAc3DecoderSettings.Controls.Add(this.checkBoxAc3DynamicRange);
       this.groupBoxAc3DecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxAc3DecoderSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.groupBoxAc3DecoderSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                                     System.Drawing.FontStyle.Regular,
+                                                                     System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.groupBoxAc3DecoderSettings.Location = new System.Drawing.Point(6, 0);
       this.groupBoxAc3DecoderSettings.Name = "groupBoxAc3DecoderSettings";
       this.groupBoxAc3DecoderSettings.Size = new System.Drawing.Size(462, 104);
@@ -175,7 +179,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxAc3Lfe
       // 
-      this.checkBoxAc3Lfe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxAc3Lfe.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxAc3Lfe.AutoSize = true;
       this.checkBoxAc3Lfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxAc3Lfe.Location = new System.Drawing.Point(403, 24);
@@ -187,22 +193,26 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxAc3SpeakerConfig
       // 
-      this.comboBoxAc3SpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxAc3SpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxAc3SpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxAc3SpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxAc3SpeakerConfig.Items.AddRange(new object[] {
-            "Dual Mono",
-            "Mono",
-            "Stereo",
-            "3 Front",
-            "2 Front + 1 Rear",
-            "3 Front + 1 Rear",
-            "2 Front + 2 Rear",
-            "3 Front + 2 Rear",
-            "Channel 1",
-            "Channel 2",
-            "Dolby Stereo"});
+      this.comboBoxAc3SpeakerConfig.Items.AddRange(new object[]
+                                                     {
+                                                       "Dual Mono",
+                                                       "Mono",
+                                                       "Stereo",
+                                                       "3 Front",
+                                                       "2 Front + 1 Rear",
+                                                       "3 Front + 1 Rear",
+                                                       "2 Front + 2 Rear",
+                                                       "3 Front + 2 Rear",
+                                                       "Channel 1",
+                                                       "Channel 2",
+                                                       "Dolby Stereo"
+                                                     });
       this.comboBoxAc3SpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxAc3SpeakerConfig.Name = "comboBoxAc3SpeakerConfig";
       this.comboBoxAc3SpeakerConfig.Size = new System.Drawing.Size(230, 21);
@@ -221,8 +231,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxFormat
       // 
-      this.groupBoxFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxFormat.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxFormat.Controls.Add(this.labelBoostValue);
       this.groupBoxFormat.Controls.Add(this.labelBoost);
       this.groupBoxFormat.Controls.Add(this.radioButtonPcm16Bit);
@@ -241,7 +253,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelBoostValue
       // 
-      this.labelBoostValue.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelBoostValue.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.labelBoostValue.Location = new System.Drawing.Point(325, 51);
       this.labelBoostValue.Name = "labelBoostValue";
       this.labelBoostValue.Size = new System.Drawing.Size(26, 23);
@@ -316,8 +330,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // trackBarBoost
       // 
-      this.trackBarBoost.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.trackBarBoost.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.trackBarBoost.Location = new System.Drawing.Point(48, 52);
       this.trackBarBoost.Maximum = 100;
       this.trackBarBoost.Name = "trackBarBoost";
@@ -328,8 +344,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxDtsDecoderSettings
       // 
-      this.groupBoxDtsDecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxDtsDecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxDtsDecoderSettings.Controls.Add(this.radioButtonDtsSpdif);
       this.groupBoxDtsDecoderSettings.Controls.Add(this.radioButtonDtsSpeakers);
       this.groupBoxDtsDecoderSettings.Controls.Add(this.checkBoxDtsLfe);
@@ -370,7 +388,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // checkBoxDtsLfe
       // 
-      this.checkBoxDtsLfe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.checkBoxDtsLfe.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.checkBoxDtsLfe.AutoSize = true;
       this.checkBoxDtsLfe.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.checkBoxDtsLfe.Location = new System.Drawing.Point(403, 24);
@@ -382,19 +402,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxDtsSpeakerConfig
       // 
-      this.comboBoxDtsSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxDtsSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxDtsSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDtsSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxDtsSpeakerConfig.Items.AddRange(new object[] {
-            "Mono",
-            "Dual Mono",
-            "Stereo",
-            "3 Front",
-            "2 Front + 1 Rear",
-            "3 Front + 1 Rear",
-            "2 Front + 2 Rear",
-            "3 Front + 2 Rear"});
+      this.comboBoxDtsSpeakerConfig.Items.AddRange(new object[]
+                                                     {
+                                                       "Mono",
+                                                       "Dual Mono",
+                                                       "Stereo",
+                                                       "3 Front",
+                                                       "2 Front + 1 Rear",
+                                                       "3 Front + 1 Rear",
+                                                       "2 Front + 2 Rear",
+                                                       "3 Front + 2 Rear"
+                                                     });
       this.comboBoxDtsSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxDtsSpeakerConfig.Name = "comboBoxDtsSpeakerConfig";
       this.comboBoxDtsSpeakerConfig.Size = new System.Drawing.Size(230, 21);
@@ -413,8 +437,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAacDecoderSettings
       // 
-      this.groupBoxAacDecoderSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAacDecoderSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDynamic);
       this.groupBoxAacDecoderSettings.Controls.Add(this.checkBoxAacDownmix);
       this.groupBoxAacDecoderSettings.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -475,7 +501,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxAacDecoderSettings.ResumeLayout(false);
       this.groupBoxAacDecoderSettings.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

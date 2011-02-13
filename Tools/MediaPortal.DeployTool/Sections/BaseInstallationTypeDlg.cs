@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -29,7 +24,7 @@ namespace MediaPortal.DeployTool.Sections
 {
   public partial class BaseInstallationTypeDlg : DeployDialog
   {
-    bool rbOneClickChecked;
+    private bool rbOneClickChecked;
 
     public BaseInstallationTypeDlg()
     {
@@ -42,6 +37,7 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #region IDeployDialog interface
+
     public override void UpdateUI()
     {
       labelOneClickCaption.Text = Localizer.GetBestTranslation("BaseInstallation_labelOneClickCaption");
@@ -50,8 +46,8 @@ namespace MediaPortal.DeployTool.Sections
       labelAdvancedCaption.Text = Localizer.GetBestTranslation("BaseInstallation_labelAdvancedCaption");
       labelAdvancedDesc.Text = Localizer.GetBestTranslation("BaseInstallation_labelAdvancedDesc");
       rbAdvanced.Text = Localizer.GetBestTranslation("BaseInstallation_rbAdvanced");
-
     }
+
     public override DeployDialog GetNextDialog()
     {
       if (rbOneClickChecked)
@@ -65,11 +61,13 @@ namespace MediaPortal.DeployTool.Sections
     {
       return true;
     }
+
     public override void SetProperties()
     {
       if (rbOneClickChecked)
       {
-        InstallationProperties.Instance.Set("InstallTypeHeader", Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
+        InstallationProperties.Instance.Set("InstallTypeHeader",
+                                            Localizer.GetBestTranslation("BaseInstallation_rbOneClick"));
         InstallationProperties.Instance.Set("InstallType", "singleseat");
         InstallationProperties.Instance.Set("ConfigureTVServerFirewall", "1");
         InstallationProperties.Instance.Set("ConfigureMediaPortalFirewall", "1");
@@ -77,11 +75,13 @@ namespace MediaPortal.DeployTool.Sections
         InstallationProperties.Instance.Set("DBMSPassword", "MediaPortal");
         // Default DBMS
         InstallationProperties.Instance.Set("DBMSType", "mysql");
-        InstallationProperties.Instance.Set("DBMSDir", InstallationProperties.Instance["ProgramFiles"] + "\\MySQL\\MySQL Server 5.1");
+        InstallationProperties.Instance.Set("DBMSDir",
+                                            InstallationProperties.Instance["ProgramFiles"] +
+                                            "\\MySQL\\MySQL Server 5.1");
       }
     }
-    #endregion
 
+    #endregion
 
     private void rbOneClick_Click(object sender, EventArgs e)
     {

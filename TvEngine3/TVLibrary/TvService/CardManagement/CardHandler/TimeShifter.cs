@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,8 +68,6 @@ namespace TvService
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
     }
-
-
 
 
     /// <summary>
@@ -351,11 +349,11 @@ namespace TvService
               ulong FreeDiskSpace = Utils.GetFreeDiskSpace(fileName);
 
               TvBusinessLayer layer = new TvBusinessLayer();
-              UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value);// in MB
+              UInt32 MaximumFileSize = UInt32.Parse(layer.GetSetting("timeshiftMaxFileSize", "256").Value); // in MB
               ulong DiskSpaceNeeded = Convert.ToUInt64(MaximumFileSize);
               DiskSpaceNeeded *= 1000000 * 2; // Convert to bytes; 2 times of timeshiftMaxFileSize
               if (FreeDiskSpace < DiskSpaceNeeded)
-              // TimeShifter need at least this free disk space otherwise, it will not start.
+                // TimeShifter need at least this free disk space otherwise, it will not start.
               {
                 Stop(ref user);
                 return TvResult.NoFreeDiskSpace;
@@ -383,7 +381,7 @@ namespace TvService
             Stop(ref user);
             return TvResult.UnknownChannel;
           }
-            
+
           context.GetUser(ref user);
           ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
 
@@ -683,8 +681,8 @@ if (!WaitForUnScrambledSignal(ref user))
           {
             TimeSpan ts = DateTime.Now - timeStart;
             Log.Write(
-                "card: WaitForTimeShiftFile - audio was found, but video was not found after {0} seconds",
-                ts.TotalSeconds);
+              "card: WaitForTimeShiftFile - audio was found, but video was not found after {0} seconds",
+              ts.TotalSeconds);
             if (_cardHandler.IsScrambled(ref user))
             {
               Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,9 +46,9 @@ namespace TvService
   public partial class Service1 : ServiceBase
   {
     private bool _priorityApplied;
-    private Thread _tvServiceThread = null;    
+    private Thread _tvServiceThread = null;
     private static Thread _unhandledExceptionInThread = null;
-   
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Service1"/> class.
     /// </summary>
@@ -64,8 +64,9 @@ namespace TvService
 
       if (_unhandledExceptionInThread != null)
       {
-        hasCurrentThreadCausedAnUnhandledException = (_unhandledExceptionInThread.ManagedThreadId == thread.ManagedThreadId);  
-      }      
+        hasCurrentThreadCausedAnUnhandledException = (_unhandledExceptionInThread.ManagedThreadId ==
+                                                      thread.ManagedThreadId);
+      }
 
       return hasCurrentThreadCausedAnUnhandledException;
     }
@@ -76,14 +77,14 @@ namespace TvService
     /// <param name="sender">The source of the event.</param>
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {      
+    {
       Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
       _unhandledExceptionInThread = Thread.CurrentThread;
       ExitCode = -1; //tell windows that the service failed.      
       OnStop(); //cleanup
-      Environment.Exit(-1);      
+      Environment.Exit(-1);
     }
-       
+
 
     /// <summary>
     /// The main entry point for the application.
@@ -106,7 +107,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
+        String[] cmdline = {path};
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Install(new Hashtable());
@@ -119,7 +120,7 @@ namespace TvService
         ti.Installers.Add(mi);
         String path = String.Format("/assemblypath={0}",
                                     System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = { path };
+        String[] cmdline = {path};
         InstallContext ctx = new InstallContext("", cmdline);
         ti.Context = ctx;
         ti.Uninstall(null);
@@ -131,7 +132,10 @@ namespace TvService
       {
         Service1 s = new Service1();
         s.DoStart(new string[] {"/DEBUG"});
-        do { Thread.Sleep(100); } while (true);
+        do
+        {
+          Thread.Sleep(100);
+        } while (true);
       }
 
       // More than one user Service may run within the same process. To add
@@ -140,7 +144,7 @@ namespace TvService
       //
       //   ServicesToRun = new ServiceBase[] {new Service1(), new MySecondUserService()};
       //
-      ServiceBase[] ServicesToRun = new ServiceBase[] { new Service1() };
+      ServiceBase[] ServicesToRun = new ServiceBase[] {new Service1()};
       ServiceBase.Run(ServicesToRun);
     }
 
@@ -149,7 +153,7 @@ namespace TvService
       OnStart(args);
     }
 
-    public void DoStop ()
+    public void DoStop()
     {
       OnStop();
     }
@@ -192,8 +196,8 @@ namespace TvService
         while (!TvServiceThread.Started)
         {
           Thread.Sleep(20);
-        }        
-      }      
+        }
+      }
     }
 
     private void applyProcessPriority()
@@ -237,7 +241,7 @@ namespace TvService
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
             _tvServiceThread.Priority = ThreadPriority.Normal;
             break;
-        }        
+        }
       }
       catch (Exception ex)
       {
@@ -264,21 +268,20 @@ namespace TvService
         Log.Write(ex);
       }
     }
-    
+
 
     /// <summary>
     /// When implemented in a derived class, executes when a Stop command is sent to the service by the Service Control Manager (SCM). Specifies actions to take when a service stops running.
     /// </summary>
     protected override void OnStop()
-    {                 
+    {
       if (_tvServiceThread != null && _tvServiceThread.IsAlive)
-      {        
-
+      {
         _tvServiceThread.Abort();
         _tvServiceThread.Join();
         _tvServiceThread = null;
       }
-    }           
+    }
   }
 
   public class TvServiceThread : IPowerEventHandler
@@ -286,7 +289,7 @@ namespace TvService
     #region variables    
 
     private EventWaitHandle _InitializedEvent;
-    private static bool _started;    
+    private static bool _started;
     private TVController _controller;
     private readonly List<PowerEventHandler> _powerEventHandlers;
     private PluginLoader _plugins;
@@ -294,7 +297,7 @@ namespace TvService
 
     #endregion
 
-    public TvServiceThread ()
+    public TvServiceThread()
     {
       // set working dir from application.exe
       string applicationPath = Application.ExecutablePath;
@@ -612,7 +615,7 @@ namespace TvService
 
 
       return false;
-    }        
+    }
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
@@ -622,7 +625,7 @@ namespace TvService
       {
         case PowerEventType.StandBy:
         case PowerEventType.Suspend:
-          _controller.OnSuspend();         
+          _controller.OnSuspend();
           return true;
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
@@ -644,7 +647,7 @@ namespace TvService
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
         case PowerEventType.ResumeSuspend:
-          _controller.OnResume();      
+          _controller.OnResume();
           return true;
       }
       return true;
@@ -658,7 +661,7 @@ namespace TvService
       try
       {
         // create the object reference and make the singleton instance available
-        RemotingServices.Marshal(_controller, "TvControl", typeof(IController));
+        RemotingServices.Marshal(_controller, "TvControl", typeof (IController));
         RemoteControl.Clear();
       }
       catch (Exception ex)
@@ -685,7 +688,7 @@ namespace TvService
         Log.Write(ex);
       }
       Log.WriteFile("Remoting stopped");
-    }   
+    }
 
     #endregion
 
@@ -776,8 +779,8 @@ namespace TvService
 
       if (_InitializedEvent != null)
       {
-        _InitializedEvent.Reset(); 
-      }      
+        _InitializedEvent.Reset();
+      }
       StopRemoting();
       RemoteControl.Clear();
       if (_controller != null)
@@ -799,7 +802,7 @@ namespace TvService
       Log.WriteFile("TV Service: stopped");
     }
 
-    public void OnStart ()
+    public void OnStart()
     {
       //System.Diagnostics.Debugger.Launch();
       try
@@ -831,14 +834,14 @@ namespace TvService
           if (_InitializedEvent != null)
           {
             _InitializedEvent.Set();
-          }           
-          Log.Info("TV service: Started");                    
+          }
+          Log.Info("TV service: Started");
           while (true)
           {
             Thread.Sleep(1000);
           }
         }
-      }      
+      }
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       

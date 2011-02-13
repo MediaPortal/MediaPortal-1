@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -170,8 +170,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.cmdTest);
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.testRedeyeChannelsTextBox);
@@ -194,7 +196,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cmdTest
       // 
-      this.cmdTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.cmdTest.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.cmdTest.Location = new System.Drawing.Point(374, 152);
       this.cmdTest.Name = "cmdTest";
       this.cmdTest.Size = new System.Drawing.Size(72, 22);
@@ -213,8 +217,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // testRedeyeChannelsTextBox
       // 
-      this.testRedeyeChannelsTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.testRedeyeChannelsTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.testRedeyeChannelsTextBox.BorderColor = System.Drawing.Color.Empty;
       this.testRedeyeChannelsTextBox.Location = new System.Drawing.Point(168, 124);
       this.testRedeyeChannelsTextBox.MaxLength = 3;
@@ -270,33 +276,37 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommandDelayCombo
       // 
-      this.CommandDelayCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.CommandDelayCombo.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.CommandDelayCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommandDelayCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommandDelayCombo.Items.AddRange(new object[] {
-            "150",
-            "200",
-            "250",
-            "300",
-            "350",
-            "400",
-            "450",
-            "500",
-            "550",
-            "600",
-            "650",
-            "700",
-            "750",
-            "800",
-            "850",
-            "900",
-            "950",
-            "1000",
-            "1050",
-            "1100",
-            "1150",
-            "1200"});
+      this.CommandDelayCombo.Items.AddRange(new object[]
+                                              {
+                                                "150",
+                                                "200",
+                                                "250",
+                                                "300",
+                                                "350",
+                                                "400",
+                                                "450",
+                                                "500",
+                                                "550",
+                                                "600",
+                                                "650",
+                                                "700",
+                                                "750",
+                                                "800",
+                                                "850",
+                                                "900",
+                                                "950",
+                                                "1000",
+                                                "1050",
+                                                "1100",
+                                                "1150",
+                                                "1200"
+                                              });
       this.CommandDelayCombo.Location = new System.Drawing.Point(168, 100);
       this.CommandDelayCombo.Name = "CommandDelayCombo";
       this.CommandDelayCombo.Size = new System.Drawing.Size(278, 21);
@@ -313,19 +323,23 @@ namespace MediaPortal.Configuration.Sections
       // 
       // CommPortCombo
       // 
-      this.CommPortCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.CommPortCombo.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.CommPortCombo.BorderColor = System.Drawing.Color.Empty;
       this.CommPortCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.CommPortCombo.Items.AddRange(new object[] {
-            "COM1:",
-            "COM2:",
-            "COM3:",
-            "COM4:",
-            "COM5:",
-            "COM6:",
-            "COM7:",
-            "COM8:"});
+      this.CommPortCombo.Items.AddRange(new object[]
+                                          {
+                                            "COM1:",
+                                            "COM2:",
+                                            "COM3:",
+                                            "COM4:",
+                                            "COM5:",
+                                            "COM6:",
+                                            "COM7:",
+                                            "COM8:"
+                                          });
       this.CommPortCombo.Location = new System.Drawing.Point(168, 76);
       this.CommPortCombo.Name = "CommPortCombo";
       this.CommPortCombo.Size = new System.Drawing.Size(278, 21);
@@ -346,9 +360,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.infoTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
       this.infoTextBox.BorderColor = System.Drawing.Color.Empty;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -363,9 +379,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.statusLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(6, 192);
@@ -377,9 +395,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // statusLabel
       // 
-      this.statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.statusLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.statusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
       this.statusLabel.Location = new System.Drawing.Point(16, 24);
       this.statusLabel.Name = "statusLabel";
@@ -390,9 +410,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.infoTextBox);
       this.groupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox3.Location = new System.Drawing.Point(6, 264);
@@ -415,7 +437,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox3.ResumeLayout(false);
       this.groupBox3.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

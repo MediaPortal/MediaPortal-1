@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,8 +122,8 @@ namespace MediaPortal.Visualization
       {
         ((VisualizationBase)Viz).SafeDispose();
       }
-      
-      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(OnPlaybackStateChanged);      
+
+      Bass.PlaybackStateChanged -= new BassAudioEngine.PlaybackStateChangedDelegate(OnPlaybackStateChanged);
     }
 
     #endregion
@@ -347,7 +347,7 @@ namespace MediaPortal.Visualization
             {
               name = pluginname;
             }
-            
+
             VisualizationInfo vizInfo = new VisualizationInfo(VisualizationInfo.PluginType.Sonique, filePath, name,
                                                               string.Empty, null);
             _VisualizationPluginsInfo.Add(vizInfo);

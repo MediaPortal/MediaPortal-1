@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -58,13 +58,12 @@ namespace MediaPortal.Music.Database
     protected string _htmlCode = null;
     protected string _queryString = "";
     protected SearchBy _searchby = SearchBy.Artists;
+
     #endregion
 
     #region ctor
 
-    public AllmusicSiteScraper()
-    {
-    }
+    public AllmusicSiteScraper() {}
 
     #endregion
 
@@ -165,12 +164,12 @@ namespace MediaPortal.Music.Database
       string strPostData = "";
       if (SearchBy.Albums == searchBy)
       {
-        strPostData = string.Format(ALBUMSEARCH, HttpUtility.UrlEncode(searchStr));  
+        strPostData = string.Format(ALBUMSEARCH, HttpUtility.UrlEncode(searchStr));
       }
       else
       {
         searchStr = SwitchArtist(searchStr);
-        strPostData = string.Format(ARTISTSEARCH, HttpUtility.UrlEncode(searchStr));  
+        strPostData = string.Format(ARTISTSEARCH, HttpUtility.UrlEncode(searchStr));
       }
 
       string strHTML = PostHTTP(MAINURL + URLPROGRAM, strPostData);
@@ -198,7 +197,7 @@ namespace MediaPortal.Music.Database
                     @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
                     @"\s*?.*<td>(?<detail>.*)</td>\s*?.*<td>(?<detail2>.*)</td>";
         }
-        else if (searchBy.ToString().Equals("Albums")) 
+        else if (searchBy.ToString().Equals("Albums"))
         {
           pattern = @"<tr.*?>\s*?.*?<td\s*?class=""relevance\stext-center"">\s*?.*\s*?.*</td>" +
                     @"\s*?.*<td.*\s*?.*</td>\s*?.*<td>.*<a.*href=""(?<code>.*?)"">(?<name>.*)</a>.*</td>" +
@@ -307,10 +306,10 @@ namespace MediaPortal.Music.Database
 
           using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
           {
-            strBody = sr.ReadToEnd();  
+            strBody = sr.ReadToEnd();
           }
-          
-          return strBody;  
+
+          return strBody;
         }
         finally
         {
@@ -318,7 +317,7 @@ namespace MediaPortal.Music.Database
           {
             result.Close();
           }
-        }                
+        }
       }
       catch (Exception) {}
       return "";
@@ -351,8 +350,8 @@ namespace MediaPortal.Music.Database
 
       using (StreamReader sr = new StreamReader(ReceiveStream, Encoding.Default))
       {
-        retval = sr.ReadToEnd();  
-      }      
+        retval = sr.ReadToEnd();
+      }
 
       // Close the response to free resources.
       myResponse.Close();

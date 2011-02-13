@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -130,8 +130,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.IRDelayTextBox);
       this.groupBox1.Controls.Add(this.IRDelayLabel);
       this.groupBox1.Controls.Add(this.browsePathToWinlircButton);
@@ -148,8 +150,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // IRDelayTextBox
       // 
-      this.IRDelayTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.IRDelayTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.IRDelayTextBox.BorderColor = System.Drawing.Color.Empty;
       this.IRDelayTextBox.Location = new System.Drawing.Point(168, 76);
       this.IRDelayTextBox.Name = "IRDelayTextBox";
@@ -167,7 +171,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // browsePathToWinlircButton
       // 
-      this.browsePathToWinlircButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.browsePathToWinlircButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.browsePathToWinlircButton.Location = new System.Drawing.Point(374, 51);
       this.browsePathToWinlircButton.Name = "browsePathToWinlircButton";
       this.browsePathToWinlircButton.Size = new System.Drawing.Size(72, 22);
@@ -178,8 +184,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // pathToWinlircTextBox
       // 
-      this.pathToWinlircTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.pathToWinlircTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.pathToWinlircTextBox.BorderColor = System.Drawing.Color.Empty;
       this.pathToWinlircTextBox.Location = new System.Drawing.Point(168, 52);
       this.pathToWinlircTextBox.Name = "pathToWinlircTextBox";
@@ -208,9 +216,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.infoTextBox);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(6, 120);
@@ -222,9 +232,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // infoTextBox
       // 
-      this.infoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.infoTextBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.infoTextBox.BackColor = System.Drawing.SystemColors.Control;
       this.infoTextBox.BorderColor = System.Drawing.Color.Empty;
       this.infoTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
@@ -248,7 +260,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

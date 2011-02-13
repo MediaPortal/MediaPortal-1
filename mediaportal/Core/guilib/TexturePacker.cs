@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
       {
         if (FileName == fileName)
         {
-            return this;
+          return this;
         }
         if (ChildLeft != null)
         {
@@ -285,8 +285,8 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlreader = new MPSettings())
       {
-
-        if (xmlreader.GetValueAsBool("debug", "skincaching", true) && MediaPortal.Util.Utils.FileExistsInCache(packedXml))
+        if (xmlreader.GetValueAsBool("debug", "skincaching", true) &&
+            MediaPortal.Util.Utils.FileExistsInCache(packedXml))
         {
           using (FileStream fileStream = new FileStream(packedXml, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
@@ -338,8 +338,10 @@ namespace MediaPortal.GUI.Library
         }
         if (xmlreader.GetValueAsBool("debug", "packLogoGfx", true))
         {
-          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png", SearchOption.AllDirectories);
-          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png", SearchOption.AllDirectories);
+          string[] tvLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, @"tv\logos"), "*.png",
+                                                SearchOption.AllDirectories);
+          string[] radioLogos = Directory.GetFiles(Config.GetSubFolder(Config.Dir.Thumbs, "Radio"), "*.png",
+                                                   SearchOption.AllDirectories);
           files.AddRange(tvLogos);
           files.AddRange(radioLogos);
         }

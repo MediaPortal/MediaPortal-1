@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -69,7 +69,9 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
     #region Public Static Properties
 
     public static string DefaultMappingPath = Path.Combine(InputHandler.DefaultsDirectory, "MatrixMX_Keypad.xml");
-    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory, "MatrixMX_Keypad.xml");
+
+    public static string CustomMappingPath = Path.Combine(InputHandler.CustomizedMappingsDirectory,
+                                                          "MatrixMX_Keypad.xml");
 
     #endregion
 

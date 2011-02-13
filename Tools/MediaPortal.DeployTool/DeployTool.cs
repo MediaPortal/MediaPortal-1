@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -37,20 +32,24 @@ namespace MediaPortal.DeployTool
     public bool _restart;
 
     #region IDeployDialog interface
+
     public void UpdateUI()
     {
       Text = Localizer.GetBestTranslation("MainWindow_AppName");
       backButton.Text = Localizer.GetBestTranslation("MainWindow_backButton");
       nextButton.Text = Localizer.GetBestTranslation("MainWindow_nextButton");
     }
+
     public DeployDialog GetNextDialog()
     {
       return null;
     }
+
     public bool SettingsValid()
     {
       return true;
     }
+
     public void SetProperties()
     {
       return;
@@ -70,8 +69,12 @@ namespace MediaPortal.DeployTool
         Directory.CreateDirectory(Application.StartupPath + "\\deploy");
 
       //Set default folders
-      InstallationProperties.Instance.Set("MPDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal");
-      InstallationProperties.Instance.Set("TVServerDir", Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) + "\\Team MediaPortal\\MediaPortal TV Server");
+      InstallationProperties.Instance.Set("MPDir",
+                                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                          "\\Team MediaPortal\\MediaPortal");
+      InstallationProperties.Instance.Set("TVServerDir",
+                                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles) +
+                                          "\\Team MediaPortal\\MediaPortal TV Server");
 
       string tmpPrg = Environment.GetEnvironmentVariable("ProgramW6432");
       if (!string.IsNullOrEmpty(tmpPrg))
@@ -129,26 +132,31 @@ namespace MediaPortal.DeployTool
       //
       // check Internet connection unless files have already been downloaded
       //
-      if (_currentDialog.type == DialogType.DownloadOnly && Directory.GetFiles(Application.StartupPath + "\\deploy").Length < 3)
+      if (_currentDialog.type == DialogType.DownloadOnly &&
+          Directory.GetFiles(Application.StartupPath + "\\deploy").Length < 3)
       {
         if (!InstallationChecks.InternetChecker.CheckConnection())
         {
-          MessageBox.Show(Localizer.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          MessageBox.Show(Localizer.GetBestTranslation("DownloadOnly_NoConnectionWarning"), "MediaPortal",
+                          MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
       }
 
       // 
       // check if there's is sufficient hard disk space for installation
       // 
-      if (_currentDialog.type == DialogType.DBMSSettings || _currentDialog.type == DialogType.TvServerSettings || _currentDialog.type == DialogType.MPSettings)
+      if (_currentDialog.type == DialogType.DBMSSettings || _currentDialog.type == DialogType.TvServerSettings ||
+          _currentDialog.type == DialogType.MPSettings)
       {
         // at least 0.5 GB free disk space are required for installation
         const double requiredDiskSpace = 0.5;
-        double actualDiskSpace = InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
+        double actualDiskSpace =
+          InstallationChecks.DiskSpaceChecker.GetRemainingHardDiskCapacity(_currentDialog.installationPath);
 
         if (actualDiskSpace < requiredDiskSpace)
         {
-          MessageBox.Show(string.Format(Localizer.GetBestTranslation("DiskSpace_Error"), requiredDiskSpace * 1000), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show(string.Format(Localizer.GetBestTranslation("DiskSpace_Error"), requiredDiskSpace * 1000),
+                          "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
       }
@@ -168,25 +176,27 @@ namespace MediaPortal.DeployTool
             process.StartInfo.UseShellExecute = true;
             process.Start();
           }
-          // Starting processes might fail - prefer a not opening Explorer instead of a big crash window...
-          catch (Exception) { }
+            // Starting processes might fail - prefer a not opening Explorer instead of a big crash window...
+          catch (Exception) {}
         }
 
-        //
-        // If in install mode, start the included setup guide
-        //
+          //
+          // If in install mode, start the included setup guide
+          //
         else
         {
-          if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() && !Utils.IsAeroEnabled())
+          if (InstallationProperties.Instance["InstallType"] != "tvserver_master" && OSInfo.OSInfo.VistaOrLater() &&
+              !Utils.IsAeroEnabled())
           {
-            MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(Localizer.GetBestTranslation("AeroThemeMissing"), "MediaPortal", MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning);
           }
           try
           {
             Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
           }
-          // This might fail on systems without a default browser
-          catch (Exception) { }
+            // This might fail on systems without a default browser
+          catch (Exception) {}
         }
         Close();
         return;
@@ -217,7 +227,9 @@ namespace MediaPortal.DeployTool
       }
       if (!_restart && InstallationProperties.Instance["Install_Dialog"] == "yes")
       {
-        nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only" ? Localizer.GetBestTranslation("Install_buttonDownload") : Localizer.GetBestTranslation("Install_buttonInstall");
+        nextButton.Text = InstallationProperties.Instance["InstallType"] == "download_only"
+                            ? Localizer.GetBestTranslation("Install_buttonDownload")
+                            : Localizer.GetBestTranslation("Install_buttonInstall");
         InstallationProperties.Instance.Set("Install_Dialog", "no");
       }
     }
@@ -255,7 +267,8 @@ namespace MediaPortal.DeployTool
       }
       catch (Exception ex)
       {
-        MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(String.Format("Unable to open the help page with your default browser - {0}", ex.Message),
+                        "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
       }
     }
   }

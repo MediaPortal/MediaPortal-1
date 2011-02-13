@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -70,7 +70,7 @@ namespace MediaPortal.Music.Database
       aSong.BPM = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBPM");
       aSong.BitRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iBitRate");
       aSong.Channels = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iChannels");
-      aSong.SampleRate= DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
+      aSong.SampleRate = DatabaseUtility.GetAsInt(aResult, aRow, "tracks.iSampleRate");
       try
       {
         aSong.DateTimePlayed = DatabaseUtility.GetAsDateTime(aResult, aRow, "dateLastPlayed");
@@ -936,7 +936,7 @@ namespace MediaPortal.Music.Database
 
       return false;
     }
-    
+
     public bool GetSongsByAlbumArtistAlbumDisc(string aAlbumArtist, string aAlbum, int discNo, ref List<Song> aSongList)
     {
       try

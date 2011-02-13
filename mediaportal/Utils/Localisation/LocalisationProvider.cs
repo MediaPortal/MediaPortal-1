@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -113,7 +113,7 @@ namespace MediaPortal.Localisation
 
     public bool UseRTL
     {
-        get { return _useRTL; }
+      get { return _useRTL; }
     }
 
     #endregion
@@ -147,9 +147,9 @@ namespace MediaPortal.Localisation
       if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
         StringLocalised stringLocalised = null;
-        if (localList.TryGetValue(id, out stringLocalised))        
+        if (localList.TryGetValue(id, out stringLocalised))
         {
-          return stringLocalised;  
+          return stringLocalised;
         }
       }
 
@@ -162,7 +162,7 @@ namespace MediaPortal.Localisation
       if (_languageStrings.TryGetValue(section.ToLower(), out localList))
       {
         StringLocalised stringLocalised = null;
-        if (localList.TryGetValue(id, out stringLocalised))            
+        if (localList.TryGetValue(id, out stringLocalised))
         {
           string prefix = string.Empty;
           if (_prefix)
@@ -352,8 +352,8 @@ namespace MediaPortal.Localisation
           XmlSerializer s = new XmlSerializer(typeof (StringFile));
           using (TextReader r = new StreamReader(path))
           {
-            strings = (StringFile)s.Deserialize(r);  
-          }          
+            strings = (StringFile)s.Deserialize(r);
+          }
         }
         catch (Exception)
         {
@@ -375,7 +375,7 @@ namespace MediaPortal.Localisation
           {
             _characters = 1536;
           }
-          
+
           useChineseHackNum = reader.GetValueAsInt("debug", "useExtendedCharsWithStandardCulture", 0);
           if (useChineseHackNum >= 128 && useChineseHackNum <= 1536)
           {
@@ -400,7 +400,7 @@ namespace MediaPortal.Localisation
 
           Dictionary<int, StringLocalised> newSection;
           if (_languageStrings.TryGetValue(section.name, out newSection))
-          {            
+          {
             _languageStrings.Remove(section.name);
           }
           else

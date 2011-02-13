@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -82,11 +82,7 @@ namespace DShowNET.Helper
       }
     }
 
-    public Guid CLSID
-    {
-      get;
-      protected set;
-    }
+    public Guid CLSID { get; protected set; }
 
     public void ResolveName()
     {
@@ -112,7 +108,7 @@ namespace DShowNET.Helper
       IPropertyBag bag = null;
       try
       {
-        Guid bagId = typeof(IPropertyBag).GUID;
+        Guid bagId = typeof (IPropertyBag).GUID;
         moniker.BindToStorage(null, null, ref bagId, out bagObj);
         bag = (IPropertyBag)bagObj;
         object val = "";

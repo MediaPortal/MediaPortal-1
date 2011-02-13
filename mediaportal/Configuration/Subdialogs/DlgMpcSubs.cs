@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,6 +44,7 @@ namespace MediaPortal.Configuration
     /// Required designer variable.
     /// </summary>
     private Container components = null;
+
     private MPNumericUpDown subPicsAheadUpDown;
     private MPLabel mpLabel1;
     private MPCheckBox disableAnimCheckBox;
@@ -103,9 +104,11 @@ namespace MediaPortal.Configuration
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label2);
       this.groupBox1.Controls.Add(this.posYUpDown);
       this.groupBox1.Controls.Add(this.disableAnimCheckBox);
@@ -168,22 +171,28 @@ namespace MediaPortal.Configuration
       this.subPicsAheadUpDown.Name = "subPicsAheadUpDown";
       this.subPicsAheadUpDown.Size = new System.Drawing.Size(41, 20);
       this.subPicsAheadUpDown.TabIndex = 12;
-      this.subPicsAheadUpDown.Value = new decimal(new int[] {
-            3,
-            0,
-            0,
-            0});
+      this.subPicsAheadUpDown.Value = new decimal(new int[]
+                                                    {
+                                                      3,
+                                                      0,
+                                                      0,
+                                                      0
+                                                    });
       // 
       // textureComboBox
       // 
-      this.textureComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textureComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textureComboBox.BorderColor = System.Drawing.Color.Empty;
       this.textureComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.textureComboBox.Items.AddRange(new object[] {
-            "Desktop",
-            "Medium",
-            "Low"});
+      this.textureComboBox.Items.AddRange(new object[]
+                                            {
+                                              "Desktop",
+                                              "Medium",
+                                              "Low"
+                                            });
       this.textureComboBox.Location = new System.Drawing.Point(169, 62);
       this.textureComboBox.Name = "textureComboBox";
       this.textureComboBox.Size = new System.Drawing.Size(104, 21);
@@ -207,7 +216,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonClose
       // 
-      this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonClose.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.buttonClose.Location = new System.Drawing.Point(383, 165);
       this.buttonClose.Name = "buttonClose";
@@ -219,7 +230,9 @@ namespace MediaPortal.Configuration
       // 
       // buttonOK
       // 
-      this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonOK.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonOK.Location = new System.Drawing.Point(302, 165);
       this.buttonOK.Name = "buttonOK";
       this.buttonOK.Size = new System.Drawing.Size(75, 23);
@@ -266,7 +279,6 @@ namespace MediaPortal.Configuration
       ((System.ComponentModel.ISupportInitialize)(this.subPicsAheadUpDown)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.posYUpDown)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion

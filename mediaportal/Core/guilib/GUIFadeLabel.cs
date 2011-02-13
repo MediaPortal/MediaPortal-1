@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -896,7 +896,7 @@ namespace MediaPortal.GUI.Library
     public override int DimColor
     {
       get { return _dimColor; }
-      set 
+      set
       {
         _dimColor = value;
         // Need to pass the dim color to our delegate label if someone tries to set it (e.g., when fadelabel is in a group).

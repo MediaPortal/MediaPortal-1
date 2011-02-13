@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -205,7 +205,7 @@ namespace Wikipedia
             Log.Info("Wikipedia: Searchterm gotten from OSD keyboard: {0}", searchterm);
             GetAndDisplayArticle(searchterm);
           }
-          // Else display an error dialog.
+            // Else display an error dialog.
           else
           {
             GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);

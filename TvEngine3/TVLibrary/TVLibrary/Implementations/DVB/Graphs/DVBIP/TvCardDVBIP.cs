@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -154,7 +154,7 @@ namespace TvLibrary.Implementations.DVB
         if (!CheckThreadId()) return null;
         return new DVBIPScanning(this);
       }
-    }   
+    }
 
     /// <summary>
     /// Scans the specified channel.
@@ -261,7 +261,7 @@ namespace TvLibrary.Implementations.DVB
             throw;
           }
         }
-        
+
         Log.Log.Info("dvbip: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
@@ -269,8 +269,8 @@ namespace TvLibrary.Implementations.DVB
       {
         if (ch != null)
         {
-          FreeSubChannel(ch.SubChannelId);  
-        }        
+          FreeSubChannel(ch.SubChannelId);
+        }
         Log.Log.Write(ex);
         throw;
       }

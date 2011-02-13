@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -51,7 +51,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       if (g_Player.Player == null || !g_Player.IsMusic || !BassMusicPlayer.IsDefaultMusicPlayer)
       {
         return false;
-      } 
+      }
 
       if (!EQSETTINGS.UseEqDisplay)
       {
@@ -159,7 +159,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
 
         CurrentStatus.SystemVolumeLevel = MPStatus.SystemVolumeLevel;
         CurrentStatus.IsMuted = MPStatus.IsMuted;
-        
+
         CurrentStatus.MediaPlayer_Active = MPStatus.MediaPlayer_Active;
         CurrentStatus.MediaPlayer_Playing = MPStatus.MediaPlayer_Playing;
         CurrentStatus.MediaPlayer_Paused = MPStatus.MediaPlayer_Paused;

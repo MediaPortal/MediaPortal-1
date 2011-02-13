@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -245,7 +245,7 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
-        // If folder is DVD backup folder then take it for watched status
+          // If folder is DVD backup folder then take it for watched status
         else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
         {
           file = GetFolderVideoFile(pItem.Path);
@@ -262,7 +262,7 @@ namespace MediaPortal.GUI.Video
           continue;
         }
 
-         if (!string.IsNullOrEmpty(file))
+        if (!string.IsNullOrEmpty(file))
         {
           byte[] resumeData = null;
           int fileId = VideoDatabase.GetFileId(file);
@@ -275,7 +275,7 @@ namespace MediaPortal.GUI.Video
             {
               pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
             }
-            
+
             string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
             //Watched status for movies in the database
@@ -303,7 +303,7 @@ namespace MediaPortal.GUI.Video
               }
             }
           }
-          
+
           if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path) && foundWatched))
           {
             pItem.IsPlayed = foundWatched;

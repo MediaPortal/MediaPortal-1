@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ namespace MpeCore.Classes.SectionPanel
 {
   public partial class UserVericalLayout : BaseVerticalLayout, ISectionPanel
   {
-
     private const string CONST_TEXT1 = "Header text";
     private const string CONST_IMAGE = "Left part image";
     private const string CONST_SHOW_SCRIPT = "On Show Script";
@@ -62,8 +61,8 @@ namespace MpeCore.Classes.SectionPanel
     {
       get { return "Custom Vertical layout"; }
     }
- 
-    
+
+
     public SectionParamCollection Init()
     {
       throw new NotImplementedException();
@@ -78,35 +77,35 @@ namespace MpeCore.Classes.SectionPanel
       param.Add(new SectionParam(ParamNamesConst.SECTION_ICON, "", ValueTypeEnum.File,
                                  "Image in upper right part"));
       param.Add(new SectionParam(CONST_SHOW_SCRIPT, "//css_reference \"MpeCore.dll\";\n" +
-                                          "\n" +
-                                          "using MpeCore;\n" +
-                                          "using MpeCore.Classes;\n" +
-                                          "using MpeCore.Classes.SectionPanel;\n" +
-                                          "\n" +
-                                          "public class Script\n" +
-                                          "{\n" +
-                                          "    public static void Main(PackageClass packageClass, UserVericalLayout form)\n" +
-                                          "    {\n" +
-                                          "        return;\n" +
-                                          "    }\n" +
-                                          "}\n"
-                            , ValueTypeEnum.Script,
-                            ""));
+                                                    "\n" +
+                                                    "using MpeCore;\n" +
+                                                    "using MpeCore.Classes;\n" +
+                                                    "using MpeCore.Classes.SectionPanel;\n" +
+                                                    "\n" +
+                                                    "public class Script\n" +
+                                                    "{\n" +
+                                                    "    public static void Main(PackageClass packageClass, UserVericalLayout form)\n" +
+                                                    "    {\n" +
+                                                    "        return;\n" +
+                                                    "    }\n" +
+                                                    "}\n"
+                                 , ValueTypeEnum.Script,
+                                 ""));
       param.Add(new SectionParam(CONST_HIDE_SCRIPT, "//css_reference \"MpeCore.dll\";\n" +
-                                          "\n" +
-                                          "using MpeCore;\n" +
-                                          "using MpeCore.Classes;\n" +
-                                          "using MpeCore.Classes.SectionPanel;\n" +
-                                          "\n" +
-                                          "public class Script\n" +
-                                          "{\n" +
-                                          "    public static void Main(PackageClass packageClass, SectionItem sectionItem, UserVericalLayout form)\n" +
-                                          "    {\n" +
-                                          "        return;\n" +
-                                          "    }\n" +
-                                          "}\n"
-                            , ValueTypeEnum.Script,
-                            ""));
+                                                    "\n" +
+                                                    "using MpeCore;\n" +
+                                                    "using MpeCore.Classes;\n" +
+                                                    "using MpeCore.Classes.SectionPanel;\n" +
+                                                    "\n" +
+                                                    "public class Script\n" +
+                                                    "{\n" +
+                                                    "    public static void Main(PackageClass packageClass, SectionItem sectionItem, UserVericalLayout form)\n" +
+                                                    "    {\n" +
+                                                    "        return;\n" +
+                                                    "    }\n" +
+                                                    "}\n"
+                                 , ValueTypeEnum.Script,
+                                 ""));
       return param;
     }
 
@@ -141,6 +140,5 @@ namespace MpeCore.Classes.SectionPanel
           MessageBox.Show("Eror in script : " + ex.Message);
       }
     }
-    
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -545,12 +545,13 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
           o.Rows.Add(row);
         }
         var serializer = new XmlSerializer(typeof (DataTable));
-        using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
+        using (
+          TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_icons.xml")))
         {
           serializer.Serialize(textWriter, o);
-          textWriter.Close();  
+          textWriter.Close();
         }
-        
+
         ClearIconDisplay();
         EnableIconSelection(false);
         cmdSave.Enabled = false;

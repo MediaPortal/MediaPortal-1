@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -106,8 +106,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxZapOSD
       // 
-      this.groupBoxZapOSD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxZapOSD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxZapOSD.Controls.Add(this.textBoxZapTimeout);
       this.groupBoxZapOSD.Controls.Add(this.labelZapTimeOut);
       this.groupBoxZapOSD.Controls.Add(this.textBoxZapDelay);
@@ -122,8 +124,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxZapTimeout
       // 
-      this.textBoxZapTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxZapTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxZapTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapTimeout.Location = new System.Drawing.Point(160, 44);
       this.textBoxZapTimeout.Name = "textBoxZapTimeout";
@@ -141,8 +145,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxZapDelay
       // 
-      this.textBoxZapDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxZapDelay.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxZapDelay.BorderColor = System.Drawing.Color.Empty;
       this.textBoxZapDelay.Location = new System.Drawing.Point(160, 20);
       this.textBoxZapDelay.Name = "textBoxZapDelay";
@@ -160,8 +166,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxOSD
       // 
-      this.groupBoxOSD.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxOSD.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxOSD.Controls.Add(this.textBoxDisplayTimeout);
       this.groupBoxOSD.Controls.Add(this.labelDisplayTimeout);
       this.groupBoxOSD.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -174,8 +182,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxDisplayTimeout
       // 
-      this.textBoxDisplayTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxDisplayTimeout.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxDisplayTimeout.BorderColor = System.Drawing.Color.Empty;
       this.textBoxDisplayTimeout.Location = new System.Drawing.Point(160, 20);
       this.textBoxDisplayTimeout.Name = "textBoxDisplayTimeout";
@@ -202,7 +212,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxOSD.ResumeLayout(false);
       this.groupBoxOSD.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

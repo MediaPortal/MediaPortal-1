@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,41 +46,80 @@ namespace MediaPortal.Player.PostProcessing
     public static IPostProcessingEngine engine;
 
     public static IPostProcessingEngine GetInstance()
-        {
-        return GetInstance(false);
-        }
+    {
+      return GetInstance(false);
+    }
 
-      public static IPostProcessingEngine GetInstance(bool forceinitialize)
+    public static IPostProcessingEngine GetInstance(bool forceinitialize)
+    {
+      if (engine == null || forceinitialize)
+
       {
-          if (engine == null || forceinitialize)
-          
-          {
-              /*public static IPostProcessingEngine GetInstance()
+        /*public static IPostProcessingEngine GetInstance()
               { */
-              using (Settings xmlreader = new MPSettings())
-              {
-                  /*string engineType = xmlreader.GetValueAsString("postprocessing", "engine", "FFDShow");
+        using (Settings xmlreader = new MPSettings())
+        {
+          /*string engineType = xmlreader.GetValueAsString("postprocessing", "engine", "FFDShow");
                   if (engineType.Equals("FFDShow"))
                       engine = new FFDShowEngine();
                   else
                       engine = new DummyEngine();*/
-                  engine = new FFDShowEngine();
-              }
-          }
-              return engine;
-       }
+          engine = new FFDShowEngine();
+        }
+      }
+      return engine;
+    }
 
     public class DummyEngine : IPostProcessingEngine
     {
       #region IPostProcessingEngine Members
-      public bool HasPostProcessing { get { return false; } }
-      public bool EnableResize { get { return false; } set { } }
-      public bool EnablePostProcess { get { return false; } set { } }
-      public bool LoadPostProcessing(IGraphBuilder graphBuilder) { return false; }
-      public bool EnableDeinterlace { get { return false; } set { } }
-      public bool EnableCrop { get { return false; } set { } }
-      public int CropVertical { get { return 0; } set { } }
-      public int CropHorizontal { get { return 0; } set { } }
+
+      public bool HasPostProcessing
+      {
+        get { return false; }
+      }
+
+      public bool EnableResize
+      {
+        get { return false; }
+        set { }
+      }
+
+      public bool EnablePostProcess
+      {
+        get { return false; }
+        set { }
+      }
+
+      public bool LoadPostProcessing(IGraphBuilder graphBuilder)
+      {
+        return false;
+      }
+
+      public bool EnableDeinterlace
+      {
+        get { return false; }
+        set { }
+      }
+
+      public bool EnableCrop
+      {
+        get { return false; }
+        set { }
+      }
+
+      public int CropVertical
+      {
+        get { return 0; }
+        set { }
+      }
+
+      public int CropHorizontal
+      {
+        get { return 0; }
+        set { }
+      }
+
       #endregion
     }
   }

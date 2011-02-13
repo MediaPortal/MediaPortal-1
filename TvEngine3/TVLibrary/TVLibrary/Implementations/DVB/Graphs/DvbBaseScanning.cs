@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -322,7 +322,7 @@ namespace TvLibrary.Implementations.DVB
               short hasVideo;
               short hasAudio;
               short lcn;
-              _analyzer.GetChannel((short) i,
+              _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
                                    out providerName, out serviceName,
@@ -534,6 +534,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return IsRadioService(serviceType) || IsTvService(serviceType);
     }
+
     /// <summary>
     /// Determines whether a DVB service type is a radio service.
     /// </summary>

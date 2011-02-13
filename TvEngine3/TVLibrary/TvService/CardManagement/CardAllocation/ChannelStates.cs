@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -55,15 +55,15 @@ namespace TvService
           //no
           //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
           //allow admin users like the scheduler to use this card anyway          
-          UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);          
+          UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
         }
         else
         {
-          UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);          
+          UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
         }
         allUsers[i] = user;
       }
-    }   
+    }
 
     private static void UpdateChannelStateUsers(IList<IUser> allUsers, ChannelState chState, int channelId)
     {
@@ -92,7 +92,7 @@ namespace TvService
     private static void UpdateChannelStateUser(IUser user, ChannelState chState, int channelId)
     {
       ChannelState currentChState;
-      
+
       bool stateExists = user.ChannelStates.TryGetValue(channelId, out currentChState);
 
       if (stateExists)
@@ -100,16 +100,18 @@ namespace TvService
         if (chState == ChannelState.nottunable)
         {
           return;
-        }                
+        }
         bool recording = (currentChState == ChannelState.recording);
         if (!recording)
         {
-          user.ChannelStates[channelId] = chState; //add key if does not exist, or update existing one.                            
-        }                
+          user.ChannelStates[channelId] = chState;
+          //add key if does not exist, or update existing one.                            
+        }
       }
       else
       {
-        user.ChannelStates[channelId] = chState; //add key if does not exist, or update existing one.                          
+        user.ChannelStates[channelId] = chState;
+        //add key if does not exist, or update existing one.                          
       }
     }
 
@@ -122,7 +124,7 @@ namespace TvService
       {
         Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
         foreach (ITvCardHandler cardHandler in cardHandlers)
-        {          
+        {
           //get a list of all users for this card
           IUser[] usersAvail = cardHandler.Users.GetUsers();
           if (usersAvail != null)
@@ -146,11 +148,11 @@ namespace TvService
       }
 
       return allUsers;
-    }   
+    }
 
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
-                                           bool checkTransponders, IList<IUser> allUsers, TVController tvController)
+                                    bool checkTransponders, IList<IUser> allUsers, TVController tvController)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
@@ -165,7 +167,7 @@ namespace TvService
 
         TvBusinessLayer layer = new TvBusinessLayer();
 
-        Dictionary<int, ChannelState> TSandRecStates = null;        
+        Dictionary<int, ChannelState> TSandRecStates = null;
 
         Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
 
@@ -190,10 +192,10 @@ namespace TvService
           }
 
           foreach (IChannel tuningDetail in tuningDetails)
-          {            
+          {
             foreach (ITvCardHandler cardHandler in cardHandlers)
-            {              
-              int cardId = cardHandler.DataBaseCard.IdCard;              
+            {
+              int cardId = cardHandler.DataBaseCard.IdCard;
 
               //check if card is enabled
               if (!cardHandler.DataBaseCard.Enabled)
@@ -225,12 +227,12 @@ namespace TvService
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
-                                          
+
               //ok card could be used to tune to this channel
               //now we check if its free...                              
               int decryptLimit = cardHandler.DataBaseCard.DecryptLimit;
-              CheckTransponderAllUsers(ch, allUsers, cards, cardHandler, decryptLimit, cardId, tuningDetail, checkTransponders);
-                                      
+              CheckTransponderAllUsers(ch, allUsers, cards, cardHandler, decryptLimit, cardId, tuningDetail,
+                                       checkTransponders);
             } //while card end
           } //foreach tuningdetail end              
 
@@ -240,13 +242,13 @@ namespace TvService
             Stopwatch stopwatchTsRec = Stopwatch.StartNew();
             TSandRecStates = tvController.GetAllTimeshiftingAndRecordingChannels();
             stopwatchTsRec.Stop();
-            Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec", stopwatchTsRec.ElapsedMilliseconds);
+            Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+                     stopwatchTsRec.ElapsedMilliseconds);
           }
           UpdateRecOrTSChannelStateForUsers(ch, allUsers, TSandRecStates);
         }
 
         RemoveAllTunableChannelStates(allUsers);
-
       }
       catch (InvalidOperationException tex)
       {
@@ -321,7 +323,6 @@ namespace TvService
     {
       foreach (IUser user in allUsers)
       {
-
         List<int> keysToDelete = new List<int>();
 
 
@@ -330,13 +331,13 @@ namespace TvService
           if (kvp.Value == ChannelState.tunable)
           {
             keysToDelete.Add(kvp.Key);
-          }          
+          }
         }
-        
-        foreach (int key in keysToDelete) 
+
+        foreach (int key in keysToDelete)
         {
           user.ChannelStates.Remove(key);
-        }     
+        }
       }
     }
 
@@ -345,7 +346,7 @@ namespace TvService
     {
       ChannelState cs = ChannelState.tunable;
       TSandRecStates.TryGetValue(ch.IdChannel, out cs);
-      
+
       if (cs == ChannelState.recording)
       {
         UpdateChannelStateUsers(allUsers, ChannelState.recording, ch.IdChannel);
@@ -353,34 +354,34 @@ namespace TvService
       else if (cs == ChannelState.timeshifting)
       {
         UpdateChannelStateUsers(allUsers, ChannelState.timeshifting, ch.IdChannel);
-      }      
+      }
     }
 
-    private void CheckTransponderAllUsers(Channel ch, IList<IUser> allUsers, Dictionary<int, ITvCardHandler> cards, ITvCardHandler tvcard,
-                                                 int decryptLimit, int cardId, IChannel tuningDetail,
-                                                 bool checkTransponders)
+    private void CheckTransponderAllUsers(Channel ch, IList<IUser> allUsers, Dictionary<int, ITvCardHandler> cards,
+                                          ITvCardHandler tvcard,
+                                          int decryptLimit, int cardId, IChannel tuningDetail,
+                                          bool checkTransponders)
     {
-        for (int i = 0; i < allUsers.Count; i++)
-        {
-          IUser user = allUsers[i];
-                    
-          //ignore admin users, like scheduler
-          if (user.IsAdmin)
-          {
-            continue;
-          }
+      for (int i = 0; i < allUsers.Count; i++)
+      {
+        IUser user = allUsers[i];
 
-          bool checkTransponder = CheckTransponder( user, tvcard, decryptLimit, tvcard.DataBaseCard.IdCard, tuningDetail);
-          if (checkTransponder)
-          {
-            UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
-          } else
-          {
-            UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
-          }
-        } //foreach allusers end                         
-      
-      
+        //ignore admin users, like scheduler
+        if (user.IsAdmin)
+        {
+          continue;
+        }
+
+        bool checkTransponder = CheckTransponder(user, tvcard, decryptLimit, tvcard.DataBaseCard.IdCard, tuningDetail);
+        if (checkTransponder)
+        {
+          UpdateChannelStateUser(user, ChannelState.tunable, ch.IdChannel);
+        }
+        else
+        {
+          UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
+        }
+      } //foreach allusers end                         
     }
 
     #endregion

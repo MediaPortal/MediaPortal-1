@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
 
 namespace TvControl
-{  
+{
   /// <summary>
   /// interface class describing all methods available
   /// to remote-control the TVService
@@ -917,7 +917,7 @@ namespace TvControl
     /// Does the card have a CA module.
     /// </summary>
     /// <value>The number of channels decrypting.</value>
-    bool HasCA(int cardId);       
+    bool HasCA(int cardId);
 
     #endregion
 
@@ -1054,8 +1054,5 @@ namespace TvControl
     void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter);
 
     #endregion
-
-    
-
   }
 }

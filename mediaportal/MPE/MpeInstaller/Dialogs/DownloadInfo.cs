@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -26,7 +46,7 @@ namespace MpeInstaller.Dialogs
       Client.DownloadFileCompleted += Client_DownloadFileCompleted;
     }
 
-    void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+    private void Client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
     {
       if (e.Error == null)
       {
@@ -41,7 +61,7 @@ namespace MpeInstaller.Dialogs
         }
       }
       counter++;
-      
+
       if (counter >= onlineFiles.Count)
       {
         MpeCore.MpeInstaller.Save();
@@ -51,7 +71,7 @@ namespace MpeInstaller.Dialogs
       NextItem();
     }
 
-    void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+    private void Client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
     {
       progressBar2.Value = e.ProgressPercentage;
       label1.Text = string.Format("{0} kb/{1} kb", e.BytesReceived / 1024, e.TotalBytesToReceive / 1024);

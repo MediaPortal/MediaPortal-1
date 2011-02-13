@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -6,7 +26,8 @@ namespace MediaPortal.DeployTool.Sections
 {
   public partial class DBMSTypeDlg : DeployDialog
   {
-    int dbmsType;
+    private int dbmsType;
+
     public DBMSTypeDlg()
     {
       InitializeComponent();
@@ -18,6 +39,7 @@ namespace MediaPortal.DeployTool.Sections
     }
 
     #region IDeployDialog interface
+
     public override void UpdateUI()
     {
       labelHeading.Text = Localizer.GetBestTranslation("DBMSType_labelHeading");
@@ -39,6 +61,7 @@ namespace MediaPortal.DeployTool.Sections
         lbMSSQL.Text = Localizer.GetBestTranslation("DBMSType_lbMSSQL_disabled");
       }
     }
+
     public override DeployDialog GetNextDialog()
     {
       if (dbmsType == 3)
@@ -56,6 +79,7 @@ namespace MediaPortal.DeployTool.Sections
     {
       return true;
     }
+
     public override void SetProperties()
     {
       switch (dbmsType)
@@ -71,6 +95,7 @@ namespace MediaPortal.DeployTool.Sections
           break;
       }
     }
+
     #endregion
 
     private void bMS_Click(object sender, EventArgs e)
@@ -103,8 +128,7 @@ namespace MediaPortal.DeployTool.Sections
       {
         Process.Start("http://www.team-mediaportal.com/manual/TV-Server/install-SQL-Server-2008");
       }
-      catch (Exception) { }
-
+      catch (Exception) {}
     }
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,7 +122,7 @@ namespace MpeInstaller
             Thread.Sleep(5000);
             pr.Kill();
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
       ExecuteQueue();
@@ -209,7 +209,7 @@ namespace MpeInstaller
       extensionListContro_all.ShowScreenShot += extensionListControl_ShowScreenShot;
     }
 
-    void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
+    private void extensionListControl_ShowScreenShot(object sender, PackageClass packageClass)
     {
       _screenShotNavigator.Set(packageClass);
       if (!_screenShotNavigator.Visible)
@@ -277,8 +277,8 @@ namespace MpeInstaller
           PluginLoader remoteExecutor =
             (PluginLoader)
             appDomain.CreateInstanceFromAndUnwrap(
-              Assembly.GetAssembly(typeof(MpeCore.MpeInstaller)).Location,
-              typeof(PluginLoader).ToString());
+              Assembly.GetAssembly(typeof (MpeCore.MpeInstaller)).Location,
+              typeof (PluginLoader).ToString());
           remoteExecutor.Load(conf_str);
           remoteExecutor.Dispose();
 
@@ -472,9 +472,9 @@ namespace MpeInstaller
       if (IsOldFormat(file))
       {
         if (!silent)
-            MessageBox.Show("This is a old format file (mpi). MPInstaller will be used to install it! ");
-          string mpiPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPInstaller.exe");
-          Process.Start(mpiPath, "\"" + file + "\"");
+          MessageBox.Show("This is a old format file (mpi). MPInstaller will be used to install it! ");
+        string mpiPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPInstaller.exe");
+        Process.Start(mpiPath, "\"" + file + "\"");
         return;
       }
       MpeCore.MpeInstaller.Init();
@@ -549,7 +549,7 @@ namespace MpeInstaller
       DateTime d = _settings.LastUpdate;
       int i = DateTime.Now.Subtract(d).Days;
       if (((_settings.DoUpdateInStartUp && i > _settings.UpdateDays) ||
-          MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0) &&
+           MpeCore.MpeInstaller.KnownExtensions.Items.Count == 0) &&
           MessageBox.Show("Do you want to update the extension list ?", "Update", MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
@@ -621,7 +621,6 @@ namespace MpeInstaller
         dlg.StartDownload(UpdateIndexUrl, tempUpdateIndex);
 
 
-
         //WebClient webClient = new WebClient();
         //webClient.DownloadProgressChanged += Client_DownloadProgressChanged;
         //webClient.DownloadFileCompleted += updateIndex_DownloadFileCompleted;
@@ -656,6 +655,7 @@ namespace MpeInstaller
       }
       MpeCore.MpeInstaller.SetInitialUrlIndex(indexUrls);
     }
+
     #endregion
 
     private void chk_stable_CheckedChanged(object sender, EventArgs e)
@@ -667,7 +667,8 @@ namespace MpeInstaller
 
     private void btn_clean_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info .", "Cleanup", MessageBoxButtons.YesNo,
+      if (MessageBox.Show("Do you want to clear all unused data ?\nYou need to redownload update info .", "Cleanup",
+                          MessageBoxButtons.YesNo,
                           MessageBoxIcon.Question) == DialogResult.Yes)
       {
         ExtensionCollection collection = new ExtensionCollection();
@@ -696,6 +697,5 @@ namespace MpeInstaller
         RefreshLists();
       }
     }
-
   }
 }

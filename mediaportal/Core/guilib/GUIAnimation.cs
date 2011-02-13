@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -79,6 +79,7 @@ namespace MediaPortal.GUI.Library
     private bool _borderHasCorners = false;
     private bool _borderCornerTextureRotate = true;
     private bool _tileFill = false;
+
     #endregion Fields
 
     #region Properties
@@ -245,7 +246,7 @@ namespace MediaPortal.GUI.Library
 
     public override void AllocResources()
     {
-      Dispose();      
+      Dispose();
       using (Settings xmlreader = new MPSettings())
       {
         _hidePngAnimations = (xmlreader.GetValueAsBool("general", "hidepnganimations", false));
@@ -291,7 +292,8 @@ namespace MediaPortal.GUI.Library
         _images[index].FlipY = _flipX;
         _images[index].FlipY = _flipY;
         _images[index].SetBorder(_strBorder, _borderPosition, _borderTextureRepeat,
-          _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners, _borderCornerTextureRotate);
+                                 _borderTextureRotate, _borderTextureFileName, _borderColorKey, _borderHasCorners,
+                                 _borderCornerTextureRotate);
         _images[index].TileFill = _tileFill;
         _images[index].AllocResources();
         //_images[index].ScaleToScreenResolution(); -> causes too big images in fullscreen
@@ -383,7 +385,7 @@ namespace MediaPortal.GUI.Library
     }
 
     public void SetBorder(string border, GUIImage.BorderPosition position, bool textureRepeat, bool textureRotate,
-      string textureFilename, long colorKey, bool hasCorners, bool cornerTextureRotate)
+                          string textureFilename, long colorKey, bool hasCorners, bool cornerTextureRotate)
     {
       _strBorder = border;
       _borderPosition = position;

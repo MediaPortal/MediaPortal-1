@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -207,8 +207,10 @@ namespace MediaPortal.Configuration
 
     #region Properties
 
-    public static string SkinName {
-      set {
+    public static string SkinName
+    {
+      set
+      {
         if (value != skinName)
         {
           skinName = value;
@@ -309,15 +311,15 @@ namespace MediaPortal.Configuration
                   Dir dir = Dir.Base; // default - it's parsed below
                   try
                   {
-                    dir = (Dir)Enum.Parse(typeof(Dir), dirId.InnerText); // parse directory name from XML to enum - it might fail here
+                    dir = (Dir)Enum.Parse(typeof (Dir), dirId.InnerText);
+                    // parse directory name from XML to enum - it might fail here
                   }
                   catch
                   {
-                      continue; // why return on failure, skip the dir
+                    continue; // why return on failure, skip the dir
                   }
 
                   Set(dir, strPath);
-                  
                 }
               }
             }
@@ -347,7 +349,8 @@ namespace MediaPortal.Configuration
       Set(Dir.Plugins, Path.Combine(baseDir, @"plugins\"));
       Set(Dir.Skin, Path.Combine(commonAppData, @"skin\"));
       Set(Dir.Thumbs, Path.Combine(commonAppData, @"thumbs\"));
-      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Blue3wide\Media\Weather\")); //will be 'fixed' and set to correct path as soon as available
+      Set(Dir.Weather, Path.Combine(commonAppData, @"skin\Blue3wide\Media\Weather\"));
+      //will be 'fixed' and set to correct path as soon as available
     }
 
 

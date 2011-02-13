@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -90,8 +90,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxActivatedFilters
       // 
-      this.groupBoxActivatedFilters.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxActivatedFilters.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxActivatedFilters.Controls.Add(this.labelPropertiesHint);
       this.groupBoxActivatedFilters.Controls.Add(this.bSetup);
       this.groupBoxActivatedFilters.Controls.Add(this.cLBDSFilter);
@@ -105,7 +107,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelPropertiesHint
       // 
-      this.labelPropertiesHint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.labelPropertiesHint.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.labelPropertiesHint.AutoSize = true;
       this.labelPropertiesHint.Location = new System.Drawing.Point(134, 140);
       this.labelPropertiesHint.Name = "labelPropertiesHint";
@@ -115,7 +119,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // bSetup
       // 
-      this.bSetup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.bSetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.bSetup.Location = new System.Drawing.Point(16, 135);
       this.bSetup.Name = "bSetup";
       this.bSetup.Size = new System.Drawing.Size(112, 22);
@@ -126,9 +132,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // cLBDSFilter
       // 
-      this.cLBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cLBDSFilter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cLBDSFilter.FormattingEnabled = true;
       this.cLBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.cLBDSFilter.Name = "cLBDSFilter";
@@ -138,9 +146,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBoxAvailableFilters
       // 
-      this.groupBoxAvailableFilters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBoxAvailableFilters.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBoxAvailableFilters.Controls.Add(this.lBDSFilter);
       this.groupBoxAvailableFilters.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBoxAvailableFilters.Location = new System.Drawing.Point(6, 197);
@@ -152,9 +162,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // lBDSFilter
       // 
-      this.lBDSFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.lBDSFilter.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.lBDSFilter.FormattingEnabled = true;
       this.lBDSFilter.Location = new System.Drawing.Point(16, 24);
       this.lBDSFilter.Name = "lBDSFilter";
@@ -164,9 +176,12 @@ namespace MediaPortal.Configuration.Sections
       // 
       // labelWarning
       // 
-      this.labelWarning.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.labelWarning.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold,
+                                                       System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelWarning.ForeColor = System.Drawing.Color.Red;
       this.labelWarning.Location = new System.Drawing.Point(0, 0);
       this.labelWarning.Name = "labelWarning";
@@ -186,7 +201,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxActivatedFilters.PerformLayout();
       this.groupBoxAvailableFilters.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -205,7 +205,7 @@ namespace SetupTv.Sections
       checkBoxShowRatings.Checked = layer.GetSetting("TvMovieShowRatings", "true").Value == "true";
       checkBoxShowAudioFormat.Checked = layer.GetSetting("TvMovieShowAudioFormat", "false").Value == "true";
       checkBoxSlowImport.Checked = layer.GetSetting("TvMovieSlowImport", "true").Value == "true";
-      
+
       var tvMovieLimitActors = Convert.ToDecimal(layer.GetSetting("TvMovieLimitActors", "5").Value);
       if (tvMovieLimitActors < numericUpDownActorCount.Minimum || tvMovieLimitActors > numericUpDownActorCount.Maximum)
       {

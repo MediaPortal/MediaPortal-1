@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,6 @@ namespace TvService
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
         {
-
           if (_cardHandler.IsLocal == false)
           {
             try
@@ -122,7 +121,7 @@ namespace TvService
         return TvResult.GraphBuildingFailed;
       }
       catch (TvExceptionNoPMT)
-      {        
+      {
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -159,7 +158,6 @@ namespace TvService
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
         {
-
           if (_cardHandler.IsLocal == false)
           {
             try
@@ -189,7 +187,7 @@ namespace TvService
           else
           {
             return TvResult.UnknownError;
-          }          
+          }
         }
       }
       catch (TvExceptionNoSignal)
@@ -304,7 +302,7 @@ namespace TvService
 
                 //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
                 if (users[i].IsAdmin)
-                // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
+                  // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
                 {
                   Log.Debug("user is scheduler: {0}", users[i].Name);
                   int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
@@ -364,9 +362,11 @@ namespace TvService
     }
 
     public event OnAfterTuneDelegate OnAfterTuneEvent;
+
     public delegate void OnAfterTuneDelegate(ITvCardHandler cardHandler);
 
     public event OnBeforeTuneDelegate OnBeforeTuneEvent;
+
     public delegate void OnBeforeTuneDelegate(ITvCardHandler cardHandler);
 
     private void Card_OnAfterTuneEvent()

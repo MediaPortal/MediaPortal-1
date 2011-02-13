@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,8 +66,8 @@ namespace SetupTv.Sections
     private bool _abortScanning = false;
     private Thread _scanThread;
 
-    Dictionary<int, CardType> _cards = null;
-    IList<Channel> _allChannels = null;
+    private Dictionary<int, CardType> _cards = null;
+    private IList<Channel> _allChannels = null;
 
     public RadioChannels()
       : this("Radio Channels")
@@ -189,14 +189,15 @@ namespace SetupTv.Sections
         _cards[card.IdCard] = RemoteControl.Instance.Type(card.IdCard);
       }
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       sb.AddConstraint(Operator.Equals, "isRadio", true);
       sb.AddOrderByField(true, "sortOrder");
       SqlStatement stmt = sb.GetStatement(true);
       _allChannels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
       tabControl1.TabPages[0].Text = string.Format("Channels ({0})", _allChannels.Count);
 
-      _lvChannelHandler = new ChannelListViewHandler(mpListView1, _allChannels, _cards, txtFilterString, ChannelType.Radio);
+      _lvChannelHandler = new ChannelListViewHandler(mpListView1, _allChannels, _cards, txtFilterString,
+                                                     ChannelType.Radio);
       _lvChannelHandler.FilterListView("");
     }
 
@@ -822,7 +823,7 @@ namespace SetupTv.Sections
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
       dlgGrpSel.Selection = GroupSelectionForm.SelectionType.ForRenaming;
 
-      if (dlgGrpSel.ShowDialog(typeof(RadioChannelGroup), this) != DialogResult.OK)
+      if (dlgGrpSel.ShowDialog(typeof (RadioChannelGroup), this) != DialogResult.OK)
       {
         return;
       }
@@ -857,7 +858,7 @@ namespace SetupTv.Sections
     {
       GroupSelectionForm dlgGrpSel = new GroupSelectionForm();
 
-      if (dlgGrpSel.ShowDialog(typeof(RadioChannelGroup), this) != DialogResult.OK)
+      if (dlgGrpSel.ShowDialog(typeof (RadioChannelGroup), this) != DialogResult.OK)
       {
         return;
       }
@@ -923,7 +924,7 @@ namespace SetupTv.Sections
     private void tabControl1_DragOver(object sender, DragEventArgs e)
     {
       //means a channel group assignment is going to be performed
-      if (e.Data.GetData(typeof(MPListView)) != null)
+      if (e.Data.GetData(typeof (MPListView)) != null)
       {
         for (int i = 0; i < tabControl1.TabPages.Count; i++)
         {
@@ -943,7 +944,7 @@ namespace SetupTv.Sections
 
     private void tabControl1_DragDrop(object sender, DragEventArgs e)
     {
-      TabPage droppedTabPage = e.Data.GetData(typeof(TabPage)) as TabPage;
+      TabPage droppedTabPage = e.Data.GetData(typeof (TabPage)) as TabPage;
       if (droppedTabPage == null)
       {
         return;

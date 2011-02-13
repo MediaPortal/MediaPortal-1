@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -77,7 +77,7 @@ namespace MediaPortal.GUI.Library
     public override void Dispose()
     {
       base.Dispose();
-      _itemList.SafeDispose();      
+      _itemList.SafeDispose();
     }
 
     public override void Render(float timePassed)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -82,7 +82,7 @@ namespace MediaPortal.Player.Subtitles
         {
           // From ETSI
           // Magazine number 8: A packet with a magazine value of 0 is referred to as belonging to magazine 8.
-          if (page < 100) 
+          if (page < 100)
             page += 800;
           if (!langInfo.ContainsKey(page))
           {

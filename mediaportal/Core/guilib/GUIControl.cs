@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,70 +34,68 @@ using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
-
   public abstract class GUIBaseControl : System.ComponentModel.ISupportInitialize
   {
-      protected GUIBaseControl()
-      {
-          // default values
-          IsVisible = true;
-          Focusable = true;
-          IsEnabled = true;
-      }
+    protected GUIBaseControl()
+    {
+      // default values
+      IsVisible = true;
+      Focusable = true;
+      IsEnabled = true;
+    }
 
-      public bool IsEnabled { get; set; }
+    public bool IsEnabled { get; set; }
 
-      [XMLSkinElement("visible")]
-      public bool IsVisible
-      {
-          get { return Visibility == Visibility.Visible; }
-          set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
-      }
-      public bool IsFocused { get; set; }
-      public bool Focusable { get; set; }
-      public MediaPortal.Drawing.Point Location { get; set; }
-      public Thickness Margin { get; set; }
-      public Size RenderSize { get; set; }
-      public Visibility Visibility { get; set; }
-      public HorizontalAlignment HorizontalAlignment { get; set; }
-      public VerticalAlignment VerticalAlignment { get; set; }
-      public HorizontalAlignment HorizontalContentAlignment { get; set; }
-      public ContextMenu ContextMenu { get; set; }
-      public virtual int Width { get; set; }
-      public virtual int Height { get; set; }
+    [XMLSkinElement("visible")]
+    public bool IsVisible
+    {
+      get { return Visibility == Visibility.Visible; }
+      set { Visibility = value ? Visibility.Visible : Visibility.Hidden; }
+    }
 
-      public void Arrange(Rect finalRect)
-      {
-          Location = finalRect.Location;
-          Width = (int)finalRect.Width;
-          Height = (int)finalRect.Height;
-      }
+    public bool IsFocused { get; set; }
+    public bool Focusable { get; set; }
+    public MediaPortal.Drawing.Point Location { get; set; }
+    public Thickness Margin { get; set; }
+    public Size RenderSize { get; set; }
+    public Visibility Visibility { get; set; }
+    public HorizontalAlignment HorizontalAlignment { get; set; }
+    public VerticalAlignment VerticalAlignment { get; set; }
+    public HorizontalAlignment HorizontalContentAlignment { get; set; }
+    public ContextMenu ContextMenu { get; set; }
+    public virtual int Width { get; set; }
+    public virtual int Height { get; set; }
 
-      // not implemented before either, but probably should?
-      public Size Measure(Size availableSize)
-      {
-          return Size.Empty; 
-      }
+    public void Arrange(Rect finalRect)
+    {
+      Location = finalRect.Location;
+      Width = (int)finalRect.Width;
+      Height = (int)finalRect.Height;
+    }
 
-      // not implemented before either, but probably should?
-      public void BringIntoView() { } 
-      public void UpdateLayout() { }
+    // not implemented before either, but probably should?
+    public Size Measure(Size availableSize)
+    {
+      return Size.Empty;
+    }
 
-      #region ISupportInitialize
-      public virtual void BeginInit()
-      {
-      }
+    // not implemented before either, but probably should?
+    public void BringIntoView() {}
+    public void UpdateLayout() {}
 
-      public virtual void EndInit()
-      {
-      }
-      #endregion
+    #region ISupportInitialize
+
+    public virtual void BeginInit() {}
+
+    public virtual void EndInit() {}
+
+    #endregion
   }
 
   /// <summary>
   /// Base class for GUIControls.
   /// </summary>
-  public abstract class GUIControl : GUIBaseControl, IDisposable// Control, IDisposable
+  public abstract class GUIControl : GUIBaseControl, IDisposable // Control, IDisposable
   {
     [XMLSkinElement("subtype")] protected string _subType = "";
     [XMLSkinElement("onleft")] protected int _leftControlId = 0;
@@ -677,7 +675,7 @@ namespace MediaPortal.GUI.Library
     {
       Dispose();
     }
-    
+
     /// <summary>
     /// Frees the control its DirectX resources.
     /// </summary>
@@ -689,10 +687,9 @@ namespace MediaPortal.GUI.Library
         for (int i = 0; i < _animations.Count; i++)
         {
           _animations[i].ResetAnimation();
-        } 
+        }
       }
 
-      
 
       _hasRendered = false;
     }
@@ -825,13 +822,13 @@ namespace MediaPortal.GUI.Library
         if (IsVisible && !value)
         {
           //only do animations after visibility has been initializaed
-          if(_visibilityInitialized) 
+          if (_visibilityInitialized)
             QueueAnimation(AnimationType.Hidden);
         }
         else if (!IsVisible && value)
         {
           //only do animations after visibility has been initializaed
-          if (_visibilityInitialized) 
+          if (_visibilityInitialized)
             QueueAnimation(AnimationType.Visible);
         }
         IsVisible = value;
@@ -1282,8 +1279,8 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      _subItemList.Add(obj);
-    }
+        _subItemList.Add(obj);
+      }
     }
 
     /// <summary>
@@ -1294,8 +1291,8 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      _subItemList.Remove(obj);
-    }
+        _subItemList.Remove(obj);
+      }
     }
 
     /// <summary>
@@ -1306,12 +1303,12 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-      if (index <= 0 || index >= _subItemList.Count)
-      {
-        return;
+        if (index <= 0 || index >= _subItemList.Count)
+        {
+          return;
+        }
+        _subItemList.RemoveAt(index);
       }
-      _subItemList.RemoveAt(index);
-    }
     }
 
     /// <summary>
@@ -1470,9 +1467,9 @@ namespace MediaPortal.GUI.Library
     public List<GUIControl> LoadControl(string xmlFilename)
     {
       XmlDocument doc = new XmlDocument();
-      
-      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);            
-      
+
+      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+
       List<GUIControl> listControls = new List<GUIControl>();
 
 
@@ -2047,12 +2044,12 @@ namespace MediaPortal.GUI.Library
         anim.ResetAnimation();
       }
       return;
-    }    
+    }
 
     public ILayoutDetail LayoutDetail
     {
       get { return _layoutDetail; }
       set { _layoutDetail = value; }
-  }
+    }
   }
 }

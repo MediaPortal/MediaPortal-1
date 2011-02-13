@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -310,7 +310,7 @@ namespace MediaPortal.GUI.RSS
           msg.Param3 = 0;
           msg.Label3 = m_strSiteURL;
           GUIWindowManager.SendMessage(msg);
-        Log.Error(e);
+          Log.Error(e);
         }
       }
     }
@@ -646,31 +646,31 @@ namespace MediaPortal.GUI.RSS
           // request.Proxy = WebProxy.GetDefaultProxy();
           request.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) {}        
+        catch (Exception) {}
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         try
-        {                  
-        using (Stream stream = response.GetResponseStream())
         {
-          Encoding enc;
-          try
+          using (Stream stream = response.GetResponseStream())
           {
-            enc = Encoding.GetEncoding(response.ContentEncoding);
+            Encoding enc;
+            try
+            {
+              enc = Encoding.GetEncoding(response.ContentEncoding);
+            }
+            catch
+            {
+              // Using Default Encoding
+              enc = Encoding.GetEncoding(m_strSiteEncoding);
+            }
+            using (StreamReader r = new StreamReader(stream, enc))
+            {
+              data = r.ReadToEnd();
+            }
           }
-          catch
-          {
-            // Using Default Encoding
-            enc = Encoding.GetEncoding(m_strSiteEncoding);
-          }
-          using (StreamReader r = new StreamReader(stream, enc))
-          {
-            data = r.ReadToEnd();
-          }
-        }
-        // Convert html to text
-        HtmlToText html = new HtmlToText(data);
-        text = html.ToString().Trim();
+          // Convert html to text
+          HtmlToText html = new HtmlToText(data);
+          text = html.ToString().Trim();
         }
         finally
         {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -226,7 +226,8 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Error("CycleRefreshRate: unable to change refresh rate to {0}Hz for monitor {1}", refreshRate, monitorIndex);
+          Log.Error("CycleRefreshRate: unable to change refresh rate to {0}Hz for monitor {1}", refreshRate,
+                    monitorIndex);
         }
       }
       else
@@ -244,15 +245,15 @@ namespace MediaPortal.Player
         this.Activated += new EventHandler(SuicideForm_Activated);
         this.Opacity = 0;
       }
-      
+
       protected override void Dispose(bool disposing)
-      {          
-          this.Activated -= new EventHandler(SuicideForm_Activated);
-          base.Dispose(disposing);
+      {
+        this.Activated -= new EventHandler(SuicideForm_Activated);
+        base.Dispose(disposing);
       }
 
       private void SuicideForm_Activated(Object sender, EventArgs e)
-      {      	
+      {
         Thread.Sleep(1000);
         this.Close();
       }
@@ -284,9 +285,7 @@ namespace MediaPortal.Player
           killFormThread.Start();
         }
       }
-      catch
-      {
-      }
+      catch {}
     }
   }
 

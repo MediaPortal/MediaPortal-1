@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,7 +66,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-        AddNetworkProviderFilter(typeof(DVBCNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (DVBCNetworkProvider).GUID);
         AddTsWriterFilterToGraph();
         if (!useInternalNetworkProvider)
         {
@@ -142,7 +142,7 @@ namespace TvLibrary.Implementations.DVB
       IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBC TuningSpace");
       tuningSpace.put_FriendlyName("MediaPortal DVBC TuningSpace");
-      tuningSpace.put__NetworkType(typeof(DVBCNetworkProvider).GUID);
+      tuningSpace.put__NetworkType(typeof (DVBCNetworkProvider).GUID);
       tuningSpace.put_SystemType(DVBSystemType.Cable);
       IDVBCLocator locator = (IDVBCLocator)new DVBCLocator();
       locator.put_CarrierFrequency(-1);

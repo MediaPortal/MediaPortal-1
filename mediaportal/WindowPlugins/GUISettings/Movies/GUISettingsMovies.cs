@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -292,7 +292,7 @@ namespace WindowPlugins.GUISettings.TV
       dlg.AddLocalizedString(942); // Stretch
       dlg.AddLocalizedString(945); // Letterbox
       dlg.AddLocalizedString(946); // Non linear stretch
-      
+
       // set the focus to currently used mode
       dlg.SelectedLabel = (int)aspectRatio;
 

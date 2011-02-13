@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private string SkinDirectory;
 
     public Gui()
-      : this("GUI") { }
+      : this("GUI") {}
 
     public Gui(string name)
       : base(name)
@@ -67,7 +67,7 @@ namespace MediaPortal.Configuration.Sections
         foreach (string skinFolder in skinFolders)
         {
           bool isInvalidDirectory = false;
-          string[] invalidDirectoryNames = new string[] { "cvs" };
+          string[] invalidDirectoryNames = new string[] {"cvs"};
 
           string directoryName = skinFolder.Substring(SkinDirectory.Length + 1);
 
@@ -109,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
     }
 
     private string[][] sectionEntries = new string[][]
-                                          {                                            
+                                          {
                                             new string[] {"gui", "allowRememberLastFocusedItem", "true"},
                                             // 0 Allow remember last focused item on supported window/skin
                                             new string[] {"gui", "autosize", "true"},
@@ -174,7 +174,6 @@ namespace MediaPortal.Configuration.Sections
           settingsCheckedListBox.SetItemChecked(index,
                                                 xmlreader.GetValueAsBool(currentSection[0], currentSection[1],
                                                                          bool.Parse(currentSection[2])));
-
         }
 
         // Load skin settings.
@@ -237,7 +236,7 @@ namespace MediaPortal.Configuration.Sections
         {
           selectedSkin = listViewAvailableSkins.SelectedItems[0].Text;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         if (prevSkin != selectedSkin)
         {
           xmlwriter.SetValueAsBool("general", "dontshowskinversion", false);
@@ -246,8 +245,10 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("skin", "name", selectedSkin);
         Config.SkinName = selectedSkin;
         xmlwriter.SetValue("general", "skinobsoletecount", 0);
-        xmlwriter.SetValueAsBool("gui", "useonlyonehome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
-        xmlwriter.SetValueAsBool("gui", "startbasichome", (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
+        xmlwriter.SetValueAsBool("gui", "useonlyonehome",
+                                 (homeComboBox.SelectedIndex & (int)HomeUsageEnum.UseOnlyOne) != 0);
+        xmlwriter.SetValueAsBool("gui", "startbasichome",
+                                 (homeComboBox.SelectedIndex & (int)HomeUsageEnum.PreferBasic) != 0);
       }
     }
 
@@ -259,7 +260,7 @@ namespace MediaPortal.Configuration.Sections
         // If it's target should be changed, contact high, please.
         Process.Start(@"http://www.team-mediaportal.com/MP1/skingallery");
       }
-      catch { }
+      catch {}
     }
   }
 }

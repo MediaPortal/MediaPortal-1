@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -543,85 +543,95 @@ namespace SetupTv.Sections
       TvBusinessLayer layer = new TvBusinessLayer();
       int idx = 0;
 
-      mpComboBoxPolarisation.Items.AddRange(new object[] {
-          "Not Set",
-          "Not Defined",
-          "Horizontal",
-          "Vertical",
-          "Circular Left",
-          "Circular Right"});
+      mpComboBoxPolarisation.Items.AddRange(new object[]
+                                              {
+                                                "Not Set",
+                                                "Not Defined",
+                                                "Horizontal",
+                                                "Vertical",
+                                                "Circular Left",
+                                                "Circular Right"
+                                              });
       mpComboBoxPolarisation.SelectedIndex = 2;
 
-      mpComboBoxMod.Items.AddRange(new object[] {
-          "Not Set",
-          "Not Defined",
-          "16 QAM",
-          "32 QAM",
-          "64 QAM",
-          "80 QAM",
-          "96 QAM",
-          "112 QAM",
-          "128 QAM",
-          "160 QAM",
-          "192 QAM",
-          "224 QAM",
-          "256 QAM",
-          "320 QAM",
-          "384 QAM",
-          "448 QAM",
-          "512 QAM",
-          "640 QAM",
-          "768 QAM",
-          "896 QAM",
-          "1024 QAM",
-          "QPSK",
-          "BPSK",
-          "OQPSK",
-          "8 VSB",
-          "16 VSB",
-          "Analog Amplitude",
-          "Analog Frequency",
-          "8 PSK",
-          "RF",
-          "16 APSK",
-          "32 APSK",
-          "QPSK2 (DVB-S2)",
-          "8 PSK2 (DVB-S2)",
-          "DirectTV"});
+      mpComboBoxMod.Items.AddRange(new object[]
+                                     {
+                                       "Not Set",
+                                       "Not Defined",
+                                       "16 QAM",
+                                       "32 QAM",
+                                       "64 QAM",
+                                       "80 QAM",
+                                       "96 QAM",
+                                       "112 QAM",
+                                       "128 QAM",
+                                       "160 QAM",
+                                       "192 QAM",
+                                       "224 QAM",
+                                       "256 QAM",
+                                       "320 QAM",
+                                       "384 QAM",
+                                       "448 QAM",
+                                       "512 QAM",
+                                       "640 QAM",
+                                       "768 QAM",
+                                       "896 QAM",
+                                       "1024 QAM",
+                                       "QPSK",
+                                       "BPSK",
+                                       "OQPSK",
+                                       "8 VSB",
+                                       "16 VSB",
+                                       "Analog Amplitude",
+                                       "Analog Frequency",
+                                       "8 PSK",
+                                       "RF",
+                                       "16 APSK",
+                                       "32 APSK",
+                                       "QPSK2 (DVB-S2)",
+                                       "8 PSK2 (DVB-S2)",
+                                       "DirectTV"
+                                     });
       mpComboBoxMod.SelectedIndex = 0;
 
-      mpComboBoxInnerFecRate.Items.AddRange(new object[] {
-            "Not Set",
-            "Not Defined",
-            "1/2",
-            "2/3",
-            "3/4",
-            "3/5",
-            "4/5",
-            "5/6",
-            "5/11",
-            "7/8",
-            "1/4",
-            "1/3",
-            "2/5",
-            "6/7",
-            "8/9",
-            "9/10"});
+      mpComboBoxInnerFecRate.Items.AddRange(new object[]
+                                              {
+                                                "Not Set",
+                                                "Not Defined",
+                                                "1/2",
+                                                "2/3",
+                                                "3/4",
+                                                "3/5",
+                                                "4/5",
+                                                "5/6",
+                                                "5/11",
+                                                "7/8",
+                                                "1/4",
+                                                "1/3",
+                                                "2/5",
+                                                "6/7",
+                                                "8/9",
+                                                "9/10"
+                                              });
       mpComboBoxInnerFecRate.SelectedIndex = 0;
 
-      mpComboBoxPilot.Items.AddRange(new object[] {
-            "Not Set",
-            "Not Defined",
-            "Off",
-            "On"});
+      mpComboBoxPilot.Items.AddRange(new object[]
+                                       {
+                                         "Not Set",
+                                         "Not Defined",
+                                         "Off",
+                                         "On"
+                                       });
       mpComboBoxPilot.SelectedIndex = 0;
 
-      mpComboBoxRollOff.Items.AddRange(new object[] {
-            "Not Set",
-            "Not Defined",
-            ".20 Roll Off",
-            ".25 Roll Off",
-            ".35 Roll Off"});
+      mpComboBoxRollOff.Items.AddRange(new object[]
+                                         {
+                                           "Not Set",
+                                           "Not Defined",
+                                           ".20 Roll Off",
+                                           ".25 Roll Off",
+                                           ".35 Roll Off"
+                                         });
       mpComboBoxRollOff.SelectedIndex = 0;
       //mpButtonSaveList.Enabled = (_transponders.Count != 0);
 
@@ -1054,9 +1064,9 @@ namespace SetupTv.Sections
         // a roll-off of .35 is the default for standard
         // DVB-S.
         if ((tuneChannel.Rolloff == RollOff.Twenty ||
-          tuneChannel.Rolloff == RollOff.TwentyFive ||
-          tuneChannel.Pilot == Pilot.On) &&
-          !checkEnableDVBS2.Checked)
+             tuneChannel.Rolloff == RollOff.TwentyFive ||
+             tuneChannel.Pilot == Pilot.On) &&
+            !checkEnableDVBS2.Checked)
         {
           continue;
         }
@@ -1113,7 +1123,8 @@ namespace SetupTv.Sections
           DVBSChannel channel = (DVBSChannel)channels[i];
           //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
           //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
-          TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
+          TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                             TvBusinessLayer.GetChannelType(channel));
           bool exists;
           if (currentDetail == null)
           {
@@ -1788,14 +1799,14 @@ namespace SetupTv.Sections
 
       bool enableScanControls = scanState == ScanState.Initialized;
       Control[] scanControls = new Control[]
-      {
-        mpLNB1, mpLNB2, mpLNB3, mpLNB4,
-        mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4,
-        mpBand1, mpBand2, mpBand3, mpBand4,
-        mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4,
-        checkBoxCreateGroupsSat, checkBoxCreateGroups, checkBoxCreateSignalGroup,
-        checkEnableDVBS2, checkBoxAdvancedTuning, buttonUpdate
-      };
+                                 {
+                                   mpLNB1, mpLNB2, mpLNB3, mpLNB4,
+                                   mpDisEqc1, mpDisEqc2, mpDisEqc3, mpDisEqc4,
+                                   mpBand1, mpBand2, mpBand3, mpBand4,
+                                   mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4,
+                                   checkBoxCreateGroupsSat, checkBoxCreateGroups, checkBoxCreateSignalGroup,
+                                   checkEnableDVBS2, checkBoxAdvancedTuning, buttonUpdate
+                                 };
       for (int ctlIndex = 0; ctlIndex < scanControls.Length; ctlIndex++)
       {
         scanControls[ctlIndex].Enabled = enableScanControls;
@@ -1803,11 +1814,11 @@ namespace SetupTv.Sections
 
       bool enableNonPredef = scanState == ScanState.Initialized && ActiveScanType != ScanTypes.Predefined;
       Control[] nonPredefControls = new Control[]
-      {
-        textBoxFreq, textBoxSymbolRate,
-        mpComboBoxPolarisation, mpComboBoxMod,
-        mpComboBoxInnerFecRate
-      };
+                                      {
+                                        textBoxFreq, textBoxSymbolRate,
+                                        mpComboBoxPolarisation, mpComboBoxMod,
+                                        mpComboBoxInnerFecRate
+                                      };
       for (int ctlIndex = 0; ctlIndex < nonPredefControls.Length; ctlIndex++)
       {
         nonPredefControls[ctlIndex].Enabled = enableNonPredef;

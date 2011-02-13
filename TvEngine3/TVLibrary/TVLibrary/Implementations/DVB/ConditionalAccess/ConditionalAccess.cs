@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -62,10 +62,10 @@ namespace TvLibrary.Implementations.DVB
     private readonly GenPixBDA _genpix;
     private readonly TeVii _TeVii;
     private readonly DigitalDevices _DigitalDevices;
-    
+
     private readonly IHardwareProvider _HWProvider;
 
-    private readonly ICiMenuActions _ciMenu;    
+    private readonly ICiMenuActions _ciMenu;
 
 
     /// <summary>
@@ -84,6 +84,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get { return _HWProvider; }
     }
+
     //anysee _anysee = null;
 
     #endregion
@@ -175,7 +176,7 @@ namespace TvLibrary.Implementations.DVB
             return;
           }
           Release.DisposeToNull(ref _technoTrend);
-          
+
           Log.Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
@@ -244,7 +245,7 @@ namespace TvLibrary.Implementations.DVB
               _ciMenu = _DigitalDevices;
             }
             return; // detected
-          }        
+          }
           Release.DisposeToNull(ref _DigitalDevices);
 
           Log.Log.WriteFile("Check for Conexant based card");
@@ -694,7 +695,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Write(ex);
       }
       return true;
-    }    
+    }
 
     /// <summary>
     /// sends the diseqc command to the card
@@ -1077,7 +1078,7 @@ namespace TvLibrary.Implementations.DVB
           _ciMenu.SetCiMenuHandler(value);
         }
       }
-    }    
+    }
 
     #region IDisposable Member
 
@@ -1100,6 +1101,7 @@ namespace TvLibrary.Implementations.DVB
       Release.Dispose(_profred);
       Release.Dispose(_TeVii);
     }
+
     #endregion
   }
 }

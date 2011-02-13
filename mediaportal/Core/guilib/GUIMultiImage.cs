@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -283,7 +283,7 @@ namespace MediaPortal.GUI.Library
         }
         if (_registeredForEvent == false)
         {
-        	GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
+          GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
           GUIPropertyManager.OnPropertyChanged += GUIPropertyManager_OnPropertyChanged;
           _registeredForEvent = true;
         }
@@ -362,15 +362,15 @@ namespace MediaPortal.GUI.Library
     }
 
     public override void Dispose()
-    {          
+    {
       _imageList.DisposeAndClear();
       //_currentImage = 0;      
 
-      
+
       GUIPropertyManager.OnPropertyChanged -=
         new GUIPropertyManager.OnPropertyChangedHandler(GUIPropertyManager_OnPropertyChanged);
       _registeredForEvent = false;
-      
+
       _currentImage = 0;
       base.Dispose();
     }

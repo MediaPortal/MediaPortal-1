@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1416,21 +1416,22 @@ namespace MediaPortal
         Thread.Sleep(100);
         return;
       }
-	  
+
       ResumePlayer();
-	  HandleCursor();
-	  
+      HandleCursor();
+
       // In minitv mode allow to loose focus
-      if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode && (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING))
+      if ((ActiveForm != this) && (alwaysOnTop) && !miniTvMode &&
+          (GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING))
       {
-          this.Activate();
+        this.Activate();
       }
-		
+
       if (GUIGraphicsContext.Vmr9Active)
       {
         return;
       }
-	  
+
       // Render a frame during idle time (no messages are waiting)
       if (active && ready)
       {
@@ -1438,26 +1439,27 @@ namespace MediaPortal
         try
         {
 #endif
-			if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) || (GUIGraphicsContext.SaveRenderCycles))
-			{
-			  // Yield some CPU time to other processes
-			  DoSleep(100); // 100 milliseconds
-			}
-			RecoverDevice();
-			try
-			{
-			  if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
-			  {
-				lock (GUIGraphicsContext.RenderLock)
-				{
-					Render(GUIGraphicsContext.TimePassed);
-				}
-			  }
-			}
-			catch (Exception ex)
-			{
-			  Log.Error("d3dapp: Exception: {0}", ex);
-			}
+        if ((GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.LOST) || (ActiveForm != this) ||
+            (GUIGraphicsContext.SaveRenderCycles))
+        {
+          // Yield some CPU time to other processes
+          DoSleep(100); // 100 milliseconds
+        }
+        RecoverDevice();
+        try
+        {
+          if (!GUIGraphicsContext.Vmr9Active && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
+          {
+            lock (GUIGraphicsContext.RenderLock)
+            {
+              Render(GUIGraphicsContext.TimePassed);
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("d3dapp: Exception: {0}", ex);
+        }
 #if !DEBUG
         } 
 		catch (Exception ee)
@@ -2004,8 +2006,7 @@ namespace MediaPortal
             GUIWindowManager.ActivateWindow(lastActiveModule);
 
             if (lastActiveModule == (int)GUIWindow.Window.WINDOW_TV && lastActiveModuleFullscreen)
-            {                       
-
+            {
               Thread tvDelayThread = new Thread(TvDelayThread);
               tvDelayThread.IsBackground = true;
               tvDelayThread.Name = "TvDelayThread";
@@ -2160,7 +2161,8 @@ namespace MediaPortal
     private void InitializeComponent()
     {
       this.components = new System.ComponentModel.Container();
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(D3DApp));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (D3DApp));
       this.menuStripMain = new System.Windows.Forms.MainMenu(this.components);
       this.menuItemFile = new System.Windows.Forms.MenuItem();
       this.menuItemExit = new System.Windows.Forms.MenuItem();
@@ -2184,16 +2186,20 @@ namespace MediaPortal
       // 
       // menuStripMain
       // 
-      this.menuStripMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemFile,
-            this.menuItemOptions,
-            this.menuItemWizards});
+      this.menuStripMain.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                              {
+                                                this.menuItemFile,
+                                                this.menuItemOptions,
+                                                this.menuItemWizards
+                                              });
       // 
       // menuItemFile
       // 
       this.menuItemFile.Index = 0;
-      this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemExit});
+      this.menuItemFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                             {
+                                               this.menuItemExit
+                                             });
       this.menuItemFile.Text = "&File";
       // 
       // menuItemExit
@@ -2205,10 +2211,12 @@ namespace MediaPortal
       // menuItemOptions
       // 
       this.menuItemOptions.Index = 1;
-      this.menuItemOptions.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemFullscreen,
-            this.menuItemMiniTv,
-            this.menuItemConfiguration});
+      this.menuItemOptions.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                                {
+                                                  this.menuItemFullscreen,
+                                                  this.menuItemMiniTv,
+                                                  this.menuItemConfiguration
+                                                });
       this.menuItemOptions.Text = "&Options";
       // 
       // menuItemFullscreen
@@ -2233,12 +2241,14 @@ namespace MediaPortal
       // menuItemWizards
       // 
       this.menuItemWizards.Index = 2;
-      this.menuItemWizards.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemDVD,
-            this.menuItemMovies,
-            this.menuItemMusic,
-            this.menuItemPictures,
-            this.menuItemTelevision});
+      this.menuItemWizards.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                                {
+                                                  this.menuItemDVD,
+                                                  this.menuItemMovies,
+                                                  this.menuItemMusic,
+                                                  this.menuItemPictures,
+                                                  this.menuItemTelevision
+                                                });
       this.menuItemWizards.Text = "Wizards";
       // 
       // menuItemDVD
@@ -2290,15 +2300,19 @@ namespace MediaPortal
       // 
       // contextMenu
       // 
-      this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItemContext});
+      this.contextMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                            {
+                                              this.menuItemContext
+                                            });
       this.contextMenu.Popup += new System.EventHandler(this.contextMenu1_Popup);
       // 
       // menuItemContext
       // 
       this.menuItemContext.Index = 0;
-      this.menuItemContext.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuItem5});
+      this.menuItemContext.MenuItems.AddRange(new System.Windows.Forms.MenuItem[]
+                                                {
+                                                  this.menuItem5
+                                                });
       this.menuItemContext.Text = "";
       // 
       // menuItem5
@@ -2321,7 +2335,6 @@ namespace MediaPortal
       this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.D3DApp_MouseMove);
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
       this.ResumeLayout(false);
-
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -518,7 +518,8 @@ namespace SetupTv.Sections
             DVBCChannel channel = (DVBCChannel)channels[i];
             //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
             //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
-            TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId, TvBusinessLayer.GetChannelType(channel));
+            TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                               TvBusinessLayer.GetChannelType(channel));
             bool exists;
             if (currentDetail == null)
             {
@@ -539,7 +540,7 @@ namespace SetupTv.Sections
               exists = true;
               dbChannel = currentDetail.ReferencedChannel();
             }
-            
+
             if (dbChannel.IsTv)
             {
               layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);

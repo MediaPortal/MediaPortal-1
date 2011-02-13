@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ namespace MediaPortal.GUI.Library
 {
   public class GUIExpressionManager
   {
-
     #region classes
 
     protected class FunctionDefinition
@@ -53,9 +52,11 @@ namespace MediaPortal.GUI.Library
       {
         object state;
         Binder defaultBinder = Type.DefaultBinder;
-        MethodInfo selectedMethod = (MethodInfo)defaultBinder.BindToMethod(BindingFlags.Static | BindingFlags.Public | BindingFlags.OptionalParamBinding,
-                                                                                _methods.ToArray(), ref parameters, null,
-                                                                                null, null, out state);
+        MethodInfo selectedMethod =
+          (MethodInfo)
+          defaultBinder.BindToMethod(BindingFlags.Static | BindingFlags.Public | BindingFlags.OptionalParamBinding,
+                                     _methods.ToArray(), ref parameters, null,
+                                     null, null, out state);
         if (selectedMethod == null)
         {
           throw new MissingMethodException("", _name);
@@ -69,7 +70,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    abstract protected class Expression
+    protected abstract class Expression
     {
       protected List<Expression> DependantExpressions = new List<Expression>();
       protected bool IsValid;
@@ -88,6 +89,7 @@ namespace MediaPortal.GUI.Library
       }
 
       public abstract object Evaluate();
+
       public virtual void Invalidate()
       {
         if (!IsValid)
@@ -96,20 +98,20 @@ namespace MediaPortal.GUI.Library
         }
 
         IsValid = false;
-        foreach(Expression exp in DependantExpressions)
+        foreach (Expression exp in DependantExpressions)
         {
           exp.Invalidate();
         }
       }
     }
 
-    protected class LiteralExpression : Expression 
+    protected class LiteralExpression : Expression
     {
       private readonly object _value;
 
       public LiteralExpression(object value)
       {
-        _value = value;  
+        _value = value;
       }
 
       public override object Evaluate()
@@ -150,7 +152,7 @@ namespace MediaPortal.GUI.Library
       {
         _func = func;
         _parameters = parameters;
-        foreach(Expression param in _parameters)
+        foreach (Expression param in _parameters)
         {
           param.AddDependency(this);
         }
@@ -158,11 +160,11 @@ namespace MediaPortal.GUI.Library
 
       public override object Evaluate()
       {
-        if(!IsValid)
+        if (!IsValid)
         {
           int paramCount = _parameters.Length;
           object[] paramValues = new object[paramCount];
-          for (int i=0; i<paramCount; i++)
+          for (int i = 0; i < paramCount; i++)
           {
             // We may have to convert the parameters to the requested type
             paramValues[i] = _parameters[i].Evaluate();
@@ -189,31 +191,34 @@ namespace MediaPortal.GUI.Library
     //                                              @"(?(p)(?!))" +         // require depth to be 0
     //                                            @"\)",                    // final closing parenthesis
     //                                            RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private const string ParameterExpr = @"([^()'\,]+" +          // anything but a parenthesis or quote
+    private const string ParameterExpr = @"([^()'\,]+" + // anything but a parenthesis or quote
                                          @"|\'([^']|\\\')*\'" + // a quoted string
-                                         @"|\((?<p>)" +         // opening parenthesis - increment depth
-                                         @"|\)(?<-p>)" +        // closing parenthesis - decrement depth
-                                         @"|(?(p)\,)" +         // a comma but only within parenthesis
-                                         @")*" +                // a sequence of any number of any of the above
-                                         @"(?(p)(?!))";         // require depth to be 0
+                                         @"|\((?<p>)" + // opening parenthesis - increment depth
+                                         @"|\)(?<-p>)" + // closing parenthesis - decrement depth
+                                         @"|(?(p)\,)" + // a comma but only within parenthesis
+                                         @")*" + // a sequence of any number of any of the above
+                                         @"(?(p)(?!))"; // require depth to be 0
 
-    private const string FunctionExpr = @"(?<function>[a-z][a-z0-9\._]*)" +       // function name
-                                        @"\s*\(" +                            // opening parenthesis
+    private const string FunctionExpr = @"(?<function>[a-z][a-z0-9\._]*)" + // function name
+                                        @"\s*\(" + // opening parenthesis
                                         @"((?(param),)(?<param>" + ParameterExpr + @"))*" + // parameters
-                                        @"\)";                                // final closing parenthesis
+                                        @"\)"; // final closing parenthesis
+
     private const string ExpressionExpr = @"\s*" +
-                                          @"((?<property>#[a-z0-9\._]+)" +    // a property name
-                                          @"|(?<int>[+-]?\d+)" +              // an integer
-                                          @"|(?<float>[+-]?\d+\.\d*)" +       // a float
-                                          @"|\'(?<string>([^']|\\\')*)\'" +   // a quoted string
-                                          @"|" + FunctionExpr +               // a function call
-                                          @")\s*";         // require depth to be 0
+                                          @"((?<property>#[a-z0-9\._]+)" + // a property name
+                                          @"|(?<int>[+-]?\d+)" + // an integer
+                                          @"|(?<float>[+-]?\d+\.\d*)" + // a float
+                                          @"|\'(?<string>([^']|\\\')*)\'" + // a quoted string
+                                          @"|" + FunctionExpr + // a function call
+                                          @")\s*"; // require depth to be 0
 
     //private const string ExprTriggerExpr = @"(?:#\(\s*)" + FunctionExpr + @"(?:\s*\))";
     private const string ExprTriggerExpr = @"(?:#\(\s*)" + ExpressionExpr + @"(?:\s*\))";
 
     //private static Regex _functionRegEx = new Regex(FunctionExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-    private static Regex _expressionRegEx = new Regex("^"+ExpressionExpr+"$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static Regex _expressionRegEx = new Regex("^" + ExpressionExpr + "$",
+                                                      RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
     private static Regex _exprTriggerRegEx = new Regex(ExprTriggerExpr, RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 
@@ -223,21 +228,24 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region ctor
+
     static GUIExpressionManager()
     {
       _registeredFunctions = new Dictionary<string, FunctionDefinition>();
       RegisterFunctions(typeof (GUIFunctions));
     }
+
     #endregion
 
     public static void RegisterFunctions(Type type)
     {
       MethodInfo[] staticMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public);
-      foreach(MethodInfo method in staticMethods)
+      foreach (MethodInfo method in staticMethods)
       {
-        if (method.IsDefined(typeof(XMLSkinFunctionAttribute), false))
+        if (method.IsDefined(typeof (XMLSkinFunctionAttribute), false))
         {
-          XMLSkinFunctionAttribute attrib = (XMLSkinFunctionAttribute)method.GetCustomAttributes(typeof(XMLSkinFunctionAttribute), false)[0];
+          XMLSkinFunctionAttribute attrib =
+            (XMLSkinFunctionAttribute)method.GetCustomAttributes(typeof (XMLSkinFunctionAttribute), false)[0];
           FunctionDefinition func;
           string functionName = attrib.FunctionName ?? (method.DeclaringType.Name + "." + method.Name);
           if (!_registeredFunctions.TryGetValue(functionName, out func))
@@ -263,9 +271,10 @@ namespace MediaPortal.GUI.Library
       MethodInfo[] staticMethods = type.GetMethods(BindingFlags.Static | BindingFlags.Public);
       foreach (MethodInfo method in staticMethods)
       {
-        if (method.IsDefined(typeof(XMLSkinFunctionAttribute), false))
+        if (method.IsDefined(typeof (XMLSkinFunctionAttribute), false))
         {
-          XMLSkinFunctionAttribute attrib = (XMLSkinFunctionAttribute)method.GetCustomAttributes(typeof(XMLSkinFunctionAttribute), false)[0];
+          XMLSkinFunctionAttribute attrib =
+            (XMLSkinFunctionAttribute)method.GetCustomAttributes(typeof (XMLSkinFunctionAttribute), false)[0];
           string functionName = attrib.FunctionName ?? (method.DeclaringType.Name + "." + method.Name);
           if (_registeredFunctions.ContainsKey(functionName))
           {
@@ -273,7 +282,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      
     }
 
     public static void ClearExpressionCache()
@@ -303,7 +311,7 @@ namespace MediaPortal.GUI.Library
           }
           catch (Exception ex)
           {
-            result = ex.ToString().Replace('\n',' ').Replace('\r',' ');
+            result = ex.ToString().Replace('\n', ' ').Replace('\r', ' ');
           }
           //line = line.Replace(match.Value, result);
           line = line.Remove(match.Index + offset, match.Length).Insert(match.Index + offset, result);

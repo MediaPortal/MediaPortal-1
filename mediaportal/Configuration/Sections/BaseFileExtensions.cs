@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
     #endregion
 
     #region Control events
-    
+
     private void addButton_Click(object sender, EventArgs e)
     {
       string extension = extensionTextBox.Text.Trim();
@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
     private void extensionTextBox_KeyDown(object sender, KeyEventArgs e)
     {
       if (e.KeyCode != System.Windows.Forms.Keys.Enter &&
-        e.KeyCode != System.Windows.Forms.Keys.Return) return;
+          e.KeyCode != System.Windows.Forms.Keys.Return) return;
       if (string.IsNullOrEmpty(extensionTextBox.Text)) return;
 
       e.Handled = true;

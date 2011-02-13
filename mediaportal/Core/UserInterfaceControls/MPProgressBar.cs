@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,23 +31,23 @@ namespace MediaPortal.UserInterface.Controls
   {
     public MPProgressBar()
     {
-       this.SetStyle(ControlStyles.UserPaint |
-            ControlStyles.AllPaintingInWmPaint |
-            ControlStyles.OptimizedDoubleBuffer, true);
-	}
-	
-	protected override void OnPaint(PaintEventArgs e)
+      this.SetStyle(ControlStyles.UserPaint |
+                    ControlStyles.AllPaintingInWmPaint |
+                    ControlStyles.OptimizedDoubleBuffer, true);
+    }
+
+    protected override void OnPaint(PaintEventArgs e)
     {
-        ProgressBarRenderer.DrawHorizontalBar(e.Graphics, this.ClientRectangle);
-        Rectangle bounds = new Rectangle
-        {
-            X = this.ClientRectangle.X,
-            Y = this.ClientRectangle.Y,
-            Width = (Int32)Math.Floor(((double)this.Value / this.Maximum) * this.ClientRectangle.Width),
-            Height = this.ClientRectangle.Height
-        };
-        bounds.Inflate(-1, -1);
-        ProgressBarRenderer.DrawHorizontalChunks(e.Graphics, bounds);
+      ProgressBarRenderer.DrawHorizontalBar(e.Graphics, this.ClientRectangle);
+      Rectangle bounds = new Rectangle
+                           {
+                             X = this.ClientRectangle.X,
+                             Y = this.ClientRectangle.Y,
+                             Width = (Int32)Math.Floor(((double)this.Value / this.Maximum) * this.ClientRectangle.Width),
+                             Height = this.ClientRectangle.Height
+                           };
+      bounds.Inflate(-1, -1);
+      ProgressBarRenderer.DrawHorizontalChunks(e.Graphics, bounds);
     }
   }
 }

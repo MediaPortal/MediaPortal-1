@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,11 +66,11 @@ namespace SetupTv.Sections
         Application.DoEvents();
 
         Cursor.Current = Cursors.WaitCursor;
-		
-		UpdateMenuAndTabs();
+
+        UpdateMenuAndTabs();
 
         listView1.Items.Clear();
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(RadioGroupMap));
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (RadioGroupMap));
 
         sb.AddConstraint(Operator.Equals, "idGroup", _channelGroup.IdGroup);
         sb.AddOrderByField(true, "sortOrder");
@@ -87,7 +87,6 @@ namespace SetupTv.Sections
             continue;
           }
           listView1.Items.Add(CreateItemForChannel(channel, map));
-
         }
         bool isAllChannelsGroup = (_channelGroup.GroupName == TvConstants.RadioGroupNames.AllChannels);
         removeChannelFromGroup.Enabled = !isAllChannelsGroup;
@@ -133,7 +132,7 @@ namespace SetupTv.Sections
       {
         imageIndex = 0;
       }
-      
+
       ListViewItem item = new ListViewItem(channel.DisplayName, imageIndex);
 
       item.Checked = channel.VisibleInGuide;
@@ -168,7 +167,7 @@ namespace SetupTv.Sections
       }
     }
 
-	private void AddSelectedItemsToGroup(MPListView sourceListView)
+    private void AddSelectedItemsToGroup(MPListView sourceListView)
     {
       if (_channelGroup == null)
       {
@@ -233,8 +232,8 @@ namespace SetupTv.Sections
         addToFavoritesToolStripMenuItem.DropDownItems.Add(item);
       }
     }
-	
-	private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
+
+    private void addToFavoritesToolStripMenuItem_Click(object sender, EventArgs e)
     {
       RadioChannelGroup group;
       ToolStripMenuItem menuItem = (ToolStripMenuItem)sender;
@@ -273,13 +272,13 @@ namespace SetupTv.Sections
         layer.AddChannelToRadioGroup(channel, group.GroupName);
       }
     }
-	
+
     private void removeChannelFromGroup_Click(object sender, EventArgs e)
     {
       mpButtonDel_Click(null, null);
     }
 
-	private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
+    private void deleteThisChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
       if (listView1.SelectedItems.Count > 0)
       {
@@ -316,8 +315,8 @@ namespace SetupTv.Sections
       ReOrder();
       OnActivated();
     }
-	
-	private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
+
+    private void editChannelToolStripMenuItem_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
       if (indexes.Count == 0)
@@ -339,7 +338,7 @@ namespace SetupTv.Sections
       }
       ReOrder();
     }
-	
+
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;

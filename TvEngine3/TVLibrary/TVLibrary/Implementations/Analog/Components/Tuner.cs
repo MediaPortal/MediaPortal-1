@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -274,7 +274,7 @@ namespace TvLibrary.Implementations.Analog.Components
       DevicesInUse.Instance.Add(_tunerDevice);
       _tuner = _filterTvTuner as IAMTVTuner;
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
-                                                       graph.Tuner.Name))
+        graph.Tuner.Name))
       {
         Log.Log.WriteFile("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;

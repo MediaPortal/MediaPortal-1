@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ namespace MediaPortal.Configuration.Sections
                                          String.Format(@"{0}\{1}", Config.GetFolder(Config.Dir.Cache), Config.Dir.Skin));
         MediaPortal.Util.Utils.DirectoryDelete(fontCache, true);
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -144,8 +144,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.checkBoxUsePrefix);
       this.mpGroupBox1.Controls.Add(this.languageComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -159,8 +161,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // languageComboBox
       // 
-      this.languageComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.languageComboBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.languageComboBox.BorderColor = System.Drawing.Color.Empty;
       this.languageComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.languageComboBox.Location = new System.Drawing.Point(118, 21);
@@ -186,7 +190,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

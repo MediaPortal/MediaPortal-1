@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -278,9 +278,10 @@ namespace SetupTv.Dialogs
     {
       if (mpListView1.SelectedIndices.Count > 0)
       {
-        
-        if (MessageBox.Show(this, "Are you sure you want to delete the selected tuningdetails?", "", MessageBoxButtons.YesNo) ==
-            DialogResult.Yes)
+        if (
+          MessageBox.Show(this, "Are you sure you want to delete the selected tuningdetails?", "",
+                          MessageBoxButtons.YesNo) ==
+          DialogResult.Yes)
         {
           for (int i = 0; i < mpListView1.SelectedIndices.Count; i++)
           {
@@ -319,7 +320,8 @@ namespace SetupTv.Dialogs
         {
           btnEditTuningDetail.Enabled = true;
           menuButtonEdit.Enabled = true;
-        } else
+        }
+        else
         {
           btnEditTuningDetail.Enabled = false;
           menuButtonEdit.Enabled = false;

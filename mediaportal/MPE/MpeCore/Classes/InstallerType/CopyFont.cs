@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,8 +37,7 @@ namespace MpeCore.Classes.InstallerType
     public static extern int RemoveFontResource(string lpFileName);
 
     [DllImport("kernel32.dll", SetLastError = true)]
-
-    static extern int WriteProfileString(string lpszSection, string lpszKeyName, string lpszString);
+    private static extern int WriteProfileString(string lpszSection, string lpszKeyName, string lpszString);
 
     [DllImport("user32.dll")]
     public static extern int SendMessage(int hWnd, // handle to destination window 
@@ -47,8 +46,8 @@ namespace MpeCore.Classes.InstallerType
                                          int lParam // second message parameter 
       );
 
-    const int WM_FONTCHANGE = 0x001D;
-    const int HWND_BROADCAST = 0xffff;
+    private const int WM_FONTCHANGE = 0x001D;
+    private const int HWND_BROADCAST = 0xffff;
 
     public new string Name
     {

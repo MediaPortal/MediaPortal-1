@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -151,9 +151,9 @@ namespace MediaPortal.Video.Database
         // Action 1-2 - IMPAw or TMDB search (50%)
         // Action 2-3 - FanArt download (75%)
         // Action 3-4 - End (100%)
-        int stepsInCode = 4;          // Total actions (no need for more as some of them are too fast to see)
+        int stepsInCode = 4; // Total actions (no need for more as some of them are too fast to see)
         int step = 100 / stepsInCode; // step value for increment
-        int percent = 0;              // actual pbar value
+        int percent = 0; // actual pbar value
 
         string line1 = GUILocalizeStrings.Get(198);
         OnProgress(line1, _movieDetails.Title, string.Empty, percent);
@@ -171,7 +171,7 @@ namespace MediaPortal.Video.Database
           bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
 
           string moviePath = _movieDetails.Path;
-            
+
           if (folderTitle)
           {
             // DVD check
@@ -228,7 +228,7 @@ namespace MediaPortal.Video.Database
 
             // Added IMDBNumber parameter for movie cover check
             // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
-            
+
             // IMPAwards
             IMPAwardsSearch impSearch = new IMPAwardsSearch();
             impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
@@ -472,7 +472,8 @@ namespace MediaPortal.Video.Database
     private void FetchActorsInMovie()
     {
       bool director = false; // Actor is director
-      bool byImdbId = true; // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
+      bool byImdbId = true;
+      // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
 
       if (_movieDetails == null)
       {
@@ -685,7 +686,7 @@ namespace MediaPortal.Video.Database
     {
       get { return _imdb[index]; }
     }
-    
+
     public int FuzzyMatch(string name)
     {
       int matchingIndex = -1;
@@ -980,7 +981,7 @@ namespace MediaPortal.Video.Database
               {
                 if (foldercheck == false && pattern[i].IsMatch(strMovieName))
                 {
-                    strMovieName = pattern[i].Replace(strMovieName, "");
+                  strMovieName = pattern[i].Replace(strMovieName, "");
                 }
               }
             }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     public int CropLeft = 0;
     public int CropRight = 0;
     public int CropTop = 0;
-    public int CropBottom = 0;    
+    public int CropBottom = 0;
     public int fboverScan = 0;
 
     // parameter names
@@ -52,7 +52,7 @@ namespace ProcessPlugins.ViewModeSwitcher
     private const string ParmDisableLBGlobaly = "parmdisablelbglobaly";
     private const string ParmBlackLevel = "parmblacklevel";
     private const string FallBackOverScan = "parmfallbackoverscan";
-    
+
     public static Geometry.Type StringToViewMode(string strViewmode)
     {
       foreach (Geometry.Type item in Enum.GetValues(typeof (Geometry.Type)))
@@ -133,9 +133,9 @@ namespace ProcessPlugins.ViewModeSwitcher
         CropRight = reader.GetValueAsInt("tv", "cropright", 0);
         CropTop = reader.GetValueAsInt("tv", "croptop", 0);
         CropBottom = reader.GetValueAsInt("tv", "cropbottom", 0);
-                
+
         bool tmpReturn = false;
-        ViewModeRules.Clear();        
+        ViewModeRules.Clear();
         int tmpRuleCount = reader.GetValueAsInt(ViewModeSwitcherSectionName, ParmRuleCount, 0);
         if (tmpRuleCount <= 0)
         {
@@ -172,7 +172,7 @@ namespace ProcessPlugins.ViewModeSwitcher
           ViewModeRules.Add(tmpRule);
           return true;
         }
-        
+
         for (int i = 1; i <= tmpRuleCount; i++)
         {
           Rule tmpRule = new Rule();
@@ -182,23 +182,40 @@ namespace ProcessPlugins.ViewModeSwitcher
             tmpReturn = true;
           }
           tmpRule.Name = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Name", "noname");
-          tmpRule.ARFrom = (float) Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom", "0"));
-          tmpRule.ARTo = (float) Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo", "0"));
-          tmpRule.MinWidth = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth", "0"));
-          tmpRule.MaxWidth = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxWidth", "0"));
-          tmpRule.MinHeight = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinHeight", "0"));
-          tmpRule.MaxHeight = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight", "0"));
+          tmpRule.ARFrom =
+            (float)
+            Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARFrom", "0"));
+          tmpRule.ARTo =
+            (float)
+            Convert.ToDouble(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ARTo", "0"));
+          tmpRule.MinWidth =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinWidth", "0"));
+          tmpRule.MaxWidth =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxWidth", "0"));
+          tmpRule.MinHeight =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MinHeight", "0"));
+          tmpRule.MaxHeight =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "MaxHeight", "0"));
           tmpRule.ChangeAR = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeAR", true);
-          String tmpViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode", "Normal");
+          String tmpViewMode = reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ViewMode",
+                                                       "Normal");
           tmpRule.ViewMode = StringToViewMode(tmpViewMode);
           tmpRule.ChangeOs = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "ChangeOS", true);
-          tmpRule.OverScan = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan", "0"));
-          tmpRule.EnableLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName, ParmRulePrefix + i + "EnableLBDetection", false);
-          tmpRule.VerticalOffSetZoom = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "VerticalOffSetZoom", "0"));
-          tmpRule.VerticalOffSet14_9 = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "VerticalOffSet14_9", "0"));
-          tmpRule.VerticalOffSetWide14_9 = Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "VerticalOffSetWide14_9", "0"));
+          tmpRule.OverScan =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName, ParmRulePrefix + i + "Overscan", "0"));
+          tmpRule.EnableLBDetection = reader.GetValueAsBool(ViewModeSwitcherSectionName,
+                                                            ParmRulePrefix + i + "EnableLBDetection", false);
+          tmpRule.VerticalOffSetZoom =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName,
+                                                    ParmRulePrefix + i + "VerticalOffSetZoom", "0"));
+          tmpRule.VerticalOffSet14_9 =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName,
+                                                    ParmRulePrefix + i + "VerticalOffSet14_9", "0"));
+          tmpRule.VerticalOffSetWide14_9 =
+            Convert.ToInt16(reader.GetValueAsString(ViewModeSwitcherSectionName,
+                                                    ParmRulePrefix + i + "VerticalOffSetWide14_9", "0"));
           ViewModeRules.Add(tmpRule);
-        }        
+        }
         return tmpReturn;
       }
     }
@@ -262,7 +279,7 @@ namespace ProcessPlugins.ViewModeSwitcher
                              tmpRule.VerticalOffSet14_9.ToString());
           xmlwriter.SetValue(ViewModeSwitcherSectionName, ParmRulePrefix + i + "VerticalOffSetWide14_9",
                              tmpRule.VerticalOffSetWide14_9.ToString());
-        }         
+        }
         if (ExportFileName != string.Empty)
         {
           Settings.SaveCache();

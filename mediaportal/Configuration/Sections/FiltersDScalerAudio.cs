@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -91,8 +91,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.textBoxAudioOffset);
       this.groupBox1.Controls.Add(this.comboBoxSpeakerConfig);
       this.groupBox1.Controls.Add(this.checkBoxMPEGOverSPDIF);
@@ -110,8 +112,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textBoxAudioOffset
       // 
-      this.textBoxAudioOffset.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxAudioOffset.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxAudioOffset.BorderColor = System.Drawing.Color.Empty;
       this.textBoxAudioOffset.Location = new System.Drawing.Point(168, 132);
       this.textBoxAudioOffset.Name = "textBoxAudioOffset";
@@ -121,17 +125,21 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
-            "Stereo",
-            "Dolby Stereo",
-            "4.0 (2 Front + 2 Rear)",
-            "4.1 (2 Front + 2 Rear + 1 Sub)",
-            "5.0 (3 Front + 2 Rear)",
-            "5.1 (3 Front + 2 Rear + 1 Sub)"});
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[]
+                                                  {
+                                                    "Stereo",
+                                                    "Dolby Stereo",
+                                                    "4.0 (2 Front + 2 Rear)",
+                                                    "4.1 (2 Front + 2 Rear + 1 Sub)",
+                                                    "5.0 (3 Front + 2 Rear)",
+                                                    "5.1 (3 Front + 2 Rear + 1 Sub)"
+                                                  });
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(168, 20);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(278, 21);
@@ -194,7 +202,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

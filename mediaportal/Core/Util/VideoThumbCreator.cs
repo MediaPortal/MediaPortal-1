@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -139,7 +139,8 @@ namespace MediaPortal.Util
       string ExtractorArgs = string.Format(" -D 6 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"",
                                            preGapSec, postGapSec, PreviewColumns, PreviewRows, blank, 0, aVideoPath);
       string ExtractorFallbackArgs = string.Format(
-        " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, blank, 0, aVideoPath);
+        " -D 8 -B {0} -E {1} -c {2} -r {3} -b {4} -t -i -w {5} -n -P \"{6}\"", 0, 0, PreviewColumns, PreviewRows, blank,
+        0, aVideoPath);
       // Honour we are using a unix app
       ExtractorArgs = ExtractorArgs.Replace('\\', '/');
       try
@@ -149,8 +150,10 @@ namespace MediaPortal.Util
         string OutputThumb = string.Format("{0}_s{1}", Path.ChangeExtension(aVideoPath, null), ".jpg");
         string ShareThumb = OutputThumb.Replace("_s.jpg", ".jpg");
 
-        if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb)) // No thumb in share although it should be there
-            || (!LeaveShareThumb && !Util.Utils.FileExistsInCache(aThumbPath))) // No thumb cached and no chance to find it in share
+        if ((LeaveShareThumb && !Util.Utils.FileExistsInCache(ShareThumb))
+            // No thumb in share although it should be there
+            || (!LeaveShareThumb && !Util.Utils.FileExistsInCache(aThumbPath)))
+          // No thumb cached and no chance to find it in share
         {
           //Log.Debug("VideoThumbCreator: No thumb in share {0} - trying to create one with arguments: {1}", ShareThumb, ExtractorArgs);
           Success = Utils.StartProcess(ExtractorPath, ExtractorArgs, TempPath, 15000, true, GetMtnConditions());
@@ -184,7 +187,7 @@ namespace MediaPortal.Util
               File.Delete(OutputThumb);
               Thread.Sleep(50);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
         else
@@ -211,7 +214,7 @@ namespace MediaPortal.Util
             File.Delete(ShareThumb);
             Thread.Sleep(30);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
       catch (Exception ex)
