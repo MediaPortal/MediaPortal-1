@@ -105,6 +105,11 @@ namespace MediaPortal.Video.Database
         string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"strFanartURL\" text DEFAULT ''";
         m_db.Execute(strSQL);
       }
+      if (DatabaseUtility.TableColumnExists(m_db, "resume", "watched") == false)
+      {
+        string strSQL = "ALTER TABLE \"main\".\"resume\" ADD COLUMN \"watched\" bool DEFAULT 0";
+        m_db.Execute(strSQL);
+      }
     }
 
     public void Dispose()
@@ -1515,6 +1520,56 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+    }
+
+    public void SetVideoFileWatched(int iFileId, bool watched)
+    {
+      try
+      {
+        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        if (results.Rows.Count != 0)
+        {
+          int iWatched = 0;
+          if (watched)
+            iWatched = 1;
+          sql = String.Format("update resume set watched={0} where idFile={1}",
+                              iWatched, iFileId);
+        }
+        m_db.Execute(sql);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public bool GetVideoFileWatched(int iFileId)
+    {
+      try
+      {
+        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+        int watched;
+        int.TryParse(DatabaseUtility.Get(results, 0, "watched"), out watched);
+        
+        if (watched != 0)
+        {
+          return true;
+        }
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
     }
 
     #endregion

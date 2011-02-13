@@ -284,21 +284,33 @@ namespace MediaPortal.GUI.Video
               foundWatched = true;
             }
           }
-          // Watched status for videos not in the database (look up by file entry and theirs stop time or resume data)
+          // Watched status for videos not in the movie database
           if (!foundWatched && markWatchedFiles)
           {
             if (fileId >= 0)
             {
-              if (VideoDatabase.GetMovieStopTime(fileId) > 0)
+              bool watched = VideoDatabase.GetVideoFileWatched(fileId);
+              
+              if (watched)
               {
                 foundWatched = true;
               }
+              // Set watched status for old files before DB upgrade
               else
               {
-                int stops = VideoDatabase.GetMovieStopTimeAndResumeData(fileId, out resumeData);
-                if (resumeData != null || stops > 0)
+                int duration = VideoDatabase.GetMovieDuration(fileId);
+                int stopTime = VideoDatabase.GetMovieStopTime(fileId);
+                int playedPercentage = 0;
+
+                if (duration > 0)
+                {
+                  playedPercentage = (100 * stopTime / duration);
+                }
+                
+                if (playedPercentage >= 80)
                 {
                   foundWatched = true;
+                  VideoDatabase.SetVideoFileWatched(fileId, true);
                 }
               }
             }

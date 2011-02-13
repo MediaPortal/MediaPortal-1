@@ -364,7 +364,7 @@ namespace MediaPortal.Video.Database
             string file = moviePath + @"\" + _movieDetails.File;
             int idFile = VideoDatabase.GetFileId(file);
 
-            if (idFile >= 0 && VideoDatabase.GetMovieStopTime(idFile) > 0)
+            if (idFile >= 0 && VideoDatabase.GetVideoFileWatched(idFile))
             {
               _movieDetails.Watched = 1;
             }

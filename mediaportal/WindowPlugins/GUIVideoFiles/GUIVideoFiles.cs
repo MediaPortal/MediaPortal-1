@@ -604,12 +604,20 @@ namespace MediaPortal.GUI.Video
                 item.IsPlayed = false;
               }
             }
-            // Check resume table if there is an entry that file is played
-            int idFile = VideoDatabase.GetFileId(file);
-
-            if (idFile >= 0 && VideoDatabase.GetMovieStopTime(idFile) > 0)
+            else
             {
-              item.IsPlayed = true;
+              // Check resume table if there is an entry that file is played
+              int idFile = VideoDatabase.GetFileId(file);
+              bool watched = VideoDatabase.GetVideoFileWatched(idFile);
+
+              if (watched)
+              {
+                item.IsPlayed = true;
+              }
+              else
+              {
+                item.IsPlayed = false;
+              }
             }
           }
           //Do NOT add OnItemSelected event handler here, because its still there...
@@ -1710,6 +1718,11 @@ namespace MediaPortal.GUI.Video
       VideoDatabase.GetFiles(iidMovie, ref movies);
       HashSet<string> watchedMovies = new HashSet<string>();
 
+      int playTimePercentage = 0; // Set watched flag after 80% of total played time
+
+      if (g_Player.Player.Duration >= 1)
+        playTimePercentage = (int)Math.Ceiling((timeMovieStopped / g_Player.Player.Duration) * 100);
+
       if (movies.Count <= 0)
       {
         return;
@@ -1734,7 +1747,12 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
           Log.Debug("GUIVideoFiles: {0} store resume time", caller);
 
-          watchedMovies.Add(strFilePath);
+          //Set file "watched" only if 80% or higher played time (share view)
+          if (playTimePercentage >= 80)
+          {
+            watchedMovies.Add(strFilePath);
+            VideoDatabase.SetVideoFileWatched(idFile, true);
+          }
         }
         else
         {
@@ -1746,8 +1764,7 @@ namespace MediaPortal.GUI.Video
         // Update db view watched status for played movie
         IMDBMovie movie = new IMDBMovie();
         VideoDatabase.GetMovieInfo(filename, ref movie);
-
-        if (!movie.IsEmpty)
+        if (!movie.IsEmpty && playTimePercentage >= 80) //Flag movie "watched" status only if 80% or higher played time (database view)
         {
           movie.Watched = 1;
           VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
@@ -1822,13 +1839,13 @@ namespace MediaPortal.GUI.Video
           // Set resumedata to zero
           VideoDatabase.GetMovieStopTimeAndResumeData(idFile, out resumeData);
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, resumeData);
-
+          VideoDatabase.SetVideoFileWatched(idFile, true);
           watchedMovies.Add(strFilePath);
         }
 
         IMDBMovie details = new IMDBMovie();
         VideoDatabase.GetMovieInfoById(iidMovie, ref details);
-        details.Watched++;
+        details.Watched = 1;
         VideoDatabase.SetWatched(details);
       }
       if (_markWatchedFiles) // save a little performance
