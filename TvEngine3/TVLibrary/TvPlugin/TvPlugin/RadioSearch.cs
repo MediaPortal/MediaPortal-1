@@ -97,7 +97,7 @@ namespace TvPlugin
     {
       GetID = (int)Window.WINDOW_SEARCH_RADIO;
     }
-
+    
     public override bool IsTv
     {
       get { return false; }
@@ -1287,7 +1287,7 @@ namespace TvPlugin
         prog = item.TVTag as Program;
       }
       
-      if (item.Label == ".." || item.IsFolder || prog == null)
+      if (item == null || item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;

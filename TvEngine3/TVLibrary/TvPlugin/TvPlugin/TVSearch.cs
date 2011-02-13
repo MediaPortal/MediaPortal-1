@@ -1286,8 +1286,8 @@ namespace TvPlugin
       {
         prog = item.TVTag as Program;
       }
-      
-      if (item.Label == ".." || item.IsFolder || prog == null)
+
+      if (item == null || item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;
