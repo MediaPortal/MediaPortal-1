@@ -193,7 +193,7 @@ namespace MediaPortal.DeployTool
           }
           try
           {
-            Process.Start(Application.StartupPath + "\\HelpContent\\SetupGuide\\SetupGuide.htm");
+            Process.Start("http://wiki.team-mediaportal.com/TeamMediaPortal/MP1QuickSetupGuide");
           }
             // This might fail on systems without a default browser
           catch (Exception) {}

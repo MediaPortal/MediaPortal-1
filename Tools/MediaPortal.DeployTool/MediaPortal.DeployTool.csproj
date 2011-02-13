@@ -428,21 +428,6 @@
     <Content Include="HelpContent\DeployToolGuide\DeployToolGuide_files\print.css">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide.htm">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\common.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\msie.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="HelpContent\SetupGuide\SetupGuide_files\print.css">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Install.ico" />
     <None Include="MediaPortal.DeployTool.exe.manifest" />
     <None Include="Resources\MePo_average.png" />
