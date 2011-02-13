@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -46,14 +41,14 @@ namespace MPTvClient
 {
   public partial class SetupDatabaseForm : Form
   {
-    enum ProviderType
+    private enum ProviderType
     {
       SqlServer,
       MySql,
     }
 
-    ProviderType _provider = ProviderType.MySql;
-    string _schemaName = "MpTvDbRC1";
+    private ProviderType _provider = ProviderType.MySql;
+    private string _schemaName = "MpTvDbRC1";
 
     public SetupDatabaseForm()
     {
@@ -104,7 +99,7 @@ namespace MPTvClient
         }
 
         string[] parts = connectionString.Split(';');
-        for (int i = 0 ; i < parts.Length ; ++i)
+        for (int i = 0; i < parts.Length; ++i)
         {
           string part = parts[i];
           string[] keyValue = part.Split('=');
@@ -138,7 +133,8 @@ namespace MPTvClient
       }
     }
 
-    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling, int timeout)
+    private string ComposeConnectionString(string server, string userid, string password, string database, bool pooling,
+                                           int timeout)
     {
       _schemaName = database;
       switch (_provider)
@@ -146,12 +142,19 @@ namespace MPTvClient
         case ProviderType.SqlServer:
           if (database == "") database = "master";
           if (pooling)
-            return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Connection Timeout={4};", password, userid, server, database, timeout);
-          return String.Format("Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;Connection Timeout={4};", password, userid, server, database, timeout);
+            return
+              String.Format(
+                "Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Connection Timeout={4};",
+                password, userid, server, database, timeout);
+          return
+            String.Format(
+              "Password={0};Persist Security Info=True;User ID={1};Initial Catalog={3};Data Source={2};Pooling=false;Connection Timeout={4};",
+              password, userid, server, database, timeout);
 
         case ProviderType.MySql:
           if (database == "") database = "mysql";
-          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};", server, userid, password, database, timeout);
+          return String.Format("Server={0};Database={3};User ID={1};Password={2};charset=utf8;Connection Timeout={4};",
+                               server, userid, password, database, timeout);
       }
       return "";
     }
@@ -164,7 +167,8 @@ namespace MPTvClient
         if (string.IsNullOrEmpty(tbServerHostName.Text) || string.IsNullOrEmpty(tbPassword.Text))
           return false;
 
-        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "", false, 15);
+        string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
+                                                          false, 15);
 
         switch (_provider)
         {
@@ -211,26 +215,32 @@ namespace MPTvClient
         if (string.IsNullOrEmpty(tbUserID.Text))
         {
           tbUserID.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid database user!", "Specify user", MessageBoxButtons.OK,
+                          MessageBoxIcon.Error);
           return;
         }
         if (string.IsNullOrEmpty(tbPassword.Text))
         {
           tbPassword.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid password for the database user!", "Specify password", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid password for the database user!", "Specify password",
+                          MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" || tbDatabaseName.Text.ToLower() == "master")
+        if (string.IsNullOrEmpty(tbDatabaseName.Text) || tbDatabaseName.Text.ToLower() == "mysql" ||
+            tbDatabaseName.Text.ToLower() == "master")
         {
           tbDatabaseName.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid schema name!", "Specify schema name", MessageBoxButtons.OK,
+                          MessageBoxIcon.Error);
           return;
         }
 
-        if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 || tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
+        if (tbServerHostName.Text.ToLower().IndexOf("localhost") >= 0 ||
+            tbServerHostName.Text.ToLower().IndexOf("127.0.0.1") >= 0)
         {
           tbServerHostName.BackColor = Color.Red;
-          MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name", MessageBoxButtons.OK, MessageBoxIcon.Error);
+          MessageBox.Show("Please specify a valid hostname or IP address for the server!", "Specify server name",
+                          MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
 
@@ -243,7 +253,7 @@ namespace MPTvClient
           TestSuccess = AttemptMySqlTestConnect(TestDb);
 
         // Do not allow to "use" incorrect data
-          btnSave.Enabled = TestSuccess;
+        btnSave.Enabled = TestSuccess;
       }
       finally
       {
@@ -255,7 +265,8 @@ namespace MPTvClient
     private bool AttemptMySqlTestConnect(string aTestDb)
     {
       _provider = ProviderType.MySql;
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb,
+                                                        false, 5);
 
       try
       {
@@ -291,7 +302,8 @@ namespace MPTvClient
     private bool AttemptMsSqlTestConnect(string aTestDb)
     {
       _provider = ProviderType.SqlServer;
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb, false, 5);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, aTestDb,
+                                                        false, 5);
 
       try
       {
@@ -320,13 +332,15 @@ namespace MPTvClient
             else
             {
               tbServerHostName.BackColor = Color.Yellow;
-              MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+              MessageBox.Show(string.Format("Test failed: {0}", sqlex.Message), "Warning", MessageBoxButtons.OK,
+                              MessageBoxIcon.Warning);
             }
           }
           else
           {
             tbServerHostName.BackColor = Color.Red;
-            MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(string.Format("Connection error: {0}", sqlex.Message), "Error", MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
           }
         }
         MessageBox.Show(this, "Connection failed!\n" + sqlex.Message);
@@ -369,7 +383,8 @@ namespace MPTvClient
 
     private void SaveGentleConfig()
     {
-      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, tbDatabaseName.Text, true, 300);
+      string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
+                                                        tbDatabaseName.Text, true, 300);
       string fname = String.Format(@"{0}\gentle.config", Application.StartupPath);
       XmlDocument doc = new XmlDocument();
       try
@@ -378,13 +393,16 @@ namespace MPTvClient
       }
       catch (Exception ex)
       {
-        MessageBox.Show(string.Format("Could not load generic gentle config to insert matching connection string: {0}", ex.Message));
+        MessageBox.Show(string.Format("Could not load generic gentle config to insert matching connection string: {0}",
+                                      ex.Message));
         return;
       }
 
       XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name"); ;
+      XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
+      ;
+      XmlNode nodeName = nodeKey.Attributes.GetNamedItem("name");
+      ;
       if (rbSQLServer.Checked)
         nodeName.InnerText = "SQLServer";
       else
@@ -402,7 +420,6 @@ namespace MPTvClient
 
       this.Close();
     }
-
 
     #region Control events
 
@@ -453,7 +470,7 @@ namespace MPTvClient
       {
         Process.Start("http://wiki.team-mediaportal.com/TV-Engine_0.3");
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     private void tbPassword_KeyUp(object sender, KeyEventArgs e)

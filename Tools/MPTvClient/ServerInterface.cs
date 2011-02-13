@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -40,16 +35,16 @@ namespace MPTvClient
 {
   public class ServerInterface
   {
-    IList<ChannelGroup> groups;
-    IList<RadioChannelGroup> radioGroups;
-    IList<Channel> channels;
-    IList<GroupMap> mappings;
-    IList<Card> cards;
-    User me;
-    bool _isTimeShifting = false;
+    private IList<ChannelGroup> groups;
+    private IList<RadioChannelGroup> radioGroups;
+    private IList<Channel> channels;
+    private IList<GroupMap> mappings;
+    private IList<Card> cards;
+    private User me;
+    private bool _isTimeShifting = false;
     public Exception lastException = null;
 
-    public bool GetDatabaseConnectionString(out string connStr,out string provider)
+    public bool GetDatabaseConnectionString(out string connStr, out string provider)
     {
       connStr = "";
       provider = "";
@@ -58,8 +53,10 @@ namespace MPTvClient
         XmlDocument doc = new XmlDocument();
         doc.Load(String.Format(@"{0}\gentle.config", Application.StartupPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
-        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString"); ;
-        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name"); ;
+        XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
+        ;
+        XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
+        ;
         connStr = nodeConnection.InnerText;
         provider = nodeProvider.InnerText;
       }
@@ -73,13 +70,14 @@ namespace MPTvClient
     }
 
     #region Connection functions
+
     public bool Connect(string hostname)
     {
       try
       {
         string connStr;
-        string provider; 
-        if (!GetDatabaseConnectionString(out connStr,out provider))
+        string provider;
+        if (!GetDatabaseConnectionString(out connStr, out provider))
           return false;
         RemoteControl.HostName = hostname;
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connStr);
@@ -99,14 +97,17 @@ namespace MPTvClient
       }
       return true;
     }
+
     public void ResetConnection()
     {
       RemoteControl.Clear();
       _isTimeShifting = false;
     }
+
     #endregion
 
     #region Controll functions
+
     public TvResult StartTimeShifting(int idChannel, ref string rtspURL)
     {
       if (_isTimeShifting)
@@ -132,6 +133,7 @@ namespace MPTvClient
       }
       return result;
     }
+
     public bool StopTimeShifting()
     {
       if (!_isTimeShifting)
@@ -149,25 +151,29 @@ namespace MPTvClient
       _isTimeShifting = false;
       return result;
     }
+
     public string GetRecordingURL(int idRecording)
     {
       TvServer server = new TvServer();
       string url = server.GetStreamUrlForFileName(idRecording);
       return url;
     }
+
     public void DeleteRecording(int idRecording)
     {
       RemoteControl.Instance.DeleteRecording(idRecording);
     }
+
     public void DeleteSchedule(int idSchedule)
     {
       Schedule sched = Schedule.Retrieve(idSchedule);
       sched.Remove();
-
     }
+
     #endregion
 
     #region Info functions
+
     public ReceptionDetails GetReceptionDetails()
     {
       VirtualCard vcard;
@@ -185,6 +191,7 @@ namespace MPTvClient
       details.signalQuality = vcard.SignalQuality;
       return details;
     }
+
     public List<StreamingStatus> GetStreamingStatus()
     {
       List<StreamingStatus> states = new List<StreamingStatus>();
@@ -194,11 +201,11 @@ namespace MPTvClient
         foreach (Card card in cards)
         {
           User user = new User();
-          User[] usersForCard=null;
+          User[] usersForCard = null;
           user.CardId = card.IdCard;
           try
           {
-             usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
+            usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           }
           catch (Exception)
           {
@@ -243,15 +250,12 @@ namespace MPTvClient
             vcard = new VirtualCard(usersForCard[i], RemoteControl.HostName);
             if (vcard.IsTimeShifting)
               tmp = "Timeshifting";
-            else
-              if (vcard.IsRecording)
-                tmp = "Recording";
-              else
-                if (vcard.IsScanning)
-                  tmp = "Scanning";
-                else
-                  if (vcard.IsGrabbingEpg)
-                    tmp = "Grabbing EPG";
+            else if (vcard.IsRecording)
+              tmp = "Recording";
+            else if (vcard.IsScanning)
+              tmp = "Scanning";
+            else if (vcard.IsGrabbingEpg)
+              tmp = "Grabbing EPG";
             state.cardId = card.IdCard;
             state.cardName = vcard.Name;
             state.cardType = vcard.Type.ToString();
@@ -269,6 +273,7 @@ namespace MPTvClient
       }
       return states;
     }
+
     public List<string> GetGroupNames()
     {
       if (!RemoteControl.IsConnected)
@@ -286,6 +291,7 @@ namespace MPTvClient
       }
       return lGroups;
     }
+
     public List<string> GetRadioGroupNames()
     {
       if (!RemoteControl.IsConnected)
@@ -303,6 +309,7 @@ namespace MPTvClient
       }
       return lGroups;
     }
+
     public List<ChannelInfo> GetChannelInfosForGroup(string groupName)
     {
       List<ChannelInfo> refChannelInfos = new List<ChannelInfo>();
@@ -346,6 +353,7 @@ namespace MPTvClient
       }
       return refChannelInfos;
     }
+
     public List<ChannelInfo> GetChannelInfosForRadioGroup(string groupName)
     {
       List<ChannelInfo> refChannelInfos = new List<ChannelInfo>();
@@ -389,6 +397,7 @@ namespace MPTvClient
       }
       return refChannelInfos;
     }
+
     public List<ChannelInfo> GetRadioChannels()
     {
       List<ChannelInfo> radioChannels = new List<ChannelInfo>();
@@ -427,6 +436,7 @@ namespace MPTvClient
       }
       return radioChannels;
     }
+
     public string GetWebStreamURL(int idChannel)
     {
       string url = "";
@@ -442,6 +452,7 @@ namespace MPTvClient
       }
       return url;
     }
+
     public List<RecordingInfo> GetRecordings()
     {
       List<RecordingInfo> recInfos = new List<RecordingInfo>();
@@ -466,6 +477,7 @@ namespace MPTvClient
       }
       return recInfos;
     }
+
     public List<ScheduleInfo> GetSchedules()
     {
       List<ScheduleInfo> schedInfos = new List<ScheduleInfo>();
@@ -493,23 +505,25 @@ namespace MPTvClient
       }
       return schedInfos;
     }
+
     private string GetDateTimeString()
     {
       string provider = Gentle.Framework.ProviderFactory.GetDefaultProvider().Name.ToLower();
       if (provider == "mysql") return "yyyy-MM-dd HH:mm:ss";
       return "yyyyMMdd HH:mm:ss";
     }
+
     public List<EPGInfo> GetEPGForChannel(string idChannel)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       List<EPGInfo> infos = new List<EPGInfo>();
-      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(Gentle.Framework.StatementType.Select, typeof (Program));
       sb.AddConstraint(Operator.Equals, "idChannel", Int32.Parse(idChannel));
       DateTime thisMorning = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day);
       sb.AddConstraint(String.Format("startTime>='{0}'", thisMorning.ToString(GetDateTimeString(), mmddFormat)));
       sb.AddOrderByField(true, "startTime");
       SqlStatement stmt = sb.GetStatement(true);
-      IList programs = ObjectFactory.GetCollection(typeof(Program), stmt.Execute());
+      IList programs = ObjectFactory.GetCollection(typeof (Program), stmt.Execute());
       if (programs != null && programs.Count > 0)
       {
         foreach (Program prog in programs)

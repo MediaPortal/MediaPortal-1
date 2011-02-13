@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -53,6 +48,7 @@ namespace MPTvClient
       client.Close();
       return true;
     }
+
     private bool CheckUdpPort(int port)
     {
       UdpClient client = new UdpClient();
@@ -71,7 +67,7 @@ namespace MPTvClient
     public frmConnectionTest()
     {
       InitializeComponent();
-      ListViewItem row=listView1.Items.Add("31456");
+      ListViewItem row = listView1.Items.Add("31456");
       row.UseItemStyleForSubItems = false;
       row.SubItems.Add("TCP");
       row.SubItems.Add("TvService RemoteControl");
@@ -85,11 +81,13 @@ namespace MPTvClient
 
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
     }
+
     public int GetFailedCount()
     {
       return countFailed;
     }
-    public void RunChecks(string hostname,string provider)
+
+    public void RunChecks(string hostname, string provider)
     {
       this.hostname = hostname;
       if (provider.ToLower() == "sqlserver")
@@ -129,9 +127,9 @@ namespace MPTvClient
         int port = int.Parse(row.Text);
         bool passed;
         if (row.SubItems[1].Text == "TCP")
-          passed=CheckTcpPort(port);
+          passed = CheckTcpPort(port);
         else
-          passed=CheckUdpPort(port);
+          passed = CheckUdpPort(port);
         if (passed)
         {
           row.SubItems[3].ForeColor = System.Drawing.Color.Green;

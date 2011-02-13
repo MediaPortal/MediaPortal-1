@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -36,6 +31,7 @@ namespace MPTvClient
     public int signalLevel;
     public int signalQuality;
   }
+
   public class StreamingStatus
   {
     public int cardId;
@@ -45,11 +41,13 @@ namespace MPTvClient
     public string channelName;
     public string userName;
   }
+
   public class ProgrammInfo
   {
     public string timeInfo;
     public string description;
   }
+
   public class EPGInfo
   {
     public DateTime startTime;
@@ -57,6 +55,7 @@ namespace MPTvClient
     public string title;
     public string description;
   }
+
   public class ChannelInfo
   {
     public string channelID;
@@ -65,6 +64,7 @@ namespace MPTvClient
     public ProgrammInfo epgNow;
     public ProgrammInfo epgNext;
   }
+
   public class RecordingInfo
   {
     public string recordingID;
@@ -73,6 +73,7 @@ namespace MPTvClient
     public string description;
     public string timeInfo;
   }
+
   public class ScheduleInfo
   {
     public string scheduleID;
@@ -82,6 +83,7 @@ namespace MPTvClient
     public string description;
     public string type;
   }
+
   public class ClientSettings
   {
     public static string playerPath = "";
@@ -99,6 +101,7 @@ namespace MPTvClient
     {
       return (System.IO.File.Exists(playerPath)) && (playerArgs != "") && (serverHostname != "");
     }
+
     public static void Load()
     {
       RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Team MediaPortal\\MPTvClient");
@@ -109,13 +112,14 @@ namespace MPTvClient
       serverHostname = (string)key.GetValue("ServerHostname", "");
       useOverride = ((string)key.GetValue("UseOverride", "0") == "1");
       overrideURL = (string)key.GetValue("OverrideURL", "");
-      alwaysPerformConnectionChecks=((int)key.GetValue("AlwaysPerformConnectionChecks",1)==1);
+      alwaysPerformConnectionChecks = ((int)key.GetValue("AlwaysPerformConnectionChecks", 1) == 1);
       frmLeft = (int)key.GetValue("Left", 0);
       frmTop = (int)key.GetValue("Top", 0);
       frmWidth = (int)key.GetValue("Width", 0);
       frmHeight = (int)key.GetValue("Height", 0);
       key.Close();
     }
+
     public static void Save()
     {
       RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Team MediaPortal\\MPTvClient", true);

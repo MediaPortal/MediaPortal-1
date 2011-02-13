@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ namespace DeployVersionSVN
 
     public void SetOption(string option, string argument)
     {
-      _options.Add((Option) Enum.Parse(typeof (Option), option, true), argument);
+      _options.Add((Option)Enum.Parse(typeof (Option), option, true), argument);
     }
 
     public void DisplayOptions()

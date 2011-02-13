@@ -1,22 +1,39 @@
-using System;
+#region Copyright (C) 2005-2011 Team MediaPortal
 
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using Microsoft.Win32;
 
 namespace SetMerit
 {
-
-  static class Program
+  internal static class Program
   {
-
-    const string FiltersKey = @"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\";
-    const string MeritKey = "FilterData";
+    private const string FiltersKey = @"CLSID\{083863F1-70DE-11d0-BD40-00A0C911CE86}\Instance\";
+    private const string MeritKey = "FilterData";
 
 
     /// <summary>
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       try
       {
@@ -59,7 +76,5 @@ namespace SetMerit
         Console.WriteLine(ex.ToString());
       }
     }
-
   }
-
 }

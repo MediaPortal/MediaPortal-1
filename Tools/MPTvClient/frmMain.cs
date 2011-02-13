@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -36,11 +31,10 @@ using TvDatabase;
 
 namespace MPTvClient
 {
-
   public partial class frmMain : Form
   {
-    ServerInterface serverIntf;
-    ExternalPlayer extPlayer;
+    private ServerInterface serverIntf;
+    private ExternalPlayer extPlayer;
 
     public frmMain()
     {
@@ -50,6 +44,7 @@ namespace MPTvClient
       ClientSettings.Load();
       miAlwaysPerformConnectionChecks.Checked = ClientSettings.alwaysPerformConnectionChecks;
     }
+
     private void SetDisconected()
     {
       tmrRefresh.Enabled = false;
@@ -57,9 +52,11 @@ namespace MPTvClient
       serverIntf.ResetConnection();
       StBarLabel.Text = "Not connected.";
       StBar.Update();
-      MessageBox.Show(serverIntf.lastException.ToString(), "Exception raised", MessageBoxButtons.OK, MessageBoxIcon.Error);
+      MessageBox.Show(serverIntf.lastException.ToString(), "Exception raised", MessageBoxButtons.OK,
+                      MessageBoxIcon.Error);
       btnConnect.Visible = true;
     }
+
     private void UpdateTVChannels()
     {
       if (cbGroups.SelectedIndex == -1)
@@ -71,10 +68,13 @@ namespace MPTvClient
         SetDisconected();
       gridTVChannels.Rows.Clear();
       foreach (ChannelInfo chanInfo in refChannelInfos)
-        gridTVChannels.Rows.Add(chanInfo.channelID, chanInfo.name, chanInfo.epgNow.timeInfo + "\n" + chanInfo.epgNext.timeInfo, chanInfo.epgNow.description + "\n" + chanInfo.epgNext.description);
+        gridTVChannels.Rows.Add(chanInfo.channelID, chanInfo.name,
+                                chanInfo.epgNow.timeInfo + "\n" + chanInfo.epgNext.timeInfo,
+                                chanInfo.epgNow.description + "\n" + chanInfo.epgNext.description);
       gridTVChannels.AutoResizeColumns();
       StBarLabel.Text = "";
     }
+
     private void UpdateRadioChannels()
     {
       if (cbRadioGroups.SelectedIndex == -1)
@@ -90,11 +90,14 @@ namespace MPTvClient
         string type = "DVB";
         if (chanInfo.isWebStream)
           type = "WebStream";
-        gridRadioChannels.Rows.Add(chanInfo.channelID, chanInfo.name, type, chanInfo.epgNow.timeInfo + "\n" + chanInfo.epgNext.timeInfo, chanInfo.epgNow.description + "\n" + chanInfo.epgNext.description);
+        gridRadioChannels.Rows.Add(chanInfo.channelID, chanInfo.name, type,
+                                   chanInfo.epgNow.timeInfo + "\n" + chanInfo.epgNext.timeInfo,
+                                   chanInfo.epgNow.description + "\n" + chanInfo.epgNext.description);
       }
       gridRadioChannels.AutoResizeColumns();
       StBarLabel.Text = "";
     }
+
     private void UpdateRecordings()
     {
       StBarLabel.Text = "Loading recordings...";
@@ -108,6 +111,7 @@ namespace MPTvClient
       gridRecordings.AutoResizeColumns();
       StBarLabel.Text = "";
     }
+
     private void UpdateSchedules()
     {
       StBarLabel.Text = "Loading schedules...";
@@ -117,18 +121,22 @@ namespace MPTvClient
         SetDisconected();
       gridSchedules.Rows.Clear();
       foreach (ScheduleInfo sched in schedInfos)
-        gridSchedules.Rows.Add(sched.scheduleID, sched.startTime.ToString(), sched.endTime.ToString(), sched.description, sched.channelName, sched.type);
+        gridSchedules.Rows.Add(sched.scheduleID, sched.startTime.ToString(), sched.endTime.ToString(), sched.description,
+                               sched.channelName, sched.type);
       gridSchedules.AutoResizeColumns();
       StBarLabel.Text = "";
     }
+
     private void btnConnect_Click(object sender, EventArgs e)
     {
       if (!ClientSettings.IsValid())
       {
-        MessageBox.Show("The settings are invalid.\nPlease check the configuration.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("The settings are invalid.\nPlease check the configuration.", "ERROR", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
         return;
       }
-      string connStr; string provider;
+      string connStr;
+      string provider;
       if (!serverIntf.GetDatabaseConnectionString(out connStr, out provider))
       {
         SetupDatabaseForm frm = new SetupDatabaseForm();
@@ -143,7 +151,10 @@ namespace MPTvClient
         connTest.RunChecks(ClientSettings.serverHostname, provider);
         if (connTest.GetFailedCount() > 0)
         {
-          if (MessageBox.Show("Some ports on the TvServer machine are not reachable.\n\nDo you want to try to connect nevertheless?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+          if (
+            MessageBox.Show(
+              "Some ports on the TvServer machine are not reachable.\n\nDo you want to try to connect nevertheless?",
+              "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
           {
             StBarLabel.Text = "Not connected";
             return;
@@ -183,21 +194,23 @@ namespace MPTvClient
       }
       foreach (string group in radioGroups)
       {
-        if (!cbAllChannels.Checked && group=="All Channels")
+        if (!cbAllChannels.Checked && group == "All Channels")
           continue;
         cbRadioGroups.Items.Add(group);
       }
       if (cbRadioGroups.Items.Count > 0)
-        cbRadioGroups.SelectedIndex = 0;      
+        cbRadioGroups.SelectedIndex = 0;
 
       StBarLabel.Text = "";
       tmrRefresh.Enabled = true;
       btnConnect.Visible = false;
     }
+
     private void cbGroups_SelectedIndexChanged(object sender, EventArgs e)
     {
       UpdateTVChannels();
     }
+
     private void timer1_Tick(object sender, EventArgs e)
     {
       if (!extPlayer.IsRunning())
@@ -236,7 +249,8 @@ namespace MPTvClient
       serverIntf.StopTimeShifting();
       extPlayer.Stop();
       string rtspURL = "";
-      TvResult result = serverIntf.StartTimeShifting(int.Parse(gridTVChannels.SelectedRows[0].Cells[0].Value.ToString()), ref rtspURL);
+      TvResult result = serverIntf.StartTimeShifting(
+        int.Parse(gridTVChannels.SelectedRows[0].Cells[0].Value.ToString()), ref rtspURL);
       StBarLabel.Text = "";
       StBar.Update();
       if (result != TvResult.Succeeded)
@@ -265,13 +279,16 @@ namespace MPTvClient
     private void externalPlayerToolStripMenuItem_Click(object sender, EventArgs e)
     {
       frmExternalPlayerConfig frm = new frmExternalPlayerConfig();
-      frm.InitForm(ClientSettings.playerPath, ClientSettings.playerArgs,ClientSettings.useOverride,ClientSettings.overrideURL);
+      frm.InitForm(ClientSettings.playerPath, ClientSettings.playerArgs, ClientSettings.useOverride,
+                   ClientSettings.overrideURL);
       if (frm.ShowDialog() == DialogResult.OK)
       {
-        frm.GetConfig(ref ClientSettings.playerPath, ref ClientSettings.playerArgs,ref ClientSettings.useOverride,ref ClientSettings.overrideURL);
+        frm.GetConfig(ref ClientSettings.playerPath, ref ClientSettings.playerArgs, ref ClientSettings.useOverride,
+                      ref ClientSettings.overrideURL);
         ClientSettings.Save();
       }
     }
+
     private void serverConnectionToolStripMenuItem_Click(object sender, EventArgs e)
     {
       frmServerConnectionConfig frm = new frmServerConnectionConfig();
@@ -283,10 +300,7 @@ namespace MPTvClient
       }
     }
 
-    private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-    {
-
-    }
+    private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e) {}
 
     private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -314,7 +328,8 @@ namespace MPTvClient
       serverIntf.StopTimeShifting();
       extPlayer.Stop();
       string rtspURL = "";
-      TvResult result = serverIntf.StartTimeShifting(int.Parse(gridTVChannels.SelectedRows[0].Cells[0].Value.ToString()), ref rtspURL);
+      TvResult result = serverIntf.StartTimeShifting(
+        int.Parse(gridTVChannels.SelectedRows[0].Cells[0].Value.ToString()), ref rtspURL);
       StBarLabel.Text = "";
       StBar.Update();
       if (result != TvResult.Succeeded)
@@ -338,19 +353,21 @@ namespace MPTvClient
       {
         StBarLabel.Text = "Trying to start timeshifting...";
         StBar.Update();
-        TvResult result = serverIntf.StartTimeShifting(int.Parse(gridRadioChannels.SelectedRows[0].Cells[0].Value.ToString()), ref rtspURL);
+        TvResult result =
+          serverIntf.StartTimeShifting(int.Parse(gridRadioChannels.SelectedRows[0].Cells[0].Value.ToString()),
+                                       ref rtspURL);
         StBarLabel.Text = "";
         StBar.Update();
         if (result != TvResult.Succeeded)
           MessageBox.Show("Could not start timeshifting\nReason: " + result.ToString());
       }
       else
-        rtspURL=serverIntf.GetWebStreamURL(int.Parse(gridRadioChannels.SelectedRows[0].Cells[0].Value.ToString()));
+        rtspURL = serverIntf.GetWebStreamURL(int.Parse(gridRadioChannels.SelectedRows[0].Cells[0].Value.ToString()));
       if (ClientSettings.useOverride)
         rtspURL = ClientSettings.overrideURL;
       string args = string.Format(ClientSettings.playerArgs, rtspURL);
       if (!extPlayer.Start(ClientSettings.playerPath, args))
-          MessageBox.Show("Failed to start external player.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show("Failed to start external player.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
     }
 
     private void gridRecordings_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -435,16 +452,16 @@ namespace MPTvClient
 
     private void btnShowEPG_Click(object sender, EventArgs e)
     {
-      List<ChannelInfo> infos=new List<ChannelInfo>();
+      List<ChannelInfo> infos = new List<ChannelInfo>();
       DataGridView grid = gridTVChannels;
       Button btn = (Button)sender;
       if (btn != btnShowEPG)
         grid = gridRadioChannels;
       foreach (DataGridViewRow row in grid.Rows)
       {
-        ChannelInfo info=new ChannelInfo();
-        info.channelID=row.Cells[0].Value.ToString();
-        info.name=row.Cells[1].Value.ToString();
+        ChannelInfo info = new ChannelInfo();
+        info.channelID = row.Cells[0].Value.ToString();
+        info.name = row.Cells[1].Value.ToString();
         infos.Add(info);
       }
       frmEPG frm = new frmEPG(serverIntf, infos);
