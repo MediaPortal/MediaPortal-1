@@ -41,17 +41,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      string originalYesNoSkinFile = GUIGraphicsContext.Skin + @"\dialogYesNo.xml";
-      string newYesNoSkinFile = GUIGraphicsContext.Skin + @"\dialogTVNotifyYesNo.xml";
-
-      if (File.Exists(newYesNoSkinFile))
-      {
-        return Load(newYesNoSkinFile);
-      }
-      else
-      {
-        return Load(originalYesNoSkinFile);
-      }
+      return Load(GUIGraphicsContext.Skin + @"\dialogTVNotifyYesNo.xml");
     }
 
     public override bool OnMessage(GUIMessage message)

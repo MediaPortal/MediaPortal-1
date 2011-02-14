@@ -1785,7 +1785,7 @@ namespace TvPlugin
             TVNotifyYesNoDialog tvNotifyDlg = (TVNotifyYesNoDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO);
 
             TVProgramDescription notify = message.Object as TVProgramDescription;
-            if (notify == null)
+            if (tvNotifyDlg == null || notify == null)
             {
               return;
             }
@@ -1856,7 +1856,6 @@ namespace TvPlugin
               }
 
             }
-
             break;
           }
       }
