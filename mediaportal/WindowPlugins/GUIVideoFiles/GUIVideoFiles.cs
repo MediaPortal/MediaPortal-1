@@ -1738,7 +1738,14 @@ namespace MediaPortal.GUI.Video
           break;
         }
 
-        if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
+        if (g_Player.IsDVDMenu)
+        {
+          VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, null);
+          watchedMovies.Add(strFilePath);
+          VideoDatabase.SetVideoFileWatched(idFile, true);
+        }
+
+        else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
         {
           byte[] resumeData = null;
           g_Player.Player.GetResumeState(out resumeData);
@@ -1764,21 +1771,21 @@ namespace MediaPortal.GUI.Video
         // Update db view watched status for played movie
         IMDBMovie movie = new IMDBMovie();
         VideoDatabase.GetMovieInfo(filename, ref movie);
-        if (!movie.IsEmpty && playTimePercentage >= 80) //Flag movie "watched" status only if 80% or higher played time (database view)
+        if (!movie.IsEmpty && (playTimePercentage >= 80 || g_Player.IsDVDMenu)) //Flag movie "watched" status only if 80% or higher played time (database view)
         {
           movie.Watched = 1;
           VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
         }
 
-        if (VideoState.StartWindow == GetID) // Is play initiator share or dbview?
+        if (VideoState.StartWindow != GetID) // Is play initiator dbview?
         {
-          LoadDirectory(_currentFolder, true, watchedMovies);
+        //  LoadDirectory(_currentFolder, true, watchedMovies);
           UpdateButtonStates();
         }
-        else
-        {
-          UpdateButtonStates();
-        }
+        //else
+        //{
+        //  UpdateButtonStates();
+        //}
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1848,11 +1855,11 @@ namespace MediaPortal.GUI.Video
         details.Watched = 1;
         VideoDatabase.SetWatched(details);
       }
-      if (_markWatchedFiles) // save a little performance
-      {
-        LoadDirectory(_currentFolder, true, watchedMovies);
-        UpdateButtonStates();
-      }
+      //if (_markWatchedFiles) // save a little performance
+      //{
+      //  LoadDirectory(_currentFolder, true, watchedMovies);
+      //  UpdateButtonStates();
+      //}
     }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)
