@@ -239,7 +239,7 @@ namespace MediaPortal.Dialogs
 
   }
 
-  public class StandardKeyboard : VirtualKeyboard
+  public class StandardKeyboard : VirtualKeyboard, IStandardKeyboard
   {
     public StandardKeyboard() : base()
     {

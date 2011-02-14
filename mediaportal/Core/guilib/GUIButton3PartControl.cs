@@ -64,6 +64,7 @@ namespace MediaPortal.GUI.Library
     protected int _hyperLinkWindowId = -1;
     protected int _actionId = -1;
     protected string _scriptAction = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("textOffsetX1")] protected int _textOffsetX1 = 10;
     [XMLSkinElement("textOffsetY1")] protected int _textOffsetY1 = 2;
     [XMLSkinElement("textOffsetX2")] protected int _textOffsetX2 = 10;
@@ -549,7 +550,12 @@ namespace MediaPortal.GUI.Library
         //is the button clicked?
         if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          // yes,
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIInfoManager.Execute(_onclick, 0);
+          }
+
           //If this button contains scriptactions call the scriptactions.
           if (_application.Length != 0)
           {

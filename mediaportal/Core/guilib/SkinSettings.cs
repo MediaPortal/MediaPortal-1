@@ -18,28 +18,45 @@
 
 #endregion
 
+using MediaPortal.Configuration;
+using MediaPortal.Profile;
+using System;
 using System.Collections.Generic;
 
 namespace MediaPortal.GUI.Library
 {
   public class SkinSettings
   {
+    public enum Kind
+    {
+      TRANSIENT = 0,  // This kind of setting will not be saved to disk.
+      PERSISTENT = 1  // This kind of setting will be saved to disk.
+    }
+
     private class SkinString
     {
       public string Name;
       public string Value;
+      public Kind Kind;
     } ;
 
     private class SkinBool
     {
       public string Name;
       public bool Value;
+      public Kind Kind;
     } ;
 
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
+    private static string _loadedSkinSettings = "";
 
     public static int TranslateSkinString(string line)
+    {
+      return TranslateSkinString(line, Kind.TRANSIENT);
+    }
+
+    public static int TranslateSkinString(string line, Kind kind)
     {
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
       while (enumer.MoveNext())
@@ -53,8 +70,13 @@ namespace MediaPortal.GUI.Library
       SkinString newString = new SkinString();
       newString.Name = line;
       newString.Value = line;
+      newString.Kind = kind;
       int key = _skinStringSettings.Count;
       _skinStringSettings[key] = newString;
+
+      // Create the setting as a property if specified as such.
+      GUIPropertyManager.SetProperty(newString.Name, newString.Value);
+
       return key;
     }
 
@@ -68,7 +90,25 @@ namespace MediaPortal.GUI.Library
       return "";
     }
 
+    public static void SetSkinString(int key, string newValue)
+    {
+      SkinString skin = null;
+      if (_skinStringSettings.TryGetValue(key, out skin))
+      {
+        skin.Value = newValue;
+        _skinStringSettings[key] = skin;
+
+        // Save the setting as a property if specified as such.
+        GUIPropertyManager.SetProperty(skin.Name, skin.Value);
+      }
+    }
+
     public static int TranslateSkinBool(string setting)
+    {
+      return TranslateSkinString(setting, Kind.TRANSIENT);
+    }
+
+    public static int TranslateSkinBool(string setting, Kind kind)
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
       while (enumer.MoveNext())
@@ -82,9 +122,13 @@ namespace MediaPortal.GUI.Library
       SkinBool newBool = new SkinBool();
       newBool.Name = setting;
       newBool.Value = false;
-      newBool.Value = false;
+      newBool.Kind = kind;
       int key = _skinBoolSettings.Count;
       _skinBoolSettings[key] = newBool;
+
+      // Create the setting as a property if specified as such.  The boolean value is converted as a string representation.
+      GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
+
       return key;
     }
 
@@ -96,6 +140,210 @@ namespace MediaPortal.GUI.Library
         return skinBool.Value;
       }
       return false;
+    }
+
+    public static void SetSkinBool(int key, bool newValue)
+    {
+      SkinBool skinBool = null;
+      if (_skinBoolSettings.TryGetValue(key, out skinBool))
+      {
+        skinBool.Value = newValue;
+        _skinBoolSettings[key] = skinBool;
+
+        // Save the setting as a property if specified as such.  The boolean value is converted as a string representation.
+        GUIPropertyManager.SetProperty(skinBool.Name, skinBool.Value.ToString());
+      }
+    }
+
+    public static void ResetSkinBool(string setting)
+    {
+      Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
+      while (enumer.MoveNext())
+      {
+        SkinBool skin = enumer.Current.Value;
+        if (skin.Name == setting)
+        {
+          skin.Value = false;
+
+          // Save the setting as a property if specified as such.  The boolean value is converted as a string representation.
+          GUIPropertyManager.SetProperty(skin.Name, skin.Value.ToString());
+        }
+      }
+    }
+
+    public static void ResetAllSkinBool()
+    {
+      Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
+      while (enumer.MoveNext())
+      {
+        SkinBool skin = enumer.Current.Value;
+        skin.Value = false;
+
+        // Save the setting as a property if specified as such.  The boolean value is converted as a string representation.
+        GUIPropertyManager.SetProperty(skin.Name, skin.Value.ToString());
+      }
+    }
+
+    public static void ResetSkinString(string setting)
+    {
+      Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
+      while (enumer.MoveNext())
+      {
+        SkinString skin = enumer.Current.Value;
+        if (skin.Name == setting)
+        {
+          skin.Value = "";
+
+          // Save the setting as a property if specified as such.
+          GUIPropertyManager.SetProperty(skin.Name, skin.Value);
+        }
+      }
+    }
+
+    public static void ResetAllSkinString()
+    {
+      Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
+      while (enumer.MoveNext())
+      {
+        SkinString skin = enumer.Current.Value;
+        skin.Value = "";
+
+        // Save the setting as a property if specified as such.
+        GUIPropertyManager.SetProperty(skin.Name, skin.Value);
+      }
+    }
+
+    private static void LoadBooleanSettings()
+    {
+      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
+      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+
+      using (Settings xmlReader = new Settings(strFileName))
+      {
+        try
+        {
+          bool success = false;
+          string allSettings = xmlReader.GetValueAsString(skinName, "BooleanSettings", "");
+
+          // Each pair is separated by a semicolon.
+          string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+
+          foreach (string setting in pairs)
+          {
+            // Each name/value pair is separated by an equal sign.
+            string[] nv = setting.Split('=');
+
+            // Create the new boolean setting.
+            SkinBool newBool = new SkinBool();
+            newBool.Name = nv[0];
+            newBool.Value = bool.TryParse(nv[1], out success);
+            if (!success)
+            {
+              newBool.Value = false;
+            }
+            newBool.Kind = Kind.PERSISTENT;
+
+            // Add the setting to th dictionary.
+            int key = _skinBoolSettings.Count;
+            _skinBoolSettings[key] = newBool;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("SkinSettings: Error loading settings from {0} - {1}", strFileName, ex.Message);
+        }
+      }
+    }
+
+    private static void LoadStringSettings()
+    {
+      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
+      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+
+      using (Settings xmlReader = new Settings(strFileName))
+      {
+        try
+        {
+          string allSettings = xmlReader.GetValueAsString(skinName, "StringSettings", "");
+
+          // Each pair is separated by a semicolon.
+          string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+
+          foreach (string setting in pairs)
+          {
+            // Each name/value pair is separated by an equal sign.
+            string[] nv = setting.Split('=');
+
+            // Create the new string setting.
+            SkinString newString = new SkinString();
+            newString.Name = nv[0];
+            newString.Value = nv[1];
+            newString.Kind = Kind.PERSISTENT;
+
+            // Add the setting to th dictionary.
+            int key = _skinStringSettings.Count;
+            _skinStringSettings[key] = newString;
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("SkinSettings: Error loading settings from {0} - {1}", strFileName, ex.Message);
+        }
+      }
+    }
+
+    public static void Load()
+    {
+      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+
+      if (_loadedSkinSettings != skinName)
+      {
+        _skinBoolSettings.Clear();
+        _skinStringSettings.Clear();
+
+        SkinSettings.LoadBooleanSettings();
+        SkinSettings.LoadStringSettings();
+
+        _loadedSkinSettings = skinName;
+      }
+    }
+
+    public static void Save()
+    {
+      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
+      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+
+      using (Settings xmlWriter = new Settings(strFileName))
+      {
+        // Save all the boolean settings.
+        string allSettings = "";
+        Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
+        SkinBool bSetting;
+        while (bEnumer.MoveNext())
+        {
+          bSetting = bEnumer.Current.Value;
+          if (bSetting.Kind == Kind.PERSISTENT)
+          {
+            allSettings += bSetting.Name + "=" + bSetting.Value + ";";
+          }
+        }
+        xmlWriter.SetValue(skinName, "BooleanSettings", allSettings);
+
+        // Save all the string settings.
+        allSettings = "";
+        Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
+        SkinString strSetting;
+        while (strEnumer.MoveNext())
+        {
+          strSetting = strEnumer.Current.Value;
+          if (strSetting.Kind == Kind.PERSISTENT)
+          {
+            allSettings += strSetting.Name + "=" + strSetting.Value + ";";
+          }
+        }
+        xmlWriter.SetValue(skinName, "StringSettings", allSettings);
+      }
+      Settings.SaveCache();
     }
   }
 }

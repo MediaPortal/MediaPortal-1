@@ -45,6 +45,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("mode")] protected ButtonMode _buttonMode = ButtonMode.BUTTON_MODE_DIALOG_LIST;
     [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
     [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
+    [XMLSkinElement("onclick")] protected string _onclick = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("valueTextInButton")] protected bool _valueTextInButton = false;
@@ -701,6 +702,12 @@ namespace MediaPortal.GUI.Library
           // send a message to anyone interested 
           message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
           GUIGraphicsContext.SendMessage(message);
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIInfoManager.Execute(_onclick, 0);
+          }
         }
 
         // Perform actions appropriate for the button mode.

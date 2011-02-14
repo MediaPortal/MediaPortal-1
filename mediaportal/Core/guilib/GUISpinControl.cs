@@ -69,6 +69,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("suffixText")] protected string _suffixText = "";
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
+    [XMLSkinElement("onclick")] protected string _onclick = "";
 
     protected bool _autoCheck = true;
     protected int _startInt = 0;
@@ -650,6 +651,12 @@ namespace MediaPortal.GUI.Library
             action.wID = Action.ActionType.ACTION_INVALID;
             _actionHandled = true;
             return;
+          }
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIInfoManager.Execute(_onclick, 0);
           }
         }
       }

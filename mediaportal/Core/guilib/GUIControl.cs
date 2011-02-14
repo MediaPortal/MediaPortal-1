@@ -115,6 +115,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("description")] protected string _description = "";
     [XMLSkinElement("dimColor")] protected int _dimColor = 0x60ffffff;
     [XMLSkinElement("layoutDetail")] protected ILayoutDetail _layoutDetail;
+    [XMLSkinElement("onfocus")] protected string _onfocus = "";
 
     protected int _parentControlId = 0;
     protected bool _isSelected = false;
@@ -651,6 +652,11 @@ namespace MediaPortal.GUI.Library
         else if (!Focus && value)
         {
           QueueAnimation(AnimationType.Focus);
+
+          if (_onfocus.Length != 0)
+          {
+            GUIInfoManager.Execute(_onfocus, 0);
+          }
         }
         //SetValue(IsFocusedProperty, value);
         IsFocused = value;

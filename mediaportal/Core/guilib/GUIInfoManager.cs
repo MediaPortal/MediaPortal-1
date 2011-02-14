@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Time;
 using MediaPortal.Utils.Time;
@@ -330,6 +331,7 @@ namespace MediaPortal.GUI.Library
     public const int STRING_EQUALS = 601;
     public const int STRING_STARTS = 602;
     public const int STRING_CONTAINS = 603;
+    public const int SKIN_STRING = 604;
 
     public const int XLINK_KAI_USERNAME = 701;
     public const int SKIN_THEME = 702;
@@ -1319,7 +1321,58 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest.Substring(0, 16) == "skin.hassetting(")
         {
-          int skinOffset = SkinSettings.TranslateSkinBool(strTest.Substring(16, strTest.Length - 17));
+          int skinOffset = SkinSettings.TranslateSkinBool(strTest.Substring(16, strTest.Length - 17), SkinSettings.Kind.PERSISTENT);
+          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
+        }
+        else if (strTest.Substring(0, 12) == "skin.string(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, pos - 12), SkinSettings.Kind.PERSISTENT);
+            int compareString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset, compareString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(12, strTestKeepCase.Length - 13), SkinSettings.Kind.PERSISTENT);
+          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset));
+        }
+        else if (strTest.Substring(0, 15) == "skin.setstring(")
+        {
+          // this condition uses GUIPropertyManager.Parse, which is case sensitive.
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int skinOffset;
+          int pos = strTestKeepCase.IndexOf(",");
+          if (pos >= 0)
+          {
+            skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(15, pos - 15), SkinSettings.Kind.PERSISTENT);
+            int valueString =
+              ConditionalStringParameter(strTestKeepCase.Substring(pos + 1, strTestKeepCase.Length - (pos + 2)));
+            return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset, valueString));
+          }
+          skinOffset = SkinSettings.TranslateSkinString(strTestKeepCase.Substring(15, strTestKeepCase.Length - 16), SkinSettings.Kind.PERSISTENT);
+          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_STRING : SKIN_STRING, skinOffset));
+        }
+        else if (strTest.Substring(0, 19) == "skin.togglesetting(")
+        {
+          int skinOffset = SkinSettings.TranslateSkinBool(strTest.Substring(19, strTest.Length - 20), SkinSettings.Kind.PERSISTENT);
           return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_BOOL : SKIN_BOOL, skinOffset));
         }
         else if (strTest.Substring(0, 14) == "skin.hastheme(")
@@ -1899,6 +1952,117 @@ namespace MediaPortal.GUI.Library
       return wWindowID;
     }
 
+    public static void Execute(string command, int dwContextWindow)
+    {
+      if (command.Length == 0)
+      {
+        return;
+      }
+      string cmd = command;
+      cmd = cmd.ToLower();
+      cmd = cmd.TrimStart(new char[] { ' ' });
+      cmd = cmd.TrimEnd(new char[] { ' ' });
+      if (cmd.Length == 0)
+      {
+        return;
+      }
+
+      int pos = cmd.IndexOf("(");
+      if (pos >= 0)
+      {
+        cmd = cmd.Substring(0, pos + 1);
+      }
+
+      // Preserve case of the setting.
+      string cmdKeepCase = command;
+      cmdKeepCase = cmdKeepCase.TrimStart(new char[] { ' ' });
+      cmdKeepCase = cmdKeepCase.TrimEnd(new char[] { ' ' });
+
+      int condition = 0;
+      if (cmd.Equals("skin.togglesetting("))
+      {
+        // Toggle the boolean setting to the opposite value.
+        condition = TranslateSingleString(cmdKeepCase);
+        SetBool(condition, !GetBool(condition, dwContextWindow), dwContextWindow);
+        SkinSettings.Save();
+      }
+      else if (cmd.Equals("skin.setstring("))
+      {
+        // Set the setting to the specified string.  If no value is specified then present the keyboard to input the value.
+        pos = cmdKeepCase.IndexOf(",");
+        if (pos >= 0 && !cmdKeepCase.Contains(",,"))
+        {
+          condition = TranslateSingleString(cmdKeepCase);
+          string newValue = cmdKeepCase.Substring(pos + 1, cmdKeepCase.Length - (pos + 2));
+          SetString(condition, newValue, dwContextWindow);
+          SkinSettings.Save();
+        }
+        else
+        {
+          // No value was provided for the skin setting.  Display a keyboard and ask for a value.
+          pos = cmdKeepCase.IndexOf(",,");
+          string label = "";
+          string prompt = "";
+          if (pos >= 0)
+          {
+            prompt = cmdKeepCase.Substring(pos + 2, cmdKeepCase.Length - (pos + 3));
+            pos = cmdKeepCase.IndexOf("(");
+            // Combine the prompt with the label (strip any property '#' from the label).
+            label = prompt + cmdKeepCase.Substring(pos + 1, cmdKeepCase.IndexOf(",,") - (pos + 1)).Replace("#", "");
+          }
+
+          string userInput = "";
+          if (GetUserInputString(ref userInput, label))
+          {
+            condition = TranslateSingleString(cmdKeepCase);
+            SetString(condition, userInput, dwContextWindow);
+            SkinSettings.Save();
+          }
+          else
+          {
+            // No value supplied and no input was entered into the keyboard.
+          }
+        }
+      }
+      else if (cmd.Equals("skin.setbool("))
+      {
+        // Set the setting to true.
+        condition = TranslateSingleString(cmdKeepCase);
+        SetBool(condition, true, dwContextWindow);
+        SkinSettings.Save();
+      }
+      else if (cmd.Equals("skin.reset("))
+      {
+        // Resets the specifed setting.  Booleans are set false, strings are set to empty string.
+        SkinSettings.ResetSkinBool(cmdKeepCase.Substring(11, cmdKeepCase.Length - 2));
+        SkinSettings.ResetSkinString(cmdKeepCase.Substring(11, cmdKeepCase.Length - 2));
+        SkinSettings.Save();
+      }
+      else if (cmd.Equals("skin.resetsettings"))
+      {
+        // Resets the specifed setting.  Booleans are set false, strings are set to empty string.
+        SkinSettings.ResetAllSkinBool();
+        SkinSettings.ResetAllSkinString();
+        SkinSettings.Save();
+      }
+    }
+
+    public static void SetString(int condition, string newValue, int dwContextWindow)
+    {
+      if (condition >= MULTI_INFO_START && condition <= MULTI_INFO_END)
+      {
+        SetMultiInfoString(m_multiInfo[condition - MULTI_INFO_START], newValue, dwContextWindow);
+      }
+    }
+
+    public static void SetBool(int condition, bool newValue, int dwContextWindow)
+    {
+      if (condition >= MULTI_INFO_START && condition <= MULTI_INFO_END)
+      {
+        SetMultiInfoBool(m_multiInfo[condition - MULTI_INFO_START], newValue, dwContextWindow);
+      }
+    }
+
     // checks the condition and returns it as necessary.  Currently used
     // for toggle button controls and visibility of images.
     public static bool GetBool(int condition1, int dwContextWindow)
@@ -2232,6 +2396,28 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
+    private static void SetMultiInfoString(GUIInfo info, string newValue, int dwContextWindow)
+    {
+      int condition = Math.Abs(info.m_info);
+      switch (condition)
+      {
+        case SKIN_STRING:
+          SkinSettings.SetSkinString(info.m_data1, newValue);
+          break;
+      }
+    }
+
+    private static void SetMultiInfoBool(GUIInfo info, bool newValue, int dwContextWindow)
+    {
+      int condition = Math.Abs(info.m_info);
+      switch (condition)
+      {
+        case SKIN_BOOL:
+          SkinSettings.SetSkinBool(info.m_data1, newValue);
+          break;
+      }
+    }
+
     /// \brief Examines the multi information sent and returns true or false accordingly.
     private static bool GetMultiInfoBool(GUIInfo info, int dwContextWindow)
     {
@@ -2250,6 +2436,7 @@ namespace MediaPortal.GUI.Library
         case STRING_EQUALS:
         case STRING_STARTS:
         case STRING_CONTAINS:
+        case SKIN_STRING:
           if (info.m_data2 != 0)
           {
             string prop1 = SkinSettings.GetSkinString(info.m_data1);
@@ -2258,7 +2445,7 @@ namespace MediaPortal.GUI.Library
             string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();
             string value2 = GUIPropertyManager.Parse(prop2).Trim().ToLowerInvariant();
 
-            if (condition == STRING_EQUALS)
+            if ((condition == STRING_EQUALS) || (condition == SKIN_STRING))
             {
               bReturn = (value1 == value2);
             }
@@ -2274,7 +2461,12 @@ namespace MediaPortal.GUI.Library
             bReturn = (info.m_info < 0) ? !bReturn : bReturn;
             AddMultiBoolInfoProperty(info, prop1);
             AddMultiBoolInfoProperty(info, prop2);
-            AddMultiInfoBoolResult(info, bReturn);
+
+            // Do not cache the result for skin strings.  The results change based on user interactions.
+            if (condition != SKIN_STRING)
+            {
+              AddMultiInfoBoolResult(info, bReturn);
+            }
           }
           else
           {
@@ -2668,6 +2860,25 @@ namespace MediaPortal.GUI.Library
         return LISTITEM_PICTURE_DATETIME;
       }
       return 0;
+    }
+
+    private static bool GetUserInputString(ref string sString, string label)
+    {
+      IStandardKeyboard keyboard = (IStandardKeyboard)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.Label = label;
+      keyboard.DoModal(GUIWindowManager.ActiveWindowEx);
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
     }
   }
 }
