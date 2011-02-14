@@ -1336,8 +1336,12 @@ namespace MediaPortal.GUI.Library
         {
           Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
                     _routedWindow, _routedWindow.GetID, GetWindow(ActiveWindow), ActiveWindow);
+
+          GUIMessage msgDlg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _routedWindow.GetID, 0, 0,
+                                 _routedWindow.PreviousWindowId, 0, null);
+          _routedWindow.OnMessage(msgDlg);
         }
-        if (_currentWindowName != string.Empty && _routedWindow != null)
+        //if (_currentWindowName != string.Empty && _routedWindow != null)
         {
           GUIPropertyManager.SetProperty("#currentmodule", _currentWindowName);
         }
