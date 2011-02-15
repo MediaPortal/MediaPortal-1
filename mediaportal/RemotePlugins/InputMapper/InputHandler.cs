@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -162,7 +162,7 @@ namespace MediaPortal.InputDevices
         focus = newFocus;
       }
     }
-    
+
     /// <summary>
     /// Button/mapping class
     /// </summary>
@@ -367,7 +367,7 @@ namespace MediaPortal.InputDevices
     public bool MapAction(string btnCode, int processID)
     {
       return DoMapAction(btnCode, processID);
-    }    
+    }
 
     /// <summary>
     /// Evaluates the button number, gets its mapping and executes the action
@@ -475,11 +475,11 @@ namespace MediaPortal.InputDevices
               break;
             case "STANDBY":
               action = new Action(Action.ActionType.ACTION_SUSPEND, 1, 0); //1 = ignore prompt
-              GUIGraphicsContext.OnAction(action);              
+              GUIGraphicsContext.OnAction(action);
               break;
             case "HIBERNATE":
               action = new Action(Action.ActionType.ACTION_HIBERNATE, 1, 0); //1 = ignore prompt
-              GUIGraphicsContext.OnAction(action);                            
+              GUIGraphicsContext.OnAction(action);
               break;
           }
           break;

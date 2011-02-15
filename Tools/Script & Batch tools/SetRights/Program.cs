@@ -1,25 +1,20 @@
-﻿#region Copyright (C) 2005-2009 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -31,9 +26,9 @@ using Microsoft.Win32;
 
 namespace SetRights
 {
-  class Program
+  internal class Program
   {
-    static int Main(string[] args)
+    private static int Main(string[] args)
     {
       if (args.Length == 0)
       {
@@ -47,9 +42,15 @@ namespace SetRights
       }
       switch (args[0].ToLowerInvariant())
       {
-        case "folder": GrantFullControlFolder(args[1]); break;
-        case "hklm": GrantFullControlRegKeyLM(args[1]); break;
-        case "hkcu": GrantFullControlRegKeyUser(args[1]); break;
+        case "folder":
+          GrantFullControlFolder(args[1]);
+          break;
+        case "hklm":
+          GrantFullControlRegKeyLM(args[1]);
+          break;
+        case "hkcu":
+          GrantFullControlRegKeyUser(args[1]);
+          break;
       }
 
       return 0;
@@ -72,19 +73,19 @@ namespace SetRights
       {
         // Create a SecurityIdentifier object for "everyone".
         SecurityIdentifier everyoneSid =
-            new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+          new SecurityIdentifier(WellKnownSidType.WorldSid, null);
 
         DirectorySecurity security = System.IO.Directory.GetAccessControl(folderName);
         FileSystemAccessRule newRule =
           new FileSystemAccessRule(
             everyoneSid,
-            FileSystemRights.FullControl,                                       // full control so no arm if new files are created
+            FileSystemRights.FullControl, // full control so no arm if new files are created
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
             PropagationFlags.None,
             AccessControlType.Allow);
 
         // Check if such a rule already exists, if so skip the modifications
-        if (ContainsRule(security.GetAccessRules(true, true, typeof(SecurityIdentifier)), newRule))
+        if (ContainsRule(security.GetAccessRules(true, true, typeof (SecurityIdentifier)), newRule))
         {
           Console.WriteLine("Permissions already set.");
           return;
@@ -100,6 +101,7 @@ namespace SetRights
         Console.WriteLine("Error while setting full write access to everyone for file: {0} : {1}", folderName, ex);
       }
     }
+
     /// <summary>
     /// Grants full control on the given registry key under HKCU for everyone
     /// </summary>
@@ -108,6 +110,7 @@ namespace SetRights
     {
       GrantFullControlRegKey(Registry.CurrentUser, subKey);
     }
+
     /// <summary>
     /// Grants full control on the given registry key under HKLM for everyone
     /// </summary>
@@ -116,6 +119,7 @@ namespace SetRights
     {
       GrantFullControlRegKey(Registry.LocalMachine, subKey);
     }
+
     /// <summary>
     /// Grants full control on the given registry key under given root name for everyone
     /// </summary>
@@ -124,12 +128,17 @@ namespace SetRights
     {
       switch (keyShortName)
       {
-        case "HKCU": GrantFullControlRegKeyUser(subKey); break;
-        case "HKLM": GrantFullControlRegKeyLM(subKey); break;
+        case "HKCU":
+          GrantFullControlRegKeyUser(subKey);
+          break;
+        case "HKLM":
+          GrantFullControlRegKeyLM(subKey);
+          break;
         default:
           throw new Exception("Invalid registry base key");
       }
     }
+
     /// <summary>
     /// Grants full control on the given registry key under RegistryKey for everyone
     /// </summary>
@@ -144,19 +153,19 @@ namespace SetRights
       {
         // Create a SecurityIdentifier object for "everyone".
         SecurityIdentifier everyoneSid =
-            new SecurityIdentifier(WellKnownSidType.WorldSid, null);
+          new SecurityIdentifier(WellKnownSidType.WorldSid, null);
 
         RegistrySecurity security = rKey.GetAccessControl();
         RegistryAccessRule newRule =
           new RegistryAccessRule(
             everyoneSid,
-            RegistryRights.FullControl,  // modify is enough for reading/writing/deleting
+            RegistryRights.FullControl, // modify is enough for reading/writing/deleting
             InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, // all subfolders and files
             PropagationFlags.None,
             AccessControlType.Allow);
 
         // Check if such a rule already exists, if so skip the modifications
-        if (ContainsRule(security.GetAccessRules(true, true, typeof(SecurityIdentifier)), newRule))
+        if (ContainsRule(security.GetAccessRules(true, true, typeof (SecurityIdentifier)), newRule))
         {
           Console.WriteLine("Permissions already set.");
           return;
@@ -189,6 +198,7 @@ namespace SetRights
       }
       return false;
     }
+
     /// <summary>
     /// Checks if the rule already exists in the collection.
     /// </summary>
@@ -204,6 +214,7 @@ namespace SetRights
       }
       return false;
     }
+
     /// <summary>
     /// Compare two rules on important properties.
     /// </summary>
@@ -213,13 +224,14 @@ namespace SetRights
     private static bool IsEqualRule(FileSystemAccessRule rule1, FileSystemAccessRule rule2)
     {
       if (rule1.AccessControlType != rule2.AccessControlType ||
-        rule1.FileSystemRights != rule2.FileSystemRights ||
-        rule1.IdentityReference != rule2.IdentityReference ||
-        rule1.InheritanceFlags != rule2.InheritanceFlags)
+          rule1.FileSystemRights != rule2.FileSystemRights ||
+          rule1.IdentityReference != rule2.IdentityReference ||
+          rule1.InheritanceFlags != rule2.InheritanceFlags)
         return false;
       else
         return true;
     }
+
     /// <summary>
     /// Compare two rules on important properties.
     /// </summary>
@@ -229,9 +241,9 @@ namespace SetRights
     private static bool IsEqualRule(RegistryAccessRule rule1, RegistryAccessRule rule2)
     {
       if (rule1.AccessControlType != rule2.AccessControlType ||
-        rule1.RegistryRights != rule2.RegistryRights ||
-        rule1.IdentityReference != rule2.IdentityReference ||
-        rule1.InheritanceFlags != rule2.InheritanceFlags)
+          rule1.RegistryRights != rule2.RegistryRights ||
+          rule1.IdentityReference != rule2.IdentityReference ||
+          rule1.InheritanceFlags != rule2.InheritanceFlags)
         return false;
       else
         return true;

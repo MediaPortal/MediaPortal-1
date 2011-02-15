@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -197,7 +197,8 @@ namespace MediaPortal.GUI.Library
       _imageBackGround.Render(timePassed);
 
       int iWidthLeft = _imageLeft.TextureWidth;
-      int iHeightLeft = (_innerheight != -1) ? _innerheight : _imageLeft.TextureHeight; // Legacy skin don't use innerheight
+      int iHeightLeft = (_innerheight != -1) ? _innerheight : _imageLeft.TextureHeight;
+      // Legacy skin don't use innerheight
       int iWidthRight = _imageRight.TextureWidth;
       int iHeightRight = (_innerheight != -1) ? _innerheight : _imageRight.TextureHeight;
       GUIGraphicsContext.ScaleHorizontal(ref iWidthLeft);
@@ -232,7 +233,8 @@ namespace MediaPortal.GUI.Library
         int iXPos = _imageBackGround.XPosition + midOffsetX;
         int iYPos = _imageBackGround.YPosition + midOffsetY;
 
-        if (_percentage > 0 && fWidth > 1) {
+        if (_percentage > 0 && fWidth > 1)
+        {
           _imageMid.SetPosition(iXPos, iYPos);
           _imageMid.Height = iHeightMid;
           _imageMid.Width = (int)Math.Abs(fWidth);

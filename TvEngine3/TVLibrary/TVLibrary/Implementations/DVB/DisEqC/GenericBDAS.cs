@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Generic BDA DiSEqC support.
   /// </summary>
-  public class GenericBDAS: IDisposable
+  public class GenericBDAS : IDisposable
   {
     #region variables
 
@@ -82,6 +82,7 @@ namespace TvLibrary.Implementations.DVB
     {
       return String.Format("{0}:{1}", _CardName, LogMessage);
     }
+
     /// <summary>
     /// Sends the diseq command.
     /// </summary>
@@ -245,9 +246,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable Member
 
-    public virtual void Dispose()
-    {
-    }
+    public virtual void Dispose() {}
 
     #endregion
   }

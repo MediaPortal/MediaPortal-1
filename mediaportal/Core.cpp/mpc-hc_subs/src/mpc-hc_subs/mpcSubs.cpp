@@ -73,6 +73,11 @@ BSTR GetLanguage(int i)
 	return (g_subManager ? g_subManager->GetLanguage(i) : NULL);
 }
 
+BSTR GetTrackName(int i)
+{
+	return (g_subManager ? g_subManager->GetTrackName(i) : NULL);
+}
+
 int GetCurrent()
 {
 	return (g_subManager ? g_subManager->GetCurrent() : -1);

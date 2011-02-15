@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -203,6 +203,15 @@ namespace TvLibrary.Implementations.Analog
                                             parameters.MaximumFileSize);
       _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
 
+      if (CurrentChannel == null)
+      {
+        Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
+        return false;
+      }
+
+      //  Set the channel type (0=tv, 1=radio)
+      _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _tsFilterInterface.TimeShiftPause(_subChannelId, 1);
       _tsFilterInterface.TimeShiftSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
       _tsFilterInterface.AnalyzerSetVideoPid(_subChannelId, 0x1011);
@@ -311,10 +320,10 @@ namespace TvLibrary.Implementations.Analog
     /// <value>The number of channels decrypting.</value>
     public override IVideoStream GetCurrentVideoStream
     {
-      get 
+      get
       {
         VideoStream stream = new VideoStream();
-        return stream; 
+        return stream;
       }
     }
 

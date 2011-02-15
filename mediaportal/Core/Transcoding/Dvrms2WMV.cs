@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -556,8 +556,8 @@ namespace MediaPortal.Core.Transcoding
           return false;
         }
       }
-      
-      
+
+
       Log.Info("DVRMS2WMV: load profile - SUCCESS!");
       //configures the WM ASF Writer to the chosen profile
       hr = config.ConfigureFilterUsingProfile(profile);
@@ -632,9 +632,9 @@ namespace MediaPortal.Core.Transcoding
       string profileContents = "";
       using (StreamReader prx = new StreamReader(strprofileType))
       {
-        profileContents = prx.ReadToEnd();  
+        profileContents = prx.ReadToEnd();
       }
-      
+
       profileManager2 = profileManager as IWMProfileManager2;
       profileManagerLanguage = profileManager as IWMProfileManagerLanguage;
       hr = profileManager2.GetSystemProfileVersion(out wmversion);

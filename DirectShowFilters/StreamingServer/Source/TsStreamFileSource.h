@@ -35,15 +35,18 @@ public:
 	static TsStreamFileSource* createNew(UsageEnvironment& env,
 		char const* fileName,
 		unsigned preferredFrameSize = 0,
-		unsigned playTimePerFrame = 0);
+		unsigned playTimePerFrame = 0,
+		int channelType = 0);
 	// "preferredFrameSize" == 0 means 'no preference'
 	// "playTimePerFrame" is in microseconds
+	//	channelType determines the buffer size (for more reliable streaming)
 
 	static TsStreamFileSource* createNew(UsageEnvironment& env,
 		FILE* fid,
 		Boolean deleteFidOnClose = False,
 		unsigned preferredFrameSize = 0,
-		unsigned playTimePerFrame = 0);
+		unsigned playTimePerFrame = 0,
+		int channelType = 0);
 	// an alternative version of "createNew()" that's used if you already have
 	// an open file.
 
@@ -58,7 +61,8 @@ protected:
 	TsStreamFileSource(UsageEnvironment& env,
 		FILE* fid, Boolean deleteFidOnClose,
 		unsigned preferredFrameSize,
-		unsigned playTimePerFrame);
+		unsigned playTimePerFrame,
+		int channelType);
 	// called only by createNew()
 
 	virtual ~TsStreamFileSource();

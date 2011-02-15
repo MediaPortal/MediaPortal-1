@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -159,12 +159,14 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxColourScheme.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxColourScheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxColourScheme.FormattingEnabled = true;
-      this.comboBoxColourScheme.Items.AddRange(new object[] {
-            "Default",
-            "Theater",
-            "Office",
-            "Airplane",
-            "Car"});
+      this.comboBoxColourScheme.Items.AddRange(new object[]
+                                                 {
+                                                   "Default",
+                                                   "Theater",
+                                                   "Office",
+                                                   "Airplane",
+                                                   "Car"
+                                                 });
       this.comboBoxColourScheme.Location = new System.Drawing.Point(256, 140);
       this.comboBoxColourScheme.Name = "comboBoxColourScheme";
       this.comboBoxColourScheme.Size = new System.Drawing.Size(198, 21);
@@ -246,11 +248,13 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlaceMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlaceMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceMode.FormattingEnabled = true;
-      this.comboBoxDeInterlaceMode.Items.AddRange(new object[] {
-            "VMR default",
-            "VMR pixel adaptive",
-            "VMR median filtering",
-            "VMR vertical stretch"});
+      this.comboBoxDeInterlaceMode.Items.AddRange(new object[]
+                                                    {
+                                                      "VMR default",
+                                                      "VMR pixel adaptive",
+                                                      "VMR median filtering",
+                                                      "VMR vertical stretch"
+                                                    });
       this.comboBoxDeInterlaceMode.Location = new System.Drawing.Point(256, 90);
       this.comboBoxDeInterlaceMode.Name = "comboBoxDeInterlaceMode";
       this.comboBoxDeInterlaceMode.Size = new System.Drawing.Size(198, 21);
@@ -261,11 +265,13 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlaceControl.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlaceControl.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlaceControl.FormattingEnabled = true;
-      this.comboBoxDeInterlaceControl.Items.AddRange(new object[] {
-            "Automatic",
-            "Film",
-            "Video",
-            "Smart"});
+      this.comboBoxDeInterlaceControl.Items.AddRange(new object[]
+                                                       {
+                                                         "Automatic",
+                                                         "Film",
+                                                         "Video",
+                                                         "Smart"
+                                                       });
       this.comboBoxDeInterlaceControl.Location = new System.Drawing.Point(256, 41);
       this.comboBoxDeInterlaceControl.Name = "comboBoxDeInterlaceControl";
       this.comboBoxDeInterlaceControl.Size = new System.Drawing.Size(198, 21);
@@ -314,14 +320,17 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.FormattingEnabled = true;
-      this.comboBoxOutPutMode.Items.AddRange(new object[] {
-            "SPDIF Mode",
-            "Pro Logic Mode"});
+      this.comboBoxOutPutMode.Items.AddRange(new object[]
+                                               {
+                                                 "SPDIF Mode",
+                                                 "Pro Logic Mode"
+                                               });
       this.comboBoxOutPutMode.Location = new System.Drawing.Point(214, 104);
       this.comboBoxOutPutMode.Name = "comboBoxOutPutMode";
       this.comboBoxOutPutMode.Size = new System.Drawing.Size(183, 21);
       this.comboBoxOutPutMode.TabIndex = 12;
-      this.comboBoxOutPutMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
+      this.comboBoxOutPutMode.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxOutPutMode_SelectedIndexChanged);
       // 
       // DynamicRangeControl
       // 
@@ -346,12 +355,14 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxProLogicII.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxProLogicII.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxProLogicII.FormattingEnabled = true;
-      this.comboBoxProLogicII.Items.AddRange(new object[] {
-            "Off",
-            "Pro Logic",
-            "Music Mode",
-            "Movie Mode",
-            "Matrix Mode"});
+      this.comboBoxProLogicII.Items.AddRange(new object[]
+                                               {
+                                                 "Off",
+                                                 "Pro Logic",
+                                                 "Music Mode",
+                                                 "Movie Mode",
+                                                 "Matrix Mode"
+                                               });
       this.comboBoxProLogicII.Location = new System.Drawing.Point(38, 167);
       this.comboBoxProLogicII.Name = "comboBoxProLogicII";
       this.comboBoxProLogicII.Size = new System.Drawing.Size(183, 21);
@@ -362,10 +373,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDRC.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDRC.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDRC.FormattingEnabled = true;
-      this.comboBoxDRC.Items.AddRange(new object[] {
-            "Normal",
-            "Late Night",
-            "Theatre"});
+      this.comboBoxDRC.Items.AddRange(new object[]
+                                        {
+                                          "Normal",
+                                          "Late Night",
+                                          "Theatre"
+                                        });
       this.comboBoxDRC.Location = new System.Drawing.Point(262, 167);
       this.comboBoxDRC.Name = "comboBoxDRC";
       this.comboBoxDRC.Size = new System.Drawing.Size(192, 21);
@@ -373,35 +386,44 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerSetup
       // 
-      this.comboBoxSpeakerSetup.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerSetup.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerSetup.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerSetup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerSetup.Items.AddRange(new object[] {
-            "Mono",
-            "Stereo",
-            "3 Speakers (2.1)",
-            "4 Speakers",
-            "5 Speakers",
-            "6 Speakers (6.1)"});
+      this.comboBoxSpeakerSetup.Items.AddRange(new object[]
+                                                 {
+                                                   "Mono",
+                                                   "Stereo",
+                                                   "3 Speakers (2.1)",
+                                                   "4 Speakers",
+                                                   "5 Speakers",
+                                                   "6 Speakers (6.1)"
+                                                 });
       this.comboBoxSpeakerSetup.Location = new System.Drawing.Point(214, 46);
       this.comboBoxSpeakerSetup.Name = "comboBoxSpeakerSetup";
       this.comboBoxSpeakerSetup.Size = new System.Drawing.Size(173, 21);
       this.comboBoxSpeakerSetup.TabIndex = 1;
-      this.comboBoxSpeakerSetup.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
+      this.comboBoxSpeakerSetup.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxSpeakerSetup_SelectedIndexChanged);
       // 
       // comboBoxHeadphones
       // 
-      this.comboBoxHeadphones.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxHeadphones.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxHeadphones.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxHeadphones.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxHeadphones.DropDownWidth = 183;
-      this.comboBoxHeadphones.Items.AddRange(new object[] {
-            "None",
-            "Dolby Headphone 1",
-            "Dolby Headphone 2",
-            "Dolby Headphone 3"});
+      this.comboBoxHeadphones.Items.AddRange(new object[]
+                                               {
+                                                 "None",
+                                                 "Dolby Headphone 1",
+                                                 "Dolby Headphone 2",
+                                                 "Dolby Headphone 3"
+                                               });
       this.comboBoxHeadphones.Location = new System.Drawing.Point(214, 76);
       this.comboBoxHeadphones.Name = "comboBoxHeadphones";
       this.comboBoxHeadphones.Size = new System.Drawing.Size(173, 21);
@@ -474,7 +496,6 @@ namespace MediaPortal.Configuration.Sections
       this.SpeakerSetup.ResumeLayout(false);
       this.SpeakerSetup.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

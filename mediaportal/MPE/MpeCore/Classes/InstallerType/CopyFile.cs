@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -80,7 +80,6 @@ namespace MpeCore.Classes.InstallerType
         packageClass.UnInstallInfo.Items.Add(unInstallItem);
       }
       catch (Exception) {}
-
     }
 
 
@@ -119,12 +118,12 @@ namespace MpeCore.Classes.InstallerType
     public string GetZipEntry(FileItem fileItem)
     {
       string asAscii = Encoding.ASCII.GetString(
-            Encoding.Convert(Encoding.UTF8,
-                             Encoding.GetEncoding(Encoding.ASCII.EncodingName,
-                                                  new EncoderReplacementFallback("_"),
-                                                  new DecoderExceptionFallback()),
-                             Encoding.UTF8.GetBytes(Path.GetFileName(fileItem.LocalFileName))
-                             ));
+        Encoding.Convert(Encoding.UTF8,
+                         Encoding.GetEncoding(Encoding.ASCII.EncodingName,
+                                              new EncoderReplacementFallback("_"),
+                                              new DecoderExceptionFallback()),
+                         Encoding.UTF8.GetBytes(Path.GetFileName(fileItem.LocalFileName))
+          ));
 
       return string.Format("Installer{{CopyFile}}\\{{{0}}}-{1}", Guid.NewGuid(),
                            asAscii);

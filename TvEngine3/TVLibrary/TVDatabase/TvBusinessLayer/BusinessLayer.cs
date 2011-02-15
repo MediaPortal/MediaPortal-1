@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -348,7 +348,7 @@ namespace TvDatabase
 
     public TuningDetail GetTuningDetail(int networkId, int serviceId, int channelType)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "networkId", networkId);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
       sb.AddConstraint(Operator.Equals, "channelType", channelType);
@@ -369,7 +369,7 @@ namespace TvDatabase
 
     public TuningDetail GetTuningDetail(int networkId, int transportId, int serviceId, int channelType)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "networkId", networkId);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
       sb.AddConstraint(Operator.Equals, "transportId", transportId);
@@ -391,10 +391,10 @@ namespace TvDatabase
 
     public IList<TuningDetail> GetTuningDetailsByName(string name, int channelType)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "name", name);
       sb.AddConstraint(Operator.Equals, "channelType", channelType);
-      
+
       SqlStatement stmt = sb.GetStatement(true);
       IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
       return details;
@@ -426,6 +426,7 @@ namespace TvDatabase
       }
       return channelType;
     }
+
     public TuningDetail GetTuningDetail(DVBBaseChannel channel)
     {
       int channelType = GetChannelType(channel);
@@ -443,12 +444,12 @@ namespace TvDatabase
 
     public IList<Channel> GetChannelsInGroup(ChannelGroup group)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Channel));
       SqlStatement origStmt = sb.GetStatement(true);
       string sql = "select c.* from channel c inner join groupmap gm on (c.idChannel = gm.idChannel and gm.idGroup =" +
                    group.IdGroup + ") order by gm.SortOrder asc";
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
-                                                    typeof(Channel));
+                                                typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(statement.Execute());
     }
 
@@ -704,7 +705,7 @@ namespace TvDatabase
       newMap.Persist();
       return newMap;
     }
-    
+
     /// <summary>
     /// Gets a list of radio channels sorted by their group
     /// </summary>
@@ -718,7 +719,7 @@ namespace TvDatabase
                                                       "select c.* from Channel c inner join RadioGroupMap g on (c.idChannel=g.idChannel and g.idGroup = '{0}') where visibleInGuide = 1 and isRadio = 1 order by g.sortOrder",
                                                       groupID), typeof (Channel));
       return ObjectFactory.GetCollection<Channel>(ManualJoinSQL.Execute()) as List<Channel>;
-    }    
+    }
 
     /// <summary>
     /// Gets a list of tv channels sorted by their group
@@ -1093,16 +1094,16 @@ namespace TvDatabase
 
     public IList<ChannelLinkageMap> GetLinkagesForChannel(Channel channel)
     {
-      IList<ChannelLinkageMap> pmap=channel.ReferringLinkedChannels();
-      if (pmap!=null)
+      IList<ChannelLinkageMap> pmap = channel.ReferringLinkedChannels();
+      if (pmap != null)
       {
-        if (pmap.Count>0)
+        if (pmap.Count > 0)
           return pmap;
       }
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelLinkageMap));
       sb.AddConstraint(Operator.Equals, "idLinkedChannel", channel.IdChannel);
       SqlStatement stmt = sb.GetStatement(true);
-      return  ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
+      return ObjectFactory.GetCollection<ChannelLinkageMap>(stmt.Execute());
     }
 
     #endregion
@@ -1124,7 +1125,7 @@ namespace TvDatabase
       string provider = ProviderFactory.GetDefaultProvider().Name.ToLowerInvariant();
       if (provider == "mysql")
       {
-        return original.Replace("\\","\\\\").Replace("'", "\\'");
+        return original.Replace("\\", "\\\\").Replace("'", "\\'");
       }
       else
       {
@@ -1580,7 +1581,8 @@ namespace TvDatabase
     {
       return SearchProgramsPerGenre(currentGenre, searchCriteria, ChannelType.All);
     }
-    public IList<Program> SearchProgramsPerGenre(string currentGenre, string searchCriteria,ChannelType channelType)
+
+    public IList<Program> SearchProgramsPerGenre(string currentGenre, string searchCriteria, ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
@@ -1615,12 +1617,13 @@ namespace TvDatabase
     {
       return SearchPrograms(searchCriteria, ChannelType.All);
     }
-    public IList<Program> SearchPrograms(string searchCriteria,ChannelType channelType)
+
+    public IList<Program> SearchPrograms(string searchCriteria, ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
       SqlSelectCommand.Append("select p.* from Program p inner join Channel c on c.idChannel = p.idChannel ");
-      SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));      
+      SqlSelectCommand.AppendFormat("where endTime > '{0}' ", DateTime.Now.ToString(GetDateTimeString(), mmddFormat));
 
       if (searchCriteria.Length > 0)
       {
@@ -1647,7 +1650,8 @@ namespace TvDatabase
     {
       return SearchProgramsByDescription(searchCriteria, ChannelType.All);
     }
-    public IList<Program> SearchProgramsByDescription(string searchCriteria,ChannelType channelType)
+
+    public IList<Program> SearchProgramsByDescription(string searchCriteria, ChannelType channelType)
     {
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       StringBuilder SqlSelectCommand = new StringBuilder();
@@ -2734,7 +2738,7 @@ namespace TvDatabase
       Log.Info("GetConflictingSchedules: Schedule = " + rec);
       List<Schedule> conflicts = new List<Schedule>();
       IList<Schedule> schedulesList = Schedule.ListAll();
-      
+
       IList<Card> cards = Card.ListAll();
       if (cards.Count == 0)
       {
@@ -2991,36 +2995,36 @@ namespace TvDatabase
       IList<Program> programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
-           //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
-           programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
-           foreach (Program prog in programs)
-           {
-               // dtDay.DayOfWeek == rec.StartTime.DayOfWeek
-               // Log.Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
-               if (prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek && rec.IsRecordingProgram(prog, false))
-               {
-                   Schedule recNew = rec.Clone();
-                   recNew.ScheduleType = (int)ScheduleRecordingType.Once;
-                   recNew.IdChannel = prog.IdChannel;
-                   recNew.StartTime = prog.StartTime;
-                   recNew.EndTime = prog.EndTime;
-                   recNew.Series = true;
-                   if (rec.IsSerieIsCanceled(recNew.StartTime))
-                   {
-                     recNew.Canceled = recNew.StartTime;
-                   }
-                   recordings.Add(recNew);
+        //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
+        programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
+        foreach (Program prog in programs)
+        {
+          // dtDay.DayOfWeek == rec.StartTime.DayOfWeek
+          // Log.Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+          if (prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek && rec.IsRecordingProgram(prog, false))
+          {
+            Schedule recNew = rec.Clone();
+            recNew.ScheduleType = (int)ScheduleRecordingType.Once;
+            recNew.IdChannel = prog.IdChannel;
+            recNew.StartTime = prog.StartTime;
+            recNew.EndTime = prog.EndTime;
+            recNew.Series = true;
+            if (rec.IsSerieIsCanceled(recNew.StartTime))
+            {
+              recNew.Canceled = recNew.StartTime;
+            }
+            recordings.Add(recNew);
 
-                   //Log.Debug("BusinessLayer.cs Added Recording WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
-               }
-           }
-           return recordings;
+            //Log.Debug("BusinessLayer.cs Added Recording WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+          }
+        }
+        return recordings;
       }
 
       programs = rec.ScheduleType == (int)ScheduleRecordingType.EveryTimeOnThisChannel
-                                  ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
-                                                                rec.ReferencedChannel())
-                                  : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
+                   ? layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName,
+                                                 rec.ReferencedChannel())
+                   : layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, null);
       foreach (Program prog in programs)
       {
         if (rec.IsRecordingProgram(prog, false))
@@ -3157,31 +3161,35 @@ namespace TvDatabase
     #endregion
 
     #region SoftwareEncoders
-    public IList<SoftwareEncoder> GetSofwareEncodersVideo() {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(SoftwareEncoder));
+
+    public IList<SoftwareEncoder> GetSofwareEncodersVideo()
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (SoftwareEncoder));
       sb.AddConstraint(Operator.Equals, "type", 0);
       sb.AddOrderByField(true, "priority");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<SoftwareEncoder>(stmt.Execute());
     }
 
-    public IList<SoftwareEncoder> GetSofwareEncodersAudio() {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(SoftwareEncoder));
+    public IList<SoftwareEncoder> GetSofwareEncodersAudio()
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (SoftwareEncoder));
       sb.AddConstraint(Operator.Equals, "type", 1);
       sb.AddOrderByField(true, "priority");
       SqlStatement stmt = sb.GetStatement(true);
       return ObjectFactory.GetCollection<SoftwareEncoder>(stmt.Execute());
     }
+
     #endregion
 
     public bool IsChannelMappedToCard(Channel dbChannel, Card card, bool forEpg)
     {
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(ChannelMap));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelMap));
       SqlStatement origStmt = sb.GetStatement(true);
       string sql = "select cm.* from channelmap cm where cm.idChannel =" +
-        dbChannel.IdChannel + " and cm.idCard=" +card.IdCard + (forEpg? "": " and cm.epgOnly=0");
+                   dbChannel.IdChannel + " and cm.idCard=" + card.IdCard + (forEpg ? "" : " and cm.epgOnly=0");
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
-                                                    typeof(Channel));
+                                                typeof (Channel));
       IList<ChannelMap> maps = ObjectFactory.GetCollection<ChannelMap>(statement.Execute());
       return maps != null && maps.Count > 0;
     }

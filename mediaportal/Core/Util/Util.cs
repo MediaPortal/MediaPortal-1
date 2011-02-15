@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -60,7 +60,6 @@ namespace MediaPortal.Util
   /// </summary>
   public class Utils
   {
-
     [DllImport("User32")]
     public static extern void GetWindowText(int h, StringBuilder s, int nMaxCount);
 
@@ -141,6 +140,7 @@ namespace MediaPortal.Util
     }
 
     public delegate bool IECallBack(int hwnd, int lParam);
+
     public delegate void UtilEventHandler(Process proc, bool waitForExit);
 
     public static event UtilEventHandler OnStartExternal = null; // Event: Start external process / waeberd & mPod
@@ -156,14 +156,18 @@ namespace MediaPortal.Util
     private static bool m_bHideExtensions = false;
     private static bool enableGuiSounds;
 
-    private static char[] crypt = new char[10] { 'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q' };
+    private static char[] crypt = new char[10] {'G', 'D', 'J', 'S', 'I', 'B', 'T', 'P', 'W', 'Q'};
 
 
     // singleton. Dont allow any instance of this class
-    private Utils() { }
+    private Utils() {}
 
-    public static string AudioExtensionsDefault = ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
-    public static string VideoExtensionsDefault = ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+    public static string AudioExtensionsDefault =
+      ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
+
+    public static string VideoExtensionsDefault =
+      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";
 
@@ -180,21 +184,21 @@ namespace MediaPortal.Util
         _movieNamePrefixes = movieNamePrefixes.Split(',');
 
         string strTmp = xmlreader.GetValueAsString("music", "extensions", AudioExtensionsDefault);
-        Tokens tok = new Tokens(strTmp, new[] { ',' });
+        Tokens tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_AudioExtensions.Add(extension.ToLower().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("movies", "extensions", VideoExtensionsDefault);
-        tok = new Tokens(strTmp, new[] { ',' });
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_VideoExtensions.Add(extension.ToLower().Trim());
         }
 
         strTmp = xmlreader.GetValueAsString("pictures", "extensions", PictureExtensionsDefault);
-        tok = new Tokens(strTmp, new[] { ',' });
+        tok = new Tokens(strTmp, new[] {','});
         foreach (string extension in tok)
         {
           m_PictureExtensions.Add(extension.ToLower().Trim());
@@ -203,7 +207,7 @@ namespace MediaPortal.Util
         if (xmlreader.GetValueAsBool("daemon", "enabled", false))
         {
           strTmp = xmlreader.GetValueAsString("daemon", "extensions", ImageExtensionsDefault);
-          tok = new Tokens(strTmp, new[] { ',' });
+          tok = new Tokens(strTmp, new[] {','});
           foreach (string extension in tok)
           {
             m_ImageExtensions.Add(extension.ToLower().Trim());
@@ -315,7 +319,7 @@ namespace MediaPortal.Util
         if (Convert.ToUInt32(mo["DriveType"]) == 4)
           return Convert.ToString(mo["ProviderName"]);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return sFilePath;
     }
 
@@ -338,9 +342,10 @@ namespace MediaPortal.Util
       return diskSize;
     }
 
-    static char[] sizes = new char[] { 'K', 'M', 'G', 'T' };
+    private static char[] sizes = new char[] {'K', 'M', 'G', 'T'};
     // converts bytes to bytes / 1024^n
-    static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
+    private static Func<long, int, double> sizeConverter = (size, expo) => size / Math.Pow(1024, expo);
+
     public static string GetSize(long dwFileSize)
     {
       int i = sizes.Length;
@@ -405,7 +410,7 @@ namespace MediaPortal.Util
           return true;
         return m_VideoExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -448,7 +453,7 @@ namespace MediaPortal.Util
         if (IsPlayListExtension(extensionFile)) return false;
         return m_AudioExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -462,11 +467,11 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         return m_PictureExtensions.Contains(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
-    static bool IsPlayListExtension(string extensionFile)
+    private static bool IsPlayListExtension(string extensionFile)
     {
       if (extensionFile == ".m3u") return true;
       if (extensionFile == ".pls") return true;
@@ -484,7 +489,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         return IsPlayListExtension(extensionFile);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -497,7 +502,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".exe") return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -510,7 +515,7 @@ namespace MediaPortal.Util
         string extensionFile = Path.GetExtension(strPath).ToLower();
         if (extensionFile == ".lnk") return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -619,10 +624,12 @@ namespace MediaPortal.Util
           return;
         }
 
-        string[] thumbs = { Path.ChangeExtension(item.Path, ".jpg"), 
-                            Path.ChangeExtension(item.Path, ".tbn"), 
+        string[] thumbs = {
+                            Path.ChangeExtension(item.Path, ".jpg"),
+                            Path.ChangeExtension(item.Path, ".tbn"),
                             Path.ChangeExtension(item.Path, ".png"),
-                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))};
+                            String.Format(@"{0}\{1}.jpg", Thumbs.Videos, EncryptLine(item.Path))
+                          };
 
         bool foundVideoThumb = false;
         foreach (string s in thumbs)
@@ -643,9 +650,11 @@ namespace MediaPortal.Util
 
         if (createVideoThumbs && !foundVideoThumb)
         {
-          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) && !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
+          if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
+              !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
           {
-            Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) + ") not found. Creating a new video thumb...");
+            Log.Debug("SetThumbnails: Thumbs for video (" + GetFilename(item.Path) +
+                      ") not found. Creating a new video thumb...");
             // creating and starting a thread for potentially every file in a list is very expensive, we should use the threadpool
             //Thread extractVideoThumbThread = new Thread(GetVideoThumb)
             //{
@@ -658,9 +667,16 @@ namespace MediaPortal.Util
           }
           return;
         }
-        item.ThumbnailImage = strThumb;
-        item.IconImage = strThumb;
-        item.IconImageBig = strThumb;
+        if (item.ThumbnailImage == string.Empty)
+        {
+          item.ThumbnailImage = strThumb;
+          item.IconImage = strThumb;
+          item.IconImageBig = strThumb;
+        }
+        else
+        {
+          strThumb = item.ThumbnailImage;
+        }
       }
       else
       {
@@ -877,28 +893,33 @@ namespace MediaPortal.Util
       DateTime now = DateTime.Now;
       if (aDateTime.Date == now.Date) // Today
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030), aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6030),
+                             aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       }
       else if (aDateTime.Date == now.Date.AddDays(1)) // Tomorrow
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("t"), CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6031), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
       else if (aDateTime.Date.AddDays(1) == now.Date) // Yesterday
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("t"), CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6040), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
       else if (aDateTime.Date.AddDays(2) == now.Date) // Two days ago
       {
-        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("t"), CultureInfo.CurrentCulture.DateTimeFormat);
+        return String.Format("{0} {1}", GUILocalizeStrings.Get(6041), aDateTime.ToString("t"),
+                             CultureInfo.CurrentCulture.DateTimeFormat);
       }
       return String.Format("{0} {1}",
-                                     Utils.GetShortDayString(aDateTime),
-                                     aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                           Utils.GetShortDayString(aDateTime),
+                           aDateTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
     }
 
     public static string GetNamedDateStartEnd(DateTime startDateTime, DateTime endDateTime)
     {
-      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t"), CultureInfo.CurrentCulture.DateTimeFormat);
+      return String.Format("{0}-{1}", GetNamedDate(startDateTime), endDateTime.ToString("t"),
+                           CultureInfo.CurrentCulture.DateTimeFormat);
     }
 
     public static string GetShortDayString(DateTime dt)
@@ -932,7 +953,7 @@ namespace MediaPortal.Util
         }
         return String.Format("{0} {1}-{2}", day, dt.Day, dt.Month);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return string.Empty;
     }
 
@@ -1012,7 +1033,7 @@ namespace MediaPortal.Util
         RegistryKey regKey = Registry.CurrentUser.OpenSubKey(string.Format(@"Network\{0}", strPath.Substring(0, 1)));
         return (regKey != null);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1234,7 +1255,7 @@ namespace MediaPortal.Util
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // No matches were found, so no stacking
       return false;
@@ -1250,12 +1271,14 @@ namespace MediaPortal.Util
         //if (Regex.IsMatch(strFileName, pattern[i], RegexOptions.IgnoreCase))
         if (stackReg[i].IsMatch(strFileName))
         {
-          strFileName = stackReg[i].Replace(strFileName, ""); //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
+          strFileName = stackReg[i].Replace(strFileName, "");
+          //Regex.Replace(strFileName, pattern[i], "", RegexOptions.IgnoreCase);
         }
       }
     }
 
     private static Regex[] StackRegExpressions = null;
+
     public static Regex[] StackExpression()
     {
       // Patterns that are used for matching
@@ -1268,14 +1291,14 @@ namespace MediaPortal.Util
       if (StackRegExpressions != null) return StackRegExpressions;
       string[] pattern = {
                            "\\[(?<digit>[0-9]{1,2})-[0-9]{1,2}\\]",
-                             "[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
+                           "\\s*[-_+ ]\\({0,1}(cd|dis[ck]|part|dvd)[-_+ ]{0,1}(?<digit>[0-9]{1,2})\\){0,1}"
                          };
 
       StackRegExpressions = new Regex[]
-                 {
-                     new Regex(pattern[0], RegexOptions.Compiled | RegexOptions.IgnoreCase), 
-                     new Regex(pattern[1], RegexOptions.Compiled | RegexOptions.IgnoreCase)
-                 };
+                              {
+                                new Regex(pattern[0], RegexOptions.Compiled | RegexOptions.IgnoreCase),
+                                new Regex(pattern[1], RegexOptions.Compiled | RegexOptions.IgnoreCase)
+                              };
       return StackRegExpressions;
     }
 
@@ -1292,7 +1315,7 @@ namespace MediaPortal.Util
         string strRet = Path.GetFullPath(String.Format("{0}{1}.jpg", Config.GetFolder(Config.Dir.Thumbs), dwcrc));
         return strRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return "000";
     }
 
@@ -1357,7 +1380,7 @@ namespace MediaPortal.Util
           CloseHandle(fHandle);
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       return result;
     }
@@ -1406,7 +1429,7 @@ namespace MediaPortal.Util
       return proc;
     }
 
-    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bMinimized)
+    public static Process StartProcess(string strProgram, string strParams, bool bWaitForExit, bool bHidden)
     {
       if (strProgram == null) return null;
       if (strProgram.Length == 0) return null;
@@ -1419,9 +1442,12 @@ namespace MediaPortal.Util
       procInfo.FileName = strFileName;
       procInfo.WorkingDirectory = strWorkingDir;
       procInfo.Arguments = strParams;
-      if (bMinimized)
+
+      if (bHidden)
       {
-        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Minimized;
+        // A hidden window can process messages from the system or from other windows, but it cannot process input from the user or display output.
+        // Set to hidden to avoid losing focus.
+        procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
       }
       return StartProcess(procInfo, bWaitForExit);
@@ -1586,7 +1612,7 @@ namespace MediaPortal.Util
               {
                 process.Kill();
               }
-              catch (Exception) { }
+              catch (Exception) {}
             }
 
             mpRunning = CheckForRunningProcess(aProcessName, false);
@@ -1762,7 +1788,7 @@ namespace MediaPortal.Util
         DateTime dt = new DateTime(year, month, day, hour, minute, 0, 0);
         return dt;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -1785,7 +1811,7 @@ namespace MediaPortal.Util
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return 0;
     }
 
@@ -1857,7 +1883,7 @@ namespace MediaPortal.Util
         File.Delete(strFile);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1874,7 +1900,7 @@ namespace MediaPortal.Util
         Directory.Delete(aDirectory, aRecursive);
         return true;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -1928,7 +1954,7 @@ namespace MediaPortal.Util
         {
           File.Copy(file, strFile, true);
         }
-        catch (Exception) { }
+        catch (Exception) {}
         return;
       }
       DownLoadImage(strURL, file);
@@ -1964,11 +1990,10 @@ namespace MediaPortal.Util
           // wr.Proxy = WebProxy.GetDefaultProxy();
           wr.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
-        catch (Exception) { }
+        catch (Exception) {}
         HttpWebResponse ws = (HttpWebResponse)wr.GetResponse();
         try
         {
-
           using (Stream str = ws.GetResponseStream())
           {
             byte[] inBuf = new byte[900000];
@@ -2066,7 +2091,7 @@ namespace MediaPortal.Util
         else
           return Path.GetFileName(strPath);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return strPath;
     }
 
@@ -2365,7 +2390,7 @@ namespace MediaPortal.Util
                 break;
               }
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
           if (FileExistsInCache(strRemoteFolderThumb))
           {
@@ -2461,19 +2486,19 @@ namespace MediaPortal.Util
     private static Dictionary<string, FileSystemWatcher> _watchers = new Dictionary<string, FileSystemWatcher>();
 
     private static HashSet<string> _foldersLookedUp = new HashSet<string>();
-    private static HashSet<string> _fileExistsCacheQueue = new HashSet<string>();        
+    private static HashSet<string> _fileExistsCacheQueue = new HashSet<string>();
 
     private static Thread _fileSystemManagerThread = null;
     private static Thread _fileExistsCacheThread = null;
 
     private static DateTime _lastTimeFolderWasAdded = DateTime.MinValue;
-    
+
     private static ManualResetEvent _fileExistsCacheThreadEvt = new ManualResetEvent(false);
 
     private static object _fileLookUpCacheLock = new object();
     private static object _foldersLookedUpLock = new object();
     private static object _watchersLock = new object();
-    private static object _fileExistsCacheLock = new object();    
+    private static object _fileExistsCacheLock = new object();
 
     public static void UpdateLookUpCacheItem(FileLookUpItem fileLookUpItem, string key)
     {
@@ -2506,7 +2531,7 @@ namespace MediaPortal.Util
       return files;
     }
 
-    static string GetParentDirectory(string path)
+    private static string GetParentDirectory(string path)
     {
       if (string.IsNullOrEmpty(path))
       {
@@ -2534,7 +2559,7 @@ namespace MediaPortal.Util
         foldersLookedUpCopy = new HashSet<string>(_foldersLookedUp);
       }
 
-      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy);     
+      bool hasFolderBeenScanned = foldersLookedUpCopy.Any(s => s == dirCopy);
       return hasFolderBeenScanned;
     }
 
@@ -2608,10 +2633,10 @@ namespace MediaPortal.Util
           AddWatcher(path, (buffersize + 4096));
         }
         else
-        {          
+        {
           RemoveWatcher(path);
           RemoveFoldersFromCache(path);
-        }        
+        }
       }
     }
 
@@ -2661,7 +2686,7 @@ namespace MediaPortal.Util
     }
 
     public static bool FileExistsInCache(string filename)
-    {      
+    {
       bool found = false;
 
       if (IsFileExistsCacheEnabled())
@@ -2680,7 +2705,7 @@ namespace MediaPortal.Util
               {
                 _fileExistsCacheQueue.Add(path);
                 _fileExistsCacheThreadEvt.Set();
-              }              
+              }
             }
             /*else
             {
@@ -2711,9 +2736,9 @@ namespace MediaPortal.Util
         }
       }
       return (_fileLookUpCacheEnabled.HasValue && _fileLookUpCacheEnabled.Value);
-    }    
+    }
 
-    private static void FileExistsCacheThread ()
+    private static void FileExistsCacheThread()
     {
       while (true)
       {
@@ -2741,7 +2766,7 @@ namespace MediaPortal.Util
         bool isQueueEmpty = false;
         lock (_fileExistsCacheLock)
         {
-          isQueueEmpty = (_fileExistsCacheQueue.Count == 0);          
+          isQueueEmpty = (_fileExistsCacheQueue.Count == 0);
         }
 
         if (isQueueEmpty)
@@ -2749,10 +2774,9 @@ namespace MediaPortal.Util
           Log.Debug("FileExistsCacheThread: no more items to cache, suspending thread.: {0}", items);
           _fileExistsCacheThreadEvt.Reset();
         }
-        
+
         _fileExistsCacheThreadEvt.WaitOne();
-        
-      }      
+      }
     }
 
     private static void FileSystemWatchManagerThread()
@@ -2799,7 +2823,7 @@ namespace MediaPortal.Util
               }
             }*/
           }
-        }        
+        }
         Thread.Sleep(FileLookUpCacheThreadScanningIntervalMSecs);
       }
     }
@@ -2822,7 +2846,6 @@ namespace MediaPortal.Util
         }
         if (Path.IsPathRooted(dir))
         {
-
           string parentDir2Use = dir;
           string parentDir = dir;
           int nrOfFoldersOnParentDirOld = 0;
@@ -2841,7 +2864,7 @@ namespace MediaPortal.Util
             {
               break;
             }
-            
+
             if (!uniqueTopLevelFolders.Contains(parentDir))
             {
               int nrOfFoldersOnParentDir = foldersLookedUpCopy.Count(fli => fli.StartsWith(parentDir));
@@ -2857,10 +2880,10 @@ namespace MediaPortal.Util
               }
               if (nrOfFoldersOnParentDir > 0)
               {
-                parentDir2Use = parentDir;                
+                parentDir2Use = parentDir;
               }
               nrOfFoldersOnParentDirOld = nrOfFoldersOnParentDir;
-            }     
+            }
             else
             {
               parentDir2Use = null;
@@ -2883,7 +2906,7 @@ namespace MediaPortal.Util
                   addFolder = false;
                   break;
                 }
-               
+
                 folderCompare = GetParentDirectory(folderCompare);
 
                 if (string.IsNullOrEmpty(folderCompare))
@@ -2900,9 +2923,9 @@ namespace MediaPortal.Util
             }
             if (addFolder)
             {
-              uniqueTopLevelFolders.Add(parentDir2Use);    
-            }            
-          }          
+              uniqueTopLevelFolders.Add(parentDir2Use);
+            }
+          }
         }
       }
 
@@ -2921,7 +2944,7 @@ namespace MediaPortal.Util
     }
 
     private static void UpdateWatchers(string dir4Watcher)
-    {           
+    {
       int dir4WatcherLen = dir4Watcher.Length;
 
       string[] keyCopy = _watchers.Keys.ToArray();
@@ -2933,7 +2956,7 @@ namespace MediaPortal.Util
           string path = fsw.Path;
           int pathLen = path.Length;
           if ((pathLen > dir4WatcherLen) && path.StartsWith(dir4Watcher))
-          {            
+          {
             RemoveWatcher(path);
           }
         }
@@ -2951,7 +2974,7 @@ namespace MediaPortal.Util
       FileSystemWatcher fsw = null;
 
       lock (_watchersLock)
-      {        
+      {
         if (_watchers.TryGetValue(dir, out fsw))
         {
           fsw.InternalBufferSize = buffersize;
@@ -2964,7 +2987,7 @@ namespace MediaPortal.Util
       bool bAlreadyWatched = false;
       lock (_watchersLock)
       {
-        bAlreadyWatched=IsFolderAlreadyWatched(dir);
+        bAlreadyWatched = IsFolderAlreadyWatched(dir);
       }
       // if this folders parent is already watched then that watcher already covers it.
       if (!bAlreadyWatched)
@@ -3017,7 +3040,7 @@ namespace MediaPortal.Util
           lock (_watchersLock)
           {
             _watchers.Remove(dir);
-          }                    
+          }
         }
       }
       catch (Exception ex)
@@ -3026,14 +3049,16 @@ namespace MediaPortal.Util
       }
     }
 
-    private static void RemoveFoldersFromCache(string dir) {
-      Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;          
+    private static void RemoveFoldersFromCache(string dir)
+    {
+      Dictionary<string, FileLookUpItem> fileLookUpCacheCopy = null;
       lock (_fileLookUpCache)
       {
         fileLookUpCacheCopy = new Dictionary<string, FileLookUpItem>(_fileLookUpCache);
       }
 
-      IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir = fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
+      IEnumerable<KeyValuePair<string, FileLookUpItem>> filesWithinDir =
+        fileLookUpCacheCopy.Where(fli => fli.Value.Filename.StartsWith(dir));
 
       foreach (KeyValuePair<string, FileLookUpItem> fli in filesWithinDir)
       {
@@ -3062,7 +3087,7 @@ namespace MediaPortal.Util
       }
     }
 
-    private static void SetupFileExistsCacheThread ()
+    private static void SetupFileExistsCacheThread()
     {
       if (_fileExistsCacheThread == null)
       {
@@ -3534,10 +3559,10 @@ namespace MediaPortal.Util
           {
             File.Delete(strFile);
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     public static bool UsingTvServer
@@ -3575,7 +3600,7 @@ namespace MediaPortal.Util
         sec = Int32.Parse(parts[5]);
         return new DateTime(year, month, day, hour, min, sec, 0);
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return DateTime.Now;
     }
 
@@ -3684,11 +3709,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // clean the TempSBE\ folder
       try
@@ -3703,11 +3728,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       // delete *.tv
       try
@@ -3722,11 +3747,11 @@ namespace MediaPortal.Util
             {
               File.Delete(fileName);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     //void DeleteOldTimeShiftFiles(string path)
@@ -3774,10 +3799,10 @@ namespace MediaPortal.Util
               }
             }
           }
-          catch (Exception) { }
+          catch (Exception) {}
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     /// <summary>
@@ -3810,7 +3835,7 @@ namespace MediaPortal.Util
         {
           result += crypt[(int)c - 48];
         }
-        catch { }
+        catch {}
       return result;
     }
 
@@ -3825,7 +3850,7 @@ namespace MediaPortal.Util
             if (crypt[i] == c)
               result += (i).ToString();
         }
-        catch { }
+        catch {}
       }
       return result;
     }
@@ -4051,7 +4076,8 @@ namespace MediaPortal.Util
     /// <param name="path">Path where to get files from</param>
     /// <param name="extensions">Extension ("dll" for example). Multiple extensions should be in format "ext1|ext2|ext3"</param>
     /// <returns>String list of file names</returns>
-    public static string[] GetFiles(string path, string extensions) {
+    public static string[] GetFiles(string path, string extensions)
+    {
       string[] allExtensions = extensions.Split('|');
       List<string> files = new List<string>();
       foreach (string sp in allExtensions)
@@ -4061,7 +4087,7 @@ namespace MediaPortal.Util
         {
           //this check is needed because GetFiles truncates extension to 3 letters, 
           //therefore "*.htm" would find both htm and html files, together with any other variant (htmshit for example)
-          if (!strFile.ToLower().EndsWith("." + sp)) 
+          if (!strFile.ToLower().EndsWith("." + sp))
           {
             continue;
           }
@@ -4075,63 +4101,64 @@ namespace MediaPortal.Util
 
   public static class GenericExtensions
   {
-      public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
+    public static XmlNode SelectSingleNodeFast(this XmlNode node, string xpath)
+    {
+      // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+      XmlNodeList nodes = node.SelectNodes(xpath);
+
+      if (nodes == null)
+        return null;
+
+      IEnumerator enumerator = nodes.GetEnumerator();
+      if (enumerator != null && enumerator.MoveNext())
       {
-          // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
-          XmlNodeList nodes = node.SelectNodes(xpath);
-
-          if (nodes == null)
-              return null;
-
-          IEnumerator enumerator = nodes.GetEnumerator();
-          if (enumerator != null && enumerator.MoveNext())
-          {
-              return (XmlNode)enumerator.Current;
-          }
-          return null;
+        return (XmlNode)enumerator.Current;
       }
+      return null;
+    }
 
-      /// <summary>
-      /// In simple cases this is much much faster than a Full XPATH query
-      /// </summary>
-      /// <param name="node"></param>
-      /// <param name="name"></param>
-      /// <returns></returns>
-      public static XmlNode SelectByNameFromChildren(this XmlNode node, string name)
-      {
-          if (node == null || string.IsNullOrEmpty(name) || !node.HasChildNodes)
-              return null;
-          foreach (XmlNode child in node.ChildNodes)
-              if (name.Equals(child.Name, StringComparison.OrdinalIgnoreCase))
-                  return child;
-          return null;
-      }
+    /// <summary>
+    /// In simple cases this is much much faster than a Full XPATH query
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public static XmlNode SelectByNameFromChildren(this XmlNode node, string name)
+    {
+      if (node == null || string.IsNullOrEmpty(name) || !node.HasChildNodes)
+        return null;
+      foreach (XmlNode child in node.ChildNodes)
+        if (name.Equals(child.Name, StringComparison.OrdinalIgnoreCase))
+          return child;
+      return null;
+    }
 
-      public static TResult TryGetOrAdd<TIn, TResult>(this Dictionary<TIn, TResult> cache, TIn arg, Func<TIn, TResult> evaluator)
-      {
-          TResult res;
-          if (cache.TryGetValue(arg, out res))
-              return res;
-          res = evaluator(arg);
-          cache.Add(arg, res);
-          return res;
-      }
+    public static TResult TryGetOrAdd<TIn, TResult>(this Dictionary<TIn, TResult> cache, TIn arg,
+                                                    Func<TIn, TResult> evaluator)
+    {
+      TResult res;
+      if (cache.TryGetValue(arg, out res))
+        return res;
+      res = evaluator(arg);
+      cache.Add(arg, res);
+      return res;
+    }
 
-      public static IAsyncResult DoAsync<T>(this Action<T> action, T arg)
-      {
-          return action.BeginInvoke(arg, null, null);
-      }
+    public static IAsyncResult DoAsync<T>(this Action<T> action, T arg)
+    {
+      return action.BeginInvoke(arg, null, null);
+    }
 
-      public static void WaitForAll(this IEnumerable<IAsyncResult> operations)
-      {
-          while (operations.Any(o => !o.IsCompleted))
-              System.Threading.Thread.Sleep(10);
-      }
+    public static void WaitForAll(this IEnumerable<IAsyncResult> operations)
+    {
+      while (operations.Any(o => !o.IsCompleted))
+        System.Threading.Thread.Sleep(10);
+    }
 
-      public static IEnumerable<IAsyncResult> DoActionAsync<T>(this IEnumerable<T> source, Action<T> actionOnItem)
-      {
-          return source.Select(i => actionOnItem.DoAsync(i))
-                       .ToArray();
-      }
+    public static IEnumerable<IAsyncResult> DoActionAsync<T>(this IEnumerable<T> source, Action<T> actionOnItem)
+    {
+      return source.Select(i => actionOnItem.DoAsync(i))
+        .ToArray();
+    }
   }
 }

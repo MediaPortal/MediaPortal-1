@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -103,6 +103,11 @@ namespace MediaPortal.Video.Database
       if (DatabaseUtility.TableColumnExists(m_db, "movieinfo", "strFanartURL") == false)
       {
         string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"strFanartURL\" text DEFAULT ''";
+        m_db.Execute(strSQL);
+      }
+      if (DatabaseUtility.TableColumnExists(m_db, "resume", "watched") == false)
+      {
+        string strSQL = "ALTER TABLE \"main\".\"resume\" ADD COLUMN \"watched\" bool DEFAULT 0";
         m_db.Execute(strSQL);
       }
     }
@@ -1120,6 +1125,19 @@ namespace MediaPortal.Video.Database
           //		Log.Error("dbs:{0}", strSQL);
           m_db.Execute(strSQL);
         }
+        // Double single quota fix (after scan and executing DatabaseUtility.RemoveInvalidChars method, movie info can contain double single quota
+        // which looks ugly on screen and also produce wrong cover thumb filename which leads to duplication of cover
+        // for the same movie ie. That's Life{x}L.jpg  and That''s Life{x}L.jpg, this is only visible and reproducable after scan,
+        // after is OK)
+        {
+          details1.PlotOutline = details1.PlotOutline.Replace("''", "'");
+          details1.Plot = details1.Plot.Replace("''", "'");
+          details1.TagLine = details1.TagLine.Replace("''", "'");
+          details1.WritingCredits = details1.WritingCredits.Replace("''", "'");
+          details1.Genre = details1.Genre.Replace("''", "'");
+          details1.Title = details1.Title.Replace("''", "'");
+          details1.UserReview = details1.UserReview.Replace("''", "'");
+        }
       }
       catch (Exception ex)
       {
@@ -1502,6 +1520,56 @@ namespace MediaPortal.Video.Database
         Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
+    }
+
+    public void SetVideoFileWatched(int iFileId, bool watched)
+    {
+      try
+      {
+        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        if (results.Rows.Count != 0)
+        {
+          int iWatched = 0;
+          if (watched)
+            iWatched = 1;
+          sql = String.Format("update resume set watched={0} where idFile={1}",
+                              iWatched, iFileId);
+        }
+        m_db.Execute(sql);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+    }
+
+    public bool GetVideoFileWatched(int iFileId)
+    {
+      try
+      {
+        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        SQLiteResultSet results = m_db.Execute(sql);
+        if (results.Rows.Count == 0)
+        {
+          return false;
+        }
+        int watched;
+        int.TryParse(DatabaseUtility.Get(results, 0, "watched"), out watched);
+        
+        if (watched != 0)
+        {
+          return true;
+        }
+        return false;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Open();
+      }
+      return false;
     }
 
     #endregion

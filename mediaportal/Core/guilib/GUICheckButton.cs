@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -59,7 +59,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
@@ -67,7 +70,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
@@ -130,7 +136,8 @@ namespace MediaPortal.GUI.Library
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
       _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
-        _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
+                              _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF,
+                              _borderCornerTextureRotateTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -138,7 +145,8 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
       _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
-        _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF,
+                                 _borderCornerTextureRotateTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,

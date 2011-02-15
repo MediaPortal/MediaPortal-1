@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -70,19 +70,19 @@ namespace MpeCore.Classes.ActionType
                                   , ValueTypeEnum.Script,
                                   ""));
       _param.Add(new SectionParam(Const_Un_script, "//css_reference \"MpeCore.dll\";\n" +
-                                          "\n" +
-                                          "using MpeCore.Classes;\n" +
-                                          "using MpeCore;\n" +
-                                          "\n" +
-                                          "public class Script\n" +
-                                          "{\n" +
-                                          "    public static void Main(PackageClass packageClass, UnInstallItem item)\n" +
-                                          "    {\n" +
-                                          "        return;\n" +
-                                          "    }\n" +
-                                          "}\n"
-                            , ValueTypeEnum.Script,
-                            ""));
+                                                   "\n" +
+                                                   "using MpeCore.Classes;\n" +
+                                                   "using MpeCore;\n" +
+                                                   "\n" +
+                                                   "public class Script\n" +
+                                                   "{\n" +
+                                                   "    public static void Main(PackageClass packageClass, UnInstallItem item)\n" +
+                                                   "    {\n" +
+                                                   "        return;\n" +
+                                                   "    }\n" +
+                                                   "}\n"
+                                  , ValueTypeEnum.Script,
+                                  ""));
       return _param;
     }
 
@@ -143,5 +143,4 @@ namespace MpeCore.Classes.ActionType
       return SectionResponseEnum.Ok;
     }
   }
-
 }

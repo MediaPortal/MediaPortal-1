@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -214,7 +214,6 @@ namespace MpeMaker.Sections
       }
     }
 
-    
 
     private void SetProperties(TreeNode node)
     {
@@ -359,7 +358,7 @@ namespace MpeMaker.Sections
       if (SelectedItem != null)
       {
         toolTip.SetToolTip(cmb_installtype,
-                            MpeInstaller.InstallerTypeProviders[cmb_installtype.Text].Description);
+                           MpeInstaller.InstallerTypeProviders[cmb_installtype.Text].Description);
         SelectedItem.InstallType = cmb_installtype.Text;
         SelectedItem.DestinationFilename = txt_installpath.Text;
         SelectedItem.UpdateOption = (UpdateOptionEnum)cmb_overwrite.SelectedIndex;
@@ -403,7 +402,8 @@ namespace MpeMaker.Sections
         msgBoxText = String.Format("Do you want to delete {0} groups from list?", treeView1.SelectedNodes.Count);
       }
 
-      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) !=
+          DialogResult.Yes) return;
 
       foreach (TreeNode treeNode in treeView1.SelectedNodes)
       {
@@ -440,9 +440,11 @@ namespace MpeMaker.Sections
         msgBoxText = String.Format("Do you want to delete {0} files from list?", treeView1.SelectedNodes.Count);
       }
 
-      msgBoxText += String.Format("{0}{0}This will remove all 'Attached folders' from this group, too!", Environment.NewLine);
+      msgBoxText += String.Format("{0}{0}This will remove all 'Attached folders' from this group, too!",
+                                  Environment.NewLine);
 
-      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+      if (MessageBox.Show(msgBoxText, msgBoxCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) !=
+          DialogResult.Yes) return;
 
       foreach (TreeNode treeNode in treeView1.SelectedNodes)
       {
@@ -555,20 +557,19 @@ namespace MpeMaker.Sections
 
     private void btnSelectSourceFile_Click(object sender, EventArgs e)
     {
-        openFileDialog.Title = "Select file";
-        if (openFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            string localFileName = openFileDialog.FileName;
-            txt_source.Text = localFileName;
-            
-            var fileItem = (FileItem)SelectedNode.Tag;
-            fileItem.LocalFileName = localFileName;
+      openFileDialog.Title = "Select file";
+      if (openFileDialog.ShowDialog() == DialogResult.OK)
+      {
+        string localFileName = openFileDialog.FileName;
+        txt_source.Text = localFileName;
 
-            string destinationFilename = MpeInstaller.InstallerTypeProviders[fileItem.InstallType].GetTemplatePath(fileItem);
-            fileItem.DestinationFilename = destinationFilename;
-            txt_installpath.Text = destinationFilename;
-                                    
-        }
+        var fileItem = (FileItem)SelectedNode.Tag;
+        fileItem.LocalFileName = localFileName;
+
+        string destinationFilename = MpeInstaller.InstallerTypeProviders[fileItem.InstallType].GetTemplatePath(fileItem);
+        fileItem.DestinationFilename = destinationFilename;
+        txt_installpath.Text = destinationFilename;
+      }
     }
   }
 }

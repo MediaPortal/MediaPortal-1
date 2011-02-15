@@ -33,6 +33,11 @@ using namespace std;
 using namespace Mediaportal;
 
 
+
+//	Incremental buffer sizes
+#define NUMBER_THROTTLE_BUFFER_SIZES	20
+
+
 //* enum which specified the timeshifting mode 
 enum RecordingMode
 {
@@ -46,6 +51,12 @@ enum PidType
   Video=0,
   Audio=1,
   Other=2
+};
+
+enum ChannelType
+{
+	TV = 0,
+	Radio = 1,
 };
 
 typedef struct stLastPtsDtsRecord
@@ -72,6 +83,7 @@ public:
 	~CDiskRecorder(void);
 	
 	void SetFileName(char* pszFileName);
+	void SetChannelType(int channelType);
 	bool Start();
 	void Stop();
 	void Pause( BYTE onOff) ;
@@ -145,6 +157,11 @@ private:
 	int             m_iPart;
   byte*           m_pWriteBuffer;
   int             m_iWriteBufferPos;
+  int			  m_iWriteBufferSize;
+  int			m_iThrottleBufferSizes[NUMBER_THROTTLE_BUFFER_SIZES];
+  int				m_iWriteBufferThrottle;
+  BOOL				m_bThrottleAtMax;
+  ChannelType		m_eChannelType;
   CTsHeader       m_tsHeader;
   CAdaptionField  m_adaptionField;
   CPcr            m_prevPcr;

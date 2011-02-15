@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -165,6 +165,15 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int DeleteAllChannels();
+
+    /// <summary>
+    /// Sets the type of channel we are timeshifting
+    /// </summary>
+    /// <param name="subChannelId">SubChannel id</param>
+    /// <param name="channelType">Channel type (0=tv, 1=radio)</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int SetChannelType(int subChannelId, int channelType);
   }
 
   /// <summary>

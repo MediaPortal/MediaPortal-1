@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -37,21 +37,21 @@ namespace MediaPortal.Configuration.Sections
 
     private string[] sortModes = {
                                    "Name", "Date", "Size", "Track", "Duration", "Title", "Artist", "Album", "Filename",
-                                   "Rating","Album Artist", "Year", "DiscID", "Composer"
+                                   "Rating", "Album Artist", "Year", "DiscID", "Composer"
                                  };
 
     private string[] defaultSortTags1 = {
-      defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-      defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-      defaultFileTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
-      defaultTrackTag, defaultTrackTag
-    };
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+                                          defaultTrackTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+                                          defaultFileTag, defaultTrackTag, defaultTrackTag, defaultTrackTag,
+                                          defaultTrackTag, defaultTrackTag
+                                        };
 
     private string[] defaultSortTags2 = {
-      "%duration%", "%date%", "%filesize%", "%duration%", "%duration%",
-      "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%",
-      "%duration%", "%year%", "%disc#%", "%duration%"
-    };
+                                          "%duration%", "%date%", "%filesize%", "%duration%", "%duration%",
+                                          "%duration%", "%duration%", "%duration%", "%filesize%", "%rating%",
+                                          "%duration%", "%year%", "%disc#%", "%duration%"
+                                        };
 
     private string[] sortTags1 = new string[20];
     private MPGroupBox groupBox3;
@@ -133,7 +133,7 @@ namespace MediaPortal.Configuration.Sections
       line1 = Util.Utils.ReplaceTag(line1, "%artist%", artist);
       line2 = Util.Utils.ReplaceTag(line2, "%artist%", artist);
       line1 = Util.Utils.ReplaceTag(line1, "%albumartist%", albumartist);
-      line2 = Util.Utils.ReplaceTag(line2, "%albumartist%", albumartist);      
+      line2 = Util.Utils.ReplaceTag(line2, "%albumartist%", albumartist);
       line1 = Util.Utils.ReplaceTag(line1, "%album%", album);
       line2 = Util.Utils.ReplaceTag(line2, "%album%", album);
       line1 = Util.Utils.ReplaceTag(line1, "%title%", title);
@@ -150,7 +150,7 @@ namespace MediaPortal.Configuration.Sections
       line2 = Util.Utils.ReplaceTag(line2, "%duration%", duration);
       line1 = Util.Utils.ReplaceTag(line1, "%genre%", genre);
       line2 = Util.Utils.ReplaceTag(line2, "%genre%", genre);
-			line1 = Util.Utils.ReplaceTag(line1, "%disc#%", discNr);
+      line1 = Util.Utils.ReplaceTag(line1, "%disc#%", discNr);
       line2 = Util.Utils.ReplaceTag(line2, "%disc#%", discNr);
       line1 = Util.Utils.ReplaceTag(line1, "%composer%", composer);
       line2 = Util.Utils.ReplaceTag(line2, "%composer%", composer);
@@ -220,8 +220,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox3
       // 
-      this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox3.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox3.Controls.Add(this.groupBox4);
       this.groupBox3.Controls.Add(this.textBoxSample);
       this.groupBox3.Controls.Add(this.label19);
@@ -259,8 +261,9 @@ namespace MediaPortal.Configuration.Sections
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(94, 91);
       this.label15.TabIndex = 15;
-      this.label15.Text = "filename\r\nfilesize of song\r\nduration of song\r\nsong rating\r\nfile date\r\nname of com" +
-          "poser\r\ngenre of track";
+      this.label15.Text =
+        "filename\r\nfilesize of song\r\nduration of song\r\nsong rating\r\nfile date\r\nname of com" +
+        "poser\r\ngenre of track";
       // 
       // label18
       // 
@@ -269,8 +272,9 @@ namespace MediaPortal.Configuration.Sections
       this.label18.Name = "label18";
       this.label18.Size = new System.Drawing.Size(78, 91);
       this.label18.TabIndex = 14;
-      this.label18.Text = "%filename% =\r\n%filesize% =\r\n%duration% =\r\n%rating% =\r\n%date% =\r\n%composer% =\r\n%ge" +
-          "nre% =\r\n";
+      this.label18.Text =
+        "%filename% =\r\n%filesize% =\r\n%duration% =\r\n%rating% =\r\n%date% =\r\n%composer% =\r\n%ge" +
+        "nre% =\r\n";
       this.label18.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // label16
@@ -280,8 +284,9 @@ namespace MediaPortal.Configuration.Sections
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(101, 91);
       this.label16.TabIndex = 13;
-      this.label16.Text = "name of artist\r\nsong title\r\nname of album artist\r\nname of album\r\ndisc number\r\ntra" +
-          "cknumber\r\nyear of song";
+      this.label16.Text =
+        "name of artist\r\nsong title\r\nname of album artist\r\nname of album\r\ndisc number\r\ntra" +
+        "cknumber\r\nyear of song";
       // 
       // label17
       // 
@@ -290,14 +295,17 @@ namespace MediaPortal.Configuration.Sections
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(82, 91);
       this.label17.TabIndex = 12;
-      this.label17.Text = "%artist% =\r\n%title% =\r\n%albumartist% =\r\n%album% =\r\n%disc#% =\r\n%track% =\r\n%year% =" +
-          "\r\n";
+      this.label17.Text =
+        "%artist% =\r\n%title% =\r\n%albumartist% =\r\n%album% =\r\n%disc#% =\r\n%track% =\r\n%year% =" +
+        "\r\n";
       this.label17.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
       // textBoxSample
       // 
-      this.textBoxSample.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textBoxSample.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textBoxSample.BackColor = System.Drawing.SystemColors.ControlLight;
       this.textBoxSample.BorderColor = System.Drawing.Color.Empty;
       this.textBoxSample.Location = new System.Drawing.Point(96, 102);
@@ -382,7 +390,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox4.ResumeLayout(false);
       this.groupBox4.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

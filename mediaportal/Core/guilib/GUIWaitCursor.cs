@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ namespace MediaPortal.GUI.Library
     private static Thread guiWaitCursorThread = null;
 
     public new static void Dispose()
-    {     
+    {
       if (_animation != null)
       {
         _animation.SafeDispose();
@@ -162,9 +162,7 @@ namespace MediaPortal.GUI.Library
       _eventTarget(_eventParam);
     }
 
-    public override void Render(float timePassed)
-    {
-    }
+    public override void Render(float timePassed) {}
 
     public static void Render()
     {

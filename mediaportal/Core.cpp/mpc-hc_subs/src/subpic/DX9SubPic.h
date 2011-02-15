@@ -1,5 +1,5 @@
 /*
- *  $Id: DX9SubPic.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ *  $Id: DX9SubPic.h 2786 2010-12-17 16:42:55Z XhmikosR $
  *
  *  (C) 2003-2006 Gabest
  *  (C) 2006-2010 see AUTHORS
@@ -48,22 +48,19 @@ public:
 	class TCLocker
 	{
 	public:
-		static void fs_Locker(void *_pLock)
-		{
+		static void fs_Locker(void *_pLock) {
 			((t_Lock *)_pLock)->Unlock();
 		}
 	};
 
 	template <typename t_Lock>
-	CScopeLock(t_Lock &_Lock)
-	{
+	CScopeLock(t_Lock &_Lock) {
 		_Lock.Lock();
 		m_pLock = &_Lock;
 		m_pUnlockFunc = TCLocker<t_Lock>::fs_Locker;
 	}
 
-	~CScopeLock()
-	{
+	~CScopeLock() {
 		m_pUnlockFunc(m_pLock);
 	}
 };

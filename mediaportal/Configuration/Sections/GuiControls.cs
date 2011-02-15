@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -115,8 +115,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBoxScrollSettings
       // 
-      this.mpGroupBoxScrollSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxScrollSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBoxScrollSettings.Controls.Add(this.label3);
       this.mpGroupBoxScrollSettings.Controls.Add(this.label1);
       this.mpGroupBoxScrollSettings.Controls.Add(this.VerticalScrollSpeedUpDown);
@@ -150,51 +152,65 @@ namespace MediaPortal.Configuration.Sections
       // VerticalScrollSpeedUpDown
       // 
       this.VerticalScrollSpeedUpDown.Location = new System.Drawing.Point(293, 20);
-      this.VerticalScrollSpeedUpDown.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.VerticalScrollSpeedUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.VerticalScrollSpeedUpDown.Maximum = new decimal(new int[]
+                                                             {
+                                                               5,
+                                                               0,
+                                                               0,
+                                                               0
+                                                             });
+      this.VerticalScrollSpeedUpDown.Minimum = new decimal(new int[]
+                                                             {
+                                                               1,
+                                                               0,
+                                                               0,
+                                                               0
+                                                             });
       this.VerticalScrollSpeedUpDown.Name = "VerticalScrollSpeedUpDown";
       this.VerticalScrollSpeedUpDown.Size = new System.Drawing.Size(28, 20);
       this.VerticalScrollSpeedUpDown.TabIndex = 7;
-      this.VerticalScrollSpeedUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.VerticalScrollSpeedUpDown.Value = new decimal(new int[]
+                                                           {
+                                                             1,
+                                                             0,
+                                                             0,
+                                                             0
+                                                           });
       // 
       // HorizontalScrollSpeedUpDown
       // 
       this.HorizontalScrollSpeedUpDown.Location = new System.Drawing.Point(130, 20);
-      this.HorizontalScrollSpeedUpDown.Maximum = new decimal(new int[] {
-            5,
-            0,
-            0,
-            0});
-      this.HorizontalScrollSpeedUpDown.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.HorizontalScrollSpeedUpDown.Maximum = new decimal(new int[]
+                                                               {
+                                                                 5,
+                                                                 0,
+                                                                 0,
+                                                                 0
+                                                               });
+      this.HorizontalScrollSpeedUpDown.Minimum = new decimal(new int[]
+                                                               {
+                                                                 1,
+                                                                 0,
+                                                                 0,
+                                                                 0
+                                                               });
       this.HorizontalScrollSpeedUpDown.Name = "HorizontalScrollSpeedUpDown";
       this.HorizontalScrollSpeedUpDown.Size = new System.Drawing.Size(28, 20);
       this.HorizontalScrollSpeedUpDown.TabIndex = 6;
-      this.HorizontalScrollSpeedUpDown.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+      this.HorizontalScrollSpeedUpDown.Value = new decimal(new int[]
+                                                             {
+                                                               1,
+                                                               0,
+                                                               0,
+                                                               0
+                                                             });
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.labelLoopDelayMs);
       this.groupBox1.Controls.Add(this.listLoopDelayUpDown);
       this.groupBox1.Controls.Add(this.labelLoopDelay);
@@ -217,20 +233,24 @@ namespace MediaPortal.Configuration.Sections
       // listLoopDelayUpDown
       // 
       this.listLoopDelayUpDown.Location = new System.Drawing.Point(149, 20);
-      this.listLoopDelayUpDown.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
+      this.listLoopDelayUpDown.Maximum = new decimal(new int[]
+                                                       {
+                                                         100000,
+                                                         0,
+                                                         0,
+                                                         0
+                                                       });
       this.listLoopDelayUpDown.Name = "listLoopDelayUpDown";
       this.listLoopDelayUpDown.Size = new System.Drawing.Size(52, 20);
       this.listLoopDelayUpDown.TabIndex = 15;
       this.listLoopDelayUpDown.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-      this.listLoopDelayUpDown.Value = new decimal(new int[] {
-            100,
-            0,
-            0,
-            0});
+      this.listLoopDelayUpDown.Value = new decimal(new int[]
+                                                     {
+                                                       100,
+                                                       0,
+                                                       0,
+                                                       0
+                                                     });
       // 
       // labelLoopDelay
       // 
@@ -256,7 +276,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.listLoopDelayUpDown)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion

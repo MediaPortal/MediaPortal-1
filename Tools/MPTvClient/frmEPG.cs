@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2008 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -37,13 +32,14 @@ namespace MPTvClient
   {
     private ServerInterface server;
 
-    public frmEPG(ServerInterface serverIf,List<ChannelInfo> infos)
+    public frmEPG(ServerInterface serverIf, List<ChannelInfo> infos)
     {
       InitializeComponent();
       server = serverIf;
       foreach (ChannelInfo info in infos)
         lbChannels.Items.Add(info.channelID + " " + info.name);
     }
+
     private void lbChannels_Click(object sender, EventArgs e)
     {
       if (lbChannels.SelectedIndex == -1)
@@ -57,7 +53,8 @@ namespace MPTvClient
       {
         DataGridViewRow row = new DataGridViewRow();
         row.CreateCells(grid);
-        row.Cells[0].Value = epg.startTime.ToString("dd.MM.yy") +" "+ epg.startTime.ToString("HH:mm") + "-" + epg.endTime.ToString("HH:mm");
+        row.Cells[0].Value = epg.startTime.ToString("dd.MM.yy") + " " + epg.startTime.ToString("HH:mm") + "-" +
+                             epg.endTime.ToString("HH:mm");
         row.Cells[1].Value = epg.title;
         row.DefaultCellStyle.Font = new Font("Tahoma", 8, FontStyle.Bold);
         if (isAlternating)

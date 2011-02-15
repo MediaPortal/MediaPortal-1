@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -118,7 +118,7 @@ namespace MediaPortal.Player
     protected DvdDomain _currDomain;
     protected IBasicAudio _basicAudio = null;
     protected IMediaPosition _mediaPos = null;
-    
+
     protected int _speed = 1;
     protected double _currentTime = 0;
     protected bool _visible = true;
@@ -433,7 +433,7 @@ namespace MediaPortal.Player
         _dvdInfo = null;
         _basicVideo = null;
         _basicAudio = null;
-        _mediaPos = null;        
+        _mediaPos = null;
 
         if (_dvdbasefilter != null)
         {
@@ -558,7 +558,7 @@ namespace MediaPortal.Player
         {
           Marshal.ThrowExceptionForHR(hr);
         }
-        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);        
+        _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
         try
         {
@@ -1460,7 +1460,7 @@ namespace MediaPortal.Player
     }
 
     protected virtual void OnProcess()
-    {      
+    {
       if (_videoWin != null)
       {
         if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -2124,16 +2124,13 @@ namespace MediaPortal.Player
     /// </summary>
     public override bool HasPostprocessing
     {
-      get
-      { 
-        return PostProcessingEngine.GetInstance().HasPostProcessing;
-      }
+      get { return PostProcessingEngine.GetInstance().HasPostProcessing; }
     }
 
     public bool SupportsCC
     {
       get
-      { 
+      {
         if (_showClosedCaptions)
         {
           return (_line21Decoder != null);
@@ -2145,7 +2142,7 @@ namespace MediaPortal.Player
       }
     }
 
-      protected virtual void SetVideoPosition(Rectangle destination)
+    protected virtual void SetVideoPosition(Rectangle destination)
     {
       if (_videoWin != null)
       {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -122,9 +122,8 @@ namespace MediaPortal.Player.Subtitles
       FFDShowAPI.FFDShowAPI api = new FFDShowAPI();*/
 
 
-
       IBaseFilter baseFilter = null;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
+      DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
       if (baseFilter == null)
         DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
       if (baseFilter == null)
@@ -145,6 +144,7 @@ namespace MediaPortal.Player.Subtitles
       else
         Log.Info("FFdshow interfaces found");
 
+      Enable = autoShow;
       return true;
       /*return MpcSubtitles.LoadSubtitles(
         DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device),
@@ -272,9 +272,15 @@ namespace MediaPortal.Player.Subtitles
       //MpcSubtitles.SetTime(nsSampleTime);
     }
 
+    public bool AutoShow
+    {
+      get { return autoShow; }
+    }
+
     #endregion
 
     #region IPostProcessing Members
+
     public bool LoadPostProcessing(IGraphBuilder graphBuilder)
     {
       IBaseFilter baseFilter = null;
@@ -292,71 +298,44 @@ namespace MediaPortal.Player.Subtitles
     {
       get { return hasPostProcessing; }
     }
+
     public bool EnableResize
     {
-      get
-      {
-        return ffdshowAPI.DoResize;
-      }
-      set
-      {
-        ffdshowAPI.DoResize = value;
-      }
+      get { return ffdshowAPI.DoResize; }
+      set { ffdshowAPI.DoResize = value; }
     }
+
     public bool EnablePostProcess
     {
-      get
-      {
-        return ffdshowAPI.DoPostProcessing;
-      }
-      set
-      {
-        ffdshowAPI.DoPostProcessing = value;
-      }
+      get { return ffdshowAPI.DoPostProcessing; }
+      set { ffdshowAPI.DoPostProcessing = value; }
     }
 
     public bool EnableDeinterlace
     {
-      get
-      {
-        return ffdshowAPI.DoDeinterlace;
-      }
-      set
-      {
-        ffdshowAPI.DoDeinterlace = value;
-      }
+      get { return ffdshowAPI.DoDeinterlace; }
+      set { ffdshowAPI.DoDeinterlace = value; }
     }
 
     public bool EnableCrop
     {
-      get
-      {
-        return ffdshowAPI.DoCropZoom;
-      }
-      set
-      {
-        ffdshowAPI.DoCropZoom = value;
-      }
+      get { return ffdshowAPI.DoCropZoom; }
+      set { ffdshowAPI.DoCropZoom = value; }
     }
 
     public int CropVertical
     {
-      get
-      {
-        return ffdshowAPI.CropVertical;
-      }
+      get { return ffdshowAPI.CropVertical; }
       set
       {
         ffdshowAPI.DoCropZoom = true;
         ffdshowAPI.CropVertical = value;
       }
     }
+
     public int CropHorizontal
     {
-      get
-      {
-        return ffdshowAPI.CropHorizontal;
-      }
+      get { return ffdshowAPI.CropHorizontal; }
       set
       {
         ffdshowAPI.DoCropZoom = true;

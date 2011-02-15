@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -212,7 +212,7 @@ namespace SetupTv.Sections
         return;
       if (mpListViewMapped.SelectedIndices == null)
         return;
-      
+
       ListViewItem selectedItem = mpListViewChannels.Items[mpListViewChannels.SelectedIndices[0]];
       Channel selectedChannel = (Channel)selectedItem.Tag;
 
@@ -220,7 +220,7 @@ namespace SetupTv.Sections
 
       foreach (ListViewItem listViewItem in selectedItemsToCombine)
       {
-        Channel selectedChannel2 = (Channel) listViewItem.Tag;
+        Channel selectedChannel2 = (Channel)listViewItem.Tag;
         NotifyForm dlg = new NotifyForm("Combining Channels...", "Updating TuningDetail Table\n\nPlease be patient...");
         dlg.Show(this);
         dlg.WaitForDisplay();
@@ -291,7 +291,6 @@ namespace SetupTv.Sections
         selectedChannel2.Remove();
         mpListViewMapped.Items.Remove(listViewItem);
       }
-      
     }
 
     private void mpListViewChannels_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -339,7 +338,6 @@ namespace SetupTv.Sections
       List<TuningDetail> result = new List<TuningDetail>();
       foreach (TuningDetail tDetail in channel.ReferringTuningDetail())
       {
-
         switch (cardType)
         {
           case CardType.Analog:
@@ -360,8 +358,8 @@ namespace SetupTv.Sections
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
                 Log.Debug(String.Format(
-                            "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to combine these channels.",
-                            tDetail.Name));
+                  "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to combine these channels.",
+                  tDetail.Name));
               }
               else
               {
@@ -402,7 +400,6 @@ namespace SetupTv.Sections
         {
           hasScrambled = true;
         }
-
       }
 
       int imageIndex;

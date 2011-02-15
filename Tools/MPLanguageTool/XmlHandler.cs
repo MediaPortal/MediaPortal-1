@@ -1,23 +1,23 @@
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Data;
 using System.Collections.Generic;
@@ -27,13 +27,15 @@ using System.IO;
 
 namespace MPLanguageTool
 {
-  class XmlHandler
+  internal class XmlHandler
   {
     private static string MainNodeSelection = string.Empty;
     private static string SingleNodeSelection = string.Empty;
     private static string Field = string.Empty;
     private static string Prefix = string.Empty;
-    private static string TextAttribute = string.Empty;  // if the Text is not in Innertext, but in an attribute (MPII does it that way)
+
+    private static string TextAttribute = string.Empty;
+    // if the Text is not in Innertext, but in an attribute (MPII does it that way)
 
     public static string BuildFileName(string languageID, bool ReturnFullPath)
     {
@@ -168,7 +170,6 @@ namespace MPLanguageTool
 
             translations.Rows.Add(row);
             originalMapping.Add(node_id, row);
-
           }
         }
       }
@@ -176,7 +177,8 @@ namespace MPLanguageTool
     }
 
     // Load Translations
-    public static DataTable Load_Translation(string languageID, DataTable originalTranslation, Dictionary<string, DataRow> originalMapping)
+    public static DataTable Load_Translation(string languageID, DataTable originalTranslation,
+                                             Dictionary<string, DataRow> originalMapping)
     {
       string xml = BuildFileName(languageID, true);
       DataTable translations = new DataTable();
@@ -333,7 +335,8 @@ namespace MPLanguageTool
         case frmMain.StringsType.MediaPortal_1:
           writer = new StreamWriter(xml, false, Encoding.UTF8);
           writer.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-          writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"" + getMaxCharsForLanguageID(languageID) + "\">\n");
+          writer.Write("<Language name=\"" + LanguageNAME + "\" characters=\"" + getMaxCharsForLanguageID(languageID) +
+                       "\">\n");
           writer.Write("  <Section name=\"unmapped\">\n");
           writer.Write("  </Section>\n");
           writer.Write("</Language>\n");
@@ -450,7 +453,6 @@ namespace MPLanguageTool
           nValue.Attributes.Append(attr);
           nRoot.AppendChild(nValue);
         }
-
       }
       doc.Save(xml);
     }
@@ -461,24 +463,24 @@ namespace MPLanguageTool
 
       switch (languageID)
       {
-        case "cs":          //Czech
-        case "hu":          //Hungarian
-        case "sl":					//Slovenian
+        case "cs": //Czech
+        case "hu": //Hungarian
+        case "sl": //Slovenian
           maxChars = 512;
           break;
-        case "el":          //Greek
+        case "el": //Greek
           maxChars = 974;
           break;
-        case "he":          //Hebrew
+        case "he": //Hebrew
           maxChars = 1524;
           break;
-        case "pl":          //Polish
+        case "pl": //Polish
           maxChars = 380;
           break;
-        case "ru":          //Russian
+        case "ru": //Russian
           maxChars = 1105;
           break;
-        case "uk":          //Ukrainian
+        case "uk": //Ukrainian
           maxChars = 1250;
           break;
         default:

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,6 +68,8 @@ namespace MediaPortal.Video.Database
     void SetMovieStopTimeAndResumeData(int iFileId, int stoptime, byte[] resumeData);
     int GetMovieDuration(int iFileId);
     void SetMovieDuration(int iFileId, int duration);
+    void SetVideoFileWatched(int iFileId, bool watched);
+    bool GetVideoFileWatched(int iFileId);
     void DeleteMovie(string strFilenameAndPath);
     int AddMovie(string strFilenameAndPath, bool bHassubtitles);
     void GetMovies(ref ArrayList movies);

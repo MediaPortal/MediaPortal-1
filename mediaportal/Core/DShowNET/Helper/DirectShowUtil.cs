@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ namespace DShowNET.Helper
   {
     private const int magicConstant = -759872593;
 
-    static DirectShowUtil() { }
+    static DirectShowUtil() {}
 
     public static IBaseFilter AddFilterToGraph(IGraphBuilder graphBuilder, string strFilterName)
     {
@@ -141,7 +141,7 @@ namespace DShowNET.Helper
           Log.Error("DirectShowUtils: failed filter {0} not found", strFilterName);
         }
       }
-      catch { }
+      catch {}
       Log.Info("DirectShowUtils: First try to insert new audio renderer {0} failed ", strFilterName);
 
       try
@@ -660,7 +660,7 @@ namespace DShowNET.Helper
       ArrayList allFiltersR = new ArrayList();
       IEnumFilters enumFilters;
       graphBuilder.EnumFilters(out enumFilters);
-      for (; ; )
+      for (;;)
       {
         int ffetched;
         IBaseFilter[] filters = new IBaseFilter[1];
@@ -688,10 +688,10 @@ namespace DShowNET.Helper
       ReleaseComObject(enumFilters);
       //if someone has a better way to sort the filters by their merits, PLEASE change the following
       //(i know there must be something more elegant)
-      Array aM = allMerits.ToArray(typeof(uint));
-      Array aF = allFilters.ToArray(typeof(IBaseFilter));
-      Array aMR = allMeritsR.ToArray(typeof(uint));
-      Array aFR = allFiltersR.ToArray(typeof(IBaseFilter));
+      Array aM = allMerits.ToArray(typeof (uint));
+      Array aF = allFilters.ToArray(typeof (IBaseFilter));
+      Array aMR = allMeritsR.ToArray(typeof (uint));
+      Array aFR = allFiltersR.ToArray(typeof (IBaseFilter));
       Array.Sort(aM, aF);
       Array.Sort(aMR, aFR);
       ArrayList ret = new ArrayList();
@@ -730,11 +730,13 @@ namespace DShowNET.Helper
       else
         connected = true;
 
-      ReleaseComObject(destination); destination = null;
+      ReleaseComObject(destination);
+      destination = null;
       return connected;
     }
 
-    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType, IBaseFilter targetFilter)
+    public static bool TryConnect(IGraphBuilder graphbuilder, IBaseFilter source, Guid mediaType,
+                                  IBaseFilter targetFilter)
     {
       bool connected = false;
       IEnumPins enumPins;
@@ -761,7 +763,9 @@ namespace DShowNET.Helper
           {
             if (mediaTypes[i].majorType == mediaType)
             {
-              if (graphbuilder.ConnectDirect(pins[0], DsFindPin.ByDirection(targetFilter, PinDirection.Input, 0), null) >= 0)
+              if (
+                graphbuilder.ConnectDirect(pins[0], DsFindPin.ByDirection(targetFilter, PinDirection.Input, 0), null) >=
+                0)
               {
                 connected = true;
                 break;
@@ -809,7 +813,7 @@ namespace DShowNET.Helper
         ArrayList sub = new ArrayList();
 
         Log.Debug("Getting corresponding filters");
-        for (; ; )
+        for (;;)
         {
           AMMediaType[] mediaTypes = new AMMediaType[1];
           int typesFetched;
@@ -823,8 +827,8 @@ namespace DShowNET.Helper
         }
         ReleaseComObject(enumTypes);
         Log.Debug("Found {0} media types", major.Count);
-        Guid[] majorTypes = (Guid[])major.ToArray(typeof(Guid));
-        Guid[] subTypes = (Guid[])sub.ToArray(typeof(Guid));
+        Guid[] majorTypes = (Guid[])major.ToArray(typeof (Guid));
+        Guid[] subTypes = (Guid[])sub.ToArray(typeof (Guid));
         Log.Debug("Loading filters");
         ArrayList filters = FilterHelper.GetFilters(majorTypes, subTypes, (Merit)0x00400000);
         Log.Debug("Loaded {0} filters", filters.Count);
@@ -951,7 +955,8 @@ namespace DShowNET.Helper
       return RenderOutputPins(graphBuilder, filter, maxPinsToRender, true);
     }
 
-    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender, bool tryAllFilters)
+    public static bool RenderOutputPins(IGraphBuilder graphBuilder, IBaseFilter filter, int maxPinsToRender,
+                                        bool tryAllFilters)
     {
       int pinsRendered = 0;
       bool bAllConnected = true;
@@ -999,7 +1004,7 @@ namespace DShowNET.Helper
                 {
                   hr = 0;
                   if (TryConnect(graphBuilder, info.achName, pins[0], tryAllFilters))
-                  //if ((hr=graphBuilder.Render(pins[0])) == 0)
+                    //if ((hr=graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
                   }
@@ -1210,7 +1215,7 @@ namespace DShowNET.Helper
       Log.Info("Disconnecting all pins from filter {0}", info.achName);
       DirectShowUtil.ReleaseComObject(info.pGraph);
       bool allDisconnected = true;
-      for (; ; )
+      for (;;)
       {
         IPin[] pins = new IPin[1];
         int fetched;
@@ -1282,7 +1287,7 @@ namespace DShowNET.Helper
         return false;
       }
       int count = 0;
-      for (; ; )
+      for (;;)
       {
         AMMediaType[] types = new AMMediaType[1];
         int fetched;
@@ -1354,7 +1359,7 @@ namespace DShowNET.Helper
                 {
                   hr = 0;
                   if (TryConnect(graphBuilder, info.achName, pins[0]))
-                  //if ((hr = graphBuilder.Render(pins[0])) == 0)
+                    //if ((hr = graphBuilder.Render(pins[0])) == 0)
                   {
                     Log.Info("  render ok");
                   }
@@ -1681,7 +1686,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
       finally
       {
         if (ienumFilt != null)
@@ -1822,7 +1827,7 @@ namespace DShowNET.Helper
           ienumFilt = null;
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
       finally
       {
         if (ienumFilt != null)
@@ -1844,7 +1849,7 @@ namespace DShowNET.Helper
       try
       {
         IErrorLog errorLog = null;
-        Guid bagId = typeof(IPropertyBag).GUID;
+        Guid bagId = typeof (IPropertyBag).GUID;
         mon.BindToStorage(null, null, ref bagId, out bagObj);
         bag = (IPropertyBag)bagObj;
         object val = "";

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -64,7 +64,7 @@ namespace MediaPortal.ServiceImplementations
       using (Settings xmlreader = new MPSettings())
       {
         _minLevel =
-          (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+          (Level)Enum.Parse(typeof (Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       bConfiguration = false;
     }
@@ -320,33 +320,34 @@ namespace MediaPortal.ServiceImplementations
 
     public void WriteFile(LogType type, Level logLevel, string format, params object[] arg)
     {
-        if (logLevel <= _minLevel)
+      if (logLevel <= _minLevel)
+      {
+        lock (logLock)
         {
-            lock (logLock)
+          try
+          {
+            if (_previousDate != DateTime.Now.Date)
             {
-                try
-                {
-                    if (_previousDate != DateTime.Now.Date)
-                    {
-                        _previousDate = DateTime.Now.Date;
-                        BackupLogFiles();
-                    }
-
-                    using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
-                    {
-                        string threadName = Thread.CurrentThread.Name;
-                        int threadId = Thread.CurrentThread.ManagedThreadId;
-                        // Write message to log stream
-                        writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now, GetLevelName(logLevel),
-                            threadName, threadId, 
-                                    (arg == null || arg.Length < 1) ? format : string.Format(format, arg)); //avoid string.format if we don't have arguments
-                        writer.Close();
-
-                    }
-                }
-                catch (Exception) { }
+              _previousDate = DateTime.Now.Date;
+              BackupLogFiles();
             }
+
+            using (StreamWriter writer = new StreamWriter(GetFileName(type), true, Encoding.UTF8))
+            {
+              string threadName = Thread.CurrentThread.Name;
+              int threadId = Thread.CurrentThread.ManagedThreadId;
+              // Write message to log stream
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}][{2}({3})]: {4}", DateTime.Now,
+                               GetLevelName(logLevel),
+                               threadName, threadId,
+                               (arg == null || arg.Length < 1) ? format : string.Format(format, arg));
+              //avoid string.format if we don't have arguments
+              writer.Close();
+            }
+          }
+          catch (Exception) {}
         }
+      }
 
       //
       if (type != LogType.Log && type != LogType.Error && type != LogType.EPG &&

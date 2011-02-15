@@ -340,6 +340,8 @@ namespace TvPlugin
 
     protected override void UpdateButtonStates()
     {
+      base.UpdateButtonStates();
+      
       string strLine = string.Empty;
       switch (currentSortMethod)
       {
@@ -857,7 +859,7 @@ namespace TvPlugin
             return;
           }
         }
-        TVHome.ViewChannel(_currentChannel);
+        TVHome.ViewChannelAndCheck(_currentChannel);
       }
     }
 

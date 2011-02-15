@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -90,7 +90,8 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         _DVDenabled = xmlreader.GetValueAsBool("dvdplayer", "mediainfoused", false);
-        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3"); // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
+        _ParseSpeed = xmlreader.GetValueAsString("debug", "MediaInfoParsespeed", "0.3");
+        // fix delay introduced after 0.7.26: http://sourceforge.net/tracker/?func=detail&aid=3013548&group_id=86862&atid=581181
       }
       bool isTV = Util.Utils.IsLiveTv(strFile);
       bool isRadio = Util.Utils.IsLiveRadio(strFile);
@@ -102,7 +103,8 @@ namespace MediaPortal.Player
       //currently disabled for all tv/radio/streaming video
       if (isTV || isRadio || isRTSP || isAVStream)
       {
-        Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP, isAVStream);
+        Log.Debug("MediaInfoWrapper: isTv:{0}, isRadio:{1}, isRTSP:{2}, isAVStream:{3}", isTV, isRadio, isRTSP,
+                  isAVStream);
         Log.Debug("MediaInfoWrapper: disabled for this content");
         return;
       }
@@ -184,7 +186,7 @@ namespace MediaPortal.Player
         {
           int intValue;
 
-          string sChannels = _mI.Get(StreamKind.Audio, i, "Channel(s)").Split(new char[] { '/' })[0].Trim();
+          string sChannels = _mI.Get(StreamKind.Audio, i, "Channel(s)").Split(new char[] {'/'})[0].Trim();
 
           if (int.TryParse(sChannels, out intValue) && intValue > _audioChannels)
           {
@@ -240,15 +242,18 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Width            : {0}", _width);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Height           : {0}", _height);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AspectRatio      : {0}", _aspectRatio);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec, Util.Utils.MakeFileName(_videoCodec).ToLower());
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoCodec       : {0} [ \"{1}.png\" ]", _videoCodec,
+                 Util.Utils.MakeFileName(_videoCodec).ToLower());
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: Scan type        : {0}", _scanType);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: IsInterlaced     : {0}", _isInterlaced);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoResolution  : {0}", _videoResolution);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: VideoDuration    : {0}", _videoDuration);
         //Audio
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioRate        : {0}", _audioRate);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels, _audioChannelsFriendly);
-        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec, Util.Utils.MakeFileName(_audioCodec).ToLower());
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioChannels    : {0} [ \"{1}.png\" ]", _audioChannels,
+                 _audioChannelsFriendly);
+        Log.Info("MediaInfoWrapper.MediaInfoWrapper: AudioCodec       : {0} [ \"{1}.png\" ]", _audioCodec,
+                 Util.Utils.MakeFileName(_audioCodec).ToLower());
         //Detection
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasAudio         : {0}", _hasAudio);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasVideo         : {0}", _hasVideo);
@@ -378,7 +383,8 @@ namespace MediaPortal.Player
       }
       if (type == StreamKind.Audio)
       {
-        strCodec = (strCodec + " " + _mI.Get(type, audiotrack, "Format_Profile").Split(new char[] { '/' })[0].ToUpper()).Trim();
+        strCodec =
+          (strCodec + " " + _mI.Get(type, audiotrack, "Format_Profile").Split(new char[] {'/'})[0].ToUpper()).Trim();
       }
       //
       // Workarround because skin engine ( string.equals/string.contains ) doesn't handle the "+" as last digit

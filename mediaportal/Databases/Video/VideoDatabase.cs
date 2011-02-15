@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -147,7 +147,7 @@ namespace MediaPortal.Video.Database
     {
       _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
     }
-    
+
     public static void AddActorToMovie(int lMovieId, int lActorId)
     {
       _database.AddActorToMovie(lMovieId, lActorId);
@@ -251,6 +251,16 @@ namespace MediaPortal.Video.Database
     public static void SetMovieDuration(int iFileId, int duration)
     {
       _database.SetMovieDuration(iFileId, duration);
+    }
+
+    public static void SetVideoFileWatched(int iFileId, bool watched)
+    {
+      _database.SetVideoFileWatched(iFileId, watched);
+    }
+
+    public static bool GetVideoFileWatched(int iFileId)
+    {
+      return _database.GetVideoFileWatched(iFileId);
     }
 
     public static void DeleteMovie(string strFilenameAndPath)

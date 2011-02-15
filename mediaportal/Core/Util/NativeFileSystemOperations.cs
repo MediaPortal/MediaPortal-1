@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -29,9 +29,10 @@ namespace MediaPortal.Util
 {
 
   #region Structs
+
   // The CharSet must match the CharSet of the corresponding PInvoke signature
   [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-  struct WIN32_FIND_DATA
+  internal struct WIN32_FIND_DATA
   {
     public uint dwFileAttributes;
     public System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
@@ -41,10 +42,8 @@ namespace MediaPortal.Util
     public uint nFileSizeLow;
     public uint dwReserved0;
     public uint dwReserved1;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
-    public string cFileName;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)]
-    public string cAlternateFileName;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string cFileName;
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 14)] public string cAlternateFileName;
   }
 
   [System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
@@ -55,32 +54,31 @@ namespace MediaPortal.Util
     public UInt16 nErrCode;
     public UInt16 Reserved1;
     public UInt16 Reserved2;
-    [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst = 128)] 
-    public string szPathName;
+    [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.ByValTStr, SizeConst = 128)] public string szPathName;
   }
 
   #endregion //structs
 
   public class NativeFileSystemOperations
   {
-
     #region Imports
+
     // using unicode removes a problem of a max file path in the ANSI implementation
     [DllImport("kernel32", CharSet = CharSet.Unicode)]
-    static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
+    private static extern IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData);
 
     [DllImport("kernel32", CharSet = CharSet.Unicode)]
-    static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
+    private static extern bool FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
 
     [DllImport("kernel32.dll", SetLastError = true)]
-    static extern bool FindClose(IntPtr hFindFile);
+    private static extern bool FindClose(IntPtr hFindFile);
 
     #endregion //Imports
 
     #region Constants
 
-    const string fileSystemPrefix = @"\\?\";
-    const string UNCPrefix = @"\\?\UNC\";
+    private const string fileSystemPrefix = @"\\?\";
+    private const string UNCPrefix = @"\\?\UNC\";
 
     #endregion //Constants
 
@@ -96,6 +94,7 @@ namespace MediaPortal.Util
     {
       return GetFiles(directory, true);
     }
+
     /// <summary>
     /// Gets all the filenames in a directory.
     /// Does not include subdirectories.
@@ -124,10 +123,11 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if (includeSystemAndHidden || (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System))==0)
+              if (includeSystemAndHidden ||
+                  (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
               {
                 string fName = Path.Combine(directory, findData.cFileName);
-                if (prefix == UNCPrefix) fName = @"\\"+fName;
+                if (prefix == UNCPrefix) fName = @"\\" + fName;
                 fi.Add(fName);
               }
             }
@@ -142,6 +142,7 @@ namespace MediaPortal.Util
       }
       return fi.ToArray();
     }
+
     /// <summary>
     /// Gets all the filenames in a directory.
     /// Does not include subdirectories.
@@ -152,6 +153,7 @@ namespace MediaPortal.Util
     {
       return GetFileInformation(directory, true);
     }
+
     /// <summary>
     /// Gets all the filenames in a directory.
     /// Does not include subdirectories.
@@ -182,11 +184,14 @@ namespace MediaPortal.Util
             //only pick up files
             if ((findData.dwFileAttributes & (uint)FileAttributes.Directory) == 0)
             {
-              if (includeSystemAndHidden || (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
+              if (includeSystemAndHidden ||
+                  (findData.dwFileAttributes & ((uint)FileAttributes.Hidden | (uint)FileAttributes.System)) == 0)
               {
                 FileInformation fileInfo = new FileInformation();
-                long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) + findData.ftCreationTime.dwLowDateTime;
-                long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) + findData.ftLastWriteTime.dwLowDateTime;
+                long ftCreationTime = (((long)findData.ftCreationTime.dwHighDateTime) << 32) +
+                                      findData.ftCreationTime.dwLowDateTime;
+                long ftLastWriteTime = (((long)findData.ftLastWriteTime.dwHighDateTime) << 32) +
+                                       findData.ftLastWriteTime.dwLowDateTime;
                 fileInfo.Name = Path.Combine(directory, findData.cFileName);
                 if (prefix == UNCPrefix) fileInfo.Name = @"\\" + fileInfo.Name;
                 fileInfo.Length = (((long)findData.nFileSizeHigh) << 32) + findData.nFileSizeLow;
@@ -206,6 +211,7 @@ namespace MediaPortal.Util
       }
       return fi.ToArray();
     }
+
     #endregion //Methods
   }
 }

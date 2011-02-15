@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,25 +28,20 @@ namespace MediaPortal.GUI.Library
   /// <summary>
   /// This is used for caching system fonts (non-latin char support)
   /// </summary>
-  class FontObject : IDisposable
+  internal class FontObject : IDisposable
   {
     protected bool disposed = false;
 
     #region Properties
-    public int size
-    {
-      get;
-      set;
-    }
 
-    public System.Drawing.Font font
-    {
-      get;
-      set;
-    }
+    public int size { get; set; }
+
+    public System.Drawing.Font font { get; set; }
+
     #endregion //properties
 
     #region IDisposable Members
+
     public void Dispose()
     {
       Dispose(true);
@@ -69,6 +64,7 @@ namespace MediaPortal.GUI.Library
       }
       disposed = true;
     }
+
     #endregion //IDisposable
   }
 }

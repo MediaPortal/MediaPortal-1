@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -65,71 +65,69 @@ namespace MediaPortal.GUI.Pictures
         tmpGUIpictures.SetSelectedItemIndex(_currentSlideIndex);
       if (Util.Utils.IsVideo(slideFilePath))
       {
-          if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
-          {
-              pauseMusic();
-          }
+        if (g_Player.IsMusic || g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting))
+        {
+          pauseMusic();
+        }
 
-          if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
-          {
-              //we skip the video in the picture slide show
-              _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
-              _slideDirection = 0;
-              return _currentSlide;
-          }
+        if (g_Player.Playing && (!g_Player.IsMusic || !g_Player.IsCDA || (g_Player.IsRadio && !g_Player.IsTimeShifting)))
+        {
+          //we skip the video in the picture slide show
+          _currentSlide = _slideCache.GetCurrentSlide(_slideList[++_currentSlideIndex]);
+          _slideDirection = 0;
+          return _currentSlide;
+        }
 
-          _loadVideoPlayback = true;
+        _loadVideoPlayback = true;
 
-          g_Player.Play(slideFilePath, g_Player.MediaType.Video);
-          g_Player.ShowFullScreenWindow();
+        g_Player.Play(slideFilePath, g_Player.MediaType.Video);
+        g_Player.ShowFullScreenWindow();
 
-          _loadVideoPlayback = false;
-          _returnedFromVideoPlayback = true;
-
+        _loadVideoPlayback = false;
+        _returnedFromVideoPlayback = true;
       }
       else
         _slideDirection = 0;
       return _currentSlide;
     }
 
-      private void pauseMusic()
+    private void pauseMusic()
+    {
+      pausedMusic = true;
+      pausedMusicPlaylist = playlistPlayer;
+      pausedPlayListType = playlistPlayer.CurrentPlaylistType;
+      isPausedMusicCDA = g_Player.IsCDA;
+      pausedMusicFileName = g_Player.CurrentFile;
+      pausedMusicLastPosition = g_Player.CurrentPosition;
+      g_Player.Stop();
+    }
+
+    private void resumePausedMusic()
+    {
+      pausedMusic = false;
+      if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
       {
-          pausedMusic = true;
-          pausedMusicPlaylist = playlistPlayer;
-          pausedPlayListType = playlistPlayer.CurrentPlaylistType;
-          isPausedMusicCDA = g_Player.IsCDA;
-          pausedMusicFileName = g_Player.CurrentFile;
-          pausedMusicLastPosition = g_Player.CurrentPosition;
-          g_Player.Stop();
+        playlistPlayer = pausedMusicPlaylist;
+        playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.Play(pausedMusicFileName);
+        g_Player.SeekAbsolute(pausedMusicLastPosition);
       }
-
-      private void resumePausedMusic()
+      else
       {
-          pausedMusic = false;
-          if (pausedPlayListType != PlayListType.PLAYLIST_NONE && !isPausedMusicCDA)
-          {
-              playlistPlayer = pausedMusicPlaylist;
-              playlistPlayer.CurrentPlaylistType = pausedPlayListType;
-              playlistPlayer.Play(pausedMusicFileName);
-              g_Player.SeekAbsolute(pausedMusicLastPosition);
-          }
-          else
-          {
-              playlistPlayer = pausedMusicPlaylist;
-              playlistPlayer.CurrentPlaylistType = pausedPlayListType;
-              playlistPlayer.Play(pausedMusicFileName);
+        playlistPlayer = pausedMusicPlaylist;
+        playlistPlayer.CurrentPlaylistType = pausedPlayListType;
+        playlistPlayer.Play(pausedMusicFileName);
 
-              //we need a little pause, cause the cd player is to slow
-              while(!(g_Player.CurrentPosition > 0) )
-              {
-                  Thread.Sleep(1);
-              }
-              g_Player.SeekAbsolute(pausedMusicLastPosition); 
-          }
-          
+        //we need a little pause, cause the cd player is to slow
+        while (!(g_Player.CurrentPosition > 0))
+        {
+          Thread.Sleep(1);
+        }
+        g_Player.SeekAbsolute(pausedMusicLastPosition);
       }
+    }
 
-      private void PrefetchNextSlide()
+    private void PrefetchNextSlide()
     {
       if (_slideList.Count != 0)
       {
@@ -302,14 +300,8 @@ namespace MediaPortal.GUI.Pictures
 
     public static int SlideDirection
     {
-      get
-      {
-        return _slideDirection;
-      }
-      set
-      {
-        _slideDirection = value;
-      }
+      get { return _slideDirection; }
+      set { _slideDirection = value; }
     }
 
     #region GUIWindow overrides
@@ -333,10 +325,10 @@ namespace MediaPortal.GUI.Pictures
           _showOverlayFlag = GUIGraphicsContext.Overlay;
           GUIGraphicsContext.Overlay = false;
           base.OnMessage(message);
-    
+
           if (_returnedFromVideoPlayback)
           {
-              GUIWindowManager.ShowPreviousWindow();
+            GUIWindowManager.ShowPreviousWindow();
           }
           else
           {
@@ -349,7 +341,7 @@ namespace MediaPortal.GUI.Pictures
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           if (!_returnedFromVideoPlayback && !_loadVideoPlayback)
-              Reset();
+            Reset();
           GUIGraphicsContext.Overlay = _showOverlayFlag;
           break;
 
@@ -703,11 +695,11 @@ namespace MediaPortal.GUI.Pictures
         return;
       }
 
-        if (pausedMusic)
-        {
-            resumePausedMusic();
-        }
-        //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
+      if (pausedMusic)
+      {
+        resumePausedMusic();
+      }
+      //Log.Info("Render:{0} {1} {2}", timePassed, _renderTimer, _frameCounter);
       if (!_isPaused && !_isPictureZoomed)
       {
         if (_frameCounter > 0)
@@ -737,7 +729,7 @@ namespace MediaPortal.GUI.Pictures
         {
           if (_currentSlide == null)
           {
-            int totalFrames = unchecked((_speed * (int)(1.0/ TIME_PER_FRAME)) + _slideShowTransistionFrames);
+            int totalFrames = unchecked((_speed * (int)(1.0 / TIME_PER_FRAME)) + _slideShowTransistionFrames);
             if (_useKenBurns)
             {
               totalFrames = _kenBurnTransistionSpeed * 30;
@@ -2281,7 +2273,8 @@ namespace MediaPortal.GUI.Pictures
         float fh = 0f;
         string szText = GUILocalizeStrings.Get(112);
         pFont.GetTextExtent(szText, ref fw, ref fh);
-        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2, 0xff000000);
+        pFont.DrawShadowText(500.0f, 60.0f, 0xffffffff, szText, GUIControl.Alignment.ALIGN_LEFT, (int)fw, 2, 2,
+                             0xff000000);
       }
       return true;
     }

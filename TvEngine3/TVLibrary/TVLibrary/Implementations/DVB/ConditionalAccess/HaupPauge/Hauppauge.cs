@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -168,7 +168,7 @@ namespace TvLibrary.Implementations.DVB
       if (hr != 0)
       {
         succeeded = false;
-        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));        
+        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
       return succeeded;
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -181,15 +181,15 @@ namespace MediaPortal.Video.Database
 
       public IIMDBScriptGrabber Grabber
       {
-        get 
-        { 
-            if(!_grabberLoaded)
-            {
-                if(!LoadScript())
-                    Grabber = null;
-                _grabberLoaded = true; // only try to load it once
-            }
-            return _grabber;
+        get
+        {
+          if (!_grabberLoaded)
+          {
+            if (!LoadScript())
+              Grabber = null;
+            _grabberLoaded = true; // only try to load it once
+          }
+          return _grabber;
         }
         set { _grabber = value; }
       }
@@ -794,7 +794,7 @@ namespace MediaPortal.Video.Database
         string parserTxt = parser.Content;
         string photoBlock = string.Empty;
         if (parser.skipToStartOf("<td id=\"img_primary\"") &&
-        (parser.extractTo("</td>", ref photoBlock)))
+            (parser.extractTo("</td>", ref photoBlock)))
         {
           parser.Content = photoBlock;
           if ((parser.skipToEndOf("<img src=\"")) &&
@@ -905,7 +905,7 @@ namespace MediaPortal.Video.Database
               movieParser.skipToEndOf(">");
               movieParser.extractTo("<br/>", ref title);
               title = Util.Utils.stripHTMLtags(title);
-              title = title.Replace("\n"," ").Replace("\r",string.Empty);
+              title = title.Replace("\n", " ").Replace("\r", string.Empty);
               title = HttpUtility.HtmlDecode(title.Trim()); // Remove HTML entities like &#189;
               // Year
               movieParser.resetPosition();
@@ -925,7 +925,7 @@ namespace MediaPortal.Video.Database
                 movieParser.extractTo("<", ref role);
                 role = Util.Utils.stripHTMLtags(role).Trim();
                 role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
-                                                  .Replace("\r", string.Empty).Trim());
+                                                .Replace("\r", string.Empty).Trim());
                 if (role == string.Empty) // Role case 2, with character link
                 {
                   movieParser.resetPosition();
@@ -933,7 +933,7 @@ namespace MediaPortal.Video.Database
                   movieParser.extractTo("</a>", ref role);
                   role = Util.Utils.stripHTMLtags(role).Trim();
                   role = HttpUtility.HtmlDecode(role.Replace("\n", " ")
-                                                    .Replace("\r", string.Empty).Trim());
+                                                  .Replace("\r", string.Empty).Trim());
                 }
               }
               else
@@ -965,7 +965,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL,ex.Message,ex.Source,ex.StackTrace);
+        Log.Error("IMDB.GetActorDetails({0} exception:{1} {2} {3}", url.URL, ex.Message, ex.Source, ex.StackTrace);
       }
       return false;
     }

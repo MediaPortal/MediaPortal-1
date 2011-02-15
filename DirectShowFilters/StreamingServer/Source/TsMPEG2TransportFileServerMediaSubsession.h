@@ -9,12 +9,12 @@
 class TsMPEG2TransportFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
 	static TsMPEG2TransportFileServerMediaSubsession*
-		createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource, Boolean timeshifting);
+		createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType);
 
 protected:
 	TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,
 		char const* fileName,
-		Boolean reuseFirstSource, Boolean timeshifting);
+		Boolean reuseFirstSource, Boolean timeshifting, int channelType);
 	// called only by createNew();
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
 	virtual float duration() const;
@@ -33,6 +33,7 @@ private: // redefined virtual functions
 		FramedSource* inputSource);
 	char m_fileName[MAX_PATH];
 	Boolean m_bTimeshifting;
+	int m_iChannelType;
 };
 
 #endif

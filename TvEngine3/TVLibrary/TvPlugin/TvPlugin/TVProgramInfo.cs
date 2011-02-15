@@ -485,8 +485,11 @@ namespace TvPlugin
       lstUpcomingEpsiodes.Clear();
       TvBusinessLayer layer = new TvBusinessLayer();
       DateTime dtDay = DateTime.Now;
+
+      // build a list of all upcoming instances of program from EPG data based on program name alone
       List<Program> episodes = (List<Program>)layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(28), initialProgram.Title, null);
 
+      // now if schedule is time based then build a second list for that schedule based on start time (see below)
       IList<Program> actualUpcomingEps = new List<Program>();      
       if (currentSchedule != null)
       {
@@ -511,8 +514,14 @@ namespace TvPlugin
           break;
         }
        
-        //episodes.AddRange(actualUpcomingEps);
-
+        // now if we have a time based schedule then loop through that and if entry does not exist
+        // in the original list then add it
+        // an entry will exist in the second list but not first if the program name is different
+        // in reality this will probably be a series that has finished
+        // eg. we have set a schedule for channel X for Monday 21:00 to 22:00 which happens to be when 
+        // program A is on.   The series for program A finishes and now between 21:00 and 22:00 on 
+        // channel X is program B.   A time based schedule does not take the program name into account
+        // therefore program B will get recorded.
         if (actualUpcomingEps.Count > 0)
         {
           for (int i = actualUpcomingEps.Count - 1; i >= 0; i--)
@@ -547,6 +556,11 @@ namespace TvPlugin
         bool isActualUpcomingEps = actualUpcomingEps.Contains(episode) ;
         bool isRecPrg = isActualUpcomingEps;
         Schedule recordingSchedule = currentSchedule;
+
+        // appears a little odd but seems to work
+        // if episode is not in second (time based) list then override isRecPrg by actually
+        // checking if episode is due to be recorded (if it is in second (time based) list then
+        // it is going to be recorded
         if (!isActualUpcomingEps)
         {
             isRecPrg = (episode.IsRecording || episode.IsRecordingOncePending || episode.IsRecordingSeriesPending) &&

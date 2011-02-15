@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ namespace MediaPortal.Time
 
     #endregion
 
-     #region Constructors/Destructors
+    #region Constructors/Destructors
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DateRange"/> class.
@@ -68,7 +68,7 @@ namespace MediaPortal.Time
       }
     }
 
-  #endregion Constructors/Destructors
+    #endregion Constructors/Destructors
 
     #region Public Methods
 

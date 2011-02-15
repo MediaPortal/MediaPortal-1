@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,7 +34,6 @@ namespace SetupTv
   /// </summary>
   public class ServiceHelper
   {
-
     /// <summary>
     /// Read from DB card detection delay 
     /// </summary>
@@ -75,15 +74,15 @@ namespace SetupTv
           using (ServiceController sc = new ServiceController("TvService"))
           {
             return sc.Status == ServiceControllerStatus.Running;
-        }
+          }
         }
         catch (Exception ex)
         {
-            Log.Error(
+          Log.Error(
             "ServiceHelper: Check whether the tvservice is running failed. Please check your installation. \nError: {0}",
-              ex.ToString());
+            ex.ToString());
           return false;
-          }
+        }
       }
     }
 
@@ -92,10 +91,7 @@ namespace SetupTv
     /// </summary>
     public static bool IsInitialized
     {
-      get
-      {
-        return WaitInitialized(0);
-      }
+      get { return WaitInitialized(0); }
     }
 
     /// <summary>
@@ -118,7 +114,8 @@ namespace SetupTv
     {
       try
       {
-        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName, EventWaitHandleRights.Synchronize);
+        EventWaitHandle initialized = EventWaitHandle.OpenExisting(RemoteControl.InitializedEventName,
+                                                                   EventWaitHandleRights.Synchronize);
         return initialized.WaitOne(millisecondsTimeout);
       }
       catch (Exception ex) // either we have no right, or the event does not exist
@@ -127,7 +124,9 @@ namespace SetupTv
         Log.Write(ex);
       }
       // Fall back: try to call a method on the server (for earlier versions of TvService)
-      DateTime expires = millisecondsTimeout == -1? DateTime.MaxValue : DateTime.Now.AddMilliseconds(millisecondsTimeout);
+      DateTime expires = millisecondsTimeout == -1
+                           ? DateTime.MaxValue
+                           : DateTime.Now.AddMilliseconds(millisecondsTimeout);
 
       // Note if millisecondsTimeout = 0, we never enter the loop and always return false
       // There is no way to determine if TvService is initialized without waiting
@@ -178,9 +177,9 @@ namespace SetupTv
           Log.Error(
             "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation. \nError: {0}",
             ex.ToString());
-        return false;
+          return false;
+        }
       }
-    }
     }
 
     /// <summary>
@@ -201,7 +200,7 @@ namespace SetupTv
             case ServiceControllerStatus.StopPending:
               break;
             case ServiceControllerStatus.Stopped:
-            return true;
+              return true;
             default:
               return false;
           }
@@ -214,8 +213,8 @@ namespace SetupTv
         Log.Error(
           "ServiceHelper: Stopping tvservice failed. Please check your installation. \nError: {0}",
           ex.ToString());
-      return false;
-    }
+        return false;
+      }
     }
 
     /// <summary>
@@ -241,7 +240,7 @@ namespace SetupTv
             case ServiceControllerStatus.StartPending:
               break;
             case ServiceControllerStatus.Running:
-            return true;
+              return true;
             default:
               return false;
           }
@@ -254,8 +253,8 @@ namespace SetupTv
         Log.Error(
           "ServiceHelper: Starting {0} failed. Please check your installation. \nError: {1}",
           aServiceName, ex.ToString());
-      return false;
-    }
+        return false;
+      }
     }
 
     /// <summary>
@@ -340,7 +339,7 @@ namespace SetupTv
         {
           if (rKey != null)
           {
-            rKey.SetValue("DependOnService", new[] { dependsOnService, "Netman" }, RegistryValueKind.MultiString);
+            rKey.SetValue("DependOnService", new[] {dependsOnService, "Netman"}, RegistryValueKind.MultiString);
             rKey.SetValue("Start", 2, RegistryValueKind.DWord); // Set TVService to autostart
           }
         }

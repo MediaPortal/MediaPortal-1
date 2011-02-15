@@ -165,8 +165,8 @@ HRESULT FileReader::OpenFile()
 	}
 	else
 	{
-		LogDebug("FileReader::OpenFile(), open file %ws failed.", pFileName);
 		DWORD dwErr = GetLastError();
+		LogDebug("FileReader::OpenFile(), open file %ws failed. Error code %d", pFileName, dwErr);
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 

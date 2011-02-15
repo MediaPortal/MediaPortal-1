@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -80,12 +80,9 @@ namespace MediaPortal.GUI.Video
       PANEL2 = 150
     } ;
 
-    [SkinControl(500)]
-    protected GUIImage imgVolumeMuteIcon;
-    [SkinControl(501)]
-    protected GUIVolumeBar imgVolumeBar;
-    [SkinControl(502)]
-    protected GUIImage imgActionForbiddenIcon;
+    [SkinControl(500)] protected GUIImage imgVolumeMuteIcon;
+    [SkinControl(501)] protected GUIVolumeBar imgVolumeBar;
+    [SkinControl(502)] protected GUIImage imgActionForbiddenIcon;
 
     private bool _isOsdVisible = false;
     private bool _isPauseOsdVisible = false;
@@ -419,14 +416,14 @@ namespace MediaPortal.GUI.Video
 
       switch (action.wID)
       {
-        // previous : play previous song from playlist
+          // previous : play previous song from playlist
         case Action.ActionType.ACTION_PREV_ITEM:
           {
             //g_playlistPlayer.PlayPrevious();
           }
           break;
 
-        // next : play next song from playlist
+          // next : play next song from playlist
         case Action.ActionType.ACTION_NEXT_ITEM:
           {
             //g_playlistPlayer.PlayNext();
@@ -529,23 +526,23 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-                if (g_Player.Paused)
-                {
-                  g_Player.Pause();
-                  _isPauseOsdVisible = false;
-                  GUIWindowManager.IsPauseOsdVisible = false;
-                  ScreenStateChanged();
-                  UpdateGUI();
-                }
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
+                ScreenStateChanged();
+                UpdateGUI();
+              }
 
-                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-                _showStep = true;
-                g_Player.SeekStep(false);
-                string statusLine = g_Player.GetStepDescription();
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                                (int)Control.LABEL_ROW1, 0, 0, null);
-                msg.Label = statusLine;
-                OnMessage(msg);
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              _showStep = true;
+              g_Player.SeekStep(false);
+              string statusLine = g_Player.GetStepDescription();
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = statusLine;
+              OnMessage(msg);
             }
           }
           break;
@@ -555,22 +552,22 @@ namespace MediaPortal.GUI.Video
           {
             if (g_Player.CanSeek)
             {
-                if (g_Player.Paused)
-                {
-                  g_Player.Pause();
-                  _isPauseOsdVisible = false;
-                  GUIWindowManager.IsPauseOsdVisible = false;
-                  ScreenStateChanged();
-                  UpdateGUI();
-                }
-                _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-                _showStep = true;
-                g_Player.SeekStep(true);
-                string statusLine = g_Player.GetStepDescription();
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                                (int)Control.LABEL_ROW1, 0, 0, null);
-                msg.Label = statusLine;
-                OnMessage(msg);
+              if (g_Player.Paused)
+              {
+                g_Player.Pause();
+                _isPauseOsdVisible = false;
+                GUIWindowManager.IsPauseOsdVisible = false;
+                ScreenStateChanged();
+                UpdateGUI();
+              }
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              _showStep = true;
+              g_Player.SeekStep(true);
+              string statusLine = g_Player.GetStepDescription();
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
+              msg.Label = statusLine;
+              OnMessage(msg);
             }
           }
           break;
@@ -628,7 +625,7 @@ namespace MediaPortal.GUI.Video
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_MOVE_UP:
         case Action.ActionType.ACTION_BIG_STEP_FORWARD:
@@ -683,7 +680,7 @@ namespace MediaPortal.GUI.Video
             }
             return;
           }
-        //break;
+          //break;
 
         case Action.ActionType.ACTION_SHOW_MPLAYER_OSD:
           //g_application.m_pPlayer.ToggleOSD();
@@ -740,29 +737,30 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_NEXT_EDITION:
           {
-              if (g_Player.EditionStreams > 1)
+            if (g_Player.EditionStreams > 1)
+            {
+              _showStatus = true;
+              _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
+                                              (int)Control.LABEL_ROW1, 0, 0, null);
+              g_Player.SwitchToNextEdition();
+
+              String language = g_Player.EditionLanguage(g_Player.CurrentEditionStream);
+              if (String.Equals(language, "Edition") || String.Equals(language, ""))
               {
-                  _showStatus = true;
-                  _timeStatusShowTime = (DateTime.Now.Ticks / 10000);
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_SET, GetID, 0,
-                                                  (int)Control.LABEL_ROW1, 0, 0, null);
-                  g_Player.SwitchToNextEdition();
-
-                  String language = g_Player.EditionLanguage(g_Player.CurrentEditionStream);
-                  if (String.Equals(language, "Edition") || String.Equals(language, ""))
-                  {
-                      msg.Label = string.Format("{0} ({1}/{2})", g_Player.EditionType(g_Player.CurrentEditionStream),
-                                                g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
-                  }
-                  else
-                  {
-                      msg.Label = string.Format("{0} {1} ({2}/{3})", language, g_Player.EditionType(g_Player.CurrentEditionStream),
-                                                g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
-                  }
-
-                  OnMessage(msg);
-                  Log.Info("GUIVideoFullscreen: switched edition to {0}", msg.Label);
+                msg.Label = string.Format("{0} ({1}/{2})", g_Player.EditionType(g_Player.CurrentEditionStream),
+                                          g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
               }
+              else
+              {
+                msg.Label = string.Format("{0} {1} ({2}/{3})", language,
+                                          g_Player.EditionType(g_Player.CurrentEditionStream),
+                                          g_Player.CurrentEditionStream + 1, g_Player.EditionStreams);
+              }
+
+              OnMessage(msg);
+              Log.Info("GUIVideoFullscreen: switched edition to {0}", msg.Label);
+            }
           }
           break;
 
@@ -789,10 +787,10 @@ namespace MediaPortal.GUI.Video
                 {
                   if (!string.IsNullOrEmpty(strName))
                     msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
-                      streamId + 1, subStreamsCount);
+                                              streamId + 1, subStreamsCount);
                   else
                     msg.Label = string.Format("{0} ({1}/{2})", langName,
-                      streamId + 1, subStreamsCount);
+                                              streamId + 1, subStreamsCount);
                 }
               }
               else
@@ -826,8 +824,8 @@ namespace MediaPortal.GUI.Video
           }
           else
           {
-              _isPauseOsdVisible = false;
-             GUIWindowManager.IsPauseOsdVisible = false;
+            _isPauseOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = false;
           }
           break;
 
@@ -854,40 +852,40 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_REWIND:
           {
-              _isPauseOsdVisible = false;
-              GUIWindowManager.IsPauseOsdVisible = false;
+            _isPauseOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = false;
 
-              if (g_Player.CanSeek && !g_Player.IsDVD)
+            if (g_Player.CanSeek && !g_Player.IsDVD)
+            {
+              ScreenStateChanged();
+              UpdateGUI();
+              double dPos = g_Player.CurrentPosition;
+              if (dPos > 1)
               {
-                ScreenStateChanged();
-                UpdateGUI();
-                double dPos = g_Player.CurrentPosition;
-                if (dPos > 1)
-                {
-                    Log.Debug("GUIVideoFullscreen.Rewind - skipping");
-                    g_Player.SeekAbsolute(dPos - 0.25d);
-                }
+                Log.Debug("GUIVideoFullscreen.Rewind - skipping");
+                g_Player.SeekAbsolute(dPos - 0.25d);
               }
             }
+          }
           break;
 
         case Action.ActionType.ACTION_FORWARD:
           {
-              _isPauseOsdVisible = false;
-              GUIWindowManager.IsPauseOsdVisible = false;
+            _isPauseOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = false;
 
-              if (g_Player.CanSeek && !g_Player.IsDVD)
+            if (g_Player.CanSeek && !g_Player.IsDVD)
+            {
+              ScreenStateChanged();
+              UpdateGUI();
+              double dPos = g_Player.CurrentPosition;
+              if (g_Player.Duration - dPos > 1)
               {
-                ScreenStateChanged();
-                UpdateGUI();
-                double dPos = g_Player.CurrentPosition;
-                if (g_Player.Duration - dPos > 1)
-                {
-                    Log.Debug("GUIVideoFullscreen.Forward - skipping");
-                    g_Player.SeekAbsolute(dPos + 0.25d);
-                }
+                Log.Debug("GUIVideoFullscreen.Forward - skipping");
+                g_Player.SeekAbsolute(dPos + 0.25d);
               }
             }
+          }
           break;
 
         case Action.ActionType.ACTION_KEY_PRESSED:
@@ -945,10 +943,10 @@ namespace MediaPortal.GUI.Video
 
         case Action.ActionType.ACTION_PLAY:
         case Action.ActionType.ACTION_MUSIC_PLAY:
-              {
-                  GUIWindowManager.IsPauseOsdVisible = false;
-                  break;
-              }
+          {
+            GUIWindowManager.IsPauseOsdVisible = false;
+            break;
+          }
 
 
         case Action.ActionType.ACTION_CONTEXT_MENU:
@@ -1189,7 +1187,7 @@ namespace MediaPortal.GUI.Video
       // Edition stream selection, show only when more than one streams exists
       if (g_Player.EditionStreams > 1)
       {
-          dlg.AddLocalizedString(200090);
+        dlg.AddLocalizedString(200090);
       }
 
       eAudioDualMonoMode dualMonoMode = g_Player.GetAudioDualMonoMode();
@@ -1239,7 +1237,7 @@ namespace MediaPortal.GUI.Video
       }
       switch (dlg.SelectedId)
       {
-        // Add audio stream selection to be able to switch audio streams in .ts recordings
+          // Add audio stream selection to be able to switch audio streams in .ts recordings
         case 492:
           ShowAudioStreamsMenu();
           break;
@@ -1372,45 +1370,46 @@ namespace MediaPortal.GUI.Video
     // Add edition stream selection to be able to switch edition streams in .ts recordings
     private void ShowEditionStreamsMenu()
     {
-        if (dlg == null)
-        {
-            return;
-        }
-        dlg.Reset();
-        dlg.SetHeading(200090); // Edition Streams
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(200090); // Edition Streams
 
-        // get the number of editionstreams in the current movie
-        int count = g_Player.EditionStreams;
-        // cycle through each editionstream and add it to our list control
-        for (int i = 0; i < count; i++)
+      // get the number of editionstreams in the current movie
+      int count = g_Player.EditionStreams;
+      // cycle through each editionstream and add it to our list control
+      for (int i = 0; i < count; i++)
+      {
+        string editionType = g_Player.EditionType(i);
+        if (editionType == Strings.Unknown || String.Equals(editionType, "") ||
+            editionType.Equals(g_Player.EditionType(i)))
         {
-            string editionType = g_Player.EditionType(i);
-            if (editionType == Strings.Unknown || String.Equals(editionType, "") || editionType.Equals(g_Player.EditionType(i)))
-            {
-                dlg.Add(g_Player.EditionLanguage(i));
-            }
-            else
-            {
-                dlg.Add(String.Format("{0} {1}", g_Player.EditionLanguage(i), editionType));
-            }
+          dlg.Add(g_Player.EditionLanguage(i));
         }
-          
-        // select/focus the editionstream, which is active atm
-        dlg.SelectedLabel = g_Player.CurrentEditionStream;
+        else
+        {
+          dlg.Add(String.Format("{0} {1}", g_Player.EditionLanguage(i), editionType));
+        }
+      }
 
-        // show dialog and wait for result
-        _IsDialogVisible = true;
-        dlg.DoModal(GetID);
-        _IsDialogVisible = false;
+      // select/focus the editionstream, which is active atm
+      dlg.SelectedLabel = g_Player.CurrentEditionStream;
 
-        if (dlg.SelectedId == -1)
-        {
-            return;
-        }
-        if (dlg.SelectedLabel != g_Player.CurrentEditionStream)
-        {
-            g_Player.CurrentEditionStream = dlg.SelectedLabel;
-        }
+      // show dialog and wait for result
+      _IsDialogVisible = true;
+      dlg.DoModal(GetID);
+      _IsDialogVisible = false;
+
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      if (dlg.SelectedLabel != g_Player.CurrentEditionStream)
+      {
+        g_Player.CurrentEditionStream = dlg.SelectedLabel;
+      }
     }
 
     // Add audio stream selection to be able to switch audio streams in .ts recordings
@@ -1520,7 +1519,7 @@ namespace MediaPortal.GUI.Video
           dlg.Add(strLang);
         }
       }
-       
+
       // select/focus the subtitle, which is active atm.
       // There may be no subtitle streams selected at all (-1), which happens when a subtitle file is used instead
       if (g_Player.EnableSubtitle)
@@ -1582,13 +1581,17 @@ namespace MediaPortal.GUI.Video
         dlg.SetHeading(200073); // Postprocessing
         IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
         // Deblocking
-        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200074), (engine.EnablePostProcess) ? GUILocalizeStrings.Get(461) : ""));
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200074),
+                              (engine.EnablePostProcess) ? GUILocalizeStrings.Get(461) : ""));
         // Resize
-        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200075), (engine.EnableResize) ? GUILocalizeStrings.Get(461) : ""));
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200075),
+                              (engine.EnableResize) ? GUILocalizeStrings.Get(461) : ""));
         // Crop
-        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200078), (engine.EnableCrop) ? GUILocalizeStrings.Get(461) : ""));
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200078),
+                              (engine.EnableCrop) ? GUILocalizeStrings.Get(461) : ""));
         // Deinterlace
-        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200077), (engine.EnableDeinterlace) ? GUILocalizeStrings.Get(461) : ""));
+        dlg.Add(String.Format("{0} {1}", GUILocalizeStrings.Get(200077),
+                              (engine.EnableDeinterlace) ? GUILocalizeStrings.Get(461) : ""));
         dlg.AddLocalizedString(970); // Previous window
         dlg.SelectedLabel = 0;
 
@@ -1605,10 +1608,18 @@ namespace MediaPortal.GUI.Video
 
         switch (dlg.SelectedLabel)
         {
-          case 0: engine.EnablePostProcess = !engine.EnablePostProcess; break;
-          case 1: engine.EnableResize = !engine.EnableResize; break;
-          case 2: engine.EnableCrop = !engine.EnableCrop; break;
-          case 3: engine.EnableDeinterlace = !engine.EnableDeinterlace; break;
+          case 0:
+            engine.EnablePostProcess = !engine.EnablePostProcess;
+            break;
+          case 1:
+            engine.EnableResize = !engine.EnableResize;
+            break;
+          case 2:
+            engine.EnableCrop = !engine.EnableCrop;
+            break;
+          case 3:
+            engine.EnableDeinterlace = !engine.EnableDeinterlace;
+            break;
         }
       } while (dlg.SelectedId != -1);
       _IsDialogVisible = false;
@@ -1777,8 +1788,8 @@ namespace MediaPortal.GUI.Video
       }
       if (_isPauseOsdVisible != screenState.PauseOsdVisible)
       {
-          screenState.PauseOsdVisible = _isPauseOsdVisible;
-          updateGUI = true;
+        screenState.PauseOsdVisible = _isPauseOsdVisible;
+        updateGUI = true;
       }
       if (_isOsdVisible && _osdWindow.NeedRefresh())
       {
@@ -1841,7 +1852,6 @@ namespace MediaPortal.GUI.Video
 
     private void UpdateGUI()
     {
-
       int iSpeed = g_Player.Speed;
       HideControl(GetID, (int)Control.IMG_2X);
       HideControl(GetID, (int)Control.IMG_4X);
@@ -1977,17 +1987,17 @@ namespace MediaPortal.GUI.Video
       }
       if (g_Player.Paused && m_iMaxTimeOSDOnscreen > 0)
       {
-          TimeSpan ts = DateTime.Now - m_dwOSDTimeOut;
-          if (ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
-          {
-              _isPauseOsdVisible = false;
-              GUIWindowManager.IsPauseOsdVisible = false;
-          }
-          else
-          {
-              _isPauseOsdVisible = true;
-              GUIWindowManager.IsPauseOsdVisible = true;
-          }
+        TimeSpan ts = DateTime.Now - m_dwOSDTimeOut;
+        if (ts.TotalMilliseconds > m_iMaxTimeOSDOnscreen)
+        {
+          _isPauseOsdVisible = false;
+          GUIWindowManager.IsPauseOsdVisible = false;
+        }
+        else
+        {
+          _isPauseOsdVisible = true;
+          GUIWindowManager.IsPauseOsdVisible = true;
+        }
       }
     }
 
@@ -2196,17 +2206,17 @@ namespace MediaPortal.GUI.Video
       return -1;
     }
 
-    void g_Player_PlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
+    private void g_Player_PlayBackChanged(g_Player.MediaType type, int stoptime, string filename)
     {
       SettingsLoaded = false; // we should reload
     }
 
-    void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
+    private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       SettingsLoaded = false; // we should reload
     }
 
-    void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
+    private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       SettingsLoaded = false; // we should reload
     }
@@ -2214,18 +2224,17 @@ namespace MediaPortal.GUI.Video
     #endregion
 
     #region Properties
+
     private bool SettingsLoaded
     {
-      get
-      {
-        return _settingsLoaded;
-      }
+      get { return _settingsLoaded; }
       set
       {
         _settingsLoaded = value;
         //maybe additional logic?
       }
     }
+
     #endregion
 
     #region IRenderLayer

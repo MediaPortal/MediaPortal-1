@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -400,17 +400,17 @@ namespace MediaPortal.GUI.Music
         //	permanent thumb
         Util.Utils.DownLoadImage(coverArtUrl, coverArtFileName);
       }
-      
+
       try
       {
         coverArtTexture = Util.Picture.Load(coverArtFileName, 0, 128, 128, true, false, out coverArtTextureWidth,
-                                            out coverArtTextureHeight);  
+                                            out coverArtTextureHeight);
       }
       catch (FileNotFoundException)
       {
         //ignore          
       }
-              
+
       Update();
     }
 

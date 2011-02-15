@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,6 +44,6 @@ namespace TvEngine.PowerScheduler
     /// <param name="sReason">Some text to describe the error condition.</param>
     /// <param name="innerException">The exception that is the cause of the current exception, 
     /// or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
-    public TimerException(string sReason, Exception innerException) : base(sReason, innerException) { }
+    public TimerException(string sReason, Exception innerException) : base(sReason, innerException) {}
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -96,21 +96,16 @@ namespace MpeMaker.Classes
       /// <value>Gets the filename.</value>
       public string Filename
       {
-        get
-        {
-          return (string)Tag;
-        }
-        set
-        {
-          Tag = value;
-        }
+        get { return (string)Tag; }
+        set { Tag = value; }
       }
     }
+
     #endregion
 
     #region Construction
 
-    protected MruStripMenu() { }
+    protected MruStripMenu() {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -118,9 +113,7 @@ namespace MpeMaker.Classes
     /// <param name="recentFileMenuItem">The temporary menu item which will be replaced with the MRU list.</param>
     /// <param name="clickedHandler">The delegate to handle the item selection (click) event.</param>
     public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler)
-      : this(recentFileMenuItem, clickedHandler, null, false, 4)
-    {
-    }
+      : this(recentFileMenuItem, clickedHandler, null, false, 4) {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -129,10 +122,7 @@ namespace MpeMaker.Classes
     /// <param name="clickedHandler">The delegate to handle the item selection (click) event.</param>
     /// <param name="maxEntries"></param>
     public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, int maxEntries)
-      : this(recentFileMenuItem, clickedHandler, null, false, maxEntries)
-    {
-
-    }
+      : this(recentFileMenuItem, clickedHandler, null, false, maxEntries) {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -141,9 +131,7 @@ namespace MpeMaker.Classes
     /// <param name="clickedHandler">The delegate to handle the item selection (click) event.</param>
     /// <param name="registryKeyName"></param>
     public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName)
-      : this(recentFileMenuItem, clickedHandler, registryKeyName, true, 4)
-    {
-    }
+      : this(recentFileMenuItem, clickedHandler, registryKeyName, true, 4) {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -152,10 +140,9 @@ namespace MpeMaker.Classes
     /// <param name="clickedHandler">The delegate to handle the item selection (click) event.</param>
     /// <param name="registryKeyName">The name or path of the registry key to use to store the MRU list and settings.</param>
     /// <param name="maxEntries">The maximum number of items on the MRU list.</param>
-    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, int maxEntries)
-      : this(recentFileMenuItem, clickedHandler, registryKeyName, true, maxEntries)
-    {
-    }
+    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName,
+                        int maxEntries)
+      : this(recentFileMenuItem, clickedHandler, registryKeyName, true, maxEntries) {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -164,10 +151,9 @@ namespace MpeMaker.Classes
     /// <param name="clickedHandler">The delegate to handle the item selection (click) event.</param>
     /// <param name="registryKeyName">The name or path of the registry key to use to store the MRU list and settings.</param>
     /// <param name="loadFromRegistry">Loads the MRU settings from the registry immediately.</param>
-    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry)
-      : this(recentFileMenuItem, clickedHandler, registryKeyName, loadFromRegistry, 4)
-    {
-    }
+    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName,
+                        bool loadFromRegistry)
+      : this(recentFileMenuItem, clickedHandler, registryKeyName, loadFromRegistry, 4) {}
 
     /// <summary>
     /// Initializes a new instance of the MruMenu class.
@@ -177,12 +163,14 @@ namespace MpeMaker.Classes
     /// <param name="registryKeyName">The name or path of the registry key to use to store the MRU list and settings.</param>
     /// <param name="loadFromRegistry">Loads the MRU settings from the registry immediately.</param>
     /// <param name="maxEntries">The maximum number of items on the MRU list.</param>
-    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry, int maxEntries)
+    public MruStripMenu(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName,
+                        bool loadFromRegistry, int maxEntries)
     {
       Init(recentFileMenuItem, clickedHandler, registryKeyName, loadFromRegistry, maxEntries);
     }
 
-    protected void Init(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry, int maxEntries)
+    protected void Init(ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName,
+                        bool loadFromRegistry, int maxEntries)
     {
       if (recentFileMenuItem == null)
         throw new ArgumentNullException("recentFileMenuItem");
@@ -214,17 +202,13 @@ namespace MpeMaker.Classes
       clickedHandler(MenuItems.IndexOf(menuItem) - StartIndex, menuItem.Filename);
     }
 
-
     #endregion
 
     #region Properties
 
     public virtual ToolStripItemCollection MenuItems
     {
-      get
-      {
-        return recentFileMenuItem.DropDownItems;
-      }
+      get { return recentFileMenuItem.DropDownItems; }
     }
 
     public List<string> Files
@@ -241,34 +225,22 @@ namespace MpeMaker.Classes
 
     public virtual int StartIndex
     {
-      get
-      {
-        return 0;
-      }
+      get { return 0; }
     }
 
     public virtual int EndIndex
     {
-      get
-      {
-        return numEntries;
-      }
+      get { return numEntries; }
     }
 
     public int NumEntries
     {
-      get
-      {
-        return numEntries;
-      }
+      get { return numEntries; }
     }
 
     public int MaxEntries
     {
-      get
-      {
-        return maxEntries;
-      }
+      get { return maxEntries; }
       set
       {
         if (value > 16)
@@ -291,22 +263,13 @@ namespace MpeMaker.Classes
 
     public int MaxShortenPathLength
     {
-      get
-      {
-        return maxShortenPathLength;
-      }
-      set
-      {
-        maxShortenPathLength = value < 16 ? 16 : value;
-      }
+      get { return maxShortenPathLength; }
+      set { maxShortenPathLength = value < 16 ? 16 : value; }
     }
 
     public virtual bool IsInline
     {
-      get
-      {
-        return false;
-      }
+      get { return false; }
     }
 
     #endregion
@@ -324,9 +287,7 @@ namespace MpeMaker.Classes
       //recentFileMenuItem.MenuItems.RemoveAt(0);
     }
 
-    protected virtual void SetFirstFile(MruMenuItem menuItem)
-    {
-    }
+    protected virtual void SetFirstFile(MruMenuItem menuItem) {}
 
     public void SetFirstFile(int number)
     {
@@ -383,7 +344,7 @@ namespace MpeMaker.Classes
     /// (Use Path.GetFullPath() to obtain this.)</para>
     /// </remarks>
     /// <returns></returns>
-    static public string ShortenPathname(string pathname, int maxLength)
+    public static string ShortenPathname(string pathname, int maxLength)
     {
       if (pathname.Length <= maxLength)
         return pathname;
@@ -392,7 +353,8 @@ namespace MpeMaker.Classes
       if (root.Length > 3)
         root += Path.DirectorySeparatorChar;
 
-      string[] elements = pathname.Substring(root.Length).Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+      string[] elements = pathname.Substring(root.Length).Split(Path.DirectorySeparatorChar,
+                                                                Path.AltDirectorySeparatorChar);
 
       int filenameIndex = elements.GetLength(0) - 1;
 
@@ -574,6 +536,7 @@ namespace MpeMaker.Classes
 
       return filenames;
     }
+
     #endregion
 
     #region Add Methods
@@ -738,10 +701,7 @@ namespace MpeMaker.Classes
 
     public string RegistryKeyName
     {
-      get
-      {
-        return registryKeyName;
-      }
+      get { return registryKeyName; }
       set
       {
         if (mruStripMutex != null)
@@ -847,32 +807,29 @@ namespace MpeMaker.Classes
 
     //private MruStripMenuInline(
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler)
-      : this(owningMenu, recentFileMenuItem, clickedHandler, null, false, 4)
-    {
-    }
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler)
+      : this(owningMenu, recentFileMenuItem, clickedHandler, null, false, 4) {}
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, int maxEntries)
-      : this(owningMenu, recentFileMenuItem, clickedHandler, null, false, maxEntries)
-    {
-    }
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler, int maxEntries)
+      : this(owningMenu, recentFileMenuItem, clickedHandler, null, false, maxEntries) {}
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName)
-      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, true, 4)
-    {
-    }
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler, string registryKeyName)
+      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, true, 4) {}
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, int maxEntries)
-      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, true, maxEntries)
-    {
-    }
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler, string registryKeyName, int maxEntries)
+      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, true, maxEntries) {}
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry)
-      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, loadFromRegistry, 4)
-    {
-    }
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry)
+      : this(owningMenu, recentFileMenuItem, clickedHandler, registryKeyName, loadFromRegistry, 4) {}
 
-    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem, ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry, int maxEntries)
+    public MruStripMenuInline(ToolStripMenuItem owningMenu, ToolStripMenuItem recentFileMenuItem,
+                              ClickedHandler clickedHandler, string registryKeyName, bool loadFromRegistry,
+                              int maxEntries)
     {
       maxShortenPathLength = 48;
       this.owningMenu = owningMenu;
@@ -886,34 +843,22 @@ namespace MpeMaker.Classes
 
     public override ToolStripItemCollection MenuItems
     {
-      get
-      {
-        return owningMenu.DropDownItems;
-      }
+      get { return owningMenu.DropDownItems; }
     }
 
     public override int StartIndex
     {
-      get
-      {
-        return MenuItems.IndexOf(firstMenuItem);
-      }
+      get { return MenuItems.IndexOf(firstMenuItem); }
     }
 
     public override int EndIndex
     {
-      get
-      {
-        return StartIndex + numEntries;
-      }
+      get { return StartIndex + numEntries; }
     }
 
     public override bool IsInline
     {
-      get
-      {
-        return true;
-      }
+      get { return true; }
     }
 
     #endregion

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ namespace MediaPortal.Music.Database
       Open();
     }
 
-    ~MusicDatabase() { }
+    ~MusicDatabase() {}
 
     public static void ReOpen()
     {
@@ -175,7 +175,7 @@ namespace MediaPortal.Music.Database
         {
           Directory.CreateDirectory(Config.GetFolder(Config.Dir.Database));
         }
-        catch (Exception) { }
+        catch (Exception) {}
 
         if (!File.Exists(Config.GetFile(Config.Dir.Database, "MusicDatabaseV12.db3")))
         {
@@ -257,41 +257,41 @@ namespace MediaPortal.Music.Database
         DatabaseUtility.SetPragmas(MusicDbClient);
 
         // Tracks table containing information for songs
-         DatabaseUtility.AddTable(
-           MusicDbClient, "tracks",
-           @"CREATE TABLE tracks ( " +
-           "idTrack integer primary key autoincrement, " + // Unique id Autoincremented
-           "strPath text, " +                              // Full  path of the file.
-           "strArtist text, " +                            // Artist
-           "strAlbumArtist text, " +                       // Album Artist
-           "strAlbum text, " +                             // Album
-           "strGenre text, " +                             // Genre  (multiple genres)
-           "strComposer text, " +                          // Composer (multiple composers)
-           "strConductor text, " +                         // Conductor
-           "strTitle text, " +                             // Song Title
-           "iTrack integer, " +                            // Track Number
-           "iNumTracks integer, " +                        // Total  Number of Tracks on Album
-           "iDuration integer, " +                         // Duration in seconds
-           "iYear integer, " +                             // Year
-           "iTimesPlayed integer, " +                      // # Times Played
-           "iRating integer, " +                           // Rating
-           "iFavorite integer, " +                         // Favorite Indicator
-           "iResumeAt integer, " +                         // Resume  song from position
-           "iDisc integer, " +                             // Disc Number
-           "iNumDisc integer, " +                          // Total  Number of Discs
-           "strLyrics text, " +                            // Lyric Text
-           "strComment text, " +                           // Comment
-           "strFileType text, " +                          // File Format (mp3, flac, etc.)           
-           "strFullCodec text, " +                         // Full Codec Description      
-           "strBitRateMode text, " +                       // Bitrate mode (CBR / VBR)           
-           "iBPM integer, " +                              // Beats per Minute
-           "iBitRate integer, " +                          // Bitrate
-           "iChannels integer, " +                         // Channels
-           "iSampleRate integer, " +                       // Sample Rate    
-           "dateLastPlayed timestamp, " +                  // Date, Last Time Played
-           "dateAdded timestamp" +                         // Date added. Either Insertion date, Creation date, LastWrite
-           ")"
-           );
+        DatabaseUtility.AddTable(
+          MusicDbClient, "tracks",
+          @"CREATE TABLE tracks ( " +
+          "idTrack integer primary key autoincrement, " + // Unique id Autoincremented
+          "strPath text, " + // Full  path of the file.
+          "strArtist text, " + // Artist
+          "strAlbumArtist text, " + // Album Artist
+          "strAlbum text, " + // Album
+          "strGenre text, " + // Genre  (multiple genres)
+          "strComposer text, " + // Composer (multiple composers)
+          "strConductor text, " + // Conductor
+          "strTitle text, " + // Song Title
+          "iTrack integer, " + // Track Number
+          "iNumTracks integer, " + // Total  Number of Tracks on Album
+          "iDuration integer, " + // Duration in seconds
+          "iYear integer, " + // Year
+          "iTimesPlayed integer, " + // # Times Played
+          "iRating integer, " + // Rating
+          "iFavorite integer, " + // Favorite Indicator
+          "iResumeAt integer, " + // Resume  song from position
+          "iDisc integer, " + // Disc Number
+          "iNumDisc integer, " + // Total  Number of Discs
+          "strLyrics text, " + // Lyric Text
+          "strComment text, " + // Comment
+          "strFileType text, " + // File Format (mp3, flac, etc.)           
+          "strFullCodec text, " + // Full Codec Description      
+          "strBitRateMode text, " + // Bitrate mode (CBR / VBR)           
+          "iBPM integer, " + // Beats per Minute
+          "iBitRate integer, " + // Bitrate
+          "iChannels integer, " + // Channels
+          "iSampleRate integer, " + // Sample Rate    
+          "dateLastPlayed timestamp, " + // Date, Last Time Played
+          "dateAdded timestamp" + // Date added. Either Insertion date, Creation date, LastWrite
+          ")"
+          );
 
         MusicDbClient.Execute(strSQL);
 

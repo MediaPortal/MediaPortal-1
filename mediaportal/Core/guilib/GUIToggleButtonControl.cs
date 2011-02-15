@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -101,8 +101,8 @@ namespace MediaPortal.GUI.Library
       _shadow = (_shadowAngle > 0) || (_shadowDistance > 0);
 
       _labelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
-                                            _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_MIDDLE, false,
-                                            _shadowAngle, _shadowDistance, _shadowColor);
+                                          _label, _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_MIDDLE, false,
+                                          _shadowAngle, _shadowDistance, _shadowColor);
       _labelControl.TextAlignment = _textAlignment;
       _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.DimColor = DimColor;
@@ -177,7 +177,7 @@ namespace MediaPortal.GUI.Library
       _labelControl.TextVAlignment = _textVAlignment;
       _labelControl.Label = _label;
       _labelControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
-      
+
       // render the text on the button
       int x = 0;
       int y = 0;
@@ -300,7 +300,7 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.SafeDispose();
       _imageAlternativeFocused.SafeDispose();
       _imageAlternativeNonFocused.SafeDispose();
-      _labelControl.SafeDispose();   
+      _labelControl.SafeDispose();
     }
 
     public override void SetPosition(int posX, int posY)
@@ -384,7 +384,6 @@ namespace MediaPortal.GUI.Library
       _labelControl.FontName = _fontName;
       _labelControl.TextColor = dwColor;
       _labelControl.Label = strLabel;
-      
     }
 
     public string Label

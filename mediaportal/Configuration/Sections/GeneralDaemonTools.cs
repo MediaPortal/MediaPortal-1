@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ namespace MediaPortal.Configuration.Sections
     private IContainer components = null;
 
     public GeneralDaemonTools()
-      : this("Virtual Drive") { }
+      : this("Virtual Drive") {}
 
     public GeneralDaemonTools(string name)
       : base(name)
@@ -66,7 +66,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
 
@@ -143,7 +143,7 @@ namespace MediaPortal.Configuration.Sections
             rk.Close();
           }
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
       return SoftwarePath;
     }
@@ -354,7 +354,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // resetButton
       // 
-      this.resetButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.resetButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.resetButton.Location = new System.Drawing.Point(384, 119);
       this.resetButton.Name = "resetButton";
       this.resetButton.Size = new System.Drawing.Size(72, 22);
@@ -372,7 +374,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox2.ResumeLayout(false);
       this.groupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -419,8 +420,10 @@ namespace MediaPortal.Configuration.Sections
 
     private void resetButton_Click(object sender, EventArgs e)
     {
-      if (MessageBox.Show("Do you really want to reset the extension list to the default?\r\nAny modification you did will be lost.", "MediaPortal Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
-        == DialogResult.No) return;
+      if (MessageBox.Show(
+        "Do you really want to reset the extension list to the default?\r\nAny modification you did will be lost.",
+        "MediaPortal Configuration", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2)
+          == DialogResult.No) return;
 
       textBoxExtensions.Text = Util.Utils.ImageExtensionsDefault;
     }

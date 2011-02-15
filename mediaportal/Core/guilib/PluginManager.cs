@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Library
       {
         Log.Info("  Loading plugis whitelist:");
         document.Load(filename);
-        foreach(XmlNode node in document.SelectNodes("/whitelist/plugin"))
+        foreach (XmlNode node in document.SelectNodes("/whitelist/plugin"))
         {
           string pluginName = node.InnerText.Trim();
           if (!whiteList.Contains(pluginName))
@@ -87,7 +87,7 @@ namespace MediaPortal.GUI.Library
         }
         _whiteList = whiteList;
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("Failed to load plugins whitelist:");
         Log.Error(ex);
@@ -135,7 +135,7 @@ namespace MediaPortal.GUI.Library
       LoadWindowPlugin(Config.GetFile(Config.Dir.Plugins, @"windows\WindowPlugins.dll")); //need to load this first!!!
 
       string[] strFiles = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "windows"), "dll");
-      
+
       foreach (string strFile in strFiles)
       {
         if (strFile.ToLower().IndexOf("windowplugins.dll") >= 0)
@@ -489,7 +489,8 @@ namespace MediaPortal.GUI.Library
 
     public static bool IsPluginNameLoaded(string strPluginName)
     {
-      if (MediaPortal.Player.PlayerFactory.ExternalPlayerList != null && MediaPortal.Player.PlayerFactory.ExternalPlayerList.Count > 0)
+      if (MediaPortal.Player.PlayerFactory.ExternalPlayerList != null &&
+          MediaPortal.Player.PlayerFactory.ExternalPlayerList.Count > 0)
       {
         foreach (ISetupForm sf in MediaPortal.Player.PlayerFactory.ExternalPlayerList)
         {
@@ -506,7 +507,7 @@ namespace MediaPortal.GUI.Library
             return true;
         }
       }
-      
+
       return false;
     }
 
@@ -536,6 +537,5 @@ namespace MediaPortal.GUI.Library
       }
       return res;
     }
-
   }
 }

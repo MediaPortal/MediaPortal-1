@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -163,7 +163,7 @@ namespace MediaPortal.Configuration
 
         string MpConfig = Assembly.GetExecutingAssembly().Location;
 #if !DEBUG
-        // Check TvPlugin version
+  // Check TvPlugin version
         string tvPlugin = Config.GetFolder(Config.Dir.Plugins) + "\\Windows\\TvPlugin.dll";
         if (File.Exists(tvPlugin) && !_avoidVersionChecking)
         {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ namespace MediaPortal.GUI.Video
       OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL = 710,
       OSD_VIDEO_POSTPROC_CROP_VERTICAL = 711,
       OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL = 712,
-      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL = 713,   
+      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL = 713,
       OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF = 714,
       OSD_SUBTITLE_DELAY = 800,
       OSD_SUBTITLE_DELAY_LABEL = 850,
@@ -187,9 +187,9 @@ namespace MediaPortal.GUI.Video
         case Action.ActionType.ACTION_PAUSE:
           {
             // push a message through to this window to handle the remote control button
-              GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
-                                                 (int)Controls.OSD_PAUSE, 0, 0, null);
-              OnMessage(msgSet);
+            GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, GetID, (int)Controls.OSD_PAUSE,
+                                               (int)Controls.OSD_PAUSE, 0, 0, null);
+            OnMessage(msgSet);
 
             if (g_Player.Paused)
             {
@@ -295,7 +295,7 @@ namespace MediaPortal.GUI.Video
             // following line should stay. Problems with OSD not
             // appearing are already fixed elsewhere
             GUIPropertyManager.SetProperty("#currentmodule", GetModuleName());
-            
+
             AllocResources();
             // if (g_application.m_pPlayer) g_application.m_pPlayer.ShowOSD(false);
             ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
@@ -555,20 +555,20 @@ namespace MediaPortal.GUI.Video
                 bool hasPostProc = g_Player.HasPostprocessing;
                 if (hasPostProc)
                 {
-                    IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
-                    SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                    SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                    SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                    SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                    UpdatePostProcessing();
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
-                    ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                  IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+                  SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  UpdatePostProcessing();
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
                 }
 
 
@@ -633,9 +633,9 @@ namespace MediaPortal.GUI.Video
 
     private void UpdatePostProcessing()
     {
-        IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
-        SetSliderValue(0.0f, 100.0f, (float)engine.CropVertical, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
-        SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+      IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+      SetSliderValue(0.0f, 100.0f, (float)engine.CropVertical, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+      SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
     }
 
     private void SetVideoProgress()
@@ -955,20 +955,20 @@ namespace MediaPortal.GUI.Video
                   break;
         */
         case (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF:
-            {
-              PostProcessingEngine.GetInstance().EnablePostProcess = !PostProcessingEngine.GetInstance().EnablePostProcess;
-              break;
-            }
+          {
+            PostProcessingEngine.GetInstance().EnablePostProcess = !PostProcessingEngine.GetInstance().EnablePostProcess;
+            break;
+          }
         case (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF:
-            {
-                PostProcessingEngine.GetInstance().EnableResize = !PostProcessingEngine.GetInstance().EnableResize;
-              break;
-            }
+          {
+            PostProcessingEngine.GetInstance().EnableResize = !PostProcessingEngine.GetInstance().EnableResize;
+            break;
+          }
         case (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF:
-            {
-              PostProcessingEngine.GetInstance().EnableDeinterlace = !PostProcessingEngine.GetInstance().EnableDeinterlace;
-              break;
-            }
+          {
+            PostProcessingEngine.GetInstance().EnableDeinterlace = !PostProcessingEngine.GetInstance().EnableDeinterlace;
+            break;
+          }
         case (int)Controls.OSD_SUBTITLE_ONOFF:
           {
             g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
@@ -982,17 +982,17 @@ namespace MediaPortal.GUI.Video
                                               (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
               OnMessage(msg); // retrieve the selected list item
               if (g_Player.SupportsCC) // Subtitle CC
-              { 
+              {
                 if (g_Player.SupportsCC && msg.Param1 == 0)
                 {
                   msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
-                                              (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
+                                       (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
                   g_Player.EnableSubtitle = false;
                   g_Player.CurrentSubtitleStream = - 1;
                   Log.Info("Subtitle CC selected ");
                 }
                 else
-                { 
+                {
                   Log.Info("Subtitle stream selected " + msg.Label);
                   g_Player.CurrentSubtitleStream = msg.Param1 - 1; // set the current subtitle
                   g_Player.EnableSubtitle = true;
@@ -1026,22 +1026,22 @@ namespace MediaPortal.GUI.Video
           break;
         case (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL:
           {
-              GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
-              if (null != pControl)
-              {
-                  PostProcessingEngine.GetInstance().CropVertical = pControl.Percentage;
-                  UpdatePostProcessing();
-              }
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl)
+            {
+              PostProcessingEngine.GetInstance().CropVertical = pControl.Percentage;
+              UpdatePostProcessing();
+            }
           }
           break;
         case (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL:
           {
-              GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
-              if (null != pControl)
-              {
-                  PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
-                  UpdatePostProcessing();
-              }
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl)
+            {
+              PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
+              UpdatePostProcessing();
+            }
           }
           break;
       }
@@ -1129,15 +1129,15 @@ namespace MediaPortal.GUI.Video
         {
           strLang = strLang.Substring(0, ipos);
         }
-          // formats to 'Language'
-          strItem = String.Format(strLang);
+        // formats to 'Language'
+        strItem = String.Format(strLang);
 
         // create a list item object to add to the list
         GUIListItem pItem = new GUIListItem();
         pItem.Label = strItem;
 
         if (strActive != null) pItem.Label = strItem + " " + strActiveLabel;
-        
+
         // add it ...
         GUIMessage msg2 = new GUIMessage(GUIMessage.MessageType.GUI_MSG_LABEL_ADD, GetID, 0,
                                          (int)Controls.OSD_AUDIOSTREAM_LIST, 0, 0, pItem);
@@ -1200,8 +1200,8 @@ namespace MediaPortal.GUI.Video
         {
           strLang = strLang.Substring(0, ipos);
         }
-          // formats to 'Language'
-          strItem = String.Format(strLang);
+        // formats to 'Language'
+        strItem = String.Format(strLang);
 
         // create a list item object to add to the list
         GUIListItem pItem = new GUIListItem(strItem);
@@ -1220,20 +1220,20 @@ namespace MediaPortal.GUI.Video
         if (currentSubtitleStream == -1)
         {
           GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-            (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
+                                             (int)Controls.OSD_SUBTITLE_LIST, 0, 0, null);
           OnMessage(msgSet);
         }
         else
         {
           GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-            (int)Controls.OSD_SUBTITLE_LIST, currentSubtitleStream + 1, 0, null);
+                                             (int)Controls.OSD_SUBTITLE_LIST, currentSubtitleStream + 1, 0, null);
           OnMessage(msgSet);
         }
       }
       else
       {
         GUIMessage msgSet = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECT, GetID, 0,
-          (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
+                                           (int)Controls.OSD_SUBTITLE_LIST, g_Player.CurrentSubtitleStream, 0, null);
         OnMessage(msgSet);
       }
     }

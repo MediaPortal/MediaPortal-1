@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ namespace MediaPortal.GUI.Music
     private int restrictionLength = 0; // used to sum up the length of all restrictions
 
     private Song currentSong = null; // holds the current Song selected in the list
-    
+
     public int PreviousLevel
     {
       get { return previousLevel; }
@@ -149,9 +149,9 @@ namespace MediaPortal.GUI.Music
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
           database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
-          
+
           previousLevel = currentLevel;
-          
+
           return songs;
         }
 
@@ -208,9 +208,9 @@ namespace MediaPortal.GUI.Music
                   songs.Add(song);
                 }
               }
-              
+
               previousLevel = currentLevel;
-              
+
               return songs;
             }
             else if (defRoot.Where == "recently added")
@@ -262,8 +262,8 @@ namespace MediaPortal.GUI.Music
         for (int i = CurrentLevel; i > -1; i--)
         {
           FilterDefinition filter = (FilterDefinition)currentView.Filters[i];
-          
-          allPrevColumns += " " + GetField(filter.Where) +" ,";
+
+          allPrevColumns += " " + GetField(filter.Where) + " ,";
           if (GetTable(filter.Where) != table)
           {
             isUsingTrackTable = true;
@@ -286,12 +286,13 @@ namespace MediaPortal.GUI.Music
             searchTable = "tracks";
             countField = "strAlbumArtist";
           }
-          
+
           if (isUsingTrackTable && searchTable != "tracks")
-          { // have the messy case where previous filters in view
+          {
+            // have the messy case where previous filters in view
             // do not use the same table as the current level
             // which means we can not just lookup values in search table
-            
+
             string joinSQL;
             if (IsMultipleValueField(searchField))
             {
@@ -303,14 +304,14 @@ namespace MediaPortal.GUI.Music
               joinSQL = string.Format("and tracks.{1} = {0}.{1} ",
                                       searchTable, searchField);
             }
-            
+
             whereClause = whereClause.Replace("group by ix", "");
             whereClause = string.Format(" where exists ( " +
                                         "    select 0 " +
                                         "    from tracks " +
                                         "    {0} " +
                                         "    {1} " +
-                                        ") " + 
+                                        ") " +
                                         "group by ix "
                                         , whereClause, joinSQL);
           }
@@ -390,7 +391,7 @@ namespace MediaPortal.GUI.Music
       }
 
       previousLevel = currentLevel;
-      
+
       return songs;
     }
 
@@ -410,7 +411,7 @@ namespace MediaPortal.GUI.Music
         }
 
         restrictionLength += Convert.ToInt16(filter.Restriction);
-        
+
         // muliple value fields are stored in one database field in tracks
         // table but on different rows in other tables
         if (IsMultipleValueField(GetField(filter.Where)))
@@ -420,8 +421,9 @@ namespace MediaPortal.GUI.Music
           {
             usingTracksTable = false;
           }
-          if(!usingTracksTable)
-          { // current level is not using tracks table so check whether
+          if (!usingTracksTable)
+          {
+            // current level is not using tracks table so check whether
             // any filters above this one are using a different table
             // and if so data will be taken from tracks table
             FilterDefinition defRoot = (FilterDefinition)currentView.Filters[0];
@@ -442,7 +444,8 @@ namespace MediaPortal.GUI.Music
           if (usingTracksTable)
           {
             if (filter.SelectedValue == "#")
-            {  // need a special case here were user selects # from grouped menu
+            {
+              // need a special case here were user selects # from grouped menu
               // as multiple values can be stored in the same field
               whereClause += String.Format(" exists ( " +
                                            "   select 0 from {0} " +
@@ -470,9 +473,11 @@ namespace MediaPortal.GUI.Music
           }
         }
         else
-        { // we are looking for fields which do not contain multiple values
+        {
+          // we are looking for fields which do not contain multiple values
           if (filter.SelectedValue == "#")
-          {  // deal with non standard characters
+          {
+            // deal with non standard characters
             whereClause += String.Format(" {0} < 'A'", GetField(filter.Where));
           }
           else
@@ -575,7 +580,7 @@ namespace MediaPortal.GUI.Music
     {
       string[] sortFields = GetSortField(filter).Split('|');
       orderClause = " order by ";
-      for (int i = 0; i < sortFields.Length; i++ )
+      for (int i = 0; i < sortFields.Length; i++)
       {
         if (i > 0)
         {
@@ -736,7 +741,7 @@ namespace MediaPortal.GUI.Music
       {
         return "dateAdded";
       }
-      if (where =="disc#")
+      if (where == "disc#")
       {
         return "iDisc";
       }
@@ -839,7 +844,7 @@ namespace MediaPortal.GUI.Music
       }
       if (filter.DefaultSort == "Track")
       {
-        return "iDisc|iTrack";  // We need to sort on Discid + Track
+        return "iDisc|iTrack"; // We need to sort on Discid + Track
       }
 
 

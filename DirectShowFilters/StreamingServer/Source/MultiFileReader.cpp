@@ -306,27 +306,42 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
   long Loop=10 ;
 
   LPWSTR pBuffer ;
-  	
+  	 	
   do
   {
-    Error=0  ;
+    Error=0;
+	currentPosition = -1;
+	filesAdded = -1;
+	filesRemoved = -1;
+	filesAdded2 = -2;
+	filesRemoved2 = -2;
+
   	m_TSBufferFile.SetFilePointer(0, FILE_END);
 	  __int64 fileLength = m_TSBufferFile.GetFilePointer();
 
     // Min file length is Header ( __int64 + long + long ) + filelist ( > 0 ) + Footer ( long + long ) 
     if (fileLength <= (sizeof(__int64) + sizeof(long) + sizeof(long) + sizeof(wchar_t) + sizeof(long) + sizeof(long)))
-			return S_FALSE;
+		return S_FALSE;
 
-	  m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
-	
-	  result=m_TSBufferFile.Read((LPBYTE)&currentPosition, sizeof(currentPosition), &bytesRead);
-    if (!SUCCEEDED(result)|| bytesRead!=sizeof(currentPosition)) Error|=0x02;
+	m_TSBufferFile.SetFilePointer(0, FILE_BEGIN);
 
-	  result=m_TSBufferFile.Read((LPBYTE)&filesAdded, sizeof(filesAdded), &bytesRead);
-    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded)) Error=0x04;
+	int readLength = sizeof(currentPosition) + sizeof(filesAdded) + sizeof(filesRemoved);
 
-	  result=m_TSBufferFile.Read((LPBYTE)&filesRemoved, sizeof(filesRemoved), &bytesRead);
-    if (!SUCCEEDED(result)||  bytesRead!=sizeof(filesRemoved)) Error=0x08;
+	LPBYTE readBuffer = new BYTE[readLength];
+
+	result = m_TSBufferFile.Read(readBuffer, readLength, &bytesRead);
+
+    if (!SUCCEEDED(result) || bytesRead != readLength) 
+		Error |= 0x02;
+
+	if(Error == 0)
+	{
+		currentPosition = *((__int64*)(readBuffer + 0));
+		filesAdded = *((long*)(readBuffer + sizeof(__int64)));
+		filesRemoved = *((long*)(readBuffer + sizeof(__int64) + sizeof(long)));
+	}
+
+	delete[] readBuffer;
 
     // If no files added or removed, break the loop !
     if ((m_filesAdded == filesAdded) && (m_filesRemoved == filesRemoved)) 
@@ -335,23 +350,42 @@ HRESULT MultiFileReader::RefreshTSBufferFile()
     __int64 remainingLength = fileLength - sizeof(__int64) - sizeof(long) - sizeof(long) - sizeof(long) - sizeof(long) ;
 
     // Above 100kb seems stupid and figure out a problem !!!
-		if (remainingLength > 100000) Error=0x10;;
+	if (remainingLength > 100000) 
+		Error = 0x10;
   
     pBuffer = (LPWSTR)new BYTE[(UINT)remainingLength];
 
-		result=m_TSBufferFile.Read((LPBYTE)pBuffer, (ULONG)remainingLength, &bytesRead);
+	result=m_TSBufferFile.Read((LPBYTE)pBuffer, (ULONG)remainingLength, &bytesRead);
     if (!SUCCEEDED(result)||  bytesRead != remainingLength) Error=0x20 ;
 
-   	result=m_TSBufferFile.Read((LPBYTE)&filesAdded2, sizeof(filesAdded2), &bytesRead);
-    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesAdded2)) Error=0x40 ;
+	
+	readLength = sizeof(filesAdded) + sizeof(filesRemoved);
 
-   	result=m_TSBufferFile.Read((LPBYTE)&filesRemoved2, sizeof(filesRemoved2), &bytesRead);
-    if (!SUCCEEDED(result)|| bytesRead!=sizeof(filesRemoved2)) Error=0x40 ;
+	readBuffer = new BYTE[readLength];
 
-    if ((filesAdded2!=filesAdded) || (filesRemoved2!=filesRemoved))
+	result = m_TSBufferFile.Read(readBuffer, readLength, &bytesRead);
+
+    if (!SUCCEEDED(result) || bytesRead != readLength) 
+		Error |= 0x40;
+
+	if(Error == 0)
+	{
+		filesAdded2 = *((long*)(readBuffer + 0));
+		filesRemoved2 = *((long*)(readBuffer + sizeof(long)));
+	}
+
+	delete[] readBuffer;
+
+    if ((filesAdded2 != filesAdded) || (filesRemoved2 != filesRemoved))
     {
-      Sleep(10) ;
-      Error=0x80 ;
+      Error = 0x80;
+
+	  LogDebug("MultiFileReader has error 0x80 in Loop %d. Try to clear SMB Cache.", 10-Loop);
+	  
+	  // try to clear local / remote SMB file cache. This should happen when we close the filehandle
+      m_TSBufferFile.CloseFile();
+	  m_TSBufferFile.OpenFile();
+	  Sleep(5);
     }
 
     if (Error) delete[] pBuffer;

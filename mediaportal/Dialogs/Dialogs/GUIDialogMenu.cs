@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -119,9 +119,9 @@ namespace MediaPortal.Dialogs
       TimeSpan ts = DateTime.Now - keyTimer;
       if (ts.TotalMilliseconds >= 1000)
       {
-          string keySelectionCopy = keySelection;
-          keySelection = string.Empty;
-          SelectOption(keySelectionCopy);
+        string keySelectionCopy = keySelection;
+        keySelection = string.Empty;
+        SelectOption(keySelectionCopy);
       }
     }
 
@@ -361,15 +361,15 @@ namespace MediaPortal.Dialogs
     }
 
     public override void Dispose()
-    {      
+    {
       listItems.DisposeAndClear();
 
       btnClose.SafeDispose();
       listView.SafeDispose();
       lblHeading.SafeDispose();
-      lblHeading2.SafeDispose();      
+      lblHeading2.SafeDispose();
 
-      base.Dispose();      
+      base.Dispose();
     }
   }
 }

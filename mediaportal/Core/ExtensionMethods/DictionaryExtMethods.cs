@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -25,18 +25,16 @@ namespace MediaPortal.ExtensionMethods
 {
   public static class DictionaryExtMethods
   {
-
     public static void Dispose<TKey, TValue>(this IDictionary<TKey, TValue> dictionaryInterface)
     {
       if (dictionaryInterface != null)
       {
-        ICollection<TValue> values = dictionaryInterface.Values;        
+        ICollection<TValue> values = dictionaryInterface.Values;
 
         foreach (object o in values)
         {
           DisposeHelper.DisposeItem(o);
         }
-        
       }
     }
 
@@ -55,11 +53,10 @@ namespace MediaPortal.ExtensionMethods
         foreach (object o in values)
         {
           IDisposable disposable = o as IDisposable;
-          DisposeHelper.DisposeItem(o);          
+          DisposeHelper.DisposeItem(o);
         }
-        dictionaryInterface.Clear(); 
-      }      
+        dictionaryInterface.Clear();
+      }
     }
-
   }
 }

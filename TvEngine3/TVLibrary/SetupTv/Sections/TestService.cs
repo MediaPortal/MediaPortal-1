@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -124,7 +124,7 @@ namespace SetupTv.Sections
             cardId = Convert.ToInt32(listViewItem.SubItems[0].Tag);
             break; // Keep the first card enabled selected only
           }
-        }       
+        }
         IUser user = new User();
         user.Name = "setuptv-" + id + "-" + cardId;
         user.IsAdmin = true;
@@ -247,7 +247,7 @@ namespace SetupTv.Sections
         mpListView1.Items.Clear();
         return;
       }
-        
+
       if (!buttonRestart.Visible)
         buttonRestart.Visible = true;
       mpButtonReGrabEpg.Enabled = true;
@@ -364,7 +364,7 @@ namespace SetupTv.Sections
 
           IUser[] usersForCard = RemoteControl.Instance.GetUsersForCard(card.IdCard);
           if (usersForCard == null || usersForCard.Length == 0)
-          {            
+          {
             string tmp = "idle";
             if (vcard.IsScanning) tmp = "Scanning";
             if (vcard.IsGrabbingEpg) tmp = "Grabbing EPG";
@@ -376,7 +376,7 @@ namespace SetupTv.Sections
             item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
             off++;
             continue;
-          }          
+          }
 
           bool userFound = false;
           for (int i = 0; i < usersForCard.Length; ++i)
@@ -425,7 +425,7 @@ namespace SetupTv.Sections
               item.SubItems.Add("");
               item.SubItems.Add("");
               item.SubItems.Add("");
-              item.SubItems.Add("");   
+              item.SubItems.Add("");
             }
             else
             {
@@ -435,13 +435,13 @@ namespace SetupTv.Sections
           // If we haven't found a user that fits, than it is a hybrid card which is inactive
           // This means that the card is idle.
           if (!userFound)
-          {            
+          {
             item.SubItems[2].Text = "idle";
             item.SubItems[3].Text = "";
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));                        
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
 
             off++;
           }
@@ -480,7 +480,7 @@ namespace SetupTv.Sections
           lineColor = Color.Red;
         }
       }
-      
+
       item.UseItemStyleForSubItems = false;
       item.BackColor = lineColor;
 
@@ -493,8 +493,7 @@ namespace SetupTv.Sections
       item.SubItems[4].Text = "";
       item.SubItems[5].Text = "";
       item.SubItems[6].Text = card.Name;
-      item.SubItems[7].Text = Convert.ToString(subchannels);                        
-
+      item.SubItems[7].Text = Convert.ToString(subchannels);
     }
 
     private void buttonRestart_Click(object sender, EventArgs e)
@@ -629,7 +628,6 @@ namespace SetupTv.Sections
             {
               hasScrambled = true;
             }
-
           }
 
           int imageIndex;
@@ -671,7 +669,6 @@ namespace SetupTv.Sections
             {
               hasScrambled = true;
             }
-
           }
 
           int imageIndex;

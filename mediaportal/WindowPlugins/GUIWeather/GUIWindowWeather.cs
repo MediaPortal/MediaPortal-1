@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Weather
       for (int i = 0; i < NUM_DAYS; i++)
       {
         _forecast[i].iconImageNameLow = GUIGraphicsContext.Skin + @"\Media\Weather\64x64\na.png";
-        _forecast[i].iconImageNameHigh =GUIGraphicsContext.Skin + @"\Media\Weather\128x128\na.png";
+        _forecast[i].iconImageNameHigh = GUIGraphicsContext.Skin + @"\Media\Weather\128x128\na.png";
         _forecast[i].Overview = string.Empty;
         _forecast[i].Day = string.Empty;
         _forecast[i].High = string.Empty;
@@ -1366,8 +1366,10 @@ namespace MediaPortal.GUI.Weather
             {
               string finalString;
               GetInteger(pDayTimeElement, "icon", out tempInteger);
-              _forecast[i].iconImageNameLow = GUIGraphicsContext.Skin + String.Format(@"\Media\Weather\64x64\{0}.png", tempInteger);
-              _forecast[i].iconImageNameHigh = GUIGraphicsContext.Skin + String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger);
+              _forecast[i].iconImageNameLow = GUIGraphicsContext.Skin +
+                                              String.Format(@"\Media\Weather\64x64\{0}.png", tempInteger);
+              _forecast[i].iconImageNameHigh = GUIGraphicsContext.Skin +
+                                               String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger);
               GetString(pDayTimeElement, "t", out _forecast[i].Overview, string.Empty);
               _forecast[i].Overview = LocalizeOverview(_forecast[i].Overview);
               finalString = string.Empty;

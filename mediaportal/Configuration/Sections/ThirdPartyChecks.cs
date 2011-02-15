@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ namespace MediaPortal.Configuration.Sections
     private static McsPolicyStatus _mcsServices;
 
     public ThirdPartyChecks()
-      : this("Additional 3rd party checks") { }
+      : this("Additional 3rd party checks") {}
 
     public ThirdPartyChecks(string name)
       : base(name)
@@ -96,7 +96,8 @@ namespace MediaPortal.Configuration.Sections
     {
       try
       {
-        using (RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false))
+        using (
+          RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", false))
         {
           if (key != null)
           {
@@ -108,7 +109,7 @@ namespace MediaPortal.Configuration.Sections
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return false;
     }
 
@@ -152,7 +153,9 @@ namespace MediaPortal.Configuration.Sections
         if (aEnableAutostart) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MPTray.exe");
-          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          using (
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+            )
           {
             object objValue = subkey.GetValue("MPTray");
             if (objValue == null || String.IsNullOrEmpty(objValue.ToString()))
@@ -174,7 +177,9 @@ namespace MediaPortal.Configuration.Sections
         }
         else
         {
-          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          using (
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+            )
           {
             subkey.DeleteValue("MPTray", false);
             Log.Info("ThirdPartyChecks: Removed MPTray from user's autostart");
@@ -247,6 +252,5 @@ namespace MediaPortal.Configuration.Sections
     }
 
     #endregion
-
   }
 }

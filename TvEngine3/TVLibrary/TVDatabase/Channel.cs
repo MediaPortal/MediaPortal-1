@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -303,8 +303,9 @@ namespace TvDatabase
             }
             catch (Exception ex)
             {
-              Log.Error("channelgroup for channel id={0} with channelgroup id={1} does not exist", idChannel, groupMap.IdGroup);
-            }                        
+              Log.Error("channelgroup for channel id={0} with channelgroup id={1} does not exist", idChannel,
+                        groupMap.IdGroup);
+            }
           }
         }
         else if (this.IsRadio)
@@ -656,7 +657,7 @@ namespace TvDatabase
     {
       //IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       //DateTime startTime = DateTime.Now;
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.Equals, "idChannel", IdChannel);
       sb.AddConstraint(Operator.GreaterThan, "endTime", date);

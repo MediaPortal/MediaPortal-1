@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,13 +36,11 @@ namespace TvService
   {
     #region private members   
 
-    public AdvancedCardAllocation(TvBusinessLayer businessLayer, TVController controller) : base(businessLayer, controller)
-    {
-      
-    }
+    public AdvancedCardAllocation(TvBusinessLayer businessLayer, TVController controller)
+      : base(businessLayer, controller) {}
 
-    private static bool IsCardEnabled( ITvCardHandler cardHandler)
-    {      
+    private static bool IsCardEnabled(ITvCardHandler cardHandler)
+    {
       return cardHandler.DataBaseCard.Enabled;
     }
 
@@ -63,8 +61,6 @@ namespace TvService
       return isCardPresent;
     }
 
-   
-    
 
     private static int NumberOfOtherUsersOnCard(ITvCardHandler card, IUser user)
     {
@@ -82,10 +78,7 @@ namespace TvService
       return nrOfOtherUsers;
     }
 
-    #endregion    
-    
-
-
+    #endregion
 
     #region ICardAllocation Members
 
@@ -95,11 +88,11 @@ namespace TvService
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
     public List<CardDetail> GetFreeCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
-                                                        ref IUser user, out TvResult result)
+                                                   ref IUser user, out TvResult result)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
-      {        
+      {
         //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
         if (LogEnabled)
@@ -111,7 +104,8 @@ namespace TvService
         List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user);
         foreach (CardDetail cardDetail in cardDetails)
         {
-          bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], cardDetail.Card.DecryptLimit, cardDetail.Card.IdCard, cardDetail.TuningDetail);
+          bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], cardDetail.Card.DecryptLimit,
+                                                   cardDetail.Card.IdCard, cardDetail.TuningDetail);
           if (checkTransponder)
           {
             cardsAvailable.Add(cardDetail);
@@ -145,7 +139,7 @@ namespace TvService
       }
       finally
       {
-        stopwatch.Stop();        
+        stopwatch.Stop();
         Log.Info("AdvancedCardAllocation.GetFreeCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
@@ -155,7 +149,8 @@ namespace TvService
     /// List is sorted.
     /// </summary>
     /// <returns>list containg all cards which can receive the channel</returns>
-    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user)
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
+                                                        ref IUser user)
     {
       Stopwatch stopwatch = Stopwatch.StartNew();
       try
@@ -188,7 +183,7 @@ namespace TvService
         }
         int number = 0;
         Dictionary<int, ITvCardHandler>.ValueCollection cardHandlers = cards.Values;
-        
+
         foreach (IChannel tuningDetail in tuningDetails)
         {
           cardsUnAvailable.Clear();
@@ -226,7 +221,8 @@ namespace TvService
             {
               Log.Info("Controller:    card:{0} type:{1} users: {2}", cardId, cardHandler.Type, nrOfOtherUsers);
             }
-            CardDetail cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder, nrOfOtherUsers);
+            CardDetail cardInfo = new CardDetail(cardId, cardHandler.DataBaseCard, tuningDetail, isSameTransponder,
+                                                 nrOfOtherUsers);
             cardsAvailable.Add(cardInfo);
           }
         }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -386,8 +386,8 @@ namespace MediaPortal.GUI.Library
       ImgDownButtonNormal.SafeDispose();
       ImgDownButtonFocused.SafeDispose();
       ImgDeleteButtonNormal.SafeDispose();
-      ImgDeleteButtonFocused.SafeDispose();      
-      ImgUpButtonDisabled.SafeDispose();            
+      ImgDeleteButtonFocused.SafeDispose();
+      ImgUpButtonDisabled.SafeDispose();
       ImgDownButtonDisabled.SafeDispose();
       ImgDeleteButtonDisabled.SafeDispose();
     }
@@ -861,7 +861,7 @@ namespace MediaPortal.GUI.Library
                                                 int id, int xOffset, int yOffset, int width, int height)
     {
       string imagePath = Path.Combine(skinFolderImagePath, origImageFileName);
-     
+
       string ext = Path.GetExtension(origImageFileName);
       string baseImgFileName = Path.GetFileNameWithoutExtension(origImageFileName);
       string dimmedImgFileName = baseImgFileName + "_dimmed" + ext;
@@ -871,7 +871,7 @@ namespace MediaPortal.GUI.Library
       // Fix mantis-0002290: GUIPlayListButtonControl creates own images and save to skin media folder       
       try
       {
-        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);  
+        guiImg = LoadAnimationControl(parentId, id, xOffset, yOffset, width, height, dimmedImgFileName);
       }
       catch (FileNotFoundException)
       {
@@ -885,8 +885,8 @@ namespace MediaPortal.GUI.Library
           // If the original image doesn't exist bail out.
           return null;
         }
-      }                
-      
+      }
+
       return guiImg;
     }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -312,24 +312,24 @@ namespace MediaPortal.Visualization
           }
 
           BassVis.BASSVIS_SetVisPort(_visParam,
-                                      _visParam.VisGenWinHandle,
-                                      VisualizationWindow.Handle,
-                                      0,
-                                      0,
-                                      VisualizationWindow.Width,
-                                      VisualizationWindow.Height);
+                                     _visParam.VisGenWinHandle,
+                                     VisualizationWindow.Handle,
+                                     0,
+                                     0,
+                                     VisualizationWindow.Width,
+                                     VisualizationWindow.Height);
 
           BassVis.BASSVIS_SetPlayState(_visParam, BASSVIS_PLAYSTATE.Play);
         }
         else
         {
           BassVis.BASSVIS_SetVisPort(_visParam,
-                                      _visParam.VisGenWinHandle,
-                                      IntPtr.Zero,
-                                      0,
-                                      0,
-                                      0,
-                                      0);
+                                     _visParam.VisGenWinHandle,
+                                     IntPtr.Zero,
+                                     0,
+                                     0,
+                                     0,
+                                     0);
         }
 
         // The Winamp Plugin has stolen focus on the MP window. Bring it back to froeground

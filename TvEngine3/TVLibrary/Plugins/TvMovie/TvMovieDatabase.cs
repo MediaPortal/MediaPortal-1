@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -324,17 +324,17 @@ namespace TvEngine
           {
             senderUrl = sender["Webseite"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderSort = sender["SortNrTVMovie"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           try
           {
             senderZeichen = sender["Zeichen"].ToString();
           }
-          catch (Exception) { }
+          catch (Exception) {}
 
           TVMChannel current = new TVMChannel(senderId,
                                               senderKennung,
@@ -586,7 +586,7 @@ namespace TvEngine
           {
             databaseTransaction.Rollback();
           }
-          catch (Exception) { }
+          catch (Exception) {}
           Log.Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
@@ -1093,7 +1093,7 @@ namespace TvEngine
         lRet = lRet * 100L + iSec;
         return lRet;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       return 0;
     }
 

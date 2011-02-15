@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -188,7 +188,7 @@ namespace MediaPortal.GUI.Library
               uint sc = (uint)_shadowColor;
               sc = GUIGraphicsContext.MergeAlpha(sc);
               _font.DrawShadowTextWidth((float)dwPosX + dMaxWidth, (float)dwPosY + 2, color, wszText2, _textAlignment,
-                 _shadowAngle, _shadowDistance, sc, (float)fTextWidth);
+                                        _shadowAngle, _shadowDistance, sc, (float)fTextWidth);
             }
             else
             {
@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Library
               uint sc = (uint)_shadowColor;
               sc = GUIGraphicsContext.MergeAlpha(sc);
               _font.DrawShadowTextWidth(x, (float)dwPosY + 2, color, wszText1, _textAlignment,
-                 _shadowAngle, _shadowDistance, sc, (float)dMaxWidth);
+                                        _shadowAngle, _shadowDistance, sc, (float)dMaxWidth);
             }
             else
             {
@@ -937,10 +937,7 @@ namespace MediaPortal.GUI.Library
 
     private bool Shadow
     {
-      get
-      {
-        return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0);
-      }
+      get { return (_shadowDistance > 0) && ((_shadowColor >> 24) > 0); }
     }
   }
 }

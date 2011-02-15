@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
@@ -14,7 +34,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
 {
   public class iMONLCDg_FontEdit : MPConfigForm
   {
-    private static readonly byte[,] _FontBuffer = new byte[0x100, 6];
+    private static readonly byte[,] _FontBuffer = new byte[0x100,6];
     private readonly Bitmap[] IconGraphics = new Bitmap[0x100];
     private bool[] CopyBuffer = new bool[6 * 8];
     private CheckBox C0_B0;
@@ -435,19 +455,19 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         var column7 = new DataColumn("CData5");
         o.Rows.Clear();
         o.Columns.Clear();
-        column.DataType = typeof(byte);
+        column.DataType = typeof (byte);
         o.Columns.Add(column);
-        column2.DataType = typeof(byte);
+        column2.DataType = typeof (byte);
         o.Columns.Add(column2);
-        column3.DataType = typeof(byte);
+        column3.DataType = typeof (byte);
         o.Columns.Add(column3);
-        column4.DataType = typeof(byte);
+        column4.DataType = typeof (byte);
         o.Columns.Add(column4);
-        column5.DataType = typeof(byte);
+        column5.DataType = typeof (byte);
         o.Columns.Add(column5);
-        column6.DataType = typeof(byte);
+        column6.DataType = typeof (byte);
         o.Columns.Add(column6);
-        column7.DataType = typeof(byte);
+        column7.DataType = typeof (byte);
         o.Columns.Add(column7);
         o.Clear();
         try
@@ -462,8 +482,10 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
             }
             o.Rows.Add(row);
           }
-          var serializer = new XmlSerializer(typeof(DataTable));
-          using (TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
+          var serializer = new XmlSerializer(typeof (DataTable));
+          using (
+            TextWriter textWriter = new StreamWriter(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"))
+            )
           {
             serializer.Serialize(textWriter, o);
             textWriter.Close();
@@ -471,7 +493,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         catch (Exception exception)
         {
-          Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
+          Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
         }
         ClearIconDisplay();
         EnableIconSelection(false);
@@ -584,7 +606,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
         }
         else
         {
-          Log.Debug("Could not find control \"{0}\"", new object[] { key });
+          Log.Debug("Could not find control \"{0}\"", new object[] {key});
         }
       }
     }
@@ -658,7 +680,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
       }
     }
 
@@ -5384,25 +5406,25 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       var column7 = new DataColumn("CData5");
       table.Rows.Clear();
       table.Columns.Clear();
-      column.DataType = typeof(byte);
+      column.DataType = typeof (byte);
       table.Columns.Add(column);
-      column2.DataType = typeof(byte);
+      column2.DataType = typeof (byte);
       table.Columns.Add(column2);
-      column3.DataType = typeof(byte);
+      column3.DataType = typeof (byte);
       table.Columns.Add(column3);
-      column4.DataType = typeof(byte);
+      column4.DataType = typeof (byte);
       table.Columns.Add(column4);
-      column5.DataType = typeof(byte);
+      column5.DataType = typeof (byte);
       table.Columns.Add(column5);
-      column6.DataType = typeof(byte);
+      column6.DataType = typeof (byte);
       table.Columns.Add(column6);
-      column7.DataType = typeof(byte);
+      column7.DataType = typeof (byte);
       table.Columns.Add(column7);
       table.Clear();
       if (File.Exists(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml")))
       {
         table.Rows.Clear();
-        var serializer = new XmlSerializer(typeof(DataTable));
+        var serializer = new XmlSerializer(typeof (DataTable));
         var xmlReader = new XmlTextReader(Config.GetFile(Config.Dir.Config, "MiniDisplay_imonlcdg_font.xml"));
         table = (DataTable)serializer.Deserialize(xmlReader);
         xmlReader.Close();
@@ -5446,7 +5468,7 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.Drivers
       }
       catch (Exception exception)
       {
-        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] { exception });
+        Log.Debug("CAUGHT EXCEPTION: {0}", new object[] {exception});
       }
     }
 

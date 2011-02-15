@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ namespace MediaPortal.Music.Database
 
     #region ctor
 
-    public MusicAlbumInfo() { }
+    public MusicAlbumInfo() {}
 
     #endregion
 
@@ -165,10 +165,10 @@ namespace MediaPortal.Music.Database
       set
       {
         _songs.Clear();
-        Tokens token = new Tokens(value, new char[] { '|' });
+        Tokens token = new Tokens(value, new char[] {'|'});
         foreach (string strToken in token)
         {
-          Tokens token2 = new Tokens(strToken, new char[] { '@' });
+          Tokens token2 = new Tokens(strToken, new char[] {'@'});
           MusicSong song = new MusicSong();
           int iTok = 0;
           foreach (string strCol in token2)
@@ -180,7 +180,7 @@ namespace MediaPortal.Music.Database
                 {
                   song.Track = Int32.Parse(strCol);
                 }
-                catch (Exception) { }
+                catch (Exception) {}
                 break;
               case 1:
                 song.SongName = strCol;
@@ -191,7 +191,7 @@ namespace MediaPortal.Music.Database
                 {
                   song.Duration = Int32.Parse(strCol);
                 }
-                catch (Exception) { }
+                catch (Exception) {}
                 break;
             }
             iTok++;
@@ -223,12 +223,12 @@ namespace MediaPortal.Music.Database
     private bool FindPattern(string pattern, string searchString)
     {
       Regex itemsFound = new Regex(
-         pattern,
-         RegexOptions.IgnoreCase
-         | RegexOptions.Multiline
-         | RegexOptions.IgnorePatternWhitespace
-         | RegexOptions.Compiled
-         );
+        pattern,
+        RegexOptions.IgnoreCase
+        | RegexOptions.Multiline
+        | RegexOptions.IgnorePatternWhitespace
+        | RegexOptions.Compiled
+        );
 
       _match = itemsFound.Match(searchString);
       if (_match.Success)
@@ -280,9 +280,7 @@ namespace MediaPortal.Music.Database
             _strReview = data.Trim();
           }
         }
-        catch (Exception)
-        {
-        }
+        catch (Exception) {}
       }
 
       //	Extract Artist
@@ -312,7 +310,7 @@ namespace MediaPortal.Music.Database
         {
           _iRating = Int32.Parse(strRating);
         }
-        catch (Exception) { }
+        catch (Exception) {}
       }
 
       //	Release Date
@@ -389,7 +387,7 @@ namespace MediaPortal.Music.Database
           }
           util.RemoveTags(ref data);
           util.ConvertHTMLToAnsi(data, out _strGenre);
-          _strGenre = _strGenre.Trim(new[] { ' ', ',' });
+          _strGenre = _strGenre.Trim(new[] {' ', ','});
         }
       }
 
@@ -410,7 +408,7 @@ namespace MediaPortal.Music.Database
           }
           util.RemoveTags(ref data);
           util.ConvertHTMLToAnsi(data, out _strStyles);
-          _strStyles = _strStyles.Trim(new[] { ' ', ',' });
+          _strStyles = _strStyles.Trim(new[] {' ', ','});
         }
       }
 
@@ -431,7 +429,7 @@ namespace MediaPortal.Music.Database
           }
           util.RemoveTags(ref data);
           util.ConvertHTMLToAnsi(data, out _strTones);
-          _strTones = _strTones.Trim(new[] { ' ', ',' });
+          _strTones = _strTones.Trim(new[] {' ', ','});
         }
       }
 
@@ -454,7 +452,7 @@ namespace MediaPortal.Music.Database
             {
               iTrack = Int32.Parse(_match.Groups["track"].Value);
             }
-            catch (Exception) { }
+            catch (Exception) {}
 
             // Song Title
             string strTitle = _match.Groups["title"].Value;
@@ -477,7 +475,7 @@ namespace MediaPortal.Music.Database
                 iMin = Int32.Parse(strMin);
                 iSec = Int32.Parse(strSec);
               }
-              catch (Exception) { }
+              catch (Exception) {}
               iDuration = iMin * 60 + iSec;
             }
 

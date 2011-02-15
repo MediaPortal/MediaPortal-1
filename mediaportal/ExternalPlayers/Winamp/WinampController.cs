@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -187,7 +187,7 @@ namespace MediaPortal.WinampPlayer
         using (sr = new StreamReader(iniFile))
         {
           //Read the first line of text
-          line = sr.ReadLine();               
+          line = sr.ReadLine();
 
           //Continue to read until you reach end of file
           while (line != null)
@@ -196,7 +196,7 @@ namespace MediaPortal.WinampPlayer
             {
               if (line.ToLower().Trim().StartsWith("minimized=1"))
               {
-                sr.Close();                
+                sr.Close();
                 return; // already in minimize... nothing to do...
               }
               else
@@ -210,7 +210,7 @@ namespace MediaPortal.WinampPlayer
             line = sr.ReadLine();
           }
           //close the file
-          sr.Close();          
+          sr.Close();
         }
         //Pass the filepath and filename to the StreamWriter Constructor
         using (sw = new StreamWriter(iniFile))
@@ -218,8 +218,8 @@ namespace MediaPortal.WinampPlayer
           //Write the file back
           sw.WriteLine(buff.ToString());
           //Close the file
-          sw.Close();                    
-        }        
+          sw.Close();
+        }
       }
       catch (Exception e)
       {
@@ -311,7 +311,7 @@ namespace MediaPortal.WinampPlayer
       Win32API.COPYDATASTRUCT cds;
       cds.dwData = (IntPtr)WA_FILETOPLAYLIST;
       cds.lpData = Marshal.StringToHGlobalUni(filename);
-      cds.cbData = 2*(filename.Length + 1);
+      cds.cbData = 2 * (filename.Length + 1);
       IntPtr songMemory = cds.lpData;
 
       Win32API.SendMessage(m_hwnd, WM_COPYDATA, 0, ref cds);

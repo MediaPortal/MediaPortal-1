@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ namespace TvLibrary.Implementations
         GetPreloadBitAndCardId();
         GetSupportsPauseGraph();
       }
-    }   
+    }
 
     #endregion
 
@@ -259,7 +259,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public virtual bool SupportsPauseGraph
     {
-      get { return !_stopGraph; }      
+      get { return !_stopGraph; }
     }
 
     /// <summary>
@@ -556,7 +556,7 @@ namespace TvLibrary.Implementations
       {
         if (dbsCard.DevicePath.Equals(_devicePath))
         {
-          _stopGraph = dbsCard.StopGraph;          
+          _stopGraph = dbsCard.StopGraph;
           break;
         }
       }
@@ -745,15 +745,15 @@ namespace TvLibrary.Implementations
         _subChannelId = 0;
         if (!continueGraph)
         {
-          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");          
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
           if (SupportsPauseGraph)
           {
-            PauseGraph();  
+            PauseGraph();
           }
           else
           {
-            StopGraph();  
-          }          
+            StopGraph();
+          }
         }
         else
         {

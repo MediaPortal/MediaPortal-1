@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -69,7 +69,7 @@ namespace DShowNET.Helper
     public static readonly Guid FFDShowVideo = new Guid("04FE9017-F873-410e-871E-AB91661A4EF7");
     public static readonly Guid FFDShowVideoRaw = new Guid("0B390488-D80F-4a68-8408-48DC199F0E97");
     public static readonly Guid FFDShowVideoDXVA = new Guid("0B0EFF97-C750-462c-9488-B10E7D87F1A6");
-    
+
     /// <summary>Creates an instance of a COM object by class ID.</summary>
     /// <param name="id">The class ID of the component to instantiate.</param>
     /// <returns>A new instance of the class.</returns>

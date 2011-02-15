@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -557,7 +557,7 @@ namespace MediaPortal.GUI.Library
 
       image.SafeDispose();
       image = null;
-    }    
+    }
 
     /// <summary>
     /// This method will raise the OnRetrieveArt() event to
@@ -667,7 +667,7 @@ namespace MediaPortal.GUI.Library
     public void Dispose()
     {
       //UnsubscribeEventHandlers();
-      
+
 
       FreeMemory();
       if (OnRetrieveArt != null)
@@ -676,7 +676,6 @@ namespace MediaPortal.GUI.Library
         _smallIconName = string.Empty;
         _pinIconName = string.Empty;
       }
-    
     }
 
     /*private void UnsubscribeEventHandlers()

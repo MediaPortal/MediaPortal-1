@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,13 +38,13 @@ namespace SetupTv.Sections.Helpers
   {
     private const int MS_SLEEP_BEFORE_FILTERING = 150;
 
-    internal ListView _listView = null;//the listview control that displays the items
-    internal IList<Channel> _allChannels = null;//all available channels
-    internal Dictionary<int, CardType> _allCards = null;//all available cards
-    internal TextBox _currentText = null;//the textbox that contains the text for filtering
-    private Thread _fillListViewThread;//the currently active thread
-    private ChannelType _type;//the type of the texbox, currently that's tv or radio
-    private Dictionary<int, ListViewItem> _listViewCache;//A list of allready created listviewitems
+    internal ListView _listView = null; //the listview control that displays the items
+    internal IList<Channel> _allChannels = null; //all available channels
+    internal Dictionary<int, CardType> _allCards = null; //all available cards
+    internal TextBox _currentText = null; //the textbox that contains the text for filtering
+    private Thread _fillListViewThread; //the currently active thread
+    private ChannelType _type; //the type of the texbox, currently that's tv or radio
+    private Dictionary<int, ListViewItem> _listViewCache; //A list of allready created listviewitems
 
     /// <summary>
     /// Creates a new ChannelListView Handler
@@ -54,7 +54,7 @@ namespace SetupTv.Sections.Helpers
     /// <param name="allCards"></param>
     /// <param name="textBox"></param>
     internal ChannelListViewHandler(ListView listView, IList<Channel> channels, Dictionary<int, CardType> allCards,
-                             TextBox textBox, ChannelType type)
+                                    TextBox textBox, ChannelType type)
     {
       _listView = listView;
       _allChannels = channels;
@@ -92,30 +92,32 @@ namespace SetupTv.Sections.Helpers
       //Sleep for MS_SLEEP_BEFORE_FILTERING ms before starting filtering (to prevent searches while
       //user is still typing)
       Thread.Sleep(MS_SLEEP_BEFORE_FILTERING);
-      
+
       Application.UseWaitCursor = true;
       PopulateRunning = true;
 
       if (InvokeHasTextChanged(filterText))
-      {//After waiting for MS_SLEEP_BEFORE_FILTERING, the search text isn't valid anymore (user changed text) -> return
+      {
+//After waiting for MS_SLEEP_BEFORE_FILTERING, the search text isn't valid anymore (user changed text) -> return
         Application.UseWaitCursor = false;
         return;
       }
-     
+
       try
       {
         Log.Debug("Filter listview for " + filterText);
         _listView.Invoke(new MethodInvoker(delegate()
-         {
-           _listView.Items.Clear();
-           _listView.BeginUpdate();
-         }));
+                                             {
+                                               _listView.Items.Clear();
+                                               _listView.BeginUpdate();
+                                             }));
 
         List<ListViewItem> items = new List<ListViewItem>();
         for (int i = 0; i < _allChannels.Count; i++)
         {
           if (InvokeHasTextChanged(filterText))
-          {//the search term changed while we were filtering
+          {
+//the search term changed while we were filtering
             Log.Debug("Cancel filtering for " + filterText);
             break;
           }
@@ -125,22 +127,20 @@ namespace SetupTv.Sections.Helpers
           if (ch.DisplayName != null &&
               (filterText.Equals("") || ContainsCaseInvariant(ch.DisplayName, filterText)))
           {
-            _listView.Invoke(new MethodInvoker(delegate()
-            {
-              items.Add(CreateListViewItemForChannel(ch, _allCards));
-            }));
+            _listView.Invoke(new MethodInvoker(delegate() { items.Add(CreateListViewItemForChannel(ch, _allCards)); }));
           }
         }
 
 
         if (!InvokeHasTextChanged(filterText))
-        {//after filtering is done the filter is still valid
+        {
+//after filtering is done the filter is still valid
           _listView.Invoke(new MethodInvoker(delegate()
-            {
-              _listView.Items.Clear();
-              _listView.Items.AddRange(items.ToArray());
-              _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
-            }));
+                                               {
+                                                 _listView.Items.Clear();
+                                                 _listView.Items.AddRange(items.ToArray());
+                                                 _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+                                               }));
           Log.Debug("Finished filtering " + items.Count + " items for " + filterText);
         }
         else
@@ -155,10 +155,10 @@ namespace SetupTv.Sections.Helpers
       finally
       {
         _listView.Invoke(new MethodInvoker(delegate()
-          {
-            _listView.EndUpdate();
-            Application.UseWaitCursor = false;
-          }));
+                                             {
+                                               _listView.EndUpdate();
+                                               Application.UseWaitCursor = false;
+                                             }));
         PopulateRunning = false;
       }
     }
@@ -170,10 +170,9 @@ namespace SetupTv.Sections.Helpers
     private bool InvokeHasTextChanged(String filterText)
     {
       bool textChanged = false;
-      _currentText.Invoke(new MethodInvoker(delegate()
-      {
-        textChanged = !_currentText.Text.Equals(filterText, StringComparison.InvariantCultureIgnoreCase);
-      }));
+      _currentText.Invoke(
+        new MethodInvoker(
+          delegate() { textChanged = !_currentText.Text.Equals(filterText, StringComparison.InvariantCultureIgnoreCase); }));
       return textChanged;
     }
 
@@ -260,7 +259,8 @@ namespace SetupTv.Sections.Helpers
       {
         if (groupName != TvConstants.TvGroupNames.AllChannels &&
             groupName != TvConstants.RadioGroupNames.AllChannels)
-        {//Don't add "All Channels"
+        {
+//Don't add "All Channels"
           groupNames.Add(groupName);
         }
       }
@@ -285,7 +285,6 @@ namespace SetupTv.Sections.Helpers
         {
           hasScrambled = true;
         }
-
       }
 
       string provider = String.Join(", ", providers.ToArray());
@@ -377,7 +376,7 @@ namespace SetupTv.Sections.Helpers
       item.SubItems.Add(tuningDetails.Count.ToString());
 
       _listViewCache.Add(ch.IdChannel, item);
-      
+
       return item;
     }
   }

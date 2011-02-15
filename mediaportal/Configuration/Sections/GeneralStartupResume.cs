@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -47,15 +47,11 @@ namespace MediaPortal.Configuration.Sections
     public class DISPLAY_DEVICE
     {
       public int cb = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
-      public string DeviceName = new String(' ', 32);
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceString = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)] public string DeviceName = new String(' ', 32);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceString = new String(' ', 128);
       public int StateFlags = 0;
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceID = new String(' ', 128);
-      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)]
-      public string DeviceKey = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceID = new String(' ', 128);
+      [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string DeviceKey = new String(' ', 128);
     }
 
     [DllImport("user32.dll")]
@@ -67,7 +63,7 @@ namespace MediaPortal.Configuration.Sections
     private const int HWND_BROADCAST = 0xFFFF;
 
     public GeneralStartupResume()
-      : this("Startup/Resume Settings") { }
+      : this("Startup/Resume Settings") {}
 
     public GeneralStartupResume(string name)
       : base(name)
@@ -79,7 +75,7 @@ namespace MediaPortal.Configuration.Sections
     private int screennumber = 0; // 0 is the primary screen
 
     private string[][] sectionEntries = new string[][]
-                                          {                                            
+                                          {
                                             new string[] {"general", "startfullscreen", "true"},
                                             // 0 Start MediaPortal in fullscreen mode
                                             new string[] {"general", "usefullscreensplash", "true"},
@@ -199,14 +195,18 @@ namespace MediaPortal.Configuration.Sections
         if (settingsCheckedListBox.GetItemChecked(4)) // autostart on boot
         {
           string fileName = Config.GetFile(Config.Dir.Base, "MediaPortal.exe");
-          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          using (
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+            )
           {
             subkey.SetValue("MediaPortal", fileName);
           }
         }
         else
         {
-          using (RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true))
+          using (
+            RegistryKey subkey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run", true)
+            )
           {
             subkey.DeleteValue("MediaPortal", false);
           }

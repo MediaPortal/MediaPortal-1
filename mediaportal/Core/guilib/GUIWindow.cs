@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -166,7 +166,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_NUMBERPLACE = 7777, // rtv - sudoku clone
       WINDOW_RADIO_LASTFM = 7890,
       WINDOW_MUSIC_MENU = 8888, // for harley
-      WINDOW_SEARCH_RADIO=8900 // gemx
+      WINDOW_SEARCH_RADIO = 8900 // gemx
 
 
       // Please use IDs up to 9999 only. Let everything above be reserved for external Plugin developers without SVN access.
@@ -217,11 +217,11 @@ namespace MediaPortal.GUI.Library
     private bool _windowAllocated;
     private bool _hasRendered = false;
     private bool _windowLoaded = false;
-    private bool _hasWindowVisibilityUpdated;
+    private static bool _hasWindowVisibilityUpdated;
 
     private VisualEffect _showAnimation = new VisualEffect(); // for dialogs
     private VisualEffect _closeAnimation = new VisualEffect();
-    
+
     #endregion
 
     #region ctor
@@ -229,7 +229,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// The (emtpy) constructur of the GUIWindow
     /// </summary>
-    public GUIWindow() { }
+    public GUIWindow() {}
 
     /// <summary>
     /// Constructor
@@ -340,7 +340,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         foreach (GUIControl control in Children)
-        {          
+        {
           control.OnDeInit();
         }
       }
@@ -364,7 +364,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public void ClearAll()
     {
-      Dispose();      
+      Dispose();
       Children.Clear();
     }
 
@@ -623,8 +623,8 @@ namespace MediaPortal.GUI.Library
       catch (FileNotFoundException e)
       {
         Log.Error("SKIN: Missing {0}", e.FileName);
-        return false; 
-      }        
+        return false;
+      }
       catch (Exception ex)
       {
         Log.Error("exception loading window {0} err:{1}\r\n\r\n{2}\r\n\r\n", _windowXmlFileName, ex.Message,
@@ -644,7 +644,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
-       
+
       try
       {
         GUIControl newControl = GUIControlFactory.Create(_windowId, node, defines, _windowXmlFileName);
@@ -669,7 +669,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private bool LoadInclude(XmlNode node,  IDictionary<string, string> defines)
+    private bool LoadInclude(XmlNode node, IDictionary<string, string> defines)
     {
       if (node == null || Children == null)
       {
@@ -748,7 +748,7 @@ namespace MediaPortal.GUI.Library
     /// It gives the window the oppertunity to allocate any (directx) resources
     /// it may need
     /// </summary>
-    public virtual void PreInit() { }
+    public virtual void PreInit() {}
 
     /// <summary>
     /// Restores all the (x,y) positions of the XML file to their original values
@@ -773,12 +773,12 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     ///  Gets called when DirectX device has been restored. 
     /// </summary>
-    public virtual void OnDeviceRestored() { }
+    public virtual void OnDeviceRestored() {}
 
     /// <summary>
     /// Gets called when DirectX device has been lost. Any texture/font is now invalid
     /// </summary>
-    public virtual void OnDeviceLost() { }
+    public virtual void OnDeviceLost() {}
 
     /// <summary>
     /// Returns whether the music/video/tv overlay is allowed on this screen
@@ -809,7 +809,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public virtual void Process() { }
+    public virtual void Process() {}
 
     public virtual void SetObject(object obj)
     {
@@ -859,7 +859,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void PreLoadPage() { }
+    protected virtual void PreLoadPage() {}
 
     protected virtual void OnPageLoad()
     {
@@ -941,18 +941,18 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void OnShowContextMenu() { }
+    protected virtual void OnShowContextMenu() {}
 
     protected virtual void OnPreviousWindow()
     {
       GUIWindowManager.ShowPreviousWindow();
     }
 
-    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClicked(int controlId, GUIControl control, Action.ActionType actionType) {}
 
-    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClickedUp(int controlId, GUIControl control, Action.ActionType actionType) {}
 
-    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) { }
+    protected virtual void OnClickedDown(int controlId, GUIControl control, Action.ActionType actionType) {}
 
     /// <summary>
     /// Returns whether the user can goto full screen video,tv,visualisation from this window
@@ -979,7 +979,7 @@ namespace MediaPortal.GUI.Library
     /// Every window window should override this method and cleanup any resources
     /// </summary>
     /// <returns></returns>
-    public virtual void DeInit() { }
+    public virtual void DeInit() {}
 
     /// <summary>
     /// Gets called by the runtime just before the window gets shown. It
@@ -1049,7 +1049,7 @@ namespace MediaPortal.GUI.Library
       try
       {
         // tell every control to free its resources
-        Children.DisposeAndClearCollection();        
+        Children.DisposeAndClearCollection();
         _listPositions.DisposeAndClear();
       }
       catch (Exception ex)
@@ -1106,10 +1106,10 @@ namespace MediaPortal.GUI.Library
                                                        | BindingFlags.Public);
       foreach (FieldInfo field in allFields)
       {
-        if (field.IsDefined(typeof(SkinControlAttribute), false))
+        if (field.IsDefined(typeof (SkinControlAttribute), false))
         {
           SkinControlAttribute atrb =
-            (SkinControlAttribute)field.GetCustomAttributes(typeof(SkinControlAttribute), false)[0];
+            (SkinControlAttribute)field.GetCustomAttributes(typeof (SkinControlAttribute), false)[0];
 
           GUIControl control = GetControl(atrb.ID);
           if (control != null)
@@ -1121,17 +1121,17 @@ namespace MediaPortal.GUI.Library
             catch (Exception ex)
             {
               Log.Error("GUIWindow:OnWindowLoaded '{0}' control id:{1} ex:{2} {3} {4}",
-                        _windowXmlFileName, 
-                        atrb.ID, 
-                        ex.Message, 
+                        _windowXmlFileName,
+                        atrb.ID,
+                        ex.Message,
                         ex.StackTrace,
                         this.ToString());
             }
           }
           else
           {
-            Log.Warn("GUIWindow:OnWindowLoaded: '{0}' is missing control id {1} (window property: {2})", 
-              _windowXmlFileName, atrb.ID, field.Name);
+            Log.Warn("GUIWindow:OnWindowLoaded: '{0}' is missing control id {1} (window property: {2})",
+                     _windowXmlFileName, atrb.ID, field.Name);
           }
         }
       }
@@ -1243,7 +1243,7 @@ namespace MediaPortal.GUI.Library
       }
       _shouldRestore = false;
 
-      Dispose();            
+      Dispose();
       Load(_windowXmlFileName);
       //LoadSkin();
       AllocResources();
@@ -1266,13 +1266,13 @@ namespace MediaPortal.GUI.Library
           if (!_isSkinLoaded)
           {
             if (GUIGraphicsContext.IsFullScreenVideo ||
-              GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO ||
-              GetID == (int)Window.WINDOW_TVFULLSCREEN ||
-              GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
+                GetID == (int)Window.WINDOW_FULLSCREEN_VIDEO ||
+                GetID == (int)Window.WINDOW_TVFULLSCREEN ||
+                GetID == (int)Window.WINDOW_FULLSCREEN_MUSIC)
             {
               return;
             }
-            
+
             // Print an error message
             GUIFont font = GUIFontManager.GetFont(0);
             if (font != null)
@@ -1303,7 +1303,6 @@ namespace MediaPortal.GUI.Library
           {
             control.UpdateVisibility();
             control.DoRender(timePassed, currentTime);
-            _hasWindowVisibilityUpdated = false;
           }
 
           GUIWaitCursor.Render();
@@ -1480,7 +1479,7 @@ namespace MediaPortal.GUI.Library
               }
               break;
 
-            // Initialize the window.
+              // Initialize the window.
 
             case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
 
@@ -1511,7 +1510,7 @@ namespace MediaPortal.GUI.Library
               InitControls();
               UpdateOverlayAllowed();
               GUIGraphicsContext.Overlay = _isOverlayAllowed;
-              
+
               // set topbar autohide 
               switch (_autoHideTopbarType)
               {
@@ -1546,7 +1545,7 @@ namespace MediaPortal.GUI.Library
 
               _hasRendered = false;
 
-              if (message.Object != null && message.Object.GetType() == typeof(string))
+              if (message.Object != null && message.Object.GetType() == typeof (string))
               {
                 _loadParameter = (string)message.Object;
               }
@@ -1565,9 +1564,9 @@ namespace MediaPortal.GUI.Library
                 _previousFocusedControlId = id;
               }
               return true;
-            // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
+              // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
-            // Cleanup and free resources
+              // Cleanup and free resources
             case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
               {
                 OnPageDestroy(message.Param1);
@@ -1582,7 +1581,7 @@ namespace MediaPortal.GUI.Library
                 return true;
               }
 
-            // Set the focus on the correct control
+              // Set the focus on the correct control
             case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
               {
                 if (GetFocusControlId() == message.TargetControlId)
@@ -1739,7 +1738,7 @@ namespace MediaPortal.GUI.Library
       get { return false; }
     }
 
-    public virtual void OnAdded() { }
+    public virtual void OnAdded() {}
 
     public virtual string GetModuleName()
     {
@@ -1763,7 +1762,7 @@ namespace MediaPortal.GUI.Library
       return true;
     }
 
-    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) { }
+    private void UpdateStates(AnimationType type, AnimationProcess currentProcess, AnimationState currentState) {}
 
     private bool HasAnimation(AnimationType animType)
     {
@@ -1915,10 +1914,10 @@ namespace MediaPortal.GUI.Library
       get { return _windowLoaded; }
     }
 
-    public bool HasWindowVisibilityUpdated
+    public static bool HasWindowVisibilityUpdated
     {
       get { return _hasWindowVisibilityUpdated; }
-
+      set { _hasWindowVisibilityUpdated = value; }
     }
 
     #endregion Properties
@@ -1930,14 +1929,8 @@ namespace MediaPortal.GUI.Library
 
     #endregion Fields
 
-    public void BeginInit()
-    {
-        
-    }
+    public void BeginInit() {}
 
-    public void EndInit()
-    {
-
-    }
+    public void EndInit() {}
   }
 }

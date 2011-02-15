@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -124,11 +124,13 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDeInterlace.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDeInterlace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDeInterlace.FormattingEnabled = true;
-      this.comboBoxDeInterlace.Items.AddRange(new object[] {
-            "Auto",
-            "Bob",
-            "Weave",
-            "Progressive"});
+      this.comboBoxDeInterlace.Items.AddRange(new object[]
+                                                {
+                                                  "Auto",
+                                                  "Bob",
+                                                  "Weave",
+                                                  "Progressive"
+                                                });
       this.comboBoxDeInterlace.Location = new System.Drawing.Point(62, 102);
       this.comboBoxDeInterlace.Name = "comboBoxDeInterlace";
       this.comboBoxDeInterlace.Size = new System.Drawing.Size(125, 21);
@@ -159,7 +161,7 @@ namespace MediaPortal.Configuration.Sections
       this.mpLabel4.Size = new System.Drawing.Size(224, 39);
       this.mpLabel4.TabIndex = 6;
       this.mpLabel4.Text = "It is recommended to enable these options for better CPU utlization. If DxVA is e" +
-          "nabled, De-Interlacing is done using VMR9.";
+                           "nabled, De-Interlacing is done using VMR9.";
       // 
       // mpLabel1
       // 
@@ -172,8 +174,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox2
       // 
-      this.mpGroupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox2.Controls.Add(this.mpLabel3);
       this.mpGroupBox2.Controls.Add(this.mpLabel2);
       this.mpGroupBox2.Controls.Add(this.comboBoxOutPutMode);
@@ -206,8 +210,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxOutPutMode
       // 
-      this.comboBoxOutPutMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxOutPutMode.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxOutPutMode.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxOutPutMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxOutPutMode.DropDownWidth = 372;
@@ -218,22 +224,27 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerConfig
       // 
-      this.comboBoxSpeakerConfig.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerConfig.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerConfig.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerConfig.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerConfig.Items.AddRange(new object[] {
-            "2 Speaker",
-            "4 Speaker",
-            "6 Speaker (5.1)",
-            "7 Speaker (6.1)",
-            "8 Speaker (7.1)",
-            "S/PDIF Out"});
+      this.comboBoxSpeakerConfig.Items.AddRange(new object[]
+                                                  {
+                                                    "2 Speaker",
+                                                    "4 Speaker",
+                                                    "6 Speaker (5.1)",
+                                                    "7 Speaker (6.1)",
+                                                    "8 Speaker (7.1)",
+                                                    "S/PDIF Out"
+                                                  });
       this.comboBoxSpeakerConfig.Location = new System.Drawing.Point(62, 57);
       this.comboBoxSpeakerConfig.Name = "comboBoxSpeakerConfig";
       this.comboBoxSpeakerConfig.Size = new System.Drawing.Size(362, 21);
       this.comboBoxSpeakerConfig.TabIndex = 1;
-      this.comboBoxSpeakerConfig.SelectedIndexChanged += new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
+      this.comboBoxSpeakerConfig.SelectedIndexChanged +=
+        new System.EventHandler(this.comboBoxSpeakerConfig_SelectedIndexChanged);
       // 
       // FiltersWinDVD7Decoder
       // 
@@ -246,7 +257,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox2.ResumeLayout(false);
       this.mpGroupBox2.PerformLayout();
       this.ResumeLayout(false);
-
     }
 
     #endregion

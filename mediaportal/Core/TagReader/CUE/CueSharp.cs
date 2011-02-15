@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -115,7 +115,7 @@ namespace MediaPortal.TagReader
       get { return m_Songwriter; }
       set { m_Songwriter = value; }
     }
-    
+
     /// <summary>
     /// Genre of album; stored within a comment (REM) field
     /// </summary>
@@ -124,7 +124,7 @@ namespace MediaPortal.TagReader
       get { return m_Genre; }
       set { m_Genre = value; }
     }
-    
+
     /// <summary>
     /// Year of album; stored within a comment (REM) field
     /// </summary>
@@ -218,7 +218,7 @@ namespace MediaPortal.TagReader
         // close the stream
         tr.Close();
       }
-      
+
 
       RemoveEmptyLines(ref cueLines);
 
@@ -350,13 +350,13 @@ namespace MediaPortal.TagReader
           string commentType;
           if (line.IndexOf(' ') > 0)
           {
-             commentType = line.Substring(0, line.IndexOf(' ')).ToUpper();
+            commentType = line.Substring(0, line.IndexOf(' ')).ToUpper();
           }
           else
           {
             commentType = "OTHER";
           }
-          
+
           switch (commentType)
           {
             case "GENRE":
@@ -368,7 +368,7 @@ namespace MediaPortal.TagReader
               // remove DATE from comment and assign the rest to year field
               line = line.Substring(line.IndexOf(' '), line.Length - line.IndexOf(' ')).Trim();
               int year;
-              if (Int32.TryParse(line,out year))
+              if (Int32.TryParse(line, out year))
               {
                 m_Year = year;
               }
@@ -844,7 +844,7 @@ namespace MediaPortal.TagReader
 
       t = ((lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Minutes * 60) +
            lastTrackIndex(m_Tracks[m_Tracks.Length - 1]).Seconds) -
-        ((lastTrackIndex(m_Tracks[0]).Minutes * 60) + lastTrackIndex(m_Tracks[0]).Seconds);
+          ((lastTrackIndex(m_Tracks[0]).Minutes * 60) + lastTrackIndex(m_Tracks[0]).Seconds);
 
       ulong lDiscId = (((uint)n % 0xff) << 24 | (uint)t << 8 | (uint)m_Tracks.Length);
       return String.Format("{0:x8}", lDiscId);

@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -78,6 +78,7 @@ namespace MediaPortal.Time
     #endregion Constructors/Destructors
 
     #region Properties
+
     /// <summary>
     /// Gets the day.
     /// </summary>
@@ -95,9 +96,10 @@ namespace MediaPortal.Time
     {
       get { return _month; }
     }
+
     #endregion Properties
 
-   #region operators
+    #region operators
 
     /// <summary>
     /// Operator &gt;s the specified time1.
@@ -293,7 +295,7 @@ namespace MediaPortal.Time
 
       int sepPos;
 
-      char[] dateSeperators = { ':', '.', 'm', 'M' };
+      char[] dateSeperators = {':', '.', 'm', 'M'};
 
       if ((sepPos = strDate.IndexOfAny(dateSeperators)) != -1)
       {
@@ -332,6 +334,7 @@ namespace MediaPortal.Time
         }
       }
     }
+
     #endregion private methods
   }
-  }
+}

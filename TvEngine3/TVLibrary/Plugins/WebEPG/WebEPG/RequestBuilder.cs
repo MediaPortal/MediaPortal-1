@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -129,7 +129,7 @@ namespace MediaPortal.WebEPG
       {
         request.ReplaceTag("[WEEKDAY]", _requestTime.DateTime.ToString(_data.WeekDay, culture));
       }
-      
+
       request.ReplaceTag("[LIST_OFFSET]", ((_offset * _data.MaxListingCount) + _data.ListStart).ToString());
       request.ReplaceTag("[PAGE_OFFSET]", (_offset + _data.PageStart).ToString());
 

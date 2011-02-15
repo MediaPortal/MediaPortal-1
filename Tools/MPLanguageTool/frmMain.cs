@@ -1,23 +1,23 @@
-/* 
- *	Copyright (C) 2005-2008 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Collections.Specialized;
 using System.Collections.Generic;
@@ -30,10 +30,11 @@ namespace MPLanguageTool
   public partial class frmMain : Form
   {
     #region Variables
-    NameValueCollection defaultTranslations;
-    DataTable originalTranslations;
-    Dictionary<string, DataRow> originalMapping;
-    CultureInfo culture;
+
+    private NameValueCollection defaultTranslations;
+    private DataTable originalTranslations;
+    private Dictionary<string, DataRow> originalMapping;
+    private CultureInfo culture;
 
     public static string languagePath;
     public static StringsType LangType;
@@ -76,8 +77,12 @@ namespace MPLanguageTool
       {
         string trans = dlg.GetTranslation();
         gv.Rows[e.RowIndex].Cells[1].Value = trans;
-        gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-        gv.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        gv.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans)
+                                                         ? System.Drawing.Color.Red
+                                                         : System.Drawing.Color.Black;
+        gv.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans)
+                                                         ? System.Drawing.Color.Red
+                                                         : System.Drawing.Color.Black;
         ToolStripText(GetUntranslatedCountDeployTool());
       }
     }
@@ -97,14 +102,18 @@ namespace MPLanguageTool
 
         gv2.Rows[e.RowIndex].Cells[2].Value = trans;
         gv2.Rows[e.RowIndex].Cells[4].Value = prefix;
-        gv2.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
-        gv2.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans) ? System.Drawing.Color.Red : System.Drawing.Color.Black;
+        gv2.Rows[e.RowIndex].Cells[0].Style.ForeColor = String.IsNullOrEmpty(trans)
+                                                          ? System.Drawing.Color.Red
+                                                          : System.Drawing.Color.Black;
+        gv2.Rows[e.RowIndex].Cells[1].Style.ForeColor = String.IsNullOrEmpty(trans)
+                                                          ? System.Drawing.Color.Red
+                                                          : System.Drawing.Color.Black;
         ToolStripText(GetUntranslatedCountMediaPortal());
       }
     }
 
-
     #region Menu-events
+
     private void openDeployToolToolStripMenuItem_Click(object sender, EventArgs e)
     {
       LangType = StringsType.DeployTool;
@@ -123,7 +132,9 @@ namespace MPLanguageTool
       // if not show folderbrowserdlg until user cancels or selects a path that contains it
       while (defaultTranslations == null)
       {
-        MessageBox.Show("The file [MediaPortal.DeployTool.resx] could not be found.\nThe LanguageTool does not work without it.", "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(
+          "The file [MediaPortal.DeployTool.resx] could not be found.\nThe LanguageTool does not work without it.",
+          "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
           return;
         languagePath = folderBrowserDialog1.SelectedPath;
@@ -139,7 +150,8 @@ namespace MPLanguageTool
       SelectCulture dlg = new SelectCulture();
       if (dlg.ShowDialog() != DialogResult.OK) return;
       culture = dlg.GetSelectedCulture();
-      Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." + culture.Name + ".resx";
+      Text = "MPLanguageTool -- Current language: " + culture.NativeName + " -- File: MediaPortal.DeployTool." +
+             culture.Name + ".resx";
       ToolStripText("Loading \"MediaPortal.DeployTool." + culture.Name + ".resx\"...");
 
       Cursor = Cursors.WaitCursor;
@@ -189,9 +201,11 @@ namespace MPLanguageTool
       LangType = StringsType.TvSeries;
       InvokeXml();
     }
+
     #endregion
 
     #region XML invoke function
+
     private void InvokeXml()
     {
       string tmpFileName = XmlHandler.BuildFileName(null, false);
@@ -206,10 +220,11 @@ namespace MPLanguageTool
 
       // check if selected path contains the default translation file
       // if not show folderbrowserdlg until user cancels or selects a path that contains it 
-      while (!System.IO.File.Exists(System.IO.Path.Combine(languagePath,tmpFileName)))
+      while (!System.IO.File.Exists(System.IO.Path.Combine(languagePath, tmpFileName)))
       {
-        MessageBox.Show("The file [" + tmpFileName + "] could not be found.\nThe LanguageTool does not work without it.",
-           "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        MessageBox.Show(
+          "The file [" + tmpFileName + "] could not be found.\nThe LanguageTool does not work without it.",
+          "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
           return;
         languagePath = folderBrowserDialog1.SelectedPath;
@@ -236,7 +251,7 @@ namespace MPLanguageTool
       while (originalTranslations == null)
       {
         MessageBox.Show("The file [" + tmpFileName + "] is invalid.\nPlease select a correct working one.",
-          "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "MPLanguageTool -- Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         if (folderBrowserDialog1.ShowDialog() == DialogResult.Cancel)
           return;
         languagePath = folderBrowserDialog1.SelectedPath;
@@ -298,7 +313,7 @@ namespace MPLanguageTool
 
       ToolStripText(untranslated);
       saveToolStripMenuItem.Enabled = true;
-      Cursor = Cursors.Default;      
+      Cursor = Cursors.Default;
     }
 
 
@@ -329,9 +344,11 @@ namespace MPLanguageTool
       }
       cbSections.SelectedItem = cbSections.Items[0];
     }
+
     #endregion
 
     #region Common ToolStrips
+
     private void saveToolStripMenuItem_Click(object sender, EventArgs e)
     {
       switch (LangType)
@@ -375,7 +392,9 @@ namespace MPLanguageTool
     {
       if (culture != null)
       {
-        if (MessageBox.Show("Do you want to save before exiting?", "MPLanguageTool -- Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        if (
+          MessageBox.Show("Do you want to save before exiting?", "MPLanguageTool -- Confirmation",
+                          MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
           saveToolStripMenuItem_Click(null, new EventArgs());
       }
       Close();
@@ -435,6 +454,7 @@ namespace MPLanguageTool
       originalTranslations = LoadSection(null);
       LoadTranslation();
     }
+
     #endregion
 
     public enum StringsType

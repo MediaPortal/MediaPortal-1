@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -7,15 +27,10 @@ namespace MediaPortal.GUI.Library
 {
   public class GUIStandardKeyboard : GUIKeyboard
   {
-
     public GUIStandardKeyboard(int dwParentID)
-      : base(dwParentID)
-    {
-    }
+      : base(dwParentID) {}
 
-    public override void InitializeInstance()
-    {
-    }
+    public override void InitializeInstance() {}
 
     protected override void MoveLeft()
     {
@@ -28,8 +43,8 @@ namespace MediaPortal.GUI.Library
       {
         if (_currentKey <= 0)
         {
-          ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-          ArrayList row = (ArrayList) board[_currentRow];
+          ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+          ArrayList row = (ArrayList)board[_currentRow];
           _currentKey = row.Count - 1;
         }
         else
@@ -50,8 +65,8 @@ namespace MediaPortal.GUI.Library
 
       do
       {
-        ArrayList board = (ArrayList) _keyboardList[(int) _currentKeyboard];
-        ArrayList row = (ArrayList) board[_currentRow];
+        ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
+        ArrayList row = (ArrayList)board[_currentRow];
 
         if (_currentKey == row.Count - 1)
         {
@@ -78,7 +93,7 @@ namespace MediaPortal.GUI.Library
         _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
         if (fWidth < fTextBoxWidth)
-          {
+        {
           if (_position >= _textEntered.Length)
           {
             _textEntered += k.ToString();

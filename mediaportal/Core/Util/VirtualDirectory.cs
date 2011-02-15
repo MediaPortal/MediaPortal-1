@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1486,7 +1486,8 @@ namespace MediaPortal.Util
       this.HandleLocalFilesInDir(aDirectory, ref aItemsList, aHasRedbookDetails, false);
     }
 
-    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails, bool useCache)
+    private void HandleLocalFilesInDir(string aDirectory, ref List<GUIListItem> aItemsList, bool aHasRedbookDetails,
+                                       bool useCache)
     {
       //This function is only used inside GetDirectoryUnProtectedExt. GetDirectoryUnProtectedExt is 
       //mainly used for internal loading. That means it isn't called when the user explicitly enters a 
@@ -1553,12 +1554,11 @@ namespace MediaPortal.Util
               int pin;
               if (!IsProtectedShare(item.Path, out pin))
               {
-                  Utils.SetThumbnails(ref item);
+                Utils.SetThumbnails(ref item);
               }
 
               aItemsList.Add(item);
               _cachedItems.Add(item);
-              
             }
             else
             {
@@ -1584,36 +1584,35 @@ namespace MediaPortal.Util
                   continue;
                 }
               }
-              
+
               if (IsValidExtension(FileName))
               {
                 // Skip hidden files
-                  if (!aHasRedbookDetails &&
-                      (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
-                        continue;
+                if (!aHasRedbookDetails &&
+                    (fd.dwFileAttributes & FileAttributes.Hidden) == FileAttributes.Hidden)
+                  continue;
 
-                  if (!aHasRedbookDetails)
-                  {
-                      //fi = new FileInformation(FileName, false);
-                      fi.Name = fd.cFileName;
-                  }
-                  else
-                  {
-                      fi = new FileInformation();
-                      fi.CreationTime = DateTime.Now;
-                      fi.Length = 0;
-                  }
+                if (!aHasRedbookDetails)
+                {
+                  //fi = new FileInformation(FileName, false);
+                  fi.Name = fd.cFileName;
+                }
+                else
+                {
+                  fi = new FileInformation();
+                  fi.CreationTime = DateTime.Now;
+                  fi.Length = 0;
+                }
 
                 item = new GUIListItem(Utils.GetFilename(FileName), "", FileName, false, fi);
 
                 Utils.SetDefaultIcons(item);
-                  Utils.SetThumbnails(ref item);
-                
+                Utils.SetThumbnails(ref item);
+
                 aItemsList.Add(item);
                 _cachedItems.Add(item);
               }
             }
-            
           }
           catch (Exception exi)
           {
@@ -1623,7 +1622,7 @@ namespace MediaPortal.Util
 
         Win32API.FindClose(handle);
 
-          _cachedDir = aDirectory;
+        _cachedDir = aDirectory;
       }
       catch (Exception ex)
       {
@@ -1635,7 +1634,7 @@ namespace MediaPortal.Util
     }
 
 
-      ///// <summary>
+    ///// <summary>
     ///// This method returns an arraylist of GUIListItems for the specified folder
     ///// This method does not check if the folder is protected by an pincode. it will
     ///// always return all files/subfolders present
@@ -1747,7 +1746,7 @@ namespace MediaPortal.Util
 
         return m_extensions.Contains(extensionFile) || m_extensions.Contains("*"); // added for explorer modul by gucky
       }
-      catch (Exception) { }
+      catch (Exception) {}
 
       return false;
     }

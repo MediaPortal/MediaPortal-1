@@ -25,7 +25,9 @@ BOOL g_onlyShowForcedSubs;
 CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	: m_d3DDev(d3DDev),
 	m_isSetTime(false),
+	m_forcedSubIndex(-1),
 	m_iSubtitleSel(-1),
+	m_enabled(false),
 	m_isIntSubStreamSelected(false),
 	m_rtNow(-1),
 	m_delay(0),
@@ -168,7 +170,7 @@ int CSubManager::GetCount()
 	return GetExtCount() + m_intSubs.GetCount();
 }
 
-BSTR CSubManager::GetLanguage(int i)
+BSTR CSubManager::GetLanguageHelper(int i, bool useTrackName)
 {
 	POSITION pos = m_pSubStreams.GetHeadPosition();
 	while(pos && i >= 0)
@@ -189,32 +191,39 @@ BSTR CSubManager::GetLanguage(int i)
 		i -= pSubStream->GetStreamCount();
 	}
 
-	return (i >= 0 && i < (int)m_intNames.GetCount()) ? m_intNames[i].AllocSysString() : NULL;
+	return (i >= 0 && i < (int)m_intNames.GetCount()) ? 
+		(useTrackName ? m_intTrackNames[i].AllocSysString() : m_intNames[i].AllocSysString()) : NULL;
+}
+
+BSTR CSubManager::GetLanguage(int i)
+{
+	return GetLanguageHelper(i, false);
+}
+
+BSTR CSubManager::GetTrackName(int i)
+{
+	return GetLanguageHelper(i, true);
 }
 
 int CSubManager::GetCurrent()
 {
-	return m_iSubtitleSel&0x7fffffff;
+	return m_iSubtitleSel;
 }
 
 void CSubManager::SetCurrent(int current)
 {
-	m_iSubtitleSel = current | (m_iSubtitleSel&0x80000000); 
+	m_iSubtitleSel = current; 
 	UpdateSubtitle();
 }
 
-void CSubManager::SetEnable(BOOL enable)
+void CSubManager::SetEnable(BOOL enabled)
 {
-	if ((enable && m_iSubtitleSel < 0) || (!enable && m_iSubtitleSel>= 0))
-	{
-		m_iSubtitleSel ^= 0x80000000;
-		UpdateSubtitle();
-	}
+	m_enabled = enabled != 0;
 }
 
 BOOL CSubManager::GetEnable()
 {
-	return m_iSubtitleSel >= 0;
+	return m_enabled ? TRUE :  FALSE;
 }
 
 void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
@@ -226,7 +235,7 @@ void CSubManager::SetTime(REFERENCE_TIME nsSampleTime)
 
 void CSubManager::Render(int x, int y, int width, int height)
 {
-	if (m_iSubtitleSel < 0)
+	if (!m_enabled)
 		return;
 
 	if (!m_isSetTime)
@@ -251,6 +260,9 @@ void CSubManager::Render(int x, int y, int width, int height)
 	{
  		CRect rcSource, rcDest;
 		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest))) {
+			ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
+			ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
+			ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 			rcDest.OffsetRect(x, y);
 			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
 			m_d3DDev->GetFVF(&fvf);
@@ -312,15 +324,8 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 			continue;
 		}
 
-		CComQIPtr<ITrackInfo> pTrackInfo;
+		CComQIPtr<ITrackInfo> pTrackInfo(pBF);
 		int index = -1;
-		if (onlyShowForcedSubs) {
-			pTrackInfo = pBF;
-			if (!pTrackInfo) {
-				ATLTRACE("Skipping - using forced subtitles and ITrackInfo is not supported");
-				continue;
-			}
-		}
 
 		BeginEnumPins(pBF, pEP, pPin)
 		{
@@ -340,17 +345,6 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 			}
 			else if (!IsTextPin(pPin))
 				continue;
-
-			if (pTrackInfo) {
-				TrackElement trackElement;
-				memset(&trackElement, 0, sizeof(trackElement));
-				pTrackInfo->GetTrackInfo(index, &trackElement);
-				if (!trackElement.FlagForced) {
-					ATLTRACE("Skipping - using forced subtitles and track %d is not forced", index);
-					continue;
-				}
-			}
-			
 
 			CComQIPtr<IBaseFilter> pTPTF = new CTextPassThruFilter(this);
 			CStringW name;
@@ -387,6 +381,15 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 				else 
 				{
 					m_pSubStreams.AddTail(pSubStream);
+					if (pTrackInfo) {
+						TrackElement trackElement;
+						memset(&trackElement, 0, sizeof(trackElement));
+						pTrackInfo->GetTrackInfo(index, &trackElement);
+						if (trackElement.FlagForced) {
+							m_forcedSubIndex = m_pSubStreams.GetCount() - 1;
+							ATLTRACE("subtitle track %d is forced", index);
+						}
+					}
 				}
 			}
 			else
@@ -402,7 +405,6 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 
 void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 {
-	m_pSS = pBF;
 	if(!m_pSS) return;
 	DWORD cStreams = 0;
 	if(SUCCEEDED(m_pSS->Count(&cStreams)))
@@ -419,7 +421,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 
 			if(dwGroup == 2)
 			{
-				CString lang;
+				CString lang, track(pszName);
 				if (lcid == 0)
 				{
 					lang = pszName;
@@ -436,6 +438,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 					ATLTRACE(L"InitInternalSubs: %d, %s", i, lang);
 					m_intSubs.Add(i);
 					m_intNames.Add(lang);
+					m_intTrackNames.Add(track);
 				}
 			}
 
@@ -512,7 +515,7 @@ void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* 
 		{
 			CComPtr<ISubStream> pSubStream;
 
-			if(!pSubStream)
+			//if(!pSubStream)
 			{
 				CAutoPtr<CVobSubFile> pVSF(new CVobSubFile(&m_csSubLock));
 				if(CString(CPath(ret[i].fn).GetExtension()).MakeLower() == _T(".idx") && pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
@@ -521,7 +524,7 @@ void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* 
 				}
 			}
 
-			if(!pSubStream && !onlyShowForcedSubs)
+			if(!pSubStream)
 			{
 				CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
 				if(pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET) && pRTS->GetStreamCount() > 0) {
@@ -599,6 +602,11 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 	LoadExternalSubtitles(fn, paths, onlyShowForcedSubs);
 	if(GetCount() > 0)
 	{
-		m_iSubtitleSel = 0x80000000; //stream 0, disabled
+		if (onlyShowForcedSubs && m_forcedSubIndex >= 0) {
+			SetCurrent(m_forcedSubIndex);
+			m_enabled = true;
+		} else {
+			SetCurrent(0); //stream 0, disabled
+		}
 	} 
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -58,7 +58,7 @@ namespace MediaPortal.Player
         SetVideoWindow();
       }
     }
-    
+
     /// <summary> create the used COM components and get the interfaces. </summary>
     protected override bool GetInterfaces()
     {
@@ -101,7 +101,7 @@ namespace MediaPortal.Player
             intCount++;
           }
         }
-        
+
         if (bAutoDecoderSettings)
         {
           return AutoRendering(wmvAudio);
@@ -124,14 +124,14 @@ namespace MediaPortal.Player
         string extension = Path.GetExtension(m_strCurrentFile).ToLower();
 
         switch (extension)
-        { 
+        {
           case ".wmv":
           case ".asf":
             {
               //strVideoCodec = "WMVideo Decoder DMO"; //allow e.g. ffdshow usage
               strH264VideoCodec = "";
               strAudioCodec = "WMAudio Decoder DMO"; // multichannel audio needs this filter
-              strAACAudioCodec = "";              
+              strAACAudioCodec = "";
               break;
             }
           case ".mkv":
@@ -153,7 +153,7 @@ namespace MediaPortal.Player
           DirectShowUtil.AddFilterToGraph(graphBuilder, strH264VideoCodec);
         if (!string.IsNullOrEmpty(strAudioCodec))
           DirectShowUtil.AddFilterToGraph(graphBuilder, strAudioCodec);
-        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec) 
+        if (!string.IsNullOrEmpty(strAACAudioCodec) && strAudioCodec != strAACAudioCodec)
           DirectShowUtil.AddFilterToGraph(graphBuilder, strAACAudioCodec);
 
         if (strAudiorenderer.Length > 0)
@@ -201,54 +201,53 @@ namespace MediaPortal.Player
             }
             FFDShowLoaded = true;
           }
-          DirectShowUtil.ReleaseComObject(baseFilter); baseFilter = null;
+          DirectShowUtil.ReleaseComObject(baseFilter);
+          baseFilter = null;
         }
         // check if current "File" is a file... it could also be a URL
         // Directory.Getfiles, ... will other give us an exception
         if (File.Exists(m_strCurrentFile))
         {
-            #region load external audio streams
-            //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
-            string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile), Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
-            bool audioSwitcherLoaded = false;
-            foreach (string file in audioFiles)
+          #region load external audio streams
+
+          //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
+          string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile),
+                                                   Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
+          bool audioSwitcherLoaded = false;
+          foreach (string file in audioFiles)
+          {
+            switch (Path.GetExtension(file))
             {
-                switch (Path.GetExtension(file))
+              case ".mp3":
+              case ".dts":
+              case ".mka":
+              case ".ac3":
+                if (!audioSwitcherLoaded)
                 {
-                    case ".mp3":
-                    case ".dts":
-                    case ".mka":
-                    case ".ac3":
-                        if (!audioSwitcherLoaded)
-                        {
-                            IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder, "MediaPortal AudioSwitcher");
-                            if (switcher != null)
-                            {
-                                DirectShowUtil.ReleaseComObject(switcher);
-                                switcher = null;
-                            }
-                            else
-                            {
-                                DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal AudioSwitcher");
-                            }
-                            audioSwitcherLoaded = true;
-                        }
-                        graphBuilder.RenderFile(file, string.Empty);
-                        Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
-                        break;
+                  IBaseFilter switcher = DirectShowUtil.GetFilterByName(graphBuilder, "MediaPortal AudioSwitcher");
+                  if (switcher != null)
+                  {
+                    DirectShowUtil.ReleaseComObject(switcher);
+                    switcher = null;
+                  }
+                  else
+                  {
+                    DirectShowUtil.AddFilterToGraph(graphBuilder, "MediaPortal AudioSwitcher");
+                  }
+                  audioSwitcherLoaded = true;
                 }
+                graphBuilder.RenderFile(file, string.Empty);
+                Log.Debug("VideoPlayerVMR9 : External audio file loaded \"{0}\"", file);
+                break;
             }
-            #endregion
+          }
+
+          #endregion
         }
         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
-        DirectShowUtil.ReleaseComObject(source); source = null;
+        DirectShowUtil.ReleaseComObject(source);
+        source = null;
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
-
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {
@@ -316,11 +315,6 @@ namespace MediaPortal.Player
 
         // render
         DirectShowUtil.RenderGraphBuilderOutputPins(graphBuilder, null);
-        #region Subtitles
-
-        SubEngine.GetInstance().LoadSubtitles(graphBuilder, m_strCurrentFile);
-
-        #endregion //Subtitles
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
         {

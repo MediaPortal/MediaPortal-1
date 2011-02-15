@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -512,23 +512,23 @@ namespace TvLibrary.Hardware
         lnbFrequency = lof1 * 1000;
 
       Log.Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
-        (int)satelliteChannel.Frequency,
-        satelliteChannel.SymbolRate * 1000,
-        Translate(satelliteChannel.Polarisation),
-        hiBand,
-        Translate(satelliteChannel.ModulationType),
-        Translate(satelliteChannel.InnerFecRate),
-        lnbFrequency
+                    (int)satelliteChannel.Frequency,
+                    satelliteChannel.SymbolRate * 1000,
+                    Translate(satelliteChannel.Polarisation),
+                    hiBand,
+                    Translate(satelliteChannel.ModulationType),
+                    Translate(satelliteChannel.InnerFecRate),
+                    lnbFrequency
         );
 
       int res = TuneTransponder(m_iDeviceIndex,
-        (int)satelliteChannel.Frequency,
-        satelliteChannel.SymbolRate * 1000,
-        lnbFrequency,
-        Translate(satelliteChannel.Polarisation),
-        hiBand ? 1:0,
-        Translate(satelliteChannel.ModulationType),
-        Translate(satelliteChannel.InnerFecRate)
+                                (int)satelliteChannel.Frequency,
+                                satelliteChannel.SymbolRate * 1000,
+                                lnbFrequency,
+                                Translate(satelliteChannel.Polarisation),
+                                hiBand ? 1 : 0,
+                                Translate(satelliteChannel.ModulationType),
+                                Translate(satelliteChannel.InnerFecRate)
         );
       Log.Log.Debug("TeVii: Send CustomTune: {0}", res);
       return (res == 1);
@@ -539,15 +539,16 @@ namespace TvLibrary.Hardware
       switch (pol)
       {
         case Polarisation.CircularL:
-        case Polarisation.LinearH: 
+        case Polarisation.LinearH:
           return TPolarization.TPol_Horizontal;
         case Polarisation.CircularR:
-        case Polarisation.LinearV: 
+        case Polarisation.LinearV:
           return TPolarization.TPol_Vertical;
-        default: 
+        default:
           return TPolarization.TPol_None;
       }
     }
+
     private TFEC Translate(BinaryConvolutionCodeRate fec)
     {
       switch (fec)
@@ -585,6 +586,7 @@ namespace TvLibrary.Hardware
           return TFEC.TFEC_AUTO;
       }
     }
+
     private TMOD Translate(ModulationType mod)
     {
       switch (mod)
@@ -593,7 +595,7 @@ namespace TvLibrary.Hardware
           return TMOD.TMOD_TURBO_8PSK;
           //return TMOD.TMOD_DVBS2_8PSK;
         case ModulationType.ModQpsk:
-          return TMOD.TMOD_TURBO_QPSK; 
+          return TMOD.TMOD_TURBO_QPSK;
           //return TMOD.TMOD_DVBS2_QPSK;
         case ModulationType.Mod8Vsb:
           return TMOD.TMOD_8VSB;

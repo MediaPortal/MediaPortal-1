@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@ namespace MpeMaker
   public partial class MainForm : Form
   {
     protected MruStripMenu mruMenu;
-    
+
     private const string mruRegKey = "SOFTWARE\\Team MediaPortal\\MpeMaker";
     private const string mpeFileDialogFilter = "Mpe project file(*.xmp2)|*.xmp2|All files|*.*";
 
@@ -103,7 +103,6 @@ namespace MpeMaker
             Console.WriteLine("Writing UpdateXML to \"{0}\"", Package.ProjectSettings.UpdatePath1);
             Package.WriteUpdateXml(Package.ProjectSettings.UpdatePath1);
           }
-
         }
 
         // close form/app
@@ -139,6 +138,7 @@ namespace MpeMaker
     #region Properties
 
     private PackageClass _package;
+
     public PackageClass Package
     {
       get { return _package; }
@@ -187,7 +187,7 @@ namespace MpeMaker
 
       splitContainer1.Panel2.Controls.Clear();
       _panels[key].Anchor = (AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Top |
-                                     AnchorStyles.Left);
+                             AnchorStyles.Left);
       _panels[key].Dock = DockStyle.Fill;
       splitContainer1.Panel2.Controls.Add(_panels[key]);
       ((ISectionControl)_panels[key]).Set(Package);
@@ -259,9 +259,10 @@ namespace MpeMaker
     {
       if (!File.Exists(filename))
       {
-        string message = String.Format("Project file {0} was not found.{1}{1}Entry will be removed from 'Most Recently Used'-list.",
-                                       Path.GetFileName(filename),
-                                       Environment.NewLine);
+        string message =
+          String.Format("Project file {0} was not found.{1}{1}Entry will be removed from 'Most Recently Used'-list.",
+                        Path.GetFileName(filename),
+                        Environment.NewLine);
         MessageBox.Show(message, "File not found", MessageBoxButtons.OK, MessageBoxIcon.Information);
         mruMenu.RemoveFile(number);
         return;
@@ -292,11 +293,11 @@ namespace MpeMaker
       packageClass.Sections.Items[0].WizardButtonsEnum = WizardButtonsEnum.NextCancel;
       packageClass.Sections.Add("Install Section");
       var item = new ActionItem("InstallFiles")
-      {
-        Params =
-          new SectionParamCollection(
-          MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
-      };
+                   {
+                     Params =
+                       new SectionParamCollection(
+                       MpeInstaller.ActionProviders["InstallFiles"].GetDefaultParams())
+                   };
       packageClass.Sections.Items[1].Actions.Add(item);
       packageClass.Sections.Items[1].WizardButtonsEnum = WizardButtonsEnum.Next;
       packageClass.Sections.Add("Setup Complete");

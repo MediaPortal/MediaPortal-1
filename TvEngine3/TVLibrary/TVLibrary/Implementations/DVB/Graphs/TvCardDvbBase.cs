@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -106,7 +106,7 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region variables
-    
+
     /// <summary>
     /// holds the the DVB tuning space
     /// </summary>
@@ -226,14 +226,17 @@ namespace TvLibrary.Implementations.DVB
     /// Channel scan interface
     /// </summary>
     protected ITsChannelScan _interfaceChannelScan;
+
     /// <summary>
     /// Internal Network provider instance
     /// </summary>
     protected IDvbNetworkProvider _interfaceNetworkProvider;
+
     /// <summary>
     /// Indicates if the internal network provider is used
     /// </summary>
     protected bool useInternalNetworkProvider;
+
     /// <summary>
     /// Channel linkage scanner interface
     /// </summary>
@@ -282,17 +285,13 @@ namespace TvLibrary.Implementations.DVB
       _supportsSubChannels = true;
       Guid networkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
       useInternalNetworkProvider = FilterGraphTools.IsThisComObjectInstalled(networkProviderClsId);
-
     }
 
     #endregion
 
     #region tuning
 
-    protected virtual void OnAfterTune (IChannel channel)
-    {
-      
-    }
+    protected virtual void OnAfterTune(IChannel channel) {}
 
     /// <summary>
     /// Scans the specified channel.
@@ -320,14 +319,14 @@ namespace TvLibrary.Implementations.DVB
 
     private ITvSubChannel DoTune(int subChannelId, IChannel channel, bool ignorePMT)
     {
-      bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));      
+      bool performTune = (_previousChannel == null || _previousChannel.IsDifferentTransponder(channel));
       ITvSubChannel ch = SubmitTuneRequest(subChannelId, channel, _tuneRequest, performTune);
       _previousChannel = channel;
-     
+
       try
       {
         if (ch != null)
-        {          
+        {
           try
           {
             RunGraph(ch.SubChannelId);
@@ -341,7 +340,7 @@ namespace TvLibrary.Implementations.DVB
           }
           OnAfterTune(channel);
           return ch;
-        }       
+        }
         else
         {
           throw new TvException("TvCardDvbBase.Tune: Subchannel was null");
@@ -354,7 +353,7 @@ namespace TvLibrary.Implementations.DVB
           FreeSubChannel(ch.SubChannelId);
         }
         throw;
-      }      
+      }
     }
 
     #endregion
@@ -514,7 +513,7 @@ namespace TvLibrary.Implementations.DVB
             else
             {
               Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
-              int hr = ((ITuner) _filterNetworkProvider).put_TuneRequest(tuneRequest);
+              int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
               Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
               if (hr != 0)
               {
@@ -777,7 +776,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_conditionalAccess.AllowedToStopGraph == false)
         {
-          RunGraph(-1);          
+          RunGraph(-1);
         }
       }
       return;
@@ -840,19 +839,20 @@ namespace TvLibrary.Implementations.DVB
       return true;
       //default behaviour is nothing
     }
+
     //protected Dictionary<int, TvDvbChannel> _mapSubChannels;
     /// <summary>
     /// Methods which starts the graph
     /// </summary>
     public override void RunGraph(int subChannel)
     {
-      Log.Log.Info("RunGraph");      
+      Log.Log.Info("RunGraph");
       bool graphRunning = GraphRunning();
 
       if (_mapSubChannels.ContainsKey(subChannel))
       {
         if (graphRunning)
-        {          
+        {
           if (!LockedInOnSignal())
           {
             throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
@@ -912,7 +912,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_graphBuilder == null)
         return;
-      
+
       FilterState state;
       ((IMediaControl)_graphBuilder).GetState(10, out state);
       if (state != FilterState.Running)
@@ -927,7 +927,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to pause graph");
       }
-      _graphState = GraphState.Created;        
+      _graphState = GraphState.Created;
     }
 
     public abstract bool CanTune(IChannel channel);
@@ -975,7 +975,7 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        int hr = ((IMediaControl)_graphBuilder).Stop();        
+        int hr = ((IMediaControl)_graphBuilder).Stop();
         Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
         if (hr < 0 || hr > 1)
         {
@@ -1242,7 +1242,9 @@ namespace TvLibrary.Implementations.DVB
 
           //try add filter to graph
           Log.Log.Info("dvb:  Adding {0} to graph", CiDeviceName);
-          if (_graphBuilder.AddSourceFilterForMoniker(capDevices[capIndex].Mon, null, capDevices[capIndex].Name, out tmpCiFilter) == 0)
+          if (
+            _graphBuilder.AddSourceFilterForMoniker(capDevices[capIndex].Mon, null, capDevices[capIndex].Name,
+                                                    out tmpCiFilter) == 0)
           {
             //DigitalDevices ci module found
             Log.Log.Info("dvb:  {0} detected", CiDeviceName);
@@ -1362,52 +1364,17 @@ namespace TvLibrary.Implementations.DVB
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
-        Log.Log.Info("dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
+        Log.Log.Info(
+          "dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
         Log.Log.Error("dvb:  No TVTuner installed");
         throw new TvException("No TVTuner installed");
       }
-      bool skipCaptureFilter = false;
-      IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
-      if (pinOut != null)
-      {
-        IEnumMediaTypes enumMedia;
-        pinOut.EnumMediaTypes(out enumMedia);
-        if (enumMedia != null)
-        {
-          int fetched;
-          AMMediaType[] mediaTypes = new AMMediaType[21];
-          enumMedia.Next(20, mediaTypes, out fetched);
-          if (fetched > 0)
-          {
-            for (int i = 0; i < fetched; ++i)
-            {
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.Mpeg2Transport &&
-                  mediaTypes[i].formatType != FormatType.None)
-              {
-                skipCaptureFilter = false;
-              }
-              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
-                  mediaTypes[i].formatType == FormatType.None)
-              {
-                skipCaptureFilter = true;
-              }
-            }
-          }
-        }
-      }
 
-      //Hauppauge Nova USB2 DVB-T & HDHomeRun workaround.
-      if (device.Name != null &&
-          (device.Name.Contains("Hauppauge Nova USB2 DVB-T TV Receiver") ||
-           device.Name.Contains("Silicondust HDHomeRun Tuner") ||
-           device.Name.Contains("TeVii DVB-S/S2 Receiver")))
-      {
-        skipCaptureFilter = true;
-      }
       Log.Log.WriteFile("dvb:  Setting lastFilter to Tuner filter");
       IBaseFilter lastFilter = _filterTuner;
 
-      if (false == skipCaptureFilter)
+      // Attempt to connect [Tuner]->[Capture]
+      if (UseCaptureFilter())
       {
         Log.Log.WriteFile("dvb:  Find BDA receiver");
         Log.Log.WriteFile("dvb:  match Capture by Tuner device path");
@@ -1442,6 +1409,86 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
+    /// Determine whether the tuner filter needs to connect to a capture filter,
+    /// or whether it can be directly connected to an inf tee.
+    /// </summary>
+    /// <returns><c>true</c> if the tuner filter must be connected to a capture filter, otherwise <c>false</c></returns>
+    private bool UseCaptureFilter()
+    {
+      // First: check the media types and formats on the tuner output
+      // pin. The WDK specifies (http://msdn.microsoft.com/en-us/library/ff557729%28v=vs.85%29.aspx)
+      // a set of formats that the tuner and capture filter output pins should set
+      // to allow the tuner filter to connect to the capture filter, and the capture
+      // filter to connect to the MPEG 2 Demultiplexor filter (see http://msdn.microsoft.com/en-us/library/dd390716%28v=vs.85%29.aspx).
+      // Most tuners support the MEDIASUBTYPE_MPEG2_TRANSPORT media sub-type on their
+      // output pin, while most capture filters use either MEDIASUBTYPE_MPEG2_TRANSPORT
+      // or STATIC_KSDATAFORMAT_SUBTYPE_BDA_MPEG2_TRANSPORT (also known as MEDIASUBTYPE_BDA_MPEG2_TRANSPORT).
+      bool useCaptureFilter = true;
+      IPin pinOut = DsFindPin.ByDirection(_filterTuner, PinDirection.Output, 0);
+      if (pinOut != null)
+      {
+        IEnumMediaTypes enumMedia;
+        pinOut.EnumMediaTypes(out enumMedia);
+        if (enumMedia != null)
+        {
+          int fetched;
+          AMMediaType[] mediaTypes = new AMMediaType[21];
+          enumMedia.Next(20, mediaTypes, out fetched);
+          if (fetched > 0)
+          {
+            for (int i = 0; i < fetched; ++i)
+            {
+              if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
+                  mediaTypes[i].formatType == FormatType.None)
+              {
+                Log.Log.WriteFile("dvb:  tuner filter has capture filter output");
+                useCaptureFilter = false;
+              }
+              DsUtils.FreeAMMediaType(mediaTypes[i]);
+            }
+          }
+          Release.ComObject("tuner filter output pin media types enum", enumMedia);
+        }
+      }
+      Release.ComObject("tuner filter output pin", pinOut);
+      if (!useCaptureFilter)
+      {
+        return false;
+      }
+
+      // Second: check whether the tuner filter implements the
+      // capture/receiver filter interface (KSCATEGORY_BDA_RECEIVER_COMPONENT).
+      // NOTE: not all filters expose this information.
+      IKsTopologyInfo topologyInfo = _filterTuner as IKsTopologyInfo;
+      if (topologyInfo != null)
+      {
+        int categoryCount;
+        topologyInfo.get_NumCategories(out categoryCount);
+        for (int i = 0; i < categoryCount; i++)
+        {
+          Guid guid;
+          topologyInfo.get_Category(i, out guid);
+          if (guid == FilterCategory.BDAReceiverComponentsCategory)
+          {
+            Log.Log.WriteFile("dvb:  tuner filter is also capture filter");
+            return false;
+          }
+        }
+      }
+
+      // Finally: if the tuner is a Silicondust HDHomeRun then a capture
+      // filter is not required. Neither of the other two detection methods
+      // work as of 2011-02-11 (mm1352000).
+      if (_tunerDevice.Name.Contains("Silicondust HDHomeRun Tuner"))
+      {
+        return false;
+      }
+
+      // Default: capture filter is required.
+      return true;
+    }
+
+    /// <summary>
     /// Connects the ts writer to the last given filter
     /// </summary>
     /// <param name="lastFilter">Last filter in the graph</param>
@@ -1453,7 +1500,6 @@ namespace TvLibrary.Implementations.DVB
       //no wintv ci usb module found. Render [Tuner] or [Capture]->[InfTee]
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
       return (hr == 0);
-
     }
 
     /// <summary>
@@ -1610,7 +1656,7 @@ namespace TvLibrary.Implementations.DVB
       }
       Log.Log.WriteFile("dvb:  Render ...->[inftee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTeeMain);
-      if(hr!=0)
+      if (hr != 0)
       {
         Log.Log.Error("dvb:Unable to connect InfTee returns:0x{0:X}", hr);
         throw new TvExceptionGraphBuildingFailed("Could not connect InfTee Filter to last Filter");
@@ -1848,7 +1894,7 @@ namespace TvLibrary.Implementations.DVB
           break;
         }
       }
-     
+
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
       {
@@ -1889,19 +1935,22 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterTuner != null)
       {
-        while (Release.ComObject(_filterTuner) > 0) ;
+        while (Release.ComObject(_filterTuner) > 0)
+          ;
         _filterTuner = null;
       }
       if (_filterCapture != null)
       {
-        while (Release.ComObject(_filterCapture) > 0) ;
+        while (Release.ComObject(_filterCapture) > 0)
+          ;
         _filterCapture = null;
       }
       if (_filterWinTvUsb != null)
       {
         Log.Log.Info("  Stopping WinTVCI module");
         winTvCiHandler.Shutdown();
-        while (Release.ComObject(_filterWinTvUsb) > 0) ;
+        while (Release.ComObject(_filterWinTvUsb) > 0)
+          ;
         _filterWinTvUsb = null;
       }
       if (_filterTIF != null)
@@ -1962,7 +2011,8 @@ namespace TvLibrary.Implementations.DVB
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          while (Release.ComObject(stat) > 0) ;
+          while (Release.ComObject(stat) > 0)
+            ;
         }
         _tunerStatistics.Clear();
       }
@@ -2404,7 +2454,7 @@ namespace TvLibrary.Implementations.DVB
               }
               if (epgChannel == null)
               {
-                DVBBaseChannel dvbChan = CreateChannel((int)networkid, (int)transportid, (int) channelid, channelName);
+                DVBBaseChannel dvbChan = CreateChannel((int)networkid, (int)transportid, (int)channelid, channelName);
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
                 epgChannels.Add(epgChannel);
@@ -2605,7 +2655,7 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Reloads the card configuration
     /// </summary>
-    public void ReloadCardConfiguration() { }
+    public void ReloadCardConfiguration() {}
 
     #endregion
 

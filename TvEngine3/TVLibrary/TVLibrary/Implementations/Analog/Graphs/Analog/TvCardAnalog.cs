@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ namespace TvLibrary.Implementations.Analog
     #region imports
 
     [ComImport, Guid("DB35F5ED-26B2-4A2A-92D3-852E145BF32D")]
-    private class MpFileWriter { }
+    private class MpFileWriter {}
 
     #endregion
 
@@ -208,12 +208,12 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// Starts scanning for linkage info
     /// </summary>
-    public void StartLinkageScanner(BaseChannelLinkageScanner callback) { }
+    public void StartLinkageScanner(BaseChannelLinkageScanner callback) {}
 
     /// <summary>
     /// Stops/Resets the linkage scanner
     /// </summary>
-    public void ResetLinkageScanner() { }
+    public void ResetLinkageScanner() {}
 
     /// <summary>
     /// Returns the channel linkages grabbed
@@ -231,17 +231,17 @@ namespace TvLibrary.Implementations.Analog
     /// Grabs the epg.
     /// </summary>
     /// <param name="callback">The callback which gets called when epg is received or canceled.</param>
-    public void GrabEpg(BaseEpgGrabber callback) { }
+    public void GrabEpg(BaseEpgGrabber callback) {}
 
     /// <summary>
     /// Start grabbing the epg while timeshifting
     /// </summary>
-    public void GrabEpg() { }
+    public void GrabEpg() {}
 
     /// <summary>
     /// Aborts grabbing the epg. This also triggers the OnEpgReceived callback.
     /// </summary>
-    public void AbortGrabbing() { }
+    public void AbortGrabbing() {}
 
     /// <summary>
     /// returns a list of all epg data for each channel found.
@@ -830,13 +830,13 @@ namespace TvLibrary.Implementations.Analog
     /// <summary>
     /// A derrived class should activate / deactivate the scanning
     /// </summary>
-    protected override void OnScanning() { }
+    protected override void OnScanning() {}
 
     /// <summary>
     /// A derrived class should activate / deactivate the epg grabber
     /// </summary>
     /// <param name="value">Mode</param>
-    protected override void UpdateEpgGrabber(bool value) { }
+    protected override void UpdateEpgGrabber(bool value) {}
 
     #endregion
   }

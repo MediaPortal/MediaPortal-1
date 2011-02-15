@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -27,7 +27,6 @@ using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Profile;
-using System.Text.RegularExpressions;
 using System.Diagnostics;
 
 namespace MediaPortal.Video.Database
@@ -152,9 +151,9 @@ namespace MediaPortal.Video.Database
         // Action 1-2 - IMPAw or TMDB search (50%)
         // Action 2-3 - FanArt download (75%)
         // Action 3-4 - End (100%)
-        int stepsInCode = 4;          // Total actions (no need for more as some of them are too fast to see)
+        int stepsInCode = 4; // Total actions (no need for more as some of them are too fast to see)
         int step = 100 / stepsInCode; // step value for increment
-        int percent = 0;              // actual pbar value
+        int percent = 0; // actual pbar value
 
         string line1 = GUILocalizeStrings.Get(198);
         OnProgress(line1, _movieDetails.Title, string.Empty, percent);
@@ -162,13 +161,17 @@ namespace MediaPortal.Video.Database
         if (_imdb.GetDetails(_url, ref _movieDetails))
         {
           percent = percent + step; // **Progress bar downloading details end
-          // Folder name for title (Change scraped title with folder name)
+          // Get special settings for grabbing
           Settings xmlreader = new MPSettings();
+          // Folder name for title (Change scraped title with folder name)
           bool folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
+          // Number of downloaded fanart per movie
           int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
+          // Also add fanart for share view
           bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
+
           string moviePath = _movieDetails.Path;
-            
+
           if (folderTitle)
           {
             // DVD check
@@ -225,7 +228,7 @@ namespace MediaPortal.Video.Database
 
             // Added IMDBNumber parameter for movie cover check
             // This number is checked on HTML cover source page, if it's equal then this is the cover for our movie
-            
+
             // IMPAwards
             IMPAwardsSearch impSearch = new IMPAwardsSearch();
             impSearch.SearchCovers(_movieDetails.Title, _movieDetails.IMDBNumber);
@@ -284,6 +287,7 @@ namespace MediaPortal.Video.Database
           // FanArt grab
           //
           _isFanArt = xmlreader.GetValueAsBool("moviedatabase", "usefanart", false);
+
           if (_isFanArt)
           {
             FanArt fanartSearch = new FanArt();
@@ -302,10 +306,10 @@ namespace MediaPortal.Video.Database
 
             if (_movieDetails.FanartURL == string.Empty)
             {
-              fanartSearch.GetWebFanart
+              fanartSearch.GetTmdbFanartByApi
                 (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);
               // Set fanart url to db
-              _movieDetails.FanartURL = fanartSearch.DefaultFanartURL;
+              _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
             }
             else // Local file or user url
             {
@@ -330,11 +334,11 @@ namespace MediaPortal.Video.Database
             line1 = GUILocalizeStrings.Get(1009); // **Progress bar downloading cover art, final step
             OnProgress(line1, _movieDetails.Title, string.Empty, percent);
             //
-            // Save cover thumbs - title suffix instead title (Cover problem for movies with the same name)
+            // Save cover thumbs
             //
             DownloadCoverArt(Thumbs.MovieTitle, _movieDetails.ThumbURL, titleExt);
             //
-            // folder.jpg for ripped DVDs
+            // Set folder.jpg for ripped DVDs
             //
             try
             {
@@ -360,7 +364,7 @@ namespace MediaPortal.Video.Database
             string file = moviePath + @"\" + _movieDetails.File;
             int idFile = VideoDatabase.GetFileId(file);
 
-            if (idFile >= 0 && VideoDatabase.GetMovieStopTime(idFile) > 0)
+            if (idFile >= 0 && VideoDatabase.GetVideoFileWatched(idFile))
             {
               _movieDetails.Watched = 1;
             }
@@ -468,7 +472,8 @@ namespace MediaPortal.Video.Database
     private void FetchActorsInMovie()
     {
       bool director = false; // Actor is director
-      bool byImdbId = true; // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
+      bool byImdbId = true;
+      // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
 
       if (_movieDetails == null)
       {
@@ -681,7 +686,7 @@ namespace MediaPortal.Video.Database
     {
       get { return _imdb[index]; }
     }
-    
+
     public int FuzzyMatch(string name)
     {
       int matchingIndex = -1;
@@ -976,7 +981,7 @@ namespace MediaPortal.Video.Database
               {
                 if (foldercheck == false && pattern[i].IsMatch(strMovieName))
                 {
-                    strMovieName = pattern[i].Replace(strMovieName, "");
+                  strMovieName = pattern[i].Replace(strMovieName, "");
                 }
               }
             }

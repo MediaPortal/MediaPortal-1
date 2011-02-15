@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,7 +44,7 @@ namespace MediaPortal.GUI.Video
   public abstract class GUIVideoBaseWindow : WindowPluginBase
   {
     #region Base variables
-    
+
     protected VideoSort.SortMethod currentSortMethod = VideoSort.SortMethod.Name;
     protected VideoSort.SortMethod currentSortMethodRoot = VideoSort.SortMethod.Name;
     //protected VideoViewHandler handler;
@@ -94,7 +94,7 @@ namespace MediaPortal.GUI.Video
           FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
           defaultSort = (int)GetSortMethod(def.DefaultSort);
         }
-        
+
 
         currentSortMethod = (VideoSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
         currentSortMethodRoot =
@@ -115,7 +115,7 @@ namespace MediaPortal.GUI.Video
         case "modified":
           return VideoSort.SortMethod.Modified;
         case "created":
-          return VideoSort.SortMethod.Created;		  
+          return VideoSort.SortMethod.Created;
         case "label":
           return VideoSort.SortMethod.Label;
         case "name":
@@ -148,10 +148,7 @@ namespace MediaPortal.GUI.Video
 
     protected override string SerializeName
     {
-      get
-      {
-        return "myvideobase";
-      }
+      get { return "myvideobase"; }
     }
 
     protected override bool AllowLayout(Layout layout)
@@ -330,10 +327,10 @@ namespace MediaPortal.GUI.Video
       }
 
       if (null != facadeLayout)
-        facadeLayout.EnableScrollLabel = CurrentSortMethod == VideoSort.SortMethod.Label || 
+        facadeLayout.EnableScrollLabel = CurrentSortMethod == VideoSort.SortMethod.Label ||
                                          CurrentSortMethod == VideoSort.SortMethod.Year ||
                                          CurrentSortMethod == VideoSort.SortMethod.Name
-                                         ;
+          ;
     }
 
     protected override void OnClick(int item) {}
@@ -347,7 +344,7 @@ namespace MediaPortal.GUI.Video
       {
         videoOverlay.Focused = false;
       }
-      
+
       LoadSettings();
 
       if (btnSortBy != null)
@@ -432,11 +429,11 @@ namespace MediaPortal.GUI.Video
           }
           if (item.FileInfo != null && !item.IsFolder)
           {
-            if (CurrentSortMethod == VideoSort.SortMethod.Modified) 
-              strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " + 
+            if (CurrentSortMethod == VideoSort.SortMethod.Modified)
+              strDate = item.FileInfo.ModificationTime.ToShortDateString() + " " +
                         item.FileInfo.ModificationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
             else
-              strDate = item.FileInfo.CreationTime.ToShortDateString() + " " + 
+              strDate = item.FileInfo.CreationTime.ToShortDateString() + " " +
                         item.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
           }
           if (CurrentSortMethod == VideoSort.SortMethod.Name)

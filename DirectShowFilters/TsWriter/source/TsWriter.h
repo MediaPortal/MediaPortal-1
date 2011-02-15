@@ -90,6 +90,8 @@ DECLARE_INTERFACE_(ITSFilter, IUnknown)
 
   STDMETHOD(GetStreamQualityCounters)(THIS_ int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity)PURE;
+  
+    STDMETHOD(TimeShiftSetChannelType)(THIS_ int handle, int channelType)PURE;
 };
 
 // Main filter object
@@ -208,6 +210,8 @@ public:
 	  STDMETHODIMP CaReset(int handle);
     STDMETHODIMP GetStreamQualityCounters(int handle, int* totalTsBytes, int* totalRecordingBytes, 
       int* TsDiscontinuity, int* recordingDiscontinuity);
+
+		STDMETHODIMP TimeShiftSetChannelType(int handle, int channelType);
 
     CMpTs(LPUNKNOWN pUnk, HRESULT *phr);
     ~CMpTs();

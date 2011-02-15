@@ -1,25 +1,20 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2010 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -122,14 +117,14 @@ namespace MediaPortal.GUI.Library
       SEARCH_FIRST,
       SEARCH_PREV,
       SEARCH_NEXT
-    };
+    } ;
 
     // Defines the directions in which the cover flow can move.
     private enum FlowDirection
     {
       LEFT,
       RIGHT
-    };
+    } ;
 
     // Define the controls
     private List<GUIListItem> _listItems = new List<GUIListItem>();
@@ -213,21 +208,21 @@ namespace MediaPortal.GUI.Library
       // Create the card labels.
       int y = _positionY + _label1OffsetY;
       _label1 = new GUILabelControl(_controlId, 0,
-                                        0, y,
-                                        Width, 0,
-                                        _fontName1, "", 0x0,
-                                        Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
-                                        false,
-                                        _shadowAngle, _shadowDistance, _shadowColor);
+                                    0, y,
+                                    Width, 0,
+                                    _fontName1, "", 0x0,
+                                    Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
+                                    false,
+                                    _shadowAngle, _shadowDistance, _shadowColor);
 
       y = _positionY + _label2OffsetY;
       _label2 = new GUILabelControl(_controlId, 0,
-                                       0, y,
-                                       Width, 0,
-                                       _fontName2, "", 0x0,
-                                       Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
-                                       false,
-                                       _shadowAngle, _shadowDistance, _shadowColor);
+                                    0, y,
+                                    Width, 0,
+                                    _fontName2, "", 0x0,
+                                    Alignment.ALIGN_CENTER, VAlignment.ALIGN_TOP,
+                                    false,
+                                    _shadowAngle, _shadowDistance, _shadowColor);
 
       // Create the horizontal scrollbar.
       int scrollbarWidth = _scrollbarWidth;
@@ -247,11 +242,11 @@ namespace MediaPortal.GUI.Library
       // Create controls for the back of the selected card.  All of the controls are provided as a single subitem.      
       XmlDocument doc = new XmlDocument();
 
-      if (SubItemCount > 0)  // avoid exception when no SubItems are available
-      {        
+      if (SubItemCount > 0) // avoid exception when no SubItems are available
+      {
         doc.LoadXml((string)GetSubItem(0));
         XmlNodeList nodeList = doc.DocumentElement.SelectNodes("/controls/*");
-        IDictionary<string, string> defines = new Dictionary<string, string>();  // An empty set of defines.
+        IDictionary<string, string> defines = new Dictionary<string, string>(); // An empty set of defines.
         foreach (XmlNode node in nodeList)
         {
           try
@@ -345,7 +340,7 @@ namespace MediaPortal.GUI.Library
 
       if (_label1 != null)
       {
-          _label1.Dispose();
+        _label1.Dispose();
       }
 
       if (_label2 != null)
@@ -360,7 +355,7 @@ namespace MediaPortal.GUI.Library
 
       foreach (GUIControl control in _cardBackControls)
       {
-          control.Dispose();
+        control.Dispose();
       }
 
       base.Dispose();
@@ -1437,7 +1432,8 @@ namespace MediaPortal.GUI.Library
           bool ms = GUIGraphicsContext.MouseSupport;
           GUIGraphicsContext.MouseSupport = true;
 
-          _horizontalScrollbar.IsVisible = _showScrollbar;  // Guarantee that the scrollbar is visible based on skin setting.
+          _horizontalScrollbar.IsVisible = _showScrollbar;
+          // Guarantee that the scrollbar is visible based on skin setting.
           _horizontalScrollbar.Render(timePassed);
 
           GUIGraphicsContext.MouseSupport = ms;
@@ -1559,7 +1555,8 @@ namespace MediaPortal.GUI.Library
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, l == _selectedCard);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1611,7 +1608,8 @@ namespace MediaPortal.GUI.Library
             TrySpinCard(timePassed);
           }
 
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1648,7 +1646,8 @@ namespace MediaPortal.GUI.Library
           // Set the card spin (front to back) angle.
           TrySpinCard(timePassed);
 
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, card, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -1676,7 +1675,7 @@ namespace MediaPortal.GUI.Library
       int s = card - maxCount;
       //for (int l = s, c = 0; l <= card; l++, c++)
       for (int l = s, c = 0; l <= ca; l++, c++)
-        {
+      {
         GUIGraphicsContext.PushMatrix();
         {
           // Cards are in motion if fractional and fract are changing.
@@ -1701,7 +1700,8 @@ namespace MediaPortal.GUI.Library
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
-          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0); // Locate the card at it's top center (card origin is top left).
+          GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
+          // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, shouldFocus);
         }
         GUIGraphicsContext.PopMatrix();
@@ -2018,9 +2018,7 @@ namespace MediaPortal.GUI.Library
     /// <summary>
     /// Called when a new card is added to the flow.
     /// </summary>
-    private void OnCardAdded()
-    {
-    }
+    private void OnCardAdded() {}
 
     /// <summary>
     /// Called when an existing card is deleted from the flow.
@@ -2157,73 +2155,49 @@ namespace MediaPortal.GUI.Library
     public bool ShowBackground
     {
       get { return _showBackground; }
-      set
-      {
-        _showBackground = value;
-      }
+      set { _showBackground = value; }
     }
 
     public bool ShowForeground
     {
       get { return _showForeground; }
-      set
-      {
-        _showForeground = value;
-      }
+      set { _showForeground = value; }
     }
 
     public float OffsetY
     {
       get { return _offsetY; }
-      set
-      {
-        _offsetY = value;
-      }
+      set { _offsetY = value; }
     }
 
     public float SelectedOffsetY
     {
       get { return _selectedYOffset; }
-      set
-      {
-        _selectedYOffset = value;
-      }
+      set { _selectedYOffset = value; }
     }
 
     public float Angle
     {
       get { return _angle; }
-      set
-      {
-        _angle = value;
-      }
+      set { _angle = value; }
     }
 
     public float SideShift
     {
       get { return _sideShift; }
-      set
-      {
-        _sideShift = value;
-      }
+      set { _sideShift = value; }
     }
 
     public float SideGap
     {
       get { return _sideGap; }
-      set
-      {
-        _sideGap = value;
-      }
+      set { _sideGap = value; }
     }
 
     public float SideDepth
     {
       get { return _sideDepth; }
-      set
-      {
-        _sideDepth = value;
-      }
+      set { _sideDepth = value; }
     }
 
     public int BackgroundX
@@ -2451,7 +2425,7 @@ namespace MediaPortal.GUI.Library
       get { return _enableSMSsearch; }
       set { _enableSMSsearch = value; }
     }
-    
+
     #endregion Implementation
 
     #region GUIFacadeView Interface
@@ -2498,18 +2472,12 @@ namespace MediaPortal.GUI.Library
 
     public int FirstCardIndex
     {
-      get
-      {
-        return 0;
-      }
+      get { return 0; }
     }
 
     public int LastCardIndex
     {
-      get
-      {
-        return _listItems.Count - 1;
-      }
+      get { return _listItems.Count - 1; }
     }
 
     public GUIListItem SelectedListItem

@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,28 +27,39 @@ using System.Security;
 namespace FFDShow.Interfaces
 {
   [Guid("FC5BCCF4-FD62-45ee-B022-3840EAEA77B2"), SuppressUnmanagedCodeSecurity,
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IffdshowBase
   {
     [PreserveSig]
     int getVersion2();
+
     [PreserveSig]
     int getParam(uint paramID, out int value);
+
     [PreserveSig]
     System.Int32 getParam2(uint paramID);
+
     [PreserveSig]
     int putParam(uint paramID, int value);
+
     [PreserveSig]
     int invParam(uint paramID);
+
     [PreserveSig]
     int getParamStr(uint paramID, out IntPtr str, int buflen);
+
     //int getParamStr(uint paramID, out string str, int buflen);
     [PreserveSig]
-    [return:MarshalAs(UnmanagedType.LPWStr)] string getParamStr2(uint paramID); //returns const pointer to string, NULL if fail
+    [return: MarshalAs(UnmanagedType.LPWStr)]
+    string getParamStr2(uint paramID);
+
+    //returns const pointer to string, NULL if fail
     [PreserveSig]
     int putParamStr(uint paramID, [In, MarshalAs(UnmanagedType.LPWStr)] string str);
+
     [PreserveSig]
     int getParamName(uint i, out string str, int len);
+
     int notifyParamsChanged();
     int setOnChangeMsg(IntPtr wnd, uint msg);
     int setOnFrameMsg(IntPtr wnd, uint msg);
@@ -76,13 +107,16 @@ namespace FFDShow.Interfaces
     int run();
     int getState2();
     int getCurTime2();
+
     [PreserveSig]
     int getParamStr3(uint paramID, out IntPtr bufPtr);
+
     //int getParamStr3(uint paramID, [Out, MarshalAs(UnmanagedType.LPWStr)] out string bufPtr);
-   
+
     //int savePresetMem(void *buf,int len); //if len=0, then buf should point to int variable which will be filled with required buffer length
     //int loadPresetMem(const void *buf,int len);
-    int savePresetMem(IntPtr buf, int len); //if len=0, then buf should point to int variable which will be filled with required buffer length
+    int savePresetMem(IntPtr buf, int len);
+    //if len=0, then buf should point to int variable which will be filled with required buffer length
     int loadPresetMem(IntPtr buf, int len);
     int getParamName3(uint i, out string namePtr);
     int getInCodecString(out string str, int buflen);
@@ -118,5 +152,5 @@ namespace FFDShow.Interfaces
     int cpuSupportsSSE42();
     int cpuSupportsSSE4A();
     int cpuSupportsSSE5();
-  };
+  } ;
 }

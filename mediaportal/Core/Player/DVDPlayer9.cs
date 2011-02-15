@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -174,14 +174,14 @@ namespace MediaPortal.Player
       GUIWindowManager.SendMessage(msg);
 
       try
-      {        
+      {
         _dvdGraph = (IDvdGraphBuilder)new DvdGraphBuilder();
 
         hr = _dvdGraph.GetFiltergraph(out _graphBuilder);
         DsError.ThrowExceptionForHR(hr);
 
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
-        
+
         _vmr9 = new VMR9Util();
         _vmr9.AddVMR9(_graphBuilder);
         _vmr9.Enable(false);
@@ -199,27 +199,27 @@ namespace MediaPortal.Player
               _dvdInfo = (IDvdInfo2)_dvdbasefilter;
               if (!String.IsNullOrEmpty(path))
               {
-                  hr = _dvdCtrl.SetDVDDirectory(path);
-                  DsError.ThrowExceptionForHR(hr);
+                hr = _dvdCtrl.SetDVDDirectory(path);
+                DsError.ThrowExceptionForHR(hr);
               }
               _dvdCtrl.SetOption(DvdOptionFlag.HMSFTimeCodeEvents, true); // use new HMSF timecode format
               _dvdCtrl.SetOption(DvdOptionFlag.ResetOnStop, false);
 
               DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _dvdbasefilter);
-    
+
               _freeNavigator = false;
-            }        
+            }
           }
         }
         catch (Exception ex)
         {
           Log.Error("DVDPlayer9:Add {0} as navigator failed: {1}", dvdDNavigator, ex.Message);
         }
-        
+
         if (_dvdInfo == null)
         {
           Log.Info("Dvdplayer9:Volume rendered, get interfaces");
-          hr = _dvdGraph.GetDvdInterface(typeof(IDvdInfo2).GUID, out comobj);
+          hr = _dvdGraph.GetDvdInterface(typeof (IDvdInfo2).GUID, out comobj);
           DsError.ThrowExceptionForHR(hr);
           _dvdInfo = (IDvdInfo2)comobj;
           comobj = null;
@@ -228,7 +228,7 @@ namespace MediaPortal.Player
         if (_dvdCtrl == null)
         {
           Log.Info("Dvdplayer9:Get IDvdControl2");
-          hr = _dvdGraph.GetDvdInterface(typeof(IDvdControl2).GUID, out comobj);
+          hr = _dvdGraph.GetDvdInterface(typeof (IDvdControl2).GUID, out comobj);
           DsError.ThrowExceptionForHR(hr);
           _dvdCtrl = (IDvdControl2)comobj;
           comobj = null;
@@ -240,7 +240,7 @@ namespace MediaPortal.Player
           {
             Log.Error("Dvdplayer9:Failed to get IDvdControl2");
           }
-        }        
+        }
 
         // disable Closed Captions!
         IBaseFilter basefilter;
@@ -255,7 +255,7 @@ namespace MediaPortal.Player
         }
         if (basefilter != null)
         {
-          Log.Info("Dvdplayer9: Line21 Decoder (Closed Captions), in use: {0}", showClosedCaptions);        
+          Log.Info("Dvdplayer9: Line21 Decoder (Closed Captions), in use: {0}", showClosedCaptions);
           _line21Decoder = (IAMLine21Decoder)basefilter;
           if (_line21Decoder != null)
           {
@@ -301,7 +301,7 @@ namespace MediaPortal.Player
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
 
-        DirectShowUtil.SetARMode(_graphBuilder, arMode);        
+        DirectShowUtil.SetARMode(_graphBuilder, arMode);
         _vmr9.SetDeinterlaceMode();
         _vmr9.Enable(true);
 
@@ -311,7 +311,7 @@ namespace MediaPortal.Player
       }
       catch (Exception ex)
       {
-        Log.Error("DvdPlayer9:Exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);        
+        Log.Error("DvdPlayer9:Exception while creating DShow graph {0} {1}", ex.Message, ex.StackTrace);
         CloseInterfaces();
         return false;
       }

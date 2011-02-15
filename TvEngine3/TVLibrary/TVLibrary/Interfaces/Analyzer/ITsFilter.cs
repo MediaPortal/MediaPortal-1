@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -355,6 +355,15 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <returns></returns>
     [PreserveSig]
     int GetStreamQualityCounters(int handle, out int totalTsBytes, out int totalRecordingBytes,
-      out int TsDiscontinuity, out int recordingDiscontinuity);
+                                 out int TsDiscontinuity, out int recordingDiscontinuity);
+
+    /// <summary>
+    /// Sets the channel type of the sub channel
+    /// </summary>
+    /// <param name="handle">Handle of the sub channel</param>
+    /// <param name="channelType">Type of the channel (tv=0, radio=1)</param>
+    /// <returns></returns>
+    [PreserveSig]
+    int TimeShiftSetChannelType(int handle, int channelType);
   }
 }

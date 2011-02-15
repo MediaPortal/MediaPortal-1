@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -45,7 +45,7 @@ namespace MediaPortal.Profile
         }
         return _configPathName;
       }
-      set 
+      set
       {
         if (string.IsNullOrEmpty(_configPathName))
         {
@@ -63,6 +63,7 @@ namespace MediaPortal.Profile
     }
 
     private static MPSettings _instance;
+
     public static MPSettings Instance
     {
       get { return _instance ?? (_instance = new MPSettings()); }
@@ -72,7 +73,6 @@ namespace MediaPortal.Profile
 
     public MPSettings()
       : base(ConfigPathName) {}
-
   }
 
   /// <summary>
@@ -95,7 +95,7 @@ namespace MediaPortal.Profile
       if (xmlDoc == null)
       {
         xmlDoc = new CacheSettingsProvider(new XmlSettingsProvider(fileName));
-        
+
         if (_isCached)
           xmlCache.Add(xmlFileName, xmlDoc);
       }
@@ -103,34 +103,35 @@ namespace MediaPortal.Profile
 
     public string GetValue(string section, string entry)
     {
-        object value = xmlDoc.GetValue(section, entry);
-        return value == null ? string.Empty : value.ToString();
+      object value = xmlDoc.GetValue(section, entry);
+      return value == null ? string.Empty : value.ToString();
     }
 
-    T GetValueOrDefault<T>(string section, string entry, Func<string, T> conv, T defaultValue)
+    private T GetValueOrDefault<T>(string section, string entry, Func<string, T> conv, T defaultValue)
     {
-        string strValue = GetValue(section, entry);
-        return string.IsNullOrEmpty(strValue) ? defaultValue : conv(strValue);
+      string strValue = GetValue(section, entry);
+      return string.IsNullOrEmpty(strValue) ? defaultValue : conv(strValue);
     }
 
     public string GetValueAsString(string section, string entry, string strDefault)
     {
-        return GetValueOrDefault(section, entry, val => val, strDefault);
+      return GetValueOrDefault(section, entry, val => val, strDefault);
     }
 
     public bool GetValueAsBool(string section, string entry, bool bDefault)
     {
-        return GetValueOrDefault(section, entry,
-                                val => val.Equals("yes", StringComparison.InvariantCultureIgnoreCase),
-                                bDefault);
+      return GetValueOrDefault(section, entry,
+                               val => val.Equals("yes", StringComparison.InvariantCultureIgnoreCase),
+                               bDefault);
     }
 
     public int GetValueAsInt(string section, string entry, int iDefault)
     {
-        return GetValueOrDefault(section, entry,
-                                 val =>
-                                 {   int iVal;
-                                     return Int32.TryParse(val, out iVal) ? iVal : iDefault;
+      return GetValueOrDefault(section, entry,
+                               val =>
+                                 {
+                                   int iVal;
+                                   return Int32.TryParse(val, out iVal) ? iVal : iDefault;
                                  }, iDefault);
     }
 
@@ -177,7 +178,7 @@ namespace MediaPortal.Profile
 
     public static void ClearCache()
     {
-        xmlCache.Clear();
+      xmlCache.Clear();
     }
 
     #region IDisposable Members

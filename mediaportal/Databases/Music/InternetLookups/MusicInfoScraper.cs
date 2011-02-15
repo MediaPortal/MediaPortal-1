@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -184,11 +184,11 @@ namespace MediaPortal.Music.Database
           Encoding encode = Encoding.GetEncoding("utf-8");
           using (StreamReader sr = new StreamReader(ReceiveStream, encode))
           {
-            strBody = sr.ReadToEnd();  
+            strBody = sr.ReadToEnd();
           }
-          
+
           return strBody;
-        }     
+        }
         finally
         {
           if (result != null)
@@ -196,7 +196,6 @@ namespace MediaPortal.Music.Database
             result.Close();
           }
         }
-        
       }
       catch (Exception) {}
       return "";

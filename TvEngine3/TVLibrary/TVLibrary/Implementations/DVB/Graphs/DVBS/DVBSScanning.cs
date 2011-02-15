@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace TvLibrary.Implementations.DVB
     /// Initializes a new instance of the <see cref="DVBSScanning"/> class.
     /// </summary>
     /// <param name="card">The card.</param>
-    public DVBSScanning(TvCardDvbBase card): base(card) { }
+    public DVBSScanning(TvCardDvbBase card) : base(card) {}
 
     /// <summary>
     /// Creates the new channel.

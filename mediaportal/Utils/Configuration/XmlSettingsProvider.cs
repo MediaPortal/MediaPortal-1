@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -269,19 +269,19 @@ namespace MediaPortal.Profile
 
     private static XmlNode SelectSingleNodeFast(XmlNode node, string xpath)
     {
-        //NOTE: this is code-duplication from Util.cs, but I don't want to introduce new dependencies
-        // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
-        XmlNodeList nodes = node.SelectNodes(xpath);
+      //NOTE: this is code-duplication from Util.cs, but I don't want to introduce new dependencies
+      // XmlNode.SelectSingleNode finds all occurances as oppossed to a single one, this causes huge perf issues (about 50% of control creation according to dotTrace)
+      XmlNodeList nodes = node.SelectNodes(xpath);
 
-        if (nodes == null)
-            return null;
+      if (nodes == null)
+        return null;
 
-        IEnumerator enumerator = nodes.GetEnumerator();
-        if (enumerator != null && enumerator.MoveNext())
-        {
-            return (XmlNode)enumerator.Current;
-        }
-        return null; //nothing found
+      IEnumerator enumerator = nodes.GetEnumerator();
+      if (enumerator != null && enumerator.MoveNext())
+      {
+        return (XmlNode)enumerator.Current;
+      }
+      return null; //nothing found
     }
   }
 }

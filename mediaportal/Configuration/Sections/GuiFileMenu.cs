@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -105,8 +105,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Controls.Add(this.textPinCodeBox);
       this.groupBox1.Controls.Add(this.chbEnabled);
@@ -129,8 +131,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textPinCodeBox
       // 
-      this.textPinCodeBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textPinCodeBox.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textPinCodeBox.BorderColor = System.Drawing.Color.Empty;
       this.textPinCodeBox.Location = new System.Drawing.Point(71, 44);
       this.textPinCodeBox.Name = "textPinCodeBox";
@@ -161,8 +165,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // textTrashcanFolder
       // 
-      this.textTrashcanFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.textTrashcanFolder.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.textTrashcanFolder.BorderColor = System.Drawing.Color.Empty;
       this.textTrashcanFolder.Location = new System.Drawing.Point(108, 100);
       this.textTrashcanFolder.Name = "textTrashcanFolder";
@@ -182,7 +188,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     #endregion

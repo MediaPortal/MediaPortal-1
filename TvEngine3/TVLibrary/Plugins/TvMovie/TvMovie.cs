@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,8 +42,12 @@ namespace TvEngine
     private bool _isImporting = false;
     private const long _timerIntervall = 1800000;
     private const string _localMachineRegSubKey = @"Software\Ewe\TVGhost\Gemeinsames";
-    private const string _virtualStoreRegSubKey32b = @"Software\Classes\VirtualStore\MACHINE\SOFTWARE\Ewe\TVGhost\Gemeinsames";
-    private const string _virtualStoreRegSubKey64b = @"Software\Classes\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Ewe\TVGhost\Gemeinsames";
+
+    private const string _virtualStoreRegSubKey32b =
+      @"Software\Classes\VirtualStore\MACHINE\SOFTWARE\Ewe\TVGhost\Gemeinsames";
+
+    private const string _virtualStoreRegSubKey64b =
+      @"Software\Classes\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Ewe\TVGhost\Gemeinsames";
 
     #endregion
 
@@ -141,12 +145,13 @@ namespace TvEngine
     #endregion
 
     #region IsWow64 check
+
     [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWow64Process(
-         [In] IntPtr hProcess,
-         [Out] out bool lpSystemInfo
-         );
+      [In] IntPtr hProcess,
+      [Out] out bool lpSystemInfo
+      );
 
     public static bool Check64bit()
     {
@@ -166,6 +171,7 @@ namespace TvEngine
       }
       return isWow64;
     }
+
     #endregion
 
     #region Powerscheduler handling

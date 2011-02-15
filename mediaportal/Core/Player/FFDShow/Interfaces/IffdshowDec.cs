@@ -1,3 +1,23 @@
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,7 +27,7 @@ using System.Security;
 namespace FFDShow.Interfaces
 {
   [Guid("10F99065-70D5-4bcc-9D88-3801F3E3881B"), SuppressUnmanagedCodeSecurity,
-  InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+   InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
   public interface IffdshowDec
   {
     int getVersion2();
@@ -98,7 +118,10 @@ namespace FFDShow.Interfaces
     int loadRemoteSettings();
     int setFilterOrder(uint filterID, uint newOrder);
     uint getPresetAutoloadItemsCount2();
-    int getPresetAutoloadItemInfo(uint index, out string name, out string hint, out int allowWildcard, out int isL, out int isVal, string val, int vallen, out int isList, out int isHelp);
+
+    int getPresetAutoloadItemInfo(uint index, out string name, out string hint, out int allowWildcard, out int isL,
+                                  out int isVal, string val, int vallen, out int isList, out int isHelp);
+
     int setPresetAutoloadItem(uint index, int isL, string val);
     string getPresetAutoloadItemList(uint paramIndex, uint listIndex);
     string[] getSupportedFOURCCs();
@@ -126,7 +149,7 @@ namespace FFDShow.Interfaces
     //int setExternalStream(int group, long streamNb);
     int getExternalStreams(IntPtr[] pAudioStreams, IntPtr[] pSubtitleStreams);
     int setExternalStream(int group, long streamNb);
-    int getCurrentSubtitlesFile([Out, MarshalAs(UnmanagedType.LPWStr)]out string ppSubtitleFile);
+    int getCurrentSubtitlesFile([Out, MarshalAs(UnmanagedType.LPWStr)] out string ppSubtitleFile);
     int setSubtitlesFile(string pSubtitleFile);
-  };
+  } ;
 }

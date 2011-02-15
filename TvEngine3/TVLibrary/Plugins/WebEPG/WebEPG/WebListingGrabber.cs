@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -453,7 +453,8 @@ namespace MediaPortal.WebEPG
         if (_parser is WebParser)
         {
           // added: delay info
-          Log.Info("WebEPG: SubLink Request {0} - Delay: {1}ms", guideData.SublinkRequest.ToString(), guideData.SublinkRequest.Delay);
+          Log.Info("WebEPG: SubLink Request {0} - Delay: {1}ms", guideData.SublinkRequest.ToString(),
+                   guideData.SublinkRequest.Delay);
 
           WebParser webParser = (WebParser)_parser;
 

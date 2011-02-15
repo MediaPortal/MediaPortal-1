@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -23,10 +23,11 @@ using MediaPortal.Drawing;
 
 namespace System.Windows.Controls
 {
-    public class ContextMenu
-    {
-        public ItemCollection Items { get; set; }
-    }
+  public class ContextMenu
+  {
+    public ItemCollection Items { get; set; }
+  }
+
 //  public class ContextMenu : MenuBase
 //  {
 //    #region Constructors
@@ -70,7 +71,7 @@ namespace System.Windows.Controls
 
 //    #region Methods
 
-///*		protected override void AddChild(object child)
+  ///*		protected override void AddChild(object child)
 //        {
 //            if(child == null)
 //                throw new ArgumentNullException("child");

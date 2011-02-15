@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -161,7 +161,8 @@ namespace WatchDog
         _tempDir += "\\";
       }
       _tempDir += "MPTemp";
-      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\\MediaPortalLogs_[date]__[time].zip";
+      _zipFile = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) +
+                 "\\MediaPortalLogs_[date]__[time].zip";
       if (!ParseCommandLine())
       {
         Application.Exit();
@@ -315,7 +316,7 @@ namespace WatchDog
     {
       PerformPreTestActions(_autoMode);
     }
-    
+
     private void PerformPreTestActions(bool autoClose)
     {
       setStatus("Busy performing pre-test actions...");
@@ -403,7 +404,7 @@ namespace WatchDog
       tmrMPWatcher.Enabled = false;
       if (_processMP.HasExited)
       {
-        if(!string.IsNullOrEmpty(_tempConfig))
+        if (!string.IsNullOrEmpty(_tempConfig))
         {
           File.Delete(_tempConfig);
         }
@@ -515,6 +516,5 @@ namespace WatchDog
         }
       }
     }
-
   }
 }

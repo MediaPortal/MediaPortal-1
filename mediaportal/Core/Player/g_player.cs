@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,7 +35,6 @@ using MediaPortal.Subtitle;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
-
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.Subtitles;
 
@@ -106,11 +105,15 @@ namespace MediaPortal.Player
     #region events
 
     public delegate void StoppedHandler(MediaType type, int stoptime, string filename);
+
     public delegate void EndedHandler(MediaType type, string filename);
+
     public delegate void StartedHandler(MediaType type, string filename);
+
     public delegate void ChangedHandler(MediaType type, int stoptime, string filename);
 
     public delegate void AudioTracksReadyHandler();
+
     public delegate void TVChannelChangeHandler();
 
     // when a user is already playing a file without stopping the user selects another file for playback.
@@ -138,7 +141,7 @@ namespace MediaPortal.Player
       _factory = new PlayerFactory();
     }
 
-    static g_Player() { }
+    static g_Player() {}
 
     public static IPlayer Player
     {
@@ -264,7 +267,7 @@ namespace MediaPortal.Player
         {
           strFromXml = ConvertToNewStyle(strFromXml);
         }
-        foreach (string token in strFromXml.Split(new char[] { ',', ';', ' ' }))
+        foreach (string token in strFromXml.Split(new char[] {',', ';', ' '}))
         {
           if (token == string.Empty)
           {
@@ -294,7 +297,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       bool foundOtherThanZeroOrOne = false;
-      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
       {
         if (token == string.Empty)
         {
@@ -314,7 +317,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       string newStyle = string.Empty;
-      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
+      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
       {
         if (token == string.Empty)
         {
@@ -428,7 +431,7 @@ namespace MediaPortal.Player
           }
         }
       }
-      catch (Exception) { }
+      catch (Exception) {}
     }
 
     #endregion
@@ -1189,7 +1192,7 @@ namespace MediaPortal.Player
 
     public static bool Play(string strFile, MediaType type, string chapters)
     {
-      using (var stream = String.IsNullOrEmpty(chapters)? null : new StringReader(chapters))
+      using (var stream = String.IsNullOrEmpty(chapters) ? null : new StringReader(chapters))
       {
         return Play(strFile, type, stream);
       }
@@ -2180,19 +2183,20 @@ namespace MediaPortal.Player
     }
 
     #region Edition selection
+
     /// <summary>
     /// Property which returns the total number of edition streams available
     /// </summary>
     public static int EditionStreams
     {
-        get
+      get
+      {
+        if (_player == null)
         {
-            if (_player == null)
-            {
-                return 0;
-            }
-            return _player.EditionStreams;
+          return 0;
         }
+        return _player.EditionStreams;
+      }
     }
 
     /// <summary>
@@ -2200,32 +2204,32 @@ namespace MediaPortal.Player
     /// </summary>
     public static int CurrentEditionStream
     {
-        get
+      get
+      {
+        if (_player == null)
         {
-            if (_player == null)
-            {
-                return 0;
-            }
-            return _player.CurrentEditionStream;
+          return 0;
         }
-        set
+        return _player.CurrentEditionStream;
+      }
+      set
+      {
+        if (_player != null)
         {
-            if (_player != null)
-            {
-                _player.CurrentEditionStream = value;
-            }
+          _player.CurrentEditionStream = value;
         }
+      }
     }
 
     public static string EditionLanguage(int iStream)
     {
-        if (_player == null)
-        {
-            return Strings.Unknown;
-        }
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
 
-        string stream = _player.EditionLanguage(iStream);
-        return Util.Utils.TranslateLanguageString(stream);
+      string stream = _player.EditionLanguage(iStream);
+      return Util.Utils.TranslateLanguageString(stream);
     }
 
     /// <summary>
@@ -2233,17 +2237,19 @@ namespace MediaPortal.Player
     /// </summary>
     public static string EditionType(int iStream)
     {
-        if (_player == null)
-        {
-            return Strings.Unknown;
-        }
+      if (_player == null)
+      {
+        return Strings.Unknown;
+      }
 
-        string stream = _player.EditionType(iStream);
-        return stream;
+      string stream = _player.EditionType(iStream);
+      return stream;
     }
+
     #endregion
 
     #region Postprocessing selection
+
     /// <summary>
     /// Property which returns true if the player is able to perform postprocessing features
     /// </summary>
@@ -2258,8 +2264,8 @@ namespace MediaPortal.Player
         return _player.HasPostprocessing;
       }
     }
-    #endregion
 
+    #endregion
 
     #region subtitle/audio stream selection
 
@@ -2421,18 +2427,22 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (IsDVD)
+        if (IsDVD || IsTV)
         {
           if (_player is DVDPlayer)
           {
             return ((DVDPlayer)_player).SupportsCC;
+          }
+          if (_player is TSReaderPlayer)
+          {
+            return ((TSReaderPlayer)_player).SupportsCC;
           }
         }
         return false;
       }
     }
 
-      public static void SetVideoWindow()
+    public static void SetVideoWindow()
     {
       if (_player == null)
       {
@@ -2654,7 +2664,7 @@ namespace MediaPortal.Player
         EnableSubtitle = true;
       }
     }
-      
+
     /// <summary>
     /// Switches to the next edition stream.
     /// 
@@ -2663,43 +2673,43 @@ namespace MediaPortal.Player
     /// </summary>
     public static void SwitchToNextEdition()
     {
-        if (_player != null)
+      if (_player != null)
+      {
+        // take current stream and number of
+        int streams = _player.EditionStreams;
+        int current = _player.CurrentEditionStream;
+        int next = current;
+        bool success = false;
+        // Loop over the stream, so we skip the disabled streams
+        // stops if the loop is over the current stream again.
+        do
         {
-            // take current stream and number of
-            int streams = _player.EditionStreams;
-            int current = _player.CurrentEditionStream;
-            int next = current;
-            bool success = false;
-            // Loop over the stream, so we skip the disabled streams
-            // stops if the loop is over the current stream again.
-            do
-            {
-                // if next stream is greater then the amount of stream
-                // take first
-                if (++next >= streams)
-                {
-                    next = 0;
-                }
-                // set the next stream
-                _player.CurrentEditionStream = next;
-                // if the stream is set in, stop the loop
-                if (next == _player.CurrentEditionStream)
-                {
-                    success = true;
-                }
-            } while ((next != current) && (success == false));
-            if (success == false)
-            {
-                Log.Info("g_Player: Failed to switch to next editionstream.");
-            }
+          // if next stream is greater then the amount of stream
+          // take first
+          if (++next >= streams)
+          {
+            next = 0;
+          }
+          // set the next stream
+          _player.CurrentEditionStream = next;
+          // if the stream is set in, stop the loop
+          if (next == _player.CurrentEditionStream)
+          {
+            success = true;
+          }
+        } while ((next != current) && (success == false));
+        if (success == false)
+        {
+          Log.Info("g_Player: Failed to switch to next editionstream.");
         }
+      }
     }
 
     private static bool IsFileUsedbyAnotherProcess(string file)
     {
       try
       {
-        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) { }
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) {}
       }
       catch (System.IO.IOException exp)
       {
@@ -2711,7 +2721,7 @@ namespace MediaPortal.Player
 
     public static bool LoadChaptersFromString(string chapters)
     {
-      if(String.IsNullOrEmpty(chapters))
+      if (String.IsNullOrEmpty(chapters))
       {
         return false;
       }
@@ -2719,7 +2729,7 @@ namespace MediaPortal.Player
       using (TextReader stream = new StringReader(chapters))
       {
         return LoadChapters(stream);
-      }      
+      }
     }
 
     private static bool LoadChapters(string videoFile)
@@ -2734,13 +2744,13 @@ namespace MediaPortal.Player
       }
 
       Log.Debug("g_Player.LoadChapters() - Chapter file found for video \"{0}\"", videoFile);
-      
+
       using (TextReader chapters = new StreamReader(chapterFile))
       {
         return LoadChapters(chapters);
       }
     }
-    
+
     private static bool LoadChapters(TextReader chaptersReader)
     {
       _chapters = null;
@@ -2748,7 +2758,6 @@ namespace MediaPortal.Player
 
       try
       {
-
         if (_loadAutoComSkipSetting)
         {
           using (Settings xmlreader = new MPSettings())
@@ -2783,7 +2792,7 @@ namespace MediaPortal.Player
             continue;
           }
 
-          string[] tokens = line.Split(new char[] { '\t' });
+          string[] tokens = line.Split(new char[] {'\t'});
           if (tokens.Length != 2)
           {
             continue;

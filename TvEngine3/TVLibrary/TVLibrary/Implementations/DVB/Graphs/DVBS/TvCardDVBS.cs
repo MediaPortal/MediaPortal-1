@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
         // Method names should be self explanatory
-        AddNetworkProviderFilter(typeof(DVBSNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (DVBSNetworkProvider).GUID);
         AddTsWriterFilterToGraph();
         if (!useInternalNetworkProvider)
         {
@@ -162,7 +162,7 @@ namespace TvLibrary.Implementations.DVB
       tuningSpace = (IDVBSTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
       tuningSpace.put_FriendlyName("MediaPortal DVBS TuningSpace");
-      tuningSpace.put__NetworkType(typeof(DVBSNetworkProvider).GUID);
+      tuningSpace.put__NetworkType(typeof (DVBSNetworkProvider).GUID);
       tuningSpace.put_SystemType(DVBSystemType.Satellite);
       tuningSpace.put_LNBSwitch(lnbSwitch * 1000);
       tuningSpace.put_LowOscillator(lowOsc * 1000);
@@ -277,11 +277,11 @@ namespace TvLibrary.Implementations.DVB
         Tune(subChannelId, channel);
       }
 
-      if (_filterTIF != null && _dvbsChannel != null && (_dvbsChannel.ServiceId < 0 || _dvbsChannel.NetworkId < 0 || _dvbsChannel.TransportId < 0))
+      if (_filterTIF != null && _dvbsChannel != null &&
+          (_dvbsChannel.ServiceId < 0 || _dvbsChannel.NetworkId < 0 || _dvbsChannel.TransportId < 0))
       {
         _filterTIF.Stop();
       }
-
     }
 
     private bool BeforeTune(ref int subChannelId, IChannel channel)

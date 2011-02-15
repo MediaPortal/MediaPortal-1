@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -76,7 +76,7 @@ namespace MediaPortal.GUI.Library
 
     private static object _renderlock = new object();
     protected static List<GUIFont> _listFonts = new List<GUIFont>();
-    protected static Dictionary<string,string> _dictFontAlias = new Dictionary<string, string>();
+    protected static Dictionary<string, string> _dictFontAlias = new Dictionary<string, string>();
     private static Sprite _d3dxSprite;
     private static bool _d3dxSpriteUsed;
     private static int _maxCachedTextures = 250;
@@ -204,8 +204,8 @@ namespace MediaPortal.GUI.Library
           XmlNodeList listAlias = doc.DocumentElement.SelectNodes("/fonts/alias");
           foreach (XmlNode node in listAlias)
           {
-              XmlNode nodeName = node.SelectSingleNodeFast("name");
-              XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
+            XmlNode nodeName = node.SelectSingleNodeFast("name");
+            XmlNode nodeFontName = node.SelectSingleNodeFast("fontname");
             _dictFontAlias.Add(nodeName.InnerText, nodeFontName.InnerText);
           }
 
@@ -234,8 +234,8 @@ namespace MediaPortal.GUI.Library
         {
           return _listFonts[iFont];
         }
-        return GetFont("debug"); 
-      }      
+        return GetFont("debug");
+      }
     }
 
     /// <summary>
@@ -348,7 +348,7 @@ namespace MediaPortal.GUI.Library
       if (!fontCached)
       {
         System.Drawing.Font systemFont = new System.Drawing.Font("Arial", fontSize);
-        FontObject newFont= new FontObject();
+        FontObject newFont = new FontObject();
         newFont.size = fontSize;
         newFont.font = systemFont;
         _listFontObjects.Add(newFont);
@@ -568,7 +568,7 @@ namespace MediaPortal.GUI.Library
         }
       }
     }
-    
+
     /// <summary>
     /// Disposes all GUIFonts.
     /// </summary>
@@ -590,8 +590,8 @@ namespace MediaPortal.GUI.Library
           _d3dxSpriteUsed = false;
         }
         _listFontTextures.DisposeAndClear();
-        _listFontObjects.DisposeAndClear(); 
-      }      
+        _listFontObjects.DisposeAndClear();
+      }
     }
 
     public static void ClearFontCache()
@@ -635,8 +635,8 @@ namespace MediaPortal.GUI.Library
         foreach (GUIFont font in _listFonts)
         {
           font.InitializeDeviceObjects();
-        } 
-      }      
+        }
+      }
     }
   }
 }

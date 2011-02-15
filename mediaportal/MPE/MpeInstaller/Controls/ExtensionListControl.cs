@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,6 +50,7 @@ namespace MpeInstaller.Controls
     public delegate void ShowScreenShotHandler(object sender, PackageClass packageClass);
 
     public Dictionary<string, int> TagList;
+
     public ExtensionListControl()
     {
       InitializeComponent();
@@ -99,7 +100,7 @@ namespace MpeInstaller.Controls
       if (UnInstallExtension != null)
         UnInstallExtension(control, control.Package);
     }
-    
+
     public void OnUpdateExtension(ExtensionControl control)
     {
       if (UpdateExtension != null)
@@ -146,15 +147,9 @@ namespace MpeInstaller.Controls
       Filter(textBox1.Text, comboBox1.Text);
     }
 
-    private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-    {
+    private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e) {}
 
-    }
-
-    private void label1_Click(object sender, EventArgs e)
-    {
-
-    }
+    private void label1_Click(object sender, EventArgs e) {}
 
     private void flowLayoutPanel1_SizeChanged(object sender, EventArgs e)
     {
@@ -163,6 +158,5 @@ namespace MpeInstaller.Controls
       else
         flowLayoutPanel1.WrapContents = false;
     }
-
   }
 }

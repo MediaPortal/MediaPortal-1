@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -41,13 +41,16 @@ namespace MediaPortal.GUI.Library
 
     private static readonly Dictionary<string, CachedTexture> _cacheTextures = new Dictionary<string, CachedTexture>();
     private static readonly Dictionary<string, bool> _persistentTextures = new Dictionary<string, bool>();
-    private static readonly Dictionary<string, DownloadedImage> _cacheDownload = new Dictionary<string, DownloadedImage>();
+
+    private static readonly Dictionary<string, DownloadedImage> _cacheDownload =
+      new Dictionary<string, DownloadedImage>();
+
     private static TexturePacker _packer = new TexturePacker();
 
     // singleton. Dont allow any instance of this class
-    private GUITextureManager() { }
+    private GUITextureManager() {}
 
-    static GUITextureManager() { }
+    static GUITextureManager() {}
 
     ~GUITextureManager()
     {
@@ -74,7 +77,7 @@ namespace MediaPortal.GUI.Library
         {
           files = Directory.GetFiles(Config.GetFolder(Config.Dir.Thumbs), "MPTemp*.*");
         }
-        catch { }
+        catch {}
 
         if (files != null)
         {
@@ -84,7 +87,7 @@ namespace MediaPortal.GUI.Library
             {
               File.Delete(file);
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
       }
@@ -94,7 +97,7 @@ namespace MediaPortal.GUI.Library
     {
       string cacheKey = filename.ToLower();
       CachedTexture texture;
-      if (_cacheTextures.TryGetValue(cacheKey,out texture))
+      if (_cacheTextures.TryGetValue(cacheKey, out texture))
       {
         return texture;
       }
@@ -158,22 +161,22 @@ namespace MediaPortal.GUI.Library
       string lowerFileName = fileName.ToLower().Trim();
       if (lowerFileName.IndexOf(@"http:") >= 0)
       {
-        
         DownloadedImage image;
-        if(!_cacheDownload.TryGetValue(lowerFileName, out image))
+        if (!_cacheDownload.TryGetValue(lowerFileName, out image))
         {
           image = new DownloadedImage(fileName);
           _cacheDownload[lowerFileName] = image;
         }
 
-        if (image.ShouldDownLoad) {
+        if (image.ShouldDownLoad)
+        {
           image.Download();
         }
 
         return image.FileName;
       }
 
-      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))            
+      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))
       {
         if (!Path.IsPathRooted(fileName))
         {
@@ -198,13 +201,14 @@ namespace MediaPortal.GUI.Library
       }
 
       CachedTexture cached;
-      if (_cacheTextures.TryGetValue(cacheKey, out cached)) {
+      if (_cacheTextures.TryGetValue(cacheKey, out cached))
+      {
         return cached.Frames;
-      }  
+      }
 
       string extension = Path.GetExtension(fileName).ToLower();
       if (extension == ".gif")
-      {        
+      {
         Image theImage = null;
         try
         {
@@ -212,10 +216,10 @@ namespace MediaPortal.GUI.Library
           {
             theImage = ImageFast.FromFile(fileName);
           }
-          catch(FileNotFoundException)
+          catch (FileNotFoundException)
           {
             Log.Warn("TextureManager: texture: {0} does not exist", fileName);
-            return 0;    
+            return 0;
           }
           catch (Exception)
           {
@@ -250,7 +254,7 @@ namespace MediaPortal.GUI.Library
                 }
               }
             }
-            catch (Exception) { }
+            catch (Exception) {}
 
             for (int i = 0; i < newCache.Frames; ++i)
             {
@@ -302,7 +306,7 @@ namespace MediaPortal.GUI.Library
         return 0;
       }
 
-      try      
+      try
       {
         int width, height;
         Texture dxtexture = LoadGraphic(fileName, lColorKey, iMaxWidth, iMaxHeight, out width, out height);
@@ -316,7 +320,7 @@ namespace MediaPortal.GUI.Library
           newCache.texture = new CachedTexture.Frame(fileName, dxtexture, 0);
           //Log.Info("  texturemanager:added:" + fileName + " total:" + _cache.Count + " mem left:" + GUIGraphicsContext.DX9Device.AvailableTextureMemory.ToString());
           newCache.Disposed += new EventHandler(cachedTexture_Disposed);
-          if (persistent && !_persistentTextures.ContainsKey(cacheKey)) 
+          if (persistent && !_persistentTextures.ContainsKey(cacheKey))
           {
             _persistentTextures[cacheKey] = true;
           }
@@ -324,9 +328,9 @@ namespace MediaPortal.GUI.Library
           _cacheTextures[cacheKey] = newCache;
           return 1;
         }
-      }   
+      }
       catch (Exception)
-      {        
+      {
         return 0;
       }
       return 0;
@@ -339,7 +343,8 @@ namespace MediaPortal.GUI.Library
       string cacheKey = name.ToLower();
 
       CachedTexture cached;
-      if (_cacheTextures.TryGetValue(cacheKey, out cached)) {
+      if (_cacheTextures.TryGetValue(cacheKey, out cached))
+      {
         return cached.Frames;
       }
 
@@ -416,7 +421,8 @@ namespace MediaPortal.GUI.Library
 
       texture = null;
       CachedTexture cached;
-      if (_cacheTextures.TryGetValue(cacheKey, out cached)) {
+      if (_cacheTextures.TryGetValue(cacheKey, out cached))
+      {
         return cached.Frames;
       }
 
@@ -476,22 +482,21 @@ namespace MediaPortal.GUI.Library
     {
       lock (GUIGraphicsContext.RenderLock)
       {
-        
         CachedTexture cached = sender as CachedTexture;
-        if (cached != null) 
+        if (cached != null)
         {
           string cacheKey = cached.Name.ToLower();
 
           // a texture in the cache has been disposed of! remove from the cache
           //if (_cacheTextures.ContainsKey(cacheKey))
           //{
-            //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
-            cached.Disposed -= new EventHandler(cachedTexture_Disposed);
-            //if (_persistentTextures.ContainsKey(cacheKey)) 
-            //{
-              _persistentTextures.Remove(cacheKey); // remove is fine even if it doesnt exist
-            //}
-            _cacheTextures.Remove(cacheKey);
+          //Log.Debug("TextureManager: Already disposed texture - cleaning up the cache...");
+          cached.Disposed -= new EventHandler(cachedTexture_Disposed);
+          //if (_persistentTextures.ContainsKey(cacheKey)) 
+          //{
+          _persistentTextures.Remove(cacheKey); // remove is fine even if it doesnt exist
+          //}
+          _cacheTextures.Remove(cacheKey);
           //}
         }
       }
@@ -550,7 +555,7 @@ namespace MediaPortal.GUI.Library
         Format fmt = Format.A8R8G8B8;
 
         ImageInformation info2 = new ImageInformation();
-                
+
         texture = TextureLoader.FromFile(GUIGraphicsContext.DX9Device,
                                          fileName,
                                          0, 0, //width/height
@@ -564,14 +569,14 @@ namespace MediaPortal.GUI.Library
                                          ref info2);
         width = info2.Width;
         height = info2.Height;
-      }      
-      catch( InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
-      {        
+      }
+      catch (InvalidDataException e1) // weird : should have been FileNotFoundException when file is missing ??
+      {
         //we need to catch this on higer level.         
         throw e1;
       }
       catch (Exception)
-      {        
+      {
         Log.Error("TextureManager: LoadGraphic - invalid thumb({0})", fileName);
         Format fmt = Format.A8R8G8B8;
         string fallback = GUIGraphicsContext.Skin + @"\media\" + "black.png";
@@ -693,7 +698,7 @@ namespace MediaPortal.GUI.Library
 
       CachedTexture cached;
       string cacheKey = fileName.ToLower();
-      if (_cacheTextures.TryGetValue(cacheKey, out cached)) 
+      if (_cacheTextures.TryGetValue(cacheKey, out cached))
       {
         iTextureWidth = cached.Width;
         iTextureHeight = cached.Height;
@@ -724,14 +729,16 @@ namespace MediaPortal.GUI.Library
 
         CachedTexture oldImage;
         string cacheKey = fileName.ToLower();
-        if (_cacheTextures.TryGetValue(cacheKey, out oldImage)) {
-          try 
+        if (_cacheTextures.TryGetValue(cacheKey, out oldImage))
+        {
+          try
           {
             //Log.Debug("TextureManager: Dispose:{0} Frames:{1} Total:{2} Mem left:{3}", oldImage.Name, oldImage.Frames, _cache.Count, Convert.ToString(GUIGraphicsContext.DX9Device.AvailableTextureMemory / 1000));                
             _cacheTextures.Remove(cacheKey);
             oldImage.SafeDispose();
           }
-          catch (Exception ex) {
+          catch (Exception ex)
+          {
             Log.Error("TextureManager: Error in ReleaseTexture({0}) - {1}", fileName, ex.Message);
           }
         }
@@ -751,12 +758,12 @@ namespace MediaPortal.GUI.Library
         try
         {
           CachedTexture[] textures;
-          lock(_cacheTextures)
+          lock (_cacheTextures)
           {
             textures = _cacheTextures.Values.Where(t => IsTemporary(t.Name)).ToArray();
           }
 
-          foreach(CachedTexture texture in textures) 
+          foreach (CachedTexture texture in textures)
           {
             string cacheKey = texture.Name.ToLower();
             _cacheTextures.Remove(cacheKey);
@@ -806,7 +813,7 @@ namespace MediaPortal.GUI.Library
        */
 
       // Get fullpath and file name      
-      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))      
+      if (!MediaPortal.Util.Utils.FileExistsInCache(fileName))
       {
         if (!Path.IsPathRooted(fileName))
         {
@@ -855,30 +862,34 @@ namespace MediaPortal.GUI.Library
       ClearDownloadCache();
     }
 
-    private static void ClearTextureCache() {
+    private static void ClearTextureCache()
+    {
       CachedTexture[] textures;
-      lock (_cacheTextures) {
+      lock (_cacheTextures)
+      {
         textures = _cacheTextures.Values.ToArray();
         _cacheTextures.Clear();
       }
 
-      foreach (CachedTexture texture in textures) {
+      foreach (CachedTexture texture in textures)
+      {
         texture.SafeDispose();
       }
     }
 
-    private static void ClearDownloadCache() 
+    private static void ClearDownloadCache()
     {
       DownloadedImage[] images;
-      lock (_cacheDownload) {
+      lock (_cacheDownload)
+      {
         images = _cacheDownload.Values.ToArray();
         _cacheDownload.Clear();
       }
 
-      foreach (DownloadedImage image in images) {
+      foreach (DownloadedImage image in images)
+      {
         image.SafeDispose();
       }
     }
-
   }
 }

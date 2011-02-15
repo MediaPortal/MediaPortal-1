@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -53,13 +53,16 @@ namespace MediaPortal.GUI.Library
     } ;
 
     #region Events
+
     public delegate string GetScrollLabelDelegate(GUIListItem item);
+
     public event GetScrollLabelDelegate GetScrollLabel;
+
     #endregion
 
-    [XMLSkinElement("spaceBetweenItems")]protected int _spaceBetweenItems = 2;
+    [XMLSkinElement("spaceBetweenItems")] protected int _spaceBetweenItems = 2;
 
-    [XMLSkinElement("textureHeight")]protected int _itemHeight = 10;
+    [XMLSkinElement("textureHeight")] protected int _itemHeight = 10;
 
     [XMLSkinElement("textXOff")] protected int _textOffsetX;
     [XMLSkinElement("textYOff")] protected int _textOffsetY;
@@ -93,9 +96,9 @@ namespace MediaPortal.GUI.Library
 
     // this is the offset from the first or last element on screen when scrolling should start
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
-    
+
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
-    
+
     [XMLSkinElement("keepaspectratio")] protected bool _keepAspectRatio = false;
 
     [XMLSkinElement("suffix")] protected string _suffix = "|";
@@ -126,7 +129,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbarXOff")] protected int _scrollbarXOff = 0;
 
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderBNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionBNF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatBNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateBNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameBNF = "image_border.png";
@@ -135,7 +141,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureNoFocus", "cornerRotate")] protected bool _borderCornerTextureRotateBNF = true;
 
     [XMLSkin("textureFocus", "border")] protected string _strBorderBF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionBF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatBF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateBF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameBF = "image_border.png";
@@ -215,7 +224,7 @@ namespace MediaPortal.GUI.Library
     protected string _scrollDirection = "";
 
     public GUIListControl(int dwParentID)
-      : base(dwParentID) { }
+      : base(dwParentID) {}
 
     /// <summary>
     /// The constructor of the GUIListControl.
@@ -308,7 +317,8 @@ namespace MediaPortal.GUI.Library
       _upDownControl.ParentControl = this;
       _upDownControl.DimColor = DimColor;
 
-      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width + _scrollbarXOff, _positionY, _scrollbarWidth, _height,
+      _verticalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width + _scrollbarXOff, _positionY,
+                                                    _scrollbarWidth, _height,
                                                     _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
       _verticalScrollbar.ParentControl = this;
       _verticalScrollbar.SendNotifies = false;
@@ -891,7 +901,7 @@ namespace MediaPortal.GUI.Library
           label = item.Label2;
           break;
 
-        /*case "#itemcount":
+          /*case "#itemcount":
           label = GUIPropertyManager.GetProperty("#itemcount");
           break;
 
@@ -2419,7 +2429,6 @@ namespace MediaPortal.GUI.Library
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _upControlId,
                                               (int)action.wID, 0, null);
               GUIGraphicsContext.SendMessage(msg);
-              
             }
             else
             {
@@ -2435,7 +2444,6 @@ namespace MediaPortal.GUI.Library
                 _cursorX = (_listItems.Count - _offset) - 1;
               }
             }
-            
           }
         }
       }
@@ -2448,7 +2456,6 @@ namespace MediaPortal.GUI.Library
         }
         _lastCommandTime = AnimationTimer.TickCount;
       }
-      
     }
 
     /// <summary>
@@ -2550,7 +2557,6 @@ namespace MediaPortal.GUI.Library
         }
         _lastCommandTime = AnimationTimer.TickCount;
       }
-      
     }
 
     /// <summary>
@@ -3247,7 +3253,7 @@ namespace MediaPortal.GUI.Library
         _listItems.Sort(comparer);
         _enableScrollLabel = false;
       }
-      catch (Exception) { }
+      catch (Exception) {}
       _refresh = true;
     }
 
@@ -3809,14 +3815,8 @@ namespace MediaPortal.GUI.Library
 
     public bool EnableScrollLabel
     {
-      get
-      {
-        return _enableScrollLabel;
-      }
-      set
-      {
-        _enableScrollLabel = value;
-      }
+      get { return _enableScrollLabel; }
+      set { _enableScrollLabel = value; }
     }
 
     private bool ScrollLabelIsScrolling
@@ -3824,10 +3824,12 @@ namespace MediaPortal.GUI.Library
       get
       {
         TimeSpan ts = DateTime.Now - _scrollTimer;
-        bool result = (ts.TotalMilliseconds < 100); //how close keypresses should be, before they trigger the label showing
+        bool result = (ts.TotalMilliseconds < 100);
+        //how close keypresses should be, before they trigger the label showing
         if (!result)
           _scrollCounter = 0;
-        return result && (_scrollCounter >= _scrollCounterLimit); //we also take in account how many scrolls passed so far
+        return result && (_scrollCounter >= _scrollCounterLimit);
+        //we also take in account how many scrolls passed so far
       }
     }
 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -140,9 +140,7 @@ namespace MpeCore.Classes
         int.TryParse(s1, out v1);
         int.TryParse(s2, out v2);
       }
-      catch (Exception)
-      {
-      }
+      catch (Exception) {}
       if (v1 > -1 && v2 > -1)
         return v1.CompareTo(v2);
       return s1.CompareTo(s2);

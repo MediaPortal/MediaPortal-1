@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -34,8 +34,6 @@ namespace TvLibrary.Implementations.DVB
   {
     #region variables
 
-
-
     #endregion
 
     /// <summary>
@@ -68,7 +66,7 @@ namespace TvLibrary.Implementations.DVB
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         _rotEntry = new DsROTEntry(_graphBuilder);
-        AddNetworkProviderFilter(typeof(ATSCNetworkProvider).GUID);
+        AddNetworkProviderFilter(typeof (ATSCNetworkProvider).GUID);
         AddTsWriterFilterToGraph();
         if (!useInternalNetworkProvider)
         {
@@ -135,7 +133,7 @@ namespace TvLibrary.Implementations.DVB
 
       tuningSpace.put_UniqueName("MediaPortal ATSC TuningSpace");
       tuningSpace.put_FriendlyName("MediaPortal ATSC TuningSpace");
-      tuningSpace.put__NetworkType(typeof(ATSCNetworkProvider).GUID);
+      tuningSpace.put__NetworkType(typeof (ATSCNetworkProvider).GUID);
       tuningSpace.put_CountryCode(0);
       tuningSpace.put_InputType(TunerInputType.Antenna);
       tuningSpace.put_MaxMinorChannel(999); //minor channels per major
@@ -246,7 +244,7 @@ namespace TvLibrary.Implementations.DVB
       {
         BuildGraph();
       }
-      if(useInternalNetworkProvider)
+      if (useInternalNetworkProvider)
       {
         return true;
       }

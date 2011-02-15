@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -68,7 +68,7 @@ namespace MediaPortal.Services
       Type t = typeof (T);
       object o = null;
       if (services.TryGetValue(t, out o))
-      {        
+      {
         if (!(o is ServiceCreatorCallback<T>))
         {
           throw new ArgumentException(string.Format("A service of type {0} is already present", t.ToString()));
@@ -104,7 +104,7 @@ namespace MediaPortal.Services
       Type t = typeof (T);
       object o = null;
       if (services.TryGetValue(t, out o))
-      {        
+      {
         ServiceCreatorCallback<T> s = o as ServiceCreatorCallback<T>;
         if (s != null)
         {

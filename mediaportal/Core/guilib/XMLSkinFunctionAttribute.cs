@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ namespace MediaPortal.GUI.Library
   /// Indicates that a method can be used in XML skin as a function.
   /// </summary>
   [AttributeUsage(AttributeTargets.Method)]
-  class XMLSkinFunctionAttribute : Attribute
+  internal class XMLSkinFunctionAttribute : Attribute
   {
     private readonly string _functionName;
 

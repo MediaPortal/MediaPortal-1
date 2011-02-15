@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -197,8 +197,8 @@ namespace MediaPortal.Configuration.Sections
       dgLimit.DataPropertyName = "Limit";
       dgViewAs.DataPropertyName = "ViewAs";
       dgSortBy.DataPropertyName = "SortBy";
-      dgAsc.DataPropertyName = "SortAsc"; 
-      dgSkip.DataPropertyName = "Skip"; 
+      dgAsc.DataPropertyName = "SortAsc";
+      dgSkip.DataPropertyName = "Skip";
 
       //Set the Data Grid Source as the Data Table created above
       dataGrid.AutoGenerateColumns = false;
@@ -218,7 +218,7 @@ namespace MediaPortal.Configuration.Sections
       datasetViews.Columns.Add(dtCol);
 
       dtCol = new DataColumn("View");
-      dtCol.DataType = typeof(ViewDefinition);
+      dtCol.DataType = typeof (ViewDefinition);
       dtCol.DefaultValue = null;
       datasetViews.Columns.Add(dtCol);
 
@@ -240,7 +240,7 @@ namespace MediaPortal.Configuration.Sections
           datasetViews.Rows.Add(
             new object[]
               {
-                view.LocalizedName, 
+                view.LocalizedName,
                 view.Name,
                 view,
               }
@@ -380,13 +380,13 @@ namespace MediaPortal.Configuration.Sections
       view.Name = "..new";
 
       datasetViews.Rows.Add(
-            new object[]
-              {
-                view.LocalizedName, 
-                view.Name,
-                view,
-              }
-            );
+        new object[]
+          {
+            view.LocalizedName,
+            view.Name,
+            view,
+          }
+        );
 
       dataGridViews.Rows[dataGridViews.Rows.Count - 1].Selected = true;
       dataGridViews.FirstDisplayedScrollingRowIndex = dataGridViews.Rows.Count - 1;
@@ -531,7 +531,8 @@ namespace MediaPortal.Configuration.Sections
         if (selectedRow > -1)
         {
           Size DragSize = SystemInformation.DragSize;
-          _dragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)), DragSize);
+          _dragDropRectangle = new Rectangle(new Point(e.X - (DragSize.Width / 2), e.Y - (DragSize.Height / 2)),
+                                             DragSize);
           _dragDropSourceIndex = selectedRow;
           _dragDropInitiatingGrid = dgV.Name;
         }
@@ -574,7 +575,7 @@ namespace MediaPortal.Configuration.Sections
         e.Effect = DragDropEffects.Move;
         int CurRow =
           dgV.HitTest(dgV.PointToClient(new Point(e.X, e.Y)).X,
-                                   dgV.PointToClient(new Point(e.X, e.Y)).Y).RowIndex;
+                      dgV.PointToClient(new Point(e.X, e.Y)).Y).RowIndex;
         if (_dragDropCurrentIndex != CurRow)
         {
           _dragDropCurrentIndex = CurRow;
@@ -708,7 +709,8 @@ namespace MediaPortal.Configuration.Sections
                 XmlNode skipLevel = node.SelectSingleNode("skipLevel");
                 if (skipLevel == null)
                 {
-                  MediaPortal.GUI.Library.Log.Info("Views: Found old view format: {0} Copying default views.", customViews);
+                  MediaPortal.GUI.Library.Log.Info("Views: Found old view format: {0} Copying default views.",
+                                                   customViews);
                   File.Copy(defaultViews, customViews, true);
                   break;
                 }
@@ -748,7 +750,7 @@ namespace MediaPortal.Configuration.Sections
     /// <param name="mediaType"></param>
     protected void SaveSettings(string mediaType)
     {
-      StoreGridInView();  // Save pending changes
+      StoreGridInView(); // Save pending changes
       string customViews = Config.GetFile(Config.Dir.Config, mediaType + "Views.xml");
       if (settingsChanged)
       {

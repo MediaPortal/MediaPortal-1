@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -130,8 +130,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.btnMapping);
       this.groupBox1.Controls.Add(this.cbEnable);
       this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -143,7 +145,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnMapping
       // 
-      this.btnMapping.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnMapping.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnMapping.Enabled = false;
       this.btnMapping.Location = new System.Drawing.Point(374, 20);
       this.btnMapping.Name = "btnMapping";
@@ -165,9 +169,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // gbI
       // 
-      this.gbI.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbI.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.gbI.Controls.Add(this.txtMonitor);
       this.gbI.Enabled = false;
       this.gbI.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
@@ -181,7 +187,8 @@ namespace MediaPortal.Configuration.Sections
       // txtMonitor
       // 
       this.txtMonitor.AutoSize = true;
-      this.txtMonitor.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.txtMonitor.Font = new System.Drawing.Font("Lucida Console", 9F, System.Drawing.FontStyle.Regular,
+                                                     System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.txtMonitor.Location = new System.Drawing.Point(16, 24);
       this.txtMonitor.Name = "txtMonitor";
       this.txtMonitor.Size = new System.Drawing.Size(180, 12);
@@ -190,8 +197,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // gbButtonCombos
       // 
-      this.gbButtonCombos.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbButtonCombos.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.gbButtonCombos.Controls.Add(this.btnLearn);
       this.gbButtonCombos.Controls.Add(this.label2);
       this.gbButtonCombos.Controls.Add(this.lblComboKill);
@@ -208,7 +217,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnLearn
       // 
-      this.btnLearn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnLearn.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnLearn.Location = new System.Drawing.Point(374, 33);
       this.btnLearn.Name = "btnLearn";
       this.btnLearn.Size = new System.Drawing.Size(72, 22);
@@ -236,8 +247,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtComboClose
       // 
-      this.txtComboClose.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtComboClose.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtComboClose.BorderColor = System.Drawing.Color.Empty;
       this.txtComboClose.Location = new System.Drawing.Point(152, 44);
       this.txtComboClose.Name = "txtComboClose";
@@ -246,8 +259,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // txtComboKill
       // 
-      this.txtComboKill.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.txtComboKill.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.txtComboKill.BorderColor = System.Drawing.Color.Empty;
       this.txtComboKill.Location = new System.Drawing.Point(152, 20);
       this.txtComboKill.Name = "txtComboKill";
@@ -256,8 +271,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // gbSettings
       // 
-      this.gbSettings.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.gbSettings.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.gbSettings.Controls.Add(this.btnRunControlPanel);
       this.gbSettings.Controls.Add(this.buttonDefault);
       this.gbSettings.Controls.Add(this.numDelay);
@@ -275,7 +292,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // btnRunControlPanel
       // 
-      this.btnRunControlPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.btnRunControlPanel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.btnRunControlPanel.Location = new System.Drawing.Point(374, 21);
       this.btnRunControlPanel.Name = "btnRunControlPanel";
       this.btnRunControlPanel.Size = new System.Drawing.Size(72, 22);
@@ -285,7 +304,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // buttonDefault
       // 
-      this.buttonDefault.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.buttonDefault.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.buttonDefault.Location = new System.Drawing.Point(374, 45);
       this.buttonDefault.Name = "buttonDefault";
       this.buttonDefault.Size = new System.Drawing.Size(72, 22);
@@ -295,32 +316,42 @@ namespace MediaPortal.Configuration.Sections
       // 
       // numDelay
       // 
-      this.numDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
-      this.numDelay.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
+      this.numDelay.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
+      this.numDelay.Increment = new decimal(new int[]
+                                              {
+                                                10,
+                                                0,
+                                                0,
+                                                0
+                                              });
       this.numDelay.Location = new System.Drawing.Point(152, 44);
-      this.numDelay.Maximum = new decimal(new int[] {
-            2000,
-            0,
-            0,
-            0});
+      this.numDelay.Maximum = new decimal(new int[]
+                                            {
+                                              2000,
+                                              0,
+                                              0,
+                                              0
+                                            });
       this.numDelay.Name = "numDelay";
       this.numDelay.Size = new System.Drawing.Size(214, 20);
       this.numDelay.TabIndex = 4;
-      this.numDelay.Value = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
+      this.numDelay.Value = new decimal(new int[]
+                                          {
+                                            150,
+                                            0,
+                                            0,
+                                            0
+                                          });
       // 
       // cbDevices
       // 
-      this.cbDevices.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.cbDevices.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.cbDevices.BorderColor = System.Drawing.Color.Empty;
       this.cbDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.cbDevices.Location = new System.Drawing.Point(152, 20);
@@ -364,7 +395,6 @@ namespace MediaPortal.Configuration.Sections
       this.gbSettings.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.numDelay)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion

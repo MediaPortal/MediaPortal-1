@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -31,7 +26,7 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class MediaPortalChecker : IInstallationPackage
+  internal class MediaPortalChecker : IInstallationPackage
   {
     public static string prg = "MediaPortal";
 
@@ -77,8 +72,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return true;
       }
 
-      string[] UninstKeys = {"MediaPortal",             // 1.x
-                             "MediaPortal 0.2.3.0"};    // 0.2.3.0
+      string[] UninstKeys = {
+                              "MediaPortal", // 1.x
+                              "MediaPortal 0.2.3.0"
+                            }; // 0.2.3.0
 
       foreach (string UnistKey in UninstKeys)
       {
@@ -108,12 +105,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       result.state = CheckState.NOT_INSTALLED;
 
-      string[] UninstKeys = {"MediaPortal",             // 1.x
-                             "MediaPortal 0.2.3.0"};    // 0.2.3.0
+      string[] UninstKeys = {
+                              "MediaPortal", // 1.x
+                              "MediaPortal 0.2.3.0"
+                            }; // 0.2.3.0
 
       foreach (string UnistKey in UninstKeys)
       {
-        RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
+        RegistryKey key =
+          Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
 
         if (key != null)
         {
@@ -122,7 +122,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
           key.Close();
 
 #if DEBUG
-          MessageBox.Show("Verifying tree " + UnistKey + " (MpPath=" + MpPath + ",version=" + MpVer + ")", "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+          MessageBox.Show("Verifying tree " + UnistKey + " (MpPath=" + MpPath + ",version=" + MpVer + ")",
+                          "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
           if (MpPath != null && File.Exists(MpPath))

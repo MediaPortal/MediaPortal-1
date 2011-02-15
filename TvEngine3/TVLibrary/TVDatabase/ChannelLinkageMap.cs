@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public ChannelLinkageMap(int idPortalChannel, int idLinkedChannel,string displayName)
+    public ChannelLinkageMap(int idPortalChannel, int idLinkedChannel, string displayName)
     {
       isChanged = true;
       this.idPortalChannel = idPortalChannel;
@@ -58,7 +58,7 @@ namespace TvDatabase
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public ChannelLinkageMap(int idMapping, int idPortalChannel, int idLinkedChannel,string displayName)
+    public ChannelLinkageMap(int idMapping, int idPortalChannel, int idLinkedChannel, string displayName)
     {
       this.idMapping = idMapping;
       this.idPortalChannel = idPortalChannel;

@@ -1,25 +1,20 @@
-#region Copyright (C) 2005-2009 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #endregion
 
@@ -33,20 +28,24 @@ using System.Runtime.InteropServices;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  class MSSQLExpressChecker : IInstallationPackage
+  internal class MSSQLExpressChecker : IInstallationPackage
   {
     [DllImport("kernel32")]
     private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
 
     private static readonly string _arch = Utils.Check64bit() ? "64" : "32";
     private static readonly string prg = "MSSQLExpress" + _arch;
-    private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"), Utils.GetDownloadString(prg, "TYPE"), prg);
+
+    private readonly string _fileName = Application.StartupPath + "\\deploy\\" +
+                                        Utils.LocalizeDownloadFile(Utils.GetDownloadString(prg, "FILE"),
+                                                                   Utils.GetDownloadString(prg, "TYPE"), prg);
 
     private static void PrepareTemplateINI(string iniFile)
     {
       WritePrivateProfileString("Options", "USERNAME", "MediaPortal", iniFile);
       WritePrivateProfileString("Options", "COMPANYNAME", "\"Team MediaPortal\"", iniFile);
-      WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"", iniFile);
+      WritePrivateProfileString("Options", "INSTALLSQLDIR", "\"" + InstallationProperties.Instance["DBMSDir"] + "\"",
+                                iniFile);
       WritePrivateProfileString("Options", "ADDLOCAL", "ALL", iniFile);
       WritePrivateProfileString("Options", "INSTANCENAME", GetIstanceName(), iniFile);
       WritePrivateProfileString("Options", "SQLBROWSERAUTOSTART", "1", iniFile);
@@ -58,7 +57,8 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void FixTcpPort()
     {
-      RegistryKey keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
+      RegistryKey keySql =
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\Instance Names\\SQL");
       if (keySql == null)
       {
         return;
@@ -66,7 +66,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
       string instanceSQL = (string)keySql.GetValue(GetIstanceName());
       keySql.Close();
 
-      keySql = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll", true);
+      keySql =
+        Registry.LocalMachine.OpenSubKey(
+          "SOFTWARE\\Microsoft\\Microsoft SQL Server\\" + instanceSQL + "\\MSSQLServer\\SuperSocketNetLib\\Tcp\\IPAll",
+          true);
       if (keySql == null)
       {
         return;
@@ -78,7 +81,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private static void StartStopService(bool start)
     {
-      string[] services = { "MSSQL$" + GetIstanceName(), "SQLBrowser" };
+      string[] services = {"MSSQL$" + GetIstanceName(), "SQLBrowser"};
       foreach (string service in services)
       {
         ServiceController ctrl = new ServiceController(service);
@@ -118,6 +121,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       DialogResult result = Utils.RetryDownloadFile(_fileName, prg);
       return (result == DialogResult.OK);
     }
+
     public bool Install()
     {
       string tmpPath = Path.GetTempPath() + "\\SQLEXPRESS";
@@ -182,7 +186,10 @@ namespace MediaPortal.DeployTool.InstallationChecks
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      using (RegistryKey key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
+      using (
+        RegistryKey key =
+          Registry.LocalMachine.OpenSubKey(
+            "SOFTWARE\\Microsoft\\Microsoft SQL Server\\SQLEXPRESS\\MSSQLServer\\CurrentVersion"))
       {
         if (key == null)
           result.state = CheckState.NOT_INSTALLED;

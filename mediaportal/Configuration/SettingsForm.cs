@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -734,7 +734,8 @@ namespace MediaPortal.Configuration
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (SettingsForm));
       this.sectionTree = new System.Windows.Forms.TreeView();
       this.cancelButton = new MediaPortal.UserInterface.Controls.MPButton();
       this.okButton = new MediaPortal.UserInterface.Controls.MPButton();
@@ -756,8 +757,10 @@ namespace MediaPortal.Configuration
       // 
       // sectionTree
       // 
-      this.sectionTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)));
+      this.sectionTree.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+           | System.Windows.Forms.AnchorStyles.Left)));
       this.sectionTree.FullRowSelect = true;
       this.sectionTree.HideSelection = false;
       this.sectionTree.HotTracking = true;
@@ -772,7 +775,9 @@ namespace MediaPortal.Configuration
       // 
       // cancelButton
       // 
-      this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.cancelButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
       this.cancelButton.Location = new System.Drawing.Point(621, 537);
       this.cancelButton.Name = "cancelButton";
@@ -784,7 +789,9 @@ namespace MediaPortal.Configuration
       // 
       // okButton
       // 
-      this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.okButton.Location = new System.Drawing.Point(540, 537);
       this.okButton.Name = "okButton";
       this.okButton.Size = new System.Drawing.Size(75, 23);
@@ -795,11 +802,14 @@ namespace MediaPortal.Configuration
       // 
       // headerLabel
       // 
-      this.headerLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.headerLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.headerLabel.Caption = "";
       this.headerLabel.FirstColor = System.Drawing.SystemColors.InactiveCaption;
-      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.Font = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                      System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.headerLabel.LastColor = System.Drawing.Color.WhiteSmoke;
       this.headerLabel.Location = new System.Drawing.Point(216, 28);
       this.headerLabel.Name = "headerLabel";
@@ -808,13 +818,16 @@ namespace MediaPortal.Configuration
       this.headerLabel.TabIndex = 3;
       this.headerLabel.TabStop = false;
       this.headerLabel.TextColor = System.Drawing.Color.WhiteSmoke;
-      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.headerLabel.TextFont = new System.Drawing.Font("Verdana", 14.25F, System.Drawing.FontStyle.Regular,
+                                                          System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // holderPanel
       // 
-      this.holderPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.holderPanel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.holderPanel.AutoScroll = true;
       this.holderPanel.BackColor = System.Drawing.SystemColors.Control;
       this.holderPanel.Location = new System.Drawing.Point(216, 58);
@@ -824,8 +837,10 @@ namespace MediaPortal.Configuration
       // 
       // beveledLine1
       // 
-      this.beveledLine1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.beveledLine1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.beveledLine1.Location = new System.Drawing.Point(8, 527);
       this.beveledLine1.Name = "beveledLine1";
       this.beveledLine1.Size = new System.Drawing.Size(696, 2);
@@ -834,7 +849,9 @@ namespace MediaPortal.Configuration
       // 
       // applyButton
       // 
-      this.applyButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.applyButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.applyButton.Location = new System.Drawing.Point(459, 537);
       this.applyButton.Name = "applyButton";
       this.applyButton.Size = new System.Drawing.Size(75, 23);
@@ -847,7 +864,9 @@ namespace MediaPortal.Configuration
       // 
       // linkLabel1
       // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.linkLabel1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.linkLabel1.AutoSize = true;
       this.linkLabel1.Location = new System.Drawing.Point(12, 542);
       this.linkLabel1.Name = "linkLabel1";
@@ -855,15 +874,18 @@ namespace MediaPortal.Configuration
       this.linkLabel1.TabIndex = 9;
       this.linkLabel1.TabStop = true;
       this.linkLabel1.Text = "Donate to MediaPortal";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+      this.linkLabel1.LinkClicked +=
+        new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // toolStrip1
       // 
       this.toolStrip1.ImeMode = System.Windows.Forms.ImeMode.On;
-      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripSplitButton,
-            this.configToolStripSplitButton,
-            this.toolStripButtonSwitchAdvanced});
+      this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
+                                       {
+                                         this.helpToolStripSplitButton,
+                                         this.configToolStripSplitButton,
+                                         this.toolStripButtonSwitchAdvanced
+                                       });
       this.toolStrip1.Location = new System.Drawing.Point(0, 0);
       this.toolStrip1.Name = "toolStrip1";
       this.toolStrip1.Size = new System.Drawing.Size(712, 25);
@@ -882,11 +904,13 @@ namespace MediaPortal.Configuration
       // 
       // configToolStripSplitButton
       // 
-      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.thumbsToolStripMenuItem,
-            this.logsToolStripMenuItem,
-            this.databaseToolStripMenuItem,
-            this.skinsToolStripMenuItem});
+      this.configToolStripSplitButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                                                               {
+                                                                 this.thumbsToolStripMenuItem,
+                                                                 this.logsToolStripMenuItem,
+                                                                 this.databaseToolStripMenuItem,
+                                                                 this.skinsToolStripMenuItem
+                                                               });
       this.configToolStripSplitButton.Image = global::MediaPortal.Configuration.Properties.Resources.icon_folder;
       this.configToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.configToolStripSplitButton.Name = "configToolStripSplitButton";
@@ -932,7 +956,8 @@ namespace MediaPortal.Configuration
       this.toolStripButtonSwitchAdvanced.AutoSize = false;
       this.toolStripButtonSwitchAdvanced.CheckOnClick = true;
       this.toolStripButtonSwitchAdvanced.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-      this.toolStripButtonSwitchAdvanced.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
+      this.toolStripButtonSwitchAdvanced.Image =
+        ((System.Drawing.Image)(resources.GetObject("toolStripButtonSwitchAdvanced.Image")));
       this.toolStripButtonSwitchAdvanced.ImageTransparentColor = System.Drawing.Color.Magenta;
       this.toolStripButtonSwitchAdvanced.Name = "toolStripButtonSwitchAdvanced";
       this.toolStripButtonSwitchAdvanced.Size = new System.Drawing.Size(135, 22);
@@ -964,7 +989,6 @@ namespace MediaPortal.Configuration
       this.toolStrip1.PerformLayout();
       this.ResumeLayout(false);
       this.PerformLayout();
-
     }
 
     #endregion
@@ -1164,7 +1188,8 @@ namespace MediaPortal.Configuration
         bool scanRunning = (bool)section.GetSetting("folderscanning");
         if (scanRunning)
         {
-          MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish", "MediaPortal Settings", MessageBoxButtons.OK,
+          MessageBox.Show("Music Folderscan running in background.\r\nPlease wait for the scan to finish",
+                          "MediaPortal Settings", MessageBoxButtons.OK,
                           MessageBoxIcon.Exclamation);
 
           if (ActivateSection(section))

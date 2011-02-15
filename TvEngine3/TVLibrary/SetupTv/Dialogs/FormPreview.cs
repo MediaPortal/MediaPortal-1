@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,8 +84,8 @@ namespace SetupTv.Sections
 
     private void FormPreview_Resize(object sender, EventArgs e)
     {
-      if(_player != null)
-      _player.ResizeToParent();
+      if (_player != null)
+        _player.ResizeToParent();
     }
   }
 }

@@ -106,13 +106,17 @@ void TsMPEG2TransportStreamFramer::afterGettingFrame1(unsigned frameSize,
 struct timeval presentationTime) {
 	fFrameSize += frameSize;
 	unsigned const numTSPackets = fFrameSize/TRANSPORT_PACKET_SIZE;
+  unsigned const dataGoingToBeLost=fFrameSize % TRANSPORT_PACKET_SIZE;
 	fFrameSize = numTSPackets*TRANSPORT_PACKET_SIZE; // an integral # of TS packets
 	if (fFrameSize == 0) {
 		// We didn't read a complete TS packet; assume that the input source has closed.
 		handleClosure(this);
 		return;
 	}
-
+  if (dataGoingToBeLost>0)
+  {
+    //need to handle a mid buffer
+  }
 	// Make sure the data begins with a sync byte:
 	unsigned syncBytePosition;
 	for (syncBytePosition = 0; syncBytePosition < fFrameSize; ++syncBytePosition) {
@@ -125,13 +129,35 @@ struct timeval presentationTime) {
 	} else if (syncBytePosition > 0) {
 		// There's a sync byte, but not at the start of the data.  Move the good data
 		// to the start of the buffer, then read more to fill it up again:
-		memmove(fTo, &fTo[syncBytePosition], fFrameSize - syncBytePosition);
-		fFrameSize -= syncBytePosition;
+		memmove(fTo, &fTo[syncBytePosition], frameSize - syncBytePosition);
+		fFrameSize -= syncBytePosition-dataGoingToBeLost;
 		fInputSource->getNextFrame(&fTo[fFrameSize], syncBytePosition,
 			afterGettingFrame, this,
 			FramedSource::handleClosure, this);
 		return;
-	} // else normal case: the data begins with a sync byte
+	}
+  else if (dataGoingToBeLost>0)// there is a problem in the buffer somewhere
+  {
+    unsigned badPacket;
+    for (int badPacket=0;badPacket<numTSPackets;badPacket++)
+    {
+      if (fTo[badPacket*TRANSPORT_PACKET_SIZE]!=TRANSPORT_SYNC_BYTE && badPacket*TRANSPORT_PACKET_SIZE<frameSize) break;
+    }
+    //we know it's the previous one...
+    if (badPacket!=0)
+    {
+	    for (syncBytePosition = 1; syncBytePosition < TRANSPORT_PACKET_SIZE; ++syncBytePosition) {
+		    if (fTo[badPacket*TRANSPORT_PACKET_SIZE-syncBytePosition] == TRANSPORT_SYNC_BYTE) break;
+	    }
+   		memmove(&fTo[(badPacket-1)*TRANSPORT_PACKET_SIZE], &fTo[badPacket*TRANSPORT_PACKET_SIZE-syncBytePosition], frameSize - (badPacket*TRANSPORT_PACKET_SIZE-syncBytePosition));
+		  fFrameSize -= TRANSPORT_PACKET_SIZE-syncBytePosition-dataGoingToBeLost;
+		  fInputSource->getNextFrame(&fTo[fFrameSize], syncBytePosition,
+			  afterGettingFrame, this,
+			  FramedSource::handleClosure, this);
+		  return;
+    }
+  }// else normal case: the data begins with a sync byte
+
 
 	fPresentationTime = presentationTime;
 

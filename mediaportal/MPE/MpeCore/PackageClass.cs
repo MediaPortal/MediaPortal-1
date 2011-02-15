@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -492,12 +492,12 @@ namespace MpeCore
     public void Save(string fileName)
     {
       GenerateUniqueFileList();
-      var serializer = new XmlSerializer(typeof(PackageClass));
+      var serializer = new XmlSerializer(typeof (PackageClass));
       using (TextWriter writer = new StreamWriter(fileName))
       {
         serializer.Serialize(writer, this);
-        writer.Close(); 
-      }      
+        writer.Close();
+      }
     }
 
     /// <summary>
@@ -511,7 +511,7 @@ namespace MpeCore
       {
         try
         {
-          var serializer = new XmlSerializer(typeof(PackageClass));
+          var serializer = new XmlSerializer(typeof (PackageClass));
           var fs = new FileStream(fileName, FileMode.Open);
           var packageClass = (PackageClass)serializer.Deserialize(fs);
           fs.Close();
@@ -586,6 +586,5 @@ namespace MpeCore
       }
       return pak1.GeneralInfo.Name.ToUpper().CompareTo(pak2.GeneralInfo.Name.ToUpper());
     }
-
   }
 }

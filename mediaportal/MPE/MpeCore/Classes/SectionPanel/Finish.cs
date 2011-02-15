@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -56,7 +56,7 @@ namespace MpeCore.Classes.SectionPanel
       CheckBoxs.Add(checkBox5);
       CheckBoxs.Add(checkBox6);
       CheckBoxs.Add(checkBox7);
-      
+
       RadioButtons.Add(radioButton1);
       RadioButtons.Add(radioButton2);
       RadioButtons.Add(radioButton3);
@@ -148,7 +148,7 @@ namespace MpeCore.Classes.SectionPanel
       i = 0;
       foreach (var includedGroup in Section.IncludedGroups)
       {
-        if(Section.Params[CONST_RADIO].GetValueAsBool())
+        if (Section.Params[CONST_RADIO].GetValueAsBool())
         {
           RadioButtons[i].Visible = true;
           RadioButtons[i].Text = _packageClass.Groups[includedGroup].DisplayName;

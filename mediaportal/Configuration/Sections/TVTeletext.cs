@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -97,8 +97,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.nudFontSize);
       this.groupBox1.Controls.Add(this.FontSizeValueLbl);
       this.groupBox1.Controls.Add(this.FontSizeLbl);
@@ -116,24 +118,30 @@ namespace MediaPortal.Configuration.Sections
       // nudFontSize
       // 
       this.nudFontSize.Location = new System.Drawing.Point(72, 97);
-      this.nudFontSize.Minimum = new decimal(new int[] {
-            50,
-            0,
-            0,
-            0});
+      this.nudFontSize.Minimum = new decimal(new int[]
+                                               {
+                                                 50,
+                                                 0,
+                                                 0,
+                                                 0
+                                               });
       this.nudFontSize.Name = "nudFontSize";
       this.nudFontSize.Size = new System.Drawing.Size(56, 20);
       this.nudFontSize.TabIndex = 1;
-      this.nudFontSize.Value = new decimal(new int[] {
-            80,
-            0,
-            0,
-            0});
+      this.nudFontSize.Value = new decimal(new int[]
+                                             {
+                                               80,
+                                               0,
+                                               0,
+                                               0
+                                             });
       // 
       // FontSizeValueLbl
       // 
       this.FontSizeValueLbl.AutoSize = true;
-      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.FontSizeValueLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                           System.Drawing.FontStyle.Regular,
+                                                           System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.FontSizeValueLbl.Location = new System.Drawing.Point(134, 99);
       this.FontSizeValueLbl.Name = "FontSizeValueLbl";
       this.FontSizeValueLbl.Size = new System.Drawing.Size(105, 13);
@@ -202,7 +210,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.nudFontSize)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion

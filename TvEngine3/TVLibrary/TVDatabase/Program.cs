@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -66,7 +66,8 @@ namespace TvDatabase
       Conflict = 16,
       RecordOncePending = 32, // used to indicate recording icon on tvguide, even though it hasnt begun yet.
       RecordSeriesPending = 64, // used to indicate recording icon on tvguide, even though it hasnt begun yet.
-      PartialRecordSeriesPending = 128 // used to indicate partial recording icon on tvguide, even though it hasnt begun yet.
+      PartialRecordSeriesPending = 128
+      // used to indicate partial recording icon on tvguide, even though it hasnt begun yet.
     }
 
     #endregion
@@ -551,14 +552,15 @@ namespace TvDatabase
       switch (provider)
       {
         case "mysql":
-          baseConstraint = string.Format("({0} < DATE_ADD(ADDDATE(DATE({0}), {4}{{0}}), INTERVAL TIME(?{3}) HOUR_SECOND)" +
-                           " AND {1} > DATE_ADD(ADDDATE(DATE({0}), 0{{0}}), INTERVAL TIME(?{2}) HOUR_SECOND))",
-                           startField, endField, startParam, endParam, crossMidnight ? 1 : 0);
+          baseConstraint =
+            string.Format("({0} < DATE_ADD(ADDDATE(DATE({0}), {4}{{0}}), INTERVAL TIME(?{3}) HOUR_SECOND)" +
+                          " AND {1} > DATE_ADD(ADDDATE(DATE({0}), 0{{0}}), INTERVAL TIME(?{2}) HOUR_SECOND))",
+                          startField, endField, startParam, endParam, crossMidnight ? 1 : 0);
           break;
         case "sqlserver":
-            baseConstraint = string.Format("({0} < DateAdd(Day, DateDiff(Day, @{2}, {0}){{0}}, @{3})" +
-                                           "AND {1} > DateAdd(Day, DateDiff(Day, @{2}, {0}){{0}}, @{2}))",
-                                           startField, endField, startParam, endParam);
+          baseConstraint = string.Format("({0} < DateAdd(Day, DateDiff(Day, @{2}, {0}){{0}}, @{3})" +
+                                         "AND {1} > DateAdd(Day, DateDiff(Day, @{2}, {0}){{0}}, @{2}))",
+                                         startField, endField, startParam, endParam);
           break;
         default:
           return;
@@ -664,12 +666,12 @@ namespace TvDatabase
     }
 
     public static IList<Program> RetrieveDaily(DateTime startTime, DateTime endTime, int channelId, int maxDays)
-    {           
+    {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
       // where foreigntable.foreignkey = ourprimarykey      
       sb.AddConstraint(Operator.GreaterThanOrEquals, "endTime", DateTime.Now /*startTime*/);
-      if (maxDays>0)
+      if (maxDays > 0)
       {
         sb.AddConstraint(Operator.LessThan, "startTime", DateTime.Now.AddDays(maxDays));
       }
@@ -686,29 +688,30 @@ namespace TvDatabase
       return ObjectFactory.GetCollection<Program>(stmt.Execute());
     }
 
-    public static IList<Program> RetrieveWeeklyEveryTimeOnThisChannel(DateTime startTime, DateTime endTime, string title, int channelId)
+    public static IList<Program> RetrieveWeeklyEveryTimeOnThisChannel(DateTime startTime, DateTime endTime, string title,
+                                                                      int channelId)
     {
-        //select * from 'foreigntable'
-        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
+      //select * from 'foreigntable'
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
 
-        // where foreigntable.foreignkey = ourprimarykey
-        sb.AddConstraint(Operator.Equals, "Title", title);
-        sb.AddConstraint(Operator.Equals, "idChannel", channelId);
-        sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now);
-        sb.AddConstraint(Operator.LessThanOrEquals, "endTime", DateTime.MaxValue);
+      // where foreigntable.foreignkey = ourprimarykey
+      sb.AddConstraint(Operator.Equals, "Title", title);
+      sb.AddConstraint(Operator.Equals, "idChannel", channelId);
+      sb.AddConstraint(Operator.GreaterThanOrEquals, "startTime", DateTime.Now);
+      sb.AddConstraint(Operator.LessThanOrEquals, "endTime", DateTime.MaxValue);
 
-        AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek + 1).ToString());
-        // passing true indicates that we'd like a list of elements, i.e. that no primary key
-        // constraints from the type being retrieved should be added to the statement
-        SqlStatement stmt = sb.GetStatement(true);
+      AddWeekdayConstraint(sb, "startTime", ((int)startTime.DayOfWeek + 1).ToString());
+      // passing true indicates that we'd like a list of elements, i.e. that no primary key
+      // constraints from the type being retrieved should be added to the statement
+      SqlStatement stmt = sb.GetStatement(true);
 
-        // execute the statement/query and create a collection of User instances from the result set
-        return ObjectFactory.GetCollection<Program>(stmt.Execute());
-    }	
+      // execute the statement/query and create a collection of User instances from the result set
+      return ObjectFactory.GetCollection<Program>(stmt.Execute());
+    }
 
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title)
     {
-      return  RetrieveByTitleAndTimesInterval(title, DateTime.Now, DateTime.MaxValue);
+      return RetrieveByTitleAndTimesInterval(title, DateTime.Now, DateTime.MaxValue);
     }
 
     public static IList<Program> RetrieveEveryTimeOnEveryChannel(string title, int maxDays)
@@ -720,13 +723,13 @@ namespace TvDatabase
     {
       return RetrieveEveryTimeOnThisChannel(title, channelId, -1);
     }
-    
+
     public static IList<Program> RetrieveEveryTimeOnThisChannel(string title, int channelId, int maxDays)
     {
       DateTime startTime = DateTime.Now;
       DateTime endTime = maxDays > 0 ? startTime.AddDays(maxDays) : DateTime.MaxValue;
 
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Program));
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
       // where foreigntable.foreignkey = ourprimarykey
       sb.AddConstraint(Operator.Equals, "Title", title);
       sb.AddConstraint(Operator.GreaterThanOrEquals, "endTime", startTime);
@@ -771,7 +774,7 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveWeekly(DateTime startTime, DateTime endTime, int channelId)
     {
-      return RetrieveWeekly(startTime, endTime, channelId, -1);      
+      return RetrieveWeekly(startTime, endTime, channelId, -1);
     }
 
     public static IList<Program> RetrieveWeekly(DateTime startTime, DateTime endTime, int channelId, int maxDays)
@@ -800,7 +803,7 @@ namespace TvDatabase
 
     public static IList<Program> RetrieveWorkingDays(DateTime startTime, DateTime endTime, int channelId)
     {
-      return RetrieveWorkingDays(startTime, endTime, channelId, -1);            
+      return RetrieveWorkingDays(startTime, endTime, channelId, -1);
     }
 
     public static IList<Program> RetrieveWorkingDays(DateTime startTime, DateTime endTime, int channelId, int maxDays)
@@ -957,19 +960,21 @@ namespace TvDatabase
       prg.IsRecordingOncePending = false;
       prg.IsRecordingSeriesPending = false;
       prg.Persist();
-    }   
+    }
 
     public static void ResetAllStates()
     {
       string sql = "Update Program set state=0 where state<>0;";
       SqlStatement stmt = new SqlStatement(StatementType.Update, Broker.Provider.GetCommand(), sql);
       stmt.Execute();
-      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
+      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof (Program));
     }
 
     public void ClearRecordPendingState()
     {
-      state &= ~(int)(ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
+      state &=
+        ~(int)
+         (ProgramState.RecordOncePending | ProgramState.RecordSeriesPending | ProgramState.PartialRecordSeriesPending);
     }
 
     public static IList<Program> RetrieveAllNotifications()

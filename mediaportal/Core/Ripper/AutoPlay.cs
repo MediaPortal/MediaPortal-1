@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -48,7 +48,7 @@ namespace MediaPortal.Ripper
       UNKNOWN = 0,
       PHOTO = 1,
       VIDEO = 2,
-      AUDIO = 3     
+      AUDIO = 3
     }
 
     public enum MediaSubType // add here new formats
@@ -67,19 +67,19 @@ namespace MediaPortal.Ripper
     /// <summary>
     /// singleton. Dont allow any instance of this class so make the constructor private
     /// </summary>
-    private AutoPlay() { }
+    private AutoPlay() {}
 
     /// <summary>
     /// Static constructor of the autoplay class.
     /// </summary>
     static AutoPlay()
-    {      
+    {
       LoadSettings();
       mediaFiles = new ArrayList();
-      enabled = true;      
+      enabled = true;
     }
 
-    ~AutoPlay() { }
+    ~AutoPlay() {}
 
     /// <summary>
     /// Starts listening for events on the optical drives.
@@ -113,7 +113,7 @@ namespace MediaPortal.Ripper
         return;
 
       if (string.IsNullOrEmpty(strDrive) || (g_Player.Playing && DaemonTools.GetVirtualDrive().StartsWith(strDrive)))
-        return;      
+        return;
 
       StopListening();
       DetectMediaType(strDrive);
@@ -123,7 +123,7 @@ namespace MediaPortal.Ripper
         StartListening();
         return;
       }
-      
+
       Log.Info("Autoplay: Start playing media type '{0}/{1}' from drive '{2}'", mediaType, mediaSubType, strDrive);
 
       switch (mediaType)
@@ -154,7 +154,7 @@ namespace MediaPortal.Ripper
               case MediaSubType.VCD:
                 long lMaxLength = 0;
                 string sPlayFile = "";
-                string[] files = Directory.GetFiles(Path.Combine(strDrive,"MPEGAV"));
+                string[] files = Directory.GetFiles(Path.Combine(strDrive, "MPEGAV"));
                 foreach (string file in files)
                 {
                   FileInfo info = new FileInfo(file);
@@ -174,7 +174,7 @@ namespace MediaPortal.Ripper
                 GUIGraphicsContext.SendMessage(msg);
                 break;
             }
-          } 
+          }
           break;
 
         case MediaType.AUDIO:
@@ -195,7 +195,7 @@ namespace MediaPortal.Ripper
         case MediaType.PHOTO:
           switch (mediaSubType)
           {
-            case MediaSubType.FILES:            
+            case MediaSubType.FILES:
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME, 0, 0, 0, 0, 0, null);
               msg.Label = strDrive;
               msg.Param1 = (int)mediaType;
@@ -212,7 +212,6 @@ namespace MediaPortal.Ripper
       }
       StartListening();
     }
-
 
     #region initialization + serialization
 
@@ -235,7 +234,7 @@ namespace MediaPortal.Ripper
       Log.Info("Check if we want to autoplay media type: {0}", iMedia);
       if (GUIWindowManager.IsRouted)
         return false;
-      
+
       string askPlaying;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, null);
       msg.Param1 = 713;
@@ -264,50 +263,50 @@ namespace MediaPortal.Ripper
         case "Ask":
           GUIWindowManager.SendMessage(msg);
           if (msg.Param1 != 0)
-            return true;          
+            return true;
           break;
         case "Yes":
-          return true;        
+          return true;
       }
       return false;
-    }    
-    
+    }
+
     /// <summary>
     /// Detects the media type of the CD/DVD inserted into a drive.
     /// </summary>
     /// <param name="driveLetter">The drive that contains the data.</param>
-   private static void DetectMediaType(string strDrive)
+    private static void DetectMediaType(string strDrive)
     {
-     mediaType = MediaType.UNKNOWN;
-     mediaSubType= MediaSubType.UNKNOWN;
+      mediaType = MediaType.UNKNOWN;
+      mediaSubType = MediaSubType.UNKNOWN;
 
-     if (string.IsNullOrEmpty(strDrive))      
+      if (string.IsNullOrEmpty(strDrive))
         return;
-     
+
       try
       {
-        if (Directory.Exists(Path.Combine(strDrive,"VIDEO_TS")))
+        if (Directory.Exists(Path.Combine(strDrive, "VIDEO_TS")))
         {
           mediaType = MediaType.VIDEO;
           mediaSubType = MediaSubType.DVD;
-          return; 
+          return;
         }
 
-        if (Directory.Exists(Path.Combine(strDrive,"BDMV")))
+        if (Directory.Exists(Path.Combine(strDrive, "BDMV")))
         {
           mediaType = MediaType.VIDEO;
           mediaSubType = MediaSubType.BLURAY;
           return;
         }
 
-        if (Directory.Exists(Path.Combine(strDrive,"HVDVD_TS")))
+        if (Directory.Exists(Path.Combine(strDrive, "HVDVD_TS")))
         {
           mediaType = MediaType.VIDEO;
           mediaSubType = MediaSubType.HDDVD;
           return;
         }
 
-        if (Directory.Exists(Path.Combine(strDrive,"MPEGAV")))
+        if (Directory.Exists(Path.Combine(strDrive, "MPEGAV")))
         {
           mediaType = MediaType.VIDEO;
           mediaSubType = MediaSubType.VCD;
@@ -316,63 +315,63 @@ namespace MediaPortal.Ripper
 
         GetMediaTypeFromFiles(Path.GetPathRoot(strDrive));
       }
-      catch (Exception) { }      
+      catch (Exception) {}
     }
 
-   private static void GetMediaTypeFromFiles(string strFolder)
-   {
-     if (string.IsNullOrEmpty(strFolder))
-       return;
-     
-     try
-     {
-       ArrayList audioFiles = new ArrayList();
-       ArrayList photoFiles = new ArrayList();
-       ArrayList videoFiles = new ArrayList();
-       mediaSubType = MediaSubType.FILES;
+    private static void GetMediaTypeFromFiles(string strFolder)
+    {
+      if (string.IsNullOrEmpty(strFolder))
+        return;
 
-       string[] files = Directory.GetFiles(strFolder, "*.*", SearchOption.AllDirectories);
-       if (files != null && files.Length > 0)
-       {
-         //for (int i = files.Length - 1; i >= 0; i--)
-         for (int i = 0; i < files.Length; i++)
-         {
-           if (Util.Utils.IsVideo(files[i]))
-           {
-             videoFiles.Add(files[i]);
-           }
-           else if (Util.Utils.IsAudio(files[i]))
-           {
-             audioFiles.Add(files[i]);
-             if (Path.GetExtension(files[i]).ToLower() == ".cda")
-               mediaSubType = MediaSubType.AUDIO_CD;
-           }
-           else if (Util.Utils.IsPicture(files[i]))
-           {
-             photoFiles.Add(files[i]);
-           }
-         }
-       }
+      try
+      {
+        ArrayList audioFiles = new ArrayList();
+        ArrayList photoFiles = new ArrayList();
+        ArrayList videoFiles = new ArrayList();
+        mediaSubType = MediaSubType.FILES;
 
-       mediaFiles.Clear();
-       if (videoFiles.Count > 0)
-       {
-         mediaType = MediaType.VIDEO;
-         mediaFiles = videoFiles;
-       }
-       else if (audioFiles.Count > 0)
-       {
-         mediaType = MediaType.AUDIO;
-         mediaFiles = audioFiles;
-       }
-       else if (photoFiles.Count > 0)
-       {
-         mediaType = MediaType.PHOTO;
-         mediaFiles = photoFiles;
-       }
-     }
-     catch (Exception) { }
-   }
+        string[] files = Directory.GetFiles(strFolder, "*.*", SearchOption.AllDirectories);
+        if (files != null && files.Length > 0)
+        {
+          //for (int i = files.Length - 1; i >= 0; i--)
+          for (int i = 0; i < files.Length; i++)
+          {
+            if (Util.Utils.IsVideo(files[i]))
+            {
+              videoFiles.Add(files[i]);
+            }
+            else if (Util.Utils.IsAudio(files[i]))
+            {
+              audioFiles.Add(files[i]);
+              if (Path.GetExtension(files[i]).ToLower() == ".cda")
+                mediaSubType = MediaSubType.AUDIO_CD;
+            }
+            else if (Util.Utils.IsPicture(files[i]))
+            {
+              photoFiles.Add(files[i]);
+            }
+          }
+        }
+
+        mediaFiles.Clear();
+        if (videoFiles.Count > 0)
+        {
+          mediaType = MediaType.VIDEO;
+          mediaFiles = videoFiles;
+        }
+        else if (audioFiles.Count > 0)
+        {
+          mediaType = MediaType.AUDIO;
+          mediaFiles = audioFiles;
+        }
+        else if (photoFiles.Count > 0)
+        {
+          mediaType = MediaType.PHOTO;
+          mediaFiles = photoFiles;
+        }
+      }
+      catch (Exception) {}
+    }
 
     #endregion
   }

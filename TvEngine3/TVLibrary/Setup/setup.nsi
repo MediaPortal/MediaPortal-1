@@ -298,6 +298,8 @@ Section "-prepare" SecPrepare
   ${LOG_TEXT} "INFO" "Prepare installation..."
   SetShellVarContext all
 
+  !insertmacro BackupGentleConfig
+	
   ; uninstall old version if necessary
   ${If} $UpdateMode = 1
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 1 | UpdateMode = 1"
@@ -308,8 +310,6 @@ Section "-prepare" SecPrepare
     ; if SingleSeat, if NoClient (Server installation), uninstall current one (removes both components) and install new server component
     ; if SingleSeat, if NoServer (Client installation), Do NOT uninstall current one (was removed on during server install already), but install new client component
     ${If} $noClient == 1
-
-      !insertmacro BackupGentleConfig
 
       ${LOG_TEXT} "INFO" "TVServer component will be installed soon. (/noClient was used)"
 
@@ -342,8 +342,6 @@ Section "-prepare" SecPrepare
 
   ${Else}
     ${LOG_TEXT} "DEBUG" "SecPrepare: DeployMode = 0 | UpdateMode = 0"
-
-    !insertmacro BackupGentleConfig
 
     ${LOG_TEXT} "INFO" "Uninstalling old version ..."
     ${If} ${Silent}

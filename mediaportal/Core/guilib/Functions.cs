@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 
 namespace MediaPortal.GUI.Library
 {
-  class GUIFunctions
+  internal class GUIFunctions
   {
     #region  String functions
 
@@ -79,7 +79,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("string.formatcount")]
     public static string FormatStringSingularPlural(int value, string multiFormat)
     {
-      string[] formats = multiFormat.Split(new char[]{'|'});
+      string[] formats = multiFormat.Split(new char[] {'|'});
       if (formats.Length != 3)
       {
         throw new ArgumentException("The value provided is not a 3-part format string", "multiFormat");
@@ -198,7 +198,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("switch")]
     public static object Switch(params object[] args)
     {
-      for(int i = 0; i < args.Length; i+=2)
+      for (int i = 0; i < args.Length; i += 2)
       {
         if ((bool)args[i])
         {
@@ -235,7 +235,7 @@ namespace MediaPortal.GUI.Library
     //}
 
     [XMLSkinFunction("eq")]
-    public static new bool Equals(object arg1, object arg2)
+    public new static bool Equals(object arg1, object arg2)
     {
       return object.Equals(arg1, arg2);
     }
@@ -327,9 +327,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("and")]
     public static bool And(params bool[] conditions)
     {
-      for(int i = 0; i<conditions.Length; i++)
+      for (int i = 0; i < conditions.Length; i++)
       {
-        if(!conditions[i])
+        if (!conditions[i])
         {
           return false;
         }
@@ -353,12 +353,14 @@ namespace MediaPortal.GUI.Library
     #endregion
 
     #region Other functions
+
     // Other
     //[XMLSkinFunction("eval")]
     //public static object Evaluate(string expression)
     //{
     //  return GUIExpressionManager.ParseExpression(expression);
     //}
+
     #endregion
 
     #region Math related
@@ -410,7 +412,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("add")]
     public static object Add(object arg0, params object[] args)
     {
-      if(arg0 is int)
+      if (arg0 is int)
       {
         return Add((int)arg0, args);
       }
@@ -505,7 +507,7 @@ namespace MediaPortal.GUI.Library
     public static float Ceiling(float arg, int decimals)
     {
       double scale = Math.Pow(10, decimals);
-      return (float)(Math.Ceiling(arg * scale)/scale);
+      return (float)(Math.Ceiling(arg * scale) / scale);
     }
 
     [XMLSkinFunction("math.floor")]
@@ -534,7 +536,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinFunction("date.add")]
     public static DateTime DateAdd(string interval, float number, DateTime date)
     {
-      switch(interval.ToLowerInvariant())
+      switch (interval.ToLowerInvariant())
       {
         case "d":
         case "dd":
@@ -599,7 +601,7 @@ namespace MediaPortal.GUI.Library
           return (int)date.DayOfWeek;
         case "ww":
         case "wk":
-          return date.DayOfYear/7;
+          return date.DayOfYear / 7;
         case "m":
         case "mm":
           return date.Month;
@@ -653,6 +655,5 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
-
   }
 }

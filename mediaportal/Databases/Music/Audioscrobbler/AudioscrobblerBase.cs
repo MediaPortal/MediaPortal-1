@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -216,7 +216,7 @@ namespace MediaPortal.Music.Database
             Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), String.Empty);
         _useDebugLog =
           (MusicDatabase.Instance.AddScrobbleUserSettings(
-             Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1)
+            Convert.ToString(MusicDatabase.Instance.AddScrobbleUser(username)), "iDebugLog", -1) == 1)
             ? true
             : false;
 
@@ -942,7 +942,7 @@ namespace MediaPortal.Music.Database
         }
 
         return success;
-      }    
+      }
     }
 
     #endregion
@@ -1313,10 +1313,10 @@ namespace MediaPortal.Music.Database
             xml = AudioscrobblerUtils.Instance.GetRadioAddTrackToPlaylistRequest(Username, Challenge, AuthToken, aArtist,
                                                                                  aTitle);
             break;
-          //case XmlRpcType.removeRecentlyListenedTrack:
-          //  break;
-          //case XmlRpcType.removeFriend:
-          //  break;
+            //case XmlRpcType.removeRecentlyListenedTrack:
+            //  break;
+            //case XmlRpcType.removeFriend:
+            //  break;
         }
 
         // Parse handshake response

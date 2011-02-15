@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ namespace MediaPortal.Player
 
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetTexture(void* texture);
+
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetAlphaBlend(UInt32 alphaBlend);
 
@@ -343,7 +344,7 @@ namespace MediaPortal.Player
           nw = GUIGraphicsContext.OverScanWidth;
           nh = GUIGraphicsContext.OverScanHeight;
         }
-        
+
         //sanity check
         if (nw <= 10 || nh <= 10 || x < 0 || y < 0)
         {
@@ -615,10 +616,10 @@ namespace MediaPortal.Player
         {
           _shouldRenderTexture = false;
         }
-        
+
         //clear screen
         GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-        
+
         _debugStep = 5;
         GUIGraphicsContext.DX9Device.BeginScene();
         try

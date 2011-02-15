@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -108,7 +108,7 @@ namespace MediaPortal.Configuration.Sections
       set { extensions = value; }
     }
 
-    private string[] extensions = new string[] { ".mp3" };
+    private string[] extensions = new string[] {".mp3"};
 
     #endregion
 
@@ -212,6 +212,7 @@ namespace MediaPortal.Configuration.Sections
 
       return null;
     }
+
     #endregion
 
     #region Designer generated code
@@ -250,9 +251,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                  | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.comboBoxDateAdded);
       this.groupBox1.Controls.Add(this.lblDate);
       this.groupBox1.Controls.Add(this.groupBoxUseAlbumThumbs);
@@ -277,10 +280,12 @@ namespace MediaPortal.Configuration.Sections
       this.comboBoxDateAdded.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxDateAdded.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxDateAdded.FormattingEnabled = true;
-      this.comboBoxDateAdded.Items.AddRange(new object[] {
-            "Current Date",
-            "Creation Date",
-            "Last Write Date"});
+      this.comboBoxDateAdded.Items.AddRange(new object[]
+                                              {
+                                                "Current Date",
+                                                "Creation Date",
+                                                "Last Write Date"
+                                              });
       this.comboBoxDateAdded.Location = new System.Drawing.Point(246, 257);
       this.comboBoxDateAdded.Name = "comboBoxDateAdded";
       this.comboBoxDateAdded.Size = new System.Drawing.Size(210, 21);
@@ -453,7 +458,9 @@ namespace MediaPortal.Configuration.Sections
       // 
       // startButton
       // 
-      this.startButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.startButton.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         ((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.startButton.Location = new System.Drawing.Point(236, 307);
       this.startButton.Name = "startButton";
       this.startButton.Size = new System.Drawing.Size(210, 22);
@@ -475,8 +482,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox2.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox2.Controls.Add(this.fileLabel);
       this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.groupBox2.Location = new System.Drawing.Point(0, 345);
@@ -488,8 +497,10 @@ namespace MediaPortal.Configuration.Sections
       // 
       // fileLabel
       // 
-      this.fileLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.fileLabel.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.fileLabel.Location = new System.Drawing.Point(16, 23);
       this.fileLabel.Name = "fileLabel";
       this.fileLabel.Size = new System.Drawing.Size(440, 16);
@@ -509,7 +520,6 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxUseForThumbs.PerformLayout();
       this.groupBox2.ResumeLayout(false);
       this.ResumeLayout(false);
-
     }
 
     #endregion
@@ -631,14 +641,14 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        m_dbs.MusicDatabaseReorg(shares, setting);  
+        m_dbs.MusicDatabaseReorg(shares, setting);
       }
       catch (Exception ex)
       {
-        Log.Error("Folder Scan: Exception during processing: ", ex.Message );
+        Log.Error("Folder Scan: Exception during processing: ", ex.Message);
         _scanRunning = false;
       }
-      
+
       using (Settings xmlreader = new MPSettings())
       {
         checkBoxUpdateSinceLastImport.Text = String.Format("Only update new / changed files after {0}",

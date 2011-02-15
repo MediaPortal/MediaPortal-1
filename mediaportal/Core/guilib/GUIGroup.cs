@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -123,7 +123,7 @@ namespace MediaPortal.GUI.Library
       }
 
       _children.SafeDispose();
-      
+
       base.Dispose();
     }
 
@@ -243,7 +243,8 @@ namespace MediaPortal.GUI.Library
     {
       foreach (GUIControl control in Children)
       {
-        if(!(control is GUIFacadeControl)) // a facadecontrol inside a group with layout, stay compatible with previous implementation
+        if (!(control is GUIFacadeControl))
+          // a facadecontrol inside a group with layout, stay compatible with previous implementation
           control.DoUpdate();
       }
     }
@@ -550,7 +551,7 @@ namespace MediaPortal.GUI.Library
         }
 
         if (!_first && CheckButtonsModifiedPosition())
-            _first = true;
+          _first = true;
 
         if (_first)
           StoreButtonsVisibilityState();
@@ -565,7 +566,7 @@ namespace MediaPortal.GUI.Library
           bool bIsVisible = Children[i].IsVisible;
           if (bVisCon != 0)
             bIsVisible = GUIInfoManager.GetBool(bVisCon, Children[i].ParentID);
-          
+
           if (_first && !bIsVisible)
           {
             if (layout.Orientation == System.Windows.Controls.Orientation.Vertical)
@@ -711,40 +712,39 @@ namespace MediaPortal.GUI.Library
 
     private void StoreButtonsModifiedPosition()
     {
-        if (_modPositions == null)
-        {
-          _modPositions = new Point[Children.Count];
-        }
-        for (int i = 0; i < Children.Count; i++)
-        {
-          _modPositions[i].X = Children[i].XPosition;
-          _modPositions[i].Y = Children[i].YPosition;
-        }
+      if (_modPositions == null)
+      {
+        _modPositions = new Point[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _modPositions[i].X = Children[i].XPosition;
+        _modPositions[i].Y = Children[i].YPosition;
+      }
     }
 
     private void StoreButtonsVisibilityState()
     {
-        if (_visibilityState == null)
-        {
-          _visibilityState = new bool[Children.Count];
-        }
-        for (int i = 0; i < Children.Count; i++)
-        {
-          _visibilityState[i] = Children[i].IsVisible;
-        }
+      if (_visibilityState == null)
+      {
+        _visibilityState = new bool[Children.Count];
+      }
+      for (int i = 0; i < Children.Count; i++)
+      {
+        _visibilityState[i] = Children[i].IsVisible;
+      }
     }
 
     private bool CheckButtonsModifiedPosition()
     {
-        for (int i = 0; i < Children.Count; i++)
+      for (int i = 0; i < Children.Count; i++)
+      {
+        if (_modPositions[i].X != Children[i].XPosition || _modPositions[i].Y != Children[i].YPosition)
         {
-            if (_modPositions[i].X != Children[i].XPosition || _modPositions[i].Y != Children[i].YPosition)
-            {
-                return true;
-            }
+          return true;
         }
-        return false;
+      }
+      return false;
     }
-
   }
 }

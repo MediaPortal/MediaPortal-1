@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -44,7 +44,9 @@ namespace MediaPortal.Player.Subtitles
     ////
     //subs management functions
     ///
+
     #region Embedded subtitles
+
     int GetCount();
 
     string GetLanguage(int i);
@@ -52,6 +54,7 @@ namespace MediaPortal.Player.Subtitles
     string GetSubtitleName(int i);
 
     int Current { get; set; }
+
     #endregion
 
     bool Enable { get; set; }
@@ -62,23 +65,24 @@ namespace MediaPortal.Player.Subtitles
 
     void DelayPlus();
     void DelayMinus();
-    
+
+    bool AutoShow { get; }
   }
 
   public class SubEngine
-  { 
+  {
     public static ISubEngine engine;
 
     public static ISubEngine GetInstance()
-        {
-        return GetInstance(false);
-        }
+    {
+      return GetInstance(false);
+    }
 
-      public static ISubEngine GetInstance(bool forceinitialize)
-        {
-        if (engine == null || forceinitialize)
-     {
-            using (Settings xmlreader = new MPSettings())
+    public static ISubEngine GetInstance(bool forceinitialize)
+    {
+      if (engine == null || forceinitialize)
+      {
+        using (Settings xmlreader = new MPSettings())
         {
           string engineType = xmlreader.GetValueAsString("subtitles", "engine", "DirectVobSub");
           if (engineType.Equals("MPC-HC"))
@@ -90,7 +94,7 @@ namespace MediaPortal.Player.Subtitles
           else
             engine = new DummyEngine();
         }
-      }  
+      }
       return engine;
     }
 
@@ -163,6 +167,11 @@ namespace MediaPortal.Player.Subtitles
       public void DelayPlus() {}
 
       public void DelayMinus() {}
+
+      public bool AutoShow
+      {
+        get { return false; }
+      }
 
       #endregion
     }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,13 +32,13 @@ namespace TvLibrary.Implementations.DVB
   /// DigitalDevices CI control class
   /// It derives from GenericBDAS for DiSEqC support.
   /// </summary>
-  public partial class DigitalDevices : GenericBDAS, ICiMenuActions 
+  public partial class DigitalDevices : GenericBDAS, ICiMenuActions
   {
     #region constants
 
     private Guid PINNAME_BDA_TRANSPORT = new Guid("{78216a81-cfa8-493e-9711-36a61c08bd9d}");
 
-    public static List<String> VendorNames = new List<String>() { "Digital Devices", "Mystique SaTiX-S2 Dual" };
+    public static List<String> VendorNames = new List<String>() {"Digital Devices", "Mystique SaTiX-S2 Dual"};
 
     [ComImport, SuppressUnmanagedCodeSecurity,
      Guid("28F54685-06FD-11D2-B27A-00A0C9223196"),
@@ -47,30 +47,30 @@ namespace TvLibrary.Implementations.DVB
     {
       [PreserveSig]
       int KsProperty(
-        [In]       ref KSMETHOD Property,
-        [In]       Int32 PropertyLength,
-        [In, Out]  IntPtr PropertyData,
-        [In]       Int32 DataLength,
-        [In, Out]  ref Int32 BytesReturned
-      );
+        [In] ref KSMETHOD Property,
+        [In] Int32 PropertyLength,
+        [In, Out] IntPtr PropertyData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+        );
 
       [PreserveSig]
       int KsMethod(
-          [In]       ref KSMETHOD Method,
-          [In]       Int32 MethodLength,
-          [In, Out]  IntPtr MethodData,
-          [In]       Int32 DataLength,
-          [In, Out]  ref Int32 BytesReturned
-      );
+        [In] ref KSMETHOD Method,
+        [In] Int32 MethodLength,
+        [In, Out] IntPtr MethodData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+        );
 
       [PreserveSig]
       int KsEvent(
-        [In, Optional]  ref KSMETHOD Event,
-        [In]            Int32 EventLength,
-        [In, Out]       IntPtr EventData,
-        [In]            Int32 DataLength,
-        [In, Out]       ref Int32 BytesReturned
-      );
+        [In, Optional] ref KSMETHOD Event,
+        [In] Int32 EventLength,
+        [In, Out] IntPtr EventData,
+        [In] Int32 DataLength,
+        [In, Out] ref Int32 BytesReturned
+        );
     }
 
     public struct KSMETHOD
@@ -78,6 +78,7 @@ namespace TvLibrary.Implementations.DVB
       public Guid Set;
       public Int32 Id;
       public Int32 Flags;
+
       public KSMETHOD(Guid set, Int32 id, Int32 flags)
       {
         Set = set;
@@ -86,20 +87,20 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    const Int32 KSMETHOD_TYPE_SEND = 1;
-    const Int32 KSPROPERTY_TYPE_GET = 1;
-    const Int32 KSPROPERTY_TYPE_SET = 2;
+    private const Int32 KSMETHOD_TYPE_SEND = 1;
+    private const Int32 KSPROPERTY_TYPE_GET = 1;
+    private const Int32 KSPROPERTY_TYPE_SET = 2;
 
-    Guid KSPROPERTYSET_DD_COMMON_INTERFACE = new Guid("0aa8a501-a240-11de-b130-000000004d56");
-    Guid KSMETHODSET_DD_CAM_CONTROL = new Guid("0aa8a511-a240-11de-b130-000000004d56");
+    private Guid KSPROPERTYSET_DD_COMMON_INTERFACE = new Guid("0aa8a501-a240-11de-b130-000000004d56");
+    private Guid KSMETHODSET_DD_CAM_CONTROL = new Guid("0aa8a511-a240-11de-b130-000000004d56");
 
-    enum KSPROPERTY_DD_COMMON_INTERFACE
+    private enum KSPROPERTY_DD_COMMON_INTERFACE
     {
       KSPROPERTY_DD_DECRYPT_PROGRAM = 0,
       KSPROPERTY_DD_CAM_MENU_TITLE = 1,
     }
 
-    enum KSMETHOD_DD_CAM_CONTROL
+    private enum KSMETHOD_DD_CAM_CONTROL
     {
       KSMETHOD_DD_CAM_RESET,
       KSMETHOD_DD_CAM_ENTER_MENU,
@@ -109,11 +110,9 @@ namespace TvLibrary.Implementations.DVB
       KSMETHOD_DD_CAM_ANSWER,
     }
 
-    struct DD_CAM_MENU_TITLE
-    {
-    }
+    private struct DD_CAM_MENU_TITLE {}
 
-    struct DD_CAM_MENU_REPLY
+    private struct DD_CAM_MENU_REPLY
     {
       public Int32 Id;
       public Int32 Choice;
@@ -127,7 +126,7 @@ namespace TvLibrary.Implementations.DVB
       public String Data;
     }*/
 
-    struct DD_CAM_MENU_DATA
+    private struct DD_CAM_MENU_DATA
     {
       public Int32 Id;
       public Int32 Type;
@@ -139,7 +138,16 @@ namespace TvLibrary.Implementations.DVB
       public List<String> Choices;
     }
 
-    enum E_STATE { IDLE, WAIT_FOR_OPEN, WAIT_FOR_MENU, MENU_OPEN, LIST_OPEN, ENQ_OPEN, CAM_ERROR = 99 };
+    private enum E_STATE
+    {
+      IDLE,
+      WAIT_FOR_OPEN,
+      WAIT_FOR_MENU,
+      MENU_OPEN,
+      LIST_OPEN,
+      ENQ_OPEN,
+      CAM_ERROR = 99
+    } ;
 
     #endregion
 
@@ -188,7 +196,8 @@ namespace TvLibrary.Implementations.DVB
       if (_CardName == String.Empty)
         return;
 
-      IEnumerable<IBaseFilter> nextFilters = FilterGraphTools.GetAllNextFilters(tunerFilter, PINNAME_BDA_TRANSPORT, PinDirection.Output);
+      IEnumerable<IBaseFilter> nextFilters = FilterGraphTools.GetAllNextFilters(tunerFilter, PINNAME_BDA_TRANSPORT,
+                                                                                PinDirection.Output);
       foreach (IBaseFilter nextFilter in nextFilters)
       {
         FilterInfo filterInfo;
@@ -234,9 +243,9 @@ namespace TvLibrary.Implementations.DVB
       if (pControl == null) return true;
 
       KSMETHOD KsProperty = new KSMETHOD(KSPROPERTYSET_DD_COMMON_INTERFACE,
-                               (Int32)KSPROPERTY_DD_COMMON_INTERFACE.KSPROPERTY_DD_DECRYPT_PROGRAM,
-                               KSPROPERTY_TYPE_SET);
-      Int32 paramSize = Marshal.SizeOf(sizeof(Int32));
+                                         (Int32)KSPROPERTY_DD_COMMON_INTERFACE.KSPROPERTY_DD_DECRYPT_PROGRAM,
+                                         KSPROPERTY_TYPE_SET);
+      Int32 paramSize = Marshal.SizeOf(sizeof (Int32));
       Int32 dwReturned = 0;
       // Initialize unmanged memory to hold the struct.
       IntPtr pSid = Marshal.AllocHGlobal(paramSize);
@@ -244,9 +253,10 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Int32 hr = pControl.KsProperty(ref KsProperty, Marshal.SizeOf(KsProperty),
-                                    pSid, paramSize,
-                                    ref dwReturned);
-        Log.Log.Debug(FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
+                                       pSid, paramSize,
+                                       ref dwReturned);
+        Log.Log.Debug(
+          FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
         return (hr == 0);
       }
       finally
@@ -282,14 +292,14 @@ namespace TvLibrary.Implementations.DVB
       if (pControl == null) return false;
 
       KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_ENTER_MENU,
-                                 KSMETHOD_TYPE_SEND);
+                                       (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_ENTER_MENU,
+                                       KSMETHOD_TYPE_SEND);
 
       Int32 dwReturned = 0;
       Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                  IntPtr.Zero, 0,
-                                  ref dwReturned
-                              );
+                                   IntPtr.Zero, 0,
+                                   ref dwReturned
+        );
       if (hr == 0)
       {
         _MenuId = 0; // reset
@@ -307,14 +317,14 @@ namespace TvLibrary.Implementations.DVB
       if (pControl == null) return false;
 
       KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_RESET,
-                                 KSMETHOD_TYPE_SEND);
+                                       (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_RESET,
+                                       KSMETHOD_TYPE_SEND);
 
       Int32 dwReturned = 0;
       Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                  IntPtr.Zero, 0,
-                                  ref dwReturned
-                              );
+                                   IntPtr.Zero, 0,
+                                   ref dwReturned
+        );
       return hr == 0;
     }
 
@@ -328,14 +338,14 @@ namespace TvLibrary.Implementations.DVB
       if (pControl == null) return false;
 
       KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_CLOSE_MENU,
-                                 KSMETHOD_TYPE_SEND);
+                                       (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_CLOSE_MENU,
+                                       KSMETHOD_TYPE_SEND);
 
       Int32 dwReturned = 0;
       Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                  IntPtr.Zero, 0,
-                                  ref dwReturned
-                              );
+                                   IntPtr.Zero, 0,
+                                   ref dwReturned
+        );
       return hr == 0;
     }
 
@@ -362,13 +372,13 @@ namespace TvLibrary.Implementations.DVB
         Marshal.StructureToPtr(Reply, pReply, false);
 
         KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_MENU_REPLY,
-                                 KSMETHOD_TYPE_SEND);
+                                         (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_MENU_REPLY,
+                                         KSMETHOD_TYPE_SEND);
         Int32 dwReturned = 0;
         Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                    pReply, Marshal.SizeOf(Reply),
-                                    ref dwReturned
-                                );
+                                     pReply, Marshal.SizeOf(Reply),
+                                     ref dwReturned
+          );
         return hr == 0;
       }
       finally
@@ -391,7 +401,7 @@ namespace TvLibrary.Implementations.DVB
 
       // Initialize unmanged memory to hold the struct.
       Int32 answerLength = (String.IsNullOrEmpty(Answer) ? 0 : Answer.Length);
-      Int32 bufferSize = 8 + answerLength +1;
+      Int32 bufferSize = 8 + answerLength + 1;
 
       if (bufferSize < 12) bufferSize = 12;
 
@@ -417,13 +427,13 @@ namespace TvLibrary.Implementations.DVB
         //DVB_MMI.DumpBinary(pReply, 0, bufferSize);
 
         KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_ANSWER,
-                                 KSMETHOD_TYPE_SEND);
+                                         (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_ANSWER,
+                                         KSMETHOD_TYPE_SEND);
         Int32 dwReturned = 0;
         Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                    pReply, bufferSize,
-                                    ref dwReturned
-                                );
+                                     pReply, bufferSize,
+                                     ref dwReturned
+          );
         return hr == 0;
       }
       finally
@@ -437,7 +447,7 @@ namespace TvLibrary.Implementations.DVB
 
     #region MMI reading methods
 
-    bool GetMenuTitle(out DD_CAM_MENU_TITLE MenuTitle)
+    private bool GetMenuTitle(out DD_CAM_MENU_TITLE MenuTitle)
     {
       MenuTitle = new DD_CAM_MENU_TITLE();
 
@@ -445,8 +455,8 @@ namespace TvLibrary.Implementations.DVB
       if (pControl == null) return false;
 
       KSMETHOD KsProperty = new KSMETHOD(KSPROPERTYSET_DD_COMMON_INTERFACE,
-                               (Int32)KSPROPERTY_DD_COMMON_INTERFACE.KSPROPERTY_DD_CAM_MENU_TITLE,
-                               KSPROPERTY_TYPE_GET);
+                                         (Int32)KSPROPERTY_DD_COMMON_INTERFACE.KSPROPERTY_DD_CAM_MENU_TITLE,
+                                         KSPROPERTY_TYPE_GET);
       Int32 ulMenuSize = Marshal.SizeOf(MenuTitle);
       Int32 dwReturned = 0;
       // Initialize unmanged memory to hold the struct.
@@ -454,14 +464,14 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         Int32 hr = pControl.KsProperty(ref KsProperty, Marshal.SizeOf(KsProperty),
-                                    pTitle, ulMenuSize,
-                                    ref dwReturned
-                                );
+                                       pTitle, ulMenuSize,
+                                       ref dwReturned
+          );
 
         if (hr != 0 || dwReturned != ulMenuSize)
           return false;
 
-        MenuTitle = (DD_CAM_MENU_TITLE)Marshal.PtrToStructure(pTitle, typeof(DD_CAM_MENU_TITLE));
+        MenuTitle = (DD_CAM_MENU_TITLE)Marshal.PtrToStructure(pTitle, typeof (DD_CAM_MENU_TITLE));
         return true;
       }
       finally
@@ -471,7 +481,7 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    bool GetCamMenuText(out DD_CAM_MENU_DATA CiMenu)
+    private bool GetCamMenuText(out DD_CAM_MENU_DATA CiMenu)
     {
       CiMenu = new DD_CAM_MENU_DATA();
       IKsControl pControl = CiFilter as IKsControl;
@@ -483,20 +493,24 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         KSMETHOD KsMethod = new KSMETHOD(KSMETHODSET_DD_CAM_CONTROL,
-                                 (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_GET_MENU,
-                                 KSMETHOD_TYPE_SEND);
+                                         (Int32)KSMETHOD_DD_CAM_CONTROL.KSMETHOD_DD_CAM_GET_MENU,
+                                         KSMETHOD_TYPE_SEND);
         Int32 dwReturned = 0;
         Int32 hr = pControl.KsMethod(ref KsMethod, Marshal.SizeOf(KsMethod),
-                                    pCiMenu, ulMenuSize,
-                                    ref dwReturned
-                                );
+                                     pCiMenu, ulMenuSize,
+                                     ref dwReturned
+          );
         if (hr == 0)
         {
           Int32 offs = 0;
-          CiMenu.Id = Marshal.ReadInt32(pCiMenu, offs); offs += 4;
-          CiMenu.Type = Marshal.ReadInt32(pCiMenu, offs); offs += 4;
-          CiMenu.NumChoices = Marshal.ReadInt32(pCiMenu, offs); offs += 4;
-          CiMenu.Length = Marshal.ReadInt32(pCiMenu, offs); offs += 4;
+          CiMenu.Id = Marshal.ReadInt32(pCiMenu, offs);
+          offs += 4;
+          CiMenu.Type = Marshal.ReadInt32(pCiMenu, offs);
+          offs += 4;
+          CiMenu.NumChoices = Marshal.ReadInt32(pCiMenu, offs);
+          offs += 4;
+          CiMenu.Length = Marshal.ReadInt32(pCiMenu, offs);
+          offs += 4;
 
           // check if we already received this menu, then ignore it.
           // otherwise we would do an endless processing.
@@ -547,7 +561,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     /// <param name="CiMenu"></param>
     /// <returns></returns>
-    bool ProcessCamMenu(DD_CAM_MENU_DATA CiMenu)
+    private bool ProcessCamMenu(DD_CAM_MENU_DATA CiMenu)
     {
       Log.Log.Debug("Menu received (ID {0} Type {1} Choices {2})", CiMenu.Id, CiMenu.Type, CiMenu.NumChoices);
       //Log.Log.Debug(" Menu Id      = {0}", CiMenu.Id);
@@ -639,9 +653,10 @@ namespace TvLibrary.Implementations.DVB
             ProcessCamMenu(ciMenu);
           }
           Thread.Sleep(500);
-        };
+        }
+        ;
       }
-      catch (ThreadAbortException) { }
+      catch (ThreadAbortException) {}
       catch (Exception ex)
       {
         Log.Log.Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());
@@ -662,6 +677,5 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
-
   }
 }

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -86,7 +86,7 @@ namespace TvControl
       _server = Dns.GetHostName();
       _recordingFolder = String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server\recordings",
                                        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
-    }        
+    }
 
     #endregion
 
@@ -917,12 +917,12 @@ namespace TvControl
         {
           RemoteControl.HostName = _server;
           RemoteControl.Instance.GetStreamQualityCounters(User, out totalTSpackets, out discontinuityCounter);
-        }                
+        }
       }
       catch (Exception)
       {
         HandleFailure();
-      }      
+      }
     }
 
 

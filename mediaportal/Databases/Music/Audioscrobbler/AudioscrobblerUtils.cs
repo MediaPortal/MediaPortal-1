@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1777,8 +1777,7 @@ namespace MediaPortal.Music.Database
               {
                 File.Delete(tmpFile);
               }
-              catch (IOException)
-              {}
+              catch (IOException) {}
             }
           }
           catch (Exception e)
@@ -2133,8 +2132,9 @@ namespace MediaPortal.Music.Database
       try
       {
         XmlDocument doc = new XmlDocument();
-        
-        string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
+
+        string tmpFileName =
+          DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/album/" + artist_ + "/" + album_ + "/info.xml");
         doc.Load(tmpFileName);
 
         XmlNodeList nodes = doc.SelectNodes(@"//album");
@@ -2252,10 +2252,10 @@ namespace MediaPortal.Music.Database
       try
       {
         XmlDocument doc = new XmlDocument();
-        
+
         string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/topalbums.xml");
         doc.Load(tmpFileName);
-        
+
         XmlNodeList nodes = doc.SelectNodes(@"//topalbums/album");
 
         foreach (XmlNode node in nodes)
@@ -2317,10 +2317,11 @@ namespace MediaPortal.Music.Database
       try
       {
         XmlDocument doc = new XmlDocument();
-        
-        string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+
+        string tmpFileName =
+          DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
         doc.Load(tmpFileName);
-        
+
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists");
 
         if (!string.IsNullOrEmpty(nodes[0].Attributes["artist"].Value))
@@ -2348,9 +2349,10 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        string tmpFileName = DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
+        string tmpFileName =
+          DownloadTempFile(@"http://ws.audioscrobbler.com/1.0/artist/" + artist_ + "/" + "similar.xml");
         doc.Load(tmpFileName);
-        
+
         XmlNodeList nodes = doc.SelectNodes(@"//similarartists/artist");
 
         foreach (XmlNode node in nodes)
@@ -2578,7 +2580,7 @@ namespace MediaPortal.Music.Database
       {
         XmlDocument doc = new XmlDocument();
 
-        string tmpFileName = DownloadTempFile(xmlFileInput); 
+        string tmpFileName = DownloadTempFile(xmlFileInput);
         doc.Load(tmpFileName);
         XmlNodeList nodes = doc.SelectNodes(queryNodePath);
 
@@ -2845,7 +2847,7 @@ namespace MediaPortal.Music.Database
         string tempFile = PathUtility.GetSecureTempFileName();
         XmlDocument doc = new XmlDocument();
 
-        string tmpFileName = DownloadTempFile(aLocation); 
+        string tmpFileName = DownloadTempFile(aLocation);
         doc.Load(tmpFileName);
         doc.Save(tempFile);
 

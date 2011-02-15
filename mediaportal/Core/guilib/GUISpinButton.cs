@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -71,7 +71,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = -1;
     [XMLSkinElement("scrollWrapString")] protected string _userWrapString = "";
     [XMLSkin("textureFocus", "border")] protected string _strBorderTF = "";
-    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureFocus", "position")] protected GUIImage.BorderPosition _borderPositionTF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureFocus", "textureRepeat")] protected bool _borderTextureRepeatTF = false;
     [XMLSkin("textureFocus", "textureRotate")] protected bool _borderTextureRotateTF = false;
     [XMLSkin("textureFocus", "texture")] protected string _borderTextureFileNameTF = "image_border.png";
@@ -79,7 +82,10 @@ namespace MediaPortal.GUI.Library
     [XMLSkin("textureFocus", "corners")] protected bool _borderHasCornersTF = false;
     [XMLSkin("textureFocus", "cornerRotate")] protected bool _borderCornerTextureRotateTF = true;
     [XMLSkin("textureNoFocus", "border")] protected string _strBorderTNF = "";
-    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF = GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
+    [XMLSkin("textureNoFocus", "position")] protected GUIImage.BorderPosition _borderPositionTNF =
+      GUIImage.BorderPosition.BORDER_IMAGE_OUTSIDE;
+
     [XMLSkin("textureNoFocus", "textureRepeat")] protected bool _borderTextureRepeatTNF = false;
     [XMLSkin("textureNoFocus", "textureRotate")] protected bool _borderTextureRotateTNF = false;
     [XMLSkin("textureNoFocus", "texture")] protected string _borderTextureFileNameTNF = "image_border.png";
@@ -150,7 +156,8 @@ namespace MediaPortal.GUI.Library
       _imageFocused.Filtering = false;
       _imageFocused.DimColor = DimColor;
       _imageFocused.SetBorder(_strBorderTF, _borderPositionTF, _borderTextureRepeatTF, _borderTextureRotateTF,
-        _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF, _borderCornerTextureRotateTF);
+                              _borderTextureFileNameTF, _borderColorKeyTF, _borderHasCornersTF,
+                              _borderCornerTextureRotateTF);
 
       _imageNonFocused = LoadAnimationControl(_parentControlId, _controlId, _positionX, _positionY, _width, _height,
                                               _nonFocusedTextureName);
@@ -158,7 +165,8 @@ namespace MediaPortal.GUI.Library
       _imageNonFocused.Filtering = false;
       _imageNonFocused.DimColor = DimColor;
       _imageNonFocused.SetBorder(_strBorderTNF, _borderPositionTNF, _borderTextureRepeatTNF, _borderTextureRotateTNF,
-        _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF, _borderCornerTextureRotateTNF);
+                                 _borderTextureFileNameTNF, _borderColorKeyTNF, _borderHasCornersTNF,
+                                 _borderCornerTextureRotateTNF);
       GUILocalizeStrings.LocalizeLabel(ref _label);
 
 
@@ -176,7 +184,7 @@ namespace MediaPortal.GUI.Library
       {
         _labelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
                                          _textColor, Alignment.ALIGN_LEFT, VAlignment.ALIGN_TOP,
-                                        _shadowAngle, _shadowDistance, _shadowColor,
+                                         _shadowAngle, _shadowDistance, _shadowColor,
                                          _userWrapString);
         ((GUIFadeLabel)_labelControl).TextAlignment = _textAlignment;
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
@@ -193,9 +201,9 @@ namespace MediaPortal.GUI.Library
       }
 
       _spinControl = new GUISpinControl(GetID, 0, _positionX + _width - _spinWidth, _positionY, _spinWidth,
-                                          _spinHeight, _upTextureName, _downTextureName,
-                                          _upTextureNameFocus, _downTextureNameFocus,
-                                          spinFontName, _textColor, _spinType, _spinAlignment);
+                                        _spinHeight, _upTextureName, _downTextureName,
+                                        _upTextureNameFocus, _downTextureNameFocus,
+                                        spinFontName, _textColor, _spinType, _spinAlignment);
       _spinControl.ParentControl = this;
       _spinControl.DimColor = DimColor;
       _spinControl.ShowRange = _showRange;
@@ -825,11 +833,8 @@ namespace MediaPortal.GUI.Library
 
     public int SpinValue
     {
-      get
-      {
-        return _spinControl.Value;
-      }
-      set 
+      get { return _spinControl.Value; }
+      set
       {
         _spinControl.Value = value;
 
@@ -838,9 +843,10 @@ namespace MediaPortal.GUI.Library
         if (_spinTextInButton)
         {
           Label = _spinControl.GetLabel();
-        }      
+        }
       }
     }
+
     public void ClearSpinLabels()
     {
       _spinControl.Reset();
@@ -855,10 +861,7 @@ namespace MediaPortal.GUI.Library
 
     public string SpinLabel
     {
-      get
-      {
-        return _spinControl.GetLabel();
-      }
+      get { return _spinControl.GetLabel(); }
     }
 
     public int SpinMaxValue()
@@ -870,6 +873,5 @@ namespace MediaPortal.GUI.Library
     {
       return _spinControl.GetMinimum();
     }
-
   }
 }

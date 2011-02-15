@@ -1,23 +1,23 @@
-/* 
- *	Copyright (C) 2005-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
- *
- *  This Program is free software; you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation; either version 2, or (at your option)
- *  any later version.
- *   
- *  This Program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  GNU General Public License for more details.
- *   
- *  You should have received a copy of the GNU General Public License
- *  along with GNU Make; see the file COPYING.  If not, write to
- *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
- *  http://www.gnu.org/copyleft/gpl.html
- *
- */
+#region Copyright (C) 2005-2011 Team MediaPortal
+
+// Copyright (C) 2005-2011 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib.BDA;
@@ -80,8 +80,9 @@ namespace TvLibrary.Interfaces.Analyzer
     IsdbS = 0x400
   }
 
-  public enum LNB_Source {
-    LNBSourceNotSet= -1,
+  public enum LNB_Source
+  {
+    LNBSourceNotSet = -1,
     LNBSourceNotDefined = 0,
     LNBSourceA = 1,
     LNBSourceB = 2,
@@ -90,25 +91,26 @@ namespace TvLibrary.Interfaces.Analyzer
     LNBSourceMax,
   } ;
 
-  public enum DiseqC11Switches{
-  Switch_NOT_SET = -1,
-  Switch_0 = 0x0,
-  Switch_1 = 0x1,
-  Switch_2 = 0x2,
-  Switch_3 = 0x3,
-  Switch_4 = 0x4,
-  Switch_5 = 0x5,
-  Switch_6 = 0x6,
-  Switch_7 = 0x7,
-  Switch_8 = 0x8,
-  Switch_9 = 0x9,
-  Switch_10 = 0xa,
-  Switch_11 = 0xb,
-  Switch_12 = 0xc,
-  Switch_13 = 0xd,
-  Switch_14 = 0xe,
-  Switch_15 = 0xf,
-} 
+  public enum DiseqC11Switches
+  {
+    Switch_NOT_SET = -1,
+    Switch_0 = 0x0,
+    Switch_1 = 0x1,
+    Switch_2 = 0x2,
+    Switch_3 = 0x3,
+    Switch_4 = 0x4,
+    Switch_5 = 0x5,
+    Switch_6 = 0x6,
+    Switch_7 = 0x7,
+    Switch_8 = 0x8,
+    Switch_9 = 0x9,
+    Switch_10 = 0xa,
+    Switch_11 = 0xb,
+    Switch_12 = 0xc,
+    Switch_13 = 0xd,
+    Switch_14 = 0xe,
+    Switch_15 = 0xf,
+  }
 
 
   [StructLayout(LayoutKind.Sequential)]
@@ -119,7 +121,7 @@ namespace TvLibrary.Interfaces.Analyzer
     public uint Bandwidth;
     public Polarisation Polarity;
     public uint Range;
-  };
+  } ;
 
   [StructLayout(LayoutKind.Sequential)]
   public struct LnbInfoSettings
@@ -127,7 +129,7 @@ namespace TvLibrary.Interfaces.Analyzer
     public uint LnbSwitchFrequency;
     public uint LowOscillator;
     public uint HighOscillator;
-  };
+  } ;
 
   [StructLayout(LayoutKind.Sequential)]
   public struct DigitalDemodulatorSettings
@@ -139,7 +141,7 @@ namespace TvLibrary.Interfaces.Analyzer
     public BinaryConvolutionCodeRate OuterFECRate;
     public SpectralInversion SpectralInversion;
     public uint SymbolRate;
-  };
+  } ;
 
   [StructLayout(LayoutKind.Sequential)]
   public struct DigitalDemodulator2Settings
@@ -155,7 +157,7 @@ namespace TvLibrary.Interfaces.Analyzer
     public Pilot Pilot;
     public RollOff RollOff;
     public TransmissionMode TransmissionMode;
-  };
+  } ;
 
   [StructLayout(LayoutKind.Sequential)]
   public struct DiseqcSatelliteSettings
@@ -164,19 +166,20 @@ namespace TvLibrary.Interfaces.Analyzer
     public uint ToneBurstEnabled;
     public LNB_Source Diseq10Selection;
     public DiseqC11Switches Diseq11Selection;
-  };
+  } ;
 
-  public enum LogLevelOption {
-  NotSet = -1,
-  All = 0,
-  Trace = 0,
-  Debug = 10000,
-  Info = 20000,
-  Warn = 30000,
-  Error = 40000,
-  Fatal = 50000,
-  Off = 60000
-} ;
+  public enum LogLevelOption
+  {
+    NotSet = -1,
+    All = 0,
+    Trace = 0,
+    Debug = 10000,
+    Info = 20000,
+    Warn = 30000,
+    Error = 40000,
+    Fatal = 50000,
+    Off = 60000
+  } ;
 
   ///<summary>
   /// Channel scanning callback
@@ -190,7 +193,8 @@ namespace TvLibrary.Interfaces.Analyzer
     int TuneDVBT(FrequencySettings fSettings);
 
     [PreserveSig]
-    int TuneDVBS(FrequencySettings fSettings, DigitalDemodulator2Settings dSettings, LnbInfoSettings lSettings, DiseqcSatelliteSettings sSettings);
+    int TuneDVBS(FrequencySettings fSettings, DigitalDemodulator2Settings dSettings, LnbInfoSettings lSettings,
+                 DiseqcSatelliteSettings sSettings);
 
     [PreserveSig]
     int TuneDVBC(FrequencySettings fSettings, DigitalDemodulatorSettings dSettings);
@@ -205,7 +209,7 @@ namespace TvLibrary.Interfaces.Analyzer
     int GetSignalStats(out bool tunerLocked, out bool signalPresent, out int signalQuality, out int signalLevel);
 
     [PreserveSig]
-    int ConfigureLogging([In, MarshalAs(UnmanagedType.LPWStr)] string logFilename, [In, MarshalAs(UnmanagedType.LPWStr)] string identifier, LogLevelOption logLevel);
-
+    int ConfigureLogging([In, MarshalAs(UnmanagedType.LPWStr)] string logFilename,
+                         [In, MarshalAs(UnmanagedType.LPWStr)] string identifier, LogLevelOption logLevel);
   }
 }

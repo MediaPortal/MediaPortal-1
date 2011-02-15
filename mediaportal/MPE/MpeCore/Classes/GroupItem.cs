@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -100,10 +100,10 @@ namespace MpeCore.Classes
 
     [XmlAttribute]
     /// <summary>
-    /// Gets or sets the name of the group.
-    /// </summary>
-    /// <value>The name.</value>
-    public string Name { get; set; }
+      /// Gets or sets the name of the group.
+      /// </summary>
+      /// <value>The name.</value>
+      public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether [defaul checked].

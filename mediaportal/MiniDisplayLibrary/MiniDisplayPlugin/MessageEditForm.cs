@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -3189,7 +3189,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       {
         Log.Info("MAP: Error accessing directory \"InputDeviceMappings\\custom\"");
       }
-      XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile), Encoding.UTF8);
+      XmlTextWriter writer = new XmlTextWriter(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile),
+                                               Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
       writer.IndentChar = '\t';

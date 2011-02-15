@@ -697,7 +697,6 @@ STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileName( int handle, char* pszFileN
   pChannel->m_pTimeShifting->SetFileName( pszFileName);
 	return S_OK;
 }
-
 STDMETHODIMP CMpTs::TimeShiftStart( int handle )
 {
   CTsChannel* pChannel=GetTsChannel(handle);
@@ -872,3 +871,12 @@ STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int*
     return S_FALSE;
 }
 
+
+STDMETHODIMP CMpTs::TimeShiftSetChannelType(int handle, int channelType)
+{
+  CTsChannel* pChannel=GetTsChannel(handle);
+  if (pChannel==NULL) return S_OK;
+	pChannel->m_pRecorder->SetChannelType(channelType);
+	pChannel->m_pTimeShifting->SetChannelType(channelType);
+	return S_OK;
+}

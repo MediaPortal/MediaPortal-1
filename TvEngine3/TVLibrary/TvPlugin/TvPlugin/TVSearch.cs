@@ -52,7 +52,7 @@ namespace TvPlugin
     [SkinControl(15)] protected GUITextScrollUpControl lblProgramDescription = null;
     [SkinControl(16)] protected GUILabelControl lblChannel = null;
     [SkinControl(17)] protected GUILabelControl lblProgramGenre = null;
-    [SkinControl(18)] protected GUIImage imgTvLogo = null;
+    [SkinControl(18)] protected GUIImage imgChannelLogo = null;
     [SkinControl(20)] protected GUIButtonControl btnViewBy = null; // is replacing btnSearchByTitle, btnSearchByGenre
     [SkinControl(21)] protected GUIButtonControl btnSearchDescription = null; // is replacing btnSearchByDescription 
 
@@ -424,9 +424,9 @@ namespace TvPlugin
 
           if (filterShow == String.Empty)
           {
-            if (imgTvLogo != null)
+            if (imgChannelLogo != null)
             {
-              imgTvLogo.IsVisible = false;
+              imgChannelLogo.IsVisible = false;
             }
             if (titleView.SubItemCount == 2)
             {
@@ -444,9 +444,9 @@ namespace TvPlugin
           }
           else
           {
-            if (imgTvLogo != null)
+            if (imgChannelLogo != null)
             {
-              imgTvLogo.IsVisible = true;
+              imgChannelLogo.IsVisible = true;
             }
             if (titleView.SubItemCount == 2)
             {
@@ -472,9 +472,9 @@ namespace TvPlugin
           titleView.IsVisible = false;
           GUIControl.FocusControl(GetID, listView.GetID);
 
-          if (imgTvLogo != null)
+          if (imgChannelLogo != null)
           {
-            imgTvLogo.IsVisible = false;
+            imgChannelLogo.IsVisible = false;
           }
         }
 
@@ -1136,7 +1136,8 @@ namespace TvPlugin
         strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
       }
       
-      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) {
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) 
+      {
         strLogo = "defaultVideoBig.png";
       }
 
@@ -1285,8 +1286,8 @@ namespace TvPlugin
       {
         prog = item.TVTag as Program;
       }
-      
-      if (item.Label == ".." || item.IsFolder || prog == null)
+
+      if (item == null || item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;

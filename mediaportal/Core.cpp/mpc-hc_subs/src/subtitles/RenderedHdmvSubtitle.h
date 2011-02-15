@@ -1,5 +1,5 @@
 /*
- * $Id: RenderedHdmvSubtitle.h 2585 2010-09-18 12:39:20Z xhmikosr $
+ * $Id: RenderedHdmvSubtitle.h 2804 2010-12-28 13:48:24Z aleksoid $
  *
  * (C) 2006-2010 see AUTHORS
  *

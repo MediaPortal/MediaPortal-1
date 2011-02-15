@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -191,7 +191,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1, 5,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1, 5,
                                    5, 0xff000000);
             }
             else
@@ -204,7 +204,8 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float) dwTextPosX, (float) _positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT,
+                                   -1,
                                    5, 5, 0xff000000);
             }
             else

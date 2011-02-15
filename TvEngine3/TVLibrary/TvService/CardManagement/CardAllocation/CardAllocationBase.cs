@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -35,6 +35,7 @@ namespace TvService
   public abstract class CardAllocationBase
   {
     private bool _logEnabled = true;
+
     public bool LogEnabled
     {
       get { return _logEnabled; }
@@ -52,6 +53,7 @@ namespace TvService
     }
 
     #region protected members            
+
     protected bool IsCamAbleToDecryptChannel(IUser user, ITvCardHandler tvcard, IChannel tuningDetail, int decryptLimit)
     {
       if (!tuningDetail.FreeToAir)
@@ -71,7 +73,6 @@ namespace TvService
               int numberOfUsersOnCurrentChannel = 0;
               foreach (IUser aUser in tvcard.Users.GetUsers())
               {
-                
                 if (aUser.IdChannel == currentChannelId)
                 {
                   ++numberOfUsersOnCurrentChannel;
@@ -128,7 +129,7 @@ namespace TvService
     }
 
     protected bool CheckTransponder(IUser user, ITvCardHandler tvcard, int decryptLimit, int cardId,
-                                  IChannel tuningDetail)
+                                    IChannel tuningDetail)
     {
       bool checkTransponder = true;
       bool isSameTransponder = IsSameTransponder(tvcard, tuningDetail);
@@ -142,7 +143,7 @@ namespace TvService
           Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
         }
       }
-      else            
+      else
       {
         if (isSameTransponder)
         {
@@ -164,7 +165,8 @@ namespace TvService
               {
                 canDecrypt = true;
               }
-            } else
+            }
+            else
             {
               canDecrypt = true;
             }
@@ -189,7 +191,6 @@ namespace TvService
                     cardId, tvcard.Type);
                 }
               }
-
             }
             else
             {
@@ -200,7 +201,7 @@ namespace TvService
                   "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
                   cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
               }
-              checkTransponder = false;              
+              checkTransponder = false;
             }
           }
         }
@@ -220,8 +221,7 @@ namespace TvService
     protected bool IsSameTransponder(ITvCardHandler tvcard, IChannel tuningDetail)
     {
       return tvcard.Tuner.IsTunedToTransponder(tuningDetail) &&
-                           tvcard.SupportsSubChannels;
-
+             tvcard.SupportsSubChannels;
     }
 
     #endregion

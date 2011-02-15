@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -654,7 +654,6 @@ namespace TvLibrary.Implementations.DVB
             // Is it the right category?
             if (DsUtils.GetPinCategory(pPins[0]) == pinCategory)
             {
-
               // Read the info
               IPin connectedPin;
               hr = pPins[0].ConnectedTo(out connectedPin);
@@ -861,7 +860,7 @@ namespace TvLibrary.Implementations.DVB
           filter.QueryFilterInfo(out info);
           Log.Log.Write("Remove filter from graph: {0}", info.achName);
           graphBuilder.RemoveFilter(filter);
-          while (Release.ComObject(filter) > 0);          
+          while (Release.ComObject(filter) > 0) ;
         }
       }
       catch (Exception)
@@ -1544,14 +1543,13 @@ namespace TvLibrary.Implementations.DVB
 
       bool connected = connectedToPin != null;
       if (connected)
-        Release.ComObject(connectedToPin);        
+        Release.ComObject(connectedToPin);
 
       int hr = pin.QueryPinInfo(out pinInfo);
       if (hr == 0)
       {
         if (pinInfo.filter != null)
-          Release.ComObject(pinInfo.filter);            
-
+          Release.ComObject(pinInfo.filter);
       }
       return String.Format("name:{0} [{3}/{4}] Direction:{1} Connected:{2}", pinInfo.name, pinInfo.dir, connected,
                            getRefCount(pin), getRefCountCOM(pin));

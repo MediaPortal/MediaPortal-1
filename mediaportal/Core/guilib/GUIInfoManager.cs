@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -654,7 +654,7 @@ namespace MediaPortal.GUI.Library
         {
           ret = SYSTEM_TIME;
         }
-        else if (strTest.Substring(0,21) == "system.time.isbetween")
+        else if (strTest.Substring(0, 21) == "system.time.isbetween")
         {
           String withoutBlanks = strTest.Replace(" ", String.Empty);
           int param1 = SkinSettings.TranslateSkinString(withoutBlanks.Substring(22, 5));
@@ -663,7 +663,7 @@ namespace MediaPortal.GUI.Library
           var guiInfo = new GUIInfo(bNegate ? -SYSTEM_TIME_IS_BETWEEN : SYSTEM_TIME_IS_BETWEEN, param1, param2);
           int index = AddMultiInfo(guiInfo);
           if (!LastReturnValues.ContainsKey(m_multiInfo[index - MULTI_INFO_START]))
-          LastReturnValues.Add(m_multiInfo[index - MULTI_INFO_START], false);
+            LastReturnValues.Add(m_multiInfo[index - MULTI_INFO_START], false);
           return index;
         }
         else if (strTest == "system.cputemperature")
@@ -1388,7 +1388,7 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest == "window.ispauseosdvisible")
         {
-            ret = WINDOW_IS_PAUSE_OSD_VISIBLE;
+          ret = WINDOW_IS_PAUSE_OSD_VISIBLE;
         }
         else if (strTest.Substring(0, 16) == "window.isactive(")
         {
@@ -1520,7 +1520,7 @@ namespace MediaPortal.GUI.Library
         else if (strTest == "facadeview.coverflow")
         {
           ret = FACADEVIEW_COVERFLOW;
-      }
+        }
       }
       else if (strTest.Length >= 13 && strTest.Substring(0, 13) == "controlgroup(")
       {
@@ -2117,7 +2117,7 @@ namespace MediaPortal.GUI.Library
       }
       else if (condition == WINDOW_IS_PAUSE_OSD_VISIBLE)
       {
-          bReturn = GUIWindowManager.IsPauseOsdVisible;
+        bReturn = GUIWindowManager.IsPauseOsdVisible;
       }
       else if (condition == PLAYER_MUTED)
       {
@@ -2217,7 +2217,7 @@ namespace MediaPortal.GUI.Library
         else if (layout == "coverflow" && condition == FACADEVIEW_COVERFLOW)
         {
           bReturn = true;
-      }
+        }
       }
       else if (g_Player.Playing)
       {
@@ -2368,15 +2368,15 @@ namespace MediaPortal.GUI.Library
     }
 
     private static bool IsTimeForRefresh()
-    {      
-      if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindowEx).HasWindowVisibilityUpdated)
+    {
+      if (GUIWindow.HasWindowVisibilityUpdated)
       {
         _renderFrameCount++;
       }
 
-      if (_renderFrameCount == FramesPerCheck )
-      {        
-          return true;
+      if (_renderFrameCount == FramesPerCheck)
+      {
+        return true;
       }
 
       //init visibility
@@ -2486,7 +2486,7 @@ namespace MediaPortal.GUI.Library
 
           break;
         case PLUGIN_IS_ENABLED:
-            bReturn = PluginManager.IsPluginNameEnabled2(info.m_stringData);
+          bReturn = PluginManager.IsPluginNameEnabled2(info.m_stringData);
           break;
         case CONTROL_HAS_TEXT:
           GUIWindow pWindow = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
@@ -2583,18 +2583,17 @@ namespace MediaPortal.GUI.Library
           }
         case SYSTEM_TIME_IS_BETWEEN:
           {
-
-              if (IsTimeForRefresh())
-              {
-                string startDate = SkinSettings.GetSkinString(info.m_data1);
-                string endDate = SkinSettings.GetSkinString(info.m_data2);
-                var timeRange = new TimeRange(startDate, endDate);
-                bReturn = timeRange.IsInRange(DateTime.Now);
-                LastReturnValues[info] = bReturn;
-                break;
-              }
-              LastReturnValues.TryGetValue(info, out bReturn);
-          break;
+            if (IsTimeForRefresh())
+            {
+              string startDate = SkinSettings.GetSkinString(info.m_data1);
+              string endDate = SkinSettings.GetSkinString(info.m_data2);
+              var timeRange = new TimeRange(startDate, endDate);
+              bReturn = timeRange.IsInRange(DateTime.Now);
+              LastReturnValues[info] = bReturn;
+              break;
+            }
+            LastReturnValues.TryGetValue(info, out bReturn);
+            break;
           }
         case WINDOW_NEXT:
           bReturn = (info.m_data1 == m_nextWindowID);
@@ -2644,7 +2643,7 @@ namespace MediaPortal.GUI.Library
           m_cacheMultiInfoBoolProperties[property] = set;
         }
         else
-        {          
+        {
           if (!set.Contains(info))
           {
             set.Add(info);
@@ -2674,9 +2673,9 @@ namespace MediaPortal.GUI.Library
     /// <returns>True if output was cached</returns>
     private static bool IsCachedMultiInfoBoolResult(GUIInfo info, out bool result)
     {
-      result = false;    
+      result = false;
       lock (lockCache)
-      {        
+      {
         bool isCachedMultiInfoBoolResult = (m_cacheMultiInfoBoolResults.TryGetValue(info, out result));
         return isCachedMultiInfoBoolResult;
       }

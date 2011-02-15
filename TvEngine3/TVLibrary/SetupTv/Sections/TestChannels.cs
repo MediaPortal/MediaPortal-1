@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ namespace SetupTv.Sections
 
     //Player _player;
     public TestChannels()
-      : this("TestChannels") { }
+      : this("TestChannels") {}
 
     public TestChannels(string name)
       : base(name)
@@ -302,10 +302,7 @@ namespace SetupTv.Sections
             RemoteControl.Instance.StopTimeShifting(ref user);
           }
         }
-        catch (Exception)
-        {
-
-        }
+        catch (Exception) {}
         _users[user.Name] = false;
       }
     }
@@ -374,14 +371,15 @@ namespace SetupTv.Sections
             {
               cardId = card.Id;
             }
-            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(cardId), "");
+            nextRowIndexForDiscUpdate = Add2Log("OK", channel.DisplayName, mSecsElapsed, user.Name,
+                                                Convert.ToString(cardId), "");
             user.CardId = cardId;
             _succeeded++;
           }
           else if (result == TvResult.CardIsDisabled ||
                    result == TvResult.AllCardsBusy ||
                    result == TvResult.CardIsDisabled ||
-                    result == TvResult.ChannelNotMappedToAnyCard
+                   result == TvResult.ChannelNotMappedToAnyCard
             )
           {
             string err = GetErrMsgFromTVResult(result);
@@ -397,13 +395,15 @@ namespace SetupTv.Sections
             {
               _firstFail = mpListViewLog.Items.Count + 1;
             }
-            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), err);
+            nextRowIndexForDiscUpdate = Add2Log("ERR", channel.DisplayName, mSecsElapsed, user.Name,
+                                                Convert.ToString(user.FailedCardId), err);
             _failed++;
           }
         }
         catch (Exception e)
         {
-          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name, Convert.ToString(user.FailedCardId), e.Message);
+          nextRowIndexForDiscUpdate = Add2Log("EXC", channel.DisplayName, mSecsElapsed, user.Name,
+                                              Convert.ToString(user.FailedCardId), e.Message);
           _ignored++;
           if (_firstFail == 0 && _running)
           {
@@ -426,7 +426,8 @@ namespace SetupTv.Sections
       }
     }
 
-    private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed, out TvResult result, out VirtualCard card)
+    private IUser StartTimeshifting(Channel channel, IUser user, int nextRowIndexForDiscUpdate, out long mSecsElapsed,
+                                    out TvResult result, out VirtualCard card)
     {
       Stopwatch sw = Stopwatch.StartNew();
       UpdateDiscontinuityCounter(user, nextRowIndexForDiscUpdate);
@@ -499,7 +500,8 @@ namespace SetupTv.Sections
       {
         if (InvokeRequired)
         {
-          Invoke(new UpdateDiscontinuityCounterDelegate(UpdateDiscontinuityCounter), new object[] { user, nextRowIndexForDiscUpdate });
+          Invoke(new UpdateDiscontinuityCounterDelegate(UpdateDiscontinuityCounter),
+                 new object[] {user, nextRowIndexForDiscUpdate});
           return;
         }
       }
@@ -524,6 +526,7 @@ namespace SetupTv.Sections
     }
 
     private object _listViewLock = new object();
+
     private int Add2Log(string state, string channel, double msec, string name, string card, string details)
     {
       int itemNr = 0;
@@ -531,7 +534,7 @@ namespace SetupTv.Sections
       {
         if (InvokeRequired)
         {
-          return (int)Invoke(new Add2LogDelegate(Add2Log), new object[] { state, channel, msec, name, card, details });
+          return (int)Invoke(new Add2LogDelegate(Add2Log), new object[] {state, channel, msec, name, card, details});
         }
 
         lock (_listViewLock)
@@ -750,7 +753,8 @@ namespace SetupTv.Sections
             item.SubItems[4].Text = "";
             item.SubItems[5].Text = "";
             item.SubItems[6].Text = card.Name;
-            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard)); ;
+            item.SubItems[7].Text = Convert.ToString(RemoteControl.Instance.GetSubChannels(card.IdCard));
+            ;
             off++;
           }
         }
@@ -803,7 +807,6 @@ namespace SetupTv.Sections
       item.SubItems[5].Text = "";
       item.SubItems[6].Text = card.Name;
       item.SubItems[7].Text = Convert.ToString(subchannels);
-
     }
 
     private void txtRndFrom_TextChanged(object sender, EventArgs e)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -80,7 +80,8 @@ namespace MediaPortal.Configuration.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FiltersMonogramAACDecoder));
+      System.ComponentModel.ComponentResourceManager resources =
+        new System.ComponentModel.ComponentResourceManager(typeof (FiltersMonogramAACDecoder));
       this.pictureBox1 = new System.Windows.Forms.PictureBox();
       this.mpGradientLabel1 = new MediaPortal.UserInterface.Controls.MPGradientLabel();
       this.mpGroupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -114,7 +115,9 @@ namespace MediaPortal.Configuration.Sections
       this.mpGradientLabel1.Size = new System.Drawing.Size(472, 8);
       this.mpGradientLabel1.TabIndex = 4;
       this.mpGradientLabel1.TextColor = System.Drawing.SystemColors.ControlText;
-      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+      this.mpGradientLabel1.TextFont = new System.Drawing.Font("Microsoft Sans Serif", 8.25F,
+                                                               System.Drawing.FontStyle.Regular,
+                                                               System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       // 
       // mpGroupBox1
       // 
@@ -179,17 +182,21 @@ namespace MediaPortal.Configuration.Sections
       // 
       // comboBoxSpeakerOutput
       // 
-      this.comboBoxSpeakerOutput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.comboBoxSpeakerOutput.Anchor =
+        ((System.Windows.Forms.AnchorStyles)
+         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+           | System.Windows.Forms.AnchorStyles.Right)));
       this.comboBoxSpeakerOutput.BorderColor = System.Drawing.Color.Empty;
       this.comboBoxSpeakerOutput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.comboBoxSpeakerOutput.Items.AddRange(new object[] {
-            "No channel mixing",
-            "Mix to mono (1 channel)",
-            "Mix to stereo (2 channels)",
-            "Mix to 2.1 (3 channels)",
-            "Mix to quadrophonic (4 channels)",
-            "Mix to 5.1 (6 channels)"});
+      this.comboBoxSpeakerOutput.Items.AddRange(new object[]
+                                                  {
+                                                    "No channel mixing",
+                                                    "Mix to mono (1 channel)",
+                                                    "Mix to stereo (2 channels)",
+                                                    "Mix to 2.1 (3 channels)",
+                                                    "Mix to quadrophonic (4 channels)",
+                                                    "Mix to 5.1 (6 channels)"
+                                                  });
       this.comboBoxSpeakerOutput.Location = new System.Drawing.Point(103, 50);
       this.comboBoxSpeakerOutput.Name = "comboBoxSpeakerOutput";
       this.comboBoxSpeakerOutput.Size = new System.Drawing.Size(320, 21);
@@ -207,7 +214,6 @@ namespace MediaPortal.Configuration.Sections
       this.mpGroupBox1.PerformLayout();
       ((System.ComponentModel.ISupportInitialize)(this.volumeTrackBar)).EndInit();
       this.ResumeLayout(false);
-
     }
 
     #endregion

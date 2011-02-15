@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ namespace MediaPortal.GUI.Library
   public enum ClockHandleType
   {
     None = 0,
-    Hour ,
+    Hour,
     Minute,
     Second
   } ;
@@ -106,8 +106,8 @@ namespace MediaPortal.GUI.Library
     private uint _delay;
 
     // Clock Animation vars
-    private int _savedMinute; 
-    private int _savedHour; 
+    private int _savedMinute;
+    private int _savedHour;
     private ClockHandleType _clockHandle;
 
     private bool _isReversible; // whether the animation is reversible or not
@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.Library
         {
           SetClock();
         }
-        _matrix.SetZRotation(((_endX - _startX)*offset + _startX)*DEGREE_TO_RADIAN, _centerX, _centerY,
+        _matrix.SetZRotation(((_endX - _startX) * offset + _startX) * DEGREE_TO_RADIAN, _centerX, _centerY,
                              GUIGraphicsContext.PixelRatio);
       }
       else if (_effect == EffectType.Zoom)
@@ -747,7 +747,7 @@ namespace MediaPortal.GUI.Library
 
       if (_clockHandle == ClockHandleType.Second)
       {
-        _startX = (float)Math.Ceiling(currentTime.Second/60.0*360.0);
+        _startX = (float)Math.Ceiling(currentTime.Second / 60.0 * 360.0);
         _endX = _startX;
       }
       else if (_clockHandle == ClockHandleType.Minute)

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -46,7 +46,8 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestCustom";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile + ".xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.AreEqual(Path.Combine(InputHandler.CustomizedMappingsDirectory, xmlFile + ".xml"),
+                      inputHandler.GetXmlPath(xmlFile));
     }
 
     [Test]
@@ -114,7 +115,9 @@ namespace MediaPortal.Tests.Core.InputDevices
     {
       string xmlFile = "TestVersion2";
       InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(false, inputHandler.CheckXmlFile(Path.Combine(InputHandler.CustomizedMappingsDirectory, "TestVersion2.xml")));
+      Assert.AreEqual(false,
+                      inputHandler.CheckXmlFile(Path.Combine(InputHandler.CustomizedMappingsDirectory,
+                                                             "TestVersion2.xml")));
     }
 
     [Test]

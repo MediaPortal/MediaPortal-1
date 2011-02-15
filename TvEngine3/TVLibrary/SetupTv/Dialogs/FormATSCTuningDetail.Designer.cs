@@ -201,10 +201,10 @@ namespace SetupTv.Dialogs
       this.comboBoxQAMModulation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.comboBoxQAMModulation.FormattingEnabled = true;
       this.comboBoxQAMModulation.Items.AddRange(new object[] {
-            "ModNotSet",
-            "Mod8Vsb",
-            "Mod64Qam",
-            "Mod256Qam"});
+            "Not Set",
+            "8 VSB",
+            "64 QAM",
+            "256 QAM"});
       this.comboBoxQAMModulation.Location = new System.Drawing.Point(88, 121);
       this.comboBoxQAMModulation.Name = "comboBoxQAMModulation";
       this.comboBoxQAMModulation.Size = new System.Drawing.Size(146, 21);

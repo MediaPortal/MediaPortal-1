@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2010 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -20,11 +20,12 @@
 
 using System;
 using System.Windows.Forms;
-
 #if MediaPortal
 using MediaPortal.ServiceImplementations;
+
 #else
 using TvLibrary.Log;
+
 #endif
 
 namespace OSPrerequisites
@@ -34,9 +35,14 @@ namespace OSPrerequisites
   ///</summary>
   public class OSPrerequisites
   {
-    private const string MSG_NOT_SUPPORTED = "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
-    private const string MSG_NOT_INSTALLABLE = "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
-    private const string MSG_BETA_SERVICE_PACK = "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
+    private const string MSG_NOT_SUPPORTED =
+      "Your platform is not supported by MediaPortal Team because it lacks critical hotfixes! \nPlease check our Wiki's requirements page.";
+
+    private const string MSG_NOT_INSTALLABLE =
+      "Your platform is not supported and cannot be used for MediaPortal/TV-Server! \nPlease check our Wiki's requirements page.";
+
+    private const string MSG_BETA_SERVICE_PACK =
+      "You are running a BETA version of Service Pack {0}.\n Please don't do bug reporting with such configuration.";
 
     ///<summary>
     /// Log and warn user if OS is not supported or is blacklisted
@@ -53,7 +59,8 @@ namespace OSPrerequisites
           Log.Error("*******************************************");
           if (dispMessage)
           {
-            MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
           }
           Environment.Exit(-100);
           break;
@@ -64,7 +71,8 @@ namespace OSPrerequisites
           Log.Info("*******************************************");
           if (dispMessage)
           {
-            res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,
+                                  MessageBoxIcon.Warning);
             if (res == DialogResult.Cancel) Environment.Exit(-200);
           }
           break;
@@ -73,7 +81,8 @@ namespace OSPrerequisites
       }
       if (dispMessage && OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(MSG_BETA_SERVICE_PACK, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+        res = MessageBox.Show(MSG_BETA_SERVICE_PACK, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,
+                              MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel) Environment.Exit(-300);
       }
     }

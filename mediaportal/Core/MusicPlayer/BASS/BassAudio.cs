@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -215,19 +215,33 @@ namespace MediaPortal.Player
     #region Delegates
 
     public delegate void PlaybackStartHandler(object sender, double duration);
+
     public event PlaybackStartHandler PlaybackStart;
+
     public delegate void PlaybackStopHandler(object sender);
+
     public event PlaybackStopHandler PlaybackStop;
+
     public delegate void PlaybackProgressHandler(object sender, double duration, double curPosition);
+
     public delegate void TrackPlaybackCompletedHandler(object sender, string filePath);
+
     public event TrackPlaybackCompletedHandler TrackPlaybackCompleted;
+
     public delegate void CrossFadeHandler(object sender, string filePath);
+
     public event CrossFadeHandler CrossFade;
+
     public delegate void PlaybackStateChangedDelegate(object sender, PlayState oldState, PlayState newState);
+
     public event PlaybackStateChangedDelegate PlaybackStateChanged;
+
     public delegate void InternetStreamSongChangedDelegate(object sender);
+
     public event InternetStreamSongChangedDelegate InternetStreamSongChanged;
+
     private delegate void InitializeControlsDelegate();
+
     private delegate void ShowVisualizationWindowDelegate(bool visible);
 
     private SYNCPROC PlaybackFadeOutProcDelegate = null;
@@ -306,16 +320,16 @@ namespace MediaPortal.Player
     private int _mixer = 0;
     // Mixing Matrix
     private float[,] _MixingMatrix = new float[8,2]
-    {
-      {1, 0}, // left front out = left in
-      {0, 1}, // right front out = right in
-      {1, 0}, // centre out = left in
-      {0, 1}, // LFE out = right in
-      {1, 0}, // left rear/side out = left in
-      {0, 1}, // right rear/side out = right in
-      {1, 0}, // left-rear center out = left in
-      {0, 1} // right-rear center out = right in
-    };
+                                       {
+                                         {1, 0}, // left front out = left in
+                                         {0, 1}, // right front out = right in
+                                         {1, 0}, // centre out = left in
+                                         {0, 1}, // LFE out = right in
+                                         {1, 0}, // left rear/side out = left in
+                                         {0, 1}, // right rear/side out = right in
+                                         {1, 0}, // left-rear center out = left in
+                                         {0, 1} // right-rear center out = right in
+                                       };
 
     private StreamCopy _streamcopy; // For Asio Channels
 
@@ -915,10 +929,10 @@ namespace MediaPortal.Player
           {
             BASSError errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
             Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}",
-                      Enum.GetName(typeof(BASSError), error), Enum.GetName(typeof(BASSError), errorasio));
+                      Enum.GetName(typeof (BASSError), error), Enum.GetName(typeof (BASSError), errorasio));
           }
           else
-            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSError), error));
+            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof (BASSError), error));
         }
       }
       catch (Exception ex)
@@ -1191,7 +1205,7 @@ namespace MediaPortal.Player
             {
               BassVst.BASS_VST_SetParam(vstHandle, paramter.Index, float.Parse(paramter.Value));
             }
-            catch (Exception) { }
+            catch (Exception) {}
           }
         }
         else
@@ -1294,7 +1308,7 @@ namespace MediaPortal.Player
         // Some Winamp dsps might raise an exception when closing
         BassWaDsp.BASS_WADSP_Free();
       }
-      catch (Exception) { }
+      catch (Exception) {}
       if (_useASIO)
       {
         BassAsio.BASS_ASIO_Stop();
@@ -1494,7 +1508,8 @@ namespace MediaPortal.Player
     /// <returns></returns>
     public bool CreateVisualization(VisualizationInfo vizPluginInfo)
     {
-      if (vizPluginInfo == null || vizPluginInfo.VisualizationType == VisualizationInfo.PluginType.None || VizWindow == null)
+      if (vizPluginInfo == null || vizPluginInfo.VisualizationType == VisualizationInfo.PluginType.None ||
+          VizWindow == null)
       {
         return false;
       }
@@ -1563,7 +1578,7 @@ namespace MediaPortal.Player
       if (VizWindow.InvokeRequired)
       {
         ShowVisualizationWindowDelegate d = new ShowVisualizationWindowDelegate(ShowVisualizationWindow);
-        VizWindow.Invoke(d, new object[] { visible });
+        VizWindow.Invoke(d, new object[] {visible});
       }
 
       else
@@ -1826,7 +1841,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterPlaybackFadeOutEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
       }
 
       return syncHandle;
@@ -1850,7 +1865,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
       }
 
       return syncHandle;
@@ -1871,7 +1886,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
       }
 
       return syncHandle;
@@ -1894,7 +1909,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterPlaybackCueTrackEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
       }
 
       return syncHandle;
@@ -2131,7 +2146,7 @@ namespace MediaPortal.Player
       if (syncHandle == 0)
       {
         Log.Debug("BASS: RegisterSlideEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
       }
 
       return;
@@ -2149,6 +2164,7 @@ namespace MediaPortal.Player
       Log.Debug("BASS: Slide of channel ended.");
       StopInternal();
     }
+
     #endregion
 
     #region IPlayer Implementation
@@ -2243,7 +2259,7 @@ namespace MediaPortal.Player
 
             // If audio file is not changed, just set new start/end position and reset pause
             string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
-              System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
+                                   System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
             if (audioFilePath.CompareTo(FilePath) == 0 /* && StreamIsPlaying(stream)*/)
             {
               setCueTrackEndPosition(stream);
@@ -2339,15 +2355,16 @@ namespace MediaPortal.Player
             int tracknum = Convert.ToInt16(filePath.Substring(filePath.IndexOf(".cda") - 2, 2));
             stream = BassCd.BASS_CD_StreamCreate(driveindex, tracknum - 1, streamFlags);
             if (stream == 0)
-              Log.Error("BASS: CD: {0}.", Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+              Log.Error("BASS: CD: {0}.", Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
           }
           else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
                    filePath.ToLower().StartsWith("mms") || filePath.ToLower().StartsWith("rtsp"))
           {
             // We're playing Internet Radio Stream
             _isLastFMRadio = Util.Utils.IsLastFMStream(filePath);
-            if(!_isLastFMRadio)
-            { // We're playing Internet Radio Stream, but not LastFM
+            if (!_isLastFMRadio)
+            {
+              // We're playing Internet Radio Stream, but not LastFM
               _isRadio = true;
             }
 
@@ -2460,7 +2477,7 @@ namespace MediaPortal.Player
                   else
                   {
                     Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll,
-                              Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                              Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
                   }
                 }
               }
@@ -2474,7 +2491,7 @@ namespace MediaPortal.Player
           else
           {
             Log.Error("BASS: Unable to create Stream for {0}.  Reason: {1}.", filePath,
-                      Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                      Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
           }
 
           bool playbackStarted = false;
@@ -2575,7 +2592,7 @@ namespace MediaPortal.Player
           else
           {
             Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath,
-                      Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+                      Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
 
             // Release all of the sync proc handles
             if (StreamEventSyncHandles[CurrentStreamIndex] != null)
@@ -2673,7 +2690,7 @@ namespace MediaPortal.Player
         }
       }
 
-      catch { }
+      catch {}
     }
 
 
@@ -2736,7 +2753,7 @@ namespace MediaPortal.Player
             BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
           }
         }
-        catch (Exception) { }
+        catch (Exception) {}
 
         // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions
         if (_isCDDAFile)
@@ -3164,7 +3181,8 @@ namespace MediaPortal.Player
         }
       }
 
-      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
+      else if (!VizWindow.Visible && !GUIWindowManager.IsRouted &&
+               VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
         NeedUpdate = true;
         SetVideoWindow();
@@ -3237,7 +3255,10 @@ namespace MediaPortal.Player
       {
         VizWindow.Visible = _State == PlayState.Playing;
       }
-      else {VizWindow.Visible = false;}
+      else
+      {
+        VizWindow.Visible = false;
+      }
     }
 
     #endregion
@@ -3293,7 +3314,8 @@ namespace MediaPortal.Player
           _savedPlayBackType = _playBackType;
         }
 
-        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}", Enum.GetName(typeof (PlayBackType), _playBackType),
+        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}",
+                 Enum.GetName(typeof (PlayBackType), _playBackType),
                  Enum.GetName(typeof (PlayBackType), (int)PlayBackType.GAPLESS));
 
         _playBackType = (int)PlayBackType.GAPLESS;
@@ -3308,8 +3330,9 @@ namespace MediaPortal.Player
     {
       if (_savedPlayBackType > -1)
       {
-        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}", Enum.GetName(typeof(PlayBackType), _playBackType),
-                 Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
+        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}",
+                 Enum.GetName(typeof (PlayBackType), _playBackType),
+                 Enum.GetName(typeof (PlayBackType), _savedPlayBackType));
 
         if (_savedPlayBackType == 0)
         {

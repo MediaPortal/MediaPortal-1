@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -28,9 +28,8 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class MusicState : StateBase
   {
-    
     private static PlayMode m_playMode = PlayMode.PLAY_MODE;
-    
+
     static MusicState()
     {
       m_iStartWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
@@ -55,6 +54,5 @@ namespace MediaPortal.GUI.Music
       get { return m_playMode; }
       set { m_playMode = value; }
     }
-    
   }
 }

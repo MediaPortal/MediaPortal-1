@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -52,7 +52,7 @@ namespace TvEngine
     private bool _remoteFileDownloadInProgress = false;
     private DateTime _remoteFileDonwloadInProgressAt = DateTime.MinValue;
     private string _remoteURL = "";
-    private System.Timers.Timer _timer1;    
+    private System.Timers.Timer _timer1;
 
     #endregion
 
@@ -229,7 +229,7 @@ namespace TvEngine
     {
       try
       {
-        Log.Info("xmlTV plugin resumed");        
+        Log.Info("xmlTV plugin resumed");
         RetrieveRemoteTvGuideOnStartUp();
       }
       catch (Exception e)
@@ -607,21 +607,22 @@ namespace TvEngine
       try
       {
         remoteScheduleTime = (DateTime)
-        (System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month, now.Day)).ConvertFrom(
-          remoteScheduleTimeStr));
+                             (System.ComponentModel.TypeDescriptor.GetConverter(new DateTime(now.Year, now.Month,
+                                                                                             now.Day)).ConvertFrom(
+                                                                                               remoteScheduleTimeStr));
       }
       catch (Exception)
       {
         //ignore      
-      }            
-      DateTime lastTransfer = remoteScheduleTime.AddDays(-1);           
+      }
+      DateTime lastTransfer = remoteScheduleTime.AddDays(-1);
       TimeSpan tsSchedule = now - remoteScheduleTime;
       TimeSpan tsLastTransfer = DateTime.Now - lastTransfer;
 
       // if just recently resumed (max 5mins) and scheduled time hasn't exceeded the 5mins mark, then ok.
       //1440 mins = 1 day. - we only want to update once per day.
       if (tsLastTransfer.TotalMinutes > 1440 && tsSchedule.TotalMinutes < 5)
-      {                             
+      {
         string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
         string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
         RetrieveRemoteFile(folder, URL);

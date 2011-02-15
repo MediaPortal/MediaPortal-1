@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -772,7 +772,7 @@ namespace MediaPortal.Util
       bool result = false;
       if (string.IsNullOrEmpty(aInputFilename) || string.IsNullOrEmpty(aThumbTargetPath) || iMaxHeight <= 0 ||
           iMaxHeight <= 0) return false;
-      
+
       Image myImage = null;
 
       try
@@ -794,7 +794,7 @@ namespace MediaPortal.Util
         catch (FileNotFoundException)
         {
           result = false;
-        }       
+        }
 
         result = CreateThumbnail(myImage, aThumbTargetPath, iMaxWidth, iMaxHeight, iRotate, aFastMode);
       }
@@ -810,7 +810,7 @@ namespace MediaPortal.Util
         catch (FileNotFoundException)
         {
           result = false;
-        }   
+        }
         catch (OutOfMemoryException)
         {
           Log.Warn("Picture: Creating thumbnail failed - image format is not supported of {0}", aInputFilename);
@@ -827,7 +827,7 @@ namespace MediaPortal.Util
         if (myImage != null)
           myImage.SafeDispose();
       }
-      
+
       return result;
     }
 
@@ -946,8 +946,8 @@ namespace MediaPortal.Util
 
       if (result && Utils.IsFileExistsCacheEnabled())
       {
-        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);        
-        Utils.DoInsertExistingFileIntoCache(aThumbTargetPath);        
+        Log.Debug("CreateThumbnail : FileExistsInCache updated with new file: {0}", aThumbTargetPath);
+        Utils.DoInsertExistingFileIntoCache(aThumbTargetPath);
       }
       return result;
     }
@@ -960,8 +960,8 @@ namespace MediaPortal.Util
         {
           using (Bitmap bmp = new Bitmap(myImage))
           {
-            bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);  
-          }          
+            bmp.Save(fs, Thumbs.ThumbCodecInfo, Thumbs.ThumbEncoderParams);
+          }
           fs.Flush();
         }
 
@@ -1039,13 +1039,12 @@ namespace MediaPortal.Util
     }
 
 
-
     public static int GetRotateByExif(string imageFile)
     {
       Image image = Image.FromFile(imageFile);
       return GetRotateByExif(image);
     }
-    
+
     public static int GetRotateByExif(Image image)
     {
       PropertyItem[] propItems = image.PropertyItems;
@@ -1056,17 +1055,18 @@ namespace MediaPortal.Util
           int iType = Convert.ToInt16(propItem.Value[0]);
           switch (iType)
           {
-            case 06: return 1; // 90 degree:  112/03/06 00
-            case 03: return 2; // 180 degree: 112/03/03 00
-            case 08: return 3; // 270 degree: 112/03/08 00
+            case 06:
+              return 1; // 90 degree:  112/03/06 00
+            case 03:
+              return 2; // 180 degree: 112/03/03 00
+            case 08:
+              return 3; // 270 degree: 112/03/08 00
           }
           break;
         }
       }
       return 0; // not rotated
     }
-
-
   }
 
 //public class Picture

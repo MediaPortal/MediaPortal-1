@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -254,31 +254,31 @@ namespace MediaPortal.Music.Database
       {
         AlbumInfo album = aAlbumInfo.Clone();
         string strTmp;
-        
+
         strTmp = album.Album;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Album = strTmp;
-        
+
         strTmp = album.Artist;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Artist = strTmp;
-        
+
         strTmp = album.Tones;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Tones = strTmp == "unknown" ? "" : strTmp;
-        
+
         strTmp = album.Styles;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Styles = strTmp == "unknown" ? "" : strTmp;
-        
+
         strTmp = album.Review;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Review = strTmp == "unknown" ? "" : strTmp;
-        
+
         strTmp = album.Image;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Image = strTmp == "unknown" ? "" : strTmp;
-        
+
         strTmp = album.Tracks;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         album.Tracks = strTmp == "unknown" ? "" : strTmp;
@@ -325,11 +325,11 @@ namespace MediaPortal.Music.Database
       {
         ArtistInfo artist = aArtistInfo.Clone();
         string strTmp;
-        
-        strTmp = artist.Artist; 
-        DatabaseUtility.RemoveInvalidChars(ref strTmp); 
+
+        strTmp = artist.Artist;
+        DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Artist = strTmp;
-        
+
         strTmp = artist.Born;
         DatabaseUtility.RemoveInvalidChars(ref strTmp);
         artist.Born = strTmp == "unknown" ? "" : strTmp;
@@ -592,7 +592,8 @@ namespace MediaPortal.Music.Database
         // Wait for the Scan and Update Thread to finish, before continuing
         _resetEvent.WaitOne();
 
-        Log.Info("Musicdatabasereorg: Total Songs: {0}. {1} added / {2} updated / {3} skipped", _processCount, _songsAdded, _songsUpdated, _songsSkipped);
+        Log.Info("Musicdatabasereorg: Total Songs: {0}. {1} added / {2} updated / {3} skipped", _processCount,
+                 _songsAdded, _songsUpdated, _songsSkipped);
 
         DateTime stopTime = DateTime.Now;
         TimeSpan ts = stopTime - startTime;
@@ -605,7 +606,8 @@ namespace MediaPortal.Music.Database
         }
 
         Log.Info(
-          "Musicdatabasereorg: Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}", _processCount, ts.Hours, ts.Minutes, ts.Seconds, trackPerSecSummary);
+          "Musicdatabasereorg: Processed {0} tracks in: {1:d2}:{2:d2}:{3:d2}{4}", _processCount, ts.Hours, ts.Minutes,
+          ts.Seconds, trackPerSecSummary);
 
 
         if (!_singleFolderScan)
@@ -671,7 +673,8 @@ namespace MediaPortal.Music.Database
         Compress();
 
         MyArgs.progress = 100;
-        MyArgs.phase = string.Format("Rescan completed. Total {0} Added {1} / Updated {2} / Skipped {3}", _processCount, _songsAdded, _songsUpdated, _songsSkipped);
+        MyArgs.phase = string.Format("Rescan completed. Total {0} Added {1} / Updated {2} / Skipped {3}", _processCount,
+                                     _songsAdded, _songsUpdated, _songsSkipped);
         OnDatabaseReorgChanged(MyArgs);
 
         Log.Info("Musicdatabasereorg: Finished Reorganisation of the Database");
@@ -750,7 +753,6 @@ namespace MediaPortal.Music.Database
       }
       return 0;
     }
-
 
     #region Delete Song
 
@@ -927,7 +929,7 @@ namespace MediaPortal.Music.Database
             {
               Log.Info("MusicDBReorg: Procesing file {0}", allFilesCount);
             }
-            
+
             MyArgs.progress = 4;
             MyArgs.phase = String.Format("Processing file {0}", allFilesCount);
             OnDatabaseReorgChanged(MyArgs);
@@ -1095,7 +1097,9 @@ namespace MediaPortal.Music.Database
             musicFolders.Add(dir.FullName);
 
             DirectoryInfo[] newDirectories = dir.GetDirectories();
-            FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName, !_excludeHiddenFiles);// dir.GetFiles(searchPattern);
+            FileInformation[] newFiles = MediaPortal.Util.NativeFileSystemOperations.GetFileInformation(dir.FullName,
+                                                                                                        !_excludeHiddenFiles);
+            // dir.GetFiles(searchPattern);
             string[] newFiles2 = MediaPortal.Util.NativeFileSystemOperations.GetFiles(dir.FullName);
             foreach (DirectoryInfo di in newDirectories)
             {
@@ -1143,7 +1147,7 @@ namespace MediaPortal.Music.Database
           return false;
         }
 
-        
+
         // Provide an easy way to exclude problematic or unwanted files from the scan
         //if (_excludeHiddenFiles)
         //{
@@ -1188,7 +1192,6 @@ namespace MediaPortal.Music.Database
           _songsProcessed++;
           fileinCluded = true;
         }
-        
       }
       catch (UnauthorizedAccessException)
       {
@@ -1200,9 +1203,11 @@ namespace MediaPortal.Music.Database
       }
       return fileinCluded;
     }
+
     #endregion
 
     #region Add / Update Song
+
     /// <summary>
     /// Retrieves the Tags from a file and tries to extract coverart
     /// </summary>
@@ -1303,7 +1308,8 @@ namespace MediaPortal.Music.Database
         DateTime dateadded = DateTime.Now;
         switch (_dateAddedValue)
         {
-          case 0:   // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
+          case 0:
+            // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
             break;
 
           case 1:
@@ -1314,8 +1320,8 @@ namespace MediaPortal.Music.Database
             dateadded = File.GetLastWriteTime(strFileName);
             break;
         }
-        
-        DatabaseUtility.RemoveInvalidChars(ref strFileName);        
+
+        DatabaseUtility.RemoveInvalidChars(ref strFileName);
 
         strSQL =
           String.Format(
@@ -1330,7 +1336,7 @@ namespace MediaPortal.Music.Database
                                {15}, {16}, {17}, '{18}', '{19}',  '{20}', '{21}',  '{22}',  {23}, {24}, {25}, {26}, '{27}', '{28}' )",
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
-            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode, 
+            0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
             tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded
             );
         try
@@ -1410,7 +1416,8 @@ namespace MediaPortal.Music.Database
           DateTime dateadded = DateTime.Now;
           switch (_dateAddedValue)
           {
-            case 0:   // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
+            case 0:
+              // Nothing to do here. we have already set the curremt date before the switch. statement left here for completness
               break;
 
             case 1:
@@ -1422,8 +1429,8 @@ namespace MediaPortal.Music.Database
               break;
           }
 
-          DatabaseUtility.RemoveInvalidChars(ref strFileName);          
-          
+          DatabaseUtility.RemoveInvalidChars(ref strFileName);
+
           strSQL =
             String.Format(
               @"update tracks 
@@ -1479,7 +1486,7 @@ namespace MediaPortal.Music.Database
       // Mantis 3078: Filename for Multiple Artists should not contain a semicolon, cause it wouldn't be found later on
       int i = 0;
       string formattedArtist = "";
-      string[] strArtistSplit = tag.Artist.Split(new char[] { ';', '|' });
+      string[] strArtistSplit = tag.Artist.Split(new char[] {';', '|'});
       foreach (string strArtist in strArtistSplit)
       {
         string s = strArtist.Trim();
