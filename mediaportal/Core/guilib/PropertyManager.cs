@@ -34,7 +34,7 @@ namespace MediaPortal.GUI.Library
   public class GUIPropertyManager
   {
     // pattern that matches a property tag, e.g. '#myproperty' or '#some.property_string'
-    private static Regex propertyExpr = new Regex(@"#[a-z0-9\._ ]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static Regex propertyExpr = new Regex(@"#[a-z0-9\._]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
     private static Dictionary<string, string> _properties = new Dictionary<string, string>();
     private static bool _isChanged = false;
 

@@ -2001,18 +2001,14 @@ namespace MediaPortal.GUI.Library
         {
           // No value was provided for the skin setting.  Display a keyboard and ask for a value.
           pos = cmdKeepCase.IndexOf(",,");
-          string label = "";
           string prompt = "";
           if (pos >= 0)
           {
             prompt = cmdKeepCase.Substring(pos + 2, cmdKeepCase.Length - (pos + 3));
-            pos = cmdKeepCase.IndexOf("(");
-            // Combine the prompt with the label (strip any property '#' from the label).
-            label = prompt + cmdKeepCase.Substring(pos + 1, cmdKeepCase.IndexOf(",,") - (pos + 1)).Replace("#", "");
           }
 
           string userInput = "";
-          if (GetUserInputString(ref userInput, label))
+          if (GetUserInputString(ref userInput, prompt))
           {
             condition = TranslateSingleString(cmdKeepCase);
             SetString(condition, userInput, dwContextWindow);
