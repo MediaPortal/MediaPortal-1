@@ -71,6 +71,7 @@ namespace TvDatabase
     private string _epgLanguages;
     private readonly string _grabberName;
     private bool _storeOnlySelectedChannels;
+    private bool _storeOnlySelectedChannelsRadio;
     private readonly bool _checkForLastUpdate;
     private int _epgReGrabAfter = 240; //4 hours
     private bool _alwaysFillHoles;
@@ -105,6 +106,8 @@ namespace TvDatabase
       _epgLanguages = _layer.GetSetting("epgLanguages").Value;
       Setting setting = _layer.GetSetting("epgStoreOnlySelected");
       _storeOnlySelectedChannels = (setting.Value == "yes");
+      Setting settingRadio = _layer.GetSetting("epgRadioStoreOnlySelected");
+      _storeOnlySelectedChannelsRadio = (settingRadio.Value == "yes");
       Setting s = _layer.GetSetting("timeoutEPGRefresh", "240");
       if (Int32.TryParse(s.Value, out _epgReGrabAfter) == false)
       {
@@ -273,7 +276,7 @@ namespace TvDatabase
         return null;
       }
       //should we store epg for this channel?
-      if (_storeOnlySelectedChannels)
+      if ((dbChannel.IsRadio && _storeOnlySelectedChannelsRadio) || (!dbChannel.IsRadio && _storeOnlySelectedChannels))
       {
         if (!dbChannel.GrabEpg)
         {
