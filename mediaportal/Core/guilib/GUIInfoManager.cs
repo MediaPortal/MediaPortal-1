@@ -2005,6 +2005,7 @@ namespace MediaPortal.GUI.Library
           if (pos >= 0)
           {
             prompt = cmdKeepCase.Substring(pos + 2, cmdKeepCase.Length - (pos + 3));
+            GUILocalizeStrings.LocalizeLabel(ref prompt);
           }
 
           string userInput = "";
