@@ -128,6 +128,7 @@ namespace SetupTv.Sections
       this.listView1.TabIndex = 3;
       this.listView1.UseCompatibleStateImageBehavior = false;
       this.listView1.View = System.Windows.Forms.View.Details;
+      this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
       // 
       // columnHeader5
       // 
@@ -198,21 +199,21 @@ namespace SetupTv.Sections
     #endregion
 
     private System.Windows.Forms.ImageList imageList1;
-      private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-      private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-      private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-      private System.Windows.Forms.TabControl tabControl1;
-      private System.Windows.Forms.TabPage tabPage1;
-      private System.Windows.Forms.ListView listView1;
-      private System.Windows.Forms.ColumnHeader columnHeader5;
-      private System.Windows.Forms.ColumnHeader columnHeader1;
-      private System.Windows.Forms.ColumnHeader columnHeader4;
-      private System.Windows.Forms.ColumnHeader columnHeader2;
-      private System.Windows.Forms.ColumnHeader columnHeader3;
-      private System.Windows.Forms.ColumnHeader PreRecord;
-		private System.Windows.Forms.ColumnHeader PostRecord;
-      private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+    private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+    private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabPage tabPage1;
+    private System.Windows.Forms.ListView listView1;
+    private System.Windows.Forms.ColumnHeader columnHeader5;
+    private System.Windows.Forms.ColumnHeader columnHeader1;
+    private System.Windows.Forms.ColumnHeader columnHeader4;
+    private System.Windows.Forms.ColumnHeader columnHeader2;
+    private System.Windows.Forms.ColumnHeader columnHeader3;
+    private System.Windows.Forms.ColumnHeader PreRecord;
+    private System.Windows.Forms.ColumnHeader PostRecord;
+    private MediaPortal.UserInterface.Controls.MPLabel mpLabelChannelCount;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonDel;
-      private System.Windows.Forms.ColumnHeader EpisodesToKeep;
+    private System.Windows.Forms.ColumnHeader EpisodesToKeep;
   }
 }
