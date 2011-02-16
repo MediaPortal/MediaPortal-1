@@ -60,21 +60,25 @@ namespace SetupTv.Sections
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.tabPageSoftwareEncoder = new System.Windows.Forms.TabPage();
+      this.numericUpDownReuseLimit = new System.Windows.Forms.NumericUpDown();
+      this.label2 = new System.Windows.Forms.Label();
       this.labelSoftwareEncoder = new System.Windows.Forms.Label();
       this.groupBoxVideo = new System.Windows.Forms.GroupBox();
       this.buttonVideoDown = new System.Windows.Forms.Button();
       this.buttonVideoUp = new System.Windows.Forms.Button();
-      this.mpListViewVideo = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeaderVideoInstalled = new System.Windows.Forms.ColumnHeader();
-      this.columnHeaderVideoPriority = new System.Windows.Forms.ColumnHeader();
-      this.columnHeaderVideoName = new System.Windows.Forms.ColumnHeader();
+      this.mpListViewVideo = new System.Windows.Forms.DataGridView();
+      this.columnHeaderVideoInstalled = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderVideoPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderVideoName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderVideoReusable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.groupBoxAudio = new System.Windows.Forms.GroupBox();
       this.buttonAudioDown = new System.Windows.Forms.Button();
       this.buttonAudioUp = new System.Windows.Forms.Button();
-      this.mpListViewAudio = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeaderAudioInstalled = new System.Windows.Forms.ColumnHeader();
-      this.columnHeaderAudioPriority = new System.Windows.Forms.ColumnHeader();
-      this.columnHeaderAudioName = new System.Windows.Forms.ColumnHeader();
+      this.mpListViewAudio = new System.Windows.Forms.DataGridView();
+      this.columnHeaderAudioInstalled = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderAudioPriority = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderAudioName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+      this.columnHeaderAudioReusable = new System.Windows.Forms.DataGridViewCheckBoxColumn();
       this.tabControl1.SuspendLayout();
       this.tabPageApplication.SuspendLayout();
       this.groupBox8.SuspendLayout();
@@ -90,8 +94,11 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPAT)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).BeginInit();
       this.tabPageSoftwareEncoder.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReuseLimit)).BeginInit();
       this.groupBoxVideo.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.mpListViewVideo)).BeginInit();
       this.groupBoxAudio.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.mpListViewAudio)).BeginInit();
       this.SuspendLayout();
       // 
       // tabControl1
@@ -102,6 +109,7 @@ namespace SetupTv.Sections
       this.tabControl1.Controls.Add(this.tabPageApplication);
       this.tabControl1.Controls.Add(this.tabPageScan);
       this.tabControl1.Controls.Add(this.tabPageSoftwareEncoder);
+      this.tabControl1.ItemSize = new System.Drawing.Size(64, 18);
       this.tabControl1.Location = new System.Drawing.Point(0, 0);
       this.tabControl1.Name = "tabControl1";
       this.tabControl1.SelectedIndex = 0;
@@ -146,41 +154,6 @@ namespace SetupTv.Sections
       // 
       this.mpComboBoxPrio.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.mpComboBoxPrio.FormattingEnabled = true;
-      this.mpComboBoxPrio.Items.AddRange(new object[] {
-            "Not Defined ",
-            "16 QAM ",
-            "32 QAM",
-            "64 QAM",
-            "80 QAM",
-            "96 QAM",
-            "112 QAM",
-            "128 QAM",
-            "160 QAM",
-            "192 QAM",
-            "224 QAM",
-            "256 QAM",
-            "320 QAM",
-            "384 QAM",
-            "448 QAM",
-            "512 QAM",
-            "640 QAM",
-            "768 QAM",
-            "896 QAM",
-            "1024 QAM",
-            "Qpsk",
-            "Bpsk",
-            "Oqpsk ",
-            "8Vsb ",
-            "16Vsb ",
-            "AnalogAmplitude ",
-            "AnalogFrequency ",
-            "8psk ",
-            "Rf ",
-            "16Apsk ",
-            "32Apsk",
-            "Qpsk2 ",
-            "8psk2 ",
-            "DirectTV  "});
       this.mpComboBoxPrio.Location = new System.Drawing.Point(125, 19);
       this.mpComboBoxPrio.Name = "mpComboBoxPrio";
       this.mpComboBoxPrio.Size = new System.Drawing.Size(179, 21);
@@ -209,7 +182,7 @@ namespace SetupTv.Sections
       this.label45.Name = "label45";
       this.label45.Size = new System.Drawing.Size(452, 35);
       this.label45.TabIndex = 80;
-      this.label45.Text = "Some cards (i.e. Hauppauge Nova-T 500) take a long time to initialize after stand" +
+      this.label45.Text = "Some cards (e.g. Hauppauge Nova-T 500) take a long time to initialize after stand" +
           "by. Therefore use this option below to force a delay should it be required.";
       // 
       // label44
@@ -512,6 +485,8 @@ namespace SetupTv.Sections
       // 
       // tabPageSoftwareEncoder
       // 
+      this.tabPageSoftwareEncoder.Controls.Add(this.numericUpDownReuseLimit);
+      this.tabPageSoftwareEncoder.Controls.Add(this.label2);
       this.tabPageSoftwareEncoder.Controls.Add(this.labelSoftwareEncoder);
       this.tabPageSoftwareEncoder.Controls.Add(this.groupBoxVideo);
       this.tabPageSoftwareEncoder.Controls.Add(this.groupBoxAudio);
@@ -523,15 +498,31 @@ namespace SetupTv.Sections
       this.tabPageSoftwareEncoder.Text = "Software Encoders";
       this.tabPageSoftwareEncoder.UseVisualStyleBackColor = true;
       // 
+      // numericUpDownReuseLimit
+      // 
+      this.numericUpDownReuseLimit.Location = new System.Drawing.Point(382, 375);
+      this.numericUpDownReuseLimit.Name = "numericUpDownReuseLimit";
+      this.numericUpDownReuseLimit.Size = new System.Drawing.Size(59, 20);
+      this.numericUpDownReuseLimit.TabIndex = 7;
+      // 
+      // label2
+      // 
+      this.label2.AutoSize = true;
+      this.label2.Location = new System.Drawing.Point(19, 377);
+      this.label2.Name = "label2";
+      this.label2.Size = new System.Drawing.Size(357, 13);
+      this.label2.TabIndex = 6;
+      this.label2.Text = "Number of tuners each reusable encoder can be used with (0 = unlimited)";
+      // 
       // labelSoftwareEncoder
       // 
       this.labelSoftwareEncoder.AutoSize = true;
       this.labelSoftwareEncoder.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
       this.labelSoftwareEncoder.Location = new System.Drawing.Point(17, 14);
       this.labelSoftwareEncoder.Name = "labelSoftwareEncoder";
-      this.labelSoftwareEncoder.Size = new System.Drawing.Size(412, 13);
+      this.labelSoftwareEncoder.Size = new System.Drawing.Size(418, 13);
       this.labelSoftwareEncoder.TabIndex = 5;
-      this.labelSoftwareEncoder.Text = "This section is only for analog cards that don\'t have  hardware encoder";
+      this.labelSoftwareEncoder.Text = "This section is only for analog cards that don\'t have hardware encoders.";
       // 
       // groupBoxVideo
       // 
@@ -540,7 +531,7 @@ namespace SetupTv.Sections
       this.groupBoxVideo.Controls.Add(this.mpListViewVideo);
       this.groupBoxVideo.Location = new System.Drawing.Point(8, 31);
       this.groupBoxVideo.Name = "groupBoxVideo";
-      this.groupBoxVideo.Size = new System.Drawing.Size(449, 176);
+      this.groupBoxVideo.Size = new System.Drawing.Size(449, 162);
       this.groupBoxVideo.TabIndex = 2;
       this.groupBoxVideo.TabStop = false;
       this.groupBoxVideo.Text = "Video Encoders";
@@ -548,7 +539,7 @@ namespace SetupTv.Sections
       // buttonVideoDown
       // 
       this.buttonVideoDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonVideoDown.Location = new System.Drawing.Point(368, 145);
+      this.buttonVideoDown.Location = new System.Drawing.Point(368, 130);
       this.buttonVideoDown.Name = "buttonVideoDown";
       this.buttonVideoDown.Size = new System.Drawing.Size(75, 23);
       this.buttonVideoDown.TabIndex = 3;
@@ -559,7 +550,7 @@ namespace SetupTv.Sections
       // buttonVideoUp
       // 
       this.buttonVideoUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonVideoUp.Location = new System.Drawing.Point(287, 144);
+      this.buttonVideoUp.Location = new System.Drawing.Point(287, 130);
       this.buttonVideoUp.Name = "buttonVideoUp";
       this.buttonVideoUp.Size = new System.Drawing.Size(75, 23);
       this.buttonVideoUp.TabIndex = 2;
@@ -570,45 +561,69 @@ namespace SetupTv.Sections
       // mpListViewVideo
       // 
       this.mpListViewVideo.AllowDrop = true;
-      this.mpListViewVideo.AllowRowReorder = true;
+      this.mpListViewVideo.AllowUserToAddRows = false;
+      this.mpListViewVideo.AllowUserToDeleteRows = false;
+      this.mpListViewVideo.AllowUserToResizeRows = false;
       this.mpListViewVideo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListViewVideo.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.mpListViewVideo.BackgroundColor = System.Drawing.SystemColors.Window;
+      this.mpListViewVideo.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+      this.mpListViewVideo.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnHeaderVideoInstalled,
             this.columnHeaderVideoPriority,
-            this.columnHeaderVideoName});
-      this.mpListViewVideo.FullRowSelect = true;
-      this.mpListViewVideo.IsChannelListView = false;
+            this.columnHeaderVideoName,
+            this.columnHeaderVideoReusable});
       this.mpListViewVideo.Location = new System.Drawing.Point(6, 19);
       this.mpListViewVideo.Name = "mpListViewVideo";
-      this.mpListViewVideo.Size = new System.Drawing.Size(437, 119);
+      this.mpListViewVideo.RowHeadersVisible = false;
+      this.mpListViewVideo.RowTemplate.Height = 18;
+      this.mpListViewVideo.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this.mpListViewVideo.Size = new System.Drawing.Size(437, 105);
       this.mpListViewVideo.TabIndex = 1;
-      this.mpListViewVideo.UseCompatibleStateImageBehavior = false;
-      this.mpListViewVideo.View = System.Windows.Forms.View.Details;
       // 
       // columnHeaderVideoInstalled
       // 
-      this.columnHeaderVideoInstalled.Text = "Installed";
-      this.columnHeaderVideoInstalled.Width = 110;
+      this.columnHeaderVideoInstalled.DataPropertyName = "Installed";
+      this.columnHeaderVideoInstalled.HeaderText = "Installed";
+      this.columnHeaderVideoInstalled.Name = "columnHeaderVideoInstalled";
+      this.columnHeaderVideoInstalled.ReadOnly = true;
+      this.columnHeaderVideoInstalled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderVideoInstalled.Width = 60;
       // 
       // columnHeaderVideoPriority
       // 
-      this.columnHeaderVideoPriority.Text = "Priority";
+      this.columnHeaderVideoPriority.DataPropertyName = "Priority";
+      this.columnHeaderVideoPriority.HeaderText = "Priority";
+      this.columnHeaderVideoPriority.Name = "columnHeaderVideoPriority";
+      this.columnHeaderVideoPriority.ReadOnly = true;
+      this.columnHeaderVideoPriority.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderVideoPriority.Width = 50;
       // 
       // columnHeaderVideoName
       // 
-      this.columnHeaderVideoName.Text = "Name";
-      this.columnHeaderVideoName.Width = 230;
+      this.columnHeaderVideoName.DataPropertyName = "Name";
+      this.columnHeaderVideoName.HeaderText = "Name";
+      this.columnHeaderVideoName.Name = "columnHeaderVideoName";
+      this.columnHeaderVideoName.ReadOnly = true;
+      this.columnHeaderVideoName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderVideoName.Width = 253;
+      // 
+      // columnHeaderVideoReusable
+      // 
+      this.columnHeaderVideoReusable.DataPropertyName = "Reusable";
+      this.columnHeaderVideoReusable.HeaderText = "Reuse";
+      this.columnHeaderVideoReusable.Name = "columnHeaderVideoReusable";
+      this.columnHeaderVideoReusable.Width = 55;
       // 
       // groupBoxAudio
       // 
       this.groupBoxAudio.Controls.Add(this.buttonAudioDown);
       this.groupBoxAudio.Controls.Add(this.buttonAudioUp);
       this.groupBoxAudio.Controls.Add(this.mpListViewAudio);
-      this.groupBoxAudio.Location = new System.Drawing.Point(8, 213);
+      this.groupBoxAudio.Location = new System.Drawing.Point(8, 207);
       this.groupBoxAudio.Name = "groupBoxAudio";
-      this.groupBoxAudio.Size = new System.Drawing.Size(449, 187);
+      this.groupBoxAudio.Size = new System.Drawing.Size(449, 162);
       this.groupBoxAudio.TabIndex = 4;
       this.groupBoxAudio.TabStop = false;
       this.groupBoxAudio.Text = "Audio Encoders";
@@ -616,7 +631,7 @@ namespace SetupTv.Sections
       // buttonAudioDown
       // 
       this.buttonAudioDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAudioDown.Location = new System.Drawing.Point(366, 155);
+      this.buttonAudioDown.Location = new System.Drawing.Point(368, 130);
       this.buttonAudioDown.Name = "buttonAudioDown";
       this.buttonAudioDown.Size = new System.Drawing.Size(75, 23);
       this.buttonAudioDown.TabIndex = 3;
@@ -627,7 +642,7 @@ namespace SetupTv.Sections
       // buttonAudioUp
       // 
       this.buttonAudioUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.buttonAudioUp.Location = new System.Drawing.Point(287, 155);
+      this.buttonAudioUp.Location = new System.Drawing.Point(287, 130);
       this.buttonAudioUp.Name = "buttonAudioUp";
       this.buttonAudioUp.Size = new System.Drawing.Size(75, 23);
       this.buttonAudioUp.TabIndex = 2;
@@ -638,36 +653,60 @@ namespace SetupTv.Sections
       // mpListViewAudio
       // 
       this.mpListViewAudio.AllowDrop = true;
-      this.mpListViewAudio.AllowRowReorder = true;
+      this.mpListViewAudio.AllowUserToAddRows = false;
+      this.mpListViewAudio.AllowUserToDeleteRows = false;
+      this.mpListViewAudio.AllowUserToResizeRows = false;
       this.mpListViewAudio.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpListViewAudio.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+      this.mpListViewAudio.BackgroundColor = System.Drawing.SystemColors.Window;
+      this.mpListViewAudio.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+      this.mpListViewAudio.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.columnHeaderAudioInstalled,
             this.columnHeaderAudioPriority,
-            this.columnHeaderAudioName});
-      this.mpListViewAudio.FullRowSelect = true;
-      this.mpListViewAudio.IsChannelListView = false;
+            this.columnHeaderAudioName,
+            this.columnHeaderAudioReusable});
       this.mpListViewAudio.Location = new System.Drawing.Point(6, 19);
       this.mpListViewAudio.Name = "mpListViewAudio";
-      this.mpListViewAudio.Size = new System.Drawing.Size(437, 130);
+      this.mpListViewAudio.RowHeadersVisible = false;
+      this.mpListViewAudio.RowTemplate.Height = 18;
+      this.mpListViewAudio.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+      this.mpListViewAudio.Size = new System.Drawing.Size(437, 105);
       this.mpListViewAudio.TabIndex = 1;
-      this.mpListViewAudio.UseCompatibleStateImageBehavior = false;
-      this.mpListViewAudio.View = System.Windows.Forms.View.Details;
       // 
       // columnHeaderAudioInstalled
       // 
-      this.columnHeaderAudioInstalled.Text = "Installed";
-      this.columnHeaderAudioInstalled.Width = 110;
+      this.columnHeaderAudioInstalled.DataPropertyName = "Installed";
+      this.columnHeaderAudioInstalled.HeaderText = "Installed";
+      this.columnHeaderAudioInstalled.Name = "columnHeaderAudioInstalled";
+      this.columnHeaderAudioInstalled.ReadOnly = true;
+      this.columnHeaderAudioInstalled.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderAudioInstalled.Width = 60;
       // 
       // columnHeaderAudioPriority
       // 
-      this.columnHeaderAudioPriority.Text = "Priority";
+      this.columnHeaderAudioPriority.DataPropertyName = "Priority";
+      this.columnHeaderAudioPriority.HeaderText = "Priority";
+      this.columnHeaderAudioPriority.Name = "columnHeaderAudioPriority";
+      this.columnHeaderAudioPriority.ReadOnly = true;
+      this.columnHeaderAudioPriority.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderAudioPriority.Width = 50;
       // 
       // columnHeaderAudioName
       // 
-      this.columnHeaderAudioName.Text = "Name";
-      this.columnHeaderAudioName.Width = 230;
+      this.columnHeaderAudioName.DataPropertyName = "Name";
+      this.columnHeaderAudioName.HeaderText = "Name";
+      this.columnHeaderAudioName.Name = "columnHeaderAudioName";
+      this.columnHeaderAudioName.ReadOnly = true;
+      this.columnHeaderAudioName.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+      this.columnHeaderAudioName.Width = 253;
+      // 
+      // columnHeaderAudioReusable
+      // 
+      this.columnHeaderAudioReusable.DataPropertyName = "Reusable";
+      this.columnHeaderAudioReusable.HeaderText = "Reuse";
+      this.columnHeaderAudioReusable.Name = "columnHeaderAudioReusable";
+      this.columnHeaderAudioReusable.Width = 55;
       // 
       // ScanSettings
       // 
@@ -697,8 +736,11 @@ namespace SetupTv.Sections
       ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTune)).EndInit();
       this.tabPageSoftwareEncoder.ResumeLayout(false);
       this.tabPageSoftwareEncoder.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.numericUpDownReuseLimit)).EndInit();
       this.groupBoxVideo.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.mpListViewVideo)).EndInit();
       this.groupBoxAudio.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.mpListViewAudio)).EndInit();
       this.ResumeLayout(false);
 
     }
@@ -735,23 +777,26 @@ namespace SetupTv.Sections
     private System.Windows.Forms.GroupBox groupBox8;
     private System.Windows.Forms.TabPage tabPageSoftwareEncoder;
     private System.Windows.Forms.GroupBox groupBoxVideo;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewVideo;
-    private System.Windows.Forms.ColumnHeader columnHeaderVideoInstalled;
-    private System.Windows.Forms.ColumnHeader columnHeaderVideoPriority;
-    private System.Windows.Forms.ColumnHeader columnHeaderVideoName;
+    private System.Windows.Forms.DataGridView mpListViewVideo;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderVideoInstalled;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderVideoPriority;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderVideoName;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn columnHeaderVideoReusable;
     private System.Windows.Forms.Button buttonVideoDown;
     private System.Windows.Forms.Button buttonVideoUp;
     private System.Windows.Forms.Label labelSoftwareEncoder;
     private System.Windows.Forms.GroupBox groupBoxAudio;
+    private System.Windows.Forms.DataGridView mpListViewAudio;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderAudioInstalled;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderAudioPriority;
+    private System.Windows.Forms.DataGridViewTextBoxColumn columnHeaderAudioName;
+    private System.Windows.Forms.DataGridViewCheckBoxColumn columnHeaderAudioReusable;
     private System.Windows.Forms.Button buttonAudioDown;
     private System.Windows.Forms.Button buttonAudioUp;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewAudio;
-    private System.Windows.Forms.ColumnHeader columnHeaderAudioInstalled;
-    private System.Windows.Forms.ColumnHeader columnHeaderAudioPriority;
-    private System.Windows.Forms.ColumnHeader columnHeaderAudioName;
     private System.Windows.Forms.NumericUpDown numericUpDownAnalog;
     private System.Windows.Forms.Label label21;
     private System.Windows.Forms.Label label24;
-
+    private System.Windows.Forms.NumericUpDown numericUpDownReuseLimit;
+    private System.Windows.Forms.Label label2;
   }
 }

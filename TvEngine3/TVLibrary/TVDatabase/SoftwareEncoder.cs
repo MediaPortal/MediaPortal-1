@@ -38,6 +38,7 @@ namespace TvDatabase
     [TableColumn("priority", NotNull = true)] private int priority;
     [TableColumn("name", NotNull = true)] private string name;
     [TableColumn("type", NotNull = true)] private int type;
+    [TableColumn("reusable", NotNull = true)] private bool reusable;
 
     #endregion
 
@@ -46,24 +47,26 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public SoftwareEncoder(int priority, string name, int type)
+    public SoftwareEncoder(int priority, string name, int type, bool reusable)
     {
       isChanged = true;
       this.priority = priority;
       this.name = name;
       this.type = type;
+      this.reusable = reusable;
     }
 
     /// <summary> 
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public SoftwareEncoder(int idEncoder, int priority, string name, int type)
+    public SoftwareEncoder(int idEncoder, int priority, string name, int type, bool reusable)
     {
       this.idEncoder = idEncoder;
       this.priority = priority;
       this.name = name;
       this.type = type;
+      this.reusable = reusable;
     }
 
     #endregion
@@ -122,6 +125,19 @@ namespace TvDatabase
       {
         isChanged |= type != value;
         type = value;
+      }
+    }
+
+    /// <summary>
+    /// Property relating to database column reusable
+    /// </summary>
+    public bool Reusable
+    {
+      get { return reusable; }
+      set
+      {
+        isChanged |= reusable != value;
+        reusable = value;
       }
     }
 

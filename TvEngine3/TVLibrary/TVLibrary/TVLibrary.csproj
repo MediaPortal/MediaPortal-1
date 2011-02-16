@@ -148,6 +148,7 @@
     <Compile Include="Implementations\DVB\Graphs\Iso6937ToUnicode.cs" />
     <Compile Include="Implementations\DVB\Structures\PidInfo.cs" />
     <Compile Include="Implementations\DVB\Structures\TSHelperTools.cs" />
+    <Compile Include="Implementations\Helper\EncodersInUse.cs" />
     <Compile Include="Implementations\Helper\FileAccess.cs" />
     <Compile Include="Implementations\Helper\FilterGraphTools.cs" />
     <Compile Include="Implementations\Helper\GraphState.cs" />

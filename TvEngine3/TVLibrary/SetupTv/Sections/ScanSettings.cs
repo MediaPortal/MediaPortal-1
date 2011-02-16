@@ -21,6 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using DirectShowLib;
 using TvDatabase;
@@ -30,14 +32,70 @@ namespace SetupTv.Sections
 {
   public partial class ScanSettings : SectionSettings
   {
-    private static readonly Guid AudioCompressorCategory = new Guid(0x33d9a761, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0,
-                                                                    0xc9, 0x11, 0xce, 0x86);
+    #region private classes
 
-    private static readonly Guid VideoCompressorCategory = new Guid(0x33d9a760, 0x90c8, 0x11d0, 0xbd, 0x43, 0x0, 0xa0,
-                                                                    0xc9, 0x11, 0xce, 0x86);
+    private class DisplaySoftwareEncoder
+    {
+      private String _installed;
+      private SoftwareEncoder _encoder;
 
-    private static readonly Guid LegacyAmFilterCategory = new Guid(0x083863F1, 0x70DE, 0x11d0, 0xBD, 0x40, 0x00, 0xA0,
-                                                                   0xC9, 0x11, 0xCE, 0x86);
+      public event PropertyChangedEventHandler _propertyChanged;
+
+      public DisplaySoftwareEncoder(SoftwareEncoder encoder)
+      {
+        _installed = "No";
+        _encoder = encoder;
+      }
+
+      public String Installed
+      {
+        get { return _installed; }
+        set { _installed = value; }
+      }
+
+      public String Priority
+      {
+        get { return _encoder.Priority.ToString(); }
+        set
+        {
+          _encoder.Priority = Convert.ToInt32(value);
+          NotifyPropertyChanged("Priority");
+        }
+      }
+
+      public String Name
+      {
+        get { return _encoder.Name; }
+      }
+
+      public bool Reusable
+      {
+        get { return _encoder.Reusable; }
+        set
+        {
+          _encoder.Reusable = value;
+          NotifyPropertyChanged("Reusable");
+        }
+      }
+
+      private void NotifyPropertyChanged(String name)
+      {
+        if (_propertyChanged != null)
+        {
+          _propertyChanged(this, new PropertyChangedEventArgs(name));
+        }
+      }
+
+      public void Persist()
+      {
+        _encoder.Persist();
+      }
+    }
+
+    #endregion
+
+    private BindingList<DisplaySoftwareEncoder> _bindingVideoEncoders;
+    private BindingList<DisplaySoftwareEncoder> _bindingAudioEncoders;
 
     public ScanSettings()
       : this("General") {}
@@ -81,7 +139,9 @@ namespace SetupTv.Sections
       {
         mpComboBoxPrio.SelectedIndex = 3; //fall back to default which is normal=3
       }
+
       BuildLists(layer);
+      numericUpDownReuseLimit.Value = Convert.ToDecimal(layer.GetSetting("softwareEncoderReuseLimit", "0").Value);
     }
 
     public override void OnSectionDeActivated()
@@ -123,6 +183,20 @@ namespace SetupTv.Sections
       s = layer.GetSetting("delayCardDetect", "0");
       s.Value = delayDetectUpDown.Value.ToString();
       s.Persist();
+
+      s = layer.GetSetting("softwareEncoderReuseLimit", "0");
+      s.Value = numericUpDownReuseLimit.Value.ToString();
+      s.Persist();
+
+      foreach (DisplaySoftwareEncoder encoder in _bindingVideoEncoders)
+      {
+        encoder.Persist();
+      }
+
+      foreach (DisplaySoftwareEncoder encoder in _bindingAudioEncoders)
+      {
+        encoder.Persist();
+      }
     }
 
     private void mpComboBoxPrio_SelectedIndexChanged(object sender, EventArgs e)
@@ -175,23 +249,23 @@ namespace SetupTv.Sections
 
     private void BuildLists(TvBusinessLayer layer)
     {
-      mpListViewVideo.Items.Clear();
+      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(FilterCategory.VideoCompressorCategory);
+      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(FilterCategory.AudioCompressorCategory);
+      DsDevice[] devices3 = DsDevice.GetDevicesOfCat(FilterCategory.LegacyAmFilterCategory);
 
-      DsDevice[] devices1 = DsDevice.GetDevicesOfCat(VideoCompressorCategory);
-      DsDevice[] devices2 = DsDevice.GetDevicesOfCat(AudioCompressorCategory);
-      DsDevice[] devices3 = DsDevice.GetDevicesOfCat(LegacyAmFilterCategory);
       bool found;
       IList<SoftwareEncoder> encoders = layer.GetSofwareEncodersVideo();
+      _bindingVideoEncoders = new BindingList<DisplaySoftwareEncoder>();
       foreach (SoftwareEncoder encoder in encoders)
       {
         found = false;
-        ListViewItem item = mpListViewVideo.Items.Add("", 0);
+        DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
         for (int i = 0; i < devices1.Length; i++)
         {
           if (devices1[i].Name == encoder.Name)
           {
             found = true;
-            item.Text = "Yes";
+            displayEncoder.Installed = "Yes";
             break;
           }
         }
@@ -202,32 +276,27 @@ namespace SetupTv.Sections
             if (devices3[i].Name == encoder.Name)
             {
               found = true;
-              item.Text = "Yes";
+              displayEncoder.Installed = "Yes";
               break;
             }
           }
         }
-        if (!found)
-        {
-          item.Text = "No";
-        }
-        item.SubItems.Add(encoder.Priority.ToString());
-        item.SubItems.Add(encoder.Name);
-        item.Tag = encoder;
+        _bindingVideoEncoders.Add(displayEncoder);
       }
+      mpListViewVideo.DataSource = _bindingVideoEncoders;
 
-      mpListViewAudio.Items.Clear();
       encoders = layer.GetSofwareEncodersAudio();
+      _bindingAudioEncoders = new BindingList<DisplaySoftwareEncoder>();
       foreach (SoftwareEncoder encoder in encoders)
       {
         found = false;
-        ListViewItem item = mpListViewAudio.Items.Add("", 0);
+        DisplaySoftwareEncoder displayEncoder = new DisplaySoftwareEncoder(encoder);
         for (int i = 0; i < devices2.Length; i++)
         {
           if (devices2[i].Name == encoder.Name)
           {
             found = true;
-            item.Text = "Yes";
+            displayEncoder.Installed = "Yes";
             break;
           }
         }
@@ -238,108 +307,114 @@ namespace SetupTv.Sections
             if (devices3[i].Name == encoder.Name)
             {
               found = true;
-              item.Text = "Yes";
+              displayEncoder.Installed = "Yes";
               break;
             }
           }
         }
-        if (!found)
+        _bindingAudioEncoders.Add(displayEncoder);
+      }
+      mpListViewAudio.DataSource = _bindingAudioEncoders;
+    }
+
+    private void MoveEncodersUp(DataGridView grid, BindingList<DisplaySoftwareEncoder> list)
+    {
+      DataGridViewSelectedRowCollection srows = grid.SelectedRows;
+      List<int> indices = new List<int>();
+      if (srows.Count == 0)
+      {
+        return;
+      }
+
+      // Juggle rows...
+      for (int i = 0; i < srows.Count; i++)
+      {
+        int index = srows[i].Index;
+        indices.Add(index);
+        if (index > 0)
         {
-          item.Text = "No";
+          list[index].Priority = (Convert.ToInt32(list[index].Priority) - 1).ToString();
+          list[index - 1].Priority = (Convert.ToInt32(list[index - 1].Priority) + 1).ToString();
+          DisplaySoftwareEncoder item = list[index];
+          list.RemoveAt(index);
+          list.Insert(index - 1, item);
         }
-        item.SubItems.Add(encoder.Priority.ToString());
-        item.SubItems.Add(encoder.Name);
-        item.Tag = encoder;
+      }
+
+      // Maintain selection...
+      grid.ClearSelection();
+      for (int i = 0; i < indices.Count; i++)
+      {
+        int index = indices[i];
+        if (index == 0)
+        {
+          grid.Rows[index].Selected = true;
+        }
+        else
+        {
+          grid.Rows[index - 1].Selected = true;
+        }
+      }
+    }
+
+    private void MoveEncodersDown(DataGridView grid, BindingList<DisplaySoftwareEncoder> list)
+    {
+      DataGridViewSelectedRowCollection srows = grid.SelectedRows;
+      List<int> indices = new List<int>();
+      if (srows.Count == 0)
+      {
+        return;
+      }
+
+      // Juggle rows...
+      for (int i = srows.Count - 1; i >= 0; i--)
+      {
+        int index = srows[i].Index;
+        indices.Add(index);
+        if (index < grid.Rows.Count - 1)
+        {
+          list[index].Priority = (Convert.ToInt32(list[index].Priority) + 1).ToString();
+          list[index + 1].Priority = (Convert.ToInt32(list[index + 1].Priority) - 1).ToString();
+          DisplaySoftwareEncoder item = list[index + 1];
+          list.RemoveAt(index + 1);
+          list.Insert(index, item);
+        }
+      }
+
+      // Maintain selection...
+      grid.ClearSelection();
+      for (int i = indices.Count - 1; i >= 0; i--)
+      {
+        int index = indices[i];
+        if (index == grid.Rows.Count - 1)
+        {
+          grid.Rows[index].Selected = true;
+        }
+        else
+        {
+          grid.Rows[index + 1].Selected = true;
+        }
       }
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
-      mpListViewVideo.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListViewVideo.SelectedIndices;
-      if (indexes.Count == 0) return;
-      for (int i = 0; i < indexes.Count; ++i)
-      {
-        int index = indexes[i];
-        if (index > 0)
-        {
-          ListViewItem item = mpListViewVideo.Items[index];
-          mpListViewVideo.Items.RemoveAt(index);
-          mpListViewVideo.Items.Insert(index - 1, item);
-        }
-      }
-      ReOrder(mpListViewVideo);
-      mpListViewVideo.EndUpdate();
-    }
-
-    private void button2_Click(object sender, EventArgs e)
-    {
-      mpListViewVideo.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListViewVideo.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewVideo.Items.Count < 2) return;
-      for (int i = indexes.Count - 1; i >= 0; i--)
-      {
-        int index = indexes[i];
-        ListViewItem item = mpListViewVideo.Items[index];
-        mpListViewVideo.Items.RemoveAt(index);
-        if (index + 1 < mpListViewVideo.Items.Count)
-          mpListViewVideo.Items.Insert(index + 1, item);
-        else
-          mpListViewVideo.Items.Add(item);
-      }
-      ReOrder(mpListViewVideo);
-      mpListViewVideo.EndUpdate();
-    }
-
-    private void ReOrder(MediaPortal.UserInterface.Controls.MPListView mpListView)
-    {
-      for (int i = 0; i < mpListView.Items.Count; ++i)
-      {
-        mpListView.Items[i].SubItems[1].Text = (i + 1).ToString();
-        SoftwareEncoder encoder = (SoftwareEncoder)mpListView.Items[i].Tag;
-        encoder.Priority = i + 1;
-        encoder.Persist();
-      }
+      MoveEncodersUp(mpListViewVideo, _bindingVideoEncoders);
     }
 
     private void button4_Click(object sender, EventArgs e)
     {
-      mpListViewAudio.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListViewAudio.SelectedIndices;
-      if (indexes.Count == 0) return;
-      for (int i = 0; i < indexes.Count; ++i)
-      {
-        int index = indexes[i];
-        if (index > 0)
-        {
-          ListViewItem item = mpListViewAudio.Items[index];
-          mpListViewAudio.Items.RemoveAt(index);
-          mpListViewAudio.Items.Insert(index - 1, item);
-        }
-      }
-      ReOrder(mpListViewAudio);
-      mpListViewAudio.EndUpdate();
+      MoveEncodersUp(mpListViewAudio, _bindingAudioEncoders);
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+      MoveEncodersDown(mpListViewVideo, _bindingVideoEncoders);
     }
 
     private void button3_Click(object sender, EventArgs e)
     {
-      mpListViewAudio.BeginUpdate();
-      ListView.SelectedIndexCollection indexes = mpListViewAudio.SelectedIndices;
-      if (indexes.Count == 0) return;
-      if (mpListViewAudio.Items.Count < 2) return;
-      for (int i = indexes.Count - 1; i >= 0; i--)
-      {
-        int index = indexes[i];
-        ListViewItem item = mpListViewAudio.Items[index];
-        mpListViewAudio.Items.RemoveAt(index);
-        if (index + 1 < mpListViewAudio.Items.Count)
-          mpListViewAudio.Items.Insert(index + 1, item);
-        else
-          mpListViewAudio.Items.Add(item);
-      }
-      ReOrder(mpListViewAudio);
-      mpListViewAudio.EndUpdate();
+      MoveEncodersDown(mpListViewAudio, _bindingAudioEncoders);
     }
   }
 }
