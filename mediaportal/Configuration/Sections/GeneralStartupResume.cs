@@ -71,7 +71,6 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
     }
 
-    private string loglevel = "2"; // 1= error, 2 = info, 3 = debug
     private int screennumber = 0; // 0 is the primary screen
 
     private string[][] sectionEntries = new string[][]
