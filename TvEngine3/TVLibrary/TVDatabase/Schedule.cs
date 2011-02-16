@@ -505,22 +505,19 @@ namespace TvDatabase
       bool isScheduleRecording = false;
       Schedule schedule = Schedule.Retrieve(id);
 
+      prg.Refresh();
+
       if (schedule != null)
       {
-        Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(id, schedule.startTime);
+        Schedule spawnedSchedule = Schedule.RetrieveSpawnedSchedule(id, prg.StartTime);
         if (spawnedSchedule != null)
         {
           schedule = spawnedSchedule;
         }
 
-        if (prg != null)
+        if (prg != null && prg.IsRecording)
         {
-          DateTime now = DateTime.Now;
-          if ((prg.StartTime == schedule.startTime && prg.EndTime == schedule.endTime) &&
-              (prg.StartTime <= now && prg.EndTime >= now))
-          {
-            isScheduleRecording = (Recording.ActiveRecording(schedule.idSchedule) != null);
-          }
+          isScheduleRecording = (Recording.ActiveRecording(schedule.idSchedule) != null);
         }
       }
 
