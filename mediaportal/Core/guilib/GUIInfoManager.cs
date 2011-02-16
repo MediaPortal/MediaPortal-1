@@ -2008,10 +2008,12 @@ namespace MediaPortal.GUI.Library
             GUILocalizeStrings.LocalizeLabel(ref prompt);
           }
 
-          string userInput = "";
+          // Get the current value to initialize the keyboard.
+          condition = TranslateSingleString(cmdKeepCase);
+          string userInput = GetString(condition, dwContextWindow);
+
           if (GetUserInputString(ref userInput, prompt))
           {
-            condition = TranslateSingleString(cmdKeepCase);
             SetString(condition, userInput, dwContextWindow);
             SkinSettings.Save();
           }
@@ -2050,6 +2052,18 @@ namespace MediaPortal.GUI.Library
       {
         SetMultiInfoString(m_multiInfo[condition - MULTI_INFO_START], newValue, dwContextWindow);
       }
+    }
+
+    public static string GetString(int condition1, int dwContextWindow)
+    {
+      string result = "";
+      int condition = Math.Abs(condition1);
+
+      if (condition >= MULTI_INFO_START && condition <= MULTI_INFO_END)
+      {
+        result = GetMultiInfoString(m_multiInfo[condition - MULTI_INFO_START], dwContextWindow);
+      }
+      return result;
     }
 
     public static void SetBool(int condition, bool newValue, int dwContextWindow)
@@ -2413,6 +2427,30 @@ namespace MediaPortal.GUI.Library
           SkinSettings.SetSkinBool(info.m_data1, newValue);
           break;
       }
+    }
+
+    /// <summary>
+    /// Examines the multi information sent and returns the string value.
+    /// </summary>
+    /// <param name="info"></param>
+    /// <param name="dwContextWindow"></param>
+    /// <returns></returns>
+    private static string GetMultiInfoString(GUIInfo info, int dwContextWindow)
+    {
+      string strReturn = "";
+
+      int condition = Math.Abs(info.m_info);
+      switch (condition)
+      {
+        case SKIN_STRING:
+          if (info.m_data2 != 0)
+          {
+            string prop1 = SkinSettings.GetSkinString(info.m_data1);
+            strReturn = GUIPropertyManager.Parse(prop1);
+          }
+          break;
+      }
+      return strReturn;
     }
 
     /// \brief Examines the multi information sent and returns true or false accordingly.
