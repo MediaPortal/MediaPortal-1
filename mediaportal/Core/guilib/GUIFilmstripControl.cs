@@ -90,12 +90,13 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolor")] protected long _textColor = 0xFFFFFFFF;
     [XMLSkinElement("selectedColor")] protected long _selectedColor = 0xFFFFFFFF;
 
-    [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
-    [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
-    [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarBackground")] protected string _scrollbarBackgroundName = "";
+    [XMLSkinElement("scrollbarLeft")] protected string _scrollbarLeftName = "";
+    [XMLSkinElement("scrollbarRight")] protected string _scrollbarRightName = "";
     [XMLSkinElement("scrollbarYOff")] protected int _scrollbarOffsetY = 0;
     [XMLSkinElement("scrollbarWidth")] protected int _scrollbarWidth = 400;
     [XMLSkinElement("scrollbarHeight")] protected int _scrollbarHeight = 15;
+    [XMLSkinElement("showScrollbar")] protected bool _showScrollbar = true;
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
     // this is the offset from the first or last element on screen when scrolling should start
@@ -309,8 +310,8 @@ namespace MediaPortal.GUI.Library
       _horizontalScrollbar = new GUIHorizontalScrollbar(_controlId, 0,
                                                         scrollbarPosX, _positionY + _scrollbarOffsetY,
                                                         scrollbarWidth, scrollbarHeight,
-                                                        _scrollbarBackgroundName, _scrollbarTopName,
-                                                        _scrollbarBottomName);
+                                                        _scrollbarBackgroundName, _scrollbarLeftName,
+                                                        _scrollbarRightName);
       _horizontalScrollbar.ParentControl = this;
       _horizontalScrollbar.DimColor = DimColor;
 
@@ -1019,7 +1020,7 @@ namespace MediaPortal.GUI.Library
 
     private void RenderScrollbar(float timePassed)
     {
-      if (_listItems.Count > _columns)
+      if (_listItems.Count > _columns && _showScrollbar)
       {
 
         // Render the spin control
@@ -1037,7 +1038,16 @@ namespace MediaPortal.GUI.Library
             _horizontalScrollbar.Percentage = fPercent;
           }
 
+          // The scrollbar is only rendered when the mouse support is enabled.  Temporarily bypass the global setting to allow
+          // the skin to determine whether or not it should be displayed.
+          bool ms = GUIGraphicsContext.MouseSupport;
+          GUIGraphicsContext.MouseSupport = true;
+
+          _horizontalScrollbar.IsVisible = _showScrollbar;
+          // Guarantee that the scrollbar is visible based on skin setting.
           _horizontalScrollbar.Render(timePassed);
+
+          GUIGraphicsContext.MouseSupport = ms;
         }
       }
     }
@@ -1192,12 +1202,19 @@ namespace MediaPortal.GUI.Library
               {
                 if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
                 {
+                  // We require mouse support for the scrollbar to respond properly.  Temporarily bypass the global setting to allow
+                  // the action to work for us.
+                  bool ms = GUIGraphicsContext.MouseSupport;
+                  GUIGraphicsContext.MouseSupport = true;
+
                   _horizontalScrollbar.OnAction(action);
                   int index = (int)((_horizontalScrollbar.Percentage / 100.0f) * _listItems.Count);
                   _offset = index;
                   _cursorX = 0;
                   OnSelectionChanged();
                   returnClick = false;
+
+                  GUIGraphicsContext.MouseSupport = ms;
                 }
               }
 
