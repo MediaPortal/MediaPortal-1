@@ -607,7 +607,6 @@ namespace MpeInstaller
     #region DownloadExtensionIndex
 
     private string tempUpdateIndex;
-    // private const string UpdateIndexUrl = "http://wiki.team-mediaportal.com/MpeInstaller/UpdateIndex?action=raw";
     private const string UpdateIndexUrl = "http://install.team-mediaportal.com/MPEI/extensions.txt";
 
     private void DownloadExtensionIndex()

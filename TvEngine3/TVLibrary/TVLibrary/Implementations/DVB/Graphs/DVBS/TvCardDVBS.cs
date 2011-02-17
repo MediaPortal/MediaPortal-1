@@ -24,6 +24,8 @@ using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
+using TvDatabase;
+using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -407,6 +409,42 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region epg & scanning
+    
+    /// <summary>
+    /// checks if a received EPGChannel should be filtered from the resultlist
+    /// </summary>
+    /// <value></value>
+    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
+      {
+        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
+        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
+        DVBSChannel dvbschannel = new DVBSChannel();
+        if (dbchannel == null)
+        {
+          return false;
+        }
+        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
+        {
+          if (detail.ChannelType == 3)
+          {
+            dvbschannel.Frequency = detail.Frequency;
+            dvbschannel.Polarisation = (Polarisation)detail.Polarisation;
+            dvbschannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbschannel.SatelliteIndex = detail.SatIndex;
+            dvbschannel.InnerFecRate = (BinaryConvolutionCodeRate)detail.InnerFecRate;
+            dvbschannel.Pilot = (Pilot)detail.Pilot;
+            dvbschannel.Rolloff = (RollOff)detail.RollOff;
+            dvbschannel.DisEqc = (DisEqcType)detail.Diseqc;
+          }
+        }
+        return this.CurrentChannel.IsDifferentTransponder(dvbschannel);
+      }
+      else
+        return false;  
+    }
 
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels

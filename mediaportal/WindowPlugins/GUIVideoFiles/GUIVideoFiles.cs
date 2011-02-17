@@ -1779,13 +1779,8 @@ namespace MediaPortal.GUI.Video
 
         if (VideoState.StartWindow != GetID) // Is play initiator dbview?
         {
-        //  LoadDirectory(_currentFolder, true, watchedMovies);
           UpdateButtonStates();
         }
-        //else
-        //{
-        //  UpdateButtonStates();
-        //}
       }
 
       if (SubEngine.GetInstance().IsModified())
@@ -1855,11 +1850,6 @@ namespace MediaPortal.GUI.Video
         details.Watched = 1;
         VideoDatabase.SetWatched(details);
       }
-      //if (_markWatchedFiles) // save a little performance
-      //{
-      //  LoadDirectory(_currentFolder, true, watchedMovies);
-      //  UpdateButtonStates();
-      //}
     }
 
     private void OnPlayBackStarted(g_Player.MediaType type, string filename)

@@ -2330,6 +2330,15 @@ namespace TvLibrary.Implementations.DVB
     #region epg & scanning
 
     /// <summary>
+    /// checks if a received EPGChannel should be filtered from the resultlist
+    /// </summary>
+    /// <value></value>
+    protected virtual bool FilterOutEPGChannel(EpgChannel epgChannel)
+    {
+      return false;
+    }
+
+    /// <summary>
     /// Start grabbing the epg
     /// </summary>
     public void GrabEpg(BaseEpgGrabber callback)
@@ -2457,7 +2466,12 @@ namespace TvLibrary.Implementations.DVB
                 DVBBaseChannel dvbChan = CreateChannel((int)networkid, (int)transportid, (int)channelid, channelName);
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
-                epgChannels.Add(epgChannel);
+                //Log.Log.Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                if (this.FilterOutEPGChannel(epgChannel) == false)
+                {
+                  //Log.Log.Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                  epgChannels.Add(epgChannel);
+                }
               }
               uint d1 = datestart;
               uint m = timestart & 0xff;
@@ -2613,7 +2627,12 @@ namespace TvLibrary.Implementations.DVB
               if (epgChannel.Programs.Count > 0)
               {
                 epgChannel.Sort();
-                epgChannels.Add(epgChannel);
+                //Log.Log.Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                if (this.FilterOutEPGChannel(epgChannel) == false)
+                {
+                  //Log.Log.Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                  epgChannels.Add(epgChannel);
+                }
               }
             } //for (uint x = 0; x < channelCount; ++x)
           }

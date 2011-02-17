@@ -47,9 +47,9 @@ namespace TvLibrary.Implementations
     }
 
     /// <summary>
-    /// ctor
+    /// ctor - private since this is a singleton class
     /// </summary>
-    public DevicesInUse()
+    private DevicesInUse()
     {
       _devicesInUse = new List<DsDevice>();
     }

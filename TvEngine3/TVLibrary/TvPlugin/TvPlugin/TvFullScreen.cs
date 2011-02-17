@@ -113,7 +113,6 @@ namespace TvPlugin
     private bool _isDialogVisible = false;
     //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
-    private GUIDialogNotify _dialogNotify = null;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
     private GUIDialogYesNo _dlgYesNo = null;
     // Message box

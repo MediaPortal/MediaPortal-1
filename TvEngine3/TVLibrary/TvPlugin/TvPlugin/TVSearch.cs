@@ -25,6 +25,7 @@ using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
@@ -93,6 +94,30 @@ namespace TvPlugin
     private string prevfilterShow = String.Empty;
     private string prevfilterEpisode = String.Empty;
 
+    #region Serialisation
+
+    private void LoadSettings()
+    {
+      using (Settings xmlreader = new MPSettings())
+      {
+          currentSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("tvsearch", "cursortmethod", "Name"), true);
+           chosenSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("tvsearch", "chosortmethod", "Auto"), true);
+          currentSearchMode = (SearchMode)Enum.Parse(typeof(SearchMode), xmlreader.GetValueAsString("tvsearch", "searchmode", "Title"), true);
+      }
+    }
+
+    private void SaveSettings()
+    {
+      using (Settings xmlwriter = new MPSettings())
+      {
+        xmlwriter.SetValue("tvsearch", "cursortmethod", currentSortMethod.ToString());
+        xmlwriter.SetValue("tvsearch", "chosortmethod", chosenSortMethod.ToString());
+        xmlwriter.SetValue("tvsearch",  "searchmode",    currentSearchMode.ToString());
+      }
+    }
+
+    #endregion
+
     public TvSearch()
     {
       GetID = (int)Window.WINDOW_SEARCHTV;
@@ -106,9 +131,13 @@ namespace TvPlugin
     public override bool Init()
     {
       bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvsearch.xml");
+      LoadSettings();
       return bResult;
     }
-
+    public override void DeInit()
+    {
+      SaveSettings();
+    }
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -143,7 +172,6 @@ namespace TvPlugin
       TVHome.WaitForGentleConnection();
 
       base.OnPageLoad();
-
       listRecordings = Schedule.ListAll();
 
       if (btnShow != null) btnShow.RestoreSelection = false;

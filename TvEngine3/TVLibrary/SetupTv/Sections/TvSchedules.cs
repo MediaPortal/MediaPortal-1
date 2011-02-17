@@ -25,18 +25,24 @@ using System.Windows.Forms;
 using System.Globalization;
 using TvControl;
 using TvDatabase;
+using MediaPortal.UserInterface.Controls;
 
 namespace SetupTv.Sections
 {
   public partial class TvSchedules : SectionSettings
   {
+    private readonly MPListViewStringColumnSorter lvwColumnSorter;
+
     public TvSchedules()
-      : this("Schedules") {}
+      : this("Schedules") { }
 
     public TvSchedules(string name)
       : base(name)
     {
       InitializeComponent();
+      lvwColumnSorter = new MPListViewStringColumnSorter();
+      lvwColumnSorter.Order = SortOrder.None;
+      listView1.ListViewItemSorter = lvwColumnSorter;
     }
 
     public override void OnSectionActivated()
@@ -114,8 +120,26 @@ namespace SetupTv.Sections
         }
         listView1.Items.Add(item);
       }
-
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+    }
+
+    private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+      if (e.Column == lvwColumnSorter.SortColumn)
+      {
+        // Reverse the current sort direction for this column.
+        lvwColumnSorter.Order = lvwColumnSorter.Order == SortOrder.Ascending
+                                  ? SortOrder.Descending
+                                  : SortOrder.Ascending;
+      }
+      else
+      {
+        // Set the column number that is to be sorted; default to ascending.
+        lvwColumnSorter.SortColumn = e.Column;
+        lvwColumnSorter.Order = SortOrder.Ascending;
+      }
+      // Perform the sort with these new sort options.
+      listView1.Sort();
     }
 
     private void deleteToolStripMenuItem_Click(object sender, EventArgs e)

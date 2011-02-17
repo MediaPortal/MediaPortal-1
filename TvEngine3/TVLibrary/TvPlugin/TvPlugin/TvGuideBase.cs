@@ -4129,7 +4129,7 @@ namespace TvPlugin
 
     private void UpdateVerticalScrollbar()
     {
-      if (_channelList == null || _channelList.Count == 0)
+      if (_channelList == null || _channelList.Count <= 0)
       {
         return;
       }
@@ -4139,12 +4139,12 @@ namespace TvPlugin
         channel -= _channelList.Count;
       }
       float current = (float)(_cursorX + _channelOffset);
-      float total = (float)_channelList.Count;
+      float total = (float)_channelList.Count - 1;
 
       if (_singleChannelView)
       {
-        current = (float)(_cursorX + _channelOffset);
-        total = (float)_totalProgramCount;
+        current = (float)(_cursorX + _programOffset);
+        total = (float)_totalProgramCount - 1;
       }
       if (total == 0)
       {

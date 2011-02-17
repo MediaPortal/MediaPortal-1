@@ -362,6 +362,12 @@ namespace MediaPortal.Util
       return string.Format("{0:f} {1}B", beautySize, sizes[i - 1]);
     }
 
+    /// <summary>
+    /// Returns whether a file is TV
+    /// Will also return true is file is Radio as both share same format
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is TV</returns>
     public static bool IsLiveTv(string strPath)
     {
       if (strPath == null) return false;
@@ -377,6 +383,12 @@ namespace MediaPortal.Util
       return strPath.Contains("rtsp:");
     }
 
+    /// <summary>
+    /// Should return whether a file is radio but is bugged
+    /// because file format for radio is the same as TV
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is radio</returns>
     public static bool IsLiveRadio(string strPath)
     {
       if (strPath == null) return false;
@@ -386,6 +398,14 @@ namespace MediaPortal.Util
       return strPath.Contains("live-radio.ts");
     }
 
+    /// <summary>
+    /// This returns whether a file is video or not
+    /// There is an issue in the logic for multi-seat radio 
+    /// => if (strPath.ToLower().StartsWith("rtsp:")) return true;
+    /// means this will incorrectly return true for multi-seat radio
+    /// </summary>
+    /// <param name="strPath">path to file</param>
+    /// <returns>Whether file is a video file</returns>
     public static bool IsVideo(string strPath)
     {
       if (strPath == null) return false;

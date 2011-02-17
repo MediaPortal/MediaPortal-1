@@ -217,7 +217,6 @@ namespace MediaPortal.GUI.Video
       for (int x = 0; x < items.Count; x++)
       {
         string strThumb = string.Empty;
-        string strLargeThumb = string.Empty;
         pItem = (GUIListItem)items[x];
         string file = string.Empty;
         bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
@@ -236,7 +235,7 @@ namespace MediaPortal.GUI.Video
             continue;
           }
 
-            // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
+          // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
           else
           {
             if (eachMovieHasDedicatedFolder)
@@ -264,11 +263,10 @@ namespace MediaPortal.GUI.Video
 
         if (!string.IsNullOrEmpty(file))
         {
-          byte[] resumeData = null;
           int fileId = VideoDatabase.GetFileId(file);
           int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
           bool foundWatched = false;
-
+          // Find watched status for movies in the database
           if (id >= 0)
           {
             if (Util.Utils.IsDVD(pItem.Path))
@@ -278,49 +276,23 @@ namespace MediaPortal.GUI.Video
 
             string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-            //Watched status for movies in the database
+            
             if (movieDetails.Watched > 0 && markWatchedFiles)
             {
               foundWatched = true;
             }
           }
-          // Watched status for videos not in the movie database
-          if (!foundWatched && markWatchedFiles)
+          // Find watched status for videos not in the movie database
+          else if (fileId >= 0 && markWatchedFiles)
           {
-            if (fileId >= 0)
-            {
-              bool watched = VideoDatabase.GetVideoFileWatched(fileId);
-              
-              if (watched)
-              {
-                foundWatched = true;
-              }
-              // Set watched status for old files before DB upgrade
-              else
-              {
-                int duration = VideoDatabase.GetMovieDuration(fileId);
-                int stopTime = VideoDatabase.GetMovieStopTime(fileId);
-                int playedPercentage = 0;
-
-                if (duration > 0)
-                {
-                  playedPercentage = (100 * stopTime / duration);
-                }
-                
-                if (playedPercentage >= 80)
-                {
-                  foundWatched = true;
-                  VideoDatabase.SetVideoFileWatched(fileId, true);
-                }
-              }
-            }
-          }
-
+            if (VideoDatabase.GetVideoFileWatched(fileId))
+              foundWatched = true;
+           }
+          // Set watched status for list item
           if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path) && foundWatched))
           {
             pItem.IsPlayed = foundWatched;
           }
-
 
           if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
           {

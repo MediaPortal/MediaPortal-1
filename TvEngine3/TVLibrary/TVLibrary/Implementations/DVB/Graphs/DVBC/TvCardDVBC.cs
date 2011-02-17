@@ -24,6 +24,8 @@ using DirectShowLib.BDA;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
+using TvDatabase;
+using TvLibrary.Epg;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -292,6 +294,37 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region epg & scanning
+
+    /// <summary>
+    /// checks if a received EPGChannel should be filtered from the resultlist
+    /// </summary>
+    /// <value></value>
+    protected override bool FilterOutEPGChannel(EpgChannel epgChannel)
+    {
+      TvBusinessLayer layer = new TvBusinessLayer();
+      if (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes")
+      {
+        DVBBaseChannel chan = epgChannel.Channel as DVBBaseChannel;
+        Channel dbchannel = layer.GetChannelByTuningDetail(chan.NetworkId, chan.TransportId, chan.ServiceId);
+        DVBCChannel dvbcchannel = new DVBCChannel();
+        if (dbchannel == null)
+        {
+          return false;
+        }
+        foreach (TuningDetail detail in dbchannel.ReferringTuningDetail())
+        {
+          if (detail.ChannelType == 2)
+          {
+            dvbcchannel.Frequency = detail.Frequency;
+            dvbcchannel.ModulationType = (ModulationType)detail.Modulation;
+            dvbcchannel.SymbolRate = detail.Symbolrate;
+          }
+        }
+        return this.CurrentChannel.IsDifferentTransponder(dvbcchannel);
+      }
+      else
+        return false;
+    }
 
     /// <summary>
     /// returns the ITVScanning interface used for scanning channels

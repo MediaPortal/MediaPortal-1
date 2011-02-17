@@ -914,6 +914,7 @@ namespace MediaPortal.GUI.Library
         GUIGraphicsContext.ScaleHorizontal(ref _spaceAfterSelected);
       }
       GUIGraphicsContext.ScaleVertical(ref _buttonHeight);
+      GUIGraphicsContext.ScaleHorizontal(ref _buttonWidth);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _buttonTextXOffset, ref _buttonTextYOffset);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _hoverPositionX, ref _hoverPositionY);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _hoverWidth, ref _hoverHeight);
