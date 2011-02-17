@@ -901,6 +901,7 @@ namespace MediaPortal.Configuration
       this.helpToolStripSplitButton.Size = new System.Drawing.Size(52, 22);
       this.helpToolStripSplitButton.Text = "Help";
       this.helpToolStripSplitButton.ToolTipText = "Opens the online wiki page for the active configuration section.";
+      this.helpToolStripSplitButton.Click += new System.EventHandler(this.helpToolStripSplitButton_Click);
       // 
       // configToolStripSplitButton
       // 
@@ -1361,7 +1362,7 @@ namespace MediaPortal.Configuration
       Process.Start((string)e.Link.LinkData);
     }
 
-    private void helpToolStripSplitButton_ButtonClick(object sender, EventArgs e)
+    private void helpToolStripSplitButton_Click(object sender, EventArgs e)
     {
       HelpSystem.ShowHelp(_previousSection.ToString());
     }
