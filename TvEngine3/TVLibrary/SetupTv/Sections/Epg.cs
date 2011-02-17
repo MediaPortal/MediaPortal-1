@@ -46,6 +46,7 @@ namespace SetupTv.Sections
 
       checkBoxAlwaysFillHoles.Checked = (layer.GetSetting("generalEPGAlwaysFillHoles", "no").Value == "yes");
       checkBoxAlwaysUpdate.Checked = (layer.GetSetting("generalEPGAlwaysReplace", "no").Value == "yes");
+      checkboxSameTransponder.Checked = (layer.GetSetting("generalGrapOnlyForSameTransponder", "no").Value == "yes");
 
       checkBoxEnableEPGWhileIdle.Checked = (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes");
       checkBoxEnableCRCCheck.Checked = !DebugSettings.DisableCRCCheck;
@@ -70,6 +71,10 @@ namespace SetupTv.Sections
 
       s = layer.GetSetting("generalEPGAlwaysReplace", "no");
       s.Value = checkBoxAlwaysUpdate.Checked ? "yes" : "no";
+      s.Persist();
+
+      s = layer.GetSetting("generalGrapOnlyForSameTransponder", "no");
+      s.Value = checkboxSameTransponder.Checked ? "yes" : "no";
       s.Persist();
 
       DebugSettings.DisableCRCCheck = !checkBoxEnableCRCCheck.Checked;
