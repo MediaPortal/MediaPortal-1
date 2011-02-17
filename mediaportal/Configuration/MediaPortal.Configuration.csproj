@@ -341,6 +341,12 @@
     <Compile Include="Sections\TVZoom.Designer.cs">
       <DependentUpon>TVZoom.cs</DependentUpon>
     </Compile>
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Subdialogs\DlgMpcSubs.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -585,9 +591,6 @@
     </Compile>
     <Compile Include="SectionTreeNode.cs">
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="SettingsForm.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="ConfigSplashScreen.cs">
     </Compile>
