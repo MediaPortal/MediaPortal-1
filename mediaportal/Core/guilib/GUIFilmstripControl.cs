@@ -93,6 +93,9 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("scrollbarbg")] protected string _scrollbarBackgroundName = "";
     [XMLSkinElement("scrollbartop")] protected string _scrollbarTopName = "";
     [XMLSkinElement("scrollbarbottom")] protected string _scrollbarBottomName = "";
+    [XMLSkinElement("scrollbarYOff")] protected int _scrollbarOffsetY = 0;
+    [XMLSkinElement("scrollbarWidth")] protected int _scrollbarWidth = 400;
+    [XMLSkinElement("scrollbarHeight")] protected int _scrollbarHeight = 15;
     [XMLSkinElement("scrollStartDelaySec")] protected int _scrollStartDelay = 1;
     [XMLSkinElement("scrollOffset")] protected int _scrollStartOffset = 0;
     // this is the offset from the first or last element on screen when scrolling should start
@@ -166,13 +169,14 @@ namespace MediaPortal.GUI.Library
     private List<GUIListItem> _listItems = new List<GUIListItem>();
     private int _frames = 0;
     private bool _refresh = false;
-    protected GUIVerticalScrollbar _horizontalScrollbar = null;
+    protected GUIHorizontalScrollbar _horizontalScrollbar = null;
     protected string _brackedText;
     protected string _scollText;
     private GUIAnimation _imageBackground;
     private GUIImage _imageInfo;
     private DateTime _idleTimer = DateTime.Now;
     private bool _infoChanged = false;
+    private bool _reAllocate = false;
     private string _newInfoImageName = "";
     private int _frameLimiter = 1;
     protected double _scrollOffset = 0.0f;
@@ -292,16 +296,24 @@ namespace MediaPortal.GUI.Library
       _upDownControl.DimColor = DimColor;
 
       _font = GUIFontManager.GetFont(_fontName);
-      int xpos = 5 + _positionX + _width;
-      if (xpos + 15 > GUIGraphicsContext.Width)
-      {
-        xpos = GUIGraphicsContext.Width - 15;
-      }
-      _horizontalScrollbar = new GUIVerticalScrollbar(_controlId, 0, 5 + _positionX + _width, _positionY, 15, _height,
-                                                      _scrollbarBackgroundName, _scrollbarTopName, _scrollbarBottomName);
+
+
+
+      // Create the horizontal scrollbar.
+      int scrollbarWidth = _scrollbarWidth;
+      int scrollbarHeight = _scrollbarHeight;
+      GUIGraphicsContext.ScaleHorizontal(ref scrollbarWidth);
+      GUIGraphicsContext.ScaleVertical(ref scrollbarHeight);
+      int scrollbarPosX = _positionX + (_width / 2) - (scrollbarWidth / 2);
+
+      _horizontalScrollbar = new GUIHorizontalScrollbar(_controlId, 0,
+                                                        scrollbarPosX, _positionY + _scrollbarOffsetY,
+                                                        scrollbarWidth, scrollbarHeight,
+                                                        _scrollbarBackgroundName, _scrollbarTopName,
+                                                        _scrollbarBottomName);
       _horizontalScrollbar.ParentControl = this;
-      _horizontalScrollbar.SendNotifies = false;
       _horizontalScrollbar.DimColor = DimColor;
+
 
       _upDownControl.Orientation = eOrientation.Horizontal;
       _upDownControl.SetReverse(true);
@@ -330,6 +342,13 @@ namespace MediaPortal.GUI.Library
       SetTextureDimensions(_textureWidth, _textureHeight);
     }
 
+
+
+
+
+
+
+
     public override void ScaleToScreenResolution()
     {
       base.ScaleToScreenResolution();
@@ -344,6 +363,7 @@ namespace MediaPortal.GUI.Library
                                                      ref _heightThumbBig);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemBigWidth, ref _itemBigHeight);
       GUIGraphicsContext.ScalePosToScreenResolution(ref _itemWidth, ref _itemHeight);
+      GUIGraphicsContext.ScaleVertical(ref _scrollbarOffsetY);
 
       //_infoImagePositionX += GUIGraphicsContext.OverScanLeft;
       //_infoImagePositionY += GUIGraphicsContext.OverScanTop;
@@ -354,6 +374,7 @@ namespace MediaPortal.GUI.Library
                                                      ref _infoImageWidth, ref _infoImageHeight);
       GUIGraphicsContext.ScaleRectToScreenResolution(ref _backGroundPositionX, ref _backGroundPositionY,
                                                      ref _backGroundWidth, ref _backGroundHeight);
+      _reAllocate = true;
     }
 
     /// <summary>
@@ -757,6 +778,23 @@ namespace MediaPortal.GUI.Library
         }
       }
 
+
+      // Reallocation of the card images occur (for example) when the window size changes.
+      // Force all of the card images to be recreated.
+      if (_reAllocate)
+      {
+        for (int i = 0; i < _listItems.Count; i++)
+        {
+          GUIListItem pItem = _listItems[i];
+          pItem.Thumbnail.SafeDispose();
+          pItem.Thumbnail = null;
+          pItem.IconBig.SafeDispose();
+          pItem.IconBig = null;
+        }
+        _reAllocate = false;
+      }
+
+
       int dwPosY = 0;
       if ((_cursorX > 0) && !ValidItem(_cursorX))
       {
@@ -962,7 +1000,6 @@ namespace MediaPortal.GUI.Library
       }
 
       dwPosY = _positionY + (_itemHeight);
-      RenderScrollbar(timePassed, dwPosY);
 
       if (_scrollingLeft || _scrollingRight)
       {
@@ -973,14 +1010,18 @@ namespace MediaPortal.GUI.Library
       {
         GUIPropertyManager.SetProperty("#highlightedbutton", string.Empty);
       }
+
+      // Render the horizontal scrollbar.
+      RenderScrollbar(timePassed);
+
       base.Render(timePassed);
     }
 
-    private void RenderScrollbar(float timePassed, int y)
+    private void RenderScrollbar(float timePassed)
     {
-      int iItemsPerPage = _columns;
-      if (_listItems.Count > iItemsPerPage)
+      if (_listItems.Count > _columns)
       {
+
         // Render the spin control
         if (_upDownControl != null)
         {
@@ -988,16 +1029,14 @@ namespace MediaPortal.GUI.Library
           _upDownControl.Render(timePassed);
         }
 
-        // Render the vertical scrollbar
         if (_horizontalScrollbar != null)
         {
-          float fPercent = (float)_offset + _cursorX;
-          fPercent /= (float)(_listItems.Count);
-          fPercent *= 100.0f;
+          float fPercent = (float)SelectedListItemIndex / (float)(_listItems.Count - 1) * 100.0f;
           if ((int)fPercent != (int)_horizontalScrollbar.Percentage)
           {
             _horizontalScrollbar.Percentage = fPercent;
           }
+
           _horizontalScrollbar.Render(timePassed);
         }
       }
@@ -1133,27 +1172,37 @@ namespace MediaPortal.GUI.Library
             {
               if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
               {
-                ///TODO: add horz. scrollbar to filmstrip
+                _horizontalScrollbar.OnAction(action);
+                int index = (int)((_horizontalScrollbar.Percentage / 100.0f) * _listItems.Count);
+                _offset = index;
+                _cursorX = 0;
+                OnSelectionChanged();
               }
-              //          _drawFocus=true;
             }
           }
           break;
-        case Action.ActionType.ACTION_MOUSE_CLICK:
-          {
-            int id;
-            bool focus;
-            if (_horizontalScrollbar != null)
-            {
-              if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
-              {
-                ///TODO: add horz. scrollbar to filmstrip
-                return;
-              }
-            }
 
-            //_drawFocus=true;
-            if (_listType == GUIListControl.ListType.CONTROL_LIST)
+
+        case Action.ActionType.ACTION_MOUSE_CLICK:
+            {
+              int id;
+              bool focus;
+              bool returnClick = true;
+              if (_horizontalScrollbar != null)
+              {
+                if (_horizontalScrollbar.HitTest((int)action.fAmount1, (int)action.fAmount2, out id, out focus))
+                {
+                  _horizontalScrollbar.OnAction(action);
+                  int index = (int)((_horizontalScrollbar.Percentage / 100.0f) * _listItems.Count);
+                  _offset = index;
+                  _cursorX = 0;
+                  OnSelectionChanged();
+                  returnClick = false;
+                }
+              }
+
+
+              if (_listType == GUIListControl.ListType.CONTROL_LIST && returnClick == true)
             {
               GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
                                               (int)Action.ActionType.ACTION_SELECT_ITEM, 0, null);
@@ -2790,7 +2839,7 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
-    public GUIVerticalScrollbar Scrollbar
+    public GUIHorizontalScrollbar Scrollbar
     {
       get { return _horizontalScrollbar; }
     }
