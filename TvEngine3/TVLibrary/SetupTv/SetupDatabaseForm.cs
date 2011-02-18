@@ -595,7 +595,9 @@ namespace SetupTv
       XmlDocument doc = new XmlDocument();
       try
       {
-        doc.Load(String.Format(@"{0}\gentle.config",PathManager.GetDataPath));
+        string gentleConfig = String.Format(@"{0}\gentle.config", PathManager.GetDataPath);
+        Log.Error(gentleConfig);
+        doc.Load(gentleConfig); //String.Format(@"{0}\gentle.config",PathManager.GetDataPath));
       }
       catch (Exception ex)
       {
