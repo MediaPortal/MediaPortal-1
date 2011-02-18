@@ -179,7 +179,7 @@ namespace SetupTv.Sections
     {
       if (_dvbtChannels.Count != 0)
       {
-        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml",PathManager.GetDataPath,
+        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", Log.GetPathName(),
                                         DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);
         PersistState();

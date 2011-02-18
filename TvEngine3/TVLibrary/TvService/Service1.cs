@@ -92,7 +92,7 @@ namespace TvService
     private static void Main(string[] args)
     {
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
 
       string opt = null;
       if (args.Length >= 1)
@@ -256,7 +256,7 @@ namespace TvService
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
+        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");

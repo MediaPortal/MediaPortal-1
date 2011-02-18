@@ -439,8 +439,6 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
   File "${svn_Common_MP_TVE3}\Gentle.config"
-  File "${TVSERVER.BASE}\log4net.config"
-
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer

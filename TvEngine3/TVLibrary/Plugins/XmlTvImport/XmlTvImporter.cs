@@ -102,7 +102,7 @@ namespace TvEngine
 
     public static string DefaultOutputFolder
     {
-      get { return PathManager.GetDataPath + @"\xmltv"; }
+      get { return Log.GetPathName() + @"\xmltv"; }
     }
 
     #endregion

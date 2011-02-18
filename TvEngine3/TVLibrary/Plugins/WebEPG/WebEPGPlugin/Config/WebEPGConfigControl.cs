@@ -33,7 +33,6 @@ using MediaPortal.WebEPG.Profile;
 using SetupTv.Sections.WebEPGConfig;
 using TvDatabase;
 using TvEngine.PowerScheduler;
-using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
 
@@ -80,7 +79,7 @@ namespace SetupTv.Sections
     {
       InitializeComponent();
 
-      _webepgFilesDir =PathManager.GetDataPath + @"\WebEPG\";
+      _webepgFilesDir = Log.GetPathName() + @"\WebEPG\";
 
       if (!Directory.Exists(_webepgFilesDir))
       {

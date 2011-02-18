@@ -61,7 +61,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxService.Items.Clear();
       mpComboBoxService.Items.Add("SAP Announcements");
-      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip",PathManager.GetDataPath);
+      String tuningFolder = String.Format(@"{0}\TuningParameters\dvbip", Log.GetPathName());
       if (Directory.Exists(tuningFolder))
       {
         string[] files = Directory.GetFiles(tuningFolder, "*.m3u");
@@ -169,10 +169,10 @@ namespace SetupTv.Sections
         else
         {
           IPlayListIO playlistIO =
-            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u",PathManager.GetDataPath,
+            PlayListFactory.CreateIO(String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
                                                    mpComboBoxService.SelectedItem));
           playlistIO.Load(playlist,
-                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u",PathManager.GetDataPath,
+                          String.Format(@"{0}\TuningParameters\dvbip\{1}.m3u", Log.GetPathName(),
                                         mpComboBoxService.SelectedItem));
         }
         if (playlist.Count == 0) return;

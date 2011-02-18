@@ -1,7 +1,7 @@
 ﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -96,10 +96,6 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\MediaPortal.Base\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
     <Reference Include="System">
       <Name>System</Name>
@@ -149,7 +145,6 @@
     <Compile Include="Localisation\StringsFile\StringSection.cs" />
     <Compile Include="Localisation\StringsFile\StringFile.cs" />
     <Compile Include="ServiceImplementations\Log.cs" />
-    <Compile Include="ServiceImplementations\log4netLogger.cs" />
     <Compile Include="ServiceImplementations\LogImpl.cs" />
     <Compile Include="Services\GlobalServiceProvider.cs" />
     <Compile Include="Services\ILog.cs" />

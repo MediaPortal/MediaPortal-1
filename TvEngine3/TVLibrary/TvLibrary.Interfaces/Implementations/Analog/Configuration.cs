@@ -328,7 +328,7 @@ namespace TvLibrary.Implementations.Analog
           name = name.Replace(invalidCharacter.ToString(), "");
         }
       }
-      String pathName = PathManager.GetDataPath;
+      String pathName = Log.Log.GetPathName();
       String fileName = String.Format(@"{0}\AnalogCard\Configuration-{1}-{2}.xml", pathName, cardId, name);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;

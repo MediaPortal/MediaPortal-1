@@ -27,7 +27,6 @@ using Mediaportal.Util;
 using DirectShowLib;
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
-using TvLibrary.Interfaces;
 
 #endif
 
@@ -903,7 +902,7 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         int hr = NativeMethods.StgCreateDocfile(
-          Path.Combine(PathManager.GetDataPath, FileUtils.MakeFileName(fileName)),
+          Path.Combine(Log.Log.GetPathName(), FileUtils.MakeFileName(fileName)),
           STGM.Create | STGM.Transacted | STGM.ReadWrite | STGM.ShareExclusive,
           0,
           out storage

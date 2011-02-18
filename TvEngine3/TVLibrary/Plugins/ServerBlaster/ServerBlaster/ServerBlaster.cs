@@ -161,7 +161,7 @@ namespace TvEngine
       try
       {
         using (
-          FileStream fs = new FileStream(String.Format(@"{0}\ServerBlaster.dat", PathManager.GetDataPath), FileMode.Open,
+          FileStream fs = new FileStream(String.Format(@"{0}\ServerBlaster.dat", Log.GetPathName()), FileMode.Open,
                                          FileAccess.Read))
         {
           BinaryFormatter bf = new BinaryFormatter();

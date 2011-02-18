@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ namespace TvLibrary.Log
   /// <summary>
   /// An implementation of a log mechanism for the GUI library.
   /// </summary>
-  public class FileLogger : ILogger
+  public class Log
   {
     private enum LogType
     {
@@ -52,12 +52,10 @@ namespace TvLibrary.Log
       Epg
     }
 
-    protected LogLevel _minLevel = LogLevel.All;
-
     /// <summary>
     /// Configure after how many days the log file shall be rotated when a new line is added
     /// </summary>
-    private readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
+    private static readonly TimeSpan _logDaysToKeep = new TimeSpan(1, 0, 0, 0);
 
     /// <summary>
     /// The maximum size of each log file in Megabytes
@@ -72,33 +70,42 @@ namespace TvLibrary.Log
     /// <summary>
     /// The last log n lines to compare for repeated entries.
     /// </summary>
-    private readonly List<string> _lastLogLines = new List<string>(_maxRepetitions);
+    private static readonly List<string> _lastLogLines = new List<string>(_maxRepetitions);
 
     #region Constructors
 
     /// <summary>
     /// Private singleton constructor . Do not allow any instance of this class.
     /// </summary>
-    public FileLogger()
+    private Log() {}
+
+    /// <summary>
+    /// Static constructor
+    /// </summary>
+    static Log()
     {
-      BackupLogFiles();
+      //BackupLogFiles(); <-- do not rotate logs when e.g. SetupTv is started.
+      _lastLogLines.Clear();
     }
 
-    
     #endregion
 
     #region Public methods
 
-    public void Error(Exception ex)
+    /// <summary>
+    /// Backups the log files.
+    /// </summary>
+    public static void BackupLogFiles()
     {
-      Write(ex);
+      RotateLogs();
+      _lastLogLines.Clear();
     }
 
     /// <summary>
     /// Writes the specified exception to the log file
     /// </summary>
     /// <param name="ex">The ex.</param>
-    public void Write(Exception ex)
+    public static void Write(Exception ex)
     {
       StringBuilder sb = new StringBuilder();
       sb.AppendFormat("Exception   :{0}\n", ex);
@@ -110,7 +117,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="Logtext">String to replace</param>
     /// <returns>String without password</returns>
-    public String SafeString(String Logtext)
+    public static String SafeString(String Logtext)
     {
       return new Regex(@"Password=[^;]*;", RegexOptions.IgnoreCase).Replace(Logtext, "Password=***;");
     }
@@ -120,7 +127,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
-    public void Write(string format, params object[] arg)
+    public static void Write(string format, params object[] arg)
     {
       // uncomment the following four lines to help identify the calling method, this
       // is useful in situations where an unreported exception causes problems
@@ -137,7 +144,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format of the string.</param>
     /// <param name="arg">An array containing the actual data of the string.</param>
-    public void WriteThreadId(string format, params object[] arg)
+    public static void WriteThreadId(string format, params object[] arg)
     {
       // uncomment the following four lines to help identify the calling method, this
       // is useful in situations where an unreported exception causes problems
@@ -149,17 +156,12 @@ namespace TvLibrary.Log
       WriteToFile(LogType.Info, log);
     }
 
-    public void Warn(string format, params object[] args)
-    {
-      WriteToFile(LogType.Info, format, args);
-    }
-
     /// <summary>
     /// Logs the message to the error file
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    public void Error(string format, params object[] arg)
+    public static void Error(string format, params object[] arg)
     {
       WriteToFile(LogType.Error, format, arg);
     }
@@ -169,7 +171,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    public void Info(string format, params object[] arg)
+    public static void Info(string format, params object[] arg)
     {
       WriteToFile(LogType.Info, format, arg);
     }
@@ -179,15 +181,9 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    public void Debug(string format, params object[] arg)
+    public static void Debug(string format, params object[] arg)
     {
       WriteToFile(LogType.Debug, format, arg);
-    }
-
-    public LogLevel Level
-    {
-      get { return _minLevel; }
-      set { _minLevel = value; }
     }
 
     /// <summary>
@@ -195,7 +191,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    public void Epg(string format, params object[] arg)
+    public static void Epg(string format, params object[] arg)
     {
       WriteToFile(LogType.Epg, format, arg);
     }
@@ -205,22 +201,16 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    public void WriteFile(string format, params object[] arg)
+    public static void WriteFile(string format, params object[] arg)
     {
       WriteToFile(LogType.Info, format, arg);
-    }
-
-    public void WriteFile(string format, Exception ex)
-    {
-      WriteToFile(LogType.Error, format);
-      Error(ex);
     }
 
     ///<summary>
     /// Returns the path the Application data location
     ///</summary>
     ///<returns>Application data path of TvServer</returns>
-    public string GetPathName()
+    public static string GetPathName()
     {
       return String.Format(@"{0}\Team MediaPortal\MediaPortal TV Server",
                            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
@@ -230,17 +220,7 @@ namespace TvLibrary.Log
 
     #region Private methods
 
-    /// <summary>
-    /// Backups the log files.
-    /// </summary>
-    private void BackupLogFiles()
-    {
-      RotateLogs();
-      _lastLogLines.Clear();
-    }
-
-
-    private string GetFileName(LogType logType)
+    private static string GetFileName(LogType logType)
     {
       string Path = GetPathName();
       switch (logType)
@@ -265,7 +245,7 @@ namespace TvLibrary.Log
     /// Therefore we set it manually.
     /// </summary>
     /// <param name="aFileName"></param>
-    private void CreateBlankFile(string aFileName)
+    private static void CreateBlankFile(string aFileName)
     {
       try
       {
@@ -285,7 +265,7 @@ namespace TvLibrary.Log
     /// <summary>
     /// Deletes .bak file, moves .log to .bak for every LogType
     /// </summary>
-    private void RotateLogs()
+    private static void RotateLogs()
     {
       try
       {
@@ -337,7 +317,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="aLogLine">A new log line</param>
     /// <returns>True if the cache only contains the exact lines as given by parameter</returns>
-    private bool IsRepetition(IComparable<string> aLogLine)
+    private static bool IsRepetition(IComparable<string> aLogLine)
     {
       bool result = true;
       // as long as the cache is not full we have no repetitions
@@ -360,7 +340,7 @@ namespace TvLibrary.Log
       return result;
     }
 
-    private void CacheLogLine(string aLogLine)
+    private static void CacheLogLine(string aLogLine)
     {
       if (!string.IsNullOrEmpty(aLogLine))
       {
@@ -379,7 +359,7 @@ namespace TvLibrary.Log
     /// </summary>
     /// <param name="aLogFileName">The file to be checked</param>
     /// <returns>False if logging must not go on</returns>
-    private bool CheckLogPrepared(string aLogFileName)
+    private static bool CheckLogPrepared(string aLogFileName)
     {
       bool result = true;
       try
@@ -422,26 +402,14 @@ namespace TvLibrary.Log
     /// <param name="logType">the type of logging.</param>
     /// <param name="format">The format.</param>
     /// <param name="arg">The arg.</param>
-    private void WriteToFile(LogType logType, string format, params object[] arg)
+    private static void WriteToFile(LogType logType, string format, params object[] arg)
     {
-      lock (typeof(FileLogger))
+      lock (typeof (Log))
       {
         try
         {
           string logFileName = GetFileName(logType);
-          string logLine = format;
-          if (arg.Length > 0)
-          {
-            try
-            {
-              logLine = string.Format(format, arg);
-            }
-            catch (Exception)
-            {
-              logLine = "FormatException at: " + format;
-            }
-          }
-          
+          string logLine = string.Format(format, arg);
 
           if (IsRepetition(logLine))
           {
@@ -457,7 +425,8 @@ namespace TvLibrary.Log
               int threadId = Thread.CurrentThread.ManagedThreadId;
 
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId,
+                               logLine);
               writer.Close();
             }
           }

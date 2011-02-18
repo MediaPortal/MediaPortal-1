@@ -18,9 +18,6 @@
 
 #endregion
 
-using System.IO;
-using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.Threading;
 
@@ -113,15 +110,7 @@ namespace MediaPortal.Services
 
     private static ILog LogServiceRequested(ServiceProvider services)
     {
-      ILog log = null;
-      if (File.Exists(Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "log4net.config")))
-      {
-        log = new Log4netLogger();
-      }
-      else
-      {
-        log = new LogImpl();
-      }
+      ILog log = new LogImpl();
       services.Add<ILog>(log);
       return log;
     }
