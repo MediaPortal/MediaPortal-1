@@ -251,6 +251,7 @@ namespace WindowPlugins
       if (handler != null)
       {
         GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+        GUIPropertyManager.SetProperty("#itemtype", handler.LocalizedCurrentViewLevel);
       }
 
       if (facadeLayout == null)
