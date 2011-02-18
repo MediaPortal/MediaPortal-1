@@ -724,6 +724,8 @@
     <EmbeddedResource Include="56_upgrade_sqlserver_database.sql" />
     <EmbeddedResource Include="57_upgrade_mysql_database.sql" />
     <EmbeddedResource Include="57_upgrade_sqlserver_database.sql" />
+    <EmbeddedResource Include="58_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="58_upgrade_sqlserver_database.sql" />
     <None Include="images\icon.down.png" />
     <Content Include="images\icon.mpConfig.ico" />
     <Content Include="images\icon.radio_fta.png" />
