@@ -437,7 +437,7 @@ public class MediaPortalApp : D3DApp, IRender
         splashScreen.Version = version;
         splashScreen.Run();
         //clientInfo=null;
-#endif
+#endif      
         Application.DoEvents();
         if (_waitForTvServer)
         {

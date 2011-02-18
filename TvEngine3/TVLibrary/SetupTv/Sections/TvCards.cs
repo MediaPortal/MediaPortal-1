@@ -141,7 +141,7 @@ namespace SetupTv.Sections
 
     private static void SaveWinTVSettings(int cardId, string name, string moniker)
     {
-      String fileName = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
+      String fileName = String.Format(@"{0}\WinTV-CI.xml",PathManager.GetDataPath);
       XmlTextWriter writer = new XmlTextWriter(fileName, System.Text.Encoding.UTF8);
       writer.Formatting = Formatting.Indented;
       writer.Indentation = 1;
@@ -163,7 +163,7 @@ namespace SetupTv.Sections
 
     private void LoadWinTVSettings()
     {
-      string configfile = String.Format(@"{0}\WinTV-CI.xml", Log.GetPathName());
+      string configfile = String.Format(@"{0}\WinTV-CI.xml",PathManager.GetDataPath);
       XmlDocument doc = new XmlDocument();
       doc.Load(configfile);
       if (doc.DocumentElement != null)
