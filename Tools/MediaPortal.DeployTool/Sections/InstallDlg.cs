@@ -172,7 +172,7 @@ namespace MediaPortal.DeployTool.Sections
       if (InstallationProperties.Instance["InstallType"] != "download_only")
         AddPackageToListView(new OldPackageChecker());
       AddPackageToListView(new DirectX9Checker());
-      AddPackageToListView(new VCRedist2008Checker());
+      AddPackageToListView(new VCRedistChecker());
       AddPackageToListView(new WindowsMediaPlayerChecker());
       switch (InstallationProperties.Instance["InstallType"])
       {

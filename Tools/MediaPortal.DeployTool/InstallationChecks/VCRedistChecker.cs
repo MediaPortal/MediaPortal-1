@@ -25,15 +25,15 @@ using System.Windows.Forms;
 
 namespace MediaPortal.DeployTool.InstallationChecks
 {
-  internal class VCRedist2008Checker : IInstallationPackage
+  internal class VCRedistChecker : IInstallationPackage
   {
-    public static string prg = "VCRedist2008";
+    public static string prg = "VCRedist2010";
 
     private readonly string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
     public string GetDisplayName()
     {
-      return "MS Visual C++ 2008 SP1 Redist (KB973552)";
+      return "MS Visual C++ 2010";
     }
 
     public bool Download()
@@ -99,27 +99,29 @@ namespace MediaPortal.DeployTool.InstallationChecks
         return result;
       }
 
-      string ManifestDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\winsxs\\Manifests\\";
-      //Manifests for Vista/2008/Windows7
-      const string ManifestCRT_Vista =
-        "x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_9.0.30729.4148_none_5090ab56bcba71c2.manifest";
-      const string ManifestMFC_Vista =
-        "x86_microsoft.vc90.mfc_1fc8b3b9a1e18e3b_9.0.30729.4148_none_4bf5400abf9d60b7.manifest";
-      const string ManifestATL_Vista =
-        "x86_microsoft.vc90.atl_1fc8b3b9a1e18e3b_9.0.30729.4148_none_51ca66a2bbe76806.manifest";
-      //Manifests for XP/2003
-      const string ManifestCRT_XP = "x86_Microsoft.VC90.CRT_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_d495ac4e.manifest";
-      const string ManifestMFC_XP = "x86_Microsoft.VC90.MFC_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_a57c1f53.manifest";
-      const string ManifestATL_XP = "x86_Microsoft.VC90.ATL_1fc8b3b9a1e18e3b_9.0.30729.4148_x-ww_353599c2.manifest";
+      string InstallDir = Environment.GetEnvironmentVariable("SystemRoot") + "\\system32\\";
+      string[] dll = new string[7];
+      //CRT
+      dll[0] = "msvcp100.dll";
+      dll[1] = "msvcr100.dll";
+      //MFC
+      dll[2] = "mfc100.dll";
+      dll[3] = "mfc100u.dll";
+      dll[4] = "mfcm100.dll";
+      dll[5] = "mfcm100u.dll";
+      //ATL
+      dll[6] = "atl100.dll";
 
-      if (File.Exists(ManifestDir + ManifestCRT_Vista) && File.Exists(ManifestDir + ManifestMFC_Vista) &&
-          File.Exists(ManifestDir + ManifestATL_Vista))
-        result.state = CheckState.INSTALLED;
-      else if (File.Exists(ManifestDir + ManifestCRT_XP) && File.Exists(ManifestDir + ManifestMFC_XP) &&
-               File.Exists(ManifestDir + ManifestATL_XP))
-        result.state = CheckState.INSTALLED;
-      else
-        result.state = CheckState.NOT_INSTALLED;
+      for (int i = 0; i < dll.Length; i++)
+      {
+        if (!File.Exists(InstallDir + dll[i]))
+        {
+          result.state = CheckState.NOT_INSTALLED;
+          return result;
+        }
+      }
+
+      result.state = CheckState.INSTALLED;
       return result;
     }
   }
