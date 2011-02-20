@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55 ----------- instance 0x%x", this);
+      Log("---------- v1.4.55a ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55 ----------- instance 0x%x", this);
+      Log("---------- v0.0.55a ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -154,6 +154,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_frameRateRatio              = 0;
     m_rawFRRatio                  = 0;
     m_maxScanLine                 = 0;
+    m_minVisScanLine              = 0;
+    m_maxVisScanLine              = 0;
     
     m_pD3DDev->GetDisplayMode(0, &m_displayMode);
 
@@ -2534,7 +2536,9 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
       SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     }
 
-    m_maxScanLine = 0;
+    m_maxScanLine    = 0;
+    m_minVisScanLine = m_displayMode.Height;
+    m_maxVisScanLine = 0;
     const int maxScanLineSamples = 1000;
     const int maxFrameSamples = 8;
     double times[maxScanLineSamples*2];
@@ -2547,7 +2551,6 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     int sampleCount;
 
     double estRefreshCyc [maxFrameSamples];
-    double cycFrac = 0.0;
     double sumRefCyc = 0.0;
     double aveRefCyc = 0.0;
 
@@ -2566,20 +2569,23 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 
     Log("Starting frame loops: start scanline: %d", rasterStatus.ScanLine);
 
-    startTime = GetCurrentTimestamp();
-    startTimeLR = startTime;
+    endTime = GetCurrentTimestamp();
+    startTimeLR = endTime;
   
     // Now we're at the start of a vsync
     for (int i = 0; i < maxFrameSamples; i++)
     {      
+      startTime = endTime;
       //Skip over vertical blanking period
       m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      while (rasterStatus.ScanLine < 10)
+      while (rasterStatus.ScanLine < 2)
       {
         m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       } 
       startLine = rasterStatus.ScanLine;
-      startTime = GetCurrentTimestamp();
+      
+      if (startLine < m_minVisScanLine)
+        m_minVisScanLine = startLine;
 
       // make a few measurements
       Log("Starting Frame: %d, start scanline: %d", i, startLine);
@@ -2591,13 +2597,14 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 
       Log("Ending Frame: %d, start scanline: %d, end scanline: %d, maxScanline: %d", i, startLine, endLine, m_maxScanLine);
 
-      cycFrac = ((double)endLine - (double)startLine)/(double)(m_maxScanLine + 1);
-      estRefreshCyc[i] = (double)(endTime - startTime) / (1.0 + cycFrac); // in hns units
+      estRefreshCyc[i] = (double)(endTime - startTime); // in hns units
       sumRefCyc += estRefreshCyc[i];
       
       coeff[i].fit = LinearRegression(scanLines, times, sampleCount, &coeff[i].slope, &coeff[i].intercept);
       Log("  samples = %d, slope = %.6f, intercept = %.6f, fit = %.6f", sampleCount, coeff[i].slope, coeff[i].intercept, coeff[i].fit);
     }    
+
+    m_maxVisScanLine = m_maxScanLine;
 
     // Restore thread priority
     if (priority != THREAD_PRIORITY_ERROR_RETURN)
@@ -2677,7 +2684,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     // Compare the two methods
     //--------------------------------------------------------------
 
-    AllowedError = 0.02; //Allow 2.0% error
+    AllowedError = 0.05; //Allow 5.0% error
 
     currError = fabs(1.0 - (simpleFrameTime / frameTime));
     if (currError < AllowedError)
@@ -2693,24 +2700,37 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
     GetRealRefreshRate(); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
     
-    if (m_dEstRefreshCycle < 5.0) // just in case it's gone badly wrong...
+    if ((m_dEstRefreshCycle < 5.0) || (m_dEstRefreshCycle > 100.0)) // just in case it's gone badly wrong...
     {
       Log("Display refresh estimation failed, measured display cycle: %.6f ms", m_dEstRefreshCycle);
       m_dEstRefreshCycle = m_dD3DRefreshCycle;
       m_dDetectedScanlineTime = m_dD3DRefreshCycle/(double)(m_displayMode.Height); // in milliseconds
       m_maxScanLine = m_displayMode.Height;
+      m_maxVisScanLine = m_displayMode.Height;
+      m_minVisScanLine = 5;
       m_estRefreshLock = false;
     }
 
     Log("Raw est display cycle, linReg: %.6f ms, simple: %.6f ms, diff: %.6f ", frameTime/10000.0, simpleFrameTime/10000.0, currError);
     Log("Measured display cycle: %.6f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
-    Log("Maximum scanline: %d", m_maxScanLine);
     Log("Measured scanline time: %.6f us", (m_dDetectedScanlineTime * 1000.0));
     Log("Display (from windows): %d x %d @ %.6f Hz | Measured refresh rate: %.6f Hz", m_displayMode.Width, m_displayMode.Height, m_dD3DRefreshRate, 1000.0/m_dEstRefreshCycle);
+    Log("Max total scanline: %d, Max visible scanline: %d, Min visible scanline: %d", m_maxScanLine, m_maxVisScanLine, m_minVisScanLine);
     
   }
+  
+  //Initialise vsync correction control values
+  m_rasterLimitLow   = (((m_maxVisScanLine - m_minVisScanLine) * 1)/8) + m_minVisScanLine; 
+  m_rasterTargetPosn = m_rasterLimitLow;
+  m_rasterLimitHigh  = (((m_maxVisScanLine - m_minVisScanLine) * 4)/8) + m_minVisScanLine;
+  m_rasterLimitTop   = (((m_maxVisScanLine - m_minVisScanLine) * 5)/8) + m_minVisScanLine;   
+  m_rasterLimitNP    = m_maxVisScanLine;   
+
+  Log("Vsync correction : rasterLimitHigh: %d, rasterLimitLow: %d, rasterTargetPosn: %d", m_rasterLimitHigh, m_rasterLimitLow, m_rasterTargetPosn);
+
   return m_estRefreshLock;
 }
+
 
 
 // Update the array m_pllJitter with a new vsync period. Calculate min, max and stddev.
@@ -3200,8 +3220,6 @@ void MPEVRCustomPresenter::GetRealRefreshRate()
   m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // in ms
 }
 
-
-
 // get time delay (in hns) to target raster paint position
 // returns zero delay if 'now' is inside the limitLow/limitHigh window
 LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime)
@@ -3210,11 +3228,7 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     LONGLONG targetDelay = 0;
     *targetTime = 0;
     LONGLONG scanlineTime = (LONGLONG) (m_dDetectedScanlineTime * 10000.0);
-     
-    UINT limitLow   = (m_maxScanLine * 1)/8; 
-    UINT targetPosn = limitLow;
-    UINT limitHigh  = (m_maxScanLine * 3)/8;
-    UINT limitTop   = (m_maxScanLine * 7)/8;    
+    UINT limitHigh  = m_rasterLimitHigh;
     
     if (*offsetTime < 0)
     {
@@ -3223,9 +3237,9 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     
     UINT errOffset = (UINT)(*offsetTime / scanlineTime); //error offset in scanlines
     limitHigh  = limitHigh + errOffset;
-    if (limitHigh > limitTop)
+    if (limitHigh > m_rasterLimitTop)
     {
-      limitHigh = limitTop;
+      limitHigh = m_rasterLimitTop;
     }
     
     *offsetTime = 0;
@@ -3236,19 +3250,19 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     {
       UINT currScanline = rasterStatus.ScanLine;
       
-      if ( currScanline < limitLow )
+      if ( currScanline < m_rasterLimitLow )
       {
-        targetDelay = (LONGLONG)(targetPosn - currScanline) * scanlineTime ;       
+        targetDelay = (LONGLONG)(m_rasterTargetPosn - currScanline) * scanlineTime ;       
       }
       else if ( currScanline > limitHigh )
       {
         if (currScanline > m_maxScanLine) 
         {
-          targetDelay = (LONGLONG)targetPosn * scanlineTime ;  
+          targetDelay = (LONGLONG)m_rasterTargetPosn * scanlineTime ;  
         }
         else
         {
-          targetDelay = (LONGLONG)(targetPosn + m_maxScanLine - currScanline) * scanlineTime ;  
+          targetDelay = (LONGLONG)(m_rasterTargetPosn + m_maxScanLine - currScanline) * scanlineTime ;  
         }      
       }   
       
@@ -3257,12 +3271,23 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
         targetDelay = (LONGLONG)(GetDisplayCycle() * (70000.0/8.0));
       }
       
-      if ( currScanline < limitTop )
+      if ( (currScanline < m_rasterLimitNP) )
       {
-        *offsetTime = (LONGLONG)(limitTop - currScanline) * scanlineTime ;
+        *offsetTime = (LONGLONG)(m_rasterLimitNP - currScanline) * scanlineTime ;
       }
       
-      targetDelay = targetDelay / 2; //delay in chunks
+      //currScanline value is reported as zero all through vertical blanking
+      //so limit delay to avoid overshooting the target position
+      if ( currScanline < 2 )
+      {
+        targetDelay = 15000 ; //Limit to 1.5ms
+        *offsetTime = 0 ;
+      }
+      else
+      {
+        targetDelay = targetDelay / 2; //delay in chunks
+      }
+      
       *targetTime = now + targetDelay;      
     }
     

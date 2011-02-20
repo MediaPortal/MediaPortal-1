@@ -370,6 +370,15 @@ protected:
   UINT   m_LastStartOfPaintScanline;
   UINT   m_LastEndOfPaintScanline;
   UINT   m_maxScanLine;
+  UINT   m_minVisScanLine;
+  UINT   m_maxVisScanLine;
+
+  UINT   m_rasterLimitLow; 
+  UINT   m_rasterTargetPosn;
+  UINT   m_rasterLimitHigh;
+  UINT   m_rasterLimitTop;    
+  UINT   m_rasterLimitNP;    
+
   double m_dEstRefCycDiff; 
   
   LONGLONG m_SampDuration;
