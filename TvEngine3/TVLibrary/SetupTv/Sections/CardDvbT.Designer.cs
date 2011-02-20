@@ -30,6 +30,8 @@ namespace SetupTv.Sections
     {
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPageScan = new System.Windows.Forms.TabPage();
+      this.chkNoChannelMoveDetection = new System.Windows.Forms.CheckBox();
+      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.checkBoxAdvancedTuning = new System.Windows.Forms.CheckBox();
       this.mpGrpAdvancedTuning = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel2 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -49,7 +51,7 @@ namespace SetupTv.Sections
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.listViewStatus = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -57,7 +59,6 @@ namespace SetupTv.Sections
       this.mpComboBoxRegion = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpComboBoxCountry = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.tabPageCIMenu = new System.Windows.Forms.TabPage();
-      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.tabControl1.SuspendLayout();
       this.tabPageScan.SuspendLayout();
       this.mpGrpAdvancedTuning.SuspendLayout();
@@ -81,6 +82,7 @@ namespace SetupTv.Sections
       // tabPageScan
       // 
       this.tabPageScan.BackColor = System.Drawing.SystemColors.Control;
+      this.tabPageScan.Controls.Add(this.chkNoChannelMoveDetection);
       this.tabPageScan.Controls.Add(this.checkBoxCreateSignalGroup);
       this.tabPageScan.Controls.Add(this.checkBoxAdvancedTuning);
       this.tabPageScan.Controls.Add(this.mpGrpAdvancedTuning);
@@ -97,6 +99,26 @@ namespace SetupTv.Sections
       this.tabPageScan.Size = new System.Drawing.Size(550, 407);
       this.tabPageScan.TabIndex = 0;
       this.tabPageScan.Text = "Scanning";
+      // 
+      // chkNoChannelMoveDetection
+      // 
+      this.chkNoChannelMoveDetection.AutoSize = true;
+      this.chkNoChannelMoveDetection.Location = new System.Drawing.Point(194, 85);
+      this.chkNoChannelMoveDetection.Name = "chkNoChannelMoveDetection";
+      this.chkNoChannelMoveDetection.Size = new System.Drawing.Size(308, 17);
+      this.chkNoChannelMoveDetection.TabIndex = 105;
+      this.chkNoChannelMoveDetection.Text = "Provider doesn\'t uniquely identify channels (detection errors)";
+      this.chkNoChannelMoveDetection.UseVisualStyleBackColor = true;
+      // 
+      // checkBoxCreateSignalGroup
+      // 
+      this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(194, 62);
+      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(178, 17);
+      this.checkBoxCreateSignalGroup.TabIndex = 9;
+      this.checkBoxCreateSignalGroup.Text = "Create \"Digital Terrestrial\" group";
+      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
       // 
       // checkBoxAdvancedTuning
       // 
@@ -381,16 +403,6 @@ namespace SetupTv.Sections
       this.tabPageCIMenu.TabIndex = 1;
       this.tabPageCIMenu.Text = "CI Menu";
       // 
-      // checkBoxCreateSignalGroup
-      // 
-      this.checkBoxCreateSignalGroup.AutoSize = true;
-      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(194, 62);
-      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
-      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(178, 17);
-      this.checkBoxCreateSignalGroup.TabIndex = 9;
-      this.checkBoxCreateSignalGroup.Text = "Create \"Digital Terrestrial\" group";
-      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
-      // 
       // CardDvbT
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -443,6 +455,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.RadioButton scanSingleTransponder;
     private System.Windows.Forms.RadioButton scanPredefProvider;
     private System.Windows.Forms.CheckBox checkBoxCreateSignalGroup;
+    private System.Windows.Forms.CheckBox chkNoChannelMoveDetection;
 
   }
 }
