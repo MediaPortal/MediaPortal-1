@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FullScreenMsg", "FullScreenMsg.csproj", "{FE1A837A-6BDD-431C-8093-E94999477D9D}"
 EndProject
 Global
