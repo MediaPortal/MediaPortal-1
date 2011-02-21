@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Weather
     private int _refreshIntercal = 30;
     private string _nowLabelLocation = string.Empty;
     private string _nowLabelUpdateTime = string.Empty;
-    private string _nowIcon = GUIGraphicsContext.Skin + @"\Media\Weather\128x128\na.png";
+    private string _nowIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\Weather\128x128\na.png");
     private string _nowLabelCondition = string.Empty;
     private string _nowLabelTemp = string.Empty;
     private string _nowLabelFeelLike = string.Empty;
@@ -194,8 +194,8 @@ namespace MediaPortal.GUI.Weather
       //loop here as well
       for (int i = 0; i < NUM_DAYS; i++)
       {
-        _forecast[i].iconImageNameLow = GUIGraphicsContext.Skin + @"\Media\Weather\64x64\na.png";
-        _forecast[i].iconImageNameHigh = GUIGraphicsContext.Skin + @"\Media\Weather\128x128\na.png";
+        _forecast[i].iconImageNameLow = GUIGraphicsContext.GetThemedSkinFile(@"\Media\Weather\64x64\na.png");
+        _forecast[i].iconImageNameHigh = GUIGraphicsContext.GetThemedSkinFile(@"\Media\Weather\128x128\na.png");
         _forecast[i].Overview = string.Empty;
         _forecast[i].Day = string.Empty;
         _forecast[i].High = string.Empty;
@@ -356,7 +356,7 @@ namespace MediaPortal.GUI.Weather
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\myweather.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myweather.xml"));
     }
 
     public override void OnAction(Action action)
@@ -410,7 +410,7 @@ namespace MediaPortal.GUI.Weather
       //GUIControl.SelectItemControl(GetID,(int)Controls.CONTROL_LOCATIONSELECT,selected);
 
       // Init Daylight clock _geochronGenerator
-      _geochronGenerator = new Geochron(GUIGraphicsContext.Skin + @"\Media");
+      _geochronGenerator = new Geochron();
       int width, height;
       GUIImage clockImage = (GUIImage)GetControl((int)Controls.CONTROL_IMAGE_SUNCLOCK);
       _geochronGenerator.getWidthHeight(out width, out height);
@@ -1266,7 +1266,7 @@ namespace MediaPortal.GUI.Weather
         _nowLabelUpdateTime = RelocalizeDateTime(_nowLabelUpdateTime);
 
         GetInteger(element, "icon", out tempInteger);
-        _nowIcon = GUIGraphicsContext.Skin + String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger);
+        _nowIcon = GUIGraphicsContext.GetThemedSkinFile(String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger));
 
         GetString(element, "t", out _nowLabelCondition, string.Empty); //current condition
         _nowLabelCondition = LocalizeOverview(_nowLabelCondition);
@@ -1366,10 +1366,10 @@ namespace MediaPortal.GUI.Weather
             {
               string finalString;
               GetInteger(pDayTimeElement, "icon", out tempInteger);
-              _forecast[i].iconImageNameLow = GUIGraphicsContext.Skin +
-                                              String.Format(@"\Media\Weather\64x64\{0}.png", tempInteger);
-              _forecast[i].iconImageNameHigh = GUIGraphicsContext.Skin +
-                                               String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger);
+              _forecast[i].iconImageNameLow = GUIGraphicsContext.GetThemedSkinFile(
+                                              String.Format(@"\Media\Weather\64x64\{0}.png", tempInteger));
+              _forecast[i].iconImageNameHigh = GUIGraphicsContext.GetThemedSkinFile(
+                                               String.Format(@"\Media\Weather\128x128\{0}.png", tempInteger));
               GetString(pDayTimeElement, "t", out _forecast[i].Overview, string.Empty);
               _forecast[i].Overview = LocalizeOverview(_forecast[i].Overview);
               finalString = string.Empty;

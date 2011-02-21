@@ -107,6 +107,7 @@ namespace MediaPortal
         {
           m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
         }
+//        SkinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
         SkinFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\splashscreen.xml");
       }
 
@@ -178,6 +179,7 @@ namespace MediaPortal
         {
           m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
         }
+//        SkinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
         SkinReferenceFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\references.xml");
       }
 

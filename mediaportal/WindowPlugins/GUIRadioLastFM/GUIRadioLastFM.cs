@@ -203,7 +203,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\MyRadioLastFM.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyRadioLastFM.xml"));
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
@@ -1964,7 +1964,7 @@ namespace MediaPortal.GUI.RADIOLASTFM
 
       if (thumb.Length <= 0)
       {
-        thumb = GUIGraphicsContext.Skin + @"\media\missing_coverart.png";
+        thumb = GUIGraphicsContext.GetThemedSkinFile(@"\media\missing_coverart.png");
       }
       else
       {

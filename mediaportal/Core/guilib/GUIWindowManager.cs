@@ -804,7 +804,7 @@ namespace MediaPortal.GUI.Library
             _listHistory.RemoveAt(_listHistory.Count - 1);
           }
           // Get previous window id (previous to the last active window) id
-          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
           {
             _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
           }
@@ -822,7 +822,7 @@ namespace MediaPortal.GUI.Library
           if (replaceWindow)
           {
             // activate HOME window
-            if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+            if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
             {
               newWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
             }
@@ -877,7 +877,7 @@ namespace MediaPortal.GUI.Library
       if (!HasPreviousWindow())
       {
         // if _listhistory count gets corrupted, go home          
-        if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+        if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
           _listHistory.Add((int)GUIWindow.Window.WINDOW_SECOND_HOME);
         else
           _listHistory.Add((int)GUIWindow.Window.WINDOW_HOME);
@@ -947,6 +947,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /* TODO: candidate for removal; this method has no callers.
     public static void ActivateSkin(string skinName, int newWindowId)
     {
       _isSwitchingToNewWindow = true;
@@ -1045,6 +1046,7 @@ namespace MediaPortal.GUI.Library
         _isSwitchingToNewWindow = false;
       }
     }
+    */
 
     #endregion
 

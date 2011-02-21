@@ -311,7 +311,7 @@ namespace MediaPortal.GUI.Library
             {
               if (_textureFileNameTag[1] != ':')
               {
-                strFileNameTemp = GUIGraphicsContext.Skin + @"\media\" + _textureFileNameTag;
+                strFileNameTemp = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + _textureFileNameTag);
               }
             }
 
@@ -2576,7 +2576,7 @@ namespace MediaPortal.GUI.Library
 
     protected void LoadAnimation(ref string textureFiles)
     {
-      string fileName = GUIGraphicsContext.Skin + "\\" + textureFiles;
+      string fileName = GUIGraphicsContext.GetThemedSkinFile("\\" + textureFiles);
       try
       {
         XmlTextReader reader = new XmlTextReader(fileName);

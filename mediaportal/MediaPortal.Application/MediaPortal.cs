@@ -1345,7 +1345,7 @@ public class MediaPortalApp : D3DApp, IRender
           }
         }
       }
-      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+      if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
       {
         Log.Info("Main: OnResume - Switch to basic home screen");
         GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
@@ -1733,7 +1733,7 @@ public class MediaPortalApp : D3DApp, IRender
 
     GUIGraphicsContext.Load();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
-    GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+    GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
     UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), m_strSkin)); // Loading skin ({0})...
     GUIFontManager.InitializeDeviceObjects();
     Log.Info("Main: Loading {0} skin", m_strSkin);
@@ -1784,7 +1784,7 @@ public class MediaPortalApp : D3DApp, IRender
     GUIWindowManager.PreInit();
     GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.RUNNING;
     Log.Info("Main: Activating windowmanager");
-    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml")))
+    if ((_startWithBasicHome) && (File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml"))))
     {
       GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_SECOND_HOME);
     }
@@ -1868,7 +1868,7 @@ public class MediaPortalApp : D3DApp, IRender
         int activeWin = GUIWindowManager.ActiveWindow;
         if (activeWin == 0 && !GUIWindowManager.HasPreviousWindow())
         {
-          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.GetThemedSkinFile(@"\basichome.xml")))
           {
             activeWin = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
           }
@@ -1899,7 +1899,7 @@ public class MediaPortalApp : D3DApp, IRender
           m_strSkin = GUIGraphicsContext.Skin;
         }
         GUIGraphicsContext.Load();
-        GUIFontManager.LoadFonts(Config.GetFile(Config.Dir.Skin, m_strSkin, "fonts.xml"));
+        GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
         GUIFontManager.InitializeDeviceObjects();
 
         if (GUIGraphicsContext.DX9Device != null)

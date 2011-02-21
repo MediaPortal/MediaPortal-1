@@ -72,7 +72,7 @@ namespace WindowPlugins.GUISettings
     public override bool Init()
     {
       //SkinDirectory = GUIGraphicsContext.Skin.Remove(GUIGraphicsContext.Skin.LastIndexOf(@"\")); 
-      return Load(GUIGraphicsContext.Skin + @"\settings_general.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_general.xml"));
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -287,11 +287,11 @@ namespace WindowPlugins.GUISettings
       SaveSettings();
       GUITextureManager.Clear();
       GUITextureManager.Init();
-      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIExpressionManager.ClearExpressionCache();
       GUIControlFactory.ClearReferences();
-      GUIControlFactory.LoadReferences(GUIGraphicsContext.Skin + @"\references.xml");
+      GUIControlFactory.LoadReferences(GUIGraphicsContext.GetThemedSkinFile(@"\references.xml"));
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID);
       GUIControl.FocusControl(GetID, btnSkin.GetID);
@@ -327,7 +327,7 @@ namespace WindowPlugins.GUISettings
       BackupButtons();
       SaveSettings();
       GUILocalizeStrings.ChangeLanguage(btnLanguage.Label);
-      GUIFontManager.LoadFonts(GUIGraphicsContext.Skin + @"\fonts.xml");
+      GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
       GUIFontManager.InitializeDeviceObjects();
       GUIWindowManager.OnResize();
       GUIWindowManager.ActivateWindow(GetID); // without this you cannot change skins / lang any more..

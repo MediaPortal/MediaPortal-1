@@ -784,6 +784,40 @@ namespace MediaPortal.GUI.Library
       _typed = "";
     }
 
+    public int FindItemByLabel(string label)
+    {
+      int item = 0;
+
+      // Find the spin item with the specified label.
+      // This algorithm chooses the first match.  It's a programming error to have to spin entries with the same label.
+      for (int i = 0; i < _listLabels.Count; i++)
+      {
+        if ((string)_listLabels[i] == label)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
+    public int FindItemByValue(int value)
+    {
+      int item = 0;
+
+      // Find the spin item with the specified value.
+      // This algorithm chooses the first match.  It's a programming error to have to spin entries with the same value.
+      for (int i = 0; i < _listValues.Count; i++)
+      {
+        if ((int)_listValues[i] == value)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
     public override void SetPosition(int dwPosX, int dwPosY)
     {
       if (dwPosX < 0)

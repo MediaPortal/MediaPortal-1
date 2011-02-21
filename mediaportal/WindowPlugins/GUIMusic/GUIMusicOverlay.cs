@@ -100,7 +100,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      bool result = Load(GUIGraphicsContext.Skin + @"\musicOverlay.xml");
+      bool result = Load(GUIGraphicsContext.GetThemedSkinFile(@"\musicOverlay.xml"));
       GetID = (int)Window.WINDOW_MUSIC_OVERLAY;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MusicOverlay);
       return result;
@@ -485,7 +485,6 @@ namespace MediaPortal.GUI.Music
 
     private MusicTag GetInfo(string fileName, out string thumb)
     {
-      string skin = GUIGraphicsContext.Skin;
       thumb = string.Empty;
       MusicTag tag = null;
 

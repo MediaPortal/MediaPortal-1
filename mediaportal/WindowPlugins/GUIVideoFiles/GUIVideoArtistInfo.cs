@@ -64,7 +64,7 @@ namespace MediaPortal.GUI.Video
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\DialogVideoArtistInfo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogVideoArtistInfo.xml"));
     }
 
     public override void PreInit() {}

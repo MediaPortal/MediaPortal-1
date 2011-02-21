@@ -47,7 +47,7 @@ namespace MediaPortal.GUI.Home
 
     public override bool Init()
     {
-      return (Load(GUIGraphicsContext.Skin + @"\myHome.xml"));
+      return (Load(GUIGraphicsContext.GetThemedSkinFile(@"\myHome.xml")));
     }
 
     protected override void LoadButtonNames()

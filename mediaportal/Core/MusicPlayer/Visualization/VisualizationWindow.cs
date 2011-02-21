@@ -789,7 +789,7 @@ namespace MediaPortal.Visualization
         }
 
         string skinFilePath = Path.Combine(Application.StartupPath,
-                                           GUIGraphicsContext.Skin + @"\MyMusicFullScreenVisualization.xml");
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\MyMusicFullScreenVisualization.xml"));
 
         XmlDocument doc = new XmlDocument();
         doc.Load(skinFilePath);
@@ -917,7 +917,7 @@ namespace MediaPortal.Visualization
       if (TrackInfoImageName.Length > 0)
       {
         string imagePath = Path.Combine(Application.StartupPath,
-                                        string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin, TrackInfoImageName));
+                                        GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + TrackInfoImageName));
 
         try
         {
@@ -965,8 +965,7 @@ namespace MediaPortal.Visualization
       if (MissingCoverArtImageName.Length > 0)
       {
         string imagePath = Path.Combine(Application.StartupPath,
-                                        string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin,
-                                                      MissingCoverArtImageName));
+                                        GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + MissingCoverArtImageName));
 
 
         try
@@ -1067,7 +1066,7 @@ namespace MediaPortal.Visualization
       }
 
       imgPath = Path.Combine(Application.StartupPath,
-                             string.Format(@"{0}\Media\{1}", GUIGraphicsContext.Skin, imgName));
+                             GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + imgName));
 
       try
       {

@@ -81,7 +81,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\tvZAPOSD.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\tvZAPOSD.xml"));
       GetID = (int)Window.WINDOW_TVZAPOSD;
       return bResult;
     }

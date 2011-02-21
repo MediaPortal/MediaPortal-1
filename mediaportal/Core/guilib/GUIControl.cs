@@ -1474,7 +1474,7 @@ namespace MediaPortal.GUI.Library
     {
       XmlDocument doc = new XmlDocument();
 
-      doc.Load(GUIGraphicsContext.Skin + "\\" + xmlFilename);
+      doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + xmlFilename));
 
       List<GUIControl> listControls = new List<GUIControl>();
 

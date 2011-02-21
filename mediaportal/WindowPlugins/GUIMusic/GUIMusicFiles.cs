@@ -305,7 +305,7 @@ namespace MediaPortal.GUI.Music
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mymusicsongs.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mymusicsongs.xml"));
     }
 
     public override void OnAction(Action action)

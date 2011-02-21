@@ -213,7 +213,7 @@ namespace MediaPortal.GUI.Home
     {
       if (Path.GetPathRoot(name) == "")
       {
-        name = String.Format(@"{0}\media\{1}", GUIGraphicsContext.Skin, name);
+        name = GUIGraphicsContext.GetThemedSkinFile(@"\media\" + name);
       }
       if ((Path.HasExtension(name)) && (File.Exists(name)))
       {

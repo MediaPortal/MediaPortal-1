@@ -260,7 +260,7 @@ namespace MediaPortal.GUI.Library
         {
           if (filename.IndexOfAny(new char[] {'?', '*'}) != -1)
           {
-            foreach (string match in Directory.GetFiles(GUIGraphicsContext.Skin + @"\media\", filename))
+            foreach (string match in Directory.GetFiles(GUIGraphicsContext.GetThemedSkinFile(@"\media\" + filename)))
             {
               _filenames.Add(Path.GetFileName(match));
             }

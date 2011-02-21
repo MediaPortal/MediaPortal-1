@@ -233,7 +233,7 @@ namespace MediaPortal.Dialogs
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\dialogProgress.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\dialogProgress.xml"));
     }
 
     public override void Reset()

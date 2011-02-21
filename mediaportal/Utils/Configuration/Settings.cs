@@ -76,6 +76,54 @@ namespace MediaPortal.Profile
   }
 
   /// <summary>
+  /// SKSettings allows to read and write SkinSetting.xml configuration file.
+  /// (wrapper class to unify path handling)
+  /// </summary>
+  public class SKSettings : Settings
+  {
+    private static string _configPathName;
+
+    public static string ConfigPathName
+    {
+      get
+      {
+        if (string.IsNullOrEmpty(_configPathName))
+        {
+          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, "SkinSettings.xml");
+        }
+        return _configPathName;
+      }
+      set
+      {
+        if (string.IsNullOrEmpty(_configPathName))
+        {
+          _configPathName = value;
+          if (!Path.IsPathRooted(_configPathName))
+          {
+            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, _configPathName);
+          }
+        }
+        else
+        {
+          throw new InvalidOperationException("ConfigPathName already has a value.");
+        }
+      }
+    }
+
+    private static SKSettings _instance;
+
+    public static SKSettings Instance
+    {
+      get { return _instance ?? (_instance = new SKSettings()); }
+    }
+
+    // public constructor should be made/private protected, we should encourage the usage of Instance
+
+    public SKSettings()
+      : base(ConfigPathName) { }
+  }
+
+  /// <summary>
   /// Settings allows to read and write any xml configuration file
   /// </summary>
   public class Settings : IDisposable

@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       currentFolder = Directory.GetCurrentDirectory();
-      return Load(GUIGraphicsContext.Skin + @"\myvideoplaylist.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoplaylist.xml"));
     }
 
     protected override string SerializeName

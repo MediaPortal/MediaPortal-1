@@ -60,7 +60,7 @@ namespace MediaPortal.GUI.Video
     {
       currentFolder = string.Empty;
       handler.CurrentView = "369";
-      return Load(GUIGraphicsContext.Skin + @"\myvideoTitle.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\myvideoTitle.xml"));
     }
 
     protected override string SerializeName

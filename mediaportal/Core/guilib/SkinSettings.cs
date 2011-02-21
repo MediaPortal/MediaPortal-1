@@ -21,7 +21,9 @@
 using MediaPortal.Configuration;
 using MediaPortal.Profile;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 namespace MediaPortal.GUI.Library
 {
@@ -47,6 +49,7 @@ namespace MediaPortal.GUI.Library
       public Kind Kind;
     } ;
 
+    private static string _skinSettingsFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
@@ -215,105 +218,113 @@ namespace MediaPortal.GUI.Library
 
     private static void LoadBooleanSettings()
     {
-      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
-      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+      _skinBoolSettings.Clear();
 
-      using (Settings xmlReader = new Settings(strFileName))
+      using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        try
+        bool success = false;
+        string allSettings = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "BooleanSettings", "");
+
+        // Each pair is separated by a semicolon.
+        string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string setting in pairs)
         {
-          bool success = false;
-          string allSettings = xmlReader.GetValueAsString(skinName, "BooleanSettings", "");
+          // Each name/value pair is separated by an equal sign.
+          string[] nv = setting.Split('=');
 
-          // Each pair is separated by a semicolon.
-          string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-
-          foreach (string setting in pairs)
+          // Create the new boolean setting.
+          SkinBool newBool = new SkinBool();
+          newBool.Name = nv[0];
+          newBool.Value = bool.TryParse(nv[1], out success);
+          if (!success)
           {
-            // Each name/value pair is separated by an equal sign.
-            string[] nv = setting.Split('=');
-
-            // Create the new boolean setting.
-            SkinBool newBool = new SkinBool();
-            newBool.Name = nv[0];
-            newBool.Value = bool.TryParse(nv[1], out success);
-            if (!success)
-            {
-              newBool.Value = false;
-            }
-            newBool.Kind = Kind.PERSISTENT;
-
-            // Add the setting to th dictionary.
-            int key = _skinBoolSettings.Count;
-            _skinBoolSettings[key] = newBool;
+            newBool.Value = false;
           }
-        }
-        catch (Exception ex)
-        {
-          Log.Error("SkinSettings: Error loading settings from {0} - {1}", strFileName, ex.Message);
+          newBool.Kind = Kind.PERSISTENT;
+
+          // Add the setting to th dictionary.
+          int key = _skinBoolSettings.Count;
+          _skinBoolSettings[key] = newBool;
         }
       }
     }
 
     private static void LoadStringSettings()
     {
-      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
-      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
+      _skinStringSettings.Clear();
 
-      using (Settings xmlReader = new Settings(strFileName))
+      using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        try
+        string allSettings = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "StringSettings", "");
+
+        // Each pair is separated by a semicolon.
+        string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string setting in pairs)
         {
-          string allSettings = xmlReader.GetValueAsString(skinName, "StringSettings", "");
+          // Each name/value pair is separated by an equal sign.
+          string[] nv = setting.Split('=');
 
-          // Each pair is separated by a semicolon.
-          string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+          // Create the new string setting.
+          SkinString newString = new SkinString();
+          newString.Name = nv[0];
+          newString.Value = nv[1];
+          newString.Kind = Kind.PERSISTENT;
 
-          foreach (string setting in pairs)
-          {
-            // Each name/value pair is separated by an equal sign.
-            string[] nv = setting.Split('=');
-
-            // Create the new string setting.
-            SkinString newString = new SkinString();
-            newString.Name = nv[0];
-            newString.Value = nv[1];
-            newString.Kind = Kind.PERSISTENT;
-
-            // Add the setting to th dictionary.
-            int key = _skinStringSettings.Count;
-            _skinStringSettings[key] = newString;
-          }
+          // Add the setting to th dictionary.
+          int key = _skinStringSettings.Count;
+          _skinStringSettings[key] = newString;
         }
-        catch (Exception ex)
+      }
+    }
+
+    private static void LoadDiscreteSettings()
+    {
+      using (Settings xmlReader = new Settings(_skinSettingsFileName))
+      {
+        string skinTheme = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "Theme", "");
+        GUIGraphicsContext.Theme = skinTheme;
+        GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
+
+        // Set a property with a comma-separated list of theme names.
+        string themesCSV = "";
+        ArrayList themes = GetSkinThemes();
+        for (int i = 0; i < themes.Count; i++)
         {
-          Log.Error("SkinSettings: Error loading settings from {0} - {1}", strFileName, ex.Message);
+          themesCSV += "," + themes[i];
         }
+
+        if (themesCSV.Length > 0)
+        {
+          themesCSV = themesCSV.Substring(1);
+        }
+        GUIPropertyManager.SetProperty("#Skin.Themes", themesCSV);
       }
     }
 
     public static void Load()
     {
-      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
-
-      if (_loadedSkinSettings != skinName)
+      try
       {
-        _skinBoolSettings.Clear();
-        _skinStringSettings.Clear();
+        if (_loadedSkinSettings != GUIGraphicsContext.SkinName)
+        {
+          LoadBooleanSettings();
+          LoadStringSettings();
+          LoadDiscreteSettings();
 
-        SkinSettings.LoadBooleanSettings();
-        SkinSettings.LoadStringSettings();
-
-        _loadedSkinSettings = skinName;
+          _loadedSkinSettings = GUIGraphicsContext.SkinName;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("SkinSettings: Error loading settings from {0} - {1}", _skinSettingsFileName, ex.Message);
       }
     }
 
     public static void Save()
     {
-      string strFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
-      string skinName = GUIGraphicsContext.Skin.Substring(GUIGraphicsContext.Skin.LastIndexOf(@"\") + 1);
-
-      using (Settings xmlWriter = new Settings(strFileName))
+      using (Settings xmlWriter = new Settings(_skinSettingsFileName))
       {
         // Save all the boolean settings.
         string allSettings = "";
@@ -327,7 +338,7 @@ namespace MediaPortal.GUI.Library
             allSettings += bSetting.Name + "=" + bSetting.Value + ";";
           }
         }
-        xmlWriter.SetValue(skinName, "BooleanSettings", allSettings);
+        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "BooleanSettings", allSettings);
 
         // Save all the string settings.
         allSettings = "";
@@ -341,9 +352,31 @@ namespace MediaPortal.GUI.Library
             allSettings += strSetting.Name + "=" + strSetting.Value + ";";
           }
         }
-        xmlWriter.SetValue(skinName, "StringSettings", allSettings);
+        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "StringSettings", allSettings);
+
+        // Save discrete settings.
+        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "Theme", GUIGraphicsContext.ThemeName);
       }
       Settings.SaveCache();
+    }
+
+    public static ArrayList GetSkinThemes()
+    {
+      ArrayList themes = new ArrayList();
+      try
+      {
+        string[] themesArray = Directory.GetDirectories(String.Format(@"{0}\Themes", GUIGraphicsContext.Skin), "*", SearchOption.TopDirectoryOnly);
+        for (int i = 0; i < themesArray.Length; i++)
+        {
+          themesArray[i] = themesArray[i].Substring(themesArray[i].LastIndexOf(@"\") + 1);
+        }
+        themes.AddRange(themesArray);
+      }
+      catch (DirectoryNotFoundException)
+      {
+        // The Themes directory was not found.  Ignore and return an empty string.
+      }
+      return themes;
     }
   }
 }

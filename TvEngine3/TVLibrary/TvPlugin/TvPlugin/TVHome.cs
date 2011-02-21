@@ -273,7 +273,7 @@ namespace TvPlugin
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mytvhomeServer.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvhomeServer.xml"));
     }
 
     public override void OnAdded()
@@ -2438,32 +2438,27 @@ namespace TvPlugin
           case "AC3":
           case "AC3plus": // just for the time being use the same icon for AC3 & AC3plus
             GUIPropertyManager.SetProperty("#TV.View.IsAC3",
-                                           string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
-                                                         "ac3.png"));
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\ac3.png"));
             break;
 
           case "Mpeg1":
             GUIPropertyManager.SetProperty("#TV.View.IsMP1A",
-                                           string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
-                                                         "mp1a.png"));
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\mp1a.png"));
             break;
 
           case "Mpeg2":
             GUIPropertyManager.SetProperty("#TV.View.IsMP2A",
-                                           string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
-                                                         "mp2a.png"));
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\mp2a.png"));
             break;
 
           case "AAC":
             GUIPropertyManager.SetProperty("#TV.View.IsAAC",
-                                           string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
-                                                         "aac.png"));
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\aac.png"));
             break;
 
           case "LATMAAC":
             GUIPropertyManager.SetProperty("#TV.View.IsLATMAAC",
-                                           string.Format("{0}{1}{2}", GUIGraphicsContext.Skin, @"\Media\Logos\",
-                                                         "latmaac3.png"));
+                                           GUIGraphicsContext.GetThemedSkinFile(@"\Media\Logos\latmaac3.png"));
             break;
         }
       }

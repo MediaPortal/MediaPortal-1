@@ -105,6 +105,7 @@ namespace MediaPortal.GUI.Library
 
     public static Device DX9Device = null; // pointer to current DX9 device
     private static string m_strSkin = ""; // name of the current skin
+    private static string m_strTheme = ""; // name of the current skin theme
     private static bool m_bFullScreenVideo = false; // boolean indicating if we're in GUI or fullscreen video/tv mode
     private static IntPtr m_ipActiveForm; // pointer to the current GDI window
     private static Rectangle m_RectVideo; // rectangle of the video preview window
@@ -844,8 +845,76 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static string Skin
     {
-      set { m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value); }
+      set { 
+        m_strSkin = Config.GetSubFolder(Config.Dir.Skin, value);
+        m_strTheme = m_strSkin; // The default theme is the skin itself.
+      }
       get { return m_strSkin; }
+    }
+
+    /// <summary>
+    /// Convenience property to get just the name of the skin.
+    /// </summary>
+    public static string SkinName
+    {
+      get { return m_strSkin.Substring(m_strSkin.LastIndexOf(@"\") + 1); }
+    }
+
+    /// <summary>
+    /// Get/set current skin theme
+    /// </summary>
+    public static string Theme
+    {
+      set { m_strTheme = Skin + @"\Themes\" + value; }
+      get { return m_strTheme; }
+    }
+
+    /// <summary>
+    /// Convenience property to get just the name of the skin theme.
+    /// </summary>
+    public static string ThemeName
+    {
+      get {
+        if (m_strTheme.Contains(@"\Themes\"))
+        {
+          return m_strTheme.Substring(m_strTheme.LastIndexOf(@"\") + 1);
+        }
+        return "";
+      }
+    }
+
+    /// <summary>
+    /// Return a themed version of the requested xml filename, otherwise return the default skin xml filename.
+    /// </summary>
+    /// <param name="xmlfilename"></param>
+    /// <returns></returns>
+    public static string GetThemedSkinFile(string xmlfilename)
+    {
+      if (File.Exists(Theme + xmlfilename))
+      {
+        return Theme + xmlfilename;
+      }
+      else
+      {
+        return Skin + xmlfilename;
+      }
+    }
+
+    /// <summary>
+    /// Return a themed version of the requested directory, otherwise return the default skin directory.
+    /// </summary>
+    /// <param name="xmlfilename"></param>
+    /// <returns></returns>
+    public static string GetThemedSkinDirectory(string dir)
+    {
+      if (Directory.Exists(Theme + dir))
+      {
+        return Theme + dir;
+      }
+      else
+      {
+        return Skin + dir;
+      }
     }
 
     /// <summary>

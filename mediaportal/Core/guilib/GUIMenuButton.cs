@@ -46,6 +46,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textureFocus")] protected string _focusedTextureName = "";
     [XMLSkinElement("textureNoFocus")] protected string _nonFocusedTextureName = "";
     [XMLSkinElement("onclick")] protected string _onclick = "";
+    [XMLSkinElement("binding")] protected string _binding = "";
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("valueTextInButton")] protected bool _valueTextInButton = false;
@@ -308,22 +309,54 @@ namespace MediaPortal.GUI.Library
           _spinControl.SuffixText = _suffixText;
           _spinControl.TextOffsetX = _spinTextOffsetX;
           _spinControl.TextOffsetY = _spinTextOffsetY;
-
-          // Pass all of the subitems to the spin control.
-          for (int i = 0; i < SubItemCount; ++i)
-          {
-            _spinControl.AddSubItem(GetSubItem(i));
-          }
-          for (int i = 0; i < SubItemCount; ++i)
-          {
-            RemoveSubItem(i);
-          }
           break;
 
         case ButtonMode.BUTTON_MODE_DIALOG_LIST:
-          // TBS
           break;
       }
+
+      // Add subitems to the menu.
+      for (int i = 0; i < SubItemCount; ++i)
+      {
+        string strItem = GUIPropertyManager.GetProperty((string)GetSubItem(i));
+        if (strItem == null || strItem == "")
+        {
+          // Refetch the subitem if a property value was not returned.
+          strItem = (string)GetSubItem(i);
+        }
+
+        // Allow for the subitem to be a CSV list of values.  If it is then add each item in the CSV list.
+        ArrayList items = new ArrayList(strItem.Split(new char[] { ',' }));
+        for (int j=0; j < items.Count; j++)
+        {
+          AddItem(items[j].ToString(), j);
+        }
+      }
+
+      for (int i = 0; i < SubItemCount; ++i)
+      {
+        RemoveSubItem(i);
+      }
+
+      // If specified, bind the selection.
+      if (_binding.Length > 0)
+      {
+        bindToValue(_binding);
+      }
+
+      // Initialize the controls properties.
+      SetProperties();
+    }
+
+    private void bindToValue(string strValue)
+    {
+      string strTemp = strValue;
+      strValue = GUIPropertyManager.GetProperty(strValue);
+      if (strValue == null || strValue == "")
+      {
+        strValue = strTemp;
+      }
+      SetSelectedItemByLabel(strValue);
     }
 
     /// <summary>
@@ -464,6 +497,12 @@ namespace MediaPortal.GUI.Library
           base.Render(timePassed);
           return;
         }
+      }
+
+      // If specified, bind the selection.
+      if (_binding.Length > 0)
+      {
+        bindToValue(_binding);
       }
 
       // This control has the focus or the focused look is being maintained.
@@ -697,18 +736,11 @@ namespace MediaPortal.GUI.Library
       GUIMessage message;
       if (Focus)
       {
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_SELECT_ITEM)
-        {
-          // send a message to anyone interested 
-          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
-          GUIGraphicsContext.SendMessage(message);
+        // The order of execution in this section is important.  The action is handled first, then properties are set to reflect
+        // state of the button, then click actions are handled.  This allows click actions to consume the buttons new state.
 
-          // If this button has a click setting then execute the setting.
-          if (_onclick.Length != 0)
-          {
-            GUIInfoManager.Execute(_onclick, 0);
-          }
-        }
+        // Preserve the action for processing after delegation.
+        Action.ActionType myAction = action.wID;
 
         // Perform actions appropriate for the button mode.
         switch (_buttonMode)
@@ -719,6 +751,22 @@ namespace MediaPortal.GUI.Library
           case ButtonMode.BUTTON_MODE_SPIN_LIST:
             PerformSpinListButtonAction(action);
             break;
+        }
+
+        // Set properties for the selection.
+        SetProperties();
+
+        if (myAction == Action.ActionType.ACTION_MOUSE_CLICK || myAction == Action.ActionType.ACTION_SELECT_ITEM)
+        {
+          // send a message to anyone interested 
+          message = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID, 0, 0, null);
+          GUIGraphicsContext.SendMessage(message);
+
+          // If this button has a click setting then execute the setting.
+          if (_onclick.Length != 0)
+          {
+            GUIInfoManager.Execute(_onclick, 0);
+          }
         }
       }
     }
@@ -764,6 +812,12 @@ namespace MediaPortal.GUI.Library
         return true;
       }
       return false;
+    }
+
+    private void SetProperties()
+    {
+      GUIPropertyManager.SetProperty("#selectedlabel" + GetID, SelectedItemLabel);
+      GUIPropertyManager.SetProperty("#selectedvalue" + GetID, SelectedItemValue.ToString());
     }
 
     /// <summary>
@@ -1037,6 +1091,23 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    private int FindItemByLabel(string label)
+    {
+      int item = 0;
+
+      // Find the menu item with the specified label.
+      // This algorithm chooses the first match.  It's a programming error to have to menu entries with the same label.
+      for (int i = 0; i < _listMenuLabels.Count; i++)
+      {
+        if ((string)_listMenuLabels[i] == label)
+        {
+          item = i;
+          break;
+        }
+      }
+      return item;
+    }
+
     private int FindItemByValue(int value)
     {
       int item = 0;
@@ -1066,7 +1137,20 @@ namespace MediaPortal.GUI.Library
           _listSelected = FindItemByValue(value);
           break;
         case ButtonMode.BUTTON_MODE_SPIN_LIST:
-          SpinValue = value;
+          SpinValue = _spinControl.FindItemByValue(value);
+          break;
+      }
+    }
+
+    public void SetSelectedItemByLabel(string label)
+    {
+      switch (_buttonMode)
+      {
+        case ButtonMode.BUTTON_MODE_DIALOG_LIST:
+          _listSelected = FindItemByLabel(label);
+          break;
+        case ButtonMode.BUTTON_MODE_SPIN_LIST:
+          SpinValue = _spinControl.FindItemByLabel(label);
           break;
       }
     }

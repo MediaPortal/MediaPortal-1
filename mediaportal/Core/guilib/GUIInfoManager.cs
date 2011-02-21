@@ -19,8 +19,10 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
+using MediaPortal.Profile;
 using MediaPortal.Player;
 using MediaPortal.Time;
 using MediaPortal.Utils.Time;
@@ -324,17 +326,14 @@ namespace MediaPortal.GUI.Library
     public const int VISUALISATION_NAME = 402;
     public const int VISUALISATION_ENABLED = 403;
 
-    public const int SKIN_HAS_THEME_START = 500;
-    public const int SKIN_HAS_THEME_END = 599; // allow for max 100 themes
-
     public const int SKIN_BOOL = 600;
     public const int STRING_EQUALS = 601;
     public const int STRING_STARTS = 602;
     public const int STRING_CONTAINS = 603;
     public const int SKIN_STRING = 604;
+    public const int SKIN_THEME = 605;
 
     public const int XLINK_KAI_USERNAME = 701;
-    public const int SKIN_THEME = 702;
 
     public const int FACADEVIEW_ALBUM = 800;
     public const int FACADEVIEW_FILMSTRIP = 801;
@@ -1244,13 +1243,9 @@ namespace MediaPortal.GUI.Library
       }
       else if (strCategory == "skin" || strCategory == "string")
       {
-        if (strTest == "skin.currenttheme")
-        {
-          ret = SKIN_THEME;
-        }
-          // string.equals(val1, val2) will check the equality of val1 to val2.
-          // string.equals(val1)       will return true if val1 has a length > 0
-        else if (strTest.Substring(0, 14) == "string.equals(")
+        // string.equals(val1, val2) will check the equality of val1 to val2.
+        // string.equals(val1)       will return true if val1 has a length > 0
+        if (strTest.Substring(0, 14) == "string.equals(")
         {
           // this condition uses GUIPropertyManager.Parse, which is case sensitive.
           string strTestKeepCase = strCondition;
@@ -1377,7 +1372,17 @@ namespace MediaPortal.GUI.Library
         }
         else if (strTest.Substring(0, 14) == "skin.hastheme(")
         {
-          ret = SKIN_HAS_THEME_START + ConditionalStringParameter(strTest.Substring(14, strTest.Length - 15));
+          string strTestKeepCase = strCondition;
+          strTestKeepCase = strTestKeepCase.TrimStart(new char[] { ' ' });
+          strTestKeepCase = strTestKeepCase.TrimEnd(new char[] { ' ' });
+          if (bNegate)
+          {
+            strTestKeepCase = strTestKeepCase.Remove(0, 1);
+          }
+
+          int compareString =
+            ConditionalStringParameter(strTestKeepCase.Substring(14, strTestKeepCase.Length - 15));
+          return AddMultiInfo(new GUIInfo(bNegate ? -SKIN_THEME : SKIN_THEME, 0, compareString));
         }
       }
       else if (strCategory == "window")
@@ -2044,6 +2049,70 @@ namespace MediaPortal.GUI.Library
         SkinSettings.ResetAllSkinString();
         SkinSettings.Save();
       }
+      else if (cmd.Substring(0, 10) == "skin.theme")
+      {
+        // A single, optional argument of -1 causes the previous theme in the list to be selected.
+        int direction = 1;
+        pos = cmdKeepCase.IndexOf("(-1)");
+        if (pos >= 0)
+        {
+          direction = -1;
+        }
+
+        // Switch the next theme in the list.
+        // Theme with empty string refers to the skin default (no theme set).
+        string skinTheme = GUIGraphicsContext.ThemeName;
+
+        ArrayList themes = SkinSettings.GetSkinThemes();
+        if (themes.Count > 0)
+        {
+          int index = themes.IndexOf((string)skinTheme);
+          if (index < 0)
+          {
+            // Theme is default or not in the list, set to first theme.
+            index = 0;
+          }
+          else
+          {
+            // Select the next theme.
+            index += direction;
+          }
+
+          // If backed up past the first theme then select the last theme.
+          if (index < 0)
+          {
+            index = themes.Count - 1;
+          }
+          else if (index >= themes.Count)
+          {
+            index = 0;
+          }
+
+          GUIGraphicsContext.Theme = (string)themes[index];
+          GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
+          SkinSettings.Save();
+        }
+      }
+      else if (cmd.Equals("skin.settheme("))
+      {
+        pos = cmdKeepCase.IndexOf("(");
+        if (pos >= 0)
+        {
+          string skinTheme = cmdKeepCase.Substring(pos + 1, cmdKeepCase.Length - (pos + 2));
+
+          // Attempt to get a property from the string.
+          string st = skinTheme;
+          skinTheme = GUIPropertyManager.GetProperty(skinTheme);
+          if (skinTheme == null)
+          {
+            skinTheme = st;
+          }
+
+          GUIGraphicsContext.Theme = skinTheme;
+          GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
+          SkinSettings.Save();
+        }
+      }
     }
 
     public static void SetString(int condition, string newValue, int dwContextWindow)
@@ -2497,7 +2566,7 @@ namespace MediaPortal.GUI.Library
             AddMultiBoolInfoProperty(info, prop1);
             AddMultiBoolInfoProperty(info, prop2);
 
-            // Do not cache the result for skin strings.  The results change based on user interactions.
+            // Do not cache the result for skin settings.  The results change based on user interactions.
             if (condition != SKIN_STRING)
             {
               AddMultiInfoBoolResult(info, bReturn);
@@ -2512,6 +2581,18 @@ namespace MediaPortal.GUI.Library
             AddMultiInfoBoolResult(info, bReturn);
           }
           return bReturn;
+        case SKIN_THEME:
+          if (info.m_data2 != 0)
+          {
+            string prop1 = GUIGraphicsContext.ThemeName;
+            string prop2 = m_stringParameters[info.m_data2];
+
+            string value1 = GUIPropertyManager.Parse(prop1).Trim().ToLowerInvariant();
+            string value2 = GUIPropertyManager.Parse(prop2).Trim().ToLowerInvariant();
+
+            bReturn = (value1 == value2);
+          }
+          break;
         case CONTROL_GROUP_HAS_FOCUS:
           //  GUIWindow win = GUIWindowManager.GetWindow(dwContextWindow);
           //  if (win == null) win = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);

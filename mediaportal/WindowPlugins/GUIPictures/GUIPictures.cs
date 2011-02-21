@@ -436,7 +436,7 @@ namespace MediaPortal.GUI.Pictures
 
     public override bool Init()
     {
-      return Load(GUIGraphicsContext.Skin + @"\mypics.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\mypics.xml"));
     }
 
     public override void DeInit()

@@ -439,8 +439,8 @@ namespace MediaPortal.GUI.Library
       // Load the reference controls
       //int iPos = _windowXmlFileName.LastIndexOf('\\');
       //string strReferenceFile = _windowXmlFileName.Substring(0, iPos);
-      _windowXmlFileName = GUIGraphicsContext.Skin + _windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\"));
-      string strReferenceFile = GUIGraphicsContext.Skin + @"\references.xml";
+      _windowXmlFileName = GUIGraphicsContext.GetThemedSkinFile(_windowXmlFileName.Substring(_windowXmlFileName.LastIndexOf("\\")));
+      string strReferenceFile = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
       GUIControlFactory.LoadReferences(strReferenceFile);
 
       try
@@ -680,7 +680,7 @@ namespace MediaPortal.GUI.Library
       {
         XmlDocument doc = new XmlDocument();
 
-        doc.Load(GUIGraphicsContext.Skin + "\\" + node.InnerText);
+        doc.Load(GUIGraphicsContext.GetThemedSkinFile("\\" + node.InnerText));
 
         if (doc.DocumentElement == null)
         {

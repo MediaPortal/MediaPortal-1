@@ -79,9 +79,9 @@ namespace TvPlugin
     private Dictionary<int, DateTime> _nextEPGupdate = new Dictionary<int, DateTime>();
     private Dictionary<int, Dictionary<int, NowAndNext>> _listNowNext = new Dictionary<int, Dictionary<int, NowAndNext>>();
 
-    private readonly string PathIconNoTune = GUIGraphicsContext.Skin + @"\Media\remote_blue.png";
-    private readonly string PathIconTimeshift = GUIGraphicsContext.Skin + @"\Media\remote_yellow.png";
-    private readonly string PathIconRecord = GUIGraphicsContext.Skin + @"\Media\remote_red.png";
+    private readonly string PathIconNoTune = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_blue.png");
+    private readonly string PathIconTimeshift = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_yellow.png");
+    private readonly string PathIconRecord = GUIGraphicsContext.GetThemedSkinFile(@"\Media\remote_red.png");
     // fetch localized ID's only once from XML file
     private readonly string local736 = GUILocalizeStrings.Get(736); // No data available
     private readonly string local789 = GUILocalizeStrings.Get(789); // Now:
@@ -164,7 +164,7 @@ namespace TvPlugin
     /// <returns></returns>
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\TVMiniGuide.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\TVMiniGuide.xml"));
 
       GetID = (int)Window.WINDOW_MINI_GUIDE;
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);

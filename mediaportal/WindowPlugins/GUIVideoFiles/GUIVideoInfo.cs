@@ -195,7 +195,7 @@ namespace MediaPortal.GUI.Video
     public override bool Init()
     {
       AmazonImagesDownloaded += new AmazonLookupCompleted(OnAmazonImagesDownloaded);
-      return Load(GUIGraphicsContext.Skin + @"\DialogVideoInfo.xml");
+      return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogVideoInfo.xml"));
     }
 
     public override void PreInit() {}

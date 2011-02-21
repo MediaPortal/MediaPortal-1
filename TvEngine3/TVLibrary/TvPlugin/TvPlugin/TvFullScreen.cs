@@ -215,7 +215,7 @@ namespace TvPlugin
         _immediateSeekIsRelative = xmlreader.GetValueAsBool("movieplayer", "immediateskipstepsisrelative", true);
         _immediateSeekValue = xmlreader.GetValueAsInt("movieplayer", "immediateskipstepsize", 10);
       }
-      Load(GUIGraphicsContext.Skin + @"\mytvFullScreen.xml");
+      Load(GUIGraphicsContext.GetThemedSkinFile(@"\mytvFullScreen.xml"));
       GetID = (int)Window.WINDOW_TVFULLSCREEN;
 
       SettingsLoaded = false;
@@ -1567,7 +1567,7 @@ namespace TvPlugin
         dlg.AddLocalizedString(100748); // Program Information
       }
 
-      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.Skin + @"\mytvtuningdetails.xml"))
+      if (!g_Player.IsTVRecording && Utils.FileExistsInCache(GUIGraphicsContext.GetThemedSkinFile(@"\mytvtuningdetails.xml")))
       {
         dlg.AddLocalizedString(200041); // tuning details
       }

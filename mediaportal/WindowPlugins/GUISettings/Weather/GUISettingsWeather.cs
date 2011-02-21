@@ -71,7 +71,7 @@ namespace MediaPortal.GUI.Settings
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\settings_weather.xml");
+      bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\settings_weather.xml"));
       return bResult;
     }
 
