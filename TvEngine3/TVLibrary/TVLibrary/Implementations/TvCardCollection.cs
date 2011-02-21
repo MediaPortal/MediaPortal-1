@@ -460,7 +460,7 @@ namespace TvLibrary.Implementations
     public static String GetFileName(string devicePath)
     {
       string hash = GetHash(devicePath);
-      String pathName = Log.Log.GetPathName();
+      String pathName = PathManager.GetDataPath;
       String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
       Log.Log.WriteFile("NetworkProvider logfilename: " + fileName);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));

@@ -77,7 +77,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode node = nodeKey.Attributes.GetNamedItem("connectionString");
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
@@ -89,7 +89,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         Log.Write(ex);
       }
 
@@ -724,7 +724,7 @@ namespace SetupTv
     {
       Process process = new Process();
       process.StartInfo.FileName = "explorer.exe";
-      process.StartInfo.Arguments = String.Format(@"{0}\log\", Log.GetPathName());
+      process.StartInfo.Arguments = String.Format(@"{0}\log\", PathManager.GetDataPath);
       process.StartInfo.UseShellExecute = true;
       process.Start();
     }

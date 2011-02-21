@@ -415,7 +415,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(),
+        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath,
                                        Path.GetFileNameWithoutExtension(context.FileName));
         if (File.Exists(newPath))
         {
@@ -470,7 +470,7 @@ namespace SetupTv.Sections
     {
       List<SatelliteContext> satellites = new List<SatelliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", Log.GetPathName()));
+      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
       {
@@ -480,11 +480,11 @@ namespace SetupTv.Sections
           ts.SatelliteName = node.Attributes.GetNamedItem("name").Value;
           ts.Url = node.Attributes.GetNamedItem("url").Value;
           string name = Utils.FilterFileName(ts.SatelliteName);
-          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), name);
+          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath, name);
           satellites.Add(ts);
         }
       }
-      String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", Log.GetPathName()),
+      String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", PathManager.GetDataPath),
                                                     "*.xml");
       foreach (String file in files)
       {
@@ -1931,7 +1931,7 @@ namespace SetupTv.Sections
     private String SaveManualScanList()
     {
       _transponders.Sort();
-      String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", Log.GetPathName(),
+      String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", PathManager.GetDataPath,
                                       DateTime.Now.ToString("yyyy-MM-dd"));
       System.IO.TextWriter parFileXML = System.IO.File.CreateText(filePath);
       XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));

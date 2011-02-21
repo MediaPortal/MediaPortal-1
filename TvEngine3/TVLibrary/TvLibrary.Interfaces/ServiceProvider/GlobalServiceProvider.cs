@@ -18,6 +18,9 @@
 
 #endregion
 
+using System.IO;
+using TvLibrary.Log;
+
 namespace TvLibrary.Interfaces
 {
   /// <summary>
@@ -38,6 +41,17 @@ namespace TvLibrary.Interfaces
         {
           _provider = new ServiceProvider();
         }
+        ILogger log = null;
+        if (File.Exists(Path.Combine(PathManager.GetDataPath, "log4net.config")))
+        {
+          log = new Log4netLogger();
+        }
+        else
+        {
+          log = new FileLogger();
+        }
+        _provider.Add<ILogger>(log);
+
         return _provider;
       }
     }
