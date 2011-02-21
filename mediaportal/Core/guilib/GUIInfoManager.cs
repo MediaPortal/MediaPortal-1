@@ -2091,6 +2091,9 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.Theme = (string)themes[index];
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
+
+          // Reactivate the current window to apply the new theme.
+          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true);
         }
       }
       else if (cmd.Equals("skin.settheme("))
@@ -2111,6 +2114,9 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.Theme = skinTheme;
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
+
+          // Reactivate the current window to apply the new theme.
+          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true);
         }
       }
     }
