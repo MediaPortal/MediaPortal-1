@@ -865,7 +865,7 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static string Theme
     {
-      set { m_strTheme = Skin + @"\Themes\" + value; }
+      set { m_strTheme = Skin + (value != SkinSettings.THEME_SKIN_DEFAULT ? @"\Themes\" + value : ""); }
       get { return m_strTheme; }
     }
 
@@ -879,7 +879,7 @@ namespace MediaPortal.GUI.Library
         {
           return m_strTheme.Substring(m_strTheme.LastIndexOf(@"\") + 1);
         }
-        return "";
+        return SkinSettings.THEME_SKIN_DEFAULT;
       }
     }
 

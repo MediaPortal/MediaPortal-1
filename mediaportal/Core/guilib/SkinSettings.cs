@@ -54,11 +54,24 @@ namespace MediaPortal.GUI.Library
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
 
+    public const string THEME_SKIN_DEFAULT = "Skin default";
+
+    /// <summary>
+    /// Translate the skin string, create the skin string as a transient value if not found.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <returns></returns>
     public static int TranslateSkinString(string line)
     {
       return TranslateSkinString(line, Kind.TRANSIENT);
     }
 
+    /// <summary>
+    /// Translate the skin string, create the skin string if not found.
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="kind"></param>
+    /// <returns></returns>
     public static int TranslateSkinString(string line, Kind kind)
     {
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
@@ -83,6 +96,11 @@ namespace MediaPortal.GUI.Library
       return key;
     }
 
+    /// <summary>
+    /// Retrieve a skin string using the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public static string GetSkinString(int key)
     {
       SkinString skin = null;
@@ -93,6 +111,11 @@ namespace MediaPortal.GUI.Library
       return "";
     }
 
+    /// <summary>
+    /// Set a skin string using the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="newValue"></param>
     public static void SetSkinString(int key, string newValue)
     {
       SkinString skin = null;
@@ -106,11 +129,22 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Translate the skin boolean, create the skin boolean as a transient value if not found.
+    /// </summary>
+    /// <param name="setting"></param>
+    /// <returns></returns>
     public static int TranslateSkinBool(string setting)
     {
       return TranslateSkinString(setting, Kind.TRANSIENT);
     }
 
+    /// <summary>
+    /// Translate the skin boolean, create the skin boolean if not found.
+    /// </summary>
+    /// <param name="setting"></param>
+    /// <param name="kind"></param>
+    /// <returns></returns>
     public static int TranslateSkinBool(string setting, Kind kind)
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
@@ -135,6 +169,11 @@ namespace MediaPortal.GUI.Library
       return key;
     }
 
+    /// <summary>
+    /// Retrieve a skin boolean using the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
     public static bool GetSkinBool(int key)
     {
       SkinBool skinBool = null;
@@ -145,6 +184,11 @@ namespace MediaPortal.GUI.Library
       return false;
     }
 
+    /// <summary>
+    /// Set a skin boolean using the specified key.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="newValue"></param>
     public static void SetSkinBool(int key, bool newValue)
     {
       SkinBool skinBool = null;
@@ -158,6 +202,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the specified skin boolean to false.
+    /// </summary>
+    /// <param name="setting"></param>
     public static void ResetSkinBool(string setting)
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
@@ -174,6 +222,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set all skin booleans to false and strings to empty.
+    /// </summary>
     public static void ResetAllSkinBool()
     {
       Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
@@ -187,6 +238,10 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set the specified skin string to empty.
+    /// </summary>
+    /// <param name="setting"></param>
     public static void ResetSkinString(string setting)
     {
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
@@ -203,6 +258,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Set all the skin strings to empty.
+    /// </summary>
     public static void ResetAllSkinString()
     {
       Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
@@ -303,6 +361,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Load all skin settings from disk.  Loads only once after the skin has changed.
+    /// </summary>
     public static void Load()
     {
       try
@@ -322,6 +383,9 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Save all skin settings to disk.
+    /// </summary>
     public static void Save()
     {
       using (Settings xmlWriter = new Settings(_skinSettingsFileName))
@@ -360,9 +424,16 @@ namespace MediaPortal.GUI.Library
       Settings.SaveCache();
     }
 
+    /// <summary>
+    /// Return a list of available themes for the current skin.  The first entry in the list is always the skin default.
+    /// </summary>
+    /// <returns></returns>
     public static ArrayList GetSkinThemes()
     {
       ArrayList themes = new ArrayList();
+
+      // Add the skin default (no theme selected).
+      themes.Add(THEME_SKIN_DEFAULT);
       try
       {
         string[] themesArray = Directory.GetDirectories(String.Format(@"{0}\Themes", GUIGraphicsContext.Skin), "*", SearchOption.TopDirectoryOnly);
