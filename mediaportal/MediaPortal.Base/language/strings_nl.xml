@@ -484,8 +484,8 @@
     <String id="527">Sorteer op: Bekeken</String>
     <String id="528">Albumartiesten</String>
     <String id="529">Weergave: Grote pictogrammenlijst</String>
-    <String id="530">CD met afbeeldingen gevonden, wilt U de CD bekijken?</String>
-    <String id="531">CD met films gevonden, wilt U de CD bekijken?</String>
+    <String id="530">Schijf met afbeeldingen gevonden, wilt U deze bekijken?</String>
+    <String id="531">Schijf met films gevonden, wilt U deze bekijken?</String>
     <String id="532">Audio-CD gevonden, wilt U de CD beluisteren?</String>
     <String id="533">Radiogids</String>
     <String id="534">Gematigd</String>
@@ -603,7 +603,7 @@
     <String id="669">Sorteer op: Genre</String>
     <String id="670">Sorteer op: Bitrate</String>
     <String id="671">Sorteer op: Gekeken</String>
-    <String id="672">Opnemen op doordeweekse dagen</String>
+    <String id="672">Opnemen op weekdagen</String>
     <String id="673">Rolsnelheid</String>
     <String id="674">Beeldschermopties</String>
     <String id="675">Voorbeeld:</String>
@@ -611,7 +611,7 @@
     <String id="677">keer</String>
     <String id="678">Sorteer op: Genre</String>
     <String id="679">Wekelijks</String>
-    <String id="680">Doordeweeks</String>
+    <String id="680">Weekdagen</String>
     <String id="681">Wachten</String>
     <String id="682">Opnemen</String>
     <String id="683">Afgelopen</String>
@@ -711,7 +711,7 @@
     <String id="784">Roteer 270°</String>
     <String id="789">Nu: </String>
     <String id="790">Volgende: </String>
-    <String id="791">Weergave: Vloeiend</String>
+    <String id="791">Weergave: Cover Flow</String>
     <String id="792">Weergave Menu</String>
     <String id="798">laag</String>
     <String id="799">hoog</String>
@@ -929,8 +929,8 @@
     <String id="1047">Start beeldvullend</String>
     <String id="1048">Instellingen</String>
     <String id="1049">Sluimerstand</String>
-    <String id="1050">Weekend</String>
-    <String id="1051">Opnemen in het weekend</String>
+    <String id="1050">Weekends</String>
+    <String id="1051">Opnemen weekends</String>
     <String id="1052">Nummers</String>
     <String id="1053">Onbekende oproep</String>
     <String id="1054">(opnemen)</String>
@@ -990,13 +990,19 @@
     <String id="1200">Installatiewizard</String>
     <String id="1201">Video vanaf begin afspelen</String>
     <String id="1202">Sorteer op: Auto</String>
-    <String id="1203">Komende afleveringen (actief {0})</String>
+    <String id="1203">Komende afleveringen (active:{0})</String>
     <String id="1204">Speel alle video's in de geselecteerde map</String>
     <String id="1205">Sorteer op: Disk#</String>
     <String id="1206">Programma speelt nu voor {0} minuten</String>
     <String id="1207">Nu overschakelen naar {0} ?</String>
+    <String id="1208">Sorteer op: Componist</String>
     <String id="1211">Afspelen hervatten vanaf {0}</String>
-    <String id="1207">Beluister dit kanaal</String>
+    <String id="1212">Herinnering annuleren</String>
+    <String id="1213">Naar dit station luisteren</String>
+    <String id="1220">Sorteer op: Datum gecreëerd</String>
+    <String id="1221">Sorteer op: Datum aangepast</String>
+    <String id="1230">Datum toegevoegd</String>
+    <String id="1231">Laatste keer afgespeeld:</String>
     <String id="1300">TV-Programma's</String>
     <String id="1440">Teletekst</String>
     <String id="1441">Teletekst</String>
@@ -1383,7 +1389,7 @@
     <String id="6013">Handmatige xmltv</String>
     <String id="6014">TV instellen</String>
     <String id="6015">DVD instellen</String>
-    <String id="6016">Automatisch verwijderen van opnames na bekijken</String>
+    <String id="6016">Verwijderen van opnames na bekijken</String>
     <String id="6017">Opnames aan filmdatabank toevoegen</String>
     <String id="6018">minuten voor het programma start</String>
     <String id="6019">minuten na het programma is afgelopen</String>
@@ -1817,6 +1823,7 @@
     <String id="100760">CD/DVD branden</String>
     <String id="100761">TV-gids</String>
     <String id="100762">Radiogids</String>
+    <String id="100763">Radio opnames</String>
     <String id="100800">Extensies</String>
     <String id="101000">Toetsenbord</String>
     <String id="101002">Virtueel standaard toetsenbord</String>
@@ -1839,8 +1846,8 @@
     <String id="102014">Afbeeldingsinformatie</String>
     <String id="102015">Mini-menu</String>
     <String id="102016">Notificatie</String>
+    <String id="102017">Opname conflict</String>
     <String id="102018">CI-menu</String>
-    <String id="102019">TV notificatie</String>
     <String id="102600">Weer</String>
     <String id="102700">Nieuws</String>
     <String id="102900">Schermbeveiliging</String>
@@ -1869,6 +1876,7 @@
     <String id="109004">MiniDisplay - Instellen - Equalizer</String>
     <String id="109005">MiniDisplay - Instellen - KeyPad</String>
     <String id="109006">MiniDisplay - Instellen - Afstandsbediening</String>
+    <String id="102019">TV notificatie</String>
     <String id="200000">Selecteer uw EPG-grabber. Als uw land er</String>
     <String id="200001">niet tussen staat, zult u dit handmatig moeten invoeren.</String>
     <String id="200002">U kunt nu de EPG-kanalen koppelen aan de TV-kanalen</String>
