@@ -1028,7 +1028,7 @@ namespace MediaPortal.GUI.Library
         } //if (i + _offset < _listItems.Count)
       } //for (int i = 0; i < _itemsPerPage; i++)
 
-      RenderScrollbar(timePassed, dwPosY);
+      RenderScrollbar(timePassed);
 
       if ((_explicitlyEnableScrollLabel || _enableScrollLabel) && ScrollLabelIsScrolling)
       {
@@ -1049,26 +1049,24 @@ namespace MediaPortal.GUI.Library
 
     //public override void Render()
 
-    protected void RenderScrollbar(float timePassed, int y)
+    protected void RenderScrollbar(float timePassed)
     {
       if (_listItems.Count > _itemsPerPage)
       {
         // Render the spin control
         if (_upDownControlVisible)
         {
-          y = y + _itemsPerPage * (_itemHeight + _spaceBetweenItems) - _spaceBetweenItems - 5;
-          //_upDownControl.SetPosition(_upDownControl.XPosition,dwPosY+10);
           _upDownControl.Render(timePassed);
         }
 
         // Render the vertical scrollbar
         if (_verticalScrollbar != null)
         {
-          float fPercent = (float)_cursorX + _offset;
-          fPercent /= (float)(_listItems.Count);
-          fPercent *= 100.0f;
+          float fPercent = (float)SelectedListItemIndex / (float)(_listItems.Count - 1) * 100.0f;
+
           _verticalScrollbar.Height = _itemsPerPage * (_itemHeight + _spaceBetweenItems);
           _verticalScrollbar.Height -= _spaceBetweenItems;
+
           if ((int)fPercent != (int)_verticalScrollbar.Percentage)
           {
             _verticalScrollbar.Percentage = fPercent;
