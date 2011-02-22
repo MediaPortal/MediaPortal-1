@@ -157,14 +157,14 @@
     <value>Cliente de MediaPortal</value>
   </data>
   <data name="CustomInstallation_labelClient" xml:space="preserve">
-    <value>Esto sólo instalará MediaPortal. Para ver la TV se conectará a un TV-Server  (servidor) dedicado de tu red.</value>
+    <value>Esto sólo instalará MediaPortal 1.0. Para ver la TV se conectará a un TV-Server  (servidor) dedicado de tu red.</value>
   </data>
   <data name="CustomInstallation_rbSingleSeat" xml:space="preserve">
     <value>Instalación completa en un puesto (singleseat)</value>
   </data>
   <data name="CustomInstallation_labelSingleSeat" xml:space="preserve">
     <value>Esta es la configuración adecuada si las tarjetas de TV están instaladas en el mismo 
-PC en el que está instalado MediaPortal y en el que vas a ver TV con MediaPortal.</value>
+PC en el que está instalado MediaPortal y en el que vas a ver TV con MediaPortal 1.0.</value>
   </data>
   <data name="CustomInstallation_rbTvServerMaster" xml:space="preserve">
     <value>Servidor dedicado de TV -Server (maestro)</value>
@@ -201,7 +201,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Por favor, selecciona el SQL-Server que quieres usar:</value>
   </data>
   <data name="DBMSType_rbMSSQL" xml:space="preserve">
-    <value>Microsoft SQL-Server Express 2005</value>
+    <value>Microsoft SQL-Server Express</value>
   </data>
   <data name="DBMSType_rbMySQL" xml:space="preserve">
     <value>MySQL 5</value>
@@ -352,7 +352,7 @@ El PC actuará como servidor dedicado de TV-Server y proveerá de TV otros PC 's
     <value>Selecciona la carpeta de instalación para MediaPortal</value>
   </data>
   <data name="TvServerSettings_checkBoxFirewall" xml:space="preserve">
-    <value>Configurar el cortafuegos de Windows para permitir el acceso externo a TV-Server</value>
+    <value>Configurar el cortafuegos de Windows para permitir el acceso externo a TV-Server.</value>
   </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>Tienes que suministrar una ruta de instalación válida para el Servidor TV-Server.</value>
@@ -503,12 +503,12 @@ Transfiere esta carpeta a tu HTPC. Comienza la instalación ejecutando "MediaPor
     <value>Microsoft SQL-Server Express 2005 está deshabilitado</value>
   </data>
   <data name="AeroThemeMissing" xml:space="preserve">
-    <value>Windows AERO está desactivado.
-Ten en cuenta que AERO es necesario para evitar entrecortes.
-Habilitar AERO también reducirá el uso de CPU, lo que hace al HTPC correr más fresco y silencioso.</value>
+    <value>Windows AERO está desactivado actualmente.
+Por favor, recuerda que el modo AERO es necesario para evitar la desincronización y las imágenes entrecortadas.
+Activar AERO puede reducir el consumo de recursos, haciendo que tu HTPC funcione más silenciosamente y más fresco. </value>
   </data>
   <data name="Reboot_Required" xml:space="preserve">
-    <value>Es necesario un reinicio por un componente de Microsoft.
-Por favor procede con él antes de continuar con la instalación de MediaPortal.</value>
+    <value>Un componente de Microsoft necesita reiniciar el ordenador.
+Por favor, hazlo antes de continuar con la instalación de MediaPortal.</value>
   </data>
 </root>
