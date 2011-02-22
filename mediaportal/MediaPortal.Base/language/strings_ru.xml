@@ -31,6 +31,18 @@
     <String id="30">Октябрь</String>
     <String id="31">Ноябрь</String>
     <String id="32">Декабрь</String>
+    <String id="33">Янв</String>
+    <String id="34">Фев</String>
+    <String id="35">Мар</String>
+    <String id="36">Апр</String>
+    <String id="37">Май</String>
+    <String id="38">Июн</String>
+    <String id="39">Июл</String>
+    <String id="40">Авг</String>
+    <String id="41">Сен</String>
+    <String id="42">Окт</String>
+    <String id="43">Ноя</String>
+    <String id="44">Дек</String>
     <String id="50" prefix="Мои ">DVD</String>
     <String id="51">Играть диск</String>
     <String id="60">Ожидание запуска ТВ Службы...</String>
@@ -352,6 +364,8 @@
     <String id="405">Точка росы</String>
     <String id="406">Влажность</String>
     <String id="407">Жесткость</String>
+    <String id="408">Введите название города</String>
+    <String id="409">Удалить местоположение</String>
     <String id="410">Подключение к Weather.com</String>
     <String id="411">Загрузка погоды с:</String>
     <String id="412">Не удалось загрузить погоду</String>
@@ -461,6 +475,12 @@
     <String id="517">Фатальная ошибка, действие не завершено</String>
     <String id="518">Удалить эту песню?</String>
     <String id="519">Субтитры выкл</String>
+    <String id="520">Местоположение не найдено</String>
+    <String id="521">Только целые числа</String>
+    <String id="522">Только положительные значения!</String>
+    <String id="523">Нулевой шаг не разрешрен!</String>
+    <String id="524">Шаг не более 3х часов!</String>
+    <String id="525">Шаг уже определен</String>
     <String id="527">Сорт. по: Просмотрено</String>
     <String id="528">Артисты</String>
     <String id="529">Вид: Большие иконки</String>
@@ -500,6 +520,9 @@
     <String id="563">kn</String>
     <String id="564">м/с</String>
     <String id="565">bft</String>
+    <String id="566">Краткий прогноз</String>
+    <String id="567">Добавить город</String>
+    <String id="568">Удалить город</String>
     <String id="590">P. 100</String>
     <String id="591">P. 200</String>
     <String id="592">P. 300</String>
@@ -688,6 +711,8 @@
     <String id="784">Поворот на 270°</String>
     <String id="789">Сейчас: </String>
     <String id="790">Далее: </String>
+    <String id="791">Вид: 3D Обложки</String>
+    <String id="792">Меню Видов</String>
     <String id="798">низкий</String>
     <String id="799">высокий</String>
     <String id="800">Начинать с</String>
@@ -701,6 +726,8 @@
     <String id="808">Ингридиенты</String>
     <String id="809">Инструкция</String>
     <String id="810">Карта</String>
+    <String id="811">Радиозаписи</String>
+    <String id="812">Радиостанции</String>
     <String id="820">Удалить непросмотренные записи?</String>
     <String id="830">Сбросить статус "просмотрено"</String>
     <String id="831">Извлечь съемный диск</String>
@@ -909,10 +936,6 @@
     <String id="1054">(запись)</String>
     <String id="1055">(просмотр)</String>
     <String id="1056">(недоступен)</String>
-    <String id="1057">Записывать Вс-Чт</String>
-    <String id="1058">Записывать Пт-Сб</String>
-    <String id="1059">Вс-Чт</String>
-    <String id="1060">Пт-Сб</String>
     <String id="1061">Съемный</String>
     <String id="1062">Объект</String>
     <String id="1064">Закладки</String>
@@ -966,7 +989,20 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Мастер настроек</String>
     <String id="1201">Воспроизвести видео с начала</String>
+    <String id="1202">Сорт. по: Авто</String>
+    <String id="1203">Следующие эпизоды (активных:{0})</String>
+    <String id="1204">Воспроизвести все видео в выбранной папке</String>
+    <String id="1205">Сорт. по: Диск№</String>
+    <String id="1206">Программа уже идет {0} минут</String>
+    <String id="1207">Переключить на {0} сейчас?</String>
+    <String id="1208">Сорт. по: Композитор</String>
     <String id="1211">Возобновить воспроизведение с {0}</String>
+    <String id="1212">Отменить напоминание</String>
+    <String id="1213">Слушать станцию</String>
+    <String id="1220">Сорт. по: Дате создания</String>
+    <String id="1221">Сорт. по: Дате изменения</String>
+    <String id="1230">Дата добавления:</String>
+    <String id="1231">Воспроизводилось:</String>
     <String id="1300" prefix="Мои ">ТВ шоу</String>
     <String id="1440" prefix="Мой ">Телетекст</String>
     <String id="1441">Телетекст</String>
@@ -980,6 +1016,7 @@
     <String id="1449">Остановить запись</String>
     <String id="1450">Вы точно хотите остановить запись?</String>
     <String id="1451">Невозможно воспроизвести</String>
+    <String id="1498">Программа/Канал не найден</String>
     <String id="1499">Нет сигнала</String>
     <String id="1500">Невозможно запустить timeshifting</String>
     <String id="1501">Тюнер выключен</String>
@@ -1242,6 +1279,7 @@
     <String id="2612">Венгерский</String>
     <String id="2613">Русский</String>
     <String id="2614">Украинский</String>
+    <String id="2615">Немецкий</String>
     <String id="2650">Перезагрузка шрифтов - пожалуйста, подождите...</String>
     <String id="2700">Открыть меню CI</String>
     <String id="2997">ч</String>
@@ -1377,6 +1415,7 @@
     <String id="6039">LATM AAC Аудио кодек</String>
     <String id="6040">Вчера</String>
     <String id="6041">Позавчера</String>
+    <String id="6042">Введите длительность шага в секундах</String>
     <String id="6050">Текущая неделя</String>
     <String id="6060">Текущий месяц</String>
     <String id="6070">Текущий год</String>
@@ -1783,6 +1822,7 @@
     <String id="100760" prefix="Моя ">Запись дисков</String>
     <String id="100761" prefix="Моя ">Телепрограмма</String>
     <String id="100762" prefix="Моя ">Радиопрограмма</String>
+    <String id="100763">Радиозаписи</String>
     <String id="100800" prefix="Мои ">Расширения</String>
     <String id="101000">клавиатура</String>
     <String id="101002">Виртуальная клавиатура</String>
@@ -1805,6 +1845,7 @@
     <String id="102014">Информация о изображении</String>
     <String id="102015">Мини меню</String>
     <String id="102016">Извещение</String>
+    <String id="102017">Конфликт записей</String>
     <String id="102018">Меню CI</String>
     <String id="102600" prefix="Моя ">Погода</String>
     <String id="102700" prefix="Мои ">RSS</String>
@@ -1822,8 +1863,10 @@
     <String id="106666">Power Scheduler. Ожидание. </String>
     <String id="107700" prefix="Мое ">ТВ/Телетекст</String>
     <String id="107701" prefix="Мое ">ТВ/Телетекст</String>
+    <String id="107776">Тетрис</String>
     <String id="107777" prefix="Мое ">Sudoku</String>
     <String id="107890" prefix="Мое ">Радио Last.fm</String>
+    <String id="107900">Текст диалога</String>
     <String id="108888">Музыкальное меню</String>
     <String id="109000">MiniDisplay - Настройка</String>
     <String id="109001">MiniDisplay - Настройка - Подсветка</String>
@@ -1832,6 +1875,7 @@
     <String id="109004">MiniDisplay - Настройка - Эквалайзер</String>
     <String id="109005">MiniDisplay - Настройка - Клавиши</String>
     <String id="109006">MiniDisplay - Настройка - ПДУ</String>
+    <String id="102019">ТВ напоминание</String>
     <String id="200000">Выберите Ваш EPG граббер. Если Ваша страна не указана</String>
     <String id="200001">в списке, то вам придеться загружать EPG самостоятельно.</String>
     <String id="200002">Теперь вы можете назначить EPG каналы вашим телеканалам</String>
@@ -1853,6 +1897,8 @@
     <String id="200019">Нажмите кнопку Закрыть для завершения этого мастера.</String>
     <String id="200020">Закрыть</String>
     <String id="200021">Настройка ТВ - EPG</String>
+    <String id="990000">Еженедельно на этом канале</String>
+    <String id="990001">{0} на канале {1}</String>
     <String id="200022">MediaPortal обнаружил следующие ТВ-карты:</String>
     <String id="200023">Нажмите кнопку Далее для настройки этой карты</String>
     <String id="200024">Настройка ТВ</String>
@@ -1901,5 +1947,22 @@
     <String id="200070">Проверьте брандмауер</String>
     <String id="200071">Удалить эту папку и все вложенные?</String>
     <String id="200072">Следующие эпизоды</String>
+    <String id="200073">Постобработка</String>
+    <String id="200074">Обработать изображение</String>
+    <String id="200075">Изменить размер</String>
+    <String id="200076">Файлы субтитров</String>
+    <String id="200077">Деитерлейсинг</String>
+    <String id="200078">Обрезать</String>
+    <String id="200079">Обрезать по верт</String>
+    <String id="200080">Обрезать по гор</String>
+    <String id="200081">МЕНЮ ВИДЕО</String>
+    <String id="200082">МЕНЮ АУДИО</String>
+    <String id="200083">МЕНЮ СУБТИТРОВ</String>
+    <String id="200084">Меню Видео</String>
+    <String id="200085">Меню Аудио</String>
+    <String id="200086">ГЛАВНОЕ МЕНЮ</String>
+    <String id="200087">Без звука</String>
+    <String id="200090">Версия</String>
+    <String id="200091">Глава</String>
   </Section>
 </Language>

@@ -744,7 +744,7 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      RenderScrollbar(timePassed, dwPosY);
+      RenderScrollbar(timePassed);
 
       if (Focus)
       {

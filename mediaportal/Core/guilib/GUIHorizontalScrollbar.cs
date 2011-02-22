@@ -139,36 +139,39 @@ namespace MediaPortal.GUI.Library
       }
 
       int iHeight = _imageBackGround.Height;
-      _imageBackGround.Render(timePassed);
       _imageBackGround.Height = iHeight;
 
       float fPercent = (float)_percentage;
       float fPosXOff = (fPercent / 100.0f);
 
-      _widthKnob = (int)(2 * _imageLeft.TextureWidth);
-      int inset = 4;
-      GUIGraphicsContext.ScaleHorizontal(ref inset);
-      inset += (_widthKnob / 2);
+      // Scale handle-parts for resolution. Background is already scaled in parent control
+      int handleHeight = _imageLeft.TextureHeight;
+      GUIGraphicsContext.ScaleVertical(ref handleHeight);
+      _imageLeft.Height = handleHeight;
+      _imageRight.Height = handleHeight;
 
-      inset = 0;
-      _startX = inset + _imageBackGround.XPosition;
-      _endX = _startX + (_imageBackGround.Width - inset);
+      int handleWidth = _imageLeft.TextureWidth;
+      GUIGraphicsContext.ScaleVertical(ref handleWidth);
+      _imageLeft.Width = handleWidth;
+      _imageRight.Width = handleWidth;
 
-      fPosXOff *= (float)(_endX - _startX - _widthKnob);
-
+      _widthKnob = (int)(2 * _imageLeft.Width);
+      _startX = _imageBackGround.XPosition;
+      _endX = _startX + _imageBackGround.Width - _widthKnob;
+      fPosXOff *= (float)(_endX - _startX);
       _startPositionXKnob = _startX + (int)fPosXOff;
+
+      _imageBackGround.Render(timePassed);
+
       int iXPos = _startPositionXKnob;
-      int iYPos = _imageBackGround.YPosition + ((_imageBackGround.Height / 2) - (_imageLeft.TextureHeight / 2));
+      int iYPos = _imageBackGround.YPosition + ((_imageBackGround.Height / 2) - (_imageLeft.Height / 2));
 
       _imageLeft.SetPosition(iXPos, iYPos);
-      _imageLeft.Height = _imageLeft.TextureHeight;
-      _imageLeft.Width = _imageLeft.TextureWidth;
       _imageLeft.Render(timePassed);
 
-      iXPos += _imageLeft.TextureWidth;
+      iXPos += _imageLeft.Width;
+
       _imageRight.SetPosition(iXPos, iYPos);
-      _imageRight.Height = _imageRight.TextureHeight;
-      _imageRight.Width = _imageLeft.TextureWidth;
       _imageRight.Render(timePassed);
 
       base.Render(timePassed);

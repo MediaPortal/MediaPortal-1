@@ -543,9 +543,12 @@ namespace TvPlugin
         {
           ChannelState CurrentChanState = ChannelState.tunable;
           channelID = CurrentChan.IdChannel;
-          if (!tvChannelStatesList.TryGetValue(channelID, out CurrentChanState))
+          if (TVHome.ShowChannelStateIcons())
           {
-            CurrentChanState = ChannelState.tunable;
+            if (!tvChannelStatesList.TryGetValue(channelID, out CurrentChanState))
+            {
+              CurrentChanState = ChannelState.tunable;
+            }
           }
 
           //StringBuilder sb = new StringBuilder();

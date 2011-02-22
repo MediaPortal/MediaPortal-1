@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Library
     private float _percentage = 0;
     private int _startPositionY = 0;
     private int _endPositionY = 0;
+    private int _heightKnob = 0;
     private int _knobPositionY = 0;
     private bool _sendNotifies = true;
 
@@ -113,30 +114,43 @@ namespace MediaPortal.GUI.Library
 
       int iHeight = _height;
       _imageBackground.Height = iHeight;
-      _imageBackground.Render(timePassed);
 
       float fPercent = (float)_percentage;
       float fPosYOff = (fPercent / 100.0f);
 
+      // Scale handle-parts for resolution.
+
+      int backgroundWidth = _imageBackground.TextureWidth;
+      GUIGraphicsContext.ScaleVertical(ref backgroundWidth);
+      _imageBackground.Width = backgroundWidth;
+
+      int handleHeight = _imageTop.TextureHeight;
+      GUIGraphicsContext.ScaleVertical(ref handleHeight);
+      _imageTop.Height = handleHeight;
+      _imageBottom.Height = handleHeight;
+
+      int handleWidth = _imageTop.TextureWidth;
+      GUIGraphicsContext.ScaleVertical(ref handleWidth);
+      _imageTop.Width = handleWidth;
+      _imageBottom.Width = handleWidth;
+
+      _heightKnob = (int)(2 * _imageTop.Height);
       _startPositionY = _imageBackground.YPosition;
-      _endPositionY = _startPositionY + _imageBackground.Height;
-
-      int iKnobHeight = (int)(_imageTop.TextureHeight);
-      fPosYOff *= (float)(_endPositionY - _startPositionY - iKnobHeight);
-
+      _endPositionY = _startPositionY + _imageBackground.Height - _imageTop.Height;
+      fPosYOff *= (float)(_endPositionY - _startPositionY);
       _knobPositionY = _startPositionY + (int)fPosYOff;
-      int iXPos = _imageBackground.XPosition + ((_imageBackground.Width / 2) - (_imageTop.TextureWidth));
+
+      _imageBackground.Render(timePassed);
+
+      int iXPos = _imageBackground.XPosition + ((_imageBackground.Width / 2) - (_imageTop.Width));
       int iYPos = _knobPositionY;
 
       _imageTop.SetPosition(iXPos, iYPos);
-      _imageTop.Height = _imageTop.TextureHeight;
-      _imageTop.Width = _imageTop.TextureWidth;
       _imageTop.Render(timePassed);
 
-      iXPos += _imageTop.TextureWidth;
+      iXPos += _imageTop.Width;
+
       _imageBottom.SetPosition(iXPos, iYPos);
-      _imageBottom.Height = _imageBottom.TextureHeight;
-      _imageBottom.Width = _imageTop.TextureWidth;
       _imageBottom.Render(timePassed);
 
       base.Render(timePassed);
