@@ -291,6 +291,7 @@ namespace WindowPlugins
       if (btnSortBy != null)
       {
         btnSortBy.IsAscending = CurrentSortAsc;
+        GUIPropertyManager.SetProperty("#itemtype", handler.LocalizedCurrentViewLevel);
       }
     }
 

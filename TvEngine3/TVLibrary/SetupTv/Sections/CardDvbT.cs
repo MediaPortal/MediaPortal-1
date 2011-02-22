@@ -179,7 +179,7 @@ namespace SetupTv.Sections
     {
       if (_dvbtChannels.Count != 0)
       {
-        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", Log.GetPathName(),
+        String filePath = String.Format(@"{0}\TuningParameters\dvbt\Manual_Scans.{1}.xml", PathManager.GetDataPath,
                                         DateTime.Now.ToString("yyyy-MM-dd"));
         SaveList(filePath);
         PersistState();
@@ -517,11 +517,23 @@ namespace SetupTv.Sections
           {
             Channel dbChannel;
             DVBTChannel channel = (DVBTChannel)channels[i];
-            //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
-            //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
-            TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
-                                                               TvBusinessLayer.GetChannelType(channel));
             bool exists;
+            TuningDetail currentDetail;
+            //User has option to skip channel move detection. There are certain providers that do not have a unique ONID + SID combination. ONID + TSID + SID is however unique.
+            if (!chkNoChannelMoveDetection.Checked)
+            {
+              //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
+              //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
+              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                                 TvBusinessLayer.GetChannelType(channel));
+            }
+            else
+            {
+              //Find the current tuningdetail if we have that.
+              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
+                                                                 TvBusinessLayer.GetChannelType(channel));
+            }
+
             if (currentDetail == null)
             {
               //add new channel

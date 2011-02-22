@@ -164,7 +164,7 @@ namespace SetupTv
       OSPrerequisites.OSPrerequisites.OsCheck(true);
 
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
-      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", Log.GetPathName()));
+      appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 
       Application.ThreadException += Application_ThreadException;
 

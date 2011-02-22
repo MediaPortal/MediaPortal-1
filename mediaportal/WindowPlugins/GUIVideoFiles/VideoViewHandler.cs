@@ -437,5 +437,34 @@ namespace MediaPortal.GUI.Video
         item.Label3 = string.Empty;
       }
     }
+
+    protected override string GetLocalizedViewLevel(string lvlName)
+    {
+      string localizedLevelName = string.Empty;
+      
+      switch(lvlName)
+      {          
+        case "actor":
+          localizedLevelName = GUILocalizeStrings.Get(344);
+          break;
+        case "genre":
+          localizedLevelName = GUILocalizeStrings.Get(135);
+          break;
+        case "year":
+          localizedLevelName = GUILocalizeStrings.Get(987);
+          break;      
+        case "watched":
+        case "title":
+        case "rating":
+          localizedLevelName = GUILocalizeStrings.Get(342);
+          break;
+        default:
+          localizedLevelName = lvlName;
+          break;
+      }
+      
+      return localizedLevelName;
+    } 
+
   }
 }

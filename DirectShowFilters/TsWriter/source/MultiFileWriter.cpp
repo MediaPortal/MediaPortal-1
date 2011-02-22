@@ -22,6 +22,7 @@
 *  nate can be reached on the forums at
 *    http://forums.dvbowners.com/
 */
+#define _WIN32_WINNT 0x0502
 
 #pragma warning(disable : 4995)
 #pragma warning(disable : 4996)

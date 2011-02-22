@@ -41,6 +41,12 @@
     <TYPE>Automatic</TYPE>
   </DirectXRedist2010>
 
+  <VCRedist2010>
+    <URL>http://install.team-mediaportal.com/VcRedist2010</URL>
+    <FILE>vcredist2010_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+  </VCRedist2010>  
+
   <!-- Section used by 1.1.0 alpha installer -->
 
   <DirectXRedist>

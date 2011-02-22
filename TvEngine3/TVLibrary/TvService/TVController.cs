@@ -493,7 +493,7 @@ namespace TvService
         //  Thread.CurrentThread.Name = "TVController";
 
         //load the database connection string from the config file
-        Log.Info(@"{0}\gentle.config", Log.GetPathName());
+        Log.Info(@"{0}\gentle.config", PathManager.GetDataPath);
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
         string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
@@ -3053,7 +3053,7 @@ namespace TvService
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
@@ -3071,13 +3071,13 @@ namespace TvService
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode nodeConnection = nodeKey.Attributes.GetNamedItem("connectionString");
         XmlNode nodeProvider = nodeKey.Attributes.GetNamedItem("name");
         nodeProvider.InnerText = connectionString;
         nodeConnection.InnerText = provider;
-        doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Save(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 
         Gentle.Framework.ProviderFactory.ResetGentle(true);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);

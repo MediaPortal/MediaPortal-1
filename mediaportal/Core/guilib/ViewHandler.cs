@@ -92,6 +92,31 @@ namespace MediaPortal.GUI.Library
         return currentView.LocalizedName;
       }
     }
+    
+    /// <summary>
+    /// Property for the view level name as localized string
+    /// This will return the view level (ie. the where in view
+    /// definition so artist, genre, actor etc)
+    /// </summary>
+    public virtual string LocalizedCurrentViewLevel
+    {
+      get
+      {
+        if (currentView == null)
+        {
+          return string.Empty;
+        }
+        
+        FilterDefinition def = (FilterDefinition)currentView.Filters[currentLevel];
+        
+        return(GetLocalizedViewLevel(def.Where));
+      }
+    }
+    
+    protected virtual string GetLocalizedViewLevel(String lvlName)
+    {
+      return lvlName;
+    }
 
     public virtual string CurrentView
     {

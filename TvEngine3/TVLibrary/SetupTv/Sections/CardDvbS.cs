@@ -415,7 +415,7 @@ namespace SetupTv.Sections
       }
       finally
       {
-        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(),
+        String newPath = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath,
                                        Path.GetFileNameWithoutExtension(context.FileName));
         if (File.Exists(newPath))
         {
@@ -470,7 +470,7 @@ namespace SetupTv.Sections
     {
       List<SatelliteContext> satellites = new List<SatelliteContext>();
       XmlDocument doc = new XmlDocument();
-      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", Log.GetPathName()));
+      doc.Load(String.Format(@"{0}\TuningParameters\dvbs\satellites.xml", PathManager.GetDataPath));
       XmlNodeList nodes = doc.SelectNodes("/satellites/satellite");
       if (nodes != null)
       {
@@ -480,11 +480,11 @@ namespace SetupTv.Sections
           ts.SatelliteName = node.Attributes.GetNamedItem("name").Value;
           ts.Url = node.Attributes.GetNamedItem("url").Value;
           string name = Utils.FilterFileName(ts.SatelliteName);
-          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", Log.GetPathName(), name);
+          ts.FileName = String.Format(@"{0}\TuningParameters\dvbs\{1}.xml", PathManager.GetDataPath, name);
           satellites.Add(ts);
         }
       }
-      String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", Log.GetPathName()),
+      String[] files = System.IO.Directory.GetFiles(String.Format(@"{0}\TuningParameters\dvbs\", PathManager.GetDataPath),
                                                     "*.xml");
       foreach (String file in files)
       {
@@ -1121,11 +1121,23 @@ namespace SetupTv.Sections
         {
           Channel dbChannel;
           DVBSChannel channel = (DVBSChannel)channels[i];
-          //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
-          //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
-          TuningDetail currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
-                                                             TvBusinessLayer.GetChannelType(channel));
           bool exists;
+          TuningDetail currentDetail;
+          //User has option to skip channel move detection. There are certain providers that do not have a unique ONID + SID combination. ONID + TSID + SID is however unique.
+          if (!chkNoChannelMoveDetection.Checked)
+          {
+            //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
+            //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
+            currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
+                                                               TvBusinessLayer.GetChannelType(channel));
+          }
+          else
+          {
+            //Find the current tuningdetail if we have that.
+            currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
+                                                               TvBusinessLayer.GetChannelType(channel));
+          }
+
           if (currentDetail == null)
           {
             //add new channel
@@ -1919,7 +1931,7 @@ namespace SetupTv.Sections
     private String SaveManualScanList()
     {
       _transponders.Sort();
-      String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", Log.GetPathName(),
+      String filePath = String.Format(@"{0}\TuningParameters\dvbs\Manual_Scans.{1}.xml", PathManager.GetDataPath,
                                       DateTime.Now.ToString("yyyy-MM-dd"));
       System.IO.TextWriter parFileXML = System.IO.File.CreateText(filePath);
       XmlSerializer xmlSerializer = new XmlSerializer(typeof (List<Transponder>));

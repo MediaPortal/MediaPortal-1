@@ -27,6 +27,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using TvDatabase;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 namespace TvEngine
@@ -518,7 +519,7 @@ namespace TvEngine
       _actorCount = Convert.ToInt32(TvBLayer.GetSetting("TvMovieLimitActors", "5").Value);
       _showLive = TvBLayer.GetSetting("TvMovieShowLive", "true").Value == "true";
       _showRepeat = TvBLayer.GetSetting("TvMovieShowRepeating", "false").Value == "true";
-      _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", Log.GetPathName());
+      _xmlFile = String.Format(@"{0}\TVMovieMapping.xml", PathManager.GetDataPath);
     }
 
     private int ImportStation(string stationName, List<Mapping> channelNames, IList<Channel> allChannels)

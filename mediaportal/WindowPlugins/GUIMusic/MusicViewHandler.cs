@@ -850,5 +850,52 @@ namespace MediaPortal.GUI.Music
 
       return GetField(filter.Where);
     }
+
+    protected override string GetLocalizedViewLevel(string lvlName)
+    {
+      string localizedLevelName = string.Empty;
+      
+      switch(lvlName)
+      {          
+        case "artist":
+          localizedLevelName = GUILocalizeStrings.Get(133);
+          break;
+        case "albumartist":
+          localizedLevelName = GUILocalizeStrings.Get(528);
+          break;
+        case "album":
+          localizedLevelName = GUILocalizeStrings.Get(132);
+          break;
+        case "genre":
+          localizedLevelName = GUILocalizeStrings.Get(135);
+          break;
+        case "year":
+          localizedLevelName = GUILocalizeStrings.Get(987);
+          break;
+        case "composer":
+          localizedLevelName = GUILocalizeStrings.Get(1214);
+          break;          
+        case "conductor":
+          localizedLevelName = GUILocalizeStrings.Get(1215);
+          break;          
+        case"disc#":
+          localizedLevelName = GUILocalizeStrings.Get(1216);
+          break;          
+        case "title":
+        case "timesplayed":
+        case "rating":
+        case "favorites":
+        case "recently added":
+        case "track":
+          localizedLevelName = GUILocalizeStrings.Get(1052);
+          break;
+        default:
+          localizedLevelName = lvlName;
+          break;
+      }
+      
+      return localizedLevelName;
+    }    
+    
   }
 }

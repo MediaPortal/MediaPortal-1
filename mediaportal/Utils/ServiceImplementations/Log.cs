@@ -85,16 +85,6 @@ namespace MediaPortal.ServiceImplementations
       GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
     }
 
-    public static void WriteFile(LogType type, bool isError, string format, params object[] arg)
-    {
-      GlobalServiceProvider.Get<ILog>().WriteFile(type, isError, format, arg);
-    }
-
-    public static void WriteFile(LogType type, string format, params object[] arg)
-    {
-      GlobalServiceProvider.Get<ILog>().WriteFile(type, format, arg);
-    }
-
     public static void SetLogLevel(Level logLevel)
     {
       GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);

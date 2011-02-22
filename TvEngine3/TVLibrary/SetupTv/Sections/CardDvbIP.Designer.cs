@@ -30,7 +30,7 @@
     {
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.listViewStatus = new System.Windows.Forms.ListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
       this.progressBarLevel = new System.Windows.Forms.ProgressBar();
       this.label2 = new System.Windows.Forms.Label();
@@ -40,13 +40,14 @@
       this.mpLabel1 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxService = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.mpBeveledLine1 = new MediaPortal.UserInterface.Controls.MPBeveledLine();
+      this.chkNoChannelMoveDetection = new System.Windows.Forms.CheckBox();
       this.SuspendLayout();
       // 
       // checkBoxCreateGroups
       // 
       this.checkBoxCreateGroups.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
       this.checkBoxCreateGroups.AutoSize = true;
-      this.checkBoxCreateGroups.Location = new System.Drawing.Point(23, 320);
+      this.checkBoxCreateGroups.Location = new System.Drawing.Point(24, 324);
       this.checkBoxCreateGroups.Name = "checkBoxCreateGroups";
       this.checkBoxCreateGroups.Size = new System.Drawing.Size(175, 17);
       this.checkBoxCreateGroups.TabIndex = 86;
@@ -155,10 +156,21 @@
       this.mpBeveledLine1.Size = new System.Drawing.Size(423, 43);
       this.mpBeveledLine1.TabIndex = 77;
       // 
+      // chkNoChannelMoveDetection
+      // 
+      this.chkNoChannelMoveDetection.AutoSize = true;
+      this.chkNoChannelMoveDetection.Location = new System.Drawing.Point(24, 347);
+      this.chkNoChannelMoveDetection.Name = "chkNoChannelMoveDetection";
+      this.chkNoChannelMoveDetection.Size = new System.Drawing.Size(308, 17);
+      this.chkNoChannelMoveDetection.TabIndex = 106;
+      this.chkNoChannelMoveDetection.Text = "Provider doesn\'t uniquely identify channels (detection errors)";
+      this.chkNoChannelMoveDetection.UseVisualStyleBackColor = true;
+      // 
       // CardDvbIP
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+      this.Controls.Add(this.chkNoChannelMoveDetection);
       this.Controls.Add(this.checkBoxCreateGroups);
       this.Controls.Add(this.listViewStatus);
       this.Controls.Add(this.progressBarQuality);
@@ -192,6 +204,7 @@
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel1;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxService;
     private MediaPortal.UserInterface.Controls.MPBeveledLine mpBeveledLine1;
+    private System.Windows.Forms.CheckBox chkNoChannelMoveDetection;
 
   }
 }

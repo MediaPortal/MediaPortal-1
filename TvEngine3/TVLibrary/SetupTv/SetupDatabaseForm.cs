@@ -32,6 +32,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Xml;
 using MySql.Data.MySqlClient;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 #endregion
@@ -118,7 +119,7 @@ namespace SetupTv
       try
       {
         XmlDocument doc = new XmlDocument();
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
         XmlNode nodeKey = doc.SelectSingleNode("/Gentle.Framework/DefaultProvider");
         XmlNode serverName = nodeKey.Attributes.GetNamedItem("name");
         XmlNode attributeConnectionString = nodeKey.Attributes.GetNamedItem("connectionString");
@@ -594,7 +595,7 @@ namespace SetupTv
       XmlDocument doc = new XmlDocument();
       try
       {
-        doc.Load(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+        doc.Load(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
       }
       catch (Exception ex)
       {
@@ -613,7 +614,7 @@ namespace SetupTv
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
       Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
 
-      doc.Save(String.Format(@"{0}\gentle.config", Log.GetPathName()));
+      doc.Save(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
     }
 
     private void mpButtonSave_Click(object sender, EventArgs e)

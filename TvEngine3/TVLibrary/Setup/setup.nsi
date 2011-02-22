@@ -253,14 +253,14 @@ ShowUninstDetails show
 !macroend
 
 !macro BackupGentleConfig
-  GetTempFileName $PREVIOUS_GENTLE_CONFIG
   ${If} ${FileExists} "${COMMON_APPDATA}\Gentle.config"
+    GetTempFileName $PREVIOUS_GENTLE_CONFIG
     ${LOG_TEXT} "INFO" "Backup Gentle.Config (${COMMON_APPDATA}\Gentle.config)"
     CopyFiles /SILENT /FILESONLY "${COMMON_APPDATA}\Gentle.config" "$PREVIOUS_GENTLE_CONFIG"
   ${EndIf}
 
-  GetTempFileName $PREVIOUS_GENTLE_CONFIG_PLUGIN
   ${If} ${FileExists} "$MPdir.Config\Gentle.config"
+    GetTempFileName $PREVIOUS_GENTLE_CONFIG_PLUGIN        
     ${LOG_TEXT} "INFO" "Backup Gentle.Config ($MPdir.Config\Gentle.config)"
     CopyFiles /SILENT /FILESONLY "$MPdir.Config\Gentle.config" "$PREVIOUS_GENTLE_CONFIG_PLUGIN"
   ${EndIf}
@@ -439,6 +439,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Common App Data Files
   SetOutPath "${COMMON_APPDATA}"
   File "${svn_Common_MP_TVE3}\Gentle.config"
+  File "${TVSERVER.BASE}\log4net.config"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
