@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="German" characters="255">
   <Section name="unmapped">
     <String id="0" prefix="Meine ">Anwendungen</String>
@@ -31,6 +31,18 @@
     <String id="30">Oktober</String>
     <String id="31">November</String>
     <String id="32">Dezember</String>
+    <String id="33">Jan</String>
+    <String id="34">Feb</String>
+    <String id="35">Mar</String>
+    <String id="36">Apr</String>
+    <String id="37">Mai</String>
+    <String id="38">Jun</String>
+    <String id="39">Jul</String>
+    <String id="40">Aug</String>
+    <String id="41">Sep</String>
+    <String id="42">Okt</String>
+    <String id="43">Nov</String>
+    <String id="44">Dec</String>
     <String id="50" prefix="Meine ">DVDs</String>
     <String id="51">Disc abspielen</String>
     <String id="60">Warte auf den Start des TV-Service...</String>
@@ -352,6 +364,8 @@
     <String id="405">Taupunkt:</String>
     <String id="406">Feuchtigkeit:</String>
     <String id="407">Heftig</String>
+    <String id="408">Name der Stadt</String>
+    <String id="409">Remote-Standort</String>
     <String id="410">Aktualisiere Daten...</String>
     <String id="411">Lade Wetterinformationen für:</String>
     <String id="412">Keine Wetterinformationen gefunden!</String>
@@ -461,6 +475,12 @@
     <String id="517">Ausnahmefehler! Aktion nicht beendet.</String>
     <String id="518">Dieses Lied löschen?</String>
     <String id="519">Untertitel aus</String>
+    <String id="520">Nummer Standorte gefunden</String>
+    <String id="521">Keine gültige Eingabe</String>
+    <String id="522">Kun positive værdier!</String>
+    <String id="523">Ein Sprungschritt von 0 ist nicht erlaubt!</String>
+    <String id="524">Kann nicht mehr als 3 Stunden überspringen!</String>
+    <String id="525">Überspringen Sie die Schritte</String>
     <String id="527">Sortiere: Gesehen</String>
     <String id="528">Album Interpret</String>
     <String id="529">Layout: Cover-Liste</String>
@@ -500,6 +520,9 @@
     <String id="563">Kn</String>
     <String id="564">M/s</String>
     <String id="565">Bft</String>
+    <String id="566">Wetter info</String>
+    <String id="567">Stadt hinzufügen</String>
+    <String id="568">Nach Stadt</String>
     <String id="590">Übersicht</String>
     <String id="591">Sport</String>
     <String id="592">Programm</String>
@@ -580,7 +603,7 @@
     <String id="669">Sortiere: Genre</String>
     <String id="670">Sortiere: Bitrate</String>
     <String id="671">Sortiere: Gesehen</String>
-    <String id="672">Montags bis Freitags</String>
+    <String id="672">In der Woche aufnehmen</String>
     <String id="673">Textlauf-Geschwindigkeit</String>
     <String id="674">Oberflächen Einstellungen</String>
     <String id="675">Beispiel:</String>
@@ -588,7 +611,7 @@
     <String id="677">mal</String>
     <String id="678">Sortiere: Genre</String>
     <String id="679">Wöchentlich</String>
-    <String id="680">Montag - Freitag</String>
+    <String id="680">Wochentags</String>
     <String id="681">Warte</String>
     <String id="682">Aufnahme aktiv</String>
     <String id="683">Fertig</String>
@@ -703,6 +726,8 @@
     <String id="808">Zutaten</String>
     <String id="809">Anweisungen</String>
     <String id="810">Karte</String>
+    <String id="811">Radioaufnahmen</String>
+    <String id="812">Radiokanal</String>
     <String id="820">Noch nicht gesehene Aufnahme löschen?</String>
     <String id="830">Als ungesehen markieren</String>
     <String id="831">Wechseldatenträger auswerfen</String>
@@ -904,8 +929,8 @@
     <String id="1047">Vollbildmodus</String>
     <String id="1048">Einstellungen</String>
     <String id="1049">Ruhezustand</String>
-    <String id="1050">Sa+So</String>
-    <String id="1051">Samstags und Sonntags</String>
+    <String id="1050">Wochenende</String>
+    <String id="1051">Aufnehmen am Wochenende</String>
     <String id="1052">Alle Titel</String>
     <String id="1053">Unbekannter Anrufer</String>
     <String id="1054">(wird aufgenommen)</String>
@@ -973,10 +998,11 @@
     <String id="1208">Sortieren: Komponist</String>
     <String id="1211">Wiedergabe bei {0} fortsetzen</String>
     <String id="1212">Nicht erinnern</String>
+    <String id="1213">Diesen Sender hören</String>
     <String id="1220">Sortieren: Erstellungsdatum</String>
     <String id="1221">Sortieren: Änderungsdatum</String>
     <String id="1230">Hinzugefügt am:</String>
-    <String id="1231">Zuletzt gehört am:</String>
+    <String id="1231">Zuletzt gespielt am:</String>
     <String id="1300" prefix="Meine ">TV Serien</String>
     <String id="1440" prefix="Mein ">Videotext</String>
     <String id="1441">Videotext</String>
@@ -990,6 +1016,7 @@
     <String id="1449">Aufnahme beenden</String>
     <String id="1450">Aufnahme wirklich beenden?</String>
     <String id="1451">Abspielen nicht möglich</String>
+    <String id="1498">Program/Kanal nicht gefunden</String>
     <String id="1499">Kein Signal</String>
     <String id="1500">Timeshift konnte nicht gestartet werden</String>
     <String id="1501">Die Karte ist deaktiviert</String>
@@ -1252,6 +1279,7 @@
     <String id="2612">Ungarisch</String>
     <String id="2613">Russisch</String>
     <String id="2614">Ukrainisch</String>
+    <String id="2615">Deutsch</String>
     <String id="2650">Lade Schriftarten, bitte warten...</String>
     <String id="2700">CI-Menü öffnen</String>
     <String id="2997">Std</String>
@@ -1387,6 +1415,7 @@
     <String id="6039">LATM AAC Audio-Dekoder</String>
     <String id="6040">Gestern</String>
     <String id="6041">Vorgestern</String>
+    <String id="6042">Weiterspringen</String>
     <String id="6050">Diese Woche</String>
     <String id="6060">Dieser Monat</String>
     <String id="6070">Dieses Jahr</String>
@@ -1733,6 +1762,7 @@
     <String id="100509" prefix="Meine ">Musik/Onlinesuche/Fortschritt</String>
     <String id="100510" prefix="Mein ">Musik/Aktueller Titel</String>
     <String id="100511" prefix="Meine">Musik/Visualisierung</String>
+    <String id="100512">Last.fm Love/Forbyd</String>
     <String id="100600" prefix="Mein ">Fernsehen/TV-Programm</String>
     <String id="100601" prefix="Mein ">Fernsehen/Timer</String>
     <String id="100602" prefix="Mein ">Fernsehen/Vollbild</String>
@@ -1793,7 +1823,8 @@
     <String id="100760" prefix="Mein ">Brenner</String>
     <String id="100761" prefix="Mein ">TV-Programm</String>
     <String id="100762" prefix="Mein ">Radio-Programm</String>
-    <String id="100800" prefix="Meine ">Erweiterungen</String>
+    <String id="100763" prefix="Mein ">Radioaufnahmen</String>
+    <String id="100800" prefix="Mein ">Erweiterungen</String>
     <String id="101000">Tastatur</String>
     <String id="101002">Standard Bildschirm-Tastatur</String>
     <String id="101003">Web Bildschirm-Tastatur</String>
@@ -1815,8 +1846,8 @@
     <String id="102014">Bildinformationen</String>
     <String id="102015">Mini Menü</String>
     <String id="102016">Benachrichtigung</String>
+    <String id="102017">Aufnahmekonflikt</String>
     <String id="102018">CI-Menü</String>
-    <String id="102019">TV-Benachrichtigung</String>
     <String id="102600" prefix="Mein ">Wetter</String>
     <String id="102700" prefix="Meine ">Nachrichten</String>
     <String id="102900">Bildschirm-Schoner</String>
@@ -1833,8 +1864,10 @@
     <String id="106666">Power Scheduler wartet</String>
     <String id="107700" prefix="Mein ">TV/Videotext</String>
     <String id="107701" prefix="Mein ">TV/Videotext</String>
+    <String id="107776" prefix="Mein ">Tetris</String>
     <String id="107777" prefix="Mein ">Su-ji wa doku</String>
     <String id="107890" prefix="Mein ">Last.fm Radio</String>
+    <String id="107900">Textdialog</String>
     <String id="108888">Musik-Menü</String>
     <String id="109000">Minidisplay Konfiguration</String>
     <String id="109001">Minidisplay Konfiguration : Hintergrundbeleuchtung</String>
@@ -1843,6 +1876,7 @@
     <String id="109004">Minidisplay Konfiguration : Equalizer</String>
     <String id="109005">Minidisplay Konfiguration : Keypad</String>
     <String id="109006">Minidisplay Konfiguration : Fernbedienung</String>
+    <String id="102019">TV-Erinnerung</String>
     <String id="200000">Bitte einen EPG-Grabber auswählen. Hinweis: Ist ihr Land nicht aufgeführt,</String>
     <String id="200001">dann müssen sie den Programmführer manuell einrichten!</String>
     <String id="200002">Sie können jetzt EPG-Kanäle ihren TV-Kanälen zuordnen</String>
@@ -1914,5 +1948,22 @@
     <String id="200070">Bitte die Firewall überprüfen</String>
     <String id="200071">Diesen Ordner inkl. Unterordner löschen?</String>
     <String id="200072">Folgen / Wiederholungen dieser Sendung</String>
+    <String id="200073">Postprosessing</String>
+    <String id="200074">Bildnachbearbeitung</String>
+    <String id="200075">Skalierung</String>
+    <String id="200076">Untertiteldatei</String>
+    <String id="200077">Deinterlacing</String>
+    <String id="200078">Bildzuschnitt</String>
+    <String id="200079">Vertikaler Zuschnitt</String>
+    <String id="200080">Horizontaler Zuschnitt</String>
+    <String id="200081">Video Menu</String>
+    <String id="200082">Audio Menu</String>
+    <String id="200083">Untertitelmenu</String>
+    <String id="200084">Videomenu</String>
+    <String id="200085">Audiomenu</String>
+    <String id="200086">Hauptmenu</String>
+    <String id="200087">Stummschalten</String>
+    <String id="200090">Heft</String>
+    <String id="200091">Kapitel</String>
   </Section>
 </Language>
