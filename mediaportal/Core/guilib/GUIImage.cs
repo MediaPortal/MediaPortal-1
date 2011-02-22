@@ -1775,6 +1775,10 @@ namespace MediaPortal.GUI.Library
               base.Render(timePassed);
             }
           }
+          else
+          {
+            base.Render(timePassed);
+          }
         }
         finally
         {
@@ -1950,7 +1954,7 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey); // left border
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey)); // left border
       }
 
       // Right border rectangle
@@ -2002,7 +2006,7 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey); // right border
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey)); // right border
       }
 
       // Top border rectangle
@@ -2064,7 +2068,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
         if (_borderHasCorners)
         {
           // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
@@ -2172,7 +2176,7 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)_borderColorKey);
+        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
         if (_borderHasCorners)
         {
           // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
