@@ -1131,9 +1131,6 @@ namespace MediaPortal.GUI.Library
           pCard.Width = _cardWidth;
           pCard.Height = _cardHeight;
 
-          // Center the image horizontally in the card.
-          pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
-
           pCard.UpdateVisibility();
           pCard.Render(timePassed);
         }
@@ -1185,9 +1182,6 @@ namespace MediaPortal.GUI.Library
           pCard.DimColor = DimColor;
           pCard.Width = _cardWidth;
           pCard.Height = _cardHeight;
-
-          // Center the image horizontally in the card.
-          pCard.SetPosition((pCard.Width - pCard.RenderWidth) / 2, 0);
 
           pCard.UpdateVisibility();
           pCard.Render(timePassed);
