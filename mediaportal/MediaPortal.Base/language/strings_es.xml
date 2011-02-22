@@ -320,7 +320,7 @@
     <String id="361">R. Presentación</String>
     <String id="362">Nivel de atenuado del salvapantallas (%)</String>
     <String id="363">Ordenar por: Archivo</String>
-    <String id="364">Passthrough del multicanal DD/DTS</String>
+    <String id="364">Passthrough multicanal DD/DTS</String>
     <String id="365">Ordenar por: Nombre</String>
     <String id="366">Ordenar por: Año</String>
     <String id="367">Ordenar por: Valoración</String>
@@ -336,8 +336,8 @@
     <String id="377">Ligera</String>
     <String id="378">AM</String>
     <String id="379">PM</String>
-    <String id="380">Lluvia suave</String>
-    <String id="381">Poco</String>
+    <String id="380">Chubascos</String>
+    <String id="381">Poca</String>
     <String id="382">Dispersos</String>
     <String id="383">Viento</String>
     <String id="384">Fuerte</String>
@@ -349,11 +349,11 @@
     <String id="390">Neblina</String>
     <String id="391">Ventoso</String>
     <String id="392">Llovizna</String>
-    <String id="393">Helando</String>
+    <String id="393">Heladas</String>
     <String id="394">No disponible</String>
     <String id="395">Bruma</String>
-    <String id="396">Seleccionar localidad</String>
-    <String id="397">Actualizar tiempo</String>
+    <String id="396">Seleccionar Ubicación</String>
+    <String id="397">Tiempo de actualización</String>
     <String id="398">Unidad de Temperatura</String>
     <String id="399">Unidad de Velocidad</String>
     <String id="400">Tiempo</String>
@@ -365,7 +365,7 @@
     <String id="406">Humedad</String>
     <String id="407">Fuerte</String>
     <String id="408">Introduzca el nombre de una ciudad</String>
-    <String id="409">Eliminar Localización</String>
+    <String id="409">Eliminar Ubicación</String>
     <String id="410">Accediendo a Weather.com</String>
     <String id="411">Obteniendo el Tiempo para:</String>
     <String id="412">No se ha podido obtener los datos del Tiempo</String>
@@ -711,7 +711,8 @@
     <String id="784">Rotar 270°</String>
     <String id="789">Ahora: </String>
     <String id="790">A continuación: </String>
-    <String id="791">Diseño: Flujo de Portadas</String>
+    <String id="791">Diseño: CoverFlow</String>
+    <String id="792">Menú de Diseños</String>
     <String id="798">bajo</String>
     <String id="799">alto</String>
     <String id="800">Empieza con</String>
@@ -935,10 +936,6 @@
     <String id="1054">(grabando)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(no disponible)</String>
-    <String id="1057">Grabar Dom-Jue</String>
-    <String id="1058">Grabar Vie-Sab</String>
-    <String id="1059">Dom-Jue</String>
-    <String id="1060">Vie-Sab</String>
     <String id="1061">Extraíble</String>
     <String id="1062">Objeto</String>
     <String id="1064">Marcadores</String>
@@ -993,7 +990,19 @@
     <String id="1200">Asistente de config.</String>
     <String id="1201">Reproducir vídeo desde el principio</String>
     <String id="1202">Ordenar por: Automático</String>
+    <String id="1203">Próximos episodios (activo:{0})</String>
+    <String id="1204">Reproducir todos los vídeos de la carpeta seleccionada</String>
+    <String id="1205">Ordenar por: Nº de Disco</String>
+    <String id="1206">El programa se ha estado ejecutando {0} minutos</String>
+    <String id="1207">¿Cambiar a {0} ahora?</String>
+    <String id="1208">Ordenar por: Compositor</String>
     <String id="1211">Reanudar reproducción desde {0}</String>
+    <String id="1212">Cancelar notificación</String>
+    <String id="1213">Escuchar esta emisora</String>
+    <String id="1220">Ordenar por: Fecha de Creación</String>
+    <String id="1221">Ordenar por: Fecha de Modificación</String>
+    <String id="1230">Añadido en:</String>
+    <String id="1231">Última reproducción:</String>
     <String id="1300" prefix="Mis ">Series de TV</String>
     <String id="1440" prefix="Mi ">TeleTexto</String>
     <String id="1441">TeleTexto</String>
@@ -1007,6 +1016,7 @@
     <String id="1449">Detener grabación</String>
     <String id="1450">¿Está seguro que desea detener la grabación?</String>
     <String id="1451">Imposible reproducir</String>
+    <String id="1498">Programa/Canal no encontrado</String>
     <String id="1499">Sin señal</String>
     <String id="1500">No es posible iniciar timeshift</String>
     <String id="1501">La tarjeta está deshabilitada</String>
@@ -1026,7 +1036,7 @@
     <String id="1515">Timeshift detenido por el\rservidor de TV</String>
     <String id="1516">Timeshift detenido por una\rrazón desconocida</String>
     <String id="1517">Timeshift detenido por\rotro usuario</String>
-    <String id="1518">No es posible crear gráfica</String>
+    <String id="1518">No es posible crear gráfico</String>
     <String id="1519">No hay instalado software de codificación soportado</String>
     <String id="1520">No hay suficiente espacio libre en disco</String>
     <String id="1521">Ver por Título</String>
@@ -1752,6 +1762,7 @@
     <String id="100509">Música/Buscar/Progreso</String>
     <String id="100510">Música/Ahora reproduciendo</String>
     <String id="100511">Música/Pantalla completa</String>
+    <String id="100512">LastFM Tema Favorito/Vetar Tema</String>
     <String id="100600">TV/Guía</String>
     <String id="100601">TV/Programación</String>
     <String id="100602">TV/Pantalla completa</String>
@@ -1812,6 +1823,7 @@
     <String id="100760">Grabadora</String>
     <String id="100761">Guía de TV</String>
     <String id="100762">Guía de Radio</String>
+    <String id="100763">Radio Grabada</String>
     <String id="100800" prefix="Mis">Extensiones</String>
     <String id="101000">teclado</String>
     <String id="101002">Teclado Virtual Estandard</String>
@@ -1834,6 +1846,7 @@
     <String id="102014">Información de la foto</String>
     <String id="102015">Mini menú</String>
     <String id="102016">Notificación</String>
+    <String id="102017">Conflicto de Grabación</String>
     <String id="102018">Menú CI</String>
     <String id="102600" prefix="Mi ">Tiempo</String>
     <String id="102700" prefix="Mis ">Noticias</String>
@@ -1863,6 +1876,7 @@
     <String id="109004">MiniDisplay - Configuración - Ecualizador</String>
     <String id="109005">MiniDisplay - Configuración - Teclado</String>
     <String id="109006">MiniDisplay - Configuración - Control remoto</String>
+    <String id="102019">Notificación de TV</String>
     <String id="200000">Seleccione su EPG. Tenga en cuenta que si su país</String>
     <String id="200001">no está en la lista, necesitará hacerlo manualmente</String>
     <String id="200002">Ahora puede ordenar los canales de la Guía Electrónica</String>
@@ -1934,6 +1948,22 @@
     <String id="200070">Por favor, compruebe el firewall</String>
     <String id="200071">¿Borrar esta carpeta y todas sus subcarpetas?</String>
     <String id="200072">Próximos episodios</String>
+    <String id="200073">Postprocesamiento</String>
+    <String id="200074">Procesar imagen</String>
+    <String id="200075">Redimensionar</String>
+    <String id="200076">Archivos de subtítulo</String>
+    <String id="200077">Desentrelazado</String>
+    <String id="200078">Recortar</String>
+    <String id="200079">Recorte vertical</String>
+    <String id="200080">Recorte horizontal</String>
+    <String id="200081">MENÚ DE VÍDEO</String>
+    <String id="200082">MENÚ DE AUDIO</String>
+    <String id="200083">MENÚ DE SUBTÍTULOS</String>
+    <String id="200084">Menú de Vídeo</String>
+    <String id="200085">Menú de Audio</String>
+    <String id="200086">MENÚ PRINCIPAL</String>
+    <String id="200087">Silencio</String>
+    <String id="200090">Edición</String>
     <String id="200091">Capítulo</String>
   </Section>
 </Language>
