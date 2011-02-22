@@ -663,7 +663,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="iWindowID">window id of the window to activate</param>    
     public static void ActivateWindow(int windowId)
     {
-      ActivateWindow(windowId, false, false, null);
+      ActivateWindow(windowId, false, false, null, false, -1);
     }
 
     /// <summary>
@@ -675,7 +675,21 @@ namespace MediaPortal.GUI.Library
     /// <param name="bReplaceWindow">replace current window</param>    
     public static void ActivateWindow(int windowId, bool replaceWindow)
     {
-      ActivateWindow(windowId, replaceWindow, false, null);
+      ActivateWindow(windowId, replaceWindow, false, null, false, -1);
+    }
+
+    /// <summary>
+    /// ActivateWindow() 
+    /// This function will show/present/activate and replace current window
+    /// with the window specified.
+    /// </summary>
+    /// <param name="windowId">window id of the window to activate</param>
+    /// <param name="replaceWindow">replace current window</param>
+    /// <param name="skipAnimation">do not perform open and close animation during this activation</param>
+    /// <param name="focusControlId">focus on this control rather than the window default</param>
+    public static void ActivateWindow(int windowId, bool replaceWindow, bool skipAnimation, int focusControlId)
+    {
+      ActivateWindow(windowId, replaceWindow, false, null, skipAnimation, focusControlId);
     }
 
     /// <summary>
@@ -686,7 +700,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="loadParameter">a parameter string to pass to the new window</param>
     public static void ActivateWindow(int windowId, String loadParameter)
     {
-      ActivateWindow(windowId, false, false, loadParameter);
+      ActivateWindow(windowId, false, false, loadParameter, false, -1);
     }
 
     /// <summary>
@@ -698,7 +712,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="bReplaceWindow">replace current window</param>  
     public static void ActivateWindow(int windowId, String loadParameter, bool replaceWindow)
     {
-      ActivateWindow(windowId, replaceWindow, false, loadParameter);
+      ActivateWindow(windowId, replaceWindow, false, loadParameter, false, -1);
     }
 
     private static void RemoveDoubleHistory(int newWindow)
@@ -737,6 +751,11 @@ namespace MediaPortal.GUI.Library
 
     private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter)
     {
+      ActivateWindow(newWindowId, replaceWindow, skipHistory, loadParameter, false, -1);
+    }
+
+    private static void ActivateWindow(int newWindowId, bool replaceWindow, bool skipHistory, String loadParameter, bool skipAnimation, int focusControlId)
+    {
       _isSwitchingToNewWindow = true;
       try
       {
@@ -774,7 +793,7 @@ namespace MediaPortal.GUI.Library
         //deactivate previous window
         if (previousWindow != null)
         {
-          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, 0,
+          msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, previousWindow.GetID, 0, 0, newWindowId, (skipAnimation ? 1 : 0),
                                null);
           previousWindow.OnMessage(msg);
           if (OnDeActivateWindow != null)
@@ -843,8 +862,10 @@ namespace MediaPortal.GUI.Library
         {
           OnActivateWindow(_activeWindowId);
         }
+
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _activeWindowId, 0, 0, _previousActiveWindowId,
-                             0, loadParameter);
+                             (skipAnimation ? 1 : 0), loadParameter);
+        msg.Param3 = focusControlId;
         newWindow.OnMessage(msg);
       }
       catch (Exception ex)

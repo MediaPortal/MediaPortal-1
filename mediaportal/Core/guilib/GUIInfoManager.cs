@@ -1957,7 +1957,7 @@ namespace MediaPortal.GUI.Library
       return wWindowID;
     }
 
-    public static void Execute(string command, int dwContextWindow)
+    public static void Execute(string command, int controlId)
     {
       if (command.Length == 0)
       {
@@ -1988,7 +1988,7 @@ namespace MediaPortal.GUI.Library
       {
         // Toggle the boolean setting to the opposite value.
         condition = TranslateSingleString(cmdKeepCase);
-        SetBool(condition, !GetBool(condition, dwContextWindow), dwContextWindow);
+        SetBool(condition, !GetBool(condition, 0), 0);
         SkinSettings.Save();
       }
       else if (cmd.Equals("skin.setstring("))
@@ -1999,7 +1999,7 @@ namespace MediaPortal.GUI.Library
         {
           condition = TranslateSingleString(cmdKeepCase);
           string newValue = cmdKeepCase.Substring(pos + 1, cmdKeepCase.Length - (pos + 2));
-          SetString(condition, newValue, dwContextWindow);
+          SetString(condition, newValue, 0);
           SkinSettings.Save();
         }
         else
@@ -2015,11 +2015,11 @@ namespace MediaPortal.GUI.Library
 
           // Get the current value to initialize the keyboard.
           condition = TranslateSingleString(cmdKeepCase);
-          string userInput = GetString(condition, dwContextWindow);
+          string userInput = GetString(condition, 0);
 
           if (GetUserInputString(ref userInput, prompt))
           {
-            SetString(condition, userInput, dwContextWindow);
+            SetString(condition, userInput, 0);
             SkinSettings.Save();
           }
           else
@@ -2032,7 +2032,7 @@ namespace MediaPortal.GUI.Library
       {
         // Set the setting to true.
         condition = TranslateSingleString(cmdKeepCase);
-        SetBool(condition, true, dwContextWindow);
+        SetBool(condition, true, 0);
         SkinSettings.Save();
       }
       else if (cmd.Equals("skin.reset("))
@@ -2092,8 +2092,12 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
 
-          // Reactivate the current window to apply the new theme.
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true);
+          // Reactivate the current window; applies the new theme to the current window immediately.
+          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
+
+          // Refocus the control that changed the theme.
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GUIWindowManager.ActiveWindow, 0, controlId, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
         }
       }
       else if (cmd.Equals("skin.settheme("))
@@ -2115,8 +2119,12 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
 
-          // Reactivate the current window to apply the new theme.
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true);
+          // Reactivate the current window; applies the new theme to the current window immediately.
+          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
+
+          // Refocus the control that changed the theme.
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GUIWindowManager.ActiveWindow, 0, controlId, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
         }
       }
     }

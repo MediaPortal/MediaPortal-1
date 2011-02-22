@@ -589,7 +589,7 @@ namespace MediaPortal.GUI.Library
           // If this button has a click setting then execute the setting.
           if (_onclick.Length != 0)
           {
-            GUIInfoManager.Execute(_onclick, 0);
+            GUIInfoManager.Execute(_onclick, GetID);
           }
 
           //If this button contains scriptactions call the scriptactions.

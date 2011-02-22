@@ -204,6 +204,7 @@ namespace MediaPortal.GUI.Library
     protected int _isOverlayAllowedCondition = 0;
     private Object instance;
     protected string _loadParameter = null;
+    private bool _skipAnimation = false;
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
@@ -887,7 +888,11 @@ namespace MediaPortal.GUI.Library
 
       SetControlVisibility();
       SetInitialOverlayAllowed();
-      QueueAnimation(AnimationType.WindowOpen);
+
+      if (!_skipAnimation)
+      {
+        QueueAnimation(AnimationType.WindowOpen);
+      }
     }
 
     protected virtual void OnPageDestroy(int new_windowId)
@@ -907,7 +912,7 @@ namespace MediaPortal.GUI.Library
             new_windowId != (int)Window.WINDOW_TVFULLSCREEN)
         {
           // Dialog animations are handled in Close() rather than here
-          if (HasAnimation(AnimationType.WindowClose)) //&& !IsDialog)
+          if (HasAnimation(AnimationType.WindowClose) && !_skipAnimation) //&& !IsDialog)
           {
             // Perform the window out effect
             QueueAnimation(AnimationType.WindowClose);
@@ -1450,7 +1455,11 @@ namespace MediaPortal.GUI.Library
       }
 
       //lock (this)
-      AnimationTrigger(message);
+      _skipAnimation = (message.Param2 == 0 ? false: true);
+      if (!_skipAnimation)
+      {
+        AnimationTrigger(message);
+      }
       int id;
       int iControlId = message.SenderControlId;
       {
@@ -1536,7 +1545,13 @@ namespace MediaPortal.GUI.Library
                 }
               }
 
-              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, _defaultControlId, 0, 0,
+              int controlId = _defaultControlId;
+              if (message.Param3 > 0)
+              {
+                controlId = message.Param3;
+              }
+
+              GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GetID, 0, controlId, 0, message.Param2,
                                               null);
               OnMessage(msg);
 
@@ -1563,6 +1578,8 @@ namespace MediaPortal.GUI.Library
               {
                 _previousFocusedControlId = id;
               }
+
+              _skipAnimation = false;
               return true;
               // TODO BUG ! Check if this return needs to be in the case and if there needs to be a break statement after each case.
 
@@ -1578,6 +1595,7 @@ namespace MediaPortal.GUI.Library
                 //long lTotalMemory = GC.GetTotalMemory(true);
                 //Log.Info("Total Memory allocated:{0}", MediaPortal.Util.Utils.GetSize(lTotalMemory));
                 _shouldRestore = true;
+                _skipAnimation = false;
                 return true;
               }
 
