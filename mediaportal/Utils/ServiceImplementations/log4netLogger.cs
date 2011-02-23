@@ -22,15 +22,16 @@ namespace MediaPortal.ServiceImplementations
       string logPath = Config.GetFolder(Config.Dir.Log);
       using (Settings xmlreader = new MPSettings())
       {
-        _minLevel =
-          (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+        _minLevel = (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
       }
       _configuration = false;
-
       string appPath = Path.GetDirectoryName(Application.ExecutablePath);
+      
       XmlDocument xmlDoc = new XmlDocument();
-
-      xmlDoc.Load(new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open));
+      FileStream fs = new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      xmlDoc.Load(fs);
+      fs.Close();
+      
       XmlNodeList nodeList = xmlDoc.SelectNodes("configuration/log4net/appender/file");
       foreach (XmlNode node in nodeList)
       {

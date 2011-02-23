@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using System.Security.AccessControl;
 using System.Xml;
 using log4net;
 using TvLibrary.Interfaces;
@@ -39,9 +40,12 @@ namespace TvLibrary.Log
       string logPath = PathManager.GetDataPath;
       string appPath = logPath;
       logPath = logPath + "\\log";
-      XmlDocument xmlDoc = new XmlDocument();
 
-      xmlDoc.Load(new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open));
+      XmlDocument xmlDoc = new XmlDocument();
+      FileStream fs = new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      xmlDoc.Load(fs);
+      fs.Close();
+
       XmlNodeList nodeList = xmlDoc.SelectNodes("configuration/log4net/appender/file");
       foreach (XmlNode node in nodeList)
       {
