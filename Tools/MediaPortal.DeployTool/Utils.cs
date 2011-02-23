@@ -522,7 +522,7 @@ namespace MediaPortal.DeployTool
         case "max":
           major = 1;
           minor = 1;
-          revision = 2;         // 1.1.0 = 1.1.0 final
+          revision = 3;         // 1.1.0 = 1.1.0 final
           break;
       }
       return CalculateVersion(major, minor, revision);
@@ -530,7 +530,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.1.2";
+      return "1.1.3";
     }
     #endregion
   }
