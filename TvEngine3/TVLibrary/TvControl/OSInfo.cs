@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -196,7 +196,7 @@ namespace OSInfo
     public static string GetOSProductType()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
       if (!GetVersionEx(ref osVersionInfo)) return string.Empty;
 
       switch (OSMajorVersion)
@@ -367,7 +367,7 @@ namespace OSInfo
     public static string GetOSServicePack()
     {
       OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+      osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
       return !GetVersionEx(ref osVersionInfo) ? string.Empty : osVersionInfo.szCSDVersion;
     }
 
@@ -508,22 +508,23 @@ namespace OSInfo
     /// </summary>
     public static OsSupport GetOSSupported()
     {
+      int minSp;
+      int minBuild;
+
       switch (GetOSName())
       {
         case OSList.WindowsXp:
-          if (OSServicePackMajor < 2)
-          {
-            return OsSupport.Blocked;
-          }
-          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 2;
+          minBuild = 2600;
+          break;
         case OSList.WindowsVista:
-          if (OSServicePackMajor < 1)
-          {
-            return (int)OsSupport.Blocked;
-          }
-          return OSServicePackMinor == 0 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 1;
+          minBuild = 6000;
+          break;
         case OSList.Windows7:
-          return OSBuildVersion == 7600 ? OsSupport.FullySupported : OsSupport.NotSupported;
+          minSp = 0;
+          minBuild = 7600;
+          break;
         case OSList.Windows2003:
         case OSList.Windows2003R2:
         case OSList.Windows2008:
@@ -533,6 +534,17 @@ namespace OSInfo
           // Windows2000andPrevious and WindowsXp64
           return OsSupport.Blocked;
       }
+      if (OSServicePackMajor < minSp || OSBuildVersion < minBuild)
+      {
+        return OsSupport.Blocked;
+      }
+      //
+      // Final service packs have OSServicePackMinor == 0
+      // Unfortunately Windows7 SP1 RC report 0 even if it's not final: added check on the string description
+      //
+      return (OSServicePackMinor != 0 || OSServicePackDesc.Contains(", v."))
+               ? OsSupport.NotSupported
+               : OsSupport.FullySupported;
     }
 
     /// <summary>
@@ -645,7 +657,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return -1;
         return osVersionInfo.wServicePackMajor;
       }
@@ -659,9 +671,21 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
-        if (!GetVersionEx(ref osVersionInfo)) return -1;
-        return osVersionInfo.wServicePackMinor;
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        return !GetVersionEx(ref osVersionInfo) ? -1 : osVersionInfo.wServicePackMinor;
+      }
+    }
+
+    /// <summary>
+    /// Gets the string description of the service pack running on this computer.
+    /// </summary>
+    public static string OSServicePackDesc
+    {
+      get
+      {
+        OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
+        return !GetVersionEx(ref osVersionInfo) ? String.Empty : osVersionInfo.szCSDVersion;
       }
     }
 
@@ -673,7 +697,7 @@ namespace OSInfo
       get
       {
         OSVERSIONINFOEX osVersionInfo = new OSVERSIONINFOEX();
-        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX));
+        osVersionInfo.dwOSVersionInfoSize = Marshal.SizeOf(typeof (OSVERSIONINFOEX));
         if (!GetVersionEx(ref osVersionInfo)) return 0x0;
         return osVersionInfo.wProductType;
       }
