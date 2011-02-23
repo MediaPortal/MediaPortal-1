@@ -2092,12 +2092,9 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
 
-          // Reactivate the current window; applies the new theme to the current window immediately.
+          // Reactivate the current window and refocus on the control used to change the theme.
+          // This applies the new theme to the current window immediately.
           GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
-
-          // Refocus the control that changed the theme.
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GUIWindowManager.ActiveWindow, 0, controlId, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
         }
       }
       else if (cmd.Equals("skin.settheme("))
@@ -2119,12 +2116,9 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
           SkinSettings.Save();
 
-          // Reactivate the current window; applies the new theme to the current window immediately.
+          // Reactivate the current window and refocus on the control used to change the theme.
+          // This applies the new theme to the current window immediately.
           GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
-
-          // Refocus the control that changed the theme.
-          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, GUIWindowManager.ActiveWindow, 0, controlId, 0, 0, null);
-          GUIWindowManager.SendMessage(msg);
         }
       }
     }
