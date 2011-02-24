@@ -2827,10 +2827,10 @@ namespace TvPlugin
         }
         if (updateScreen)
         {
+          Update(false);
           SetFocus();
           UpdateCurrentProgram();
           SetProperties();
-          Update(false);
         }
         return;
       }
