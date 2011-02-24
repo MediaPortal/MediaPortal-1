@@ -50,6 +50,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("font")] protected string _fontName;
     [XMLSkinElement("label")] protected string _label = "";
     [XMLSkinElement("valueTextInButton")] protected bool _valueTextInButton = false;
+    [XMLSkin("valueTextInButton", "align")] protected Alignment _valueTextInButtonAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("valuePrefixText")] protected string _prefixText = "";
     [XMLSkin("valuePrefixText", "join")] protected string _prefixTextJoin = "";
     [XMLSkinElement("valueSuffixText")] protected string _suffixText = "";
@@ -132,6 +133,7 @@ namespace MediaPortal.GUI.Library
     protected GUIAnimation _imageNonFocused = null;
     protected GUIAnimation _hoverImage = null;
     protected GUIControl _labelControl = null;
+    protected GUIControl _valueLabelControl = null;
     protected GUISpinControl _spinControl = null;
 
     // List of dialog menu labels and values are held locally.  Spin list labels and values are given to the spinControl.
@@ -267,6 +269,18 @@ namespace MediaPortal.GUI.Library
         ((GUILabelControl)_labelControl).DimColor = DimColor;
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
         ((GUILabelControl)_labelControl).TextVAlignment = _textVAlignment;
+
+        // If the value should be displayed in the button but the alignment is not left then we need another control to display the right aligned
+        // button value.
+        if (_valueTextInButtonAlignment == Alignment.ALIGN_RIGHT)
+        {
+          _valueLabelControl = new GUILabelControl(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                                   _label, _textColor, Alignment.ALIGN_RIGHT, VAlignment.ALIGN_TOP, false,
+                                                   _shadowAngle, _shadowDistance, _shadowColor);
+          ((GUILabelControl)_valueLabelControl).ParentControl = this;
+          ((GUILabelControl)_valueLabelControl).DimColor = DimColor;
+          ((GUILabelControl)_valueLabelControl).TextVAlignment = _textVAlignment;
+        }
       }
       else
       {
@@ -278,6 +292,21 @@ namespace MediaPortal.GUI.Library
         ((GUIFadeLabel)_labelControl).TextVAlignment = _textVAlignment;
         ((GUIFadeLabel)_labelControl).AllowScrolling = false;
         ((GUIFadeLabel)_labelControl).AllowFadeIn = false;
+
+        // If the value should be displayed in the button but the alignment is not left then we need another control to display the right aligned
+        // button value.
+        if (_valueTextInButtonAlignment == Alignment.ALIGN_RIGHT)
+        {
+          _valueLabelControl = new GUIFadeLabel(_parentControlId, 0, _positionX, _positionY, _width, _height, _fontName,
+                                                _textColor, Alignment.ALIGN_RIGHT, VAlignment.ALIGN_TOP,
+                                                _shadowAngle, _shadowDistance, _shadowColor,
+                                                _userWrapString);
+          ((GUIFadeLabel)_valueLabelControl).ParentControl = this;
+          ((GUIFadeLabel)_valueLabelControl).DimColor = DimColor;
+          ((GUIFadeLabel)_valueLabelControl).TextVAlignment = _textVAlignment;
+          ((GUIFadeLabel)_valueLabelControl).AllowScrolling = false;
+          ((GUIFadeLabel)_valueLabelControl).AllowFadeIn = false;
+        }
       }
 
       // Build elements for the specified button mode.
@@ -621,30 +650,36 @@ namespace MediaPortal.GUI.Library
     private void RenderButtonLabel(float timePassed, int labelWidth)
     {
       string labelText = _label;
+      string valueText = "";
 
       if (_valueTextInButton)
       {
         if (_isRangeSet)
         {
-          labelText = SelectedItemValue.ToString();
+          valueText = SelectedItemValue.ToString();
         }
         else
         {
-          labelText = SelectedItemLabel;
+          valueText = SelectedItemLabel;
         }
 
         if (_prefixText.Length > 0)
         {
-          labelText = _prefixText + labelText;
+          valueText = _prefixText + valueText;
         }
 
         if (_suffixText.Length > 0)
         {
-          labelText = labelText + _suffixText;
+          valueText = valueText + _suffixText;
+        }
+
+        if (_valueTextInButtonAlignment == Alignment.ALIGN_LEFT)
+        {
+          labelText += valueText;
         }
       }
 
-      // Render the text on the button
+      // Render the button label text on the button
       if (_labelControl is GUILabelControl)
       {
         ((GUILabelControl)_labelControl).TextAlignment = _textAlignment;
@@ -695,6 +730,31 @@ namespace MediaPortal.GUI.Library
 
       _labelControl.SetPosition(x, y);
       _labelControl.Render(timePassed);
+
+      // Render the button value text on the button separately is required
+      if (_valueTextInButtonAlignment == Alignment.ALIGN_RIGHT)
+      {
+        if (_valueLabelControl is GUILabelControl)
+        {
+          ((GUILabelControl)_valueLabelControl).TextAlignment = Alignment.ALIGN_RIGHT;
+          ((GUILabelControl)_valueLabelControl).TextVAlignment = _textVAlignment;
+          ((GUILabelControl)_valueLabelControl).Label = valueText;
+          ((GUILabelControl)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        }
+        else
+        {
+          ((GUIFadeLabel)_valueLabelControl).TextAlignment = Alignment.ALIGN_RIGHT;
+          ((GUIFadeLabel)_valueLabelControl).TextVAlignment = _textVAlignment;
+          ((GUIFadeLabel)_valueLabelControl).Label = valueText;
+          ((GUIFadeLabel)_valueLabelControl).TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
+        }
+
+        // X position forced to the right.
+        x = _positionX + _width - _textOffsetX;
+
+        _valueLabelControl.SetPosition(x, y);
+        _valueLabelControl.Render(timePassed);
+      }
     }
 
     /// <summary>
