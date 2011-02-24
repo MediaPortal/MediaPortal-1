@@ -8,16 +8,17 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
-TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource, Boolean timeshifting) 
+TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource, Boolean timeshifting, int channelType) 
 {
-	return new TsMPEG2TransportFileServerMediaSubsession(env, fileName, reuseFirstSource,timeshifting);
+	return new TsMPEG2TransportFileServerMediaSubsession(env, fileName, reuseFirstSource,timeshifting, channelType);
 }
 
-TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,char const* fileName, Boolean reuseFirstSource, Boolean timeshifting)
+TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,char const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType)
 : FileServerMediaSubsession(env, fileName, reuseFirstSource) 
 {
 	strcpy(m_fileName,fFileName);
 	m_bTimeshifting = timeshifting;
+	m_iChannelType = channelType;
 
   m_pDuration = new CTsDuration();
 }
@@ -38,7 +39,7 @@ FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(u
 
 	// Create the video source:
 	unsigned const inputDataChunkSize= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize);
+	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize, 0, m_iChannelType);
 	if (fileSource == NULL) return NULL;
 	fFileSize = fileSource->fileSize();
 	strcpy(m_fileName,fFileName);

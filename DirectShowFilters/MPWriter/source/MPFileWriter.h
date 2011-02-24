@@ -56,6 +56,7 @@ DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 	STDMETHOD(AddChannel)(THIS_ int* subChannelId)PURE;
 	STDMETHOD(DeleteChannel)(THIS_ int subChannelId)PURE;
 	STDMETHOD(DeleteAllChannels)(THIS_)PURE;
+	STDMETHOD(SetChannelType)(THIS_ int subChannelId, int channelType)PURE;
 };
 // Main filter object
 
@@ -157,6 +158,7 @@ public:
 	STDMETHODIMP AddChannel(int* subChannelId);
 	STDMETHODIMP DeleteChannel(int subChannelId);
 	STDMETHODIMP DeleteAllChannels();
+	STDMETHODIMP SetChannelType(int subChannelId, int channelType);
 private:
 
 	CSubChannel* GetSubChannel(int handle);	

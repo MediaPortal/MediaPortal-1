@@ -37,7 +37,7 @@ extern void LogDebug(const char *fmt, ...) ;
 TsStreamFileSource*
 TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 							  unsigned preferredFrameSize,
-							  unsigned playTimePerFrame) 
+							  unsigned playTimePerFrame, int channelType) 
 {
 	LogDebug("ts:open %s",fileName);  
 	FileReader* reader;
@@ -57,7 +57,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 
 
 	Boolean deleteFidOnClose = true;
-	TsStreamFileSource* newSource = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose, preferredFrameSize, playTimePerFrame);
+	TsStreamFileSource* newSource = new TsStreamFileSource(env, (FILE*)reader, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
 	newSource->fFileSize = reader->GetFileSize();
 	LogDebug("ts:size %d",(DWORD)newSource->fFileSize);  
 	return newSource;
@@ -67,10 +67,11 @@ TsStreamFileSource*
 TsStreamFileSource::createNew(UsageEnvironment& env, FILE* fid,
 							  Boolean deleteFidOnClose,
 							  unsigned preferredFrameSize,
-							  unsigned playTimePerFrame) {
+							  unsigned playTimePerFrame,
+							  int channelType) {
 								  if (fid == NULL) return NULL;
 
-								  TsStreamFileSource* newSource = new TsStreamFileSource(env, fid, deleteFidOnClose, preferredFrameSize, playTimePerFrame);
+								  TsStreamFileSource* newSource = new TsStreamFileSource(env, fid, deleteFidOnClose, preferredFrameSize, playTimePerFrame, channelType);
 								  MultiFileReader* reader = (MultiFileReader*)fid;
 								  newSource->fFileSize = reader->GetFileSize();
 								  LogDebug("ts:createNew size %d",(DWORD)newSource->fFileSize);  
@@ -119,7 +120,8 @@ void TsStreamFileSource::seekToByteRelative(int64_t offset)
 TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 									   Boolean deleteFidOnClose,
 									   unsigned preferredFrameSize,
-									   unsigned playTimePerFrame)
+									   unsigned playTimePerFrame,
+									   int channelType)
 									   : FramedFileSource(env, fid), fPreferredFrameSize(preferredFrameSize),
 									   fPlayTimePerFrame(playTimePerFrame), fLastPlayTime(0), fFileSize(0),
 									   fDeleteFidOnClose(deleteFidOnClose) 
@@ -127,7 +129,9 @@ TsStreamFileSource::TsStreamFileSource(UsageEnvironment& env, FILE* fid,
 	LogDebug("ts:ctor:%x",this);  
 	MultiFileReader* reader = (MultiFileReader*)fFid;
 	m_buffer.Clear();
+	m_buffer.SetChannelType(channelType);
 	m_buffer.SetFileReader(reader);
+
 }
 
 TsStreamFileSource::~TsStreamFileSource() 

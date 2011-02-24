@@ -39,6 +39,7 @@ public:
 	STDMETHODIMP StopRecord();
 
 	STDMETHODIMP SetTimeShiftFileName(char* pszFileName);
+	STDMETHODIMP SetChannelType(int channelType);
 	STDMETHODIMP StartTimeShifting();
 	STDMETHODIMP StopTimeShifting();
 	STDMETHODIMP PauseTimeShifting(int onOff);

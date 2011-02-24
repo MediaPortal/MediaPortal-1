@@ -95,6 +95,12 @@ STDMETHODIMP CSubChannel::SetTimeShiftFileName(char* pszFileName)
 	return S_OK;
 }
 
+STDMETHODIMP CSubChannel::SetChannelType(int channelType)
+{
+	m_pTsWriter->SetChannelType(channelType);
+	return S_OK;
+}
+
 STDMETHODIMP CSubChannel::SetTimeShiftParams(int minFiles, int maxFiles, ULONG maxFileSize)
 {
 	m_pTsWriter->SetTimeShiftParams(  minFiles,  maxFiles,  maxFileSize);

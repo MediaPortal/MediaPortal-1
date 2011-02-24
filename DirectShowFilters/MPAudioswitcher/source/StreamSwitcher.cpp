@@ -490,7 +490,9 @@ HRESULT CStreamSwitcherInputPin::CompleteConnect(IPin* pReceivePin)
 				CStringW fn = fileName.Mid(fileName.ReverseFind('/')+1);
 				if(!fn.IsEmpty()) fileName = fn;
 
-				if(!pinName.IsEmpty()) fileName += L" / " + pinName;
+				// Haali & LAVFSplitter return only one "Audio" pin name, cause CMainFrame::OnInitMenuPopup lookup find the wrong popmenu,
+				// add space at the end to prevent this, internal filter never return "Audio" only.
+				if(!pinName.IsEmpty()) fileName = pinName + L" "; 
 
 				WCHAR* pName = new WCHAR[fileName.GetLength()+1];
 				if(pName)
@@ -1261,7 +1263,7 @@ STDMETHODIMP CStreamSwitcherFilter::Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWOR
 		*plcid = 0;
 
 	if(pdwGroup)
-		*pdwGroup = 0;
+		*pdwGroup = (m_pOutput->CurrentMediaType().majortype == MEDIATYPE_Audio) ? 1 : 0;		
 
 	if(ppszName && (*ppszName = (WCHAR*)CoTaskMemAlloc((wcslen(pPin->Name())+1)*sizeof(WCHAR))))
 		wcscpy(*ppszName, pPin->Name());

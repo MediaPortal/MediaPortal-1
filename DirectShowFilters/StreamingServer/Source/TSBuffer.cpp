@@ -33,12 +33,15 @@
 #include "global.h"
 #include "entercriticalsection.h"
 
+#define TV_BUFFER_ITEM_SIZE	32336
+#define RADIO_BUFFER_ITEM_SIZE	1880
+
 extern void LogDebug(const char *fmt, ...) ;
 CTSBuffer::CTSBuffer()
 {
 	m_pFileReader = NULL;
 	m_lItemOffset = 0;
-	m_lTSBufferItemSize = 8084 ; //128028;
+	m_lTSBufferItemSize = TV_BUFFER_ITEM_SIZE; 
 
 	//round to nearest byte boundary.
 
@@ -89,6 +92,29 @@ long CTSBuffer::Count()
 	return bytesAvailable;
 }
 
+void CTSBuffer::SetChannelType(int channelType)
+{
+	Mediaportal::CEnterCriticalSection lock(m_BufferLock);
+
+	Clear();
+
+	//	Tv
+	if(channelType == 0)
+	{
+		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to TV (%d)", TV_BUFFER_ITEM_SIZE);
+		m_lTSBufferItemSize = TV_BUFFER_ITEM_SIZE;
+		m_eChannelType = TV;
+	}
+
+	//	Radio
+	else
+	{
+		LogDebug("CTSBuffer::SetChannelType() - Buffer size set to radio (%d)", RADIO_BUFFER_ITEM_SIZE);
+		m_lTSBufferItemSize = RADIO_BUFFER_ITEM_SIZE;
+		m_eChannelType = Radio;
+	}
+}
+
 HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 {
 	if (!m_pFileReader)
@@ -99,90 +125,64 @@ HRESULT CTSBuffer::Require(long nBytes, BOOL bIgnoreDelay)
 	if (nBytes <= bytesAvailable)
 		return S_OK;
 
-	while (nBytes > bytesAvailable)
+	//	Calculate how many data items we need
+	UINT bytesRequired = nBytes - bytesAvailable;
+	UINT dataItemsRequired = bytesRequired / m_lTSBufferItemSize;
+
+	if((bytesRequired % m_lTSBufferItemSize) > 0)
+		dataItemsRequired++;
+
+	//	Work out the total number of bytes we need to read and allocate a buffer
+	UINT bytesToRead = dataItemsRequired * m_lTSBufferItemSize;
+	BYTE* readBuffer = new BYTE[bytesToRead];
+
+	UINT totalBytesRead = 0;
+	UINT iteration = 0;
+
+	do
 	{
-		BYTE *newItem = new BYTE[m_lTSBufferItemSize];
-		ULONG ulBytesRead = 0;
+		if(iteration > 0)
+		{
+			//	Sleep for 4ms per iteration (TV)
+			int sleepPerIteration = 4;
 
-		__int64 currPosition = m_pFileReader->GetFilePointer();
-		HRESULT hr = m_pFileReader->Read(newItem, m_lTSBufferItemSize, &ulBytesRead);
-		if (FAILED(hr)){
+			//	If radio set to 20ms
+			if(m_eChannelType == Radio)
+				sleepPerIteration = 20;
 
-			delete[] newItem;
+			Sleep(iteration * sleepPerIteration);
+		}
+
+		ULONG bytesRead = 0;
+		HRESULT hr = m_pFileReader->Read(readBuffer + totalBytesRead, bytesToRead - totalBytesRead, &bytesRead);
+
+		if(FAILED(hr) || iteration >= 20)
+		{
+			LogDebug("TSBuffer::Require() - Failed to read buffer file");
+			
+			delete[] readBuffer;
+
 			return hr;
 		}
 
-		if (ulBytesRead < (ULONG)m_lTSBufferItemSize) 
-		{
-			WORD wReadOnly = 0;
-			m_pFileReader->get_ReadOnly(&wReadOnly);
-			if (wReadOnly && !bIgnoreDelay)
-			{
-				m_loopCount = max(2, m_loopCount);
-				m_loopCount = min(20, m_loopCount);
-//				int count = 220; // 2 second max delay
-				while (ulBytesRead < (ULONG)m_lTSBufferItemSize && m_loopCount) 
-				{
-          //Log("TSBuffer::Require() Waiting for file to grow:%d",bDelay);
-//					::OutputDebugString(TEXT("TSBuffer::Require() Waiting for file to grow.\n"));
-
-					WORD bDelay = 0;
-					m_pFileReader->get_DelayMode(&bDelay);
-					m_loopCount--;
-
-					if (bDelay > 0)
-					{
-						Sleep(2000);
-						m_loopCount = 0;
-					}
-					else
-					{
-						if (!m_loopCount)
-						{
-							m_loopCount = 20;
-							delete[] newItem;
-							return hr;
-						}
-						Sleep(100);
-					}
-
-					ULONG ulNextBytesRead = 0;				
-					m_pFileReader->SetFilePointer(currPosition, FILE_BEGIN);
-					HRESULT hr = m_pFileReader->Read(newItem, m_lTSBufferItemSize, &ulNextBytesRead);
-					if (FAILED(hr) && !m_loopCount){
-
-						m_loopCount = 20;
-						delete[] newItem;
-						return hr;
-					}
-
-					if (((ulNextBytesRead == 0) | (ulNextBytesRead == ulBytesRead)) && !m_loopCount){
-
-						m_loopCount = 20;
-						delete[] newItem;
-						return E_FAIL;
-					}
-
-					ulBytesRead = ulNextBytesRead;
-				}
-			}
-			else
-			{
-				delete[] newItem;
-				return E_FAIL;
-			}
-		}
-
-		m_loopCount = 20;
-		if (newItem)
-		{
-			m_Array.push_back(newItem);
-			bytesAvailable += m_lTSBufferItemSize;
-		}
-
-//		m_pFileReader->setBufferPointer();
-
+		totalBytesRead += bytesRead;
+		iteration++;
 	}
+	while(totalBytesRead < bytesToRead);
+
+
+	//	Success! Copy all bytes to data items
+	for(int i = 0; i < dataItemsRequired; i++)
+	{
+		BYTE* newDataItem = new BYTE[m_lTSBufferItemSize];
+		memcpy(newDataItem, readBuffer + (i * m_lTSBufferItemSize), m_lTSBufferItemSize);
+
+		m_Array.push_back(newDataItem);
+		bytesAvailable += m_lTSBufferItemSize;
+	}
+
+	delete[] readBuffer;
+
 	return S_OK;
 }
 

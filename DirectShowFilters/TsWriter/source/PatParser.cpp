@@ -198,24 +198,7 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 	info.OtherMux=sdtInfo.OtherMux;
 	info.SdtReceived=true;
 	strcpy(info.ProviderName,sdtInfo.ProviderName);
-     
-  int number=0;
-  char compareBuffer[255];
-  for (itChannels it2 = m_mapChannels.begin();it2!=m_mapChannels.end();++it2)
-  {
-		CChannelInfo& info2=it2->second;
-    if (info2.ServiceId==sdtInfo.ServiceId) continue;
-    if (number==0)
-			strcpy(compareBuffer,sdtInfo.ServiceName);
-    else
-      sprintf(compareBuffer,"%s (%d)", sdtInfo.ServiceName,number);
-    if (strcmp(info2.ServiceName,compareBuffer)==0) number++;
-  }
-
-  if (number==0)
-		strcpy(info.ServiceName,sdtInfo.ServiceName);
-  else
-    sprintf(info.ServiceName,"%s (%d)", sdtInfo.ServiceName,number);
+	strcpy(info.ServiceName,sdtInfo.ServiceName);
 }
 
 void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)

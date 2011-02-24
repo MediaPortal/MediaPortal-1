@@ -749,7 +749,12 @@ STDMETHODIMP  CMPFileWriter::Reset()
 	m_pTeletextInputPin->Reset();
 	return S_OK;
 }
-
+STDMETHODIMP CMPFileWriter::SetChannelType(int subChannelId, int channelType)
+{
+	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
+	if (pSubChannel==NULL) return S_OK;
+	return pSubChannel->SetChannelType(channelType);
+}
 
 
 //

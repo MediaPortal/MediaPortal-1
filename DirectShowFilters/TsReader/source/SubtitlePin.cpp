@@ -262,7 +262,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
             m_bPresentSample = false;              
         }
 
-        if (m_bPresentSample)
+        if (m_bPresentSample && m_dRateSeeking == 1.0)
         {
           //do we need to set the discontinuity flag?
           if (m_bDiscontinuity || buffer->GetDiscontinuity())

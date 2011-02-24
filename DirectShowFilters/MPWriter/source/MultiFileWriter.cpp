@@ -23,6 +23,8 @@
 *    http://forums.dvbowners.com/
 */
 
+#define _WIN32_WINNT 0x0502
+
 #pragma warning(disable : 4995)
 #pragma warning(disable : 4996)
 #include <winsock2.h>
@@ -408,11 +410,18 @@ HRESULT MultiFileWriter::WriteTSBufferFile()
 
 	// Write current position of most recent file.
 	__int64 currentPointer = m_pCurrentTSFile->GetFilePointer();
-	WriteFile(m_hTSBufferFile, &currentPointer, sizeof(currentPointer), &written, NULL);
 
-	// Write filesAdded and filesRemoved values
-	WriteFile(m_hTSBufferFile, &m_filesAdded, sizeof(m_filesAdded), &written, NULL);
-	WriteFile(m_hTSBufferFile, &m_filesRemoved, sizeof(m_filesRemoved), &written, NULL);
+	BYTE* writeBuffer = new BYTE[65536];
+	BYTE* writePointer = writeBuffer;
+
+	*((__int64*)writePointer) = currentPointer;
+	writePointer += sizeof(__int64);
+	
+	*((long*)writePointer) = m_filesAdded;
+	writePointer += sizeof(long);
+	
+	*((long*)writePointer) = m_filesRemoved;
+	writePointer += sizeof(long);
 
 	// Write out all the filenames (null terminated)
 	std::vector<LPWSTR>::iterator it = m_tsFileNames.begin();
@@ -421,16 +430,32 @@ HRESULT MultiFileWriter::WriteTSBufferFile()
 		LPWSTR pFilename = *it;
 		long length = wcslen(pFilename)+1;
 		length *= sizeof(wchar_t);
-		WriteFile(m_hTSBufferFile, pFilename, length, &written, NULL);
+		//WriteFile(m_hTSBufferFile, pFilename, length, &written, NULL);
+		memcpy(writePointer, pFilename, length);
+		writePointer += length;
+
+		if((writePointer - writeBuffer) > 60000)
+		{
+			LogDebug("MultiFileWriter: TS buffer file has exceeded maximum length.  Reduce the number of timeshifting files");
+			delete[] writeBuffer;
+			return S_FALSE;
+		}
 	}
 
 	// Finish up with a unicode null character in case we want to put stuff after this in the future.
 	wchar_t temp = 0;
-	WriteFile(m_hTSBufferFile, &temp, sizeof(temp), &written, NULL);
+	*((wchar_t*)writePointer) = temp;
+	writePointer += sizeof(wchar_t);
+	
+	
+	*((long*)writePointer) = m_filesAdded;
+	writePointer += sizeof(long);
+	
+	*((long*)writePointer) = m_filesRemoved;
+	writePointer += sizeof(long);
 
-	// Write again filesAdded and filesRemoved values for integrity check.
-	WriteFile(m_hTSBufferFile, &m_filesAdded, sizeof(m_filesAdded), &written, NULL);
-	WriteFile(m_hTSBufferFile, &m_filesRemoved, sizeof(m_filesRemoved), &written, NULL);
+	WriteFile(m_hTSBufferFile, writeBuffer, writePointer - writeBuffer, &written, NULL);
+	delete[] writeBuffer;
 
 	//randomly park the file pointer to help minimise HDD clogging
 //	if(m_pCurrentTSFile && m_pCurrentTSFile->GetFilePointer()&1)

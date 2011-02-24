@@ -331,6 +331,7 @@ void CEpgDecoder::DecodeParentalRatingDescriptor(byte* data, EPGEvent& epgEvent)
 					lang.parentalRating=rating;
 					lang.text="";
 					lang.event="";
+					lang.extendedEventComplete = false;
 					//LogDebug("epg grab parental: %s [%d]",langi, rating);
 					epgEvent.vecLanguages.push_back(lang);
 				}
@@ -481,8 +482,8 @@ void CEpgDecoder::DecodePremiereContentTransmissionDescriptor(byte* data, EPGEve
 	byte *buf=data+8;
 	while ((buf+6) <= (data+2+data[1]))
 	{
-		unsigned int starttime_no = *(buf+2);
-        for (int i=0; i < starttime_no; i+=3)
+		  unsigned int starttime_no = *(buf+2);
+      for (unsigned int i=0; i < starttime_no; i+=3)
         {
 			unsigned long dateMJD=(buf[0]<<8)+buf[1];
             unsigned long timeUTC=(buf[3+i]<<16)+(buf[4+i]<<8)+data[5+i];
@@ -519,6 +520,7 @@ void CEpgDecoder::DecodeDishShortDescription(byte* data, EPGEvent& epgEvent, int
 		lang.parentalRating=0;
 		// simulated lang id for "eng"
 		lang.language=langENG;
+		lang.extendedEventComplete = false;
 		epgEvent.vecLanguages.push_back(lang);
 		//LogDebug("DISH EPG ShortDescription=%s",text.c_str());
 	}
@@ -553,6 +555,7 @@ void CEpgDecoder::DecodeDishLongDescription(byte* data, EPGEvent& epgEvent, int 
 		free(decompressed);
 		lang.language=langENG;
 		lang.parentalRating=0;
+		lang.extendedEventComplete = false;
 		epgEvent.vecLanguages.push_back(lang);
 	}
 	catch(...)
@@ -673,6 +676,7 @@ void CEpgDecoder::DecodeExtendedEvent(byte* data, EPGEvent& epgEvent)
 		//add new language...
 		EPGLanguage lang;
 		lang.language=language;
+		lang.extendedEventComplete = false;
 		lang.event="";
 		if (text.size()>0) 
 			lang.text=text;
@@ -718,6 +722,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		  lang.language=ISO_639_language_code;
 		  lang.event="";
 		  lang.text="";
+		  lang.extendedEventComplete = false;
 		  epgEvent.vecLanguages.push_back(lang);
 			return;
 		}
@@ -730,12 +735,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		{
 			if (6+event_len > descriptor_len+2)
 			{
-		    EPGLanguage lang;
-			lang.language=ISO_639_language_code;
-		    lang.event="";
-		    lang.text="";
+				EPGLanguage lang;
+				lang.language=ISO_639_language_code;
+				lang.event="";
+				lang.text="";
 				lang.parentalRating=0;
-		    epgEvent.vecLanguages.push_back(lang);
+				lang.extendedEventComplete = false;
+				epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check1: %d %d",event_len,descriptor_len);
 				return;
 			}
@@ -746,7 +752,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			}
 			else
 			{
-				CAutoString buffer(event_len+10);
+				CAutoString buffer(event_len*4);
 				getString468A(&buf[6],event_len,buffer.GetBuffer(), event_len*4);
 				eventText=buffer.GetBuffer();
 			}
@@ -754,12 +760,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		}
 		else if (event_len<0)
 		{
-	    EPGLanguage lang;
-		lang.language=ISO_639_language_code;
-	    lang.event="";
-	    lang.text="";
-		lang.parentalRating=0;
-	    epgEvent.vecLanguages.push_back(lang);
+			EPGLanguage lang;
+			lang.language=ISO_639_language_code;
+			lang.event="";
+			lang.text="";
+			lang.parentalRating=0;
+			lang.extendedEventComplete = false;
+			epgEvent.vecLanguages.push_back(lang);
 			LogDebug("*** DecodeShortEventDescriptor: check1a: %d %d",event_len,descriptor_len);
 			return;
 		}
@@ -770,12 +777,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		{
 			if (off+text_len > descriptor_len+2) 
 			{
-	      EPGLanguage lang;
-		  lang.language=ISO_639_language_code;
-	      lang.event="";
-	      lang.text="";
+				EPGLanguage lang;
+				lang.language=ISO_639_language_code;
+				lang.event="";
+				lang.text="";
 				lang.parentalRating=0;
-	      epgEvent.vecLanguages.push_back(lang);
+				lang.extendedEventComplete = false;
+				epgEvent.vecLanguages.push_back(lang);
 				LogDebug("*** DecodeShortEventDescriptor: check2: %d %d",event_len,descriptor_len);
 				return;
 			}
@@ -786,7 +794,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 			}
 			else
 			{
-				CAutoString buffer (text_len+10);
+				CAutoString buffer (text_len*4);
 			  getString468A(&buf[off+1],text_len,buffer.GetBuffer(), text_len*4);
 				eventDescription=buffer.GetBuffer();
 			}
@@ -795,12 +803,13 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		}
 		else if (text_len<0)
 		{
-	    EPGLanguage lang;
-		lang.language=ISO_639_language_code;
-	    lang.event="";
-	    lang.text="";
+			EPGLanguage lang;
+			lang.language=ISO_639_language_code;
+			lang.event="";
+			lang.text="";
 			lang.parentalRating=0;
-	    epgEvent.vecLanguages.push_back(lang);
+			lang.extendedEventComplete = false;
+			epgEvent.vecLanguages.push_back(lang);
 			LogDebug("*** DecodeShortEventDescriptor: check2a: %d %d",event_len,descriptor_len);
 			return;
 		}
@@ -820,6 +829,7 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 		}
 		EPGLanguage lang;
 		lang.language=ISO_639_language_code;
+		lang.extendedEventComplete = false;
 		if (eventText.size()>0)
 			lang.event=eventText;
 		if (eventDescription.size()>0)

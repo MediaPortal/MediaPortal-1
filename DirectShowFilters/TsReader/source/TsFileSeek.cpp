@@ -31,7 +31,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-const float SEEKING_ACCURACY = (float)0.08; // 1/25 *2 (2 frames in PAL)
+const double SEEKING_ACCURACY = (double)0.16; // 1/25 *4 (4 frames in PAL)
 const int MAX_SEEKING_ITERATIONS = 50;
 
 extern void LogDebug(const char *fmt, ...) ;
@@ -141,10 +141,11 @@ void CTsFileSeek::Seek(CRefTime refTime)
       double clockFound=m_pcrFound.ToClock();
       if( m_useBinarySearch )
       {
-        double diff = fabs( seekTimeStamp - clockFound );
+        double diff = clockFound - seekTimeStamp;
         //LogDebug(" got %f at filepos %x diff %f ( %I64x, %I64x )", clockFound, (DWORD)filePos, diff, binaryMin, binaryMax);
           
-        if( diff < SEEKING_ACCURACY )
+        // Make sure that seeking position is at least the target one
+        if (0 <= diff && diff <= SEEKING_ACCURACY)
         {
           LogDebug(" stop seek: %f at %x - target: %f, diff: %f", 
             clockFound, (DWORD)filePos, seekTimeStamp, diff);

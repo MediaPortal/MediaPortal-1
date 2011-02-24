@@ -1002,9 +1002,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         {
           ivecBuffers it;
           it = m_t_vecAudioBuffers.begin();
+          delete *it;
           m_t_vecAudioBuffers.erase(it);
         }
-        m_bSetAudioDiscontinuity=true;
+        m_bSetAudioDiscontinuity = true;
       }
     }
     m_AudioValidPES = true;     

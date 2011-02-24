@@ -31,6 +31,12 @@
 #include "FileReader.h"
 #include "CriticalSection.h"
 
+enum ChannelType
+{
+	TV = 0,
+	Radio = 1,
+};
+
 class CTSBuffer 
 {
 public:
@@ -40,6 +46,7 @@ public:
 
 	void Clear();
 	long Count();
+	void SetChannelType(int channelType);
 	HRESULT Require(long nBytes, BOOL bIgnoreDelay = FALSE);
 	HRESULT DequeFromBuffer(BYTE *pbData, long lDataLength);
 	HRESULT ReadFromBuffer(BYTE *pbData, long lDataLength, long lOffset);
@@ -52,6 +59,7 @@ protected:
   Mediaportal::CCriticalSection m_BufferLock;
 
 	long m_lTSBufferItemSize;
+	ChannelType	m_eChannelType;
 	int debugcount;
 	int m_ParserLock;
 

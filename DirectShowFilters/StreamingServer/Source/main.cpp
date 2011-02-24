@@ -55,8 +55,8 @@ int  StreamSetupEx(char* ipAdress, int port);
 void StreamShutdown();
 void StreamRun();
 void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
-void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream);
-void StreamAddMpegFile(char* streamName, char* fileName);
+void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream,int channelType);
+void StreamAddMpegFile(char* streamName, char* fileName, int channelType);
 void StreamRemove(char* streamName);
 
 extern netAddressBits SendingInterfaceAddr ;
@@ -67,7 +67,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int main(int argc, char* argv[])
 {
 	StreamSetup("192.168.1.130");
-	StreamAddTimeShiftFile("test1", "C:\\1\\live5-0.ts.tsbuffer",false);
+	StreamAddTimeShiftFile("test1", "C:\\1\\live5-0.ts.tsbuffer",false,0);
 	//StreamAddMpegFile("test2", "C:\\media\\movies\\NED 1.mpg");
 	//StreamAddMpegFile("test3", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
 	while (true)
@@ -190,13 +190,13 @@ void StreamRemove( char* streamName)
 }
 
 //**************************************************************************************
-void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream)
+void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream,int channelType)
 {
 	try
 	{
 		LogDebug("Stream server: add timeshift  mpeg-2 transport stream %s filename:%s", streamName,fileName);
 		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,true));
+		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,true,channelType));
 		m_rtspServer->addServerMediaSession(sms);
 
 		announceStream(m_rtspServer, sms, streamName, fileName);
@@ -208,13 +208,13 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
 }
 
 //**************************************************************************************
-void StreamAddMpegFile(char* streamName, char* fileName)
+void StreamAddMpegFile(char* streamName, char* fileName, int channelType)
 {
 	try
 	{
 		LogDebug("Stream server: add mpeg-2 ts stream %s filename:%s", streamName,fileName);
 		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
-		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,false));
+		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,false,channelType));
 		m_rtspServer->addServerMediaSession(sms);
 		announceStream(m_rtspServer, sms, streamName, fileName);
 	}
