@@ -102,6 +102,8 @@ namespace SetupTv
     {
       Thread.CurrentThread.Name = "SetupTv";
 
+      GlobalServiceProvider.Instance.Add<ILogger>(new Log4netLogger("TvSetupLog.config"));  
+
       Process[] p = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
       if (p.Length > 1)
       {

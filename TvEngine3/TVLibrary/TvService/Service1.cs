@@ -91,6 +91,8 @@ namespace TvService
     /// </summary>
     private static void Main(string[] args)
     {
+      GlobalServiceProvider.Instance.Add<ILogger>(new Log4netLogger("log4net.config"));
+
       NameValueCollection appSettings = ConfigurationManager.AppSettings;
       appSettings.Set("GentleConfigFile", String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
 

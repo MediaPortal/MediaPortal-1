@@ -37,14 +37,14 @@ namespace TvLibrary.Log
     #endregion
 
     #region Constructors/Destructors
-    public Log4netLogger()
+    public Log4netLogger(string ConfigName)
     {
       string logPath = PathManager.GetDataPath;
       string appPath = logPath;
       logPath = logPath + "\\log";
 
       XmlDocument xmlDoc = new XmlDocument();
-      FileStream fs = new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      FileStream fs = new FileStream(Path.Combine(appPath, ConfigName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
       xmlDoc.Load(fs);
       fs.Close();
 
