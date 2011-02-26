@@ -189,7 +189,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Log.Log.Error("mdplugs: error - useMDAPI = {0}", ex);
       }
-      Log.Log.Info("mdplugs: useMDAPI = {0}");
+      Log.Log.Info("mdplugs: useMDAPI = {0}", useMDAPI);
       return useMDAPI;
     }
 

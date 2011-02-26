@@ -1780,6 +1780,37 @@ namespace TvPlugin
             ;
             break;
           }
+        case GUIMessage.MessageType.GUI_MSG_NOTIFY_REC:
+          string heading = message.Label;
+          string text = message.Label2;
+          Channel ch = message.Object as Channel;
+          //Log.Debug("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
+          string logo = string.Empty;
+          if (null != ch && ch.IsTv)
+          {
+            logo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+          }
+          else if (null != ch && ch.IsRadio)
+          {
+            logo = Utils.GetCoverArt(Thumbs.Radio, ch.DisplayName);
+          }
+
+          GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
+          if (pDlgNotify != null)
+          {
+            pDlgNotify.Reset();
+            pDlgNotify.ClearAll();
+            pDlgNotify.SetHeading(heading);
+            if (!string.IsNullOrEmpty(text))
+            {
+              pDlgNotify.SetText(text);
+            }
+            pDlgNotify.SetImage(logo);
+            pDlgNotify.TimeOut = 5;
+
+            pDlgNotify.DoModal(GUIWindowManager.ActiveWindow);
+          }
+          break;
         case GUIMessage.MessageType.GUI_MSG_NOTIFY_TV_PROGRAM:
           {
             TVNotifyYesNoDialog tvNotifyDlg = (TVNotifyYesNoDialog)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_TVNOTIFYYESNO);

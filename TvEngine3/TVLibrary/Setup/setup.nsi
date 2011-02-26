@@ -440,7 +440,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "${COMMON_APPDATA}"
   File "${svn_Common_MP_TVE3}\Gentle.config"
   File "${TVSERVER.BASE}\log4net.config"
-
+  File "${TVSERVER.BASE}\TvSetupLog.config"
+  
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html

@@ -20,6 +20,9 @@
 
 using System;
 using System.IO;
+using System.Security.AccessControl;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using log4net;
 using TvLibrary.Interfaces;
@@ -34,14 +37,17 @@ namespace TvLibrary.Log
     #endregion
 
     #region Constructors/Destructors
-    public Log4netLogger()
+    public Log4netLogger(string ConfigName)
     {
       string logPath = PathManager.GetDataPath;
       string appPath = logPath;
       logPath = logPath + "\\log";
-      XmlDocument xmlDoc = new XmlDocument();
 
-      xmlDoc.Load(new FileStream(Path.Combine(appPath, "log4net.config"), FileMode.Open));
+      XmlDocument xmlDoc = new XmlDocument();
+      FileStream fs = new FileStream(Path.Combine(appPath, ConfigName), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+      xmlDoc.Load(fs);
+      fs.Close();
+
       XmlNodeList nodeList = xmlDoc.SelectNodes("configuration/log4net/appender/file");
       foreach (XmlNode node in nodeList)
       {
@@ -195,7 +201,9 @@ namespace TvLibrary.Log
 
     public void Write(Exception ex)
     {
-      Error(ex);
+      StringBuilder sb = new StringBuilder();
+      sb.AppendFormat("Exception   :{0}\n", ex);
+      Error(SafeString(sb.ToString()));
     }
 
     public void Write(string format, params object[] arg)
@@ -255,6 +263,16 @@ namespace TvLibrary.Log
       {
         _logger.Fatal("", ex);
       }
+    }
+
+    /// <summary>
+    /// Replaces a password inside the string by stars
+    /// </summary>
+    /// <param name="Logtext">String to replace</param>
+    /// <returns>String without password</returns>
+    public String SafeString(String Logtext)
+    {
+      return new Regex(@"Password=[^;]*;", RegexOptions.IgnoreCase).Replace(Logtext, "Password=***;");
     }
 
     #endregion
