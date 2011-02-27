@@ -135,6 +135,8 @@ namespace MpeInstaller.Controls
           testToolStripMenuItem.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold,
                                                 GraphicsUnit.Point, ((byte)(0)));
         }
+        if (!item.CheckDependency(true))
+          testToolStripMenuItem.ForeColor = Color.Red;
         if (item.GeneralInfo.VersionDescription != null)
           testToolStripMenuItem.ToolTipText = item.GeneralInfo.VersionDescription.Length > 1024
                                                 ? item.GeneralInfo.VersionDescription.Substring(0, 1024) + "..."

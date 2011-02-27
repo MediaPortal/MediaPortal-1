@@ -38,6 +38,8 @@
           this.btn_clean = new System.Windows.Forms.Button();
           this.button2 = new System.Windows.Forms.Button();
           this.groupBox1 = new System.Windows.Forms.GroupBox();
+          this.chk_dependency = new System.Windows.Forms.CheckBox();
+          this.lbl_lastupdate = new System.Windows.Forms.Label();
           this.chk_stable = new System.Windows.Forms.CheckBox();
           this.chk_updateExtension = new System.Windows.Forms.CheckBox();
           this.label2 = new System.Windows.Forms.Label();
@@ -46,7 +48,7 @@
           this.chk_update = new System.Windows.Forms.CheckBox();
           this.btn_online_update = new System.Windows.Forms.Button();
           this.button1 = new System.Windows.Forms.Button();
-          this.lbl_lastupdate = new System.Windows.Forms.Label();
+          this.lbl_warn = new System.Windows.Forms.Label();
           this.tabControl1.SuspendLayout();
           this.tab_extensions.SuspendLayout();
           this.tab_known.SuspendLayout();
@@ -119,6 +121,7 @@
           // tab_options
           // 
           this.tab_options.AllowDrop = true;
+          this.tab_options.Controls.Add(this.lbl_warn);
           this.tab_options.Controls.Add(this.btn_clean);
           this.tab_options.Controls.Add(this.button2);
           this.tab_options.Controls.Add(this.groupBox1);
@@ -158,6 +161,7 @@
           // 
           // groupBox1
           // 
+          this.groupBox1.Controls.Add(this.chk_dependency);
           this.groupBox1.Controls.Add(this.lbl_lastupdate);
           this.groupBox1.Controls.Add(this.chk_stable);
           this.groupBox1.Controls.Add(this.chk_updateExtension);
@@ -167,11 +171,31 @@
           this.groupBox1.Controls.Add(this.chk_update);
           this.groupBox1.Location = new System.Drawing.Point(8, 76);
           this.groupBox1.Name = "groupBox1";
-          this.groupBox1.Size = new System.Drawing.Size(562, 88);
+          this.groupBox1.Size = new System.Drawing.Size(562, 109);
           this.groupBox1.TabIndex = 2;
           this.groupBox1.TabStop = false;
           this.groupBox1.Text = "Startup";
           this.groupBox1.UseCompatibleTextRendering = true;
+          // 
+          // chk_dependency
+          // 
+          this.chk_dependency.AutoSize = true;
+          this.chk_dependency.Location = new System.Drawing.Point(6, 86);
+          this.chk_dependency.Name = "chk_dependency";
+          this.chk_dependency.Size = new System.Drawing.Size(185, 17);
+          this.chk_dependency.TabIndex = 7;
+          this.chk_dependency.Text = "Show only  compatible extensions";
+          this.chk_dependency.UseVisualStyleBackColor = true;
+          this.chk_dependency.CheckedChanged += new System.EventHandler(this.chk_dependency_CheckedChanged);
+          // 
+          // lbl_lastupdate
+          // 
+          this.lbl_lastupdate.AutoSize = true;
+          this.lbl_lastupdate.Location = new System.Drawing.Point(284, 18);
+          this.lbl_lastupdate.Name = "lbl_lastupdate";
+          this.lbl_lastupdate.Size = new System.Drawing.Size(35, 13);
+          this.lbl_lastupdate.TabIndex = 6;
+          this.lbl_lastupdate.Text = "label3";
           // 
           // chk_stable
           // 
@@ -263,14 +287,18 @@
           this.button1.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
           this.button1.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
           // 
-          // lbl_lastupdate
+          // lbl_warn
           // 
-          this.lbl_lastupdate.AutoSize = true;
-          this.lbl_lastupdate.Location = new System.Drawing.Point(284, 18);
-          this.lbl_lastupdate.Name = "lbl_lastupdate";
-          this.lbl_lastupdate.Size = new System.Drawing.Size(35, 13);
-          this.lbl_lastupdate.TabIndex = 6;
-          this.lbl_lastupdate.Text = "label3";
+          this.lbl_warn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                      | System.Windows.Forms.AnchorStyles.Right)));
+          this.lbl_warn.BackColor = System.Drawing.Color.Red;
+          this.lbl_warn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+          this.lbl_warn.Location = new System.Drawing.Point(11, 188);
+          this.lbl_warn.Name = "lbl_warn";
+          this.lbl_warn.Size = new System.Drawing.Size(559, 21);
+          this.lbl_warn.TabIndex = 5;
+          this.lbl_warn.Text = "Some extension are hidden";
+          this.lbl_warn.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
           // 
           // MainForm
           // 
@@ -321,6 +349,8 @@
         private System.Windows.Forms.CheckBox chk_stable;
         private System.Windows.Forms.Button btn_clean;
         private System.Windows.Forms.Label lbl_lastupdate;
+        private System.Windows.Forms.CheckBox chk_dependency;
+        private System.Windows.Forms.Label lbl_warn;
     }
 }
 

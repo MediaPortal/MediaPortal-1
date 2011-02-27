@@ -78,8 +78,7 @@
           this.AcceptButton = this.button_next;
           this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-          this.AutoSize = true;
-          this.ClientSize = new System.Drawing.Size(499, 354);
+          this.ClientSize = new System.Drawing.Size(494, 351);
           this.Controls.Add(this.lst_changes);
           this.Controls.Add(this.lbl_curr_file);
           this.Controls.Add(this.progressBar1);

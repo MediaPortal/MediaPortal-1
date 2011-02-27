@@ -111,6 +111,7 @@ namespace MpeCore.Classes.SectionPanel
     {
       button_back.Visible = false;
       button_cancel.Visible = false;
+      this.Width = 500;
     }
 
     #endregion
