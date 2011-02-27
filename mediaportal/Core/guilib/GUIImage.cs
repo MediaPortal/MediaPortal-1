@@ -174,6 +174,7 @@ namespace MediaPortal.GUI.Library
 
     private float _texUoff, _texVoff, _texUmax, _texVmax;
     private float _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax;
+    private float _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc;
     private float _masktexUoff, _masktexVoff, _masktexUmax, _masktexVmax;
     private Texture _packedTexture = null;
     private int _packedTextureNo = -1;
@@ -1536,18 +1537,22 @@ namespace MediaPortal.GUI.Library
                   uoff = _diffusetexUmax + _diffusetexUoff;
                   umax = _diffusetexUoff;
                 }
+
                 if (_flipY)
                 {
                   fy += nh;
-                  //uoff1 = _umax + _uoff;
-                  //umax1 = _uoff;
-
                   voff1 = _vmax + _voff;
                   vmax1 = _voff;
 
                   voff = _diffusetexVmax + _diffusetexVoff;
                   vmax = _diffusetexVoff;
                 }
+
+                // Set final coordinates for diffuse texture.
+                _diffusetexUoffCalc = uoff;
+                _diffusetexUmaxCalc = umax;
+                _diffusetexVoffCalc = voff;
+                _diffusetexVmaxCalc = vmax;
 
                 float[,] m = GUIGraphicsContext.GetFinalMatrix();
 
@@ -1571,22 +1576,30 @@ namespace MediaPortal.GUI.Library
 
                     FontEngineDrawMaskedTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
                                                  (int)color, m,
-                                                 _packedDiffuseTextureNo, uoff, voff, umax, vmax,
+                                                 _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc,
                                                  _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                   }
                 }
                 else
                 {
-                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m
-                                         , _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                  FontEngineDrawTexture2(_packedTextureNo, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color, m,
+                                         _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
+                }
+
+                // Draw flipped image border.
+                if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) &&
+                    _borderTextureFileName.Length > 0)
+                {
+                  DrawBorder(true);
                 }
               }
             }
 
+            // Draw main image border.
             if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) &&
                 _borderTextureFileName.Length > 0)
             {
-              DrawBorder();
+              DrawBorder(false);
             }
 
             base.Render(timePassed);
@@ -1673,8 +1686,8 @@ namespace MediaPortal.GUI.Library
                     umaxm = _masktexUmax + _masktexUoff;
                     vmaxm = _masktexVmax + _masktexVoff;
 
-                    frame.Draw(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
-                               _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
+                    frame.DrawMasked(_fx, _fy, _nw, _nh, _uoff, _voff, _umax, _vmax, (int)color,
+                                     _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                   }
                 }
                 else
@@ -1730,6 +1743,13 @@ namespace MediaPortal.GUI.Library
                     voff = _diffusetexVmax + _diffusetexVoff;
                     vmax = _diffusetexVoff;
                   }
+
+                  // Set final calculated coordinates for diffuse texture.
+                  _diffusetexUoffCalc = uoff;
+                  _diffusetexUmaxCalc = umax;
+                  _diffusetexVoffCalc = voff;
+                  _diffusetexVmaxCalc = vmax;
+
                   float[,] matrix = GUIGraphicsContext.GetFinalMatrix();
 
                   if (_maskFileName.Length > 0)
@@ -1752,7 +1772,7 @@ namespace MediaPortal.GUI.Library
 
                       FontEngineDrawMaskedTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1,
                                                    (int)color, matrix,
-                                                   _packedDiffuseTextureNo, uoff, voff, umax, vmax,
+                                                   _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc,
                                                    _packedMaskTextureNo, uoffm, voffm, umaxm, vmaxm);
                     }
                   }
@@ -1760,15 +1780,23 @@ namespace MediaPortal.GUI.Library
                   {
                     FontEngineDrawTexture2(frame.TextureNumber, fx, fy, nw, nh, uoff1, voff1, umax1, vmax1, (int)color,
                                            matrix,
-                                           _packedDiffuseTextureNo, uoff, voff, umax, vmax);
+                                           _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
                   }
+                }
+
+                // Draw flipped image border.
+                if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) &&
+                    _borderTextureFileName.Length > 0)
+                {
+                  DrawBorder(true);
                 }
               }
 
+              // Draw main image border.
               if ((_borderLeft > 0 || _borderRight > 0 || _borderTop > 0 || _borderBottom > 0) &&
                   _borderTextureFileName.Length > 0)
               {
-                DrawBorder();
+                DrawBorder(false);
               }
 
               frame = null;
@@ -1800,7 +1828,7 @@ namespace MediaPortal.GUI.Library
     // The border position (pos) is specified by pos relative to the x,y,nw,nh rectangle
     // U=upper corners, L=lower corners
     // pos values 0=outside, 1=inside, 2=center
-    private void DrawBorder()
+    private void DrawBorder(bool flip)
     {
       float bl = _borderLeft;
       float br = _borderRight;
@@ -1810,7 +1838,7 @@ namespace MediaPortal.GUI.Library
       float posX = 0f, posY = 0f, width = 0f, height = 0f; // Describes the bounding rectangle to border
       float tx = 0f, ty = 0f, tw = 0f, th = 0f; // Scaling translations for border position (center, inside, outside)
       float bx = 0f, by = 0f, bw = 0f, bh = 0f; // One border rectangle (reused for each side)
-      float umax = 0f, vmax = 0f; // Texture coordinate extent
+      float uoff = 0f, voff = 0f, umax = 0f, vmax = 0f; // Texture coordinates
       float zrot = 0f; // Rotation of a textured border edge if specified by _borderTextureRotate
       float cxLeft = 0f, cyLeft = 0f, cwLeft = 0f, chLeft = 0f; // Left corner rectangle (reused for each left corner)
       float cxRight = 0f, cyRight = 0f, cwRight = 0f, chRight = 0f;
@@ -1872,6 +1900,20 @@ namespace MediaPortal.GUI.Library
           width = Width;
           height = Height;
           break;
+      }
+
+      // Compute new position for flipped border.
+      if (flip)
+      {
+        if (_flipX)
+        {
+          posX += width;
+        }
+
+        if (_flipY)
+        {
+          posY += height;
+        }
       }
 
       switch (_borderPosition)
@@ -1954,7 +1996,34 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey)); // left border
+        if (flip)
+        {
+          // Compute new texture coordinates for flipped left side border.
+          float temp;
+          if (_flipX)
+          {
+            temp = uoff;
+            uoff = umax + temp;
+            umax = temp;
+          }
+
+          if (_flipY)
+          {
+            temp = voff;
+            voff = vmax + temp;
+            vmax = temp;
+          }
+
+          // Draw left border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
+                       (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
+                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+        }
+        else
+        {
+          // Draw left border.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        }
       }
 
       // Right border rectangle
@@ -2006,7 +2075,34 @@ namespace MediaPortal.GUI.Library
           vmax = 1;
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey)); // right border
+        if (flip)
+        {
+          // Compute new texture coordinates for flipped right side border.
+          float temp;
+          if (_flipX)
+          {
+            temp = uoff;
+            uoff = umax + temp;
+            umax = temp;
+          }
+
+          if (_flipY)
+          {
+            temp = voff;
+            voff = vmax + temp;
+            vmax = temp;
+          }
+
+          // Draw right border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
+                       (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
+                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+        }
+        else
+        {
+          // Draw right border.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        }
       }
 
       // Top border rectangle
@@ -2068,23 +2164,64 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        if (flip)
+        {
+          // Compute new texture coordinates for flipped top side border.
+          float temp;
+          if (_flipX)
+          {
+            temp = uoff;
+            uoff = umax + temp;
+            umax = temp;
+          }
+
+          if (_flipY)
+          {
+            temp = voff;
+            voff = vmax + temp;
+            vmax = temp;
+          }
+
+          // Draw top border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
+                       (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
+                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+        }
+        else
+        {
+          // Draw top border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        }
+
         if (_borderHasCorners)
         {
           // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
           float[,] m = GUIGraphicsContext.GetFinalMatrix();
 
-          // Upper left corner
-          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                 cvmaxLeft, (int)_borderColorKey, m,
-                                 cornerTexture.TextureNumber, 0, 0, 0, 0);
-          // indicates fontEngine should ignore texture blending
+          if (flip)
+          {
+            // Upper left corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                   cvmaxLeft, (int)_borderColorKey, m,
+                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
 
-          // Upper right corner
-          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                 cumaxRight, cvmaxRight, (int)_borderColorKey, m,
-                                 cornerTexture.TextureNumber, 0, 0, 0, 0);
-          // indicates fontEngine should ignore texture blending
+            // Upper right corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                   cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+          }
+          else
+          {
+            // Upper left corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                   cvmaxLeft, (int)_borderColorKey, m,
+                                   cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+
+            // Upper right corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                   cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                   cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+          }
         }
       }
 
@@ -2176,23 +2313,64 @@ namespace MediaPortal.GUI.Library
           }
         }
 
-        texture.Draw(bx, by, bw, bh, zrot, 0, 0, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        if (flip)
+        {
+          // Compute new texture coordinates for flipped top side border.
+          float temp;
+          if (_flipX)
+          {
+            temp = uoff;
+            uoff = umax + temp;
+            umax = temp;
+          }
+
+          if (_flipY)
+          {
+            temp = voff;
+            voff = vmax + temp;
+            vmax = temp;
+          }
+
+          // Draw bottom border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
+                       (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
+                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+        }
+        else
+        {
+          // Draw bottom border flipped.
+          texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey));
+        }
+
         if (_borderHasCorners)
         {
           // Using FontEngineDrawTexture2 for its ability to flip the corner texture.
           float[,] m = GUIGraphicsContext.GetFinalMatrix();
 
-          // Lower left corner
-          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                 cvmaxLeft, (int)_borderColorKey, m,
-                                 cornerTexture.TextureNumber, 0, 0, 0, 0);
-          // indicates fontEngine should ignore texture blending
+          if (flip)
+          {
+            // Lower left corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                   cvmaxLeft, (int)_borderColorKey, m,
+                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
 
-          // Lower right corner
-          FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                 cumaxRight, cvmaxRight, (int)_borderColorKey, m,
-                                 cornerTexture.TextureNumber, 0, 0, 0, 0);
-          // indicates fontEngine should ignore texture blending
+            // Lower right corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                   cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+          }
+          else
+          {
+            // Lower left corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
+                                   cvmaxLeft, (int)_borderColorKey, m,
+                                   cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+
+            // Lower right corner
+            FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
+                                   cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                   cornerTexture.TextureNumber, 0, 0, 0, 0); // indicates fontEngine should ignore texture blending
+          }
         }
       }
       texture = null;
