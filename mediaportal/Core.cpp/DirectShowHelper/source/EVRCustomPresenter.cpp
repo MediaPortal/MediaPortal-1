@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55a ----------- instance 0x%x", this);
+      Log("---------- v1.4.55b ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55a ----------- instance 0x%x", this);
+      Log("---------- v0.0.55b ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -156,6 +156,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_maxScanLine                 = 0;
     m_minVisScanLine              = 0;
     m_maxVisScanLine              = 0;
+    
+    m_numFilters = 0;
     
     m_pD3DDev->GetDisplayMode(0, &m_displayMode);
 
@@ -1893,6 +1895,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     case MFVP_MESSAGE_BEGINSTREAMING:
       // The EVR switched from stopped to paused. The presenter should allocate resources.
       Log("ProcessMessage MFVP_MESSAGE_BEGINSTREAMING");
+      GetFilterNames();
       m_bEndStreaming = FALSE;
       m_bInputAvailable = FALSE;
       m_bFirstInputNotify = FALSE;
@@ -3574,4 +3577,70 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 
   m_dPreviousVariableFreq = m_dVariableFreq;
 }
+
+
+//=============== Filter Graph interface functions =================
+
+bool MPEVRCustomPresenter::GetFilterNames()
+{
+  FILTER_INFO filterInfo;
+  ZeroMemory(&filterInfo, sizeof(filterInfo));
+  HRESULT hr = m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
+
+  if (hr == S_OK)
+  {
+    EnumFilters(filterInfo.pGraph);
+    filterInfo.pGraph->Release();
+
+    return true;
+  }
+  
+  filterInfo.pGraph->Release();
+  return false;
+}
+
+
+HRESULT MPEVRCustomPresenter::EnumFilters(IFilterGraph *pGraph) 
+{
+    IEnumFilters *pEnum = NULL;
+    IBaseFilter *pFilter;
+    ULONG cFetched;
+    m_numFilters = 0;
+
+    HRESULT hr = pGraph->EnumFilters(&pEnum);
+    if (FAILED(hr)) return hr;
+
+    while(pEnum->Next(1, &pFilter, &cFetched) == S_OK)
+    {
+        FILTER_INFO FilterInfo;
+        hr = pFilter->QueryFilterInfo(&FilterInfo);
+        if (FAILED(hr))
+        {
+            Log("Could not get the filter info");
+            continue;  // Maybe the next one will work.
+        }
+
+        char szName[MAX_FILTER_NAME];
+        int cch = WideCharToMultiByte(CP_ACP, 0, FilterInfo.achName, MAX_FILTER_NAME, szName, MAX_FILTER_NAME, 0, 0);
+        
+        if (cch > 0 && m_numFilters < FILTER_LIST_SIZE) 
+        {
+          strcpy(m_filterNames[m_numFilters],szName);
+          Log("Filter: %s", m_filterNames[m_numFilters]);
+          m_numFilters++;
+        }
+        
+        // The FILTER_INFO structure holds a pointer to the Filter Graph
+        // Manager, with a reference count that must be released.
+        if (FilterInfo.pGraph != NULL)
+        {
+            FilterInfo.pGraph->Release();
+        }
+        pFilter->Release();
+    }
+
+    pEnum->Release();
+    return S_OK;
+}
+
 

@@ -188,6 +188,7 @@ void StatsRenderer::DrawStats()
     m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
     CString  strText;
     int TextHeight = int(25.0*m_TextScale + 0.5);
+    int BlankHeight = int(10.0*m_TextScale + 0.5);
     
     strText.Format("Display: %d x %d @ %.6f Hz | Meas rfsh: %.6f Hz | MaxLine: %d | PCD: %.6f", 
       m_pPresenter->m_displayMode.Width, m_pPresenter->m_displayMode.Height,
@@ -196,43 +197,36 @@ void StatsRenderer::DrawStats()
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Video: %d x %d @ %d x %d | Act FPS: %.6f (red)| Drwn: %d | Drop: %d | Lkd: %d", 
+    strText.Format("Video: %d x %d %d:%d | Act FPS: %.4f (red)| Drawn: %d | Drop: %d", 
       m_pPresenter->m_iVideoWidth, m_pPresenter->m_iVideoHeight, 
       m_pPresenter->m_iARX, m_pPresenter->m_iARY, 
-      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped,
-      (int)m_pPresenter->m_DetectedLock);
+      10000000.0 / m_pPresenter->m_fJitterMean, m_pPresenter->m_iFramesDrawn, m_pPresenter->m_iFramesDropped);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
+    OffsetRect(&rc, 0, BlankHeight); // Extra "line feed"
 
-    strText.Format("Render time (grn): %+5.1f ms | NST: %+3.2f ms | AveNST: %+3.2f ms | FrRat: %d | Stall: %3.2f ms", 
+    strText.Format("Render time (grn): %+5.1f ms | NST: %+3.1f ms | AveRNST: %+3.1f ms | FrRat: %d | Stall: %+3.1f ms", 
       m_pPresenter->m_fSyncOffsetAvr/10000.0, m_pPresenter->m_llLastCFPts/10000.0, 
       m_pPresenter->m_fCFPMean/10000.0, m_pPresenter->m_frameRateRatio, m_pPresenter->m_stallTime/10000.0);
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("Raster offset (ylw): %5.2f ms | SOP: %4d | EOP: %4d | FrH: %d | LFr: %d | Derr: %5.2f ms",
+    strText.Format("Raster offset (ylw): %5.2f ms | SOP: %4d | EOP: %4d | Locked: %d | Derr: %5.2f ms | Q: %d",
       m_pPresenter->m_rasterSyncOffset, m_pPresenter->m_LastStartOfPaintScanline, m_pPresenter->m_LastEndOfPaintScanline, 
-      m_pPresenter->m_iFramesHeld, m_pPresenter->m_iLateFrames, m_pPresenter->m_lastDelayErr/10000.0);
+      (int)m_pPresenter->m_DetectedLock, m_pPresenter->m_lastDelayErr/10000.0, (m_pPresenter->m_qScheduledSamples.Count()));
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
 
-    strText.Format("DetFrT: %+5.3f ms | DetFrT_SD: %+5.3f ms | RtFrT: %+5.3f ms | DetSDur: %+5.3f ms | Q: %d",  
-      (m_pPresenter->m_DetectedFrameTime * 1000.0), (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0),
-      (m_pPresenter->m_rtTimePerFrame/10000.0 ), (m_pPresenter->m_SampDuration/10000.0), (m_pPresenter->m_qScheduledSamples.Count()) );
+    strText.Format("Rptd FPS: %.3f | Detd FPS: %.3f | DetFrT_SD: %+5.3f ms | DetSDur: %+5.3f ms",  
+      (10000000.0/m_pPresenter->m_rtTimePerFrame), (1.0/m_pPresenter->m_DetectedFrameTime),
+      (m_pPresenter->m_DetectedFrameTimeStdDev/10000.0), (m_pPresenter->m_SampDuration/10000.0) );
     DrawText(rc, strText);
     OffsetRect(&rc, 0, TextHeight);
-
-//    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | BadSTimCnt: %d", 
-//       m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
-//       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_qBadSampTimCnt );
-//    DrawText(rc, strText);
-//    OffsetRect(&rc, 0, TextHeight);
 
     if (m_pPresenter->m_pAVSyncClock) //Stats for MP Audio Renderer
     {
-      OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
+      OffsetRect(&rc, 0, BlankHeight); // Extra "line feed"
   
       strText.Format("Detd bias: %.7f | BiasAdj: %d | AudAdj: %.6f | AvePhDiff: %.6f | NumAdj: %d", 
         m_pPresenter->m_dBias, m_pPresenter->m_bBiasAdjustmentDone, m_pPresenter->m_dVariableFreq, 
@@ -249,7 +243,51 @@ void StatsRenderer::DrawStats()
       OffsetRect(&rc, 0, TextHeight);
     }
 
-    OffsetRect(&rc, 0, TextHeight); // Extra "line feed"
+    if (m_pPresenter->m_numFilters > 0) 
+    {
+      OffsetRect(&rc, 0, BlankHeight); // Extra "line feed"
+      
+      strText.Format("");
+      for (int i=0; i < 3 && i < m_pPresenter->m_numFilters; i++)
+      {
+        strText += m_pPresenter->m_filterNames[i];
+        if (m_pPresenter->m_numFilters > (i+1)) strText += ", ";
+      }
+      DrawText(rc, strText);
+      OffsetRect(&rc, 0, TextHeight);
+    }
+
+    if (m_pPresenter->m_numFilters > 3) 
+    {
+      strText.Format("");
+      for (int i=3; i < 6 && i < m_pPresenter->m_numFilters; i++)
+      {
+        strText += m_pPresenter->m_filterNames[i];
+        if (m_pPresenter->m_numFilters > (i+1)) strText += ", ";
+      }
+      DrawText(rc, strText);
+      OffsetRect(&rc, 0, TextHeight);
+    }
+
+    if (m_pPresenter->m_numFilters > 6)
+    {
+      strText.Format("");
+      for (int i=6; i < FILTER_LIST_SIZE && i < m_pPresenter->m_numFilters; i++)
+      {
+        strText += m_pPresenter->m_filterNames[i];
+        if (m_pPresenter->m_numFilters > (i+1)) strText += ", ";
+      }
+      DrawText(rc, strText);
+      OffsetRect(&rc, 0, TextHeight);
+    }
+    
+//    strText.Format("QPut: %d | QNoPut: %d | QPop: %d | QPut-QPop: %d | BadSTimCnt: %d", 
+//       m_pPresenter->m_qGoodPutCnt, m_pPresenter->m_qBadPutCnt, m_pPresenter->m_qGoodPopCnt, 
+//       (m_pPresenter->m_qGoodPutCnt - m_pPresenter->m_qGoodPopCnt), m_pPresenter->m_qBadSampTimCnt );
+//    DrawText(rc, strText);
+//    OffsetRect(&rc, 0, TextHeight);
+
+    OffsetRect(&rc, 0, BlankHeight); // Extra "line feed"
     m_pSprite->End();
   }
 
@@ -338,6 +376,7 @@ void StatsRenderer::DrawStats()
     m_pLine->Draw(Points, NB_JITTER, D3DCOLOR_XRGB(220, 220, 100));
     m_pLine->End();
   }
+  
 }
 
 
@@ -365,7 +404,7 @@ void StatsRenderer::DrawTearingTest(CComPtr<IDirect3DSurface9> pSurface)
 
   rcTearing.left = (rcTearing.right + 15) % width;
   rcTearing.right  = rcTearing.left + 4;
-  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB(255,255,255,255));
+  m_pD3DDev->ColorFill(pSurface, &rcTearing, D3DCOLOR_ARGB(255,100,100,100));
 
   m_nTearingPos = (m_nTearingPos + 7) % width;
 }

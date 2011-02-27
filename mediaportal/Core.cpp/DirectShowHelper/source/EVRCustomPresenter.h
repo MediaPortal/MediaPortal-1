@@ -42,6 +42,7 @@ using namespace std;
 #define FRAME_PROC_THRSH2 60
 #define DFT_THRESH 0.007
 #define NUM_PHASE_DEVIATIONS 32
+#define FILTER_LIST_SIZE 9
 
 // magic numbers
 #define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
@@ -243,6 +244,9 @@ protected:
   LONGLONG       GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime);
   void           DwmEnableMMCSSOnOff(bool enable);
 
+  HRESULT EnumFilters(IFilterGraph *pGraph);
+  bool GetFilterNames();
+
   CComPtr<IDirect3DDevice9>         m_pD3DDev;
   IVMR9Callback*                    m_pCallback;
   CComPtr<IDirect3DDeviceManager9>  m_pDeviceManager;
@@ -413,6 +417,9 @@ protected:
   LONGLONG      m_earliestPresentTime;
   LONGLONG      m_lastPresentTime;
   LONGLONG      m_lastDelayErr;
+
+  char          m_filterNames[FILTER_LIST_SIZE][MAX_FILTER_NAME];
+  int           m_numFilters;
   
   BOOL          m_bIsWin7;
   bool          m_bMsVideoCodec;
