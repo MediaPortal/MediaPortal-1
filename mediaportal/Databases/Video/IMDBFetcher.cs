@@ -360,11 +360,8 @@ namespace MediaPortal.Video.Database
             //
             // Save details to database
             //
-            // Check resume table if there is an entry that file is played
-            string file = moviePath + @"\" + _movieDetails.File;
-            int idFile = VideoDatabase.GetFileId(file);
-
-            if (idFile >= 0 && VideoDatabase.GetVideoFileWatched(idFile))
+            // Check movie table if there is an entry that new movie is already played as share
+            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID))
             {
               _movieDetails.Watched = 1;
             }

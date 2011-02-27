@@ -107,7 +107,7 @@ namespace MediaPortal.Video.Database
       }
       if (DatabaseUtility.TableColumnExists(m_db, "resume", "watched") == false)
       {
-        string strSQL = "ALTER TABLE \"main\".\"resume\" ADD COLUMN \"watched\" bool DEFAULT 0";
+        string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"watched\" bool DEFAULT 0";
         m_db.Execute(strSQL);
       }
     }
@@ -1522,19 +1522,19 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public void SetVideoFileWatched(int iFileId, bool watched)
+    public void SetMovieWatchedStatus(int idMovie, bool watched)
     {
       try
       {
-        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        string sql = String.Format("select * from movie where idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
         if (results.Rows.Count != 0)
         {
           int iWatched = 0;
           if (watched)
             iWatched = 1;
-          sql = String.Format("update resume set watched={0} where idFile={1}",
-                              iWatched, iFileId);
+          sql = String.Format("update movie set watched={0} where idMovie={1}",
+                              iWatched, idMovie);
         }
         m_db.Execute(sql);
       }
@@ -1545,11 +1545,12 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    public bool GetVideoFileWatched(int iFileId)
+    public bool GetMovieWatchedStatus(int idMovie)
     {
       try
       {
-        string sql = String.Format("select * from resume where idFile={0}", iFileId);
+        
+        string sql = String.Format("select * from movie where idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
         if (results.Rows.Count == 0)
         {

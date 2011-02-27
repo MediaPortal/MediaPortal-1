@@ -266,7 +266,7 @@ namespace MediaPortal.GUI.Video
           int fileId = VideoDatabase.GetFileId(file);
           int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
           bool foundWatched = false;
-          // Find watched status for movies in the database
+          // Set thumb for movies
           if (id >= 0)
           {
             if (Util.Utils.IsDVD(pItem.Path))
@@ -276,18 +276,13 @@ namespace MediaPortal.GUI.Video
 
             string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
             strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-            
-            if (movieDetails.Watched > 0 && markWatchedFiles)
-            {
-              foundWatched = true;
-            }
           }
-          // Find watched status for videos not in the movie database
-          else if (fileId >= 0 && markWatchedFiles)
+          // Find watched status for videos
+          if (fileId >= 0 && markWatchedFiles)
           {
-            if (VideoDatabase.GetVideoFileWatched(fileId))
+            if (VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file)))
               foundWatched = true;
-           }
+          }
           // Set watched status for list item
           if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path) && foundWatched))
           {

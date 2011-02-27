@@ -423,7 +423,7 @@ namespace MediaPortal.GUI.Video
         {
           GUIPropertyManager.SetProperty("#iswatched", "no");
           currentMovie.Watched = 0;
-          // Delete movie file stop time data
+          VideoDatabase.SetMovieWatchedStatus(currentMovie.ID, false);
           ArrayList files = new ArrayList();
           VideoDatabase.GetFiles(currentMovie.ID, ref files);
 
@@ -437,6 +437,7 @@ namespace MediaPortal.GUI.Video
         {
           GUIPropertyManager.SetProperty("#iswatched", "yes");
           currentMovie.Watched = 1;
+          VideoDatabase.SetMovieWatchedStatus(currentMovie.ID, true);
         }
         VideoDatabase.SetMovieInfoById(currentMovie.ID, ref currentMovie);
       }

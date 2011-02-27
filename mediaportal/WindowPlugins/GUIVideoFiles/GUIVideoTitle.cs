@@ -278,6 +278,20 @@ namespace MediaPortal.GUI.Video
           return;
         }
         GUIVideoFiles.Reset(); // reset pincode
+        
+        ArrayList files = new ArrayList();
+        VideoDatabase.GetFiles(movie.ID, ref files);
+        
+        if (files.Count > 1)
+        {
+          GUIVideoFiles._stackedMovieFiles = files;
+          GUIVideoFiles._isStacked = true;
+          GUIVideoFiles.MovieDuration(files);
+        }
+        else
+        {
+          GUIVideoFiles._isStacked = false;
+        }
         GUIVideoFiles.PlayMovie(movie.ID);
       }
     }
