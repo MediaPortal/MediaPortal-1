@@ -2017,7 +2017,7 @@ namespace MediaPortal.GUI.Library
           // Draw left border flipped.
           texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
                        (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
-                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                       _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
         }
         else
         {
@@ -2096,7 +2096,7 @@ namespace MediaPortal.GUI.Library
           // Draw right border flipped.
           texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
                        (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
-                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                       _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
         }
         else
         {
@@ -2185,7 +2185,7 @@ namespace MediaPortal.GUI.Library
           // Draw top border flipped.
           texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
                        (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
-                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                       _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
         }
         else
         {
@@ -2203,12 +2203,12 @@ namespace MediaPortal.GUI.Library
             // Upper left corner
             FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
                                    cvmaxLeft, (int)_borderColorKey, m,
-                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                                   _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
 
             // Upper right corner
             FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
                                    cumaxRight, cvmaxRight, (int)_borderColorKey, m,
-                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                                   _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
           }
           else
           {
@@ -2334,7 +2334,7 @@ namespace MediaPortal.GUI.Library
           // Draw bottom border flipped.
           texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
                        (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
-                       _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                       _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
         }
         else
         {
@@ -2352,12 +2352,12 @@ namespace MediaPortal.GUI.Library
             // Lower left corner
             FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
                                    cvmaxLeft, (int)_borderColorKey, m,
-                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                                   _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
 
             // Lower right corner
             FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
                                    cumaxRight, cvmaxRight, (int)_borderColorKey, m,
-                                   _packedDiffuseTextureNo, _diffusetexUoff, _diffusetexVoff, _diffusetexUmax, _diffusetexVmax);
+                                   _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
           }
           else
           {
