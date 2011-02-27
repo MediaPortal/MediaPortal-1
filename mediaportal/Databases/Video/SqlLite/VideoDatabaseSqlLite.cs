@@ -105,10 +105,24 @@ namespace MediaPortal.Video.Database
         string strSQL = "ALTER TABLE \"main\".\"movieinfo\" ADD COLUMN \"strFanartURL\" text DEFAULT ''";
         m_db.Execute(strSQL);
       }
-      if (DatabaseUtility.TableColumnExists(m_db, "resume", "watched") == false)
+      if (DatabaseUtility.TableColumnExists(m_db, "movie", "watched") == false)
       {
         string strSQL = "ALTER TABLE \"main\".\"movie\" ADD COLUMN \"watched\" bool DEFAULT 0";
         m_db.Execute(strSQL);
+        // Set status for movies after upgrade
+        strSQL = String.Format("select idMovie, iswatched from movieinfo");
+        SQLiteResultSet results = m_db.Execute(strSQL);
+
+        for (int i = 0; i < results.Rows.Count; i++)
+        {
+          int movieId = Int32.Parse(DatabaseUtility.Get(results, i, "idMovie"));
+          int watched = Int32.Parse(DatabaseUtility.Get(results, i, "iswatched"));
+          if (watched > 0)
+          {
+            SetMovieWatchedStatus(movieId, true);
+          }
+        }
+
       }
     }
 
