@@ -1025,6 +1025,8 @@ namespace MediaPortal.Video.Database
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.WritingCredits = strLine;
         // Genres
+        //Clear old genres link for movie
+        RemoveGenresForMovie(lMovieId);
         strLine = details1.Genre;
         DatabaseUtility.RemoveInvalidChars(ref strLine);
         details1.Genre = strLine;
@@ -1038,6 +1040,8 @@ namespace MediaPortal.Video.Database
         details1.MPARating = strLine;
 
         // add director
+        // Remove actors from movie in case we switch old movie for new one
+        RemoveActorsForMovie(lMovieId);
         int lDirector = -1;
         lDirector = AddActor(details.Director);
         AddActorToMovie(lMovieId, lDirector);
@@ -2268,7 +2272,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
@@ -2320,7 +2324,7 @@ namespace MediaPortal.Video.Database
       }
       catch (Exception ex)
       {
-        Log.Error("musicdatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
+        Log.Error("videodatabase exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
         Open();
       }
 
