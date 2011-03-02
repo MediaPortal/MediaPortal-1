@@ -623,8 +623,6 @@ namespace SetupTv.Sections
             item = mpListView1.Items[off];
           }
 
-          ColorLine(card, item);
-
           bool cardPresent = RemoteControl.Instance.CardPresent(card.IdCard);
           if (!cardPresent)
           {
@@ -640,6 +638,7 @@ namespace SetupTv.Sections
             continue;
           }
 
+          ColorLine(card, item);
           VirtualCard vcard = new VirtualCard(user);
           item.SubItems[0].Text = card.IdCard.ToString();
           item.SubItems[0].Tag = card.IdCard;
