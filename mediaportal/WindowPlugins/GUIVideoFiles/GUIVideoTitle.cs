@@ -469,8 +469,21 @@ namespace MediaPortal.GUI.Video
 
         itemlist.Add(item);
       }
+      
+      // Clear info for zero result
+      if (itemlist.Count == 0)
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = GUILocalizeStrings.Get(284);
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        movie = new IMDBMovie();
+        item.AlbumInfoTag = movie;
+        movie.SetProperties(false);
+        itemlist.Add(item);
+      }
 
       int itemIndex = 0;
+      
       foreach (GUIListItem item in itemlist)
       {
         facadeLayout.Add(item);
@@ -517,7 +530,7 @@ namespace MediaPortal.GUI.Video
       {
         SetIMDBThumbs(itemlist);
       }
-
+      
       OnSort();
 
       SwitchLayout();
