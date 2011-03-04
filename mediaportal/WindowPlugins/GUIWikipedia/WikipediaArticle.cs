@@ -166,13 +166,13 @@ namespace Wikipedia
         Log.Info(e.ToString());
       }
 
-      if (wikipediaXML.IndexOf("<text xml:space=\"preserve\">") > 0)
+      if (wikipediaXML.IndexOf("<text") > 0)
       {
         Log.Info("Wikipedia: Extracting unparsed string.");
         int iStart = 0;
         int iEnd = wikipediaXML.Length;
         // Start of the Entry
-        iStart = wikipediaXML.IndexOf("<text xml:space=\"preserve\">") + 27;
+        iStart = wikipediaXML.IndexOf(">", wikipediaXML.IndexOf("<text") +1) + 1;
         // End of the Entry
         iEnd = wikipediaXML.IndexOf("</text>");
         // Extract the Text and update the var
