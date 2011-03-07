@@ -35,21 +35,22 @@ namespace MediaPortal.Configuration.Sections
       System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("External Players", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup3 = new System.Windows.Forms.ListViewGroup("Process Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       System.Windows.Forms.ListViewGroup listViewGroup4 = new System.Windows.Forms.ListViewGroup("Other Plugins", System.Windows.Forms.HorizontalAlignment.Left);
+      System.Windows.Forms.ListViewGroup listViewGroup5 = new System.Windows.Forms.ListViewGroup("Incompatible Plugins", System.Windows.Forms.HorizontalAlignment.Left);
       this.imageListLargePlugins = new System.Windows.Forms.ImageList(this.components);
       this.imageListContextMenu = new System.Windows.Forms.ImageList(this.components);
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.mpButtonConfig = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonPlugin = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonHome = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonEnable = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewPlugins = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeaderName = new System.Windows.Forms.ColumnHeader();
+      this.columnHeaderName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.imageListMPInstaller = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip = new MediaPortal.UserInterface.Controls.MPContextMenuStrip();
       this.toolTip = new MediaPortal.UserInterface.Controls.MPToolTip();
       this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-      this.linkLabel1 = new System.Windows.Forms.LinkLabel();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.SuspendLayout();
@@ -68,6 +69,17 @@ namespace MediaPortal.Configuration.Sections
       this.imageListLargePlugins.Images.SetKeyName(7, "plugin_externalplayers_off.png");
       this.imageListLargePlugins.Images.SetKeyName(8, "plugin_window_home.png");
       this.imageListLargePlugins.Images.SetKeyName(9, "plugin_window_plugins.png");
+      this.imageListLargePlugins.Images.SetKeyName(10, "plugin_other_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(11, "plugin_other_off_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(12, "plugin_window_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(13, "plugin_window_off_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(14, "plugin_process_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(15, "plugin_process_off_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(16, "plugin_externalplayers_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(17, "plugin_externalplayers_off_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(18, "plugin_window_home_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(19, "plugin_window_plugins_incomp.png");
+      this.imageListLargePlugins.Images.SetKeyName(20, "alert-ovl.png");
       // 
       // imageListContextMenu
       // 
@@ -104,6 +116,18 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Plugins";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // linkLabel1
+      // 
+      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.linkLabel1.AutoSize = true;
+      this.linkLabel1.Location = new System.Drawing.Point(284, 311);
+      this.linkLabel1.Name = "linkLabel1";
+      this.linkLabel1.Size = new System.Drawing.Size(160, 13);
+      this.linkLabel1.TabIndex = 5;
+      this.linkLabel1.TabStop = true;
+      this.linkLabel1.Text = "Browse and install new plugins...";
+      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
       // 
       // mpButtonConfig
       // 
@@ -172,11 +196,14 @@ namespace MediaPortal.Configuration.Sections
       listViewGroup3.Name = "listViewGroupProcess";
       listViewGroup4.Header = "Other Plugins";
       listViewGroup4.Name = "listViewGroupOther";
+      listViewGroup5.Header = "Incompatible Plugins";
+      listViewGroup5.Name = "listViewGroupIncompatible";
       this.listViewPlugins.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2,
             listViewGroup3,
-            listViewGroup4});
+            listViewGroup4,
+            listViewGroup5});
       this.listViewPlugins.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
       this.listViewPlugins.HideSelection = false;
       this.listViewPlugins.HotTracking = true;
@@ -189,10 +216,10 @@ namespace MediaPortal.Configuration.Sections
       this.listViewPlugins.Size = new System.Drawing.Size(424, 288);
       this.listViewPlugins.TabIndex = 0;
       this.listViewPlugins.UseCompatibleStateImageBehavior = false;
-      this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
-      this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
       this.listViewPlugins.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.listViewPlugins_ItemSelectionChanged);
       this.listViewPlugins.Click += new System.EventHandler(this.listViewPlugins_Click);
+      this.listViewPlugins.DoubleClick += new System.EventHandler(this.listViewPlugins_DoubleClick);
+      this.listViewPlugins.MouseClick += new System.Windows.Forms.MouseEventHandler(this.listViewPlugins_MouseClick);
       // 
       // columnHeaderName
       // 
@@ -217,18 +244,6 @@ namespace MediaPortal.Configuration.Sections
       // 
       this.openFileDialog1.Filter = "MPI files|*.mpi|ZIP files|*.zip|All files|*.*";
       // 
-      // linkLabel1
-      // 
-      this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-      this.linkLabel1.AutoSize = true;
-      this.linkLabel1.Location = new System.Drawing.Point(284, 311);
-      this.linkLabel1.Name = "linkLabel1";
-      this.linkLabel1.Size = new System.Drawing.Size(160, 13);
-      this.linkLabel1.TabIndex = 5;
-      this.linkLabel1.TabStop = true;
-      this.linkLabel1.Text = "Browse and install new plugins...";
-      this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
-      // 
       // PluginsNew
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -239,6 +254,7 @@ namespace MediaPortal.Configuration.Sections
       this.Size = new System.Drawing.Size(472, 408);
       this.mpTabControl1.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
+      this.tabPage1.PerformLayout();
       this.ResumeLayout(false);
 
     }

@@ -1744,6 +1744,7 @@ public class MediaPortalApp : D3DApp, IRender
       PluginManager.LoadWhiteList(_safePluginsList);
     }
     PluginManager.LoadWindowPlugins();
+    CheckForIncompatibelPlugins();
     Log.Info("Main: Loading windowmanager");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71)); // Initializing window manager...
     Log.Info("Main: Resizing windowmanager");
@@ -3784,6 +3785,24 @@ public class MediaPortalApp : D3DApp, IRender
     using (OldSkinForm form = new OldSkinForm())
     {
       if (form.CheckSkinVersion(m_strSkin, SkinVersion))
+      {
+        return;
+      }
+#if !DEBUG
+      if (splashScreen != null)
+      {
+        splashScreen.AllowWindowOverlay((Form)form);
+      }
+#endif
+      form.ShowDialog(this);
+    }
+  }
+
+  protected void CheckForIncompatibelPlugins()
+  {
+    using (var form = new IncompatiblePluginsForm())
+    {
+      if (!form.CheckForIncompatiblePlugins())
       {
         return;
       }

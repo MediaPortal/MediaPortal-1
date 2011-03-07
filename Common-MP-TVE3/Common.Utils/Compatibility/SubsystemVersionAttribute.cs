@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,14 +18,31 @@
 
 #endregion
 
-using System.Reflection;
-using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
+using System;
 
-[assembly: AssemblyTitle("PowerSchedulerClientPlugin")]
-[assembly: AssemblyDescription("")]
-[assembly: ComVisible(false)]
-[assembly: Guid("f017b73a-abd9-4542-915c-3d13470a3053")]
+namespace MediaPortal.Common.Utils
+{
+  [AttributeUsage(AttributeTargets.Assembly, AllowMultiple = true)]
+  public class SubsystemVersionAttribute : Attribute
+  {
+    private readonly string _subsystem;
+    private readonly Version _version;
 
-[assembly: CompatibleVersion("Own")]
-[assembly: UsesSubsystem("MP")]
+    public SubsystemVersionAttribute(string subsystem, string version)
+    {
+      _subsystem = subsystem;
+      _version = new Version(version);
+    }
+
+    public string Subsystem
+    {
+      get { return _subsystem; }
+    }
+
+    public Version Version
+    {
+      get { return _version; }
+    }
+
+  }
+}

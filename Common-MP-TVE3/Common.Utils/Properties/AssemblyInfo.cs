@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -18,10 +18,7 @@
 
 #endregion
 
-using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -29,15 +26,5 @@ using MediaPortal.Common.Utils;
 // associated with an assembly.
 //
 
-[assembly: AssemblyTitle("ServerBlaster")]
+[assembly: AssemblyTitle("Common.Utils")]
 [assembly: AssemblyDescription("")]
-
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-
-[assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
-
-[assembly: CompatibleVersion("Own")]
-[assembly: UsesSubsystem("TVE")]

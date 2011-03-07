@@ -20,6 +20,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
@@ -37,3 +38,6 @@ using System.Runtime.InteropServices;
 // Die folgende GUID bestimmt die ID der Typbibliothek, wenn dieses Projekt für COM verfügbar gemacht wird
 
 [assembly: Guid("a9ea8803-1a93-4233-8b3e-3cf2ee654e35")]
+
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("TVE")]

@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvBusinessLayer", "..\TVDat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.Utils", "..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj", "{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,6 +47,10 @@ Global
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Debug|x86.Build.0 = Debug|x86
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.ActiveCfg = Release|x86
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.Build.0 = Release|x86
+		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.Debug|x86.ActiveCfg = Debug|x86
+		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.Debug|x86.Build.0 = Debug|x86
+		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.Release|x86.ActiveCfg = Release|x86
+		{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

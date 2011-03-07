@@ -437,6 +437,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${svn_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
   File "${svn_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  ; Common Utils
+  File "${svn_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
   ; Support
   File "${svn_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
@@ -549,6 +551,8 @@ SectionEnd
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   ; Utils
   Delete "$MPdir.Base\Utils.dll"
+  ; Common Utils
+  Delete "$MPdir.Base\Common.Utils.dll"
   ; Support
   Delete "$MPdir.Base\MediaPortal.Support.dll"
   ; Databases
