@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55b ----------- instance 0x%x", this);
+      Log("---------- v1.4.55c ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55b ----------- instance 0x%x", this);
+      Log("---------- v0.0.55c ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -145,8 +145,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_LastScheduledUncorrectedSampleTime  = -1;
     m_DetectedFrameTimePos                = 0;
     m_DectedSum                           = 0;
-    m_DetectedFrameRate                   = 0.0;
     m_DetectedFrameTime                   = -1.0;
+    m_DetFrameTimeAve                     = -1.0;
     m_DetectedLock                        = false;
     m_DetectedFrameTimeStdDev             = 0;
     m_LastEndOfPaintScanline       = 0;
@@ -775,7 +775,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
-      if (!m_bMsVideoCodec || m_bMsVideoCodec && m_rtTimePerFrame == 0)
+      if (!m_bMsVideoCodec || m_bMsVideoCodec && (m_rtTimePerFrame == 0))
         m_rtTimePerFrame = (10000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
 
       Log("Time Per Frame: %.3f ms", (double)m_rtTimePerFrame/10000.0);
@@ -793,6 +793,13 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     }
     else
     {
+      LARGE_INTEGER frameRate;
+      CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_RATE, (UINT64*)&frameRate.QuadPart), "Failed to get MF_MT_FRAME_RATE");
+      Log("MF_MT_FRAME_RATE: %.3f fps", ((double)frameRate.HighPart/(double)frameRate.LowPart));
+      
+      if ( (!m_bMsVideoCodec || (m_bMsVideoCodec && (m_rtTimePerFrame == 0))) && frameRate.HighPart != 0)
+        m_rtTimePerFrame = (10000000*(LONGLONG)frameRate.LowPart)/(LONGLONG)frameRate.HighPart;
+
       Log("Setting MFVideoTransferMatrix using m_pMFCreateVideoMediaType failed, trying MF_MT_FRAME_SIZE");
       CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
 
@@ -819,8 +826,8 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     if (m_rtTimePerFrame == 0)
     {
       // if fps information is not provided use default (workaround for possible bugs)
-      Log("No time per frame available using default: %d", DEFAULT_FRAME_TIME);
-      m_rtTimePerFrame = DEFAULT_FRAME_TIME;
+      m_rtTimePerFrame = (LONGLONG)(10000 * GetDisplayCycle());
+      Log("No time per frame available using default: %f", GetDisplayCycle());
     }
 
     CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
@@ -2897,7 +2904,6 @@ void MPEVRCustomPresenter::ResetFrameStats()
   
   m_DetectedFrameTimePos  = 0;
   m_DetectedLock          = false;
-  m_DetectedFrameRate     = 0.0;
   m_DetectedFrameTime     = -1.0;  
   m_DectedSum             = 0;
   ZeroMemory((void*)&m_DetectedFrameTimeHistory, sizeof(LONGLONG) * NB_DFTHSIZE);
@@ -3149,7 +3155,15 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
 
       double DetectedTime = Average / 10000000.0;
       
-      if ((fabs(1.0 - (DetectedTime / m_DetectedFrameTime)) > 0.01) || (m_DetectedFrameTimePos < NB_DFTHSIZE)) //allow 1% drift
+      m_DetFrameTimeAve = DetectedTime;
+      
+      bool bFTdiff = false;      
+      if (m_DetectedFrameTime && DetectedTime)
+      {
+        bFTdiff = fabs(1.0 - (DetectedTime / m_DetectedFrameTime)) > 0.01; //allow 1% drift before re-calculating
+      }
+      
+      if (bFTdiff || (m_DetectedFrameTimePos < NB_DFTHSIZE))
 			{
 	      double AllowedError = 0.025; //Allow 2.5% error to cover (ReClock ?) sample timing jitter
 	      static double AllowedValues[] = {1000.5/30000.0, 1000.0/25000.0, 1000.5/24000.0};  //30Hz and 24Hz are compromise values
@@ -3177,20 +3191,18 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
 	      if (BestVal != 0.0)
 	      {
 	        m_DetectedLock = true;
-	        m_DetectedFrameRate = 1.0 / BestVal;
 	        m_DetectedFrameTime = BestVal;
 	      }
 	      else
 	      {
 	        m_DetectedLock = false;
-	        m_DetectedFrameRate = 1.0 / DetectedTime;
 	        m_DetectedFrameTime = DetectedTime;
 	      }
 	    }
     }
 
   }
-  else if (Diff > m_rtTimePerFrame*8)
+  else if ((Diff >= m_rtTimePerFrame*8) && m_rtTimePerFrame)
   {
     // Seek, so reset the averaging logic
     m_DetectedFrameTimePos = 0;
@@ -3199,7 +3211,7 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
     ZeroMemory((void*)&m_DetectedFrameTimeHistory, sizeof(LONGLONG) * NB_DFTHSIZE);
   }
     
-  LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameRate);
+  LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameTime);
 }
 
 
@@ -3393,9 +3405,20 @@ bool MPEVRCustomPresenter::QueryFpsFromVideoMSDecoder()
     HRESULT rr = pBaseFilter->FindPin(L"Video Input", &pin);
     CMediaType mt; 
     pin->ConnectionMediaType(&mt);
-    ExtractAvgTimePerFrame(&mt, m_rtTimePerFrame);
-
-    Log("Found Microsoft DTV-DVD Video Decoder - using the FPS from Video Input pin");
+    
+    REFERENCE_TIME rtAvgTimePerFrame = 0;   
+    bool goodFPS = ExtractAvgTimePerFrame(&mt, rtAvgTimePerFrame);
+    if (goodFPS && rtAvgTimePerFrame)
+    {
+      m_rtTimePerFrame = rtAvgTimePerFrame;
+      Log("Found Microsoft DTV-DVD Video Decoder - FPS from Video Input pin: %.3f", 10000000.0/m_rtTimePerFrame);
+    }
+    else
+    {
+      // if fps information is not provided leave m_rtTimePerFrame unchanged
+      Log("Found Microsoft DTV-DVD Video Decoder - no FPS from Video Input pin available");
+    }
+    
     return true;
   }
 

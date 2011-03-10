@@ -398,10 +398,10 @@ protected:
   LONGLONG      m_DetectedFrameTimeHistory[NB_DFTHSIZE];
   LONGLONG      m_DectedSum;
   int           m_DetectedFrameTimePos;
-  double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;
   double        m_DetectedFrameTimeStdDev;
   bool          m_DetectedLock;
+  double        m_DetFrameTimeAve;
 
   int           m_frameRateRatio;
   int           m_rawFRRatio;
