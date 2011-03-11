@@ -91,7 +91,11 @@ namespace SetupTv.Sections
         return;
       Setting setting = e.Item.Tag as Setting;
       if (setting == null)
+      {
+        e.Item.Checked = false;
         return;
+      }
+
       setting.Value = e.Item.Checked ? "true" : "false";
       setting.Persist();
       _needRestart = true;

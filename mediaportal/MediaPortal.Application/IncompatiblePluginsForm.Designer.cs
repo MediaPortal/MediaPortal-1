@@ -40,6 +40,7 @@
       // 
       mpLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
+      mpLabel1.ForeColor = System.Drawing.Color.Black;
       mpLabel1.Location = new System.Drawing.Point(12, 13);
       mpLabel1.Name = "mpLabel1";
       mpLabel1.Size = new System.Drawing.Size(372, 33);
@@ -70,14 +71,13 @@
       this.PluginsList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.PluginsList.BackColor = System.Drawing.Color.OrangeRed;
-      this.PluginsList.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+      this.PluginsList.BackColor = System.Drawing.Color.White;
       this.PluginsList.Location = new System.Drawing.Point(12, 49);
       this.PluginsList.Name = "PluginsList";
-      this.PluginsList.Size = new System.Drawing.Size(372, 158);
+      this.PluginsList.Size = new System.Drawing.Size(372, 147);
       this.PluginsList.TabIndex = 2;
-      this.PluginsList.Enter += new System.EventHandler(this.PluginsList_Enter);
       this.PluginsList.Format += new System.Windows.Forms.ListControlConvertEventHandler(this.PluginsList_Format);
+      this.PluginsList.Enter += new System.EventHandler(this.PluginsList_Enter);
       // 
       // IncompatiblePluginsForm
       // 

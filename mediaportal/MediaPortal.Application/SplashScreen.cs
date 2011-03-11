@@ -157,8 +157,29 @@ namespace MediaPortal
       frm.Update();
       frm.FadeIn();
       string oldInfo = null;
-      while (!stopRequested && frm.Focused) //run until stop of splashscreen is requested
+      while (!stopRequested && (frm.Focused || OutDatedSkinForm != null)) //run until stop of splashscreen is requested
       {
+        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
+        // Allow other Windows to Overlay the splashscreen
+        {
+          if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
+          {
+            if (frm.Focused)
+            {
+              frm.TopMost = false;
+              OutDatedSkinForm.TopMost = true;
+              OutDatedSkinForm.BringToFront();
+              Cursor.Show();
+            }
+          }
+          else
+          {
+            AllowWindowOverlayRequested = false;
+            frm.TopMost = true;
+            frm.BringToFront();
+            Cursor.Hide();
+          }
+        }
         if (oldInfo != info)
         {
           frm.SetInformation(info);

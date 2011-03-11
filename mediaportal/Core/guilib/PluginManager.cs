@@ -349,7 +349,6 @@ namespace MediaPortal.GUI.Library
           }
           else
           {
-            //MarkPluginAsCompatible(assem);
 
             foreach (Type t in types)
             {
