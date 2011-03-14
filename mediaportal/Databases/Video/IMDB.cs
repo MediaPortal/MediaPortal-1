@@ -769,7 +769,7 @@ namespace MediaPortal.Video.Database
         try
         {
           int pos = url.URL.LastIndexOf("nm");
-          string id = url.URL.Substring(pos).Replace("/", string.Empty);
+          string id = url.URL.Substring(pos, 9).Replace("/", string.Empty);
           actor.IMDBActorID = id;
         }
         catch (Exception) {}

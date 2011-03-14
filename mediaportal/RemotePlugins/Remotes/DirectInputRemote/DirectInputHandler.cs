@@ -123,10 +123,18 @@ namespace MediaPortal.InputDevices
 
     public void Init()
     {
-      bool _controlEnabled = false;
-      using (Settings xmlreader = new MPSettings())
+      Init(false);
+    }
+
+    public void Init(bool force)
+    {
+      bool _controlEnabled = true;
+      if (!force)
       {
-        _controlEnabled = xmlreader.GetValueAsBool("remote", "DirectInput", false);
+        using (Settings xmlreader = new MPSettings())
+        {
+          _controlEnabled = xmlreader.GetValueAsBool("remote", "DirectInput", false);
+        }
       }
       if (_controlEnabled)
       {

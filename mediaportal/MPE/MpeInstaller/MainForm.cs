@@ -170,16 +170,21 @@ namespace MpeInstaller
 
     private void FilterList()
     {
-      if (_settings.ShowOnlyStable)
-      {
-        //MpeCore.MpeInstaller.InstalledExtensions.HideByRelease();
-        MpeCore.MpeInstaller.KnownExtensions.HideByRelease();
-      }
+      //if (_settings.ShowOnlyStable)
+      //{
+      //  //MpeCore.MpeInstaller.InstalledExtensions.HideByRelease();
+      //  MpeCore.MpeInstaller.KnownExtensions.HideByRelease();
+      //}
+      //else
+      //{
+      //  MpeCore.MpeInstaller.InstalledExtensions.ShowAll();
+      //  MpeCore.MpeInstaller.KnownExtensions.ShowAll();
+      //}
+      MpeCore.MpeInstaller.KnownExtensions.Hide(_settings.ShowOnlyStable, _settings.ShowOnlyCompatible);
+      if (MpeCore.MpeInstaller.KnownExtensions.GetHiddenExtensionCount() > 0)
+        lbl_warn.Visible = true;
       else
-      {
-        MpeCore.MpeInstaller.InstalledExtensions.ShowAll();
-        MpeCore.MpeInstaller.KnownExtensions.ShowAll();
-      }
+        lbl_warn.Visible = false;
     }
 
     public void Init()
@@ -193,6 +198,7 @@ namespace MpeInstaller
       chk_update.Checked = _settings.DoUpdateInStartUp;
       chk_updateExtension.Checked = _settings.UpdateAll;
       chk_stable.Checked = _settings.ShowOnlyStable;
+      chk_dependency.Checked = _settings.ShowOnlyCompatible;
       numeric_Days.Value = _settings.UpdateDays;
       FilterList();
       chk_update_CheckedChanged(null, null);
@@ -586,6 +592,7 @@ namespace MpeInstaller
         _settings.UpdateAll = chk_updateExtension.Checked;
         _settings.UpdateDays = (int)numeric_Days.Value;
         _settings.ShowOnlyStable = chk_stable.Checked;
+        _settings.ShowOnlyCompatible = chk_dependency.Checked;
       }
       if (!_settings.DoUpdateInStartUp)
       {
@@ -696,5 +703,14 @@ namespace MpeInstaller
         RefreshLists();
       }
     }
+    private void chk_dependency_CheckedChanged(object sender, EventArgs e)
+    {
+      chk_update_CheckedChanged(null, null);
+      FilterList();
+      RefreshLists();
+    }
+
+
+
   }
 }

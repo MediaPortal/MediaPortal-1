@@ -70,7 +70,10 @@ namespace MediaPortal.GUI.Library
           Load(null);
         }
 
-        return _stringProvider.UseRTL;
+        if (_stringProvider != null)
+          return _stringProvider.UseRTL;
+        else
+          return false;
       }
     }
 

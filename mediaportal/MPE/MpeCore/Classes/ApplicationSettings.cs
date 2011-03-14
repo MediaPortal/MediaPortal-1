@@ -42,6 +42,7 @@ namespace MpeCore.Classes
     public bool UpdateAll { get; set; }
     public bool DoUpdateInStartUp { get; set; }
     public bool ShowOnlyStable { get; set; }
+    public bool ShowOnlyCompatible { get; set; }
     public List<string> IgnoredUpdates { get; set; }
 
     public void Save()

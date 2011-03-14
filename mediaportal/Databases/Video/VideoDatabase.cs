@@ -253,14 +253,14 @@ namespace MediaPortal.Video.Database
       _database.SetMovieDuration(iFileId, duration);
     }
 
-    public static void SetVideoFileWatched(int iFileId, bool watched)
+    public static void SetMovieWatchedStatus(int iMovieId, bool watched)
     {
-      _database.SetVideoFileWatched(iFileId, watched);
+      _database.SetMovieWatchedStatus(iMovieId, watched);
     }
 
-    public static bool GetVideoFileWatched(int iFileId)
+    public static bool GetmovieWatchedStatus(int iMovieId)
     {
-      return _database.GetVideoFileWatched(iFileId);
+      return _database.GetMovieWatchedStatus(iMovieId);
     }
 
     public static void DeleteMovie(string strFilenameAndPath)

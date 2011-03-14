@@ -19,6 +19,7 @@
 #endregion
 
 using System.Reflection;
+using MediaPortal.Common.Utils;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -28,3 +29,6 @@ using System.Reflection;
 
 [assembly: AssemblyTitle("ProcessPlugins")]
 [assembly: AssemblyDescription("")]
+
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("MP")]

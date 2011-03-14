@@ -272,6 +272,20 @@ namespace MediaPortal.GUI.Video
           return;
         }
         GUIVideoFiles.Reset(); // reset pincode
+        
+        ArrayList files = new ArrayList();
+        VideoDatabase.GetFiles(movie.ID, ref files);
+        
+        if (files.Count > 1)
+        {
+          GUIVideoFiles._stackedMovieFiles = files;
+          GUIVideoFiles._isStacked = true;
+          GUIVideoFiles.MovieDuration(files);
+        }
+        else
+        {
+          GUIVideoFiles._isStacked = false;
+        }
         GUIVideoFiles.PlayMovie(movie.ID);
       }
     }
@@ -449,8 +463,21 @@ namespace MediaPortal.GUI.Video
 
         itemlist.Add(item);
       }
+      
+      // Clear info for zero result
+      if (itemlist.Count == 0)
+      {
+        GUIListItem item = new GUIListItem();
+        item.Label = GUILocalizeStrings.Get(284);
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        movie = new IMDBMovie();
+        item.AlbumInfoTag = movie;
+        movie.SetProperties(false);
+        itemlist.Add(item);
+      }
 
       int itemIndex = 0;
+      
       foreach (GUIListItem item in itemlist)
       {
         facadeLayout.Add(item);
@@ -497,7 +524,7 @@ namespace MediaPortal.GUI.Video
       {
         SetIMDBThumbs(itemlist);
       }
-
+      
       OnSort();
 
       SwitchLayout();

@@ -132,7 +132,6 @@ namespace MediaPortal.GUI.Library
     public const int MaxNumfontVertices = 100 * 6;
     private int _StartCharacter = 32;
     private int _EndCharacter = 255;
-    private bool _useRTLLang = false;
     private Microsoft.DirectX.Direct3D.Font _d3dxFont;
 
     #endregion
@@ -187,11 +186,7 @@ namespace MediaPortal.GUI.Library
 
     private void LoadSettings()
     {
-      // Some users have english systems but use RTL text.. System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
-      using (Settings xmlreader = new MPSettings())
-      {
-        _useRTLLang = GUILocalizeStrings.UseRTL;
-      }
+        //maybe later...
     }
 
     public int ID
@@ -507,7 +502,7 @@ namespace MediaPortal.GUI.Library
     /// <returns>The text in display order</returns>	
     public string GetRTLText(string inLTRText)
     {
-      if (!_useRTLLang)
+      if (!GUILocalizeStrings.UseRTL)
         return inLTRText;
       try
       {

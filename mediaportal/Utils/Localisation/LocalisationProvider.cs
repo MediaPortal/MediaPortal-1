@@ -265,13 +265,18 @@ namespace MediaPortal.Localisation
 
     private void LoadStrings(string directory)
     {
+      LoadStrings(directory, false);
+    }
+
+    private void LoadStrings(string directory, bool loadRTL)
+    {
       // Local Language
-      LoadStrings(directory, _currentLanguage.Name, false);
+      LoadStrings(directory, _currentLanguage.Name, false, loadRTL);
 
       // Parent Language
       if (!_currentLanguage.IsNeutralCulture)
       {
-        LoadStrings(directory, _currentLanguage.Parent.Name, false);
+        LoadStrings(directory, _currentLanguage.Parent.Name, false, loadRTL);
       }
 
       // Default to English
@@ -287,9 +292,12 @@ namespace MediaPortal.Localisation
 
       LoadUserStrings();
 
-      foreach (string directoy in _languageDirectories)
+      if (_languageDirectories != null)
       {
-        LoadStrings(directoy);
+        for (int i = 0; i < _languageDirectories.Count; i++)
+        {
+          LoadStrings(_languageDirectories[i], i == 0); // we want to load RTL flag only from main directory, first in list (index 0)
+        }
       }
     }
 
@@ -339,6 +347,11 @@ namespace MediaPortal.Localisation
     }
 
     private void LoadStrings(string directory, string language, bool log)
+    {
+      LoadStrings(directory, language, log, false);
+    }
+
+    private void LoadStrings(string directory, string language, bool log, bool loadRTL)
     {
       string filename = "strings_" + language + ".xml";
       GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
@@ -391,7 +404,8 @@ namespace MediaPortal.Localisation
         GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
                                                 useChineseHackNum, strings.characters);
 
-        _useRTL = strings.rtl;
+        if (loadRTL)
+          _useRTL = strings.rtl;
 
         foreach (StringSection section in strings.sections)
         {

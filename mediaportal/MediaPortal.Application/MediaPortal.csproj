@@ -225,6 +225,10 @@
     <Reference Include="System.Xml">
       <Name>System.XML</Name>
     </Reference>
+    <ProjectReference Include="..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj">
       <Project>{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}</Project>
       <Name>DirectShowLib</Name>
@@ -287,6 +291,12 @@
       <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Direct3D.cs" />
+    <Compile Include="IncompatiblePluginsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IncompatiblePluginsForm.Designer.cs">
+      <DependentUpon>IncompatiblePluginsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MediaPortal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -318,6 +328,9 @@
     <EmbeddedResource Include="FullScreenSplashScreen.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IncompatiblePluginsForm.resx">
+      <DependentUpon>IncompatiblePluginsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.resx">
       <DependentUpon>MediaPortal.cs</DependentUpon>

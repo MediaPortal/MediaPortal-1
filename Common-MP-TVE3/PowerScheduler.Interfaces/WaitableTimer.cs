@@ -159,7 +159,6 @@ namespace TvEngine.PowerScheduler
       {
         // Done with thread
         AbortWaiter();
-
         // Check mode
         if (value > 0)
         {
@@ -167,11 +166,15 @@ namespace TvEngine.PowerScheduler
           m_Interval = DateTime.UtcNow.AddSeconds(value).ToFileTimeUtc();
 
           // Create thread
-          m_Waiting = new Thread(new ThreadStart(WaitThread));
+          m_Waiting = new Thread(new ParameterizedThreadStart(WaitThread));
+          m_Waiting.Priority = ThreadPriority.AboveNormal;
           m_Waiting.Name = "PowerScheduler Waiter";
 
+          ManualResetEvent handshake = new ManualResetEvent(false);
           // Run it
-          m_Waiting.Start();
+          m_Waiting.Start(handshake);
+          // wait until wakeup timer is set
+          handshake.WaitOne();
         }
         else
         {
@@ -189,20 +192,22 @@ namespace TvEngine.PowerScheduler
     /// The <see cref="Thread"/> may be terminated with a call to <see cref="AbortWaiter"/>
     /// before the time expires.
     /// </remarks>
-    private void WaitThread()
+    private void WaitThread(object arg)
     {
+      ManualResetEvent handshake = (ManualResetEvent)arg;
       // Ignore aborts
       try
       {
         // Interval to use
         long lInterval = m_Interval;
 
+        
         // Start timer
         if (!SetWaitableTimer(SafeWaitHandle, &lInterval, 0, IntPtr.Zero, IntPtr.Zero, true))
         {
           throw new TimerException("Could not start Timer", new Win32Exception(Marshal.GetLastWin32Error()));
         }
-
+        handshake.Set();
         // Wait for the timer to expire
         WaitOne();
 
@@ -214,6 +219,7 @@ namespace TvEngine.PowerScheduler
       }
       catch (TimerException e)
       {
+        handshake.Set();
         if (OnTimerException != null)
         {
           OnTimerException(this, e);

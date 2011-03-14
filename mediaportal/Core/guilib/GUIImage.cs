@@ -1530,7 +1530,7 @@ namespace MediaPortal.GUI.Library
 
                 if (_flipX)
                 {
-                  fx += nw;
+                  fx += nw + _borderRight;
                   uoff1 = _umax + _uoff;
                   umax1 = _uoff;
 
@@ -1540,7 +1540,7 @@ namespace MediaPortal.GUI.Library
 
                 if (_flipY)
                 {
-                  fy += nh;
+                  fy += nh + _borderBottom;
                   voff1 = _vmax + _voff;
                   vmax1 = _voff;
 
@@ -1723,7 +1723,7 @@ namespace MediaPortal.GUI.Library
 
                   if (_flipX)
                   {
-                    fx += nw;
+                    fx += nw + _borderRight;
                     uoff1 = _umax + _uoff;
                     umax1 = _uoff;
 
@@ -1732,7 +1732,7 @@ namespace MediaPortal.GUI.Library
                   }
                   if (_flipY)
                   {
-                    fy += nh;
+                    fy += nh + _borderBottom;
                     //uoff1 = _umax + _uoff;
                     //umax1 = _uoff;
 
@@ -2017,7 +2017,9 @@ namespace MediaPortal.GUI.Library
           // Draw left border flipped.
           texture.Draw(bx, by, bw, bh, zrot, uoff, voff, umax, vmax,
                        (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey),
-                       _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
+                       _packedDiffuseTextureNo, _diffusetexVoffCalc, _diffusetexUoffCalc, _diffusetexVmaxCalc, _diffusetexUmaxCalc);
+// flipped 180         _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVmaxCalc, _diffusetexUmaxCalc, _diffusetexVoffCalc);
+// orig                _packedDiffuseTextureNo, _diffusetexUoffCalc, _diffusetexVoffCalc, _diffusetexUmaxCalc, _diffusetexVmaxCalc);
         }
         else
         {

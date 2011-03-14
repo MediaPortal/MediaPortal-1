@@ -296,6 +296,54 @@ namespace MpeCore.Classes
       }
     }
 
+    /// <summary>
+    /// Hide extensions which isn't compatible
+    /// </summary>
+    public void HideByDependencies()
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
+        if (!item.CheckDependency(true))
+        {
+          item.IsHiden = true;
+        }
+      }
+    }
+
+    public void Hide(bool onlystable, bool onlycompatible)
+    {
+      foreach (PackageClass item in Items)
+      {
+        item.IsHiden = false;
+        if (onlycompatible)
+        {
+          if (!item.CheckDependency(true))
+          {
+            item.IsHiden = true;
+          }
+        }
+        if (onlystable)
+        {
+          if (item.GeneralInfo.DevelopmentStatus != ParamNamesConst.DEVELOPMENTSTATUS_STABE)
+          {
+            item.IsHiden = true;
+          }
+        }
+      }
+    }
+
+    public int GetHiddenExtensionCount()
+    {
+      int i = 0;
+      foreach (PackageClass item in Items)
+      {
+        if (item.IsHiden)
+          i++;
+      }
+      return i;
+    }
+
     public void ShowAll()
     {
       foreach (PackageClass item in Items)

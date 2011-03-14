@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2010 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2010 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -19,13 +19,12 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.InteropServices;
-using MediaPortal.Common.Utils;
 
-[assembly: AssemblyTitle("PowerSchedulerClientPlugin")]
+//
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+
+[assembly: AssemblyTitle("Common.Utils")]
 [assembly: AssemblyDescription("")]
-[assembly: ComVisible(false)]
-[assembly: Guid("f017b73a-abd9-4542-915c-3d13470a3053")]
-
-[assembly: CompatibleVersion("Own")]
-[assembly: UsesSubsystem("MP")]
