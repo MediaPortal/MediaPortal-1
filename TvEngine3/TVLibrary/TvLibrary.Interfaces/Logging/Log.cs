@@ -107,9 +107,7 @@ namespace TvLibrary.Log
     /// <param name="ex">The ex.</param>
     public static void Write(Exception ex)
     {
-      StringBuilder sb = new StringBuilder();
-      sb.AppendFormat("Exception   :{0}\n", ex);
-      Error(SafeString(sb.ToString()));
+      Error("Exception   :{0}\n", ex);
     }
 
     /// <summary>

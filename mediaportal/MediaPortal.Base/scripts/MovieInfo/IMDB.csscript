@@ -73,12 +73,12 @@ internal class Grabber : IIMDBScriptGrabber
       if ((iStartOfMoviePopPartList <= 0) & (iStartOfMovieExactApproxList <= 0))
       {
         //Check if direct find is true (film page)
-		// Title
-		string regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
-		string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Trim();
-		// Year
-		string strYear = Regex.Match(strBody, regexPattern).Groups["movieYear"].Value;
-		if (strTitle != string.Empty && strYear != string.Empty)
+        // Title
+        string regexPattern = @"<title>(?<movieTitle>.*?)[(].*?(?<movieYear>\d{4})";
+        string strTitle = Regex.Match(strBody, regexPattern).Groups["movieTitle"].Value.Trim();
+        // Year
+        string strYear = Regex.Match(strBody, regexPattern).Groups["movieYear"].Value;
+        if (strTitle != string.Empty && strYear != string.Empty)
         {
           HTMLUtil htmlUtil = new HTMLUtil();
           htmlUtil.ConvertHTMLToAnsi(strTitle, out strTitle);
@@ -376,8 +376,8 @@ internal class Grabber : IIMDBScriptGrabber
       //regexPattern = 
       //  ";\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\"><a href=\"/character/ch[0-9]*/\">(?<role>.*?)<|;\">(?<actor>[\\w'. ]*)</a></td><td class=\"ddd\"> ... </td><td class=\"char\">(?<role>.*?)<|<td[^<]*<a\\s+href=\"/name/nm\\d{7}/\"[^>]*>(?<actor>[^<]*)</a>.*?<div[^<]*<a\\s+href=\"/character/ch\\d{7}/\"[^>]*>(?<role>[^<]*)</a>";
       string others = @"td class=""nm""><a href=./name.*?>(?<actor>.*?)</a><.*?<td class=""char"">(?<role>.*?)<";
-	  regexPattern =
-          @"href=""/name/nm\d{7}/"".*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>"; 
+      regexPattern =
+            @"href=""/name/nm\d{7}/"".*?alt=""(?<actor>.*?)"".*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
       Match castBlock = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline);
 
       // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
@@ -410,7 +410,7 @@ internal class Grabber : IIMDBScriptGrabber
           strRole = m.Groups["role"].Value;
           strRole = Utils.stripHTMLtags(strRole).Trim().Replace("\n", "");
           strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";").Replace("  ", "").Replace("(", " (");
-		  
+
           movieDetails.Cast += strActor;
           if (strRole != string.Empty)
             movieDetails.Cast += " as " + strRole;
@@ -427,13 +427,13 @@ internal class Grabber : IIMDBScriptGrabber
           strActor = string.Empty;
           strActor = m.Groups["actor"].Value;
           strActor = Utils.stripHTMLtags(strActor).Trim();
-          strActor = HttpUtility.HtmlDecode(strActor).Replace(",", ";").Replace("\n","");
+          strActor = HttpUtility.HtmlDecode(strActor).Replace(",", ";").Replace("\n", "");
 
           strRole = string.Empty;
           strRole = m.Groups["role"].Value;
           strRole = Utils.stripHTMLtags(strRole).Trim();
-          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";").Replace("\n","");
-		  
+          strRole = HttpUtility.HtmlDecode(strRole).Replace(",", ";").Replace("\n", "");
+
           movieDetails.Cast += strActor;
           if (strRole != string.Empty)
             movieDetails.Cast += " as " + strRole;
@@ -458,14 +458,15 @@ internal class Grabber : IIMDBScriptGrabber
       // MPARating
       //
       // Get rating from main movie page if exists
-	  regexBlockPattern = @"<div\sclass=""infobar"".*?nbsp;<a";
+      regexBlockPattern = @"<div\sclass=""infobar"".*?nbsp;<a";
       block = Regex.Match(strBody, regexBlockPattern, RegexOptions.Singleline).Value;
       regexPattern = @"alt=""(?<rating>.*?)""";
-      string mCertUSA = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["rating"].Value.Replace("_","-");
+      string mCertUSA = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["rating"].Value.Replace("_", "-");
       if (mCertUSA.ToLower().Contains("tv-"))
-		mCertUSA = string.Empty;
-		
-	  //Get all other ratings
+        mCertUSA = string.Empty;
+
+      //Get all other ratings
+      string mpaRating = string.Empty;
       strAbsUrl = string.Empty;
       string strBody2 = GetPage(url.URL + "parentalguide#certification", "utf-8", out strAbsUrl);
       regexBlockPattern = @"<a\shref=""/search/title\?certificates=.*?</div>";
@@ -477,13 +478,13 @@ internal class Grabber : IIMDBScriptGrabber
       string landcode = System.Globalization.CultureInfo.CurrentCulture.Name;
       landcode = landcode.Substring(landcode.LastIndexOf("-") + 1).Trim();
       //Try to find rating according user country
-      char[] splitter = {'|'};
+      char[] splitter = { '|' };
       string[] landRating = tempRating.Split(splitter);
       if (landRating.Length > 0)
       {
         for (int i = 0; i < landRating.Length; ++i)
         {
-          string mpaRating = landRating[i];
+          mpaRating = landRating[i];
 
           //Country check - IMDB is not so ISO oriented
           if (mpaRating.Contains("UK:"))
@@ -499,34 +500,34 @@ internal class Grabber : IIMDBScriptGrabber
           }
         }
         // No user country rating, try to set default as USA (if found in cert. list and not in  main page)
-        if (mpaRating.Contains("USA:") && !mpaRating.ToLower().Contains("unrated") && !mpaRating.ToLower().Contains("approved") 
-									   && !mpaRating.ToLower().Contains("tv-"))
+        if (mpaRating.Contains("USA:") && !mpaRating.ToLower().Contains("unrated") && !mpaRating.ToLower().Contains("approved")
+                     && !mpaRating.ToLower().Contains("tv-"))
         {
           for (int i = 0; i < landRating.Length; ++i)
           {
-            string mpaRating = landRating[i];
-             if (mpaRating.Contains("USA:") && !mpaRating.ToLower().Contains("unrated") && !mpaRating.ToLower().Contains("approved"))
+            mpaRating = landRating[i];
+            if (mpaRating.Contains("USA:") && !mpaRating.ToLower().Contains("unrated") && !mpaRating.ToLower().Contains("approved"))
             {
               if (mpaRating.Contains("("))
                 mpaRating = mpaRating.Substring(0, mpaRating.IndexOf("("));
               movieDetails.MPARating = mpaRating.Substring(mpaRating.IndexOf(":") + 1).Trim();
-			  break;
+              break;
             }
           }
-		}
-		// No user country but IMDB usa rating from main page is there
+        }
+        // No user country but IMDB usa rating from main page is there
         if (movieDetails.MPARating == string.Empty)
           movieDetails.MPARating = mCertUSA;
-		// No user country or IMDB USA, show all
+        // No user country or IMDB USA, show all
         if (movieDetails.MPARating == string.Empty)
-		  movieDetails.MPARating = tempRating.Trim();
+          movieDetails.MPARating = tempRating.Trim();
       }
 
       // Runtime
       regexPattern =
         "<h5>Runtime:</h5>.*?(?<movieRuntime>\\d+)\\smin\\s+|(?<movieRuntime>\\d+)\\smin&nbsp;&nbsp;-&nbsp;&nbsp;";
       int runtime;
-      if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value,out runtime))
+      if (int.TryParse(Regex.Match(strBody, regexPattern).Groups["movieRuntime"].Value, out runtime))
       {
         movieDetails.RunTime = runtime;
       }
@@ -534,13 +535,13 @@ internal class Grabber : IIMDBScriptGrabber
       // Tagline
       regexPattern =
         @"<h5>Tagline.</h5>[^>]+>[^\r]?(?<movieTagline>[^<]+)|<h4[^>]*>Tagline[s]?:</h4>[\s\f\r]*(?<movieTagline>[^<]+)";
-      string tagline = Regex.Match(strBody, regexPattern).Groups["movieTagline"].Value.Replace("\n", string.Empty);;
+      string tagline = Regex.Match(strBody, regexPattern).Groups["movieTagline"].Value.Replace("\n", string.Empty); ;
       movieDetails.TagLine = HttpUtility.HtmlDecode(tagline);
 
       // Rating
       regexPattern = @"<b>(?<movieScore>\d+.\d+)/10</b>|<span[^<]*>(?<movieScore>\d+.\d+)<span>/10</span>";
       string rating = Regex.Match(strBody, regexPattern).Groups["movieScore"].Value.Replace('.', ',');
-      movieDetails.Rating = (float) Double.Parse(rating);
+      movieDetails.Rating = (float)Double.Parse(rating);
       if (movieDetails.Rating > 10.0f)
         movieDetails.Rating /= 10.0f;
 
@@ -579,25 +580,25 @@ internal class Grabber : IIMDBScriptGrabber
             }
           }
         }
-		if (movieDetails.Plot == string.Empty)
-		   movieDetails.Plot = movieDetails.PlotOutline;
+        if (movieDetails.Plot == string.Empty)
+          movieDetails.Plot = movieDetails.PlotOutline;
       }
       catch (Exception)
       {
       }
 
       //User review
-	  regexPattern = "<a\\shref=\"/user/.*?<p>(?<review>.*?)</p>";
-	  Match strReview = Regex.Match(HttpUtility.HtmlDecode(strBody), regexPattern, RegexOptions.Singleline);
-	  if (strReview.Success)
-	  {
-	  	 string review =
-  	  	   Utils.stripHTMLtags(strReview.Groups["review"].Value.Replace("\n", " ").Trim());
-	  	 movieDetails.UserReview = HttpUtility.HtmlDecode(review);
-	  }
-	  return true;
+      regexPattern = "<a\\shref=\"/user/.*?<p>(?<review>.*?)</p>";
+      Match strReview = Regex.Match(HttpUtility.HtmlDecode(strBody), regexPattern, RegexOptions.Singleline);
+      if (strReview.Success)
+      {
+        string review =
+            Utils.stripHTMLtags(strReview.Groups["review"].Value.Replace("\n", " ").Trim());
+        movieDetails.UserReview = HttpUtility.HtmlDecode(review);
+      }
+      return true;
     }
-    catch (Exception) {}
+    catch (Exception) { }
     return false;
   }
 

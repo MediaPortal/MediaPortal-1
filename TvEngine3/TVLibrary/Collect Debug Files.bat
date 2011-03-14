@@ -1,4 +1,5 @@
 xcopy "..\..\Common-MP-TVE3\DirectShowLib\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
+xcopy "..\..\Common-MP-TVE3\Common.Utils\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "SetupControls\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "SetupTv\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y
 xcopy "TestApp\bin\Debug\*.*" "_TvServerDebug\MediaPortal TV Server\" /R /Y

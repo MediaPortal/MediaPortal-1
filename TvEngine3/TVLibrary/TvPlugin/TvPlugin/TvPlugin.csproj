@@ -194,6 +194,10 @@
     <Compile Include="WakeOnLanManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>

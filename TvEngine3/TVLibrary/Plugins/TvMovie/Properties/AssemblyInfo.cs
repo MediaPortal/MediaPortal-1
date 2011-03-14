@@ -20,6 +20,7 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -37,3 +38,6 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 
 [assembly: Guid("880c5315-7940-4e83-8f15-f8f29269c0e4")]
+
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("TVE")]

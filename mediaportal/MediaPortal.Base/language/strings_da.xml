@@ -52,11 +52,11 @@
     <String id="64">Starter tilføjelser...</String>
     <String id="65">Indlæser keymap.xml...</String>
     <String id="66">Indlæser strenge...</String>
-    <String id="67">Cacherer grafik...</String>
+    <String id="67">Cacher grafik...</String>
     <String id="68">Indlæser skrifttyper...</String>
     <String id="69">Indlæser skin ({0})...</String>
-    <String id="70">Indlæser vindue tilføjelser...</String>
-    <String id="71">Initailiserer vindue manageren...</String>
+    <String id="70">Indlæser vindue-tilføjelser...</String>
+    <String id="71">Initailiserer vindue-manageren...</String>
     <String id="100">Vis: Ikoner</String>
     <String id="101">Vis: Liste</String>
     <String id="102">Scan</String>
@@ -520,6 +520,7 @@
     <String id="563">knob</String>
     <String id="564">m/s</String>
     <String id="565">beaufort</String>
+    <String id="566">Hurtig vejr oversigt</String>
     <String id="567">Tilføj by</String>
     <String id="568">Fjern by</String>
     <String id="590">S. 100</String>
@@ -935,10 +936,6 @@
     <String id="1054">(Optager)</String>
     <String id="1055">(Tidsforskyder)</String>
     <String id="1056">(Ikke tilgængelig)</String>
-    <String id="1057">Optag søn-tors</String>
-    <String id="1058">Optag fre-lør</String>
-    <String id="1059">Søn-tors</String>
-    <String id="1060">Fre-lør</String>
     <String id="1061">Flytbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bogmærker</String>
@@ -1001,8 +998,11 @@
     <String id="1208">Sortering: Komponist</String>
     <String id="1211">Fortsæt afspilning fra {0}</String>
     <String id="1212">Annullér påmindelse</String>
+    <String id="1213">Lyt til denne station</String>
     <String id="1220">Sortering: Oprettet</String>
     <String id="1221">Sortering: Ændret</String>
+    <String id="1230">Dato tilføjet:</String>
+    <String id="1231">Sidst spillet:</String>
     <String id="1300" prefix="Mine ">TV-Udsendelser</String>
     <String id="1440" prefix="Mit ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
@@ -1203,7 +1203,7 @@
     <String id="2132">Lukker disk: forventet tid:</String>
     <String id="2133">TV-Optagelser</String>
     <String id="2134">Video</String>
-    <String id="2135">Audio</String>
+    <String id="2135">Lyd</String>
     <String id="2136">Data</String>
     <String id="2137">Konvertér</String>
     <String id="2138">Klip</String>
@@ -1554,7 +1554,7 @@
     <String id="13033">Senest Startet</String>
     <String id="13034">Titel</String>
     <String id="13041">Vis Film-Info</String>
-    <String id="14001" prefix="Mine ">udvidelser</String>
+    <String id="14001" prefix="Mine ">Udvidelser</String>
     <String id="14002">Syn</String>
     <String id="14003">Indstallerede udvidelser</String>
     <String id="14004">Online udvidelser</String>
@@ -1823,6 +1823,7 @@
     <String id="100760" prefix="Min ">Brænder</String>
     <String id="100761" prefix="Min ">TV-guide</String>
     <String id="100762" prefix="Min ">Radioguide</String>
+    <String id="100763">Optaget radio</String>
     <String id="100800" prefix="My ">Udvidelser</String>
     <String id="101000">tastatur</String>
     <String id="101002">Virtuelt Standard Tastatur</String>
@@ -1845,6 +1846,7 @@
     <String id="102014">Billedinfo</String>
     <String id="102015">MiniMenu</String>
     <String id="102016">Besked</String>
+    <String id="102017">Optagelses konflikt</String>
     <String id="102018">CI menu</String>
     <String id="102600" prefix="Mit ">Vejr</String>
     <String id="102700" prefix="Mine ">Nyheder</String>
@@ -1946,11 +1948,21 @@
     <String id="200070">Check firewall</String>
     <String id="200071">Slet denne mappe og alle underliggende mapper?</String>
     <String id="200072">Kommende afsnit</String>
+    <String id="200073">Postprocessing</String>
+    <String id="200074">Postprocess picture</String>
     <String id="200075">Skalér</String>
     <String id="200076">Undertekstfiler</String>
+    <String id="200077">Deinterlace</String>
     <String id="200078">Beskæring</String>
     <String id="200079">Lodret beskæring</String>
     <String id="200080">Vandret beskæring</String>
+    <String id="200081">VIDEO MENU</String>
+    <String id="200082">LYD MENU</String>
+    <String id="200083">UNDERTEKST MENU</String>
+    <String id="200084">Video Menu</String>
+    <String id="200085">Audio Menu</String>
+    <String id="200086">HOVED MENU</String>
+    <String id="200087">Mute</String>
     <String id="200090">Udgave</String>
     <String id="200091">Kapitel</String>
   </Section>

@@ -21,6 +21,7 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils;
 
 //
 // General Information about an assembly is controlled through the following 
@@ -37,3 +38,6 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
+
+[assembly: CompatibleVersion("Own")]
+[assembly: UsesSubsystem("TVE")]
