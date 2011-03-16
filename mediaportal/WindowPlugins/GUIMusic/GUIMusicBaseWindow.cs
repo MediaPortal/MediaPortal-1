@@ -20,11 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -34,9 +33,9 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
+using WindowPlugins;
 using Action = MediaPortal.GUI.Library.Action;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
-using WindowPlugins;
 
 namespace MediaPortal.GUI.Music
 {
@@ -109,6 +108,13 @@ namespace MediaPortal.GUI.Music
 
     protected bool PlayAllOnSingleItemPlayNow = true;
     protected string _currentPlaying = string.Empty;
+    
+    protected static BackgroundWorker bw;
+    protected static bool defaultPlaylistLoaded = false;
+    protected static bool ignorePlaylistChange = false;
+
+    protected delegate void ReplacePlaylistDelegate(PlayList newPlaylist);
+    protected delegate void StartPlayingPlaylistDelegate();
 
     #endregion
 
@@ -130,6 +136,8 @@ namespace MediaPortal.GUI.Music
       }
 
       playlistPlayer = PlayListPlayer.SingletonPlayer;
+
+      playlistPlayer.PlaylistChanged += new PlayListPlayer.PlaylistChangedEventHandler(playlistPlayer_PlaylistChanged); 
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
@@ -404,6 +412,7 @@ namespace MediaPortal.GUI.Music
     protected override void UpdateButtonStates()
     {
       base.UpdateButtonStates();
+
       if (GetID == (int)Window.WINDOW_MUSIC_GENRE)
       {
         GUIPropertyManager.SetProperty("#currentmodule",
@@ -579,11 +588,22 @@ namespace MediaPortal.GUI.Music
 
     protected void LoadPlayList(string strPlayList, bool startPlayback)
     {
+      LoadPlayList(strPlayList, startPlayback, false, false);
+    }
+
+    protected void LoadPlayList(string strPlayList, bool startPlayback, bool isAsynch)
+    {
+      LoadPlayList(strPlayList, startPlayback, isAsynch, false);
+    }
+
+    protected void LoadPlayList(string strPlayList, bool startPlayback, bool isAsynch, bool defaultLoad)
+    {
       IPlayListIO loader = PlayListFactory.CreateIO(strPlayList);
       if (loader == null)
       {
         return;
       }
+
       PlayList playlist = new PlayList();
 
       if (!Util.Utils.FileExistsInCache(strPlayList))
@@ -594,7 +614,10 @@ namespace MediaPortal.GUI.Music
 
       if (!loader.Load(playlist, strPlayList))
       {
-        TellUserSomethingWentWrong();
+        if (isAsynch && defaultLoad) // we might not be in GUI yet! we have asynch and default load because we might want to use asynch loading from gui button too, later!
+          throw new Exception(string.Format("Unable to load Playlist file: {0}", strPlayList)); // exception is handled in backgroundworker
+        else
+          TellUserSomethingWentWrong();
         return;
       }
 
@@ -612,13 +635,21 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
+      if (isAsynch && bw.CancellationPending)
+        return;
+
       // clear current playlist
-      playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
+      //playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Clear();
 
       Song song = new Song();
+      PlayList newPlaylist = new PlayList();
+
       // add each item of the playlist to the playlistplayer
       for (int i = 0; i < playlist.Count; ++i)
       {
+        if (isAsynch && bw.CancellationPending)
+          return;
+
         PlayListItem playListItem = playlist[i];
         m_database.GetSongByFileName(playListItem.FileName, ref song);
         MusicTag tag = new MusicTag();
@@ -627,7 +658,7 @@ namespace MediaPortal.GUI.Music
         if (Util.Utils.FileExistsInCache(playListItem.FileName) ||
             playListItem.Type == PlayListItem.PlayListItemType.AudioStream)
         {
-          playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playListItem);
+          newPlaylist.Add(playListItem);
         }
         else
         {
@@ -635,11 +666,28 @@ namespace MediaPortal.GUI.Music
         }
       }
 
+      if (isAsynch && bw.CancellationPending)
+        return;
+
+      ReplacePlaylist(newPlaylist);
+
+      if (startPlayback)
+        StartPlayingPlaylist();
+    }
+
+    private void StartPlayingPlaylist()
+    {
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        StartPlayingPlaylistDelegate d = StartPlayingPlaylist;
+        GUIGraphicsContext.form.Invoke(d);
+      }
+
       // if we got a playlist
-      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0 && startPlayback)
+      if (playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Count > 0)
       {
         // then get 1st song
-        playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+        PlayList playlist = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
         PlayListItem item = playlist[0];
 
         // and start playing it
@@ -652,6 +700,28 @@ namespace MediaPortal.GUI.Music
         {
           GUIWindowManager.ActivateWindow((int)Window.WINDOW_MUSIC_PLAYLIST);
         }
+      }
+    }
+
+    private void ReplacePlaylist(PlayList newPlaylist)
+    {
+      if (GUIGraphicsContext.form.InvokeRequired)
+      {
+        ReplacePlaylistDelegate d = ReplacePlaylist;
+        GUIGraphicsContext.form.Invoke(d, newPlaylist);
+      }
+
+      try
+      {
+        ignorePlaylistChange = true;
+        playlistPlayer.ReplacePlaylist(PlayListType.PLAYLIST_MUSIC, newPlaylist);
+
+        if (playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC)
+          playlistPlayer.Reset();
+      }
+      finally
+      {
+        ignorePlaylistChange = false;
       }
     }
 
@@ -2114,6 +2184,12 @@ namespace MediaPortal.GUI.Music
       }
 
       DoPlayNowJumpTo(pItems.Count);
+    }
+
+    void playlistPlayer_PlaylistChanged(PlayListType nPlayList, PlayList playlist)
+    {
+      if (nPlayList == GetPlayListType() && !ignorePlaylistChange && bw.IsBusy && !bw.CancellationPending)
+        bw.CancelAsync();
     }
 
     #endregion

@@ -20,9 +20,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
@@ -76,10 +76,12 @@ namespace MediaPortal.GUI.Music
     private AudioscrobblerUtils ascrobbler = null;
     private ScrobblerUtilsRequest _lastRequest;
     private string _defaultPlaylist = "default.m3u";
+    private WaitCursor waitCursor;
 
     #endregion
 
     protected delegate void ThreadRefreshList();
+    protected delegate void ThreadHideWaitCursor();
 
     private ScrobbleMode currentScrobbleMode = ScrobbleMode.Similar;
     private offlineMode currentOfflineMode = offlineMode.random;
@@ -97,45 +99,10 @@ namespace MediaPortal.GUI.Music
     public GUIMusicPlayList()
     {
       GetID = (int)Window.WINDOW_MUSIC_PLAYLIST;
-
-      using (Profile.Settings xmlreader = new Profile.MPSettings())
-      {
-        _playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
-        _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
-        _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
-        _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
-      }
-
-      if (_resumePlaylistOnEnter)
-      {
-        Log.Info("Playlist: Loading default playlist {0}", _defaultPlaylist);
-        LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false);
-      }
     }
 
     ~GUIMusicPlayList()
     {
-      // Save the default Playlist
-      if (_savePlaylistOnExit)
-      {
-        Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
-        IPlayListIO saver = new PlayListM3uIO();
-        PlayList playlist = playlistPlayer.GetPlaylist(GetPlayListType());
-        PlayList playlistTmp = new PlayList();
-        // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
-        foreach (PlayListItem item in playlist)
-        {
-          if (Path.GetExtension(item.FileName) != ".cda")
-          {
-            playlistTmp.Add(item);
-          }
-        }
-
-        if (playlistTmp.Count > 0)
-        {
-          saver.Save(playlistTmp, Path.Combine(_playlistFolder, _defaultPlaylist));
-        }
-      }
     }
 
     #region overrides
@@ -146,7 +113,27 @@ namespace MediaPortal.GUI.Music
       {
         _enableScrobbling = MediaPortal.GUI.Library.PluginManager.IsPluginNameEnabled("Audioscrobbler");
         _currentScrobbleUser = xmlreader.GetValueAsString("audioscrobbler", "user", "Username");
-        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true);
+        _useSimilarRandom = xmlreader.GetValueAsBool("audioscrobbler", "usesimilarrandom", true); _playlistFolder = xmlreader.GetValueAsString("music", "playlists", "");
+        _savePlaylistOnExit = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", false);
+        _resumePlaylistOnEnter = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", false);
+        _autoShuffleOnLoad = xmlreader.GetValueAsBool("musicfiles", "autoshuffle", false);
+        playlistPlayer.RepeatPlaylist = xmlreader.GetValueAsBool("musicfiles", "repeat", true);
+      }
+
+      if (_resumePlaylistOnEnter)
+      {
+        Log.Info("GUIMusicPlaylist: Loading default playlist {0}", _defaultPlaylist);
+        //LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false);
+        bw = new BackgroundWorker();
+        bw.WorkerSupportsCancellation = true;
+        bw.WorkerReportsProgress = false;
+        bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+        bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+        bw.RunWorkerAsync();
+      }
+      else
+      {
+        defaultPlaylistLoaded = true;
       }
 
       _scrobbleUsers = m_database.GetAllScrobbleUsers();
@@ -172,6 +159,28 @@ namespace MediaPortal.GUI.Music
       if (_lastRequest != null)
       {
         ascrobbler.RemoveRequest(_lastRequest);
+      }
+
+      // Save the default Playlist
+      if (_savePlaylistOnExit)
+      {
+          Log.Info("Playlist: Saving default playlist {0}", _defaultPlaylist);
+          IPlayListIO saver = new PlayListM3uIO();
+          PlayList playlist = playlistPlayer.GetPlaylist(GetPlayListType());
+          PlayList playlistTmp = new PlayList();
+          // Sort out Playlist Items residing on a CD, as they are gonna most likely to change
+          foreach (PlayListItem item in playlist)
+          {
+              if (Path.GetExtension(item.FileName) != ".cda")
+              {
+                  playlistTmp.Add(item);
+              }
+          }
+
+          if (playlistTmp.Count > 0)
+          {
+              saver.Save(playlistTmp, Path.Combine(_playlistFolder, _defaultPlaylist));
+          }
       }
 
       base.DeInit();
@@ -299,17 +308,15 @@ namespace MediaPortal.GUI.Music
         GUIControl.FocusControl(GetID, btnLayouts.GetID);
       }
 
-      using (Profile.Settings settings = new Profile.MPSettings())
-      {
-        playlistPlayer.RepeatPlaylist = settings.GetValueAsBool("musicfiles", "repeat", true);
-      }
-
       if (btnRepeatPlaylist != null)
       {
         btnRepeatPlaylist.Selected = playlistPlayer.RepeatPlaylist;
       }
 
       SelectCurrentPlayingSong();
+
+      if (bw.IsBusy && !bw.CancellationPending)
+        ShowWaitCursor();
     }
 
     protected override void OnPageDestroy(int newWindowId)
@@ -319,6 +326,7 @@ namespace MediaPortal.GUI.Music
       {
         settings.SetValueAsBool("musicfiles", "repeat", playlistPlayer.RepeatPlaylist);
       }
+      HideWaitCursor();
       base.OnPageDestroy(newWindowId);
     }
 
@@ -1587,6 +1595,54 @@ namespace MediaPortal.GUI.Music
 
       playlistPlayer.GetPlaylist(GetPlayListType()).Add(playlistItem);
       return true;
+    }
+
+    #endregion
+
+    #region background load of default playlist
+
+    private void bw_DoWork(object sender, DoWorkEventArgs e)
+    {
+      LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true);
+      if (bw.CancellationPending)
+        e.Cancel = true;
+    }
+
+    private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      defaultPlaylistLoaded = false;
+      if (e.Cancelled == true)
+      {
+        Log.Info("GUIMusicPlaylist: Loading of default playlist cancelled - user changed playlist during loading");
+      }
+      else if (e.Error != null)
+      {
+        Log.Info("GUIMusicPlaylist: Error loading default playlist: {0}", e.Error.Message);
+      }
+      else
+      {
+        Log.Info("GUIMusicPlaylist: Default Playlist loaded");
+        defaultPlaylistLoaded = true;
+      }
+
+      if (defaultPlaylistLoaded)
+        GUIGraphicsContext.form.Invoke(new ThreadRefreshList(DoRefreshList));
+
+      GUIGraphicsContext.form.Invoke(new ThreadHideWaitCursor(HideWaitCursor));
+    }
+ 
+    private void ShowWaitCursor()
+    {
+      waitCursor = new WaitCursor();
+    }
+
+    private void HideWaitCursor()
+    {
+      if (waitCursor != null)
+      {
+        waitCursor.Dispose();
+        waitCursor = null;
+      }
     }
 
     #endregion
