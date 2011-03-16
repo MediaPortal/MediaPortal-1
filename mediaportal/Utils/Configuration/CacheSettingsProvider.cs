@@ -136,6 +136,24 @@ namespace MediaPortal.Profile
       provider.SetValue(section, entry, value);
     }
 
+    /// <summary>
+    /// Moves an entry from the 'from' section to the 'to' section
+    /// </summary>
+    /// <param name="fromSection"></param>
+    /// <param name="toSection"></param>
+    /// <param name="entry"></param>
+    public void MoveEntry(string fromSection, string toSection, string entry)
+    {
+      object value = GetValue(fromSection, entry);
+
+      if (value == null)
+        return;
+
+      SetValue(toSection, entry, value);
+
+      RemoveEntry(fromSection, entry);
+    }
+
 #if DEBUG
     ~CacheSettingsProvider()
     {

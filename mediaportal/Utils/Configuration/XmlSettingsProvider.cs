@@ -203,6 +203,24 @@ namespace MediaPortal.Profile
       modified = true;
     }
 
+    /// <summary>
+    /// Moves an entry from the 'from' section to the 'to' section
+    /// </summary>
+    /// <param name="fromSection"></param>
+    /// <param name="toSection"></param>
+    /// <param name="entry"></param>
+    public void MoveEntry(string fromSection, string toSection, string entry)
+    {
+      object value = GetValue(fromSection, entry);
+
+      if (value == null)
+        return;
+
+      SetValue(toSection, entry, value);
+
+      RemoveEntry(fromSection, entry);
+    }
+
     private string GetSectionsPath(string section)
     {
       return "section[@name=\"" + section + "\"]";

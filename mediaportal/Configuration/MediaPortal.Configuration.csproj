@@ -248,6 +248,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Common.cs" />
+    <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
     <Compile Include="Sections\BaseFileExtensions.cs">

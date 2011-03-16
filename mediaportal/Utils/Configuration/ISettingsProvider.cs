@@ -27,5 +27,6 @@ namespace MediaPortal.Profile
     void RemoveEntry(string section, string entry);
     void Save();
     void SetValue(string section, string entry, object value);
+    void MoveEntry(string fromSection, string toSection, string entry);
   }
 }
