@@ -75,6 +75,10 @@ namespace MediaPortal.Tests.Core.Profile
       setValueHits++;
     }
 
+    public void MoveEntry(string fromSection, string toSection, string entry)
+    {
+    }
+
     #endregion
 
     [SetUp]
