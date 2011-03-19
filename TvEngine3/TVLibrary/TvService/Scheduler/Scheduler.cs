@@ -534,9 +534,15 @@ namespace TvService
                         // Handle schedules so TV Service won't try to re-schedule them every 15 seconds
                         if ((ScheduleRecordingType)newRecording.Schedule.ScheduleType == ScheduleRecordingType.Once)
                         {
-                          // even for Once type , the schedule can initially be a serie
-                          if (newRecording.IsSerie)
+                          // One-off schedules can be spawned for some schedule types to record the actual episode
+                          // if this is the case then add a cancelled schedule for this episode against the parent
+                          int parentScheduleID = newRecording.Schedule.IdParentSchedule;
+                          if (parentScheduleID > 0)
                           {
+                            CanceledSchedule canceled = new CanceledSchedule(parentScheduleID,
+                                                                             newRecording.Program.IdChannel,
+                                                                             newRecording.Program.StartTime);
+                            canceled.Persist();
                             _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
                                                                newRecording.Program);
                           }
