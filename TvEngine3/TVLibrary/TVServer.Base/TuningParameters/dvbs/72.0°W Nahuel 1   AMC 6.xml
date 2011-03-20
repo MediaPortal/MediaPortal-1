@@ -478,6 +478,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>3937000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>2825</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate5_6</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>4063000</CarrierFrequency>
     <Polarisation>LinearV</Polarisation>
     <SymbolRate>1628</SymbolRate>

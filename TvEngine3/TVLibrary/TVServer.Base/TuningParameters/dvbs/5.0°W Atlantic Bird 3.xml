@@ -64,6 +64,15 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>3744000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>1428</SymbolRate>
+    <Modulation>ModNotSet</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>NotSet</Pilot>
+    <Rolloff>NotSet</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>4023000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>2018</SymbolRate>
@@ -460,24 +469,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3633000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>2100</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate5_6</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3642000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>2100</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate5_6</InnerFecRate>
-    <Pilot>Off</Pilot>
-    <Rolloff>ThirtyFive</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>4110000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
     <SymbolRate>2141</SymbolRate>
@@ -514,12 +505,21 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>11637000</CarrierFrequency>
+    <Polarisation>LinearV</Polarisation>
+    <SymbolRate>20000</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>12674000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>16935</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
+    <Modulation>Mod16Apsk</Modulation>
     <InnerFecRate>Rate2_3</InnerFecRate>
-    <Pilot>Off</Pilot>
+    <Pilot>On</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
 </ArrayOfTransponder>

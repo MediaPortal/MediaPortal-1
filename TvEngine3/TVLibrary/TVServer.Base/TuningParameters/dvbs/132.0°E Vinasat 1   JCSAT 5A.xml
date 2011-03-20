@@ -100,7 +100,7 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11590000</CarrierFrequency>
+    <CarrierFrequency>11589000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
     <SymbolRate>28800</SymbolRate>
     <Modulation>ModNotSet</Modulation>
@@ -219,7 +219,7 @@
   <Transponder>
     <CarrierFrequency>11669000</CarrierFrequency>
     <Polarisation>LinearH</Polarisation>
-    <SymbolRate>28800</SymbolRate>
+    <SymbolRate>30000</SymbolRate>
     <Modulation>Mod8Psk</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>On</Pilot>

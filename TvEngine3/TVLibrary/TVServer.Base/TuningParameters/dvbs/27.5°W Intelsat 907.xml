@@ -46,27 +46,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3794000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>4400</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3800000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>2400</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3803000</CarrierFrequency>
-    <Polarisation>CircularR</Polarisation>
-    <SymbolRate>2000</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -91,24 +73,6 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>3850000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>3702</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3860000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>4600</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
     <CarrierFrequency>3873000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
     <SymbolRate>3200</SymbolRate>
@@ -121,15 +85,6 @@
     <CarrierFrequency>3902000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
     <SymbolRate>1807</SymbolRate>
-    <Modulation>ModNotSet</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>NotSet</Pilot>
-    <Rolloff>NotSet</Rolloff>
-  </Transponder>
-  <Transponder>
-    <CarrierFrequency>3930000</CarrierFrequency>
-    <Polarisation>CircularL</Polarisation>
-    <SymbolRate>6365</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -181,9 +136,9 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>4134000</CarrierFrequency>
+    <CarrierFrequency>4130000</CarrierFrequency>
     <Polarisation>CircularR</Polarisation>
-    <SymbolRate>4100</SymbolRate>
+    <SymbolRate>1517</SymbolRate>
     <Modulation>ModNotSet</Modulation>
     <InnerFecRate>Rate3_4</InnerFecRate>
     <Pilot>NotSet</Pilot>
@@ -316,12 +271,39 @@
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
+    <CarrierFrequency>3850000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>3703</SymbolRate>
+    <Modulation>ModQpsk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>Off</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
     <CarrierFrequency>3855000</CarrierFrequency>
     <Polarisation>CircularL</Polarisation>
-    <SymbolRate>4600</SymbolRate>
+    <SymbolRate>4130</SymbolRate>
     <Modulation>Mod8Psk</Modulation>
-    <InnerFecRate>Rate3_5</InnerFecRate>
+    <InnerFecRate>Rate2_3</InnerFecRate>
     <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3860000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>4180</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate2_3</InnerFecRate>
+    <Pilot>On</Pilot>
+    <Rolloff>ThirtyFive</Rolloff>
+  </Transponder>
+  <Transponder>
+    <CarrierFrequency>3940000</CarrierFrequency>
+    <Polarisation>CircularL</Polarisation>
+    <SymbolRate>2400</SymbolRate>
+    <Modulation>ModQpsk</Modulation>
+    <InnerFecRate>Rate3_4</InnerFecRate>
+    <Pilot>Off</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
   <Transponder>
