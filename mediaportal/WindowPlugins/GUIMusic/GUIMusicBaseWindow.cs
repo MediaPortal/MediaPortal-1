@@ -635,7 +635,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (isAsynch && bw.CancellationPending)
+      if (null != bw && isAsynch && bw.CancellationPending)
         return;
 
       // clear current playlist
@@ -647,7 +647,7 @@ namespace MediaPortal.GUI.Music
       // add each item of the playlist to the playlistplayer
       for (int i = 0; i < playlist.Count; ++i)
       {
-        if (isAsynch && bw.CancellationPending)
+        if (null != bw && isAsynch && bw.CancellationPending)
           return;
 
         PlayListItem playListItem = playlist[i];
@@ -666,7 +666,7 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      if (isAsynch && bw.CancellationPending)
+      if (null != bw && isAsynch && bw.CancellationPending)
         return;
 
       ReplacePlaylist(newPlaylist);
@@ -2159,7 +2159,7 @@ namespace MediaPortal.GUI.Music
 
     void playlistPlayer_PlaylistChanged(PlayListType nPlayList, PlayList playlist)
     {
-      if (nPlayList == GetPlayListType() && !ignorePlaylistChange && bw.IsBusy && !bw.CancellationPending)
+      if (null != bw && nPlayList == GetPlayListType() && !ignorePlaylistChange && bw.IsBusy && !bw.CancellationPending)
         bw.CancelAsync();
     }
 

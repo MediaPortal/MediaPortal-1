@@ -315,7 +315,7 @@ namespace MediaPortal.GUI.Music
 
       SelectCurrentPlayingSong();
 
-      if (bw.IsBusy && !bw.CancellationPending)
+      if (null != bw && bw.IsBusy && !bw.CancellationPending)
         ShowWaitCursor();
     }
 
@@ -1604,7 +1604,7 @@ namespace MediaPortal.GUI.Music
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
       LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true);
-      if (bw.CancellationPending)
+      if (null != bw && bw.CancellationPending)
         e.Cancel = true;
     }
 
