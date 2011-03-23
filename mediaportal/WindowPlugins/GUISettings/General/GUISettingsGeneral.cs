@@ -159,8 +159,8 @@ namespace WindowPlugins.GUISettings
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      base.OnPageDestroy(newWindowId);
       SaveSettings();
+      base.OnPageDestroy(newWindowId);
     }
 
     private void SaveSettings()
@@ -171,8 +171,8 @@ namespace WindowPlugins.GUISettings
         xmlwriter.SetValueAsBool("general", "IdleTimer", btnScreenSaver.Selected);
         xmlwriter.SetValue("gui", "language", btnLanguage.Label);
         xmlwriter.SetValue("skin", "name", btnSkin.Label);
-        Config.SkinName = btnSkin.Label;
       }
+      Config.SkinName = btnSkin.Label;
     }
 
     private void SetFullScreen()
@@ -306,7 +306,8 @@ namespace WindowPlugins.GUISettings
         {
           try
           {
-            Form.ActiveForm.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            GUIGraphicsContext.form.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
+            //Form.ActiveForm.ClientSize = new Size(GUIGraphicsContext.SkinSize.Width, GUIGraphicsContext.SkinSize.Height);
           }
           catch (Exception ex)
           {
