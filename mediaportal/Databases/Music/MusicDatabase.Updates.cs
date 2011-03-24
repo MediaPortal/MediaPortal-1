@@ -1260,38 +1260,14 @@ namespace MediaPortal.Music.Database
 
         // When we got Multiple Entries of either Artist, Genre, Albumartist in WMP notation, separated by ";",
         // we will store them separeted by "|"
-        tag.Artist = FormatMultipleEntry(tag.Artist, true);
-        tag.AlbumArtist = FormatMultipleEntry(tag.AlbumArtist, true);
-        tag.Genre = FormatMultipleEntry(tag.Genre, false);
-        tag.Composer = FormatMultipleEntry(tag.Composer, true);
+        tag.Artist = Util.Utils.FormatMultiItemMusicString(tag.Artist, _stripArtistPrefixes);
+        tag.AlbumArtist = Util.Utils.FormatMultiItemMusicString(tag.AlbumArtist, _stripArtistPrefixes);
+        tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
+        tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
 
         return tag;
       }
       return null;
-    }
-
-    /// <summary>
-    /// Multiple Entry fields need to be formatted to contain a | at the end to be able to search correct
-    /// </summary>
-    /// <param name="str"></param>
-    /// <param name="strip"></param>
-    /// <returns></returns>
-    public string FormatMultipleEntry(string str, bool strip)
-    {
-      string[] strSplit = str.Split(new char[] {';', '|'});
-      // Can't use a simple String.Join as i need to trim all the elements 
-      string strJoin = "| ";
-      foreach (string strTmp in strSplit)
-      {
-        string s = strTmp.Trim();
-        // Strip Artist / AlbumArtist but NOT Genres
-        if (_stripArtistPrefixes && strip)
-        {
-          Util.Utils.StripArtistNamePrefix(ref s, true);
-        }
-        strJoin += String.Format("{0} | ", s.Trim());
-      }
-      return strJoin;
     }
 
     /// <summary>

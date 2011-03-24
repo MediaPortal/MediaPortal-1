@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Music
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
     private bool _useFileMenu = false;
+    private bool _stripArtistPrefixes = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -226,6 +227,7 @@ namespace MediaPortal.GUI.Music
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -1459,6 +1461,10 @@ namespace MediaPortal.GUI.Music
           tag = TagReader.TagReader.ReadTag(pItem.Path);
           if (tag != null)
           {
+            tag.Artist = Util.Utils.FormatMultiItemMusicString(tag.Artist, _stripArtistPrefixes);
+            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicString(tag.AlbumArtist, _stripArtistPrefixes);
+            tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
+            tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
             pItem.MusicTag = tag;
             pItem.Duration = tag.Duration;
             pItem.Year = tag.Year;
@@ -1862,7 +1868,7 @@ namespace MediaPortal.GUI.Music
 
     public string Author()
     {
-      return "Frodo, SteveV, rtv, hwahrmann";
+      return "Frodo, SteveV, rtv, hwahrmann, JamesonUK";
     }
 
     public string Description()
