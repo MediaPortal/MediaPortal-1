@@ -539,7 +539,7 @@ namespace MediaPortal.GUI.Music
 
         if (tag != null)
         {
-          tag.Artist = Util.Utils.FormatMultiItemMusicString(tag.Artist, _stripArtistPrefixes);
+          tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
         }
       }
 

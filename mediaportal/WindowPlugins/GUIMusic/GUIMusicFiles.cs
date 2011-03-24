@@ -1461,10 +1461,10 @@ namespace MediaPortal.GUI.Music
           tag = TagReader.TagReader.ReadTag(pItem.Path);
           if (tag != null)
           {
-            tag.Artist = Util.Utils.FormatMultiItemMusicString(tag.Artist, _stripArtistPrefixes);
-            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicString(tag.AlbumArtist, _stripArtistPrefixes);
-            tag.Genre = Util.Utils.FormatMultiItemMusicString(tag.Genre, false);
-            tag.Composer = Util.Utils.FormatMultiItemMusicString(tag.Composer, _stripArtistPrefixes);
+            tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+            tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+            tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
             pItem.MusicTag = tag;
             pItem.Duration = tag.Duration;
             pItem.Year = tag.Year;
