@@ -28,9 +28,7 @@ using System.IO;
 using System.Text;
 using System.Timers;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
-using MediaPortal.Freedb;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Player;
@@ -82,7 +80,7 @@ namespace MediaPortal.GUI.Music
       LBL_NEXT_ALBUM_NAME = 122,
       LBL_NEXT_ARTIST_NAME = 123,
 
-      BEST_TAG_TRACKS = 28,
+      BEST_SIMILAR_TRACKS = 28,
       BEST_ALBUM_TRACKS = 29,
 
       BTN_LASTFM_LOVE = 30,
@@ -134,10 +132,10 @@ namespace MediaPortal.GUI.Music
     [SkinControl((int)ControlIDs.PROG_TRACK)] protected GUIProgressControl ProgTrack = null;
     [SkinControl((int)ControlIDs.IMG_TRACK_PROGRESS_BG)] protected GUIImage ImgTrackProgressBkGrnd = null;
     [SkinControl((int)ControlIDs.LBL_UP_NEXT)] protected GUILabelControl LblUpNext = null;
-    [SkinControl((int)ControlIDs.LIST_TAG_INFO)] protected GUIListControl facadeTagInfo = null;
+    [SkinControl((int)ControlIDs.LIST_TAG_INFO)] protected GUIListControl facadeSimilarTrackInfo = null;
     [SkinControl((int)ControlIDs.LIST_ALBUM_INFO)] protected GUIListControl facadeAlbumInfo = null;
     [SkinControl((int)ControlIDs.BEST_ALBUM_TRACKS)] protected GUIFadeLabel LblBestAlbumTracks = null;
-    [SkinControl((int)ControlIDs.BEST_TAG_TRACKS)] protected GUIFadeLabel LblBestTagTracks = null;
+    [SkinControl((int)ControlIDs.BEST_SIMILAR_TRACKS)] protected GUIFadeLabel LblBestSimilarTracks = null;
     [SkinControl((int)ControlIDs.IMGLIST_UNKNOWN_TRACK1)] protected GUIImageList ImgListUnknownTrack1 = null;
     [SkinControl((int)ControlIDs.IMGLIST_UNKNOWN_TRACK2)] protected GUIImageList ImgListUnknownTrack2 = null;
     [SkinControl((int)ControlIDs.IMGLIST_UNKNOWN_TRACK3)] protected GUIImageList ImgListUnknownTrack3 = null;
@@ -465,8 +463,8 @@ namespace MediaPortal.GUI.Music
 
         case Action.ActionType.ACTION_SHOW_INFO:
           //OnShowContextMenu();
-          facadeTagInfo.Clear();
-          UpdateTagInfo();
+          facadeSimilarTrackInfo.Clear();
+          UpdateSimilarTrackInfo();
           FlipPictures();
           break;
 
@@ -544,13 +542,13 @@ namespace MediaPortal.GUI.Music
                 }
               }
             }
-            if (facadeTagInfo != null)
+            if (facadeSimilarTrackInfo != null)
             {
               if (message.SenderControlId == (int)ControlIDs.LIST_TAG_INFO) // listbox
               {
                 if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
                 {
-                  AddInfoTrackToPlaylist(facadeTagInfo.SelectedListItem, true);
+                  AddInfoTrackToPlaylist(facadeSimilarTrackInfo.SelectedListItem, true);
                 }
               }
             }
@@ -570,7 +568,7 @@ namespace MediaPortal.GUI.Music
       BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
 
       facadeAlbumInfo.Clear();
-      facadeTagInfo.Clear();
+      facadeSimilarTrackInfo.Clear();
       ImagePathContainer.Clear();
 
       _trackChanged = true;
@@ -594,9 +592,9 @@ namespace MediaPortal.GUI.Music
       {
         LblBestAlbumTracks.Visible = false;
       }
-      if (LblBestTagTracks != null)
+      if (LblBestSimilarTracks != null)
       {
-        LblBestTagTracks.Visible = false;
+        LblBestSimilarTracks.Visible = false;
       }
       ControlsInitialized = true;
 
@@ -722,19 +720,6 @@ namespace MediaPortal.GUI.Music
         dlg.AddLocalizedString(33041);
       }
 
-      //dlg.AddLocalizedString(928);        // Find Coverart
-      // dlg.AddLocalizedString(4521);       // Show Album Info
-
-      if (IsCdTrack(CurrentTrackFileName))
-      {
-        dlg.AddLocalizedString(4554); // Lookup CD info
-      }
-
-      if (CurrentTrackTag != null)
-      {
-        dlg.AddLocalizedString(33040); // copy IRC spam
-      }
-
       if (_audioscrobblerEnabled)
       {
         dlg.AddLocalizedString(34010); // love
@@ -793,31 +778,6 @@ namespace MediaPortal.GUI.Music
               _MusicWindow.ShowAlbumInfo(GetID, false, CurrentTrackTag.Artist, CurrentTrackTag.Album, albumFolderPath,
                                          CurrentTrackTag);
             }
-          }
-          break;
-
-        case 4554: // Lookup CD info
-          MusicTag tag = new MusicTag();
-          GetCDInfoFromFreeDB(CurrentTrackFileName, tag);
-          GetTrackTags();
-          break;
-
-        case 33040: // IRC spam
-          try
-          {
-            if (CurrentTrackTag != null)
-            {
-              string tmpTrack = CurrentTrackTag.Track > 0
-                                  ? (Convert.ToString(CurrentTrackTag.Track) + ". ")
-                                  : string.Empty;
-              Clipboard.SetDataObject(
-                @"/me is listening to " + CurrentTrackTag.Artist + " [" + CurrentTrackTag.Album + "] - " + tmpTrack +
-                CurrentTrackTag.Title, true);
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Error("GUIMusicPlayingNow: could not copy song spam to clipboard - {0}", ex.Message);
           }
           break;
 
@@ -1061,23 +1021,23 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    public void OnUpdateTagInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
+    public void OnUpdateSimilarTrackInfoCompleted(TagInfoRequest request, List<Song> TagTracks)
     {
       if (request.Equals(_lastTagRequest))
       {
-        GUIGraphicsContext.form.Invoke(new TagInfoCompletedDelegate(DoUpdateTagInfo), new object[] {request, TagTracks});
+        GUIGraphicsContext.form.Invoke(new TagInfoCompletedDelegate(DoUpdateSimilarTrackInfo), new object[] {request, TagTracks});
       }
       else
       {
-        Log.Warn("NowPlaying.OnUpdateTagInfoCompleted: unexpected response for request: {0}", request.Type);
+        Log.Warn("NowPlaying.OnUpdateSimilarTrackInfoCompleted: unexpected response for request: {0}", request.Type);
       }
     }
 
-    public void DoUpdateTagInfo(TagInfoRequest request, List<Song> TagTracks)
+    public void DoUpdateSimilarTrackInfo(TagInfoRequest request, List<Song> TagTracks)
     {
       GUIListItem item = null;
       {
-        facadeTagInfo.Clear();
+        facadeSimilarTrackInfo.Clear();
 
         for (int i = 0; i < TagTracks.Count; i++)
         {
@@ -1089,21 +1049,21 @@ namespace MediaPortal.GUI.Music
 
           item.MusicTag = TagTracks[i].ToMusicTag();
 
-          facadeTagInfo.Add(item);
+          facadeSimilarTrackInfo.Add(item);
 
           // display 3 items only
-          if (facadeTagInfo.Count == DISPLAY_LISTITEM_COUNT)
+          if (facadeSimilarTrackInfo.Count == DISPLAY_LISTITEM_COUNT)
           {
             break;
           }
         }
 
-        if (facadeTagInfo.Count > 0)
+        if (facadeSimilarTrackInfo.Count > 0)
         {
-          if (LblBestTagTracks != null)
+          if (LblBestSimilarTracks != null)
           {
-            LblBestTagTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
-            LblBestTagTracks.Visible = true;
+            LblBestSimilarTracks.Label = GUILocalizeStrings.Get(33031) + TagTracks[0].Genre;
+            LblBestSimilarTracks.Visible = true;
           }
 
           if (facadeAlbumInfo == null || facadeAlbumInfo.Count == 0)
@@ -1480,7 +1440,7 @@ namespace MediaPortal.GUI.Music
                Convert.ToString(RatingValue));
     }
 
-    private string CleanTagString(string tagField)
+    private static string CleanTagString(string tagField)
     {
       int dotIndex = 0;
       string outString = string.Empty;
@@ -1565,9 +1525,9 @@ namespace MediaPortal.GUI.Music
     /// <summary>
     /// Updates the "similar tags" info for the current track playing.
     /// The tag info is fetched asynchronously by adding a request onto the request queue of the AudioScrobblerUtils
-    /// class. The response will be received via callback by a delegate (OnUpdateTagInfoCompleted).
+    /// class. The response will be received via callback by a delegate (OnUpdateSimilarTrackInfoCompleted).
     /// </summary>
-    private void UpdateTagInfo()
+    private void UpdateSimilarTrackInfo()
     {
       string CurrentArtist = CleanTagString(CurrentTrackTag.Artist);
       string CurrentTrack = CleanTagString(CurrentTrackTag.Title);
@@ -1583,9 +1543,9 @@ namespace MediaPortal.GUI.Music
           return;
         }
 
-        if (LblBestTagTracks != null)
+        if (LblBestSimilarTracks != null)
         {
-          LblBestTagTracks.Visible = false;
+          LblBestSimilarTracks.Visible = false;
         }
 
         TagInfoRequest request = new TagInfoRequest(
@@ -1594,7 +1554,7 @@ namespace MediaPortal.GUI.Music
           true,
           false,
           true,
-          new TagInfoRequest.TagInfoRequestHandler(OnUpdateTagInfoCompleted)
+          new TagInfoRequest.TagInfoRequestHandler(OnUpdateSimilarTrackInfoCompleted)
           );
         _lastTagRequest = request;
         InfoScrobbler.AddRequest(request);
@@ -1659,12 +1619,12 @@ namespace MediaPortal.GUI.Music
           }
 
           // track has changed so always look up similar tracks
-          if (LblBestTagTracks != null)
+          if (LblBestSimilarTracks != null)
           {
-            LblBestTagTracks.Visible = false;
+            LblBestSimilarTracks.Visible = false;
           }
-          facadeTagInfo.Clear();
-          UpdateTagInfo();
+          facadeSimilarTrackInfo.Clear();
+          UpdateSimilarTrackInfo();
 
           // non-text values default to 0 and datetime.minvalue so
           // set the appropriate properties to string.empty
@@ -1706,6 +1666,7 @@ namespace MediaPortal.GUI.Music
                                   ? string.Empty
                                   : CurrentTrackTag.DateTimeModified.ToShortDateString();
 
+          // TODO: some of these properties are also set in music overlay.   Need to only set once
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
           GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
@@ -1932,268 +1893,29 @@ namespace MediaPortal.GUI.Music
 
     private void GetTrackTags()
     {
-      bool isCurSongCdTrack = IsCdTrack(CurrentTrackFileName);
-      bool isNextSongCdTrack = IsCdTrack(NextTrackFileName);
-      bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName);
-      MusicDatabase dbs = MusicDatabase.Instance;
+      PlayListItem currentItem = PlaylistPlayer.GetCurrentItem();
+      PlayListItem nextItem = PlaylistPlayer.GetNextItem();
+      if (currentItem != null)
+      {
+        CurrentTrackTag = (MusicTag)currentItem.MusicTag;
+      }
+      else
+      {
+        CurrentTrackTag = null;
+      }
+
+      if (nextItem != null)
+      {
+        NextTrackTag = (MusicTag)nextItem.MusicTag;
+      }
+      else
+      {
+        NextTrackTag = null;
+      }
 
       if (CurrentTrackTag != null)
       {
         PreviousTrackTag = CurrentTrackTag;
-      }
-
-      if (!isCurSongCdTrack && !isInternetStream)
-      {
-        CurrentTrackTag = GetTrackTag(dbs, CurrentTrackFileName);
-      }
-
-      if (!isNextSongCdTrack && !isInternetStream)
-      {
-        //NextTrackFileName = PlaylistPlayer.GetNext();
-        NextTrackTag = GetTrackTag(dbs, NextTrackFileName);
-      }
-
-      // Get Information from CD Track
-      if (isCurSongCdTrack || isNextSongCdTrack)
-      {
-        PlayList curPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-
-        int iCurItemIndex = PlaylistPlayer.CurrentSong;
-        PlayListItem curPlaylistItem = curPlaylist[iCurItemIndex];
-
-        if (curPlaylistItem == null)
-        {
-          CurrentTrackTag = null;
-          NextTrackTag = null;
-          return;
-        }
-
-        int playListItemCount = curPlaylist.Count;
-        int nextItemIndex = 0;
-
-        if (iCurItemIndex < playListItemCount - 1)
-        {
-          nextItemIndex = iCurItemIndex + 1;
-        }
-
-        PlayListItem nextPlaylistItem = curPlaylist[nextItemIndex];
-
-        if (isCurSongCdTrack)
-        {
-          CurrentTrackTag = (MusicTag)curPlaylistItem.MusicTag;
-        }
-
-        if (isNextSongCdTrack && nextPlaylistItem != null)
-        {
-          NextTrackTag = (MusicTag)nextPlaylistItem.MusicTag;
-        }
-
-        // There's no MusicTag info in the Playlist so check is we have a valid 
-        // GUIMusicFiles.MusicCD object
-        if ((CurrentTrackTag == null || NextTrackTag == null) && GUIMusicFiles.MusicCD != null)
-        {
-          int curCDTrackNum = GetCDATrackNumber(CurrentTrackFileName);
-          int nextCDTrackNum = GetCDATrackNumber(NextTrackFileName);
-
-          if (curCDTrackNum < GUIMusicFiles.MusicCD.Tracks.Length)
-          {
-            CDTrackDetail curTrack = GUIMusicFiles.MusicCD.getTrack(curCDTrackNum);
-            CurrentTrackTag = GetTrackTag(curTrack);
-          }
-          if (nextCDTrackNum < GUIMusicFiles.MusicCD.Tracks.Length)
-          {
-            CDTrackDetail nextTrack = GUIMusicFiles.MusicCD.getTrack(nextCDTrackNum);
-            NextTrackTag = GetTrackTag(nextTrack);
-          }
-        }
-      }
-
-      // If we got an Internetstream and are playing via BASS Player
-      // then receive the MusicTags from the stream
-      if (isInternetStream && _usingBassEngine)
-      {
-        NextTrackTag = null;
-        CurrentTrackTag = BassMusicPlayer.Player.GetStreamTags();
-      }
-    }
-
-    private MusicTag GetTrackTag(CDTrackDetail cdTrack)
-    {
-      if (GUIMusicFiles.MusicCD == null)
-      {
-        return null;
-      }
-      MusicTag tag = new MusicTag();
-      tag.Artist = GUIMusicFiles.MusicCD.Artist;
-      tag.Album = GUIMusicFiles.MusicCD.Title;
-      tag.Genre = GUIMusicFiles.MusicCD.Genre;
-      tag.Year = GUIMusicFiles.MusicCD.Year;
-      tag.Duration = cdTrack.Duration;
-      tag.Title = cdTrack.Title;
-      return tag;
-    }
-
-    private MusicTag GetTrackTag(MusicDatabase dbs, string strFile)
-    {
-      MusicTag tag = null;
-      Song song = new Song();
-      if (String.IsNullOrEmpty(strFile))
-      {
-        // Return an empty object
-        return song.ToMusicTag();
-      }
-      bool bFound = dbs.GetSongByFileName(strFile, ref song);
-      if (!bFound)
-      {
-        tag = TagReader.TagReader.ReadTag(strFile);
-        if (tag != null && tag.Title != GUILocalizeStrings.Get(4543)) // Track information not available
-        {
-          return tag;
-        }
-        // tagreader failed or not using it
-        song.Title = Path.GetFileNameWithoutExtension(strFile);
-        song.Artist = string.Empty;
-        song.Album = string.Empty;
-      }
-
-      tag = song.ToMusicTag();
-
-      return tag;
-    }
-
-    private bool IsCdTrack(string fileName)
-    {
-      return Path.GetExtension(CurrentTrackFileName).ToLower() == ".cda";
-    }
-
-    private void GetCDInfoFromFreeDB(string path, MusicTag tag)
-    {
-      try
-      {
-        // check internet connectivity
-        GUIDialogOK pDlgOK = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-        if (null != pDlgOK && !Win32API.IsConnectedToInternet())
-        {
-          pDlgOK.SetHeading(703);
-          pDlgOK.SetLine(1, 703);
-          pDlgOK.SetLine(2, string.Empty);
-          pDlgOK.DoModal(GetID);
-          return;
-        }
-        else if (!Win32API.IsConnectedToInternet())
-        {
-          return;
-        }
-        string m_strDiscId = string.Empty;
-        int m_iSelectedAlbum = 0;
-
-        FreeDBHttpImpl freedb = new FreeDBHttpImpl();
-        char driveLetter = Path.GetFullPath(path).ToCharArray()[0];
-
-        // try finding it in the database
-        string strPathName, strCDROMPath;
-
-        //int_20h fake the path with the cdInfo
-        strPathName = driveLetter + ":/" + freedb.GetCDDBDiscIDInfo(driveLetter, '+');
-        strCDROMPath = strPathName + "+" + Path.GetFileName(path);
-
-        Song song = new Song();
-        bool bFound = false;
-
-        try
-        {
-          freedb.Connect(); // should be replaced with the Connect that receives a http freedb site...
-          CDInfo[] cds = freedb.GetDiscInfo(driveLetter);
-          if (cds != null)
-          {
-            // freedb returned one album
-            if (cds.Length == 1)
-            {
-              GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[0].Category, cds[0].DiscId);
-              m_strDiscId = cds[0].DiscId;
-            }
-
-              // freedb returned more than one album
-            else if (cds.Length > 1)
-            {
-              if (m_strDiscId == cds[0].DiscId)
-              {
-                GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category,
-                                                              cds[m_iSelectedAlbum].DiscId);
-              }
-
-              else
-              {
-                m_strDiscId = cds[0].DiscId;
-                //show dialog with all albums found
-                string szText = GUILocalizeStrings.Get(181);
-                GUIDialogSelect pDlg = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
-                if (null != pDlg)
-                {
-                  pDlg.Reset();
-                  pDlg.SetHeading(szText);
-                  for (int j = 0; j < cds.Length; j++)
-                  {
-                    CDInfo info = cds[j];
-                    pDlg.Add(info.Title);
-                  }
-                  pDlg.DoModal(GetID);
-
-                  // and wait till user selects one
-                  m_iSelectedAlbum = pDlg.SelectedLabel;
-                  if (m_iSelectedAlbum < 0)
-                  {
-                    return;
-                  }
-                  GUIMusicFiles.MusicCD = freedb.GetDiscDetails(cds[m_iSelectedAlbum].Category,
-                                                                cds[m_iSelectedAlbum].DiscId);
-                }
-              }
-            }
-          }
-          freedb.Disconnect();
-          //if (GUIMusicFiles.MusicCD == null) bCDDAFailed = true;
-        }
-
-        catch (Exception)
-        {
-          GUIMusicFiles.MusicCD = null;
-        }
-
-        if (!bFound && GUIMusicFiles.MusicCD != null) // if musicCD was configured correctly...
-        {
-          int trackno = GetCDATrackNumber(path);
-          CDTrackDetail track = GUIMusicFiles.MusicCD.getTrack(trackno);
-
-          tag = new MusicTag();
-          tag.Album = GUIMusicFiles.MusicCD.Title;
-          tag.Genre = GUIMusicFiles.MusicCD.Genre;
-          if (track == null)
-          {
-            // prob hidden track									
-            tag.Artist = GUIMusicFiles.MusicCD.Artist;
-            tag.Duration = -1;
-            tag.Title = string.Empty;
-            tag.Track = -1;
-          }
-          else
-          {
-            tag.Artist = track.Artist == null ? GUIMusicFiles.MusicCD.Artist : track.Artist;
-            tag.Duration = track.Duration;
-            tag.Title = track.Title;
-            tag.Track = track.TrackNumber;
-          }
-        }
-        else if (bFound)
-        {
-          tag = new MusicTag();
-          tag = song.ToMusicTag();
-        }
-      } // end of try
-      catch (Exception e)
-      {
-        // log the problem...
-        Log.Error("GUIMusicPlayingNow: GetCDInfoFromFreeDB: {0}", e.ToString());
       }
     }
 
@@ -2203,45 +1925,6 @@ namespace MediaPortal.GUI.Music
       NextTrackFileName = PlaylistPlayer.GetNext();
       GetTrackTags();
       UpdateTrackInfo();
-    }
-
-    private bool AddSongToPlaylist(ref GUIListItem song, bool enqueueNext_)
-    {
-      PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-      if (playlist == null)
-      {
-        return false;
-      }
-
-      //add to playlist
-      PlayListItem playlistItem = new PlayListItem();
-      playlistItem.Type = PlayListItem.PlayListItemType.Audio;
-      StringBuilder sb = new StringBuilder();
-      MusicTag tmptag = new MusicTag();
-      tmptag = (MusicTag)song.MusicTag;
-
-      playlistItem.FileName = song.Path;
-      sb.Append(tmptag.Track);
-      sb.Append(". ");
-      sb.Append(tmptag.Artist);
-      sb.Append(" - ");
-      sb.Append(tmptag.Title);
-      playlistItem.Description = sb.ToString();
-      playlistItem.Duration = tmptag.Duration;
-
-      playlistItem.MusicTag = tmptag;
-
-      if (enqueueNext_)
-      {
-        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
-      }
-      else
-      {
-        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
-      }
-
-      OnSongInserted();
-      return true;
     }
 
     /// <summary>
@@ -2285,30 +1968,6 @@ namespace MediaPortal.GUI.Music
 
       OnSongInserted();
       return true;
-    }
-
-    private int GetCDATrackNumber(string strFile)
-    {
-      string strTrack = string.Empty;
-      int pos = strFile.IndexOf(".cda");
-      if (pos >= 0)
-      {
-        pos--;
-        while (Char.IsDigit(strFile[pos]) && pos > 0)
-        {
-          strTrack = strFile[pos] + strTrack;
-          pos--;
-        }
-      }
-
-      try
-      {
-        int iTrack = Convert.ToInt32(strTrack);
-        return iTrack;
-      }
-      catch (Exception) {}
-
-      return 1;
     }
 
     private void LoadAndStartPlayList()
