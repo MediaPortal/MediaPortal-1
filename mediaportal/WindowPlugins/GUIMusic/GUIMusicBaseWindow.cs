@@ -211,17 +211,6 @@ namespace MediaPortal.GUI.Music
 
         PlayAllOnSingleItemPlayNow = xmlreader.GetValueAsBool("musicfiles", "addall", true);
 
-        int defaultSort = (int)MusicSort.SortMethod.Name;
-
-        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
-            (handler.View.Filters.Count > 0))
-        {
-          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
-          defaultSort = (int)GetSortMethod(def.DefaultSort);
-        }
-
-        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
-
         for (int i = 0; i < _sortModes.Length; ++i)
         {
           _sortTags1[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "1", _defaultSortTags1[i]);
@@ -318,15 +307,6 @@ namespace MediaPortal.GUI.Music
         Log.Error("GUIMusicBaseWindow::GetSortMethod: Unknown String - " + s);
       }
       return MusicSort.SortMethod.Name;
-    }
-
-    protected override void SaveSettings()
-    {
-      base.SaveSettings();
-      using (Profile.Settings xmlwriter = new Profile.MPSettings())
-      {
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
-      }
     }
 
     #endregion

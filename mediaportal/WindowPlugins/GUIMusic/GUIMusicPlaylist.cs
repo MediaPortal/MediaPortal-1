@@ -198,6 +198,7 @@ namespace MediaPortal.GUI.Music
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
       }
     }
 
@@ -208,6 +209,7 @@ namespace MediaPortal.GUI.Music
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
       }
     }
   
