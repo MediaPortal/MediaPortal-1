@@ -222,11 +222,13 @@ namespace MediaPortal.GUI.Music
     #region Serialisation
 
     protected override void LoadSettings()
-    {
+    {   
       base.LoadSettings();
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
@@ -267,6 +269,16 @@ namespace MediaPortal.GUI.Music
         {
           currentFolder = string.Empty;
         }
+      }
+    }
+
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
       }
     }
 

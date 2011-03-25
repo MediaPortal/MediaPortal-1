@@ -191,6 +191,26 @@ namespace MediaPortal.GUI.Music
       get { return "mymusicplaylist"; }
     }
 
+    protected override void LoadSettings()
+    {
+      base.LoadSettings();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+      }
+    }
+
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+      }
+    }
+  
     // Fires every time - especially ACTION_MUSIC_PLAY even if we're already playing stuff
     private void OnNewAction(Action action)
     {

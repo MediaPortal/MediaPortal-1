@@ -219,6 +219,9 @@ namespace TvPlugin
       base.LoadSettings();
       using (Settings xmlreader = new MPSettings())
       {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+        
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
 
         if (strTmp == "channel")
@@ -258,6 +261,9 @@ namespace TvPlugin
       base.SaveSettings();
       using (Settings xmlwriter = new MPSettings())
       {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        
         switch (_currentSortMethod)
         {
           case SortMethod.Channel:

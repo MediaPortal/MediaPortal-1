@@ -201,6 +201,8 @@ namespace MediaPortal.GUI.Video
       base.LoadSettings();
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
         VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
 
@@ -273,6 +275,16 @@ namespace MediaPortal.GUI.Video
           string currentParentFolder = @dirInfo.FullName;
           _history.Set(dirName, currentParentFolder);
         }
+      }
+    }
+
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
       }
     }
 
