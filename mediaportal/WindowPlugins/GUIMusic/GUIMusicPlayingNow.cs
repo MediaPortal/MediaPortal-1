@@ -284,7 +284,7 @@ namespace MediaPortal.GUI.Music
       {
         Log.Debug("GUIMusicPlayingNow: g_Player_PlayBackEnded for {0}", filename);
 
-        if (!g_Player.Playing && NextTrackTag.Title == string.Empty)
+        if (!g_Player.Playing && NextTrackTag == null)
         {
           Log.Debug("GUIMusicPlayingNow: All playlist items played - returning to previous window");
           Action action = new Action();
