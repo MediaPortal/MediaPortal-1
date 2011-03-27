@@ -60,7 +60,6 @@ namespace MediaPortal.GUI.Music
     private MusicTag m_tag = null;
     private int coverArtTextureWidth = 0;
     private int coverArtTextureHeight = 0;
-    private bool _prevOverlay = false;
 
     public GUIMusicInfo()
     {
@@ -88,14 +87,24 @@ namespace MediaPortal.GUI.Music
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          _prevOverlay = GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
-          return true;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay = _prevOverlay;
-          return true;
+          {
+            base.OnMessage(message);
+            m_pParentWindow = null;
+            m_bRunning = false;
+            Dispose();
+            DeInitControls();
+            GUILayerManager.UnRegisterLayer(this);
+            return true;
+          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          {
+            base.OnMessage(message);
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            return true;
+          }
       }
       return base.OnMessage(message);
     }
@@ -111,10 +120,6 @@ namespace MediaPortal.GUI.Music
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
-
-      GUIWindowManager.UnRoute();
-      m_pParentWindow = null;
-      m_bRunning = false;
     }
 
     public void DoModal(int dwParentId)
@@ -136,7 +141,6 @@ namespace MediaPortal.GUI.Music
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       m_bRunning = true;
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
         GUIWindowManager.Process();
@@ -150,11 +154,11 @@ namespace MediaPortal.GUI.Music
     {
       if (m_bRunning)
       {
-        // Probably user pressed H (SWITCH_HOME)
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
         m_bRunning = false;
+        m_pParentWindow = null;
+        GUIWindowManager.UnRoute();
       }
+
       albumInfo = null;
       if (coverArtTexture != null)
       {

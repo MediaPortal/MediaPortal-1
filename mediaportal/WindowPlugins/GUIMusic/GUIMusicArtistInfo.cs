@@ -61,7 +61,6 @@ namespace MediaPortal.GUI.Music
     private MusicArtistInfo artistInfo = null;
     private int coverArtTextureWidth = 0;
     private int coverArtTextureHeight = 0;
-    private bool _prevOverlay = false;
 
     public GUIMusicArtistInfo()
     {
@@ -77,7 +76,7 @@ namespace MediaPortal.GUI.Music
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU || action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
         Close();
         return;
@@ -89,14 +88,24 @@ namespace MediaPortal.GUI.Music
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          _prevOverlay = GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
-          return true;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay = _prevOverlay;
-          return true;
+          {
+            base.OnMessage(message);
+            m_pParentWindow = null;
+            m_bRunning = false;
+            Dispose();
+            DeInitControls();
+            GUILayerManager.UnRegisterLayer(this);
+            return true;
+          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          {
+            base.OnMessage(message);
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            return true;
+          }
       }
       return base.OnMessage(message);
     }
@@ -112,10 +121,6 @@ namespace MediaPortal.GUI.Music
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
-
-      GUIWindowManager.UnRoute();
-      m_pParentWindow = null;
-      m_bRunning = false;
     }
 
     public void DoModal(int dwParentId)
@@ -148,13 +153,20 @@ namespace MediaPortal.GUI.Music
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      base.OnPageDestroy(newWindowId);
+      if (m_bRunning)
+      {
+        m_bRunning = false;
+        m_pParentWindow = null;
+        GUIWindowManager.UnRoute();
+      }
+
       artistInfo = null;
       if (coverArtTexture != null)
       {
         coverArtTexture.Dispose();
         coverArtTexture = null;
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()
