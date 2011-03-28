@@ -33,6 +33,7 @@ namespace MediaPortal.Utils.Web
     private bool _externalBrowser = false;
     private string _encoding = string.Empty;
     private int _delay = 0;
+    private string _agent = string.Empty;
 
     public HTTPRequest() {}
 
@@ -65,6 +66,7 @@ namespace MediaPortal.Utils.Web
       _externalBrowser = request._externalBrowser;
       _encoding = request._encoding;
       _delay = request._delay;
+      _agent = request._agent;
     }
 
     public HTTPRequest(Uri request)
@@ -132,6 +134,13 @@ namespace MediaPortal.Utils.Web
       set { _encoding = value; }
     }
 
+    [XmlAttribute("user-agent")]
+    public string UserAgent
+    {
+      get { return _agent; }
+      set { _agent = value; }
+    }
+
     [XmlAttribute("delay")]
     public int Delay
     {
@@ -162,6 +171,7 @@ namespace MediaPortal.Utils.Web
       newHTTPRequest._externalBrowser = this._externalBrowser;
       newHTTPRequest._cookies = this._cookies;
       newHTTPRequest._delay = this._delay;
+      newHTTPRequest._agent = this._agent;
       return newHTTPRequest;
     }
 
