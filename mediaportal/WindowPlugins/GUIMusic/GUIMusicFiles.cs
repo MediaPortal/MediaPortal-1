@@ -1505,7 +1505,7 @@ namespace MediaPortal.GUI.Music
       }
 
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(selectedItem, ref pl);
+      AddFolderToPlaylist(selectedItem, ref pl, false);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1519,7 +1519,7 @@ namespace MediaPortal.GUI.Music
     private void InsertSelectionToPlaylist()
     {
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl);
+      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl, false);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1536,7 +1536,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="item">GUIListItem to be added to playlist</param>
     /// <param name="pl">Playlist to be added to</param>
-    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl)
+    /// <param name="playCd">Determines is whole CD playback has been requested</param>
+    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl, bool playCD)
     {
       if (item.Label == "..")
       {
@@ -1550,7 +1551,7 @@ namespace MediaPortal.GUI.Music
         GetTagInfo(ref subFolders);
         foreach (GUIListItem subItem in subFolders)
         {
-          AddFolderToPlaylist(subItem, ref pl);
+          AddFolderToPlaylist(subItem, ref pl, playCD);
         }
       }
       else
@@ -1559,12 +1560,11 @@ namespace MediaPortal.GUI.Music
         if (PlayAllOnSingleItemPlayNow)
         {
           GUIListItem selectedItem = facadeLayout.SelectedListItem;
-          if (selectedItem == null)
+          if (playCD)
           {
-            // this should only occur when using the play CD button
-            // on menu in which case no item might be selected
-            // if this is the case then the whole folder will have been
-            // requested to play so add the individual tracks
+            // this is only set in PlayCD.  Playback is requested for whole drive
+            // so only need to add the individual items as this is called
+            // recursively
             pl.Add(ConvertItemToPlaylist(item));
           }
           else if (!selectedItem.IsFolder)
@@ -1679,7 +1679,7 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = new GUIListItem("CD_ROOT_FOLDER");
         item.IsFolder = true;
         item.Path = strDrive;
-        AddFolderToPlaylist(item, ref pl);
+        AddFolderToPlaylist(item, ref pl, true);
 
         pl.Sort(new TrackComparer());
 
