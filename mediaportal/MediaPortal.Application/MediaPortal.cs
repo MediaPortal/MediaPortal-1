@@ -107,6 +107,7 @@ public class MediaPortalApp : D3DApp, IRender
   protected string _dateFormat = string.Empty;
   protected bool _useLongDateFormat = false;
   private bool showLastActiveModule = false;
+  private int _suspendGracePeriodSec = 5;
   private int lastActiveModule = -1;
   private bool lastActiveModuleFullscreen = false;
   private static bool _mpCrashed = false;
@@ -320,7 +321,7 @@ public class MediaPortalApp : D3DApp, IRender
         _waitForTvServer = xmlreader.GetValueAsBool("general", "wait for tvserver", false);
         watchdogEnabled = xmlreader.GetValueAsBool("general", "watchdogEnabled", true);
         restartOnError = xmlreader.GetValueAsBool("general", "restartOnError", false);
-        restartDelay = xmlreader.GetValueAsInt("general", "restart delay", 10);
+        restartDelay = xmlreader.GetValueAsInt("general", "restart delay", 10);        
 
         GUIGraphicsContext._useScreenSelector |= xmlreader.GetValueAsBool("screenselector", "usescreenselector", false);
       }
@@ -752,6 +753,7 @@ public class MediaPortalApp : D3DApp, IRender
     // check to load plugins
     using (Settings xmlreader = new MPSettings())
     {
+      _suspendGracePeriodSec = xmlreader.GetValueAsInt("general", "suspendgraceperiod", 5);
       useScreenSaver = xmlreader.GetValueAsBool("general", "IdleTimer", true);
       timeScreenSaver = xmlreader.GetValueAsInt("general", "IdleTimeValue", 300);
       useIdleblankScreen = xmlreader.GetValueAsBool("general", "IdleBlanking", false);
@@ -1310,7 +1312,7 @@ public class MediaPortalApp : D3DApp, IRender
       EXECUTION_STATE oldState = EXECUTION_STATE.ES_CONTINUOUS;
       bool turnMonitorOn;
       using (Settings xmlreader = new MPSettings())
-      {
+      {        
         turnMonitorOn = xmlreader.GetValueAsBool("general", "turnmonitoronafterresume", false);
         if (turnMonitorOn)
         {
@@ -2515,6 +2517,10 @@ public class MediaPortalApp : D3DApp, IRender
                     restartOptions = RestartOptions.Suspend;
                     Utils.SuspendSystem(false);
                   }
+                  else
+                  {
+                    Log.Info("Main: SUSPEND ignored since suspend graceperiod of {0} sec. is violated.", _suspendGracePeriodSec); 
+                  }
                   break;
 
                 case Action.ActionType.ACTION_HIBERNATE:
@@ -2522,6 +2528,10 @@ public class MediaPortalApp : D3DApp, IRender
                   {
                     restartOptions = RestartOptions.Hibernate;
                     Utils.HibernateSystem(false);
+                  }
+                  else
+                  {
+                    Log.Info("Main: HIBERNATE ignored since hibernate graceperiod of {0} sec. is violated.", _suspendGracePeriodSec);
                   }
                   break;
               }
@@ -2812,7 +2822,7 @@ public class MediaPortalApp : D3DApp, IRender
   private bool IsSuspendOrHibernationAllowed()
   {
     TimeSpan ts = DateTime.Now - _lastOnresume;
-    return (ts.TotalSeconds > 5);
+    return (ts.TotalSeconds > _suspendGracePeriodSec);
   }
 
   #region keypress handlers
