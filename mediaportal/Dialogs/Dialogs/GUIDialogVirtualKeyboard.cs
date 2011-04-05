@@ -155,9 +155,12 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
-      using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
+      if (!_keyboard._useSearchLayout)
       {
-        _keyboard.SmsStyleText = xmlreader.GetValueAsBool("general", "smsstyleinput", true);
+        using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
+        {
+          _keyboard.SmsStyleText = xmlreader.GetValueAsBool("general", "smsstyleinput", true);
+        }
       }
 
       base.OnPageLoad();
