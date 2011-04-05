@@ -2050,11 +2050,8 @@ namespace MediaPortal.GUI.Music
           // we are adding multiple tracks to playlist so need to ensure
           // playback starts on selected item
           int iSelectedItem = facadeLayout.SelectedListItemIndex;
-          if (facadeLayout[0].Label == "..")
-          {
-            // if facade has ".." parent then ignore this
-            iSelectedItem = iSelectedItem - 1;
-          }
+          int numberOfFolders = facadeLayout.Count - pl.Count;
+          iSelectedItem = iSelectedItem - numberOfFolders;
           if (iSelectedItem > 0)
           {
             // playback was not started from first track
