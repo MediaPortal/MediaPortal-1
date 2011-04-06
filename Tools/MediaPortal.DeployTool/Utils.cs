@@ -369,7 +369,7 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    #region Autorun
+    #region NotifyReboot
 
     public static bool AutoRunApplication(string action)
     {
@@ -395,6 +395,20 @@ namespace MediaPortal.DeployTool
         key.Close();
       }
       return true;
+    }
+
+    public static void NotifyReboot(string DisplayName)
+    {
+      // Write Run registry key
+      Utils.AutoRunApplication("set");
+
+      // Notify about the needed reboot
+      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), DisplayName, MessageBoxButtons.OK,
+                      MessageBoxIcon.Exclamation);
+
+      //Close DeployTool
+      Environment.Exit(-3);
+
     }
 
     #endregion

@@ -767,6 +767,11 @@ Section -Post
   ; set rights to programmdata directory and reg keys
   !insertmacro SetRights
 
+  ; start configuration.exe for MediaPortal.xml upgrading
+  StrCpy $R0 "--DeployMode"
+  ${LOG_TEXT} "INFO" "Starting Configuration.exe $R0..."
+  ExecWait '"$INSTDIR\Configuration.exe" $R0'
+	  
   ; start MpTray if it was running before
   ${If} $MPTray_Running == 0
     ${LOG_TEXT} "INFO" "Starting MPTray..."

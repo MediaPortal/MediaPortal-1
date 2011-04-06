@@ -59,7 +59,15 @@ namespace MediaPortal.DeployTool.InstallationChecks
       if (setup != null)
       {
         setup.WaitForExit();
-        if (setup.ExitCode == 0) return true;
+        if (setup.ExitCode == 0)
+        {
+          string targetDir = InstallationProperties.Instance["MPDir"];
+          if (File.Exists(targetDir + "\\reboot"))
+          {
+            Utils.NotifyReboot(GetDisplayName());
+          }
+          return true;
+        }
       }
       return false;
     }

@@ -47,6 +47,7 @@ namespace MediaPortal.Configuration
     private string sectionsConfiguration = string.Empty;
     private bool _avoidVersionChecking = false;
     private bool _debugOptions = false;
+    private bool _preventGUILaunch = false;
 
     private const string mpMutex = "{E0151CBA-7F81-41df-9849-F5298A779EB3}";
     private const string configMutex = "{0BFD648F-A59F-482A-961B-337D70968611}";
@@ -113,20 +114,22 @@ namespace MediaPortal.Configuration
           }
 
           //  deploymode used to upgrade the configuration files
-          if (trimmedArgument == "/upgradesettings")
+          if (trimmedArgument == "--deploymode")
           {
-            Log.Info("Startup: Command line switch \"/UpgradeSettings\" - Upgrading settings configuration file");
+            Log.Info("Running in deploy mode - upgrading config file");
 
             try
             {
               ISettingsProvider mpConfig = new XmlSettingsProvider(MPSettings.ConfigPathName);
               SettingsUpgradeManager.Instance.UpgradeToLatest(mpConfig);
-
-              Log.Info("Startup: Upgrading configuration file completed successfully");
             }
             catch (Exception ex)
             {
               Log.Error("Unhandled exception when upgrading config file '" + MPSettings.ConfigPathName + "'\r\n\r\n" + ex.ToString());
+            }
+            finally
+            {
+              _preventGUILaunch = true;
             }
           }
 
@@ -150,6 +153,10 @@ namespace MediaPortal.Configuration
     /// </summary>
     public void Start()
     {
+      //  If the application GUI shouldn't be loaded
+      if (_preventGUILaunch)
+        return;
+
       using (ProcessLock processLock = new ProcessLock(configMutex))
       {
         if (processLock.AlreadyExists)

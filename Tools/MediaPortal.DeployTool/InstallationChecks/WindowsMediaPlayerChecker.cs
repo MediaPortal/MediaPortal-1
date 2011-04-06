@@ -47,16 +47,25 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      try
+      Process setup = Process.Start(_fileName, "/q");
+      if (setup != null)
       {
-        Process setup = Process.Start(_fileName, "/q");
-        if (setup != null)
+        setup.WaitForExit();
+        // Return codes:
+        //  0               = success, no reboot required
+        //  3010            = success, reboot required
+        //  any other value = failure
+
+        if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
-          setup.WaitForExit();
+          Utils.NotifyReboot(GetDisplayName());
         }
-        return true;
+
+        if (setup.ExitCode == 0)
+        {
+          return true;
+        }
       }
-      catch {}
       return false;
     }
 

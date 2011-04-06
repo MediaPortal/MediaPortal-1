@@ -32,9 +32,6 @@ namespace MediaPortal.Configuration
 
     #region Methods
 
-    private SettingsUpgradeManager()
-    { }
-
     /// <summary>
     /// Upgrades the specified settings collection to the latest structure
     /// </summary>

@@ -53,15 +53,9 @@ namespace MediaPortal.DeployTool.InstallationChecks
         //  3010            = success, reboot required
         //  any other value = failure
 
-        if (setup.ExitCode == 3010 || File.Exists("c:\\vc_force_reboot"))
+        if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
-          // Write Run registry key
-          Utils.AutoRunApplication("set");
-
-          // Notify about the needed reboot
-          MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), GetDisplayName(), MessageBoxButtons.OK,
-                          MessageBoxIcon.Exclamation);
-          Environment.Exit(-3);
+          Utils.NotifyReboot(GetDisplayName());
         }
 
         if (setup.ExitCode == 0)
