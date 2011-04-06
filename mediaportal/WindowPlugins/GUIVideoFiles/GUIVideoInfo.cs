@@ -439,7 +439,7 @@ namespace MediaPortal.GUI.Video
           currentMovie.Watched = 1;
           VideoDatabase.SetMovieWatchedStatus(currentMovie.ID, true);
         }
-        VideoDatabase.SetMovieInfoById(currentMovie.ID, ref currentMovie);
+        VideoDatabase.SetWatched(currentMovie);
       }
 
       if (control == spinDisc)
