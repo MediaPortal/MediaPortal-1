@@ -576,7 +576,7 @@ namespace MediaPortal.GUI.Library
       }
 
       Settings xmlreader = new SKSettings();
-      string skinThemeTexturePath = xmlreader.GetValueAsString(GUIGraphicsContext.SkinName, "Theme", "") + @"\media\";
+      string skinThemeTexturePath = xmlreader.GetValueAsString("Theme", "Name", "") + @"\media\";
       skinThemeTexturePath = skinThemeTexturePath.ToLower();
 
       // Look for textures first in the current theme location.  Theme textures override default textures.

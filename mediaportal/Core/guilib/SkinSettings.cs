@@ -280,28 +280,20 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        bool success = false;
-        string allSettings = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "BooleanSettings", "");
+        string allSettingNames = xmlReader.GetValueAsString("booleansettings", "keys", "");
 
-        // Each pair is separated by a semicolon.
-        string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+        // Each setting name is separated by a comma.
+        string[] settingNames = allSettingNames.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-        foreach (string setting in pairs)
+        foreach (string name in settingNames)
         {
-          // Each name/value pair is separated by an equal sign.
-          string[] nv = setting.Split('=');
-
           // Create the new boolean setting.
           SkinBool newBool = new SkinBool();
-          newBool.Name = nv[0];
-          newBool.Value = bool.TryParse(nv[1], out success);
-          if (!success)
-          {
-            newBool.Value = false;
-          }
+          newBool.Name = name;
+          newBool.Value = xmlReader.GetValueAsBool("booleansettings", name, false);
           newBool.Kind = Kind.PERSISTENT;
 
-          // Add the setting to th dictionary.
+          // Add the setting to the dictionary.
           int key = _skinBoolSettings.Count;
           _skinBoolSettings[key] = newBool;
         }
@@ -314,23 +306,20 @@ namespace MediaPortal.GUI.Library
 
       using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        string allSettings = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "StringSettings", "");
+        string allSettingNames = xmlReader.GetValueAsString("stringsettings", "keys", "");
 
-        // Each pair is separated by a semicolon.
-        string[] pairs = allSettings.Split(new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
+        // Each setting name is separated by a comma.
+        string[] settingNames = allSettingNames.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-        foreach (string setting in pairs)
+        foreach (string name in settingNames)
         {
-          // Each name/value pair is separated by an equal sign.
-          string[] nv = setting.Split('=');
-
           // Create the new string setting.
           SkinString newString = new SkinString();
-          newString.Name = nv[0];
-          newString.Value = nv[1];
+          newString.Name = name;
+          newString.Value = xmlReader.GetValueAsString("stringsettings", name, "");
           newString.Kind = Kind.PERSISTENT;
 
-          // Add the setting to th dictionary.
+          // Add the setting to the dictionary.
           int key = _skinStringSettings.Count;
           _skinStringSettings[key] = newString;
         }
@@ -341,8 +330,7 @@ namespace MediaPortal.GUI.Library
     {
       using (Settings xmlReader = new Settings(_skinSettingsFileName))
       {
-        string skinTheme = xmlReader.GetValueAsString(GUIGraphicsContext.SkinName, "Theme", "");
-        GUIGraphicsContext.Theme = skinTheme;
+        GUIGraphicsContext.Theme = xmlReader.GetValueAsString("theme", "name", "");
         GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
 
         // Set a property with a comma-separated list of theme names.
@@ -391,7 +379,7 @@ namespace MediaPortal.GUI.Library
       using (Settings xmlWriter = new Settings(_skinSettingsFileName))
       {
         // Save all the boolean settings.
-        string allSettings = "";
+        string allSettingNames = "";
         Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
         SkinBool bSetting;
         while (bEnumer.MoveNext())
@@ -399,13 +387,14 @@ namespace MediaPortal.GUI.Library
           bSetting = bEnumer.Current.Value;
           if (bSetting.Kind == Kind.PERSISTENT)
           {
-            allSettings += bSetting.Name + "=" + bSetting.Value + ";";
+            allSettingNames += bSetting.Name + ",";
+            xmlWriter.SetValue("booleansettings", bSetting.Name, bSetting.Value);
           }
         }
-        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "BooleanSettings", allSettings);
+        xmlWriter.SetValue("booleansettings", "keys", allSettingNames);
 
         // Save all the string settings.
-        allSettings = "";
+        allSettingNames = "";
         Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
         SkinString strSetting;
         while (strEnumer.MoveNext())
@@ -413,13 +402,14 @@ namespace MediaPortal.GUI.Library
           strSetting = strEnumer.Current.Value;
           if (strSetting.Kind == Kind.PERSISTENT)
           {
-            allSettings += strSetting.Name + "=" + strSetting.Value + ";";
+            allSettingNames += strSetting.Name + ",";
+            xmlWriter.SetValue("stringsettings", strSetting.Name, strSetting.Value);
           }
         }
-        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "StringSettings", allSettings);
+        xmlWriter.SetValue("stringsettings", "keys", allSettingNames);
 
         // Save discrete settings.
-        xmlWriter.SetValue(GUIGraphicsContext.SkinName, "Theme", GUIGraphicsContext.ThemeName);
+        xmlWriter.SetValue("theme", "name", GUIGraphicsContext.ThemeName);
       }
       Settings.SaveCache();
     }

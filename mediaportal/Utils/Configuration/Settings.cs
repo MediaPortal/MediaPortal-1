@@ -89,7 +89,7 @@ namespace MediaPortal.Profile
       {
         if (string.IsNullOrEmpty(_configPathName))
         {
-          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, "SkinSettings.xml");
+          _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, "SkinSettings.xml");
         }
         return _configPathName;
       }
@@ -100,7 +100,7 @@ namespace MediaPortal.Profile
           _configPathName = value;
           if (!Path.IsPathRooted(_configPathName))
           {
-            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.Config, _configPathName);
+            _configPathName = Configuration.Config.GetFile(Configuration.Config.Dir.SelectedSkin, _configPathName);
           }
         }
         else
