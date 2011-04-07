@@ -316,6 +316,17 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Move the control with the specified id to the end of the control list (will render last; in front of other controls).
+    /// </summary>
+    /// <param name="dwId">ID of the control</param>
+    public void SendToFront(ref GUIControl ctrl)
+    {
+      // Remove the control from the collection and add it back to the end of the collection.
+      Remove(ctrl.GetID);
+      Add(ref ctrl);
+    }
+
+    /// <summary>
     /// This method will call the OnInit() on each control belonging to this window
     /// this gives the control a way to do some pre-initalisation stuff
     /// </summary>
