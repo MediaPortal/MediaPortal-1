@@ -66,8 +66,8 @@ namespace MediaPortal.GUI.Library
                                                              int color,
                                                              float[,] matrix, int textureNo2, float uoff2,
                                                              float voff2,
-                                                             float umax2, float vmax2);
-
+                                                             float umax2, float vmax2,
+                                                             GUIImage.FontEngineBlendMode blendMode);
     #endregion
 
     #region events / delegates
@@ -363,7 +363,8 @@ namespace MediaPortal.GUI.Library
       /// <param name="umaxd"></param>
       /// <param name="vmaxd"></param>
       public void Draw(float x, float y, float nw, float nh, float zrot, float uoff, float voff, float umax, float vmax,
-                       int color, int diffuseTextureNo, float uoffd, float voffd, float umaxd, float vmaxd)
+                       int color, int blendableTextureNo, float uoffd, float voffd, float umaxd, float vmaxd,
+                       GUIImage.FontEngineBlendMode blendMode)
       {
         if (_textureNumber >= 0)
         {
@@ -375,7 +376,8 @@ namespace MediaPortal.GUI.Library
 
           FontEngineDrawTexture2(_textureNumber, x, y, nw, nh, uoff, voff, umax, vmax,
                                  color, localTransform.Matrix,
-                                 diffuseTextureNo, uoffd, voffd, umaxd, vmaxd);
+                                 blendableTextureNo, uoffd, voffd, umaxd, vmaxd,
+                                 blendMode);
         }
         else
         {
