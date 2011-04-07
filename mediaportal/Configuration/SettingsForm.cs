@@ -582,7 +582,7 @@ namespace MediaPortal.Configuration
       AddSection(new ConfigPage(gui, new GuiControls(), false));
       Log.Info("  add gui thumbs section");
       AddSection(new ConfigPage(gui, new GuiThumbs(), false));
-      Log.Info("  add general screensaver section");
+      Log.Info("  add gui screensaver section");
       AddSection(new ConfigPage(gui, new GuiScreensaver(), true));
       Log.Info("  add gui file menu section");
       AddSection(new ConfigPage(gui, new GuiFileMenu(), true));
