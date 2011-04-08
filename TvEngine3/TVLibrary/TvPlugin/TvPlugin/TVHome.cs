@@ -2575,18 +2575,25 @@ namespace TvPlugin
 
     private static void UpdateCurrentEpgValues(Channel ch)
     {
-      GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));          // no epg for this channel
-      GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
-      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
-      GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
-      GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
-      GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
+      if (ch == null || ch.CurrentProgram == null)
+      {
+        GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));          // no epg for this channel
+        GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
+        GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+        GUIPropertyManager.SetProperty("#TV.Record.percent1", "0");
+        GUIPropertyManager.SetProperty("#TV.Record.percent2", "0");
+        GUIPropertyManager.SetProperty("#TV.Record.percent3", "0");
+
+        GUIPropertyManager.SetProperty("#TV.View.channel", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.thumb", String.Empty);
+      }
       if (ch == null)
       {
         Log.Debug("UpdateCurrentEpgValues: no channel, returning");
