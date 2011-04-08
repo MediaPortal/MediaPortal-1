@@ -1227,6 +1227,35 @@ namespace TvLibrary.Implementations.DVB
       if (!_captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
         return false;
 
+      Log.Log.WriteFile("dvb:  DigitalDevices CI: try to connect [demux]");
+      IPin lastFilterOutputPin = null;
+      IPin demuxPinIn = null;
+      IBaseFilter tmpDemux = null;
+      try
+      {
+        tmpDemux = (IBaseFilter)new MPEG2Demultiplexer();
+        _graphBuilder.AddFilter(tmpDemux, "MPEG2-Demultiplexer");
+
+        lastFilterOutputPin = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
+        demuxPinIn = DsFindPin.ByDirection(tmpDemux, PinDirection.Input, 0);
+        
+        // If connection to Demux is possible, CI filter cannot be put between.
+        // this test removes a 30 .. 45 second delay when the graphbuilder tries to 
+        // render Capture->CI->Demux and CI is not enabled for this tuner.
+        if (_graphBuilder.Connect(lastFilterOutputPin, demuxPinIn) == 0)
+        {
+          Log.Log.WriteFile("dvb:  DigitalDevices CI: connection to [demux] successful, CI not available or configured for this tuner.");
+          Log.Log.WriteFile("dvb:  DigitalDevices CI: disconnect [demux], HR:" + lastFilterOutputPin.Disconnect());
+          return false;
+        }
+      }
+      finally
+      {
+        Release.ComObject(pInfo.achName+" pin0", lastFilterOutputPin);
+        Release.ComObject("tifdemux pinin", demuxPinIn);
+        _graphBuilder.RemoveFilter(tmpDemux);
+      }
+
       try
       {
         DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.BDAReceiverComponentsCategory);
