@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<window>
+  <controls>
+		<!-- Title / Genre will be set using Facade Properties -->
+    <control>
+      <description>Rating Stars</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>583</posX>
+      <posY>645</posY>
+      <width>115</width>
+      <height>22</height>
+      <texture>#TVSeries.Series.FiveStarRatingPath</texture>
+      <visible>facadeview.coverflow</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+  </controls>
+</window>

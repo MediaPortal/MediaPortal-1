@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>4755</id>
+  <defaultcontrol>50</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <define>#header.label</define>
+  <define>#header.image</define>
+  <controls>
+    
+    <!-- *** WINDOW DEFAULTS *** -->    
+    
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>1</id>
+      <texture>Background.png</texture>
+      <width>1280</width>
+      <height>720</height>
+    </control>
+    <control>
+      <type>image</type>
+      <id>1</id>
+      <posX>80</posX>
+      <posY>12</posY>
+      <width>210</width>
+      <height>70</height>
+      <texture>#header.image</texture>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <id>1</id>      
+      <posX>300</posX>
+      <posY>30</posY>
+      <width>820</width>
+      <label>#header.label</label>
+      <font>font14</font>
+      <textcolor>White</textcolor>
+    </control>
+    <control>
+      <description>Filter</description>
+      <type>label</type>
+      <id>1</id>      
+      <posX>300</posX>
+      <posY>62</posY>
+      <width>700</width>
+      <label>#OnlineVideos.filter</label>
+      <font>font10</font>
+      <textcolor>ffa9d0f7</textcolor>      
+    </control>    
+    <control>
+      <description>Date</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1244</posX>
+      <posY>6</posY>
+      <label>#date</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1244</posX>
+      <posY>35</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+    </control>
+    
+    <import>myonlinevideos.details.xml</import>
+    <import>myonlinevideos.facade.xml</import>           
+    
+    <!-- *** Bottom part *** -->
+        
+    <control>
+      <description>video rectangle</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>78</posX>
+      <posY>553</posY>
+      <width>219</width>
+      <height>124</height>
+      <texture>Picture_cover.png</texture>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>
+    <control>
+      <description>video preview window</description>
+      <type>videowindow</type>
+      <id>99</id>
+      <posX>86</posX>
+      <posY>558</posY>
+      <width>203</width>
+      <height>115</height>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+      <action>18</action>
+      <textureFocus>tv_green_border.png</textureFocus>
+      <visible>player.hasmedia | videoplayer.usingoverlays</visible>
+      <animation effect="fade" time="250">visiblechange</animation>
+    </control>
+    <control>
+      <id>500</id>
+      <type>image</type>
+      <posX>79</posX>
+      <posY>555</posY>
+      <width>214</width>
+      <height>119</height>
+      <centered>yes</centered>
+      <texture diffuse="Thumb_Mask.png">#selectedthumb</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <visible>!videoplayer.usingoverlays + !player.hasmedia + !Control.IsVisible(51)</visible>
+      <animation effect="fade" time="250" reversible="false">visible</animation>
+    </control>
+    
+    <control>
+      <description>Selected item Label</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>300</posX>
+      <posY>551</posY>
+      <width>780</width>
+      <label>#selecteditem</label>
+      <font>font11</font>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>    
+    <control>
+      <description>Length Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Runtime.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, videos)+control.hastext(502)</visible>
+    </control>    
+    <control>
+      <description>Language Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>248</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, sites)+control.hastext(502)</visible>
+    </control>
+    <control>
+      <description>Videos Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Videos.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, categories)+control.hastext(502)</visible>
+    </control>    
+    <control>
+      <description>Sites Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>579</posY>
+      <width>120</width>
+      <font>font10</font>
+      <label>#OnlineVideos.Translation.Sites.Label:</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>string.equals(#OnlineVideos.state, groups)+control.hastext(502)</visible>
+    </control>    
+    <control>
+      <description>language of site | number of sites in group | number of videos in category | length of video</description>
+      <type>label</type>
+      <id>502</id>
+      <posX>420</posX>
+      <posY>579</posY>
+      <width>780</width>
+      <font>font10</font>
+      <label>#selecteditem2</label>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>!string.equals(#OnlineVideos.state, details)</visible>
+    </control>
+    <control>
+      <description>Description</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>300</posX>
+      <posY>604</posY>
+      <width>780</width>
+      <height>116</height>
+      <colordiffuse>ffffffff</colordiffuse>
+      <font>font10</font>
+      <label>#OnlineVideos.desc</label>
+      <textcolor>White</textcolor>
+      <visible>!Control.IsVisible(51)</visible>
+    </control>
+    
+    <control>
+      <description>Buffering Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>590</posY>
+      <label>#OnlineVideos.buffered % #OnlineVideos.Translation.Buffered.Label</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#OnlineVideos.IsBuffering, true) + !player.hasmedia</visible>
+    </control>
+    
+    <control>
+      <description>Label for Current, Total Amount and Localized Type of items</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#selectedindex/#itemcount #itemtype</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
+    </control>    
+    <control>
+      <description>Label for Total Amount and Localized Type of items</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1195</posX>
+      <posY>551</posY>
+      <label>#itemcount #itemtype</label>
+      <align>right</align>
+      <textcolor>White</textcolor>
+      <font>font10</font>
+      <visible>!string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
+    </control>    
+    
+    <!-- *** HIDDEN MENU *** -->
+
+    <control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <onexit>50</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY>
+      <buttonwidth>106</buttonwidth>
+      <buttonheight>720</buttonheight>      
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <dimColor>00ffffff</dimColor>
+      <control>
+        <type>image</type>
+        <posX>20</posX>
+        <posY>78</posY>
+        <width>340</width>
+        <height>475</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>fffffffff</colorDiffuse>
+        <visible>!Control.HasFocus(50)</visible>
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+      </control>
+      <control>
+        <description>button group</description>
+        <type>group</type>        
+        <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+        <posX>50</posX>
+        <posY>102</posY>
+        <layout>StackLayout</layout>
+        <visible>!Control.HasFocus(50)</visible>
+        <control>
+          <description>View-As</description>
+          <type>button</type>
+          <id>2</id>
+          <label>#OnlineVideos.Translation.LayoutList.Label</label>          
+          <onright>50</onright>
+          <onup>17</onup>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Search</description>
+          <id>10</id>
+          <onright>50</onright>
+          <onup>2</onup>
+          <label>#OnlineVideos.Translation.Search.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <description>select category</description>
+          <type>selectbutton</type>
+          <id>9</id>
+          <onright>50</onright>
+          <onup>10</onup>
+          <label>#OnlineVideos.Translation.Category.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>        
+        <control>
+          <type>selectbutton</type>
+          <description>Max Results</description>
+          <id>5</id>
+          <onright>50</onright>
+          <onup>9</onup>
+          <label>#OnlineVideos.Translation.MaxResults.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <type>selectbutton</type>
+          <description>Order By</description>
+          <id>6</id>
+          <onright>50</onright>
+          <onup>5</onup>
+          <label>#OnlineVideos.Translation.SortOptions.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <type>selectbutton</type>
+          <description>TimeFrame button</description>
+          <id>7</id>
+          <onright>50</onright>
+          <onup>6</onup>
+          <label>#OnlineVideos.Translation.Timeframe.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Update button</description>
+          <id>8</id>
+          <onright>50</onright>
+          <onup>7</onup>
+          <ondown>12</ondown>
+          <label>#OnlineVideos.Translation.Refresh.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>
+        <control>
+          <type>button</type>
+          <description>Do Age Check</description>
+          <id>12</id>
+          <onright>50</onright>
+          <onup>8</onup>
+          <ondown>13</ondown>
+          <label>#OnlineVideos.Translation.EnterPin.Label</label>
+          <font>font11</font>
+          <height>37</height>
+        </control>        
+        <control>
+          <type>button</type>
+          <description>Update Sites</description>
+          <id>13</id>
+          <onright>50</onright>
+          <onup>12</onup>
+          <ondown>2</ondown>
+          <label>#OnlineVideos.Translation.ManageSites.Label</label>
+          <font>font11</font>
+          <height>37</height>
+          <hyperlink>4757</hyperlink>
+        </control>        
+      </control>
+    </control>    
+  </controls>
+</window>

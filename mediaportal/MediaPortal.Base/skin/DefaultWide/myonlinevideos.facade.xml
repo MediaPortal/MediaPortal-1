@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+    <control>
+      <description>group element</description>
+      <type>group</type>
+      <visible>!Control.HasFocus(50)</visible>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <animation effect="fade" time="250">WindowClose</animation>
+      <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
+      <animation effect="slide" time="250" end="800,0">WindowClose</animation>
+      <animation effect="rotatey" start="20" end="0" center="525,0" tween="back" ease="easeout" time="300" reversible="false">hidden</animation>
+      <animation effect="rotatey" start="0" end="20" center="525,0" tween="back" ease="easeout" time="300" reversible="false">visible</animation>
+      <control>
+        <description>composite control consisting of a list control and a thumbnail panel</description>
+        <type>facadeview</type>
+        <id>50</id>
+        <control>
+          <description>listcontrol</description>
+          <type>listcontrol</type>
+          <id>50</id>
+          <posX>80</posX>
+          <width>1120</width>
+          <posY>85</posY>
+          <height>520</height>
+          <onleft>2</onleft>
+          <onright>2</onright>
+          <spinPosX>1180</spinPosX>
+          <spinPoxY>670</spinPoxY>
+          <scrollOffset>2</scrollOffset>
+          <font2>font9</font2>
+          <textYOff2>8</textYOff2>
+        </control>
+        <control>
+          <description>Thumbnail Panel</description>
+          <type>thumbnailpanel</type>
+          <id>50</id>
+          <posX>80</posX>
+          <width>1120</width>
+          <posY>85</posY>
+          <height>540</height>
+          <scrollOffset>1</scrollOffset>
+          <onleft>2</onleft>
+          <onright>50</onright>
+          
+          <textureMask>Picturethumbmask.png</textureMask>
+          <frameNoFocus>Picturethumbframe.png</frameNoFocus>
+          <frameFocus>-</frameFocus>
+          <showFrame>true</showFrame>
+          
+          <enableFocusZoom>yes</enableFocusZoom>                    
+          <zoomXPixels>35</zoomXPixels>
+          <zoomYPixels>35</zoomYPixels>          
+          <hideUnfocusTexture>no</hideUnfocusTexture>          
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>no</renderUnfocusText>
+          <thumbZoom>no</thumbZoom>
+          
+          <!-- smallicons -->
+          <itemWidth>160</itemWidth>
+          <itemHeight>117</itemHeight>
+          <textureWidth>160</textureWidth>
+          <textureHeight>117</textureHeight>
+          <thumbWidth>143</thumbWidth>
+          <thumbHeight>101</thumbHeight>
+          <thumbPosX>9</thumbPosX>
+          <thumbPosY>9</thumbPosY>
+          
+          <!-- largeicons -->
+          <itemWidthBig>223</itemWidthBig>
+          <itemHeightBig>156</itemHeightBig>
+          <textureWidthBig>223</textureWidthBig>
+          <textureHeightBig>156</textureHeightBig>
+          <thumbWidthBig>201</thumbWidthBig>
+          <thumbHeightBig>136</thumbHeightBig>
+          <thumbPosXBig>11</thumbPosXBig>
+          <thumbPosYBig>11</thumbPosYBig>
+
+          <spinCanFocus>no</spinCanFocus>          
+          <spinPosX>1180</spinPosX>
+          <spinPoxY>680</spinPoxY>          
+        </control>        
+      </control>
+    </control>
+  </controls>
+</window>

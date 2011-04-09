@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+    <id>9811</id>
+    <defaultcontrol>50</defaultcontrol>
+    <allowoverlay>no</allowoverlay>
+		<!-- Shadows under blue/grey text -->
+    <define>#shadow.dark:ff111111</define>
+    <!-- Shadows under white text -->
+    <define>#shadow.light:ff222222</define>   
+    <controls>
+			<import>TVSeries.dummy.xml</import>        
+		
+			<!-- Default Background -->
+			<control>
+				<description>Default Background</description>
+				<type>image</type>
+				<id>0</id>
+				<posX>0</posX>
+				<posY>0</posY>
+				<width>1280</width>
+				<height>720</height>
+				<texture>background.png</texture>					
+			</control>
+			<control>
+				<description>Default Background when no Fanart Displayed</description>
+				<type>image</type>
+				<id>0</id>
+				<posX>0</posX>
+				<posY>0</posY>
+				<width>1280</width>
+				<height>720</height>
+				<texture>background_tvseries.png</texture>
+				<!-- Avoid default artwork flash when first entering plugin -->
+				<visible>!string.equals(#TVSeries.Title,)</visible>
+      </control>
+		
+			<!-- Fanart Fading -->
+			<control>
+				<description>Fanart Background #1</description>
+				<type>image</type>
+				<id>524</id>
+				<posX>0</posX>
+				<posY>0</posY>
+				<width>1280</width>
+				<height>720</height>
+				<texture>#TVSeries.Fanart.1</texture>
+				<animation effect="fade" time="300">visible</animation>
+				<animation effect="fade" time="300" delay="300">hidden</animation>
+			</control>
+			<control>
+				<description>Fanart Background #2</description>
+				<type>image</type>
+				<id>525</id>
+				<posX>0</posX>
+				<posY>0</posY>
+				<width>1280</width>
+				<height>720</height>
+				<texture>#TVSeries.Fanart.2</texture>
+				<animation effect="fade" time="300">visible</animation>
+				<animation effect="fade" time="300" delay="300">hidden</animation>
+			</control> 				        
+	
+			<import>TVSeries.HiddenMenu.xml</import>
+			<import>TVSeries.Facade.xml</import>		
+			<import>TVSeries.SeriesAndSeasonListPosters.xml</import>
+			<import>TVSeries.SeriesWideBanners.xml</import>
+			<import>TVSeries.SeriesAndSeasonFilmstrip.xml</import>
+			<!--<import>TVSeries.SeriesListBanners.xml</import>-->		
+			<import>TVSeries.EpisodeList.xml</import>
+			<import>TVSeries.GroupList.xml</import>
+			<import>TVSeries.Coverflow.xml</import>
+			<import>TVSeries.TopBar.xml</import>
+			<import>TVSeries.Overlay.xml</import>			
+			
+			<!-- IMPORT PROCESS ANIMATION -->
+			<control>
+				<description>Import Animation</description>
+				<type>animation</type>
+				<id>51</id>
+				<posX>610</posX>
+				<posY>1</posY>
+				<width>48</width>
+				<height>48</height>
+				<textures>common.waiting.1.png;common.waiting.2.png;common.waiting.3.png;common.waiting.4.png;common.waiting.5.png;common.waiting.6.png;common.waiting.7.png;common.waiting.8.png</textures>
+				<Duration>0:0:01.5</Duration>
+				<keepaspectratio>yes</keepaspectratio>
+			</control>
+
+    </controls>
+</window>
