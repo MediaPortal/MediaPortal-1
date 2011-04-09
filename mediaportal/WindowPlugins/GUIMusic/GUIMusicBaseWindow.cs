@@ -211,17 +211,6 @@ namespace MediaPortal.GUI.Music
 
         PlayAllOnSingleItemPlayNow = xmlreader.GetValueAsBool("musicfiles", "addall", true);
 
-        int defaultSort = (int)MusicSort.SortMethod.Name;
-
-        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
-            (handler.View.Filters.Count > 0))
-        {
-          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
-          defaultSort = (int)GetSortMethod(def.DefaultSort);
-        }
-
-        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", defaultSort);
-
         for (int i = 0; i < _sortModes.Length; ++i)
         {
           _sortTags1[i] = xmlreader.GetValueAsString("mymusic", _sortModes[i] + "1", _defaultSortTags1[i]);
@@ -318,15 +307,6 @@ namespace MediaPortal.GUI.Music
         Log.Error("GUIMusicBaseWindow::GetSortMethod: Unknown String - " + s);
       }
       return MusicSort.SortMethod.Name;
-    }
-
-    protected override void SaveSettings()
-    {
-      base.SaveSettings();
-      using (Profile.Settings xmlwriter = new Profile.MPSettings())
-      {
-        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
-      }
     }
 
     #endregion
@@ -635,7 +615,7 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      if (isAsynch && bw.CancellationPending)
+      if (null != bw && isAsynch && bw.CancellationPending)
         return;
 
       // clear current playlist
@@ -647,7 +627,7 @@ namespace MediaPortal.GUI.Music
       // add each item of the playlist to the playlistplayer
       for (int i = 0; i < playlist.Count; ++i)
       {
-        if (isAsynch && bw.CancellationPending)
+        if (null != bw && isAsynch && bw.CancellationPending)
           return;
 
         PlayListItem playListItem = playlist[i];
@@ -666,7 +646,7 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      if (isAsynch && bw.CancellationPending)
+      if (null != bw && isAsynch && bw.CancellationPending)
         return;
 
       ReplacePlaylist(newPlaylist);
@@ -831,32 +811,6 @@ namespace MediaPortal.GUI.Music
 
     public static string GetCoverArt(bool isfolder, string filename, MusicTag tag)
     {
-      // attempt to load folder.jpg
-      if (!Util.Utils.IsAVStream(filename))
-      {
-        string strFolderThumb = string.Empty;
-        if (isfolder)
-        {
-          strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
-        }
-        else
-        {
-          strFolderThumb = Util.Utils.GetLocalFolderThumb(filename);
-        }
-
-        if (Util.Utils.FileExistsInCache(strFolderThumb))
-        {
-          return strFolderThumb;
-        }
-        else
-        {
-          if (_createMissingFolderThumbCache)
-          {
-            FolderThumbCacher thumbworker = new FolderThumbCacher(filename, false);
-          }
-        }
-      }
-
       string strAlbumName = string.Empty;
       string strArtistName = string.Empty;
       if (tag != null)
@@ -884,6 +838,32 @@ namespace MediaPortal.GUI.Music
           }
         }
         return strThumb;
+      }
+
+      // attempt to load folder.jpg
+      if (!Util.Utils.IsAVStream(filename))
+      {
+        string strFolderThumb = string.Empty;
+        if (isfolder)
+        {
+          strFolderThumb = Util.Utils.GetLocalFolderThumbForDir(filename);
+        }
+        else
+        {
+          strFolderThumb = Util.Utils.GetLocalFolderThumb(filename);
+        }
+
+        if (Util.Utils.FileExistsInCache(strFolderThumb))
+        {
+          return strFolderThumb;
+        }
+        else
+        {
+          if (_createMissingFolderThumbCache)
+          {
+            FolderThumbCacher thumbworker = new FolderThumbCacher(filename, false);
+          }
+        }
       }
 
       //TODO: consider lookup of embedded artwork
@@ -2099,11 +2079,8 @@ namespace MediaPortal.GUI.Music
           // we are adding multiple tracks to playlist so need to ensure
           // playback starts on selected item
           int iSelectedItem = facadeLayout.SelectedListItemIndex;
-          if (facadeLayout[0].Label == "..")
-          {
-            // if facade has ".." parent then ignore this
-            iSelectedItem = iSelectedItem - 1;
-          }
+          int numberOfFolders = facadeLayout.Count - pl.Count;
+          iSelectedItem = iSelectedItem - numberOfFolders;
           if (iSelectedItem > 0)
           {
             // playback was not started from first track
@@ -2188,7 +2165,7 @@ namespace MediaPortal.GUI.Music
 
     void playlistPlayer_PlaylistChanged(PlayListType nPlayList, PlayList playlist)
     {
-      if (nPlayList == GetPlayListType() && !ignorePlaylistChange && bw.IsBusy && !bw.CancellationPending)
+      if (null != bw && nPlayList == GetPlayListType() && !ignorePlaylistChange && bw.IsBusy && !bw.CancellationPending)
         bw.CancelAsync();
     }
 

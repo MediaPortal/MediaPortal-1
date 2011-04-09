@@ -1918,8 +1918,16 @@ namespace SetupTv.Sections
       tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedIndex - 1;
       tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex - 1;
       tuneChannel.InnerFecRate = (BinaryConvolutionCodeRate)mpComboBoxInnerFecRate.SelectedIndex - 1;
-      tuneChannel.Pilot = (Pilot)mpComboBoxPilot.SelectedIndex - 1;
-      tuneChannel.Rolloff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;
+      if (checkEnableDVBS2.Checked)
+      {
+        tuneChannel.Pilot = (Pilot)mpComboBoxPilot.SelectedIndex - 1;
+        tuneChannel.Rolloff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;
+      }
+      else
+      {
+        tuneChannel.Pilot = Pilot.NotSet;
+        tuneChannel.Rolloff = RollOff.NotSet;
+      }
       return tuneChannel;
     }
 

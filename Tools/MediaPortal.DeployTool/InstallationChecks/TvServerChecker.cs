@@ -65,13 +65,20 @@ namespace MediaPortal.DeployTool.InstallationChecks
       Process setup = Process.Start(_fileName,
                                     String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam,
                                                   pwdparam, targetDir));
-
-      if (setup == null)
+ 
+      if (setup != null)
       {
-        return false;
+        setup.WaitForExit();
+        if (setup.ExitCode == 0)
+        {
+          if (File.Exists(targetDir + "\\reboot"))
+          {
+            Utils.NotifyReboot(GetDisplayName());
+          }
+          return true;
+        }
       }
-      setup.WaitForExit();
-      return setup.ExitCode == 0;
+      return false;
     }
 
     public bool UnInstall()

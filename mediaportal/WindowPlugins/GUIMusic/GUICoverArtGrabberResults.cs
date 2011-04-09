@@ -116,7 +116,6 @@ namespace MediaPortal.GUI.Music
 
     private string _ThumbPath = string.Empty;
     private Texture coverArtTexture = null;
-    private bool _prevOverlay = false;
 
     private string _Artist = string.Empty;
     private string _Album = string.Empty;
@@ -191,10 +190,6 @@ namespace MediaPortal.GUI.Music
     {
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
-
-      GUIWindowManager.UnRoute();
-      m_pParentWindow = null;
-      m_bRunning = false;
     }
 
     public void DoModal(int dwParentId)
@@ -233,18 +228,17 @@ namespace MediaPortal.GUI.Music
     {
       if (m_bRunning)
       {
-        // Probably user pressed H (SWITCH_HOME)
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
         m_bRunning = false;
+        m_pParentWindow = null;
+        GUIWindowManager.UnRoute();
       }
-      base.OnPageDestroy(newWindowId);
 
       if (coverArtTexture != null)
       {
         coverArtTexture.Dispose();
         coverArtTexture = null;
       }
+      base.OnPageDestroy(newWindowId);
     }
 
     protected override void OnPageLoad()
@@ -321,21 +315,27 @@ namespace MediaPortal.GUI.Music
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          _prevOverlay = GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
-          GUIPropertyManager.SetProperty("#currentmodule", GUILocalizeStrings.Get(4515));
-          return true;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay = _prevOverlay;
-          return true;
-
+          {
+            base.OnMessage(message);
+            m_pParentWindow = null;
+            m_bRunning = false;
+            Dispose();
+            DeInitControls();
+            GUILayerManager.UnRegisterLayer(this);
+            return true;
+          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          {
+            base.OnMessage(message);
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            return true;
+          }
         default:
           return base.OnMessage(message);
       }
-
-      //return base.OnMessage(message);
     }
 
     private void SetButtonVisibility()

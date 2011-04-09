@@ -191,6 +191,28 @@ namespace MediaPortal.GUI.Music
       get { return "mymusicplaylist"; }
     }
 
+    protected override void LoadSettings()
+    {
+      base.LoadSettings();
+      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
+      {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
+      }
+    }
+
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
+      }
+    }
+  
     // Fires every time - especially ACTION_MUSIC_PLAY even if we're already playing stuff
     private void OnNewAction(Action action)
     {
@@ -315,7 +337,7 @@ namespace MediaPortal.GUI.Music
 
       SelectCurrentPlayingSong();
 
-      if (bw.IsBusy && !bw.CancellationPending)
+      if (null != bw && bw.IsBusy && !bw.CancellationPending)
         ShowWaitCursor();
     }
 
@@ -1604,7 +1626,7 @@ namespace MediaPortal.GUI.Music
     private void bw_DoWork(object sender, DoWorkEventArgs e)
     {
       LoadPlayList(Path.Combine(_playlistFolder, _defaultPlaylist), false, true, true);
-      if (bw.CancellationPending)
+      if (null != bw && bw.CancellationPending)
         e.Cancel = true;
     }
 

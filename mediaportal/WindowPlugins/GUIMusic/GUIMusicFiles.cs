@@ -140,6 +140,7 @@ namespace MediaPortal.GUI.Music
     private string _destination = string.Empty;
     private string _fileMenuPinCode = string.Empty;
     private bool _useFileMenu = false;
+    private bool _stripArtistPrefixes = false;
 
     private DateTime Previous_ACTION_PLAY_Time = DateTime.Now;
     private TimeSpan AntiRepeatInterval = new TimeSpan(0, 0, 0, 0, 500);
@@ -221,11 +222,15 @@ namespace MediaPortal.GUI.Music
     #region Serialisation
 
     protected override void LoadSettings()
-    {
+    {   
       base.LoadSettings();
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
+        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
+        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
+        currentSortMethod = (MusicSort.SortMethod)xmlreader.GetValueAsInt(SerializeName, "sortmethod", (int)MusicSort.SortMethod.Name);
+        _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         MusicState.StartWindow = xmlreader.GetValueAsInt("music", "startWindow", GetID);
         MusicState.View = xmlreader.GetValueAsString("music", "startview", string.Empty);
         _useFileMenu = xmlreader.GetValueAsBool("filemenu", "enabled", true);
@@ -265,6 +270,17 @@ namespace MediaPortal.GUI.Music
         {
           currentFolder = string.Empty;
         }
+      }
+    }
+
+    protected override void SaveSettings()
+    {
+      base.SaveSettings();
+      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
+      {
+        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
+        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
+        xmlwriter.SetValue(SerializeName, "sortmethod", (int)currentSortMethod);
       }
     }
 
@@ -1462,6 +1478,10 @@ namespace MediaPortal.GUI.Music
           tag = TagReader.TagReader.ReadTag(pItem.Path);
           if (tag != null)
           {
+            tag.Artist = Util.Utils.FormatMultiItemMusicStringTrim(tag.Artist, _stripArtistPrefixes);
+            tag.AlbumArtist = Util.Utils.FormatMultiItemMusicStringTrim(tag.AlbumArtist, _stripArtistPrefixes);
+            tag.Genre = Util.Utils.FormatMultiItemMusicStringTrim(tag.Genre, false);
+            tag.Composer = Util.Utils.FormatMultiItemMusicStringTrim(tag.Composer, _stripArtistPrefixes);
             pItem.MusicTag = tag;
             pItem.Duration = tag.Duration;
             pItem.Year = tag.Year;
@@ -1488,7 +1508,7 @@ namespace MediaPortal.GUI.Music
       }
 
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(selectedItem, ref pl);
+      AddFolderToPlaylist(selectedItem, ref pl, false);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1502,7 +1522,7 @@ namespace MediaPortal.GUI.Music
     private void InsertSelectionToPlaylist()
     {
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl);
+      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl, false);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1519,7 +1539,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="item">GUIListItem to be added to playlist</param>
     /// <param name="pl">Playlist to be added to</param>
-    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl)
+    /// <param name="playCd">Determines is whole CD playback has been requested</param>
+    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl, bool playCD)
     {
       if (item.Label == "..")
       {
@@ -1533,7 +1554,7 @@ namespace MediaPortal.GUI.Music
         GetTagInfo(ref subFolders);
         foreach (GUIListItem subItem in subFolders)
         {
-          AddFolderToPlaylist(subItem, ref pl);
+          AddFolderToPlaylist(subItem, ref pl, playCD);
         }
       }
       else
@@ -1542,12 +1563,11 @@ namespace MediaPortal.GUI.Music
         if (PlayAllOnSingleItemPlayNow)
         {
           GUIListItem selectedItem = facadeLayout.SelectedListItem;
-          if (selectedItem == null)
+          if (playCD)
           {
-            // this should only occur when using the play CD button
-            // on menu in which case no item might be selected
-            // if this is the case then the whole folder will have been
-            // requested to play so add the individual tracks
+            // this is only set in PlayCD.  Playback is requested for whole drive
+            // so only need to add the individual items as this is called
+            // recursively
             pl.Add(ConvertItemToPlaylist(item));
           }
           else if (!selectedItem.IsFolder)
@@ -1662,7 +1682,7 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = new GUIListItem("CD_ROOT_FOLDER");
         item.IsFolder = true;
         item.Path = strDrive;
-        AddFolderToPlaylist(item, ref pl);
+        AddFolderToPlaylist(item, ref pl, true);
 
         pl.Sort(new TrackComparer());
 
@@ -1865,7 +1885,7 @@ namespace MediaPortal.GUI.Music
 
     public string Author()
     {
-      return "Frodo, SteveV, rtv, hwahrmann";
+      return "Frodo, SteveV, rtv, hwahrmann, JamesonUK";
     }
 
     public string Description()

@@ -523,6 +523,9 @@ namespace MediaPortal.Configuration.Sections
 
     private void listViewPlugins_DoubleClick(object sender, EventArgs e)
     {
+      if (listViewPlugins.FocusedItem == null) return;
+      if (listViewPlugins.FocusedItem.Tag == null) return;
+
       ItemTag itemTag = (ItemTag)listViewPlugins.FocusedItem.Tag;
       if (itemTag.IsIncompatible)
       {

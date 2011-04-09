@@ -153,7 +153,7 @@ namespace MediaPortal.GUI.Music
 
     protected override string SerializeName
     {
-      get { return "mymusic" + handler.CurrentView; }
+      get { return "mymusicgenres"; }
     }
 
     protected override Layout CurrentLayout

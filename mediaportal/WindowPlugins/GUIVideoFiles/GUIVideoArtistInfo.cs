@@ -54,9 +54,7 @@ namespace MediaPortal.GUI.Video
     private ViewMode viewmode = ViewMode.Biography;
 
     private IMDBActor currentActor = null;
-    private bool _prevOverlay = false;
-    private string imdbCoverArtUrl = string.Empty;
-
+    
     public GUIVideoArtistInfo()
     {
       GetID = (int)Window.WINDOW_VIDEO_ARTIST_INFO;
@@ -83,14 +81,24 @@ namespace MediaPortal.GUI.Video
     {
       switch (message.Message)
       {
-        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
-          _prevOverlay = GUIGraphicsContext.Overlay;
-          base.OnMessage(message);
-          return true;
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
-          base.OnMessage(message);
-          GUIGraphicsContext.Overlay = _prevOverlay;
-          return true;
+          {
+            base.OnMessage(message);
+            m_pParentWindow = null;
+            m_bRunning = false;
+            Dispose();
+            DeInitControls();
+            GUILayerManager.UnRegisterLayer(this);
+            return true;
+          }
+        case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
+          {
+            base.OnMessage(message);
+            GUIGraphicsContext.Overlay = base.IsOverlayAllowed;
+            m_pParentWindow = GUIWindowManager.GetWindow(m_dwParentWindowID);
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
+            return true;
+          }
       }
       return base.OnMessage(message);
     }
@@ -99,17 +107,8 @@ namespace MediaPortal.GUI.Video
 
     private void Close()
     {
-      GUIWindowManager.IsSwitchingToNewWindow = true;
-      lock (this)
-      {
-        m_bRunning = false;
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
-        OnMessage(msg);
-
-        GUIWindowManager.UnRoute();
-        m_pParentWindow = null;
-      }
-      GUIWindowManager.IsSwitchingToNewWindow = false;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, GetID, 0, 0, 0, 0, null);
+      OnMessage(msg);
     }
 
     public void DoModal(int dwParentId)
@@ -121,17 +120,14 @@ namespace MediaPortal.GUI.Video
         m_dwParentWindowID = 0;
         return;
       }
-
-      GUIWindowManager.IsSwitchingToNewWindow = true;
+      
       GUIWindowManager.RouteToWindow(GetID);
 
-      // active this window...
+      // activate this window...
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, GetID, 0, 0, 0, 0, null);
       OnMessage(msg);
 
       GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Dialog);
-
-      GUIWindowManager.IsSwitchingToNewWindow = false;
       m_bRunning = true;
       while (m_bRunning && GUIGraphicsContext.CurrentState == GUIGraphicsContext.State.RUNNING)
       {
@@ -152,14 +148,14 @@ namespace MediaPortal.GUI.Video
     {
       if (m_bRunning)
       {
-        // User probably pressed H (SWITCH_HOME)
         m_bRunning = false;
-        GUIWindowManager.UnRoute();
         m_pParentWindow = null;
+        GUIWindowManager.UnRoute();
       }
 
-      base.OnPageDestroy(newWindowId);
       currentActor = null;
+
+      base.OnPageDestroy(newWindowId);
     }
 
 
@@ -240,7 +236,7 @@ namespace MediaPortal.GUI.Video
         imgCoverArt.AllocResources();
       }
     }
-
+    
     #region IRenderLayer
 
     public bool ShouldRenderLayer()

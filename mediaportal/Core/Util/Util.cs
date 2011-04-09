@@ -4121,6 +4121,46 @@ namespace MediaPortal.Util
       files.Sort();
       return files.ToArray();
     }
+
+    /// <summary>
+    /// Tags such as artist allow multiple values.  We expect these to be separated
+    /// by ; but for formatting and easier searching we show this as |
+    /// trim off start and end separators
+    /// </summary>
+    /// <param name="tagValue">The value stored in the tag</param>
+    /// <param name="stripArtistPrefixes">Whether to strip prefixes, eg The Beatles => Beatles, The</param>
+    /// <returns></returns>
+    public static string FormatMultiItemMusicStringTrim(string tagValue, bool stripArtistPrefixes)
+    {
+      String formattedString = FormatMultiItemMusicString(tagValue, stripArtistPrefixes);
+      char[] charsToTrim = { '|', ' ' };
+      return formattedString.Trim(charsToTrim);
+    }
+
+    /// <summary>
+    /// Tags such as artist allow multiple values.  We expect these to be separated
+    /// by ; but for formatting and easier searching we show this as |
+    /// </summary>
+    /// <param name="tagValue">The value stored in the tag</param>
+    /// <param name="stripArtistPrefixes">Whether to strip prefixes, eg The Beatles => Beatles, The</param>
+    /// <returns></returns>
+    public static string FormatMultiItemMusicString(string tagValue, bool stripArtistPrefixes)
+    {
+      string[] strSplit = tagValue.Split(new char[] { ';', '|' });
+      // Can't use a simple String.Join as i need to trim all the elements 
+      string strFormattedString = "| ";
+      foreach (string strTmp in strSplit)
+      {
+        string s = strTmp.Trim();
+        // Strip Artist / AlbumArtist but NOT Genres
+        if (stripArtistPrefixes)
+        {
+          Utils.StripArtistNamePrefix(ref s, true);
+        }
+        strFormattedString += String.Format("{0} | ", s.Trim());
+      }
+      return strFormattedString;
+    }
   }
 
   public static class GenericExtensions

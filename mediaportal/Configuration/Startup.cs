@@ -114,7 +114,7 @@ namespace MediaPortal.Configuration
           }
 
           //  deploymode used to upgrade the configuration files
-          if (trimmedArgument == "/deploymode")
+          if (trimmedArgument == "--deploymode")
           {
             Log.Info("Running in deploy mode - upgrading config file");
 

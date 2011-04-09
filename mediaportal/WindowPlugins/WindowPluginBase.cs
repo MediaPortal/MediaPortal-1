@@ -51,32 +51,9 @@ namespace WindowPlugins
 
     #region Serialisation
 
-    protected virtual void LoadSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlreader = new MediaPortal.Profile.MPSettings())
-      {
-        int defaultLayout = (int)Layout.List;
-        bool defaultAscending = true;
-        if ((handler != null) && (handler.View != null) && (handler.View.Filters != null) &&
-            (handler.View.Filters.Count > 0))
-        {
-          FilterDefinition def = (FilterDefinition)handler.View.Filters[0];
-          defaultLayout = (int)GetLayoutNumber(def.DefaultView);
-          defaultAscending = def.SortAscending;
-        }
-        currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", defaultLayout);
-        m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", defaultAscending);
-      }
-    }
+    protected virtual void LoadSettings() { }
 
-    protected virtual void SaveSettings()
-    {
-      using (MediaPortal.Profile.Settings xmlwriter = new MediaPortal.Profile.MPSettings())
-      {
-        xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
-        xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-      }
-    }
+    protected virtual void SaveSettings() { }
 
     #endregion
 

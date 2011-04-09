@@ -76,6 +76,9 @@ namespace TvService
     private Thread _schedulerThread = null;
     private TvBusinessLayer _layer = new TvBusinessLayer();
 
+    private static ManualResetEvent _evtSchedulerCtrl;
+    private static ManualResetEvent _evtSchedulerWaitCtrl;
+
     /// <summary>
     /// Indicates how many free cards to try for recording
     /// </summary>
@@ -105,7 +108,7 @@ namespace TvService
     /// </summary>
     public void ResetTimer()
     {
-      DoScheduleWork();
+      _evtSchedulerWaitCtrl.Set();
     }
 
     /// <summary>
@@ -283,6 +286,9 @@ namespace TvService
 
     private void StartSchedulerThread()
     {
+      _evtSchedulerCtrl = new ManualResetEvent(false);
+      _evtSchedulerWaitCtrl = new ManualResetEvent(true);
+      
       // setup scheduler thread.						
       // thread already running, then leave it.
       if (_schedulerThread != null)
@@ -302,12 +308,20 @@ namespace TvService
 
     private void StopSchedulerThread()
     {
-      if (_schedulerThread != null)
+      if (_schedulerThread != null && _schedulerThread.IsAlive)
       {
-        if (_schedulerThread.IsAlive)
+        try
         {
+          _evtSchedulerWaitCtrl.Set();
+          _evtSchedulerCtrl.Set();
+          _schedulerThread.Join();          
           Log.Debug("Scheduler: thread stopped.");
-          _schedulerThread.Abort();
+        }
+        catch (Exception) { }
+        finally
+        {
+          _evtSchedulerWaitCtrl.Close();
+          _evtSchedulerCtrl.Close();
         }
       }
     }
@@ -328,17 +342,35 @@ namespace TvService
 
     private void SchedulerWorker()
     {
-      while (true)
+      try
+      {              
+        bool firstRun = true;
+        while (!_evtSchedulerCtrl.WaitOne(1))
+        {
+          bool resetTimer = _evtSchedulerWaitCtrl.WaitOne(SCHEDULE_THREADING_TIMER_INTERVAL);
+
+          try
+          {
+            DoScheduleWork();
+          }
+          catch (Exception ex)
+          {
+            Log.Write("scheduler: SchedulerWorker inner exception {0}", ex);
+          }
+          finally
+          {
+            if (resetTimer || firstRun)
+            {
+              _evtSchedulerWaitCtrl.Reset();
+            }
+            firstRun = false;
+          }
+        }
+        _evtSchedulerWaitCtrl.Set();
+      }
+      catch (Exception ex2)
       {
-        try
-        {
-          DoScheduleWork();
-        }
-        catch (Exception ex)
-        {
-          Log.Write("scheduler: SchedulerWorker exception {0}", ex);
-        }
-        Thread.Sleep(SCHEDULE_THREADING_TIMER_INTERVAL);
+        Log.Write("scheduler: SchedulerWorker outer exception {0}", ex2);
       }
     }
 
@@ -444,7 +476,6 @@ namespace TvService
       if (schedule.Canceled != Schedule.MinSchedule ||
           IsRecordingSchedule(schedule.IdSchedule, out card) ||
           schedule.IsSerieIsCanceled(new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)))
-
       {
         isScheduleReadyForRecording = false;
       }
@@ -534,12 +565,15 @@ namespace TvService
                         // Handle schedules so TV Service won't try to re-schedule them every 15 seconds
                         if ((ScheduleRecordingType)newRecording.Schedule.ScheduleType == ScheduleRecordingType.Once)
                         {
-                          // even for Once type , the schedule can initially be a serie
-                          if (newRecording.IsSerie)
-                          {
-                            _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
-                                                               newRecording.Program);
+                          // One-off schedules can be spawned for some schedule types to record the actual episode
+                          // if this is the case then add a cancelled schedule for this episode against the parent
+                          int parentScheduleID = newRecording.Schedule.IdParentSchedule;
+                          if (parentScheduleID > 0)
+                          {                            
+                            CancelSchedule(newRecording, parentScheduleID);
                           }
+
+                          
                           IUser user = newRecording.User;
                           _tvController.Fire(this,
                                              new TvServerEventArgs(TvServerEventType.ScheduleDeleted,
@@ -551,12 +585,7 @@ namespace TvService
                         }
                         else
                         {
-                          CanceledSchedule canceled = new CanceledSchedule(newRecording.Schedule.IdSchedule,
-                                                                           newRecording.Program.IdChannel,
-                                                                           newRecording.Program.StartTime);
-                          canceled.Persist();
-                          _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
-                                                             newRecording.Program);
+                          CancelSchedule(newRecording, newRecording.Schedule.IdSchedule);
                         }
 
                         Log.Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
@@ -588,6 +617,16 @@ namespace TvService
         Log.Error("Scheduler: Error checking schedule {0} for repeatings {1}", ToRecordTitle, ex1.ToString());
       }
       return NewRecordingNeeded;
+    }
+
+    private void CancelSchedule(RecordingDetail newRecording, int scheduleId)
+    {
+      CanceledSchedule canceled = new CanceledSchedule(scheduleId,
+                                                       newRecording.Program.IdChannel,
+                                                       newRecording.Program.StartTime);
+      canceled.Persist();
+      _episodeManagement.OnScheduleEnded(newRecording.FileName, newRecording.Schedule,
+                                         newRecording.Program);
     }
 
     /// <summary>
@@ -1446,11 +1485,12 @@ namespace TvService
                 recording.Program.EndTime, recording.Schedule.PostRecordInterval);
       if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
       {
-        CanceledSchedule canceled = new CanceledSchedule(recording.Schedule.IdSchedule, recording.Program.IdChannel,
-                                                         recording.Program.StartTime);
-        canceled.Persist();
+        CancelSchedule(recording, recording.Schedule.IdSchedule);
       }
-      _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+      else
+      {
+        _episodeManagement.OnScheduleEnded(recording.FileName, recording.Schedule, recording.Program);
+      }
     }
 
     private void StopRecordOnOnceSchedule(RecordingDetail recording)

@@ -49,29 +49,36 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      try
+      // Extract package
+      Process setup = Process.Start(_fileName, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
+      if (setup != null)
       {
-        // Extract package
-        Process setup = Process.Start(_fileName, "/q /t:\"" + Path.GetTempPath() + "\\directx9c\"");
-        if (setup != null)
+        setup.WaitForExit();
+      }
+
+      // Install package
+      string exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
+
+      setup = Process.Start(exe, "/silent");
+      if (setup != null)
+      {
+        setup.WaitForExit();
+        // Return codes:
+        //  0               = success, no reboot required
+        //  3010            = success, reboot required
+        //  any other value = failure
+
+        if (setup.ExitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
-          setup.WaitForExit();
+          Utils.NotifyReboot(GetDisplayName());
         }
 
-        // Install package
-        string exe = Path.GetTempPath() + "\\directx9c\\DXSetup.exe";
-
-        setup = Process.Start(exe, "/silent");
-        if (setup != null)
+        if (setup.ExitCode == 0)
         {
-          setup.WaitForExit();
+          return true;
         }
-        return true;
       }
-      catch
-      {
-        return false;
-      }
+      return false;
     }
 
     public bool UnInstall()

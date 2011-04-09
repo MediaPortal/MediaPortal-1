@@ -49,7 +49,7 @@ namespace MediaPortal.GUI.Library
       public Kind Kind;
     } ;
 
-    private static string _skinSettingsFileName = Config.GetFile(Config.Dir.Config, "SkinSettings.xml");
+    private static string _skinSettingsFileName = Config.GetFile(Config.Dir.SelectedSkin, "SkinSettings.xml");
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
     private static string _loadedSkinSettings = "";
