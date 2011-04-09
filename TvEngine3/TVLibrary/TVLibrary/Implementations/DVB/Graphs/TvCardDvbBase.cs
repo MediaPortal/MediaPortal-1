@@ -1254,6 +1254,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject(pInfo.achName+" pin0", lastFilterOutputPin);
         Release.ComObject("tifdemux pinin", demuxPinIn);
         _graphBuilder.RemoveFilter(tmpDemux);
+        Release.ComObject("tmpDemux", tmpDemux);
       }
 
       try
