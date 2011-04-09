@@ -165,6 +165,8 @@ namespace TvPlugin
     private long _defaultGenreColorOnLater = 0;
     private long _guideColorChannelButton = 0;
     private long _guideColorChannelButtonSelected = 0;
+    private long _guideColorGroupButton = 0;
+    private long _guideColorGroupButtonSelected = 0;
     private long _guideColorProgramEnded = 0;
     private long _guideColorProgramSelected = 0;
     private long _guideColorBorderHighlight = 0;
@@ -197,7 +199,7 @@ namespace TvPlugin
       get
       {
         // show/hide channel group button
-        GUIButtonControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
+        GUIControl btnChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIControl;
 
         // visible only if more than one group? and not in single channel, and button exists in skin!
         return (TVHome.Navigator.Groups.Count > 1 && !_singleChannelView && btnChannelGroup != null);
@@ -311,6 +313,8 @@ namespace TvPlugin
       // Load supporting guide colors.
       _guideColorChannelButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbutton", "ff0e517b"));
       _guideColorChannelButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorchannelbuttonselected", "Green"));
+      _guideColorGroupButton = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbutton", "ff0e517b"));
+      _guideColorGroupButtonSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorgroupbuttonselected", "Green"));
       _guideColorProgramSelected = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramselected", "Green"));
       _guideColorProgramEnded = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorprogramended", "Gray"));
       _guideColorBorderHighlight = GetColorFromString(xmlreader.GetValueAsString("tvguidecolors", "guidecolorborderhighlight", "99ffffff"));
@@ -1195,6 +1199,14 @@ namespace TvPlugin
 
         // sets button visible state
         UpdateGroupButton();
+
+        GUIButton3PartControl cntlChannelGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButton3PartControl;
+        cntlChannelGroup.RenderLeft = false;
+        cntlChannelGroup.RenderRight = false;
+        if (_useColorsForButtons)
+        {
+          cntlChannelGroup.ColourDiffuse = _guideColorGroupButton;
+        }
 
         _updateTimer = DateTime.Now;
         GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
@@ -3476,7 +3488,7 @@ namespace TvPlugin
       String GroupButtonText = " ";
 
       // show/hide tvgroup button
-      GUIButtonControl btnTvGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIButtonControl;
+      GUIControl btnTvGroup = GetControl((int)Controls.CHANNEL_GROUP_BUTTON) as GUIControl;
 
       if (btnTvGroup != null)
         btnTvGroup.Visible = GroupButtonAvail;
@@ -3569,14 +3581,25 @@ namespace TvPlugin
       if (_cursorY == 0 || _cursorY == MinYIndex) // either channel or group button
       {
         // Handle the tv channel buttons (the left column of buttons).
-        int controlid = (int)Controls.IMG_CHAN1 + _cursorX;
+        int controlid;
+        if (_cursorY == -1)
+          controlid = (int)Controls.CHANNEL_GROUP_BUTTON;
+        else
+          controlid = (int)Controls.IMG_CHAN1 + _cursorX;
 
         GUIButton3PartControl img = GetControl(controlid) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
           if (_useColorsForButtons)
           {
-            img.ColourDiffuse = _guideColorChannelButton;
+            if (_cursorY == 0)
+            {
+              img.ColourDiffuse = _guideColorChannelButton;
+            }
+            else
+            {
+              img.ColourDiffuse = _guideColorGroupButton;
+            }
           }
         }
 
@@ -3590,22 +3613,19 @@ namespace TvPlugin
         GUIButton3PartControl img = GetControl(iControlId) as GUIButton3PartControl;
         if (null != img && img.IsVisible)
         {
-          if (_useColorsForButtons && _useColorsForGenres)
+          if (_useColorsForButtons && _currentProgram != null)
           {
-            if (_currentProgram != null)
+            if (_currentProgram.IsRunningAt(DateTime.Now))
             {
-              if (_currentProgram.IsRunningAt(DateTime.Now))
-              {
-                img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, true);
-              }
-              else if (_currentProgram.EndedBefore(DateTime.Now))
-              {
-                img.ColourDiffuse = _guideColorProgramEnded;
-              }
-              else
-              {
-                img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, false);
-              }
+              img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, true);
+            }
+            else if (_currentProgram.EndedBefore(DateTime.Now))
+            {
+              img.ColourDiffuse = _guideColorProgramEnded;
+            }
+            else
+            {
+              img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, false);
             }
           }
         }
@@ -3635,13 +3655,20 @@ namespace TvPlugin
         if (null != img && img.IsVisible)
         {
           // Using colors for genres forces use of the border highlighting.
-          if (_useBorderHighlight || (_useColorsForButtons && _useColorsForGenres))
+          if (_useBorderHighlight || _useColorsForGenres)
           {
             SetFocusBorder(ref img);
           }
           else if (_useColorsForButtons)
           {
-            img.ColourDiffuse = _guideColorChannelButtonSelected;
+            if (_cursorY == -1)
+            {
+              img.ColourDiffuse = _guideColorGroupButtonSelected;
+            }
+            else
+            {
+              img.ColourDiffuse = _guideColorChannelButtonSelected;
+            }
           }
         }
 
@@ -3656,7 +3683,7 @@ namespace TvPlugin
         if (null != img && img.IsVisible)
         {
           // Using colors for genres forces use of the border highlighting.
-          if (_useBorderHighlight || (_useColorsForButtons && _useColorsForGenres))
+          if (_useBorderHighlight || _useColorsForGenres)
           {
             SetFocusBorder(ref img);
           }
