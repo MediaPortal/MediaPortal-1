@@ -232,8 +232,9 @@ namespace TvPlugin
         {
           _currentChannel = channels[0];
         }
-        _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
-        _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
+
+        PositionGuideCursorToCurrentChannel();
+
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
@@ -372,8 +373,6 @@ namespace TvPlugin
       using (Settings xmlwriter = new MPSettings())
       {
         xmlwriter.SetValue("mytv", "channel", _currentChannel.DisplayName);
-        xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
-        xmlwriter.SetValue("tvguide", "yoffset", _channelOffset.ToString());
         xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
       }
     }
@@ -722,11 +721,8 @@ namespace TvPlugin
         TVHome.Navigator.SetCurrentGroup(newIndex);
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
-        _cursorY = 1; // cursor should be on the program guide item
-        _channelOffset = 0;
-        // reset to top; otherwise focus could be out of screen if new group has less then old position
-        _cursorX = 0; // first channel
         GetChannels(true);
+        PositionGuideCursorToCurrentChannel();
         Update(false);
         SetFocus();
         GUIWaitCursor.Hide();
@@ -856,6 +852,15 @@ namespace TvPlugin
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
 
+              GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
+              GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
+
+              int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
+              int iItemHeight = cntlChannelTemplate.Height;
+              _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
+
+              GetChannels(true);
+
               // Loading tvguide settings will overwrite the guide cursor position.  If we are coming back from the program info window (where
               // recording selections are made) we would like to reposition the cursor to the program from which we invoked the
               // program info window; the user comes back to where they started.  To do this we need to save and restore the cursor
@@ -873,14 +878,6 @@ namespace TvPlugin
                 _channelOffset = _backupChannelOffset;
               }
 
-              GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
-              GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
-
-              int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
-              int iItemHeight = cntlChannelTemplate.Height;
-              _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
-
-              GetChannels(true);
               LoadSchedules(true);
               _currentProgram = null;
               if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
@@ -1061,20 +1058,43 @@ namespace TvPlugin
         if (prevGroup != TVHome.Navigator.CurrentGroup.IdGroup)
         {
           GUIWaitCursor.Show();
-          // button focus should be on tvgroup, so change back to channel name
-          //if (_cursorY == -1)
-          //	_cursorY = 0;
-          _cursorY = 1; // cursor should be on the program guide item
-          _channelOffset = 0;
-          // reset to top; otherwise focus could be out of screen if new group has less then old position
-          _cursorX = 0; // set to top, otherwise index could be out of range in new group
 
           // group has been changed
           GetChannels(true);
+          PositionGuideCursorToCurrentChannel();
           Update(false);
 
           SetFocus();
           GUIWaitCursor.Hide();
+        }
+      }
+    }
+
+    private void PositionGuideCursorToCurrentChannel()
+    {
+      _cursorX = 0;
+      _cursorY = 1; // cursor should be on the program guide item
+      _channelOffset = 0;
+
+      // Attempt to position to the current channel in the new list of channels.  If the channel is not in
+      // the group then the first channel in the group is selected.
+      bool channelInGroup = false;
+      for (int i = 0; i < _channelList.Count; i++)
+      {
+        Channel chan = ((GuideChannel)_channelList[i]).channel;
+        if (chan.IdChannel == _currentChannel.IdChannel)
+        {
+          _cursorX = i;
+          channelInGroup = true;
+          break;
+        }
+      }
+      if (channelInGroup)
+      {
+        while (_cursorX >= _channelCount)
+        {
+          _cursorX -= _channelCount;
+          _channelOffset += _channelCount;
         }
       }
     }
