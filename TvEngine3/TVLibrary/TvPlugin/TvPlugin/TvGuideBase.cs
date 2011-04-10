@@ -160,6 +160,7 @@ namespace TvPlugin
     private bool _useBorderHighlight = false;
     private bool _useColorsForButtons = false;
     private bool _useColorsForGenres = false;
+    private bool _specifyMpaaRatedAsMovie = false;
     private bool _guideColorsLoadedFromSkinSettings = false;
     private long _defaultGenreColorOnNow = 0;
     private long _defaultGenreColorOnLater = 0;
@@ -251,6 +252,9 @@ namespace TvPlugin
         {
           LoadGenreMap(xmlreader, genreList);
         }
+
+        // Special genre rules.
+        _specifyMpaaRatedAsMovie = xmlreader.GetValueAsBool("genremap", "specifympaaratedasmovie", false);
       }
 
       // Attempt to load genre colors from the skin settings.
@@ -2324,7 +2328,7 @@ namespace TvPlugin
         {
           if (program.IsRunningAt(DateTime.Now))
           {
-            img.ColourDiffuse = GetColorForProgram(program.Genre, true);
+            img.ColourDiffuse = GetColorForProgram(program, true);
           }
           else if (program.EndedBefore(DateTime.Now))
           {
@@ -2332,7 +2336,7 @@ namespace TvPlugin
           }
           else
           {
-            img.ColourDiffuse = GetColorForProgram(program.Genre, false);
+            img.ColourDiffuse = GetColorForProgram(program, false);
           }
         }
       }
@@ -2948,7 +2952,7 @@ namespace TvPlugin
           {
             if (program.IsRunningAt(DateTime.Now))
             {
-              img.ColourDiffuse = GetColorForProgram(program.Genre, true);
+              img.ColourDiffuse = GetColorForProgram(program, true);
             }
             else if (program.EndedBefore(DateTime.Now))
             {
@@ -2956,7 +2960,7 @@ namespace TvPlugin
             }
             else
             {
-              img.ColourDiffuse = GetColorForProgram(program.Genre, false);
+              img.ColourDiffuse = GetColorForProgram(program, false);
             }
           }
 
@@ -3617,7 +3621,7 @@ namespace TvPlugin
           {
             if (_currentProgram.IsRunningAt(DateTime.Now))
             {
-              img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, true);
+              img.ColourDiffuse = GetColorForProgram(_currentProgram, true);
             }
             else if (_currentProgram.EndedBefore(DateTime.Now))
             {
@@ -3625,7 +3629,7 @@ namespace TvPlugin
             }
             else
             {
-              img.ColourDiffuse = GetColorForProgram(_currentProgram.Genre, false);
+              img.ColourDiffuse = GetColorForProgram(_currentProgram, false);
             }
           }
         }
@@ -4272,7 +4276,7 @@ namespace TvPlugin
       SetFocus();
     }
 
-    private long GetColorForProgram(string programGenre, bool onNow)
+    private long GetColorForProgram(Program program, bool onNow)
     {
       // Set the default color in case the genre color is not defined.
       long defaultColor = _defaultGenreColorOnLater;
@@ -4288,9 +4292,16 @@ namespace TvPlugin
 
       // Lookup the category genre for the specified program genre.
       string genre = "";
-      if (!_genreMap.TryGetValue(programGenre, out genre))
+      if (_specifyMpaaRatedAsMovie && IsMPAA(program.Classification))
       {
-        return defaultColor;
+        genre = "Movie";
+      }
+      else
+      {
+        if (!_genreMap.TryGetValue(program.Genre, out genre))
+        {
+          return defaultColor;
+        }
       }
 
       // Return a valid default color if the specified genre does not have a color association.
@@ -4327,6 +4338,11 @@ namespace TvPlugin
       }
 
       return result;
+    }
+
+    private bool IsMPAA(string classification)
+    {
+      return ",G,PG,PG-13,R,NC-17,AO,NR,".Contains("," + classification.Trim() + ",");
     }
 
     private void OnKeyTimeout()
