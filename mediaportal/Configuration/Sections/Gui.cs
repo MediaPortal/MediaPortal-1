@@ -185,7 +185,7 @@ namespace MediaPortal.Configuration.Sections
         if (currentSkin == "NoSkin")
         {
           //Change default skin based on screen aspect ratio
-          currentSkin = screenRatio > 1.5 ? "Blue3wide" : "Blue3";
+          currentSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
         }
 
         //
@@ -230,7 +230,7 @@ namespace MediaPortal.Configuration.Sections
         }
 
         // Save skin settings.
-        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "Blue3wide");
+        string prevSkin = xmlwriter.GetValueAsString("skin", "name", "DefaultWide");
         string selectedSkin = prevSkin;
         try
         {

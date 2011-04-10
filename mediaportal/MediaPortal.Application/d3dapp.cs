@@ -55,7 +55,7 @@ namespace MediaPortal
   public class D3DApp : MPForm
   {
     private const int MILLI_SECONDS_TIMER = 1;
-    protected string m_strSkin = "Blue3";
+    protected string m_strSkin = "Default";
     public static string _strSkinOverride = string.Empty;
     protected string m_strLanguage = "english";
 

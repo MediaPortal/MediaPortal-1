@@ -104,7 +104,7 @@ namespace MediaPortal.Configuration.Sections
       using (Settings xmlwriter = new MPSettings())
       {
         string prevLanguage = xmlwriter.GetValueAsString("gui", "language", "English");
-        string skin = xmlwriter.GetValueAsString("skin", "name", "Blue3wide");
+        string skin = xmlwriter.GetValueAsString("skin", "name", "DefaultWide");
         if (prevLanguage != languageComboBox.Text)
         {
           Util.Utils.DeleteFiles(Config.GetSubFolder(Config.Dir.Skin, skin + @"\fonts"), "*");
