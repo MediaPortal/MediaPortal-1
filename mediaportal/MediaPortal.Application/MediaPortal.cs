@@ -1464,6 +1464,7 @@ public class MediaPortalApp : D3DApp, IRender
     _mouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
+    CheckForIncompatibelPlugins();
     PluginManager.Start();
     tMouseClickTimer = new Timer(SystemInformation.DoubleClickTime);
     tMouseClickTimer.AutoReset = false;
@@ -1746,7 +1747,6 @@ public class MediaPortalApp : D3DApp, IRender
       PluginManager.LoadWhiteList(_safePluginsList);
     }
     PluginManager.LoadWindowPlugins();
-    CheckForIncompatibelPlugins();
     Log.Info("Main: Loading windowmanager");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71)); // Initializing window manager...
     Log.Info("Main: Resizing windowmanager");

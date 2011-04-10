@@ -542,8 +542,8 @@ namespace MediaPortal.GUI.Library
             }
             if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
             {
-              pImage.Width = _textureWidth + _zoomXPixels - 4;
-              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.Width = _textureWidth + _zoomXPixels;
+              pImage.Height = _textureHeight + _zoomYPixels;
               pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
             }
             pImage.Render(timePassed);
@@ -575,8 +575,8 @@ namespace MediaPortal.GUI.Library
           }
           if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
           {
-            pImage.Width = _textureWidth + _zoomXPixels - 4;
-            pImage.Height = _textureHeight + _zoomYPixels - 4;
+            pImage.Width = _textureWidth + _zoomXPixels;
+            pImage.Height = _textureHeight + _zoomYPixels;
             pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
           }
           pImage.Render(timePassed);
@@ -614,8 +614,8 @@ namespace MediaPortal.GUI.Library
             }
             if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
             {
-              pImage.Width = _textureWidth + _zoomXPixels - 4;
-              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.Width = _textureWidth + _zoomXPixels;
+              pImage.Height = _textureHeight + _zoomYPixels;
               pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
             }
             pImage.Render(timePassed);
@@ -646,8 +646,8 @@ namespace MediaPortal.GUI.Library
             }
             if (bFocus && (_zoomXPixels != 0 || _zoomYPixels != 0))
             {
-              pImage.Width = _textureWidth + _zoomXPixels - 4;
-              pImage.Height = _textureHeight + _zoomYPixels - 4;
+              pImage.Width = _textureWidth + _zoomXPixels;
+              pImage.Height = _textureHeight + _zoomYPixels;
               pImage.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
             }
             pImage.Render(timePassed);

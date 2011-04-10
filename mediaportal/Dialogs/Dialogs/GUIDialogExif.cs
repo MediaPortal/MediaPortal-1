@@ -161,6 +161,7 @@ namespace MediaPortal.Dialogs
 
         imgPicture.IsVisible = false;
       }
+      GUIPropertyManager.SetProperty("#selectedthumb", FileName);
     }
 
     public override void Render(float timePassed)
