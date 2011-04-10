@@ -34,7 +34,7 @@
       <width>52</width>
       <height>52</height>
       <texture>play_enabled.png</texture>
-      <visible>player.playing</visible>
+      <visible>!player.paused+!player.forwarding+!player.rewinding</visible>
     </control>
     <control>
       <description>Pause logo</description>
