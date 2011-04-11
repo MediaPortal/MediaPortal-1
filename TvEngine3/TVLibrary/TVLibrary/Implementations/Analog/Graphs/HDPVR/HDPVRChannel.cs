@@ -201,7 +201,7 @@ namespace TvLibrary.Implementations.Analog
       ScanParameters parameters = _card.Parameters;
       _tsFilterInterface.TimeShiftSetParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
                                             parameters.MaximumFileSize);
-      _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelId, fileName);
+      _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelId, fileName);
 
       if (CurrentChannel == null)
       {
@@ -244,7 +244,7 @@ namespace TvLibrary.Implementations.Analog
     protected override void OnStartRecording(string fileName)
     {
       _recordingFileName = fileName;
-      _tsFilterInterface.RecordSetRecordingFileName(_subChannelId, fileName);
+      _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelId, fileName);
       _tsFilterInterface.RecordSetPmtPid(_subChannelId, 0x0100, 1, _pmtData, _pmtLength);
       _startRecording = true;
       _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelId, this);

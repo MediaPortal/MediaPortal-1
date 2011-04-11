@@ -32,6 +32,7 @@
 #include <windows.h>
 #include <stdio.h>
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 MultiFileWriter::MultiFileWriter(MultiFileWriterParam *pWriterParams) :
 	m_hTSBufferFile(INVALID_HANDLE_VALUE),
@@ -72,8 +73,6 @@ HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
 
 HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 {
-	USES_CONVERSION;
-
 	// Is the file already opened
 	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
 	{
@@ -85,7 +84,7 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 
 	if(wcslen(pszFileName) > MAX_PATH)
   {
-    LogDebug("MultiFileWriter: filename too long");
+    LogDebug(L"MultiFileWriter: filename too long");
 		return ERROR_FILENAME_EXCED_RANGE;
   }
 	// Take a copy of the filename
@@ -106,16 +105,15 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
     LogDebug("MultiFileWriter: not enough free diskspace");
 		return E_FAIL;
   }
-	TCHAR *pFileName = NULL;
 
 	// Try to open the file
-	m_hTSBufferFile = CreateFile(W2T(m_pTSBufferFileName),  // The filename
+	m_hTSBufferFile = CreateFileW(m_pTSBufferFileName,              // The filename
 								 (DWORD) GENERIC_WRITE,             // File access
 								 (DWORD) FILE_SHARE_READ,           // Share access
-								 NULL,                      // Security
+								 NULL,                              // Security
 								 (DWORD) CREATE_ALWAYS,             // Open flags
-								 (DWORD) 0,                 // More flags
-								 NULL);                     // Template
+								 (DWORD) 0,                         // More flags
+								 NULL);                             // Template
 
 	if (m_hTSBufferFile == INVALID_HANDLE_VALUE)
 	{
@@ -285,11 +283,10 @@ HRESULT MultiFileWriter::PrepareTSFile()
 
 HRESULT MultiFileWriter::CreateNewTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
 
 	LPWSTR pFilename = new wchar_t[MAX_PATH];
-	WIN32_FIND_DATA findData;
+	WIN32_FIND_DATAW findData;
 	HANDLE handleFound = INVALID_HANDLE_VALUE;
 
 	//LogDebug("CreateNewTSFile.");
@@ -300,7 +297,7 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 		swprintf(pFilename, L"%s%i.ts", m_pTSBufferFileName, m_currentFilenameId);
 
 		// Check if file already exists
-		handleFound = FindFirstFile(W2T(pFilename), &findData);
+		handleFound = FindFirstFileW(pFilename, &findData);
 		if (handleFound == INVALID_HANDLE_VALUE)
 			break;
 
@@ -331,8 +328,8 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 	if (pos)
 		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
-	swprintf((LPWSTR)&msg, L"New file created : %s\n", pFilename);
-	::OutputDebugString(W2T((LPWSTR)&msg));
+	swprintf(msg, L"New file created : %s\n", pFilename);
+	::OutputDebugStringW(msg);
 
 	//LogDebug("new file created");
 	return S_OK;
@@ -340,25 +337,22 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 
 HRESULT MultiFileWriter::ReuseTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
-  DWORD Tmo=5 ;
+	DWORD Tmo=5 ;
 
 	LPWSTR pFilename = m_tsFileNames.at(0);
 
 	if FAILED(hr = m_pCurrentTSFile->SetFileName(pFilename))
 	{
-		LogDebug("Failed to set filename to reuse old file");
+		LogDebug(L"Failed to set filename to reuse old file");
 		return hr;
 	}
 
 	// Check if file is being read by something.
-  TCHAR sz[MAX_PATH];
-  sprintf(sz, "%S", pFilename);
-  // Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
+	// Can be locked temporarily to update duration or definitely (!) if timeshift is paused.
 	do
 	{
-		DeleteFile(sz) ;	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
+		DeleteFileW(pFilename);	// Stupid function, return can be ok and file not deleted ( just tagged for deleting )!!!!
 		hr = m_pCurrentTSFile->OpenFile() ;
 		if (!FAILED(hr)) break ;
 		Sleep(20) ;
@@ -368,11 +362,11 @@ HRESULT MultiFileWriter::ReuseTSFile()
   if (Tmo)
   {
     if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-			LogDebug("MultiFileWriter: %d tries to succeed deleting and re-opening %ws.", 6-Tmo, pFilename);
+			LogDebug(L"MultiFileWriter: %d tries to succeed deleting and re-opening %s.", 6-Tmo, pFilename);
   }
   else
 	{
-    LogDebug("MultiFileWriter: failed to create file %ws",pFilename);
+    LogDebug(L"MultiFileWriter: failed to create file %s", pFilename);
 		return hr ;
 	}
 
@@ -387,8 +381,8 @@ HRESULT MultiFileWriter::ReuseTSFile()
 	if (pos)
 		m_currentFileId = _wtoi(pos);
 	wchar_t msg[MAX_PATH];
-	swprintf((LPWSTR)&msg, L"Old file reused : %s\n", pFilename);
-	::OutputDebugString(W2T((LPWSTR)&msg));
+	swprintf(msg, L"Old file reused : %s\n", pFilename);
+	::OutputDebugStringW(msg);
 
 	//LogDebug("reuse old file");
 	return S_OK;
@@ -459,8 +453,6 @@ HRESULT MultiFileWriter::WriteTSBufferFile()
 
 HRESULT MultiFileWriter::CleanupFiles()
 {
-	USES_CONVERSION;
-
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
 	m_currentFilenameId = 0;
@@ -478,9 +470,9 @@ HRESULT MultiFileWriter::CleanupFiles()
 			// If any of the files are being read then we won't
 			// delete any so that the full buffer stays intact.
 			wchar_t msg[MAX_PATH];
-			swprintf((LPWSTR)&msg, L"CleanupFiles: A file is still locked : %s\n", *it);
-			::OutputDebugString(W2T((LPWSTR)&msg));
-			LogDebug("CleanupFiles: A file is still locked");
+			swprintf(msg, L"CleanupFiles: A file is still locked : %s\n", *it);
+			::OutputDebugStringW((LPWSTR)&msg);
+			LogDebug(L"CleanupFiles: A file is still locked");
 			return S_OK;
 		}
 	}
@@ -489,23 +481,23 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
-		if (DeleteFile(W2T(*it)) == FALSE)
+		if (DeleteFileW(*it) == FALSE)
 		{
 			wchar_t msg[MAX_PATH];
-			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
-			::OutputDebugString(W2T((LPWSTR)&msg));
-			LogDebug("CleanupFiles: Failed to delete file");
+			swprintf(msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
+			::OutputDebugStringW(msg);
+			LogDebug(L"CleanupFiles: Failed to delete file");
 		}
 		delete[] *it;
 	}
 	m_tsFileNames.clear();
 
-	if (DeleteFile(W2T(m_pTSBufferFileName)) == FALSE)
+	if (DeleteFileW(m_pTSBufferFileName) == FALSE)
 	{
 		wchar_t msg[MAX_PATH];
-		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
-		::OutputDebugString(W2T((LPWSTR)&msg));
-			LogDebug("CleanupFiles: Failed to delete tsbuffer file: 0x%x\n", GetLastError());
+		swprintf(msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
+		::OutputDebugStringW(msg);
+			LogDebug(L"CleanupFiles: Failed to delete tsbuffer file: 0x%x\n", GetLastError());
 
 	}
 	m_filesAdded = 0;
@@ -517,16 +509,14 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 BOOL MultiFileWriter::IsFileLocked(LPWSTR pFilename)
 {
-	USES_CONVERSION;
-
 	HANDLE hFile;
-	hFile = CreateFile(W2T(pFilename),        // The filename
+	hFile = CreateFileW(pFilename,                    // The filename
 					   (DWORD) GENERIC_READ,          // File access
 					   (DWORD) NULL,                  // Share access
-					   NULL,                  // Security
+					   NULL,                          // Security
 					   (DWORD) OPEN_EXISTING,         // Open flags
-					   (DWORD) 0,             // More flags
-					   NULL);                 // Template
+					   (DWORD) 0,                     // More flags
+					   NULL);                         // Template
 
 	if (hFile == INVALID_HANDLE_VALUE)
 		return TRUE;
@@ -542,14 +532,14 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
 
 	HRESULT hr;
 
-	char	*pszDrive = NULL;
-	char	szDrive[4];
-	if (m_pTSBufferFileName[1] == ':')
+	wchar_t	*pszDrive = NULL;
+	wchar_t	szDrive[4];
+	if (m_pTSBufferFileName[1] == L':')
 	{
-		szDrive[0] = (char)m_pTSBufferFileName[0];
-		szDrive[1] = ':';
-		szDrive[2] = '\\';
-		szDrive[3] = '\0';
+		szDrive[0] = (wchar_t)m_pTSBufferFileName[0];
+		szDrive[1] = L':';
+		szDrive[2] = L'\\';
+		szDrive[3] = 0;
 		pszDrive = szDrive;
 	}
 
@@ -559,7 +549,7 @@ HRESULT MultiFileWriter::GetAvailableDiskSpace(__int64* llAvailableDiskSpace)
 	uliDiskSpaceAvailable.QuadPart= 0;
 	uliDiskSpaceTotal.QuadPart= 0;
 	uliDiskSpaceFree.QuadPart= 0;
-	hr = GetDiskFreeSpaceEx(pszDrive, &uliDiskSpaceAvailable, &uliDiskSpaceTotal, &uliDiskSpaceFree);
+	hr = GetDiskFreeSpaceExW(pszDrive, &uliDiskSpaceAvailable, &uliDiskSpaceTotal, &uliDiskSpaceFree);
 	if SUCCEEDED(hr)
 		*llAvailableDiskSpace = uliDiskSpaceAvailable.QuadPart;
 	else

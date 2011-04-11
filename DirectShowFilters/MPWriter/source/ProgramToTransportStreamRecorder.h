@@ -14,7 +14,7 @@ class CProgramToTransportStreamRecorder: public TSThread
 public:
 	CProgramToTransportStreamRecorder(void);
 	virtual ~CProgramToTransportStreamRecorder(void);
-	void Initialize(char* fileNameOut);
+	void Initialize(wchar_t* fileNameOut);
 	void ClearStreams();
 	void Close();
 	void Write(byte* data, int len);

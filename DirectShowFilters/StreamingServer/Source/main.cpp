@@ -13,37 +13,49 @@
 //#include "RTSPOverHTTPServer.hh"
 
 static char logbuffer[2000]; 
-
-void LogDebug(const char *fmt, ...) 
+static wchar_t logbufferw[2000];
+void LogDebug(const wchar_t *fmt, ...)
 {
 	va_list ap;
 	va_start(ap,fmt);
 
-	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	vswprintf_s(logbufferw, fmt, ap);
 	va_end(ap); 
 
-	TCHAR folder[MAX_PATH];
-	TCHAR fileName[MAX_PATH];
-	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
+	wchar_t folder[MAX_PATH];
+	wchar_t fileName[MAX_PATH];
+	::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
+	swprintf_s(fileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
 
-	FILE* fp = fopen(fileName,"a+");
+	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
 	if (fp!=NULL)
 	{
 		SYSTEMTIME systemTime;
 		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbuffer);
+			logbufferw);
 		fclose(fp);
 	}
 };
 
+void LogDebug(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap,fmt);
+
+	va_start(ap,fmt);
+	vsprintf(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
+};
+
 const char* STREAM_NAME = "testStream";
-const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.1 Beta 1\"";
+const char* STREAM_DESCRIPTION = "Session streamed by \"MediaPortal Tv Server v1.2 Beta 1\"";
 const char* FILE_NAME = "C:\\temp\\testApp\\live.ts.tsbuffer";
 const int	DEFAULT_RTSP_PORT = 554;
 
@@ -54,9 +66,9 @@ void StreamSetup(char* ipAdress);
 int  StreamSetupEx(char* ipAdress, int port);
 void StreamShutdown();
 void StreamRun();
-void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName); // fwd
-void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream,int channelType);
-void StreamAddMpegFile(char* streamName, char* fileName, int channelType);
+void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * streamName, wchar_t * inputFileName); // fwd
+void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramStream,int channelType);
+void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType);
 void StreamRemove(char* streamName);
 
 extern netAddressBits SendingInterfaceAddr ;
@@ -67,7 +79,7 @@ extern netAddressBits ReceivingInterfaceAddr ;
 int main(int argc, char* argv[])
 {
 	StreamSetup("192.168.1.130");
-	StreamAddTimeShiftFile("test1", "C:\\1\\live5-0.ts.tsbuffer",false,0);
+	StreamAddTimeShiftFile("test1", L"C:\\1\\live5-0.ts.tsbuffer",false,0);
 	//StreamAddMpegFile("test2", "C:\\media\\movies\\NED 1.mpg");
 	//StreamAddMpegFile("test3", "C:\\media\\movies\\PREMIERE 420070201-1146.ts");
 	while (true)
@@ -125,13 +137,13 @@ void StreamSetup(char* ipAdress)
 //**************************************************************************************
 int StreamSetupEx(char* ipAdress, int port)
 {
-	TCHAR folder[MAX_PATH];
-	TCHAR fileName[MAX_PATH];
-	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log",folder);
-	::DeleteFile(fileName);
+	wchar_t folder[MAX_PATH];
+	wchar_t fileName[MAX_PATH];
+	::SHGetSpecialFolderPathW(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+	swprintf(fileName, MAX_PATH, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\streaming server.Log", folder);
+	::DeleteFileW(fileName);
 
-	LogDebug("-------------- v1.0.4 ---------------");
+	LogDebug("-------------- v1.0.5 ---------------");
   StreamShutdown();
 	if (port == DEFAULT_RTSP_PORT) {
 		LogDebug("Stream server:Setup stream server for ip: %s", ipAdress);
@@ -190,11 +202,11 @@ void StreamRemove( char* streamName)
 }
 
 //**************************************************************************************
-void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStream,int channelType)
+void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramStream,int channelType)
 {
 	try
 	{
-		LogDebug("Stream server: add timeshift  mpeg-2 transport stream %s filename:%s", streamName,fileName);
+		LogDebug(L"Stream server: add timeshift  mpeg-2 transport stream %S filename:%s", streamName,fileName);
 		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
 		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,true,channelType));
 		m_rtspServer->addServerMediaSession(sms);
@@ -203,16 +215,16 @@ void StreamAddTimeShiftFile(char* streamName, char* fileName,bool isProgramStrea
 	}
 	catch(...)
 	{
-		LogDebug("Stream server: unable to add stream %s filename:%s", streamName,fileName);
+		LogDebug(L"Stream server: unable to add stream %S filename:%s", streamName,fileName);
 	}
 }
 
 //**************************************************************************************
-void StreamAddMpegFile(char* streamName, char* fileName, int channelType)
+void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType)
 {
 	try
 	{
-		LogDebug("Stream server: add mpeg-2 ts stream %s filename:%s", streamName,fileName);
+		LogDebug(L"Stream server: add mpeg-2 ts stream %S filename:%s", streamName,fileName);
 		ServerMediaSession* sms= ServerMediaSession::createNew(*m_env, streamName, streamName,STREAM_DESCRIPTION,false);
 		sms->addSubsession(TsMPEG2TransportFileServerMediaSubsession::createNew(*m_env, fileName, false,false,channelType));
 		m_rtspServer->addServerMediaSession(sms);
@@ -220,12 +232,12 @@ void StreamAddMpegFile(char* streamName, char* fileName, int channelType)
 	}
 	catch(...)
 	{
-		LogDebug("Stream server: unable to add stream %s filename:%s", streamName,fileName);
+		LogDebug(L"Stream server: unable to add stream %S filename:%s", streamName,fileName);
 	}
 }
 
 //**************************************************************************************
-void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms,char * streamName, char * inputFileName) 
+void announceStream(RTSPServer* rtspServer, ServerMediaSession* sms, char * streamName, wchar_t * inputFileName) 
 {
 	char* url = rtspServer->rtspURL(sms);
 	LogDebug("Stream server: url for stream is %s", url);

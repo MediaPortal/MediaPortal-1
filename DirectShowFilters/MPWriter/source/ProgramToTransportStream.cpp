@@ -4,6 +4,7 @@
 #include "ProgramToTransportStream.h"
 #include "MemoryStreamSource.h"
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...);
 
 CProgramToTransportStream::CProgramToTransportStream(void)
 {
@@ -27,9 +28,9 @@ void afterPlaying(void* clientData)
 	LogDebug("CProgramToTransportStream afterPlaying");
 	MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
 }
-void CProgramToTransportStream::Initialize(char* fileNameOut)
+void CProgramToTransportStream::Initialize(wchar_t* fileNameOut)
 {
-	LogDebug("CProgramToTransportStream::Initialize %s",fileNameOut);
+	LogDebug(L"CProgramToTransportStream::Initialize %s", fileNameOut);
 	m_BufferThreadActive=false;
 	m_buffer.Clear();
 
@@ -50,7 +51,7 @@ void CProgramToTransportStream::Initialize(char* fileNameOut)
 	// And, from this, a filter that converts to MPEG-2 Transport Stream frames:
 	m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
 
-	m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut,m_minFiles,m_maxFiles,m_maxFileSize);
+	m_outputSink = CMultiWriterFileSink::createNew(*m_env, fileNameOut, m_minFiles, m_maxFiles, m_maxFileSize);
 	if (m_outputSink == NULL) 
 	{
 		*m_env << "Unable to open file \"" << fileNameOut << "\" as a file sink\n";

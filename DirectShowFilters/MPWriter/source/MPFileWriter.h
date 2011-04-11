@@ -40,12 +40,12 @@ DEFINE_GUID(IID_IMPFileRecord,0xd5ff805e, 0xa98b, 0x4d56,  0xbe, 0xde, 0x3f, 0x1
 
 DECLARE_INTERFACE_(IMPFileRecord, IUnknown)
 {
-	STDMETHOD(SetRecordingFileName)(THIS_ int subChannelId, char* pszFileName)PURE;
+	STDMETHOD(SetRecordingFileNameW)(THIS_ int subChannelId, wchar_t* pwszFileName)PURE;
 	STDMETHOD(StartRecord)(THIS_ int subChannelId)PURE;
 	STDMETHOD(StopRecord)(THIS_ int subChannelId)PURE;
 	STDMETHOD(IsReceiving)(THIS_ BOOL* yesNo)PURE;
 	STDMETHOD(Reset)(THIS_)PURE;
-	STDMETHOD(SetTimeShiftFileName)(THIS_ int subChannelId, char* pszFileName)PURE;
+	STDMETHOD(SetTimeShiftFileNameW)(THIS_ int subChannelId, wchar_t* pwszFileName)PURE;
 	STDMETHOD(StartTimeShifting)(THIS_ int subChannelId)PURE;
 	STDMETHOD(StopTimeShifting)(THIS_ int subChannelId)PURE;
 	STDMETHOD(PauseTimeShifting)(THIS_ int subChannelId, int onOff)PURE;
@@ -140,14 +140,14 @@ public:
 
 	HRESULT		 Write(PBYTE pbData, LONG lDataLength);
 	HRESULT		 WriteTeletext(PBYTE pbData, LONG lDataLength);
-	STDMETHODIMP SetRecordingFileName(int subChannelId, char* pszFileName);
+	STDMETHODIMP SetRecordingFileNameW(int subChannelId, wchar_t* pwszFileName);
 	STDMETHODIMP StartRecord(int subChannelId);
 	STDMETHODIMP StopRecord(int subChannelId);
 
 	STDMETHODIMP IsReceiving(BOOL* yesNo);
 	STDMETHODIMP Reset();
 
-	STDMETHODIMP SetTimeShiftFileName(int subChannelId, char* pszFileName);
+	STDMETHODIMP SetTimeShiftFileNameW(int subChannelId, wchar_t* pszFileName);
 	STDMETHODIMP StartTimeShifting(int subChannelId);
 	STDMETHODIMP StopTimeShifting(int subChannelId);
 	STDMETHODIMP PauseTimeShifting(int subChannelId, int onOff);
@@ -169,9 +169,6 @@ private:
 	typedef vector<CSubChannel*>::iterator ivecChannels;
 	int m_id;
 };
-
-
-
 
 
 class CMPFileWriterTeletextInputPin : public CRenderedInputPin

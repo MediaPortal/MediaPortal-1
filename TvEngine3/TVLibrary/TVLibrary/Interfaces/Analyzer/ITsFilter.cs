@@ -145,13 +145,13 @@ namespace TvLibrary.Interfaces.Analyzer
     int PmtGetPMTData(int handle, IntPtr pmtData);
 
     /// <summary>
-    /// Sets the recorder filename for the given sub channel
+    /// Sets the recorder unicode filename for the given subchannel
     /// </summary>
     /// <param name="handle">Handle of the sub channel</param>
-    /// <param name="fileName">Filename for the reocrding</param>
+    /// <param name="fileName">Filename for the recording</param>
     /// <returns></returns>
     [PreserveSig]
-    int RecordSetRecordingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int RecordSetRecordingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts recording on the given sub channel
@@ -198,7 +198,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Filename</param>
     /// <returns></returns>
     [PreserveSig]
-    int TimeShiftSetTimeShiftingFileName(int handle, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int TimeShiftSetTimeShiftingFileNameW(int handle, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts timeshifting on the given sub channel

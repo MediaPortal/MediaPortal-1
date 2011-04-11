@@ -502,7 +502,7 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
       if (_tsFilterInterface != null)
       {
-        int hr = _tsFilterInterface.RecordSetRecordingFileName(_subChannelIndex, fileName);
+        int hr = _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelIndex, fileName);
         if (hr != 0)
         {
           Log.Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
@@ -576,7 +576,7 @@ namespace TvLibrary.Implementations.DVB
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
         _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                               _parameters.MaximumFileSize);
-        _tsFilterInterface.TimeShiftSetTimeShiftingFileName(_subChannelIndex, fileName);
+        _tsFilterInterface.TimeShiftSetTimeShiftingFileNameW(_subChannelIndex, fileName);
 
         if (CurrentChannel == null)
         {

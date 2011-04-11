@@ -9,6 +9,8 @@
 ////////// CMultiWriterFileSink //////////
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...);
+
 CMultiWriterFileSink::CMultiWriterFileSink(UsageEnvironment& env, MultiFileWriter* fid, unsigned bufferSize,char const* perFrameFileNamePrefix) 
 : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize) 
 {
@@ -64,21 +66,19 @@ CMultiWriterFileSink::~CMultiWriterFileSink()
 	delete[] m_pWriteBuffer;
 }
 
-CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize, Boolean oneFilePerFrame, int channelType) 
+CMultiWriterFileSink* CMultiWriterFileSink::createNew(UsageEnvironment& env, wchar_t const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize, Boolean oneFilePerFrame, int channelType)
 {
 	do 
 	{
-		LogDebug("CMultiWriterFileSink::create file:%s",fileName);
+		LogDebug(L"CMultiWriterFileSink::create file:%s", fileName);
 		MultiFileWriter* fid = new MultiFileWriter();
 		fid->setMinTSFiles(minFiles);
 		fid->setMaxTSFiles(maxFiles);
 		fid->setChunkReserve(maxFileSize);
 		fid->setMaxTSFileSize(maxFileSize);
-		WCHAR wstrFileName[2048];
-		MultiByteToWideChar(CP_ACP,0,fileName,-1,wstrFileName,1+strlen(fileName));
-		if (FAILED(fid->OpenFile(wstrFileName)))
+		if (FAILED(fid->OpenFile(fileName)))
 		{
-			LogDebug("CMultiWriterFileSink::create file:%s failed",fileName);
+			LogDebug(L"CMultiWriterFileSink::create file:%s failed", fileName);
 			delete fid;
 			return NULL;
 		}

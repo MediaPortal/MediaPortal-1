@@ -45,11 +45,15 @@ namespace TvLibrary.Streaming
     private static extern void StreamRun();
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddTimeShiftFile(string streamName, string fileName, bool isProgramStream,
+    private static extern void StreamAddTimeShiftFile(string streamName, 
+                                                      [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
+                                                      bool isProgramStream,
                                                       int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
-    private static extern void StreamAddMpegFile(string streamName, string fileName, int channelType);
+    private static extern void StreamAddMpegFile(string streamName,
+                                                 [In, MarshalAs(UnmanagedType.LPWStr)] string fileName, 
+                                                 int channelType);
 
     [DllImport("StreamingServer.dll", CharSet = CharSet.Ansi)]
     private static extern void StreamRemove(string streamName);
