@@ -1747,6 +1747,7 @@ public class MediaPortalApp : D3DApp, IRender
       PluginManager.LoadWhiteList(_safePluginsList);
     }
     PluginManager.LoadWindowPlugins();
+    PluginManager.CheckExternalPlayersCompatibility();
     Log.Info("Main: Loading windowmanager");
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(71)); // Initializing window manager...
     Log.Info("Main: Resizing windowmanager");

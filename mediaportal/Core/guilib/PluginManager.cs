@@ -319,6 +319,60 @@ namespace MediaPortal.GUI.Library
       return (typeObj.ToString().Equals(criteriaObj.ToString()));
     }
 
+    public static void CheckExternalPlayersCompatibility()
+    {
+      Log.Info("Checking external players plugins compatibility");
+      string[] fileList = MediaPortal.Util.Utils.GetFiles(Config.GetSubFolder(Config.Dir.Plugins, "ExternalPlayers"), "dll");
+      foreach (string fileName in fileList)
+      {
+        CheckPluginCompatibility(fileName, typeof(Player.IExternalPlayer));
+      }
+    }
+
+    private static void CheckPluginCompatibility(string strFile, Type pluginInterface)
+    {
+      try
+      {
+        Assembly assem = Assembly.LoadFrom(strFile);
+        if (assem != null)
+        {
+          Type[] types = assem.GetExportedTypes();
+
+          if (types.Any(t => t.IsClass && !t.IsAbstract && pluginInterface.IsAssignableFrom(t)) 
+              && !CompatibilityManager.IsPluginCompatible(assem))
+          {
+            Log.Error(
+              "PluginManager: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!", assem.FullName);
+            _incompatibilities.Add(assem);
+          }
+          else
+          {
+
+            foreach (Type t in types)
+            {
+              try
+              {
+                if (t.IsClass && !t.IsAbstract && pluginInterface.IsAssignableFrom(t) && !CompatibilityManager.IsPluginCompatible(t))
+                {
+                  Log.Error(
+                    "PluginManager: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!",
+                    t.FullName);
+                  _incompatibilities.Add(t);
+                }
+              }
+              catch (NullReferenceException) {}
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Info(
+          "PluginManager: Plugin file {0} is broken or incompatible with the current MediaPortal version and won't be loaded!",
+          strFile.Substring(strFile.LastIndexOf(@"\") + 1));
+        Log.Info("PluginManager: Exception: {0}", ex);
+      }
+    }
 
     private static void LoadPlugin(string strFile)
     {

@@ -26,6 +26,7 @@ using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Common.Utils;
 
 namespace MediaPortal.Player
 {
@@ -131,6 +132,14 @@ namespace MediaPortal.Player
                 {
                   if (t.IsSubclassOf(typeof (IExternalPlayer)))
                   {
+                    if (!CompatibilityManager.IsPluginCompatible(t))
+                    {
+                      Log.Error(
+                        "  external player: {0} is tagged as incompatible with the current MediaPortal version and won't be loaded!",
+                        t.FullName);
+                      continue;
+                    }
+
                     object newObj = (object)Activator.CreateInstance(t);
                     Log.Info("  found plugin:{0} in {1}", t.ToString(), fileName);
 
