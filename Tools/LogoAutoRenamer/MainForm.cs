@@ -56,6 +56,17 @@ namespace LogoAutoRenamer
 
       File.Delete(log);
       StreamWriter tw = File.AppendText(log);
+      tw.WriteLine("");
+      tw.WriteLine("******************************");
+      tw.WriteLine(" Searching for TV/Radio logos ");
+      tw.WriteLine("******************************");
+      tw.WriteLine("");
+      tw.WriteLine("Source       : " + textBoxSrc.Text);
+      tw.WriteLine("Destination  : " + textBoxDst.Text);
+      tw.WriteLine("Channels list: " + textboxXml.Text);
+      tw.WriteLine("");
+      tw.WriteLine("******************************");
+
       foreach (string dir in dirs)
       {
         if (!Directory.Exists(dir))
@@ -136,20 +147,30 @@ namespace LogoAutoRenamer
             }
 
             string chNameLog = ("<" + chName + ">").PadRight(40, ' ') + "[" + chType + "]";
+            string src = textBoxSrc.Text + "\\" + logoName;
+            string dir = chType.Trim() == "TV" ? "TV\\logos" : "Radio";
+            string dst = textBoxDst.Text + "\\" + dir + "\\" + chName + ".png";
+
             if (foundLogo)
             {
-              string src = textBoxSrc.Text + "\\" + logoName;
-              string dir = chType.Trim() == "TV" ? "TV\\logos" : "Radio";
-              string dst = textBoxDst.Text + "\\" + dir + "\\" + chName + ".png";
               Image image = Image.FromFile(src);
               image.Save(dst, ImageFormat.Png);
-              tw.WriteLine(chNameLog + ":  found logo <" + logoName + ">");
+              string tmp = "<" + logoName + ">";
+              tw.WriteLine(chNameLog + ":  found " + tmp.PadRight(30, ' ') + " [overwritten if present]");
               iChWithLogo++;
             }
             else
             {
-              tw.WriteLine(chNameLog + ":  no logo available");
-              iChNoLogo++;
+              if (File.Exists(dst))
+              {
+                tw.WriteLine(chNameLog + ":  already exist");
+                iChWithLogo++;
+              }
+              else
+              {
+                tw.WriteLine(chNameLog + ":  not available");
+                iChNoLogo++;
+              }
             }
           }
         }
