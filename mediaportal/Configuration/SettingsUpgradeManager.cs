@@ -85,19 +85,15 @@ namespace MediaPortal.Configuration
 
       string skinbase = Config.GetFolder(Config.Dir.Skin) + "\\";
 
-      //Zip old Blue3/Blue3Wide
-      string _zipFile = skinbase + "Old-Blue3(wide)-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
+      //Zip Blue3/Blue3Wide skin folders 
+      string[] skins3 = { "Blue3", "Blue3Wide" };
 
-      using (Archiver archiver = new Archiver())
+      foreach (string skin in skins3)
       {
-        string[] skins3 = { "Blue3", "Blue3Wide" };
-        foreach (string skin in skins3)
+        if (Directory.Exists(skinbase + skin))
         {
-          if (Directory.Exists(skinbase + skin))
-          {
-            Log.Info("Adding skin \"" + skinbase + skin + "\" to zip...");
-            archiver.AddDirectory(skinbase + skin, _zipFile, false);
-          }
+          Log.Info("Adding skin \"" + skinbase + skin + "\" to zip...");
+          ZipDirectory(skinbase, skin);
         }
       }
 
@@ -193,6 +189,18 @@ namespace MediaPortal.Configuration
       {
         Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
       }
+    }
+
+    /// <summary>
+    /// Create a zip file from a directory
+    /// </summary>
+    /// <param name="skinbase"></param>
+    /// <param name="skin"></param>
+    private void ZipDirectory(string skinbase, string skin)
+    {
+      string _zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
+      Archiver archiver = new Archiver();
+      archiver.AddDirectory(skinbase + skin, _zipFile, true);
     }
 
     #endregion
