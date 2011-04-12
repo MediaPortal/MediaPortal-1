@@ -9,7 +9,7 @@
       <id>0</id>
       <posX>65</posX>
       <posY>547</posY>
-      <width>360</width>
+      <width>330</width>
       <height>180</height>
       <texture mask="picturethumbmask.png">blue.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
@@ -75,7 +75,7 @@
       <id>5</id>
       <posX>78</posX>
       <posY>680</posY>
-      <width>310</width>
+      <width>300</width>
       <height>37</height>
       <font>font12</font>
       <label>#Play.Current.Title\r#Play.Current.Genre\r#Play.Current.Year\r#Play.Current.Director</label>
