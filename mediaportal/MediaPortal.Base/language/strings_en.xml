@@ -1002,6 +1002,9 @@
     <String id="1214">Composers</String>
     <String id="1215">Conductors</String>
     <String id="1216">Discs</String>
+    <String id="1217">Artist Tracks</String>
+    <String id="1218">Albums By Age</String>
+    <String id="1219">Album Artists (Index)</String>
     <String id="1220">Sort by: Date Created</String>
     <String id="1221">Sort by: Date Modified</String>
     <String id="1230">Date added:</String>
@@ -1349,7 +1352,7 @@
     <String id="4554">Lookup CD info</String>
     <String id="4555">Current Playlist</String>
     <String id="4557">Add all to playlist</String>
-    <String id="4558">Recently added</String>
+    <String id="4558">Recently Added</String>
     <String id="5900" prefix="My ">Trailers</String>
     <String id="5901">Show Movies</String>
     <String id="5902">Show which movies?</String>
