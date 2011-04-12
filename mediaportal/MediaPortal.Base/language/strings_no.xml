@@ -999,6 +999,12 @@
     <String id="1211">Gjenoppta avspilling fra {0}</String>
     <String id="1212">Avbryt påminnelse</String>
     <String id="1213">Lytt til denne kanalen</String>
+    <String id="1214">Komponist</String>
+    <String id="1215">Dirigent</String>
+    <String id="1216">Disker</String>
+    <String id="1217">Artist spor</String>
+    <String id="1218">Album etter alder</String>
+    <String id="1219">Album artister (oversikt)</String>
     <String id="1220">Sorter etter: Dato lagret</String>
     <String id="1221">Sorter etter: Endret dato</String>
     <String id="1230">Dato lagt til</String>
