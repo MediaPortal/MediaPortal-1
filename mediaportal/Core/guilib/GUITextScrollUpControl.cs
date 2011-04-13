@@ -291,12 +291,15 @@ namespace MediaPortal.GUI.Library
                   x = dwPosX + dMaxWidth + _width;
                   break;
               }
+
+              uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
               if (Shadow)
               {
+                uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
                 _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy,
                                           (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor), wszText2.Trim(),
                                           _textAlignment,
-                                          _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
+                                          _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
               }
               else
               {
@@ -316,23 +319,26 @@ namespace MediaPortal.GUI.Library
                 x = dwPosX + _width;
                 break;
             }
-
-            if (Shadow)
             {
-              _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
-                                        wszText1.Trim(), _textAlignment,
-                                        _shadowAngle, _shadowDistance, _shadowColor, (float)dMaxWidth);
-            }
-            else
-            {
-              _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
-                                  wszText1.Trim(), (float)dMaxWidth, _textAlignment);
-            }
+              uint aColor = GUIGraphicsContext.MergeAlpha((uint)color);
+              if (Shadow)
+              {
+                uint sColor = GUIGraphicsContext.MergeAlpha((uint)_shadowColor);
+                _font.DrawShadowTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                          wszText1.Trim(), _textAlignment,
+                                          _shadowAngle, _shadowDistance, sColor, (float)dMaxWidth);
+              }
+              else
+              {
+                _font.DrawTextWidth(x, (float)dwPosY + ioffy, (uint)GUIGraphicsContext.MergeAlpha((uint)_textColor),
+                                    wszText1.Trim(), (float)dMaxWidth, _textAlignment);
+              }
 
-            //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
-            //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
+              //            Log.Info("dw _positionY, dwPosY, _yPositionScroll, _scrollOffset: {0} {1} {2} {3}", _positionY, dwPosY, _yPositionScroll, _scrollOffset);
+              //            Log.Info("dw wszText1.Trim() {0}", wszText1.Trim());
 
-            dwPosY += (int)(_itemHeight * _lineSpacing);
+              dwPosY += (int)(_itemHeight * _lineSpacing);
+            }
           }
         }
 
