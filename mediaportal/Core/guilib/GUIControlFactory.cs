@@ -374,7 +374,7 @@ namespace MediaPortal.GUI.Library
       TypeConverter converter = convCache.TryGetOrAdd(type, t => TypeDescriptor.GetConverter(t));
       if (converter.CanConvertFrom(typeof (string)))
       {
-        return converter.ConvertFromString(valueText);
+        return converter.ConvertFromString(null, CultureInfo.GetCultureInfo("en-US"), valueText);
       }
 
       return null;
