@@ -156,6 +156,11 @@ namespace TvLibrary.Implementations.DVB
       /// </summary>
       AdvancedCodecHdNvodReference = 0x1B,
 
+      /// <summary>
+      /// sky germany linked channels (option channels)
+      /// </summary>
+      SkyGermanyOptionChannel = 0xd3
+
       // (0x1C to 0x7F reserved)
       // (0x80 to 0xFE user defined)
       // (0xFF reserved)
@@ -563,7 +568,8 @@ namespace TvLibrary.Implementations.DVB
         serviceType == (int)DvbServiceType.DigitalTelevision ||
         serviceType == (int)DvbServiceType.Mpeg2HdDigitalTelevision ||
         serviceType == (int)DvbServiceType.AdvancedCodecSdDigitalTelevision ||
-        serviceType == (int)DvbServiceType.AdvancedCodecHdDigitalTelevision)
+        serviceType == (int)DvbServiceType.AdvancedCodecHdDigitalTelevision ||
+        serviceType == (int)DvbServiceType.SkyGermanyOptionChannel)
       {
         return true;
       }
