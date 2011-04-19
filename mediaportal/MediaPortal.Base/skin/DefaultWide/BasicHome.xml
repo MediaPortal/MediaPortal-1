@@ -497,6 +497,19 @@
     <control>
       <description>music logo</description>
       <type>image</type>
+      <id>1</id>
+      <posX>852</posX>
+      <posY>352</posY>
+      <width>115</width>
+      <height>115</height>
+      <keepaspectratio>no</keepaspectratio>
+      <centered>yes</centered>
+      <texture mask="picturethumbmask.png">missing_coverart.png</texture>
+      <visible>Player.HasAudio+!Player.HasVideo+!control.hasthumb(31)|!control.hasthumb(77)</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
       <id>31</id>
       <posX>852</posX>
       <posY>352</posY>
@@ -594,6 +607,7 @@
       <wrapString></wrapString>
       <align>center</align>
       <visible>Player.HasAudio+!Player.HasVideo</visible>
+      <animation effect="fade" time="400" condition="true">conditional</animation>
     </control>
   </controls>
 </window>
