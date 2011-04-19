@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
 <window>
   <id>763</id>
   <defaultcontrol>50</defaultcontrol>
@@ -26,8 +25,6 @@
       <texture>#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -38,8 +35,6 @@
       <height>118</height>
       <texture>Picture_cover.png</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -49,8 +44,6 @@
       <width>160</width>
       <height>157</height>
       <texture>-</texture>
-      
-      
     </control>
     <control>
       <description>Number of Files Label</description>
@@ -62,8 +55,6 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
       <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
     </control>
     <control>
@@ -73,8 +64,6 @@
       <posX>39</posX>
       <posY>96</posY>
       <layout>StackLayout</layout>
-      
-      
       <control>
         <type>button</type>
         <description>View-As button</description>
@@ -111,19 +100,8 @@
         <onleft>6</onleft>
         <onright>50</onright>
         <onup>5</onup>
-        <ondown>7</ondown>
-        <label>624</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>compress button</description>
-        <id>7</id>
-        <onleft>7</onleft>
-        <onright>50</onright>
-        <onup>6</onup>
         <ondown>99</ondown>
-        <hyperlink>609</hyperlink>
-        <label>896</label>
+        <label>624</label>
       </control>
     </control>
     <control>
@@ -148,8 +126,6 @@
       <textcolor>FFB2D4F5</textcolor>
       <label>#Radio.Recorded.Channel</label>
       <font>font12</font>
-      
-      
     </control>
     <control>
       <description>Current program time</description>
@@ -162,8 +138,6 @@
       <align>left</align>
       <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
-      
-      
     </control>
     <control>
       <description>Current program genre</description>
@@ -176,8 +150,6 @@
       <align>right</align>
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
       <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
     </control>
     <control>
@@ -190,8 +162,6 @@
       <label>#Radio.Recorded.Title</label>
       <font>font12</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <control>
       <description>Description1</description>
@@ -204,8 +174,6 @@
       <label>#Radio.Recorded.Description</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <import>common.facade.recordings.xml</import>
   </controls>
