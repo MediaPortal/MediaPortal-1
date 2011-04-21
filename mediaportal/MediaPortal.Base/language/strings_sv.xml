@@ -802,7 +802,7 @@
     <String id="916">Fjärrfil</String>
     <String id="917">Denna fil finns i en fjärrmapp</String>
     <String id="918">Vill du ladda ner det till din vanliga</String>
-    <String id="919">lokala share?</String>
+    <String id="919">lokal utdelning?</String>
     <String id="920">Kunde inte ladda ner fjärrfil</String>
     <String id="921">Filen laddas ner</String>
     <String id="922">Beskrivning</String>
@@ -936,10 +936,6 @@
     <String id="1054">(inspelning)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(ej tillgänglig)</String>
-    <String id="1057">Spela in Sön-Tors</String>
-    <String id="1058">Spela in Fre-Lör</String>
-    <String id="1059">Sön-Tor</String>
-    <String id="1060">Fre-Lör</String>
     <String id="1061">Flyttbar</String>
     <String id="1062">Objekt</String>
     <String id="1064">Bokmärken</String>
@@ -997,7 +993,22 @@
     <String id="1203">Kommande avsnitt (aktiva:{0})</String>
     <String id="1204">Spela alla filmer i vald mapp</String>
     <String id="1205">Sortering: Disknr</String>
+    <String id="1206">Programmet spelas i {0} minuter</String>
+    <String id="1207">Växla till {0} nu?</String>
+    <String id="1208">Sortera efter kompositör</String>
     <String id="1211">Återuppta uppspelning från {0}</String>
+    <String id="1212">Ta bort påminnelse</String>
+    <String id="1213">Lyssna ttill denna station</String>
+    <String id="1214">Kompositörer</String>
+    <String id="1215">Ledare</String>
+    <String id="1216">Skivor</String>
+    <String id="1217">Artistspår</String>
+    <String id="1218">Album i åldersordning</String>
+    <String id="1219">Album Artister (Index)</String>
+    <String id="1220">Sortera efter skapandedatum</String>
+    <String id="1221">Sortera efter ändradatum</String>
+    <String id="1230">Tillagd datum:</String>
+    <String id="1231">Senast spelad:</String>
     <String id="1300" prefix="Mina ">TV-serier</String>
     <String id="1440" prefix="Min ">Text-TV</String>
     <String id="1441">Text-TV</String>
@@ -1667,7 +1678,7 @@
     <String id="33031">Andra låtar med etikett:</String>
     <String id="33032">Detta albums bästa låt kunde inte</String>
     <String id="33033">hittas i din samling!</String>
-    <String id="33040">Copy now playing spam to clipboard</String>
+    <String id="33040">Kopiera skräp som spelas nu till klippbordet</String>
     <String id="33041">Lägg till detta album till spellistan</String>
     <String id="34000" prefix="Min">Last.fm</String>
     <String id="34001">Starta / byt ström</String>
@@ -1753,8 +1764,8 @@
     <String id="100505" prefix="Min ">Musik/top100</String>
     <String id="100506" prefix="Min ">Musik/Favoriter</String>
     <String id="100507" prefix="Min ">Musik/År</String>
-    <String id="100508" prefix="Min ">Musik/Lookup/Resultat</String>
-    <String id="100509" prefix="Min ">Musik/Lookup/Progress</String>
+    <String id="100508" prefix="Min ">Musik/Sökning/Resultat</String>
+    <String id="100509" prefix="Min ">Musik/Sökning/Förlopp</String>
     <String id="100510" prefix="Min ">Musik/Nu spelas</String>
     <String id="100511" prefix="Min ">Musik/Fullskärm</String>
     <String id="100512">LastFM Älska/Hata</String>
@@ -1818,6 +1829,7 @@
     <String id="100760" prefix="Min ">Brännare</String>
     <String id="100761" prefix="Min ">TV-tablå</String>
     <String id="100762" prefix="Min ">Radio-tablå</String>
+    <String id="100763">Inspelad radio</String>
     <String id="100800" prefix="Mina">Tillägg</String>
     <String id="101000">tangentbord</String>
     <String id="101002">Virtuellt standardtangentbord</String>
@@ -1840,6 +1852,7 @@
     <String id="102014">Bildinfo</String>
     <String id="102015">Minimeny</String>
     <String id="102016">Upplysning</String>
+    <String id="102017">Inspelningskonflikt</String>
     <String id="102018">CI meny</String>
     <String id="102600" prefix="Mitt">Väder</String>
     <String id="102700" prefix="Mina">Nyheter</String>
@@ -1869,6 +1882,7 @@
     <String id="109004">MiniDisplay - Inställningar - Equalizer</String>
     <String id="109005">MiniDisplay - Inställningar - Tangentbord</String>
     <String id="109006">MiniDisplay - Inställningar - Fjärrkontroll</String>
+    <String id="102019">TV-påminnelse</String>
     <String id="200000">Var god ange vilken EPG grabber du använder. Om ditt land inte</String>
     <String id="200001">finns med i listan måste du tillföra EPG:n manuellt</String>
     <String id="200002">Nu kan du mappa EPG-kanalerna till dina TV-kanaler</String>
