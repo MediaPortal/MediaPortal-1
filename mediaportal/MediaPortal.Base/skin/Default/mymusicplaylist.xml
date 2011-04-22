@@ -164,12 +164,16 @@
           <visible>!Control.HasFocus(50)</visible>
           <control>
             <description>View-As button</description>
-            <type>button</type>
+            <type>menubutton</type>
             <id>2</id>
-            <label>100</label>
+            <label></label>
             <onright>50</onright>
             <onup>17</onup>
             <ondown>20</ondown>
+            <mode>dialoglist</mode>
+            <dialogTitle>499</dialogTitle>
+            <valueTextInButton>yes</valueTextInButton>
+            <valuePrefixText>97</valuePrefixText>
           </control>
           <control>
             <description>Shuffle button</description>
