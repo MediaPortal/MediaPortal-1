@@ -32,7 +32,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       1
-!define VER_REVISION    6
+!define VER_REVISION    7
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
