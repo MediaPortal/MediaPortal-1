@@ -1074,6 +1074,7 @@ namespace MediaPortal.GUI.Library
     public long TextColor
     {
       get { return _textColor; }
+      set { _textColor = value; }
     }
 
     public string FontName

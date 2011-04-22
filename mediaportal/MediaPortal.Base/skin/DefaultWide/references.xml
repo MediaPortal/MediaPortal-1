@@ -92,7 +92,7 @@
     <dialogTitle></dialogTitle>
     <dialogShowNumbers>no</dialogShowNumbers>
     <font>font12</font>
-    <textcolor>ffa9d0f7</textcolor>
+    <textcolor>ffffffff</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <disabledcolor>ff808080</disabledcolor>
     <textcolorNoFocus>ffa9d0f7</textcolorNoFocus>

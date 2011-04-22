@@ -640,6 +640,7 @@ namespace MediaPortal.GUI.Library
           break;
       }
 
+      _spinControl.TextColor = Disabled ? _disabledColor : Focus ? _textColor : _textColorNoFocus;
       _spinControl.SetPosition(x, y);
       _spinControl.Render(timePassed);
     }
