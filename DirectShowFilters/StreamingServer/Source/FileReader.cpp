@@ -27,6 +27,8 @@
 #include "FileReader.h"
 //#include "global.h"
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 FileReader::FileReader() :
 	m_hFile(INVALID_HANDLE_VALUE),
 	m_pFileName(0),
@@ -158,12 +160,12 @@ HRESULT FileReader::OpenFile()
 	if (Tmo)
 	{
     if (Tmo<4) // 1 failed + 1 succeded is quasi-normal, more is a bit suspicious ( disk drive too slow or problem ? )
-  			LogDebug("FileReader::OpenFile(), %d tries to succeed opening %ws.", 6-Tmo, pFileName);
+  			LogDebug(L"FileReader::OpenFile(), %d tries to succeed opening %s.", 6-Tmo, pFileName);
 	}
 	else
 	{
 		DWORD dwErr = GetLastError();
-		LogDebug("FileReader::OpenFile(), open file %ws failed. Error code %d", pFileName, dwErr);
+		LogDebug(L"FileReader::OpenFile(), open file %s failed. Error code %d", pFileName, dwErr);
 		return HRESULT_FROM_WIN32(dwErr);
 	}
 

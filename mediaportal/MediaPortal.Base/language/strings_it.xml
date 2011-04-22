@@ -999,6 +999,12 @@
     <String id="1211">Riproduci il video da {0}</String>
     <String id="1212">Cancellare la notifica</String>
     <String id="1213">Ascolta questa stazione</String>
+    <String id="1214">Compositori</String>
+    <String id="1215">Direttori</String>
+    <String id="1216">Dischi</String>
+    <String id="1217">Traccie per Artista</String>
+    <String id="1218">Album per data</String>
+    <String id="1219">Album per indice Artista</String>
     <String id="1220">Ordina per: Data creazione</String>
     <String id="1221">Ordina per: Data modifica</String>
     <String id="1230">Aggiunto in data:</String>

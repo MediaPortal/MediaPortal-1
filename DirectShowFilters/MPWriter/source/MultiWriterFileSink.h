@@ -28,7 +28,7 @@ enum ChannelType
 class CMultiWriterFileSink: public MediaSink,public CPacketSync 
 {
 public:
-  static CMultiWriterFileSink* createNew(UsageEnvironment& env, char const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False, int channelType = 0);
+  static CMultiWriterFileSink* createNew(UsageEnvironment& env, wchar_t const* fileName,int minFiles, int maxFiles, ULONG maxFileSize,unsigned bufferSize = 20000,Boolean oneFilePerFrame = False, int channelType = 0);
   // "bufferSize" should be at least as large as the largest expected
   //   input frame.
   // "oneFilePerFrame" - if True - specifies that each input frame will

@@ -9,11 +9,11 @@
 class TsMPEG2TransportFileServerMediaSubsession: public FileServerMediaSubsession{
 public:
 	static TsMPEG2TransportFileServerMediaSubsession*
-		createNew(UsageEnvironment& env, char const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType);
+		createNew(UsageEnvironment& env, wchar_t const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType);
 
 protected:
 	TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,
-		char const* fileName,
+		wchar_t const* fileName,
 		Boolean reuseFirstSource, Boolean timeshifting, int channelType);
 	// called only by createNew();
 	virtual ~TsMPEG2TransportFileServerMediaSubsession();
@@ -31,7 +31,7 @@ private: // redefined virtual functions
 	virtual RTPSink* createNewRTPSink(Groupsock* rtpGroupsock,
 		unsigned char rtpPayloadTypeIfDynamic,
 		FramedSource* inputSource);
-	char m_fileName[MAX_PATH];
+	wchar_t m_fileName[MAX_PATH];
 	Boolean m_bTimeshifting;
 	int m_iChannelType;
 };

@@ -33,7 +33,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 class TsStreamFileSource: public FramedFileSource {
 public:
 	static TsStreamFileSource* createNew(UsageEnvironment& env,
-		char const* fileName,
+		wchar_t const* fileName,
 		unsigned preferredFrameSize = 0,
 		unsigned playTimePerFrame = 0,
 		int channelType = 0);
@@ -55,7 +55,7 @@ public:
 
 	void seekToByteAbsolute(u_int64_t byteNumber);
 	void seekToByteRelative(int64_t offset);
-  void seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& duration); 
+	void seekToTimeAbsolute(CRefTime& seekTime, CTsDuration& duration); 
 
 protected:
 	TsStreamFileSource(UsageEnvironment& env,

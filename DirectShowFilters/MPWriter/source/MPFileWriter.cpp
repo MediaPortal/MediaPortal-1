@@ -81,33 +81,45 @@ const AMOVIESETUP_FILTER sudDump =
 };
 
 static char logbuffer[2000]; 
-
-void LogDebug(const char *fmt, ...) 
+static wchar_t logbufferw[2000];
+void LogDebug(const wchar_t *fmt, ...)
 {
 	va_list ap;
 	va_start(ap,fmt);
 
-	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	vswprintf_s(logbufferw, fmt, ap);
 	va_end(ap); 
 
-	TCHAR folder[MAX_PATH];
-	TCHAR fileName[MAX_PATH];
-	::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-	sprintf(fileName,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\MPFileWriter.Log",folder);
+	wchar_t folder[MAX_PATH];
+	wchar_t fileName[MAX_PATH];
+	::SHGetSpecialFolderPathW(NULL, folder, CSIDL_COMMON_APPDATA, FALSE);
+	swprintf_s(fileName, L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\MPFileWriter.Log", folder);
 
-	FILE* fp = fopen(fileName,"a+");
+	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
 	if (fp!=NULL)
 	{
-		SYSTEMTIME systemTime;
-		GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbuffer);
+			logbufferw);
 		fclose(fp);
 	}
+};
+
+void LogDebug(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap,fmt);
+
+	va_start(ap,fmt);
+	vsprintf(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
 };
 
 //
@@ -551,11 +563,11 @@ BOOL APIENTRY DllMain(HANDLE hModule,
 	return DllEntryPoint((HINSTANCE)(hModule), dwReason, lpReserved);
 }
 
-STDMETHODIMP CMPFileWriter::SetTimeShiftFileName(int subChannelId, char* pszFileName)
+STDMETHODIMP CMPFileWriter::SetTimeShiftFileNameW(int subChannelId, wchar_t* pwszFileName)
 {
 	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
 	if (pSubChannel==NULL) return S_OK;
-	return pSubChannel->SetTimeShiftFileName(pszFileName);
+	return pSubChannel->SetTimeShiftFileNameW(pwszFileName);
 }
 
 STDMETHODIMP CMPFileWriter::SetTimeShiftParams(int subChannelId, int minFiles, int maxFiles, ULONG maxFileSize)
@@ -586,11 +598,11 @@ STDMETHODIMP CMPFileWriter::PauseTimeShifting(int subChannelId, int onOff)
 }
 
 
-STDMETHODIMP CMPFileWriter::SetRecordingFileName(int subChannelId, char* pszFileName)
+STDMETHODIMP CMPFileWriter::SetRecordingFileNameW(int subChannelId, wchar_t* pwszFileName)
 {
 	CSubChannel* pSubChannel=GetSubChannel(subChannelId);
 	if (pSubChannel==NULL) return S_OK;
-	return pSubChannel->SetRecordingFileName(pszFileName);
+	return pSubChannel->SetRecordingFileNameW(pwszFileName);
 }
 
 

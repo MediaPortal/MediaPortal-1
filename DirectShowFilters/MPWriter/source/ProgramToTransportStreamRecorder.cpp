@@ -4,6 +4,7 @@
 #include "ProgramToTransportStreamRecorder.h"
 #include "MemoryStreamSource.h"
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 CProgramToTransportStreamRecorder::CProgramToTransportStreamRecorder(void)
 {
@@ -27,9 +28,9 @@ void afterPlayingRecorder(void* clientData)
 	LogDebug("CProgramToTransportStreamRecorder afterPlaying");
 	MPEG2TransportStreamFromPESSource* outputSink=(MPEG2TransportStreamFromPESSource*)clientData;
 }
-void CProgramToTransportStreamRecorder::Initialize(char* fileNameOut)
+void CProgramToTransportStreamRecorder::Initialize(wchar_t* fileNameOut)
 {
-	LogDebug("CProgramToTransportStreamRecorder::Initialize %s",fileNameOut);
+	LogDebug(L"CProgramToTransportStreamRecorder::Initialize %s", fileNameOut);
 	m_BufferThreadActive=false;
 	m_buffer.Clear();
 

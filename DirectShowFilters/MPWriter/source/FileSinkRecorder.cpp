@@ -9,6 +9,8 @@
 ////////// CFileSinkRecorder //////////
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...);
+
 CFileSinkRecorder::CFileSinkRecorder(UsageEnvironment& env, FileWriter* fid, unsigned bufferSize,char const* perFrameFileNamePrefix) 
   : MediaSink(env), fOutFid(fid), fBufferSize(bufferSize) 
 {
@@ -37,18 +39,16 @@ CFileSinkRecorder::~CFileSinkRecorder()
 
 }
 
-CFileSinkRecorder* CFileSinkRecorder::createNew(UsageEnvironment& env, char const* fileName,unsigned bufferSize) 
+CFileSinkRecorder* CFileSinkRecorder::createNew(UsageEnvironment& env, wchar_t const* fileName,unsigned bufferSize) 
 {
   do 
   {
-    LogDebug("CFileSinkRecorder::create file:%s",fileName);
+    LogDebug(L"CFileSinkRecorder::create file:%s",fileName);
     FileWriter* fid = new FileWriter();
-	  WCHAR wstrFileName[2048];
-	  MultiByteToWideChar(CP_ACP,0,fileName,-1,wstrFileName,1+strlen(fileName));
-	  fid->SetFileName(wstrFileName);
+    fid->SetFileName(fileName);
     if (FAILED(fid->OpenFile()))
     {
-      LogDebug("CFileSinkRecorder::create file:%s failed",fileName);
+      LogDebug(L"CFileSinkRecorder::create file:%s failed", fileName);
       delete fid;
       return NULL;
     }

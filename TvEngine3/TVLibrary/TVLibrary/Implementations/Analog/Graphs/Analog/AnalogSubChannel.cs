@@ -162,7 +162,7 @@ namespace TvLibrary.Implementations.Analog
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
                                    parameters.MaximumFileSize);
-      _mpRecord.SetTimeShiftFileName(_subChannelId, fileName);
+      _mpRecord.SetTimeShiftFileNameW(_subChannelId, fileName);
 
       //  Set the channel type
       if (CurrentChannel == null)
@@ -202,7 +202,7 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartRecord();
       }
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
-      _mpRecord.SetRecordingFileName(_subChannelId, fileName);
+      _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
       _mpRecord.StartRecord(_subChannelId);
     }

@@ -36,7 +36,7 @@ namespace TvLibrary.Interfaces.Analyzer
     ///<param name="fileName">Filename</param>
     ///<returns>Error code</returns>
     [PreserveSig]
-    int SetTimeShiftingFileName([In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int SetTimeShiftingFileNameW([In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts timeshifting.

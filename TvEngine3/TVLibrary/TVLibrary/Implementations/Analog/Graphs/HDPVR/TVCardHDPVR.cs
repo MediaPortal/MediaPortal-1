@@ -21,8 +21,10 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using DirectShowLib;
 using TvLibrary.ChannelLinkage;
+using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.Analog.QualityControl;
 using TvLibrary.Interfaces;
@@ -32,14 +34,17 @@ using TvLibrary.Implementations.Helper;
 namespace TvLibrary.Implementations.Analog
 {
   /// <summary>
-  /// Class for handling HDPVR
+  /// Class for handling supported capture cards, including the Hauppauge HD PVR and Colossus.
   /// </summary>
   public class TvCardHDPVR : TvCardBase, ITVCard
   {
-    #region const
+    #region constants
 
-    private const string _captureDeviceName = "Hauppauge HD PVR Capture Device";
-    private const string _encoderDeviceName = "Hauppauge HD PVR Encoder";
+    // Assume the capture card is a Hauppauge HD PVR by default.
+    private readonly string _deviceType = "HDPVR";
+    private readonly string _crossbarDeviceName = "Hauppauge HD PVR Crossbar";
+    private readonly string _captureDeviceName = "Hauppauge HD PVR Capture Device";
+    private readonly string _encoderDeviceName = "Hauppauge HD PVR Encoder";
 
     #endregion
 
@@ -88,12 +93,27 @@ namespace TvLibrary.Implementations.Analog
     #region ctor
 
     ///<summary>
-    /// Constrcutor for the HD PVR device
+    /// Constructor for a capture card device.
     ///</summary>
-    ///<param name="device">HDPVR encoder device</param>
+    ///<param name="device">A crossbar device for a supported capture card.</param>
     public TvCardHDPVR(DsDevice device)
       : base(device)
     {
+      // Determine what type of card this is.
+      if (device.Name.Contains("Colossus"))
+      {
+        Match match = Regex.Match(device.Name, @".*?(\d+)$");
+        int deviceNumber = 0;
+        if (match.Success)
+        {
+          deviceNumber = Convert.ToInt32(match.Groups[1].Value);
+        }
+        _deviceType = "Colossus";
+        _crossbarDeviceName = device.Name;
+        _captureDeviceName = "Hauppauge Colossus Capture " + deviceNumber;
+        _encoderDeviceName = "Hauppauge Colossus TS Encoder " + deviceNumber;
+      }
+
       _mapSubChannels = new Dictionary<Int32, BaseSubChannel>();
       _supportsSubChannels = true;
       _minChannel = 0;
@@ -312,8 +332,10 @@ namespace TvLibrary.Implementations.Analog
     private Int32 GetNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      Log.Log.Info("HDPVR:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
-      HDPVRChannel subChannel = new HDPVRChannel(this, id, channel, _filterTsWriter);
+      Log.Log.Info("HDPVR: GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      HDPVRChannel subChannel = new HDPVRChannel(this, _deviceType, id, _filterTsWriter, _graphBuilder);
+      subChannel.Parameters = Parameters;
+      subChannel.CurrentChannel = channel;
       _mapSubChannels[id] = subChannel;
       return id;
     }
@@ -526,13 +548,13 @@ namespace TvLibrary.Implementations.Analog
         }
 
         _graphState = GraphState.Created;
-        _configuration.Graph.Crossbar.Name = "Hauppauge HD PVR Crossbar";
+        _configuration.Graph.Crossbar.Name = _crossBarDevice.Name;
         _configuration.Graph.Crossbar.VideoPinMap = _videoPinMap;
         _configuration.Graph.Crossbar.AudioPinMap = _audioPinMap;
         _configuration.Graph.Crossbar.VideoPinRelatedAudioMap = _videoPinRelatedAudioMap;
         _configuration.Graph.Crossbar.VideoOut = _videoOutPinIndex;
         _configuration.Graph.Crossbar.AudioOut = _audioOutPinIndex;
-        _configuration.Graph.Capture.Name = _captureDeviceName;
+        _configuration.Graph.Capture.Name = _captureDevice.Name;
         _configuration.Graph.Capture.FrameRate = -1d;
         _configuration.Graph.Capture.ImageHeight = -1;
         _configuration.Graph.Capture.ImageWidth = -1;
@@ -763,7 +785,7 @@ namespace TvLibrary.Implementations.Analog
         IPin pinOut = DsFindPin.ByDirection(_filterEncoder, PinDirection.Output, 0);
         if (pinOut == null)
         {
-          Log.Log.Error("HDPVR: Unable to find output pin on the encoder filter");
+          Log.Log.Error("HDPVR:  Unable to find output pin on the encoder filter");
           throw new TvException("unable to find output pin on the encoder filter");
         }
         IPin pinIn = DsFindPin.ByDirection(_filterTsWriter, PinDirection.Input, 0);
@@ -818,11 +840,12 @@ namespace TvLibrary.Implementations.Analog
       {
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
         _mapSubChannels[subChannel].AfterTuneEvent += new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
-        _mapSubChannels[subChannel].OnGraphStarted();
+        _mapSubChannels[subChannel].OnGraphStart();
       }
 
       if (graphRunning)
       {
+        Log.Log.Write("HDPVR: Graph already running");
         return;
       }
 

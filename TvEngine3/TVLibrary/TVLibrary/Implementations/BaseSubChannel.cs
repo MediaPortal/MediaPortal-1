@@ -370,6 +370,7 @@ namespace TvLibrary.Implementations
           Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
         }
 
+        _dateRecordingStarted = DateTime.Now;
         _graphState = GraphState.Recording;
       }
       catch (Exception e)

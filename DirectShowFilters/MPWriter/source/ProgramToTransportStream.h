@@ -14,7 +14,7 @@ class CProgramToTransportStream: public TSThread
 public:
 	CProgramToTransportStream(void);
 	virtual ~CProgramToTransportStream(void);
-	void Initialize(char* fileNameOut);
+	void Initialize(wchar_t* fileNameOut);
 	void SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
 	void SetChannelType(int channelType);
 	void ClearStreams();

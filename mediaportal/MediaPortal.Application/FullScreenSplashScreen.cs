@@ -105,7 +105,7 @@ namespace MediaPortal
         }
         else
         {
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Default");
         }
 //        SkinFilePath = GUIGraphicsContext.GetThemedSkinFile("\\splashscreen.xml");
         SkinFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\splashscreen.xml");
@@ -177,7 +177,7 @@ namespace MediaPortal
         }
         else
         {
-          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Blue3");
+          m_strSkin = xmlreader.GetValueAsString("skin", "name", "Default");
         }
 //        SkinReferenceFilePath = GUIGraphicsContext.GetThemedSkinFile("\\references.xml");
         SkinReferenceFilePath = Config.GetFile(Config.Dir.Skin, m_strSkin + "\\references.xml");

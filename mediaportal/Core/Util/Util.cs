@@ -3351,7 +3351,7 @@ namespace MediaPortal.Util
           {
             using (Profile.Settings xmlreader = new Profile.MPSettings())
             {
-              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Blue3");
+              currentSkin = Config.Dir.Config + @"\skin\" + xmlreader.GetValueAsString("skin", "name", "Default");
             }
             defaultBackground = currentSkin + @"\media\previewbackground.png";
           }

@@ -31,21 +31,21 @@
 #include "..\..\shared\tsheader.h"
 #include "..\..\shared\DebugSettings.h"
 
-static char logFile[MAX_PATH];
+static wchar_t logFile[MAX_PATH];
 static WORD logFileParsed = -1;
 
-void GetLogFile(char *pLog)
+void GetLogFile(wchar_t *pLog)
 {
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
   if(logFileParsed != systemTime.wDay)
   {
-    TCHAR folder[MAX_PATH];
-    ::SHGetSpecialFolderPath(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
-    sprintf(logFile,"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
+    wchar_t folder[MAX_PATH];
+    ::SHGetSpecialFolderPathW(NULL,folder,CSIDL_COMMON_APPDATA,FALSE);
+    swprintf_s(logFile,L"%s\\Team MediaPortal\\MediaPortal TV Server\\log\\TsWriter-%04.4d-%02.2d-%02.2d.Log",folder, systemTime.wYear, systemTime.wMonth, systemTime.wDay);
     logFileParsed=systemTime.wDay; // rec
   }
-  strcpy(pLog, &logFile[0]);
+  wcscpy(pLog, &logFile[0]);
 }
 
 // Setup data
@@ -88,32 +88,45 @@ DEFINE_TVE_DEBUG_SETTING(DisableCRCCheck)
 DEFINE_TVE_DEBUG_SETTING(DumpRawTS)
 
 static char logbuffer[2000]; 
-void LogDebug(const char *fmt, ...) 
+static wchar_t logbufferw[2000];
+void LogDebug(const wchar_t *fmt, ...)
 {
 //#ifdef DEBUG
 	va_list ap;
 	va_start(ap,fmt);
 
-	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	vswprintf_s(logbufferw, fmt, ap);
 	va_end(ap); 
 
-  TCHAR fileName[MAX_PATH];
-  GetLogFile(fileName);
-	FILE* fp = fopen(fileName,"a+");
+	wchar_t fileName[MAX_PATH];
+	GetLogFile(fileName);
+	FILE* fp = _wfopen(fileName,L"a+, ccs=UTF-8");
 	if (fp!=NULL)
 	{
-    SYSTEMTIME systemTime;
-    GetLocalTime(&systemTime);
-		fprintf(fp,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
+	SYSTEMTIME systemTime;
+	GetLocalTime(&systemTime);
+		fwprintf(fp,L"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d.%02.2d %s\n",
 			systemTime.wDay, systemTime.wMonth, systemTime.wYear,
 			systemTime.wHour,systemTime.wMinute,systemTime.wSecond,systemTime.wMilliseconds,
-			logbuffer);
+			logbufferw);
 		fclose(fp);
-    //::OutputDebugStringA(logbuffer);::OutputDebugStringA("\n");
+		//::OutputDebugStringW(logbufferw);::OutputDebugStringW(L"\n");
 	}
 //#endif
+};
+
+void LogDebug(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap,fmt);
+
+	va_start(ap,fmt);
+	vsprintf(logbuffer, fmt, ap);
+	va_end(ap); 
+
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	LogDebug(L"%s", logbufferw);
 };
 
 //
@@ -642,12 +655,12 @@ STDMETHODIMP CMpTs::PmtGetPMTData (int handle,BYTE *pmtData)
 	return pChannel->m_pPmtGrabber->GetPMTData (pmtData);
 }
 
-STDMETHODIMP CMpTs::RecordSetRecordingFileName( int handle,char* pszFileName)
+STDMETHODIMP CMpTs::RecordSetRecordingFileNameW( int handle, wchar_t* pwszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-	pChannel->m_pRecorder->SetFileName( pszFileName);
-	return S_OK;
+  pChannel->m_pRecorder->SetFileNameW(pwszFileName);
+  return S_OK;
 }
 
 STDMETHODIMP CMpTs::RecordStartRecord( int handle)
@@ -676,26 +689,24 @@ STDMETHODIMP CMpTs::RecordSetPmtPid(int handle,int mtPid, int serviceId,byte* pm
 	return S_OK;
 }
 
-STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileName( int handle, char* pszFileName)
+STDMETHODIMP CMpTs::TimeShiftSetTimeShiftingFileNameW( int handle, wchar_t* pwszFileName)
 {
   CTsChannel* pChannel=GetTsChannel(handle);
   if (pChannel==NULL) return S_OK;
-  
+
   b_dumpRawPakets=false;
   if (DumpRawTS())
   {
-	  b_dumpRawPakets=true;
-	  string fileName=pszFileName;
-	  fileName=fileName.substr(0, fileName.rfind("\\"));
-	  fileName.append("\\raw_paket_dump.ts");
-  	
-	  LogDebug("Setting name for raw paket dump file to %s",fileName.c_str());
-	  WCHAR wstrFileName[2048];
-	  MultiByteToWideChar(CP_ACP,0,fileName.c_str(),-1,wstrFileName,1+fileName.size());
-	  m_rawPaketWriter->SetFileName(wstrFileName);
+    b_dumpRawPakets=true;
+    wstring fileName=pwszFileName;
+    fileName=fileName.substr(0, fileName.rfind(L"\\"));
+    fileName.append(L"\\raw_packet_dump.ts");
+
+    LogDebug(L"Setting name for raw packet dump file to %s", fileName.c_str());
+    m_rawPaketWriter->SetFileName(fileName.c_str());
   }
-  pChannel->m_pTimeShifting->SetFileName( pszFileName);
-	return S_OK;
+  pChannel->m_pTimeShifting->SetFileNameW(pwszFileName);
+  return S_OK;
 }
 STDMETHODIMP CMpTs::TimeShiftStart( int handle )
 {
@@ -704,7 +715,7 @@ STDMETHODIMP CMpTs::TimeShiftStart( int handle )
   if (b_dumpRawPakets)
   {
 	  m_rawPaketWriter->OpenFile();
-	  LogDebug("Raw paket dump file created. Now dumping raw pakets to dump file");
+    LogDebug("Raw packet dump file created. Now dumping raw packets to dump file");
   }
   if (pChannel->m_pTimeShifting->Start())
 		return S_OK;
@@ -719,7 +730,7 @@ STDMETHODIMP CMpTs::TimeShiftStop( int handle )
   if (b_dumpRawPakets)
   {
 	  m_rawPaketWriter->CloseFile();
-	  LogDebug("Raw paket dump file closed");
+    LogDebug("Raw packet dump file closed");
   }
 	pChannel->m_pTimeShifting->Stop( );
 	return S_OK;
@@ -733,7 +744,7 @@ STDMETHODIMP CMpTs:: TimeShiftReset( int handle )
   {
 	  m_rawPaketWriter->CloseFile();
 	  m_rawPaketWriter->OpenFile();
-	  LogDebug("Raw paket dump file reset");
+    LogDebug("Raw packet dump file reset");
   }
 	pChannel->m_pTimeShifting->Reset( );
 	return S_OK;

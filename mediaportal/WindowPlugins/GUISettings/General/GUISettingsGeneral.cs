@@ -209,7 +209,7 @@ namespace WindowPlugins.GUISettings
       string currentSkin = "";
       using (Settings xmlreader = new MPSettings())
       {
-        currentSkin = xmlreader.GetValueAsString("skin", "name", "Blue3wide");
+        currentSkin = xmlreader.GetValueAsString("skin", "name", "DefaultWide");
       }
       installedSkins = GetInstalledSkins();
 

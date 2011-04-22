@@ -32,16 +32,17 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 #include "TsFileSeek.h"
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 
 TsStreamFileSource*
-TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
+TsStreamFileSource::createNew(UsageEnvironment& env, wchar_t const* fileName,
 							  unsigned preferredFrameSize,
 							  unsigned playTimePerFrame, int channelType) 
 {
-	LogDebug("ts:open %s",fileName);  
+	LogDebug(L"ts:open %s", fileName);  
 	FileReader* reader;
-	if (strstr(fileName,".tsbuffer")!=NULL)
+	if (wcsstr(fileName, L".tsbuffer")!=NULL)
 	{
 		reader = new MultiFileReader();
 		__int64 fileSize= reader->GetFileSize();
@@ -50,9 +51,7 @@ TsStreamFileSource::createNew(UsageEnvironment& env, char const* fileName,
 	{
 		reader = new FileReader();
 	}
-	WCHAR           wFileName[1024];
-	MultiByteToWideChar(CP_ACP,0,fileName,-1,wFileName,1024);
-	reader->SetFileName(wFileName);
+	reader->SetFileName(fileName);
 	reader->OpenFile();
 
 

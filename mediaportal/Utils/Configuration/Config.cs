@@ -50,7 +50,7 @@ namespace MediaPortal.Configuration
     #region Variables
 
     private static Dictionary<Dir, string> directories;
-    private static string skinName = "Blue3wide";
+    private static string skinName = "DefaultWide";
 
     #endregion
 

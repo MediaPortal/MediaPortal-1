@@ -2701,17 +2701,21 @@ namespace MediaPortal.Player
     /// </summary>
     public override void Stop()
     {
-      int stream = GetCurrentStream();
-      if (_SoftStop && !_isLastFMRadio && !_isRadio)
-      {
-        RegisterStreamSlideEndEvent(stream);
-        Log.Info("BASS: Stopping song. Fading out.");
-        Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, _CrossFadeIntervalMS);
-      }
-      else
-      {
+      //TODO: Mantis 3477
+      //Soft stop causing issues with TV when starting TV when music is playing
+      //Disabled soft stop as workaround for 1.2 beta
+
+      //int stream = GetCurrentStream();
+      //if (_SoftStop && !_isLastFMRadio && !_isRadio)
+      //{
+      //  RegisterStreamSlideEndEvent(stream);
+      //  Log.Info("BASS: Stopping song. Fading out.");
+      //  Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, _CrossFadeIntervalMS);
+      //}
+      //else
+      //{
         StopInternal();
-      }
+//      }
     }
 
     /// <summary>

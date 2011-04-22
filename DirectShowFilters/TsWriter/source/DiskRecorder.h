@@ -82,7 +82,7 @@ public:
 	CDiskRecorder(RecordingMode mode);
 	~CDiskRecorder(void);
 	
-	void SetFileName(char* pszFileName);
+	void SetFileNameW(wchar_t* pwszFileName);
 	void SetChannelType(int channelType);
 	bool Start();
 	void Stop();
@@ -118,6 +118,7 @@ private:
 	void WriteToRecording(byte* buffer, int len);
 	void WriteToTimeshiftFile(byte* buffer, int len);
 	void WriteLog(const char *fmt, ...);
+	void WriteLog(const wchar_t *fmt, ...);
 	void SetPcrPid(int pcrPid);
 	bool IsStreamWanted(int stream_type);
 	void AddStream(PidInfo2 pidInfo);
@@ -134,7 +135,7 @@ private:
   RecordingMode    m_recordingMode;
 	CPmtParser*					 m_pPmtParser;
 	bool				         m_bRunning;
-	char				         m_szFileName[2048];
+	wchar_t				         m_wszFileName[2048];
 	MultiFileWriter*     m_pTimeShiftFile;
 	HANDLE							 m_hFile;
 	CCriticalSection     m_section;

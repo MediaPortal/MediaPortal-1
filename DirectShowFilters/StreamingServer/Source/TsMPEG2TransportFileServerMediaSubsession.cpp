@@ -8,15 +8,15 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
-TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,char const* fileName,Boolean reuseFirstSource, Boolean timeshifting, int channelType) 
+TsMPEG2TransportFileServerMediaSubsession* TsMPEG2TransportFileServerMediaSubsession::createNew(UsageEnvironment& env,wchar_t const* fileName,Boolean reuseFirstSource, Boolean timeshifting, int channelType) 
 {
-	return new TsMPEG2TransportFileServerMediaSubsession(env, fileName, reuseFirstSource,timeshifting, channelType);
+	return new TsMPEG2TransportFileServerMediaSubsession(env, fileName, reuseFirstSource, timeshifting, channelType);
 }
 
-TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,char const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType)
-: FileServerMediaSubsession(env, fileName, reuseFirstSource) 
+TsMPEG2TransportFileServerMediaSubsession::TsMPEG2TransportFileServerMediaSubsession(UsageEnvironment& env,wchar_t const* fileName, Boolean reuseFirstSource, Boolean timeshifting, int channelType)
+: FileServerMediaSubsession(env, 0, reuseFirstSource) 
 {
-	strcpy(m_fileName,fFileName);
+	wcscpy(m_fileName, fileName);
 	m_bTimeshifting = timeshifting;
 	m_iChannelType = channelType;
 
@@ -39,10 +39,9 @@ FramedSource* TsMPEG2TransportFileServerMediaSubsession::createNewStreamSource(u
 
 	// Create the video source:
 	unsigned const inputDataChunkSize= TRANSPORT_PACKETS_PER_NETWORK_PACKET*TRANSPORT_PACKET_SIZE;
-	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), fFileName, inputDataChunkSize, 0, m_iChannelType);
+	TsStreamFileSource* fileSource= TsStreamFileSource::createNew(envir(), m_fileName, inputDataChunkSize, 0, m_iChannelType);
 	if (fileSource == NULL) return NULL;
 	fFileSize = fileSource->fileSize();
-	strcpy(m_fileName,fFileName);
  
   // Create a framer for the Transport Stream:
 	return TsMPEG2TransportStreamFramer::createNew(envir(), fileSource);
@@ -110,7 +109,7 @@ FileReader* TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() const
 {
   FileReader *pFileDuration;
 
-  if (strstr(m_fileName,".tsbuffer")!=NULL)
+  if (wcsstr(m_fileName, L".tsbuffer")!=NULL)
   {
     pFileDuration = new MultiFileReader();
   }
@@ -120,9 +119,7 @@ FileReader* TsMPEG2TransportFileServerMediaSubsession::OpenFileDuration() const
   }
 
   // initialize duration estimator
-  WCHAR wFileName[1024];
-  MultiByteToWideChar(CP_ACP,0,m_fileName,-1,wFileName,1024);
-  pFileDuration->SetFileName(wFileName);
+  pFileDuration->SetFileName(m_fileName);
   if(FAILED(pFileDuration->OpenFile()))
   {
     CloseFileDuration(pFileDuration);

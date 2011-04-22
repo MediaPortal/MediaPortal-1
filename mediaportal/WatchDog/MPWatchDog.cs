@@ -37,8 +37,8 @@ namespace WatchDog
   {
     #region Constants
 
-    private const string Default4to3Skin = "Blue3";
-    private const string Default16to9Skin = "Blue3wide";
+    private const string Default4to3Skin = "Default";
+    private const string Default16to9Skin = "DefaultWide";
 
     #endregion
 

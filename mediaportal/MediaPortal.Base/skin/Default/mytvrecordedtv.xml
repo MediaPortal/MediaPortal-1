@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
 <window>
   <id>603</id>
   <defaultcontrol>50</defaultcontrol>
@@ -25,8 +24,6 @@
       <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)</visible>
       <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -37,8 +34,6 @@
       <height>110</height>
       <texture flipY="true" diffuse="Thumb_Mask.png" mask="Picturethumbmask.png">Picturethumbframe.png</texture>
       <visible>[facadeview.list|facadeview.album]+Control.HasFocus(50)+Control.HasThumb(500)</visible>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -48,8 +43,6 @@
       <width>160</width>
       <height>157</height>
       <texture>-</texture>
-      
-      
     </control>
     <control>
       <type>group</type>
@@ -58,8 +51,6 @@
       <posX>39</posX>
       <posY>96</posY>
       <layout>StackLayout</layout>
-      
-      
       <control>
         <type>button</type>
         <description>View-As button</description>
@@ -96,19 +87,8 @@
         <onleft>6</onleft>
         <onright>50</onright>
         <onup>5</onup>
-        <ondown>7</ondown>
-        <label>624</label>
-      </control>
-      <control>
-        <type>button</type>
-        <description>compress button</description>
-        <id>7</id>
-        <onleft>7</onleft>
-        <onright>50</onright>
-        <onup>6</onup>
         <ondown>99</ondown>
-        <hyperlink>609</hyperlink>
-        <label>896</label>
+        <label>624</label>
       </control>
     </control>
     <control>
@@ -121,8 +101,6 @@
       <height>0</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      
-      
     </control>
     <control>
       <type>image</type>
@@ -146,8 +124,6 @@
       <textcolor>FFB2D4F5</textcolor>
       <label>#TV.RecordedTV.Channel      #TV.RecordedTV.Time</label>
       <font>font12</font>
-      
-      
     </control>
     <control>
       <description>Program Title</description>
@@ -160,8 +136,6 @@
       <align>left</align>
       <font>font14</font>
       <textcolor>gainsboro</textcolor>
-      
-      
     </control>
     <control>
       <description>Current program Genre</description>
@@ -174,8 +148,6 @@
       <font>font10</font>
       <textcolor>FFB2D4F5</textcolor>
       <visible>!string.equals(#TV.RecordedTV.Genre,-)</visible>
-      
-      
     </control>
     <control>
       <description>Description1</description>
@@ -188,8 +160,6 @@
       <label>#TV.RecordedTV.Description</label>
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
-      
-      
     </control>
     <import>common.facade.recordings.xml</import>
   </controls>

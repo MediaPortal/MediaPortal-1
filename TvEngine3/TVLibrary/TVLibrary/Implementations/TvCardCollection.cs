@@ -120,13 +120,19 @@ namespace TvLibrary.Implementations
           }
         }
       }
-      //Hauppauge HD PVR
+      //Hauppauge HD PVR & Colossus
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
       for (int i = 0; i < devices.Length; ++i)
       {
-        if (String.Compare(devices[i].Name, "Hauppauge HD PVR Crossbar", true) == 0)
+        if (devices[i].Name.Equals("Hauppauge HD PVR Crossbar"))
         {
           Log.Log.WriteFile("Detected Hauppauge HD PVR");
+          TvCardHDPVR card = new TvCardHDPVR(devices[i]);
+          _cards.Add(card);
+        }
+        else if (devices[i].Name.Contains("Hauppauge Colossus Crossbar"))
+        {
+          Log.Log.WriteFile("Detected Hauppauge Colossus");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }

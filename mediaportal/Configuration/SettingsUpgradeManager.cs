@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using MediaPortal.Profile;
 using MediaPortal.GUI.Library;
+using MediaPortal.Configuration;
+using MediaPortal.Support;
+using System.IO;
 
 namespace MediaPortal.Configuration
 {
@@ -72,11 +75,38 @@ namespace MediaPortal.Configuration
       MoveEntry(settings, "skin", "gui", "language");
       MoveEntry(settings, "general", "gui", "useonlyonehome");
 
-      //  blue3/wide is now default/wide
+      //  blue3/wide and blue4/blue4wide are now default/wide
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue3", "Default");
       UpdateEntryDefaultValue(settings, "skin", "name", "Blue3wide", "DefaultWide");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4", "Default");
+      UpdateEntryDefaultValue(settings, "skin", "name", "Blue4wide", "DefaultWide");
 
       settings.Save();
+
+      string skinbase = Config.GetFolder(Config.Dir.Skin) + "\\";
+
+      //Zip Blue3/Blue3Wide skin folders 
+      string[] skins3 = { "Blue3", "Blue3Wide" };
+
+      foreach (string skin in skins3)
+      {
+        if (Directory.Exists(skinbase + skin))
+        {
+          Log.Info("Adding skin \"" + skinbase + skin + "\" to zip...");
+          ZipDirectory(skinbase, skin);
+        }
+      }
+
+      // Delete beta Blue4/Blue4Wide and outdated Blue3/Blue3Wide folders
+      string[] skins3_4 = { "Blue3", "Blue3Wide", "Blue4", "Blue4Wide" };
+      foreach (string skin in skins3_4)
+      {
+        if (Directory.Exists(skinbase + skin))
+        {
+          Log.Info("Deleting old skin \"" + skinbase + skin + "\"...");
+          Directory.Delete(skinbase + skin, true);
+        }
+      }
     }
 
     /// <summary>
@@ -155,10 +185,22 @@ namespace MediaPortal.Configuration
 
         Log.Info("(Settings upgrade) Updated default value of entry " + section + "/" + entry + " from " + fromDefaultValue + "->" + toDefaultValue + "");
       }
-      catch(Exception ex)
+      catch (Exception ex)
       {
         Log.Error("(Settings upgrade) Unhandled exception when trying to update default value for entry " + section + "/" + entry + "\r\n\r\n" + ex.ToString());
       }
+    }
+
+    /// <summary>
+    /// Create a zip file from a directory
+    /// </summary>
+    /// <param name="skinbase"></param>
+    /// <param name="skin"></param>
+    private void ZipDirectory(string skinbase, string skin)
+    {
+      string _zipFile = skinbase + "Old-" + skin + "-" + DateTime.Now.ToString("dd_MM_yy") + ".zip";
+      Archiver archiver = new Archiver();
+      archiver.AddDirectory(skinbase + skin, _zipFile, true);
     }
 
     #endregion

@@ -55,7 +55,7 @@
 #define TRANSPORT_PRIVATE_DATA_FLAG_BIT     0x2     // bitmask for the TRANSPORT_PRIVATE_DATA flag
 #define ADAPTION_FIELD_EXTENSION_FLAG_BIT   0x1     // bitmask for the DAPTION_FIELD_EXTENSION flag
 
-#define ERROR_FILE_TOO_LARGE 223
+//#define ERROR_FILE_TOO_LARGE 223  - already defined in winerror.h
 #define RECORD_BUFFER_SIZE 256000
 
 int DR_FAKE_NETWORK_ID   = 0x456;                // network id we use in our PAT
@@ -72,6 +72,7 @@ double DR_MAX_ALLOWED_PCR_DIFF = 10.0; // (clock value) if pcr/pts/dts differenc
 								    //			   this value a hole/jump is assumed
 
 extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const wchar_t *fmt, ...) ;
 
 //*******************************************************************
 //* ctor
@@ -180,12 +181,11 @@ void CDiskRecorder::SetChannelType(int channelType)
 		WriteLog("SetChannelType exception");
 	}
 }
-void CDiskRecorder::SetFileName(char* pszFileName)
+void CDiskRecorder::SetFileNameW(wchar_t* pwszFileName)
 {
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		WriteLog("set filename:%s",pszFileName);
 		m_iPacketCounter=0;
 		m_iPmtPid=-1;
 		m_pcrPid=-1;
@@ -193,13 +193,14 @@ void CDiskRecorder::SetFileName(char* pszFileName)
 		m_AudioOrVideoSeen=false ;
 		m_bStartPcrFound=false;
 		m_bDetermineNewStartPcr=false;
-		strcpy(m_szFileName,pszFileName);
-		if (m_recordingMode == TimeShift)
-			strcat(m_szFileName,".tsbuffer");
+		wcscpy(m_wszFileName,pwszFileName);
+		if (m_recordingMode==RecordingMode::TimeShift)
+			wcscat(m_wszFileName, L".tsbuffer");
+		WriteLog(L"set filename:%s", m_wszFileName);
 	}
 	catch(...)
 	{
-		WriteLog("SetFilename exception");
+		WriteLog(L"SetFilename exception");
 	}
 }
 
@@ -215,17 +216,15 @@ bool CDiskRecorder::Start()
 			return false;
 		}
 
-		if (strlen(m_szFileName)==0) return false;
-		::DeleteFile((LPCTSTR) m_szFileName);
+		if (wcslen(m_wszFileName)==0) return false;
+		::DeleteFileW((LPCWSTR) m_wszFileName);
 		m_iPart=2;
 		if (m_recordingMode==RecordingMode::TimeShift)
 		{
-			WCHAR wstrFileName[2048];
-			MultiByteToWideChar(CP_ACP,0,m_szFileName,-1,wstrFileName,1+strlen(m_szFileName));
 			m_pTimeShiftFile = new MultiFileWriter(&m_params);
-			if (FAILED(m_pTimeShiftFile->OpenFile(wstrFileName))) 
+			if (FAILED(m_pTimeShiftFile->OpenFile(m_wszFileName))) 
 			{
-				WriteLog("failed to open filename:%s %d",m_szFileName,GetLastError());
+				WriteLog(L"failed to open filename:%s %d",m_wszFileName,GetLastError());
 				m_pTimeShiftFile->CloseFile();
 				delete m_pTimeShiftFile;
 				m_pTimeShiftFile=NULL;
@@ -239,18 +238,18 @@ bool CDiskRecorder::Start()
 				CloseHandle(m_hFile);
 				m_hFile=INVALID_HANDLE_VALUE;
 			}
-			m_hFile = CreateFile(m_szFileName,      // The filename
-												 (DWORD) GENERIC_WRITE,         // File access
-												 (DWORD) FILE_SHARE_READ,       // Share access
-												  NULL,                  // Security
-												 (DWORD) OPEN_ALWAYS,           // Open flags
-//				  						 (DWORD) FILE_FLAG_RANDOM_ACCESS,
-//											 (DWORD) FILE_FLAG_WRITE_THROUGH,             // More flags
-												 (DWORD) 0,             // More flags
-													NULL);                 // Template
+			m_hFile = CreateFileW(	m_wszFileName,						// The filename
+									(DWORD) GENERIC_WRITE,				// File access
+									(DWORD) FILE_SHARE_READ,			// Share access
+									NULL,								// Security
+									(DWORD) OPEN_ALWAYS,				// Open flags
+//									(DWORD) FILE_FLAG_RANDOM_ACCESS,
+//									(DWORD) FILE_FLAG_WRITE_THROUGH,	// More flags
+									(DWORD) 0,							// More flags
+									NULL);								// Template
 			if (m_hFile == INVALID_HANDLE_VALUE)
 			{
-				LogDebug("Recorder:unable to create file:'%s' %d",m_szFileName, GetLastError());
+				LogDebug(L"Recorder:unable to create file:'%s' %d",m_wszFileName, GetLastError());
 				return false;
 			}
 		}
@@ -262,7 +261,7 @@ bool CDiskRecorder::Start()
 		m_mapLastPtsDts.clear();
 		m_iPacketCounter=0;
 		m_iWriteBufferPos=0;
-		WriteLog("Start '%s'",m_szFileName);
+		WriteLog(L"Start '%s'",m_wszFileName);
 		m_bRunning=true;
 		m_bPaused=FALSE;
 	}
@@ -278,7 +277,7 @@ void CDiskRecorder::Stop()
 	CEnterCriticalSection enter(m_section);
 	try
 	{
-		WriteLog("Stop '%s'",m_szFileName);
+		WriteLog(L"Stop '%s'",m_wszFileName);
 		m_bRunning=false;
 		m_pPmtParser->Reset();
 		if (m_pTimeShiftFile!=NULL)
@@ -569,67 +568,66 @@ void CDiskRecorder::WriteToRecording(byte* buffer, int len)
             //On fat16/fat32 we can only create files of max. 2gb/4gb
             if (ERROR_FILE_TOO_LARGE == GetLastError())
             {
-              LogDebug("Recorder:Maximum filesize reached for file:'%s' %d",m_szFileName);
+                LogDebug(L"Recorder:Maximum filesize reached for file:'%s' %d", m_wszFileName);
                 //close the file...
 		          CloseHandle(m_hFile);
               m_hFile=INVALID_HANDLE_VALUE;
 
               //create a new file
-              char ext[MAX_PATH];
-              char fileName[MAX_PATH];
-              char part[100];
-						  int len=strlen(m_szFileName)-1;
-						  int pos=len-1;
-						  while (pos>0)
-						  {
-							  if (m_szFileName[pos]=='.') break;
-							  pos--;
-						  }
-              strcpy(ext, &m_szFileName[pos]);
-              strncpy(fileName, m_szFileName, pos);
-              fileName[pos]=0;
-              sprintf(part,"_p%d",m_iPart);
-              char newFileName[MAX_PATH];
-              sprintf(newFileName,"%s%s%s",fileName,part,ext);
+                wchar_t ext[MAX_PATH];
+                wchar_t fileName[MAX_PATH];
+                wchar_t part[100];
+                int len=wcslen(m_wszFileName)-1;
+                int pos=len-1;
+                while (pos>0)
+                {
+                  if (m_wszFileName[pos]==L'.') break;
+                  pos--;
+                }
+                wcscpy(ext, &m_wszFileName[pos]);
+                wcsncpy(fileName, m_wszFileName, pos);
+                fileName[pos]=0;
+                swprintf_s(part,L"_p%d",m_iPart);
+                wchar_t newFileName[MAX_PATH];
+                swprintf_s(newFileName,L"%s%s%s",fileName,part,ext);
+                LogDebug(L"Recorder:Create new  file:'%s' %d",newFileName);
+                m_hFile = CreateFileW(newFileName,              // The filename
+                            (DWORD) GENERIC_WRITE,              // File access
+                            (DWORD) FILE_SHARE_READ,            // Share access
+                            NULL,                               // Security
+                            (DWORD) OPEN_ALWAYS,                // Open flags
+                            (DWORD) 0,                          // More flags
+                            NULL);                              // Template
+                if (m_hFile == INVALID_HANDLE_VALUE)
+                {
+                  LogDebug(L"Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
+                  m_iWriteBufferPos=0;
+                  return ;
+                }
+                m_iPart++;
+                WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
+              }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
+              else
+              {
+                LogDebug(L"Recorder:unable to write file:'%s' %d %d %x",m_wszFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
+              }
+            }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
+          }//if (m_hFile!=INVALID_HANDLE_VALUE)
+        }//if (m_iWriteBufferPos>0)
+        m_iWriteBufferPos=0;
+      }
+      catch(...)
+      {
+        LogDebug("Recorder:Write exception");
+      }
+    }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
 
-						  LogDebug("Recorder:Create new  file:'%s' %d",newFileName);
-	            m_hFile = CreateFile(newFileName,      // The filename
-						             (DWORD) GENERIC_WRITE,         // File access
-						             (DWORD) FILE_SHARE_READ,       // Share access
-						             NULL,                  // Security
-						             (DWORD) OPEN_ALWAYS,           // Open flags
-						             (DWORD) 0,             // More flags
-						             NULL);                 // Template
-	            if (m_hFile == INVALID_HANDLE_VALUE)
-	            {
-                LogDebug("Recorder:unable to create file:'%s' %d",newFileName, GetLastError());
-                m_iWriteBufferPos=0;
-		            return ;
-	            }
-              m_iPart++;
-              WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL);
-            }//of if (ERROR_FILE_TOO_LARGE == GetLastError())
-						else
-						{				 
-							LogDebug("Recorder:unable to write file:'%s' %d %d %x",m_szFileName, GetLastError(),m_iWriteBufferPos,m_hFile);
-						}
-          }//of if (FALSE == WriteFile(m_hFile, (PVOID)m_pWriteBuffer, (DWORD)m_iWriteBufferPos, &written, NULL))
-		    }//if (m_hFile!=INVALID_HANDLE_VALUE)
-      }//if (m_iWriteBufferPos>0)
-      m_iWriteBufferPos=0;
-	  }
-	  catch(...)
-	  {
-		  LogDebug("Recorder:Write exception");
-	  }
-  }// of if (len + m_iWriteBufferPos >= RECORD_BUFFER_SIZE)
-
-  if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
-  {
-    memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
-    m_iWriteBufferPos+=len;
-  }
-	} catch (...) { WriteLog("Exception in writetorecording");}
+    if ( (m_iWriteBufferPos+len) < RECORD_BUFFER_SIZE && len > 0)
+    {
+      memcpy(&m_pWriteBuffer[m_iWriteBufferPos],buffer,len);
+      m_iWriteBufferPos+=len;
+    }
+  } catch (...) { WriteLog("Exception in writetorecording");}
 }
 
 void CDiskRecorder::WriteToTimeshiftFile(byte* buffer, int len)
@@ -730,6 +728,23 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 		LogDebug("Recorder: TIMESHIFT %s",logbuffer);
 	else
 		LogDebug("Recorder: RECORD    %s",logbuffer);
+}
+
+void CDiskRecorder::WriteLog(const wchar_t* fmt,...)
+{
+  wchar_t logbuffer[2000]; 
+  va_list ap;
+  va_start(ap,fmt);
+
+  int tmp;
+  va_start(ap,fmt);
+  tmp=vswprintf_s(logbuffer, fmt, ap);
+  va_end(ap); 
+
+  if (m_recordingMode==RecordingMode::TimeShift)
+    LogDebug(L"Recorder: TIMESHIFT %s",logbuffer);
+  else
+    LogDebug(L"Recorder: RECORD    %s",logbuffer);
 }
 
 void CDiskRecorder::SetPcrPid(int pcrPid)

@@ -999,6 +999,12 @@
     <String id="1211">Oynatmaya {0}'dan devam et</String>
     <String id="1212">Hatırlatmayı iptal et</String>
     <String id="1213">Bu İstasyonu Dinle</String>
+    <String id="1214">Besteciler</String>
+    <String id="1215">Orkestra Şefleri</String>
+    <String id="1216">Diskler</String>
+    <String id="1217">Sanatçı Parçaları</String>
+    <String id="1218">Yaşa Göre Albümler</String>
+    <String id="1219">Albüm Sanatçıları (İndeks)</String>
     <String id="1220">Sıralama: Oluşturulma Tarihi</String>
     <String id="1221">Sıralama: Değiştirilme Tarihi</String>
     <String id="1230">Eklenme tarihi:</String>
@@ -1846,6 +1852,7 @@
     <String id="102014">Resim bilgisi</String>
     <String id="102015">Mini menü</String>
     <String id="102016">Bilgilendirme</String>
+    <String id="102017">Kayıt Çakışması</String>
     <String id="102018">CI menüsü</String>
     <String id="102600">Hava Durumu</String>
     <String id="102700">Haberler</String>

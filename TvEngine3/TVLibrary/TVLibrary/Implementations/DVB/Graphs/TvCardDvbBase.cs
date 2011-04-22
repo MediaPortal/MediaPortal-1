@@ -515,7 +515,32 @@ namespace TvLibrary.Implementations.DVB
               Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
               int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
               Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
-              if (hr != 0)
+
+              //  NOTE
+              //  After mantis 3469 is confirmed working in 1.2.0 beta remove these comments and everything:
+              //  ***** FROM HERE *****
+              var revert = false;
+
+              try
+              {
+                var revertFile = new System.IO.FileInfo(@"c:\revertputtunerequest.txt");
+
+                if (revertFile.Exists)
+                  revert = true;
+
+                if (revert)
+                  Log.Log.WriteFile("dvb:Reverting put_tuneRequest error catch to pre-1.2.0 beta");
+              }
+              catch (Exception)
+              {
+                //  Make sure no new errors are introduced
+              }
+
+              if ((!revert && hr < 0) || (revert && hr != 0))
+              
+              //  ***** TO HERE *****
+              //  AND uncomment this line:
+              //  if(hr < 0)
               {
                 Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
                                   DsError.GetErrorText(hr));

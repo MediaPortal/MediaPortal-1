@@ -38,7 +38,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int SetRecordingFileNameW(int subChannelId, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts recording.
@@ -78,7 +78,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// <param name="fileName">Name of the file.</param>
     /// <returns></returns>
     [PreserveSig]
-    int SetTimeShiftFileName(int subChannelId, [In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int SetTimeShiftFileNameW(int subChannelId, [In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts  time shifting.

@@ -101,7 +101,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>DvbCoreUtils.lib;strmbase.lib;livemedia555.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>.\bin\Release\$(ProjectName).dll</OutputFile>
+      <OutputFile>bin\Release\$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>$(DSHOW_BASE)Release_MBCS; $(DXSDK_DIR)lib\x86;$(WINDOWS_SDK)\lib; ..\shared;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>Source\StreamingServer.def</ModuleDefinitionFile>
@@ -113,6 +113,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -138,7 +139,6 @@
     <ClInclude Include="Source\TSThread.h" />
     <ClInclude Include="Source\CriticalSection.h" />
     <ClInclude Include="Source\EnterCriticalSection.h" />
-    <ClInclude Include="Source\StdAfx.h" />
     <ClInclude Include="Source\FileReader.h" />
     <ClInclude Include="Source\MultiFileReader.h" />
     <ClInclude Include="Source\Global.h" />

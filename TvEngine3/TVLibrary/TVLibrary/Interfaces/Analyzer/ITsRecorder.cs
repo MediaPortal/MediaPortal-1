@@ -35,7 +35,7 @@ namespace TvLibrary.Interfaces.Analyzer
     /// </summary>
     /// <returns></returns>
     [PreserveSig]
-    int SetRecordingFileName([In, MarshalAs(UnmanagedType.LPStr)] string fileName);
+    int SetRecordingFileNameW([In, MarshalAs(UnmanagedType.LPWStr)] string fileName);
 
     /// <summary>
     /// Starts recording.
