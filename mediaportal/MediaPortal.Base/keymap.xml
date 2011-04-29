@@ -1091,16 +1091,6 @@
     </action>
   </window>
   <window>
-    <id>750</id>
-    <description>MyRecipes</description>
-    <action>
-      <id>80</id>
-      <key>0</key>
-      <sound />
-      <description>delete item</description>
-    </action>
-  </window>
-  <window>
     <id>4734</id>
     <description>MyMusicVideo</description>
     <action>
