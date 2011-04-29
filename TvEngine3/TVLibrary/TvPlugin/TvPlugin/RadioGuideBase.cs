@@ -3622,11 +3622,11 @@ namespace TvPlugin
 
     private void OnSelectItem(bool isItemSelected)
     {
-      Radio.UpdateCurrentChannel();
       if (_currentProgram == null)
       {
         return;
       }
+      Radio.CurrentChannel = _currentChannel;
       if (isItemSelected)
       {
         if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)
