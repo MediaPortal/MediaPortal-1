@@ -174,7 +174,7 @@ namespace Gentle.Common
 			{
 				try
 				{
-					string result = ConfigurationSettings.AppSettings[ key ];
+					string result = ConfigurationManager.AppSettings[ key ];
 					if( result != null && result.Length > 0 )
 					{
 						return result;
@@ -189,7 +189,7 @@ namespace Gentle.Common
 			{
 				try
 				{
-					string result = ConfigurationSettings.AppSettings[ key ];
+					string result = ConfigurationManager.AppSettings[ key ];
 					if( result != null && result.Length > 0 )
 					{
 						return Path.Combine( result, CONFIG_FILENAME );
