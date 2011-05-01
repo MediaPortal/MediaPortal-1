@@ -1532,6 +1532,10 @@ namespace TvPlugin
           int channelNum = detail[0].ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
+        else
+        {
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", String.Empty);
+        }
       }
 
       if (_cursorY == 0 || _currentProgram == null)

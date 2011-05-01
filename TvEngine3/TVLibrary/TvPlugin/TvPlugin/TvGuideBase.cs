@@ -1499,6 +1499,10 @@ namespace TvPlugin
           int channelNum = detail[0].ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
+        else
+        {
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", String.Empty);
+        }
       }
 
       if (_cursorY == 0 || _currentProgram == null)
@@ -3718,7 +3722,7 @@ namespace TvPlugin
             else //not recording
             {
               // clicked the show we're currently watching
-              if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.IdChannel == _currentChannel.IdChannel && g_Player.Playing)
+              if (TVHome.Navigator.Channel != null && TVHome.Navigator.Channel.IdChannel == _currentChannel.IdChannel && g_Player.Playing && g_Player.IsTV)
               {
                 Log.Debug("TVGuide: clicked on a currently running show");
                 GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
