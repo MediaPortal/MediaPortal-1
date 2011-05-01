@@ -209,7 +209,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Es ist bereits ein SQL Server vorhanden und dieser soll verwendet werden.</value>
   </data>
   <data name="Finished_labelHeading1" xml:space="preserve">
-    <value>Herzlichen Glückwunsch !</value>
+    <value>Herzlichen Glückwunsch!</value>
   </data>
   <data name="Finished_labelHeading2_install" xml:space="preserve">
     <value>Die Installation von MediaPortal war erfolgreich.</value>
@@ -266,7 +266,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Vorgang</value>
   </data>
   <data name="Install_colApplication" xml:space="preserve">
-    <value>Applikation</value>
+    <value>Anwendung</value>
   </data>
   <data name="Install_colState" xml:space="preserve">
     <value>Status</value>
@@ -281,7 +281,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Es ist ein Fehler bei der Installation der Anwendung [{0}] aufgetreten</value>
   </data>
   <data name="Install_labelHeadingInstall" xml:space="preserve">
-    <value>Klicken Sie "Installieren", um alle für die gewählte Konfiguration notwendigen Applikationen zu installieren.</value>
+    <value>Klicken Sie "Installieren", um alle für die gewählte Konfiguration notwendigen Anwendungen zu installieren.</value>
   </data>
   <data name="Install_msgDownloading" xml:space="preserve">
     <value>Download läuft...</value>
@@ -323,7 +323,7 @@ Dieser PC versorgt andere PCs mit MediaPortal in Ihrem Netzwerk.</value>
     <value>Die gewünschte Datei wurde nicht gefunden</value>
   </data>
   <data name="ManualDownload_labelDesc" xml:space="preserve">
-    <value>Drücken Sie "Weiter" sobald Sie die gewünschte Datei heruntergeladen haben</value>
+    <value>Drücken Sie "Weiter", sobald Sie die gewünschte Datei heruntergeladen haben</value>
   </data>
   <data name="ManualDownload_labelHeading" xml:space="preserve">
     <value>Sie müssen die folgende Datei manuell herunterladen</value>
@@ -435,7 +435,7 @@ Möchten Sie die Installations-Schritte jetzt durchführen oder lediglich die be
     <value>Ihr Betriebssystem wird leider nicht von MediaPortal unterstützt.</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Ihr Betriebsystem wird leider nicht unterstützt. Mirosoft stellt für Ihr System nicht alle benötigten Hotfixe bereit.
+    <value>Ihr Betriebsystem wird leider nicht unterstützt. Microsoft stellt für Ihr System nicht alle benötigten Hotfixe bereit.
 Fortsetzung erfolgt auf eigenes Risiko.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
