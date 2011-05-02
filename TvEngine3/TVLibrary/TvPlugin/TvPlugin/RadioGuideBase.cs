@@ -1532,6 +1532,10 @@ namespace TvPlugin
           int channelNum = detail[0].ChannelNumber;
           GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", channelNum + "");
         }
+        else
+        {
+          GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.ChannelNumber", String.Empty);
+        }
       }
 
       if (_cursorY == 0 || _currentProgram == null)
@@ -3622,11 +3626,11 @@ namespace TvPlugin
 
     private void OnSelectItem(bool isItemSelected)
     {
-      Radio.UpdateCurrentChannel();
       if (_currentProgram == null)
       {
         return;
       }
+      Radio.CurrentChannel = _currentChannel;
       if (isItemSelected)
       {
         if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)

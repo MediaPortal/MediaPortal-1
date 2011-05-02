@@ -1562,7 +1562,12 @@ namespace MediaPortal.GUI.Music
         // add tracks
         if (PlayAllOnSingleItemPlayNow)
         {
-          GUIListItem selectedItem = facadeLayout.SelectedListItem;
+          GUIListItem selectedItem = null;
+          if (facadeLayout != null)
+          {
+            selectedItem = facadeLayout.SelectedListItem; 
+          }
+
           if (playCD)
           {
             // this is only set in PlayCD.  Playback is requested for whole drive
@@ -1570,9 +1575,15 @@ namespace MediaPortal.GUI.Music
             // recursively
             pl.Add(ConvertItemToPlaylist(item));
           }
-          else if (!selectedItem.IsFolder)
+          else if (selectedItem == null  || selectedItem.IsFolder)
           {
-            // we have a track selected so add any other tracks which
+            // selected item was a folder (or playback started from outside of music plugin)
+            // so contents will get recursively added so just add item to playlist
+            pl.Add(ConvertItemToPlaylist(item));
+          }
+          else
+          {
+            // selected item was not a folder so add any other tracks which
             // are on showing on the facade
             for (int i = 0; i < facadeLayout.Count; i++)
             {
@@ -1582,12 +1593,6 @@ namespace MediaPortal.GUI.Music
                 pl.Add(ConvertItemToPlaylist(trackItem));
               }
             }
-          }
-          else
-          {
-            // selected item was a folder so contents will get
-            // recursively added so just add item to playlist
-            pl.Add(ConvertItemToPlaylist(item));
           }
         }
         else
