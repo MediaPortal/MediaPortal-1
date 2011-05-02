@@ -44,8 +44,8 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("action")] protected int _actionId = -1;
     [XMLSkinElement("script")] protected string _scriptAction = "";
     [XMLSkinElement("onclick")] protected string _onclick = "";
-    [XMLSkinElement("textXOff")]
-    protected int _textOffsetX = 0;
+    [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textalign")] protected Alignment _textAlignment = Alignment.ALIGN_LEFT;
     [XMLSkinElement("textvalign")] protected VAlignment _textVAlignment = VAlignment.ALIGN_TOP;
@@ -314,7 +314,12 @@ namespace MediaPortal.GUI.Library
         _imageNonFocused.Render(timePassed);
       }
 
-      int labelWidth = _width - 2 * _textOffsetX;
+      int labelWidth = _width;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - 2 * _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);

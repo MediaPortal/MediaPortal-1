@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("shadowAngle")] protected int _shadowAngle = 0;
     [XMLSkinElement("shadowDistance")] protected int _shadowDistance = 0;
@@ -579,7 +580,11 @@ namespace MediaPortal.GUI.Library
     {
       // Render the button label.
       // Compute with of label so that the text fits within the button.
-      int labelWidth = _width - (2 * _textOffsetX);
+      int labelWidth = _width;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - (2 * _textOffsetX);
+      }
       if (labelWidth <= 0)
       {
         return;
@@ -595,8 +600,13 @@ namespace MediaPortal.GUI.Library
     private void RenderAsSpinList(float timePassed)
     {
       // Render the button label.
-      // Compute with of label so that the text does not overlap the spin controls.
-      int labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      // Compute width of label so that the text does not overlap the spin controls.
+      int labelWidth = _width - (2 * _spinWidth) - _textOffsetX;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);

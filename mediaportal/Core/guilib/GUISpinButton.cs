@@ -38,6 +38,7 @@ namespace MediaPortal.GUI.Library
     [XMLSkinElement("textcolorNoFocus")] protected long _textColorNoFocus = 0xFFFFFFFF;
     [XMLSkinElement("disabledcolor")] protected long _disabledColor = 0xFF606060;
     [XMLSkinElement("textXOff")] protected int _textOffsetX = 0;
+    [XMLSkin("textXOff", "hasMargin")] protected bool _textOffsetXHasMargin = true;
     [XMLSkinElement("textYOff")] protected int _textOffsetY = 0;
     [XMLSkinElement("textureUp")] protected string _upTextureName;
     [XMLSkinElement("textureDown")] protected string _downTextureName;
@@ -318,7 +319,12 @@ namespace MediaPortal.GUI.Library
       }
 
       // Compute with of label so that the text does not overlap the spin controls.
-      int labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      int labelWidth = _width - (2 * _spinWidth) - _textOffsetX;
+      if (_textOffsetXHasMargin)
+      {
+        labelWidth = _width - (2 * _textOffsetX) - (2 * _spinWidth) - _textOffsetX;
+      }
+
       if (labelWidth <= 0)
       {
         base.Render(timePassed);
