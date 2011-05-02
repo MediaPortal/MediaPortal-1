@@ -884,19 +884,19 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
-    /// Return a themed version of the requested xml filename, otherwise return the default skin xml filename.
+    /// Return a themed version of the requested skin filename, otherwise return the default skin filename.  Use a path to media to get images.
     /// </summary>
     /// <param name="xmlfilename"></param>
     /// <returns></returns>
-    public static string GetThemedSkinFile(string xmlfilename)
+    public static string GetThemedSkinFile(string filename)
     {
-      if (File.Exists(Theme + xmlfilename))
+      if (File.Exists(Theme + filename))
       {
-        return Theme + xmlfilename;
+        return Theme + filename;
       }
       else
       {
-        return Skin + xmlfilename;
+        return Skin + filename;
       }
     }
 

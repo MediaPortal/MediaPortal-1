@@ -431,6 +431,24 @@ public class MediaPortalApp : D3DApp, IRender
         //Localization strings for new splashscreen and for MediaPortal itself
         LoadLanguageString();
 
+        // Initialize the skin and theme prior to beginning the splash screen thread.  This provides for the splash screen to be used in a theme.
+        string strSkin = "";
+        try
+        {
+          using (Settings xmlreader = new MPSettings())
+          {
+            strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Default");
+          }
+        }
+        catch (Exception)
+        {
+          strSkin = "Default";
+        }
+        Config.SkinName = strSkin;
+        GUIGraphicsContext.Skin = strSkin;
+        SkinSettings.Load();
+        Log.Info("Main: Skin is {0} using theme {1}", strSkin, GUIGraphicsContext.ThemeName);
+
 #if !DEBUG
         string version = ConfigurationManager.AppSettings["version"];
         //ClientApplicationInfo clientInfo = ClientApplicationInfo.Deserialize("MediaPortal.exe.config");
@@ -797,8 +815,6 @@ public class MediaPortalApp : D3DApp, IRender
     {
       using (Settings xmlreader = new MPSettings())
       {
-        m_strSkin = _strSkinOverride.Length > 0 ? _strSkinOverride : xmlreader.GetValueAsString("skin", "name", "Default");
-        Config.SkinName = m_strSkin;
         _autoHideMouse = xmlreader.GetValueAsBool("general", "autohidemouse", true);
         GUIGraphicsContext.MouseSupport = xmlreader.GetValueAsBool("gui", "mousesupport", false);
         GUIGraphicsContext.AllowRememberLastFocusedItem = xmlreader.GetValueAsBool("gui",
@@ -811,8 +827,8 @@ public class MediaPortalApp : D3DApp, IRender
     }
     catch (Exception)
     {
-      m_strSkin = "Default";
     }
+
     SetStyle(ControlStyles.Opaque, true);
     SetStyle(ControlStyles.UserPaint, true);
     SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -1713,7 +1729,6 @@ public class MediaPortalApp : D3DApp, IRender
     GUITextureManager.Dispose();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(65)); // Loading keymap.xml...
     ActionTranslator.Load();
-    GUIGraphicsContext.Skin = m_strSkin;
     GUIGraphicsContext.ActiveForm = Handle;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(67)); // Caching graphics...
     try
@@ -1737,9 +1752,8 @@ public class MediaPortalApp : D3DApp, IRender
     GUIGraphicsContext.Load();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(68)); // Loading fonts...
     GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
-    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), m_strSkin)); // Loading skin ({0})...
+    UpdateSplashScreenMessage(String.Format(GUILocalizeStrings.Get(69), GUIGraphicsContext.SkinName + " - " + GUIGraphicsContext.ThemeName)); // Loading skin ({0})...
     GUIFontManager.InitializeDeviceObjects();
-    Log.Info("Main: Loading {0} skin", m_strSkin);
     GUIWindowManager.Initialize();
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(70)); // Loading window plugins...
     if (!string.IsNullOrEmpty(_safePluginsList))
@@ -1898,10 +1912,6 @@ public class MediaPortalApp : D3DApp, IRender
 
         GUIGraphicsContext.DX9Device.EvictManagedResources();
         GUIWaitCursor.Dispose();
-        if (!m_strSkin.Equals(GUIGraphicsContext.Skin))
-        {
-          m_strSkin = GUIGraphicsContext.Skin;
-        }
         GUIGraphicsContext.Load();
         GUIFontManager.LoadFonts(GUIGraphicsContext.GetThemedSkinFile(@"\fonts.xml"));
         GUIFontManager.InitializeDeviceObjects();
@@ -3795,7 +3805,7 @@ public class MediaPortalApp : D3DApp, IRender
   {
     using (OldSkinForm form = new OldSkinForm())
     {
-      if (form.CheckSkinVersion(m_strSkin, SkinVersion))
+      if (form.CheckSkinVersion(GUIGraphicsContext.SkinName, SkinVersion))
       {
         return;
       }
