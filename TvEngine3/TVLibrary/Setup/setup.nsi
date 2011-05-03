@@ -399,6 +399,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; Rest of Files
   SetOutPath "$INSTDIR"
   File "${svn_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${svn_Common_MP_TVE3}\CoreServices\CoreServices\bin\${BUILD_TYPE}\CoreServices.dll"
   File "${svn_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
   File "${svn_TVServer}\Plugins\PluginBase\bin\${BUILD_TYPE}\PluginBase.dll"
   File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
@@ -442,7 +443,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${svn_Common_MP_TVE3}\Gentle.config"
   File "${TVSERVER.BASE}\log4net.config"
   File "${TVSERVER.BASE}\TvSetupLog.config"
-  
+  File "${TVSERVER.BASE}\MediaPortalDirs.xml"
+   
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION   for TVServer
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html
@@ -554,6 +556,7 @@ ${MementoSectionEnd}
   ; And finally remove all the files installed
   ; Leave the directory in place, as it might contain user modified files
   Delete "$INSTDIR\DirectShowLib.dll"
+  Delete "$INSTDIR\CoreServices.dll"
   Delete "$INSTDIR\Common.Utils.dll"
   ; binary used for skystar2 support
   Delete "$INSTDIR\dvblib.dll"

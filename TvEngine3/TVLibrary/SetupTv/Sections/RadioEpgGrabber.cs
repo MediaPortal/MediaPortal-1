@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using TvControl;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
 
@@ -380,7 +380,7 @@ namespace SetupTv.Sections
           setting.Value += code;
           setting.Value += ",";
         }
-        //Log.WriteFile("tvsetup:epggrabber:all: epglang={0}", setting.Value);
+        //GlobalServiceProvider.Instance.Get<ILogger>().Info("tvsetup:epggrabber:all: epglang={0}", setting.Value);
         setting.Persist();
       }
       finally
@@ -401,7 +401,7 @@ namespace SetupTv.Sections
         TvBusinessLayer layer = new TvBusinessLayer();
         Setting setting = layer.GetSetting("radioLanguages");
         setting.Value = ",";
-        Log.WriteFile("tvsetup:epggrabber:none: epglang={0}", setting.Value);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("tvsetup:epggrabber:none: epglang={0}", setting.Value);
         setting.Persist();
       }
       finally

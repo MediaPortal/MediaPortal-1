@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Threading;
 using MediaPortal.GUI.Library;
+using MediaPortal.CoreServices;
 
 namespace MediaPortal.Devices
 {
@@ -147,7 +148,7 @@ namespace MediaPortal.Devices
       }
       catch (Exception e)
       {
-        Log.Write("Remote.Init: {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Remote.Init: {0}", e.Message);
       }
     }
 
@@ -381,7 +382,7 @@ namespace MediaPortal.Devices
       }
       catch (Exception e)
       {
-        Log.Write("Blaster.OnReadComplete: {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.OnReadComplete: {0}", e.Message);
       }
     }
 
@@ -404,7 +405,7 @@ namespace MediaPortal.Devices
         foreach (byte packetByte in packetBytes) packetFinal[packetOffset++] = packetByte;
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       lock (this) _packetArray = new ArrayList();
@@ -437,7 +438,7 @@ namespace MediaPortal.Devices
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.FinalizePacket: {0}", BitConverter.ToString(packetFinal).Replace("-", ""));
 
       _packetArray = new ArrayList();
 
@@ -474,7 +475,7 @@ namespace MediaPortal.Devices
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       _packetArray = new ArrayList();
@@ -605,7 +606,7 @@ namespace MediaPortal.Devices
           throw new Exception(string.Format("Failed in call to SetupDiGetDeviceInterfaceDetail ({0})", GetLastError()));
         }
 
-        if (_dumpDevices) Log.Write("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
+        if (_dumpDevices) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Device.FindDevice: {0}", deviceInterfaceDetailData.DevicePath);
 
         if (deviceInterfaceDetailData.DevicePath.IndexOf("#vid_0471&pid_0815") != -1)
         {

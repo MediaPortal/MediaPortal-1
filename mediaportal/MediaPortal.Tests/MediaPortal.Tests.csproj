@@ -111,6 +111,10 @@
     <Compile Include="Utils\Time\WorldTimeZoneTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>

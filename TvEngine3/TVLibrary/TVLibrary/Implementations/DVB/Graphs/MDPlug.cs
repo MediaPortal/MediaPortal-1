@@ -27,6 +27,7 @@ using DirectShowLib;
 using TvLibrary.Interfaces;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -55,7 +56,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (IsMDApiEnabled(deviceName, devicePath, out CardFolder, out InstanceNumber))
       {
-        Log.Log.Info("mdplugs: Create - IsMDApiEnabled for {0} - {1}", CardFolder, InstanceNumber);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: Create - IsMDApiEnabled for {0} - {1}", CardFolder, InstanceNumber);
         MDPlugs ret = new MDPlugs(CardFolder, InstanceNumber);
         return ret;
       }
@@ -69,7 +70,7 @@ namespace TvLibrary.Implementations.DVB
     {
       _instanceNumber = InstanceNumber;
       _cardFolder = CardFolder;
-      Log.Log.Info("mdplugs: InstanceNumber(s) = {0}", _instanceNumber);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: InstanceNumber(s) = {0}", _instanceNumber);
     }
 
     /// <summary>
@@ -105,7 +106,7 @@ namespace TvLibrary.Implementations.DVB
       InstanceNumber = 0;
       if (Directory.Exists("MDPLUGINS") == false)
         return false;
-      Log.Log.Info("mdplugs: MDPLUGINS exist");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: MDPLUGINS exist");
 
       bool useMDAPI = false;
       try
@@ -187,9 +188,9 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Error("mdplugs: error - useMDAPI = {0}", ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("mdplugs: error - useMDAPI = {0}", ex);
       }
-      Log.Log.Info("mdplugs: useMDAPI = {0}", useMDAPI);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: useMDAPI = {0}", useMDAPI);
       return useMDAPI;
     }
 
@@ -208,7 +209,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_mDPlugsArray[iplg] != null)
           {
-            Log.Log.Debug("Closing MDAPI plugin instance : {0}{1}", _cardFolder, iplg);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Closing MDAPI plugin instance : {0}{1}", _cardFolder, iplg);
             _mDPlugsArray[iplg].Close();
             _mDPlugsArray[iplg] = null;
           }
@@ -231,19 +232,19 @@ namespace TvLibrary.Implementations.DVB
       for (iplg = 0; iplg < _instanceNumber; iplg++)
       {
         filtername = "mdapifilter" + iplg;
-        Log.Log.Info("mdplugs: add {0}", filtername);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: add {0}", filtername);
 
         hr = graphBuilder.AddFilter(_mDPlugs[iplg].mdapiFilter, filtername);
         if (hr != 0)
         {
-          Log.Log.Error("mdplugs:Add {0} returns:0x{1:X}", filtername, hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("mdplugs:Add {0} returns:0x{1:X}", filtername, hr);
           throw new TvException("Unable to add " + filtername);
         }
       }
       iplg = 0;
       filtername = "mdapifilter" + iplg;
 
-      Log.Log.Info("mdplugs: connect lastFilter->{0}", filtername);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: connect lastFilter->{0}", filtername);
       IPin mainTeeOut = DsFindPin.ByDirection(lastFilter, PinDirection.Output, 0);
       IPin mdApiInFirst = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Input, 0);
       hr = graphBuilder.Connect(mainTeeOut, mdApiInFirst);
@@ -251,13 +252,13 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("mdapifilter0 pinin", mdApiInFirst);
       if (hr != 0)
       {
-        Log.Log.Info("unable to connect lastFilter->{0}", filtername);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("unable to connect lastFilter->{0}", filtername);
       }
       if (_instanceNumber > 1)
       {
         for (iplg = 0; iplg < _instanceNumber - 1; iplg++)
         {
-          Log.Log.Info("mdplugs: connect mdapifilter{0}->mdapifilter{1}", iplg, iplg + 1);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: connect mdapifilter{0}->mdapifilter{1}", iplg, iplg + 1);
           IPin mdApiOutPrev = DsFindPin.ByDirection(_mDPlugs[iplg].mdapiFilter, PinDirection.Output, 0);
           IPin mdApiInNext = DsFindPin.ByDirection(_mDPlugs[iplg + 1].mdapiFilter, PinDirection.Input, 0);
           hr = graphBuilder.Connect(mdApiOutPrev, mdApiInNext);
@@ -265,12 +266,12 @@ namespace TvLibrary.Implementations.DVB
           Release.ComObject("mdApiNext pinin", mdApiInNext);
           if (hr != 0)
           {
-            Log.Log.Info("unable to connect mdapifilter{0}->mdapifilter{1]", iplg, iplg + 1);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("unable to connect mdapifilter{0}->mdapifilter{1]", iplg, iplg + 1);
           }
         }
       }
       filtername = "mdapifilter" + iplg;
-      Log.Log.Info("mdplugs: Setting last filter to {0}", filtername);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplugs: Setting last filter to {0}", filtername);
       lastFilter = _mDPlugs[iplg].mdapiFilter;
     }
 
@@ -280,7 +281,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channelName">Channel name to be freed</param>
     public void FreeChannel(string channelName)
     {
-      Log.Log.Info("mdplug: FreeChannel {0}", channelName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: FreeChannel {0}", channelName);
       MDPlug[] plugins = getPlugins();
       foreach (MDPlug plugin in plugins)
       {
@@ -297,7 +298,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void FreeAllChannels()
     {
-      Log.Log.Info("mdplug: FreeAllChannels");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: FreeAllChannels");
       MDPlug[] plugins = getPlugins();
       foreach (MDPlug plugin in plugins)
       {
@@ -315,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (plugins == null || plugins.Length == 0)
       {
-        Log.Log.Info("mdplug: SetChannel no MD plugins has been defined for card folder {0}.", _cardFolder);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel no MD plugins has been defined for card folder {0}.", _cardFolder);
         return;
       }
 
@@ -333,13 +334,13 @@ namespace TvLibrary.Implementations.DVB
         // PMT is updated, do not increase ref count
         if (myPlugin != null)
         {
-          Log.Log.Info("mdplug: SetChannel update channel {0}.", currentChannel.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel update channel {0}.", currentChannel.Name);
           myPlugin.SetChannel(currentChannel, channelInfo);
           return;
         }
         else
         {
-          Log.Log.Info("mdplug: SetChannel update channel, channel not found. {0}.", currentChannel.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel update channel, channel not found. {0}.", currentChannel.Name);
           return;
         }
       }
@@ -349,7 +350,7 @@ namespace TvLibrary.Implementations.DVB
         {
           // Increment usage counter of this slot.
           myPlugin.IncrementDecodingCounter();
-          Log.Log.Info("mdplug: SetChannel already decoding channel {0}. Increment counter", currentChannel.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel already decoding channel {0}. Increment counter", currentChannel.Name);
           return;
         } // else not found allocate new slot
       }
@@ -360,7 +361,7 @@ namespace TvLibrary.Implementations.DVB
         IChannel chan = plugin.GetDecodingChannel();
         if (chan != null)
         {
-          Log.Log.Info("  slot[" + idx + "] {0}", chan.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("  slot[" + idx + "] {0}", chan.Name);
         }
         idx++;
       }
@@ -369,14 +370,14 @@ namespace TvLibrary.Implementations.DVB
       MDPlug freePlugin = FindFreeSlot(plugins, currentChannel, out slotNumber);
       if (freePlugin == null)
       {
-        Log.Log.Info("mdplug: SetChannel no free slots available for channel {0} (try increase limit).",
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel no free slots available for channel {0} (try increase limit).",
                      currentChannel.Name);
         return;
       }
 
-      Log.Log.Info("mdplug: SetChannel nr of currently decoding channels {0}.", CalculateSlotsInUse(plugins));
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel nr of currently decoding channels {0}.", CalculateSlotsInUse(plugins));
 
-      Log.Log.Info("mdplug: SetChannel starting decryption on channel '{0}' using plugin slot {1} of {2} avail.",
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: SetChannel starting decryption on channel '{0}' using plugin slot {1} of {2} avail.",
                    currentChannel.Name, slotNumber, plugins.Length);
 
       freePlugin.SetChannel(currentChannel, channelInfo);
@@ -770,20 +771,20 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       // Test Ex capabilities
       try
       {
         _changeChannel_Ex = (IChangeChannel_Ex)mdapiFilter;
         _changeChannel.SetPluginsDirectory(CardFolder);
-        Log.Log.Info("mdplug: This MDAPIfilter accept Extend capabilities");
-        Log.Log.Info("mdplug: The mdplugin folder for this instance is : MDPlugins\\{0}", CardFolder);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: This MDAPIfilter accept Extend capabilities");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: The mdplugin folder for this instance is : MDPlugins\\{0}", CardFolder);
       }
       catch (Exception)
       {
-        //Log.Log.Write(ex);
-        Log.Log.Info("mdplug: This MDAPIfilter doesnt have Extend capabilities. We will use standard");
+        //GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: This MDAPIfilter doesnt have Extend capabilities. We will use standard");
         _changeChannel_Ex = null;
       }
     }
@@ -839,7 +840,7 @@ namespace TvLibrary.Implementations.DVB
       if (_decodingChannel != null)
       {
         _decodingCounter++;
-        Log.Log.Info("mdplug: usage counter for channel '{0}' is {1}", _decodingChannel.Name, _decodingCounter);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: usage counter for channel '{0}' is {1}", _decodingChannel.Name, _decodingCounter);
       }
     }
 
@@ -855,13 +856,13 @@ namespace TvLibrary.Implementations.DVB
         if (forceFree
             || _decodingCounter <= 0)
         {
-          Log.Log.Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: usage counter for channel '{0}' is zero", _decodingChannel.Name);
           _decodingChannel = null;
           _decodingCounter = 0;
         }
         else
         {
-          Log.Log.Info("mdplug: usage counter for channel '{0}' is still {1}", _decodingChannel.Name, _decodingCounter);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: usage counter for channel '{0}' is still {1}", _decodingChannel.Name, _decodingCounter);
         }
       }
     }
@@ -996,7 +997,7 @@ namespace TvLibrary.Implementations.DVB
         //if (emmList.Count <= 0) return;
         for (int i = 0; i < emmList.Count; ++i)
         {
-          Log.Log.Info("EMM #{0} CA:0x{1:X} EMM:0x{2:X} ID:0x{3:X}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("EMM #{0} CA:0x{1:X} EMM:0x{2:X} ID:0x{3:X}",
                        i, emmList[i].CaId, emmList[i].Pid, emmList[i].ProviderId);
         }
 
@@ -1004,7 +1005,7 @@ namespace TvLibrary.Implementations.DVB
         List<ECMEMM> ecmList = channelInfo.caPMT.GetECM();
         for (int i = 0; i < ecmList.Count; ++i)
         {
-          Log.Log.Info("ECM #{0} CA:0x{1:X} ECM:0x{2:X} ID:0x{3:X}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ECM #{0} CA:0x{1:X} ECM:0x{2:X} ID:0x{3:X}",
                        i, ecmList[i].CaId, ecmList[i].Pid, ecmList[i].ProviderId);
         }
 
@@ -1091,7 +1092,7 @@ namespace TvLibrary.Implementations.DVB
 
             Boolean.TryParse(mainNode.Attributes["fillout"].Value, out filloutXMLFile);
 
-            Log.Log.Info("mdplug: MDAPIProvID.xml Filling out MDAPIProvID {0} ", filloutXMLFile);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: MDAPIProvID.xml Filling out MDAPIProvID {0} ", filloutXMLFile);
 
             XmlNodeList channelList = doc.SelectNodes("/mdapi/channels/channel");
             string Tp_id = String.Format("{0:D}", _mDPlugTProg82.Tp_id);
@@ -1170,7 +1171,7 @@ namespace TvLibrary.Implementations.DVB
                     break;
                 }
             }
-            Log.Log.Info("mdplug: MDAPIProvID.xml mode used = Channel:{0} Provider:{1} Ca_typ:{2}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: MDAPIProvID.xml mode used = Channel:{0} Provider:{1} Ca_typ:{2}",
                          channelfound,
                          providfound,
                          catypfound);
@@ -1180,7 +1181,7 @@ namespace TvLibrary.Implementations.DVB
             {
               try
               {
-                Log.Log.Info("mdapi: Attempting to add entry to MDAPIProvID.xml");
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("mdapi: Attempting to add entry to MDAPIProvID.xml");
 
                 XmlNode node;
                 if (filloutXMLFile && ecmList.Count > 0)
@@ -1290,17 +1291,17 @@ namespace TvLibrary.Implementations.DVB
               }
               catch (Exception g)
               {
-                Log.Log.Write(g);
+                GlobalServiceProvider.Instance.Get<ILogger>().Error(g);
               }
             }
           }
           catch (Exception e)
           {
-            Log.Log.Write(e);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
           }
         }
 
-        Log.Log.Info("mdplug: tp_id:{0}(0x{1:X}) sid:{2}(0x{3:X}) pmt_id:{4}(0x{5:X})",
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: tp_id:{0}(0x{1:X}) sid:{2}(0x{3:X}) pmt_id:{4}(0x{5:X})",
                      _mDPlugTProg82.Tp_id,
                      _mDPlugTProg82.Tp_id,
                      _mDPlugTProg82.SID_pid,
@@ -1310,7 +1311,7 @@ namespace TvLibrary.Implementations.DVB
 
         for (int i = 0; i < count; ++i)
         {
-          Log.Log.Info("mdplug: #{0} CA_typ:{1}(0x{2:X}) ECM:{3}(0x{4:X}) EMM:0x{5:X} provider:{6}(0x{7:X})",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: #{0} CA_typ:{1}(0x{2:X}) ECM:{3}(0x{4:X}) EMM:0x{5:X} provider:{6}(0x{7:X})",
                        i,
                        _mDPlugTProg82.CA_System82[i].CA_Typ,
                        _mDPlugTProg82.CA_System82[i].CA_Typ,
@@ -1341,7 +1342,7 @@ namespace TvLibrary.Implementations.DVB
         _decodingChannel = currentChannel;
         _decodingCounter = 1;
 
-        Log.Log.Info("mdplug: Send channel change to MDAPI filter Ca_Id:{0} CA_Nr:{1} ECM_PID:{2}(0x{3:X})",
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("mdplug: Send channel change to MDAPI filter Ca_Id:{0} CA_Nr:{1} ECM_PID:{2}(0x{3:X})",
                      _mDPlugTProg82.CA_ID,
                      _mDPlugTProg82.CA_Nr,
                      _mDPlugTProg82.ECM_PID,
@@ -1349,7 +1350,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       Marshal.FreeHGlobal(lparam);
       Marshal.FreeHGlobal(lparam2);

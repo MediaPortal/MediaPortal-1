@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using TvLibrary.Implementations.DVB;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
@@ -49,7 +50,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _videoEncoder = videoEncoder;
-      Log.Log.WriteFile("analog: IVideoEncoder supported by: " +
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: IVideoEncoder supported by: " +
                         FilterGraphTools.GetFilterName(_videoEncoder as IBaseFilter) + "; Checking capabilities ");
       CheckCapabilities();
     }

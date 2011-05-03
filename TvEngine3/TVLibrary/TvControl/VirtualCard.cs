@@ -22,6 +22,7 @@ using System;
 using System.Net;
 using System.Xml.Serialization;
 using TvLibrary.Interfaces;
+using MediaPortal.CoreServices;
 
 namespace TvControl
 {
@@ -1604,19 +1605,19 @@ namespace TvControl
     /// <returns></returns>
     public bool SetCiMenuHandler(TvLibrary.Interfaces.ICiMenuCallbacks CallbackHandler)
     {
-      TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("VC: SetCiMenuHandler");
       try
       {
         if (User.CardId < 0 || !IsOwner())
         {
           return false;
         }
-        TvLibrary.Log.Log.Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("VC: SetCiMenuHandler card: {0}, {1}", User.CardId, CallbackHandler);
         return RemoteControl.Instance.SetCiMenuHandler(User.CardId, CallbackHandler);
       }
       catch (Exception Ex)
       {
-        TvLibrary.Log.Log.Error("Exception: {0}", Ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception: {0}", Ex.ToString());
         HandleFailure();
       }
       return false;

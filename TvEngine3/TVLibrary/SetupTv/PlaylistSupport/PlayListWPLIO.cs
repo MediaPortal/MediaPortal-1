@@ -21,7 +21,7 @@
 using System;
 using System.Xml;
 using System.IO;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace MediaPortal.Playlists
 {
@@ -67,7 +67,7 @@ namespace MediaPortal.Playlists
       }
       catch (Exception e)
       {
-        Log.Error(e.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(e.StackTrace);
       }
       return false;
     }

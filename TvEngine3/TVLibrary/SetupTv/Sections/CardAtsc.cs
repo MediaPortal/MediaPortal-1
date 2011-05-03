@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using System.Threading;
 using TvDatabase;
 using TvControl;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
@@ -200,19 +200,19 @@ namespace SetupTv.Sections
           tuneChannel.MajorChannel = -1;
           if (checkBoxQAM.Checked)
           {
-            Log.WriteFile("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("ATSC tune: QAM checkbox selected... using Modulation 256Qam");
             tuneChannel.PhysicalChannel = index + 1;
             tuneChannel.Frequency = _atscChannels[index].frequency;
             tuneChannel.ModulationType = ModulationType.Mod256Qam;
           }
           else
           {
-            Log.WriteFile("ATSC tune: QAM checkbox not selected... using Modulation 8Vsb");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("ATSC tune: QAM checkbox not selected... using Modulation 8Vsb");
             tuneChannel.PhysicalChannel = index;
             tuneChannel.Frequency = -1;
             tuneChannel.ModulationType = ModulationType.Mod8Vsb;
           }
-          Log.WriteFile("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ATSC tune: PhysicalChannel: {0} Frequency: {1} Modulation: {2}", tuneChannel.PhysicalChannel,
                         tuneChannel.Frequency, tuneChannel.ModulationType);
           string line = String.Format("physical channel:{0} frequency:{1} modulation:{2}", tuneChannel.PhysicalChannel,
                                       tuneChannel.Frequency, tuneChannel.ModulationType);
@@ -341,7 +341,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       finally
       {

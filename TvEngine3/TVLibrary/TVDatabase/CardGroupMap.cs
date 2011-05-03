@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvDatabase
 {
@@ -157,7 +157,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Error("Exception in CardGroupMap.Persist() with Message {0}", ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in CardGroupMap.Persist() with Message {0}", ex.Message);
           return;
         }
         isChanged = false;

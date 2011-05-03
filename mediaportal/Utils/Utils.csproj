@@ -132,9 +132,6 @@
     <Compile Include="CommandLine\CommandLine.cs" />
     <Compile Include="CommandLine\ICommandLineOptions.cs" />
     <Compile Include="Configuration\CacheSettingsProvider.cs" />
-    <Compile Include="Configuration\Config.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Configuration\DebugSettings.cs" />
     <Compile Include="Configuration\DirectXCheck.cs" />
     <Compile Include="Configuration\ISettingsPrefetchable.cs" />
@@ -149,16 +146,8 @@
     <Compile Include="Localisation\StringsFile\StringSection.cs" />
     <Compile Include="Localisation\StringsFile\StringFile.cs" />
     <Compile Include="ServiceImplementations\Log.cs" />
-    <Compile Include="ServiceImplementations\log4netLogger.cs" />
-    <Compile Include="ServiceImplementations\LogImpl.cs" />
-    <Compile Include="Services\GlobalServiceProvider.cs" />
-    <Compile Include="Services\ILog.cs" />
     <Compile Include="Services\ISelectDVDHandler.cs" />
     <Compile Include="Services\IVideoThumbBlacklist.cs" />
-    <Compile Include="Services\Level.cs" />
-    <Compile Include="Services\LogType.cs" />
-    <Compile Include="Services\ServiceCreatorCallback.cs" />
-    <Compile Include="Services\ServiceProvider.cs" />
     <Compile Include="Threading\Interfaces\IThreadPool.cs" />
     <Compile Include="Threading\Interfaces\IWork.cs" />
     <Compile Include="Threading\Interfaces\IWorkInterval.cs" />
@@ -218,6 +207,12 @@
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -269,7 +269,7 @@ namespace MediaPortal.EPG.config
 
     //  if (System.IO.File.Exists(_strChannelsFile))
     //  {
-    //    //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+    //    //GlobalServiceProvider.Instance.Get<ILogger>().Info(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
     //    MediaPortal.Webepg.Profile.Xml xmlreader = new MediaPortal.Webepg.Profile.Xml(_strChannelsFile);
     //    int channelCount = xmlreader.GetValueAsInt(country, "TotalChannels", 0);
 
@@ -299,7 +299,7 @@ namespace MediaPortal.EPG.config
     {
       if (File.Exists(_strChannelsFile))
       {
-        //Log.WriteFile(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
+        //GlobalServiceProvider.Instance.Get<ILogger>().Info(LogType.Log, false, "WebEPG Config: Loading Existing channels.xml");
         Xml xmlreader = new Xml(_strChannelsFile);
         int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
@@ -376,7 +376,7 @@ namespace MediaPortal.EPG.config
       if (Directory.Exists(_strGrabberDir + country) && _ChannelList != null)
       {
         DirectoryInfo dir = new DirectoryInfo(_strGrabberDir + country);
-        //Log.WriteFile(LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
+        //GlobalServiceProvider.Instance.Get<ILogger>().Info(LogType.Log, false, "WebEPG Config: Directory: {0}", Location);
         foreach (FileInfo file in dir.GetFiles("*.xml"))
         {
           LoadGrabber(country, file);

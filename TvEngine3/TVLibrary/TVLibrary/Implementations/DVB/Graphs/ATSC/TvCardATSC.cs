@@ -26,6 +26,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvDatabase;
 using TvLibrary.Epg;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -60,10 +61,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          Log.Log.Error("atsc:Graph already built");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("atsc:Graph already built");
           throw new TvException("Graph already built");
         }
-        Log.Log.WriteFile("atsc:BuildGraph");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:BuildGraph");
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
@@ -84,7 +85,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
@@ -96,13 +97,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void CreateTuningSpace()
     {
-      Log.Log.WriteFile("atsc:CreateTuningSpace()");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:CreateTuningSpace()");
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
         return;
       }
       IEnumTuningSpaces enumTuning;
@@ -119,7 +120,7 @@ namespace TvLibrary.Implementations.DVB
         spaces[0].get_UniqueName(out name);
         if (name == "MediaPortal ATSC TuningSpace")
         {
-          Log.Log.WriteFile("atsc:found correct tuningspace {0}", name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:found correct tuningspace {0}", name);
           _tuningSpace = (IATSCTuningSpace)spaces[0];
           tuner.put_TuningSpace(_tuningSpace);
           _tuningSpace.CreateTuneRequest(out request);
@@ -129,7 +130,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("ITuningSpace", spaces[0]);
       }
       Release.ComObject("IEnumTuningSpaces", enumTuning);
-      Log.Log.WriteFile("atsc:Create new tuningspace");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:Create new tuningspace");
       _tuningSpace = (IATSCTuningSpace)new ATSCTuningSpace();
       IATSCTuningSpace tuningSpace = (IATSCTuningSpace)_tuningSpace;
 
@@ -176,7 +177,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("atsc:Tune:{0} ", channel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:Tune:{0} ", channel);
       try
       {
         if (!BeforeTune(channel))
@@ -196,7 +197,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         throw;
       }
     }
@@ -209,7 +210,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded else false</returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("atsc:Tune:{0} ", channel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:Tune:{0} ", channel);
       try
       {
         if (!BeforeTune(channel))
@@ -229,7 +230,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         throw;
       }
     }
@@ -239,7 +240,7 @@ namespace TvLibrary.Implementations.DVB
       ATSCChannel atscChannel = channel as ATSCChannel;
       if (atscChannel == null)
       {
-        Log.Log.WriteFile("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:Channel is not a ATSC channel!!! {0}", channel.GetType().ToString());
         return false;
       }
       if (_graphState == GraphState.Idle)
@@ -252,48 +253,48 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_previousChannel == null || _previousChannel.IsDifferentTransponder(atscChannel))
       {
-        Log.Log.WriteFile("atsc:using new channel tuning settings");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:using new channel tuning settings");
         ITuneRequest request;
         int hr = _tuningSpace.CreateTuneRequest(out request);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - CreateTuneRequest");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - CreateTuneRequest");
         _tuneRequest = request;
         IATSCChannelTuneRequest tuneRequest = (IATSCChannelTuneRequest)_tuneRequest;
         ILocator locator;
         hr = _tuningSpace.get_DefaultLocator(out locator);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - get_DefaultLocator");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - get_DefaultLocator");
         IATSCLocator atscLocator = (IATSCLocator)locator;
         hr = atscLocator.put_SymbolRate(-1);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_SymbolRate");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_SymbolRate");
         hr = atscLocator.put_TSID(-1);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_TSID");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_TSID");
         hr = atscLocator.put_CarrierFrequency((int)atscChannel.Frequency);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_CarrierFrequency");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_CarrierFrequency");
         hr = atscLocator.put_Modulation(atscChannel.ModulationType);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_Modulation");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_Modulation");
         hr = tuneRequest.put_Channel(atscChannel.MajorChannel);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_Channel");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_Channel");
         hr = tuneRequest.put_MinorChannel(atscChannel.MinorChannel);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_MinorChannel");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_MinorChannel");
         hr = atscLocator.put_PhysicalChannel(atscChannel.PhysicalChannel);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_PhysicalChannel");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_PhysicalChannel");
         hr = _tuneRequest.put_Locator(locator);
         if (hr != 0)
-          Log.Log.WriteFile("atsc: Failed - put_Locator");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc: Failed - put_Locator");
         //set QAM paramters if necessary...
         _conditionalAccess.CheckATSCQAM(atscChannel);
       }
       else
       {
-        Log.Log.WriteFile("atsc:using previous channel tuning settings");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:using previous channel tuning settings");
       }
       return true;
     }

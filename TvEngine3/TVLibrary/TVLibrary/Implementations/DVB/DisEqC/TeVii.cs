@@ -28,6 +28,7 @@ using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using TvLibrary.Hardware;
 using TvLibrary.Implementations.DVB;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Hardware
 {
@@ -258,7 +259,7 @@ namespace TvLibrary.Hardware
     /// </summary>
     private void Close()
     {
-      Log.Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
       CloseDevice(m_iDeviceIndex);
     }
 
@@ -331,18 +332,18 @@ namespace TvLibrary.Hardware
         m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: number of devices: {0}", numberDevices);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: number of devices: {0}", numberDevices);
 
       String deviceName = String.Empty;
       String devicePath = String.Empty;
 
-      //Log.Log.Debug("TeVii: DevicePath of active card: {0}", m_devicePath);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: DevicePath of active card: {0}", m_devicePath);
       for (int deviceIdx = 0; deviceIdx < numberDevices; deviceIdx++)
       {
         deviceName = GetUnmanagedString(GetDeviceName(deviceIdx));
         devicePath = GetUnmanagedString(GetDevicePath(deviceIdx));
 
-        //Log.Log.Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
+        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: compare to {0} {1}", deviceName, devicePath);
         if (devicePath == m_devicePath)
         {
           m_iDeviceIndex = deviceIdx;
@@ -353,14 +354,14 @@ namespace TvLibrary.Hardware
 
       if (!m_bIsTeVii) return;
 
-      Log.Log.Debug("TeVii: card {0} detected: {1} (API v{2})", m_iDeviceIndex, deviceName, GetAPIVersion());
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: card {0} detected: {1} (API v{2})", m_iDeviceIndex, deviceName, GetAPIVersion());
       if (OpenDevice(m_iDeviceIndex, IntPtr.Zero, IntPtr.Zero) == 0)
       {
-        Log.Log.Debug("TeVii: card {0} open failed !", m_iDeviceIndex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: card {0} open failed !", m_iDeviceIndex);
         m_bIsTeVii = false;
         return;
       }
-      Log.Log.Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: card {0} successful opened", m_iDeviceIndex);
     }
 
     /// <summary>
@@ -416,7 +417,7 @@ namespace TvLibrary.Hardware
     {
       if (m_bIsTeVii == false)
         return;
-      Log.Log.Debug("TeVii: SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
 
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
@@ -455,11 +456,11 @@ namespace TvLibrary.Hardware
       int res = SendDiSEqC(m_iDeviceIndex, diSEqC, diSEqC.Length, 0, 0);
       if (res == 0)
       {
-        Log.Log.Debug("TeVii: Send DiSEqC failed");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: Send DiSEqC failed");
         return false;
       }
 
-      Log.Log.Debug("TeVii: Send DiSEqC successful.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: Send DiSEqC successful.");
       return true;
     }
 
@@ -470,7 +471,7 @@ namespace TvLibrary.Hardware
     /// <returns></returns>
     public bool ReadDiSEqCCommand(out byte[] reply)
     {
-      Log.Log.Debug("ReadDiSEqCCommand not supported");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("ReadDiSEqCCommand not supported");
       reply = new byte[0];
       return true;
     }
@@ -511,7 +512,7 @@ namespace TvLibrary.Hardware
       else
         lnbFrequency = lof1 * 1000;
 
-      Log.Log.Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: Start CustomTune F:{0} SR:{1} LOF:{6} P:{2} HI:{3} M:{4} FEC:{5}",
                     (int)satelliteChannel.Frequency,
                     satelliteChannel.SymbolRate * 1000,
                     Translate(satelliteChannel.Polarisation),
@@ -530,7 +531,7 @@ namespace TvLibrary.Hardware
                                 Translate(satelliteChannel.ModulationType),
                                 Translate(satelliteChannel.InnerFecRate)
         );
-      Log.Log.Debug("TeVii: Send CustomTune: {0}", res);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TeVii: Send CustomTune: {0}", res);
       return (res == 1);
     }
 

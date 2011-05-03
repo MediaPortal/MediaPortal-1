@@ -27,7 +27,7 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using similaritymetrics;
 using MediaPortal.UserInterface.Controls;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace SetupTv.Sections
 {
@@ -357,7 +357,7 @@ namespace SetupTv.Sections
             {
               if (!enableDVBS2 && (tDetail.Pilot > -1 || tDetail.RollOff > -1))
               {
-                Log.Debug(String.Format(
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug(String.Format(
                   "Imported channel {0} detected as DVB-S2. Skipped! \n Enable \"DVB-S2 tuning\" option in your TV-Card properties to be able to combine these channels.",
                   tDetail.Name));
               }

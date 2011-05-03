@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvDatabase
 {
@@ -303,7 +303,7 @@ namespace TvDatabase
             }
             catch (Exception ex)
             {
-              Log.Error("channelgroup for channel id={0} with channelgroup id={1} does not exist", idChannel,
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("channelgroup for channel id={0} with channelgroup id={1} does not exist", idChannel,
                         groupMap.IdGroup);
             }
           }
@@ -382,8 +382,8 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          Log.Error("Exception in Channel.Persist() with Message {0}", ex.Message);
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in Channel.Persist() with Message {0}", ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return;
         }
         isChanged = false;

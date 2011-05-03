@@ -22,7 +22,7 @@ using System;
 using System.Text.RegularExpressions;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvService
 {
@@ -186,7 +186,7 @@ namespace TvService
         }
         catch (Exception e)
         {
-          Log.Error("RecordingDetail: exception occured {0}", e);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("RecordingDetail: exception occured {0}", e);
         }
 
         return isRecording;
@@ -221,12 +221,12 @@ namespace TvService
       Setting setting;
       if (!IsSerie)
       {
-        Log.Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: MakeFileName() using \"moviesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("moviesformat", "%title%");
       }
       else
       {
-        Log.Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: MakeFileName() using \"seriesformat\" (_isSerie={0})", _isSerie);
         setting = layer.GetSetting("seriesformat", "%title%");
       }
 

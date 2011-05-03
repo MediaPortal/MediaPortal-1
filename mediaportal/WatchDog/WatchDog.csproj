@@ -158,6 +158,10 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common-MP-TVE3\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MediaPortal.Support\MediaPortal.Support.csproj">
       <Project>{BD4A3413-C9F9-4299-BB52-ED45027EE7CC}</Project>
       <Name>MediaPortal.Support</Name>

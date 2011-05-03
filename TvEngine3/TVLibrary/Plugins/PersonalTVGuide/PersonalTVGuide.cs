@@ -29,7 +29,7 @@ using TvDatabase;
 using TvEngine.Events;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvEngine
 {
@@ -67,7 +67,7 @@ namespace TvEngine
     /// </summary>
     public void UpdatePersonalTVGuide()
     {
-      if (_debugMode) Log.Info("PersonalTVGuide: Updating list");
+      if (_debugMode) GlobalServiceProvider.Instance.Get<ILogger>().Info("PersonalTVGuide: Updating list");
       if (!_isUpdating)
       {
         try
@@ -80,12 +80,12 @@ namespace TvEngine
         }
         catch (Exception ex)
         {
-          Log.Error("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("PersonalTVGuide: Error spawing update thread - {0},{1}", ex.Message, ex.StackTrace);
         }
       }
       else
       {
-        Log.Error("PersonalTVGuide: Update already started");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("PersonalTVGuide: Update already started");
       }
     }
 
@@ -101,14 +101,14 @@ namespace TvEngine
     {
       _isUpdating = true;
 
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) GlobalServiceProvider.Instance.Get<ILogger>().Info("PersonalTVGuide: UpdateThread - Start: " + DateTime.Now.ToLongTimeString());
       ClearPersonalTVGuideMap();
       IList<Keyword> list = Keyword.ListAll();
       foreach (Keyword key in list)
       {
         if (_stopService)
         {
-          Log.Info("PersonalTVGuide: Stop Update loop");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("PersonalTVGuide: Stop Update loop");
           break;
         }
         UpdateKeyword(key);
@@ -117,7 +117,7 @@ namespace TvEngine
       Setting setting = cmLayer.GetSetting("PTVGLastUpdateTime", DateTime.Now.ToString());
       setting.Value = DateTime.Now.ToString();
       setting.Persist();
-      if (_debugMode) Log.Info("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
+      if (_debugMode) GlobalServiceProvider.Instance.Get<ILogger>().Info("PersonalTVGuide: UpdateThread - Stop : " + DateTime.Now.ToLongTimeString());
       _isUpdating = false;
     }
 
@@ -133,7 +133,7 @@ namespace TvEngine
 
     private void UpdateKeyword(Keyword key)
     {
-      if (_debugMode) Log.Debug("PersonalTVGuide: Updating Keyword: " + key.Name);
+      if (_debugMode) GlobalServiceProvider.Instance.Get<ILogger>().Debug("PersonalTVGuide: Updating Keyword: " + key.Name);
       if (key.SearchInTitle)
       {
         SaveList(key.IdKeyword, ContainsInTitle(key.Name));
@@ -198,7 +198,7 @@ namespace TvEngine
     private void LoadSettings()
     {
       //_debugMode = (cmLayer.GetSetting("PTVGDebugMode", "true").Value == "true");
-      if (_debugMode) Log.Debug("PersonalTVGuide: Extensive Logging switched on");
+      if (_debugMode) GlobalServiceProvider.Instance.Get<ILogger>().Debug("PersonalTVGuide: Extensive Logging switched on");
     }
 
     #endregion
@@ -252,7 +252,7 @@ namespace TvEngine
     public void Start(IController controller)
     {
       LoadSettings();
-      Log.WriteFile("plugin: PersonalTVGuide started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: PersonalTVGuide started");
       _stopService = false;
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -265,7 +265,7 @@ namespace TvEngine
     public void Stop()
     {
       _stopService = true;
-      Log.WriteFile("plugin: PersonalTVGuide stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: PersonalTVGuide stopped");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {

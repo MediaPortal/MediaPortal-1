@@ -20,7 +20,7 @@
 
 using System;
 using TvControl;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
@@ -118,7 +118,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -140,7 +140,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -161,7 +161,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 

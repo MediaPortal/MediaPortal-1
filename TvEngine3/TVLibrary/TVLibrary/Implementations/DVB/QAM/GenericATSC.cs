@@ -22,6 +22,7 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Channels;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -62,20 +63,20 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("GenericATSC: QAM capable card found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenericATSC: QAM capable card found!");
             _isGenericATSC = true;
             _tempValue = Marshal.AllocCoTaskMem(1024);
             _tempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Debug("GenericATSC: QAM card NOT found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenericATSC: QAM card NOT found!");
             _isGenericATSC = false;
           }
         }
       }
       else
-        Log.Log.Info("GenericATSC: tuner pin not found!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenericATSC: tuner pin not found!");
     }
 
     /// <summary>
@@ -111,23 +112,23 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenericATSC: Set ModulationType: {0}", channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         int hr = _propertySet.Set(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32,
                                   _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("GenericATSC: Set returned: 0x{0:X} - {1}", hr, HResult.GetDXErrorString(hr));
         }
       }
       //Below is for debug only...
       /*
       if ((supported & KSPropertySupport.Get) == KSPropertySupport.Get)
       {
-        Log.Log.Info("GenericATSC: Get ModulationType");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenericATSC: Get ModulationType");
         Marshal.WriteInt32(_tempValue, (Int32)0);
         hr = _propertySet.Get(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, _tempInstance, 32, _tempValue, 4, out length);
-        Log.Log.Info("GenericATSC: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenericATSC: Get   returned:{0:X} len:{1} value:{2}", hr, length, Marshal.ReadInt32(_tempValue));
       }
       */
     }

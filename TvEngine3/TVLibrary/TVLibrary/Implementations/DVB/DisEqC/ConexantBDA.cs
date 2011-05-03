@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -63,19 +64,19 @@ namespace TvLibrary.Implementations.DVB
                                       out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("Conexant BDA: DVB-S card found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Conexant BDA: DVB-S card found!");
             _isConexant = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Debug("Conexant BDA: DVB-S card NOT found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Conexant BDA: DVB-S card NOT found!");
             _isConexant = false;
           }
         }
       }
       else
-        Log.Log.Info("Conexant BDA: tuner pin not found!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Conexant BDA: tuner pin not found!");
     }
 
     /// <summary>
@@ -156,13 +157,13 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Conexant BDA: SendDiseqCommand: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Conexant BDA: SendDiseqCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
     }
 
@@ -193,13 +194,13 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Conexant BDA: SendDiseqCCommand: {0}", txt);
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Conexant BDA: SendDiseqCCommand returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
       return (hr == 0);
     }

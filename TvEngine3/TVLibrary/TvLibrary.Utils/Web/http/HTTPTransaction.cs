@@ -25,6 +25,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using TvLibrary.Interfaces;
+using MediaPortal.CoreServices;
 
 // for Service Framework
 

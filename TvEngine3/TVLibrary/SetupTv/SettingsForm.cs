@@ -26,7 +26,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Net;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using TvDatabase;
 using SetupTv.Sections;
@@ -58,8 +58,8 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Error("Failed to startup cause of exception");
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to startup cause of exception");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -90,7 +90,7 @@ namespace SetupTv
       catch (Exception ex)
       {
         MessageBox.Show("Unable to open:" + String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
 
       try
@@ -100,8 +100,8 @@ namespace SetupTv
       catch (Exception ex)
       {
         MessageBox.Show("Failed to open database");
-        Log.Error("Unable to get list of servers");
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Unable to get list of servers");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
 
       Project project = new Project();
@@ -143,7 +143,7 @@ namespace SetupTv
                                                        MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
                     if (dlg == DialogResult.Yes)
                     {
-                      Log.Info("Controller: server {0} changed to {1}", server.HostName, localHostname);
+                      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: server {0} changed to {1}", server.HostName, localHostname);
                       server.HostName = localHostname;
                       server.Persist();
                       RemoteControl.Clear();
@@ -158,8 +158,8 @@ namespace SetupTv
                   }
                   else
                   {
-                    Log.Error("Cannot connect to server {0}", server.HostName);
-                    Log.Write(ex);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Error("Cannot connect to server {0}", server.HostName);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
                     DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
                                                        "Please check the TV Server logs for details.\n\n" +
                                                        "Setup will now close.");
@@ -560,7 +560,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       finally
       {
@@ -706,7 +706,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 

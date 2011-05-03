@@ -34,7 +34,7 @@ using TvDatabase;
 using TvEngine.Interfaces;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -178,7 +178,7 @@ namespace TvEngine.PowerScheduler
         GlobalServiceProvider.Instance.Remove<IPowerScheduler>();
       }
       GlobalServiceProvider.Instance.Add<IPowerScheduler>(this);
-      Log.Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Registered PowerScheduler service to GlobalServiceProvider");
     }
 
     ~PowerScheduler()
@@ -192,7 +192,7 @@ namespace TvEngine.PowerScheduler
       catch (ObjectDisposedException) {}
       catch (AppDomainUnloadedException appex)
       {
-        Log.Info("PowerScheduler: Error on dispose - {0}", appex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Error on dispose - {0}", appex.Message);
       }
     }
 
@@ -217,7 +217,7 @@ namespace TvEngine.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Powerscheduler: Error naming thread - {0}", ex.Message);
       }
 
       _controller = controller;
@@ -226,7 +226,7 @@ namespace TvEngine.PowerScheduler
       Register(_clientWakeupHandler);
       RegisterPowerEventHandler();
 
-      Log.Debug("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Registered default set of standby/resume handlers to PowerScheduler");
 
       // Create the PowerManager that helps setting the correct thread executation state
       _powerManager = new PowerManager();
@@ -252,7 +252,7 @@ namespace TvEngine.PowerScheduler
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Started);
 
-      Log.Debug("PowerScheduler: Starting poll thread");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Starting poll thread");
       _stopThread = new ManualResetEvent(false);
       _pollThread = new Thread(new ThreadStart(PollThread));
       _pollThread.Name = "PowerScheduler poll thread";
@@ -260,7 +260,7 @@ namespace TvEngine.PowerScheduler
       _pollThread.Priority = ThreadPriority.Normal;
       _pollThread.Start();
 
-      Log.Info("Powerscheduler: started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Powerscheduler: started");
     }
 
     /// <summary>
@@ -280,11 +280,11 @@ namespace TvEngine.PowerScheduler
       _factory.RemoveDefaultSet();
       Unregister(_clientStandbyHandler);
       Unregister(_clientWakeupHandler);
-      Log.Debug("PowerScheduler: Removed default set of standby/resume handlers to PowerScheduler");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Removed default set of standby/resume handlers to PowerScheduler");
 
       SendPowerSchedulerEvent(PowerSchedulerEventType.Stopped);
 
-      Log.Info("Powerscheduler: stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Powerscheduler: stopped");
     }
 
     private void RegisterPowerEventHandler()
@@ -293,11 +293,11 @@ namespace TvEngine.PowerScheduler
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
-        Log.Debug("PowerScheduler: Registered PowerScheduler as PowerEventHandler to tvservice");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Registered PowerScheduler as PowerEventHandler to tvservice");
       }
       else
       {
-        Log.Error("PowerScheduler: Unable to register power event handler!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: Unable to register power event handler!");
       }
     }
 
@@ -308,11 +308,11 @@ namespace TvEngine.PowerScheduler
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
           new PowerEventHandler(OnPowerEvent));
-        Log.Debug("PowerScheduler: UnRegistered PowerScheduler as PowerEventHandler to tvservice");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: UnRegistered PowerScheduler as PowerEventHandler to tvservice");
       }
       else
       {
-        Log.Error("PowerScheduler: Unable to unregister power event handler!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: Unable to unregister power event handler!");
       }
     }
 
@@ -339,7 +339,7 @@ namespace TvEngine.PowerScheduler
       // RemotingConfiguration.RegisterWellKnownServiceType(typeof(PowerScheduler), "PowerControl", WellKnownObjectMode.Singleton);
       ObjRef objref = RemotingServices.Marshal(this, "PowerControl", typeof (IPowerController));
       RemotePowerControl.Clear();
-      Log.Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Registered PowerScheduler as \"PowerControl\" remoting service");
       _remotingStarted = true;
     }
 
@@ -436,7 +436,7 @@ namespace TvEngine.PowerScheduler
     /// <returns></returns>
     public void SuspendSystem(string source, bool force)
     {
-      Log.Info("PowerScheduler: Manual system suspend requested by {0}", source);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Manual system suspend requested by {0}", source);
 
       // determine standby mode
       switch (_settings.ShutdownMode)
@@ -448,10 +448,10 @@ namespace TvEngine.PowerScheduler
           SuspendSystem(source, (int)RestartOptions.Hibernate, force);
           break;
         case ShutdownMode.StayOn:
-          Log.Debug("PowerScheduler: Standby requested but system is configured to stay on");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Standby requested but system is configured to stay on");
           break;
         default:
-          Log.Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: unknown shutdown mode: {0}", _settings.ShutdownMode);
           break;
       }
     }
@@ -487,7 +487,7 @@ namespace TvEngine.PowerScheduler
         // block concurrent request?
         if (_ignoreSuspendUntil > now)
         {
-          Log.Info("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Concurrent shutdown was ignored: {0} ; force: {1}", (RestartOptions)how, force);
           return;
         }
 
@@ -495,7 +495,7 @@ namespace TvEngine.PowerScheduler
         _ignoreSuspendUntil = DateTime.MaxValue;
       }
 
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Entering shutdown {0} ; forced: {1} -- kick off shutdown thread", (RestartOptions)how,
                force);
       SuspendSystemThreadEnv data = new SuspendSystemThreadEnv();
       data.that = this;
@@ -516,9 +516,9 @@ namespace TvEngine.PowerScheduler
 
     protected void SuspendSystemThread(string source, RestartOptions how, bool force)
     {
-      Log.Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Shutdown thread is running: {0}, force: {1}", how, force);
       _isSuspendInProgress = true;
-      Log.Debug("PowerScheduler: Informing handlers about UserShutdownNow");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Informing handlers about UserShutdownNow");
       UserShutdownNow();
 
       // user is away, so we set _lastUserTime long time in the past to pretend that he didn't access system a long time
@@ -527,7 +527,7 @@ namespace TvEngine.PowerScheduler
       // test if shutdown is allowed
       bool disallow = DisAllowShutdown(true);
 
-      Log.Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Source: {0}; shutdown is allowed {1} ; forced: {2}", source, !disallow, force);
 
       if (disallow && !force)
       {
@@ -546,7 +546,7 @@ namespace TvEngine.PowerScheduler
         // Here we should wait for QuerySuspendFailed / QueryStandByFailed since we have rejected
         // the suspend request
         _querySuspendFailed++;
-        Log.Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: _querySuspendFailed {0}", _querySuspendFailed);
         do
         {
           System.Threading.Thread.Sleep(1000);
@@ -554,7 +554,7 @@ namespace TvEngine.PowerScheduler
       }
       // activate standby
       _denySuspendQuery = false;
-      Log.Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: Entering shutdown {0} ; forced: {1}", (RestartOptions)how, force);
       WindowsController.ExitWindows((RestartOptions)how, force, SuspendSystemThreadAfter);
     }
 
@@ -795,7 +795,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void OnWakeupTimerExpired()
     {
-      Log.Debug("PowerScheduler: OnResume");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: OnResume");
     }
 
     /// <summary>
@@ -803,8 +803,8 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void OnWakeupTimerException(WaitableTimer sender, TimerException exception)
     {
-      Log.Error("PowerScheduler: WaitableTimer had an exception:");
-      Log.Write(exception);
+      GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: WaitableTimer had an exception:");
+      GlobalServiceProvider.Instance.Get<ILogger>().Error(exception);
     }
 
     /// <summary>
@@ -822,7 +822,7 @@ namespace TvEngine.PowerScheduler
       }
       catch (Exception ex)
       {
-        Log.Error("Powerscheduler: Error naming thread - {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Powerscheduler: Error naming thread - {0}", ex.Message);
       }
 
       int reload = 0;
@@ -847,7 +847,7 @@ namespace TvEngine.PowerScheduler
           }
           catch (Exception ex)
           {
-            Log.Write(ex);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           }
         }
         if (_stopThread.WaitOne(1000)) // Wait one sec / exit
@@ -876,7 +876,7 @@ namespace TvEngine.PowerScheduler
           Convert.ToBoolean(layer.GetSetting("PowerSchedulerExtensiveLogging", "false").Value))
       {
         _settings.ExtensiveLogging = !_settings.ExtensiveLogging;
-        Log.Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: extensive logging enabled: {0}", _settings.ExtensiveLogging);
         changed = true;
       }
       // Check if PowerScheduler should actively put the system into standby
@@ -1029,7 +1029,7 @@ namespace TvEngine.PowerScheduler
 
       if (!GetLastInputInfo(ref lastInputInfo))
       {
-        Log.Error("PowerScheduler: Unable to GetLastInputInfo!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: Unable to GetLastInputInfo!");
         return DateTime.MinValue;
       }
 
@@ -1067,7 +1067,7 @@ namespace TvEngine.PowerScheduler
           _powerManager.AllowStandby();
           if (!_idle)
           {
-            Log.Info("PowerScheduler: System changed from busy state to idle state");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: System changed from busy state to idle state");
             _idle = true;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemIdle);
           }
@@ -1076,7 +1076,7 @@ namespace TvEngine.PowerScheduler
           // DisAllowShutdown takes some seconds to run => check once again Unattended 
           if (Unattended && _settings.ShutdownEnabled)
           {
-            Log.Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: System is unattended and idle - initiate suspend/hibernate");
             SuspendSystem();
           }
         }
@@ -1085,7 +1085,7 @@ namespace TvEngine.PowerScheduler
           _powerManager.PreventStandby();
           if (_idle)
           {
-            Log.Info("PowerScheduler: System changed from idle state to busy state");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: System changed from idle state to busy state");
             _idle = false;
             SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
           }
@@ -1105,13 +1105,13 @@ namespace TvEngine.PowerScheduler
       {
         case PowerEventType.QuerySuspend:
         case PowerEventType.QueryStandBy:
-          Log.Debug("PowerScheduler: System wants to enter standby (query)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System wants to enter standby (query)");
           // First request for suspend, this we will reject by returning false.
           // Instead we will start a shutdown thread that will de-init and last will 
           // issue a new suspend query that will accept.
           if (_denySuspendQuery)
           {
-            Log.Debug("PowerScheduler: Suspend queried, starting suspend sequence");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Suspend queried, starting suspend sequence");
             // Always try to Hibernate (S4). If system is set to S3, then Hibernate will fail and result will be S3
             SuspendSystem("System", (int)RestartOptions.Hibernate, false);
             return false;
@@ -1124,7 +1124,7 @@ namespace TvEngine.PowerScheduler
         case PowerEventType.QuerySuspendFailed:
         case PowerEventType.QueryStandByFailed:
           _querySuspendFailed--;
-          Log.Debug("PowerScheduler: Entering standby was disallowed (blocked)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Entering standby was disallowed (blocked)");
           return true;
         case PowerEventType.ResumeAutomatic:
         case PowerEventType.ResumeCritical:
@@ -1140,9 +1140,9 @@ namespace TvEngine.PowerScheduler
     private void Suspend(PowerEventType powerStatus)
     {
       if (powerStatus == PowerEventType.Suspend)
-        Log.Debug("PowerScheduler: System is going to suspend");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System is going to suspend");
       else if (powerStatus == PowerEventType.StandBy)
-        Log.Debug("PowerScheduler: System is going to standby");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System is going to standby");
       _denySuspendQuery = true; // reset the flag
       _standby = true;
       _controller.EpgGrabberEnabled = false;
@@ -1155,11 +1155,11 @@ namespace TvEngine.PowerScheduler
     private void Resume(PowerEventType powerStatus)
     {
       if (powerStatus == PowerEventType.ResumeAutomatic)
-        Log.Debug("PowerScheduler: System has resumed automatically from standby");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System has resumed automatically from standby");
       else if (powerStatus == PowerEventType.ResumeCritical)
-        Log.Debug("PowerScheduler: System has resumed from standby after a critical suspend");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System has resumed from standby after a critical suspend");
       else if (powerStatus == PowerEventType.ResumeSuspend)
-        Log.Debug("PowerScheduler: System has resumed from standby");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: System has resumed from standby");
 
       if (!_standby)
         return;
@@ -1170,7 +1170,7 @@ namespace TvEngine.PowerScheduler
         _lastUserTime = DateTime.Now;
         if (_idle)
         {
-          Log.Info("PowerScheduler: System changed from idle state to busy state");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: System changed from idle state to busy state");
           _idle = false;
           SendPowerSchedulerEvent(PowerSchedulerEventType.SystemBusy);
         }
@@ -1194,7 +1194,7 @@ namespace TvEngine.PowerScheduler
     /// </summary>
     private void SetWakeupTimer()
     {
-      Log.Debug("PowerScheduler: SetWakeupTimer");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: SetWakeupTimer");
       if (_settings.WakeupEnabled)
       {
         // determine next wakeup time from IWakeupHandlers
@@ -1203,7 +1203,7 @@ namespace TvEngine.PowerScheduler
         if (disallow && OSInfo.OSInfo.VistaOrLater())
         {
           // fixing mantis 1487: If suspend it's triggered by remote on vista PSClient tells TV Server Power scheduler to wakeup after 1 min 
-          Log.Debug("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Vista detected => DisAllowShutdown ignored in SetWakeupTimer");
           disallow = false;
         }
         if (nextWakeup < DateTime.MaxValue || disallow)
@@ -1225,16 +1225,16 @@ namespace TvEngine.PowerScheduler
             delta = 60;
           }
           _wakeupTimer.SecondsToWait = delta;
-          Log.Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Set wakeup timer to wakeup system in {0} minutes", delta / 60);
         }
         else
         {
-          Log.Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: No pending events found in the future which should wakeup the system");
           _wakeupTimer.SecondsToWait = -1;
         }
       }
       else
-        Log.Debug("PowerScheduler: Warning WakeupEnabled is not set.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: Warning WakeupEnabled is not set.");
     }
 
     #region Message handling
@@ -1324,7 +1324,7 @@ namespace TvEngine.PowerScheduler
         }
         catch (Exception e)
         {
-          Log.Write(e);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
         }
         LogVerbose("External command finished");
       }
@@ -1336,13 +1336,13 @@ namespace TvEngine.PowerScheduler
     {
       //don't just do this: LogVerbose(msg, null);!!
       if (_settings.ExtensiveLogging)
-        Log.Debug(msg);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug(msg);
     }
 
     private void LogVerbose(string format, params object[] args)
     {
       if (_settings.ExtensiveLogging)
-        Log.Debug(format, args);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug(format, args);
     }
 
     #endregion
@@ -1361,7 +1361,7 @@ namespace TvEngine.PowerScheduler
       TvService.TVController controller = _controller as TvService.TVController;
       if (controller != null)
       {
-        Log.Debug("PowerScheduler: DeInit controller");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: DeInit controller");
         controller.DeInit();
         _cardsStopped = true;
         _reinitializeController = true;
@@ -1382,7 +1382,7 @@ namespace TvEngine.PowerScheduler
       TvService.TVController controller = _controller as TvService.TVController;
       if (controller != null && _reinitializeController)
       {
-        Log.Debug("PowerScheduler: ReInit Controller");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: ReInit Controller");
         Thread.Sleep(5000); // Give it a few seconds.
         controller.Init();
         _reinitializeController = false;
@@ -1542,7 +1542,7 @@ namespace TvEngine.PowerScheduler
       DateTime nextWakeupTime = DateTime.MaxValue;
       DateTime earliestWakeupTime = DateTime.Now;
 
-      //too much logging Log.Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
+      //too much logging GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: earliest wakeup time: {0}", earliestWakeupTime); 
       foreach (IWakeupHandler handler in _wakeupHandlers)
       {
         DateTime nextTime = handler.GetNextWakeupTime(earliestWakeupTime);
@@ -1551,7 +1551,7 @@ namespace TvEngine.PowerScheduler
                    nextTime);
         if (nextTime < nextWakeupTime && nextTime >= earliestWakeupTime)
         {
-          //too much logging Log.Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
+          //too much logging GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: found next wakeup time {0} by {1}", nextTime, handler.HandlerName);
           handlerName = handler.HandlerName;
           nextWakeupTime = nextTime;
         }
@@ -1564,7 +1564,7 @@ namespace TvEngine.PowerScheduler
       {
         _currentNextWakeupTime = nextWakeupTime;
 
-        Log.Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: new next wakeup time {0} found by {1}", nextWakeupTime, handlerName);
       }
 
       return nextWakeupTime;

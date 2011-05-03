@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 using System.Timers;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 #endregion
 
@@ -137,7 +137,7 @@ namespace TvService
     /// <param name = "user">The user.</param>
     public void Add(IUser user)
     {
-      Log.Info("user:{0} add", user.Name);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("user:{0} add", user.Name);
       if (_owner == null)
       {
         _owner = user;
@@ -160,7 +160,7 @@ namespace TvService
     public void Remove(IUser user)
     {
       string username = user.Name;
-      Log.Info("user:{0} remove", username);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("user:{0} remove", username);
       IUser existingUser = _users.Find(t => t.Name.Equals(username));
       if (existingUser != null)
       {
@@ -192,7 +192,7 @@ namespace TvService
 
     public void HeartBeatUser(IUser user)
     {
-      //Log.Debug("user:{0} heartbeat received", user.Name);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Debug("user:{0} heartbeat received", user.Name);
 
       IUser existingUser = _users.Find(t => t.Name == user.Name);
       if (existingUser != null)
@@ -436,7 +436,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
   }

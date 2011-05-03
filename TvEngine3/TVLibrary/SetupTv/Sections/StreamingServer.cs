@@ -26,7 +26,7 @@ using TvDatabase;
 using TvLibrary.Interfaces;
 using TvLibrary.Streaming;
 using System.Net;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace SetupTv.Sections
 {
@@ -72,8 +72,8 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Error("Failed to get our server host name");
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to get our server host name");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       List<string> ipAdresses = RemoteControl.Instance.ServerIpAdresses;
       IpAddressComboBox.Items.Clear();

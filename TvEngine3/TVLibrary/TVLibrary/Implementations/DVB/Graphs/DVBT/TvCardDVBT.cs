@@ -26,6 +26,7 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvDatabase;
 using TvLibrary.Epg;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -64,10 +65,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          Log.Log.Error("dvbt:Graph already built");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvbt:Graph already built");
           throw new TvException("Graph already build");
         }
-        Log.Log.WriteFile("dvbt:BuildGraph");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt:BuildGraph");
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
@@ -87,7 +88,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
@@ -99,13 +100,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void CreateTuningSpace()
     {
-      Log.Log.WriteFile("dvbt:CreateTuningSpace()");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt:CreateTuningSpace()");
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
         return;
       }
       IEnumTuningSpaces enumTuning;
@@ -122,7 +123,7 @@ namespace TvLibrary.Implementations.DVB
         spaces[0].get_UniqueName(out name);
         if (name == "MediaPortal DVBT TuningSpace")
         {
-          Log.Log.WriteFile("dvbt:found correct tuningspace {0}", name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt:found correct tuningspace {0}", name);
           _tuningSpace = (IDVBTuningSpace)spaces[0];
           tuner.put_TuningSpace(_tuningSpace);
           _tuningSpace.CreateTuneRequest(out request);
@@ -132,7 +133,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("ITuningSpace", spaces[0]);
       }
       Release.ComObject("IEnumTuningSpaces", enumTuning);
-      Log.Log.WriteFile("dvbt:Create new tuningspace");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt:Create new tuningspace");
       _tuningSpace = (IDVBTuningSpace)new DVBTuningSpace();
       IDVBTuningSpace tuningSpace = (IDVBTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBT TuningSpace");
@@ -178,7 +179,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("dvbt: Scan:{0}", channel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt: Scan:{0}", channel);
       try
       {
         if (!BeforeTune(channel, ref subChannelId))
@@ -188,7 +189,7 @@ namespace TvLibrary.Implementations.DVB
 
         ITvSubChannel ch = base.Scan(subChannelId, channel);
 
-        Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
       catch (TvExceptionNoSignal)
@@ -201,7 +202,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         throw;
       }
     }
@@ -214,7 +215,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      Log.Log.WriteFile("dvbt: Tune:{0}", channel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt: Tune:{0}", channel);
       try
       {
         if (!BeforeTune(channel, ref subChannelId))
@@ -224,7 +225,7 @@ namespace TvLibrary.Implementations.DVB
 
         ITvSubChannel ch = base.Tune(subChannelId, channel);
 
-        Log.Log.Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt: tune: Graph running. Returning {0}", ch.ToString());
         return ch;
       }
       catch (TvExceptionNoSignal)
@@ -237,7 +238,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         throw;
       }
     }
@@ -247,7 +248,7 @@ namespace TvLibrary.Implementations.DVB
       DVBTChannel dvbtChannel = channel as DVBTChannel;
       if (dvbtChannel == null)
       {
-        Log.Log.WriteFile("dvbt:Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbt:Channel is not a DVBT channel!!! {0}", channel.GetType().ToString());
         return false;
       }
       if (_graphState == GraphState.Idle)

@@ -23,7 +23,7 @@
 using System.Collections.Generic;
 using TvControl;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvEngine.PowerScheduler.Handlers;
 using TvEngine.PowerScheduler.Interfaces;
 
@@ -63,7 +63,7 @@ namespace TvEngine.PowerScheduler
     /// <param name="controller">Reference to tvservice's TVController</param>
     public PowerSchedulerFactory(IController controller)
     {
-      Log.Info("PowerSchedulerFactory CTOR");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerSchedulerFactory CTOR");
 
       IStandbyHandler standbyHandler;
 

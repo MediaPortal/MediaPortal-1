@@ -188,6 +188,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Common-MP-TVE3\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\TVDatabase\TVDatabase.csproj">
       <Project>{0FD8DEAE-37A4-49CC-A7BE-E86E0E0D85BD}</Project>
       <Name>TVDatabase</Name>

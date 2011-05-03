@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -86,12 +87,12 @@ namespace TvLibrary.Implementations.DVB
       //check the filter name
       FilterInfo tInfo;
       tunerFilter.QueryFilterInfo(out tInfo);
-      Log.Log.Debug("GenPix tuner filter name: {0}", tInfo.achName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenPix tuner filter name: {0}", tInfo.achName);
       //check the pin name
       IPin pin = DsFindPin.ByDirection(tunerFilter, PinDirection.Output, 0);
       PinInfo pInfo;
       pin.QueryPinInfo(out pInfo);
-      Log.Log.Debug("GenPix tuner filter pin name: {0}", pInfo.name);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenPix tuner filter pin name: {0}", pInfo.name);
       if (pin != null)
       {
         _propertySet = pin as IKsPropertySet;
@@ -102,20 +103,20 @@ namespace TvLibrary.Implementations.DVB
                                       out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("GenPix BDA: DVB-S card found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenPix BDA: DVB-S card found!");
             _isGenPix = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
             _ptrTempInstance = Marshal.AllocCoTaskMem(1024);
           }
           else
           {
-            Log.Log.Debug("GenPix BDA: DVB-S card NOT found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenPix BDA: DVB-S card NOT found!");
             _isGenPix = false;
           }
         }
       }
       else
-        Log.Log.Info("GenPix BDA: tuner pin not found!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenPix BDA: tuner pin not found!");
     }
 
     /// <summary>
@@ -138,7 +139,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_isGenPix == false)
         return;
-      Log.Log.Debug("SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("SendDiseqc: {0},{1}", parameters.ToString(), channel.ToString());
 
       //bit 0	(1)	: 0=low band, 1 = hi band
       //bit 1 (2) : 0=vertical, 1 = horizontal
@@ -174,13 +175,13 @@ namespace TvLibrary.Implementations.DVB
       string txt = "";
       for (int i = 0; i < len; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
-      Log.Log.Debug("GenPix: SendDiseqCommand: {0} with length {1}", txt, len);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("GenPix: SendDiseqCommand: {0} with length {1}", txt, len);
       //set the DisEqC command to the tuner pin
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC,
                                 _ptrTempInstance, 32, _ptrDiseqc, len);
       if (hr != 0)
       {
-        Log.Log.Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("GenPix: SendDiseqCommand returned: 0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
                      DsError.GetErrorText(hr));
       }
     }

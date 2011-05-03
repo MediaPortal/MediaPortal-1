@@ -27,7 +27,7 @@ using TvControl;
 using Gentle.Framework;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using DirectShowLib;
 
 namespace SetupTv.Sections

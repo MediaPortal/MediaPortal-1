@@ -56,7 +56,7 @@ namespace MediaPortal.MusicShareWatcher
     // Close the Watcher Application
     private void closeMenuItem_Click(object sender, EventArgs e)
     {
-      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher terminated.");
+      Log.Info("MusicShareWatcher terminated.");
       Application.Exit();
     }
 
@@ -84,7 +84,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       if (msg.Msg == WM_QUERYENDSESSION)
       {
-        Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher terminated because of System/Session shutdown.");
+        Log.Info("MusicShareWatcher terminated because of System/Session shutdown.");
         // If system is shutting down, allow exit.
         Application.Exit();
       }

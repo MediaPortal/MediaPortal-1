@@ -27,6 +27,7 @@ using DirectShowLib.BDA;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using System.Text;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -257,13 +258,13 @@ namespace TvLibrary.Implementations.DVB
         if (_isDigitalEverywhere)
         {
           _hasCAM = IsCamPresent();
-          Log.Log.WriteFile("FireDTV cam detected  : {0}", _hasCAM);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV cam detected  : {0}", _hasCAM);
           if (_hasCAM)
           {
-            Log.Log.WriteFile("FireDTV cam name      : \"{0}\"", GetCAMName());
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV cam name      : \"{0}\"", GetCAMName());
           }
-          Log.Log.WriteFile("FireDTV driver version: {0}", GetDriverVersionNumber());
-          Log.Log.WriteFile("FireDTV board version : {0}", GetHardwareFirmwareVersionNumber());
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV driver version: {0}", GetDriverVersionNumber());
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV board version : {0}", GetHardwareFirmwareVersionNumber());
         }
       }
       _readCamName = true;
@@ -333,24 +334,24 @@ namespace TvLibrary.Implementations.DVB
       // read CAM name, when it works, this usually means that CAM is ready to descramble (needed i.e. after resume)
       if (_readCamName)
       {
-        Log.Log.WriteFile("FireDTV cam name    : \"{0}\"", GetCAMName());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV cam name    : \"{0}\"", GetCAMName());
       }
 
-      //Log.Log.WriteFile("SendPMTToFireDTV pmtLength:{0}", pmtLength);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("SendPMTToFireDTV pmtLength:{0}", pmtLength);
       Guid propertyGuid = KSPROPSETID_Firesat;
       const int propId = KSPROPERTY_FIRESAT_HOST2CA;
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:SendPmt() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendPmt() properySet=null");
         return true;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Log.WriteFile("FireDTV:SendPmt() not supported");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendPmt() not supported");
         return true;
       }
 
@@ -378,7 +379,7 @@ namespace TvLibrary.Implementations.DVB
         caData.uData[i + 2] = PMT[i];
         log += String.Format("0x{0:X} ", PMT[i]);
       }
-      Log.Log.WriteFile(log);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(log);
 
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
@@ -386,7 +387,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:  failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:  failed 0x{0:X}", hr);
         ResetCAM();
         return false;
       }
@@ -398,21 +399,21 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void ResetCAM()
     {
-      Log.Log.WriteFile("FireDTV:ResetCAM()");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:ResetCAM()");
       Guid propertyGuid = KSPROPSETID_Firesat;
       const int propId = KSPROPERTY_FIRESAT_HOST2CA;
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:ResetCAM() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:ResetCAM() properySet=null");
         return;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Log.WriteFile("FireDTV:ResetCAM() Reset CI is not supported");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:ResetCAM() Reset CI is not supported");
         return;
       }
 
@@ -424,10 +425,10 @@ namespace TvLibrary.Implementations.DVB
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:ResetCAM() failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:ResetCAM() failed 0x{0:X}", hr);
         return;
       }
-      Log.Log.WriteFile("FireDTV:ResetCAM() cam has been reset");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:ResetCAM() cam has been reset");
       return;
     }
 
@@ -504,7 +505,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.QuerySupported(propertyGuid, (int)propertySelect, out isTypeSupported);
         if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
         {
-          Log.Log.WriteFile("FireDTV: Set H/W pid filtering is not supported");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: Set H/W pid filtering is not supported");
           return true;
         }
 
@@ -626,13 +627,13 @@ namespace TvLibrary.Implementations.DVB
           Marshal.StructureToPtr(dvbsStruct, _ptrDataReturned, true);
         }
 
-        //      Log.Log.WriteFile("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
+        //      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: Set H/W pid filtering count:{0} len:{1}", pids.Count, len);
 
         //      string txt = "";
         //      for (int i = 0; i < len; ++i)
         //        txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDataInstance, i));
 
-        //      Log.Log.WriteFile("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
+        //      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: Set H/W pid filtering pid {0} data:{1}", logStart, txt);
         hr = propertySet.Set(propertyGuid,
                              (int)propertySelect,
                              _ptrDataInstance, len,
@@ -640,7 +641,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (hr != 0)
         {
-          Log.Log.WriteFile("FireDTV: Set H/W pid filtering failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: Set H/W pid filtering failed 0x{0:X}", hr);
           return false;
         }
       }
@@ -663,7 +664,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.QuerySupported(propertyGuid, KSPROPERTY_FIRESAT_GET_FIRMWARE_VERSION, out isTypeSupported);
         if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
         {
-          Log.Log.WriteFile("FireDTV:GetFirmwareVersion() not supported");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetFirmwareVersion() not supported");
           return String.Empty;
         }
         int byteCount;
@@ -675,7 +676,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (hr != 0)
         {
-          Log.Log.WriteFile("FireDTV:GetFirmwareVersion() failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetFirmwareVersion() failed 0x{0:X}", hr);
           return String.Empty;
         }
 
@@ -712,7 +713,7 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.QuerySupported(propertyGuid, KSPROPERTY_FIRESAT_DRIVER_VERSION, out isTypeSupported);
         if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
         {
-          Log.Log.WriteFile("FireDTV:GetDriverVersion() not supported");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetDriverVersion() not supported");
           return String.Empty;
         }
         int byteCount;
@@ -724,7 +725,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (hr != 0)
         {
-          Log.Log.WriteFile("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetDriverVersion() failed 0x{0:X}", hr);
           return String.Empty;
         }
 
@@ -755,14 +756,14 @@ namespace TvLibrary.Implementations.DVB
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:GetCAMStatus() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMStatus() properySet=null");
         return 0;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Get) == 0)
       {
-        Log.Log.WriteFile("FireDTV:GetCAMStatus() get is not supported");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMStatus() get is not supported");
         return 0;
       }
       try
@@ -771,7 +772,7 @@ namespace TvLibrary.Implementations.DVB
         hr = propertySet.Get(propertyGuid, propId, _ptrDataInstance, 1036, _ptrDataReturned, 1036, out bytesReturned);
         if (hr != 0)
         {
-          Log.Log.WriteFile("FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMStatus() failed 0x{0:X}", hr);
           if (((uint)hr) == (0x8007001F))
           {
             ResetCAM();
@@ -788,12 +789,12 @@ namespace TvLibrary.Implementations.DVB
         }
         ushort camStatus = (ushort)Marshal.ReadInt16(_ptrDataReturned, 0);
 
-        //Log.Log.WriteFile("FireDTV:GetCAMStatus() status is <0x{0:X}>", camStatus);
+        //GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMStatus() status is <0x{0:X}>", camStatus);
         return camStatus;
       }
       finally
       {
-        Log.Log.WriteFile("FireDTV:GetCAMStatus() finished");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMStatus() finished");
       }
     }
 
@@ -810,14 +811,14 @@ namespace TvLibrary.Implementations.DVB
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:GetCAMName() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMName() properySet=null");
         return string.Empty;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Log.WriteFile("FireDTV:GetCAMName() not supported");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:GetCAMName() not supported");
         return string.Empty;
       }
 
@@ -828,7 +829,7 @@ namespace TvLibrary.Implementations.DVB
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, CA_DATA_SIZE, _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV: unable to set \"CA_APPLICATION_INFO\"");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: unable to set \"CA_APPLICATION_INFO\"");
       }
 
       const int timeout = 250; // at least 7 seconds for SamsungCAM - Italia (chemelli)
@@ -845,13 +846,13 @@ namespace TvLibrary.Implementations.DVB
         }
         if (j == 0)
         {
-          Log.Log.WriteFile("FireDTV: GetCAMName() looping for {0}s and retrying", (timeout * loops / 1000));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: GetCAMName() looping for {0}s and retrying", (timeout * loops / 1000));
         }
         Thread.Sleep(timeout);
       }
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV: GetCAMName() failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: GetCAMName() failed 0x{0:X}", hr);
         return string.Empty;
       }
 
@@ -861,7 +862,7 @@ namespace TvLibrary.Implementations.DVB
 
       short manufacturer_code = BitConverter.ToInt16(caDataReturned.uData, 0);
       short application_manufacturer = BitConverter.ToInt16(caDataReturned.uData, 2);
-      Log.Log.WriteFile("FireDTV cam specs     : manufacturer_code={0}, application_manufacturer={1}",
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV cam specs     : manufacturer_code={0}, application_manufacturer={1}",
                         manufacturer_code, application_manufacturer);
 
       int Length = Convert.ToInt16(caDataReturned.uData[4]);
@@ -917,39 +918,39 @@ namespace TvLibrary.Implementations.DVB
       if ((camStatus & DE_CI_STATUS.CI_MODULE_PRESENT) != 0)
       {
         //CAM is inserted
-        Log.Log.WriteFile("  FireDTV:cam is inserted");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is inserted");
         if ((camStatus & DE_CI_STATUS.CI_MODULE_IS_DVB) != 0)
         {
           //CAM is DVB CAM 
-          Log.Log.WriteFile("  FireDTV:cam is valid");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is valid");
           if ((camStatus & DE_CI_STATUS.CI_MODULE_ERROR) != 0)
           {
             //CAM has an error
-            Log.Log.WriteFile("  FireDTV:cam has error");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam has error");
             return false;
           }
           if ((camStatus & DE_CI_STATUS.CI_MODULE_INIT_READY) != 0)
           {
             //CAM is initialized
-            Log.Log.WriteFile("  FireDTV:cam is ready");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is ready");
           }
           else
           {
-            Log.Log.WriteFile("  FireDTV:cam is NOT ready");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is NOT ready");
             return false;
           }
           if ((camStatus & DE_CI_STATUS.CI_APP_INFO_AVAILABLE) != 0)
           {
-            Log.Log.WriteFile("  FireDTV:cam is able to descramble");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is able to descramble");
           }
           else
           {
-            Log.Log.WriteFile("  FireDTV:cam is UNABLE to descramble");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is UNABLE to descramble");
             return false;
           }
           return true;
         }
-        Log.Log.WriteFile("  FireDTV:cam is NOT valid");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("  FireDTV:cam is NOT valid");
         return false;
       }
       return true;
@@ -972,14 +973,14 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.InnerFecRate == channel.InnerFecRate)
         {
           _previousChannel = channel;
-          Log.Log.WriteFile("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}",
                             channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
         if (_previousChannel.DisEqc == DisEqcType.None && channel.DisEqc == DisEqcType.None)
         {
           _previousChannel = channel;
-          Log.Log.WriteFile("FireDTV: already no diseqc used",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: already no diseqc used",
                             channel.DisEqc, channel.Frequency, channel.Polarisation);
           return;
         }
@@ -987,7 +988,7 @@ namespace TvLibrary.Implementations.DVB
       if (_previousChannel == null && channel.DisEqc == DisEqcType.None)
       {
         _previousChannel = channel;
-        Log.Log.WriteFile("FireDTV: diseqc isn't used - skip it",
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: diseqc isn't used - skip it",
                           channel.DisEqc, channel.Frequency, channel.Polarisation);
         return;
       }
@@ -1017,7 +1018,7 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile(
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(
         "FireDTV SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2},  polarisation:{3} hiband:{4}",
         channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
 
@@ -1035,26 +1036,26 @@ namespace TvLibrary.Implementations.DVB
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() properySet=null");
         return;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
         return;
       }
 
       string txt = "";
       for (int i = 0; i < 10; ++i)
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDataInstance, i));
-      Log.Log.WriteFile("FireDTV:SendDiseq: {0}", txt);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseq: {0}", txt);
 
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25);
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
       }
     }
 
@@ -1082,21 +1083,21 @@ namespace TvLibrary.Implementations.DVB
       KSPropertySupport isTypeSupported;
       if (propertySet == null)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() properySet=null");
         return false;
       }
 
       int hr = propertySet.QuerySupported(propertyGuid, propId, out isTypeSupported);
       if (hr != 0 || (isTypeSupported & KSPropertySupport.Set) == 0)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() set is not supported {0:X} {1}", hr, (int)isTypeSupported);
         return false;
       }
 
       hr = propertySet.Set(propertyGuid, propId, _ptrDataInstance, 25, _ptrDataInstance, 25);
       if (hr != 0)
       {
-        Log.Log.WriteFile("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV:SendDiseqcCommand() failed:{0:X}", hr);
         return false;
       }
       return true;
@@ -1152,7 +1153,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (CiMenuThread == null)
       {
-        Log.Log.Debug("FireDTV: Starting new CI handler thread");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Starting new CI handler thread");
         StopThread = false;
         CiMenuThread = new Thread(new ThreadStart(CiMenuHandler));
         CiMenuThread.Name = "FireDTV CiMenuHandler";
@@ -1174,7 +1175,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (ciMenuHandler != null)
       {
-        Log.Log.Debug("FireDTV: registering ci callbacks");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: registering ci callbacks");
         m_ciMenuCallback = ciMenuHandler;
         StartCiHandlerThread();
         return true;
@@ -1189,11 +1190,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool EnterCIMenu()
     {
-      Log.Log.Debug("FireDTV: Enter CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Enter CI Menu");
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       if (propertySet == null)
       {
-        Log.Log.Debug("FireDTV:EnterCIMenu() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:EnterCIMenu() properySet=null");
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
@@ -1205,9 +1206,9 @@ namespace TvLibrary.Implementations.DVB
                                _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.Debug("FireDTV: unable to send CA_ENTER_MENU");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to send CA_ENTER_MENU");
       }
-      Log.Log.Debug("FireDTV: Enter CI Menu successful");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Enter CI Menu successful");
       return true;
     }
 
@@ -1217,11 +1218,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool CloseCIMenu()
     {
-      Log.Log.Debug("FireDTV: Close CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Close CI Menu");
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       if (propertySet == null)
       {
-        Log.Log.Debug("FireDTV:EnterCIMenu() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:EnterCIMenu() properySet=null");
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
@@ -1233,9 +1234,9 @@ namespace TvLibrary.Implementations.DVB
                                _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.Debug("FireDTV: unable to send CA_MMI close");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to send CA_MMI close");
       }
-      Log.Log.Debug("FireDTV: Close CI Menu successful");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Close CI Menu successful");
       return true;
     }
 
@@ -1246,11 +1247,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SelectMenu(byte choice)
     {
-      Log.Log.Debug("FireDTV: Select CI Menu entry {0}", choice);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Select CI Menu entry {0}", choice);
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       if (propertySet == null)
       {
-        Log.Log.Debug("FireDTV:SelectMenu() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:SelectMenu() properySet=null");
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
@@ -1263,9 +1264,9 @@ namespace TvLibrary.Implementations.DVB
                                _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.Debug("FireDTV: unable to select CI Menu entry");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to select CI Menu entry");
       }
-      Log.Log.Debug("FireDTV: Close CI Menu successful");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Close CI Menu successful");
       return true;
     }
 
@@ -1278,17 +1279,17 @@ namespace TvLibrary.Implementations.DVB
     public bool SendMenuAnswer(bool Cancel, String Answer)
     {
       if (Answer == null) Answer = "";
-      Log.Log.Debug("FireDTV: Send CI Menu answer {0}", Answer);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: Send CI Menu answer {0}", Answer);
       IKsPropertySet propertySet = _filterTuner as IKsPropertySet;
       if (propertySet == null)
       {
-        Log.Log.Debug("FireDTV:SendMenuAnswer() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:SendMenuAnswer() properySet=null");
         return false;
       }
       /* QuerySupported has been done in GetCAMName already */
       FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
       DVB_MMI.CreateMMIAnswer(Cancel, Answer, ref caData.uData, ref caData.uLength1, ref caData.uLength2);
-      //Log.Log.Debug("FireDTV:Created answer: length:{0},{1}", caData.uLength1, caData.uLength2);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:Created answer: length:{0},{1}", caData.uLength1, caData.uLength2);
       //DVB_MMI.DumpBinary(caData.uData,0,caData.uLength1);
       Marshal.StructureToPtr(caData, _ptrDataInstance, true);
       Marshal.StructureToPtr(caData, _ptrDataReturned, true);
@@ -1296,9 +1297,9 @@ namespace TvLibrary.Implementations.DVB
                                _ptrDataReturned, CA_DATA_SIZE);
       if (hr != 0)
       {
-        Log.Log.Debug("FireDTV: unable to send CI Menu answer");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to send CI Menu answer");
       }
-      Log.Log.Debug("FireDTV: send CI Menu successful");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: send CI Menu successful");
       return true;
     }
 
@@ -1311,7 +1312,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void CiMenuHandler()
     {
-      Log.Log.Debug("FireDTV: CI handler thread start polling status");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: CI handler thread start polling status");
       int bytesReturned;
       int hr;
       DVB_MMI_Handler MMI = new DVB_MMI_Handler("FireDTV", ref m_ciMenuCallback);
@@ -1323,7 +1324,7 @@ namespace TvLibrary.Implementations.DVB
 
       if (propertySet == null)
       {
-        Log.Log.Debug("FireDTV:CiMenuHandler() properySet=null");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV:CiMenuHandler() properySet=null");
         return;
       }
 
@@ -1336,17 +1337,17 @@ namespace TvLibrary.Implementations.DVB
                                _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
           if (hr != 0)
           {
-            Log.Log.Debug("FireDTV: error reading CI state.");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: error reading CI state.");
           }
           else
           {
             CiStatus = (DE_CI_STATUS)Marshal.ReadInt16(_ptrDataCiHandler);
 #if DEBUG
-            Log.Log.Debug("FireDTV: CI iStatus:{0}", CiStatus);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: CI iStatus:{0}", CiStatus);
 #endif
             if ((CiStatus & DE_CI_STATUS.CI_MMI_REQUEST) != 0)
             {
-              Log.Log.Debug("FireDTV: CI menu object available!");
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: CI menu object available!");
 
               // Get the MMI object
               FIRESAT_CA_DATA caData = GET_FIRESAT_CA_DATA(5 /*CA_MMI*/, 0);
@@ -1357,14 +1358,14 @@ namespace TvLibrary.Implementations.DVB
                                    _ptrDataCiHandler, CA_DATA_SIZE);
               if (hr != 0)
               {
-                Log.Log.Debug("FireDTV: unable to set \"CA_MMI\"");
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to set \"CA_MMI\"");
               }
 
               hr = propertySet.Get(KSPROPSETID_Firesat, KSPROPERTY_FIRESAT_CA2HOST, _ptrDataInstance, CA_DATA_SIZE,
                                    _ptrDataCiHandler, CA_DATA_SIZE, out bytesReturned);
               if (hr != 0)
               {
-                Log.Log.Debug("FireDTV: unable to get \"CA_MMI\": hr {0:X}", hr);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: unable to get \"CA_MMI\": hr {0:X}", hr);
               }
               else
               {
@@ -1382,7 +1383,7 @@ namespace TvLibrary.Implementations.DVB
         catch (ThreadAbortException) {}
         catch (Exception ex)
         {
-          Log.Log.Debug("FireDTV: error in CiMenuHandler thread\r\n{0}", ex.ToString());
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: error in CiMenuHandler thread\r\n{0}", ex.ToString());
           return;
         }
       }

@@ -28,7 +28,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Microsoft.Win32;
-
+using MediaPortal.CoreServices;
 
 namespace SetupTv
 {
@@ -791,13 +791,13 @@ namespace SetupTv
         {
           if (CheckFileVersion(dllPath, "6.5.2710.2732", out aParamVersion))
             validDllFound = true;
-          TvLibrary.Log.Log.Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Util: Version of installed Psisdecd.dll: {0} Path: {1}", aParamVersion.ToString(),
                                  dllPath);
           if (aParamVersion > mostRecentVer)
             mostRecentVer = aParamVersion;
         }
         else
-          TvLibrary.Log.Log.Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Util: Registered Psisdecd.dll does not exist in path: {0}", dllPath);
       }
       if (!validDllFound)
       {
@@ -817,7 +817,7 @@ namespace SetupTv
           if (dllPaths.Count < 1)
             ErrorMsg = "Psisdecd.dll may not be registered properly! \nPlease check our Wiki's requirements page.";
 
-          TvLibrary.Log.Log.Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Util: Psisdecd.dll error - {0}", ErrorMsg);
           if (
             MessageBox.Show(ErrorMsg, "Microsoft SI/PSI parser outdated!", MessageBoxButtons.OKCancel,
                             MessageBoxIcon.Exclamation) == DialogResult.OK)

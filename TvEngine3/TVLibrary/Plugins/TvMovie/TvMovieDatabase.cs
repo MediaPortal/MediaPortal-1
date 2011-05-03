@@ -28,7 +28,7 @@ using System.Text;
 using System.Threading;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvEngine
 {
@@ -240,7 +240,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Info("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception in GetChannels: {0}\n{1}", ex.Message, ex.StackTrace);
       }
       return tvChannels;
     }
@@ -262,7 +262,7 @@ namespace TvEngine
       }
       catch (Exception connex)
       {
-        Log.Info("TVMovie: Exception creating OleDbConnection: {0}", connex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception creating OleDbConnection: {0}", connex.Message);
         return false;
       }
 
@@ -284,7 +284,7 @@ namespace TvEngine
             }
             catch (Exception dsex)
             {
-              Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
               return false;
             }
           }
@@ -292,14 +292,14 @@ namespace TvEngine
       }
       catch (System.Data.OleDb.OleDbException ex)
       {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
-        Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception: {0}", ex.StackTrace);
         _canceled = true;
         return false;
       }
       catch (Exception ex2)
       {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
         _canceled = true;
         return false;
       }
@@ -349,7 +349,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
       }
 
       _channelList = GetChannels();
@@ -371,14 +371,14 @@ namespace TvEngine
           }
           else
           {
-            Log.Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Last update was at {0} - new import scheduled", Convert.ToString(lastUpdated));
             return true;
           }
         }
         catch (Exception ex)
         {
-          Log.Info("TVMovie: An error occured checking the last import time {0}", ex.Message);
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: An error occured checking the last import time {0}", ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return true;
         }
       }
@@ -395,12 +395,12 @@ namespace TvEngine
       List<Mapping> mappingList = GetMappingList();
       if (mappingList == null || mappingList.Count < 1)
       {
-        Log.Info("TVMovie: Cannot import from TV Movie database - no mappings found");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Cannot import from TV Movie database - no mappings found");
         return;
       }
 
       DateTime ImportStartTime = DateTime.Now;
-      Log.Debug("TVMovie: Importing database");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Importing database");
       int maximum = 0;
 
       foreach (TVMChannel tvmChan in _tvmEpgChannels)
@@ -411,7 +411,7 @@ namespace TvEngine
             break;
           }
 
-      Log.Debug("TVMovie: Calculating stations done");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Calculating stations done");
 
       // setting update time of epg import to avoid that the background thread triggers another import
       // if the process lasts longer than the timer's update check interval
@@ -419,7 +419,7 @@ namespace TvEngine
       setting.Value = DateTime.Now.ToString();
       setting.Persist();
 
-      Log.Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Mapped {0} stations for EPG import", Convert.ToString(maximum));
       int counter = 0;
 
       _tvmEpgProgs.Clear();
@@ -432,7 +432,7 @@ namespace TvEngine
         if (_canceled)
           return;
 
-        Log.Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Searching time share mappings for station: {0}", station.TvmEpgDescription);
         // get all tv movie channels
         List<Mapping> channelNames = new List<Mapping>();
 
@@ -453,7 +453,7 @@ namespace TvEngine
               OnStationsChanged(counter, maximum, display);
             counter++;
 
-            Log.Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Importing {3} time frame(s) for MP channel [{0}/{1}] - {2}", Convert.ToString(counter),
                      Convert.ToString(maximum), display, Convert.ToString(channelNames.Count));
 
             _tvmEpgProgs.Clear();
@@ -468,18 +468,18 @@ namespace TvEngine
             List<Program> InsertCopy = new List<Program>(_tvmEpgProgs);
             int debugCount = TvBLayer.InsertPrograms(InsertCopy, DeleteBeforeImportOption.OverlappingPrograms,
                                                      importPrio);
-            Log.Info("TVMovie: Inserted {0} programs", debugCount);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Inserted {0} programs", debugCount);
           }
           catch (Exception ex)
           {
-            Log.Info("TVMovie: Error inserting programs - {0}", ex.StackTrace);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error inserting programs - {0}", ex.StackTrace);
           }
         }
       }
 
-      Log.Debug("TVMovie: Waiting for database to be updated...");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Waiting for database to be updated...");
       TvBLayer.WaitForInsertPrograms();
-      Log.Debug("TVMovie: Database update finished.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Database update finished.");
 
 
       if (OnStationsChanged != null)
@@ -494,12 +494,12 @@ namespace TvEngine
           setting.Persist();
 
           TimeSpan ImportDuration = (DateTime.Now - ImportStartTime);
-          Log.Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Imported {0} database entries for {1} stations in {2} seconds", _programsCounter, counter,
                     Convert.ToString(ImportDuration.TotalSeconds));
         }
         catch (Exception)
         {
-          Log.Info("TVMovie: Error updating the database with last import date");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error updating the database with last import date");
         }
       }
       GC.Collect();
@@ -577,8 +577,8 @@ namespace TvEngine
         catch (OleDbException ex)
         {
           databaseTransaction.Rollback();
-          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
-          Log.Error("TVMovie: Exception: {0}", ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error accessing TV Movie Clickfinder database - import of current station canceled");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Exception: {0}", ex);
           return 0;
         }
         catch (Exception ex1)
@@ -588,7 +588,7 @@ namespace TvEngine
             databaseTransaction.Rollback();
           }
           catch (Exception) {}
-          Log.Info("TVMovie: Exception: {0}", ex1);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Exception: {0}", ex1);
           return 0;
         }
         finally
@@ -638,7 +638,7 @@ namespace TvEngine
       }
       catch (Exception ex2)
       {
-        Log.Info("TVMovie: Error parsing EPG time data - {0}", ex2.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error parsing EPG time data - {0}", ex2.ToString());
       }
 
       string title = Sendung;
@@ -731,7 +731,7 @@ namespace TvEngine
             }
             catch (Exception)
             {
-              Log.Info("TVMovie: Invalid year for OnAirDate - {0}", date);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Invalid year for OnAirDate - {0}", date);
             }
           }
 
@@ -852,14 +852,14 @@ namespace TvEngine
           }
           catch (Exception)
           {
-            Log.Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error loading mappings - make sure tv channel: {0} (ID: {1}) still exists!",
                      mapping.StationName, mapping.IdChannel);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Info("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Error in GetMappingList - {0}\n{1}", ex.Message, ex.StackTrace);
       }
       return mappingList;
     }
@@ -1121,7 +1121,7 @@ namespace TvEngine
             processes[0].WaitForExit(1200000);
             BenchClock.Stop();
             UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-            Log.Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish",
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: tvuptodate was already running - waited {0} seconds for internet update to finish",
                      Convert.ToString(UpdateDuration));
             return UpdateDuration;
           }
@@ -1140,18 +1140,18 @@ namespace TvEngine
 
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString(UpdateDuration));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: tvuptodate finished internet update in {0} seconds", Convert.ToString(UpdateDuration));
         }
         catch (Exception ex)
         {
           BenchClock.Stop();
           UpdateDuration = (BenchClock.ElapsedMilliseconds / 1000);
-          Log.Info("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: LaunchTVMUpdater failed: {0}", ex.Message);
         }
       }
       else
       {
-        Log.Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: tvuptodate.exe not found in default location: {0}", UpdaterPath);
         UpdateDuration = 30; // workaround for systems without tvuptodate
       }
 

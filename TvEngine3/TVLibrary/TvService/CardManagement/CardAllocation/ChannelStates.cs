@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Channels;
@@ -53,7 +53,7 @@ namespace TvService
         if (!tvcard.Users.IsOwner(user))
         {
           //no
-          //Log.Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
+          //GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller:    card:{0} type:{1} is tuned to different transponder", cardId, tvcard.Type);
           //allow admin users like the scheduler to use this card anyway          
           UpdateChannelStateUser(user, ChannelState.nottunable, ch.IdChannel);
         }
@@ -144,7 +144,7 @@ namespace TvService
       }
       catch (InvalidOperationException tex)
       {
-        Log.Error("ChannelState: Possible race condition occured when getting users - {0}", tex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ChannelState: Possible race condition occured when getting users - {0}", tex.StackTrace);
       }
 
       return allUsers;
@@ -158,7 +158,7 @@ namespace TvService
       try
       {
         //construct list of all cards we can use to tune to the new channel
-        Log.Debug("Controller: DoSetChannelStates for {0} channels", channels.Count);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: DoSetChannelStates for {0} channels", channels.Count);
 
         if (allUsers == null || allUsers.Count == 0)
         {
@@ -201,7 +201,7 @@ namespace TvService
               if (!cardHandler.DataBaseCard.Enabled)
               {
                 //not enabled, so skip the card
-                //Log.Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
+                //GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller:    card:{0} type:{1} is disabled", cardId, tvcard.Type);
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
@@ -209,7 +209,7 @@ namespace TvService
               if (!cardHandler.Tuner.CanTune(tuningDetail))
               {
                 //card cannot tune to this channel, so skip it
-                //Log.Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
+                //GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller:    card:{0} type:{1} cannot tune to channel", cardId, tvcard.Type);
                 UpdateChannelStateUsers(allUsers, ChannelState.nottunable, ch.IdChannel);
                 continue;
               }
@@ -242,7 +242,7 @@ namespace TvService
             Stopwatch stopwatchTsRec = Stopwatch.StartNew();
             TSandRecStates = tvController.GetAllTimeshiftingAndRecordingChannels();
             stopwatchTsRec.Stop();
-            Log.Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("ChannelStates.GetAllTimeshiftingAndRecordingChannels took {0} msec",
                      stopwatchTsRec.ElapsedMilliseconds);
           }
           UpdateRecOrTSChannelStateForUsers(ch, allUsers, TSandRecStates);
@@ -252,17 +252,17 @@ namespace TvService
       }
       catch (InvalidOperationException tex)
       {
-        Log.Error("ChannelState: Possible race condition occured setting channel states - {0}", tex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ChannelState: Possible race condition occured setting channel states - {0}", tex.StackTrace);
       }
       catch (Exception ex)
       {
-        Log.Error("ChannelState: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ChannelState: An unknown error occured while setting channel states - {0}\n{1}", ex.Message,
                   ex.StackTrace);
       }
       finally
       {
         stopwatch.Stop();
-        Log.Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);
       }
     }
 
@@ -283,7 +283,7 @@ namespace TvService
         tuningChannels.Add(_businessLayer.GetTuningChannel(tuningDetail));
       }
       stopwatch.Stop();
-      Log.Info("ChannelStates.GetTuningChannels took {0} msec", stopwatch.ElapsedMilliseconds);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("ChannelStates.GetTuningChannels took {0} msec", stopwatch.ElapsedMilliseconds);
       return result;
     }
 
@@ -307,7 +307,7 @@ namespace TvService
         }
       }
       stopwatch.Stop();
-      Log.Info("ChannelStates.GetChannelMapping took {0} msec", stopwatch.ElapsedMilliseconds);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("ChannelStates.GetChannelMapping took {0} msec", stopwatch.ElapsedMilliseconds);
       return result;
     }
 

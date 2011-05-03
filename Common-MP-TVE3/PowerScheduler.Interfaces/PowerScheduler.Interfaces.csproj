@@ -93,4 +93,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

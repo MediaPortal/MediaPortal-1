@@ -20,6 +20,7 @@
 
 using System;
 using System.Drawing;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Teletext
 {
@@ -622,7 +623,7 @@ namespace TvLibrary.Teletext
                 }
                 catch (Exception ex)
                 {
-                  Log.Log.Info("Error in teletext page renderer: ", ex);
+                  GlobalServiceProvider.Instance.Get<ILogger>().Info("Error in teletext page renderer: ", ex);
                 }
               }
             }

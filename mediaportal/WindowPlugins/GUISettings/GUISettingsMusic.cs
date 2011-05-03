@@ -20,6 +20,7 @@
 
 using System.Threading;
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
@@ -139,7 +140,7 @@ namespace MediaPortal.GUI.Settings
                   MusicDatabaseReorg reorg = new MusicDatabaseReorg(GetID);
                   Work work = new Work(new DoWorkHandler(reorg.ReorgAsync));
                   work.ThreadPriority = ThreadPriority.Lowest;
-                  GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+                  GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Low);
                 }
               }
             }

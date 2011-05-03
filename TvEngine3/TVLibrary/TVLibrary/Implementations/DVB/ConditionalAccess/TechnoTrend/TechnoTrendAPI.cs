@@ -27,6 +27,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -695,11 +696,11 @@ namespace TvLibrary.Implementations.DVB
       m_hBdaApi = bdaapiOpenHWIdx(m_deviceType, m_deviceID);
       if (m_hBdaApi.ToInt32() == -1)
       {
-        Log.Log.Debug("TechnoTrend: unable to open the device");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: unable to open the device");
         return;
       }
 
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: OpenHWIdx succeeded");
+      if (m_verboseLogging) GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OpenHWIdx succeeded");
       GetDrvVersion();
 
       // assign callback functions
@@ -735,11 +736,11 @@ namespace TvLibrary.Implementations.DVB
       {
         m_ciSlotAvailable = true;
         m_caErrorCount = 0; // (re)set error counter
-        Log.Log.Debug("TechnoTrend: OpenCI succeeded");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OpenCI succeeded");
       }
       else
       {
-        Log.Log.Debug("TechnoTrend: no CI detected: {0}", result);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: no CI detected: {0}", result);
       }
     }
 
@@ -753,10 +754,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (m_ciSlotAvailable)
         {
-          Log.Log.Debug("TechnoTrend: Closing CI");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Closing CI");
           bdaapiCloseCI(m_hBdaApi);
         }
-        Log.Log.Debug("TechnoTrend: Closing hardware");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Closing hardware");
         bdaapiClose(m_hBdaApi);
       }
     }
@@ -778,7 +779,7 @@ namespace TvLibrary.Implementations.DVB
       TTApiResult result = bdaapiCIGetSlotStatus(m_hBdaApi, m_slot);
       if (result != TTApiResult.Success)
       {
-        Log.Log.Debug("TechnoTrend: bdaapiCIGetSlotStatus failed {0}", result);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: bdaapiCIGetSlotStatus failed {0}", result);
       }
     }
 
@@ -794,11 +795,11 @@ namespace TvLibrary.Implementations.DVB
       hr = bdaapiGetDrvVersion(m_hBdaApi, ref v1, ref v2, ref v3, ref v4);
       if (hr != TTApiResult.Success)
       {
-        Log.Log.Debug("TechnoTrend: bdaapiGetDrvVersion failed {0}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: bdaapiGetDrvVersion failed {0}", hr);
       }
       else
       {
-        Log.Log.Debug("TechnoTrend: initalized id:{0}, driver version:{1}.{2}.{3}.{4}", m_deviceID, v1, v2, v3, v4);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: initalized id:{0}, driver version:{1}.{2}.{3}.{4}", m_deviceID, v1, v2, v3, v4);
       }
 
       return TTApiResult.Success;
@@ -875,7 +876,7 @@ namespace TvLibrary.Implementations.DVB
       {
         yesNo = true;
       }
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: IsCamReady: {0}", yesNo);
+      if (m_verboseLogging) GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: IsCamReady: {0}", yesNo);
       return yesNo;
     }
 
@@ -893,7 +894,7 @@ namespace TvLibrary.Implementations.DVB
       {
         yesNo = false;
       }
-      if (m_verboseLogging) Log.Log.Debug("TechnoTrend: IsCamPresent: {0}", yesNo);
+      if (m_verboseLogging) GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: IsCamPresent: {0}", yesNo);
       return yesNo;
     }
 
@@ -949,7 +950,7 @@ namespace TvLibrary.Implementations.DVB
       // if OpenCI failed, there's no CI ergo no CAM
       if (m_ciSlotAvailable == false)
       {
-        if (m_verboseLogging) Log.Log.Debug("TechnoTrend: DescrambleMultiple: no CI present");
+        if (m_verboseLogging) GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: DescrambleMultiple: no CI present");
         succeeded = true;
         return succeeded;
       }
@@ -976,11 +977,11 @@ namespace TvLibrary.Implementations.DVB
         }
       }
 
-      Log.Log.Debug("TechnoTrend: DescrambleMultiple:({0})", filteredChannels.Count);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: DescrambleMultiple:({0})", filteredChannels.Count);
       for (int i = 0; i < filteredChannels.Count; ++i)
       {
         ConditionalAccessContext context = filteredChannels[i];
-        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.ServiceId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.ServiceId);
         Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.ServiceId);
       }
 
@@ -993,17 +994,17 @@ namespace TvLibrary.Implementations.DVB
           if (m_ciStatus == 1)
           {
             succeeded = true;
-            Log.Log.Debug("TechnoTrend: services decoded:{0} {1}", result, m_ciStatus);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: services decoded:{0} {1}", result, m_ciStatus);
           }
           else
           {
             succeeded = false;
-            Log.Log.Debug("TechnoTrend: services not decoded:{0} ciStatus: {1}", result, m_ciStatus);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: services not decoded:{0} ciStatus: {1}", result, m_ciStatus);
           }
         }
         else
         {
-          Log.Log.Debug("TechnoTrend: services not decoded:{0}", result);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: services not decoded:{0}", result);
         }
       }
       else if (m_slotStatus == TTCiSlotStatus.SlotUnknownState)
@@ -1011,25 +1012,25 @@ namespace TvLibrary.Implementations.DVB
         if (m_waitTimeout == 0)
         {
           //no CAM inserted
-          Log.Log.Debug("TechnoTrend: CI slot state unknown, allow one retry");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: CI slot state unknown, allow one retry");
           succeeded = false; // to allow retry from ConditionalAccess
         }
         else
         {
           //still no valid state? don't try next time!
-          Log.Log.Debug("TechnoTrend: CI slot state still unknown after one retry. Stop trying.");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: CI slot state still unknown after one retry. Stop trying.");
           succeeded = true; // to allow retry from ConditionalAccess
         }
         m_waitTimeout++;
       }
       else if (m_slotStatus == TTCiSlotStatus.SlotModuleInserted)
       {
-        Log.Log.Debug("TechnoTrend: CI module inserted but not yet ready");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: CI module inserted but not yet ready");
         succeeded = false; // to allow retry from ConditionalAccess
       }
       else if (m_slotStatus == TTCiSlotStatus.SlotEmpty)
       {
-        Log.Log.Debug("TechnoTrend: no cam detected, slot empty");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: no cam detected, slot empty");
         succeeded = true; //no CAM inserted, no retry
       }
       return succeeded;
@@ -1048,7 +1049,7 @@ namespace TvLibrary.Implementations.DVB
             _previousChannel.DisEqc == channel.DisEqc &&
             _previousChannel.Polarisation == channel.Polarisation)
         {
-          Log.Log.WriteFile("TechnoTrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc,
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TechnoTrend: already tuned to diseqc:{0}, frequency:{1}, polarisation:{2}", channel.DisEqc,
                             channel.Frequency, channel.Polarisation);
           return;
         }
@@ -1069,7 +1070,7 @@ namespace TvLibrary.Implementations.DVB
       // 3        B         A
       // 4        B         B
       bool hiBand = BandTypeConverter.IsHiBand(channel, parameters);
-      Log.Log.WriteFile(
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(
         "TechnoTrend SendDiseqcCommand() diseqc:{0}, antenna:{1} frequency:{2}, polarisation:{3} hiband:{4}",
         channel.DisEqc, antennaNr, channel.Frequency, channel.Polarisation, hiBand);
       bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
@@ -1080,7 +1081,7 @@ namespace TvLibrary.Implementations.DVB
       cmd |= (byte)((antennaNr - 1) << 2);
       Marshal.WriteByte(_ptrDataInstance, 3, cmd);
       bdaapiSetDiSEqCMsg(m_hBdaApi, _ptrDataInstance, 4, 1, 0, (short)channel.Polarisation);
-      Log.Log.Info("TechnoTrend: Diseqc Command Send");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TechnoTrend: Diseqc Command Send");
     }
 
     /// <summary>
@@ -1091,7 +1092,7 @@ namespace TvLibrary.Implementations.DVB
     {
       int uiAntPwrOnOff = 0;
       string Get5vAntennae = "Disabled";
-      Log.Log.Info("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Setting TechnoTrend DVB-T 5v Antennae Power enabled:{0}", onOff);
       bdaapiSetDVBTAntPwr(m_hBdaApi, onOff);
       bdaapiGetDVBTAntPwr(m_hBdaApi, ref uiAntPwrOnOff);
       if (uiAntPwrOnOff == 0)
@@ -1106,7 +1107,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Get5vAntennae = "Not Connected";
       }
-      Log.Log.Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TechnoTrend DVB-T 5v Antennae status:{0}", Get5vAntennae);
     }
 
     #region callback handlers
@@ -1128,24 +1129,24 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         m_slotStatus = (TTCiSlotStatus)nStatus;
-        Log.Log.Debug("TechnoTrend: slot {0} changed", nSlot);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: slot {0} changed", nSlot);
         if (csInfo != null)
         {
-          Log.Log.Debug("TechnoTrend:    CI status:{0} ", m_slotStatus);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:    CI status:{0} ", m_slotStatus);
           if (csInfo->pMenuTitleString != null)
           {
-            Log.Log.Debug("TechnoTrend:    CI text  :{0} ", Marshal.PtrToStringAnsi(csInfo->pMenuTitleString));
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:    CI text  :{0} ", Marshal.PtrToStringAnsi(csInfo->pMenuTitleString));
           }
 
           for (int i = 0; i < csInfo->wNoOfCaSystemIDs; ++i)
           {
-            Log.Log.Debug("TechnoTrend:      ca system id  :{0:X} ", csInfo->pCaSystemIDs[i]);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:      ca system id  :{0:X} ", csInfo->pCaSystemIDs[i]);
           }
         }
       }
       catch (Exception)
       {
-        Log.Log.Debug("TechnoTrend: OnSlotChange() exception");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnSlotChange() exception");
       }
     }
 
@@ -1160,30 +1161,30 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        Log.Log.Debug("$ OnCaChange slot:{0} reply:{1:X} status:{2}", nSlot, nReplyTag, wStatus);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ OnCaChange slot:{0} reply:{1:X} status:{2}", nSlot, nReplyTag, wStatus);
         switch (nReplyTag)
         {
           case 0x0C: //CI_PSI_COMPLETE:
-            Log.Log.Debug("$ CI: ### Number of programs : {0}", wStatus);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ CI: ### Number of programs : {0}", wStatus);
             break;
 
           case 0x0D: //CI_MODULE_READY:
-            Log.Log.Debug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ CI: CI_MODULE_READY in OnCAStatus not supported");
             break;
           case 0x0E: //CI_SWITCH_PRG_REPLY:
             {
               switch (wStatus)
               {
                 case 4: //ERR_INVALID_DATA:
-                  Log.Log.Debug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ CI: ERROR::SetProgram failed !!! (invalid PNR)");
                   break;
                 case 5: //ERR_NO_CA_RESOURCE:
-                  Log.Log.Debug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ CI: ERROR::SetProgram failed !!! (no CA resource available)");
                   m_ciStatus = -1; // not ready
                   m_caErrorCount++; // count the errors to allow reset
                   break;
                 case 0: //ERR_NONE:
-                  Log.Log.Debug("$ CI:    SetProgram OK");
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("$ CI:    SetProgram OK");
                   m_ciStatus = 1;
                   m_caErrorCount = 0; // reset counter
                   break;
@@ -1199,13 +1200,13 @@ namespace TvLibrary.Implementations.DVB
         // ATTEBNTION: DOESN'T WORK and crashes graph / BaseFilter
         //if (m_ciStatus == -1 && m_caErrorCount >= 1)
         //{
-        //  Log.Log.Info("SetProgram failed {0} times because of no CA resource. Resetting CI now.", m_caErrorCount);
+        //  GlobalServiceProvider.Instance.Get<ILogger>().Info("SetProgram failed {0} times because of no CA resource. Resetting CI now.", m_caErrorCount);
         //  ResetCI();
         //}
       }
       catch (Exception e)
       {
-        Log.Log.Debug("TechnoTrend: OnCaChange() exception: {0}", e.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnCaChange() exception: {0}", e.ToString());
       }
     }
 
@@ -1221,11 +1222,11 @@ namespace TvLibrary.Implementations.DVB
       try
       {
         m_ciDisplayString = Marshal.PtrToStringAnsi(pString, wLength);
-        Log.Log.Debug("TechnoTrend:OnDisplayString slot:{0} {1}", nSlot, m_ciDisplayString);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnDisplayString slot:{0} {1}", nSlot, m_ciDisplayString);
       }
       catch (Exception e)
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayString() exception: {0}", e.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnDisplayString() exception: {0}", e.ToString());
       }
     }
 
@@ -1242,7 +1243,7 @@ namespace TvLibrary.Implementations.DVB
     {
       try
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu/List; {0} items; wLength: {1}; pStringArray: {2:x} ", wItems, wLength,
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnDisplayMenu/List; {0} items; wLength: {1}; pStringArray: {2:x} ", wItems, wLength,
                       pStringArray);
         // construct all strings for callback
         StringBuilder[] Entries = new StringBuilder[wItems];
@@ -1258,7 +1259,7 @@ namespace TvLibrary.Implementations.DVB
           }
           else // if string ends before maxlength
           {
-            Log.Log.Debug("TechnoTrend: {0}: {1} ", idx, Entries[idx].ToString());
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: {0}: {1} ", idx, Entries[idx].ToString());
             // is title part finished?
             if (ciMenuCallbacks != null)
             {
@@ -1278,7 +1279,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnDisplayMenu() exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnDisplayMenu() exception: {0}", ex.ToString());
       }
     }
 
@@ -1290,7 +1291,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     public unsafe void onSwitchOsdOff(IntPtr Context, byte nSlot)
     {
-      Log.Log.Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:CI_OnSwitchOsdOff slot:{0}", nSlot);
       try
       {
         if (ciMenuCallbacks != null)
@@ -1300,7 +1301,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: CI_OnSwitchOsdOff() exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: CI_OnSwitchOsdOff() exception: {0}", ex.ToString());
       }
     }
 
@@ -1315,7 +1316,7 @@ namespace TvLibrary.Implementations.DVB
     public unsafe void onInputRequest(IntPtr Context, byte nSlot, bool bBlindAnswer, byte nExpectedLength,
                                       Int16 dwKeyMask)
     {
-      Log.Log.Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer,
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnInputRequest; bBlindAnswer {0}, nExpectedLength: {1}; dwKeyMask: {2} ", bBlindAnswer,
                     nExpectedLength, dwKeyMask);
       try
       {
@@ -1327,7 +1328,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("TechnoTrend: OnInputRequest() exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: OnInputRequest() exception: {0}", ex.ToString());
       }
     }
 
@@ -1339,7 +1340,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="pDescriptor">Descriptor</param>
     public unsafe void onLscSetDescriptor(IntPtr Context, byte nSlot, IntPtr pDescriptor)
     {
-      Log.Log.Debug("TechnoTrend:OnLscSetDescriptor slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscSetDescriptor slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1349,7 +1350,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     public unsafe void onLscConnect(IntPtr Context, byte nSlot)
     {
-      Log.Log.Debug("TechnoTrend:OnLscConnect slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscConnect slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1359,7 +1360,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     public unsafe void onLscDisconnect(IntPtr Context, byte nSlot)
     {
-      Log.Log.Debug("TechnoTrend:OnLscDisconnect slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscDisconnect slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1371,7 +1372,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="Timeout10Ms">Timeout</param>
     public unsafe void onLscSetParams(IntPtr Context, byte nSlot, byte BufferSize, byte Timeout10Ms)
     {
-      Log.Log.Debug("TechnoTrend:OnLscSetParams slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscSetParams slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1381,7 +1382,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nSlot">Is the Slot ID.</param>
     public unsafe void onLscEnquireStatus(IntPtr Context, byte nSlot)
     {
-      Log.Log.Debug("TechnoTrend:OnLscEnquireStatus slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscEnquireStatus slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1392,7 +1393,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="PhaseID">Phase</param>
     public unsafe void onLscGetNextBuffer(IntPtr Context, byte nSlot, byte PhaseID)
     {
-      Log.Log.Debug("TechnoTrend:OnLscGetNextBuffer slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscGetNextBuffer slot:{0}", nSlot);
     }
 
     /// <summary>
@@ -1405,7 +1406,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="nLength">Length</param>
     public unsafe void onLscTransmitBuffer(IntPtr Context, byte nSlot, byte PhaseID, IntPtr pData, Int16 nLength)
     {
-      Log.Log.Debug("TechnoTrend:OnLscTransmitBuffer slot:{0}", nSlot);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend:OnLscTransmitBuffer slot:{0}", nSlot);
     }
 
     #endregion
@@ -1480,10 +1481,10 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool EnterCIMenu()
     {
-      Log.Log.Debug("TechnoTrend: Enter CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Enter CI Menu");
       if (bdaapiCIEnterModuleMenu(m_hBdaApi, 0) != TTApiResult.Success)
       {
-        Log.Log.Debug("TechnoTrend: bdaapiCIEnterModuleMenu failed.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: bdaapiCIEnterModuleMenu failed.");
         return false;
       }
       return true;
@@ -1495,7 +1496,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool CloseCIMenu()
     {
-      Log.Log.Debug("TechnoTrend: Close CI Menu not yet implemented");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Close CI Menu not yet implemented");
       return true;
     }
 
@@ -1506,10 +1507,10 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SelectMenu(byte choice)
     {
-      Log.Log.Debug("TechnoTrend: Select CI Menu entry {0}", choice);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Select CI Menu entry {0}", choice);
       if (bdaapiCIMenuAnswer(m_hBdaApi, m_slot, choice) != TTApiResult.Success)
       {
-        Log.Log.Debug("TechnoTrend: bdaapiCIMenuAnswer  failed");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: bdaapiCIMenuAnswer  failed");
         return false;
       }
       return true;
@@ -1524,10 +1525,10 @@ namespace TvLibrary.Implementations.DVB
     public bool SendMenuAnswer(bool Cancel, string Answer)
     {
       if (Answer == null) Answer = "";
-      Log.Log.Debug("TechnoTrend: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
       if (bdaapiCIAnswer(m_hBdaApi, 0, Answer, (byte)Answer.Length) != TTApiResult.Success)
       {
-        Log.Log.Debug("TechnoTrend: SendMenuAnswer failed.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TechnoTrend: SendMenuAnswer failed.");
         return false;
       }
       return true;

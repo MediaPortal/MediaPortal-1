@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using TvLibrary;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 
 namespace TvService
@@ -65,7 +65,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
@@ -74,7 +74,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return false;
         }
       }
@@ -105,7 +105,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
@@ -125,7 +125,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return null;
       }
     }
@@ -148,7 +148,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
@@ -163,7 +163,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return null;
       }
     }

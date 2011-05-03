@@ -30,7 +30,7 @@ using Gentle.Framework;
 using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations;
 using TvLibrary.Channels;
@@ -332,7 +332,7 @@ namespace SetupTv.Sections
         }
 
         XmlDocument doc = new XmlDocument();
-        Log.Info("TvChannels: Trying to import channels from {0}", openFileDialog1.FileName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Trying to import channels from {0}", openFileDialog1.FileName);
         doc.Load(openFileDialog1.FileName);
         XmlNodeList channelList = doc.SelectNodes("/tvserver/channels/channel");
         XmlNodeList tvChannelGroupList = doc.SelectNodes("/tvserver/channelgroups/channelgroup");
@@ -370,7 +370,7 @@ namespace SetupTv.Sections
               // rtv: since analog allows NOT to merge channels we need to take care of this. US users e.g. have multiple stations named "Sport" with different tuningdetails.
               // using AddChannel would incorrectly "merge" these totally different channels.
               // see this: http://forum.team-mediaportal.com/1-0-rc1-svn-builds-271/importing-exported-channel-list-groups-channels-39368/
-              Log.Info("TvChannels: Adding {0}. channel: {1}", channelCount, displayName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Adding {0}. channel: {1}", channelCount, displayName);
               IList<Channel> foundExistingChannels = layer.GetChannelsByName(displayName);
               if (mergeChannels && (foundExistingChannels != null && foundExistingChannels.Count > 0))
               {
@@ -463,7 +463,7 @@ namespace SetupTv.Sections
                     analogChannel.VideoSource = (AnalogChannel.VideoInputType)videoSource;
                     analogChannel.IsVCRSignal = isVCRSignal;
                     layer.AddTuningDetails(dbChannel, analogChannel);
-                    Log.Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for analog channel: {0} number: {1}", name, channelNumber);
                     break;
                   case 1: //ATSCChannel
                     ATSCChannel atscChannel = new ATSCChannel();
@@ -482,7 +482,7 @@ namespace SetupTv.Sections
                     atscChannel.TransportId = transportId;
                     atscChannel.ModulationType = (ModulationType)modulation;
                     layer.AddTuningDetails(dbChannel, atscChannel);
-                    Log.Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for ATSC channel: {0} number: {1} provider: {2}", name,
                              channelNumber, provider);
                     break;
                   case 2: //DVBCChannel
@@ -501,7 +501,7 @@ namespace SetupTv.Sections
                     dvbcChannel.TransportId = transportId;
                     dvbcChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbcChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for DVB-C channel: {0} provider: {1}", name, provider);
                     break;
                   case 3: //DVBSChannel
                     DVBSChannel dvbsChannel = new DVBSChannel();
@@ -527,7 +527,7 @@ namespace SetupTv.Sections
                     dvbsChannel.Rolloff = (RollOff)rollOff;
                     dvbsChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbsChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for DVB-S channel: {0} provider: {1}", name, provider);
                     break;
                   case 4: //DVBTChannel
                     DVBTChannel dvbtChannel = new DVBTChannel();
@@ -544,7 +544,7 @@ namespace SetupTv.Sections
                     dvbtChannel.TransportId = transportId;
                     dvbtChannel.LogicalChannelNumber = channelNumber;
                     layer.AddTuningDetails(dbChannel, dvbtChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for DVB-T channel: {0} provider: {1}", name, provider);
                     break;
                   case 5: //Webstream
                     layer.AddWebStreamTuningDetails(dbChannel, url, bitrate);
@@ -564,14 +564,14 @@ namespace SetupTv.Sections
                     dvbipChannel.TransportId = transportId;
                     dvbipChannel.Url = url;
                     layer.AddTuningDetails(dbChannel, dvbipChannel);
-                    Log.Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added tuning details for DVB-IP channel: {0} provider: {1}", name, provider);
                     break;
                 }
               }
             }
             catch (Exception exc)
             {
-              Log.Error("TvChannels: Failed to add channel - {0}", exc.Message);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("TvChannels: Failed to add channel - {0}", exc.Message);
             }
           }
         }
@@ -628,7 +628,7 @@ namespace SetupTv.Sections
             }
             catch (Exception exg)
             {
-              Log.Error("TvChannels: Failed to add group - {0}", exg.Message);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("TvChannels: Failed to add group - {0}", exg.Message);
             }
           }
         }
@@ -676,7 +676,7 @@ namespace SetupTv.Sections
             }
             catch (Exception exg)
             {
-              Log.Error("Radio Channels: Failed to add group - {0}", exg.Message);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("Radio Channels: Failed to add group - {0}", exg.Message);
             }
           }
         }
@@ -724,20 +724,20 @@ namespace SetupTv.Sections
               {
                 schedule.Persist();
                 scheduleCount++;
-                Log.Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Added schedule: {0} on channel: {1}", programName, channel);
               }
               else
-                Log.Info("TvChannels: Skipped schedule: {0} because the channel was unknown: {1}", programName, channel);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("TvChannels: Skipped schedule: {0} because the channel was unknown: {1}", programName, channel);
             }
             catch (Exception ex)
             {
-              Log.Error("TvChannels: Failed to add schedule - {0}", ex.Message);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("TvChannels: Failed to add schedule - {0}", ex.Message);
             }
           }
         }
 
         dlg.Close();
-        Log.Info(
+        GlobalServiceProvider.Instance.Get<ILogger>().Info(
           "TvChannels: Imported {0} channels, {1} tv channel groups, {2} radio channel groups and {3} schedules",
           channelCount, tvChannelGroupCount, radioChannelGroupCount, scheduleCount);
         MessageBox.Show(

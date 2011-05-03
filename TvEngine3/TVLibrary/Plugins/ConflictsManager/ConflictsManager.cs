@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvControl;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvDatabase;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
@@ -84,7 +84,7 @@ namespace TvEngine
     /// </summary>
     public void Start(IController controller)
     {
-      Log.WriteFile("plugin: ConflictsManager started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: ConflictsManager started");
       _conflictingPrograms = new List<Program>();
       ITvServerEvent events = GlobalServiceProvider.Instance.Get<ITvServerEvent>();
       events.OnTvServerEvent += new TvServerEventHandler(events_OnTvServerEvent);
@@ -95,7 +95,7 @@ namespace TvEngine
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile("plugin: ConflictsManager stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: ConflictsManager stopped");
       ClearConflictTable();
       ClearConflictPrograms();
 
@@ -139,7 +139,7 @@ namespace TvEngine
     /// </summary>
     public void UpdateConflicts()
     {
-      Log.Info("ConflictManager: Updating conflicts list");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("ConflictManager: Updating conflicts list");
       DateTime startUpdate = DateTime.Now;
       TimeSpan ts;
       // hmm... 
@@ -167,20 +167,20 @@ namespace TvEngine
       /*
       if (cmDebug)
       {
-        foreach (Schedule schedule in scheduleOnceList) Log.Debug("Record Once schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleDailyList) Log.Debug("Daily schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeeklyList) Log.Debug("Weekly schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWeekendsList) Log.Debug("Weekend schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleWorkingDaysList) Log.Debug("Working days schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) Log.Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
-        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) Log.Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
-        Log.Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleOnceList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Record Once schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleDailyList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Daily schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeeklyList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Weekly schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWeekendsList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Weekend schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleWorkingDaysList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Working days schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeEveryChannelList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Evry time on evry chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
+        foreach (Schedule schedule in scheduleEveryTimeThisChannelList) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Evry time on this chan. schedule: {0} {1} - {2}", schedule.ProgramName, schedule.StartTime, schedule.EndTime);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("------------------------------------------------");
        * 
       }*/
 
@@ -188,12 +188,12 @@ namespace TvEngine
 
       scheduleList.Clear();
       ts = DateTime.Now - startUpdate;
-      Log.Info("Schedules List built {0} ms", ts.TotalMilliseconds);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Schedules List built {0} ms", ts.TotalMilliseconds);
       // try to assign all schedules to existing cards
-      if (cmDebug) Log.Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
+      if (cmDebug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Calling assignSchedulestoCards with {0} schedules", scheduleListToParse.Count);
       List<Schedule>[] assignedList = AssignSchedulesToCards(scheduleListToParse);
       ts = DateTime.Now - startUpdate;
-      Log.Info("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("ConflictManager: Update done within {0} ms", ts.TotalMilliseconds);
       //List<Conflict> _conflicts = new List<Conflict>();
     }
 

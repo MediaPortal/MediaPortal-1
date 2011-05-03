@@ -24,6 +24,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MediaPortal.CoreServices;
 using MediaPortal.Services;
 
 // for Service Framework
@@ -64,8 +65,8 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public HTTPTransaction()
     {
-      _auth = GlobalServiceProvider.Get<IHttpAuthentication>();
-      _stats = GlobalServiceProvider.Get<IHttpStatistics>();
+      _auth = GlobalServiceProvider.Instance.Get<IHttpAuthentication>();
+      _stats = GlobalServiceProvider.Instance.Get<IHttpStatistics>();
     }
 
     /// <summary>

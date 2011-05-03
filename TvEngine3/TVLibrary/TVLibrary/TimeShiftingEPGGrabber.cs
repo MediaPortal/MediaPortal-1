@@ -24,6 +24,7 @@ using System.Threading;
 using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvDatabase;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary
 {
@@ -61,11 +62,11 @@ namespace TvLibrary
     {
       if (_updateThreadRunning)
       {
-        Log.Log.Info("Timeshifting epg grabber not started because the db update thread is still running.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Timeshifting epg grabber not started because the db update thread is still running.");
         return false;
       }
       LoadSettings();
-      Log.Log.Info("Timeshifting epg grabber started.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Timeshifting epg grabber started.");
       _grabStartTime = DateTime.Now;
       _epgTimer.Enabled = true;
       return true;
@@ -74,7 +75,7 @@ namespace TvLibrary
     private void _epgTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
       TimeSpan ts = DateTime.Now - _grabStartTime;
-      Log.Log.Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
+      GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: timeout after {1} mins", ts.TotalMinutes);
       _epgTimer.Enabled = false;
       _card.AbortGrabbing();
     }
@@ -87,7 +88,7 @@ namespace TvLibrary
     /// </summary>
     public new void OnEpgCancelled()
     {
-      Log.Log.Info("Timeshifting epg grabber stopped.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Timeshifting epg grabber stopped.");
       _card.IsEpgGrabbing = false;
       _epgTimer.Enabled = false;
     }
@@ -106,17 +107,17 @@ namespace TvLibrary
       }
       catch (Exception ex)
       {
-        Log.Log.Epg("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: Error while retrieving the epg data: ", ex);
       }
       if (grabbedEpg == null)
       {
-        Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: No epg received.");
         return 0;
       }
       _epg = new List<EpgChannel>(grabbedEpg);
-      Log.Log.Epg("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", _epg.Count);
+      GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: OnEPGReceived got {0} channels", _epg.Count);
       if (_epg.Count == 0)
-        Log.Log.Epg("TimeshiftingEpgGrabber: No epg received.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: No epg received.");
       else
       {
         Thread workerThread = new Thread(UpdateDatabaseThread);
@@ -145,7 +146,7 @@ namespace TvLibrary
         _dbUpdater.UpdateEpgForChannel(epgChannel);
       }
       Schedule.SynchProgramStatesForAll();
-      Log.Log.Epg("TimeshiftingEpgGrabber: Finished updating the database.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Epg("TimeshiftingEpgGrabber: Finished updating the database.");
       _epg.Clear();
       _epg = null;
       _card.IsEpgGrabbing = false;

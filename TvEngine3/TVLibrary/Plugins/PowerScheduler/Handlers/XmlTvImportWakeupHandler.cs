@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 #endregion
 
@@ -93,7 +93,7 @@ namespace TvEngine.PowerScheduler.Handlers
         remoteScheduleTime.AddDays(1);
       }
 
-      Log.Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug(this._handlerName + ".GetNextWakeupTime {0}", remoteScheduleTime);
 
       remoteScheduleTime.AddMinutes(-1); // resume 60sec before      
 

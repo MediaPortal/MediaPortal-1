@@ -37,6 +37,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MediaPortal;
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -47,12 +48,14 @@ using MediaPortal.Profile;
 using MediaPortal.RedEyeIR;
 using MediaPortal.Ripper;
 using MediaPortal.SerialIR;
+using MediaPortal.Threading;
 using MediaPortal.Util;
 using MediaPortal.Services;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 using Action = MediaPortal.GUI.Library.Action;
+using ThreadPool = System.Threading.ThreadPool;
 using Timer = System.Timers.Timer;
 
 #endregion
@@ -187,6 +190,7 @@ public class MediaPortalApp : D3DApp, IRender
   public static void Main(string[] args)
   {
     Thread.CurrentThread.Name = "MPMain";
+    AddThreadPoolService();
     if (args.Length > 0)
     {
       foreach (string arg in args)
@@ -1513,7 +1517,7 @@ public class MediaPortalApp : D3DApp, IRender
         }
       }
 
-      GlobalServiceProvider.Add<IVideoThumbBlacklist>(new MediaPortal.Video.Database.VideoThumbBlacklistDBImpl());
+      GlobalServiceProvider.Instance.Add<IVideoThumbBlacklist>(new MediaPortal.Video.Database.VideoThumbBlacklistDBImpl());
       Utils.CheckThumbExtractorVersion();
     }
     catch (Exception ex)
@@ -4086,4 +4090,16 @@ public class MediaPortalApp : D3DApp, IRender
       Log.Info("No write permissions to enable/disable the S3 standby trick");
     }
   }
+
+  private static void AddThreadPoolService()
+  {
+    MediaPortal.Threading.ThreadPool pool = new MediaPortal.Threading.ThreadPool();
+    pool.ErrorLog += new LoggerDelegate(GlobalServiceProvider.Instance.Get<ILogger>().Error);
+    pool.WarnLog += new LoggerDelegate(GlobalServiceProvider.Instance.Get<ILogger>().Warn);
+    pool.InfoLog += new LoggerDelegate(GlobalServiceProvider.Instance.Get<ILogger>().Info);
+    pool.DebugLog += new LoggerDelegate(GlobalServiceProvider.Instance.Get<ILogger>().Debug);
+    GlobalServiceProvider.Instance.Add<IThreadPool>(pool);
+    GlobalServiceProvider.Instance.Get<ILogger>().Debug("Added ThreadPool to GlobalServiceProvider");
+  }
+
 }

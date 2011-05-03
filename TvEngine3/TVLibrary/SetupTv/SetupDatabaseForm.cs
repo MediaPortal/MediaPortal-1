@@ -33,7 +33,7 @@ using System.Windows.Forms;
 using System.Xml;
 using MySql.Data.MySqlClient;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 #endregion
 
@@ -316,20 +316,20 @@ namespace SetupTv
                     {
                       using (SqlCommand cmd = new SqlCommand(SqlStmt, connect))
                       {
-                        Log.Write("  Exec SQL: {0}", SqlStmt);
+                        GlobalServiceProvider.Instance.Get<ILogger>().Debug("  Exec SQL: {0}", SqlStmt);
                         cmd.ExecuteNonQuery();
                       }
                     }
                     catch (SqlException ex)
                     {
-                      Log.Write("  ********* SQL statement failed! *********");
-                      Log.Write("  ********* Error reason: {0}", ex.Message);
-                      Log.Write("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(),
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* SQL statement failed! *********");
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Error reason: {0}", ex.Message);
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Error code: {0}, Line: {1} *********", ex.Number.ToString(),
                                 ex.LineNumber.ToString());
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                        GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Connection status = {0} - aborting further command execution..",
                                   connect.State.ToString());
                         break;
                       }
@@ -352,19 +352,19 @@ namespace SetupTv
                     {
                       using (MySqlCommand cmd = new MySqlCommand(SqlStmt, connect))
                       {
-                        Log.Write("  Exec SQL: {0}", SqlStmt);
+                        GlobalServiceProvider.Instance.Get<ILogger>().Debug("  Exec SQL: {0}", SqlStmt);
                         cmd.ExecuteNonQuery();
                       }
                     }
                     catch (MySqlException ex)
                     {
-                      Log.Write("  ********* SQL statement failed! *********");
-                      Log.Write("  ********* Error reason: {0}", ex.Message);
-                      Log.Write("  ********* Error code: {0} *********", ex.Number.ToString());
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* SQL statement failed! *********");
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Error reason: {0}", ex.Message);
+                      GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Error code: {0} *********", ex.Number.ToString());
                       succeeded = false;
                       if (connect.State != ConnectionState.Open)
                       {
-                        Log.Write("  ********* Connection status = {0} - aborting further command execution..",
+                        GlobalServiceProvider.Instance.Get<ILogger>().Debug("  ********* Connection status = {0} - aborting further command execution..",
                                   connect.State.ToString());
                         break;
                       }
@@ -612,7 +612,7 @@ namespace SetupTv
 
       string ServerName = ParseServerHostName(tbServerHostName.Text);
       bool LocalServer = IsDatabaseOnLocalMachine(ServerName);
-      Log.Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- SetupDatabaseForm: server = {0}, local = {1}", ServerName, Convert.ToString(LocalServer));
 
       doc.Save(String.Format(@"{0}\gentle.config", PathManager.GetDataPath));
     }
@@ -743,7 +743,7 @@ namespace SetupTv
         if (ResourceExists(names, "SetupTv." + version + "_upgrade_sqlserver_database.sql"))
         {
           if (ExecuteSQLScript(version + "_upgrade"))
-            Log.Info("- database upgraded to schema version " + version);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("- database upgraded to schema version " + version);
           else
             return false;
         }
@@ -810,7 +810,7 @@ namespace SetupTv
         }
         else
         {
-          Log.Info("SetupDatabaseForm: DB service name not recognized - using defaults");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("SetupDatabaseForm: DB service name not recognized - using defaults");
           tbServiceDependency.BackColor = Color.Red;
         }
       }
@@ -820,7 +820,7 @@ namespace SetupTv
       {
         if (ServiceHelper.AddDependencyByName(DBSearchPattern))
         {
-          Log.Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("SetupDatabaseForm: Added dependency for TvService - {0}", DBSearchPattern);
           if (!ServiceHelper.IsServiceEnabled(DBSearchPattern, false))
           {
             if (MessageBox.Show(this,
@@ -844,7 +844,7 @@ namespace SetupTv
           }
         }
         else
-          Log.Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("SetupDatabaseForm: Could not add dependency for TvService - {0}", DBSearchPattern);
       }
     }
 

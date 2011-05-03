@@ -27,6 +27,7 @@ using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Implementations.Analog;
+using MediaPortal.CoreServices;
 
 
 namespace TvLibrary.Implementations
@@ -318,7 +319,7 @@ namespace TvLibrary.Implementations
       catch (Exception e)
       {
         //cleanup
-        Log.Log.WriteFile("StartTimeShifting failed, cleaning up {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("StartTimeShifting failed, cleaning up {0}", e.Message);
         StopTimeShifting();
       }
       return false;
@@ -349,25 +350,25 @@ namespace TvLibrary.Implementations
     {
       try
       {
-        Log.Log.WriteFile("StartRecording to {0}", fileName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("StartRecording to {0}", fileName);
         OnStartRecording(fileName);
         _recordingFileName = fileName;
 
         if (this is AnalogSubChannel)
         {
-          Log.Log.Info("analog subch:{0} Started recording", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} Started recording", _subChannelId);
         }
         else if (this is HDPVRChannel)
         {
-          Log.Log.Info("HDPVR subch:{0} Started recording", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("HDPVR subch:{0} Started recording", _subChannelId);
         }
         else if (this is TvDvbChannel)
         {
-          Log.Log.Info("DVB subch:{0} Started recording", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("DVB subch:{0} Started recording", _subChannelId);
         }
         else
         {
-          Log.Log.Info("Unknown subch:{0} Started recording", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Unknown subch:{0} Started recording", _subChannelId);
         }
 
         _dateRecordingStarted = DateTime.Now;
@@ -375,7 +376,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception e)
       {
-        Log.Log.WriteFile("StartRecording failed, cleaning up {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("StartRecording failed, cleaning up {0}", e.Message);
         //cleanup
         StopRecording();
         return false;
@@ -390,7 +391,7 @@ namespace TvLibrary.Implementations
     /// <returns></returns>
     public bool StopRecording()
     {
-      Log.Log.WriteFile("basesubchannel.StopRecording {}", this._subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("basesubchannel.StopRecording {}", this._subChannelId);
       OnStopRecording();
       _graphState = _timeshiftFileName != "" ? GraphState.TimeShifting : GraphState.Created;
       _recordingFileName = "";
@@ -430,7 +431,7 @@ namespace TvLibrary.Implementations
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile(ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Info(ex.ToString());
       }
       return 0;
     }
@@ -447,12 +448,12 @@ namespace TvLibrary.Implementations
       _packetHeader = _tsHelper.GetHeader(ptr);
       if (_packetHeader.SyncByte != 0x47)
       {
-        Log.Log.WriteFile("packet sync error");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("packet sync error");
         return;
       }
       if (_packetHeader.TransportError)
       {
-        Log.Log.WriteFile("packet transport error");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("packet transport error");
         return;
       }
       // teletext
@@ -477,12 +478,12 @@ namespace TvLibrary.Implementations
     {
       try
       {
-        Log.Log.WriteFile("PID seen - type = {0}", pidType);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("PID seen - type = {0}", pidType);
         OnAudioVideoEvent(pidType);
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return 0;
     }
@@ -498,19 +499,19 @@ namespace TvLibrary.Implementations
     {
       if (this is AnalogSubChannel)
       {
-        Log.Log.Info("analog subch:{0} Decompose()", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} Decompose()", _subChannelId);
       }
       else if (this is HDPVRChannel)
       {
-        Log.Log.Info("HDPVR subch:{0} Decompose", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("HDPVR subch:{0} Decompose", _subChannelId);
       }
       else if (this is TvDvbChannel)
       {
-        Log.Log.Info("DVB subch:{0} Decompose()", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("DVB subch:{0} Decompose()", _subChannelId);
       }
       else
       {
-        Log.Log.Info("Unknown subch:{0} Decompose()", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Unknown subch:{0} Decompose()", _subChannelId);
       }
 
       if (IsRecording)

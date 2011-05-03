@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Windows.Forms;
 using System.Collections;
-using TvLibrary.Log; //Logging
+using MediaPortal.CoreServices; //Logging
 
 namespace TVEngine.Devices
 {
@@ -146,7 +146,7 @@ namespace TVEngine.Devices
       }
       catch (Exception e)
       {
-        Log.Write("Remote.Init: {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Remote.Init: {0}", e.Message);
       }
     }
 
@@ -249,19 +249,19 @@ namespace TVEngine.Devices
 
     public static void Send(int blasterPort, byte[] packet, int deviceType, int deviceSpeed, bool debug)
     {
-      if (debug) Log.Write("Blaster.Send: Checking if  Singleton is null.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Checking if  Singleton is null.");
       if (_deviceSingleton == null) return;
-      if (debug) Log.Write("Blaster.Send: Checking if Device Singleton Stream is null.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Checking if Device Singleton Stream is null.");
       if (_deviceSingleton._deviceStream == null) return;
-      if (debug) Log.Write("Blaster.Send: Done Initial Checking. Will check arguments.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Done Initial Checking. Will check arguments.");
       if (blasterPort < 0 || blasterPort > 2) throw new ArgumentException("blasterPort must be 1, 2 or 0 (both)");
-      if (debug) Log.Write("Blaster.Send: BlasterPort Done.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: BlasterPort Done.");
       if (deviceType < 0 || deviceType > 1) throw new ArgumentException("blasterType must be 1, or 0 (0 - MS, 1- SMK)");
-      if (debug) Log.Write("Blaster.Send: BlasterType Done.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: BlasterType Done.");
       if (deviceSpeed < 0 || deviceSpeed > 2)
         throw new ArgumentException("blasterSpeed must be between 0 and 2 (0 - Fast, 2 - Slow)");
       _currentSpeed = deviceSpeed;
-      if (debug) Log.Write("Blaster.Send: BlasterSpeed Done.");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: BlasterSpeed Done.");
 
 
       byte[][] packetSpeed = new[]
@@ -302,17 +302,17 @@ namespace TVEngine.Devices
       }
 
 
-      if (debug) Log.Write("Blaster.Send: Type {0}, Speed {1}", deviceType, s);
-      if (debug) Log.Write("Blaster.Send: Port {0}", blasterPort == 0 ? "1 & 2" : blasterPort.ToString());
-      if (debug) Log.Write("Seding packets");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Type {0}, Speed {1}", deviceType, s);
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Port {0}", blasterPort == 0 ? "1 & 2" : blasterPort.ToString());
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Seding packets");
       _deviceSingleton._deviceStream.Write(packetSpeed[s], 0, packetSpeed[s].Length);
-      if (debug) Log.Write("Blaster.Send: Wrote speed packets");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Wrote speed packets");
       _deviceSingleton._deviceStream.Write(packetPorts[p], 0, packetPorts[p].Length);
-      if (debug) Log.Write("Blaster.Send: Wrote port packets");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Wrote port packets");
       _deviceSingleton._deviceStream.Write(packet, 0, packet.Length);
-      if (debug) Log.Write("Blaster.Send: Wrote channel data  packets");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Wrote channel data  packets");
       _deviceSingleton._deviceStream.Flush();
-      if (debug) Log.Write("Blaster.Send: Flushed");
+      if (debug) GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.Send: Flushed");
     }
 
     public static void BeginLearn(LearnCallback learnCallback)
@@ -417,7 +417,7 @@ namespace TVEngine.Devices
       }
       catch (Exception e)
       {
-        Log.Write("Blaster.OnReadComplete: {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.OnReadComplete: {0}", e.Message);
       }
     }
 
@@ -449,7 +449,7 @@ namespace TVEngine.Devices
         }
       }
 
-      Log.Write("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blaster.FinalizePacket: {0} ({1} bytes)", BitConverter.ToString(packetFinal).Replace("-", ""),
                 packetFinal.Length);
 
       _packetArray = new ArrayList();

@@ -20,6 +20,7 @@
 
 using System;
 using System.Security.AccessControl;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Helper
 {
@@ -45,7 +46,7 @@ namespace TvLibrary.Helper
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while setting full write access to everyone for file: {0} : {1}", fileName, ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while setting full write access to everyone for file: {0} : {1}", fileName, ex);
       }
     }
   }

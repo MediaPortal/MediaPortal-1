@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- 
+   This file stores information about the various Directories used in MediaPortal TV Server.
+     
+   ATTENTION: Never change anything in the <Dir> element as this may cause MediaPortal TV Server to fail.
+   If you don't know what that means at all, leave the default settings. 
+-->
+<Config>
+  <!-- The Path were all the Config files are located (mediaportal.xml, etc.) -->
+  <Dir id = "Config">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal TV Server\</Path>
+  </Dir>
+  <!-- The Path were all the Plugins are located. Don't modify -->
+  <Dir id = "Plugins">
+    <Path>Plugins\</Path>
+  </Dir>
+  <!-- The Path were the log files should be written to -->
+  <Dir id = "Log">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal TV Server\Log\</Path>
+  </Dir>
+  <!-- The Path were the Language files are located -->
+  <Dir id = "Language">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal TV Server\Language\</Path>
+  </Dir>
+  <!-- The Path for the databases -->
+  <Dir id = "Database">
+    <Path>%ProgramData%\Team MediaPortal\MediaPortal TV Server\Database\</Path>
+  </Dir>
+</Config>

@@ -19,6 +19,7 @@
 #endregion
 
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Services;
@@ -48,14 +49,14 @@ namespace MediaPortal.GUI.Video
       GUIWindowManager.ShowPreviousWindow();
 
       ISelectDVDHandler selectDVDHandler;
-      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+      if (GlobalServiceProvider.Instance.IsRegistered<ISelectDVDHandler>())
       {
-        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+        selectDVDHandler = GlobalServiceProvider.Instance.Get<ISelectDVDHandler>();
       }
       else
       {
         selectDVDHandler = new SelectDVDHandler();
-        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+        GlobalServiceProvider.Instance.Add<ISelectDVDHandler>(selectDVDHandler);
       }
 
       string dvdToPlay = selectDVDHandler.ShowSelectDriveDialog(GetID, false);

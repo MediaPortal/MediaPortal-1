@@ -24,6 +24,7 @@ using DirectShowLib;
 using Microsoft.Win32;
 using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Implementations.DVB;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog.Components
 {
@@ -251,7 +252,7 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <returns>true, if the graph building was successful</returns>
     public bool CreateFilterInstance(Graph graph, IFilterGraph2 graphBuilder)
     {
-      Log.Log.WriteFile("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvTunerFilter {0}", _tunerDevice.Name);
       if (DevicesInUse.Instance.IsUsed(_tunerDevice))
         return false;
       IBaseFilter tmp;
@@ -262,12 +263,12 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        Log.Log.WriteFile("analog: cannot add filter to graph");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter to graph");
         return false;
       }
       if (hr != 0)
       {
-        Log.Log.Error("analog: AddTvTunerFilter failed:0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: AddTvTunerFilter failed:0x{0:X}", hr);
         throw new TvException("Unable to add tvtuner to graph");
       }
       _filterTvTuner = tmp;
@@ -276,7 +277,7 @@ namespace TvLibrary.Implementations.Analog.Components
       if (string.IsNullOrEmpty(graph.Tuner.Name) || !_tunerDevice.Name.Equals(
         graph.Tuner.Name))
       {
-        Log.Log.WriteFile("analog: Detecting capabilities of the tuner");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Detecting capabilities of the tuner");
         graph.Tuner.Name = _tunerDevice.Name;
         int index;
         _audioPin = FilterGraphTools.FindMediaPin(_filterTvTuner, MediaType.AnalogAudio, MediaSubType.Null,
@@ -284,7 +285,7 @@ namespace TvLibrary.Implementations.Analog.Components
         graph.Tuner.AudioPin = index;
         return CheckCapabilities(graph);
       }
-      Log.Log.WriteFile("analog: Using stored capabilities of the tuner");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Using stored capabilities of the tuner");
       _audioPin = DsFindPin.ByDirection(_filterTvTuner, PinDirection.Output, graph.Tuner.AudioPin);
       _supportsFMRadio = (graph.Tuner.RadioMode & RadioMode.FM) != 0;
       _supportsAMRadio = (graph.Tuner.RadioMode & RadioMode.AM) != 0;
@@ -353,7 +354,7 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (_tuner == null)
       {
-        Log.Log.WriteFile("");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("");
         return false;
       }
       UpdateMinMaxChannel();
@@ -438,7 +439,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (TvExceptionSWEncoderMissing)
       {
-        Log.Log.Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("UpdateSignalQuality: unable to perform the check because of a missing audio/video encoder!");
       }
 
       if (_tunerLocked)
@@ -473,12 +474,12 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           if (analogChannel.IsRadio)
           {
-            Log.Log.WriteFile("analog:  set to FM radio");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  set to FM radio");
             _tuner.put_Mode(AMTunerModeType.FMRadio);
           }
           else
           {
-            Log.Log.WriteFile("analog:  set to TV");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  set to TV");
             _tuner.put_Mode(AMTunerModeType.TV);
           }
         }
@@ -510,12 +511,12 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (analogChannel.IsRadio)
         {
-          Log.Log.WriteFile("analog:  set to FM radio");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  set to FM radio");
           _tuner.put_Mode(AMTunerModeType.FMRadio);
         }
         else
         {
-          Log.Log.WriteFile("analog:  set to TV");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  set to TV");
           _tuner.put_Mode(AMTunerModeType.TV);
         }
         _tuner.put_TuningSpace(analogChannel.Country.Id);
@@ -536,7 +537,7 @@ namespace TvLibrary.Implementations.Analog.Components
       _currentChannel = analogChannel;
       UpdateSignalQuality();
       UpdateMinMaxChannel();
-      Log.Log.WriteFile("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Analog: Tuned to country:{0} video:{1} Hz audio:{2} Hz locked:{3}", analogChannel.Country.Id,
                         _videoFrequency, _audioFrequency, _tunerLocked);
     }
 

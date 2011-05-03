@@ -106,6 +106,10 @@
       <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
       <Name>Common.Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common-MP-TVE3\CoreServices\CoreServices\CoreServices.csproj">
+      <Project>{A3D5C7ED-FA10-44DB-9549-2776933B85FF}</Project>
+      <Name>CoreServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\Common-MP-TVE3\PowerScheduler.Interfaces\PowerScheduler.Interfaces.csproj">
       <Project>{7701AA79-18D4-4A18-BB52-16774FB7943D}</Project>
       <Name>PowerScheduler.Interfaces</Name>

@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -69,7 +70,7 @@ namespace TvLibrary.Implementations.DVB
                                       out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug("Hauppauge: DVB-S card found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Hauppauge: DVB-S card found!");
             _isHauppauge = true;
             _ptrDiseqc = Marshal.AllocCoTaskMem(1024);
             _tempValue = Marshal.AllocCoTaskMem(1024);
@@ -77,14 +78,14 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            Log.Log.Debug("Hauppauge: DVB-S card NOT found!");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Hauppauge: DVB-S card NOT found!");
             _isHauppauge = false;
             Dispose();
           }
         }
       }
       else
-        Log.Log.Info("Hauppauge: tuner pin not found!");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge: tuner pin not found!");
     }
 
     /// <summary>
@@ -162,13 +163,13 @@ namespace TvLibrary.Implementations.DVB
         txt += String.Format("0x{0:X} ", Marshal.ReadByte(_ptrDiseqc, i));
       for (int i = 160; i < 188; i = (i + 4))
         txt += String.Format("0x{0:X} ", Marshal.ReadInt32(_ptrDiseqc, i));
-      Log.Log.Debug("Hauppauge: SendDiseq: {0}", txt);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Hauppauge: SendDiseq: {0}", txt);
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
       if (hr != 0)
       {
         succeeded = false;
-        Log.Log.Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge: SendDiseq returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
       }
       return succeeded;
     }
@@ -195,7 +196,7 @@ namespace TvLibrary.Implementations.DVB
 
       int hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_DISEQC, _ptrDiseqc,
                                 len, _ptrDiseqc, len);
-      Log.Log.Info("hauppauge: setdiseqc returned:{0:X}", hr);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("hauppauge: setdiseqc returned:{0:X}", hr);
       return (hr == 0);
     }
 
@@ -224,13 +225,13 @@ namespace TvLibrary.Implementations.DVB
                                   out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Debug("Hauppauge: Set Pilot: {0}", channel.Pilot);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Hauppauge: Set Pilot: {0}", channel.Pilot);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Pilot);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_PILOT, _tempInstance,
                               32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge: Set Pilot returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
       //Set the Roll-off
@@ -238,13 +239,13 @@ namespace TvLibrary.Implementations.DVB
                                   out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        Log.Log.Debug("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Hauppauge: Set Roll-Off: {0}", channel.Rolloff);
         Marshal.WriteInt32(_tempValue, (Int32)channel.Rolloff);
         hr = _propertySet.Set(BdaTunerExtentionProperties, (int)BdaTunerExtension.KSPROPERTY_BDA_ROLL_OFF, _tempInstance,
                               32, _tempValue, 4);
         if (hr != 0)
         {
-          Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
     }

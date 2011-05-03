@@ -20,7 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 //using MediaPortal.GUI.Library;
 
@@ -79,7 +79,7 @@ namespace TvEngine
     public void blast(string channel_data, bool ExLogging)
     {
       if (ExLogging)
-        Log.Info("HCWBlaster: Changing channels: {0}", channel_data);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: Changing channels: {0}", channel_data);
 
       int iChannel = Convert.ToInt32(channel_data);
 
@@ -88,7 +88,7 @@ namespace TvEngine
         HCWRetVal = UIR_Open(0, 0);
         if (HCWRetVal == 0)
         {
-          Log.Info("HCWBlaster: Failed to get Blaster Handle");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: Failed to get Blaster Handle");
           return;
         }
 
@@ -104,11 +104,11 @@ namespace TvEngine
 
           if (ExLogging)
           {
-            Log.Info("HCWBlaster: " + devset1);
-            Log.Info("HCWBlaster: " + devset2);
-            Log.Info("HCWBlaster: " + devset3);
-            Log.Info("HCWBlaster: " + devset4);
-            Log.Info("HCWBlaster: " + devset5);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: " + devset1);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: " + devset2);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: " + devset3);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: " + devset4);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: " + devset5);
           }
         }
         else
@@ -120,10 +120,10 @@ namespace TvEngine
       int RetChg = UIR_GotoChannel(HCWIRConfig.d, HCWIRConfig.f, iChannel);
       if (RetChg != 0)
       {
-        Log.Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: UIR_GotoChannel() failed: " + RetChg);
       }
       if (ExLogging)
-        Log.Info("HCWBlaster: Finished Changing channels: {0}", channel_data);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("HCWBlaster: Finished Changing channels: {0}", channel_data);
     }
   }
 }

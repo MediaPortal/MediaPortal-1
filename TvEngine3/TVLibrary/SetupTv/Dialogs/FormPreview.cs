@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using SetupControls;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 
 namespace SetupTv.Sections
@@ -60,7 +60,7 @@ namespace SetupTv.Sections
         return DialogResult.None;
       }
 
-      Log.Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, user.SubChannel, user.Name,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("preview {0} user:{1} {2} {3} {4}", _channel.DisplayName, user.CardId, user.SubChannel, user.Name,
                _card.TimeShiftFileName);
       _player = new Player();
       _player.Play(_card.TimeShiftFileName, this);

@@ -24,7 +24,7 @@ using TvLibrary.Implementations;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using TvDatabase;
 
@@ -59,7 +59,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
-        Log.Info("card: Scan {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: Scan {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
 
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
@@ -73,7 +73,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at: {0}",
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at: {0}",
                         _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return TvResult.ConnectionToSlaveFailed;
             }
@@ -104,7 +104,7 @@ namespace TvService
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -113,7 +113,7 @@ namespace TvService
       }
       catch (TvExceptionGraphBuildingFailed ex2)
       {
-        Log.Write(ex2);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex2);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -130,7 +130,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -153,7 +153,7 @@ namespace TvService
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
           return TvResult.CardIsDisabled;
-        Log.Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: Tune {0} to {1}", _cardHandler.DataBaseCard.IdCard, channel.Name);
 
         // fix mantis 0002776: Code locking in cardtuner can cause hangs 
         //lock (this)
@@ -167,7 +167,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at: {0}",
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at: {0}",
                         _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return TvResult.ConnectionToSlaveFailed;
             }
@@ -202,7 +202,7 @@ namespace TvService
       catch (TvExceptionSWEncoderMissing ex)
       {
         user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -212,7 +212,7 @@ namespace TvService
       catch (TvExceptionGraphBuildingFailed ex2)
       {
         user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        Log.Write(ex2);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex2);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -231,7 +231,7 @@ namespace TvService
       catch (Exception ex)
       {
         user.FailedCardId = _cardHandler.DataBaseCard.IdCard;
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         if (result != null)
         {
           _cardHandler.Card.FreeSubChannel(result.SubChannelId);
@@ -243,17 +243,17 @@ namespace TvService
     private TvResult AfterTune(IUser user, int idChannel, ITvSubChannel result)
     {
       bool isLocked = _cardHandler.Card.IsTunerLocked;
-      Log.Debug("card: Tuner locked: {0}", isLocked);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: Tuner locked: {0}", isLocked);
 
-      Log.Info("**************************************************");
-      Log.Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("**************************************************");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("***** SIGNAL LEVEL: {0}, SIGNAL QUALITY: {1} *****", _cardHandler.Card.SignalLevel,
                _cardHandler.Card.SignalQuality);
-      Log.Info("**************************************************");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("**************************************************");
 
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (result != null)
       {
-        Log.Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: tuned user: {0} subchannel: {1}", user.Name, result.SubChannelId);
         user.SubChannel = result.SubChannelId;
         user.IdChannel = idChannel;
         context.Add(user);
@@ -278,7 +278,7 @@ namespace TvService
       //{
       //  return true;
       //}
-      Log.Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: user: {0}:{1}:{2} tune {3}", user.Name, user.CardId, user.SubChannel, channel.ToString());
       _cardHandler.Card.CamType = (CamType)_cardHandler.DataBaseCard.CamType;
       _cardHandler.SetParameters();
 
@@ -290,7 +290,7 @@ namespace TvService
         {
           if (context.IsOwner(user) || user.IsAdmin)
           {
-            Log.Debug("card: to different transponder");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: to different transponder");
 
             //remove all subchannels, except for this user...
             IUser[] users = context.Users;
@@ -298,20 +298,20 @@ namespace TvService
             {
               if (users[i].Name != user.Name)
               {
-                Log.Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("  stop subchannel: {0} user: {1}", i, users[i].Name);
 
                 //fix for b2b mantis; http://mantis.team-mediaportal.com/view.php?id=1112
                 if (users[i].IsAdmin)
                   // if we are stopping an on-going recording/schedule (=admin), we have to make sure that we remove the schedule also.
                 {
-                  Log.Debug("user is scheduler: {0}", users[i].Name);
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("user is scheduler: {0}", users[i].Name);
                   int recScheduleId = RemoteControl.Instance.GetRecordingSchedule(users[i].CardId,
                                                                                   users[i].IdChannel);
 
                   if (recScheduleId > 0)
                   {
                     Schedule schedule = Schedule.Retrieve(recScheduleId);
-                    Log.Info("removing schedule with id: {0}", schedule.IdSchedule);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("removing schedule with id: {0}", schedule.IdSchedule);
                     RemoteControl.Instance.StopRecordingSchedule(schedule.IdSchedule);
                     schedule.Delete();
                   }
@@ -326,7 +326,7 @@ namespace TvService
           }
           else
           {
-            Log.Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: user: {0} is not the card owner. Cannot switch transponder", user.Name);
             result = TvResult.NotTheOwner;
             return false;
           }
@@ -399,18 +399,18 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return TvResult.UnknownError;
         }
 
         TvResult result;
-        Log.WriteFile("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: CardTune {0} {1} {2}:{3}:{4}", _cardHandler.DataBaseCard.IdCard, channel.Name, user.Name,
                       user.CardId, user.SubChannel);
         if (_cardHandler.IsScrambled(ref user))
         {
           result = Tune(ref user, channel, dbChannel.IdChannel);
-          Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
           return result;
         }
         bool cardActive = true;
@@ -428,12 +428,12 @@ namespace TvService
           return TvResult.Succeeded;
         }
         result = Tune(ref user, channel, dbChannel.IdChannel);
-        Log.Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("card2:{0} {1} {2}", user.Name, user.CardId, user.SubChannel);
         return result;
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return TvResult.UnknownError;
       }
     }
@@ -456,7 +456,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
@@ -499,7 +499,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
@@ -508,7 +508,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return false;
       }
     }

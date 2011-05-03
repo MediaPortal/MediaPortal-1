@@ -20,6 +20,7 @@
 
 using System.Collections.Generic;
 using DirectShowLib;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations
 {
@@ -92,10 +93,10 @@ namespace TvLibrary.Implementations
         if (_devicesInUse[i].Mon == device.Mon && _devicesInUse[i].Name == device.Name &&
             _devicesInUse[i].DevicePath == device.DevicePath)
         {
-          Log.Log.WriteFile("device in use", device.Name);
-          Log.Log.WriteFile("  moniker   :{0} ", device.Mon);
-          Log.Log.WriteFile("  name      :{0} ", device.Name);
-          Log.Log.WriteFile("  devicepath:{0} ", device.DevicePath);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("device in use", device.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("  moniker   :{0} ", device.Mon);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("  name      :{0} ", device.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("  devicepath:{0} ", device.DevicePath);
           return true;
         }
       }

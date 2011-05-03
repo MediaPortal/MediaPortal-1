@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using MediaPortal.CoreServices;
 using MediaPortal.Services;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.TagReader;
@@ -51,7 +52,7 @@ namespace MediaPortal.Util
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.Lowest;
 
-        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
     }
 

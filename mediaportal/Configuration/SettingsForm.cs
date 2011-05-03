@@ -36,6 +36,7 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
 using MediaPortal.Util;
+using MediaPortal.Configuration;
 using DVDPlayer = MediaPortal.Configuration.Sections.DVDPlayer;
 using Keys = MediaPortal.Configuration.Sections.Keys;
 

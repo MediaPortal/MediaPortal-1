@@ -21,6 +21,7 @@
 using System;
 using DirectShowLib;
 using TvLibrary.Implementations.DVB;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog.QualityControl
 {
@@ -49,7 +50,7 @@ namespace TvLibrary.Implementations.Analog.QualityControl
       : base(configuration)
     {
       _codecAPI = codecAPI;
-      Log.Log.WriteFile("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ICodecAPI supported by: " + FilterGraphTools.GetFilterName(_codecAPI as IBaseFilter) +
                         "; Checking capabilities ");
       CheckCapabilities();
     }

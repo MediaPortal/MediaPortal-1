@@ -23,7 +23,7 @@ using System.Net;
 using TvLibrary;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using TvDatabase;
 
@@ -191,7 +191,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
           }
         }
@@ -253,7 +253,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
           }
         }
@@ -279,7 +279,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return 0;
           }
         }
@@ -307,7 +307,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return CardType.Analog;
             }
           }
@@ -315,7 +315,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return CardType.Analog;
         }
       }
@@ -340,7 +340,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return "";
             }
           }
@@ -348,7 +348,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return "";
         }
       }
@@ -371,7 +371,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return "";
           }
         }
@@ -379,7 +379,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return "";
       }
     }
@@ -406,7 +406,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return false;
             }
           }
@@ -414,7 +414,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return false;
         }
       }
@@ -441,7 +441,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
@@ -449,7 +449,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return 0;
         }
       }
@@ -476,7 +476,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
@@ -484,7 +484,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return 0;
         }
       }
@@ -509,7 +509,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return;
           }
         }
@@ -517,7 +517,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -542,7 +542,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
@@ -550,7 +550,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return 0;
         }
       }
@@ -577,7 +577,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
               return 0;
             }
           }
@@ -585,7 +585,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return 0;
         }
       }
@@ -650,7 +650,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return null;
           }
         }
@@ -665,7 +665,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return null;
       }
     }
@@ -690,7 +690,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return -1;
           }
         }
@@ -700,7 +700,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return -1;
       }
     }
@@ -725,7 +725,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return "";
           }
         }
@@ -743,7 +743,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return "";
       }
     }
@@ -768,7 +768,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return false;
           }
         }
@@ -783,7 +783,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return false;
       }
     }
@@ -808,11 +808,11 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return;
           }
         }
-        Log.Info("Pausecard");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Pausecard");
 
         //remove all subchannels, except for this user...
         ITvSubChannel[] channels = _card.SubChannels;
@@ -838,7 +838,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -861,11 +861,11 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
             return;
           }
         }
-        Log.Info("Stopcard");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Stopcard");
 
         //remove all subchannels, except for this user...
         ITvSubChannel[] channels = _card.SubChannels;
@@ -883,7 +883,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -904,7 +904,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}", _dbsCard.ReferencedServer().HostName);
           return null;
         }
       }

@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvService
 {
@@ -39,7 +39,7 @@ namespace TvService
       _timer.Interval = 15 * 60 * 1000;
       _timer.Enabled = true;
       _timer.Elapsed += _timer_Elapsed;
-      Log.Write("DiskManagement: started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("DiskManagement: started");
     }
 
 
@@ -87,7 +87,7 @@ namespace TvService
         return;
       }
 
-      Log.Write("DiskManagement: checking free disk space");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("DiskManagement: checking free disk space");
 
       //first get all drives..
       List<string> drives = GetDisks();
@@ -112,8 +112,8 @@ namespace TvService
       }
       catch (Exception e)
       {
-        Log.Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
-        Log.Error(e.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("DiskManagement: Exception at parsing freediskspace ({0}) to drive {1}", quotaText, drive);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(e.ToString());
         //no setting for this drive: quitting
         return false;
       }
@@ -133,8 +133,8 @@ namespace TvService
       if (freeDiskSpace > minimiumFreeDiskSpace)
         return false;
 
-      Log.Info("DiskManagement: Drive {0} is out of free space!", drive);
-      Log.Info("DiskManagement: Has: {0} Minimum Set: {1}", freeDiskSpace.ToString(), minimiumFreeDiskSpace.ToString());
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiskManagement: Drive {0} is out of free space!", drive);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiskManagement: Has: {0} Minimum Set: {1}", freeDiskSpace.ToString(), minimiumFreeDiskSpace.ToString());
       return true;
     }
 
@@ -169,8 +169,8 @@ namespace TvService
           }
           catch (Exception e)
           {
-            Log.Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
-            Log.Write(e);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("DiskManagement: Exception at building FileInfo ({0})", recorded.FileName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
           }
         }
       }
@@ -183,16 +183,16 @@ namespace TvService
       if (!OutOfDiskSpace(drive))
         return;
 
-      Log.Write("DiskManagement: not enough free space on drive: {0}", drive);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("DiskManagement: not enough free space on drive: {0}", drive);
 
       List<RecordingFileInfo> recordings = GetRecordingsOnDrive(drive);
       if (recordings.Count == 0)
       {
-        Log.Write("DiskManagement: no recordings to delete");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("DiskManagement: no recordings to delete");
         return;
       }
 
-      Log.Write("DiskManagement: found {0} recordings", recordings.Count);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("DiskManagement: found {0} recordings", recordings.Count);
 
       // Not enough free diskspace
       // start deleting recordings (oldest ones first)

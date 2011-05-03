@@ -56,11 +56,7 @@ namespace MediaPortal.Configuration
     {
       Thread.CurrentThread.Name = "Config Main";
       Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
-
-      // Logger should write into Configuration.log
-      Log.SetConfigurationMode();
-      Log.BackupLogFile(LogType.Config);
-
+           
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());

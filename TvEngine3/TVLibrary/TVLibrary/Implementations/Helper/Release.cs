@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary
 {
@@ -39,7 +40,7 @@ namespace TvLibrary
         if (hr != 0)
         {
           //StackTrace st = new StackTrace(true);
-          //Log.Log.Debug("  Release {0} returns {1}", o, hr);
+          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("  Release {0} returns {1}", o, hr);
         }
       }
       return hr;
@@ -55,7 +56,7 @@ namespace TvLibrary
       if (o != null)
       {
         DsUtils.ReleaseComObject(o);
-        //Log.Log.Debug("  Release {0} returns {1}", line, hr);
+        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("  Release {0} returns {1}", line, hr);
       }
     }
 
@@ -78,12 +79,12 @@ namespace TvLibrary
         }
         catch (System.Exception ex)
         {
-          Log.Log.Error("  Error in Dispose of {0}: {1}", line, ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("  Error in Dispose of {0}: {1}", line, ex.Message);
         }
 
         int remainingReferences = Release.ComObject(o);
         //if (remainingReferences > 0)
-        Log.Log.WriteFile("  Release {0} leaves {1} references", line, remainingReferences);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("  Release {0} leaves {1} references", line, remainingReferences);
 
         o = default(E);
       }

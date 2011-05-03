@@ -22,6 +22,7 @@ using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Interfaces
 {
@@ -168,7 +169,8 @@ namespace TvLibrary.Interfaces
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while converting dvb text", ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error while converting dvb text");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       byte[] text = new byte[len - pos];
       for (int i = 0; i < len - pos; i++)

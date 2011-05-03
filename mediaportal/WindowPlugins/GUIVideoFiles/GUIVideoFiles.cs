@@ -26,6 +26,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -705,14 +706,14 @@ namespace MediaPortal.GUI.Video
         }
 
         ISelectDVDHandler selectDVDHandler;
-        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+        if (GlobalServiceProvider.Instance.IsRegistered<ISelectDVDHandler>())
         {
-          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+          selectDVDHandler = GlobalServiceProvider.Instance.Get<ISelectDVDHandler>();
         }
         else
         {
           selectDVDHandler = new SelectDVDHandler();
-          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+          GlobalServiceProvider.Instance.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
         selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
@@ -1219,14 +1220,14 @@ namespace MediaPortal.GUI.Video
           return;
         }
         ISelectDVDHandler selectDVDHandler;
-        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+        if (GlobalServiceProvider.Instance.IsRegistered<ISelectDVDHandler>())
         {
-          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+          selectDVDHandler = GlobalServiceProvider.Instance.Get<ISelectDVDHandler>();
         }
         else
         {
           selectDVDHandler = new SelectDVDHandler();
-          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+          GlobalServiceProvider.Instance.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
         

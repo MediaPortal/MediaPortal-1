@@ -33,7 +33,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting;
 using System.Xml;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using TvEngine;
 using TvEngine.Interfaces;
@@ -78,7 +78,7 @@ namespace TvService
     /// <param name="e">The <see cref="System.UnhandledExceptionEventArgs"/> instance containing the event data.</param>
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-      Log.WriteFile("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Tvservice stopped due to an unhandled app domain exception {0}", e.ExceptionObject);
       _unhandledExceptionInThread = Thread.CurrentThread;
       ExitCode = -1; //tell windows that the service failed.      
       OnStop(); //cleanup
@@ -187,7 +187,7 @@ namespace TvService
           catch (Exception ex)
           {
             // applyProcessPriority can generate an exception when we cannot connect to the database
-            Log.Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("OnStart: exception applying process priority: {0}", ex.StackTrace);
           }
         }
 
@@ -245,7 +245,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Error("applyProcessPriority: exception is {0}", ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("applyProcessPriority: exception is {0}", ex.StackTrace);
       }
     }
 
@@ -265,7 +265,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -310,7 +310,7 @@ namespace TvService
       AddPowerEventHandler(OnPowerEventHandler);
       try
       {
-        Log.Debug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Setting up EventWaitHandle with name: {0}", RemoteControl.InitializedEventName);
 
         EventWaitHandleAccessRule rule =
           new EventWaitHandleAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null),
@@ -322,12 +322,12 @@ namespace TvService
                                                 out eventCreated, sec);
         if (!eventCreated)
         {
-          Log.Info("{0} was not created", RemoteControl.InitializedEventName);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("{0} was not created", RemoteControl.InitializedEventName);
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       // setup the remoting channels
       try
@@ -338,7 +338,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -445,7 +445,7 @@ namespace TvService
     {
       if (msg == WM_POWERBROADCAST)
       {
-        Log.Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TV service PowerEventThread received WM_POWERBROADCAST {1}", wParam.ToInt32());
         switch (wParam.ToInt32())
         {
           case PBT_APMQUERYSUSPENDFAILED:
@@ -487,7 +487,7 @@ namespace TvService
 
     private void PowerEventThread()
     {
-      //Log.Debug( "Service1.PowerEventThread started" );
+      //GlobalServiceProvider.Instance.Get<ILogger>().Debug( "Service1.PowerEventThread started" );
 
       Thread.BeginThreadAffinity();
       try
@@ -513,12 +513,12 @@ namespace TvService
 
         if (handle.Equals(IntPtr.Zero))
         {
-          Log.Error("TV service PowerEventThread cannot create window handle, exiting thread");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("TV service PowerEventThread cannot create window handle, exiting thread");
           return;
         }
 
         // this thread needs an message loop
-        Log.Debug("TV service PowerEventThread message loop is running");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TV service PowerEventThread message loop is running");
         while (true)
         {
           try
@@ -530,21 +530,21 @@ namespace TvService
 
             TranslateMessage(ref msgApi);
 
-            Log.Debug("TV service PowerEventThread {0}", msgApi.message);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TV service PowerEventThread {0}", msgApi.message);
 
 
             DispatchMessageA(ref msgApi);
           }
           catch (Exception ex)
           {
-            Log.Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("TV service PowerEventThread: Exception: {0}", ex.ToString());
           }
         }
       }
       finally
       {
         Thread.EndThreadAffinity();
-        Log.Debug("TV service PowerEventThread finished");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TV service PowerEventThread finished");
       }
     }
 
@@ -558,7 +558,7 @@ namespace TvService
     [MethodImpl(MethodImplOptions.Synchronized)]
     protected bool OnPowerEvent(PowerEventType powerStatus)
     {
-      Log.Debug("OnPowerEvent: PowerStatus: {0}", powerStatus);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnPowerEvent: PowerStatus: {0}", powerStatus);
 
       bool accept = true;
       List<PowerEventHandler> powerEventPreventers = new List<PowerEventHandler>();
@@ -587,7 +587,7 @@ namespace TvService
         return true;
       if (powerEventPreventers.Count > 0)
         foreach (PowerEventHandler handler in powerEventPreventers)
-          Log.Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerStatus:{0} rejected by {1}", powerStatus, handler.Target.ToString());
 
       // if query suspend: 
       // everybody that allowed the standby now must receive a deny event
@@ -619,7 +619,7 @@ namespace TvService
 
     private bool OnPowerEventHandler(PowerEventType powerStatus)
     {
-      Log.Debug("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnPowerEventHandler: PowerStatus: {0}", powerStatus);
 
       switch (powerStatus)
       {
@@ -666,7 +666,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -675,7 +675,7 @@ namespace TvService
     /// </summary>
     private void StopRemoting()
     {
-      Log.WriteFile("TV service StopRemoting");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV service StopRemoting");
       try
       {
         if (_controller != null)
@@ -685,9 +685,9 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
-      Log.WriteFile("Remoting stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Remoting stopped");
     }
 
     #endregion
@@ -695,12 +695,12 @@ namespace TvService
     private void StartPlugins()
     {
       TvBusinessLayer layer = new TvBusinessLayer();
-      Log.Info("TV Service: Load plugins");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Load plugins");
 
       _plugins = new PluginLoader();
       _plugins.Load();
 
-      Log.Info("TV Service: Plugins loaded");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugins loaded");
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
@@ -709,7 +709,7 @@ namespace TvService
           Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
           if (setting.Value == "true")
           {
-            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugin: {0} started", plugin.Name);
             try
             {
               plugin.Start(_controller);
@@ -717,33 +717,33 @@ namespace TvService
             }
             catch (Exception ex)
             {
-              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
-              Log.Write(ex);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
             }
           }
           else
           {
-            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugin: {0} disabled", plugin.Name);
           }
         }
       }
 
-      Log.Info("TV Service: Plugins started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugins started");
 
       // fire off startedAll on plugins
       foreach (ITvServerPlugin plugin in _pluginsStarted)
       {
         if (plugin is ITvServerPluginStartedAll)
         {
-          Log.Info("TV Service: Plugin: {0} started all", plugin.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugin: {0} started all", plugin.Name);
           try
           {
             (plugin as ITvServerPluginStartedAll).StartedAll();
           }
           catch (Exception ex)
           {
-            Log.Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
-            Log.Write(ex);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugin: {0} failed to startedAll", plugin.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           }
         }
       }
@@ -751,7 +751,7 @@ namespace TvService
 
     private void StopPlugins()
     {
-      Log.Info("TV Service: Stop plugins");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Stop plugins");
       if (_pluginsStarted != null)
       {
         foreach (ITvServerPlugin plugin in _pluginsStarted)
@@ -762,20 +762,20 @@ namespace TvService
           }
           catch (Exception ex)
           {
-            Log.Info("TV Service: plugin: {0} failed to stop", plugin.Name);
-            Log.Write(ex);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: plugin: {0} failed to stop", plugin.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           }
         }
         _pluginsStarted = new List<ITvServerPlugin>();
       }
-      Log.Info("TV Service: Plugins stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: Plugins stopped");
     }
 
     public void OnStop()
     {
       if (!Started)
         return;
-      Log.WriteFile("TV Service: stopping");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: stopping");
 
       if (_InitializedEvent != null)
       {
@@ -792,14 +792,14 @@ namespace TvService
       StopPlugins();
       if (_powerEventThreadId != 0)
       {
-        Log.Debug("TV Service: OnStop asking PowerEventThread to exit");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TV Service: OnStop asking PowerEventThread to exit");
         PostThreadMessage(_powerEventThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
         _powerEventThread.Join();
       }
       _powerEventThreadId = 0;
       _powerEventThread = null;
       _started = false;
-      Log.WriteFile("TV Service: stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TV Service: stopped");
     }
 
     public void OnStart()
@@ -809,13 +809,13 @@ namespace TvService
       {
         if (!Started)
         {
-          Log.Info("TV service: Starting");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TV service: Starting");
 
           Thread.CurrentThread.Name = "TVService";
 
           FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-          Log.WriteFile("TVService v" + versionInfo.FileVersion + " is starting up on " +
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVService v" + versionInfo.FileVersion + " is starting up on " +
                         OSInfo.OSInfo.GetOSDisplayVersion());
 
           //Check for unsupported operating systems
@@ -835,7 +835,7 @@ namespace TvService
           {
             _InitializedEvent.Set();
           }
-          Log.Info("TV service: Started");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TV service: Started");
           while (true)
           {
             Thread.Sleep(1000);
@@ -845,7 +845,7 @@ namespace TvService
       catch (Exception ex)
       {
         //wait for thread to exit. eg. when stopping tvservice       
-        Log.Error("TvService OnStart failed : {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("TvService OnStart failed : {0}", ex.ToString());
         _started = true; // otherwise the onstop code will not complete.
         OnStop();
       }

@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using System.Threading;
@@ -146,7 +146,7 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               ps.Unregister(this as IStandbyHandler);
             }
-            Log.Debug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: preventing standby when grabbing EPG: {0}", enabled);
           }
 
           // Check if system should wakeup for EPG grabs
@@ -165,7 +165,7 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               ps.Unregister(this as IWakeupHandler);
             }
-            Log.Debug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: wakeup system for EPG grabbing: {0}", enabled);
           }
 
           // Check if a wakeup time is set
@@ -175,13 +175,13 @@ namespace TvEngine.PowerScheduler.Handlers
           if (!config.Equals(setting.Get<EPGWakeupConfig>()))
           {
             setting.Set<EPGWakeupConfig>(config);
-            Log.Debug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: wakeup system for EPG at time: {0}:{1}", config.Hour, config.Minutes);
             if (config.Days != null)
             {
               foreach (EPGGrabDays day in config.Days)
-                Log.Debug("PowerScheduler: EPG wakeup on day {0}", day);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: EPG wakeup on day {0}", day);
             }
-            Log.Debug("PowerScheduler: EPG last run: {0}", config.LastRun);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: EPG last run: {0}", config.LastRun);
           }
 
           // check if schedule is due
@@ -206,7 +206,7 @@ namespace TvEngine.PowerScheduler.Handlers
             GrabberSource s = _extGrabbers[o];
             if (s.Timeout < DateTime.Now)
             {
-              Log.Debug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: EPG source '{0}' timed out, setting allow-standby = true for this source.",
                         s.Name);
               // timeout passed, standby is allowed
               s.SetStandbyAllowed(true, 0);
@@ -248,7 +248,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
 
         p.StartInfo = psi;
-        Log.Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("EpgGrabbingHandler: Starting external command: {0} {1}", p.StartInfo.FileName, p.StartInfo.Arguments);
         try
         {
           p.Start();
@@ -256,9 +256,9 @@ namespace TvEngine.PowerScheduler.Handlers
         }
         catch (Exception e)
         {
-          Log.Write(e);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
         }
-        Log.Debug("EpgGrabbingHandler: External command finished");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("EpgGrabbingHandler: External command finished");
       }
     }
 
@@ -273,7 +273,7 @@ namespace TvEngine.PowerScheduler.Handlers
       TvBusinessLayer layer = new TvBusinessLayer();
       EPGWakeupConfig config = new EPGWakeupConfig((layer.GetSetting("EPGWakeupConfig", String.Empty).Value));
 
-      Log.Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("PowerScheduler: EPG schedule {0}:{1} is due: {2}:{3}",
                config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
 
       // start external command
@@ -379,7 +379,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
         if (DateTime.Now.Day == nextRun.Day)
         {
-          Log.Error("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("PowerScheduler: no valid next wakeup date for EPG grabbing found!");
           nextRun = DateTime.MaxValue;
         }
       }
@@ -398,7 +398,7 @@ namespace TvEngine.PowerScheduler.Handlers
         // check for "should run, but not running"
         if (ShouldRunNow())
         {
-          Log.Debug("EpgGrabbingHandler: standby not allowed since EPG is due");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("EpgGrabbingHandler: standby not allowed since EPG is due");
           return true;
         }
 
@@ -408,7 +408,7 @@ namespace TvEngine.PowerScheduler.Handlers
           int cardId = _controller.CardId(i);
           if (_controller.IsGrabbingEpg(cardId))
           {
-            Log.Debug("EpgGrabbingHandler: card {0} does not allow standby", _controller.CardName(cardId));
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("EpgGrabbingHandler: card {0} does not allow standby", _controller.CardName(cardId));
             return true;
           }
         }
@@ -417,7 +417,7 @@ namespace TvEngine.PowerScheduler.Handlers
         foreach (GrabberSource source in _extGrabbers.Values)
           if (!source.StandbyAllowed)
           {
-            Log.Debug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("EpgGrabbingHandler: {0} does not allow standby", source.Name);
             return true;
           }
 
@@ -452,7 +452,7 @@ namespace TvEngine.PowerScheduler.Handlers
         }
       }
       if (isExternal)
-        Log.Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: next EPG wakeup set by external EPG source {0}", externalName);
       return nextRun;
     }
 

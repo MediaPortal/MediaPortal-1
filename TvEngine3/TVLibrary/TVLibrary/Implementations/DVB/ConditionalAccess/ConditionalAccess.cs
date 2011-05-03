@@ -27,6 +27,7 @@ using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
 using TvDatabase;
 using TvLibrary.Hardware;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -111,7 +112,7 @@ namespace TvLibrary.Implementations.DVB
           _decryptLimit = c.DecryptLimit;
           _useCam = c.CAM;
           _CamType = (CamType)c.CamType;
-          Log.Log.WriteFile("CAM is {0} model", _CamType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("CAM is {0} model", _CamType);
         }
 
         _mapSubChannels = new Dictionary<int, ConditionalAccessContext>();
@@ -124,7 +125,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (isDVBC || isDVBS || isDVBT)
         {
-          Log.Log.WriteFile("Check for KNC");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for KNC");
           // Lookup device index of current card. only counting KNC cards by device path
           int DeviceIndex = KNCDeviceLookup.GetDeviceIndex(card);
           _knc = new KNCAPI(tunerFilter, (uint)DeviceIndex);
@@ -132,21 +133,21 @@ namespace TvLibrary.Implementations.DVB
           {
             //if (_knc.IsCamReady()) 
             _ciMenu = _knc; // Register KNC CI Menu capabilities when CAM detected and ready
-            Log.Log.WriteFile("KNC card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC card detected");
             return;
           }
           Release.DisposeToNull(ref _knc);
 
-          Log.Log.WriteFile("Check for Digital Everywhere");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Digital Everywhere");
           _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
           if (_digitalEveryWhere.IsDigitalEverywhere)
           {
-            Log.Log.WriteFile("Digital Everywhere card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Digital Everywhere card detected");
             _diSEqCMotor = new DiSEqCMotor(_digitalEveryWhere);
 
             if (_digitalEveryWhere.IsCamReady())
             {
-              Log.Log.WriteFile("Digital Everywhere registering CI menu capabilities");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("Digital Everywhere registering CI menu capabilities");
               _ciMenu = _digitalEveryWhere; // Register FireDTV CI Menu capabilities when CAM detected and ready
             }
             //_digitalEveryWhere.ResetCAM();
@@ -154,41 +155,41 @@ namespace TvLibrary.Implementations.DVB
           }
           Release.DisposeToNull(ref _digitalEveryWhere);
 
-          Log.Log.WriteFile("Check for Twinhan");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Twinhan");
           _twinhan = new Twinhan(tunerFilter);
           if (_twinhan.IsTwinhan)
           {
-            Log.Log.WriteFile("Twinhan card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan card detected");
             _diSEqCMotor = new DiSEqCMotor(_twinhan);
-            Log.Log.WriteFile("Twinhan registering CI menu capabilities");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan registering CI menu capabilities");
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
           Release.DisposeToNull(ref _twinhan);
 
-          Log.Log.WriteFile("Check for TechnoTrend");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for TechnoTrend");
           _technoTrend = new TechnoTrendAPI(tunerFilter);
           if (_technoTrend.IsTechnoTrend)
           {
             ////if (_technoTrend.IsCamPresent()) 
             _ciMenu = _technoTrend; // Register Technotrend CI Menu capabilities
-            Log.Log.WriteFile("TechnoTrend card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("TechnoTrend card detected");
             return;
           }
           Release.DisposeToNull(ref _technoTrend);
 
-          Log.Log.WriteFile("Check for Hauppauge");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
           if (_hauppauge.IsHauppauge)
           {
-            Log.Log.WriteFile("Hauppauge card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
 
-              Log.Log.WriteFile("WinTV CI registering CI menu capabilities");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI registering CI menu capabilities");
               _ciMenu = _winTvCiModule; // WinTv CI Menu capabilities 
             }
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
@@ -197,19 +198,19 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _hauppauge);
           Release.DisposeToNull(ref _winTvCiModule);
 
-          /*Log.Log.Info("Check for anysee");
+          /*GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
           if (_anysee.Isanysee)
           {
-            Log.Log.Info("anysee device detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("anysee device detected");
             return;
           }*/
 
-          Log.Log.WriteFile("Check for ProfRed");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for ProfRed");
           _profred = new ProfRed(tunerFilter);
           if (_profred.IsProfRed)
           {
-            Log.Log.WriteFile("ProfRed card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("ProfRed card detected");
             _diSEqCMotor = new DiSEqCMotor(_profred);
             return;
           }
@@ -219,16 +220,16 @@ namespace TvLibrary.Implementations.DVB
           _TeVii = new TeVii();
           _TeVii.Init(tunerFilter);
           _TeVii.DevicePath = card.DevicePath;
-          Log.Log.WriteFile("Check for {0}", _TeVii.Provider);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for {0}", _TeVii.Provider);
           _TeVii.CheckAndOpen();
           if (_TeVii.IsSupported)
           {
             _diSEqCMotor = new DiSEqCMotor(_TeVii);
             _HWProvider = _TeVii;
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
@@ -248,15 +249,15 @@ namespace TvLibrary.Implementations.DVB
           }
           Release.DisposeToNull(ref _DigitalDevices);
 
-          Log.Log.WriteFile("Check for Conexant based card");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
           if (_conexant.IsConexant)
           {
-            Log.Log.WriteFile("Conexant BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Conexant BDA card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
@@ -264,15 +265,15 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _conexant);
           Release.DisposeToNull(ref _winTvCiModule);
 
-          Log.Log.WriteFile("Check for GenPix BDA based card");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for GenPix BDA based card");
           _genpix = new GenPixBDA(tunerFilter);
           if (_genpix.IsGenPix)
           {
-            Log.Log.WriteFile("GenPix BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("GenPix BDA card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
@@ -280,15 +281,15 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _genpix);
           Release.DisposeToNull(ref _winTvCiModule);
 
-          Log.Log.WriteFile("Check for Generic DVB-S card");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
           if (_genericbdas.IsGenericBDAS)
           {
-            Log.Log.WriteFile("Generic BDA card detected");
-            Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Generic BDA card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
             if (winTvUsbCiFilter != null)
             {
-              Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
               _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             }
             return;
@@ -296,10 +297,10 @@ namespace TvLibrary.Implementations.DVB
           Release.DisposeToNull(ref _genericbdas);
 
           //Final WinTV-CI check for DVB-T hybrid cards
-          Log.Log.WriteFile("Check for Hauppauge WinTV CI");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Hauppauge WinTV CI");
           if (winTvUsbCiFilter != null)
           {
-            Log.Log.WriteFile("WinTV CI detected in graph - using capabilities...");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTV CI detected in graph - using capabilities...");
             _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             return;
           }
@@ -310,20 +311,20 @@ namespace TvLibrary.Implementations.DVB
         bool isATSC = (card is TvCardATSC);
         if (isATSC)
         {
-          Log.Log.WriteFile("Check for ViXS ATSC QAM card");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for ViXS ATSC QAM card");
           _isvixsatsc = new ViXSATSC(tunerFilter);
           if (_isvixsatsc.IsViXSATSC)
           {
-            Log.Log.WriteFile("ViXS ATSC QAM card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("ViXS ATSC QAM card detected");
             return;
           }
           Release.DisposeToNull(ref _isvixsatsc);
 
-          Log.Log.WriteFile("Check for Generic ATSC QAM card");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Check for Generic ATSC QAM card");
           _isgenericatsc = new GenericATSC(tunerFilter);
           if (_isgenericatsc.IsGenericATSC)
           {
-            Log.Log.WriteFile("Generic ATSC QAM card detected");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Generic ATSC QAM card detected");
             return;
           }
           Release.DisposeToNull(ref _isgenericatsc);
@@ -331,7 +332,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -360,12 +361,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_mapSubChannels.ContainsKey(id))
       {
-        Log.Log.WriteFile("FreeSubChannel CA: freeing sub channel : {0}", id);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FreeSubChannel CA: freeing sub channel : {0}", id);
         _mapSubChannels.Remove(id);
       }
       else
       {
-        Log.Log.WriteFile("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("FreeSubChannel CA: tried to free non existing sub channel : {0}", id);
       }
     }
 
@@ -413,7 +414,7 @@ namespace TvLibrary.Implementations.DVB
           return true;
         if (_knc != null)
         {
-          //Log.Log.WriteFile("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
+          //GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _knc.IsCamPresent(), _knc.IsCamReady());
           return _knc.IsCamReady();
         }
         if (_digitalEveryWhere != null)
@@ -426,7 +427,7 @@ namespace TvLibrary.Implementations.DVB
         }
         if (_technoTrend != null)
         {
-          Log.Log.WriteFile("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TechnoTrend IsCamReady(): IsCamPresent:{0}, IsCamReady:{1}", _technoTrend.IsCamPresent(),
                             _technoTrend.IsCamReady());
           if (_technoTrend.IsCamPresent() == false)
           {
@@ -443,13 +444,13 @@ namespace TvLibrary.Implementations.DVB
           int hr = _winTvCiModule.Init();
           if (hr != 0)
             return false;
-          Log.Log.Info("WinTVCI:  CAM initialized");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTVCI:  CAM initialized");
           return true;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return true;
     }
@@ -478,7 +479,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -653,10 +654,10 @@ namespace TvLibrary.Implementations.DVB
           int hr = _winTvCiModule.SendPMT(PMT, pmtLength);
           if (hr != 0)
           {
-            Log.Log.Info("Conditional Access:  sendPMT to WinTVCI failed");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Conditional Access:  sendPMT to WinTVCI failed");
             return false;
           }
-          Log.Log.Info("Conditional Access:  sendPMT to WinTVCI succeeded");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Conditional Access:  sendPMT to WinTVCI succeeded");
           return true;
         }
         if (_knc != null)
@@ -692,7 +693,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return true;
     }
@@ -760,7 +761,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return succeeded;
     }
@@ -807,21 +808,21 @@ namespace TvLibrary.Implementations.DVB
           {
             for (int i = 0; i < HwPids.Count; ++i)
             {
-              Log.Log.Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: HW Filtered Pid : 0x{0:X}", HwPids[i]);
             }
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, true, isAtsc, HwPids);
           }
           else
           {
             pids.Clear();
-            Log.Log.Info("FireDTV: HW Filtering disabled.");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("FireDTV: HW Filtering disabled.");
             _digitalEveryWhere.SetHardwarePidFiltering(isDvbc, isDvbt, isDvbs, isAtsc, pids);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -833,7 +834,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>The channel with DVB-S2 parameters set.</returns>
     public DVBSChannel SetDVBS2Modulation(ScanParameters parameters, DVBSChannel channel)
     {
-      //Log.Log.WriteFile("Trying to set DVB-S2 modulation...");
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("Trying to set DVB-S2 modulation...");
       try
       {
         if (_twinhan != null)
@@ -855,10 +856,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("Twinhan DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Twinhan DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan DVB-S2 modulation set to:{0}", channel.ModulationType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan DVB-S2 Pilot set to:{0}", channel.Pilot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_hauppauge != null)
@@ -891,10 +892,10 @@ namespace TvLibrary.Implementations.DVB
             {
               channel.Pilot = Pilot.Off;
             }
-            Log.Log.WriteFile("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
-            Log.Log.WriteFile("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
-            Log.Log.WriteFile("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);
-            Log.Log.WriteFile("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge DVB-S2 modulation set to:{0}", channel.ModulationType);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge DVB-S2 Pilot set to:{0}", channel.Pilot);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge DVB-S2 RollOff set to:{0}", channel.Rolloff);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge DVB-S2 fec set to:{0}", channel.InnerFecRate);
             _hauppauge.SetDVBS2PilotRolloff(channel);
           }
           return channel;
@@ -910,10 +911,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModBpsk;
           }
-          Log.Log.WriteFile("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ProfRed DVB-S2 modulation set to:{0}", channel.ModulationType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ProfRed DVB-S2 Pilot set to:{0}", channel.Pilot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ProfRed DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ProfRed DVB-S2 fec set to:{0}", channel.InnerFecRate);
           //}
           return channel;
         }
@@ -936,10 +937,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("Technotrend DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Technotrend DVB-S2 modulation set to:{0}", channel.ModulationType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Technotrend DVB-S2 Pilot set to:{0}", channel.Pilot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Technotrend DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Technotrend DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_knc != null)
@@ -961,10 +962,10 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.ModulationType = ModulationType.ModOqpsk;
           }
-          Log.Log.WriteFile("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC DVB-S2 modulation set to:{0}", channel.ModulationType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC DVB-S2 Pilot set to:{0}", channel.Pilot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC DVB-S2 RollOff set to:{0}", channel.Rolloff);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC DVB-S2 fec set to:{0}", channel.InnerFecRate);
           return channel;
         }
         if (_digitalEveryWhere != null)
@@ -982,7 +983,7 @@ namespace TvLibrary.Implementations.DVB
           {
             channel.Pilot = Pilot.NotSet;
             channel.Rolloff = RollOff.NotSet;
-            //Log.Log.WriteFile("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
+            //GlobalServiceProvider.Instance.Get<ILogger>().Info("DigitalEverywhere: we're tuning DVB-S, pilot & roll-off are now not set");
           }
 
           if (channel.InnerFecRate != BinaryConvolutionCodeRate.RateNotSet)
@@ -1004,16 +1005,16 @@ namespace TvLibrary.Implementations.DVB
             BinaryConvolutionCodeRate r = channel.InnerFecRate + _pilot + _rollOff;
             channel.InnerFecRate = r;
           }
-          Log.Log.WriteFile("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
-          Log.Log.WriteFile("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
-          Log.Log.WriteFile("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
-          Log.Log.WriteFile("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("DigitalEverywhere DVB-S2 modulation set to:{0}", channel.ModulationType);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("DigitalEverywhere Pilot set to:{0}", channel.Pilot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("DigitalEverywhere RollOff set to:{0}", channel.Rolloff);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("DigitalEverywhere fec set to:{0}", (int)channel.InnerFecRate);
           return channel;
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return channel;
     }
@@ -1030,19 +1031,19 @@ namespace TvLibrary.Implementations.DVB
         {
           if (_isgenericatsc != null)
           {
-            Log.Log.Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Setting Generic ATSC modulation to {0}", channel.ModulationType);
             _isgenericatsc.SetXPATSCQam(channel);
           }
           if (_isvixsatsc != null)
           {
-            Log.Log.Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Setting ViXS ATSC BDA modulation to {0}", channel.ModulationType);
             _isvixsatsc.SetViXSQam(channel);
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return channel;
     }
@@ -1061,7 +1062,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return channel;
     }

@@ -180,7 +180,7 @@ namespace MediaPortal.Utils.Web
       }
       catch (ArgumentException) // ex)
       {
-        //_log.Error("Html Parser: Regex error: {0} {1}", regex, ex.ToString());
+        //_GlobalServiceProvider.Instance.Get<ILogger>().Error("Html Parser: Regex error: {0} {1}", regex, ex.ToString());
         return string.Empty;
       }
 

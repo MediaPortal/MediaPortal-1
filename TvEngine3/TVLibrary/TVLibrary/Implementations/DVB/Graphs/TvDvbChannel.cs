@@ -31,6 +31,7 @@ using TvLibrary.Implementations.Helper;
 using TvLibrary.Teletext;
 using System.Threading;
 using TvDatabase;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -184,7 +185,7 @@ namespace TvLibrary.Implementations.DVB
       _tsFilterInterface = (ITsFilter)tsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
 
-      Log.Log.WriteFile("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);
 
       _subChannelId = subChannelId;
       _conditionalAccess.AddSubChannel(_subChannelId, channel);
@@ -220,7 +221,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnBeforeTune()
     {
-      Log.Log.WriteFile("subch:{0} OnBeforeTune", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting && _subChannelIndex >= 0)
       {
         _tsFilterInterface.TimeShiftPause(_subChannelIndex, 1);
@@ -238,7 +239,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnAfterTune()
     {
-      Log.Log.WriteFile("subch:{0} OnAfterTune", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnAfterTune", _subChannelId);
       if (_conditionalAccess != null)
       {
         List<ushort> pids = new List<ushort>();
@@ -293,18 +294,18 @@ namespace TvLibrary.Implementations.DVB
             int timeoutPMT = _parameters.TimeOutPMT * 1000;
             if (alwaysUsePATLookup)
             {
-              Log.Log.Debug("WaitForPMT: Using new way for PMT grabbing via PAT");
-              Log.Log.Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Using new way for PMT grabbing via PAT");
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Waiting for SID {0}", channel.ServiceId);
             }
             else
             {
-              Log.Log.Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Waiting for PMT {0:X}", _pmtPid);
             }
 
             if (_eventPMT.WaitOne(timeoutPMT, true))
             {
               TimeSpan ts = DateTime.Now - dtNow;
-              Log.Log.Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Found PMT after {0} seconds.", ts.TotalSeconds);
               DateTime dtNowPMT2CAM = DateTime.Now;
               bool sendPmtToCamDone = false;
               try
@@ -328,7 +329,7 @@ namespace TvLibrary.Implementations.DVB
                           _mdplugs.SetChannel(_currentChannel, _channelInfo, false);
                         }
                       }
-                      Log.Log.Info("subch:{0} stop tif", _subChannelId);
+                      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} stop tif", _subChannelId);
                       if (_filterTIF != null)
                       {
                         _filterTIF.Stop();
@@ -337,26 +338,26 @@ namespace TvLibrary.Implementations.DVB
                   }
                   else
                   {
-                    Log.Log.Debug("WaitForPMT: waiting for SendPmtToCam {0} ms.", ts.TotalMilliseconds);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: waiting for SendPmtToCam {0} ms.", ts.TotalMilliseconds);
                     Thread.Sleep(waitInterval);
                   }
                 }
               }
               catch (Exception ex)
               {
-                Log.Log.WriteFile("subch:{0}", ex.Message);
-                Log.Log.WriteFile("subch:{0}", ex.Source);
-                Log.Log.WriteFile("subch::{0}", ex.StackTrace);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}", ex.Message);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}", ex.Source);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch::{0}", ex.StackTrace);
               }
               TimeSpan tsPMT2CAM = DateTime.Now - dtNowPMT2CAM;
               _listenCA = false;
               if (!sendPmtToCamDone)
               {
-                Log.Log.Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Timed out sending PMT to CAM {0} seconds.", tsPMT2CAM.TotalSeconds);
               }
               else
               {
-                Log.Log.Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPmt: PMT handling took {0} seconds.", tsPMT2CAM.TotalSeconds);
               }
               // PMT was found so exit here
               foundPMT = true;
@@ -366,9 +367,9 @@ namespace TvLibrary.Implementations.DVB
             {
               // Timeout waiting for PMT
               TimeSpan ts = DateTime.Now - dtNow;
-              Log.Log.Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("WaitForPMT: Timed out waiting for PMT after {0} seconds. Increase the PMT timeout value?",
                             ts.TotalSeconds);
-              Log.Log.Debug("Setting to 0 to search for new PMT.");
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Setting to 0 to search for new PMT.");
               lookForPid = 0;
             }
           }
@@ -402,10 +403,10 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (Exception e)
         {
-          Log.Log.Error("GraphRunning error : {0}", e.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("GraphRunning error : {0}", e.Message);
         }
       }
-      //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
       return graphRunning;
     }
 
@@ -417,11 +418,11 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStart()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStart", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnGraphStart", _subChannelId);
 
       if (GraphRunning())
       {
-        Log.Log.WriteFile("subch:{0} Graph already running - WaitForPMT", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} Graph already running - WaitForPMT", _subChannelId);
 
         bool foundPMT = WaitForPMT();
         if (!foundPMT)
@@ -448,13 +449,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStarted()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStarted", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnGraphStarted", _subChannelId);
       if (!GraphRunning())
       {
         _pmtPid = -1;
         _pmtVersion = -1;
 
-        Log.Log.WriteFile("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} Graph not started - skip WaitForPMT", _subChannelId);
       }
       else
       {
@@ -472,7 +473,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStop()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStop", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnGraphStop", _subChannelId);
       _pmtPid = -1;
       _dateTimeShiftStarted = DateTime.MinValue;
       _dateRecordingStarted = DateTime.MinValue;
@@ -502,7 +503,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void OnGraphStopped()
     {
-      Log.Log.WriteFile("subch:{0} OnGraphStopped", _subChannelId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnGraphStopped", _subChannelId);
       _graphState = GraphState.Created;
     }
 
@@ -516,32 +517,32 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="fileName">filename to which to recording should be saved</param>
     protected override void OnStartRecording(string fileName)
     {
-      Log.Log.WriteFile("subch:{0} StartRecord({1})", _subChannelId, fileName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} StartRecord({1})", _subChannelId, fileName);
       if (_tsFilterInterface != null)
       {
         int hr = _tsFilterInterface.RecordSetRecordingFileNameW(_subChannelIndex, fileName);
         if (hr != 0)
         {
-          Log.Log.Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("subch:{0} SetRecordingFileName failed:{1:X}", _subChannelId, hr);
         }
         //if (_channelInfo.pids.Count == 0)
         if (!PMTreceived)
         {
-          Log.Log.WriteFile("subch:{0} StartRecord no pmt received yet", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} StartRecord no pmt received yet", _subChannelId);
           _startRecording = true;
         }
         else
         {
-          Log.Log.WriteFile("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}-{1} tswriter StartRecording...", _subChannelId, _subChannelIndex);
           SetRecorderPids();
 
-          Log.Log.WriteFile("Set video / audio observer");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set video / audio observer");
           _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
 
           hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
-            Log.Log.Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("subch:{0} tswriter StartRecord failed:{1:X}", _subChannelId, hr);
           }
         }
       }
@@ -553,19 +554,19 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("tvdvbchannel.OnStopRecording subch={0}, subch index={1}", _subChannelId, _subChannelIndex);
       if (IsRecording)
       {
         if (_tsFilterInterface != null)
         {
-          Log.Log.WriteFile("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId,
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvdvbchannel.OnStopRecording subch:{0}-{1} tswriter StopRecording...", _subChannelId,
                             _subChannelIndex);
           _tsFilterInterface.RecordStopRecord(_subChannelIndex);
         }
       }
       else
       {
-        Log.Log.WriteFile("tvdvbchannel.OnStopRecording - not recording");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("tvdvbchannel.OnStopRecording - not recording");
       }
     }
 
@@ -578,16 +579,16 @@ namespace TvLibrary.Implementations.DVB
       //if (_channelInfo.pids.Count == 0)
       if (!PMTreceived)
       {
-        Log.Log.WriteFile("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SetTimeShiftFileName no pmt received. Timeshifting failed", _subChannelId);
         return false;
       }
 
       _timeshiftFileName = fileName;
-      Log.Log.WriteFile("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SetTimeShiftFileName:{1}", _subChannelId, fileName);
       //int hr;
       if (_tsFilterInterface != null)
       {
-        Log.Log.WriteFile("Set video / audio observer");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Set video / audio observer");
         _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
         _tsFilterInterface.TimeShiftSetParams(_subChannelIndex, _parameters.MinimumFiles, _parameters.MaximumFiles,
                                               _parameters.MaximumFileSize);
@@ -595,17 +596,17 @@ namespace TvLibrary.Implementations.DVB
 
         if (CurrentChannel == null)
         {
-          Log.Log.Error("CurrentChannel is null when trying to start timeshifting");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("CurrentChannel is null when trying to start timeshifting");
           return false;
         }
 
         //  Set the channel type (0=tv, 1=radio)
         _tsFilterInterface.TimeShiftSetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
 
-        Log.Log.WriteFile("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SetTimeShiftFileName fill in pids", _subChannelId);
         _startTimeShifting = false;
         SetTimeShiftPids();
-        Log.Log.WriteFile("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}-{1} tswriter StartTimeshifting...", _subChannelId, _subChannelIndex);
         _tsFilterInterface.TimeShiftStart(_subChannelIndex);
 
         _graphState = GraphState.TimeShifting;
@@ -621,7 +622,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (IsTimeShifting)
       {
-        Log.Log.WriteFile("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}-{1} tswriter StopTimeshifting...", _subChannelId, _subChannelIndex);
         if (_tsFilterInterface != null)
         {
           _tsFilterInterface.TimeShiftStop(_subChannelIndex);
@@ -811,19 +812,19 @@ namespace TvLibrary.Implementations.DVB
 
         if (teletextPid == -1)
         {
-          Log.Log.Info("subch: stop grabbing teletext");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("subch: stop grabbing teletext");
           _tsFilterInterface.TTxStop(_subChannelIndex);
           _grabTeletext = false;
           return;
         }
-        Log.Log.Info("subch: start grabbing teletext");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch: start grabbing teletext");
         _tsFilterInterface.TTxSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, teletextPid);
         _tsFilterInterface.TTxStart(_subChannelIndex);
       }
       else
       {
-        Log.Log.Info("subch: stop grabbing teletext");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch: stop grabbing teletext");
         _tsFilterInterface.TTxStop(_subChannelIndex);
       }
     }
@@ -859,7 +860,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="serviceId">The service id.</param>
     protected bool SetupPmtGrabber(int pmtPid, int serviceId)
     {
-      Log.Log.Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SetupPmtGrabber:pid {1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
 
       // reset event before starting to wait
       _eventPMT.Reset();
@@ -874,12 +875,12 @@ namespace TvLibrary.Implementations.DVB
       if (_conditionalAccess != null)
         _conditionalAccess.OnRunGraph(serviceId);
 
-      Log.Log.Write("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} set pmt grabber pmt:{1:X} sid:{2:X}", _subChannelId, pmtPid, serviceId);
       _tsFilterInterface.PmtSetCallBack(_subChannelIndex, this);
       _tsFilterInterface.PmtSetPmtPid(_subChannelIndex, pmtPid, serviceId);
       if (_mdplugs != null)
       {
-        Log.Log.Write("subch:{0} set ca grabber ", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} set ca grabber ", _subChannelId);
         _listenCA = true;
         _tsFilterInterface.CaSetCallBack(_subChannelIndex, this);
         _tsFilterInterface.CaReset(_subChannelIndex);
@@ -899,7 +900,7 @@ namespace TvLibrary.Implementations.DVB
         return;
       try
       {
-        Log.Log.WriteFile("subch:{0} SetMpegPidMapping", _subChannelId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SetMpegPidMapping", _subChannelId);
 
         List<ushort> hwPids = new List<ushort>();
         hwPids.Add(0x0); //PAT
@@ -908,8 +909,8 @@ namespace TvLibrary.Implementations.DVB
         hwPids.Add(0x11); //SDT
         hwPids.Add(0x12); //EPG
 
-        Log.Log.WriteFile("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcrPid);
-        Log.Log.WriteFile("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}  pid:{1:X} pcr", _subChannelId, info.pcrPid);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}  pid:{1:X} pmt", _subChannelId, info.network_pmt_PID);
 
         if (info.network_pmt_PID >= 0 && info.serviceID >= 0)
         {
@@ -920,12 +921,12 @@ namespace TvLibrary.Implementations.DVB
         {
           foreach (PidInfo pidInfo in info.pids)
           {
-            Log.Log.WriteFile("subch:{0}  {1}", _subChannelId, pidInfo.ToString());
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}  {1}", _subChannelId, pidInfo.ToString());
             if (pidInfo.pid == 0 || pidInfo.pid > 0x1fff)
               continue;
             if (pidInfo.isTeletext)
             {
-              Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}    map {1}", _subChannelId, pidInfo);
               if (GrabTeletext)
               {
                 _tsFilterInterface.TTxSetTeletextPid(_subChannelIndex, pidInfo.pid);
@@ -956,7 +957,7 @@ namespace TvLibrary.Implementations.DVB
 
               if (_currentAudioStream.Pid == pidInfo.pid)
               {
-                Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}    map {1}", _subChannelId, pidInfo);
                 _tsFilterInterface.AnalyzerSetAudioPid(_subChannelIndex, pidInfo.pid);
               }
               hwPids.Add((ushort)pidInfo.pid);
@@ -964,7 +965,7 @@ namespace TvLibrary.Implementations.DVB
 
             if (pidInfo.isVideo)
             {
-              Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
               _tsFilterInterface.AnalyzerSetVideoPid(_subChannelIndex, pidInfo.pid);
               if (info.pcrPid > 0 && info.pcrPid != pidInfo.pid)
@@ -975,7 +976,7 @@ namespace TvLibrary.Implementations.DVB
 
             if (pidInfo.isDVBSubtitle)
             {
-              Log.Log.WriteFile("subch:{0}    map {1}", _subChannelId, pidInfo);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0}    map {1}", _subChannelId, pidInfo);
               hwPids.Add((ushort)pidInfo.pid);
             }
           }
@@ -1004,7 +1005,7 @@ namespace TvLibrary.Implementations.DVB
               hwPids.Add((ushort)emmValue.Pid);
             }
           }
-          Log.Log.WriteFile("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Number of HWPIDS that needs to be sent to tuner :{0} ", hwPids.Count);
         }
 
         if (_conditionalAccess != null && info.network_pmt_PID >= 0 && info.serviceID >= 0)
@@ -1018,7 +1019,7 @@ namespace TvLibrary.Implementations.DVB
           _tsFilterInterface.TimeShiftReset(_subChannelIndex);
           SetTimeShiftPids();
 
-          Log.Log.WriteFile("Set video / audio observer");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set video / audio observer");
           _tsFilterInterface.SetVideoAudioObserver(_subChannelIndex, this);
 
           _tsFilterInterface.TimeShiftStart(_subChannelIndex);
@@ -1030,13 +1031,13 @@ namespace TvLibrary.Implementations.DVB
           _startRecording = false;
           SetRecorderPids();
 
-          Log.Log.WriteFile("Set video / audio observer");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set video / audio observer");
           _tsFilterInterface.RecorderSetVideoAudioObserver(_subChannelIndex, this);
 
           int hr = _tsFilterInterface.RecordStartRecord(_subChannelIndex);
           if (hr != 0)
           {
-            Log.Log.Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("subch:[0} StartRecord failed:{1:X}", _subChannelId, hr);
           }
 
           _graphState = GraphState.Recording;
@@ -1055,7 +1056,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -1064,7 +1065,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected virtual void SetTimeShiftPids()
     {
-      //Log.Log.WriteFile("SetTimeShiftPids new DLL");
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("SetTimeShiftPids new DLL");
       if (_channelInfo == null)
         return;
       if (_channelInfo.pids.Count == 0)
@@ -1086,7 +1087,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception e)
       {
-        Log.Log.Error("could not set TimeShiftSetPmtPid {0}", e.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("could not set TimeShiftSetPmtPid {0}", e.Message);
       }
     }
 
@@ -1095,7 +1096,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void SetRecorderPids()
     {
-      Log.Log.WriteFile("SetRecorderPids");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("SetRecorderPids");
       if (_channelInfo == null)
         return;
       if (_channelInfo.pids.Count == 0)
@@ -1132,18 +1133,18 @@ namespace TvLibrary.Implementations.DVB
             {
               DateTime dtNow = DateTime.Now;
               foundCA = false;
-              //Log.Log.Info("subch:{0} listen for CA", _listenCA);
+              //GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} listen for CA", _listenCA);
               if (!_eventCA.WaitOne(10000, true)) //wait 10 sec for CA to arrive.
               {
                 TimeSpan ts = DateTime.Now - dtNow;
-                Log.Log.Info("subch:{0} SendPmt:no CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPmt:no CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
                 return false;
               }
               else
               {
                 foundCA = true;
                 TimeSpan ts = DateTime.Now - dtNow;
-                Log.Log.Info("subch:{0} SendPmt:CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPmt:CA found after {1} seconds", _subChannelId, ts.TotalSeconds);
               }
             }
           }
@@ -1151,7 +1152,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (channel == null)
         {
-          Log.Log.Info("subch:{0} SendPmt:no channel set", _subChannelId);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPmt:no channel set", _subChannelId);
           return true;
         }
         IntPtr pmtMem = Marshal.AllocCoTaskMem(4096); // max. size for pmt
@@ -1165,7 +1166,7 @@ namespace TvLibrary.Implementations.DVB
             Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
             int version = ((_pmtData[5] >> 1) & 0x1F);
             int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
-            Log.Log.Info("subch:{0} SendPmt:{1:X} {2:X} {3:X} {4:X}", _subChannelId, pmtProgramNumber, channel.ServiceId,
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPmt:{1:X} {2:X} {3:X} {4:X}", _subChannelId, pmtProgramNumber, channel.ServiceId,
                          _pmtVersion, version);
             if (pmtProgramNumber == channel.ServiceId)
             {
@@ -1183,7 +1184,7 @@ namespace TvLibrary.Implementations.DVB
               if (_channelInfo.scrambled == channel.FreeToAir)
               {
                 channel.FreeToAir = !_channelInfo.scrambled;
-                Log.Log.Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.",
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPMT: Channel FTA information changed to {1} according to CAIDs in PMT.",
                              _subChannelId, channel.FreeToAir);
               }
               if ((_mdplugs != null) && (foundCA))
@@ -1200,7 +1201,7 @@ namespace TvLibrary.Implementations.DVB
                 }
                 catch (Exception ex)
                 {
-                  Log.Log.Write(ex);
+                  GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
                 }
               }
 
@@ -1208,15 +1209,15 @@ namespace TvLibrary.Implementations.DVB
 
               if (_conditionalAccess == null)
               {
-                Log.Log.Info("subch:{0} SendPMT: No cam in use, nothing to do.", _subChannelId);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPMT: No cam in use, nothing to do.", _subChannelId);
                 return true;
               }
               if (channel.FreeToAir)
               {
-                Log.Log.Info("subch:{0} SendPMT: Channel is FTA, nothing to do.", _subChannelId);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPMT: Channel is FTA, nothing to do.", _subChannelId);
                 return true;
               }
-              Log.Log.WriteFile("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPMT version:{1} len:{2} {3}", _subChannelId, version, _pmtLength,
                                 _channelInfo.caPMT.ProgramNumber);
 
               int audioPid = -1;
@@ -1228,13 +1229,13 @@ namespace TvLibrary.Implementations.DVB
               if (_conditionalAccess.SendPMT(_subChannelId, channel, _pmtData, _pmtLength,
                                              audioPid))
               {
-                Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());
                 return true;
               }
               else
               {
                 //cam is not ready yet
-                Log.Log.WriteFile("subch:{0} SendPmt failed cam flags:{1}", _subChannelId,
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} SendPmt failed cam flags:{1}", _subChannelId,
                                   _conditionalAccess.IsCamReady());
                 _pmtVersion = -1;
                 waitInterval = 3000;
@@ -1245,7 +1246,7 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (Exception ex)
         {
-          Log.Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         }
         finally
         {
@@ -1317,7 +1318,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_eventCA != null && _listenCA)
       {
-        Log.Log.WriteFile("subch:OnCaReceived()");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:OnCaReceived()");
         _eventCA.Set();
       }
       return 0;
@@ -1335,7 +1336,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_eventPMT != null)
       {
-        Log.Log.WriteFile("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} OnPMTReceived() pmt:{3:X} ran:{1} dynamic:{2}", _subChannelId, GraphRunning(),
                           !_pmtRequested, pmtPid);
         _eventPMT.Set();
         // PMT callback is done on each new PMT version
@@ -1360,7 +1361,7 @@ namespace TvLibrary.Implementations.DVB
           }
           else
           {
-            Log.Log.Debug("Failed SendPmtToCam in callback handler");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Failed SendPmtToCam in callback handler");
           }
         }
       }
@@ -1384,16 +1385,16 @@ namespace TvLibrary.Implementations.DVB
           {
             currentDetail.PmtPid = pmtPid;
             currentDetail.Persist();
-            Log.Log.Debug("Updated PMT Pid to {0:X}!", pmtPid);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Updated PMT Pid to {0:X}!", pmtPid);
           }
           catch (Exception e)
           {
-            Log.Log.Error("PMT {0:X} could not be persisted to DB!", pmtPid, e);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("PMT {0:X} could not be persisted to DB!", pmtPid, e);
           }
         }
         else
         {
-          Log.Log.Debug("PMT {0:X} could not be persisted to DB, no tuningdetails found!", pmtPid);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("PMT {0:X} could not be persisted to DB, no tuningdetails found!", pmtPid);
         }
       }
     }

@@ -25,7 +25,7 @@ using System.Threading;
 using Microsoft.Win32;
 using TvDatabase;
 using TvControl;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace SetupTv
 {
@@ -78,7 +78,7 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          Log.Error(
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(
             "ServiceHelper: Check whether the tvservice is running failed. Please check your installation. \nError: {0}",
             ex.ToString());
           return false;
@@ -120,8 +120,8 @@ namespace SetupTv
       }
       catch (Exception ex) // either we have no right, or the event does not exist
       {
-        Log.Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to wait for {0}", RemoteControl.InitializedEventName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       // Fall back: try to call a method on the server (for earlier versions of TvService)
       DateTime expires = millisecondsTimeout == -1
@@ -140,15 +140,15 @@ namespace SetupTv
         }
         catch (System.Runtime.Remoting.RemotingException)
         {
-          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ServiceHelper: Waiting for tvserver to initialize. (remoting not initialized)");
         }
         catch (System.Net.Sockets.SocketException)
         {
-          Log.Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ServiceHelper: Waiting for tvserver to initialize. (socket not initialized)");
         }
         catch (Exception ex)
         {
-          Log.Error(
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(
             "ServiceHelper: Could not check whether the tvservice is running. Please check your network as well. \nError: {0}",
             ex.ToString());
           break;
@@ -174,7 +174,7 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          Log.Error(
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(
             "ServiceHelper: Check whether the tvservice is stopped failed. Please check your installation. \nError: {0}",
             ex.ToString());
           return false;
@@ -210,7 +210,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Error(
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(
           "ServiceHelper: Stopping tvservice failed. Please check your installation. \nError: {0}",
           ex.ToString());
         return false;
@@ -250,7 +250,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Error(
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(
           "ServiceHelper: Starting {0} failed. Please check your installation. \nError: {1}",
           aServiceName, ex.ToString());
         return false;
@@ -348,7 +348,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        Log.Error("ServiceHelper: Failed to access registry {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ServiceHelper: Failed to access registry {0}", ex.Message);
         return false;
       }
     }

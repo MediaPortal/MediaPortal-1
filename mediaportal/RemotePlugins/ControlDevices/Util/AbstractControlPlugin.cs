@@ -18,6 +18,7 @@
 
 #endregion
 
+using MediaPortal.CoreServices;
 using MediaPortal.Services;
 
 namespace MediaPortal.ControlDevices
@@ -27,12 +28,12 @@ namespace MediaPortal.ControlDevices
     private string _libraryName = string.Empty;
     protected IControlSettings _settings;
     protected string _dllPath = string.Empty;
-    protected ILog _log;
+    protected ILogger _log;
 
     public AbstractControlPlugin()
     {
       ServiceProvider services = GlobalServiceProvider.Instance;
-      _log = services.Get<ILog>();
+      _log = services.Get<ILogger>();
     }
 
     public string LibraryName

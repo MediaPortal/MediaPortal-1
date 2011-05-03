@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Xml.Serialization;
+using MediaPortal.CoreServices;
 using MediaPortal.Localisation.LanguageStrings;
 using MediaPortal.Services;
 using MediaPortal.Profile;
@@ -354,7 +355,7 @@ namespace MediaPortal.Localisation
     private void LoadStrings(string directory, string language, bool log, bool loadRTL)
     {
       string filename = "strings_" + language + ".xml";
-      GlobalServiceProvider.Get<ILog>().Info("    Loading strings file: {0}", filename);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("    Loading strings file: {0}", filename);
 
       string path = Path.Combine(directory, filename);
       if (File.Exists(path))
@@ -401,7 +402,7 @@ namespace MediaPortal.Localisation
               useChineseHackNum = 1536;
           }
         }
-        GlobalServiceProvider.Get<ILog>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("    ExtendedChars = {0}:{0}, StringChars = {1}", useChineseHack,
                                                 useChineseHackNum, strings.characters);
 
         if (loadRTL)
@@ -430,7 +431,7 @@ namespace MediaPortal.Localisation
               newSection.Add(languageString.id, languageString);
               if (log)
               {
-                GlobalServiceProvider.Get<ILog>().Info("    String not found, using English: {0}",
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("    String not found, using English: {0}",
                                                        languageString.ToString());
               }
             }

@@ -34,7 +34,7 @@ using SetupTv.Sections.WebEPGConfig;
 using TvDatabase;
 using TvEngine.PowerScheduler;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
 
 namespace SetupTv.Sections
@@ -197,7 +197,7 @@ namespace SetupTv.Sections
         _configFile.RadioChannels.Add(channel);
       }
 
-      Log.Info("WebEPG Config: Button: Save");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Button: Save");
       string confFile = _configFileDir + "\\WebEPG.xml";
       FileInfo config = new FileInfo(confFile);
       if (config.Exists)
@@ -345,14 +345,14 @@ namespace SetupTv.Sections
 
     private void LoadConfig()
     {
-      Log.Info("WebEPG Config: Loading Channels");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Loading Channels");
       hChannelConfigInfo = new Hashtable();
       TvMappings.HChannelConfigInfo = hChannelConfigInfo;
       RadioMappings.HChannelConfigInfo = hChannelConfigInfo;
 
       if (File.Exists(_webepgFilesDir + "\\channels\\channels.xml"))
       {
-        Log.Info("WebEPG Config: Loading Existing channels.xml");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Loading Existing channels.xml");
         Xml xmlreader = new Xml(_webepgFilesDir + "\\channels\\channels.xml");
         int channelCount = xmlreader.GetValueAsInt("ChannelInfo", "TotalChannels", 0);
 
@@ -365,7 +365,7 @@ namespace SetupTv.Sections
         }
       }
 
-      Log.Info("WebEPG Config: Loading Grabbers");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Loading Grabbers");
       hGrabberConfigInfo = new Hashtable();
       CountryList = new SortedList();
       tGrabbers = new TreeNode("Web Sites");
@@ -375,7 +375,7 @@ namespace SetupTv.Sections
       }
       else
       {
-        Log.Info("WebEPG Config: Cannot find grabbers directory");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Cannot find grabbers directory");
       }
 
       IDictionaryEnumerator Enumerator = hChannelConfigInfo.GetEnumerator();
@@ -407,7 +407,7 @@ namespace SetupTv.Sections
     {
       if (File.Exists(_configFileDir + "\\WebEPG.xml"))
       {
-        Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Loading Existing WebEPG.xml");
 
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
         TextReader r = null;
@@ -423,7 +423,7 @@ namespace SetupTv.Sections
           {
             r.Close();
           }
-          Log.Error("WebEPG: Error loading config {0}: {1}", _configFileDir + "\\WebEPG.xml",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG: Error loading config {0}: {1}", _configFileDir + "\\WebEPG.xml",
                     ex.Message);
           LoadOldConfigFile();
         }
@@ -466,7 +466,7 @@ namespace SetupTv.Sections
 
     private void LoadOldConfigFile()
     {
-      Log.Info("Trying to load old config file format");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Trying to load old config file format");
 
       _configFile = new WebepgConfigFile();
 
@@ -549,7 +549,7 @@ namespace SetupTv.Sections
     private void GetGrabbers(ref TreeNode Main, string Location)
     {
       DirectoryInfo dir = new DirectoryInfo(Location);
-      Log.Debug("WebEPG Config: Directory: {0}", Location);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPG Config: Directory: {0}", Location);
       GrabberConfigInfo gInfo;
       foreach (FileInfo file in dir.GetFiles("*.xml"))
       {
@@ -558,7 +558,7 @@ namespace SetupTv.Sections
         GrabberConfigFile grabberXml;
         try
         {
-          Log.Debug("WebEPG Config: File: {0}", file.Name);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPG Config: File: {0}", file.Name);
 
           XmlSerializer s = new XmlSerializer(typeof (GrabberConfigFile));
           TextReader r = new StreamReader(file.FullName);
@@ -566,7 +566,7 @@ namespace SetupTv.Sections
         }
         catch (Exception)
         {
-          Log.Info("WebEPG Config: File open failed - XML error");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: File open failed - XML error");
           return;
         }
 

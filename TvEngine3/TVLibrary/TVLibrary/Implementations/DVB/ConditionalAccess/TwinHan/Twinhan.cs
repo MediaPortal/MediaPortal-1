@@ -26,6 +26,7 @@ using TvLibrary.Channels;
 using System.Text;
 using TvLibrary.Interfaces;
 using System.Threading;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -281,7 +282,7 @@ namespace TvLibrary.Implementations.DVB
         if (_isTwinHanCard)
         {
           _camPresent = IsCamPresent();
-          Log.Log.WriteFile("Twinhan:  CAM detected:{0}", _camPresent);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  CAM detected:{0}", _camPresent);
         }
       }
       _initialized = true;
@@ -304,7 +305,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (IsCamPresent())
           {
-            Log.Log.WriteFile("Twinhan:  CAM inserted");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  CAM inserted");
           }
         }
         return result;
@@ -341,16 +342,16 @@ namespace TvLibrary.Implementations.DVB
           {
             CIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 0);
             MMIState = (uint)Marshal.ReadInt32(_ptrOutBuffer, 4);
-            if (!SilentMode) Log.Log.WriteFile("Twinhan:  CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
+            if (!SilentMode) GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  CI State:{0:X} MMI State:{1:X}", CIState, MMIState);
           }
           else
           {
-            Log.Log.WriteFile("Twinhan:  unable to get CI State hr:{0:X}", hr);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  unable to get CI State hr:{0:X}", hr);
           }
         }
         finally
         {
-          if (!SilentMode) Log.Log.WriteFile("Twinhan: CI status read");
+          if (!SilentMode) GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan: CI status read");
         }
       }
     }
@@ -394,7 +395,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_initialized)
         return _isTwinHanCard;
-      //Log.Log.WriteFile("Twinhan:  Check for twinhan driver");
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  Check for twinhan driver");
       bool success = false;
       try
       {
@@ -410,7 +411,7 @@ namespace TvLibrary.Implementations.DVB
       }
       finally
       {
-        Log.Log.WriteFile("Twinhan: CI detection finished");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan: CI detection finished");
       }
       return success;
     }
@@ -436,9 +437,9 @@ namespace TvLibrary.Implementations.DVB
         int back = Marshal.ReadInt32(_ptrDwBytesReturned);
         if (hr != 0)
         {
-          Log.Log.WriteFile("Twinhan:  GetPmtReply() failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  GetPmtReply() failed 0x{0:X}", hr);
         }
-        Log.Log.WriteFile("Twinhan:  GetPmtReply() returned {0} bytes", back);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  GetPmtReply() returned {0} bytes", back);
         DVB_MMI.DumpBinary(_ptrPmt, 0, back);
         //Release.ComObject(propertySet);
       }
@@ -455,11 +456,11 @@ namespace TvLibrary.Implementations.DVB
     {
       if (IsCamPresent() == false)
         return true; // Nothing to do
-      Log.Log.WriteFile("Twinhan: Send PMT, len: {0}", caPMTLen);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan: Send PMT, len: {0}", caPMTLen);
       if (caPMT.Length == 0)
         return false;
 
-      Log.Log.WriteFile(" capmt:");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(" capmt:");
       DVB_MMI.DumpBinary(caPMT, 0, caPMTLen);
 
 
@@ -476,17 +477,17 @@ namespace TvLibrary.Implementations.DVB
           if (hr != 0)
           {
             failedAttempts++;
-            Log.Log.WriteFile("Twinhan:  CAM failed 0x{0:X}", hr);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  CAM failed 0x{0:X}", hr);
             if (((uint)hr) == (0x8007001F) && failedAttempts < 10)
             {
-              Log.Log.Debug(" sleep and then retry again, failedAttempts: {0}", failedAttempts);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug(" sleep and then retry again, failedAttempts: {0}", failedAttempts);
               System.Threading.Thread.Sleep(100);
               continue;
             }
           }
           else
           {
-            Log.Log.WriteFile("Twinhan:  CAM returned ok 0x{0:X}", hr);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  CAM returned ok 0x{0:X}", hr);
             suceeded = true;
           }
           break;
@@ -517,7 +518,7 @@ namespace TvLibrary.Implementations.DVB
     private void SetLnbData(bool lnbPower, int LNBLOFLowBand, int LNBLOFHighBand, int LNBLOFHiLoSW, int turnon22Khz,
                             int disEqcPort)
     {
-      Log.Log.WriteFile("Twinhan:  SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  SetLnb diseqc port:{0} 22khz:{1} low:{2} hi:{3} switch:{4} power:{5}", disEqcPort,
                         turnon22Khz, LNBLOFLowBand, LNBLOFHighBand, LNBLOFHiLoSW, lnbPower);
 
       const int disEqcLen = 20;
@@ -540,10 +541,10 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr != 0)
         {
-          Log.Log.WriteFile("Twinhan:  SetLNB failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  SetLNB failed 0x{0:X}", hr);
         }
         else
-          Log.Log.WriteFile("Twinhan:  SetLNB ok 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Twinhan:  SetLNB ok 0x{0:X}", hr);
         //Release.ComObject(propertySet);
       }
     }
@@ -599,11 +600,11 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr != 0)
         {
-          Log.Log.WriteFile("TwinHan DiSEqC failed 0x{1:X8}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TwinHan DiSEqC failed 0x{1:X8}", hr);
         }
         else
         {
-          Log.Log.WriteFile("TwinHan DiSEqC succeeded");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TwinHan DiSEqC succeeded");
           success = true;
         }
         //Release.ComObject(propertySet);
@@ -634,13 +635,13 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr != 0)
         {
-          Log.Log.WriteFile("TwinHan get DiSEqC failed 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TwinHan get DiSEqC failed 0x{0:X}", hr);
         }
         else
         {
-          Log.Log.WriteFile("TwinHan get DiSEqC ok 0x{0:X}", hr);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TwinHan get DiSEqC ok 0x{0:X}", hr);
         }
-        Log.Log.Write("ReadDiSEqCCommand");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("ReadDiSEqCCommand");
         DVB_MMI.DumpBinary(_ptrDiseqc, 0, 16);
 
         success = true;
@@ -675,7 +676,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (CiMenuThread == null)
       {
-        Log.Log.Debug("TwinHan: Starting new CI handler thread");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: Starting new CI handler thread");
         StopThread = false;
         CiMenuThread = new Thread(new ThreadStart(CiMenuHandler));
         CiMenuThread.Name = "TwinHan CiMenuHandler";
@@ -693,7 +694,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (ciMenuHandler != null)
       {
-        Log.Log.Debug("Twinhan: registering ci callbacks");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Twinhan: registering ci callbacks");
         m_ciMenuCallback = ciMenuHandler;
         StartCiHandlerThread();
         return true;
@@ -713,11 +714,11 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr == 0)
         {
-          Log.Log.Debug("TwinHan: enter CI menu successful");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: enter CI menu successful");
           return true;
         }
 
-        Log.Log.Debug("TwinHan: enter CI menu failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: enter CI menu failed 0x{0:X}", hr);
       }
       return false;
     }
@@ -734,11 +735,11 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr == 0)
         {
-          Log.Log.Debug("TwinHan: close CI menu successful");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: close CI menu successful");
           return true;
         }
 
-        Log.Log.Debug("TwinHan: close CI menu failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: close CI menu failed 0x{0:X}", hr);
       }
       return false;
     }
@@ -785,7 +786,7 @@ namespace TvLibrary.Implementations.DVB
     {
       Marshal.StructureToPtr(MMI, _ptrMMIBuffer, true);
       int sizeMMI = Marshal.SizeOf(MMI);
-      Log.Log.Debug("SendMMI: size {0}", sizeMMI);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("SendMMI: size {0}", sizeMMI);
       DVB_MMI.DumpBinary(_ptrMMIBuffer, 0, sizeMMI);
       InitStructure((int)THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _ptrMMIBuffer, sizeMMI);
       if (propertySet != null)
@@ -793,11 +794,11 @@ namespace TvLibrary.Implementations.DVB
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
         if (hr == 0)
         {
-          Log.Log.Debug("TwinHan: SendMMI successful");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: SendMMI successful");
           return true;
         }
 
-        Log.Log.Debug("TwinHan: SendMMI failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: SendMMI failed 0x{0:X}", hr);
       }
       return false;
     }
@@ -822,7 +823,7 @@ namespace TvLibrary.Implementations.DVB
         if (hr == 0)
         {
           bytesReturned = Marshal.ReadInt32(_ptrDwBytesReturned);
-          Log.Log.Debug("TwinHan: ReadMMI successful, bytes {0}", bytesReturned);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: ReadMMI successful, bytes {0}", bytesReturned);
           DVB_MMI.DumpBinary(_ptrMMIBuffer, 0, bytesReturned);
           try
           {
@@ -830,14 +831,14 @@ namespace TvLibrary.Implementations.DVB
           }
           catch (Exception e)
           {
-            Log.Log.Write(e);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
             return null;
           }
 
           return MMI;
         }
 
-        Log.Log.Debug("TwinHan: ReadMMI failed 0x{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: ReadMMI failed 0x{0:X}", hr);
       }
       return null;
     }
@@ -851,7 +852,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void CiMenuHandler()
     {
-      Log.Log.Debug("TwinHan: CI handler thread start polling status");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: CI handler thread start polling status");
       try
       {
         while (!StopThread)
@@ -865,16 +866,16 @@ namespace TvLibrary.Implementations.DVB
               MMIInfoStruct MMI = ReadMMI();
               if (MMI != null)
               {
-                Log.Log.Debug("TwinHan MMI:");
-                Log.Log.Debug("Type        :{0}", MMI.Type);
-                Log.Log.Debug("Header:      {0}", MMI.Header);
-                Log.Log.Debug("SubHeader:   {0}", MMI.SubHeader);
-                Log.Log.Debug("ButtomLine:  {0}", MMI.BottomLine);
-                Log.Log.Debug("ItemCount:   {0}", MMI.ItemCount);
-                Log.Log.Debug("EnqFlag:     {0}", MMI.EnqFlag);
-                Log.Log.Debug("Prompt:      {0}", MMI.Prompt);
-                Log.Log.Debug("AnswerLength:{0}", MMI.Answer_Text_Length);
-                Log.Log.Debug("Blind_Answer:{0}", MMI.Blind_Answer);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan MMI:");
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Type        :{0}", MMI.Type);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Header:      {0}", MMI.Header);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("SubHeader:   {0}", MMI.SubHeader);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("ButtomLine:  {0}", MMI.BottomLine);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("ItemCount:   {0}", MMI.ItemCount);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("EnqFlag:     {0}", MMI.EnqFlag);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Prompt:      {0}", MMI.Prompt);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("AnswerLength:{0}", MMI.Answer_Text_Length);
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Blind_Answer:{0}", MMI.Blind_Answer);
 
                 // which types do we get???
                 switch (MMI.Type)
@@ -906,7 +907,7 @@ namespace TvLibrary.Implementations.DVB
               }
               break;
             default:
-              Log.Log.Write("MMI State {0}", (CIState)MMIState);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("MMI State {0}", (CIState)MMIState);
               break;
           }
           Thread.Sleep(500);
@@ -915,7 +916,7 @@ namespace TvLibrary.Implementations.DVB
       catch (ThreadAbortException) {}
       catch (Exception ex)
       {
-        Log.Log.Debug("TwinHan: error in CiMenuHandler thread\r\n{0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TwinHan: error in CiMenuHandler thread\r\n{0}", ex.ToString());
         return;
       }
     }

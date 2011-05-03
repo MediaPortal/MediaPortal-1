@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using System.Threading;
 using TvDatabase;
 using TvControl;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
@@ -203,7 +203,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Error("Error saving tuningdetails: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error saving tuningdetails: {0}", ex.ToString());
         MessageBox.Show("Transponder list could not be saved, check error.log for details.");
       }
     }
@@ -223,7 +223,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error loading tuningdetails: {0}", ex.ToString());
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
       }
     }
@@ -625,7 +625,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       finally
       {

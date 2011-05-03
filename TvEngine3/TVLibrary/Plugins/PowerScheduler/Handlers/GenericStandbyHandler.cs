@@ -25,7 +25,7 @@ using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
-
+using MediaPortal.CoreServices;
 #endregion
 
 namespace TvEngine.PowerScheduler.Handlers

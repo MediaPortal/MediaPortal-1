@@ -25,7 +25,7 @@ using System.Data.SqlTypes;
 using TvLibrary.Channels;
 using TvLibrary.Epg;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvDatabase
 {
@@ -124,7 +124,7 @@ namespace TvDatabase
       {
         return;
       }
-      Log.Epg("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+      GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: {1} lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
 
       // Store the data in our database
       ImportPrograms(dbChannel, epgChannel.Programs);
@@ -142,7 +142,7 @@ namespace TvDatabase
       EpgHoleCollection holes = new EpgHoleCollection();
       if ((dbChannel.EpgHasGaps || _alwaysFillHoles) && !_alwaysReplace)
       {
-        Log.Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: {1} is marked to have epg gaps. Calculating them...", _grabberName, dbChannel.DisplayName);
         IList<Program> infos = _layer.GetPrograms(dbChannel, DateTime.Now);
         if (infos.Count > 1)
         {
@@ -157,7 +157,7 @@ namespace TvDatabase
             }
           }
         }
-        Log.Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: {1} Found {2} epg holes.", _grabberName, dbChannel.DisplayName, holes.Count);
       }
       DateTime dbLastProgram = _layer.GetNewestProgramForChannel(dbChannel.IdChannel);
       EpgProgram lastProgram = null;
@@ -187,7 +187,7 @@ namespace TvDatabase
           {
             continue;
           }
-          Log.Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName,
+          GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: Great we stuffed an epg hole {1}-{2} :-)", _grabberName,
                   epgProgram.StartTime.ToShortDateString() + " " + epgProgram.StartTime.ToShortTimeString(),
                   epgProgram.EndTime.ToShortDateString() + " " + epgProgram.EndTime.ToShortTimeString());
         }
@@ -203,7 +203,7 @@ namespace TvDatabase
               prog = epgs[0];
               if (epgs.Count > 1)
               {
-                Log.Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName,
+                GlobalServiceProvider.Instance.Get<ILogger>().Epg("- {0} entries are obsolete for {1} from {2} to {3}", epgs.Count - 1, dbChannel.DisplayName,
                         epgProgram.StartTime, epgProgram.EndTime);
               }
               for (int idx = 1; idx < epgs.Count; idx++)
@@ -211,19 +211,19 @@ namespace TvDatabase
                 try
                 {
                   epgs[idx].Delete();
-                  Log.Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
+                  GlobalServiceProvider.Instance.Get<ILogger>().Epg("- Deleted the epg entry {0} ({1} - {2})", epgs[idx].Title, epgs[idx].StartTime,
                           epgs[idx].EndTime);
                 }
                 catch (Exception ex)
                 {
-                  Log.Epg("Error during epg entry deletion: {0}", ex.Message);
+                  GlobalServiceProvider.Instance.Get<ILogger>().Epg("Error during epg entry deletion: {0}", ex.Message);
                 }
               }
             }
           }
           catch (Exception ex)
           {
-            Log.Epg("Error the existing epg entry check: {0}", ex.Message);
+            GlobalServiceProvider.Instance.Get<ILogger>().Epg("Error the existing epg entry check: {0}", ex.Message);
           }
         }
         AddProgramAndApplyTemplates(dbChannel, epgProgram, prog);
@@ -237,7 +237,7 @@ namespace TvDatabase
       //_layer.StartResetProgramStatesThread(System.Threading.ThreadPriority.Lowest);
 
 
-      Log.Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Epg("- Inserted {0} epg entries for channel {1}", iInserted, dbChannel.DisplayName);
     }
 
     #endregion
@@ -250,7 +250,7 @@ namespace TvDatabase
       //are there any epg infos for this channel?
       if (epgChannel.Programs.Count == 0)
       {
-        Log.Epg("{0}: no epg infos found for channel networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: no epg infos found for channel networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}",
                 _grabberName, dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
         return null;
       }
@@ -262,7 +262,7 @@ namespace TvDatabase
 
       if (dbChannel == null)
       {
-        Log.Epg("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
+        GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: no channel found for networkid:0x{1:X} transportid:0x{2:X} serviceid:0x{3:X}", _grabberName,
                 dvbChannel.NetworkId, dvbChannel.TransportId, dvbChannel.ServiceId);
         /*foreach (EpgProgram ei in epgChannel.Programs)
         {
@@ -271,7 +271,7 @@ namespace TvDatabase
           {
             title = ei.Text[0].Title;
           }
-          Log.Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
+          GlobalServiceProvider.Instance.Get<ILogger>().Epg("                   -> {0}-{1}  {2}", ei.StartTime, ei.EndTime, title);
         }*/
         return null;
       }
@@ -280,7 +280,7 @@ namespace TvDatabase
       {
         if (!dbChannel.GrabEpg)
         {
-          Log.Epg("{0}: channel {1} is not configured to grab epg.", _grabberName, dbChannel.DisplayName);
+          GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: channel {1} is not configured to grab epg.", _grabberName, dbChannel.DisplayName);
           return null;
         }
       }
@@ -290,7 +290,7 @@ namespace TvDatabase
         TimeSpan ts = DateTime.Now - dbChannel.LastGrabTime;
         if (ts.TotalMinutes < _epgReGrabAfter)
         {
-          Log.Epg("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
+          GlobalServiceProvider.Instance.Get<ILogger>().Epg("{0}: {1} not needed lastUpdate:{2}", _grabberName, dbChannel.DisplayName, dbChannel.LastGrabTime);
           return null;
         }
       }

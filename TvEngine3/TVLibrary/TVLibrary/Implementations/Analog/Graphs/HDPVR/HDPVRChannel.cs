@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using DirectShowLib;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Helper;
 using TvLibrary.Interfaces.Analyzer;
@@ -175,7 +176,7 @@ namespace TvLibrary.Implementations.Analog
         Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
         int version = ((_pmtData[5] >> 1) & 0x1F);
         int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
-        Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
         if (pmtProgramNumber != SERVICE_ID)
         {
           throw new TvException("HDPVRChannel.WaitForPMT: PMT program doesn't match HDPVR service ID");
@@ -216,7 +217,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     public override int OnPMTReceived(int pmtPid)
     {
-      Log.Log.WriteFile("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
       if (_eventPMT != null)
       {
         _eventPMT.Set();

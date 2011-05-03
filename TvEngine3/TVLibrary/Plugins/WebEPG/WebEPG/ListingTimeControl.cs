@@ -260,7 +260,7 @@ namespace MediaPortal.WebEPG
         guideStartTime = guideStartTime.AddDays(_addDays);
       }
 
-      //Log.Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPG: Guide, Program Debug: [{0} {1}]", _GrabDay, _bNextDay);
 
       guideData.StartTime = guideStartTime;
       guideData.EndTime = guideEndTime;

@@ -23,6 +23,7 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.IO;
 using System.Drawing;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Teletext
 {
@@ -377,7 +378,7 @@ namespace TvLibrary.Teletext
 
       Assembly assm = Assembly.GetExecutingAssembly();
       //for (int x = 0; x < names.Length; x++)
-      //  Log.Write("res:{0}", names[x]);
+      //  GlobalServiceProvider.Instance.Get<ILogger>().Debug("res:{0}", names[x]);
 
       Stream stream = assm.GetManifestResourceStream("TVCapture.teletext.LogoPage");
       if (stream != null)
@@ -437,7 +438,7 @@ namespace TvLibrary.Teletext
       }
       catch (Exception ex)
       {
-        Log.Log.WriteFile("Error while saving teletext data: ", ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while saving teletext data: ", ex);
       }
     }
 

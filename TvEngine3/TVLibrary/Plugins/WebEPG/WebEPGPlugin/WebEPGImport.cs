@@ -27,7 +27,7 @@ using System.IO;
 using SetupTv;
 using TvControl;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using MediaPortal.WebEPG;
@@ -107,7 +107,7 @@ namespace TvEngine
     /// </summary>
     public void Start(IController controller)
     {
-      Log.WriteFile("plugin: webepg started");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: webepg started");
 
       //CheckNewTVGuide();
       _scheduleTimer = new System.Timers.Timer();
@@ -121,7 +121,7 @@ namespace TvEngine
     /// </summary>
     public void Stop()
     {
-      Log.WriteFile("plugin: webepg stopped");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: webepg stopped");
       UnregisterWakeupHandler();
       if (_scheduleTimer != null)
       {
@@ -201,8 +201,8 @@ namespace TvEngine
 
         try
         {
-          Log.Write("plugin:webepg importing");
-          Log.Info("WebEPG: Using directory {0}", webepgDirectory);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("plugin:webepg importing");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Using directory {0}", webepgDirectory);
 
 
           IEpgDataSink epgSink;
@@ -220,7 +220,7 @@ namespace TvEngine
             //  stmt.Execute();
             //}
             epgSink = new DatabaseEPGDataSink(deleteBeforeImport);
-            Log.Info("Writing to TVServer database");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Writing to TVServer database");
           }
           else
           {
@@ -234,7 +234,7 @@ namespace TvEngine
               // Do not use XmlTvImporter.DefaultOutputFolder to avoid reference to XmlTvImport
               xmltvDirectory = layer.GetSetting("xmlTv", PathManager.GetDataPath + @"\xmltv").Value;
             }
-            Log.Info("Writing to tvguide.xml in {0}", xmltvDirectory);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Writing to tvguide.xml in {0}", xmltvDirectory);
             // Open XMLTV output file
             if (!Directory.Exists(xmltvDirectory))
             {
@@ -266,12 +266,12 @@ namespace TvEngine
           setting = layer.GetSetting("webepgResultStatus", "");
           setting.Value = epg.ImportStats.Status;
           setting.Persist();
-          //Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
         {
-          Log.Error(@"plugin:webepg import failed");
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:webepg import failed");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         }
 
         setting = layer.GetSetting("webepgResultLastImport", "");
@@ -280,7 +280,7 @@ namespace TvEngine
       }
       finally
       {
-        Log.WriteFile(@"plugin:webepg import done");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:webepg import done");
         _workerThreadRunning = false;
         SetStandbyAllowed(true);
       }
@@ -296,7 +296,7 @@ namespace TvEngine
         EPGWakeupConfig config = new EPGWakeupConfig(configSetting.Value);
         if (ShouldRunNow())
         {
-          Log.Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPGImporter: WebEPG schedule {0}:{1} is due: {2}:{3}",
                    config.Hour, config.Minutes, DateTime.Now.Hour, DateTime.Now.Minute);
           StartImport(null);
           config.LastRun = DateTime.Now;
@@ -321,11 +321,11 @@ namespace TvEngine
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          Log.Debug("WebEPGImporter: registered with PowerScheduler EPG handler");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPGImporter: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      Log.Debug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPGImporter: NOT registered with PowerScheduler EPG handler");
     }
 
     private void RegisterWakeupHandler()
@@ -333,10 +333,10 @@ namespace TvEngine
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().Register(this as IWakeupHandler);
-        Log.Debug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPGImporter: registered WakeupHandler with PowerScheduler ");
         return;
       }
-      Log.Debug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPGImporter: NOT registered WakeupHandler with PowerScheduler ");
     }
 
     private void UnregisterWakeupHandler()
@@ -344,7 +344,7 @@ namespace TvEngine
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerScheduler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerScheduler>().Unregister(this as IWakeupHandler);
-        Log.Debug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("WebEPGImporter: unregistered WakeupHandler with PowerScheduler ");
       }
     }
 
@@ -352,7 +352,7 @@ namespace TvEngine
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        Log.Debug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("plugin:webepg: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }
@@ -429,7 +429,7 @@ namespace TvEngine
         }
         if (DateTime.Now.Day == nextRun.Day)
         {
-          Log.Error("WebEPG: no valid next wakeup date for EPG grabbing found!");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG: no valid next wakeup date for EPG grabbing found!");
           nextRun = DateTime.MaxValue;
         }
       }

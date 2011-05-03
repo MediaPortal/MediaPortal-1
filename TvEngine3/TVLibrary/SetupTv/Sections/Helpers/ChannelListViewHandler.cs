@@ -24,7 +24,7 @@ using System.Text;
 using System.Windows.Forms;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using System.Threading;
 using SetupControls;
 
@@ -105,7 +105,7 @@ namespace SetupTv.Sections.Helpers
 
       try
       {
-        Log.Debug("Filter listview for " + filterText);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Filter listview for " + filterText);
         _listView.Invoke(new MethodInvoker(delegate()
                                              {
                                                _listView.Items.Clear();
@@ -118,7 +118,7 @@ namespace SetupTv.Sections.Helpers
           if (InvokeHasTextChanged(filterText))
           {
 //the search term changed while we were filtering
-            Log.Debug("Cancel filtering for " + filterText);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Cancel filtering for " + filterText);
             break;
           }
 
@@ -141,7 +141,7 @@ namespace SetupTv.Sections.Helpers
                                                  _listView.Items.AddRange(items.ToArray());
                                                  _listView.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
                                                }));
-          Log.Debug("Finished filtering " + items.Count + " items for " + filterText);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Finished filtering " + items.Count + " items for " + filterText);
         }
         else
         {
@@ -150,7 +150,7 @@ namespace SetupTv.Sections.Helpers
       }
       catch (Exception exp)
       {
-        Log.Error("RefreshAllChannels error: {0}", exp.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("RefreshAllChannels error: {0}", exp.StackTrace);
       }
       finally
       {

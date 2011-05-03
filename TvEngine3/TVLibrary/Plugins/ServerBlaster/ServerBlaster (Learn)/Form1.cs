@@ -33,6 +33,7 @@ using MediaPortal.Devices;
 using MediaPortal.GUI.Library;
 using XPListview;
 using System.Threading;
+using MediaPortal.CoreServices;
 
 namespace BlasterTest
 {
@@ -664,7 +665,7 @@ namespace BlasterTest
 
     private void OnDeviceRemoval()
     {
-      Log.Write("Device removal");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Device removal");
 
 //			// are we currently learning?
 //			if(buttonStart.Enabled) return;
@@ -825,24 +826,24 @@ namespace BlasterTest
                 }
                 else
                 {
-                  Log.Write("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("Form1.LoadConfig: Unexpected value type '{0}'", objectValue.GetType());
                 }
               }
               else
               {
-                Log.Write("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Form1.LoadConfig: Unexpected key type '{0}'", objectKey.GetType());
               }
             }
           }
           else
           {
-            Log.Write("Form1.LoadConfig: Unexpected root object");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Form1.LoadConfig: Unexpected root object");
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Write("Form1.LoadConfig: {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Form1.LoadConfig: {0}", ex.Message);
       }
     }
   }

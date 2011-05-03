@@ -22,6 +22,7 @@ using System;
 using System.Reflection;
 using System.Text;
 using System.Threading;
+using MediaPortal.CoreServices;
 using MediaPortal.Services;
 using mshtml;
 using SHDocVw;
@@ -53,7 +54,7 @@ namespace MediaPortal.Utils.Web
     /// </summary>
     public HTMLPage()
     {
-      _cache = GlobalServiceProvider.Get<IHtmlCache>();
+      _cache = GlobalServiceProvider.Instance.Get<IHtmlCache>();
     }
 
     /// <summary>
@@ -266,7 +267,7 @@ namespace MediaPortal.Utils.Web
             }
           }
 
-          GlobalServiceProvider.Get<ILog>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
           // Encoding: depends on selected page
           if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
           {
@@ -277,14 +278,14 @@ namespace MediaPortal.Utils.Web
             }
             catch (System.ArgumentException e)
             {
-              GlobalServiceProvider.Get<ILog>().Error(e);
+              GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
             }
           }
           return true;
         }
         _error = Page.GetError();
         if (!string.IsNullOrEmpty(_error))
-          GlobalServiceProvider.Get<ILog>().Error("HTMLPage: GetInternal error: {0}", _error);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("HTMLPage: GetInternal error: {0}", _error);
         return false;
       }
     }

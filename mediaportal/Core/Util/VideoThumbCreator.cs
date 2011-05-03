@@ -25,6 +25,7 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.ServiceImplementations;
 using MediaPortal.Profile;
 using MediaPortal.Services;
@@ -99,7 +100,7 @@ namespace MediaPortal.Util
         return false;
       }
 
-      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
+      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Instance.Get<IVideoThumbBlacklist>();
       if (blacklist != null && blacklist.Contains(aVideoPath))
       {
         Log.Debug("Skipped creating thumbnail for {0}, it has been blacklisted because last attempt failed", aVideoPath);

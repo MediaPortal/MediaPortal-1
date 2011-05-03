@@ -20,7 +20,7 @@
 
 using System.Collections;
 using System.IO;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using MediaPortal.WebEPG.Profile;
 
 namespace MediaPortal.EPG.config
@@ -141,7 +141,7 @@ namespace MediaPortal.EPG.config
         return;
       }
 
-      Log.Info("WebEPG Config: Loading Existing WebEPG.xml");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Loading Existing WebEPG.xml");
       Xml xmlreader = new Xml(configFile);
       _MaxGrab = xmlreader.GetValueAsInt("General", "MaxDays", 1);
       int channelCount = xmlreader.GetValueAsInt("ChannelMap", "Count", 0);

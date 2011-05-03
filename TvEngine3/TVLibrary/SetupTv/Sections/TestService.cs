@@ -25,7 +25,7 @@ using System.Windows.Forms;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using Gentle.Framework;
 using SetupControls;
 
@@ -461,7 +461,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 

@@ -22,6 +22,7 @@ using System;
 using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -64,13 +65,13 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidBdaDigitalDemodulator, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            Log.Log.Debug(FormatMessage("DiSEqC capable card found!"));
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug(FormatMessage("DiSEqC capable card found!"));
             _isGenericBDAS = true;
           }
         }
       }
       else
-        Log.Log.Info(FormatMessage("tuner pin not found!"));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("tuner pin not found!"));
     }
 
     /// <summary>
@@ -93,27 +94,27 @@ namespace TvLibrary.Implementations.DVB
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA:
-          Log.Log.Info(FormatMessage("  Level1AA - SendDiSEqCCommand(0x00)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  Level1AA - SendDiSEqCCommand(0x00)"));
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.Level1AB:
-          Log.Log.Info(FormatMessage("  Level1AB - SendDiSEqCCommand(0x01)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  Level1AB - SendDiSEqCCommand(0x01)"));
           SendDiSEqCCommand(0x01);
           break;
         case DisEqcType.Level1BA:
-          Log.Log.Info(FormatMessage("  Level1BA - SendDiSEqCCommand(0x0100)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  Level1BA - SendDiSEqCCommand(0x0100)"));
           SendDiSEqCCommand(0x0100);
           break;
         case DisEqcType.Level1BB:
-          Log.Log.Info(FormatMessage("  Level1BB - SendDiSEqCCommand(0x0101)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  Level1BB - SendDiSEqCCommand(0x0101)"));
           SendDiSEqCCommand(0x0101);
           break;
         case DisEqcType.SimpleA:
-          Log.Log.Info(FormatMessage("  SimpleA - SendDiSEqCCommand(0x00)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  SimpleA - SendDiSEqCCommand(0x00)"));
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.SimpleB:
-          Log.Log.Info(FormatMessage("  SimpleB - SendDiSEqCCommand(0x01)"));
+          GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  SimpleB - SendDiSEqCCommand(0x01)"));
           SendDiSEqCCommand(0x01);
           break;
         default:
@@ -128,7 +129,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
-      Log.Log.Info(FormatMessage("  SendDiSEqC Command {0}"), ulRange);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  SendDiSEqC Command {0}"), ulRange);
       // get ControlNode of tuner control node
       object ControlNode;
       int hr = _TunerDevice.GetControlNode(0, 1, 0, out ControlNode);
@@ -147,7 +148,7 @@ namespace TvLibrary.Implementations.DVB
               if (FrequencyFilter != null)
               {
                 hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info(FormatMessage("  put_Range:{0} success:{1}"), ulRange, hr);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  put_Range:{0} success:{1}"), ulRange, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 
@@ -157,26 +158,26 @@ namespace TvLibrary.Implementations.DVB
                     hr = DecviceControl.CommitChanges();
                     if (hr == 0)
                     {
-                      Log.Log.Info(FormatMessage("  CommitChanges() Succeeded"));
+                      GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  CommitChanges() Succeeded"));
                       return true;
                     }
                     // reset configuration
-                    Log.Log.Info(FormatMessage("  CommitChanges() Failed!"));
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  CommitChanges() Failed!"));
                     DecviceControl.StartChanges();
                     DecviceControl.CommitChanges();
                     return false;
                   }
-                  Log.Log.Info(FormatMessage("  CheckChanges() Failed!"));
+                  GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  CheckChanges() Failed!"));
                   return false;
                 }
-                Log.Log.Info(FormatMessage("  put_Range Failed!"));
+                GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  put_Range Failed!"));
                 return false;
               }
             }
           }
         }
       }
-      Log.Log.Info(FormatMessage("  GetControlNode Failed!"));
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  GetControlNode Failed!"));
       return false;
     }
 
@@ -205,19 +206,19 @@ namespace TvLibrary.Implementations.DVB
               if (FrequencyFilter != null)
               {
                 hr = FrequencyFilter.get_Range(out pulRange);
-                Log.Log.Info(FormatMessage("  get_Range:{0} success:{1}"), pulRange, hr);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  get_Range:{0} success:{1}"), pulRange, hr);
                 if (hr == 0)
                 {
                   return true;
                 }
-                Log.Log.Info(FormatMessage("  get_Range Failed!"));
+                GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  get_Range Failed!"));
                 return false;
               }
             }
           }
         }
       }
-      Log.Log.Info(FormatMessage("  GetControlNode Failed!"));
+      GlobalServiceProvider.Instance.Get<ILogger>().Info(FormatMessage("  GetControlNode Failed!"));
       pulRange = 0;
       return false;
     }

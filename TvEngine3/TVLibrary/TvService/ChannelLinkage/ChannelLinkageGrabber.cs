@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Interfaces;
 using TvLibrary.ChannelLinkage;
 using System.Threading;
@@ -48,7 +48,7 @@ namespace TvService
 
     public override int OnLinkageReceived()
     {
-      Log.Info("OnLinkageReceived()");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("OnLinkageReceived()");
       Thread workerThread = new Thread(UpdateDatabaseThread);
       workerThread.IsBackground = true;
       workerThread.Name = "Channel linkage update thread";
@@ -67,7 +67,7 @@ namespace TvService
                                                                pChannel.ServiceId);
       if (dbPortalChannel == null)
       {
-        Log.Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId,
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Portal channel with networkId={0}, transportId={1}, serviceId={2} not found", pChannel.NetworkId,
                  pChannel.TransportId, pChannel.ServiceId);
         return;
       }
@@ -78,7 +78,7 @@ namespace TvService
                                                                   lChannel.ServiceId);
         if (dbLinkedChannnel == null)
         {
-          Log.Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Linked channel with name={0}, networkId={1}, transportId={2}, serviceId={3} not found",
                    lChannel.Name, lChannel.NetworkId, lChannel.TransportId, lChannel.ServiceId);
           continue;
         }
@@ -95,13 +95,13 @@ namespace TvService
       Thread.CurrentThread.Priority = ThreadPriority.Lowest;
 
       List<PortalChannel> linkages = _card.ChannelLinkages;
-      Log.Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("ChannelLinkage received. {0} portal channels read", linkages.Count);
       foreach (PortalChannel pChannel in linkages)
       {
-        Log.Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("[Linkage Scanner] New portal channel {0} {1} {2}", pChannel.NetworkId, pChannel.ServiceId,
                  pChannel.TransportId);
         foreach (LinkedChannel lchan in pChannel.LinkedChannels)
-          Log.Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("[Linkage Scanner] - {0} nid={1},tid={2} sid={3}", lchan.Name, lchan.NetworkId, lchan.TransportId,
                    lchan.ServiceId);
         PersistPortalChannel(pChannel);
       }

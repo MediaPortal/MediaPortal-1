@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using System.Windows.Forms;
 
 namespace TestApp
@@ -140,18 +140,18 @@ namespace TestApp
     public bool Play(string fileName, Form form)
     {
       fileName += ".tsbuffer";
-      Log.WriteFile("play:{0}", fileName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("play:{0}", fileName);
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
 
-      Log.WriteFile("add tsfilesource");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("add tsfilesource");
       _tsFileSource = new TsFileSource();
       _graphBuilder.AddFilter((IBaseFilter)_tsFileSource, "TsFileSource");
 
       #region add mpeg-2 demux filter
 
-      Log.WriteFile("add mpeg-2 demux");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("add mpeg-2 demux");
       MPEG2Demultiplexer demux = new MPEG2Demultiplexer();
       _mpegDemux = (IBaseFilter)demux;
       int hr = _graphBuilder.AddFilter(_mpegDemux, "MPEG-2 Demultiplexer");
@@ -160,7 +160,7 @@ namespace TestApp
 
       #region create mpeg2 demux pins
 
-      Log.WriteFile("create mpeg-2 demux pins");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("create mpeg-2 demux pins");
       //create mpeg-2 demux output pins
       IMpeg2Demultiplexer demuxer = _mpegDemux as IMpeg2Demultiplexer;
 
@@ -169,14 +169,14 @@ namespace TestApp
         hr = demuxer.CreateOutputPin(GetAudioMpg2Media(), "Audio", out _pinAudio);
       if (hr != 0)
       {
-        Log.WriteFile("unable to create audio pin");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("unable to create audio pin");
         return false;
       }
       if (demuxer != null)
         hr = demuxer.CreateOutputPin(GetVideoMpg2Media(), "Video", out _pinVideo);
       if (hr != 0)
       {
-        Log.WriteFile("unable to create video pin");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("unable to create video pin");
         return false;
       }
 
@@ -184,11 +184,11 @@ namespace TestApp
 
       #region load file in tsfilesource
 
-      Log.WriteFile("load file in tsfilesource");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("load file in tsfilesource");
       IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsFileSource;
       if (interfaceFile == null)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:Failed to get IFileSourceFilter");
         return false;
       }
 
@@ -207,31 +207,31 @@ namespace TestApp
 
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:Failed to load file");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:Failed to load file");
         return false;
       }
 
       #region connect tsfilesource->demux
 
-      Log.WriteFile("connect tsfilesource->demux");
-      Log.WriteFile("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("connect tsfilesource->demux");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:connect tsfilesource->mpeg2 demux");
       IPin pinTsOut = DsFindPin.ByDirection((IBaseFilter)_tsFileSource, PinDirection.Output, 0);
       if (pinTsOut == null)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
         return false;
       }
       IPin pinDemuxIn = DsFindPin.ByDirection(_mpegDemux, PinDirection.Input, 0);
       if (pinDemuxIn == null)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:failed to find output pin of tsfilesource");
         return false;
       }
 
       hr = _graphBuilder.Connect(pinTsOut, pinDemuxIn);
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:failed to connect tsfilesource->mpeg2 demux:{0:X}", hr);
         return false;
       }
       Release.ComObject(pinTsOut);
@@ -241,19 +241,19 @@ namespace TestApp
 
       #region map demux pids
 
-      Log.WriteFile("map mpeg2 pids");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("map mpeg2 pids");
       IMPEG2StreamIdMap pStreamId = (IMPEG2StreamIdMap)_pinVideo;
       hr = pStreamId.MapStreamId(0xe0, MPEG2Program.ElementaryStream, 0, 0);
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9: failed to map pid 0xe0->video pin");
         return false;
       }
       pStreamId = (IMPEG2StreamIdMap)_pinAudio;
       hr = pStreamId.MapStreamId(0xc0, MPEG2Program.ElementaryStream, 0, 0);
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9: failed  to map pid 0xc0->audio pin");
         return false;
       }
 
@@ -261,17 +261,17 @@ namespace TestApp
 
       #region render demux audio/video pins
 
-      Log.WriteFile("render pins");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("render pins");
       hr = _graphBuilder.Render(_pinAudio);
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:failed to render video output pin:{0:X}", hr);
       }
 
       hr = _graphBuilder.Render(_pinVideo);
       if (hr != 0)
       {
-        Log.WriteFile("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:failed to render audio output pin:{0:X}", hr);
       }
 
       #endregion
@@ -289,10 +289,10 @@ namespace TestApp
         _videoWin.SetWindowPosition(190, 250, 150, 150);
       }
 
-      Log.WriteFile("run graph");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
       hr = _mediaCtrl.Run();
-      Log.WriteFile("TSStreamBufferPlayer9:running:{0:X}", hr);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TSStreamBufferPlayer9:running:{0:X}", hr);
 
       return true;
     }

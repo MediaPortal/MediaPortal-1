@@ -91,7 +91,7 @@ namespace MediaPortal.WebEPG.Parser
       }
       catch (XmlException) // ex)
       {
-        //Log.Error("WebEPG: XML failed");
+        //GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG: XML failed");
         return count;
       }
 

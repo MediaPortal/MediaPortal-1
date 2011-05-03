@@ -50,6 +50,7 @@ namespace MediaPortal.Configuration
 
     private static Dictionary<Dir, string> directories;
     private static string skinName = string.Empty;
+    private static string baseDirName = string.Empty;
 
     #endregion
 
@@ -58,6 +59,7 @@ namespace MediaPortal.Configuration
     static Config()
     {
       directories = new Dictionary<Dir, string>();
+      SetBaseDirName(AppDomain.CurrentDomain.BaseDirectory);
       LoadDirs(AppDomain.CurrentDomain.BaseDirectory);
     }
 
@@ -207,6 +209,14 @@ namespace MediaPortal.Configuration
 
     #region Properties
 
+    public static string CommonAppData
+    {
+      get
+      {
+        return Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + @"\Team MediaPortal\" + baseDirName + "\\"; //+ @"\Team MediaPortal\MediaPortal\";
+      }
+    }
+
     public static string SkinName
     {
       set
@@ -214,10 +224,7 @@ namespace MediaPortal.Configuration
         if (value != skinName)
         {
           skinName = value;
-          string commonAppData =
-            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
-            + @"\Team MediaPortal\MediaPortal\";
-          string weatherDir = commonAppData + @"skin\" + skinName + @"\Media\Weather\";
+          string weatherDir = CommonAppData + @"skin\" + skinName + @"\Media\Weather\";
           Set(Dir.Weather, weatherDir);
         }
       }
@@ -227,16 +234,27 @@ namespace MediaPortal.Configuration
 
     #region Private Methods
 
+    private static void SetBaseDirName(string startUpPath)
+    {
+      var separators = new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar };
+      var entries = startUpPath.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+      if (entries.Length > 0)
+      {
+        baseDirName = entries[entries.Length - 1];
+      }
+
+    }
+
     /// <summary>
     /// Read the Directory Configuration from the Config File.
     /// First we look for the file in MyDocuments of the logged on user. If file is not there or invalid, 
     /// we use the one from the MediaPortal InstallPath.
     /// </summary>
-    private static void LoadDirs(string startuppath)
+    private static void LoadDirs(string startUpPath)
     {
-      Set(Dir.Base, startuppath + @"\");
+      Set(Dir.Base, startUpPath + @"\");
       LoadDefaultDirs();
-      if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\Team MediaPortal\"))
+      if (!ReadConfig(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + baseDirName + "\\"))  //@"\Team MediaPortal\"))
       {
         if (!ReadConfig(Get(Dir.Base)))
         {
@@ -337,9 +355,7 @@ namespace MediaPortal.Configuration
     private static void LoadDefaultDirs()
     {
       string baseDir = Get(Dir.Base);
-      string commonAppData =
-        Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)
-        + @"\Team MediaPortal\MediaPortal\";
+      string commonAppData = CommonAppData;
 
       Set(Dir.Cache, Path.Combine(commonAppData, @"cache\"));
       Set(Dir.Config, commonAppData);

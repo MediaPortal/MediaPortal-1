@@ -20,6 +20,7 @@
 
 using System;
 using System.IO;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary
 {
@@ -84,8 +85,8 @@ namespace TvLibrary
       }
       catch (System.IO.IOException ex)
       {
-        Log.Log.Error("Failed to write debug setting '{0}'", setting);
-        Log.Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to write debug setting '{0}'", setting);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 

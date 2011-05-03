@@ -149,12 +149,12 @@ namespace TvLibrary.Teletext
               continue;
             }
              */
-            //Log.Write("Packet Number:{0}, type:{1}", packetNumber, type);
+            //GlobalServiceProvider.Instance.Get<ILogger>().Debug("Packet Number:{0}, type:{1}", packetNumber, type);
             string channelName = "";
             for (int i = 0; i < 20; i++)
             {
               char char1 = (char)(rowData[off + 22 + i] & 127);
-              //Log.Write("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
+              //GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}-{1:x}", char1, (byte)(rowData[off + 22 + i] & 127));
               channelName += char1;
             }
             int pos = channelName.LastIndexOf("teletext", StringComparison.InvariantCultureIgnoreCase);
@@ -346,11 +346,11 @@ namespace TvLibrary.Teletext
       catch (Exception)
       {
         System.Diagnostics.Trace.WriteLine("EXCEPTION");
-        //        Log.WriteFile(Log.LogType.Error,true,"Exception while decoding teletext");
-        //        Log.Write(ex);
+        //        GlobalServiceProvider.Instance.Get<ILogger>().Info(Log.LogType.Error,true,"Exception while decoding teletext");
+        //        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       //System.Diagnostics.Trace.WriteLine(_line);
-      //Log.Log.WriteFile(_line);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info(_line);
     }
 
 //void Decode(byte[] rowData)

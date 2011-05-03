@@ -55,12 +55,9 @@ namespace MediaPortal.MusicShareWatcher
 
     public MusicShareWatcherHelper()
     {
-      // Create Log File
-      Log.BackupLogFile(LogType.MusicShareWatcher);
-
       musicDB = MusicDatabase.Instance;
       LoadShares();
-      Log.Info(LogType.MusicShareWatcher, "MusicShareWatcher starting up!");
+      Log.Info("MusicShareWatcher starting up!");
     }
 
     #endregion
@@ -71,7 +68,7 @@ namespace MediaPortal.MusicShareWatcher
     {
       if (bMonitoring)
       {
-        Log.Info(LogType.MusicShareWatcher, "Starting up a worker thread...");
+        Log.Info("MusicShareWatcher: Starting up a worker thread...");
         Thread WorkerThread = new Thread(WatchShares);
         WorkerThread.IsBackground = true;
         WorkerThread.Name = "MusicShareWatcher";
@@ -101,7 +98,7 @@ namespace MediaPortal.MusicShareWatcher
           watcher.EnableRaisingEvents = true;
         }
         m_Timer.Start();
-        Log.Info(LogType.MusicShareWatcher, "Monitoring of shares enabled");
+        Log.Info("MusicShareWatcher: Monitoring of shares enabled");
       }
       else
       {
@@ -112,14 +109,14 @@ namespace MediaPortal.MusicShareWatcher
         }
         m_Timer.Stop();
         m_Events.Clear();
-        Log.Info(LogType.MusicShareWatcher, "Monitoring of shares disabled");
+        Log.Info("MusicShareWatcher: Monitoring of shares disabled");
       }
     }
 
     private void WatchShares()
     {
-      Log.Info(LogType.MusicShareWatcher, "Monitoring active for following shares:");
-      Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
+      Log.Info("MusicShareWatcher: Monitoring active for following shares:");
+      Log.Info("MusicShareWatcher: ---------------------------------------");
 
       // Release existing FSW Objects first
       foreach (DelayedFileSystemWatcher watcher in m_Watchers)
@@ -171,16 +168,16 @@ namespace MediaPortal.MusicShareWatcher
           m_Timer.Elapsed += new ElapsedEventHandler(ProcessEvents);
           m_Timer.AutoReset = true;
           m_Timer.Enabled = watcherFile.EnableRaisingEvents;
-          Log.Info(LogType.MusicShareWatcher, sharename);
+          Log.Info("MusicShareWatcher: " + sharename);
         }
         catch (ArgumentException ex)
         {
-          Log.Info(LogType.MusicShareWatcher, "Unable to turn on monitoring for: {0} Exception: {1}", sharename,
+          Log.Info("MusicShareWatcher: Unable to turn on monitoring for: {0} Exception: {1}", sharename,
                    ex.Message);
         }
       }
-      Log.Info(LogType.MusicShareWatcher, "---------------------------------------");
-      Log.Info(LogType.MusicShareWatcher, "Note: Errors reported for CD/DVD drives can be ignored.");
+      Log.Info("MusicShareWatcher: ---------------------------------------");
+      Log.Info("MusicShareWatcher: Note: Errors reported for CD/DVD drives can be ignored.");
     }
 
     #endregion Main
@@ -190,7 +187,7 @@ namespace MediaPortal.MusicShareWatcher
     // Event handler for Create of a file
     private void OnCreated(object source, FileSystemEventArgs e)
     {
-      Log.Debug(LogType.MusicShareWatcher, "Add Song Fired: {0}", e.FullPath);
+      Log.Debug("MusicShareWatcher: Add Song Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Create, e.FullPath));
     }
 
@@ -202,7 +199,7 @@ namespace MediaPortal.MusicShareWatcher
       // Was it on a file? Ignore change events on directories
       if (fi.Exists)
       {
-        Log.Debug(LogType.MusicShareWatcher, "Change Song Fired: {0}", e.FullPath);
+        Log.Debug("MusicShareWatcher: Change Song Fired: {0}", e.FullPath);
         m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Change, e.FullPath));
       }
     }
@@ -210,21 +207,21 @@ namespace MediaPortal.MusicShareWatcher
     // Event handler handling the Delete of a file
     private void OnDeleted(object source, FileSystemEventArgs e)
     {
-      Log.Debug(LogType.MusicShareWatcher, "Delete Song Fired: {0}", e.FullPath);
+      Log.Debug("MusicShareWatcher: Delete Song Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Delete, e.FullPath));
     }
 
     // Event handler handling the Delete of a directory
     private void OnDirectoryDeleted(object source, FileSystemEventArgs e)
     {
-      Log.Debug(LogType.MusicShareWatcher, "Delete Directory Fired: {0}", e.FullPath);
+      Log.Debug("MusicShareWatcher: Delete Directory Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.DeleteDirectory, e.FullPath));
     }
 
     // Event handler handling the Rename of a file/directory
     private void OnRenamed(object source, RenamedEventArgs e)
     {
-      Log.Debug(LogType.MusicShareWatcher, "Rename File/Directory Fired: {0}", e.FullPath);
+      Log.Debug("MusicShareWatcher: Rename File/Directory Fired: {0}", e.FullPath);
       m_Events.Add(new MusicShareWatcherEvent(MusicShareWatcherEvent.EventType.Rename, e.FullPath, e.OldFullPath));
     }
 
@@ -257,21 +254,21 @@ namespace MediaPortal.MusicShareWatcher
                   break;
                 case MusicShareWatcherEvent.EventType.Delete:
                   musicDB.DeleteSong(currentEvent.FileName, true);
-                  Log.Info(LogType.MusicShareWatcher, "Deleted Song: {0}", currentEvent.FileName);
+                  Log.Info("MusicShareWatcher: Deleted Song: {0}", currentEvent.FileName);
                   break;
                 case MusicShareWatcherEvent.EventType.DeleteDirectory:
                   musicDB.DeleteSongDirectory(currentEvent.FileName);
-                  Log.Info(LogType.MusicShareWatcher, "Deleted Directory: {0}", currentEvent.FileName);
+                  Log.Info("MusicShareWatcher: Deleted Directory: {0}", currentEvent.FileName);
                   break;
                 case MusicShareWatcherEvent.EventType.Rename:
                   if (musicDB.RenameSong(currentEvent.OldFileName, currentEvent.FileName))
                   {
-                    Log.Info(LogType.MusicShareWatcher, "Song / Directory {0} renamed to {1]", currentEvent.OldFileName,
+                    Log.Info("MusicShareWatcher: Song / Directory {0} renamed to {1]", currentEvent.OldFileName,
                              currentEvent.FileName);
                   }
                   else
                   {
-                    Log.Info(LogType.MusicShareWatcher, "Song / Directory rename failed: {0}", currentEvent.FileName);
+                    Log.Info("MusicShareWatcher: Song / Directory rename failed: {0}", currentEvent.FileName);
                   }
                   break;
               }

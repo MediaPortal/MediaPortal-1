@@ -23,6 +23,7 @@ using System.Text;
 using DirectShowLib;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Interfaces;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -102,7 +103,7 @@ namespace TvLibrary.Implementations.DVB
     public Int32 OnAPDU(IBaseFilter pUSBCIFilter, IntPtr APDU, long SizeOfAPDU)
     {
       Int32 MMI_length = (Int32)SizeOfAPDU;
-      Log.Log.Info("WinTvCi OnAPDU: SizeOfAPDU={0}", MMI_length);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCi OnAPDU: SizeOfAPDU={0}", MMI_length);
       byte[] bMMI = DVB_MMI.IntPtrToByteArray(APDU, 0, MMI_length);
 #if DEBUG
       DVB_MMI.DumpBinary(bMMI, 0, MMI_length);
@@ -113,8 +114,8 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception e)
       {
-        Log.Log.Write("WinTvCI error:");
-        Log.Log.Write(e);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCI error:");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
       }
       return 0;
     }
@@ -127,11 +128,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 OnStatus(IBaseFilter pUSBCIFilter, long Status)
     {
-      //Log.Log.Info("WinTvCI OnStatus: Status={0}", Status);
+      //GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCI OnStatus: Status={0}", Status);
       if (Status == 1)
-        Log.Log.Info("WinTvCI: Module installed but no CAM inserted?");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCI: Module installed but no CAM inserted?");
       if (Status == 2)
-        Log.Log.Info("WinTvCI: Module installed & CAM inserted");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCI: Module installed & CAM inserted");
       return 0;
     }
 
@@ -146,7 +147,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 OnCamInfo(IntPtr Context, byte appType, ushort appManuf, ushort manufCode, StringBuilder Info)
     {
-      Log.Log.Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCi OnCamInfo: appType={0} appManuf={1} manufCode={2} info={3}", appType, appManuf, manufCode,
                    Info.ToString());
       return 0;
     }
@@ -158,7 +159,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public Int32 OnMMIClosed(IBaseFilter pUSBCIFilter)
     {
-      Log.Log.Info("WinTvCi OnMMIClosed");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTvCi OnMMIClosed");
       if (m_ciMenuCallback != null)
       {
         m_ciMenuCallback.OnCiCloseDisplay(0);
@@ -247,7 +248,7 @@ namespace TvLibrary.Implementations.DVB
     public bool EnterCIMenu()
     {
       int res = WinTVCI_OpenMMI(_winTvUsbCIFilter);
-      Log.Log.Debug("WinTvCi: Enter CI Menu Result:{0:x}", res);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WinTvCi: Enter CI Menu Result:{0:x}", res);
       return true;
     }
 
@@ -257,7 +258,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool CloseCIMenu()
     {
-      Log.Log.Debug("WinTvCi: Close CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WinTvCi: Close CI Menu");
       byte[] uData = new byte[5]; // default answer length
       DVB_MMI.CreateMMIClose(ref uData);
       SendAPDU(uData, uData.Length); // send to cam
@@ -271,7 +272,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool SelectMenu(byte choice)
     {
-      Log.Log.Debug("WinTvCi: Select CI Menu entry {0}", choice);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WinTvCi: Select CI Menu entry {0}", choice);
       byte[] uData = new byte[5]; // default answer length
       DVB_MMI.CreateMMISelect(choice, ref uData);
       SendAPDU(uData, uData.Length); // send to cam
@@ -287,7 +288,7 @@ namespace TvLibrary.Implementations.DVB
     public bool SendMenuAnswer(bool Cancel, String Answer)
     {
       if (Answer == null) Answer = "";
-      Log.Log.Debug("WinTvCi: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WinTvCi: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
       byte[] uData = new byte[1024];
       byte uLength1 = 0;
       byte uLength2 = 0;

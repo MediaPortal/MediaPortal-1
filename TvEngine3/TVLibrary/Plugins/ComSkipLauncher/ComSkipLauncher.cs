@@ -21,7 +21,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 using SetupTv;
 using TvEngine.Events;
@@ -108,7 +108,7 @@ namespace TvEngine
     [CLSCompliant(false)]
     public void Start(IController controller)
     {
-      Log.Info("plugin: ComSkipLauncher start");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: ComSkipLauncher start");
 
       LoadSettings();
 
@@ -117,7 +117,7 @@ namespace TvEngine
 
     public void Stop()
     {
-      Log.Info("plugin: ComSkipLauncher stop");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: ComSkipLauncher stop");
 
       if (GlobalServiceProvider.Instance.IsRegistered<ITvServerEvent>())
       {
@@ -147,7 +147,7 @@ namespace TvEngine
 
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ComSkipLauncher: Recording started ({0} on {1}), launching program ({2} {3}) ...",
                    tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -158,7 +158,7 @@ namespace TvEngine
 
           string parameters = ProcessParameters(_parameters, tvEvent.Recording.FileName, channel.DisplayName);
 
-          Log.Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("ComSkipLauncher: Recording ended ({0} on {1}), launching program ({2} {3}) ...",
                    tvEvent.Recording.FileName, channel.DisplayName, _program, parameters);
 
           LaunchProcess(_program, parameters, Path.GetDirectoryName(_program), ProcessWindowStyle.Hidden);
@@ -166,7 +166,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - ComSkipLauncher_OnTvServerEvent(): {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - ComSkipLauncher_OnTvServerEvent(): {0}", ex.Message);
       }
     }
 
@@ -187,7 +187,7 @@ namespace TvEngine
         _program = DefaultProgram;
         _parameters = DefaultParameters;
 
-        Log.Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - LoadSettings(): {0}", ex.Message);
       }
     }
 
@@ -211,7 +211,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - SaveSettings(): {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - SaveSettings(): {0}", ex.Message);
       }
     }
 
@@ -234,7 +234,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - ProcessParameters(): {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - ProcessParameters(): {0}", ex.Message);
       }
 
       return output;
@@ -260,7 +260,7 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        Log.Error("ComSkipLauncher - LaunchProcess(): {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - LaunchProcess(): {0}", ex.Message);
       }
     }
 

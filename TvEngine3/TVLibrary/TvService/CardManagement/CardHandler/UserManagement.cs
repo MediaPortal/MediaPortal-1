@@ -21,7 +21,7 @@
 using System;
 using System.Threading;
 using TvLibrary.Interfaces;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvControl;
 
 
@@ -85,7 +85,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
@@ -110,7 +110,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
@@ -226,7 +226,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("card: unable to connect to slave controller at:{0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }

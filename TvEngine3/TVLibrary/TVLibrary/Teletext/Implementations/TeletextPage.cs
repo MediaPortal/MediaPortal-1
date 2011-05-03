@@ -141,7 +141,7 @@ namespace TvLibrary.Teletext
         return false;
       //if (pageNumber == 0x100)
       //{
-      //  Log.Log.WriteFile("del {0:X} {1}-{2}", pageNumber, subPageNumber, _numberOfSubPages);
+      //  GlobalServiceProvider.Instance.Get<ILogger>().Info("del {0:X} {1}-{2}", pageNumber, subPageNumber, _numberOfSubPages);
       //}
       //subpage removed
       for (int i = subPageNumber; i <= _numberOfSubPages; ++i)

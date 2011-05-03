@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace TvService
 {
@@ -42,7 +42,7 @@ namespace TvService
       _posEnd = posEnd;
       _fileEnd = fileEnd;
       _recording = recording;
-      Log.Info("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}", posStart, fileStart, posEnd,
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: dtor() pos1: {0}, file1: {1}, pos2: {2}, file2: {3}, rec: {4}", posStart, fileStart, posEnd,
                fileEnd, recording);
     }
 
@@ -52,13 +52,13 @@ namespace TvService
       {
         string baseTs = Path.GetDirectoryName(_fileStart) + "\\" +
                         Path.GetFileNameWithoutExtension(_fileStart).Substring(0, 19);
-        Log.Info("TsCopier: baseTs: {0}", baseTs);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: baseTs: {0}", baseTs);
         int idCurrent = Int32.Parse(Path.GetFileNameWithoutExtension(_fileStart).Remove(0, 19));
         int idStart = idCurrent;
         int idStop = Int32.Parse(Path.GetFileNameWithoutExtension(_fileEnd).Remove(0, 19));
         TvBusinessLayer layer = new TvBusinessLayer();
         decimal maxFiles = Convert.ToDecimal(layer.GetSetting("timeshiftMaxFiles", "20").Value);
-        Log.Info("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: baseTs={0} idCurrent={1} idStop={2} maxFiles={3}", baseTs, idCurrent, idStop, maxFiles);
         Directory.CreateDirectory(Path.GetDirectoryName(_recording) + "\\" +
                                   Path.GetFileNameWithoutExtension(_recording) + "_tsbuffers");
         int cycles = 1;
@@ -71,7 +71,7 @@ namespace TvService
           string currentSourceBuffer = baseTs + idCurrent.ToString() + ".ts";
           string targetTs = Path.GetDirectoryName(_recording) + "\\" + Path.GetFileNameWithoutExtension(_recording) +
                             "_tsbuffers\\" + Path.GetFileName(currentSourceBuffer);
-          Log.Info("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
           FileStream reader = new FileStream(currentSourceBuffer, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
           FileStream writer = new FileStream(targetTs, FileMode.CreateNew, FileAccess.Write);
 
@@ -94,16 +94,16 @@ namespace TvService
           reader.Close();
           reader.Dispose();
           reader = null;
-          Log.Info("TsCopier: copying done.");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: copying done.");
           idCurrent++;
           if (idCurrent > maxFiles)
             idCurrent = 1;
         }
-        Log.Info("TsCopier: processed all timeshift buffer files for recording.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TsCopier: processed all timeshift buffer files for recording.");
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
   }

@@ -27,7 +27,7 @@ using System.Text;
 using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace SetupTv.Dialogs
 {
@@ -49,14 +49,14 @@ namespace SetupTv.Dialogs
           Channel selectedChannel = listViewChannels.SelectedItems[0].Tag as Channel;
           if (selectedChannel.IdChannel > -1)
           {
-            Log.Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("SelectListChannel: Channel '{0}' has been selected. ID = {1}", selectedChannel.DisplayName,
                       selectedChannel.IdChannel);
             return selectedChannel.IdChannel;
           }
         }
         else
         {
-          Log.Debug("SelectListChannel: Invalid channel selection.");
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("SelectListChannel: Invalid channel selection.");
         }
       }
 

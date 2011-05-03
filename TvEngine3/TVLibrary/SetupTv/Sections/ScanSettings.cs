@@ -26,7 +26,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using DirectShowLib;
 using TvDatabase;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 
 namespace SetupTv.Sections
 {
@@ -208,7 +208,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        Log.Write("could not set priority on tvservice - the process might be terminated : " + ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("could not set priority on tvservice - the process might be terminated : " + ex.Message);
         return;
       }
 
@@ -241,7 +241,7 @@ namespace SetupTv.Sections
       }
       catch (Exception exp)
       {
-        Log.Write(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug(string.Format("Could not set priority on tvservice. Error on setting process.PriorityClass: {0}",
                                 exp.Message));
         return;
       }

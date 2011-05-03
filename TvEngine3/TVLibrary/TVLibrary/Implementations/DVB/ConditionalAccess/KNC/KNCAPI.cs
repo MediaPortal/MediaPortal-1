@@ -26,6 +26,7 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
+using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -369,7 +370,7 @@ namespace TvLibrary.Implementations.DVB
 
       // iDeviceIndex passed by TvLibrary ! Enumerated by DevicePath
       m_iDeviceIndex = DeviceIndex;
-      Log.Log.Debug("KNC: card {0} detected: {1}", m_iDeviceIndex, info.achName);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} detected: {1}", m_iDeviceIndex, info.achName);
 
       OpenCI();
     }
@@ -382,7 +383,7 @@ namespace TvLibrary.Implementations.DVB
       // HW Enable (always?) succeeds
       if (KNCBDA_HW_Enable(m_iDeviceIndex, m_tunerFilter) == 0)
       {
-        Log.Log.Debug("KNC: card {0} HW Enable failed", m_iDeviceIndex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} HW Enable failed", m_iDeviceIndex);
       }
 
       m_callbacks = new KNCCiCallbacks();
@@ -402,12 +403,12 @@ namespace TvLibrary.Implementations.DVB
         {
           ////CI_HW_Enable seems to always succeed ?!
           //if (KNCBDA_CI_HW_Enable(m_iDeviceIndex, true) == 0)
-          //  Log.Log.Debug("KNC: card {0} CI HW enable FAILED!", m_iDeviceIndex);
+          //  GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} CI HW enable FAILED!", m_iDeviceIndex);
 
           // CI Enable succeeds always, only if CAM isReady there is a slot/CAM
           if (KNCBDA_CI_IsReady(m_iDeviceIndex) != 0)
           {
-            Log.Log.Debug("KNC: card {0} CI slot enabled successfully", m_iDeviceIndex);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} CI slot enabled successfully", m_iDeviceIndex);
 
             // remember CAM is present
             m_bCAM_present = true;
@@ -416,13 +417,13 @@ namespace TvLibrary.Implementations.DVB
 
             StringBuilder nameBuffer = new StringBuilder(100);
             if (KNCBDA_CI_GetName(m_iDeviceIndex, nameBuffer, (uint)nameBuffer.MaxCapacity) != 0)
-              Log.Log.Debug("KNC: card {0} CAM Type: {1}", m_iDeviceIndex, nameBuffer);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} CAM Type: {1}", m_iDeviceIndex, nameBuffer);
             else
-              Log.Log.Debug("KNC: CI_GetName failed.");
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: CI_GetName failed.");
           }
           else
           {
-            Log.Log.Debug("KNC: card {0} detected without CAM", m_iDeviceIndex);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} detected without CAM", m_iDeviceIndex);
           }
         }
       }
@@ -433,7 +434,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void CloseCI()
     {
-      Log.Log.Debug("KNC: Disable CI");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Disable CI");
       KNCBDA_CI_Disable(m_iDeviceIndex);
     }
 
@@ -452,7 +453,7 @@ namespace TvLibrary.Implementations.DVB
     public void Dispose()
     {
       CloseCI();
-      Log.Log.Debug("KNC: Disposing CI handler");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Disposing CI handler");
       Marshal.FreeCoTaskMem(ptrPmt);
       Marshal.FreeCoTaskMem(ptrCallback);
       Marshal.FreeCoTaskMem(_ptrDataInstance);
@@ -467,7 +468,7 @@ namespace TvLibrary.Implementations.DVB
     public bool IsCamReady()
     {
       bool yesNo = (KNCBDA_CI_IsReady(m_iDeviceIndex) != 0);
-      Log.Log.Info("KNC: IsCAMReady {0}", yesNo);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC: IsCAMReady {0}", yesNo);
       return yesNo;
     }
 
@@ -481,7 +482,7 @@ namespace TvLibrary.Implementations.DVB
     {
       get
       {
-        Log.Log.Info("KNC: IsKNC {0}", m_bIsKNC);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC: IsKNC {0}", m_bIsKNC);
         return m_bIsKNC;
       }
     }
@@ -500,7 +501,7 @@ namespace TvLibrary.Implementations.DVB
         Marshal.WriteByte(ptrPmt, i, pmt[i]);
       }
       succeeded = KNCBDA_CI_SendPMTCommand(m_iDeviceIndex, ptrPmt, (uint)PMTlength) != 0;
-      Log.Log.Info("KNC: SendPMT success = {0}", succeeded);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC: SendPMT success = {0}", succeeded);
 
       if (!succeeded && m_ciState != KNCCiSlotStatus.Ready)
       {
@@ -528,27 +529,27 @@ namespace TvLibrary.Implementations.DVB
       switch (channel.DisEqc)
       {
         case DisEqcType.Level1AA:
-          Log.Log.Info("KNC:  Level1AA - SendDiSEqCCommand(0x00)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  Level1AA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.Level1AB:
-          Log.Log.Info("KNC:  Level1AB - SendDiSEqCCommand(0x01)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  Level1AB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
         case DisEqcType.Level1BA:
-          Log.Log.Info("KNC:  Level1BA - SendDiSEqCCommand(0x0100)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  Level1BA - SendDiSEqCCommand(0x0100)");
           SendDiSEqCCommand(0x0100);
           break;
         case DisEqcType.Level1BB:
-          Log.Log.Info("KNC:  Level1BB - SendDiSEqCCommand(0x0101)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  Level1BB - SendDiSEqCCommand(0x0101)");
           SendDiSEqCCommand(0x0101);
           break;
         case DisEqcType.SimpleA:
-          Log.Log.Info("KNC:  SimpleA - SendDiSEqCCommand(0x00)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  SimpleA - SendDiSEqCCommand(0x00)");
           SendDiSEqCCommand(0x00);
           break;
         case DisEqcType.SimpleB:
-          Log.Log.Info("KNC:  SimpleB - SendDiSEqCCommand(0x01)");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  SimpleB - SendDiSEqCCommand(0x01)");
           SendDiSEqCCommand(0x01);
           break;
         default:
@@ -563,7 +564,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns>true if succeeded, otherwise false</returns>
     protected bool SendDiSEqCCommand(ulong ulRange)
     {
-      Log.Log.Info("KNC:  SendDiSEqC Command {0}", ulRange);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  SendDiSEqC Command {0}", ulRange);
       // get ControlNode of tuner control node
       object ControlNode;
       int hr = ((IBDA_Topology)m_tunerFilter).GetControlNode(0, 1, 0, out ControlNode);
@@ -582,7 +583,7 @@ namespace TvLibrary.Implementations.DVB
               if (FrequencyFilter != null)
               {
                 hr = FrequencyFilter.put_Range(ulRange);
-                Log.Log.Info("KNC:  put_Range:{0} success:{1}", ulRange, hr);
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  put_Range:{0} success:{1}", ulRange, hr);
                 if (hr == 0)
                 {
                   // did it accept the changes? 
@@ -592,26 +593,26 @@ namespace TvLibrary.Implementations.DVB
                     hr = DecviceControl.CommitChanges();
                     if (hr == 0)
                     {
-                      Log.Log.Info("KNC:  CommitChanges() Succeeded");
+                      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  CommitChanges() Succeeded");
                       return true;
                     }
                     // reset configuration
-                    Log.Log.Info("KNC:  CommitChanges() Failed!");
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  CommitChanges() Failed!");
                     DecviceControl.StartChanges();
                     DecviceControl.CommitChanges();
                     return false;
                   }
-                  Log.Log.Info("KNC:  CheckChanges() Failed!");
+                  GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  CheckChanges() Failed!");
                   return false;
                 }
-                Log.Log.Info("KNC:  put_Range Failed!");
+                GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  put_Range Failed!");
                 return false;
               }
             }
           }
         }
       }
-      Log.Log.Info("KNC:  GetControlNode Failed!");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC:  GetControlNode Failed!");
       return false;
     }
 
@@ -633,7 +634,7 @@ namespace TvLibrary.Implementations.DVB
           yesNo = true;
         }
       }
-      Log.Log.Info("KNC: IsCIAvailable {0}", yesNo);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("KNC: IsCIAvailable {0}", yesNo);
       return yesNo;
     }
 
@@ -655,7 +656,7 @@ namespace TvLibrary.Implementations.DVB
         {
           m_waitTimeout = 0; // allow one new retry
         }
-        Log.Log.Debug("KNC: card {0} CI State: {1} {2}", m_iDeviceIndex, lpszMessage, State);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: card {0} CI State: {1} {2}", m_iDeviceIndex, lpszMessage, State);
       }
     }
 
@@ -668,7 +669,7 @@ namespace TvLibrary.Implementations.DVB
     {
       lock (this)
       {
-        Log.Log.Debug("OnKncCiOpenDisplay slot: {0}", slot);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiOpenDisplay slot: {0}", slot);
       }
     }
 
@@ -688,12 +689,12 @@ namespace TvLibrary.Implementations.DVB
       {
         lock (this)
         {
-          Log.Log.Debug("OnKncCiMenu slot:       {0}", slot);
-          Log.Log.Debug("OnKncCiMenu title:      {0}", lpszTitle);
-          Log.Log.Debug("OnKncCiMenu subtitle:   {0}", lpszSubTitle);
-          Log.Log.Debug("OnKncCiMenu bottom:     {0}", lpszSubTitle);
-          Log.Log.Debug("OnKncCiMenu lpszBottom: {0}", lpszBottom);
-          Log.Log.Debug("OnKncCiMenu nNumChoices:{0}", nNumChoices);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu slot:       {0}", slot);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu title:      {0}", lpszTitle);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu subtitle:   {0}", lpszSubTitle);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu bottom:     {0}", lpszSubTitle);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu lpszBottom: {0}", lpszBottom);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu nNumChoices:{0}", nNumChoices);
           if (m_ciMenuCallback != null)
           {
             m_ciMenuCallback.OnCiMenu(lpszTitle.ToString(), lpszSubTitle.ToString(), lpszBottom.ToString(),
@@ -703,7 +704,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("OnKncCiMenu exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenu exception: {0}", ex.ToString());
       }
     }
 
@@ -720,7 +721,7 @@ namespace TvLibrary.Implementations.DVB
       {
         lock (this)
         {
-          Log.Log.Debug("OnKncCiMenuChoice slot:{0} choice:{1} text:{2}", slot, nChoice, lpszText);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenuChoice slot:{0} choice:{1} text:{2}", slot, nChoice, lpszText);
           if (m_ciMenuCallback != null)
           {
             m_ciMenuCallback.OnCiMenuChoice((int)nChoice, lpszText.ToString());
@@ -729,7 +730,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("OnKncCiMenuChoice exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiMenuChoice exception: {0}", ex.ToString());
       }
     }
 
@@ -747,7 +748,7 @@ namespace TvLibrary.Implementations.DVB
       {
         lock (this)
         {
-          Log.Log.Debug("OnKncCiRequest slot:{0} bBlind:{1} nAnswerLength:{2} text:{3}", slot, bBlind, nAnswerLength,
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiRequest slot:{0} bBlind:{1} nAnswerLength:{2} text:{3}", slot, bBlind, nAnswerLength,
                         lpszText);
           if (m_ciMenuCallback != null)
           {
@@ -757,7 +758,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("OnKncCiRequest exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiRequest exception: {0}", ex.ToString());
       }
     }
 
@@ -773,7 +774,7 @@ namespace TvLibrary.Implementations.DVB
       {
         lock (this)
         {
-          Log.Log.Debug("OnKncCiCloseDisplay slot:{0} nDelay:{1}", slot, nDelay);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("OnKncCiCloseDisplay slot:{0} nDelay:{1}", slot, nDelay);
           if (m_ciMenuCallback != null)
           {
             m_ciMenuCallback.OnCiCloseDisplay((int)nDelay);
@@ -782,7 +783,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        Log.Log.Debug("KncCiCloseDisplay exception: {0}", ex.ToString());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("KncCiCloseDisplay exception: {0}", ex.ToString());
       }
     }
 
@@ -813,7 +814,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!m_bCAM_present)
         return false;
-      Log.Log.Debug("KNC: Enter CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Enter CI Menu");
       KNCBDA_CI_EnterMenu(m_iDeviceIndex, m_nSlot);
       return true;
     }
@@ -826,7 +827,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!m_bCAM_present)
         return false;
-      Log.Log.Debug("KNC: Close CI Menu");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Close CI Menu");
       KNCBDA_CI_CloseMenu(m_iDeviceIndex, m_nSlot);
       return true;
     }
@@ -840,7 +841,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!m_bCAM_present)
         return false;
-      Log.Log.Debug("KNC: Select CI Menu entry {0}", choice);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Select CI Menu entry {0}", choice);
       KNCBDA_CI_SelectMenu(m_iDeviceIndex, m_nSlot, choice);
       return true;
     }
@@ -856,7 +857,7 @@ namespace TvLibrary.Implementations.DVB
       if (!m_bCAM_present)
         return false;
       if (Answer == null) Answer = "";
-      Log.Log.Debug("KNC: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("KNC: Send Menu Answer: {0}, Cancel: {1}", Answer, Cancel);
       KNCBDA_CI_SendMenuAnswer(m_iDeviceIndex, m_nSlot, Cancel, Answer);
       return true;
     }

@@ -25,6 +25,7 @@ using System.Collections;
 using System.Threading;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
+using MediaPortal.CoreServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
 using MediaPortal.Profile;
@@ -98,7 +99,7 @@ namespace MediaPortal.ProcessPlugins.MusicDBReorg
       Work work = new Work(new DoWorkHandler(this.Run));
       work.ThreadPriority = ThreadPriority.Lowest;
       work.Description = "MusicDBReorg Thread";
-      GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
+      GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Low);
       Log.Info("MusicDBReorg: started");
     }
 

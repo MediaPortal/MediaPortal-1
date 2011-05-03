@@ -35,7 +35,7 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations.Analog;
 using TvLibrary.Implementations.Hybrid;
 using TvLibrary.Epg;
-using TvLibrary.Log;
+using MediaPortal.CoreServices;
 using TvLibrary.Streaming;
 using TvControl;
 using TvDatabase;
@@ -104,7 +104,7 @@ namespace TvService
     {
       if (ValidateTvControllerParams(cardId, false))
       {
-        Log.Debug("InitConditionalAccess: ValidateTvControllerParams failed");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("InitConditionalAccess: ValidateTvControllerParams failed");
         return false;
       }
       ITVCard unknownCard = _cards[cardId].Card;
@@ -155,12 +155,12 @@ namespace TvService
       {
         s_ciMenu = null;
         s_ciMenu += value;
-        Log.Debug("CiMenu: registered client event for callback");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("CiMenu: registered client event for callback");
       }
       remove
       {
         s_ciMenu = null;
-        Log.Debug("CiMenu: unregistered client callback.");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("CiMenu: unregistered client callback.");
       }
     }
 
@@ -212,13 +212,13 @@ namespace TvService
     /// <returns>true if supported</returns>
     public bool CiMenuSupported(int cardId)
     {
-      Log.Debug("CiMenuSupported called cardid {0}", cardId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("CiMenuSupported called cardid {0}", cardId);
       if (ValidateTvControllerParams(cardId, false))
       {
-        Log.Debug("ValidateTvControllerParams failed");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("ValidateTvControllerParams failed");
         return false;
       }
-      Log.Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("CiMenuSupported card {0} supported: {1}", _cards[cardId].CardName, _cards[cardId].CiMenuSupported);
       return _cards[cardId].CiMenuSupported;
     }
 
@@ -229,7 +229,7 @@ namespace TvService
     /// <returns>true if successful</returns>
     public bool EnterCiMenu(int cardId)
     {
-      Log.Debug("EnterCiMenu called");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("EnterCiMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
       if (_cards[cardId].CiMenuActions != null)
@@ -248,7 +248,7 @@ namespace TvService
     /// <returns>true if successful</returns>
     public bool SelectMenu(int cardId, byte choice)
     {
-      Log.Debug("SelectCiMenu called");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("SelectCiMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
       return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SelectMenu(choice);
@@ -261,7 +261,7 @@ namespace TvService
     /// <returns>true if successful</returns>
     public bool CloseMenu(int cardId)
     {
-      Log.Debug("CloseMenu called");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("CloseMenu called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
       if (_cards[cardId].CiMenuActions != null)
@@ -281,7 +281,7 @@ namespace TvService
     /// <returns></returns>
     public bool SendMenuAnswer(int cardId, bool Cancel, string Answer)
     {
-      Log.Debug("SendMenuAnswer called");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("SendMenuAnswer called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
       return _cards[cardId].CiMenuActions != null && _cards[cardId].CiMenuActions.SendMenuAnswer(Cancel, Answer);
@@ -307,14 +307,14 @@ namespace TvService
     public bool EnableCiMenuHandler(int cardId)
     {
       bool res;
-      Log.Debug("TvController: EnableCiMenuHandler called");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvController: EnableCiMenuHandler called");
       if (ValidateTvControllerParams(cardId, false))
         return false;
       if (_cards[cardId].CiMenuActions != null)
       {
         ActiveCiMenuCard = cardId;
         res = _cards[cardId].CiMenuActions.SetCiMenuHandler(this);
-        Log.Debug("TvController: SetCiMenuHandler: result {0}", res);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvController: SetCiMenuHandler: result {0}", res);
         return res;
       }
       else
@@ -441,7 +441,7 @@ namespace TvService
 
     public void Init()
     {
-      Log.Info("Controller: Initializing TVServer");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: Initializing TVServer");
       bool result = false;
 
       for (int i = 0; i < 5 && !result; i++)
@@ -455,19 +455,19 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: Error while deinit TvServer in Init");
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Error while deinit TvServer in Init");
           }
 
           Thread.Sleep(3000);
         }
-        Log.Info("Controller: {0} init attempt", (i + 1));
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: {0} init attempt", (i + 1));
         result = InitController();
       }
 
       if (result)
-        Log.Info("Controller: TVServer initialized okay");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: TVServer initialized okay");
       else
-        Log.Info("Controller: Failed to initialize TVServer");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: Failed to initialize TVServer");
 
       return;
     }
@@ -493,25 +493,25 @@ namespace TvService
         //  Thread.CurrentThread.Name = "TVController";
 
         //load the database connection string from the config file
-        Log.Info(@"{0}\gentle.config", PathManager.GetDataPath);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info(@"{0}\gentle.config", PathManager.GetDataPath);
         string connectionString, provider;
         GetDatabaseConnectionString(out connectionString, out provider);
         string ConnectionLog = connectionString.Remove(connectionString.IndexOf(@"Password=") + 8);
-        Log.Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: using {0} database connection: {1}", provider, ConnectionLog);
         Gentle.Framework.ProviderFactory.SetDefaultProviderConnectionString(connectionString);
 
         _cards = new Dictionary<int, ITvCardHandler>();
         _localCardCollection = new TvCardCollection(this);
 
         //log all local ip adresses, usefull for debugging problems
-        Log.Write("Controller: started at {0}", Dns.GetHostName());
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: started at {0}", Dns.GetHostName());
         IPHostEntry local = Dns.GetHostEntry(Dns.GetHostName());
         foreach (IPAddress ipaddress in local.AddressList)
         {
           // Show only IPv4 family addresses
           if (ipaddress.AddressFamily == AddressFamily.InterNetwork)
           {
-            Log.Info("Controller: local ip address:{0}", ipaddress.ToString());
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: local ip address:{0}", ipaddress.ToString());
           }
         }
 
@@ -523,7 +523,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Error("Controller: Failed to fetch tv servers from database - {0}",
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Failed to fetch tv servers from database - {0}",
                     Utils.BlurConnectionStringPassword(ex.Message));
           return false;
         }
@@ -533,7 +533,7 @@ namespace TvService
         {
           if (IsLocal(server.HostName))
           {
-            Log.Info("Controller: server running on {0}", server.HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: server running on {0}", server.HostName);
             _ourServer = server;
             break;
           }
@@ -546,16 +546,16 @@ namespace TvService
           if (servers.Count == 0)
           {
             //there are no other servers so we are the master one.
-            Log.Info("Controller: create new server in database");
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: create new server in database");
             _ourServer = new Server(false, Dns.GetHostName(), RtspStreaming.DefaultPort);
             _ourServer.IsMaster = true;
             _isMaster = true;
             _ourServer.Persist();
-            Log.Info("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
           }
           else
           {
-            Log.Error(
+            GlobalServiceProvider.Instance.Get<ILogger>().Error(
               "Controller: sorry, master/slave server setups are not supported. Since there is already another server in the db, we exit here.");
             return false;
           }
@@ -583,7 +583,7 @@ namespace TvService
           if (!found)
           {
             // card is not yet in the database, so add it
-            Log.Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
             layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath, _ourServer);
           }
         }
@@ -615,7 +615,7 @@ namespace TvService
                     {
                       try
                       {
-                        Log.Info("Controller: preloading card :{0}", card.Name);
+                        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: preloading card :{0}", card.Name);
                         card.BuildGraph();
                         if (unknownCard is TvCardAnalog)
                         {
@@ -624,17 +624,17 @@ namespace TvService
                       }
                       catch (Exception ex)
                       {
-                        Log.Error("failed to preload card '{0}', ex = {1}", card.Name, ex);
+                        GlobalServiceProvider.Instance.Get<ILogger>().Error("failed to preload card '{0}', ex = {1}", card.Name, ex);
                       }
                     }
                     else
                     {
-                      Log.Info("Controller: NOT preloading card :{0}", card.Name);
+                      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: NOT preloading card :{0}", card.Name);
                     }
                   }
                   else
                   {
-                    Log.Info("Controller: NOT preloading card :{0}", unknownCard.Name);
+                    GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: NOT preloading card :{0}", unknownCard.Name);
                   }
                 }
 
@@ -644,7 +644,7 @@ namespace TvService
             }
             if (!found)
             {
-              Log.Info("Controller: card not found :{0}", dbsCard.Name);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: card not found :{0}", dbsCard.Name);
 
               for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
               {
@@ -682,7 +682,7 @@ namespace TvService
           }
         }
 
-        Log.Info("Controller: setup hybrid cards");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: setup hybrid cards");
         IList<CardGroup> cardgroups = CardGroup.ListAll();
         foreach (CardGroup group in cardgroups)
         {
@@ -693,7 +693,7 @@ namespace TvService
             if (localcards.ContainsKey(card.IdCard))
             {
               localcards[card.IdCard].IsHybrid = true;
-              Log.WriteFile("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("Hybrid card: " + localcards[card.IdCard].Name + " (" + group.Name + ")");
               HybridCard hybridCard = hybridCardGroup.Add(card.IdCard, localcards[card.IdCard]);
               localcards[card.IdCard] = hybridCard;
             }
@@ -721,11 +721,11 @@ namespace TvService
             }
             if (!Directory.Exists(TimeShiftPath))
             {
-              Log.Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: creating timeshifting folder {0} for card \"{1}\"", TimeShiftPath, dbsCard.Name);
               Directory.CreateDirectory(TimeShiftPath);
             }
 
-            Log.Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, TimeShiftPath);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: card {0}: current timeshiftpath = {1}", dbsCard.Name, TimeShiftPath);
             if (TimeShiftPath != null)
             {
               string[] files = Directory.GetFiles(TimeShiftPath);
@@ -751,11 +751,11 @@ namespace TvService
           }
           catch (Exception exd)
           {
-            Log.Info("Controller: Error cleaning old ts buffer - {0}", exd.Message);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: Error cleaning old ts buffer - {0}", exd.Message);
           }
         }
 
-        Log.Info("Controller: setup streaming");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: setup streaming");
         _streamer = new RtspStreaming(_ourServer.HostName, _ourServer.RtspPort);
 
         if (_isMaster)
@@ -770,17 +770,17 @@ namespace TvService
         ExecutePendingDeletions();
 
         // Re-evaluate program states
-        Log.Info("Controller: recalculating program states");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: recalculating program states");
         TvDatabase.Program.ResetAllStates();
         Schedule.SynchProgramStatesForAll();
       }
       catch (Exception ex)
       {
-        Log.Write("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvControllerException: {0}\r\n{1}", ex.ToString(), ex.StackTrace);
         return false;
       }
 
-      Log.Info("Controller: initalized");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: initalized");
       return true;
     }
 
@@ -788,7 +788,7 @@ namespace TvService
     {
       // setup heartbeat monitoring thread.
       // useful for kicking idle/dead clients.
-      Log.Info("Controller: setup HeartBeat Monitor");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: setup HeartBeat Monitor");
 
       //stop thread, just incase it is running.
       if (heartBeatMonitorThread != null)
@@ -830,7 +830,7 @@ namespace TvService
     /// </summary>
     public void DeInit()
     {
-      Log.Info("Controller: DeInit.");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: DeInit.");
       try
       {
         if (heartBeatMonitorThread != null)
@@ -839,7 +839,7 @@ namespace TvService
           {
             if (heartBeatMonitorThread.IsAlive)
             {
-              Log.Info("Controller: HeartBeat monitor stopped...");
+              GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: HeartBeat monitor stopped...");
               try
               {
                 heartBeatMonitorThread.Abort();
@@ -852,26 +852,26 @@ namespace TvService
         //stop the RTSP streamer server
         if (_streamer != null)
         {
-          Log.Info("Controller: stop streamer...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: stop streamer...");
           _streamer.Stop();
           _streamer = null;
-          Log.Info("Controller: streamer stopped...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: streamer stopped...");
         }
         //stop the recording scheduler
         if (_scheduler != null)
         {
-          Log.Info("Controller: stop scheduler...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: stop scheduler...");
           _scheduler.Stop();
           _scheduler = null;
-          Log.Info("Controller: scheduler stopped...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: scheduler stopped...");
         }
         //stop the epg grabber
         if (_epgGrabber != null)
         {
-          Log.Info("Controller: stop epg grabber...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: stop epg grabber...");
           _epgGrabber.Stop();
           _epgGrabber = null;
-          Log.Info("Controller: epg stopped...");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: epg stopped...");
         }
 
         //clean up the tv cards
@@ -885,7 +885,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Error("TvController: Deinit failed - {0}", ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("TvController: Deinit failed - {0}", ex.Message);
       }
     }
 
@@ -1826,7 +1826,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                       _cards[cardId].DataBaseCard.ReferencedServer().HostName);
             return TvResult.UnknownError;
           }
@@ -1846,14 +1846,14 @@ namespace TvService
         catch (Exception ex)
         {
           isTimeShifting = false;
-          Log.Error("Exception in checking  " + ex.Message);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in checking  " + ex.Message);
         }
         TvResult result = _cards[cardId].TimeShifter.Start(ref user, ref fileName);
         if (result == TvResult.Succeeded)
         {
           if (!isTimeShifting)
           {
-            Log.Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("user:{0} card:{1} sub:{2} add stream:{3}", user.Name, user.CardId, user.SubChannel, fileName);
             if (File.Exists(fileName))
             {
               _streamer.Start();
@@ -1866,7 +1866,7 @@ namespace TvService
               if (subChannel != null && subChannel.CurrentChannel != null)
                 isTv = subChannel.CurrentChannel.IsTv;
               else
-                Log.Error("SubChannel or CurrentChannel is null when starting streaming");
+                GlobalServiceProvider.Instance.Get<ILogger>().Error("SubChannel or CurrentChannel is null when starting streaming");
 
               RtspStream stream = new RtspStream(String.Format("stream{0}.{1}", cardId, user.SubChannel), fileName,
                                                  _cards[cardId].Card, isTv);
@@ -1874,7 +1874,7 @@ namespace TvService
             }
             else
             {
-              Log.Write("Controller: streaming: file not found:{0}", fileName);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: streaming: file not found:{0}", fileName);
             }
           }
         }
@@ -1882,7 +1882,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return TvResult.UnknownError;
     }
@@ -1924,7 +1924,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return TvStoppedReason.UnknownReason;
     }
@@ -1959,7 +1959,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("card: unable to connect to slave controller at:{0}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
                       _cards[cardId].DataBaseCard.ReferencedServer().HostName);
             return false;
           }
@@ -1982,7 +1982,7 @@ namespace TvService
         if (_cards[cardId].Recorder.IsRecording(ref user))
           return true;
 
-        Log.Write("Controller: StopTimeShifting {0}", cardId);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: StopTimeShifting {0}", cardId);
         lock (this)
         {
           if (IsGrabbingEpg(cardId))
@@ -2001,7 +2001,7 @@ namespace TvService
             ITvCardContext context = (ITvCardContext)_cards[user.CardId].Card.Context;
             if (!context.ContainsUsersForSubchannel(user.SubChannel))
             {
-              Log.Write("Controller:Timeshifting stopped on card:{0}", cardId);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller:Timeshifting stopped on card:{0}", cardId);
               _streamer.Remove(String.Format("stream{0}.{1}", cardId, subChannel));
             }
           }
@@ -2021,7 +2021,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
       return false;
     }
@@ -2128,10 +2128,10 @@ namespace TvService
     /// <returns></returns>
     public bool GrabEpg(BaseEpgGrabber grabber, int cardId)
     {
-      Log.Info("Controller: GrabEpg on card ID == {0}", cardId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: GrabEpg on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
       {
-        Log.Error("Controller: GrabEpg - invalid cardId");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: GrabEpg - invalid cardId");
         return false;
       }
       return _cards[cardId].Epg.Start(grabber);
@@ -2142,10 +2142,10 @@ namespace TvService
     /// </summary>
     public void AbortEPGGrabbing(int cardId)
     {
-      Log.Info("Controller: AbortEPGGrabbing on card ID == {0}", cardId);
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: AbortEPGGrabbing on card ID == {0}", cardId);
       if (ValidateTvControllerParams(cardId))
       {
-        Log.Error("Controller: AbortEPGGrabbing - invalid cardId");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: AbortEPGGrabbing - invalid cardId");
         return;
       }
       _cards[cardId].Epg.Abort();
@@ -2188,7 +2188,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
           }
           return false;
         }
@@ -2203,7 +2203,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        Log.Error("Controller: Can't delete recording");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't delete recording");
       }
       return false;
     }
@@ -2230,7 +2230,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
           }
           return true;
         }
@@ -2247,7 +2247,7 @@ namespace TvService
     /// </summary>
     public bool DeleteInvalidRecordings()
     {
-      Log.Debug("Deleting invalid recordings");
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Deleting invalid recordings");
       IList<Recording> itemlist = Recording.ListAll();
       bool foundInvalidRecording = false;
       foreach (Recording rec in itemlist)
@@ -2260,7 +2260,7 @@ namespace TvService
           }
           catch (Exception e)
           {
-            Log.Error("Controller: Can't delete invalid recording", e);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't delete invalid recording", e);
           }
           foundInvalidRecording = true;
         }
@@ -2312,7 +2312,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return -1;
       }
     }
@@ -2358,7 +2358,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: unable to connect to slave controller at:{0}",
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: unable to connect to slave controller at:{0}",
                       _cards[user.CardId].DataBaseCard.ReferencedServer().HostName);
             return "";
           }
@@ -2368,7 +2368,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        Log.Error("Controller: Can't get streaming url");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't get streaming url");
       }
       return "";
     }
@@ -2393,7 +2393,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
             return "";
           }
         }
@@ -2406,18 +2406,18 @@ namespace TvService
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
             string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
-            Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
         }
         catch (Exception)
         {
-          Log.Error("Controller: Can't get recroding url - First catch");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't get recroding url - First catch");
         }
       }
       catch (Exception)
       {
-        Log.Error("Controller: Can't get recroding url - Second catch");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't get recroding url - Second catch");
       }
       return "";
     }
@@ -2447,7 +2447,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
+            GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
             return "";
           }
         }
@@ -2464,12 +2464,12 @@ namespace TvService
         }
         catch (Exception)
         {
-          Log.Error("Controller: Can't get recording chapters - First catch");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't get recording chapters - First catch");
         }
       }
       catch (Exception)
       {
-        Log.Error("Controller: Can't get recording chapters - Second catch");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("Controller: Can't get recording chapters - Second catch");
       }
       return "";
     }
@@ -2488,7 +2488,7 @@ namespace TvService
         RtspStream stream = new RtspStream(streamName, fileName, streamName);
         _streamer.AddStream(stream);
         string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
-        Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: streaming url:{0} file:{1}", url, fileName);
         return url;
       }
       return "";
@@ -2509,14 +2509,14 @@ namespace TvService
       while (enumerator.MoveNext())
       {
         KeyValuePair<int, ITvCardHandler> key = enumerator.Current;
-        Log.Info("Controller: dispose card:{0}", key.Value.CardName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: dispose card:{0}", key.Value.CardName);
         try
         {
           key.Value.Dispose();
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         }
       }
     }
@@ -2535,7 +2535,7 @@ namespace TvService
         return -1;
 
       Channel channel = Channel.Retrieve(idChannel);
-      Log.Write("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: TimeShiftingWouldUseCard {0} {1}", channel.DisplayName, channel.IdChannel);
 
       try
       {
@@ -2549,7 +2549,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return -1;
       }
       return -1;
@@ -2606,7 +2606,7 @@ namespace TvService
       }
 
       Channel channel = Channel.Retrieve(idChannel);
-      Log.Write("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
+      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: StartTimeShifting {0} {1}", channel.DisplayName, channel.IdChannel);
       card = null;
       if (_epgGrabber != null)
       {
@@ -2620,7 +2620,7 @@ namespace TvService
         if (freeCards.Count == 0)
         {
           //no free cards available
-          Log.Write("Controller: StartTimeShifting failed:{0}", result);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: StartTimeShifting failed:{0}", result);
 
           if (_epgGrabber != null && AllCardsIdle)
           {
@@ -2644,7 +2644,7 @@ namespace TvService
           }
         }
 
-        Log.Write("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: try max {0} of {1} cards for timeshifting", maxCards, freeCards.Count);
         TvBusinessLayer layer = new TvBusinessLayer();
         //keep tuning each card until we are succesful                
         for (int i = 0; i < maxCards; i++)
@@ -2652,7 +2652,7 @@ namespace TvService
           int nrOfOtherUsersTimeshiftingOnCard = 0;
           if (i > 0)
           {
-            Log.Write("Controller: Timeshifting failed, lets try next available card.");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: Timeshifting failed, lets try next available card.");
             cardChanged = (maxCards > 1);
           }
           userCopy = new User(user.Name, user.IsAdmin);
@@ -2673,7 +2673,7 @@ namespace TvService
                                                             Environment.SpecialFolder.CommonApplicationData));
             if (!Directory.Exists(cardInfo.Card.RecordingFolder))
             {
-              Log.Write("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: creating recording folder {0} for card {0}", cardInfo.Card.RecordingFolder,
                         cardInfo.Card.Name);
               Directory.CreateDirectory(cardInfo.Card.RecordingFolder);
             }
@@ -2685,7 +2685,7 @@ namespace TvService
               Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData));
             if (!Directory.Exists(cardInfo.Card.TimeShiftFolder))
             {
-              Log.Write("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder,
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: creating timeshifting folder {0} for card {0}", cardInfo.Card.TimeShiftFolder,
                         cardInfo.Card.Name);
               Directory.CreateDirectory(cardInfo.Card.TimeShiftFolder);
             }
@@ -2719,7 +2719,7 @@ namespace TvService
 
               if (isDiffTS)
               {
-                Log.Write("Controller: kicking leech user {0} off card {1} since owner {2} changed transponder", u.Name,
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: kicking leech user {0} off card {1} since owner {2} changed transponder", u.Name,
                           cardInfo.Card.Name, user.Name);
                 StopTimeShifting(ref u, TvStoppedReason.OwnerChangedTS);
               }
@@ -2737,7 +2737,7 @@ namespace TvService
                     {
                       if (i < maxCards)
                       {
-                        Log.Write("Controller: skipping card:{0} since other users are present on the same channel.",
+                        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: skipping card:{0} since other users are present on the same channel.",
                                   userCopy.CardId);
                         skipCard = true;
                         break; //try next card  
@@ -2770,7 +2770,7 @@ namespace TvService
             StopTimeShifting(ref userCopy);
             continue; //try next card            
           }
-          Log.Info("control2:{0} {1} {2}", userCopy.Name, userCopy.CardId, userCopy.SubChannel);
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("control2:{0} {1} {2}", userCopy.Name, userCopy.CardId, userCopy.SubChannel);
           if (!IsTimeShifting(ref userCopy))
           {
             CleanTimeShiftFiles(cardInfo.Card.TimeShiftFolder,
@@ -2786,7 +2786,7 @@ namespace TvService
             StopTimeShifting(ref userCopy);
             continue; //try next card
           }
-          Log.Write("Controller: StartTimeShifting started on card:{0} to {1}", userCopy.CardId, timeshiftFileName);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: StartTimeShifting started on card:{0} to {1}", userCopy.CardId, timeshiftFileName);
           card = GetVirtualCard(userCopy);
           card.NrOfOtherUsersTimeshiftingOnCard = nrOfOtherUsersTimeshiftingOnCard;
           RemoveUserFromOtherCards(card.Id, userCopy); //only remove user from other cards if new tuning was a success
@@ -2821,7 +2821,7 @@ namespace TvService
         {
           _epgGrabber.Start();
         }
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return TvResult.UnknownError;
       }
     }
@@ -2868,21 +2868,21 @@ namespace TvService
       card = null;
       try
       {
-        Log.Info("IsRecordingSchedule:{0} {1}", idSchedule, _isMaster);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("IsRecordingSchedule:{0} {1}", idSchedule, _isMaster);
         if (_isMaster == false)
           return false;
         if (!_scheduler.IsRecordingSchedule(idSchedule, out card))
         {
-          Log.Info("IsRecordingSchedule: scheduler is not recording schedule");
+          GlobalServiceProvider.Instance.Get<ILogger>().Info("IsRecordingSchedule: scheduler is not recording schedule");
           return false;
         }
-        Log.Info("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("IsRecordingSchedule: scheduler is recording schedule on cardid:{0}", card.Id);
 
         return true;
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return false;
       }
     }
@@ -2902,7 +2902,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -2924,7 +2924,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -2950,7 +2950,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -2967,7 +2967,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -2987,7 +2987,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
           return false;
         }
       }
@@ -3002,7 +3002,7 @@ namespace TvService
               TvBusinessLayer layer = new TvBusinessLayer();
               if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
-                Log.Write("Controller: epg start");
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: epg start");
                 _epgGrabber.Start();
               }
             }
@@ -3014,7 +3014,7 @@ namespace TvService
               TvBusinessLayer layer = new TvBusinessLayer();
               if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value == "yes")
               {
-                Log.Write("Controller: epg stop");
+                GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: epg stop");
                 _epgGrabber.Stop();
               }
             }
@@ -3022,7 +3022,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          Log.Write(ex);
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         }
       }
     }
@@ -3038,7 +3038,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -3062,7 +3062,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -3088,7 +3088,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
         return;
       }
     }
@@ -3710,7 +3710,7 @@ namespace TvService
 
     private void HeartBeatMonitor()
     {
-      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.",
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.",
                HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
       while (true)
       {
@@ -3736,7 +3736,7 @@ namespace TvService
                 // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
                 if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
                 {
-                  Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
+                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
                   StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
                 }
               }
@@ -3897,7 +3897,7 @@ namespace TvService
         _cards[user.CardId].Tuner.OnBeforeTuneEvent += new CardTuner.OnBeforeTuneDelegate(Tuner_OnBeforeTuneEvent);
 
         TvResult result = _cards[user.CardId].Tuner.CardTune(ref user, channel, dbChannel);
-        Log.Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller: {0} {1} {2}", user.Name, user.CardId, user.SubChannel);
 
         /*
         if (result == TvResult.Succeeded)
@@ -3932,7 +3932,7 @@ namespace TvService
     {
       try
       {
-        Log.Write(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug(@"Controller: delete timeshift files {0}\{1}", folder, fileName);
         string[] files = Directory.GetFiles(folder);
         for (int i = 0; i < files.Length; ++i)
         {
@@ -3940,19 +3940,19 @@ namespace TvService
           {
             try
             {
-              Log.Write("Controller:   delete {0}", files[i]);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller:   delete {0}", files[i]);
               File.Delete(files[i]);
             }
             catch (Exception e)
             {
-              Log.Debug("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
+              GlobalServiceProvider.Instance.Get<ILogger>().Debug("Controller: Error \"{0}\" on delete in CleanTimeshiftFiles", e.Message);
             }
           }
         }
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -3982,7 +3982,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Write(ex);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
       }
     }
 
@@ -4019,7 +4019,7 @@ namespace TvService
     {
       get
       {
-        //Log.Debug("TVController.CanSuspend: checking cards");
+        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVController.CanSuspend: checking cards");
 
         Dictionary<int, ITvCardHandler>.Enumerator enumer = _cards.GetEnumerator();
         while (enumer.MoveNext())
@@ -4036,19 +4036,19 @@ namespace TvService
               if (_cards[cardId].Recorder.IsRecording(ref users[i]) ||
                   _cards[cardId].TimeShifter.IsTimeShifting(ref users[i]))
               {
-                //Log.Debug("TVController.CanSuspend: checking cards finished -> cannot suspend");
+                //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVController.CanSuspend: checking cards finished -> cannot suspend");
                 return false;
               }
             }
           }
         }
-        //Log.Debug("TVController.CanSuspend: IsTimeToRecord");
+        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVController.CanSuspend: IsTimeToRecord");
 
         // check whether the scheduler would like to record something now, but there is no card recording
         // this can happen if a recording is due, but the scheduler has not yet picked up recording (latency)
         if (_scheduler != null && _scheduler.IsTimeToRecord(DateTime.Now))
         {
-          //Log.Debug("TVController.CanSuspend: IsTimeToRecord finished -> cannot suspend" );
+          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVController.CanSuspend: IsTimeToRecord finished -> cannot suspend" );
           return false;
         }
         return true;
@@ -4064,11 +4064,11 @@ namespace TvService
 #if DEBUG
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
-        Log.Error(
+        GlobalServiceProvider.Instance.Get<ILogger>().Error(
           "TVController:" + sf.GetMethod().Name +
           " - incorrect parameters used! cardId {0} _cards.ContainsKey(cardId) == {1} CardPresent {2}", cardId,
           _cards.ContainsKey(cardId), CardPresent(cardId));
-        Log.Error("{0}", st);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("{0}", st);
 #endif
         return true;
       }
@@ -4090,16 +4090,16 @@ namespace TvService
 
         if (user != null)
         {
-          Log.Error(
+          GlobalServiceProvider.Instance.Get<ILogger>().Error(
             "TVController:" + sf.GetMethod().Name +
             " - incorrect parameters used! user {0} cardId {1} _cards.ContainsKey(cardId) == {2} CardPresent(cardId) {3}",
             user, user.CardId, _cards.ContainsKey(user.CardId), CardPresent(user.CardId));
         }
         else
         {
-          Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
+          GlobalServiceProvider.Instance.Get<ILogger>().Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! user NULL");
         }
-        Log.Error("{0}", st);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("{0}", st);
 #endif
         return true;
       }
@@ -4113,8 +4113,8 @@ namespace TvService
         StackTrace st = new StackTrace(true);
         StackFrame sf = st.GetFrame(0);
 
-        Log.Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! channel NULL");
-        Log.Error("{0}", st);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("TVController:" + sf.GetMethod().Name + " - incorrect parameters used! channel NULL");
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("{0}", st);
         return true;
       }
       return false;
@@ -4140,7 +4140,7 @@ namespace TvService
           // avoid unwanted CI menu callbacks if user has not opened CI menu interactively
           if (ActiveCiMenuCard != -1 && _cards[ActiveCiMenuCard].DataBaseCard.CamType == 1 && !IsCiMenuInteractive)
           {
-            Log.Debug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", curMenu.Title);
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("AstonCrypt2: unrequested CI menu received, no action done. Menu Title: {0}", curMenu.Title);
             return;
           }
 
@@ -4150,7 +4150,7 @@ namespace TvService
           }
           else
           {
-            Log.Debug("CI menu received but no listeners available");
+            GlobalServiceProvider.Instance.Get<ILogger>().Debug("CI menu received but no listeners available");
           }
         }
       }
@@ -4185,7 +4185,7 @@ namespace TvService
     {
       if (curMenu == null)
       {
-        Log.Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Error in OnCiMenuChoice: menu choice sent before menu started");
         return 0;
       }
       curMenu.AddEntry(nChoice + 1, lpszText); // choices for display +1 
@@ -4243,11 +4243,11 @@ namespace TvService
         List<int> pendingDelitionRemove = new List<int>();
         IList<PendingDeletion> pendingDeletions = PendingDeletion.ListAll();
 
-        Log.Debug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
+        GlobalServiceProvider.Instance.Get<ILogger>().Debug("ExecutePendingDeletions: number of pending deletions : " + Convert.ToString(pendingDeletions.Count));
 
         foreach (PendingDeletion pendingDelition in pendingDeletions)
         {
-          Log.Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
+          GlobalServiceProvider.Instance.Get<ILogger>().Debug("ExecutePendingDeletions: trying to remove file : " + pendingDelition.FileName);
 
           bool wasPendingDeletionAdded = false;
           bool wasDeleted = RecordingFileHandler.DeleteRecordingOnDisk(pendingDelition.FileName,
@@ -4270,7 +4270,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        Log.Error("ExecutePendingDeletions exception : " + ex.Message);
+        GlobalServiceProvider.Instance.Get<ILogger>().Error("ExecutePendingDeletions exception : " + ex.Message);
       }
     }
 
@@ -4280,7 +4280,7 @@ namespace TvService
     {
       if (!_onResumeDone)
       {
-        Log.Info("TvController.OnResume()");
+        GlobalServiceProvider.Instance.Get<ILogger>().Info("TvController.OnResume()");
         SetupHeartbeatThread();
 
         if (_scheduler != null)
@@ -4294,7 +4294,7 @@ namespace TvService
     public void OnSuspend()
     {
       _onResumeDone = false;
-      Log.Info("TvController.OnSuspend()");
+      GlobalServiceProvider.Instance.Get<ILogger>().Info("TvController.OnSuspend()");
       if (heartBeatMonitorThread != null && heartBeatMonitorThread.IsAlive)
       {
         heartBeatMonitorThread.Abort();
