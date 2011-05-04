@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55 ----------- instance 0x%x", this);
+      Log("---------- v1.4.55f ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55 ----------- instance 0x%x", this);
+      Log("---------- v0.0.55f ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -145,8 +145,8 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_LastScheduledUncorrectedSampleTime  = -1;
     m_DetectedFrameTimePos                = 0;
     m_DectedSum                           = 0;
-    m_DetectedFrameRate                   = 0.0;
     m_DetectedFrameTime                   = -1.0;
+    m_DetFrameTimeAve                     = -1.0;
     m_DetectedLock                        = false;
     m_DetectedFrameTimeStdDev             = 0;
     m_LastEndOfPaintScanline       = 0;
@@ -154,6 +154,10 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     m_frameRateRatio              = 0;
     m_rawFRRatio                  = 0;
     m_maxScanLine                 = 0;
+    m_minVisScanLine              = 0;
+    m_maxVisScanLine              = 0;
+    
+    m_numFilters = 0;
     
     m_pD3DDev->GetDisplayMode(0, &m_displayMode);
 
@@ -771,7 +775,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
 
     if (hr == 0 && videoFormat->videoInfo.FramesPerSecond.Numerator != 0)
     {
-      if (!m_bMsVideoCodec || m_bMsVideoCodec && m_rtTimePerFrame == 0)
+      if (!m_bMsVideoCodec || m_bMsVideoCodec && (m_rtTimePerFrame == 0))
         m_rtTimePerFrame = (10000000I64*videoFormat->videoInfo.FramesPerSecond.Denominator)/videoFormat->videoInfo.FramesPerSecond.Numerator;
 
       Log("Time Per Frame: %.3f ms", (double)m_rtTimePerFrame/10000.0);
@@ -789,6 +793,13 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     }
     else
     {
+      LARGE_INTEGER frameRate;
+      CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_RATE, (UINT64*)&frameRate.QuadPart), "Failed to get MF_MT_FRAME_RATE");
+      Log("MF_MT_FRAME_RATE: %.3f fps", ((double)frameRate.HighPart/(double)frameRate.LowPart));
+      
+      if ( (!m_bMsVideoCodec || (m_bMsVideoCodec && (m_rtTimePerFrame == 0))) && frameRate.HighPart != 0)
+        m_rtTimePerFrame = (10000000*(LONGLONG)frameRate.LowPart)/(LONGLONG)frameRate.HighPart;
+
       Log("Setting MFVideoTransferMatrix using m_pMFCreateVideoMediaType failed, trying MF_MT_FRAME_SIZE");
       CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
 
@@ -815,8 +826,8 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     if (m_rtTimePerFrame == 0)
     {
       // if fps information is not provided use default (workaround for possible bugs)
-      Log("No time per frame available using default: %d", DEFAULT_FRAME_TIME);
-      m_rtTimePerFrame = DEFAULT_FRAME_TIME;
+      m_rtTimePerFrame = (LONGLONG)(10000 * GetDisplayCycle());
+      Log("No time per frame available using default: %f", GetDisplayCycle());
     }
 
     CHECK_HR((*pType)->GetUINT64(MF_MT_FRAME_SIZE, (UINT64*)&i64Size.QuadPart), "Failed to get MF_MT_FRAME_SIZE");
@@ -1343,7 +1354,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         //Clamp within limits - because of hystersis, the range of nextSampleTime
         //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
         //the -0.5 to +0.5 allowable range 
-        if (m_bDVDMenu || m_bScrubbing || (m_frameRateRatio == 0 && m_dBias == 1.0))
+        if (m_bDVDMenu || m_bScrubbing || (m_iFramesDrawn <= FRAME_PROC_THRSH2) || (m_frameRateRatio == 0 && m_dBias == 1.0))
         {
           nstPhaseDiff = 0.0;
         }
@@ -1891,6 +1902,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     case MFVP_MESSAGE_BEGINSTREAMING:
       // The EVR switched from stopped to paused. The presenter should allocate resources.
       Log("ProcessMessage MFVP_MESSAGE_BEGINSTREAMING");
+      GetFilterNames();
       m_bEndStreaming = FALSE;
       m_bInputAvailable = FALSE;
       m_bFirstInputNotify = FALSE;
@@ -2534,7 +2546,9 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
       SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
     }
 
-    m_maxScanLine = 0;
+    m_maxScanLine    = 0;
+    m_minVisScanLine = m_displayMode.Height;
+    m_maxVisScanLine = 0;
     const int maxScanLineSamples = 1000;
     const int maxFrameSamples = 8;
     double times[maxScanLineSamples*2];
@@ -2547,7 +2561,6 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     int sampleCount;
 
     double estRefreshCyc [maxFrameSamples];
-    double cycFrac = 0.0;
     double sumRefCyc = 0.0;
     double aveRefCyc = 0.0;
 
@@ -2566,20 +2579,23 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 
     Log("Starting frame loops: start scanline: %d", rasterStatus.ScanLine);
 
-    startTime = GetCurrentTimestamp();
-    startTimeLR = startTime;
+    endTime = GetCurrentTimestamp();
+    startTimeLR = endTime;
   
     // Now we're at the start of a vsync
     for (int i = 0; i < maxFrameSamples; i++)
     {      
+      startTime = endTime;
       //Skip over vertical blanking period
       m_pD3DDev->GetRasterStatus(0, &rasterStatus);
-      while (rasterStatus.ScanLine < 10)
+      while (rasterStatus.ScanLine < 2)
       {
         m_pD3DDev->GetRasterStatus(0, &rasterStatus);
       } 
       startLine = rasterStatus.ScanLine;
-      startTime = GetCurrentTimestamp();
+      
+      if (startLine < m_minVisScanLine)
+        m_minVisScanLine = startLine;
 
       // make a few measurements
       Log("Starting Frame: %d, start scanline: %d", i, startLine);
@@ -2591,13 +2607,14 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
 
       Log("Ending Frame: %d, start scanline: %d, end scanline: %d, maxScanline: %d", i, startLine, endLine, m_maxScanLine);
 
-      cycFrac = ((double)endLine - (double)startLine)/(double)(m_maxScanLine + 1);
-      estRefreshCyc[i] = (double)(endTime - startTime) / (1.0 + cycFrac); // in hns units
+      estRefreshCyc[i] = (double)(endTime - startTime); // in hns units
       sumRefCyc += estRefreshCyc[i];
       
       coeff[i].fit = LinearRegression(scanLines, times, sampleCount, &coeff[i].slope, &coeff[i].intercept);
       Log("  samples = %d, slope = %.6f, intercept = %.6f, fit = %.6f", sampleCount, coeff[i].slope, coeff[i].intercept, coeff[i].fit);
     }    
+
+    m_maxVisScanLine = m_maxScanLine;
 
     // Restore thread priority
     if (priority != THREAD_PRIORITY_ERROR_RETURN)
@@ -2677,7 +2694,7 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     // Compare the two methods
     //--------------------------------------------------------------
 
-    AllowedError = 0.02; //Allow 2.0% error
+    AllowedError = 0.05; //Allow 5.0% error
 
     currError = fabs(1.0 - (simpleFrameTime / frameTime));
     if (currError < AllowedError)
@@ -2693,24 +2710,37 @@ BOOL MPEVRCustomPresenter::EstimateRefreshTimings()
     m_pD3DDev->GetDisplayMode(0, &m_displayMode); //update this just in case anything has changed...
     GetRealRefreshRate(); // update m_dD3DRefreshCycle and m_dD3DRefreshRate values
     
-    if (m_dEstRefreshCycle < 5.0) // just in case it's gone badly wrong...
+    if ((m_dEstRefreshCycle < 5.0) || (m_dEstRefreshCycle > 100.0)) // just in case it's gone badly wrong...
     {
       Log("Display refresh estimation failed, measured display cycle: %.6f ms", m_dEstRefreshCycle);
       m_dEstRefreshCycle = m_dD3DRefreshCycle;
       m_dDetectedScanlineTime = m_dD3DRefreshCycle/(double)(m_displayMode.Height); // in milliseconds
       m_maxScanLine = m_displayMode.Height;
+      m_maxVisScanLine = m_displayMode.Height;
+      m_minVisScanLine = 5;
       m_estRefreshLock = false;
     }
 
     Log("Raw est display cycle, linReg: %.6f ms, simple: %.6f ms, diff: %.6f ", frameTime/10000.0, simpleFrameTime/10000.0, currError);
     Log("Measured display cycle: %.6f ms, locked: %d ", m_dEstRefreshCycle, m_estRefreshLock);
-    Log("Maximum scanline: %d", m_maxScanLine);
     Log("Measured scanline time: %.6f us", (m_dDetectedScanlineTime * 1000.0));
     Log("Display (from windows): %d x %d @ %.6f Hz | Measured refresh rate: %.6f Hz", m_displayMode.Width, m_displayMode.Height, m_dD3DRefreshRate, 1000.0/m_dEstRefreshCycle);
+    Log("Max total scanline: %d, Max visible scanline: %d, Min visible scanline: %d", m_maxScanLine, m_maxVisScanLine, m_minVisScanLine);
     
   }
+  
+  //Initialise vsync correction control values
+  m_rasterLimitLow   = (((m_maxVisScanLine - m_minVisScanLine) * 1)/8) + m_minVisScanLine; 
+  m_rasterTargetPosn = m_rasterLimitLow;
+  m_rasterLimitHigh  = (((m_maxVisScanLine - m_minVisScanLine) * 4)/8) + m_minVisScanLine;
+  m_rasterLimitTop   = (((m_maxVisScanLine - m_minVisScanLine) * 5)/8) + m_minVisScanLine;   
+  m_rasterLimitNP    = m_maxVisScanLine;   
+
+  Log("Vsync correction : rasterLimitHigh: %d, rasterLimitLow: %d, rasterTargetPosn: %d", m_rasterLimitHigh, m_rasterLimitLow, m_rasterTargetPosn);
+
   return m_estRefreshLock;
 }
+
 
 
 // Update the array m_pllJitter with a new vsync period. Calculate min, max and stddev.
@@ -2874,7 +2904,6 @@ void MPEVRCustomPresenter::ResetFrameStats()
   
   m_DetectedFrameTimePos  = 0;
   m_DetectedLock          = false;
-  m_DetectedFrameRate     = 0.0;
   m_DetectedFrameTime     = -1.0;  
   m_DectedSum             = 0;
   ZeroMemory((void*)&m_DetectedFrameTimeHistory, sizeof(LONGLONG) * NB_DFTHSIZE);
@@ -3004,25 +3033,31 @@ void MPEVRCustomPresenter::GetFrameRateRatio()
 double MPEVRCustomPresenter::GetCycleDifference()
 {
 	double dBaseDisplayCycle = GetDisplayCycle();
-	UINT i;
+	UINT i, j;
 	double minDiff = 1.0;
+	
 	if (dBaseDisplayCycle == 0.0 || m_dFrameCycle == 0.0)
   {
     return 1.0;
   }
   else
 	{
-    for (i = 1; i <= 8; i++) 
+    for (j = 1; j <= 2; j++) 
 		{
-			double dDisplayCycle = i * dBaseDisplayCycle;
-			double diff = (dDisplayCycle - m_dFrameCycle) / m_dFrameCycle;
-			if (abs(diff) < abs(minDiff))
-			{
-				minDiff = diff;
-				m_dOptimumDisplayCycle = dDisplayCycle;
-			}
-		}
+  	  double dFrameCycle = j * m_dFrameCycle;
+      for (i = 1; i <= 8; i++) 
+  		{
+  			double dDisplayCycle = i * dBaseDisplayCycle;
+  			double diff = (dDisplayCycle - dFrameCycle) / dFrameCycle;
+  			if (abs(diff) < abs(minDiff))
+  			{
+  				minDiff = diff;
+  				m_dOptimumDisplayCycle = dDisplayCycle;
+  			}
+  		}
+  	}
 	}
+	
 	return minDiff;
 }
 
@@ -3126,7 +3161,15 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
 
       double DetectedTime = Average / 10000000.0;
       
-      if ((fabs(1.0 - (DetectedTime / m_DetectedFrameTime)) > 0.01) || (m_DetectedFrameTimePos < NB_DFTHSIZE)) //allow 1% drift
+      m_DetFrameTimeAve = DetectedTime;
+      
+      bool bFTdiff = false;      
+      if (m_DetectedFrameTime && DetectedTime)
+      {
+        bFTdiff = fabs(1.0 - (DetectedTime / m_DetectedFrameTime)) > 0.01; //allow 1% drift before re-calculating
+      }
+      
+      if (bFTdiff || (m_DetectedFrameTimePos < NB_DFTHSIZE))
 			{
 	      double AllowedError = 0.025; //Allow 2.5% error to cover (ReClock ?) sample timing jitter
 	      static double AllowedValues[] = {1000.5/30000.0, 1000.0/25000.0, 1000.5/24000.0};  //30Hz and 24Hz are compromise values
@@ -3154,20 +3197,18 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
 	      if (BestVal != 0.0)
 	      {
 	        m_DetectedLock = true;
-	        m_DetectedFrameRate = 1.0 / BestVal;
 	        m_DetectedFrameTime = BestVal;
 	      }
 	      else
 	      {
 	        m_DetectedLock = false;
-	        m_DetectedFrameRate = 1.0 / DetectedTime;
 	        m_DetectedFrameTime = DetectedTime;
 	      }
 	    }
     }
 
   }
-  else if (Diff > m_rtTimePerFrame*8)
+  else if ((Diff >= m_rtTimePerFrame*8) && m_rtTimePerFrame)
   {
     // Seek, so reset the averaging logic
     m_DetectedFrameTimePos = 0;
@@ -3176,7 +3217,7 @@ void MPEVRCustomPresenter::CorrectSampleTime(IMFSample* pSample)
     ZeroMemory((void*)&m_DetectedFrameTimeHistory, sizeof(LONGLONG) * NB_DFTHSIZE);
   }
     
-  LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameRate);
+  LOG_TRACE("EVR: Time: %f %f %f\n", Time / 10000000.0, SetDuration / 10000000.0, m_DetectedFrameTime);
 }
 
 
@@ -3200,8 +3241,6 @@ void MPEVRCustomPresenter::GetRealRefreshRate()
   m_dD3DRefreshCycle = 1000.0 / m_dD3DRefreshRate; // in ms
 }
 
-
-
 // get time delay (in hns) to target raster paint position
 // returns zero delay if 'now' is inside the limitLow/limitHigh window
 LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime)
@@ -3210,11 +3249,7 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     LONGLONG targetDelay = 0;
     *targetTime = 0;
     LONGLONG scanlineTime = (LONGLONG) (m_dDetectedScanlineTime * 10000.0);
-     
-    UINT limitLow   = (m_maxScanLine * 1)/8; 
-    UINT targetPosn = limitLow;
-    UINT limitHigh  = (m_maxScanLine * 3)/8;
-    UINT limitTop   = (m_maxScanLine * 7)/8;    
+    UINT limitHigh  = m_rasterLimitHigh;
     
     if (*offsetTime < 0)
     {
@@ -3223,9 +3258,9 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     
     UINT errOffset = (UINT)(*offsetTime / scanlineTime); //error offset in scanlines
     limitHigh  = limitHigh + errOffset;
-    if (limitHigh > limitTop)
+    if (limitHigh > m_rasterLimitTop)
     {
-      limitHigh = limitTop;
+      limitHigh = m_rasterLimitTop;
     }
     
     *offsetTime = 0;
@@ -3236,19 +3271,19 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
     {
       UINT currScanline = rasterStatus.ScanLine;
       
-      if ( currScanline < limitLow )
+      if ( currScanline < m_rasterLimitLow )
       {
-        targetDelay = (LONGLONG)(targetPosn - currScanline) * scanlineTime ;       
+        targetDelay = (LONGLONG)(m_rasterTargetPosn - currScanline) * scanlineTime ;       
       }
       else if ( currScanline > limitHigh )
       {
         if (currScanline > m_maxScanLine) 
         {
-          targetDelay = (LONGLONG)targetPosn * scanlineTime ;  
+          targetDelay = (LONGLONG)m_rasterTargetPosn * scanlineTime ;  
         }
         else
         {
-          targetDelay = (LONGLONG)(targetPosn + m_maxScanLine - currScanline) * scanlineTime ;  
+          targetDelay = (LONGLONG)(m_rasterTargetPosn + m_maxScanLine - currScanline) * scanlineTime ;  
         }      
       }   
       
@@ -3257,12 +3292,23 @@ LONGLONG MPEVRCustomPresenter::GetDelayToRasterTarget(LONGLONG *targetTime, LONG
         targetDelay = (LONGLONG)(GetDisplayCycle() * (70000.0/8.0));
       }
       
-      if ( currScanline < limitTop )
+      if ( (currScanline < m_rasterLimitNP) )
       {
-        *offsetTime = (LONGLONG)(limitTop - currScanline) * scanlineTime ;
+        *offsetTime = (LONGLONG)(m_rasterLimitNP - currScanline) * scanlineTime ;
       }
       
-      targetDelay = targetDelay / 2; //delay in chunks
+      //currScanline value is reported as zero all through vertical blanking
+      //so limit delay to avoid overshooting the target position
+      if ( currScanline < 2 )
+      {
+        targetDelay = 15000 ; //Limit to 1.5ms
+        *offsetTime = 0 ;
+      }
+      else
+      {
+        targetDelay = targetDelay / 2; //delay in chunks
+      }
+      
       *targetTime = now + targetDelay;      
     }
     
@@ -3365,9 +3411,20 @@ bool MPEVRCustomPresenter::QueryFpsFromVideoMSDecoder()
     HRESULT rr = pBaseFilter->FindPin(L"Video Input", &pin);
     CMediaType mt; 
     pin->ConnectionMediaType(&mt);
-    ExtractAvgTimePerFrame(&mt, m_rtTimePerFrame);
-
-    Log("Found Microsoft DTV-DVD Video Decoder - using the FPS from Video Input pin");
+    
+    REFERENCE_TIME rtAvgTimePerFrame = 0;   
+    bool goodFPS = ExtractAvgTimePerFrame(&mt, rtAvgTimePerFrame);
+    if (goodFPS && rtAvgTimePerFrame)
+    {
+      m_rtTimePerFrame = rtAvgTimePerFrame;
+      Log("Found Microsoft DTV-DVD Video Decoder - FPS from Video Input pin: %.3f", 10000000.0/m_rtTimePerFrame);
+    }
+    else
+    {
+      // if fps information is not provided leave m_rtTimePerFrame unchanged
+      Log("Found Microsoft DTV-DVD Video Decoder - no FPS from Video Input pin available");
+    }
+    
     return true;
   }
 
@@ -3549,4 +3606,70 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
 
   m_dPreviousVariableFreq = m_dVariableFreq;
 }
+
+
+//=============== Filter Graph interface functions =================
+
+bool MPEVRCustomPresenter::GetFilterNames()
+{
+  FILTER_INFO filterInfo;
+  ZeroMemory(&filterInfo, sizeof(filterInfo));
+  HRESULT hr = m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
+
+  if (hr == S_OK)
+  {
+    EnumFilters(filterInfo.pGraph);
+    filterInfo.pGraph->Release();
+
+    return true;
+  }
+  
+  filterInfo.pGraph->Release();
+  return false;
+}
+
+
+HRESULT MPEVRCustomPresenter::EnumFilters(IFilterGraph *pGraph) 
+{
+    IEnumFilters *pEnum = NULL;
+    IBaseFilter *pFilter;
+    ULONG cFetched;
+    m_numFilters = 0;
+
+    HRESULT hr = pGraph->EnumFilters(&pEnum);
+    if (FAILED(hr)) return hr;
+
+    while(pEnum->Next(1, &pFilter, &cFetched) == S_OK)
+    {
+        FILTER_INFO FilterInfo;
+        hr = pFilter->QueryFilterInfo(&FilterInfo);
+        if (FAILED(hr))
+        {
+            Log("Could not get the filter info");
+            continue;  // Maybe the next one will work.
+        }
+
+        char szName[MAX_FILTER_NAME];
+        int cch = WideCharToMultiByte(CP_ACP, 0, FilterInfo.achName, MAX_FILTER_NAME, szName, MAX_FILTER_NAME, 0, 0);
+        
+        if (cch > 0 && m_numFilters < FILTER_LIST_SIZE) 
+        {
+          strcpy_s(m_filterNames[m_numFilters],szName);
+          Log("Filter: %s", m_filterNames[m_numFilters]);
+          m_numFilters++;
+        }
+        
+        // The FILTER_INFO structure holds a pointer to the Filter Graph
+        // Manager, with a reference count that must be released.
+        if (FilterInfo.pGraph != NULL)
+        {
+            FilterInfo.pGraph->Release();
+        }
+        pFilter->Release();
+    }
+
+    pEnum->Release();
+    return S_OK;
+}
+
 
