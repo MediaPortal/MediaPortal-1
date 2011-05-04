@@ -85,11 +85,11 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55e ----------- instance 0x%x", this);
+      Log("---------- v1.4.55f ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55e ----------- instance 0x%x", this);
+      Log("---------- v0.0.55f ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -1354,7 +1354,7 @@ HRESULT MPEVRCustomPresenter::CheckForScheduledSample(LONGLONG *pTargetTime, LON
         //Clamp within limits - because of hystersis, the range of nextSampleTime
         //is greater than frameTime, so it's possible for nstPhaseDiff to exceed
         //the -0.5 to +0.5 allowable range 
-        if (m_bDVDMenu || m_bScrubbing || (m_iFramesDrawn <= FRAME_PROC_THRSH2))
+        if (m_bDVDMenu || m_bScrubbing || (m_iFramesDrawn <= FRAME_PROC_THRSH2) || (m_frameRateRatio == 0 && m_dBias == 1.0))
         {
           nstPhaseDiff = 0.0;
         }
@@ -3042,7 +3042,7 @@ double MPEVRCustomPresenter::GetCycleDifference()
   }
   else
 	{
-    for (j = 1; j <= 4; j++) 
+    for (j = 1; j <= 2; j++) 
 		{
   	  double dFrameCycle = j * m_dFrameCycle;
       for (i = 1; i <= 8; i++) 
@@ -3654,7 +3654,7 @@ HRESULT MPEVRCustomPresenter::EnumFilters(IFilterGraph *pGraph)
         
         if (cch > 0 && m_numFilters < FILTER_LIST_SIZE) 
         {
-          strcpy(m_filterNames[m_numFilters],szName);
+          strcpy_s(m_filterNames[m_numFilters],szName);
           Log("Filter: %s", m_filterNames[m_numFilters]);
           m_numFilters++;
         }
