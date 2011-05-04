@@ -113,13 +113,16 @@ void StreamGetClientDetail(unsigned int clientNr, char** ipAdres, char** streamN
 	vector<MPRTSPServer::MPRTSPClientSession*> clients=m_rtspServer->Clients();
 	if (clientNr>=clients.size()) return;
 	MPRTSPServer::MPRTSPClientSession* client = clients[clientNr];
-
 	sprintf(szipAdres,"%d.%d.%d.%d", client->getClientAddr().sin_addr.S_un.S_un_b.s_b1,
 		client->getClientAddr().sin_addr.S_un.S_un_b.s_b2,
 		client->getClientAddr().sin_addr.S_un.S_un_b.s_b3,
 		client->getClientAddr().sin_addr.S_un.S_un_b.s_b4);
 	*isActive=client->IsSessionIsActive();
-	strcpy(szstreamName,client->getOurServerMediaSession()->streamName());
+  ServerMediaSession * clientMediaSession = client->getOurServerMediaSession();
+  if (clientMediaSession)
+  {
+    strcpy(szstreamName,clientMediaSession->streamName());
+  }
 	*streamName=&szstreamName[0];
 	*ipAdres=&szipAdres[0];
 	*ticks=client->getStartDateTime();
