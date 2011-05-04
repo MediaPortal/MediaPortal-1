@@ -23,7 +23,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using mshtml;
 using SHDocVw;
 
@@ -267,7 +267,7 @@ namespace MediaPortal.Utils.Web
           }
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
+        Log.Debug("HTMLPage: GetInternal encoding: {0}", _pageEncodingMessage);
         // Encoding: depends on selected page
         if (string.IsNullOrEmpty(_strPageSource) || strEncode.ToLower() != _defaultEncode)
         {
@@ -278,7 +278,7 @@ namespace MediaPortal.Utils.Web
           }
           catch (System.ArgumentException e)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
+            Log.Write(e);
           }
         }
         return true;
@@ -286,7 +286,7 @@ namespace MediaPortal.Utils.Web
       _error = Page.GetError();
       if (!string.IsNullOrEmpty(_error))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("HTMLPage: GetInternal error: {0}", _error);
+        Log.Error("HTMLPage: GetInternal error: {0}", _error);
       }
       return false;
     }

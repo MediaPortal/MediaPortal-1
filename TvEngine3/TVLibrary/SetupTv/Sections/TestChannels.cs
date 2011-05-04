@@ -32,7 +32,7 @@ using SetupControls;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 #endregion
 
@@ -343,7 +343,7 @@ namespace SetupTv.Sections
 
               if (ts.TotalMilliseconds < _tunedelay)
               {
-                //GlobalServiceProvider.Instance.Get<ILogger>().Debug("tune delay");
+                //Log.Debug("tune delay");
                 Thread.Sleep(100);
               }
               else
@@ -585,12 +585,12 @@ namespace SetupTv.Sections
           txtAvgMsec.Value = Convert.ToInt32(_avg / _total);
         }
         Application.DoEvents();
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: Succeeded={0}", _succeeded);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: Failed={0}", _failed);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: Ignored={0}", _ignored);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: Total={0}", _total);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TestChannels: First Fail={0}", _firstFail);
+        Log.Debug("TestChannels: Succeeded={0}", _succeeded);
+        Log.Debug("TestChannels: Failed={0}", _failed);
+        Log.Debug("TestChannels: Ignored={0}", _ignored);
+        Log.Debug("TestChannels: Total={0}", _total);
+        Log.Debug("TestChannels: Avg mSec={0}", txtAvgMsec.Value);
+        Log.Debug("TestChannels: First Fail={0}", _firstFail);
       }
     }
 
@@ -772,7 +772,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
     }
 

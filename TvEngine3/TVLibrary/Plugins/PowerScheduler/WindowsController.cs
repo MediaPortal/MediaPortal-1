@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using System.Diagnostics;
 using System.Threading;
 
@@ -124,7 +124,7 @@ namespace TvEngine.PowerScheduler
 
     public static ExitWindowsHandler HookExitWindows(ExitWindowsHandler handler)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
+      Log.Debug("WindowsController: Setting ExitWindows to {0}.{1}", handler.Target, handler.Method);
 
       ExitWindowsHandler old = _exitWindows;
       _exitWindows = handler;
@@ -185,7 +185,7 @@ namespace TvEngine.PowerScheduler
       ExitWindowsDefaultEnv env = (ExitWindowsDefaultEnv)_data;
       RestartOptions how = env.how;
       bool force = env.force;
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
+      Log.Debug("WindowsController: Performing ExitWindows {0}, force: {1}", how, force);
       bool res;
       switch (how)
       {
@@ -199,7 +199,7 @@ namespace TvEngine.PowerScheduler
           res = ExitWindowsInt((int)how, force);
           break;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("WindowsController: ExitWindows performed, result: {0}", res);
+      Log.Debug("WindowsController: ExitWindows performed, result: {0}", res);
       if (env.after != null)
         env.after(how, force, res);
     }
@@ -322,7 +322,7 @@ namespace TvEngine.PowerScheduler
     /// <exception cref="PrivilegeException">There was an error while requesting a required privilege.</exception>
     protected static bool ExitWindowsInt(int how, bool force)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("--Exit Windows - ", how.ToString() + ", " + force.ToString());
+      Log.Info("--Exit Windows - ", how.ToString() + ", " + force.ToString());
       EnableToken("SeShutdownPrivilege");
       if (force)
         how = how | EWX_FORCE;

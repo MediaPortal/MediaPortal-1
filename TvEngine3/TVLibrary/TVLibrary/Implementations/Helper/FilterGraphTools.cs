@@ -28,7 +28,6 @@ using DirectShowLib;
 #if !USING_NET11
 using System.Runtime.InteropServices.ComTypes;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
 
 #endif
 
@@ -364,7 +363,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Error occured while adding filter by device path: ", ex);
+        Log.Log.WriteFile("Error occured while adding filter by device path: ", ex);
         // An error occur. Just returning null...
       }
       finally
@@ -818,7 +817,7 @@ namespace TvLibrary.Implementations.DVB
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while disconnecting all pins: ", ex);
+            Log.Log.WriteFile("Error while disconnecting all pins: ", ex);
           }
           Release.ComObject(filters[0]);
         }
@@ -860,14 +859,14 @@ namespace TvLibrary.Implementations.DVB
         {
           FilterInfo info;
           filter.QueryFilterInfo(out info);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Remove filter from graph: {0}", info.achName);
+          Log.Log.Write("Remove filter from graph: {0}", info.achName);
           graphBuilder.RemoveFilter(filter);
           while (Release.ComObject(filter) > 0) ;
         }
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Remove filter error!");
+        Log.Log.Write("Remove filter error!");
         return;
       }
       finally
@@ -1259,8 +1258,8 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinSource:{0}", LogPinInfo(pinSource));
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, i);
@@ -1272,11 +1271,11 @@ namespace TvLibrary.Implementations.DVB
 
         if (connectedToPin == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
+          Log.Log.WriteFile("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
           int hr = graphBuilder.Connect(pinSource, pinIn);
           if (hr == 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+            Log.Log.WriteFile("analog:  pins connected");
             Release.ComObject("pindest" + i, pinIn);
             return true;
           }
@@ -1301,8 +1300,8 @@ namespace TvLibrary.Implementations.DVB
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IPin pinSource, IBaseFilter destinationFilter,
                                      out int destinationPinIndex)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinSource:{0}", LogPinInfo(pinSource));
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinSource:{0}", LogPinInfo(pinSource));
       destinationPinIndex = -1;
       for (int i = 0; i <= 10; ++i)
       {
@@ -1316,11 +1315,11 @@ namespace TvLibrary.Implementations.DVB
 
         if (connectedToPin == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
+          Log.Log.WriteFile("analog:  pinDest {0}:{1}", i, LogPinInfo(pinIn));
           int hr = graphBuilder.Connect(pinSource, pinIn);
           if (hr == 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+            Log.Log.WriteFile("analog:  pins connected");
             Release.ComObject("pindest" + i, pinIn);
             return true;
           }
@@ -1343,18 +1342,18 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinDest:{0}", LogPinInfo(pinDestination));
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
         if (pinOut == null)
           return false;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinDestination);
         if (hr == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+          Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pindest" + i, pinOut);
           return true;
         }
@@ -1374,19 +1373,19 @@ namespace TvLibrary.Implementations.DVB
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IPin pinDestination,
                                      out int sourcePinIndex)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinDest:{0}", LogPinInfo(pinDestination));
+      //Log.Log.WriteFile("analog: ConnectFilter()");
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinDestination));
       sourcePinIndex = -1;
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
         if (pinOut == null)
           return false;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinDestination);
         if (hr == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+          Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pindest" + i, pinOut);
           sourcePinIndex = i;
           return true;
@@ -1405,17 +1404,17 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
+      //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinDest:{0}", LogPinInfo(pinIn));
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
         int hr = graphBuilder.Connect(pinOut, pinIn);
         if (hr == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+          Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pinIn", pinIn);
           Release.ComObject("pinOut", pinOut);
           return true;
@@ -1437,15 +1436,15 @@ namespace TvLibrary.Implementations.DVB
     public static bool ConnectFilter(IGraphBuilder graphBuilder, IBaseFilter sourceFilter, IBaseFilter destinationFilter,
                                      string deviceName)
     {
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: ConnectFilter()");
+      //Log.Log.WriteFile("analog: ConnectFilter()");
       IPin pinIn = DsFindPin.ByDirection(destinationFilter, PinDirection.Input, 0);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  PinDest:{0}", LogPinInfo(pinIn));
+      Log.Log.WriteFile("analog:  PinDest:{0}", LogPinInfo(pinIn));
       for (int i = 0; i <= 10; ++i)
       {
         IPin pinOut = DsFindPin.ByDirection(sourceFilter, PinDirection.Output, i);
         if (pinOut == null)
           return false;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
+        Log.Log.WriteFile("analog:  pinSource {0}:{1}", i, LogPinInfo(pinOut));
 
         //Hauppauge hack - sorry, i attempted to do this right, but hauppauge drivers report incorrect values
         //and it takes a very long time to reject the audio to video connection - diehard2
@@ -1458,13 +1457,13 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while connecting a filter: ", ex);
+          Log.Log.WriteFile("Error while connecting a filter: ", ex);
         }
         if (testPin != null)
         {
           Release.ComObject("outPin", pinOut);
           Release.ComObject("testPin", testPin);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: skipping pin");
+          Log.Log.WriteFile("analog: skipping pin");
           continue;
         }
         if (deviceName.Contains("Hauppauge") &&
@@ -1478,7 +1477,7 @@ namespace TvLibrary.Implementations.DVB
 
         if (hr == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  pins connected");
+          Log.Log.WriteFile("analog:  pins connected");
           Release.ComObject("pinIn", pinIn);
           Release.ComObject("pinOut", pinOut);
           return true;

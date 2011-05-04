@@ -33,7 +33,6 @@ using TvLibrary.Epg;
 using TvLibrary.ChannelLinkage;
 using MediaPortal.TV.Epg;
 using TvDatabase;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -427,7 +426,7 @@ namespace TvLibrary.Implementations.DVB
     protected int GetNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      Log.Log.Info("dvb:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
       TvDvbChannel subChannel = new TvDvbChannel(_graphBuilder, _conditionalAccess, _mdplugs, _filterTIF,
                                                  _filterTsWriter, id, channel);
@@ -467,19 +466,19 @@ namespace TvLibrary.Implementations.DVB
     protected ITvSubChannel SubmitTuneRequest(int subChannelId, IChannel channel, ITuneRequest tuneRequest,
                                               bool performTune)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
+      Log.Log.Info("dvb:Submiting tunerequest Channel:{0} subChannel:{1} ", channel.Name, subChannelId);
       bool newSubChannel = false;
       if (_mapSubChannels.ContainsKey(subChannelId) == false)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Getting new subchannel");
+        Log.Log.Info("dvb:Getting new subchannel");
         newSubChannel = true;
         subChannelId = GetNewSubChannel(channel);
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:using existing subchannel:{0}", subChannelId);
+        Log.Log.Info("dvb:using existing subchannel:{0}", subChannelId);
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
+      Log.Log.Info("dvb:Submit tunerequest size:{0} new:{1}", _mapSubChannels.Count, subChannelId);
       _mapSubChannels[subChannelId].CurrentChannel = channel;
 
       try
@@ -503,9 +502,9 @@ namespace TvLibrary.Implementations.DVB
                 _conditionalAccess.HWProvider is ICustomTuning &&
                 (_conditionalAccess.HWProvider as ICustomTuning).SupportsTuningForChannel(channel))
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Custom tune method detected");
+              Log.Log.WriteFile("dvb:Custom tune method detected");
               bool res = (_conditionalAccess.HWProvider as ICustomTuning).CustomTune(channel, _parameters);
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Custom tune method finished with result {0}", res);
+              Log.Log.WriteFile("dvb:Custom tune method finished with result {0}", res);
               if (!res)
               {
                 throw new TvException("Unable to tune to channel");
@@ -513,9 +512,9 @@ namespace TvLibrary.Implementations.DVB
             }
             else
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submit tunerequest calling put_TuneRequest");
+              Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
               int hr = ((ITuner)_filterNetworkProvider).put_TuneRequest(tuneRequest);
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submit tunerequest done calling put_TuneRequest");
+              Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
 
               //  NOTE
               //  After mantis 3469 is confirmed working in 1.2.0 beta remove these comments and everything:
@@ -530,7 +529,7 @@ namespace TvLibrary.Implementations.DVB
                   revert = true;
 
                 if (revert)
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Reverting put_tuneRequest error catch to pre-1.2.0 beta");
+                  Log.Log.WriteFile("dvb:Reverting put_tuneRequest error catch to pre-1.2.0 beta");
               }
               catch (Exception)
               {
@@ -543,7 +542,7 @@ namespace TvLibrary.Implementations.DVB
               //  AND uncomment this line:
               //  if(hr < 0)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+                Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
                                   DsError.GetErrorText(hr));
                 throw new TvException("Unable to tune to channel");
               }
@@ -557,7 +556,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (newSubChannel)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:SubmitTuneRequest  failed - removing subchannel: {0}", subChannelId);
+          Log.Log.WriteFile("dvb:SubmitTuneRequest  failed - removing subchannel: {0}", subChannelId);
           if (_mapSubChannels.ContainsKey(subChannelId))
           {
             _mapSubChannels.Remove(subChannelId);
@@ -575,7 +574,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="channel">Channel to tune</param>
     private void PerformInternalNetworkProviderTuning(IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submit tunerequest calling put_TuneRequest");
+      Log.Log.WriteFile("dvb:Submit tunerequest calling put_TuneRequest");
       int hr = 0;
       int undefinedValue = -1;
       if (channel is DVBTChannel)
@@ -602,7 +601,7 @@ namespace TvLibrary.Implementations.DVB
         int hiOsc;
         int lnbSwitch;
         BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
         if (lnbSwitch == 0)
         {
           lnbSwitch = 18000;
@@ -717,10 +716,10 @@ namespace TvLibrary.Implementations.DVB
           hr = _interfaceNetworkProvider.TuneATSC((uint)undefinedValue, fSettings, dSettings);
         }
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Submit tunerequest done calling put_TuneRequest");
+      Log.Log.WriteFile("dvb:Submit tunerequest done calling put_TuneRequest");
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
+        Log.Log.WriteFile("dvb:SubmitTuneRequest  returns:0x{0:X} - {1}{2}", hr, HResult.GetDXErrorString(hr),
                           HResult.GetDXErrorString(hr));
         //remove subchannel.
         /*if (newSubChannel)
@@ -739,40 +738,40 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId())
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: GetTunerSignalStatistics()");
+      Log.Log.WriteFile("dvb: GetTunerSignalStatistics()");
       //no tuner filter? then return;
       _tunerStatistics = new List<IBDA_SignalStatistics>();
       if (_filterTuner == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: could not get IBDA_Topology since no tuner device");
+        Log.Log.Error("dvb: could not get IBDA_Topology since no tuner device");
         return;
       }
       //get the IBDA_Topology from the tuner device
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: get IBDA_Topology");
+      //Log.Log.WriteFile("dvb: get IBDA_Topology");
       IBDA_Topology topology = _filterTuner as IBDA_Topology;
       if (topology == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: could not get IBDA_Topology from tuner");
+        Log.Log.Error("dvb: could not get IBDA_Topology from tuner");
         return;
       }
       //get the NodeTypes from the topology
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: GetNodeTypes");
+      //Log.Log.WriteFile("dvb: GetNodeTypes");
       int nodeTypeCount;
       int[] nodeTypes = new int[33];
       Guid[] guidInterfaces = new Guid[33];
       int hr = topology.GetNodeTypes(out nodeTypeCount, 32, nodeTypes);
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: FAILED could not get node types from tuner:0x{0:X}", hr);
+        Log.Log.Error("dvb: FAILED could not get node types from tuner:0x{0:X}", hr);
         return;
       }
       if (nodeTypeCount == 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: FAILED could not get any node types");
+        Log.Log.Error("dvb: FAILED could not get any node types");
       }
       Guid GuidIBDA_SignalStatistic = new Guid("1347D106-CF3A-428a-A5CB-AC0D9A2A4338");
       //for each node type
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: got {0} node types", nodeTypeCount);
+      //Log.Log.WriteFile("dvb: got {0} node types", nodeTypeCount);
       for (int i = 0; i < nodeTypeCount; ++i)
       {
         object objectNode;
@@ -780,12 +779,12 @@ namespace TvLibrary.Implementations.DVB
         hr = topology.GetNodeInterfaces(nodeTypes[i], out numberOfInterfaces, 32, guidInterfaces);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
+          Log.Log.Error("dvb: FAILED could not GetNodeInterfaces for node:{0} 0x:{1:X}", i, hr);
         }
         hr = topology.GetControlNode(0, 1, nodeTypes[i], out objectNode);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb: FAILED could not GetControlNode for node:{0} 0x:{1:X}", i, hr);
+          Log.Log.Error("dvb: FAILED could not GetControlNode for node:{0} 0x:{1:X}", i, hr);
           return;
         }
         //and get the final IBDA_SignalStatistics
@@ -793,7 +792,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (guidInterfaces[iface] == GuidIBDA_SignalStatistic)
           {
-            //GlobalServiceProvider.Instance.Get<ILogger>().Debug(" got IBDA_SignalStatistics on node:{0} interface:{1}", i, iface);
+            //Log.Write(" got IBDA_SignalStatistics on node:{0} interface:{1}", i, iface);
             _tunerStatistics.Add((IBDA_SignalStatistics)objectNode);
           }
         }
@@ -838,24 +837,24 @@ namespace TvLibrary.Implementations.DVB
           }
           catch (COMException)
           {
-            //            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalLocked() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
         }
         if (!isLocked)
         {
           ts = DateTime.Now - timeStart;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  LockedInOnSignal waiting 20ms");
+          Log.Log.WriteFile("dvb:  LockedInOnSignal waiting 20ms");
           System.Threading.Thread.Sleep(20);
         }
       }
 
       if (!isLocked)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+        Log.Log.WriteFile("dvb:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  LockedInOnSignal ok");
+        Log.Log.WriteFile("dvb:  LockedInOnSignal ok");
       }
       return isLocked;
     }
@@ -872,7 +871,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void RunGraph(int subChannel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RunGraph");
+      Log.Log.Info("RunGraph");
       bool graphRunning = GraphRunning();
 
       if (_mapSubChannels.ContainsKey(subChannel))
@@ -893,11 +892,11 @@ namespace TvLibrary.Implementations.DVB
       {
         return;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  RunGraph");
+      Log.Log.Info("dvb:  RunGraph");
       int hr = ((IMediaControl)_graphBuilder).Run();
       if (hr < 0 || hr > 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  RunGraph returns: 0x{0:X}", hr);
+        Log.Log.WriteFile("dvb:  RunGraph returns: 0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
 
@@ -912,7 +911,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (!LockedInOnSignal())
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Info("Unable to tune to channel - no signal");
+          //Log.Log.WriteFile("Unable to tune to channel - no signal");
           throw new TvExceptionNoSignal("Unable to tune to channel - no signal");
         }
         _mapSubChannels[subChannel].AfterTuneEvent -= new BaseSubChannel.OnAfterTuneDelegate(OnAfterTuneEvent);
@@ -926,7 +925,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void PauseGraph()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:PauseGraph called");
+      Log.Log.WriteFile("dvb:PauseGraph called");
       if (!CheckThreadId())
         return;
       _epgGrabbing = false;
@@ -943,14 +942,14 @@ namespace TvLibrary.Implementations.DVB
       ((IMediaControl)_graphBuilder).GetState(10, out state);
       if (state != FilterState.Running)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:PauseGraph filterstate already paused, returning.");
+        Log.Log.WriteFile("dvb:PauseGraph filterstate already paused, returning.");
         return;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:PauseGraph");
+      Log.Log.WriteFile("dvb:PauseGraph");
       int hr = ((IMediaControl)_graphBuilder).Pause();
       if (hr < 0 || hr > 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:PauseGraph returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:PauseGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to pause graph");
       }
       _graphState = GraphState.Created;
@@ -963,7 +962,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public override void StopGraph()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:StopGraph called");
+      Log.Log.WriteFile("dvb:StopGraph called");
       if (!CheckThreadId())
         return;
       _epgGrabbing = false;
@@ -981,14 +980,14 @@ namespace TvLibrary.Implementations.DVB
         ((IMediaControl)_graphBuilder).GetState(10, out state);
         if (state == FilterState.Stopped)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:StopGraph filterstate already stopped, returning.");
+          Log.Log.WriteFile("dvb:StopGraph filterstate already stopped, returning.");
           return;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:StopGraph");
+        Log.Log.WriteFile("dvb:StopGraph");
         int hr = ((IMediaControl)_graphBuilder).Stop();
         if (hr < 0 || hr > 1)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:StopGraph returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
         _conditionalAccess.OnStopGraph();
@@ -1002,10 +1001,10 @@ namespace TvLibrary.Implementations.DVB
       else
       {
         int hr = ((IMediaControl)_graphBuilder).Stop();
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
+        Log.Log.WriteFile("dvb:StopGraph - conditionalAccess.AllowedToStopGraph = false");
         if (hr < 0 || hr > 1)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:StopGraph returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:StopGraph returns:0x{0:X}", hr);
           throw new TvException("Unable to stop graph");
         }
         _graphState = GraphState.Created;
@@ -1017,12 +1016,12 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void AddNetworkProviderFilter(Guid networkProviderClsId)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:AddNetworkProviderFilter");
+      Log.Log.WriteFile("dvb:AddNetworkProviderFilter");
       if (useInternalNetworkProvider)
       {
         const string networkProviderName = "MediaPortal Network Provider";
         Guid internalNetworkProviderClsId = new Guid("{D7D42E5C-EB36-4aad-933B-B4C419429C98}");
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Add {0}", networkProviderName);
+        Log.Log.WriteFile("dvb:Add {0}", networkProviderName);
         _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, internalNetworkProviderClsId,
                                                                      networkProviderName);
         _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
@@ -1033,7 +1032,7 @@ namespace TvLibrary.Implementations.DVB
       }
       _isATSC = false;
       _managedThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:AddNetworkProviderFilter");
+      Log.Log.WriteFile("dvb:AddNetworkProviderFilter");
       TvBusinessLayer layer = new TvBusinessLayer();
       Card c = layer.GetCardByDevicePath(DevicePath);
       // generic network provider Guid.
@@ -1096,11 +1095,11 @@ namespace TvLibrary.Implementations.DVB
           networkProviderClsId = genProviderClsId;
           break;
         default:
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:This application doesn't support this Tuning Space");
+          Log.Log.Error("dvb:This application doesn't support this Tuning Space");
           // Tuning Space can also describe Analog TV but this application don't support them
           throw new TvException("This application doesn't support this Tuning Space");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Add {0}", NetworkProviderName);
+      Log.Log.WriteFile("dvb:Add {0}", NetworkProviderName);
       _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, networkProviderClsId,
                                                                    NetworkProviderName);
     }
@@ -1120,12 +1119,12 @@ namespace TvLibrary.Implementations.DVB
       DsDevice[] capDevices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCapture);
       DsDevice usbWinTvDevice = null;
       int hr;
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("AddWinTvCIModule: capDevices {0}", capDevices.Length);
+      //Log.Log.WriteFile("AddWinTvCIModule: capDevices {0}", capDevices.Length);
       for (int capIndex = 0; capIndex < capDevices.Length; capIndex++)
       {
         if (capDevices[capIndex].Name != null)
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Info("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
+          //Log.Log.WriteFile("AddWinTvCIModule: {0}", capDevices[capIndex].Name.ToLower());
           if (capDevices[capIndex].Name.ToUpperInvariant() == "WINTVCIUSBBDA SOURCE")
           {
             if (false == DevicesInUse.Instance.IsUsed(capDevices[capIndex]))
@@ -1138,11 +1137,11 @@ namespace TvLibrary.Implementations.DVB
       }
       if (usbWinTvDevice == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  WinTv CI module not detected.");
+        Log.Log.Info("dvb:  WinTv CI module not detected.");
         return;
       }
       //wintv ci usb module found
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  WinTv CI module detected");
+      Log.Log.Info("dvb:  WinTv CI module detected");
       //add logic to check if WinTV device should be built with this DVB graph.
       string configfile = String.Format(@"{0}\WinTV-CI.xml", PathManager.GetDataPath);
       string cardmoniker = "";
@@ -1159,15 +1158,15 @@ namespace TvLibrary.Implementations.DVB
       }
       catch
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:  WinTv CI configuration missing or invalid. Configure it inside SetupTv!");
+        Log.Log.Error("dvb:  WinTv CI configuration missing or invalid. Configure it inside SetupTv!");
       }
       string tuner = _tunerDevice.DevicePath;
       if (tuner != cardmoniker)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
+        Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
         return;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Adding WinTv CI to graph");
+      Log.Log.Info("dvb:  Adding WinTv CI to graph");
       //add filter to graph
       IBaseFilter tmpCiFilter;
       try
@@ -1176,13 +1175,13 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  failed to add WinTv CI filter to graph");
+        Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
         return;
       }
       if (hr != 0)
       {
         //cannot add filter to graph...
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  failed to add WinTv CI filter to graph");
+        Log.Log.Info("dvb:  failed to add WinTv CI filter to graph");
         if (tmpCiFilter != null)
         {
           //release WinTV CI resources& remove filter & render graph without it.
@@ -1195,23 +1194,23 @@ namespace TvLibrary.Implementations.DVB
       //Check if WinTV CI is plugged in to USB port if not remove filter from graph.
       winTvCiHandler = new WinTvCiModule(tmpCiFilter);
       int winTVCIStatus = winTvCiHandler.Init();
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("WinTVCI: Init() returned: {0}", winTVCIStatus);
+      //Log.Log.Info("WinTVCI: Init() returned: {0}", winTVCIStatus);
       if (winTVCIStatus != (int)HResult.Serverity.Success)
       {
         //release WinTV CI resources& remove filter & render graph without it.
         winTvCiHandler.Shutdown();
         _graphBuilder.RemoveFilter(tmpCiFilter);
         Release.ComObject("WintvUsbCI module", tmpCiFilter);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  WinTv CI not plugged in or driver not installed correctly!");
+        Log.Log.Info("dvb:  WinTv CI not plugged in or driver not installed correctly!");
         return;
       }
       //WinTV-CI tray icon no longer required as it is now fully native supported
       //now render ..->[WinTv USB]
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render ...->[WinTvUSB]");
+      Log.Log.Info("dvb:  Render ...->[WinTvUSB]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter);
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:  Render ...->[WinTvUSB] failed");
+        Log.Log.Error("dvb:  Render ...->[WinTvUSB] failed");
         winTvCiHandler.Shutdown();
         _graphBuilder.RemoveFilter(tmpCiFilter);
         Release.ComObject("WintvUsbCI module", tmpCiFilter);
@@ -1220,7 +1219,7 @@ namespace TvLibrary.Implementations.DVB
       _filterWinTvUsb = tmpCiFilter;
       _deviceWinTvUsb = usbWinTvDevice;
       DevicesInUse.Instance.Add(usbWinTvDevice);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Setting lastFilter to WinTV CI");
+      Log.Log.WriteFile("dvb:  Setting lastFilter to WinTV CI");
       lastFilter = _filterWinTvUsb;
       return;
     }
@@ -1245,7 +1244,7 @@ namespace TvLibrary.Implementations.DVB
       bool filterSuccess = false;
 
       lastFilter.QueryFilterInfo(out pInfo);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug(pInfo.achName);
+      //Log.Log.Debug(pInfo.achName);
 
       if (_captureDevice == null)
         return false;
@@ -1253,7 +1252,7 @@ namespace TvLibrary.Implementations.DVB
       if (!_captureDevice.DevicePath.ToLowerInvariant().Contains("fbca-11de-b16f-000000004d56"))
         return false;
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("dvb:  DigitalDevices CI: try to connect [demux]");
+      Log.Log.WriteFile("dvb:  DigitalDevices CI: try to connect [demux]");
       IPin lastFilterOutputPin = null;
       IPin demuxPinIn = null;
       IBaseFilter tmpDemux = null;
@@ -1270,8 +1269,8 @@ namespace TvLibrary.Implementations.DVB
         // render Capture->CI->Demux and CI is not enabled for this tuner.
         if (_graphBuilder.Connect(lastFilterOutputPin, demuxPinIn) == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("dvb:  DigitalDevices CI: connection to [demux] successful, CI not available or configured for this tuner.");
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("dvb:  DigitalDevices CI: disconnect [demux], HR:" + lastFilterOutputPin.Disconnect());
+          Log.Log.WriteFile("dvb:  DigitalDevices CI: connection to [demux] successful, CI not available or configured for this tuner.");
+          Log.Log.WriteFile("dvb:  DigitalDevices CI: disconnect [demux], HR:" + lastFilterOutputPin.Disconnect());
           return false;
         }
       }
@@ -1297,20 +1296,20 @@ namespace TvLibrary.Implementations.DVB
           CiDeviceName = capDevices[capIndex].Name;
 
           //try add filter to graph
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Adding {0} to graph", CiDeviceName);
+          Log.Log.Info("dvb:  Adding {0} to graph", CiDeviceName);
           if (
             _graphBuilder.AddSourceFilterForMoniker(capDevices[capIndex].Mon, null, capDevices[capIndex].Name,
                                                     out tmpCiFilter) == 0)
           {
             //DigitalDevices ci module found
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  {0} detected", CiDeviceName);
+            Log.Log.Info("dvb:  {0} detected", CiDeviceName);
 
             String filterName = tunerOnly ? "Tuner" : "Capture";
             //now render [Tuner/Capture]->[CI]
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render [{0}]->[{1}]", filterName, CiDeviceName);
+            Log.Log.Info("dvb:  Render [{0}]->[{1}]", filterName, CiDeviceName);
             if (_capBuilder.RenderStream(null, null, lastFilter, null, tmpCiFilter) != 0)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render [{0}]->[{1}] failed", filterName, CiDeviceName);
+              Log.Log.Info("dvb:  Render [{0}]->[{1}] failed", filterName, CiDeviceName);
               _graphBuilder.RemoveFilter(tmpCiFilter);
               continue;
             }
@@ -1322,13 +1321,13 @@ namespace TvLibrary.Implementations.DVB
             }
           }
           //cannot add filter to graph...
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  failed to add {0} filter to graph, try to find more devices.", CiDeviceName);
+          Log.Log.Info("dvb:  failed to add {0} filter to graph, try to find more devices.", CiDeviceName);
           //there can be multiple CI devices, try next one
         }
         if (DDCIDevice == null)
           return false;
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Setting lastFilter to Digital Devices CI");
+        Log.Log.WriteFile("dvb:  Setting lastFilter to Digital Devices CI");
         lastFilter = tmpCiFilter;
         _filterDigitalDevicesCI = tmpCiFilter;
         _deviceDigitalDevicesCI = DDCIDevice;
@@ -1338,7 +1337,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:   Error adding CI: {0}", ex.Message);
+        Log.Log.Error("dvb:   Error adding CI: {0}", ex.Message);
         filterSuccess = false;
         return filterSuccess;
       }
@@ -1368,9 +1367,9 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId())
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:AddAndConnectBDABoardFilters");
+      Log.Log.WriteFile("dvb:AddAndConnectBDABoardFilters");
       _rotEntry = new DsROTEntry(_graphBuilder);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: find bda tuner");
+      Log.Log.WriteFile("dvb: find bda tuner");
       // Enumerate BDA Source filters category and found one that can connect to the network provider
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDASourceFiltersCategory);
       for (int i = 0; i < devices.Length; i++)
@@ -1380,7 +1379,7 @@ namespace TvLibrary.Implementations.DVB
           continue;
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
+          Log.Log.Info("dvb:  [Tuner]: {0} is being used by TVServer already or another application!", devices[i].Name);
           continue;
         }
         int hr;
@@ -1407,10 +1406,10 @@ namespace TvLibrary.Implementations.DVB
         {
           // Got it !
           _filterTuner = tmp;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  using [Tuner]: {0}", devices[i].Name);
+          Log.Log.WriteFile("dvb:  using [Tuner]: {0}", devices[i].Name);
           _tunerDevice = devices[i];
           DevicesInUse.Instance.Add(devices[i]);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render [Network provider]->[Tuner] OK");
+          Log.Log.WriteFile("dvb:  Render [Network provider]->[Tuner] OK");
           break;
         }
         // Try another...
@@ -1420,26 +1419,26 @@ namespace TvLibrary.Implementations.DVB
       // Assume we found a tuner filter...
       if (_filterTuner == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(
+        Log.Log.Info(
           "dvb:  A useable TV Tuner cannot be found! Either the device no longer exists or it's in use by another application!");
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:  No TVTuner installed");
+        Log.Log.Error("dvb:  No TVTuner installed");
         throw new TvException("No TVTuner installed");
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Setting lastFilter to Tuner filter");
+      Log.Log.WriteFile("dvb:  Setting lastFilter to Tuner filter");
       IBaseFilter lastFilter = _filterTuner;
 
       // Attempt to connect [Tuner]->[Capture]
       if (UseCaptureFilter())
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Find BDA receiver");
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  match Capture by Tuner device path");
+        Log.Log.WriteFile("dvb:  Find BDA receiver");
+        Log.Log.WriteFile("dvb:  match Capture by Tuner device path");
         AddBDARendererToGraph(device, ref lastFilter);
         if (_filterCapture == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Match by device path failed - trying alternative method");
+          Log.Log.WriteFile("dvb:  Match by device path failed - trying alternative method");
           matchDevicePath = false;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  match Capture filter by Tuner device connection");
+          Log.Log.WriteFile("dvb:  match Capture filter by Tuner device connection");
           AddBDARendererToGraph(device, ref lastFilter);
         }
       }
@@ -1460,7 +1459,7 @@ namespace TvLibrary.Implementations.DVB
       {
         throw new TvExceptionGraphBuildingFailed("Graph building of DVB card failed");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb: Checking for hardware specific extensions");
+      Log.Log.WriteFile("dvb: Checking for hardware specific extensions");
       _conditionalAccess = new ConditionalAccess(_filterTuner, _filterTsWriter, _filterWinTvUsb, this);
     }
 
@@ -1497,7 +1496,7 @@ namespace TvLibrary.Implementations.DVB
               if (mediaTypes[i].majorType == MediaType.Stream && mediaTypes[i].subType == MediaSubType.BdaMpeg2Transport &&
                   mediaTypes[i].formatType == FormatType.None)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  tuner filter has capture filter output");
+                Log.Log.WriteFile("dvb:  tuner filter has capture filter output");
                 useCaptureFilter = false;
               }
               DsUtils.FreeAMMediaType(mediaTypes[i]);
@@ -1526,7 +1525,7 @@ namespace TvLibrary.Implementations.DVB
           topologyInfo.get_Category(i, out guid);
           if (guid == FilterCategory.BDAReceiverComponentsCategory)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  tuner filter is also capture filter");
+            Log.Log.WriteFile("dvb:  tuner filter is also capture filter");
             return false;
           }
         }
@@ -1552,7 +1551,7 @@ namespace TvLibrary.Implementations.DVB
     protected bool ConnectTsWriter(IBaseFilter lastFilter)
     {
       int hr;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render ..->[TsWriter]");
+      Log.Log.Info("dvb:  Render ..->[TsWriter]");
       //no wintv ci usb module found. Render [Tuner] or [Capture]->[InfTee]
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _filterTsWriter);
       return (hr == 0);
@@ -1582,14 +1581,14 @@ namespace TvLibrary.Implementations.DVB
         hr = _graphBuilder.AddFilter(_infTeeSecond, "Inf Tee Second");
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:Add second InfTee returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:Add second InfTee returns:0x{0:X}", hr);
           throw new TvException("Unable to add  second InfTee");
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render ...->[inftee] second ");
+        Log.Log.WriteFile("dvb:  Render ...->[inftee] second ");
         hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTeeSecond);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:Unable to connect InfTee second returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:Unable to connect InfTee second returns:0x{0:X}", hr);
           throw new TvExceptionGraphBuildingFailed("Could not connect InfTee second Filter to last Filter");
         }
         lastFilter = _infTeeSecond;
@@ -1620,7 +1619,7 @@ namespace TvLibrary.Implementations.DVB
           continue;
         IBaseFilter tmp;
         const string deviceIdDelimter = @"#{";
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  -{0}", devices[i].Name);
+        Log.Log.WriteFile("dvb:  -{0}", devices[i].Name);
         //Make sure the BDA Receiver Component is on the same physical device as the BDA Source Filter.
         //This is done by checking the DeviceId and DeviceInstance part of the DevicePath.
         if (matchDevicePath)
@@ -1652,7 +1651,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (tmp != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
+            Log.Log.Error("dvb:  Failed to add bda receiver: {0}. Is it in use?", devices[i].Name);
             _graphBuilder.RemoveFilter(tmp);
             Release.ComObject("bda receiver", tmp);
           }
@@ -1662,17 +1661,17 @@ namespace TvLibrary.Implementations.DVB
         hr = _capBuilder.RenderStream(null, null, _filterTuner, null, tmp);
         if (hr == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render [Tuner]->[Capture] AOK");
+          Log.Log.WriteFile("dvb:  Render [Tuner]->[Capture] AOK");
           // render [Capture]->[Inf Tee]
           _filterCapture = tmp;
           _captureDevice = devices[i];
           DevicesInUse.Instance.Add(devices[i]);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Setting lastFilter to Capture device");
+          Log.Log.WriteFile("dvb:  Setting lastFilter to Capture device");
           currentLastFilter = _filterCapture;
           break;
         }
         // Try another...
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Looking for another bda receiver...");
+        Log.Log.WriteFile("dvb:  Looking for another bda receiver...");
         _graphBuilder.RemoveFilter(tmp);
         Release.ComObject("bda receiver", tmp);
       }
@@ -1687,12 +1686,12 @@ namespace TvLibrary.Implementations.DVB
         return;
       if (_filterMpeg2DemuxTif != null)
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Add MPEG2 Demultiplexer filter");
+      Log.Log.WriteFile("dvb:Add MPEG2 Demultiplexer filter");
       _filterMpeg2DemuxTif = (IBaseFilter)new MPEG2Demultiplexer();
       int hr = _graphBuilder.AddFilter(_filterMpeg2DemuxTif, "MPEG2-Demultiplexer");
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
+        Log.Log.WriteFile("dvb:AddMpeg2DemuxerTif returns:0x{0:X}", hr);
         throw new TvException("Unable to add MPEG2 demultiplexer for tif");
       }
     }
@@ -1702,25 +1701,25 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void ConnectMpeg2DemuxToInfTee(ref IBaseFilter lastFilter)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:add Inf Tee filter");
+      Log.Log.WriteFile("dvb:add Inf Tee filter");
       _infTeeMain = (IBaseFilter)new InfTee();
       int hr = _graphBuilder.AddFilter(_infTeeMain, "Inf Tee");
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render ...->[inftee]");
+      Log.Log.WriteFile("dvb:  Render ...->[inftee]");
       hr = _capBuilder.RenderStream(null, null, lastFilter, null, _infTeeMain);
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:Unable to connect InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Unable to connect InfTee returns:0x{0:X}", hr);
         throw new TvExceptionGraphBuildingFailed("Could not connect InfTee Filter to last Filter");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Setting lastFilter to Inf Tee");
+      Log.Log.WriteFile("dvb:  Setting lastFilter to Inf Tee");
       lastFilter = _infTeeMain;
       //connect the [inftee main] -> [TIF MPEG2 Demultiplexer]
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Render [inftee]->[demux]");
+      Log.Log.WriteFile("dvb:  Render [inftee]->[demux]");
       IPin mainTeeOut = DsFindPin.ByDirection(_infTeeMain, PinDirection.Output, 0);
       IPin demuxPinIn = DsFindPin.ByDirection(_filterMpeg2DemuxTif, PinDirection.Input, 0);
       hr = _graphBuilder.Connect(mainTeeOut, demuxPinIn);
@@ -1728,7 +1727,7 @@ namespace TvLibrary.Implementations.DVB
       Release.ComObject("tifdemux pinin", demuxPinIn);
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:Add main InfTee returns:0x{0:X}", hr);
+        Log.Log.Error("dvb:Add main InfTee returns:0x{0:X}", hr);
         throw new TvException("Unable to add  mainInfTee");
       }
     }
@@ -1740,12 +1739,12 @@ namespace TvLibrary.Implementations.DVB
     {
       if (_filterTsWriter == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  Add Mediaportal TsWriter filter");
+        Log.Log.WriteFile("dvb:  Add Mediaportal TsWriter filter");
         _filterTsWriter = (IBaseFilter)new MpTsAnalyzer();
         int hr = _graphBuilder.AddFilter(_filterTsWriter, "MediaPortal Ts Analyzer");
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);
+          Log.Log.Error("dvb:  Add main Ts Analyzer returns:0x{0:X}", hr);
           throw new TvException("Unable to add Ts Analyzer filter");
         }
         _interfaceChannelScan = (ITsChannelScan)_filterTsWriter;
@@ -1762,7 +1761,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (!CheckThreadId())
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:  AddTransportStreamFiltersToGraph");
+      Log.Log.WriteFile("dvb:  AddTransportStreamFiltersToGraph");
       int hr;
       // Add two filters needed in a BDA graph
       DsDevice[] devices = DsDevice.GetDevicesOfCat(FilterCategory.BDATransportInformationRenderersCategory);
@@ -1770,49 +1769,49 @@ namespace TvLibrary.Implementations.DVB
       {
         if (String.Compare(devices[i].Name, "BDA MPEG2 Transport Information Filter", true) == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("    add BDA MPEG2 Transport Information Filter filter");
+          Log.Log.Write("    add BDA MPEG2 Transport Information Filter filter");
           try
           {
             hr = _graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, devices[i].Name, out _filterTIF);
             if (hr != 0)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
+              Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter:0x{0:X}", hr);
               return;
             }
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("    unable to add BDA MPEG2 Transport Information Filter filter");
+            Log.Log.Error("    unable to add BDA MPEG2 Transport Information Filter filter");
           }
           continue;
         }
       }
       if (_filterTIF == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("BDA MPEG2 Transport Information Filter not found");
+        Log.Log.Error("BDA MPEG2 Transport Information Filter not found");
         return;
       }
       IPin pinInTif = DsFindPin.ByDirection(_filterTIF, PinDirection.Input, 0);
       if (pinInTif == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("    unable to find input pin of TIF");
+        Log.Log.Error("    unable to find input pin of TIF");
         return;
       }
       if (_filterMpeg2DemuxTif == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("   _filterMpeg2DemuxTif==null");
+        Log.Log.Error("   _filterMpeg2DemuxTif==null");
         return;
       }
       //IPin pinInSec = DsFindPin.ByDirection(_filterSectionsAndTables, PinDirection.Input, 0);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("    pinTif:{0}", FilterGraphTools.LogPinInfo(pinInTif));
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
+      Log.Log.WriteFile("    pinTif:{0}", FilterGraphTools.LogPinInfo(pinInTif));
+      //Log.Log.WriteFile("    pinSec:{0}", FilterGraphTools.LogPinInfo(pinInSec));
       //connect tif
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("    Connect tif and mpeg2 sections and tables");
+      Log.Log.WriteFile("    Connect tif and mpeg2 sections and tables");
       IEnumPins enumPins;
       _filterMpeg2DemuxTif.EnumPins(out enumPins);
       if (enumPins == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("   _filterMpeg2DemuxTif.enumpins returned null");
+        Log.Log.Error("   _filterMpeg2DemuxTif.enumpins returned null");
         return;
       }
       bool tifConnected = false;
@@ -1858,20 +1857,20 @@ namespace TvLibrary.Implementations.DVB
         {
           try
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
+            Log.Log.WriteFile("dvb:try tif:{0}", FilterGraphTools.LogPinInfo(pins[0]));
             hr = _graphBuilder.Connect(pins[0], pinInTif);
             if (hr == 0)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("    tif connected");
+              Log.Log.WriteFile("    tif connected");
               tifConnected = true;
               Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
               continue;
             }
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("    tif not connected:0x{0:X}", hr);
+            Log.Log.WriteFile("    tif not connected:0x{0:X}", hr);
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while connecting TIF filter: {0}", ex);
+            Log.Log.WriteFile("Error while connecting TIF filter: {0}", ex);
           }
         }
         Release.ComObject("mpeg2 demux pin" + pinNr, pins[0]);
@@ -1881,7 +1880,7 @@ namespace TvLibrary.Implementations.DVB
       // Release.ComObject("mpeg2 sections&tables pin in", pinInSec);
       if (tifConnected == false)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("    unable to connect transport information filter");
+        Log.Log.Error("    unable to connect transport information filter");
         //throw new TvException("unable to connect transport information filter");
       }
     }
@@ -1920,19 +1919,19 @@ namespace TvLibrary.Implementations.DVB
       if (_graphBuilder == null || !CheckThreadId())
         return;
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:Decompose");
+      Log.Log.WriteFile("dvb:Decompose");
       if (_epgGrabbing)
       {
         if (_epgGrabberCallback != null && _epgGrabbing)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb:cancel epg->decompose");
+          Log.Log.Epg("dvb:cancel epg->decompose");
           _epgGrabberCallback.OnEpgCancelled();
         }
         _epgGrabbing = false;
       }
 
       FreeAllSubChannels();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  stop");
+      Log.Log.WriteFile("  stop");
       // Decompose the graph
 
       int counter = 0, hr = 0;
@@ -1946,7 +1945,7 @@ namespace TvLibrary.Implementations.DVB
         if (counter >= 30)
         {
           if (state != FilterState.Stopped)
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("dvb:graph still running");
+            Log.Log.Error("dvb:graph still running");
           break;
         }
       }
@@ -1954,18 +1953,18 @@ namespace TvLibrary.Implementations.DVB
       //In case MDPlugs exists then close and release them
       if (_mdplugs != null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("  Closing MDAPI Plugins");
+        Log.Log.Info("  Closing MDAPI Plugins");
         _mdplugs.Close();
         _mdplugs = null;
       }
       if (_conditionalAccess != null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("  Disposing ConditionalAccess");
+        Log.Log.Info("  Disposing ConditionalAccess");
         _conditionalAccess.Dispose();
         _conditionalAccess = null;
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  free...");
+      Log.Log.WriteFile("  free...");
       _interfaceChannelScan = null;
       _interfaceEpgGrabber = null;
       _previousChannel = null;
@@ -2003,7 +2002,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (_filterWinTvUsb != null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("  Stopping WinTVCI module");
+        Log.Log.Info("  Stopping WinTVCI module");
         winTvCiHandler.Shutdown();
         while (Release.ComObject(_filterWinTvUsb) > 0)
           ;
@@ -2018,7 +2017,7 @@ namespace TvLibrary.Implementations.DVB
       //{
       //  Release.ComObject("secions&tables filter", _filterSectionsAndTables); _filterSectionsAndTables = null;
       //}
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  free pins...");
+      Log.Log.WriteFile("  free pins...");
       if (_filterTsWriter as IBaseFilter != null)
       {
         Release.ComObject("TSWriter filter", _filterTsWriter);
@@ -2026,10 +2025,10 @@ namespace TvLibrary.Implementations.DVB
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("!!! Error releasing TSWriter filter (_filterTsWriter as IBaseFilter was null!)");
+        Log.Log.Debug("!!! Error releasing TSWriter filter (_filterTsWriter as IBaseFilter was null!)");
         _filterTsWriter = null;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  free graph...");
+      Log.Log.WriteFile("  free graph...");
       if (_rotEntry != null)
       {
         _rotEntry.Dispose();
@@ -2046,7 +2045,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("graph builder", _graphBuilder);
         _graphBuilder = null;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  free devices...");
+      Log.Log.WriteFile("  free devices...");
       if (_deviceWinTvUsb != null)
       {
         DevicesInUse.Instance.Remove(_deviceWinTvUsb);
@@ -2072,7 +2071,7 @@ namespace TvLibrary.Implementations.DVB
         }
         _tunerStatistics.Clear();
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("  decompose done...");
+      Log.Log.WriteFile("  decompose done...");
       _graphState = GraphState.Idle;
     }
 
@@ -2131,7 +2130,7 @@ namespace TvLibrary.Implementations.DVB
           _signalQuality = 0;
           return;
         }
-        //GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:UpdateSignalQuality");
+        //Log.Log.WriteFile("dvb:UpdateSignalQuality");
         //if we dont have an IBDA_SignalStatistics interface then return
         if (_tunerStatistics == null)
         {
@@ -2140,7 +2139,7 @@ namespace TvLibrary.Implementations.DVB
           _signalLevel = 0;
           _signalPresent = false;
           _signalQuality = 0;
-          //          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
         if (_tunerStatistics.Count == 0)
@@ -2150,36 +2149,36 @@ namespace TvLibrary.Implementations.DVB
           _signalLevel = 0;
           _signalPresent = false;
           _signalQuality = 0;
-          //          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:UpdateSignalPresent() no tuner stat interfaces");
+          //          Log.Log.WriteFile("dvb:UpdateSignalPresent() no tuner stat interfaces");
           return;
         }
         bool isTunerLocked = false;
         long signalQuality = 0;
         long signalStrength = 0;
 
-        //       GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
+        //       Log.Log.Write("dvb:UpdateSignalQuality() count:{0}", _tunerStatistics.Count);
         for (int i = 0; i < _tunerStatistics.Count; i++)
         {
           IBDA_SignalStatistics stat = _tunerStatistics[i];
-          //          GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} get locked",i );
+          //          Log.Log.Write("   dvb:  #{0} get locked",i );
           try
           {
             bool isLocked;
             //is the tuner locked?
             stat.get_SignalLocked(out isLocked);
             isTunerLocked |= isLocked;
-            //  GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
+            //  Log.Log.Write("   dvb:  #{0} isTunerLocked:{1}", i,isLocked);
           }
           catch (COMException)
           {
-            //            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalLocked() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalLocked() locked :{0}", ex);
+            Log.Log.WriteFile("get_SignalLocked() locked :{0}", ex);
           }
 
-          //          GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} get signalquality", i);
+          //          Log.Log.Write("   dvb:  #{0} get signalquality", i);
           try
           {
             int quality;
@@ -2187,17 +2186,17 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalQuality(out quality); //1-100
             if (quality > 0)
               signalQuality += quality;
-            //   GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} signalQuality:{1}", i, quality);
+            //   Log.Log.Write("   dvb:  #{0} signalQuality:{1}", i, quality);
           }
           catch (COMException)
           {
-            //            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalQuality() locked :{0}", ex);
+            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-          //          GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} get signalstrength", i);
+          //          Log.Log.Write("   dvb:  #{0} get signalstrength", i);
           try
           {
             int strength;
@@ -2205,17 +2204,17 @@ namespace TvLibrary.Implementations.DVB
             stat.get_SignalStrength(out strength); //1-100
             if (strength > 0)
               signalStrength += strength;
-            //    GlobalServiceProvider.Instance.Get<ILogger>().Info("   dvb:  #{0} signalStrength:{1}", i, strength);
+            //    Log.Log.Write("   dvb:  #{0} signalStrength:{1}", i, strength);
           }
           catch (COMException)
           {
-            //            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalQuality() locked :{0}", ex);
+            //            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("get_SignalQuality() locked :{0}", ex);
+            Log.Log.WriteFile("get_SignalQuality() locked :{0}", ex);
           }
-          //GlobalServiceProvider.Instance.Get<ILogger>().Info("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);          
+          //Log.Log.WriteFile("  dvb:#{0}  locked:{1} present:{2} quality:{3} strength:{4}", i, isLocked, isPresent, quality, strength);          
         }
         if (_tunerStatistics.Count > 0)
         {
@@ -2273,7 +2272,7 @@ namespace TvLibrary.Implementations.DVB
       _epgGrabbing = false;
       if (_epgGrabberCallback != null && _epgGrabbing)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb:cancel epg->scanning");
+        Log.Log.Epg("dvb:cancel epg->scanning");
         _epgGrabberCallback.OnEpgCancelled();
       }
     }
@@ -2375,7 +2374,7 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Log.Write(ex);
           return new List<PortalChannel>();
         }
       }
@@ -2402,7 +2401,7 @@ namespace TvLibrary.Implementations.DVB
       if (!CheckThreadId())
         return;
       _epgGrabberCallback = callback;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:grab epg...");
+      Log.Log.Write("dvb:grab epg...");
       if (_interfaceEpgGrabber == null)
         return;
       _interfaceEpgGrabber.SetCallBack(callback);
@@ -2439,7 +2438,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void AbortGrabbing()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvb:abort grabbing epg");
+      Log.Log.Write("dvb:abort grabbing epg");
       if (_interfaceEpgGrabber != null)
         _interfaceEpgGrabber.AbortGrabbing();
       if (_timeshiftingEPGGrabber != null)
@@ -2468,8 +2467,8 @@ namespace TvLibrary.Implementations.DVB
           _interfaceEpgGrabber.GetEPGChannelCount(out channelCount);
           dvbReady = channelCount > 0;
           List<EpgChannel> epgChannels = new List<EpgChannel>();
-          GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb:mhw ready MHW {0} titles found", titleCount);
-          GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb:dvb ready.EPG {0} channels", channelCount);
+          Log.Log.Epg("dvb:mhw ready MHW {0} titles found", titleCount);
+          Log.Log.Epg("dvb:dvb ready.EPG {0} channels", channelCount);
           if (mhwReady)
           {
             _interfaceEpgGrabber.GetMHWTitleCount(out titleCount);
@@ -2522,10 +2521,10 @@ namespace TvLibrary.Implementations.DVB
                 DVBBaseChannel dvbChan = CreateChannel((int)networkid, (int)transportid, (int)channelid, channelName);
                 epgChannel = new EpgChannel();
                 epgChannel.Channel = dvbChan;
-                //GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                //Log.Log.Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
                 if (this.FilterOutEPGChannel(epgChannel) == false)
                 {
-                  //GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
+                  //Log.Log.Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", dvbChan.NetworkId, dvbChan.TransportId, dvbChan.ServiceId);
                   epgChannels.Add(epgChannel);
                 }
               }
@@ -2677,16 +2676,16 @@ namespace TvLibrary.Implementations.DVB
                 }
                 catch (Exception ex)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+                  Log.Log.Write(ex);
                 }
               } //for (uint i = 0; i < eventCount; ++i)
               if (epgChannel.Programs.Count > 0)
               {
                 epgChannel.Sort();
-                //GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                //Log.Log.Epg("dvb: start filtering channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
                 if (this.FilterOutEPGChannel(epgChannel) == false)
                 {
-                  //GlobalServiceProvider.Instance.Get<ILogger>().Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
+                  //Log.Log.Epg("dvb: Not Filtered channel NID {0} TID {1} SID{2}", chan.NetworkId, chan.TransportId, chan.ServiceId);
                   epgChannels.Add(epgChannel);
                 }
               }
@@ -2698,7 +2697,7 @@ namespace TvLibrary.Implementations.DVB
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Log.Write(ex);
           return new List<EpgChannel>();
         }
       }
@@ -2715,7 +2714,7 @@ namespace TvLibrary.Implementations.DVB
     public IQuality Quality
     {
       get { return null; }
-      set { if (value == null) GlobalServiceProvider.Instance.Get<ILogger>().Info("Setting null quality control"); }
+      set { if (value == null) Log.Log.WriteFile("Setting null quality control"); }
     }
 
     /// <summary>

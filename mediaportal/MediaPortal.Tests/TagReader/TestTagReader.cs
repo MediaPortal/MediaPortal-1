@@ -19,7 +19,6 @@
 #endregion
 
 using System.IO;
-using MediaPortal.CoreServices;
 using MediaPortal.Services;
 using MediaPortal.TagReader;
 using MediaPortal.Tests.MockObjects;
@@ -33,7 +32,7 @@ namespace MediaPortal.Tests.TagReader
     [SetUp]
     public void Init()
     {
-      GlobalServiceProvider.Instance.Replace<ILogger>(new NoLog());
+      GlobalServiceProvider.Replace<ILog>(new NoLog());
     }
 
     [Test]

@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TvEngine;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using MediaPortal.Common.Utils;
 
 namespace SetupTv
@@ -106,7 +106,7 @@ namespace SetupTv
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t))
                     {
-                      GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                      Log.WriteFile(
                         "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                         t.FullName);
                       _incompatiblePlugins.Add(t);
@@ -119,7 +119,7 @@ namespace SetupTv
                 }
                 catch (TargetInvocationException)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                  Log.WriteFile(
                     "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                     t.FullName);
                   _incompatiblePlugins.Add(t);
@@ -127,10 +127,10 @@ namespace SetupTv
                 }
                 catch (Exception iPluginException)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("Exception while loading IPlugin instances: {0}", t.FullName);
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(iPluginException.ToString());
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(iPluginException.Message);
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(iPluginException.StackTrace);
+                  Log.WriteFile("Exception while loading IPlugin instances: {0}", t.FullName);
+                  Log.WriteFile(iPluginException.ToString());
+                  Log.WriteFile(iPluginException.Message);
+                  Log.WriteFile(iPluginException.StackTrace);
                 }
               }
             }
@@ -140,10 +140,10 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(
+        Log.WriteFile(
           "PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!",
           strFile.Substring(strFile.LastIndexOf(@"\") + 1));
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("PluginManager: Exception: {0}", ex);
+        Log.WriteFile("PluginManager: Exception: {0}", ex);
       }
     }
 

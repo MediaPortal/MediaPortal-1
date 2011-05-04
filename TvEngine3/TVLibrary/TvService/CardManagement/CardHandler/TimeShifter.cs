@@ -24,7 +24,7 @@ using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations.DVB;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvControl;
 using TvDatabase;
 
@@ -93,7 +93,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+          Log.Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return "";
         }
@@ -108,7 +108,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return "";
       }
     }
@@ -139,7 +139,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+          Log.Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
@@ -155,7 +155,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return false;
       }
     }
@@ -208,7 +208,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+          Log.Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
@@ -226,7 +226,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return false;
       }
     }
@@ -255,7 +255,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+          Log.Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return DateTime.MinValue;
         }
@@ -271,7 +271,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return DateTime.MinValue;
       }
     }
@@ -280,7 +280,7 @@ namespace TvService
     {
       if (_tuneInProgress)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("audioVideoEventHandler - tune in progress");
+        Log.Info("audioVideoEventHandler - tune in progress");
         return;
       }
 
@@ -291,12 +291,12 @@ namespace TvService
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("audioVideoEventHandler {0}", pidType);
+          Log.Info("audioVideoEventHandler {0}", pidType);
           _eventAudio.Set();
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("audio last seen at {0}", _timeAudioEvent);
+          Log.Info("audio last seen at {0}", _timeAudioEvent);
         }
         _timeAudioEvent = DateTime.Now;
       }
@@ -307,12 +307,12 @@ namespace TvService
         if (ts.TotalMilliseconds > 1000)
         {
           // Avoid repetitive events that are kept for next channel change, so trig only once.
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("audioVideoEventHandler {0}", pidType);
+          Log.Info("audioVideoEventHandler {0}", pidType);
           _eventVideo.Set();
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("video last seen at {0}", _timeVideoEvent);
+          Log.Info("video last seen at {0}", _timeVideoEvent);
         }
         _timeVideoEvent = DateTime.Now;
       }
@@ -360,7 +360,7 @@ namespace TvService
               }
             }
 
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
+            Log.Write("card: StartTimeShifting {0} {1} ", _cardHandler.DataBaseCard.IdCard, fileName);
 
             if (_cardHandler.IsLocal == false)
             {
@@ -369,7 +369,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+            Log.Error("card: unable to connect to slave controller at:{0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
             Stop(ref user);
             return TvResult.UnknownError;
@@ -393,13 +393,13 @@ namespace TvService
 
           _subchannel = subchannel;
 
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: CAM enabled : {0}", _cardHandler.HasCA);
+          Log.Write("card: CAM enabled : {0}", _cardHandler.HasCA);
 
           if (subchannel is TvDvbChannel)
           {
             if (!((TvDvbChannel)subchannel).PMTreceived)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
+              Log.Info("start subch:{0} No PMT received. Timeshifting failed", subchannel.SubChannelId);
               Stop(ref user);
               return TvResult.UnableToStartGraph;
             }
@@ -432,7 +432,7 @@ namespace TvService
               if (channel.GrabEpg)
                 _cardHandler.Card.GrabEpg();
               else
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
+                Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
                          channel.DisplayName);
             }
             return TvResult.Succeeded;
@@ -464,7 +464,7 @@ namespace TvService
             if (channel.GrabEpg)
               _cardHandler.Card.GrabEpg();
             else
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
+              Log.Info("TimeshiftingEPG: channel {0} is not configured for grabbing epg",
                        channel.DisplayName);
           }
           return TvResult.Succeeded;
@@ -472,7 +472,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
 
       Stop(ref user);
@@ -496,7 +496,7 @@ namespace TvService
           ((BaseSubChannel)subchannel).AudioVideoEvent -= AudioVideoEventHandler;
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel,
+        Log.Write("card {2}: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel,
                   _cardHandler.Card.Name);
 
         lock (this)
@@ -507,7 +507,7 @@ namespace TvService
             if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
               return true;
 
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
+            Log.Write("card: StopTimeShifting user:{0} sub:{1}", user.Name, user.SubChannel);
 
             if (_cardHandler.IsLocal == false)
             {
@@ -516,7 +516,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+            Log.Error("card: unable to connect to slave controller at:{0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
@@ -533,7 +533,7 @@ namespace TvService
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card not IDLE - removing user: {0}", user.Name);
+            Log.Debug("card not IDLE - removing user: {0}", user.Name);
             _cardHandler.Users.RemoveUser(user);
           }
 
@@ -543,7 +543,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
       return false;
     }
@@ -569,19 +569,19 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+          Log.Error("card: unable to connect to slave controller at:{0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return TvResult.UnknownError;
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: CardTimeShift {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
+        Log.WriteFile("card: CardTimeShift {0} {1}", _cardHandler.DataBaseCard.IdCard, fileName);
         if (IsTimeShifting(ref user))
           return TvResult.Succeeded;
         return Start(ref user, ref fileName);
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return TvResult.UnknownError;
       }
     }
@@ -605,7 +605,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+        Log.Error("card: unable to connect to slave controller at:{0}",
                   _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return false;
       }
@@ -625,7 +625,7 @@ if (!WaitForUnScrambledSignal(ref user))
       {
         if (!_cardHandler.HasCA)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - return scrambled, since card has no CAM.");
+          Log.Write("card: WaitForTimeShiftFile - return scrambled, since card has no CAM.");
           scrambled = true;
           return false;
         }
@@ -643,29 +643,29 @@ if (!WaitForUnScrambledSignal(ref user))
 
       if (isRadio)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - waiting _eventAudio");
+        Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio");
         // wait for audio PID to be seen
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
           // start of the video & audio is seen
           TimeSpan ts = DateTime.Now - timeStart;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - audio is seen after {0} seconds", ts.TotalSeconds);
+          Log.Write("card: WaitForTimeShiftFile - audio is seen after {0} seconds", ts.TotalSeconds);
           return true;
         }
         else
         {
           TimeSpan ts = DateTime.Now - timeStart;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - audio stream is scrambled");
+            Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");
             scrambled = true;
           }
         }
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
+        Log.Write("card: WaitForTimeShiftFile - waiting _eventAudio & _eventVideo");
         // block until video & audio PIDs are seen or the timeout is reached
         if (_eventAudio.WaitOne(waitForEvent, true))
         {
@@ -673,19 +673,19 @@ if (!WaitForUnScrambledSignal(ref user))
           {
             // start of the video & audio is seen
             TimeSpan ts = DateTime.Now - timeStart;
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - video and audio are seen after {0} seconds",
+            Log.Write("card: WaitForTimeShiftFile - video and audio are seen after {0} seconds",
                       ts.TotalSeconds);
             return true;
           }
           else
           {
             TimeSpan ts = DateTime.Now - timeStart;
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+            Log.Write(
               "card: WaitForTimeShiftFile - audio was found, but video was not found after {0} seconds",
               ts.TotalSeconds);
             if (_cardHandler.IsScrambled(ref user))
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - audio stream is scrambled");
+              Log.Write("card: WaitForTimeShiftFile - audio stream is scrambled");
               scrambled = true;
             }
           }
@@ -693,10 +693,10 @@ if (!WaitForUnScrambledSignal(ref user))
         else
         {
           TimeSpan ts = DateTime.Now - timeStart;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
+          Log.Write("card: WaitForTimeShiftFile - no audio was found after {0} seconds", ts.TotalSeconds);
           if (_cardHandler.IsScrambled(ref user))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card: WaitForTimeShiftFile - audio and video stream is scrambled");
+            Log.Write("card: WaitForTimeShiftFile - audio and video stream is scrambled");
             scrambled = true;
           }
         }
@@ -731,7 +731,7 @@ if (!WaitForUnScrambledSignal(ref user))
 
     public void OnBeforeTune()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TimeShifter.OnBeforeTune: resetting audio/video events");
+      Log.Debug("TimeShifter.OnBeforeTune: resetting audio/video events");
       _tuneInProgress = true;
       _eventAudio.Reset();
       _eventVideo.Reset();
@@ -739,7 +739,7 @@ if (!WaitForUnScrambledSignal(ref user))
 
     public void OnAfterTune()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TimeShifter.OnAfterTune: resetting audio/video time");
+      Log.Debug("TimeShifter.OnAfterTune: resetting audio/video time");
       _timeAudioEvent = DateTime.MinValue;
       _timeVideoEvent = DateTime.MinValue;
 

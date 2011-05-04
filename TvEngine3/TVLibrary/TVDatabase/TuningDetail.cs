@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -666,7 +666,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in TuningDetail.Persist() with Exception {0}", ex);
+          Log.Error("Exception in TuningDetail.Persist() with Exception {0}", ex);
           return;
         }
         isChanged = false;

@@ -22,7 +22,6 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading;
-using MediaPortal.CoreServices;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Services;
@@ -51,7 +50,7 @@ namespace MediaPortal.GUI.Video
         _aMovie = LookupMovie;
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.Normal;
-        GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Normal);
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Normal);
       }
 
       // Changed code - added IMDB and TMDB cover search

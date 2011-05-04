@@ -32,7 +32,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -332,7 +332,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
       finally
       {

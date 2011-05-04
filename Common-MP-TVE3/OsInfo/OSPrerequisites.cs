@@ -20,8 +20,13 @@
 
 using System;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
-using MediaPortal.CoreServices; 
+#if MediaPortal
+using MediaPortal.ServiceImplementations;
+
+#else
+using TvLibrary.Log;
+
+#endif
 
 namespace OSPrerequisites
 {
@@ -49,9 +54,9 @@ namespace OSPrerequisites
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("*******************************************");
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("* ERROR, OS can't be used for MediaPortal *");
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("*******************************************");
+          Log.Error("*******************************************");
+          Log.Error("* ERROR, OS can't be used for MediaPortal *");
+          Log.Error("*******************************************");
           if (dispMessage)
           {
             MessageBox.Show(MSG_NOT_INSTALLABLE, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OK,
@@ -61,9 +66,9 @@ namespace OSPrerequisites
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
           //Used .Info as .Warning is missing
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("*******************************************");
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("* WARNING, OS not officially supported    *");
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("*******************************************");
+          Log.Info("*******************************************");
+          Log.Info("* WARNING, OS not officially supported    *");
+          Log.Info("*******************************************");
           if (dispMessage)
           {
             res = MessageBox.Show(MSG_NOT_SUPPORTED, OSInfo.OSInfo.GetOSDisplayVersion(), MessageBoxButtons.OKCancel,

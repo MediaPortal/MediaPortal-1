@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -49,7 +49,7 @@ namespace SetupTv.Sections
     {
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Callback from tvserver {0}", Menu.Title);
+        Log.Debug("Callback from tvserver {0}", Menu.Title);
 
         // pass menu to calling dialog
         if (refDlg != null)

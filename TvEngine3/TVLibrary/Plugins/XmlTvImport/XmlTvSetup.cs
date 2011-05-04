@@ -32,7 +32,7 @@ using Gentle.Framework;
 using Tst;
 using TvDatabase;
 using TvEngine;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -188,7 +188,7 @@ namespace SetupTv.Sections
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to load groups {0}", e.Message);
+        Log.Error("Failed to load groups {0}", e.Message);
       }
     }
 
@@ -216,7 +216,7 @@ namespace SetupTv.Sections
         textBoxAction.Text = "Loading";
         this.Refresh();
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Loading all channels from the tvguide[s]");
+        Log.Debug("Loading all channels from the tvguide[s]");
         // used for partial matches
         TstDictionary guideChannels = new TstDictionary();
 
@@ -245,7 +245,7 @@ namespace SetupTv.Sections
           }
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Loading all channels from the database");
+        Log.Debug("Loading all channels from the database");
 
         CBChannelGroup chGroup = (CBChannelGroup)comboBoxGroup.SelectedItem;
 
@@ -379,7 +379,7 @@ namespace SetupTv.Sections
                 }
                 catch (Exception ex)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Error("Error while searching for matching guide channel :" + ex.Message);
+                  Log.Error("Error while searching for matching guide channel :" + ex.Message);
                 }
               }
             }
@@ -448,8 +448,8 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed loading channels/mappings : channel {0} erro {1} ", name, ex.Message);
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex.StackTrace);
+        Log.Error("Failed loading channels/mappings : channel {0} erro {1} ", name, ex.Message);
+        Log.Error(ex.StackTrace);
         textBoxAction.Text = "Error";
       }
     }
@@ -516,13 +516,13 @@ namespace SetupTv.Sections
           if (canRead)
           {
               // all ok, get channels
-              GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:xmltv loading " + fileName);
+              Log.WriteFile(@"plugin:xmltv loading " + fileName);
               listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
           else
           {
               MessageBox.Show("Can't open tvguide.xml for reading");
-              GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
+              Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "].");
           }*/
 
           try
@@ -531,14 +531,14 @@ namespace SetupTv.Sections
             IOUtil.CheckFileAccessRights(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             // all ok, get channels
-            GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:xmltv loading " + fileName);
+            Log.WriteFile(@"plugin:xmltv loading " + fileName);
 
             listChannels.AddRange(readTVGuideChannelsFromFile(fileName));
           }
           catch (Exception e)
           {
             MessageBox.Show("Can't open tvguide.xml for reading");
-            GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
           }
         }
 
@@ -568,7 +568,7 @@ namespace SetupTv.Sections
                 tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
               }
 
-              GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:xmltv loading " + tvguideFileName);
+              Log.WriteFile(@"plugin:xmltv loading " + tvguideFileName);
 
               // get channels
               listChannels.AddRange(readTVGuideChannelsFromFile(tvguideFileName));
@@ -579,7 +579,7 @@ namespace SetupTv.Sections
           catch (Exception e)
           {
             MessageBox.Show("Can't read file(s) from the tvguide.lst");
-            GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
+            Log.Error(@"plugin:xmltv StartImport - Exception when reading [" + fileName + "] : " + e.Message);
           }
           finally
           {
@@ -623,7 +623,7 @@ namespace SetupTv.Sections
               String id = xmlReader.GetAttribute("id");
               if (id == null || id.Length == 0)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Error("  channel#{0} doesnt contain an id", iChannel);
+                Log.Error("  channel#{0} doesnt contain an id", iChannel);
               }
               else
               {
@@ -729,8 +729,8 @@ namespace SetupTv.Sections
       catch (Exception ex)
       {
         textBoxAction.Text = "Save failed";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error while saving channelmappings : {0}", ex.Message);
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex.StackTrace);
+        Log.Error("Error while saving channelmappings : {0}", ex.Message);
+        Log.Error(ex.StackTrace);
       }
     }
 
@@ -808,11 +808,11 @@ namespace SetupTv.Sections
       catch (UnauthorizedAccessException ex)
       {
         MessageBox.Show("Can't open the file for writing");
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to export guidechannels {0}", ex.Message);
+        Log.Error("Failed to export guidechannels {0}", ex.Message);
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to export guidechannels {0}", ex.Message);
+        Log.Error("Failed to export guidechannels {0}", ex.Message);
       }
     }
 

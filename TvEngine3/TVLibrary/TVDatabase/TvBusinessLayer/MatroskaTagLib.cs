@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using System.Data.SqlTypes;
 
 namespace TvDatabase
@@ -100,7 +100,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while reading subdirectories of {0}: {1}", aDirectory, ex);
+          Log.Info("Error while reading subdirectories of {0}: {1}", aDirectory, ex);
         }
         List<string> searchDirs = new List<string>(importDirs);
         foreach (string subDir in searchDirs)
@@ -123,18 +123,18 @@ namespace TvDatabase
             }
             catch (Exception ex)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while reading matroska informations in file {0}: {1}", xmlFile, ex);
+              Log.Info("Error while reading matroska informations in file {0}: {1}", xmlFile, ex);
             }
           }
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
+          Log.Info("Error while reading matroska informations in directory {0}: {1}", aDirectory, ex);
         }
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while reading all matroska informations : ", ex);
+        Log.Info("Error while reading all matroska informations : ", ex);
       }
       return foundTagInfo;
     }

@@ -22,7 +22,6 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -57,7 +56,7 @@ namespace TvLibrary.Implementations.DVB
       dvbipChannel.TransportId = info.transportStreamID;
       dvbipChannel.PmtPid = info.network_pmt_PID;
       dvbipChannel.FreeToAir = !info.scrambled;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Found: {0}", dvbipChannel);
+      Log.Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
     }
   }

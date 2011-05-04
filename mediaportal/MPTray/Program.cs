@@ -24,7 +24,6 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.Configuration;
 using MediaPortal.Hardware;
 using MediaPortal.Hooks;
 using MediaPortal.Util;
@@ -436,7 +435,7 @@ namespace MPTray
         }
 
         string filePath =
-          Path.Combine(Config.GetFolder(Config.Dir.Log), fileName);
+          Path.Combine(MediaPortal.Configuration.Config.GetFolder(MediaPortal.Configuration.Config.Dir.Log), fileName);
         if (File.Exists(filePath))
         {
           try

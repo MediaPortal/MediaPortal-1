@@ -20,7 +20,7 @@
 
 using System.Collections.Generic;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -57,7 +57,7 @@ namespace TvService
         if (!rec.ShouldBeDeleted)
           continue;
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Recorder: delete old recording:{0} date:{1}",
+        Log.Write("Recorder: delete old recording:{0} date:{1}",
                   rec.FileName,
                   rec.StartTime.ToShortDateString());
         recordings.Remove(rec);

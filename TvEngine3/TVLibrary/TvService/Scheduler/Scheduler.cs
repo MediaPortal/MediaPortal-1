@@ -30,7 +30,7 @@ using TvControl;
 using TvDatabase;
 using TvEngine.Events;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 #endregion
 
@@ -116,13 +116,13 @@ namespace TvService
     /// </summary>
     public void Start()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: started");
+      Log.Write("Scheduler: started");
 
       ResetRecordingStates();
 
       _recordingsInProgressList = new List<RecordingDetail>();
       IList<Schedule> schedules = Schedule.ListAll();
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: loaded {0} schedules", schedules.Count);
+      Log.Write("Scheduler: loaded {0} schedules", schedules.Count);
       StartSchedulerThread();
       new DiskManagement();
       new RecordingManagement();
@@ -135,7 +135,7 @@ namespace TvService
     /// </summary>
     public void Stop()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: stopped");
+      Log.Write("Scheduler: stopped");
       StopSchedulerThread();
 
       ResetRecordingStates();
@@ -211,7 +211,7 @@ namespace TvService
     /// <param name="idSchedule">database schedule id</param>
     public void StopRecordingSchedule(int idSchedule)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("recList:StopRecordingSchedule {0}", idSchedule);
+      Log.Write("recList:StopRecordingSchedule {0}", idSchedule);
       RecordingDetail foundRec = null;
 
       foreach (RecordingDetail rec in _recordingsInProgressList)
@@ -255,7 +255,7 @@ namespace TvService
     /// <param name="cardId">id of the card</param>
     public void StopRecordingOnCard(int cardId)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("recList:StopRecordingOnCard {0}", cardId);
+      Log.Write("recList:StopRecordingOnCard {0}", cardId);
       RecordingDetail foundRec = null;
       foreach (RecordingDetail rec in _recordingsInProgressList)
       {
@@ -298,7 +298,7 @@ namespace TvService
           return;
         }
       }
-     GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: thread started.");
+      Log.Debug("Scheduler: thread started.");
       _schedulerThread = new Thread(SchedulerWorker);
       _schedulerThread.IsBackground = true;
       _schedulerThread.Name = "scheduler thread";
@@ -315,7 +315,7 @@ namespace TvService
           _evtSchedulerWaitCtrl.Set();
           _evtSchedulerCtrl.Set();
           _schedulerThread.Join();          
-         GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: thread stopped.");
+          Log.Debug("Scheduler: thread stopped.");
         }
         catch (Exception) { }
         finally
@@ -355,7 +355,7 @@ namespace TvService
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: SchedulerWorker inner exception {0}", ex);
+            Log.Write("scheduler: SchedulerWorker inner exception {0}", ex);
           }
           finally
           {
@@ -370,7 +370,7 @@ namespace TvService
       }
       catch (Exception ex2)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: SchedulerWorker outer exception {0}", ex2);
+        Log.Write("scheduler: SchedulerWorker outer exception {0}", ex2);
       }
     }
 
@@ -392,7 +392,7 @@ namespace TvService
         IList<Schedule> schedules = Schedule.FindOrphanedOnceSchedules();
         foreach (Schedule orphan in schedules)
         {
-         GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: Orphaned once schedule found {0} - removing", orphan.IdSchedule);
+          Log.Debug("Scheduler: Orphaned once schedule found {0} - removing", orphan.IdSchedule);
           orphan.Delete();
         }
       }
@@ -408,7 +408,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Scheduler: Could not cleanup episode title {0} - {1}", aEpisodeTitle, ex.ToString());
+        Log.Error("Scheduler: Could not cleanup episode title {0} - {1}", aEpisodeTitle, ex.ToString());
         return aEpisodeTitle;
       }
     }
@@ -426,7 +426,7 @@ namespace TvService
           if (sc == null)
           {
             //seems like the schedule has disappeared  stop the recording also.
-           GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: Orphaned Recording found {0} - removing", schedId);
+            Log.Debug("Scheduler: Orphaned Recording found {0} - removing", schedId);
             StopRecordingSchedule(schedId);
           }
         }
@@ -459,7 +459,7 @@ namespace TvService
               }
               else
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("StartAnyDueRecordings: RecordingDetail was null");
+                Log.Info("StartAnyDueRecordings: RecordingDetail was null");
               }
             }
           }
@@ -509,14 +509,14 @@ namespace TvService
           ToRecordTitle = CleanEpisodeTitle(newRecording.Program.Title);
 
           IList<Recording> pastRecordings = Recording.ListAll();
-         GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
+          Log.Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
           // EPG needs to have episode information to distinguish between repeatings and new broadcasts
           if (ToRecordEpisode.Equals(String.Empty) || ToRecordEpisode.Equals(".."))
           {
             // Check the type so we aren't logging too verbose on single runs
             if (scheduleType != (int)ScheduleRecordingType.Once)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.",
+              Log.Info("Scheduler: No epsisode title found for schedule {0} - omitting repeating check.",
                        newRecording.Program.Title);
             }
           }
@@ -588,21 +588,21 @@ namespace TvService
                           CancelSchedule(newRecording, newRecording.Schedule.IdSchedule);
                         }
 
-                        GlobalServiceProvider.Instance.Get<ILogger>().Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
+                        Log.Info("Scheduler: Schedule {0}-{1} ({2}) has already been recorded ({3}) - aborting...",
                                  newRecording.Program.StartTime.ToString(), ToRecordTitle, ToRecordEpisode,
                                  pastRecordings[i].StartTime.ToString());
                       }
                     }
                     catch (Exception ex)
                     {
-                      GlobalServiceProvider.Instance.Get<ILogger>().Error(
+                      Log.Error(
                         "Scheduler: Schedule {0} ({1}) has already been recorded but the file is invalid ({2})! Going to record again...",
                         ToRecordTitle, ToRecordEpisode, ex.Message);
                     }
                   }
                   else
                   {
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                    Log.Info(
                       "Scheduler: Schedule {0} ({1}) had already been started - expect previous failure and try to resume...",
                       ToRecordTitle, ToRecordEpisode);
                   }
@@ -614,7 +614,7 @@ namespace TvService
       }
       catch (Exception ex1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Scheduler: Error checking schedule {0} for repeatings {1}", ToRecordTitle, ex1.ToString());
+        Log.Error("Scheduler: Error checking schedule {0} for repeatings {1}", ToRecordTitle, ex1.ToString());
       }
       return NewRecordingNeeded;
     }
@@ -728,7 +728,7 @@ namespace TvService
       if (current != null)
       {
         // (currentTime.DayOfWeek == schedule.StartTime.DayOfWeek)
-        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler.cs WeeklyEveryTimeOnThisChannel: {0} {1} current.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek {2} == {3}", schedule.ProgramName, schedule.ReferencedChannel().Name, current.StartTime.DayOfWeek, schedule.StartTime.DayOfWeek);
+        // Log.Debug("Scheduler.cs WeeklyEveryTimeOnThisChannel: {0} {1} current.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek {2} == {3}", schedule.ProgramName, schedule.ReferencedChannel().Name, current.StartTime.DayOfWeek, schedule.StartTime.DayOfWeek);
         if (current.StartTime.DayOfWeek == schedule.StartTime.DayOfWeek)
         {
           if (currentTime >= current.StartTime.AddMinutes(-schedule.PreRecordInterval) &&
@@ -924,7 +924,7 @@ namespace TvService
     {
       IUser user = RecDetail.User;
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName,
+      Log.Write("Scheduler: Time to record {0} {1}-{2} {3}", RecDetail.Channel.DisplayName,
                 DateTime.Now.ToShortTimeString(), RecDetail.EndTime.ToShortTimeString(),
                 RecDetail.Schedule.ProgramName);
       //get list of all cards we can use todo the recording      
@@ -940,12 +940,12 @@ namespace TvService
       {
         //Free cards are those cards not being used by anyone
         maxCards = GetMaxCards(freeCards);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: try max {0} of {1} FREE cards for recording", maxCards, freeCards.Count);
+        Log.Write("scheduler: try max {0} of {1} FREE cards for recording", maxCards, freeCards.Count);
         recSucceded = FindFreeCardAndStartRecord(RecDetail, user, freeCards, maxCards);
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: no free cards found for recording.");
+        Log.Write("scheduler: no free cards found for recording.");
       }
       if (!recSucceded)
       {
@@ -957,7 +957,7 @@ namespace TvService
           //Avail cards are ALL cards, even if used by another timeshifting user (not scheduler users).
           //These cards are used as a last option.
           maxCards = GetMaxCards(availCards);
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: try max {0} of {1} AVAILABLE cards for recording", maxCards, availCards.Count);
+          Log.Write("scheduler: try max {0} of {1} AVAILABLE cards for recording", maxCards, availCards.Count);
 
           //remove all cards previously cards tried for recording during the "free cards" iteration.
           foreach (var cardDetail in freeCards)
@@ -969,7 +969,7 @@ namespace TvService
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: no available cards found for recording.");
+          Log.Write("scheduler: no available cards found for recording.");
         }
       }
     }
@@ -992,10 +992,10 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Write(ex);
           StopFailedRecord(RecDetail);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: recording failed, lets try next available card.");
+        Log.Write("scheduler: recording failed, lets try next available card.");
         if (cardInfo != null && cards.Contains(cardInfo))
         {
           cards.Remove(cardInfo);
@@ -1022,10 +1022,10 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Write(ex);
           StopFailedRecord(RecDetail);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: recording failed, lets try next available card.");
+        Log.Write("scheduler: recording failed, lets try next available card.");
         if (cardInfo != null && cards.Contains(cardInfo))
         {
           cards.Remove(cardInfo);
@@ -1057,10 +1057,10 @@ namespace TvService
           catch (Exception ex)
           {
             //consume exception, since it isn't catastrophic
-            GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+            Log.Write(ex);
           }
 
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
+          Log.Write("Scheduler: recList: count: {0} add scheduleid: {1} card: {2}",
                     _recordingsInProgressList.Count,
                     RecDetail.Schedule.IdSchedule, RecDetail.CardInfo.Card.Name);
           result = true;
@@ -1068,7 +1068,7 @@ namespace TvService
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("scheduler: no card found to record on.");
+        Log.Write("scheduler: no card found to record on.");
       }
       return result;
     }
@@ -1088,7 +1088,7 @@ namespace TvService
           _tvController.StopTimeShifting(ref user);
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.DisplayName,
+        Log.Write("Scheduler: stop failed record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.ProgramName);
 
@@ -1112,7 +1112,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
     }
 
@@ -1160,13 +1160,13 @@ namespace TvService
           if (card.Id == recommendedCard)
           {
             cardInfo = card;
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : record on recommended card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
+            Log.Write("Scheduler : record on recommended card:{0} priority:{1}", cardInfo.Id, cardInfo.Card.Priority);
             break;
           }
         }
         if (cardInfo == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : recommended card:{0} is not available", recommendedCard);
+          Log.Write("Scheduler : recommended card:{0} is not available", recommendedCard);
         }
       }
       return cardInfo;
@@ -1185,12 +1185,12 @@ namespace TvService
         }
         if (cardInfo == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : no free card was found and no card was found where user can be kicked.");
+          Log.Write("Scheduler : no free card was found and no card was found where user can be kicked.");
         }
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : no free card was found and scheduler is not allowed to stop other users LiveTV. ");
+        Log.Write("Scheduler : no free card was found and scheduler is not allowed to stop other users LiveTV. ");
       }
 
       return cardInfo;
@@ -1215,7 +1215,7 @@ namespace TvService
           if (canKickAll)
           {
             cardInfo = cardDetail;
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+            Log.Write(
               "Scheduler : card is not tuned to the same transponder and not recording, kicking all users. record on card:{0} priority:{1}",
               cardInfo.Id, cardInfo.Card.Priority);
             for (int i = 0; i < tmpUsers.Length; i++)
@@ -1223,12 +1223,12 @@ namespace TvService
               IUser tmpUser = tmpUsers[i];
               if (_tvController.IsTimeShifting(ref tmpUser))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+                Log.Write(
                   "Scheduler : kicking user:{0}",
                   tmpUser.Name);
                 _tvController.StopTimeShifting(ref tmpUser, TvStoppedReason.RecordingStarted);
               }
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+              Log.Write(
                 "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
                 cardInfo.Id, cardInfo.Card.Priority, tmpUser.Name);
             }
@@ -1256,7 +1256,7 @@ namespace TvService
             {
               if (_tvController.IsTimeShifting(ref tmpUser))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+                Log.Write(
                   "Scheduler : card is tuned to the same transponder but not free. record on card:{0} priority:{1}, kicking user:{2}",
                   cardDetail.Id, cardDetail.Card.Priority, tmpUser.Name);
                 _tvController.StopTimeShifting(ref tmpUser, TvStoppedReason.RecordingStarted);
@@ -1307,7 +1307,7 @@ namespace TvService
     {
       bool startRecordingOnDisc = false;
       _tvController.EpgGrabberEnabled = false;
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : record, first tune to channel");
+      Log.Write("Scheduler : record, first tune to channel");
       TvResult tuneResult = _tvController.Tune(ref user, cardInfo.TuningDetail, RecDetail.Channel.IdChannel);
 
       startRecordingOnDisc = (tuneResult == TvResult.Succeeded);
@@ -1316,7 +1316,7 @@ namespace TvService
       {
         if (_tvController.SupportsSubChannels(cardInfo.Card.IdCard) == false)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : record, now start timeshift");
+          Log.Write("Scheduler : record, now start timeshift");
           string timeshiftFileName = String.Format(@"{0}\live{1}-{2}.ts", cardInfo.Card.TimeShiftFolder, cardInfo.Id,
                                                    user.SubChannel);
           startRecordingOnDisc = (TvResult.Succeeded == _tvController.StartTimeShifting(ref user, ref timeshiftFileName));
@@ -1326,7 +1326,7 @@ namespace TvService
         {
           RecDetail.MakeFileName(cardInfo.Card.RecordingFolder);
           RecDetail.CardInfo = cardInfo;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler : record to {0}", RecDetail.FileName);
+          Log.Write("Scheduler : record to {0}", RecDetail.FileName);
           string fileName = RecDetail.FileName;
           startRecordingOnDisc = (TvResult.Succeeded == _tvController.StartRecording(ref user, ref fileName, false, 0));
 
@@ -1347,7 +1347,7 @@ namespace TvService
     private void CreateRecording(RecordingDetail RecDetail)
     {
       int idServer = RecDetail.CardInfo.Card.IdServer;
-     GlobalServiceProvider.Instance.Get<ILogger>().Debug(String.Format("Scheduler: adding new row in db for title=\"{0}\" of type=\"{1}\"",
+      Log.Debug(String.Format("Scheduler: adding new row in db for title=\"{0}\" of type=\"{1}\"",
                               RecDetail.Program.Title, RecDetail.Schedule.ScheduleType));
       RecDetail.Recording = new Recording(RecDetail.Schedule.IdChannel, RecDetail.Schedule.IdSchedule, true,
                                           RecDetail.RecordingStartDateTime, DateTime.Now, RecDetail.Program.Title,
@@ -1429,7 +1429,7 @@ namespace TvService
           _tvController.StopTimeShifting(ref user);
         }
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.DisplayName,
+        Log.Write("Scheduler: stop record {0} {1}-{2} {3}", recording.Channel.DisplayName,
                   recording.RecordingStartDateTime,
                   recording.EndTime, recording.Schedule.ProgramName);
 
@@ -1457,13 +1457,13 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
     }
 
     private void RetryStopRecord(RecordingDetail recording)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}",
+      Log.Write("Scheduler: stop record did not succeed (trying again in 1 min.) {0} {1}-{2} {3}",
                 recording.Channel.DisplayName, recording.RecordingStartDateTime, recording.EndTime,
                 recording.Schedule.ProgramName);
       recording.Recording.EndTime = recording.Recording.EndTime.AddMinutes(1);
@@ -1481,7 +1481,7 @@ namespace TvService
 
     private void StopRecordOnSeriesSchedule(RecordingDetail recording)
     {
-     GlobalServiceProvider.Instance.Get<ILogger>().Debug("Scheduler: endtime={0}, Program.EndTime={1}, postRecTime={2}", recording.EndTime,
+      Log.Debug("Scheduler: endtime={0}, Program.EndTime={1}, postRecTime={2}", recording.EndTime,
                 recording.Program.EndTime, recording.Schedule.PostRecordInterval);
       if (DateTime.Now <= recording.Program.EndTime.AddMinutes(recording.Schedule.PostRecordInterval))
       {
@@ -1518,7 +1518,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
+        Log.Error("StopRecord - updating record id={0} failed {1}", recording.Recording.IdRecording, ex.StackTrace);
       }
     }
 

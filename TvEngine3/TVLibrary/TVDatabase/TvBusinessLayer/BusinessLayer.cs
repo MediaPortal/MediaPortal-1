@@ -41,7 +41,7 @@ using TvLibrary;
 using TvLibrary.Channels;
 using TvLibrary.Implementations;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
 using ThreadState = System.Threading.ThreadState;
 
@@ -1258,7 +1258,7 @@ namespace TvDatabase
         }
         catch (Exception cex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: GetProgramsForAllChannels could not retrieve connection details - {0}", cex.Message);
+          Log.Info("BusinessLayer: GetProgramsForAllChannels could not retrieve connection details - {0}", cex.Message);
           return new Dictionary<int, List<Program>>();
         }
         switch (provider)
@@ -1309,7 +1309,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: GetProgramsForAllChannels caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Info("BusinessLayer: GetProgramsForAllChannels caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
         return new Dictionary<int, List<Program>>();
       }
       finally
@@ -1358,7 +1358,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: GetProgramsForAllChannels Exception in finally - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Info("BusinessLayer: GetProgramsForAllChannels Exception in finally - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -1731,7 +1731,7 @@ namespace TvDatabase
         }
       }
 
-      // GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: mini-guide command: {0}", completeStatement);
+      // Log.Info("BusinessLayer: mini-guide command: {0}", completeStatement);
       return completeStatement;
     }
 
@@ -1771,7 +1771,7 @@ namespace TvDatabase
             break;
           default:
             //MSSQLConnect = new System.Data.OleDb.OleDbConnection("Provider=SQLOLEDB;" + connectString);
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: No connect info for provider {0} - aborting", provider);
+            Log.Info("BusinessLayer: No connect info for provider {0} - aborting", provider);
             return nowNextList;
         }
 
@@ -1799,7 +1799,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
+        Log.Info("BusinessLayer: GetNowNext failed {0}", ex.Message);
       }
       finally
       {
@@ -2006,7 +2006,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error("BusinessLayer: InsertPrograms error - {0}, {1}", ex.Message, ex.StackTrace);
         return 0;
       }
     }
@@ -2052,11 +2052,11 @@ namespace TvDatabase
     //    {
     //      System.TimeSpan ts = DateTime.Now - _lastProgramUpdate;
 
-    //      GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ProgramStatesThread waiting...{0} sec", ts.TotalSeconds);
+    //      Log.Info("BusinessLayer: ProgramStatesThread waiting...{0} sec", ts.TotalSeconds);
 
     //      if (ts.TotalSeconds >= 60) //if more than 60 secs. has passed since last update to the program table, then lets do the program states
     //      {
-    //        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ProgramStatesThread - done waiting. calling SynchProgramStatesForAll");
+    //        Log.Info("BusinessLayer: ProgramStatesThread - done waiting. calling SynchProgramStatesForAll");
     //        _lastProgramUpdate = DateTime.MinValue;
     //        Schedule.SynchProgramStatesForAll();
     //        return;
@@ -2095,7 +2095,7 @@ namespace TvDatabase
     {
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("BusinessLayer: InsertProgramsThread started");
+        Log.Debug("BusinessLayer: InsertProgramsThread started");
 
         IGentleProvider prov = ProviderFactory.GetDefaultProvider();
         string provider = prov.Name.ToLowerInvariant();
@@ -2112,7 +2112,7 @@ namespace TvDatabase
             insertProgams = InsertProgramsSqlServer;
             break;
           default:
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
+            Log.Info("BusinessLayer: InsertPrograms unknown provider - {0}", provider);
             return;
         }
 
@@ -2132,7 +2132,7 @@ namespace TvDatabase
               //  Has new work been queued in the meantime?
               if (_programInsertsQueue.Count == 0)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Debug("BusinessLayer: InsertProgramsThread exiting");
+                Log.Debug("BusinessLayer: InsertProgramsThread exiting");
                 _insertProgramsThread = null;
                 break;
               }
@@ -2152,14 +2152,14 @@ namespace TvDatabase
               importParams.ConnectString = defaultConnectString;
               Thread.CurrentThread.Priority = importParams.Priority;
               insertProgams(importParams);
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
+              Log.Debug("BusinessLayer: Inserted {0} programs to the database", importParams.ProgramList.Count);
               lastImport = DateTime.Now;
               Thread.CurrentThread.Priority = ThreadPriority.Lowest;
             }
             catch (Exception ex)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
-              GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+              Log.Error("BusinessLayer: InsertMySQL/InsertMSSQL caused an exception:");
+              Log.Write(ex);
             }
           }
           // Now all queued inserts have been processed, clear Gentle cache
@@ -2168,7 +2168,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Error("BusinessLayer: InsertProgramsThread error - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -2217,7 +2217,7 @@ namespace TvDatabase
 
           transact.Commit();
           benchClock.Stop();
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms",
+          Log.Info("BusinessLayer: OptimizeMySql successful - duration: {0}ms",
                    benchClock.ElapsedMilliseconds.ToString());
         }
       }
@@ -2232,9 +2232,9 @@ namespace TvDatabase
         }
         catch (Exception ex2)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+          Log.Info("BusinessLayer: OptimizeMySql unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: OptimizeMySql unsuccessful - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Info("BusinessLayer: OptimizeMySql unsuccessful - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -2282,9 +2282,9 @@ namespace TvDatabase
         }
         catch (Exception ex2)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Info("BusinessLayer: InsertMySql caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -2331,9 +2331,9 @@ namespace TvDatabase
         }
         catch (Exception ex2)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
+          Log.Info("BusinessLayer: InsertSqlServer unsuccessful - ROLLBACK - {0}, {1}", ex2.Message, ex2.StackTrace);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
+        Log.Info("BusinessLayer: InsertSqlServer caused an Exception - {0}, {1}", ex.Message, ex.StackTrace);
       }
     }
 
@@ -2364,7 +2364,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
         throw;
       }
 
@@ -2386,7 +2386,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
+          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
                    ex.StackTrace);
           throw;
         }
@@ -2414,7 +2414,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
         throw;
       }
 
@@ -2434,7 +2434,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
+          Log.Info("BusinessLayer: ExecuteDeleteProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
                    ex.StackTrace);
           throw;
         }
@@ -2477,7 +2477,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand - Prepare caused an Exception - {0}", ex.Message);
       }
 
       foreach (Program prog in currentInserts)
@@ -2515,13 +2515,13 @@ namespace TvDatabase
           switch (myex.Number)
           {
             case 1062:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+              Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
               break;
             case 1406:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
+              Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, myex.Message);
               break;
             default:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused a MySqlException - {0}, {1} {2}",
+              Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused a MySqlException - {0}, {1} {2}",
                        myex.Message,
                        myex.Number, myex.HelpLink);
               break;
@@ -2529,7 +2529,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
+          Log.Info("BusinessLayer: ExecuteInsertProgramsMySqlCommand caused an Exception - {0}, {1}", ex.Message,
                    ex.StackTrace);
         }
       }
@@ -2559,7 +2559,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
       foreach (ProgramListPartition partition in deleteProgramRanges)
       {
@@ -2580,7 +2580,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;
@@ -2606,7 +2606,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
       foreach (int idChannel in channelIds)
       {
@@ -2625,7 +2625,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Error("BusinessLayer: ExecuteDeleteProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;
@@ -2667,7 +2667,7 @@ namespace TvDatabase
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
+        Log.Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand - Prepare caused an Exception - {0}", ex.Message);
       }
       foreach (Program prog in currentInserts)
       {
@@ -2705,13 +2705,13 @@ namespace TvDatabase
           switch (msex.Number)
           {
             case 2601:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
+              Log.Info("BusinessLayer: Your importer tried to add a duplicate entry: {0}", errorRow);
               break;
             case 8152:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
+              Log.Info("BusinessLayer: Your importer tried to add a too much info: {0}, {1}", errorRow, msex.Message);
               break;
             default:
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand caused a SqlException - {0}, {1} {2}",
+              Log.Info("BusinessLayer: ExecuteInsertProgramsSqlServerCommand caused a SqlException - {0}, {1} {2}",
                        msex.Message, msex.Number,
                        msex.HelpLink);
               break;
@@ -2719,7 +2719,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("BusinessLayer: ExecuteInsertProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
+          Log.Error("BusinessLayer: ExecuteInsertProgramsSqlServerCommand error - {0}, {1}", ex.Message, ex.StackTrace);
         }
       }
       return;
@@ -2735,7 +2735,7 @@ namespace TvDatabase
 
     public List<Schedule> GetConflictingSchedules(Schedule rec)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("GetConflictingSchedules: Schedule = " + rec);
+      Log.Info("GetConflictingSchedules: Schedule = " + rec);
       List<Schedule> conflicts = new List<Schedule>();
       IList<Schedule> schedulesList = Schedule.ListAll();
 
@@ -2744,7 +2744,7 @@ namespace TvDatabase
       {
         return conflicts;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
+      Log.Info("GetConflictingSchedules: Cards.Count = {0}", cards.Count);
 
       List<Schedule>[] cardSchedules = new List<Schedule>[cards.Count];
       for (int i = 0; i < cards.Count; i++)
@@ -2786,7 +2786,7 @@ namespace TvDatabase
         List<Schedule> overlapping;
         if (!AssignSchedulesToCard(newEpisode, cardSchedules, out overlapping))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
+          Log.Info("GetConflictingSchedules: newEpisode can not be assigned to a card = " + newEpisode);
           conflicts.AddRange(overlapping);
         }
       }
@@ -2797,7 +2797,7 @@ namespace TvDatabase
                                               out List<Schedule> overlappingSchedules)
     {
       overlappingSchedules = new List<Schedule>();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("AssignSchedulesToCard: schedule = " + schedule);
+      Log.Info("AssignSchedulesToCard: schedule = " + schedule);
       IList<Card> cards = Card.ListAll();
       bool assigned = false;
       int count = 0;
@@ -2809,13 +2809,13 @@ namespace TvDatabase
           bool free = true;
           foreach (Schedule assignedSchedule in cardSchedules[count])
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
+            Log.Info("AssignSchedulesToCard: card {0}, ID = {1} has schedule = " + assignedSchedule, count, card.IdCard);
             if (schedule.IsOverlapping(assignedSchedule))
             {
               if (!(schedule.isSameTransponder(assignedSchedule) && card.supportSubChannels))
               {
                 overlappingSchedules.Add(assignedSchedule);
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
+                Log.Info("AssignSchedulesToCard: overlapping with " + assignedSchedule + " on card {0}, ID = {1}", count,
                          card.IdCard);
                 free = false;
                 break;
@@ -2824,7 +2824,7 @@ namespace TvDatabase
           }
           if (free)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
+            Log.Info("AssignSchedulesToCard: free on card {0}, ID = {1}", count, card.IdCard);
             cardSchedules[count].Add(schedule);
             int recommendedCard = schedule.RecommendedCard;
             if (recommendedCard != card.IdCard)
@@ -2995,12 +2995,12 @@ namespace TvDatabase
       IList<Program> programs;
       if (rec.ScheduleType == (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel)
       {
-        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
+        //Log.Debug("get {0} {1} EveryTimeOnThisChannel", rec.ProgramName, rec.ReferencedChannel().Name);
         programs = layer.SearchMinimalPrograms(dtDay, dtDay.AddDays(days), rec.ProgramName, rec.ReferencedChannel());
         foreach (Program prog in programs)
         {
           // dtDay.DayOfWeek == rec.StartTime.DayOfWeek
-          // GlobalServiceProvider.Instance.Get<ILogger>().Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+          // Log.Debug("BusinessLayer.cs Program prog in programs WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
           if (prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek && rec.IsRecordingProgram(prog, false))
           {
             Schedule recNew = rec.Clone();
@@ -3015,7 +3015,7 @@ namespace TvDatabase
             }
             recordings.Add(recNew);
 
-            //GlobalServiceProvider.Instance.Get<ILogger>().Debug("BusinessLayer.cs Added Recording WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
+            //Log.Debug("BusinessLayer.cs Added Recording WeeklyEveryTimeOnThisChannel: {0} {1} prog.StartTime.DayOfWeek == rec.StartTime.DayOfWeek {2} == {3}", rec.ProgramName, rec.ReferencedChannel().Name, prog.StartTime.DayOfWeek, rec.StartTime.DayOfWeek);
           }
         }
         return recordings;
@@ -3069,7 +3069,7 @@ namespace TvDatabase
       sb.AddConstraint(Operator.Equals, "endTime", endTime);
       sb.AddConstraint(Operator.Equals, "scheduleType", scheduleType);
       SqlStatement stmt = sb.GetStatement(true);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info(stmt.Sql);
+      Log.Info(stmt.Sql);
       IList<Schedule> schedules = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
       if (schedules == null)
       {
@@ -3137,7 +3137,7 @@ namespace TvDatabase
         sb.AddConstraint(Operator.Equals, "sortOrder", aSortOrder);
       }
       SqlStatement stmt = sb.GetStatement(true);
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug(stmt.Sql);
+      Log.Debug(stmt.Sql);
       IList<ChannelGroup> groups = ObjectFactory.GetCollection<ChannelGroup>(stmt.Execute());
       if (groups == null)
       {

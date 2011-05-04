@@ -32,7 +32,6 @@ using System.Threading;
 using System.Web;
 using System.Xml;
 using MediaPortal.Configuration;
-using MediaPortal.CoreServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Services;
@@ -618,7 +617,7 @@ namespace MediaPortal.Music.Database
           if (!_running)
           {
             _running = true;
-            GlobalServiceProvider.Instance.Get<IThreadPool>().Add(delegate()
+            GlobalServiceProvider.Get<IThreadPool>().Add(delegate()
                                                            {
                                                              ScrobblerUtilsRequest req;
                                                              while (_requestQueue.Count > 0)

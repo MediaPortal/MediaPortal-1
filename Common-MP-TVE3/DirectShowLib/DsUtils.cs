@@ -1056,7 +1056,7 @@ namespace DirectShowLib
       }
 
       StackTrace st = new StackTrace(true);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
+      //Log.Error("Exception while releasing COM object (NULL) - stacktrace: {0}", st);
 
       return 0;
     }

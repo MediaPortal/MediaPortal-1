@@ -25,7 +25,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Implementations.Helper;
 using TvDatabase;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations
 {
@@ -97,7 +96,7 @@ namespace TvLibrary.Implementations
         ((IMediaControl)_graphBuilder).GetState(10, out state);
         graphRunning = (state == FilterState.Running);
       }
-      //GlobalServiceProvider.Instance.Get<ILogger>().Info("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
+      //Log.Log.WriteFile("subch:{0} GraphRunning: {1}", _subChannelId, graphRunning);
       return graphRunning;
     }
 
@@ -705,19 +704,19 @@ namespace TvLibrary.Implementations
     /// <param name="continueGraph">Indicates, if the graph should be continued or stopped</param>
     private void FreeSubChannel(int id, bool continueGraph)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id,
+      Log.Log.Info("tvcard:FreeSubChannel: subchannels count {0} subch#{1} keep graph={2}", _mapSubChannels.Count, id,
                    continueGraph);
       if (_mapSubChannels.ContainsKey(id))
       {
         if (_mapSubChannels[id].IsTimeShifting)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
+          Log.Log.Info("tvcard:FreeSubChannel :{0} - is timeshifting (skipped)", id);
           return;
         }
 
         if (_mapSubChannels[id].IsRecording)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
+          Log.Log.Info("tvcard:FreeSubChannel :{0} - is recording (skipped)", id);
           return;
         }
 
@@ -733,20 +732,20 @@ namespace TvLibrary.Implementations
 
         /*if (_conditionalAccess != null)
         {         
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel CA:{0}", id);
+          Log.Log.Info("tvcard:FreeSubChannel CA:{0}", id);
           _conditionalAccess.FreeSubChannel(id);
         }*/
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
+        Log.Log.Info("tvcard:FreeSubChannel :{0} - sub channel not found", id);
       }
       if (_mapSubChannels.Count == 0)
       {
         _subChannelId = 0;
         if (!continueGraph)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, pausing graph");
           if (SupportsPauseGraph)
           {
             PauseGraph();
@@ -758,12 +757,12 @@ namespace TvLibrary.Implementations
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel : no subchannels present, continueing graph");
+          Log.Log.Info("tvcard:FreeSubChannel : no subchannels present, continueing graph");
         }
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
+        Log.Log.Info("tvcard:FreeSubChannel : subchannels STILL present {}, continueing graph", _mapSubChannels.Count);
       }
     }
 
@@ -772,7 +771,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     protected void FreeAllSubChannels()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("tvcard:FreeAllSubChannels");
+      Log.Log.Info("tvcard:FreeAllSubChannels");
       Dictionary<int, BaseSubChannel>.Enumerator en = _mapSubChannels.GetEnumerator();
       while (en.MoveNext())
       {

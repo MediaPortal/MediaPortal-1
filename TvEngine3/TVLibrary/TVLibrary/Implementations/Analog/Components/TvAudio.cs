@@ -25,7 +25,6 @@ using DirectShowLib;
 using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog.Components
 {
@@ -124,21 +123,21 @@ namespace TvLibrary.Implementations.Analog.Components
       streams = new List<IAudioStream>();
       if (!string.IsNullOrEmpty(graph.TvAudio.Name) && graph.TvAudio.Mode != TvAudioVariant.Unavailable)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Using TvAudio configuration from stored graph");
+        Log.Log.WriteFile("analog: Using TvAudio configuration from stored graph");
 
         if (CreateConfigurationBasedFilterInstance(graph, tuner, crossbar, graphBuilder))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Using TvAudio configuration from stored graph succeeded");
+          Log.Log.WriteFile("analog: Using TvAudio configuration from stored graph succeeded");
           return true;
         }
       }
       if (tuner.AudioPin == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter no tv audio device needed!");
+        Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio device needed!");
         mode = TvAudioVariant.Unavailable;
         return true;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: No stored graph for TvAudio component - Trying to detect");
+      Log.Log.WriteFile("analog: No stored graph for TvAudio component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, tuner, crossbar, graphBuilder);
     }
 
@@ -159,20 +158,20 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (graph.TvAudio.Mode == TvAudioVariant.TvTuner || graph.TvAudio.Mode == TvAudioVariant.TvTunerConnection)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          Log.Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           return false;
         }
         if (graph.TvAudio.Mode == TvAudioVariant.TvTuner)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
+          Log.Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
           _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
           if (_tvAudioTunerInterface != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
+            Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
             mode = TvAudioVariant.TvTuner;
             streams = new List<IAudioStream>();
@@ -193,7 +192,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
       if (devices != null && devices.Length > 0)
       {
@@ -206,7 +205,7 @@ namespace TvLibrary.Implementations.Analog.Components
             continue;
           if (!deviceName.Equals(devices[i].Name))
             continue;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
+          Log.Log.WriteFile("analog: AddTvAudioFilter use:{0} {1}", devices[i].Name, i);
           int hr;
           try
           {
@@ -215,7 +214,7 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter to graph");
+            Log.Log.WriteFile("analog: cannot add filter to graph");
             continue;
           }
           if (hr != 0)
@@ -245,7 +244,7 @@ namespace TvLibrary.Implementations.Analog.Components
             else
             {
               //succeeded. we're done
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+              Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
               Release.ComObject("audiotuner pinin", pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
@@ -290,7 +289,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
       }
       if (devices != null && devices.Length > 0)
       {
@@ -298,7 +297,7 @@ namespace TvLibrary.Implementations.Analog.Components
         for (int i = 0; i < devices.Length; i++)
         {
           IBaseFilter tmp;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
+          Log.Log.WriteFile("analog: AddTvAudioFilter try:{0} {1}", devices[i].Name, i);
           //if tv audio tuner is currently in use we can skip it
           if (DevicesInUse.Instance.IsUsed(devices[i]))
             continue;
@@ -310,7 +309,7 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter to graph");
+            Log.Log.WriteFile("analog: cannot add filter to graph");
             continue;
           }
           if (hr != 0)
@@ -340,7 +339,7 @@ namespace TvLibrary.Implementations.Analog.Components
             else
             {
               //succeeded. we're done
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
+              Log.Log.WriteFile("analog: AddTvAudioFilter succeeded:{0}", devices[i].Name);
               Release.ComObject("audiotuner pinin", pin);
               _filterTvAudioTuner = tmp;
               _audioDevice = devices[i];
@@ -359,21 +358,21 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterTvAudioTuner == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
+        Log.Log.WriteFile("analog: AddTvAudioFilter no tv audio devices found - Trying TvTuner filter");
         int hr = graphBuilder.Connect(tuner.AudioPin, crossbar.AudioTunerIn);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
+          Log.Log.Error("analog: unable to add TvAudioTuner to graph - even TvTuner as TvAudio fails");
           mode = TvAudioVariant.Unavailable;
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
+          Log.Log.WriteFile("analog: AddTvAudioFilter connected TvTuner with Crossbar directly succeeded!");
           mode = TvAudioVariant.TvTunerConnection;
           _tvAudioTunerInterface = tuner.Filter as IAMTVAudio;
           if (_tvAudioTunerInterface != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
+            Log.Log.WriteFile("analog: AddTvAudioFilter succeeded - TvTuner is also TvAudio");
             _filterTvAudioTuner = tuner.Filter;
             mode = TvAudioVariant.TvTuner;
           }

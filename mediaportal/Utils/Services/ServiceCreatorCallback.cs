@@ -1,4 +1,4 @@
-﻿#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -18,16 +18,7 @@
 
 #endregion
 
-namespace MediaPortal.CoreServices
+namespace MediaPortal.Services
 {
-  public enum LogLevel
-  {
-    None = 0,
-    Critical = 1,
-    Error = 2,
-    Warning = 3,
-    Information = 4,
-    Debug = 5,
-    All = int.MaxValue
-  }
+  public delegate T ServiceCreatorCallback<T>(ServiceProvider provider);
 }

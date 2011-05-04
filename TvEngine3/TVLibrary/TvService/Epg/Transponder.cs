@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
 namespace TvService
@@ -122,7 +122,7 @@ namespace TvService
       {
         if (Index < 0 || Index >= Channels.Count)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
+          Log.Error("transponder index out of range:{0}/{1}", Index, Channels.Count);
           return null;
         }
         TvBusinessLayer layer = new TvBusinessLayer();
@@ -143,7 +143,7 @@ namespace TvService
         return;
       Channels[Index].LastGrabTime = DateTime.Now;
       Channels[Index].Persist();
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
+      Log.Write("EPG: database updated for #{0} {1}", Index, Channels[Index].DisplayName);
     }
 
     /// <summary>
@@ -184,12 +184,12 @@ namespace TvService
     /// </summary>
     public void Dump()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
+      Log.Write("Transponder:{0} {1} {2} {3} {4} {5}", _currentChannelIndex, TuningDetail.ChannelType,
                 TuningDetail.Frequency, TuningDetail.Modulation, TuningDetail.Symbolrate, TuningDetail.Bandwidth,
                 TuningDetail.Polarisation);
       foreach (Channel c in _channels)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(" {0}", c.DisplayName);
+        Log.Write(" {0}", c.DisplayName);
       }
     }
 

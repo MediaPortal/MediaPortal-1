@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
 using System.Runtime.InteropServices;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -158,7 +157,7 @@ namespace TvLibrary.Implementations.DVB
       {
         // Create string from byte array 
         String menuEntry = BytesToString(sourceData, offset + 4, Length);
-        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("FireDTV: MMI Parse GetCIText: {0}", menuEntry.ToString());
+        //Log.Log.Debug("FireDTV: MMI Parse GetCIText: {0}", menuEntry.ToString());
         menuEntries.Add(menuEntry.ToString());
       }
       else
@@ -264,7 +263,7 @@ namespace TvLibrary.Implementations.DVB
         {
           if (row.Length > 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+            Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
                                             rowText.ToString().PadRight(16, ' ')));
           }
           rowText.Length = 0;
@@ -276,7 +275,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (row.Length > 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
+        Log.Log.WriteFile(String.Format("{0}|{1}", row.ToString().PadRight(55, ' '),
                                         rowText.ToString().PadRight(16, ' ')));
       }
     }
@@ -370,7 +369,7 @@ namespace TvLibrary.Implementations.DVB
       int mmiOffset = 3 + countLengthBytes; // 3 bytes mmi tag + 1 byte length field ?
 
 #if DEBUG
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", m_cardName, uMMITag, mmiLength,
+      Log.Log.Debug("{0}: MMITag:{1}, MMIObjectLength: {2} ({2:X2}), mmiOffset: {3}", m_cardName, uMMITag, mmiLength,
                     mmiOffset);
 #endif
       int offset = 0; // starting with 0; reading whole struct from start
@@ -385,12 +384,12 @@ namespace TvLibrary.Implementations.DVB
         }
         if (m_ciMenuCallback != null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: OnCiClose()", m_cardName);
+          Log.Log.Debug("{0}: OnCiClose()", m_cardName);
           m_ciMenuCallback.OnCiCloseDisplay(nDelay);
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: OnCiCloseDisplay: cannot do callback!", m_cardName);
+          Log.Log.Debug("{0}: OnCiCloseDisplay: cannot do callback!", m_cardName);
         }
       }
       if (uMMITag == DVB_MMI.MMI_TAGS.ENQUIRY)
@@ -410,13 +409,13 @@ namespace TvLibrary.Implementations.DVB
         strText = DVB_MMI.BytesToString(MMI, mmiOffset + 4, mmiLength - mmiOffset - 2);
         if (m_ciMenuCallback != null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", m_cardName,
+          Log.Log.Debug("{0}: OnCiRequest: bPasswordMode:{1}, answer_text_length:{2}, strText:{3}", m_cardName,
                         bPasswordMode, answer_text_length, strText);
           m_ciMenuCallback.OnCiRequest(bPasswordMode, answer_text_length, strText);
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: OnCiRequest: cannot do callback!", m_cardName);
+          Log.Log.Debug("{0}: OnCiRequest: cannot do callback!", m_cardName);
         }
       }
       if (uMMITag == DVB_MMI.MMI_TAGS.LIST_LAST || uMMITag == DVB_MMI.MMI_TAGS.MENU_LAST ||
@@ -427,11 +426,11 @@ namespace TvLibrary.Implementations.DVB
         offset++;
         while (MMI[offset] != (byte)0x9F)
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("Skip to offset {0} value {1:X2}", offset, MMI[offset]);
+          //Log.Log.Debug("Skip to offset {0} value {1:X2}", offset, MMI[offset]);
           offset++;
         }
         uMMITag = DVB_MMI.ToMMITag(MMI, offset); // get next MMI tag
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: MMI Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName,
+        Log.Log.Debug("{0}: MMI Parse: Got MENU_LAST, skipped to next block on index: {1}; new Tag {2}", m_cardName,
                       offset, uMMITag);
 
         int nChoices = 0;
@@ -459,7 +458,7 @@ namespace TvLibrary.Implementations.DVB
 #if DEBUG
         for (int c = 0; c < Choices.Count; c++)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: {1} : {2}", m_cardName, c, Choices[c]);
+          Log.Log.Debug("{0}: {1} : {2}", m_cardName, c, Choices[c]);
         }
 #endif
         if (m_ciMenuCallback != null)
@@ -472,7 +471,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: OnCiMenu: cannot do callback!", m_cardName);
+          Log.Log.Debug("{0}: OnCiMenu: cannot do callback!", m_cardName);
         }
       }
     }

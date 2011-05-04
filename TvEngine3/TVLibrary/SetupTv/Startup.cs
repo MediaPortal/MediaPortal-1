@@ -30,7 +30,7 @@ using System.Threading;
 using System.Diagnostics;
 using TvControl;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
 namespace SetupTv
@@ -92,8 +92,9 @@ namespace SetupTv
 
     public static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in setuptv");
-      GlobalServiceProvider.Instance.Get<ILogger>().Error(e.Exception);
+      Log.Write("Exception in setuptv");
+      Log.Write(e.ToString());
+      Log.Write(e.Exception);
     }
 
     [STAThread]
@@ -132,7 +133,7 @@ namespace SetupTv
           switch (param.Substring(0, 12))
           {
             case "--DeployMode":
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("---- started in Deploy mode ----");
+              Log.Debug("---- started in Deploy mode ----");
               startupMode = StartupMode.DeployMode;
               break;
 
@@ -157,7 +158,7 @@ namespace SetupTv
 
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+      Log.Info("---- SetupTv v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
 
       //Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(true);
@@ -168,7 +169,7 @@ namespace SetupTv
       Application.ThreadException += Application_ThreadException;
 
       //test connection with database
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- check connection with database ----");
+      Log.Info("---- check connection with database ----");
       SetupDatabaseForm dlg = new SetupDatabaseForm(startupMode);
 
       if (startupMode == StartupMode.DeployMode)
@@ -203,7 +204,7 @@ namespace SetupTv
       if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
           (!dlg.TestConnection(startupMode)))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("---- ask user for connection details ----");
+        Log.Info("---- ask user for connection details ----");
         if (dlg.ShowDialog() != DialogResult.OK || startupMode != StartupMode.DeployMode)
           return; // close the application without restart here.
       }
@@ -213,7 +214,7 @@ namespace SetupTv
         dlg.SaveGentleConfig();
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- check if database needs to be updated/created ----");
+      Log.Info("---- check if database needs to be updated/created ----");
       int currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       if (currentSchemaVersion <= 36) // drop pre-1.0 DBs and handle -1
       {
@@ -226,34 +227,34 @@ namespace SetupTv
               MessageBoxDefaultButton.Button2) == DialogResult.Cancel)
             return;
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("---- create database ----");
+        Log.Info("---- create database ----");
         if (!dlg.ExecuteSQLScript("create"))
         {
           MessageBox.Show("Failed to create the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
           return;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("- Database created.");
+        Log.Info("- Database created.");
         currentSchemaVersion = dlg.GetCurrentShemaVersion(startupMode);
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- upgrade database schema ----");
+      Log.Info("---- upgrade database schema ----");
       if (!dlg.UpgradeDBSchema(currentSchemaVersion))
       {
         MessageBox.Show("Failed to upgrade the database.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         return;
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("---- check if tvservice is running ----");
+      Log.Info("---- check if tvservice is running ----");
       if (!ServiceHelper.IsRunning)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("---- tvservice is not running ----");
+        Log.Info("---- tvservice is not running ----");
         if (startupMode != StartupMode.DeployMode)
         {
           DialogResult result = MessageBox.Show("The Tv service is not running.\rStart it now?",
                                                 "Mediaportal TV service", MessageBoxButtons.YesNo);
           if (result != DialogResult.Yes) return;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("---- start tvservice----");
+        Log.Info("---- start tvservice----");
         ServiceHelper.Start();
       }
 
@@ -265,7 +266,7 @@ namespace SetupTv
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("---- restart tvservice----");
+        Log.Info("---- restart tvservice----");
         ServiceHelper.Restart();
         ServiceHelper.WaitInitialized();
         try
@@ -276,8 +277,8 @@ namespace SetupTv
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("---- Unable to restart tv service----");
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Info("---- Unable to restart tv service----");
+          Log.Write(ex);
           MessageBox.Show("Failed to startup tvservice" + ex);
           return;
         }
@@ -290,7 +291,7 @@ namespace SetupTv
         if (card.RecordingFormat != 0)
         {
           card.RecordingFormat = 0;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Card {0} switched from .MPG to .TS format", card.Name);
+          Log.Info("Card {0} switched from .MPG to .TS format", card.Name);
           card.Persist();
         }
       }
@@ -315,7 +316,7 @@ namespace SetupTv
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
     }
 

@@ -24,7 +24,6 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
-using MediaPortal.CoreServices;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.GUI.View;
@@ -213,14 +212,14 @@ namespace MediaPortal.GUI.Video
       if (control == btnPlayDVD)
       {
         ISelectDVDHandler selectDVDHandler;
-        if (GlobalServiceProvider.Instance.IsRegistered<ISelectDVDHandler>())
+        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
         {
-          selectDVDHandler = GlobalServiceProvider.Instance.Get<ISelectDVDHandler>();
+          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
         }
         else
         {
           selectDVDHandler = new SelectDVDHandler();
-          GlobalServiceProvider.Instance.Add<ISelectDVDHandler>(selectDVDHandler);
+          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         string dvdToPlay = selectDVDHandler.ShowSelectDVDDialog(GetID);
         if (dvdToPlay != null)
@@ -628,14 +627,14 @@ namespace MediaPortal.GUI.Video
     protected void OnPlayDVD(String drive, int parentId)
     {
       ISelectDVDHandler selectDVDHandler;
-      if (GlobalServiceProvider.Instance.IsRegistered<ISelectDVDHandler>())
+      if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
       {
-        selectDVDHandler = GlobalServiceProvider.Instance.Get<ISelectDVDHandler>();
+        selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
       }
       else
       {
         selectDVDHandler = new SelectDVDHandler();
-        GlobalServiceProvider.Instance.Add<ISelectDVDHandler>(selectDVDHandler);
+        GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
       }
       selectDVDHandler.OnPlayDVD(drive, GetID);
     }

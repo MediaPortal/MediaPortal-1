@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
-using MediaPortal.CoreServices;
 
 #endregion
 

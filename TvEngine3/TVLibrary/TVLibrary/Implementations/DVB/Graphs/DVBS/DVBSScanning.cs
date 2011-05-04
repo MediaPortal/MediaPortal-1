@@ -24,7 +24,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -69,7 +68,7 @@ namespace TvLibrary.Implementations.DVB
       dvbsChannel.InnerFecRate = tuningChannel.InnerFecRate;
       dvbsChannel.Pilot = tuningChannel.Pilot;
       dvbsChannel.Rolloff = tuningChannel.Rolloff;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Found: {0}", dvbsChannel);
+      Log.Log.Write("Found: {0}", dvbsChannel);
       return dvbsChannel;
     }
   }

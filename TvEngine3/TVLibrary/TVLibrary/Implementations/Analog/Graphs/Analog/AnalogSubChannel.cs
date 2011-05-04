@@ -25,7 +25,6 @@ using TvLibrary.Implementations.Analog.Components;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Implementations;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -70,7 +69,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnBeforeTune()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} OnBeforeTune", _subChannelId);
+      Log.Log.WriteFile("analog subch:{0} OnBeforeTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -86,7 +85,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnAfterTune()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} OnAfterTune", _subChannelId);
+      Log.Log.WriteFile("analog subch:{0} OnAfterTune", _subChannelId);
       if (IsTimeShifting)
       {
         if (_subChannelId >= 0)
@@ -104,7 +103,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStart()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} OnGraphStart", _subChannelId);
+      Log.Log.WriteFile("analog subch:{0} OnGraphStart", _subChannelId);
       if (_teletextDecoder != null)
       {
         _teletextDecoder.ClearBuffer();
@@ -118,7 +117,7 @@ namespace TvLibrary.Implementations.Analog
     /// </summary>
     public override void OnGraphStarted()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog subch:{0} OnGraphStarted", _subChannelId);
+      Log.Log.WriteFile("analog subch:{0} OnGraphStarted", _subChannelId);
       _dateTimeShiftStarted = DateTime.MinValue;
       OnAfterTuneEvent();
     }
@@ -157,8 +156,8 @@ namespace TvLibrary.Implementations.Analog
         _card.Quality.StartPlayback();
       }
       _timeshiftFileName = fileName;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:SetTimeShiftFileName:{0}", fileName);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:SetTimeShiftFileName: uses .ts");
+      Log.Log.WriteFile("analog:SetTimeShiftFileName:{0}", fileName);
+      Log.Log.WriteFile("analog:SetTimeShiftFileName: uses .ts");
       ScanParameters parameters = _card.Parameters;
       _mpRecord.SetVideoAudioObserver(_subChannelId, this);
       _mpRecord.SetTimeShiftParams(_subChannelId, parameters.MinimumFiles, parameters.MaximumFiles,
@@ -168,7 +167,7 @@ namespace TvLibrary.Implementations.Analog
       //  Set the channel type
       if (CurrentChannel == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error, CurrentChannel is null when trying to start timeshifting");
+        Log.Log.Error("Error, CurrentChannel is null when trying to start timeshifting");
         return false;
       }
 
@@ -186,7 +185,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopTimeShifting()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: StopTimeShifting()");
+      Log.Log.WriteFile("analog: StopTimeShifting()");
       _mpRecord.SetVideoAudioObserver(_subChannelId, null);
       _mpRecord.StopTimeShifting(_subChannelId);
     }
@@ -202,7 +201,7 @@ namespace TvLibrary.Implementations.Analog
       {
         _card.Quality.StartRecord();
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:StartRecord({0})", fileName);
+      Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
       _mpRecord.StartRecord(_subChannelId);
@@ -214,7 +213,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns></returns>
     protected override void OnStopRecording()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:StopRecord()");
+      Log.Log.WriteFile("analog:StopRecord()");
       _mpRecord.StopRecord(_subChannelId);
       if (_card.SupportsQualityControl && IsTimeShifting)
       {

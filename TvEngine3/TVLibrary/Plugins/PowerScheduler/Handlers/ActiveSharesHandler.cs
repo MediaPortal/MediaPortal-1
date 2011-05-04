@@ -27,7 +27,7 @@ using System.Text;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Interfaces;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 #endregion
 
@@ -108,7 +108,7 @@ namespace TvEngine.PowerScheduler.Handlers
         {
           MonitoringType = ShareType.UserFromHostUsingShare;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share,
+        Log.Debug("ShareMonitor: Monitor user '{0}' from host '{1}' on share '{2}' Type '{3}'", _user, _host, _share,
                   MonitoringType);
       }
 
@@ -166,7 +166,7 @@ namespace TvEngine.PowerScheduler.Handlers
             }
             break;
           default:
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("Invalid share monitoring configuration.");
+            Log.Debug("Invalid share monitoring configuration.");
             break;
         }
         return serverConnectionMatches;
@@ -254,15 +254,15 @@ namespace TvEngine.PowerScheduler.Handlers
               _sharesToMonitor.Add(new ShareMonitor(shareItem[0], shareItem[1], shareItem[2]));
             }
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: Share monitoring is enabled.", HandlerName);
+          Log.Debug("{0}: Share monitoring is enabled.", HandlerName);
           return true;
         }
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("{0}: Error >{1}< loading shares to monitor", HandlerName, ex.Message);
+        Log.Error("{0}: Error >{1}< loading shares to monitor", HandlerName, ex.Message);
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: Share monitoring is disabled.", HandlerName);
+      Log.Debug("{0}: Share monitoring is disabled.", HandlerName);
       return false;
     }
 
@@ -302,13 +302,13 @@ namespace TvEngine.PowerScheduler.Handlers
             {
               if (shareBeingMonitored.Equals(connection))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName,
+                Log.Debug("{0}: Standby cancelled due to connection '{1}:{2}' on share '{3}'", HandlerName,
                           connection.UserName, connection.ComputerName, connection.ShareName);
                 return true;
               }
             }
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("{0}: have not found any matching connections - will allow standby", HandlerName);
+          Log.Debug("{0}: have not found any matching connections - will allow standby", HandlerName);
           return false;
         }
         return false;

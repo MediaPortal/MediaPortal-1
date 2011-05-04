@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TvEngine;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using MediaPortal.Common.Utils;
 
 
@@ -55,7 +55,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("PluginManager: Error while loading dll's");
+        Log.WriteFile("PluginManager: Error while loading dll's");
       }
     }
 
@@ -92,7 +92,7 @@ namespace TvService
                   {
                     if (!CompatibilityManager.IsPluginCompatible(t))
                     {
-                      GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                      Log.WriteFile(
                         "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                         t.FullName);
                       continue;                      
@@ -100,23 +100,23 @@ namespace TvService
                     Object newObj = Activator.CreateInstance(t);
                     plugin = (ITvServerPlugin)newObj;
                     _plugins.Add(plugin);
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
+                    Log.WriteFile("PluginManager: Loaded {0} version:{1} author:{2}", plugin.Name, plugin.Version,
                                   plugin.Author);
                   }
                 }
                 catch (TargetInvocationException)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                  Log.WriteFile(
                     "PluginManager: {0} is incompatible with the current tvserver version and won't be loaded!",
                     t.FullName);
                   continue;
                 }
                 catch (Exception ex)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(ex.ToString());
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(ex.Message);
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(ex.StackTrace);
+                  Log.WriteFile("Exception while loading ITvServerPlugin instances: {0}", t.FullName);
+                  Log.WriteFile(ex.ToString());
+                  Log.WriteFile(ex.Message);
+                  Log.WriteFile(ex.StackTrace);
                 }
               }
             }
@@ -126,10 +126,10 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(
+        Log.WriteFile(
           "PluginManager: Plugin file {0} is broken or incompatible with the current tvserver version and won't be loaded!",
           strFile.Substring(strFile.LastIndexOf(@"\") + 1));
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("PluginManager: Exception: {0}", ex);
+        Log.WriteFile("PluginManager: Exception: {0}", ex);
       }
     }
 

@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvControl;
 
 
@@ -63,7 +63,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+        Log.Error("card: unable to connect to slave controller at:{0}",
                   _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return null;
       }
@@ -99,7 +99,7 @@ namespace TvService
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+        Log.Error("card: unable to connect to slave controller at:{0}",
                   _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return null;
       }
@@ -131,16 +131,16 @@ namespace TvService
         RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
         if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
           return;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
+        Log.WriteFile("card: SetCurrentAudioStream: {0} - {1}", _cardHandler.DataBaseCard.IdCard, stream);
         if (_cardHandler.IsLocal == false)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
+          Log.WriteFile("card: SetCurrentAudioStream: controlling remote instance {0}", RemoteControl.HostName);
           RemoteControl.Instance.SetCurrentAudioStream(user, stream);
         }
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to connect to slave controller at:{0}",
+        Log.Error("card: unable to connect to slave controller at:{0}",
                   _cardHandler.DataBaseCard.ReferencedServer().HostName);
         return;
       }
@@ -148,7 +148,7 @@ namespace TvService
       ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
       if (context == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: SetCurrentAudioStream: TvCardContext == null");
+        Log.WriteFile("card: SetCurrentAudioStream: TvCardContext == null");
         return;
       }
 
@@ -156,7 +156,7 @@ namespace TvService
       ITvSubChannel subchannel = _cardHandler.Card.GetSubChannel(user.SubChannel);
       if (subchannel == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("card: SetCurrentAudioStream: ITvSubChannel == null");
+        Log.WriteFile("card: SetCurrentAudioStream: ITvSubChannel == null");
         return;
       }
 

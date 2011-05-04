@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -184,7 +184,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in KeywordMap.Persist() with Message {0}", ex.Message);
+          Log.Error("Exception in KeywordMap.Persist() with Message {0}", ex.Message);
           return;
         }
         isChanged = false;

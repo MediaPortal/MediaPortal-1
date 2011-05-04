@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 using DirectShowLib;
 using TvDatabase;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations
 {
@@ -84,7 +83,7 @@ namespace TvLibrary.Implementations
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
+            Log.Log.WriteFile("analog:  compressor {0} is in use, checking reuse limit...", dev.Name);
             key = dev;
             break;
           }
@@ -93,7 +92,7 @@ namespace TvLibrary.Implementations
         // Encoder not yet used -> always okay to use.
         if (key == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  compressor {0} is usable", device.Name);
+          Log.Log.WriteFile("analog:  compressor {0} is usable", device.Name);
           _encodersInUse.Add(device, 1);
           return true;
         }
@@ -101,7 +100,7 @@ namespace TvLibrary.Implementations
         // Encoder not yet in DB -> assume reusable.
         if (dbEncoder == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  unrecognised compressor, assuming usable");
+          Log.Log.WriteFile("analog:  unrecognised compressor, assuming usable");
           _encodersInUse[key]++;
           return true;
         }
@@ -112,14 +111,14 @@ namespace TvLibrary.Implementations
         {
           if (reuseLimit <= 0 || _encodersInUse[key] < reuseLimit)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
+            Log.Log.WriteFile("analog:  reusable compressor, usage under limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit == 0 ? "[unlimited]" : reuseLimit.ToString());
             _encodersInUse[key]++;
             return true;
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
+            Log.Log.WriteFile("analog:  reusable compressor, usage already at limit (usage: {0}, limit: {1})",
                               _encodersInUse[key], reuseLimit);
             return false;
           }
@@ -130,7 +129,7 @@ namespace TvLibrary.Implementations
       // and it is in use, which means the limit has already
       // been reached. The encoder wouldn't be in _encodersInUse
       // if it wasn't in use...
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  non-reusable compressor, already used");
+      Log.Log.WriteFile("analog:  non-reusable compressor, already used");
       return false;
     }
 
@@ -151,11 +150,11 @@ namespace TvLibrary.Implementations
         {
           if (dev.Name == device.Name && device.Mon.IsEqual(dev.Mon) == 0 && dev.DevicePath == device.DevicePath)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: removing instance of compressor {0} from use", dev.Name);
+            Log.Log.WriteFile("analog: removing instance of compressor {0} from use", dev.Name);
             _encodersInUse[dev]--;
             if (_encodersInUse[dev] == 0)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: compressor is no longer in use");
+              Log.Log.WriteFile("analog: compressor is no longer in use");
               _encodersInUse.Remove(dev);
             }
             break;

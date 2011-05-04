@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 
 namespace SetupTv.Sections
@@ -155,7 +155,7 @@ namespace SetupTv.Sections
       }
       catch (Exception exp)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("LoadGroups error: {0}", exp.Message);
+        Log.Error("LoadGroups error: {0}", exp.Message);
       }
 
       if (listBox1.SelectedIndex <= -1 && listBox1.Items.Count > 0)

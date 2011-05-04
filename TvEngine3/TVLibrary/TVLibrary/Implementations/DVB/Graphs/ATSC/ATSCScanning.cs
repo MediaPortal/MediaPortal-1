@@ -23,7 +23,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -85,7 +84,7 @@ namespace TvLibrary.Implementations.DVB
       atscChannel.TransportId = info.transportStreamID;
       atscChannel.PmtPid = info.network_pmt_PID;
       atscChannel.FreeToAir = !info.scrambled;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("atsc:Found: {0}", atscChannel);
+      Log.Log.Write("atsc:Found: {0}", atscChannel);
       return atscChannel;
     }
 
@@ -93,14 +92,14 @@ namespace TvLibrary.Implementations.DVB
     {
       if (((ATSCChannel)channel).Frequency > 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
                      ((ATSCChannel)channel).Frequency, info.serviceID);
         info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).Frequency,
                                           info.serviceID);
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
+        Log.Log.Info("DVBBaseScanning: service_name is null so now = Unknown {0}-{1}",
                      ((ATSCChannel)channel).PhysicalChannel, info.serviceID);
         info.service_name = String.Format("Unknown {0}-{1:X}", ((ATSCChannel)channel).PhysicalChannel,
                                           info.serviceID);

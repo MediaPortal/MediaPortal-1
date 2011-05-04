@@ -25,7 +25,6 @@ using System.Security;
 using System.Threading;
 using DirectShowLib;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -208,7 +207,7 @@ namespace TvLibrary.Implementations.DVB
         {
           CiFilter = nextFilter;
           _isDigitalDevices = true;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug(FormatMessage(" Common Interface found!"));
+          Log.Log.Debug(FormatMessage(" Common Interface found!"));
           break;
         }
       }
@@ -256,7 +255,7 @@ namespace TvLibrary.Implementations.DVB
         Int32 hr = pControl.KsProperty(ref KsProperty, Marshal.SizeOf(KsProperty),
                                        pSid, paramSize,
                                        ref dwReturned);
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+        Log.Log.Debug(
           FormatMessage(String.Format("--> Setting service id {0} for decrypting returned {1}", serviceId, hr)));
         return (hr == 0);
       }
@@ -564,11 +563,11 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     private bool ProcessCamMenu(DD_CAM_MENU_DATA CiMenu)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("Menu received (ID {0} Type {1} Choices {2})", CiMenu.Id, CiMenu.Type, CiMenu.NumChoices);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Menu Id      = {0}", CiMenu.Id);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Menu Type    = {0}", CiMenu.Type);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Menu Choices = {0}", CiMenu.NumChoices);
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Menu Length  = {0}", CiMenu.Length);
+      Log.Log.Debug("Menu received (ID {0} Type {1} Choices {2})", CiMenu.Id, CiMenu.Type, CiMenu.NumChoices);
+      //Log.Log.Debug(" Menu Id      = {0}", CiMenu.Id);
+      //Log.Log.Debug(" Menu Type    = {0}", CiMenu.Type);
+      //Log.Log.Debug(" Menu Choices = {0}", CiMenu.NumChoices);
+      //Log.Log.Debug(" Menu Length  = {0}", CiMenu.Length);
 
       if (ciMenuCallbacks == null)
         return false;
@@ -589,7 +588,7 @@ namespace TvLibrary.Implementations.DVB
           ciMenuCallbacks.OnCiRequest(false, (uint)CiMenu.NumChoices, CiMenu.Title);
           break;
         default:
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Unknown MMI Type {0}", CiMenu.Type);
+          Log.Log.Debug("Unknown MMI Type {0}", CiMenu.Type);
           break;
       }
       return true;
@@ -624,7 +623,7 @@ namespace TvLibrary.Implementations.DVB
       }
       if (CiMenuThread == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(FormatMessage("Starting new CI handler thread"));
+        Log.Log.Debug(FormatMessage("Starting new CI handler thread"));
         StopThread = false;
         CiMenuThread = new Thread(new ThreadStart(CiMenuHandler));
         CiMenuThread.Name = String.Format("{0} CiMenuHandler", _CardName);
@@ -643,7 +642,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     private void CiMenuHandler()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug(FormatMessage("CI handler thread start polling status"));
+      Log.Log.Debug(FormatMessage("CI handler thread start polling status"));
       try
       {
         while (!StopThread)
@@ -660,7 +659,7 @@ namespace TvLibrary.Implementations.DVB
       catch (ThreadAbortException) {}
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());
+        Log.Log.Debug(FormatMessage("error in CiMenuHandler thread\r\n{0}"), ex.ToString());
         return;
       }
     }

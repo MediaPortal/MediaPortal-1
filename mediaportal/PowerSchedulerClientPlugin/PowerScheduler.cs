@@ -34,7 +34,6 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using MediaPortal.Configuration;
-using MediaPortal.CoreServices;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;

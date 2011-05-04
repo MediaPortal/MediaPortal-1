@@ -27,7 +27,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using System.Threading;
 
 
@@ -709,7 +709,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("ReplaceTag: Regex generated the following error: {0}", ex.Message);
+        Log.Error("ReplaceTag: Regex generated the following error: {0}", ex.Message);
         return line;
       }
 

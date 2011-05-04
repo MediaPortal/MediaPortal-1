@@ -26,7 +26,7 @@ using System.Timers;
 using System.Collections;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvEngine.PowerScheduler.Interfaces;
 using System.Threading;
 
@@ -157,13 +157,13 @@ namespace TvEngine.PowerScheduler.Handlers
             setting.Set<bool>(enabled);
             if (enabled) // Start
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: networkMonitor started");
+              Log.Debug("NetworkMonitorHandler: networkMonitor started");
               Thread netmonThr = new Thread(new ThreadStart(StartNetworkMonitor));
               netmonThr.Start();
             }
             else // Stop
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: networkMonitor stopped");
+              Log.Debug("NetworkMonitorHandler: networkMonitor stopped");
               StopNetworkMonitor();
             }
           }
@@ -171,7 +171,7 @@ namespace TvEngine.PowerScheduler.Handlers
           if (enabled) // Get minimum transferrate considered as network activity
           {
             idleLimit = Int32.Parse(layer.GetSetting("NetworkMonitorIdleLimit", "2").Value);
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
+            Log.Debug("NetworkMonitorHandler: idle limit in KB/s: {0}", idleLimit);
           }
 
           break;
@@ -206,7 +206,7 @@ namespace TvEngine.PowerScheduler.Handlers
       }
       catch (Exception netmonEx)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("NetworkMonitorHandler: networkMonitor died -> {0}", netmonEx.Message);
+        Log.Error("NetworkMonitorHandler: networkMonitor died -> {0}", netmonEx.Message);
       }
     }
 
@@ -237,9 +237,9 @@ namespace TvEngine.PowerScheduler.Handlers
         foreach (NetworkAdapter adapter in monitoredAdapters)
           if ((adapter.ulSpeedPeak >= idleLimit) || (adapter.dlSpeedPeak >= idleLimit))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
+            Log.Debug("NetworkMonitorHandler: standby prevented: {0}", adapter.name);
+            Log.Debug("NetworkMonitorHandler: ulSpeed: {0}", adapter.ulSpeedPeak);
+            Log.Debug("NetworkMonitorHandler: dlSpeed: {0}", adapter.dlSpeedPeak);
 
             adapter.ulSpeedPeak = 0; // Clear peak values
             adapter.dlSpeedPeak = 0;

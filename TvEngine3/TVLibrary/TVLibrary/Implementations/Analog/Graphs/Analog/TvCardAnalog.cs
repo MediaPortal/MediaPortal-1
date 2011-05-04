@@ -35,7 +35,6 @@ using Capture = TvLibrary.Implementations.Analog.Components.Capture;
 using Crossbar = TvLibrary.Implementations.Analog.Components.Crossbar;
 using Tuner = TvLibrary.Implementations.Analog.Components.Tuner;
 using TvAudio = TvLibrary.Implementations.Analog.Components.TvAudio;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -132,7 +131,7 @@ namespace TvLibrary.Implementations.Analog
       }
       mediaCtl.GetState(10, out state);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: PauseGraph state:{0}", state);
+      Log.Log.WriteFile("analog: PauseGraph state:{0}", state);
       _isScanning = false;
       if (_tsFileSink != null)
       {
@@ -151,10 +150,10 @@ namespace TvLibrary.Implementations.Analog
       int hr = mediaCtl.Pause();
       if (hr < 0 || hr > 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: PauseGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("analog: PauseGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to pause graph");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Graph paused");
+      Log.Log.WriteFile("analog: Graph paused");
     }
 
 
@@ -177,7 +176,7 @@ namespace TvLibrary.Implementations.Analog
       }
       mediaCtl.GetState(10, out state);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: StopGraph state:{0}", state);
+      Log.Log.WriteFile("analog: StopGraph state:{0}", state);
       _isScanning = false;
       if (_tsFileSink != null)
       {
@@ -196,10 +195,10 @@ namespace TvLibrary.Implementations.Analog
       int hr = mediaCtl.Stop();
       if (hr < 0 || hr > 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to stop graph");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Graph stopped");
+      Log.Log.WriteFile("analog: Graph stopped");
     }
 
     #endregion
@@ -289,7 +288,7 @@ namespace TvLibrary.Implementations.Analog
     /// <returns>true if succeeded else false</returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  Tune:{0}", channel);
+      Log.Log.WriteFile("analog:  Tune:{0}", channel);
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
@@ -332,7 +331,7 @@ namespace TvLibrary.Implementations.Analog
     protected int GetNewSubChannel(IChannel channel)
     {
       int id = _subChannelId++;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
+      Log.Log.Info("analog:GetNewSubChannel:{0} #{1}", _mapSubChannels.Count, id);
 
       AnalogSubChannel subChannel = new AnalogSubChannel(this, id, _tvAudio, _capture.SupportsTeletext, _tsFileSink);
       _mapSubChannels[id] = subChannel;
@@ -401,18 +400,18 @@ namespace TvLibrary.Implementations.Analog
         if (!isLocked)
         {
           ts = DateTime.Now - timeStart;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  LockedInOnSignal waiting 20ms");
+          Log.Log.WriteFile("analog:  LockedInOnSignal waiting 20ms");
           System.Threading.Thread.Sleep(20);
         }
       }
 
       if (!isLocked)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
+        Log.Log.WriteFile("analog:  LockedInOnSignal could not lock onto channel - no signal or bad signal");
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:  LockedInOnSignal ok");
+        Log.Log.WriteFile("analog:  LockedInOnSignal ok");
       }
       return isLocked;
     }
@@ -475,7 +474,7 @@ namespace TvLibrary.Implementations.Analog
     {
       if (_graphBuilder == null)
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:Dispose()");
+      Log.Log.WriteFile("analog:Dispose()");
       if (!CheckThreadId())
         return;
 
@@ -493,7 +492,7 @@ namespace TvLibrary.Implementations.Analog
       // Decompose the graph
       mediaCtl.Stop();
       FilterGraphTools.RemoveAllFilters(_graphBuilder);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:All filters removed");
+      Log.Log.WriteFile("analog:All filters removed");
       if (_tuner != null)
       {
         _tuner.Dispose();
@@ -528,7 +527,7 @@ namespace TvLibrary.Implementations.Analog
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
       _graphState = GraphState.Idle;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: dispose completed");
+      Log.Log.WriteFile("analog: dispose completed");
     }
 
     #endregion
@@ -548,12 +547,12 @@ namespace TvLibrary.Implementations.Analog
       }
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: build graph");
+      Log.Log.WriteFile("analog: build graph");
       try
       {
         if (_graphState != GraphState.Idle)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Graph already build");
+          Log.Log.WriteFile("analog: Graph already build");
           throw new TvException("Graph already build");
         }
         //create a new filter graph
@@ -565,7 +564,7 @@ namespace TvLibrary.Implementations.Analog
         _tuner = new Tuner(_tunerDevice);
         if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add tv tuner filter");
+          Log.Log.Error("analog: unable to add tv tuner filter");
           throw new TvException("Analog: unable to add tv tuner filter");
         }
         _minChannel = _tuner.MinChannel;
@@ -574,21 +573,21 @@ namespace TvLibrary.Implementations.Analog
         _crossbar = new Crossbar();
         if (!_crossbar.CreateFilterInstance(graph, _graphBuilder, _tuner))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add tv crossbar filter");
+          Log.Log.Error("analog: unable to add tv crossbar filter");
           throw new TvException("Analog: unable to add tv crossbar filter");
         }
         //add the tv audio tuner device and connect it to the crossbar
         _tvAudio = new TvAudio();
         if (!_tvAudio.CreateFilterInstance(graph, _graphBuilder, _tuner, _crossbar))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add tv audio tuner filter");
+          Log.Log.Error("analog: unable to add tv audio tuner filter");
           throw new TvException("Analog: unable to add tv audio tuner filter");
         }
         //add the tv capture device and connect it to the crossbar
         _capture = new Capture();
         if (!_capture.CreateFilterInstance(graph, _capBuilder, _graphBuilder, _tuner, _crossbar, _tvAudio))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add capture filter");
+          Log.Log.Error("analog: unable to add capture filter");
           throw new TvException("Analog: unable to add capture filter");
         }
         Configuration.writeConfiguration(_configuration);
@@ -597,7 +596,7 @@ namespace TvLibrary.Implementations.Analog
         {
           if (!_teletext.CreateFilterInstance(graph, _graphBuilder, _capture))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to setup teletext filters");
+            Log.Log.Error("analog: unable to setup teletext filters");
             throw new TvException("Analog: unable to setup teletext filters");
           }
         }
@@ -605,16 +604,16 @@ namespace TvLibrary.Implementations.Analog
         _encoder = new Encoder();
         if (!_encoder.CreateFilterInstance(_graphBuilder, _tuner, _tvAudio, _crossbar, _capture))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: unable to add encoding filter");
+          Log.Log.Error("analog: unable to add encoding filter");
           throw new TvException("Analog: unable to add capture filter");
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Check quality control");
+        Log.Log.WriteFile("analog: Check quality control");
         _qualityControl = QualityControlFactory.createQualityControl(_configuration, _encoder.VideoEncoderFilter,
                                                                      _capture.VideoFilter, _encoder.MultiplexerFilter,
                                                                      _encoder.VideoCompressorFilter);
         if (_qualityControl == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: No quality control support found");
+          Log.Log.WriteFile("analog: No quality control support found");
           //If a hauppauge analog card, set bitrate to default
           //As the graph is stopped, we don't need to pass in the deviceID
           //However, if we wish to change quality for a live graph, the deviceID must be passed in
@@ -629,7 +628,7 @@ namespace TvLibrary.Implementations.Analog
               int min, max;
               bool vbr;
               _hauppauge.GetVideoBitRate(out min, out max, out vbr);
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
+              Log.Log.Write("Hauppauge set video parameters - Max kbps: {0}, Min kbps: {1}, VBR {2}", max, min, vbr);
               _hauppauge.Dispose();
               _hauppauge = null;
             }
@@ -640,21 +639,21 @@ namespace TvLibrary.Implementations.Analog
         {
           throw new TvException("Analog: unable to add mpfilewriter");
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Graph is built");
+        Log.Log.WriteFile("analog: Graph is built");
         FilterGraphTools.SaveGraphFile(_graphBuilder, "analog.grf");
         ReloadCardConfiguration();
         _graphState = GraphState.Created;
       }
       catch (TvExceptionSWEncoderMissing ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw;
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
@@ -671,28 +670,28 @@ namespace TvLibrary.Implementations.Analog
     {
       if (!CheckThreadId())
         return false;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:AddTsFileSink");
+      Log.Log.WriteFile("analog:AddTsFileSink");
       _tsFileSink = (IBaseFilter)new MpFileWriter();
       int hr = _graphBuilder.AddFilter(_tsFileSink, "TsFileSink");
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:AddTsFileSink returns:0x{0:X}", hr);
+        Log.Log.WriteFile("analog:AddTsFileSink returns:0x{0:X}", hr);
         throw new TvException("Unable to add TsFileSink");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:connect muxer->tsfilesink");
+      Log.Log.WriteFile("analog:connect muxer->tsfilesink");
       IPin pin = DsFindPin.ByDirection(_encoder.MultiplexerFilter, PinDirection.Output, 0);
       if (!FilterGraphTools.ConnectPin(_graphBuilder, pin, _tsFileSink, 0))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:unable to connect muxer->tsfilesink");
+        Log.Log.WriteFile("analog:unable to connect muxer->tsfilesink");
         throw new TvException("Unable to connect pins");
       }
       Release.ComObject("mpegmux pinin", pin);
       if (_capture.SupportsTeletext)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:connect wst/vbi codec->tsfilesink");
+        Log.Log.WriteFile("analog:connect wst/vbi codec->tsfilesink");
         if (!FilterGraphTools.ConnectPin(_graphBuilder, _teletext.WST_VBI_Pin, _tsFileSink, 1))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog:unable to connect wst/vbi->tsfilesink");
+          Log.Log.WriteFile("analog:unable to connect wst/vbi->tsfilesink");
           throw new TvException("Unable to connect pins");
         }
       }
@@ -731,22 +730,22 @@ namespace TvLibrary.Implementations.Analog
         return;
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: RunGraph");
+      Log.Log.WriteFile("analog: RunGraph");
       int hr = 0;
       IMediaControl mediaCtrl = _graphBuilder as IMediaControl;
       if (mediaCtrl == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
       hr = mediaCtrl.Run();
       if (hr < 0 || hr > 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: RunGraph returns:0x{0:X}", hr);
+        Log.Log.WriteFile("analog: RunGraph returns:0x{0:X}", hr);
         throw new TvException("Unable to start graph");
       }
       GraphRunning();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: RunGraph succeeded");
+      Log.Log.WriteFile("analog: RunGraph succeeded");
       if (!_mapSubChannels.ContainsKey(subChannel))
       {
         return;

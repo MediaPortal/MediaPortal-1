@@ -26,7 +26,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvEngine;
 using TvControl;
 using TvDatabase;
@@ -88,7 +88,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("ComSkipLauncher: Configuration deactivated");
+      Log.Info("ComSkipLauncher: Configuration deactivated");
 
       ComSkipLauncher.RunAtStart = this.RunAtStart;
       ComSkipLauncher.Program = this.Program;
@@ -101,7 +101,7 @@ namespace SetupTv.Sections
 
     public override void OnSectionActivated()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("ComSkipLauncher: Configuration activated");
+      Log.Info("ComSkipLauncher: Configuration activated");
 
       ComSkipLauncher.LoadSettings();
 
@@ -139,7 +139,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("ComSkipLauncher - Config Test: {0}", ex.Message);
+        Log.Error("ComSkipLauncher - Config Test: {0}", ex.Message);
       }
     }
 

@@ -25,7 +25,6 @@ using TvLibrary.Interfaces;
 using TvLibrary.Epg;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.ChannelLinkage;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.RadioWebStream
 {
@@ -97,7 +96,7 @@ namespace TvLibrary.Implementations.RadioWebStream
       /* unreachable 
       if (_managedThreadId != System.Threading.Thread.CurrentThread.ManagedThreadId)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:Invalid thread id!!!");
+        Log.Log.WriteFile("RadioWebStream:Invalid thread id!!!");
         return false;
       }
       return true;
@@ -115,8 +114,8 @@ namespace TvLibrary.Implementations.RadioWebStream
     protected void StartRecord(bool transportStream, string fileName)
     {
       if (!CheckThreadId()) return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:StartRecord({0})", fileName);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:Recording currently not implemented");
+      Log.Log.WriteFile("RadioWebStream:StartRecord({0})", fileName);
+      Log.Log.WriteFile("RadioWebStream:Recording currently not implemented");
       _dateRecordingStarted = DateTime.Now;
     }
 
@@ -127,7 +126,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     protected static void StopRecord()
     {
       if (!CheckThreadId()) return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:StopRecord()");
+      Log.Log.WriteFile("RadioWebStream:StopRecord()");
     }
 
     #endregion
@@ -211,7 +210,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns></returns>
     public ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:  Tune:{0}", channel);
+      Log.Log.WriteFile("RadioWebStream:  Tune:{0}", channel);
       return null;
     }
 
@@ -223,7 +222,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// <returns></returns>
     public ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:  Scan:{0}", channel);
+      Log.Log.WriteFile("RadioWebStream:  Scan:{0}", channel);
       return null;
     }
 
@@ -406,7 +405,7 @@ namespace TvLibrary.Implementations.RadioWebStream
     /// </summary>
     public virtual void Dispose()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("RadioWebStream:Dispose()");
+      Log.Log.WriteFile("RadioWebStream:Dispose()");
       if (!CheckThreadId()) return;
     }
 

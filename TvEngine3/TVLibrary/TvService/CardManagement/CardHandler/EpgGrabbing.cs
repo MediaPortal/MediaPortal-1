@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using TvLibrary.Interfaces;
 using TvLibrary.Epg;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvControl;
 
 namespace TvService
@@ -46,7 +46,7 @@ namespace TvService
     /// <returns></returns>
     public bool Start(BaseEpgGrabber grabber)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Epg("EpgGrabbing: Start");
+      Log.Epg("EpgGrabbing: Start");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -64,7 +64,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("EpgGrabbing: unable to connect to controller at: {0}",
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return false;
         }
@@ -84,7 +84,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return false;
       }
     }
@@ -94,7 +94,7 @@ namespace TvService
     /// </summary>
     public void Abort()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Epg("EpgGrabbing: Abort");
+      Log.Epg("EpgGrabbing: Abort");
       try
       {
         if (_cardHandler.DataBaseCard.Enabled == false)
@@ -111,7 +111,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("EpgGrabbing: unable to connect to controller at: {0}",
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return;
         }
@@ -126,7 +126,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
         return;
       }
     }
@@ -153,7 +153,7 @@ namespace TvService
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("EpgGrabbing: unable to connect to controller at: {0}",
+          Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
                     _cardHandler.DataBaseCard.ReferencedServer().HostName);
           return null;
         }
@@ -192,7 +192,7 @@ namespace TvService
           }
           catch (Exception)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("EpgGrabbing: unable to connect to controller at: {0}",
+            Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
                       _cardHandler.DataBaseCard.ReferencedServer().HostName);
             return false;
           }
@@ -205,7 +205,7 @@ namespace TvService
             }
             catch (Exception)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Error("EpgGrabbing: unable to connect to controller at: {0}",
+              Log.Error("EpgGrabbing: unable to connect to controller at: {0}",
                         _cardHandler.DataBaseCard.ReferencedServer().HostName);
               return false;
             }
@@ -214,7 +214,7 @@ namespace TvService
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Write(ex);
           return false;
         }
       }
@@ -226,7 +226,7 @@ namespace TvService
     /// <param name="user">User</param>
     public void Stop(IUser user)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Epg("EpgGrabbing: Stop - user {0}", user.Name);
+      Log.Epg("EpgGrabbing: Stop - user {0}", user.Name);
       if (_cardHandler.IsLocal == false)
       {
         // RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
@@ -247,7 +247,7 @@ namespace TvService
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Epg("EpgGrabbing: Stop - context == null");
+        Log.Epg("EpgGrabbing: Stop - context == null");
       }
 
       _cardHandler.Card.IsEpgGrabbing = false;

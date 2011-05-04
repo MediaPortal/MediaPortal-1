@@ -22,7 +22,6 @@ using System;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Channels;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -75,19 +74,19 @@ namespace TvLibrary.Implementations.DVB
           _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
           if ((supported & KSPropertySupport.Set) != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("ViXS ATSC: DVB-S card found!");
+            Log.Log.Debug("ViXS ATSC: DVB-S card found!");
             _tempValue = Marshal.AllocCoTaskMem(1024);
             _isViXSATSC = true;
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("ViXS ATSC: card NOT found!");
+            Log.Log.Debug("ViXS ATSC: card NOT found!");
             _isViXSATSC = false;
           }
         }
       }
       else
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("ViXS ATSC: could not find MPEG2 Transport pin!");
+        Log.Log.Info("ViXS ATSC: could not find MPEG2 Transport pin!");
     }
 
     /// <summary>
@@ -99,13 +98,13 @@ namespace TvLibrary.Implementations.DVB
       _propertySet.QuerySupported(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, out supported);
       if ((supported & KSPropertySupport.Set) == KSPropertySupport.Set)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
+        Log.Log.Debug("ViXS ATSC: Set ModulationType value: {0}", (Int32)channel.ModulationType);
         Marshal.WriteInt32(_tempValue, (Int32)channel.ModulationType);
         int hr = _propertySet.Set(guidViXSTunerExtention, (int)BdaDigitalModulator.MODULATION_TYPE, _tempValue, 4,
                                   _tempValue, 4);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
+          Log.Log.Info("ViXS ATSC: Set returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
     }
@@ -125,9 +124,9 @@ namespace TvLibrary.Implementations.DVB
                                   _tempValue, 4, out length);
         if (hr != 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("ViXS ATSC: Get returned:{0:X}", hr);
+          Log.Log.Info("ViXS ATSC: Get returned:{0:X}", hr);
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
+        Log.Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
       }
     }
 

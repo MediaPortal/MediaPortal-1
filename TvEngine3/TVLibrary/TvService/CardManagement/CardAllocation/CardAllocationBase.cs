@@ -26,7 +26,7 @@ using TvControl;
 using TvDatabase;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 #endregion
 
@@ -140,7 +140,7 @@ namespace TvService
       {
         if (LogEnabled)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
+          Log.Info("Controller:    card:{0} type:{1} is available", cardId, tvcard.Type);
         }
       }
       else
@@ -177,7 +177,7 @@ namespace TvService
               {
                 if (LogEnabled)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                  Log.Info(
                     "Controller:    card:{0} type:{1} is available, tuned to same transponder decrypting {2}/{3} channels",
                     cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
                 }
@@ -186,7 +186,7 @@ namespace TvService
               {
                 if (LogEnabled)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                  Log.Info(
                     "Controller:    card:{0} type:{1} is available, tuned to same transponder",
                     cardId, tvcard.Type);
                 }
@@ -197,7 +197,7 @@ namespace TvService
               //it is not, skip this card
               if (LogEnabled)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info(
+                Log.Info(
                   "Controller:    card:{0} type:{1} is not available, tuned to same transponder decrypting {2}/{3} channels (cam limit reached)",
                   cardId, tvcard.Type, tvcard.NumberOfChannelsDecrypting, decryptLimit);
               }
@@ -209,7 +209,7 @@ namespace TvService
         {
           if (LogEnabled)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
+            Log.Info("Controller:    card:{0} type:{1} is not available, tuned to different transponder",
                      cardId, tvcard.Type);
           }
           checkTransponder = false;

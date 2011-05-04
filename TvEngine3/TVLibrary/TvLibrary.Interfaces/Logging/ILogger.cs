@@ -20,7 +20,7 @@
 
 using System;
 
-namespace MediaPortal.CoreServices
+namespace TvLibrary.Log
 {
   /// <summary>
   /// Interface for all logger implementations.
@@ -35,72 +35,80 @@ namespace MediaPortal.CoreServices
     LogLevel Level { get; set; }
 
     /// <summary>
-    /// Writes a debug message to the  Log
+    /// Writes a epg message to the log.
+    /// </summary>
+    /// <param name="format">A composite format string.</param>
+    /// <param name="args">An array of objects to write using format.</param>
+    void Epg(string format, params object[] args);
+
+    /// <summary>
+    /// Writes a debug message to the log.
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Debug(string format, params object[] args);
 
     /// <summary>
-    /// Writes an informational message to the  Log
+    /// Writes an informational message to the log.
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Info(string format, params object[] args);
 
     /// <summary>
-    /// Writes a warning to the  Log
+    /// Writes a warning to the log.
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Warn(string format, params object[] args);
 
     /// <summary>
-    /// Writes an error message to the  Log
+    /// Writes an error message to the log.
     /// </summary>
     /// <param name="format">A composite format string.</param>
     /// <param name="args">An array of objects to write using format.</param>
     void Error(string format, params object[] args);
 
     /// <summary>
-    /// Writes an error <see cref="Exception"/> to the  Log
+    /// Writes an Error <see cref="Exception"/> to the log.
     /// </summary>
     /// <param name="ex">The <see cref="Exception"/> to write.</param>
     void Error(Exception ex);
 
+    
     /// <summary>
-    /// Writes an error <see cref="Exception"/> to the  Log
+    /// Writes the specified exception to the log file
     /// </summary>
-    /// <param name="message">A message string.</param>
-    /// <param name="ex">The <see cref="Exception"/> to write.</param>
-    void Error(string message, Exception ex);
+    /// <param name="ex">The ex.</param>
+    void Write(Exception ex);
 
     /// <summary>
-    /// Writes an critical message to the  Log
+    /// Write a string to the logfile.
     /// </summary>
-    /// <param name="format">A composite format string.</param>
-    /// <param name="args">An array of objects to write using format.</param>
-    void Critical(string format, params object[] args);
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    void Write(string format, params object[] arg);
 
     /// <summary>
-    /// Writes an critical <see cref="Exception"/> to the  Log
+    /// Write a string to the logfile.
     /// </summary>
-    /// <param name="ex">The <see cref="Exception"/> to write.</param>
-    void Critical(Exception ex);
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    void WriteThreadId(string format, params object[] arg);
 
     /// <summary>
-    /// Writes an critical <see cref="Exception"/> to the  Log
+    /// Logs the message to the info file
     /// </summary>
-    /// <param name="message">A message string.</param>
-    /// <param name="ex">The <see cref="Exception"/> to write.</param>
-    void Critical(string message, Exception ex);
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    void WriteFile(string format, params object[] arg);
 
     /// <summary>
-    /// Writes a epg message to the  Log
+    /// Logs the message to the info file
     /// </summary>
-    /// <param name="format">A composite format string.</param>
-    /// <param name="args">An array of objects to write using format.</param>
-    void Epg(string format, params object[] args);
+    /// <param name="format">The format.</param>
+    /// <param name="arg">The arg.</param>
+    void WriteFile(string format, Exception ex);
 
   }
 }

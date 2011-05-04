@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace MediaPortal.WebEPG.Profile
 {
@@ -181,7 +181,7 @@ namespace MediaPortal.WebEPG.Profile
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("Unable to save {0} {1}", ex.Message);
+            Log.Error("Unable to save {0} {1}", ex.Message);
           }
           _doc = null;
         }

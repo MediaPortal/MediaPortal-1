@@ -26,7 +26,6 @@ using TvLibrary.Channels;
 using TvLibrary.Implementations.Helper;
 using TvDatabase;
 using TvLibrary.Epg;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -69,10 +68,10 @@ namespace TvLibrary.Implementations.DVB
       {
         if (_graphState != GraphState.Idle)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("dvbs:Graph already built");
+          Log.Log.Error("dvbs:Graph already built");
           throw new TvException("Graph already built");
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:BuildGraph");
+        Log.Log.WriteFile("dvbs:BuildGraph");
         _graphBuilder = (IFilterGraph2)new FilterGraph();
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
@@ -93,7 +92,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         Dispose();
         _graphState = GraphState.Idle;
         throw new TvExceptionGraphBuildingFailed("Graph building failed", ex);
@@ -105,13 +104,13 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     protected void CreateTuningSpace()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:CreateTuningSpace()");
+      Log.Log.WriteFile("dvbs:CreateTuningSpace()");
       ITuner tuner = (ITuner)_filterNetworkProvider;
       SystemTuningSpaces systemTuningSpaces = new SystemTuningSpaces();
       ITuningSpaceContainer container = systemTuningSpaces as ITuningSpaceContainer;
       if (container == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
+        Log.Log.Error("CreateTuningSpace() Failed to get ITuningSpaceContainer");
         return;
       }
       IEnumTuningSpaces enumTuning;
@@ -144,7 +143,7 @@ namespace TvLibrary.Implementations.DVB
         spaces[0].get_UniqueName(out name);
         if (name == "MediaPortal DVBS TuningSpace")
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:found correct tuningspace {0}", name);
+          Log.Log.WriteFile("dvbs:found correct tuningspace {0}", name);
 
           _tuningSpace = (IDVBSTuningSpace)spaces[0];
           tuningSpace = (IDVBSTuningSpace)_tuningSpace;
@@ -160,7 +159,7 @@ namespace TvLibrary.Implementations.DVB
         Release.ComObject("ITuningSpace", spaces[0]);
       }
       Release.ComObject("IEnumTuningSpaces", enumTuning);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:Create new tuningspace");
+      Log.Log.WriteFile("dvbs:Create new tuningspace");
       _tuningSpace = (IDVBSTuningSpace)new DVBSTuningSpace();
       tuningSpace = (IDVBSTuningSpace)_tuningSpace;
       tuningSpace.put_UniqueName("MediaPortal DVBS TuningSpace");
@@ -208,7 +207,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Scan(int subChannelId, IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs: Scan:{0}", channel);
+      Log.Log.WriteFile("dvbs: Scan:{0}", channel);
       try
       {
         if (!BeforeTune(ref subChannelId, channel))
@@ -229,7 +228,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         throw;
       }
     }
@@ -242,7 +241,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public override ITvSubChannel Tune(int subChannelId, IChannel channel)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs: Tune:{0}", channel);
+      Log.Log.WriteFile("dvbs: Tune:{0}", channel);
       try
       {
         if (!BeforeTune(ref subChannelId, channel))
@@ -263,7 +262,7 @@ namespace TvLibrary.Implementations.DVB
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         throw;
       }
     }
@@ -275,7 +274,7 @@ namespace TvLibrary.Implementations.DVB
       if (_diseqCretries == 0 && !_diseqCsucceded && _conditionalAccess != null)
       {
         _diseqCretries++;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs: setting diseqC failed the first time, resetting diseqC");
+        Log.Log.WriteFile("dvbs: setting diseqC failed the first time, resetting diseqC");
         StopGraph();
         Tune(subChannelId, channel);
       }
@@ -292,7 +291,7 @@ namespace TvLibrary.Implementations.DVB
       DVBSChannel dvbsChannel = channel as DVBSChannel;
       if (dvbsChannel == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
+        Log.Log.WriteFile("Channel is not a DVBS channel!!! {0}", channel.GetType().ToString());
         return false;
       }
       /*if (CurrentChannel != null)
@@ -304,7 +303,7 @@ namespace TvLibrary.Implementations.DVB
       {
         dvbsChannel.SwitchingFrequency = 11700000;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:  Tune:{0}", channel);
+      Log.Log.WriteFile("dvbs:  Tune:{0}", channel);
       if (_graphState == GraphState.Idle)
       {
         BuildGraph();
@@ -339,7 +338,7 @@ namespace TvLibrary.Implementations.DVB
         int hiOsc;
         int lnbSwitch;
         BandTypeConverter.GetDefaultLnbSetup(Parameters, dvbsChannel.BandType, out lowOsc, out hiOsc, out lnbSwitch);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
+        Log.Log.Info("LNB low:{0} hi:{1} switch:{2}", lowOsc, hiOsc, lnbSwitch);
         if (lnbSwitch == 0)
           lnbSwitch = 18000;
         IDVBSTuningSpace tuningSpace = (IDVBSTuningSpace)_tuningSpace;
@@ -371,9 +370,9 @@ namespace TvLibrary.Implementations.DVB
           tuneChannel = _conditionalAccess.SetDVBS2Modulation(_parameters, tuneChannel);
         }
         dvbsLocator.put_Modulation(tuneChannel.ModulationType);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
+        Log.Log.WriteFile("dvbs:channel modulation is set to {0}", tuneChannel.ModulationType);
         dvbsLocator.put_InnerFECRate(tuneChannel.InnerFecRate);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
+        Log.Log.WriteFile("dvbs:channel FECRate is set to {0}", tuneChannel.InnerFecRate);
         _tuneRequest.put_Locator(locator);
 
         //set the DisEqC parameters 

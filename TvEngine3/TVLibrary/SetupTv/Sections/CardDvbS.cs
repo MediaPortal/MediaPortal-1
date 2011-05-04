@@ -29,7 +29,7 @@ using System.Net;
 using TvDatabase;
 using TvControl;
 using TvLibrary;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Channels;
 using TvLibrary.Interfaces;
 using DirectShowLib.BDA;
@@ -457,7 +457,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error loading tuningdetails: {0}", ex.ToString());
+        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
       }
     }
@@ -953,7 +953,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
       finally
       {

@@ -39,7 +39,6 @@ using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
 using WindowPlugins;
 using Layout = MediaPortal.GUI.Library.GUIFacadeControl.Layout;
-using MediaPortal.CoreServices;
 
 //using System.Windows;
 //using System.Windows.Media;
@@ -62,7 +61,7 @@ namespace TvPlugin
       {
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.BelowNormal;
-        GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
 
       private void PerformRequest()

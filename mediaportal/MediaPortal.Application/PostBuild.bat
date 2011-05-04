@@ -25,7 +25,6 @@ xcopy %1\Configuration\bin\%2\Configuration.* . /Y /D
 REM Core
 xcopy %1\core\bin\%2\DirectShowLib.* . /Y /D
 xcopy %1\core\bin\%2\Core.* . /Y /D
-xcopy %1\core\bin\%2\CoreServices.* . /Y /D
 
 REM Databases
 xcopy %1\databases\bin\%2\databases.* . /Y /D

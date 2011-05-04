@@ -24,7 +24,7 @@ using Gentle.Framework;
 using MediaPortal.WebEPG.Parser;
 using TvDatabase;
 using System.Threading;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using MediaPortal.Utils.Time;
 
 namespace MediaPortal.WebEPG
@@ -168,9 +168,9 @@ namespace MediaPortal.WebEPG
 
     void IEpgDataSink.Close()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Waiting for database to be updated...");
+      Log.Info("WebEPG: Waiting for database to be updated...");
       layer.WaitForInsertPrograms();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Database update finished.");
+      Log.Info("WebEPG: Database update finished.");
     }
 
     void IEpgDataSink.WriteChannel(string id, string name)
@@ -190,8 +190,8 @@ namespace MediaPortal.WebEPG
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG: failed to retrieve channels with display name '{0}':", name);
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Error("WebEPG: failed to retrieve channels with display name '{0}':", name);
+          Log.Write(ex);
         }
       }
     }
@@ -211,7 +211,7 @@ namespace MediaPortal.WebEPG
       else
       {
         _currentChannels = null;
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
+        Log.Info("WebEPG: Unknown channel (display name = {0}, channel id = {1}) - skipping...", name, id);
         return false;
       }
     }

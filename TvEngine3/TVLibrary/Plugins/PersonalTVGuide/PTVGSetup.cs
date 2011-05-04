@@ -26,7 +26,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 
 namespace SetupTv.Sections

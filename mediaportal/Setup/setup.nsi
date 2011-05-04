@@ -428,7 +428,6 @@ Section "MediaPortal core files (required)" SecCore
   ; Core
   File "${svn_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${svn_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "${svn_Common_MP_TVE3}\CoreServices\CoreServices\bin\${BUILD_TYPE}\CoreServices.dll"
   File "${svn_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
   File "${svn_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
   File "${svn_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
@@ -543,7 +542,6 @@ SectionEnd
   ; Core
   Delete "$MPdir.Base\Core.dll"
   Delete "$MPdir.Base\DirectShowLib.dll"
-  Delete "$MPdir.Base\CoreServices.dll"
   Delete "$MPdir.Base\fontengine.dll"
   Delete "$MPdir.Base\dshowhelper.dll"
   Delete "$MPdir.Base\Win7RefreshRateHelper.dll"

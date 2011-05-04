@@ -21,7 +21,7 @@
 using System;
 using System.Collections;
 using Gentle.Framework;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -189,7 +189,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in SoftwareEncoder.Persist() with Message {0}", ex.Message);
+          Log.Error("Exception in SoftwareEncoder.Persist() with Message {0}", ex.Message);
           return;
         }
         isChanged = false;

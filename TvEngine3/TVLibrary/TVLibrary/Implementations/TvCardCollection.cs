@@ -33,7 +33,6 @@ using DirectShowLib;
 using DirectShowLib.BDA;
 using Microsoft.Win32;
 using TvLibrary.Interfaces.Analyzer;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations
 {
@@ -51,7 +50,7 @@ namespace TvLibrary.Implementations
     /// </summary>
     public TvCardCollection(IEpgEvents epgEvents)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("----------------------------");
+      Log.Log.WriteFile("----------------------------");
       _epgEvents = epgEvents;
       // Logic here to delay detection of cards
       // Ideally this should occur after standby event.
@@ -60,10 +59,10 @@ namespace TvLibrary.Implementations
       int delayDetect = Convert.ToInt32(setting.Value);
       if (delayDetect >= 1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Detecting Cards in {0} seconds", delayDetect);
+        Log.Log.WriteFile("Detecting Cards in {0} seconds", delayDetect);
         System.Threading.Thread.Sleep(delayDetect * 1000);
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Detecting Cards");
+      Log.Log.WriteFile("Detecting Cards");
       _cards = new List<ITVCard>();
       DetectCards();
     }
@@ -89,7 +88,7 @@ namespace TvLibrary.Implementations
       {
         if (String.Compare(devices[i].Name, "B2C2 MPEG-2 Source", true) == 0)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected SkyStar 2 card");
+          Log.Log.WriteFile("Detected SkyStar 2 card");
           TvCardDvbSS2 card = new TvCardDvbSS2(_epgEvents, devices[i]);
           _cards.Add(card);
           //break;  maybe more than one B2C2 card ?
@@ -102,7 +101,7 @@ namespace TvLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected IP TV Card " + cardNum);
+            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIPElecard(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -115,7 +114,7 @@ namespace TvLibrary.Implementations
           int iptvCardCount = Convert.ToInt32(setting.Value);
           for (int cardNum = 0; cardNum < iptvCardCount; cardNum++)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected IP TV Card " + cardNum);
+            Log.Log.WriteFile("Detected IP TV Card " + cardNum);
             TvCardDVBIP card = new TvCardDVBIPBuiltIn(_epgEvents, devices[i], cardNum);
             _cards.Add(card);
           }
@@ -131,13 +130,13 @@ namespace TvLibrary.Implementations
         }
         if (devices[i].Name.Equals("Hauppauge HD PVR Crossbar"))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected Hauppauge HD PVR");
+          Log.Log.WriteFile("Detected Hauppauge HD PVR");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
         else if (devices[i].Name.Contains("Hauppauge Colossus Crossbar"))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected Hauppauge Colossus");
+          Log.Log.WriteFile("Detected Hauppauge Colossus");
           TvCardHDPVR card = new TvCardHDPVR(devices[i]);
           _cards.Add(card);
         }
@@ -184,7 +183,7 @@ namespace TvLibrary.Implementations
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("DVBT card detection error: {0}", ex.ToString());
+            Log.Log.Error("DVBT card detection error: {0}", ex.ToString());
           }
 
           //DVBS
@@ -267,12 +266,12 @@ namespace TvLibrary.Implementations
             bool isCablePreferred = false;
             string name = devices[i].Name ?? "unknown";
             name = name.ToLowerInvariant();
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Found card:{0}", name);
+            Log.Log.WriteFile("Found card:{0}", name);
             //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
             if (name.Contains("silicondust hdhomerun tuner"))
             {
               isCablePreferred = CheckHDHomerunCablePrefered(name);
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+              Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
             }
             IBaseFilter tmp;
             try
@@ -282,7 +281,7 @@ namespace TvLibrary.Implementations
             catch (InvalidComObjectException)
             {
               //ignore bad card
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("cannot add filter {0} to graph", devices[i].Name);
+              Log.Log.WriteFile("cannot add filter {0} to graph", devices[i].Name);
               continue;
             }
             //Use the Microsoft Network Provider method first but only if available
@@ -292,7 +291,7 @@ namespace TvLibrary.Implementations
                                                                            "Microsoft Network Provider");
               if (ConnectFilter(graphBuilder, networkDVB, tmp))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB card:{0}", name);
+                Log.Log.WriteFile("Detected DVB card:{0}", name);
                 // determine the DVB card supported GUIDs here!
                 _providerType = networkDVB as ITunerCap;
                 int ulcNetworkTypesMax = 5;
@@ -302,32 +301,32 @@ namespace TvLibrary.Implementations
                                                                  pguidNetworkTypes);
                 for (int n = 0; n < pulcNetworkTypes; n++)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
+                  Log.Log.Debug("Detecting type by MSNP {0}: {1}", n, pguidNetworkTypes[n]);
                   //test the first found guid to determine the DVB card type
                   if (pguidNetworkTypes[n] == (typeof (DVBTNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-T* card:{0}", name);
+                    Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
                     TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                     _cards.Add(dvbtCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof (DVBSNetworkProvider).GUID) && !isCablePreferred)
                   {
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-S* card:{0}", name);
+                    Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
                     TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof (DVBCNetworkProvider).GUID))
                   {
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-C* card:{0}", name);
+                    Log.Log.WriteFile("Detected DVB-C* card:{0}", name);
                     TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                     _cards.Add(dvbcCard);
                     connected = true;
                   }
                   else if (pguidNetworkTypes[n] == (typeof (ATSCNetworkProvider).GUID))
                   {
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected ATSC* card:{0}", name);
+                    Log.Log.WriteFile("Detected ATSC* card:{0}", name);
                     TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                     _cards.Add(dvbsCard);
                     connected = true;
@@ -339,7 +338,7 @@ namespace TvLibrary.Implementations
               }
               else
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Not connected with generic MS Network Provider, using the original method");
+                Log.Log.WriteFile("Not connected with generic MS Network Provider, using the original method");
                 connected = false;
               }
               graphBuilder.RemoveFilter(networkDVB);
@@ -349,25 +348,25 @@ namespace TvLibrary.Implementations
             {
               if (ConnectFilter(graphBuilder, networkDVBT, tmp))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-T card:{0}", name);
+                Log.Log.WriteFile("Detected DVB-T card:{0}", name);
                 TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
                 _cards.Add(dvbtCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBC, tmp))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-C card:{0}", name);
+                Log.Log.WriteFile("Detected DVB-C card:{0}", name);
                 TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
                 _cards.Add(dvbcCard);
               }
               else if (ConnectFilter(graphBuilder, networkDVBS, tmp))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-S card:{0}", name);
+                Log.Log.WriteFile("Detected DVB-S card:{0}", name);
                 TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
               else if (ConnectFilter(graphBuilder, networkATSC, tmp))
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected ATSC card:{0}", name);
+                Log.Log.WriteFile("Detected ATSC card:{0}", name);
                 TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
                 _cards.Add(dvbsCard);
               }
@@ -390,7 +389,7 @@ namespace TvLibrary.Implementations
       {
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected analog card:{0}", name);
+        Log.Log.WriteFile("Detected analog card:{0}", name);
         TvCardAnalog analogCard = new TvCardAnalog(devices[i]);
         _cards.Add(analogCard);
       }
@@ -407,12 +406,12 @@ namespace TvLibrary.Implementations
         bool isCablePreferred = false;
         string name = devices[i].Name ?? "unknown";
         name = name.ToLowerInvariant();
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Found card:{0}", name);
+        Log.Log.WriteFile("Found card:{0}", name);
         //silicondust work-around for dvb type detection issue. generic provider would always use dvb-t
         if (name.Contains("silicondust hdhomerun tuner"))
         {
           isCablePreferred = CheckHDHomerunCablePrefered(name);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
+          Log.Log.WriteFile("silicondust hdhomerun detected - prefer cable mode: {0}", isCablePreferred);
         }
         IBaseFilter tmp;
         graphBuilder.AddSourceFilterForMoniker(devices[i].Mon, null, name, out tmp);
@@ -424,31 +423,31 @@ namespace TvLibrary.Implementations
         interfaceNetworkProvider.ConfigureLogging(GetFileName(devices[i].DevicePath), hash, LogLevelOption.Debug);
         if (ConnectFilter(graphBuilder, networkDVB, tmp))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB card:{0}- Hash: {1}", name, hash);
+          Log.Log.WriteFile("Detected DVB card:{0}- Hash: {1}", name, hash);
           interfaceNetworkProvider.GetAvailableTuningTypes(out tuningTypes);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("TuningTypes: " + tuningTypes);
+          Log.Log.WriteFile("TuningTypes: " + tuningTypes);
           // determine the DVB card supported GUIDs here!
           if ((tuningTypes & TuningType.DvbT) != 0 && !isCablePreferred)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-T* card:{0}", name);
+            Log.Log.WriteFile("Detected DVB-T* card:{0}", name);
             TvCardDVBT dvbtCard = new TvCardDVBT(_epgEvents, devices[i]);
             _cards.Add(dvbtCard);
           }
           if ((tuningTypes & TuningType.DvbS) != 0 && !isCablePreferred)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-S* card:{0}", name);
+            Log.Log.WriteFile("Detected DVB-S* card:{0}", name);
             TvCardDVBS dvbsCard = new TvCardDVBS(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
           if ((tuningTypes & TuningType.DvbC) != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected DVB-C* card:{0}", name);
+            Log.Log.WriteFile("Detected DVB-C* card:{0}", name);
             TvCardDVBC dvbcCard = new TvCardDVBC(_epgEvents, devices[i]);
             _cards.Add(dvbcCard);
           }
           if ((tuningTypes & TuningType.Atsc) != 0 && !isCablePreferred)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Detected ATSC* card:{0}", name);
+            Log.Log.WriteFile("Detected ATSC* card:{0}", name);
             TvCardATSC dvbsCard = new TvCardATSC(_epgEvents, devices[i]);
             _cards.Add(dvbsCard);
           }
@@ -473,7 +472,7 @@ namespace TvLibrary.Implementations
       string hash = GetHash(devicePath);
       String pathName = PathManager.GetDataPath;
       String fileName = String.Format(@"{0}\Log\NetworkProvider-{1}.log", pathName, hash);
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("NetworkProvider logfilename: " + fileName);
+      Log.Log.WriteFile("NetworkProvider logfilename: " + fileName);
       Directory.CreateDirectory(Path.GetDirectoryName(fileName));
       return fileName;
     }

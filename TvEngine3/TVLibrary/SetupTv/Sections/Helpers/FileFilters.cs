@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using MediaPortal.UserInterface.Controls;
 using System.Xml.Serialization;
 using System.Xml;
@@ -132,7 +132,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Error loading tuningdetails: {0}", ex.ToString());
+        Log.Error("Error loading tuningdetails: {0}", ex.ToString());
         MessageBox.Show("Transponder list could not be loaded, check error.log for details.");
         return null;
       }

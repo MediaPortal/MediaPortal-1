@@ -29,7 +29,7 @@ using TvControl;
 using TvDatabase;
 using TvEngine.PowerScheduler.Interfaces;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvEngine
 {
@@ -83,12 +83,12 @@ namespace TvEngine
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Registry lookup for {1} failed: {0}", valueName, ex.Message);
+        Log.Error("TVMovie: Registry lookup for {1} failed: {0}", valueName, ex.Message);
       }
 
       if (string.IsNullOrEmpty(value))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Registry setting {1} has no value", valueName);
+        Log.Info("TVMovie: Registry setting {1} has no value", valueName);
       }
 
       return value;
@@ -182,7 +182,7 @@ namespace TvEngine
       {
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 1800);
         if (!allowed)
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
+          Log.Debug("TVMovie: Telling PowerScheduler standby is allowed: {0}, timeout is 30 minutes", allowed);
       }
     }
 
@@ -196,11 +196,11 @@ namespace TvEngine
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: registered with PowerScheduler EPG handler");
+          Log.Debug("TVMovie: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
+      Log.Debug("TVMovie: NOT registered with PowerScheduler EPG handler");
     }
 
     private void EPGScheduleDue()
@@ -225,11 +225,11 @@ namespace TvEngine
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Import enabled but the ClickFinder database was not found.");
+          Log.Error("TVMovie: Import enabled but the ClickFinder database was not found.");
           return;
         }
 
-        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: Checking database");
+        //Log.Debug("TVMovie: Checking database");
         try
         {
           if (_database.NeedsImport)
@@ -243,16 +243,16 @@ namespace TvEngine
               if (updateDuration > 20)
                 _database.Import();
               else
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Import skipped because there was no new data.");
+                Log.Info("TVMovie: Import skipped because there was no new data.");
             }
             else
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie: Import skipped because the update process timed out / has been aborted.");
+              Log.Info("TVMovie: Import skipped because the update process timed out / has been aborted.");
           }
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovie plugin error:");
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Info("TvMovie plugin error:");
+          Log.Write(ex);
         }
       }
       finally
@@ -278,7 +278,7 @@ namespace TvEngine
       }
       catch (Exception ex1)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
+        Log.Error("TVMovie: Error checking enabled status - {0},{1}", ex1.Message, ex1.StackTrace);
       }
 
       if (!_isImporting)
@@ -293,7 +293,7 @@ namespace TvEngine
         }
         catch (Exception ex2)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+          Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         }
       }
     }
@@ -318,7 +318,7 @@ namespace TvEngine
       {
         _stateTimer.Enabled = false;
         _stateTimer.Stop();
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie: background import timer stopped");
+        Log.Debug("TVMovie: background import timer stopped");
       }
     }
 

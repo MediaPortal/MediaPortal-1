@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using Gentle.Framework;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvDatabase
 {
@@ -567,7 +567,7 @@ namespace TvDatabase
 
     public static void SynchProgramStatesForAll()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("schedule.SynchProgramStatesForAll");
+      Log.Info("schedule.SynchProgramStatesForAll");
       IList<Schedule> allSChedules = Schedule.ListAll();
 
       if (allSChedules != null && allSChedules.Count > 0)
@@ -745,7 +745,7 @@ namespace TvDatabase
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(e);
+        Log.Write(e);
       }
     }
 
@@ -784,7 +784,7 @@ namespace TvDatabase
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(
+        Log.Info(
           "IsPartialRecording: program ({0} {1} - {2} is not (at least partially) included in the schedule {3:hh:mm} - {4:hh:mm}",
           prg.Title, prg.StartTime, prg.EndTime, schedule.startTime, schedule.endTime);
         return false;
@@ -809,7 +809,7 @@ namespace TvDatabase
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("Exception in Schedule.Persist() with Message {0}", ex.Message);
+          Log.Error("Exception in Schedule.Persist() with Message {0}", ex.Message);
           return;
         }
         isChanged = false;

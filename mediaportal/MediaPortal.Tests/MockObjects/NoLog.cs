@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using MediaPortal.CoreServices;
 using MediaPortal.Services;
 
 namespace MediaPortal.Tests.MockObjects
@@ -27,39 +26,48 @@ namespace MediaPortal.Tests.MockObjects
   /// <summary>
   /// Dummy <see cref="ILog"/> service implementation that does absolutely nothing.
   /// </summary>
-  public class NoLog : ILogger
+  public class NoLog : ILog
   {
-    #region Implementation of ILogger
+    public void BackupLogFiles() {}
 
-    private LogLevel _level;
+    public void BackupLogFile(LogType logType) {}
 
-    public LogLevel Level
-    {
-      get { return _level; }
-      set { _level = value; }
-    }
+    public void Write(Exception ex) {}
 
-    public void Debug(string format, params object[] args) {}
-    
-    public void Info(string format, params object[] args) {}
+    /// <summary>
+    /// Write a string to the logfile.
+    /// </summary>
+    /// <param name="format">The format of the string.</param>
+    /// <param name="arg">An array containing the actual data of the string.</param>
+    public void Write(string format, params object[] arg) {}
 
-    public void Warn(string format, params object[] args) {}
+    public void Info(string format, params object[] arg) {}
 
-    public void Error(string format, params object[] args) {}
+    public void Info(LogType type, string format, params object[] arg) {}
+
+    public void Warn(string format, params object[] arg) {}
+
+    public void Warn(LogType type, string format, params object[] arg) {}
+
+    public void Debug(string format, params object[] arg) {}
+
+    public void Debug(LogType type, string format, params object[] arg) {}
+
+    public void Error(string format, params object[] arg) {}
+
+    public void Error(LogType type, string format, params object[] arg) {}
 
     public void Error(Exception ex) {}
 
-    public void Error(string message, Exception ex) {}
 
-    public void Critical(string format, params object[] args) {}
+    public void SetConfigurationMode() {}
 
-    public void Critical(Exception ex) {}
+    public void WriteFile(LogType type, bool isError, string format, params object[] arg) {}
 
-    public void Critical(string message, Exception ex) {}
+    public void WriteFile(LogType type, string format, params object[] arg) {}
 
-    public void Epg(string format, params object[] args) {}
-    
+    public void WriteFile(LogType type, Level logLevel, string format, params object[] arg) {}
 
-    #endregion
+    public void SetLogLevel(Level logLevel) {}
   }
 }

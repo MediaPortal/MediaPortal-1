@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -43,7 +43,7 @@ namespace TvService
     public static bool DeleteRecordingOnDisk(string fileNameForRec, out bool wasPendingDeletionAdded)
     {
       wasPendingDeletionAdded = false;
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
+      Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
       bool filesDeleted = false;
       try
       {
@@ -65,7 +65,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
+        Log.Error("RecordingFileHandler: Error while deleting a recording from disk: {0}", ex.Message);
         wasPendingDeletionAdded = true;
         filesDeleted = false;
       }
@@ -102,14 +102,14 @@ namespace TvService
         bool doesPendingDeletionExist = (PendingDeletion.Retrieve(fileNameForRec) != null);
         if (!doesPendingDeletionExist)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
+          Log.Error("RecordingFileHandler: adding filename to list of pending deletions: {0}", fileNameForRec);
           PendingDeletion addNewPendingDeletion = new PendingDeletion(fileNameForRec);
           addNewPendingDeletion.Persist();
         }
       }
       catch (Exception ex2)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}",
+        Log.Error("DeleteRecordingOnDisk - tried to add to list of pending deletions exception={0}, filename={1}",
                   ex2.Message, fileNameForRec);
       }
     }
@@ -122,7 +122,7 @@ namespace TvService
 
       foreach (string fileName in relatedFiles)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(" - deleting '{0}'", fileName);
+        Log.Debug(" - deleting '{0}'", fileName);
         // File.Delete will _not_ throw on "File does not exist"
         File.Delete(fileName);
       }
@@ -138,11 +138,11 @@ namespace TvService
     {
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Clean orphan recording dirs for {0}", fileName);
+        Log.Debug("RecordingFileHandler: Clean orphan recording dirs for {0}", fileName);
         string recfolder = Path.GetDirectoryName(fileName);
         List<string> recordingPaths = GetRecordingPaths();
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
+        Log.Debug("RecordingFileHandler: Checking {0} path(s) for cleanup", Convert.ToString(recordingPaths.Count));
         foreach (string checkPath in recordingPaths)
         {
           if (checkPath != string.Empty && checkPath != Path.GetPathRoot(checkPath))
@@ -150,7 +150,7 @@ namespace TvService
             // make sure we're only deleting directories which are "recording dirs" from a tv card
             if (fileName.Contains(checkPath))
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName),
+              Log.Debug("RecordingFileHandler: Origin for recording {0} found: {1}", Path.GetFileName(fileName),
                         checkPath);
               string deleteDir = recfolder;
               // do not attempt to step higher than the recording base path
@@ -185,7 +185,7 @@ namespace TvService
                 }
                 catch (Exception ex1)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
+                  Log.Info("RecordingFileHandler: Could not delete directory {0} - {1}", deleteDir, ex1.Message);
                   throw; //make sure its added to the pending deletions list later on.                  
                 }
               }
@@ -193,14 +193,14 @@ namespace TvService
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
+            Log.Debug("RecordingFileHandler: Path not valid for removal - {1}", checkPath);
             return;
           }
         }
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
+        Log.Error("RecordingFileHandler: Error cleaning the recording folders - {0},{1}", ex.Message, ex.StackTrace);
         throw; //make sure its added to the pending deletions list later on.                  
       }
     }
@@ -212,7 +212,7 @@ namespace TvService
 
       if (hasSubDirs)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
+        Log.Debug("RecordingFileHandler: Found {0} sub-directory(s) in recording path - not cleaning {1}",
                   Convert.ToString(subdirs.Length), deleteDir);
       }
       return hasSubDirs;
@@ -221,7 +221,7 @@ namespace TvService
     private static string DeleteDir(string deleteDir)
     {
       Directory.Delete(deleteDir);
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
+      Log.Debug("RecordingFileHandler: Deleted empty recording dir - {0}", deleteDir);
       DirectoryInfo di = Directory.GetParent(deleteDir);
       if (di != null)
       {
@@ -250,7 +250,7 @@ namespace TvService
         hasDirAnyFilesOver1MBTotal = (fileSizesTotal >= 1048576);
         if (hasDirAnyFilesOver1MBTotal)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+          Log.Debug(
             "RecordingFileHandler: Found {0} bytes worth of data (max 1mb) in directory in recording path - not cleaning {1}",
             fileSizesTotal, deleteDir);
           break;
@@ -270,7 +270,7 @@ namespace TvService
 
         if (hasDirAnyImportantFiles)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug(
+          Log.Debug(
             "RecordingFileHandler: Found irrelevant file {0} in recording path {1} - not cleaning",
             fileName, deleteDir);
           break;

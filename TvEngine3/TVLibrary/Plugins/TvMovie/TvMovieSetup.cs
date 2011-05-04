@@ -27,7 +27,7 @@ using System.Threading;
 using System.Windows.Forms;
 using TvDatabase;
 using TvEngine;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 
 namespace SetupTv.Sections
@@ -273,7 +273,7 @@ namespace SetupTv.Sections
               }
               catch (Exception exstat)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
+                Log.Info("TvMovieSetup: Error loading TV Movie station - {0}", exstat.Message);
               }
             }
           }
@@ -297,7 +297,7 @@ namespace SetupTv.Sections
           }
           catch (Exception exdb)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
+            Log.Info("TvMovieSetup: Error loading MP's channels from database - {0}", exdb.Message);
           }
           finally
           {
@@ -306,7 +306,7 @@ namespace SetupTv.Sections
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
+          Log.Info("TvMovieSetup: Unhandled error in  LoadStations - {0}\n{1}", ex.Message, ex.StackTrace);
         }
       }
     }
@@ -374,17 +374,17 @@ namespace SetupTv.Sections
           mapping.Remove();
       }
       else
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovieSetup: SaveMapping - no mappingList items");
+        Log.Info("TvMovieSetup: SaveMapping - no mappingList items");
 
       TvBusinessLayer layer = new TvBusinessLayer();
 
       foreach (TreeNode channel in treeViewMpChannels.Nodes)
       {
-        //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvMovieSetup: Processing channel {0}", channel.Text);
+        //Log.Debug("TvMovieSetup: Processing channel {0}", channel.Text);
         foreach (TreeNode station in channel.Nodes)
         {
           ChannelInfo channelInfo = (ChannelInfo)station.Tag;
-          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
+          //Log.Debug("TvMovieSetup: Processing channelInfo {0}", channelInfo.Name);
           TvMovieMapping mapping = null;
           try
           {
@@ -393,17 +393,17 @@ namespace SetupTv.Sections
           }
           catch (Exception exm)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
+            Log.Error("TvMovieSetup: Error on new TvMovieMapping for channel {0} - {1}", channel.Text, exm.Message);
           }
-          //GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
+          //Log.Write("TvMovieSetup: SaveMapping - new mapping for {0}/{1}", channel.Text, channelInfo.Name);
           try
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
+            Log.Debug("TvMovieSetup: Persisting TvMovieMapping for channel {0}", channel.Text);
             mapping.Persist();
           }
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
+            Log.Error("TvMovieSetup: Error on mapping.Persist() {0},{1}", ex.Message, ex.StackTrace);
           }
         }
       }
@@ -461,22 +461,22 @@ namespace SetupTv.Sections
                     }
                   }
                   else
-                    GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
+                    Log.Debug("TVMovie plugin: Channel {0} no longer present in Database - ignoring", stationName);
                 }
               }
               catch (Exception exInner)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
+                Log.Debug("TVMovie plugin: Mapping of station {0} failed; maybe it has been deleted / changed ({1})",
                           MpChannelName, exInner.Message);
               }
             }
           }
           else
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
+            Log.Debug("TVMovie plugin: LoadMapping did not find any mapped channels");
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
+          Log.Debug("TVMovie plugin: LoadMapping failed - {0},{1}", ex.Message, ex.StackTrace);
         }
         ColorTree();
       }
@@ -498,7 +498,7 @@ namespace SetupTv.Sections
               return MpNode;
           }
           else
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
+            Log.Debug("TVMovie plugin: FindChannel failed - no Channel in Node tag of {0}", MpNode.Text);
         }
       return null;
     }
@@ -682,7 +682,7 @@ namespace SetupTv.Sections
                           "Please make sure a supported TV Movie Clickfinder release has been successfully installed.",
                           "Error loading TV Movie stations", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadStations() - {0},{1}", ex1.Message,
                    ex1.StackTrace);
           return;
         }
@@ -696,7 +696,7 @@ namespace SetupTv.Sections
           MessageBox.Show(this, "Please make sure your using a valid channel mapping.",
                           "Error loading TVM <-> MP channel mapping", MessageBoxButtons.OK, MessageBoxIcon.Error);
           checkBoxEnableImport.Checked = false;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
+          Log.Info("TVMovie plugin: Error enabling TV Movie import in LoadMapping() - {0},{1}", ex2.Message,
                    ex2.StackTrace);
           return;
         }
@@ -728,7 +728,7 @@ namespace SetupTv.Sections
       }
       catch (Exception ex2)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
+        Log.Error("TVMovie: Error spawing import thread - {0},{1}", ex2.Message, ex2.StackTrace);
         buttonImportNow.Enabled = true;
       }
     }
@@ -746,8 +746,8 @@ namespace SetupTv.Sections
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("TvMovie plugin error:");
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Info("TvMovie plugin error:");
+        Log.Write(ex);
         buttonImportNow.Enabled = true;
       }
     }

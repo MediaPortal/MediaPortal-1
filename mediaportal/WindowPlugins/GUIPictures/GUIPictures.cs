@@ -29,7 +29,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MediaPortal.Configuration;
-using MediaPortal.CoreServices;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
@@ -70,7 +69,7 @@ namespace MediaPortal.GUI.Pictures
 
         work = new Work(new DoWorkHandler(this.PerformRequest));
         work.ThreadPriority = ThreadPriority.BelowNormal;
-        GlobalServiceProvider.Instance.Get<IThreadPool>().Add(work, QueuePriority.Low);
+        GlobalServiceProvider.Get<IThreadPool>().Add(work, QueuePriority.Low);
       }
 
       /// <summary>

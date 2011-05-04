@@ -20,7 +20,6 @@
 
 using System;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB
 {
@@ -230,35 +229,35 @@ namespace TvLibrary.Implementations.DVB
     public void Reset()
     {
       byte[] cmd = new byte[3];
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: ClearReset");
+      Log.Log.Write("DiSEqC: ClearReset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: PowerOn");
+      Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: reset");
+      Log.Log.Write("DiSEqC: reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.Reset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: clear reset");
+      Log.Log.Write("DiSEqC: clear reset");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.ClearReset;
       _controller.SendDiSEqCCommand(cmd);
       System.Threading.Thread.Sleep(100);
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: PowerOn");
+      Log.Log.Write("DiSEqC: PowerOn");
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = 0x10;
       cmd[2] = (byte)DiSEqCCommands.PowerOn;
@@ -270,7 +269,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void StopMotor()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: stop motor");
+      Log.Log.Write("DiSEqC: stop motor");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -284,7 +283,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void SetEastLimit()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: set east limit");
+      Log.Log.Write("DiSEqC: set east limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -298,7 +297,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void SetWestLimit()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: set west limit");
+      Log.Log.Write("DiSEqC: set west limit");
       byte[] cmd = new byte[3];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -317,7 +316,7 @@ namespace TvLibrary.Implementations.DVB
       {
         if (value)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: enable limits");
+          Log.Log.Write("DiSEqC: enable limits");
           byte[] cmd = new byte[4];
           cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
           cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -328,7 +327,7 @@ namespace TvLibrary.Implementations.DVB
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: disable limits");
+          Log.Log.Write("DiSEqC: disable limits");
           byte[] cmd = new byte[3];
           cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
           cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -349,7 +348,7 @@ namespace TvLibrary.Implementations.DVB
       if (steps == 0)
         return;
       StopMotor();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
+      Log.Log.Write("DiSEqC: drive motor {0} for {1} steps", direction.ToString(), steps);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       if (direction == DiSEqCDirection.West)
@@ -390,7 +389,7 @@ namespace TvLibrary.Implementations.DVB
     {
       if (position <= 0)
         throw new ArgumentException("position");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: store current position in {0}", position);
+      Log.Log.Write("DiSEqC: store current position in {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -411,7 +410,7 @@ namespace TvLibrary.Implementations.DVB
     /// </summary>
     public void GotoReferencePosition()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: goto reference position");
+      Log.Log.Write("DiSEqC: goto reference position");
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;
@@ -436,7 +435,7 @@ namespace TvLibrary.Implementations.DVB
         throw new ArgumentException("position");
       if (_currentStepsAzimuth == 0 && _currentStepsElevation == 0 && position == _currentPosition)
         return;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("DiSEqC: goto position {0}", position);
+      Log.Log.Write("DiSEqC: goto position {0}", position);
       byte[] cmd = new byte[4];
       cmd[0] = (byte)DiSEqCFraming.FirstTransmission;
       cmd[1] = (byte)DiSEqCMovement.Azimutal;

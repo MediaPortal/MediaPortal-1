@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using DirectShowLib;
 using similaritymetrics;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary
 {
@@ -124,7 +123,7 @@ namespace TvLibrary
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.Write(ex);
         return devices;
       }
     }

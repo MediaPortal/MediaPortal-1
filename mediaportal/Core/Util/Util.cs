@@ -38,7 +38,6 @@ using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.CoreServices;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.Profile;
 using Microsoft.Win32;
@@ -738,7 +737,7 @@ namespace MediaPortal.Util
         return;
       }
 
-      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Instance.Get<IVideoThumbBlacklist>();
+      IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
       if (blacklist != null && blacklist.Contains(path))
       {
         Log.Debug("Skipped creating thumbnail for {0}, it has been blacklisted because last attempt failed", path);
@@ -813,7 +812,7 @@ namespace MediaPortal.Util
           string newVersion = VideoThumbCreator.GetThumbExtractorVersion();
           if (newVersion != lastVersion)
           {
-            IVideoThumbBlacklist blacklist = GlobalServiceProvider.Instance.Get<IVideoThumbBlacklist>();
+            IVideoThumbBlacklist blacklist = GlobalServiceProvider.Get<IVideoThumbBlacklist>();
             if (blacklist != null)
             {
               blacklist.Clear();

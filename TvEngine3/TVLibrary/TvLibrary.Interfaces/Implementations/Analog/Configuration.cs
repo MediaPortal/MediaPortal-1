@@ -24,7 +24,6 @@ using System.Text;
 using System.Xml;
 using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog
 {
@@ -251,7 +250,7 @@ namespace TvLibrary.Implementations.Analog
         }
         catch
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("Error while reading analog card configuration file");
+          Log.Log.WriteFile("Error while reading analog card configuration file");
           _configuration = new Configuration();
           _configuration.Name = name;
           _configuration.DevicePath = devicePath;

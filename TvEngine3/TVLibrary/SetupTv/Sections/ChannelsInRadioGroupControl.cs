@@ -26,7 +26,7 @@ using SetupTv.Dialogs;
 using TvDatabase;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace SetupTv.Sections
 {
@@ -94,7 +94,7 @@ namespace SetupTv.Sections
       }
       catch (Exception exp)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("OnActivated error: {0}", exp.Message);
+        Log.Error("OnActivated error: {0}", exp.Message);
       }
       finally
       {

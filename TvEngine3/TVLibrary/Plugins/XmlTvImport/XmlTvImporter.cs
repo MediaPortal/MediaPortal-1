@@ -27,7 +27,7 @@ using System.IO;
 using SetupTv;
 using TvControl;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using TvEngine.PowerScheduler.Interfaces;
 using TvEngine.Interfaces;
@@ -114,7 +114,7 @@ namespace TvEngine
     /// </summary>
     public void Start(IController controller)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: xmltv started");
+      Log.WriteFile("plugin: xmltv started");
 
       //System.Diagnostics.Debugger.Launch();      
       RegisterPowerEventHandler();
@@ -132,7 +132,7 @@ namespace TvEngine
     /// </summary>
     public void Stop()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("plugin: xmltv stopped");
+      Log.WriteFile("plugin: xmltv stopped");
 
       UnRegisterPowerEventHandler();
 
@@ -150,11 +150,11 @@ namespace TvEngine
       if (GlobalServiceProvider.Instance.IsRegistered<IPowerEventHandler>())
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().AddPowerEventHandler(new PowerEventHandler(OnPowerEvent));
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("xmltv: Registered xmltv as PowerEventHandler to tvservice");
+        Log.Debug("xmltv: Registered xmltv as PowerEventHandler to tvservice");
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("xmltv: Unable to register power event handler!");
+        Log.Error("xmltv: Unable to register power event handler!");
       }
     }
 
@@ -165,11 +165,11 @@ namespace TvEngine
       {
         GlobalServiceProvider.Instance.Get<IPowerEventHandler>().RemovePowerEventHandler(
           new PowerEventHandler(OnPowerEvent));
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("xmltv: UnRegistered xmltv as PowerEventHandler to tvservice");
+        Log.Debug("xmltv: UnRegistered xmltv as PowerEventHandler to tvservice");
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("xmltv: Unable to unregister power event handler!");
+        Log.Error("xmltv: Unable to unregister power event handler!");
       }
     }
 
@@ -219,7 +219,7 @@ namespace TvEngine
         {
           string folder = layer.GetSetting("xmlTv", DefaultOutputFolder).Value;
           string URL = layer.GetSetting("xmlTvRemoteURL", "").Value;
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("downloadGuideOnWakeUp");
+          Log.Debug("downloadGuideOnWakeUp");
           RetrieveRemoteFile(folder, URL);
         }
       }
@@ -229,12 +229,12 @@ namespace TvEngine
     {
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("xmlTV plugin resumed");
+        Log.Info("xmlTV plugin resumed");
         RetrieveRemoteTvGuideOnStartUp();
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("xmlTV plugin resume exception [" + e.Message + "]");
+        Log.Info("xmlTV plugin resume exception [" + e.Message + "]");
       }
     }
 
@@ -329,7 +329,7 @@ namespace TvEngine
               }
               catch (Exception ex)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
+                Log.Info("file is locked, retrying in 30secs. [" + ex.Message + "]");
                 retries++;
                 Thread.Sleep(30000); //wait 30 sec. before retrying.
               }
@@ -339,13 +339,13 @@ namespace TvEngine
                 try
                 {
                   string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("extracting zip file {0} to location {1}", path, newLoc);
+                  Log.Info("extracting zip file {0} to location {1}", path, newLoc);
                   ZipFile zip = new ZipFile(path);
                   zip.ExtractAll(newLoc, true);
                 }
                 catch (Exception ex2)
                 {
-                  GlobalServiceProvider.Instance.Get<ILogger>().Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
+                  Log.Info("file is locked, retrying in 30secs. [" + ex2.Message + "]");
                   retries++;
                   Thread.Sleep(30000); //wait 30 sec. before retrying.
                 }
@@ -370,7 +370,7 @@ namespace TvEngine
         setting.Value = DateTime.Now.ToString();
         setting.Persist();
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(info);
+        Log.Info(info);
       }
       catch (Exception) {}
       finally
@@ -399,7 +399,7 @@ namespace TvEngine
       if (URL.Length == 0)
       {
         errMsg = "No URL defined.";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(errMsg);
+        Log.Error(errMsg);
         setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
         setting.Value = errMsg;
         setting.Persist();
@@ -411,7 +411,7 @@ namespace TvEngine
       if (folder.Length == 0)
       {
         errMsg = "No tvguide.xml path defined.";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(errMsg);
+        Log.Error(errMsg);
         setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");
         setting.Value = errMsg;
         setting.Persist();
@@ -434,13 +434,13 @@ namespace TvEngine
         // grab username, password and server from the URL
         // ftp://user:pass@www.somesite.com/TVguide.xml
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("FTP URL detected.");
+        Log.Info("FTP URL detected.");
 
         int passwordEndIdx = URL.IndexOf("@");
 
         if (passwordEndIdx > -1)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("FTP username/password detected.");
+          Log.Info("FTP username/password detected.");
 
           int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
           int userEndIdx = URL.IndexOf(":", userStartIdx);
@@ -454,15 +454,15 @@ namespace TvEngine
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("no FTP username/password detected. Using anonymous access.");
+          Log.Info("no FTP username/password detected. Using anonymous access.");
         }
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("HTTP URL detected.");
+        Log.Info("HTTP URL detected.");
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("initiating download of remote file from " + URL);
+      Log.Info("initiating download of remote file from " + URL);
       Uri uri = new Uri(URL);
       Client.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
 
@@ -476,19 +476,19 @@ namespace TvEngine
       catch (WebException ex)
       {
         errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(errMsg);
+        Log.Error(errMsg);
         lastTransferAt = errMsg;
       }
       catch (InvalidOperationException ex)
       {
         errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(errMsg);
+        Log.Error(errMsg);
         lastTransferAt = errMsg;
       }
       catch (Exception ex)
       {
         errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(errMsg);
+        Log.Error(errMsg);
         lastTransferAt = errMsg;
       }
 
@@ -565,11 +565,11 @@ namespace TvEngine
           setting.Value = now.ToString();
           setting.Persist();
 
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("File transfer timed out.");
+          Log.Info("File transfer timed out.");
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("File transfer is in progress. Waiting...");
+          Log.Info("File transfer is in progress. Waiting...");
           return;
         }
       }
@@ -629,7 +629,7 @@ namespace TvEngine
       }
       else
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Not the time to fetch remote file yet");
+        Log.Info("Not the time to fetch remote file yet");
       }
     }
 
@@ -648,7 +648,7 @@ namespace TvEngine
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("xmlTvLastUpdate not found, forcing import {0}", e.Message);
+        Log.Info("xmlTvLastUpdate not found, forcing import {0}", e.Message);
         lastTime = DateTime.MinValue;
       }
 
@@ -751,7 +751,7 @@ namespace TvEngine
         }
         catch (Exception e)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
       }
@@ -766,7 +766,7 @@ namespace TvEngine
         }
         catch (Exception e)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
+          Log.Error(@"plugin:xmltv StartImport - File [" + fileName + "] doesn't have read access : " + e.Message);
           return;
         }
         try //Check that all listed files can be read before starting import (and deleting programs list)
@@ -790,7 +790,7 @@ namespace TvEngine
             }
             catch (Exception e)
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " +
+              Log.Error(@"plugin:xmltv StartImport - File [" + tvguideFileName + "] doesn't have read access : " +
                         e.Message);
               return;
             }
@@ -870,7 +870,7 @@ namespace TvEngine
           if (param._importXML)
           {
             string fileName = folder + @"\tvguide.xml";
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("plugin:xmltv importing " + fileName);
+            Log.Write("plugin:xmltv importing " + fileName);
 
             XMLTVImport import = new XMLTVImport(10); // add 10 msec dely to the background thread
             import.Import(fileName, deleteBeforeImport, false);
@@ -885,7 +885,7 @@ namespace TvEngine
           if (param._importLST)
           {
             string fileName = folder + @"\tvguide.lst";
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("plugin:xmltv importing files in " + fileName);
+            Log.Write("plugin:xmltv importing files in " + fileName);
 
             Encoding fileEncoding = Encoding.Default;
             streamIn = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -902,7 +902,7 @@ namespace TvEngine
                 tvguideFileName = System.IO.Path.Combine(folder, tvguideFileName);
               }
 
-              GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:xmltv importing " + tvguideFileName);
+              Log.WriteFile(@"plugin:xmltv importing " + tvguideFileName);
 
               XMLTVImport import = new XMLTVImport(10); // add 10 msec dely to the background thread
 
@@ -928,23 +928,23 @@ namespace TvEngine
           setting = layer.GetSetting("xmlTvResultStatus", "");
           setting.Value = errors;
           setting.Persist();
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
+          Log.Write("Xmltv: imported {0} channels, {1} programs status:{2}", numChannels, numPrograms, errors);
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(@"plugin:xmltv import failed");
-          GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+          Log.Error(@"plugin:xmltv import failed");
+          Log.Write(ex);
         }
 
         setting = layer.GetSetting("xmlTvLastUpdate", "");
         setting.Value = param._importDate.ToString();
         setting.Persist();
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("Xmltv: waiting for database to finish inserting imported programs.");
+        Log.Info("Xmltv: waiting for database to finish inserting imported programs.");
         layer.WaitForInsertPrograms();
       }
       finally
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info(@"plugin:xmltv import done");
+        Log.WriteFile(@"plugin:xmltv import done");
         if (streamIn != null)
         {
           streamIn.Close();
@@ -975,11 +975,11 @@ namespace TvEngine
         if (handler != null)
         {
           handler.EPGScheduleDue += new EPGScheduleHandler(EPGScheduleDue);
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("XmlTvImporter: registered with PowerScheduler EPG handler");
+          Log.Debug("XmlTvImporter: registered with PowerScheduler EPG handler");
           return;
         }
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
+      Log.Debug("XmlTvImporter: NOT registered with PowerScheduler EPG handler");
     }
 
 
@@ -987,7 +987,7 @@ namespace TvEngine
     {
       if (GlobalServiceProvider.Instance.IsRegistered<IEpgHandler>())
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
+        Log.Debug("plugin:xmltv: Telling PowerScheduler standby is allowed: {0}, timeout is one hour", allowed);
         GlobalServiceProvider.Instance.Get<IEpgHandler>().SetStandbyAllowed(this, allowed, 3600);
       }
     }

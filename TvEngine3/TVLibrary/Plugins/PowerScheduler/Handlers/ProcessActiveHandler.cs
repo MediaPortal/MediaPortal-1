@@ -26,7 +26,7 @@ using System.Text;
 using System.Diagnostics;
 using TvDatabase;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvEngine.PowerScheduler.Interfaces;
 
 #endregion
@@ -78,7 +78,7 @@ namespace TvEngine.PowerScheduler.Handlers
             setting.Set<List<string>>(processes);
             _processes = processes;
             foreach (string process in processes)
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("PowerScheduler: preventing standby for process: {0}", process);
+              Log.Debug("PowerScheduler: preventing standby for process: {0}", process);
           }
           break;
       }

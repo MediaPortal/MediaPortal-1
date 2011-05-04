@@ -23,7 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvDatabase;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Web;
@@ -127,8 +127,9 @@ namespace MediaPortal.EPG
     //public WebEPG(string configFile, string xmltvDirectory, string baseDirectory)
     public WebEPG(string configFile, IEpgDataSink epgDataSink, string baseDirectory)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Assembly versions:");
-      GlobalServiceProvider.Instance.Get<ILogger>().Info(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
+      Log.Info("Assembly versions:");
+      Log.Info(this.GetType().Assembly.GetName().Name + " " + this.GetType().Assembly.GetName().Version.ToString());
+      Log.Info(typeof (Log).Assembly.GetName().Name + " " + typeof (Log).Assembly.GetName().Version.ToString());
       // set config directories and files.
       _configFile = configFile;
       //_xmltvDirectory = xmltvDirectory;
@@ -181,7 +182,7 @@ namespace MediaPortal.EPG
         GlobalServiceProvider.Instance.Add<IHttpStatistics>(httpStats);
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Loading Channel Config");
+      Log.Info("WebEPG: Loading Channel Config");
       _grabList = new Dictionary<string, List<grabInfo>>();
       // for each channel write info xmltv file.
       List<ChannelMap> allChannels = new List<ChannelMap>(_config.Channels);
@@ -190,7 +191,7 @@ namespace MediaPortal.EPG
       {
         if (channel.id == null && channel.merged == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info(" Ignoring Channel Name: {0} - No Channel id", channel.displayName);
+          Log.Info(" Ignoring Channel Name: {0} - No Channel id", channel.displayName);
           continue;
         }
 
@@ -198,7 +199,7 @@ namespace MediaPortal.EPG
         {
           if (channel.grabber != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Loading Channel {0} ID: {1}", channel.displayName, channel.id);
+            Log.Debug(" Loading Channel {0} ID: {1}", channel.displayName, channel.id);
             //xmltv.WriteChannel(channel.id, channel.displayName);
             _epgDataSink.WriteChannel(channel.id, channel.displayName);
 
@@ -223,12 +224,12 @@ namespace MediaPortal.EPG
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info(" Ignoring Channel Name: {0} - No Grabber id", channel.displayName);
+            Log.Info(" Ignoring Channel Name: {0} - No Grabber id", channel.displayName);
           }
         }
         else
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug(" Loading Merged Channel {0}", channel.displayName);
+          Log.Debug(" Loading Merged Channel {0}", channel.displayName);
           //xmltv.WriteChannel("[Merged]", channel.displayName);
           _epgDataSink.WriteChannel("[Merged]", channel.displayName);
 
@@ -243,7 +244,7 @@ namespace MediaPortal.EPG
               grab.merged = true;
               grab.linked = true;
               grab.linkTime = new TimeRange(merged.start, merged.end);
-              GlobalServiceProvider.Instance.Get<ILogger>().Debug("  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
+              Log.Debug("  Loading Merged Sub-channel: {0} Time range: {1}", merged.id,
                         grab.linkTime.ToString());
 
               if (!_grabList.ContainsKey(merged.id))
@@ -259,7 +260,7 @@ namespace MediaPortal.EPG
             }
             else
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
+              Log.Info("  Ignoring Merged Sub-channel: {0}/{1} - No Grabber id", channel.displayName,
                        merged.id);
             }
           }
@@ -278,8 +279,8 @@ namespace MediaPortal.EPG
         _status.Status = string.Format("Getting Channel ID: {0} [{1} of {2}]", channelid, i, _grabList.Count);
         if (ShowProgress != null) ShowProgress(_status);
 
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Getting Channel ID: {0}", channelid);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("        [{0} of {1}]", i++, _grabList.Count);
+        Log.Info("WebEPG: Getting Channel ID: {0}", channelid);
+        Log.Info("        [{0} of {1}]", i++, _grabList.Count);
 
         if (_grabList[channelid].Count > 0)
         {
@@ -308,8 +309,8 @@ namespace MediaPortal.EPG
 
               if (grab.merged)
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Writing Merged Channel Part: {0}", grab.name);
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("        [{0}]", grab.linkTime);
+                Log.Info("WebEPG: Writing Merged Channel Part: {0}", grab.name);
+                Log.Info("        [{0}]", grab.linkTime);
                 if (_epgDataSink.StartChannelPrograms("[Merged]", grab.name))
                 {
                   _epgDataSink.SetTimeWindow(grab.linkTime);
@@ -327,7 +328,7 @@ namespace MediaPortal.EPG
               }
               else
               {
-                GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Writing Channel: {0}", grab.name);
+                Log.Info("WebEPG: Writing Channel: {0}", grab.name);
                 if (_epgDataSink.StartChannelPrograms(channelid, grab.name))
                 {
                   for (int p = 0; p < programs.Count; p++)
@@ -348,7 +349,7 @@ namespace MediaPortal.EPG
           {
             foreach (grabInfo grab in _grabList[channelid])
             {
-              GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG: Grabber failed for: {0}", grab.name);
+              Log.Info("WebEPG: Grabber failed for: {0}", grab.name);
             }
           }
         }
@@ -363,7 +364,7 @@ namespace MediaPortal.EPG
       for (int h = 0; h < httpStats.Count; h++)
       {
         SiteStatistics site = httpStats.GetbyIndex(h);
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("HTTP Statistics: {0}", site.ToString());
+        Log.Info("HTTP Statistics: {0}", site.ToString());
         httpStats.Clear(site.Site);
       }
 
@@ -386,11 +387,11 @@ namespace MediaPortal.EPG
     {
       if (!File.Exists(_configFile))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("File not found: {0}", _configFile);
+        Log.Info("File not found: {0}", _configFile);
         return false;
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Loading Config File: {0}", _configFile);
+      Log.Info("Loading Config File: {0}", _configFile);
       try
       {
         XmlSerializer s = new XmlSerializer(typeof (WebepgConfigFile));
@@ -400,7 +401,7 @@ namespace MediaPortal.EPG
       }
       catch (InvalidOperationException ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG: Error loading config: {0}", ex.Message);
+        Log.Error("WebEPG: Error loading config: {0}", ex.Message);
         return false;
       }
 

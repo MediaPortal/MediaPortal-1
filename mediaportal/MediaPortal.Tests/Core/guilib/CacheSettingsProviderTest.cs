@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using MediaPortal.CoreServices;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Tests.MockObjects;
@@ -85,7 +84,7 @@ namespace MediaPortal.Tests.Core.Profile
     [SetUp]
     public void Init()
     {
-      GlobalServiceProvider.Instance.Replace<ILogger>(new NoLog());
+      GlobalServiceProvider.Replace<ILog>(new NoLog());
       this.getValueReturns = null;
       this.getValueHits = 0;
       this.removeEntryHits = 0;

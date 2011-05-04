@@ -20,7 +20,7 @@
 
 using System;
 using System.Diagnostics;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace SetupTv
 {
@@ -36,7 +36,7 @@ namespace SetupTv
       }
       catch (Exception exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(exception);
+        Log.Write(exception);
       }
     }
   }

@@ -21,7 +21,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.DVB.Structures
 {
@@ -200,7 +199,7 @@ namespace TvLibrary.Implementations.DVB.Structures
     {
       if (buf.Length < 13)
       {
-        //GlobalServiceProvider.Instance.Get<ILogger>().Info("decodePMTTable() len < 13 len={0}", buf.Length);
+        //Log.Log.WriteFile("decodePMTTable() len < 13 len={0}", buf.Length);
         return;
       }
       int section_length = ((buf[1] & 0xF) << 8) + buf[2];
@@ -220,7 +219,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       //if (pat.program_number != program_number)
       //{
 
-      //GlobalServiceProvider.Instance.Get<ILogger>().Debug("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number, program_number);
+      //Log.Write("decodePMTTable() pat program#!=program numer {0}!={1}", pat.program_number, program_number);
       //return 0;
       //}
       //pat.pid_list = new ArrayList();
@@ -231,7 +230,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       int x;
       int len1 = section_length - pointer;
       int len2 = program_info_length;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("Decode pmt");
+      Log.Log.Write("Decode pmt");
       while (len2 > 0)
       {
         if (pointer + 2 > buf.Length)
@@ -246,7 +245,7 @@ namespace TvLibrary.Implementations.DVB.Structures
 
         if (indicator == 0x9) //MPEG CA Descriptor
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Info("  descriptor1:{0:X} len:{1} {2:X} {3:X}", indicator,data.Length,buf[pointer],buf[pointer+1]);
+          //Log.Log.Write("  descriptor1:{0:X} len:{1} {2:X} {3:X}", indicator,data.Length,buf[pointer],buf[pointer+1]);
           caPMT.Descriptors.Add(data);
           caPMT.ProgramInfoLength += data.Length;
 
@@ -259,7 +258,7 @@ namespace TvLibrary.Implementations.DVB.Structures
           string tmp = "";
           for (int teller = 0; teller < x; ++teller)
             tmp += String.Format("{0:x} ", buf[pointer + teller]);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("descr1 len:{0:X} {1}", x, tmp);
+          Log.Log.Info("descr1 len:{0:X} {1}", x, tmp);
         }
         len2 -= x;
         pointer += x;
@@ -288,7 +287,7 @@ namespace TvLibrary.Implementations.DVB.Structures
         }
         catch (Exception ex)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Error while decoding pmt: ", ex);
+          Log.Log.WriteFile("Error while decoding pmt: ", ex);
         }
 
         switch (pidInfo.stream_type)
@@ -349,7 +348,7 @@ namespace TvLibrary.Implementations.DVB.Structures
               int indicator = buf[pointer];
               x = buf[pointer + 1] + 2;
 
-              //GlobalServiceProvider.Instance.Get<ILogger>().Info("  descriptor2:{0:X}", indicator);
+              //Log.Log.Write("  descriptor2:{0:X}", indicator);
               if (x + pointer < buf.Length) // parse descriptor data
               {
                 byte[] data = new byte[x];
@@ -365,7 +364,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     pidInfo.isEAC3Audio = false;
                     break;
                   case 0x03: // audio
-                    //GlobalServiceProvider.Instance.Get<ILogger>().Debug("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
+                    //Log.Write("dvbsections: indicator {1} {0} found",(indicator==0x02?"for video":"for audio"),indicator);
                     pidInfo.isAudio = true;
                     pidInfo.isVideo = false;
                     pidInfo.isTeletext = false;
@@ -381,7 +380,7 @@ namespace TvLibrary.Implementations.DVB.Structures
                     string tmp = "";
                     for (int teller = 0; teller < x; ++teller)
                       tmp += String.Format("{0:x} ", buf[pointer + teller]);
-                    GlobalServiceProvider.Instance.Get<ILogger>().Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
+                    Log.Log.Info("descr2 pid:{0:X} len:{1:X} {2}", pmtEs.ElementaryStreamPID, x, tmp);
 
                     scrambled = true; // if there is a CA Descriptor, the stream is scrambled
 
@@ -562,7 +561,7 @@ namespace TvLibrary.Implementations.DVB.Structures
       {
         byte descriptorTag = cat[pos];
         byte descriptorLen = cat[pos + 1];
-        //GlobalServiceProvider.Instance.Get<ILogger>().Info("tag:0x{0:X} len:{1:X}", descriptorTag, descriptorLen);
+        //Log.Log.Info("tag:0x{0:X} len:{1:X}", descriptorTag, descriptorLen);
         if (descriptorTag == 0x9)
         {
           byte[] data = new byte[2 + descriptorLen];

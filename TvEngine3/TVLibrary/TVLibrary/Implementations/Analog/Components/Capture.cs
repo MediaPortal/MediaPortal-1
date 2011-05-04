@@ -24,7 +24,6 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 using TvLibrary.Implementations.Analog.GraphComponents;
 using TvLibrary.Implementations.DVB;
-using MediaPortal.CoreServices;
 
 namespace TvLibrary.Implementations.Analog.Components
 {
@@ -272,14 +271,14 @@ namespace TvLibrary.Implementations.Analog.Components
     {
       if (!string.IsNullOrEmpty(graph.Capture.Name))
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Using Capture configuration from stored graph");
+        Log.Log.WriteFile("analog: Using Capture configuration from stored graph");
         if (CreateConfigurationBasedFilterInstance(graph, capBuilder, graphBuilder, tuner, crossbar, tvAudio))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Using Capture configuration from stored graph succeeded");
+          Log.Log.WriteFile("analog: Using Capture configuration from stored graph succeeded");
           return true;
         }
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: No stored or invalid graph for Capture component - Trying to detect");
+      Log.Log.WriteFile("analog: No stored or invalid graph for Capture component - Trying to detect");
       return CreateAutomaticFilterInstance(graph, capBuilder, graphBuilder, tuner, crossbar, tvAudio);
     }
 
@@ -311,7 +310,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (tuner.TunerName == "Adaptec USB TvTuner")
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Adaptec USB device detected!");
+          Log.Log.WriteFile("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         }
         else
@@ -320,15 +319,14 @@ namespace TvLibrary.Implementations.Analog.Components
           devices = DeviceSorter.Sort(devices, tuner.TunerName, tvAudio.TvAudioName, crossbar.CrossBarName);
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("analog: AddTvCaptureFiler error in allocating devices collection");
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Log.WriteFile("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter no tvcapture devices found");
+        Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
       }
       //try each video capture filter
@@ -338,14 +336,14 @@ namespace TvLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         if (_badCaptureDevices.Contains(devices[i].Name))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Device: {0} in use?", devices[i].Name);
+          Log.Log.WriteFile("analog: Device: {0} in use?", devices[i].Name);
           continue;
         }
         if (!videoDeviceName.Equals(devices[i].Name) &&
@@ -359,7 +357,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter to graph");
+          Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -367,7 +365,7 @@ namespace TvLibrary.Implementations.Analog.Components
           //cannot add video capture filter to graph, try next one
           if (tmp != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter: {0} to graph", devices[i].Name);
+            Log.Log.WriteFile("analog: cannot add filter: {0} to graph", devices[i].Name);
             graphBuilder.RemoveFilter(tmp);
             Release.ComObject("TvCaptureFilter", tmp);
           }
@@ -383,7 +381,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_videoCaptureDevice);
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter connected video to crossbar successfully");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter connected video to crossbar successfully");
           videoConnected = true;
           filterUsed = true;
         }
@@ -398,7 +396,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           audioConnected = true;
           filterUsed = true;
         }
@@ -412,7 +410,7 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter failed to connect to crossbar");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
           Release.ComObject("capture filter", tmp);
         }
@@ -467,7 +465,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (tuner.TunerName == "Adaptec USB TvTuner")
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Adaptec USB device detected!");
+          Log.Log.WriteFile("analog: Adaptec USB device detected!");
           devices = DsDevice.GetDevicesOfCat(FilterCategory.VideoInputDevice);
         }
         else
@@ -478,12 +476,12 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFiler error in allocating devices collection");
+        Log.Log.WriteFile("analog: AddTvCaptureFiler error in allocating devices collection");
         return false;
       }
       if (devices.Length == 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter no tvcapture devices found");
+        Log.Log.WriteFile("analog: AddTvCaptureFilter no tvcapture devices found");
         return false;
       }
       //try each video capture filter
@@ -493,10 +491,10 @@ namespace TvLibrary.Implementations.Analog.Components
         IBaseFilter tmp;
         if (_badCaptureDevices.Contains(devices[i].Name))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
+          Log.Log.WriteFile("analog: AddTvCaptureFilter bypassing: {0}", devices[i].Name);
           continue;
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
+        Log.Log.WriteFile("analog: AddTvCaptureFilter try:{0} {1}", devices[i].Name, i);
         // if video capture filter is in use, then we can skip it
         if (DevicesInUse.Instance.IsUsed(devices[i]))
           continue;
@@ -508,7 +506,7 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         catch (Exception)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: cannot add filter to graph");
+          Log.Log.WriteFile("analog: cannot add filter to graph");
           continue;
         }
         if (hr != 0)
@@ -533,7 +531,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_videoCaptureDevice);
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter connected video to crossbar successfully");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter connected video to crossbar successfully");
           graph.Capture.Name = _videoCaptureDevice.Name;
           graph.Capture.VideoIn = destinationIndex;
           videoConnected = true;
@@ -549,7 +547,7 @@ namespace TvLibrary.Implementations.Analog.Components
           {
             DevicesInUse.Instance.Add(_audioCaptureDevice);
           }
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter connected audio to crossbar successfully");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter connected audio to crossbar successfully");
           graph.Capture.AudioCaptureName = devices[i].Name;
           graph.Capture.AudioIn = destinationIndex;
           audioConnected = true;
@@ -565,7 +563,7 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           // cannot connect crossbar->video capture filter, remove filter from graph
           // cand continue with the next vieo capture filter
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: AddTvCaptureFilter failed to connect to crossbar");
+          Log.Log.WriteFile("analog: AddTvCaptureFilter failed to connect to crossbar");
           graphBuilder.RemoveFilter(tmp);
           Release.ComObject("capture filter", tmp);
         }
@@ -593,7 +591,7 @@ namespace TvLibrary.Implementations.Analog.Components
     /// <param name="graph">The stored graph</param>
     private void FindVBIPin(Graph graph)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: FindVBIPin on VideoCapture");
+      Log.Log.WriteFile("analog: FindVBIPin on VideoCapture");
       int pinIndex;
       try
       {
@@ -601,7 +599,7 @@ namespace TvLibrary.Implementations.Analog.Components
                                                                     PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: VideoPortVBI pin found");
+          Log.Log.WriteFile("analog: VideoPortVBI pin found");
           Release.ComObject(pinVBI);
           return;
         }
@@ -609,7 +607,7 @@ namespace TvLibrary.Implementations.Analog.Components
                                                                PinDirection.Output, out pinIndex);
         if (pinVBI != null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: VBI pin found");
+          Log.Log.WriteFile("analog: VBI pin found");
           graph.Capture.TeletextPin = pinIndex;
           _pinVBI = pinVBI;
           return;
@@ -620,25 +618,25 @@ namespace TvLibrary.Implementations.Analog.Components
         if (ex.ErrorCode.Equals(unchecked((Int32)0x80070490)))
         {
           // pin on a NVTV capture filter is named VBI..
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
+          Log.Log.WriteFile("analog: getCategory not supported by collection ? ERROR:0x{0:x} :" + ex.Message,
                             ex.ErrorCode);
 
           if (_filterVideoCapture == null)
             return;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: find VBI pin by name");
+          Log.Log.WriteFile("analog: find VBI pin by name");
 
           IPin pinVBI = FilterGraphTools.GetPinByName(_filterVideoCapture, "VBI", PinDirection.Output, out pinIndex);
           if (pinVBI != null)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: pin named VBI found");
+            Log.Log.WriteFile("analog: pin named VBI found");
             graph.Capture.TeletextPin = pinIndex;
             _pinVBI = pinVBI;
             return;
           }
         }
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: Error in searching vbi pin - Skipping error");
+        Log.Log.WriteFile("analog: Error in searching vbi pin - Skipping error");
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("analog: FindVBIPin on VideoCapture no vbi pin found");
+      Log.Log.WriteFile("analog: FindVBIPin on VideoCapture no vbi pin found");
     }
 
     /// <summary>
@@ -819,7 +817,7 @@ namespace TvLibrary.Implementations.Analog.Components
         if (hr == 0)
         {
           _currentVideoFormat = newVideoFormat;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set new video format to: {0}", _currentVideoFormat);
+          Log.Log.Info("Set new video format to: {0}", _currentVideoFormat);
         }
       }
     }
@@ -836,7 +834,7 @@ namespace TvLibrary.Implementations.Analog.Components
         {
           VideoQuality quality = map[prop];
           _videoProcAmp.Set(prop, quality.Value, quality.IsManual ? VideoProcAmpFlags.Manual : VideoProcAmpFlags.Auto);
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set VideoProcAmp - {0} to value: {1}", prop, quality.Value);
+          Log.Log.Info("Set VideoProcAmp - {0} to value: {1}", prop, quality.Value);
         }
       }
     }
@@ -853,7 +851,7 @@ namespace TvLibrary.Implementations.Analog.Components
       {
         if (SetFrameRate((long)(10000000d / frameRate)))
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("Set Framerate to {0} succeeded", frameRate);
+          Log.Log.Info("Set Framerate to {0} succeeded", frameRate);
           _frameRate = frameRate;
         }
         BitmapInfoHeader bmiHeader = GetFrameSize();
@@ -863,7 +861,7 @@ namespace TvLibrary.Implementations.Analog.Components
           bmiHeader.Height = imageHeight;
           if (SetFrameSize(bmiHeader))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("Set Framesize to {0}x{1} succeeded", imageWidth, imageHeight);
+            Log.Log.Info("Set Framesize to {0}x{1} succeeded", imageWidth, imageHeight);
             _imageWidth = imageWidth;
             _imageHeight = imageHeight;
           }
@@ -888,7 +886,7 @@ namespace TvLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameRate: Failed to get the video format - {0}", hr);
+            Log.Log.Info("SetFrameRate: Failed to get the video format - {0}", hr);
             return false;
           }
           // The formatPtr member points to different structures
@@ -924,12 +922,12 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           else if (mediaType.formatType == FormatType.None)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameRate: FAILED no format returned");
+            Log.Log.Info("SetFrameRate: FAILED no format returned");
             return false;
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameRate:  FAILED unknown fmt");
+            Log.Log.Info("SetFrameRate:  FAILED unknown fmt");
             return false;
           }
           // PtrToStructure copies the data so we need to copy it back
@@ -938,7 +936,7 @@ namespace TvLibrary.Implementations.Analog.Components
           hr = _streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameRate:  FAILED to set:{0}", hr);
+            Log.Log.Info("SetFrameRate:  FAILED to set:{0}", hr);
             return false;
           }
         }
@@ -950,7 +948,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameRate:  FAILED ");
+        Log.Log.Info("SetFrameRate:  FAILED ");
       }
       return false;
     }
@@ -972,7 +970,7 @@ namespace TvLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameSize: Failed to get the video format - {0}", hr);
+            Log.Log.Info("SetFrameSize: Failed to get the video format - {0}", hr);
             return false;
           }
           // The formatPtr member points to different structures
@@ -1008,12 +1006,12 @@ namespace TvLibrary.Implementations.Analog.Components
           }
           else if (mediaType.formatType == FormatType.None)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameSize: FAILED no format returned");
+            Log.Log.Info("SetFrameSize: FAILED no format returned");
             return false;
           }
           else
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameSize:  FAILED unknown fmt");
+            Log.Log.Info("SetFrameSize:  FAILED unknown fmt");
             return false;
           }
           // PtrToStructure copies the data so we need to copy it back
@@ -1022,7 +1020,7 @@ namespace TvLibrary.Implementations.Analog.Components
           hr = _streamConfig.SetFormat(mediaType);
           if (hr != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameSize:  FAILED to set:{0}", hr);
+            Log.Log.Info("SetFrameSize:  FAILED to set:{0}", hr);
             return false;
           }
         }
@@ -1034,7 +1032,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("SetFrameSize:  FAILED ");
+        Log.Log.Info("SetFrameSize:  FAILED ");
       }
       return false;
     }
@@ -1057,7 +1055,7 @@ namespace TvLibrary.Implementations.Analog.Components
           int hr = _streamConfig.GetFormat(out mediaType);
           if (hr != 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Info("GetFrameSize: FAILED to get format - {0}", hr);
+            Log.Log.Info("GetFrameSize: FAILED to get format - {0}", hr);
             Marshal.ThrowExceptionForHR(hr);
             return bmiHeader;
           }
@@ -1095,7 +1093,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
+        Log.Log.Info("  VideoCaptureDevice.getStreamConfigSetting() FAILED ");
       }
       return bmiHeader;
     }

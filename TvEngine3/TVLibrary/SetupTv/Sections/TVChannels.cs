@@ -26,7 +26,7 @@ using SetupTv.Dialogs;
 using TvControl;
 using Gentle.Framework;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using MediaPortal.UserInterface.Controls;
 using System.Threading;

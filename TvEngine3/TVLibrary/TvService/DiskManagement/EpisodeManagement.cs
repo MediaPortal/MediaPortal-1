@@ -21,7 +21,7 @@
 using System;
 using System.Collections.Generic;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -59,7 +59,7 @@ namespace TvService
 
     public void OnScheduleEnded(string recordingFilename, Schedule recording, TvDatabase.Program program)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
+      Log.Write("diskmanagement: recording {0} ended. type:{1} max episodes:{2}",
                 program.Title, (ScheduleRecordingType)recording.ScheduleType, recording.MaxAirings);
 
       CheckEpsiodesForRecording(recording, program);
@@ -82,7 +82,7 @@ namespace TvService
         Recording oldestEpisode = GetOldestEpisode(episodes);
         if (oldestEpisode == null)
           return;
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("diskmanagement:   Delete episode {0} {1} {2} {3}",
+        Log.Write("diskmanagement:   Delete episode {0} {1} {2} {3}",
                   oldestEpisode.ReferencedChannel(),
                   oldestEpisode.Title,
                   oldestEpisode.StartTime.ToLongDateString(),

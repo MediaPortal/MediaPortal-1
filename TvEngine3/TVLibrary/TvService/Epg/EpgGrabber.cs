@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using TvControl;
 using TvDatabase;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvLibrary.Interfaces;
 using System.Threading;
 
@@ -101,7 +101,7 @@ namespace TvService
       TvBusinessLayer layer = new TvBusinessLayer();
       if (layer.GetSetting("idleEPGGrabberEnabled", "yes").Value != "yes")
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Epg("EPG: grabber disabled");
+        Log.Epg("EPG: grabber disabled");
         return;
       }
       if (_isRunning)
@@ -119,7 +119,7 @@ namespace TvService
       {
         return;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
+      Log.Epg("EPG: grabber initialized for {0} transponders..", TransponderList.Instance.Count);
       _isRunning = true;
       IList<Card> cards = Card.ListAll();
 
@@ -149,7 +149,7 @@ namespace TvService
         }
         catch (Exception e)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name,
+          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name,
                     card.ReferencedServer().HostName);
         }
 
@@ -170,7 +170,7 @@ namespace TvService
       {
         return;
       }
-      GlobalServiceProvider.Instance.Get<ILogger>().Epg("EPG: grabber stopped..");
+      Log.Epg("EPG: grabber stopped..");
       _epgTimer.Enabled = false;
       _isRunning = false;
       foreach (EpgCard epgCard in _epgCards)
@@ -231,7 +231,7 @@ namespace TvService
           return;
         foreach (EpgCard card in _epgCards)
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
+          //Log.Epg("card:{0} grabbing:{1}", card.Card.IdCard, card.IsGrabbing);
           if (!_isRunning)
             return;
           if (card.IsGrabbing)
@@ -243,7 +243,7 @@ namespace TvService
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+        Log.Write(ex);
       }
       finally
       {
@@ -290,13 +290,13 @@ namespace TvService
           TimeSpan ts = DateTime.Now - TransponderList.Instance.CurrentTransponder.CurrentChannel.LastGrabTime;
           if (ts.TotalMinutes < _epgReGrabAfter)
           {
-            //GlobalServiceProvider.Instance.Get<ILogger>().Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
+            //Log.Epg("Skip card:#{0} transponder #{1}/{2} channel: {3} - Less than regrab time",
             //         epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count, ch.DisplayName);
             continue; // less then 2 hrs ago
           }
           if (epgCard.Card.canTuneTvChannel(ch.IdChannel))
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
+            Log.Epg("Grab for card:#{0} transponder #{1}/{2} channel: {3}",
                     epgCard.Card.IdCard, TransponderList.Instance.CurrentIndex + 1, TransponderList.Instance.Count,
                     ch.DisplayName);
             //start grabbing

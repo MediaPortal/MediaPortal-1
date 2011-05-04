@@ -21,7 +21,7 @@
 using System;
 using System.IO;
 using System.Threading;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 
 namespace TvService
 {
@@ -84,15 +84,15 @@ namespace TvService
     {
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
+        Log.Write(@"card: delete timeshift files {0}\{1}", _folder, _fileName);
         string[] files = Directory.GetFiles(_folder);
         for (int i = 0; i < files.Length; ++i)
         {
           if (files[i].IndexOf(_fileName) >= 0)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card:   trying to delete {0}", files[i]);
+            Log.Write("card:   trying to delete {0}", files[i]);
             File.Delete(files[i]);
-            GlobalServiceProvider.Instance.Get<ILogger>().Debug("card:   deleted file {0}", files[i]);
+            Log.Write("card:   deleted file {0}", files[i]);
           }
         }
       }

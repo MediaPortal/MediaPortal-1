@@ -29,7 +29,7 @@ using System.Windows.Forms;
 using SetupTv.Sections.WebEPGConfig;
 using ChannelMap = MediaPortal.WebEPG.Config.ChannelMap;
 using MediaPortal.WebEPG.Config;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvDatabase;
 using Gentle.Framework;
 using System.Globalization;
@@ -133,22 +133,22 @@ namespace SetupTv.Sections.WebEPGConfig
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Failed to load groups {0}", e.Message);
+        Log.Error("Failed to load groups {0}", e.Message);
       }
     }
 
     public void DoImportChannels()
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Button: Import");
+      Log.Info("WebEPG Config: Button: Import");
       try
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Importing from TV Server Database");
+        Log.Info("WebEPG Config: Importing from TV Server Database");
         getTvServerChannels();
         RedrawList(null);
       }
       catch (Exception ex)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("WebEPG Config: Import failed - {0}", ex.Message);
+        Log.Error("WebEPG Config: Import failed - {0}", ex.Message);
         MessageBox.Show("An error occured while trying to import channels. See log for more details.", "Import Error",
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
       }
@@ -417,7 +417,7 @@ namespace SetupTv.Sections.WebEPGConfig
         if (info != null)
         {
           tbChannelName.Text = info.FullName;
-          GlobalServiceProvider.Instance.Get<ILogger>().Info("WebEPG Config: Selection: {0}", info.FullName);
+          Log.Info("WebEPG Config: Selection: {0}", info.FullName);
 
           GrabberConfigInfo gInfo = (GrabberConfigInfo)info.GrabberList[grabberId];
           if (gInfo != null)

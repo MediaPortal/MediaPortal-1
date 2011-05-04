@@ -31,7 +31,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 using System.Threading;
 using TvLibrary.Interfaces;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using ThreadState = System.Threading.ThreadState;
 
 namespace TvControl
@@ -169,12 +169,12 @@ namespace TvControl
       catch (System.Threading.ThreadAbortException)
       {
         benchClock.Stop();
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("RemoteControl - timed out after {0} msec", benchClock.ElapsedMilliseconds);
+        Log.Info("RemoteControl - timed out after {0} msec", benchClock.ElapsedMilliseconds);
         Thread.ResetAbort();
       }
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("RemoteControl - RefreshRemotingConnectionStatus exception : {0} {1} {2}", e.Message, e.Source,
+        Log.Info("RemoteControl - RefreshRemotingConnectionStatus exception : {0} {1} {2}", e.Message, e.Source,
                  e.StackTrace);
         //ignore
       }
@@ -192,7 +192,7 @@ namespace TvControl
         {
           if (!_firstFailure)
           {
-            //GlobalServiceProvider.Instance.Get<ILogger>().Info("RemoteControl - Disconnected st : {0}", Environment.StackTrace);
+            Log.Info("RemoteControl - Disconnected st : {0}", Environment.StackTrace);
             OnRemotingDisconnected();
           }
           _firstFailure = false;
@@ -203,7 +203,7 @@ namespace TvControl
         _firstFailure = true;
         if (OnRemotingConnected != null)
         {
-          //GlobalServiceProvider.Instance.Get<ILogger>().Info("RemoteControl - Connected");
+          Log.Info("RemoteControl - Connected");
           OnRemotingConnected();
         }
       }
@@ -255,7 +255,7 @@ namespace TvControl
       {
         if (_callbackChannel == null)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}",
+          Log.Debug("RemoteControl: RegisterChannel first called in Domain {0} for thread {1} with id {2}",
                     AppDomain.CurrentDomain.FriendlyName, Thread.CurrentThread.Name,
                     Thread.CurrentThread.ManagedThreadId);
 
@@ -278,7 +278,7 @@ namespace TvControl
       catch (System.Net.Sockets.SocketException) {}
       catch (Exception e)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error(e.ToString());
+        Log.Error(e.ToString());
       }
     }
 
@@ -323,7 +323,7 @@ namespace TvControl
       finally
       {
         benchClock.Stop();
-        GlobalServiceProvider.Instance.Get<ILogger>().Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
+        Log.Debug("TCP connect took : {0}", benchClock.ElapsedMilliseconds);
       }
     }
 
@@ -374,7 +374,7 @@ namespace TvControl
         {
           try
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
+            Log.Error("RemoteControl: Timeout getting server Instance; retrying in 5 seconds - {0}", exrt.Message);
             // maybe the DB wasn't up yet - 2nd try...
             Thread.Sleep(5000);
 
@@ -399,12 +399,12 @@ namespace TvControl
             // didn't help - do nothing
           catch (Exception ex)
           {
-            GlobalServiceProvider.Instance.Get<ILogger>().Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
+            Log.Error("RemoteControl: Error getting server Instance - {0}", ex.Message);
           }
         }
         catch (Exception exg)
         {
-          GlobalServiceProvider.Instance.Get<ILogger>().Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
+          Log.Error("RemoteControl: Error getting server Instance - {0}", exg.Message);
         }
 
         return null;

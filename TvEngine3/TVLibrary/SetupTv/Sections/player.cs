@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 using DirectShowLib;
 //using DShowNET.TsFileSink;
 using TvLibrary;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using System.Windows.Forms;
 
 namespace SetupTv.Sections
@@ -44,29 +44,29 @@ namespace SetupTv.Sections
     public bool Play(string fileName, Form form)
     {
       _form = form;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("play:{0}", fileName);
+      Log.WriteFile("play:{0}", fileName);
       _graphBuilder = (IFilterGraph2)new FilterGraph();
       _rotEntry = new DsROTEntry(_graphBuilder);
 
       TsReader reader = new TsReader();
       _tsReader = (IBaseFilter)reader;
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("TSReaderPlayer:add TsReader to graph");
+      Log.Info("TSReaderPlayer:add TsReader to graph");
       _graphBuilder.AddFilter(_tsReader, "TsReader");
 
       #region load file in TsReader
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("load file in Ts");
+      Log.WriteFile("load file in Ts");
       IFileSourceFilter interfaceFile = (IFileSourceFilter)_tsReader;
       if (interfaceFile == null)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSReaderPlayer:Failed to get IFileSourceFilter");
+        Log.WriteFile("TSReaderPlayer:Failed to get IFileSourceFilter");
         return false;
       }
       int hr = interfaceFile.Load(fileName, null);
 
       if (hr != 0)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Info("TSReaderPlayer:Failed to load file");
+        Log.WriteFile("TSReaderPlayer:Failed to load file");
         return false;
       }
 
@@ -74,7 +74,7 @@ namespace SetupTv.Sections
 
       #region render pin
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("TSReaderPlayer:render TsReader outputs");
+      Log.Info("TSReaderPlayer:render TsReader outputs");
       IEnumPins enumPins;
       _tsReader.EnumPins(out enumPins);
       IPin[] pins = new IPin[2];
@@ -109,10 +109,10 @@ namespace SetupTv.Sections
                                     form.ClientRectangle.Height);
       }
 
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("run graph");
+      Log.WriteFile("run graph");
       _mediaCtrl = (IMediaControl)_graphBuilder;
       hr = _mediaCtrl.Run();
-      GlobalServiceProvider.Instance.Get<ILogger>().Info("TSReaderPlayer:running:{0:X}", hr);
+      Log.WriteFile("TSReaderPlayer:running:{0:X}", hr);
 
       return true;
     }

@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
-using MediaPortal.CoreServices;
+using TvLibrary.Log;
 using TvDatabase;
 using MediaPortal.Utils.Time;
 using MediaPortal.Utils.Web;
@@ -380,7 +380,7 @@ namespace MediaPortal.WebEPG.Parser
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Parsing error {0} : {1}", tag, element);
+        Log.Error("Parsing error {0} : {1}", tag, element);
       }
     }
 
@@ -658,7 +658,7 @@ namespace MediaPortal.WebEPG.Parser
       }
       catch (Exception)
       {
-        GlobalServiceProvider.Instance.Get<ILogger>().Error("Parsing error {0} : {1}", tag, element);
+        Log.Error("Parsing error {0} : {1}", tag, element);
       }
     }
 

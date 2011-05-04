@@ -19,40 +19,75 @@
 #endregion
 
 using System;
-using MediaPortal.CoreServices;
+using MediaPortal.Services;
 
 namespace MediaPortal.ServiceImplementations
 {
   public class Log
   {
+    public static void SetConfigurationMode()
+    {
+      GlobalServiceProvider.Get<ILog>().SetConfigurationMode();
+    }
+
+    public static void BackupLogFiles()
+    {
+      GlobalServiceProvider.Get<ILog>().BackupLogFiles();
+    }
+
+    public static void BackupLogFile(LogType logType)
+    {
+      GlobalServiceProvider.Get<ILog>().BackupLogFile(logType);
+    }
+
     public static void Info(string format, params object[] arg)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Info(format, arg);
+      GlobalServiceProvider.Get<ILog>().Info(format, arg);
     }
-    
+
+    public static void Info(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Info(type, format, arg);
+    }
+
     public static void Error(string format, params object[] arg)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Error(format, arg);
+      GlobalServiceProvider.Get<ILog>().Error(format, arg);
     }
 
     public static void Error(Exception ex)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Error(ex);
+      GlobalServiceProvider.Get<ILog>().Error(ex);
+    }
+
+    public static void Error(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Error(type, format, arg);
     }
 
     public static void Warn(string format, params object[] arg)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Warn(format, arg);
+      GlobalServiceProvider.Get<ILog>().Warn(format, arg);
+    }
+
+    public static void Warn(LogType type, string format, params object[] arg)
+    {
+      GlobalServiceProvider.Get<ILog>().Warn(type, format, arg);
     }
 
     public static void Debug(string format, params object[] arg)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Debug(format, arg);
+      GlobalServiceProvider.Get<ILog>().Debug(format, arg);
     }
 
-    public static void SetLogLevel(LogLevel logLevel)
+    public static void Debug(LogType type, string format, params object[] arg)
     {
-      GlobalServiceProvider.Instance.Get<ILogger>().Level = logLevel;
+      GlobalServiceProvider.Get<ILog>().Debug(type, format, arg);
+    }
+
+    public static void SetLogLevel(Level logLevel)
+    {
+      GlobalServiceProvider.Get<ILog>().SetLogLevel(logLevel);
     }
   }
 }
