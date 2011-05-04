@@ -3186,7 +3186,7 @@ namespace TvDatabase
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (ChannelMap));
       SqlStatement origStmt = sb.GetStatement(true);
-      string sql = "select cm.* from channelmap cm where cm.idChannel =" +
+      string sql = "select cm.* from ChannelMap cm where cm.idChannel =" +
                    dbChannel.IdChannel + " and cm.idCard=" + card.IdCard + (forEpg ? "" : " and cm.epgOnly=0");
       SqlStatement statement = new SqlStatement(StatementType.Select, origStmt.Command, sql,
                                                 typeof (Channel));
