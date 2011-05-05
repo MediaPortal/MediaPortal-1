@@ -1893,6 +1893,14 @@ namespace MediaPortal.GUI.Music
 
     private void GetTrackTags()
     {
+      bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName);
+      if (isInternetStream && _usingBassEngine)
+      {
+        NextTrackTag = null;
+        CurrentTrackTag = BassMusicPlayer.Player.GetStreamTags();
+        return;
+      }
+
       PlayListItem currentItem = PlaylistPlayer.GetCurrentItem();
       PlayListItem nextItem = PlaylistPlayer.GetNextItem();
       if (currentItem != null)
