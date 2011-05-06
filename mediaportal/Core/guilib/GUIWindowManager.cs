@@ -896,6 +896,12 @@ namespace MediaPortal.GUI.Library
       if (isFullscreen && (!Player.g_Player.Playing || (!Player.g_Player.HasVideo && !Player.g_Player.HasViz)))
         ShowPreviousWindow();
 
+      // do not go back to music now playing screen if music is not playing
+      if (_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW && ! (g_Player.Playing && g_Player.IsMusic))
+      {
+        ShowPreviousWindow();
+      }
+
       if (_previousActiveWindowId != ActiveWindow)
         ActivateWindow(_previousActiveWindowId, false, true, null);
     }
