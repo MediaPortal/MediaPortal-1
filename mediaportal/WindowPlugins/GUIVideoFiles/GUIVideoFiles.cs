@@ -331,7 +331,7 @@ namespace MediaPortal.GUI.Video
       if (_fileMenuPinCode != string.Empty)
       {
         string userCode = string.Empty;
-        if (GetUserInputString(ref userCode) && userCode == _fileMenuPinCode)
+        if (GetUserPasswordString(ref userCode) && userCode == _fileMenuPinCode)
         {
           OnShowFileMenu(preselectDelete);
         }
@@ -2328,6 +2328,25 @@ namespace MediaPortal.GUI.Video
       }
       keyboard.IsSearchKeyboard = true;
       keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
       keyboard.Text = sString;
       keyboard.DoModal(GetID); // show it...
       if (keyboard.IsConfirmed)
