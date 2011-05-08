@@ -300,7 +300,7 @@ namespace TvPlugin
 
       SetLastChannel();
 
-      if (_autoTurnOnRadio)
+      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
       {
         Play(facadeLayout.SelectedListItem);
       }
