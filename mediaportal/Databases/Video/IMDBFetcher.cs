@@ -718,7 +718,8 @@ namespace MediaPortal.Video.Database
 
       for (int index = 0; index < _imdb.Count; ++index)
       {
-        int distance = Levenshtein.Match(name, _imdb[index].Title);
+        name = _imdb.GetSearchString(name);
+        int distance = Levenshtein.Match(name, _imdb[index].Title.ToLower());
 
         if (distance == matchingDistance && matchingDistance != int.MaxValue)
         {
