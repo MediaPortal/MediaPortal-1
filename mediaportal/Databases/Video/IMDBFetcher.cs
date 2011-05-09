@@ -304,7 +304,7 @@ namespace MediaPortal.Video.Database
             line1 = GUILocalizeStrings.Get(921) + ": Fanart"; // **Progress bar message fanart start
             OnProgress(line1, _url.Title, string.Empty, percent);
 
-            if (_movieDetails.FanartURL == string.Empty)
+            if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
                 (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);

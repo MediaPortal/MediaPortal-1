@@ -91,7 +91,7 @@ namespace MediaPortal.Util
 
       filename = Path.GetFileNameWithoutExtension(filename);
       filename = Utils.RemoveTrailingSlash(filename);
-
+      
       if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
       {
         localFile = localFile.Replace("file://", "");
@@ -114,7 +114,16 @@ namespace MediaPortal.Util
         //
         if (!isUrl)
         {
-          File.Copy(localFile, dbFile, true);
+          try
+          {
+            if (!localFile.Equals(dbFile, StringComparison.OrdinalIgnoreCase) && File.Exists(localFile))
+              File.Copy(localFile, dbFile, true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+          }
+          
         }
         else
         {
@@ -137,17 +146,31 @@ namespace MediaPortal.Util
             string fileclean = CleanFilename(filename);
             _fileMovie = SetFanArtFileName(fileclean, index);
 
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
           else // DVD Video
           {
             SetDvdMovieFile(path, index);
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
         }
@@ -258,7 +281,7 @@ namespace MediaPortal.Util
                   string fileclean = CleanFilename(filename);
                   _fileMovie = SetFanArtFileName(fileclean, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
                   // DVD Video
@@ -266,7 +289,7 @@ namespace MediaPortal.Util
                 {
                   SetDvdMovieFile(path, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
               }
@@ -293,7 +316,7 @@ namespace MediaPortal.Util
                     string fileclean = CleanFilename(filename);
                     _fileMovie = SetFanArtFileName(fileclean, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                     // DVD video
@@ -301,7 +324,7 @@ namespace MediaPortal.Util
                   {
                     SetDvdMovieFile(path, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                 }
@@ -357,7 +380,7 @@ namespace MediaPortal.Util
               string fileclean = CleanFilename(filename);
               _fileMovie = SetFanArtFileName(fileclean, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
               // DVD Video
@@ -365,7 +388,7 @@ namespace MediaPortal.Util
             {
               SetDvdMovieFile(path, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
           }
