@@ -2173,6 +2173,10 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
+        else if (Util.Utils.IsNetwork(item.Path)) // Process network root with drive letter
+        {
+          dlg.AddLocalizedString(1204); // Play All in selected folder
+        }
       }
       if (!_mapSettings.Stack)
       {
