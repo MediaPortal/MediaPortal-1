@@ -365,6 +365,14 @@ namespace MediaPortal.GUI.Video
         {
           movieDetails.SetPlayProperties();
         }
+        else
+        {
+          GUIListItem item = new GUIListItem();
+          item.IsFolder = false;
+          item.Path = fileName;
+          Util.Utils.SetThumbnails(ref item);
+          GUIPropertyManager.SetProperty("#Play.Current.Thumb", item.ThumbnailImage);
+        }
       }
       else if (g_Player.IsTV && g_Player.IsTimeShifting)
       {
