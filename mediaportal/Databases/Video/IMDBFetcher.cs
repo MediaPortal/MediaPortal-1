@@ -1363,9 +1363,6 @@ namespace MediaPortal.Video.Database
       {
         if (File.Exists(file))
         {
-          PerformanceCounter ramCounter = new PerformanceCounter("Memory", "Available MBytes");
-          string freeMem = ramCounter.NextValue() + "Mb";
-          Log.Info("Adding file:{0}  **RAM free: {1}**", file, freeMem);
           id = VideoDatabase.AddMovieFile(file);
 
           VirtualDirectory dir = new VirtualDirectory();
