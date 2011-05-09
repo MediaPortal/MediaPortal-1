@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using CSScriptLibrary;
 using MediaPortal.Configuration;
@@ -411,64 +412,15 @@ namespace MediaPortal.Video.Database
     /// <summary>
     /// make a searchstring out of the filename
     /// </summary>
-    private string GetSearchString(string strMovie)
+    public string GetSearchString(string strMovie)
     {
-      string strURL = strMovie;
-      strURL = strURL.ToLower();
-      strURL = strURL.Trim();
-
-      RemoveAllAfter(ref strURL, "divx");
-      RemoveAllAfter(ref strURL, "xvid");
-      RemoveAllAfter(ref strURL, "dvd");
-      RemoveAllAfter(ref strURL, " dvdrip");
-      RemoveAllAfter(ref strURL, "svcd");
-      RemoveAllAfter(ref strURL, "mvcd");
-      RemoveAllAfter(ref strURL, "vcd");
-      RemoveAllAfter(ref strURL, "cd");
-      RemoveAllAfter(ref strURL, "ac3");
-      RemoveAllAfter(ref strURL, "ogg");
-      RemoveAllAfter(ref strURL, "ogm");
-      RemoveAllAfter(ref strURL, "internal");
-      RemoveAllAfter(ref strURL, "fragment");
-      RemoveAllAfter(ref strURL, "proper");
-      RemoveAllAfter(ref strURL, "limited");
-      RemoveAllAfter(ref strURL, "rerip");
-      RemoveAllAfter(ref strURL, "bluray");
-      RemoveAllAfter(ref strURL, "brrip");
-      RemoveAllAfter(ref strURL, "hddvd");
-      RemoveAllAfter(ref strURL, "x264");
-      RemoveAllAfter(ref strURL, "mbluray");
-      RemoveAllAfter(ref strURL, "1080p");
-      RemoveAllAfter(ref strURL, "720p");
-      RemoveAllAfter(ref strURL, "480p");
-      RemoveAllAfter(ref strURL, "r5");
-
-      RemoveAllAfter(ref strURL, "+divx");
-      RemoveAllAfter(ref strURL, "+xvid");
-      RemoveAllAfter(ref strURL, "+dvd");
-      RemoveAllAfter(ref strURL, "+dvdrip");
-      RemoveAllAfter(ref strURL, "+svcd");
-      RemoveAllAfter(ref strURL, "+mvcd");
-      RemoveAllAfter(ref strURL, "+vcd");
-      RemoveAllAfter(ref strURL, "+cd");
-      RemoveAllAfter(ref strURL, "+ac3");
-      RemoveAllAfter(ref strURL, "+ogg");
-      RemoveAllAfter(ref strURL, "+ogm");
-      RemoveAllAfter(ref strURL, "+internal");
-      RemoveAllAfter(ref strURL, "+fragment");
-      RemoveAllAfter(ref strURL, "+proper");
-      RemoveAllAfter(ref strURL, "+limited");
-      RemoveAllAfter(ref strURL, "+rerip");
-      RemoveAllAfter(ref strURL, "+bluray");
-      RemoveAllAfter(ref strURL, "+brrip");
-      RemoveAllAfter(ref strURL, "+hddvd");
-      RemoveAllAfter(ref strURL, "+x264");
-      RemoveAllAfter(ref strURL, "+mbluray");
-      RemoveAllAfter(ref strURL, "+1080p");
-      RemoveAllAfter(ref strURL, "+720p");
-      RemoveAllAfter(ref strURL, "+480p");
-      RemoveAllAfter(ref strURL, "+r5");
-      return strURL;
+      string strUrl = strMovie;
+      strUrl = strUrl.Trim();
+      Regex rx = new Regex(@"(([\(\{\[]|\b)((576|720|1080)[pi]|dir(ectors )?cut|dvd([r59]|rip|scr(eener)?)|(avc)?hd|wmv|ntsc|pal|mpeg|dsr|r[1-5]|bd[59]|dts|ac3|blu(-)?ray|[hp]dtv|stv|hddvd|xvid|divx|x264|dxva|(?-i)FEST[Ii]VAL|L[iI]M[iI]TED|[WF]S|PROPER|REPACK|RER[Ii]P|REAL|RETA[Ii]L|EXTENDED|REMASTERED|UNRATED|CHRONO|THEATR[Ii]CAL|DC|SE|UNCUT|[Ii]NTERNAL|V\d{1}|BR[Rr]ip|[DS]UBBED)([\]\)\}]|\b)(-[^\s]+$)?)", RegexOptions.IgnoreCase);
+      strUrl = rx.Replace(strUrl, "")
+                 .Replace(".", " ")
+                 .Replace("_", " ").Trim();
+      return strUrl;
     }
 
     #endregion
@@ -681,65 +633,52 @@ namespace MediaPortal.Video.Database
           return;
         }
         parser.resetPosition();
-        // while (parser.skipToEndOfNoCase("found the following results"))
-        int exact = 0;
-        int popular = 0;
-        try
+        
+        while (parser.skipToEndOfNoCase("Exact Matches"))
         {
-          exact = strBody.LastIndexOf("Exact Matches");
-        }
-        catch (Exception) {}
-        try
-        {
-          popular = strBody.LastIndexOf("Popular Names");
-        }
-        catch (Exception) {}
-        if ((exact > 0) & (exact < popular) & (popular >= 0) | (popular < 0))
-        {
-          while (parser.skipToEndOfNoCase("Exact Matches"))
+          string url = string.Empty;
+          string name = string.Empty;
+          //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
+          if (parser.skipToStartOf("href=\"/name/"))
           {
-            string url = string.Empty;
-            string name = string.Empty;
-            //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
-            if (parser.skipToStartOf("href=\"/name/"))
-            {
-              parser.skipToEndOf("href=\"");
-              parser.extractTo("\"", ref url);
-              parser.skipToEndOf(">");
-              parser.extractTo("</a>", ref name);
-              name = new HTMLUtil().ConvertHTMLToAnsi(name);
-              name = Util.Utils.RemoveParenthesis(name).Trim();
-              IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
-              _elements.Add(newUrl);
-            }
-            else
-            {
-              parser.skipToEndOfNoCase("</a>");
-            }
+            parser.skipToEndOf("href=\"");
+            parser.extractTo("\"", ref url);
+            parser.skipToEndOf("<br><a");
+            parser.skipToEndOf(">");
+            parser.extractTo("</a>", ref name);
+            name = new HTMLUtil().ConvertHTMLToAnsi(name);
+            name = Util.Utils.RemoveParenthesis(name).Trim();
+            IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
+            _elements.Add(newUrl);
+          }
+          else
+          {
+            parser.skipToEndOfNoCase("</a>");
           }
         }
-        else
+        // Maybe more actors with the similar name
+        parser.resetPosition();
+        
+        while (parser.skipToEndOfNoCase("Popular Names"))
         {
-          while (parser.skipToEndOfNoCase("Popular Names"))
+          string url = string.Empty;
+          string name = string.Empty;
+          //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
+          if (parser.skipToStartOf("href=\"/name/"))
           {
-            string url = string.Empty;
-            string name = string.Empty;
-            //<a href="/name/nm0000246/" onclick="set_args('nm0000246', 1)">Bruce Willis</a>
-            if (parser.skipToStartOf("href=\"/name/"))
-            {
-              parser.skipToEndOf("href=\"");
-              parser.extractTo("\"", ref url);
-              parser.skipToEndOf(">");
-              parser.extractTo("</a>", ref name);
-              name = new HTMLUtil().ConvertHTMLToAnsi(name);
-              name = Util.Utils.RemoveParenthesis(name).Trim();
-              IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
-              _elements.Add(newUrl);
-            }
-            else
-            {
-              parser.skipToEndOfNoCase("</a>");
-            }
+            parser.skipToEndOf("href=\"");
+            parser.extractTo("\"", ref url);
+            parser.skipToEndOf("<br><a");
+            parser.skipToEndOf(">");
+            parser.extractTo("</a>", ref name);
+            name = new HTMLUtil().ConvertHTMLToAnsi(name);
+            name = Util.Utils.RemoveParenthesis(name).Trim();
+            IMDBUrl newUrl = new IMDBUrl("http://akas.imdb.com" + url, name, "IMDB");
+            _elements.Add(newUrl);
+          }
+          else
+          {
+            parser.skipToEndOfNoCase("</a>");
           }
         }
       }
@@ -811,9 +750,23 @@ namespace MediaPortal.Video.Database
             (parser.extractTo("<", ref value)) &&
             (parser.skipToEndOf("year=")) &&
             (parser.extractTo("\"", ref value2)))
+          
         {
           actor.DateOfBirth = value + " " + value2;
         }
+        // Death date
+        if ((parser.skipToEndOf(">Died:</h4>")) &&
+            (parser.skipToEndOf("deaths\">")) &&
+            (parser.extractTo("<", ref value)) &&
+            (parser.skipToEndOf("death_date=")) &&
+            (parser.extractTo("\"", ref value2)))
+        {
+          if (actor.DateOfBirth == string.Empty)
+            actor.DateOfBirth = "?";
+          actor.DateOfBirth += " ~ " + value + " " + value2;
+        }
+
+        parser.resetPosition();
         // Birth place
         if ((parser.skipToEndOf("birth_place=")) &&
             (parser.skipToEndOf(">")) &&
