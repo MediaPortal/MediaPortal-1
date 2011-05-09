@@ -213,14 +213,40 @@ namespace MediaPortal.Video.Database
           // Covers - If cover is not empty don't change it, else download new
           //
           // Local cover check (every movie is in it's own folder), lookin' for folder.jpg
+          // or look for local cover named as movie file
+          string localCover = string.Empty; // local cover named as movie filename
+          string movieFile = string.Empty;
+          
+          // Find movie file(s)
+          ArrayList files = new ArrayList();
+          VideoDatabase.GetFiles(_movieDetails.ID, ref files);
+          
+          // Remove stack endings for video file(CD, Part...)
+          if (files.Count > 0)
+          {
+            movieFile = (string)files[0];
+            Util.Utils.RemoveStackEndings(ref movieFile);
+          }
+          
+          localCover = moviePath + @"\" + Util.Utils.GetFilename(movieFile, true) + ".jpg";
+          
+          // Every movie in it's own folder?
           if (folderTitle)
           {
-            string localCover = moviePath + @"\folder.jpg";
+            localCover = moviePath + @"\folder.jpg";
             if (File.Exists(localCover))
             {
               _movieDetails.ThumbURL = "file://" + localCover;
             }
           }
+          // Try local movefilename.jpg
+          else if (File.Exists(localCover))
+          {
+            _movieDetails.ThumbURL = "file://" + localCover;
+          }
+          //
+          // No local or scraper thumb
+          //
           if (_movieDetails.ThumbURL == string.Empty)
           {
             line1 = GUILocalizeStrings.Get(928) + ": IMP Awards"; // **Progress bar message cover search IMPAw start
