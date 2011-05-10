@@ -92,8 +92,8 @@ namespace MediaPortal.Dialogs
     public override void PageDestroy()
     {
       _timeOutInSeconds = 0;
-      RestoreDefaultBtnLabels();
       base.PageDestroy();
+      RestoreDefaultBtnLabels();
     }
 
     public override void Reset()
