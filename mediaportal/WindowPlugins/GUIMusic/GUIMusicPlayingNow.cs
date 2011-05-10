@@ -1715,7 +1715,7 @@ namespace MediaPortal.GUI.Music
             GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", String.Empty);
           }
           ArtistInfo _artistInfo = new ArtistInfo();
-          if (MusicDatabase.Instance.GetArtistInfo(CurrentTrackTag.AlbumArtist, ref _artistInfo))
+          if (MusicDatabase.Instance.GetArtistInfo(CurrentTrackTag.Artist, ref _artistInfo))
           {
             GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", _artistInfo.AMGBio);
             GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", _artistInfo.Born);
