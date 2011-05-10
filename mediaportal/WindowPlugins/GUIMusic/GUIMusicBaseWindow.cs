@@ -2021,9 +2021,8 @@ namespace MediaPortal.GUI.Music
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           if (dlgYesNo != null)
           {
-            // need localised strings here
-            dlgYesNo.SetHeading("Existing Playlist Detected");
-            dlgYesNo.SetLine(1, "Do you want to clear the current playlist?");
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(1223));  // Existing Playlist detected
+            dlgYesNo.SetLine(1, GUILocalizeStrings.Get(1224));  // Do you want to clear the current playlist?
             dlgYesNo.DoModal(GetID);
             if (dlgYesNo.IsConfirmed)
             {
