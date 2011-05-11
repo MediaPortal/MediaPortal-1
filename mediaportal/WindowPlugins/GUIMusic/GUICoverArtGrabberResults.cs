@@ -30,7 +30,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music
 {
-  public class GUICoverArtGrabberResults : GUIInternalWindow, IRenderLayer
+  public class GUICoverArtGrabberResults : GUIDialogWindow
   {
     public delegate void FindCoverArtProgressHandler(AmazonWebservice aws, int progressPercent);
 
@@ -85,6 +85,7 @@ namespace MediaPortal.GUI.Music
 
     [SkinControl((int)ControlIDs.IMG_AMAZON)] protected GUIImage imgAmazon = null;
 
+    /*
     #region Base Dialog Variables
 
     private bool m_bRunning = false;
@@ -93,8 +94,11 @@ namespace MediaPortal.GUI.Music
     private GUIWindow m_pParentWindow = null;
 
     #endregion
+    */
 
     #region Variables
+
+    private bool m_bRefresh = false;
 
     private const int MAX_UNFILTERED_SEARCH_ITEMS = 40;
     private const int MAX_SEARCH_ITEMS = 12;
@@ -172,18 +176,21 @@ namespace MediaPortal.GUI.Music
 
     public override void OnAction(Action action)
     {
-      Console.WriteLine(action.wID);
+      //Console.WriteLine(action.wID);
 
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      if (action.wID == Action.ActionType.ACTION_CLOSE_DIALOG ||
+          action.wID == Action.ActionType.ACTION_PREVIOUS_MENU ||
+          action.wID == Action.ActionType.ACTION_CONTEXT_MENU)
       {
         CancelledByUser = true;
-        Close();
-        return;
+        //PageDestroy();
+        //return;
       }
 
       base.OnAction(action);
     }
 
+    /*
     #region Base Dialog Members
 
     private void Close()
@@ -223,15 +230,26 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+    */
+
+    public override void DoModal(int ParentID)
+    {
+      _CancelledByUser = false;
+      m_bRefresh = false;
+      AllocResources();
+      InitControls();
+
+      base.DoModal(ParentID);
+    }
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      if (m_bRunning)
-      {
-        m_bRunning = false;
-        m_pParentWindow = null;
-        GUIWindowManager.UnRoute();
-      }
+      //if (m_bRunning)
+      //{
+      //  m_bRunning = false;
+      //  m_pParentWindow = null;
+      //  GUIWindowManager.UnRoute();
+      //}
 
       if (coverArtTexture != null)
       {
@@ -260,9 +278,13 @@ namespace MediaPortal.GUI.Music
         btnCancel.NavigateUp = (int)ControlIDs.BTN_SKIP;
         listView.NavigateLeft = (int)ControlIDs.BTN_SKIP;
       }
+
       GUIPropertyManager.SetProperty("#currentmodule",
                                      String.Format("{0}/{1}", GUILocalizeStrings.Get(100005),
                                                    GUILocalizeStrings.Get(4515)));
+
+      UpdateAlbumCoverList();
+      SetButtonVisibility();
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -281,12 +303,12 @@ namespace MediaPortal.GUI.Music
 
               _CancelledByUser = false;
               _SelectedAlbum = null;
-              Close();
+              PageDestroy();
               return;
             }
 
             _SelectedAlbum = (AlbumInfo)amazonWS.AlbumInfoList[selectedItem];
-            this.Close();
+            PageDestroy();
             break;
           }
 
@@ -296,7 +318,7 @@ namespace MediaPortal.GUI.Music
 
             _CancelledByUser = false;
             _SelectedAlbum = null;
-            Close();
+            PageDestroy();
             break;
           }
 
@@ -305,12 +327,13 @@ namespace MediaPortal.GUI.Music
             Log.Info("Cover art grabber:user cancelled out of grab results");
 
             _CancelledByUser = true;
-            Close();
+            PageDestroy();
             break;
           }
       }
     }
 
+    /*
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -337,6 +360,7 @@ namespace MediaPortal.GUI.Music
           return base.OnMessage(message);
       }
     }
+    */
 
     private void SetButtonVisibility()
     {
@@ -824,6 +848,7 @@ namespace MediaPortal.GUI.Music
       lblNoMatches.Visible = true;
     }
 
+    /*
     #region IRenderLayer
 
     public bool ShouldRenderLayer()
@@ -837,5 +862,6 @@ namespace MediaPortal.GUI.Music
     }
 
     #endregion
+    */
   }
 }
