@@ -2060,42 +2060,7 @@ namespace MediaPortal.GUI.Library
         }
 
         // Switch the next theme in the list.
-        // Theme with empty string refers to the skin default (no theme set).
-        string skinTheme = GUIGraphicsContext.ThemeName;
-
-        ArrayList themes = SkinSettings.GetSkinThemes();
-        if (themes.Count > 0)
-        {
-          int index = themes.IndexOf((string)skinTheme);
-          if (index < 0)
-          {
-            // Theme is default or not in the list, set to first theme.
-            index = 0;
-          }
-          else
-          {
-            // Select the next theme.
-            index += direction;
-          }
-
-          // If backed up past the first theme then select the last theme.
-          if (index < 0)
-          {
-            index = themes.Count - 1;
-          }
-          else if (index >= themes.Count)
-          {
-            index = 0;
-          }
-
-          GUIGraphicsContext.Theme = (string)themes[index];
-          GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
-          SkinSettings.Save();
-
-          // Reactivate the current window and refocus on the control used to change the theme.
-          // This applies the new theme to the current window immediately.
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
-        }
+        GUIThemeManager.ActivateThemeNext(direction, controlId);
       }
       else if (cmd.Equals("skin.settheme("))
       {
@@ -2112,13 +2077,7 @@ namespace MediaPortal.GUI.Library
             skinTheme = st;
           }
 
-          GUIGraphicsContext.Theme = skinTheme;
-          GUIPropertyManager.SetProperty("#Skin.CurrentTheme", GUIGraphicsContext.ThemeName);
-          SkinSettings.Save();
-
-          // Reactivate the current window and refocus on the control used to change the theme.
-          // This applies the new theme to the current window immediately.
-          GUIWindowManager.ActivateWindow(GUIWindowManager.ActiveWindow, true, true, controlId);
+          GUIThemeManager.ActivateThemeByName(skinTheme, controlId);
         }
       }
     }

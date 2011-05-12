@@ -265,10 +265,14 @@ namespace WindowPlugins
 
     protected virtual void UpdateButtonStates()
     {
+      if (handler != null)
+      {
+        GUIPropertyManager.SetProperty("#itemtype", handler.LocalizedCurrentViewLevel);
+        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
+      }
       if (btnSortBy != null)
       {
         btnSortBy.IsAscending = CurrentSortAsc;
-        GUIPropertyManager.SetProperty("#itemtype", handler.LocalizedCurrentViewLevel);
       }
     }
 
@@ -276,12 +280,6 @@ namespace WindowPlugins
     {
       // Set the selected layout.
       SwitchToNextAllowedLayout(layout);
-
-      // Update properties.
-      if (handler != null)
-      {
-        GUIPropertyManager.SetProperty("#view", handler.LocalizedCurrentView);
-      }
     }
 
     protected virtual void SwitchToNextAllowedLayout(Layout selectedLayout)

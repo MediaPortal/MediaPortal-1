@@ -884,6 +884,21 @@ namespace MediaPortal.GUI.Library
     }
 
     /// <summary>
+    /// Returns true if the current theme has the specified file.
+    /// </summary>
+    /// <param name="filename"></param>
+    /// <returns></returns>
+    public static bool HasThemeSpecificSkinFile(string filename)
+    {
+      // Do not check for files in the default theme (base skin).
+      if (ThemeName != SkinSettings.THEME_SKIN_DEFAULT)
+      {
+        return File.Exists(Theme + filename);
+      }
+      return false;
+    }
+
+    /// <summary>
     /// Return a themed version of the requested skin filename, otherwise return the default skin filename.  Use a path to media to get images.
     /// </summary>
     /// <param name="xmlfilename"></param>

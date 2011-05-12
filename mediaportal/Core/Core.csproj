@@ -345,6 +345,7 @@
     <Compile Include="guilib\GUISpinButton.cs" />
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\IStandardKeyboard.cs" />
+    <Compile Include="guilib\GUIThemeManager.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
