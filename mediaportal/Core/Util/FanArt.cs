@@ -224,7 +224,15 @@ namespace MediaPortal.Util
           random = false;
         }
         // Download fanart xml 
-        string tmdbXml = GetPage(tmdbUrl, "utf-8", out strAbsUrl);
+        string tmdbXml = string.Empty;
+        if (!GetPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbXml))
+        {
+          if (!GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl, ref tmdbXml))
+          {
+            Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
+            return;
+          }
+        }
 
         string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
 
@@ -236,12 +244,6 @@ namespace MediaPortal.Util
         {
           MatchCollection mcBd = Regex.Matches(tmdbXml, matchBackdrop);
           // Set fanart collection
-          if (mcBd.Count == 0)
-          {
-            // Try workaround search if no fanart count
-            tmdbXml = GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl);
-            mcBd = Regex.Matches(tmdbXml, matchBackdrop);
-          }
           if (mcBd.Count != 0)
           {
             foreach (Match mBd in mcBd)
@@ -257,6 +259,11 @@ namespace MediaPortal.Util
                 _fanartList.Add(strBd);
               }
             }
+          }
+          else
+          {
+            Log.Info("Fanart Serach: No fanart found for - {0} ({1})", title, tmdbUrl);
+            return;
           }
           // Check if fanart collection is lower than wanted fanarts quantity per movie
           if (_fanartList.Count < countFA)
@@ -594,9 +601,9 @@ namespace MediaPortal.Util
     }
 
     // Get URL HTML body
-    private string GetPage(string strUrl, string strEncode, out string absoluteUri)
+    private bool GetPage(string strUrl, string strEncode, out string absoluteUri, ref string strBody)
     {
-      string strBody = string.Empty;
+      bool sucess = true;
       absoluteUri = String.Empty;
       Stream receiveStream = null;
       StreamReader sr = null;
@@ -617,11 +624,9 @@ namespace MediaPortal.Util
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode,
-                  ex.Message,
-                  ex.StackTrace);
+        sucess = false;
       }
       finally
       {
@@ -650,7 +655,7 @@ namespace MediaPortal.Util
           catch (Exception) {}
         }
       }
-      return strBody;
+      return sucess;
     }
 
     #endregion
