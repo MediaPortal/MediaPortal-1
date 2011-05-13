@@ -1134,11 +1134,13 @@ namespace MediaPortal.GUI.Pictures
           item2.Label2 = sizeItem2;
           if (sortAsc)
           {
-            return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+            long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
           else
           {
-            return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+            long compare = (item2.FileInfo.Length - item1.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
       }
       return 0;
