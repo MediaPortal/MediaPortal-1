@@ -1478,7 +1478,8 @@ namespace MediaPortal.GUI.Library
       {
         // Compute the new spin angle.  The larger the distance the faster the spinning.  As the distance gets
         // smaller the card will spin more slowly as it settles onto the selected angle.
-        _spinAnglePosition += distance * timePassed * _spinSpeed;
+        // _spinAnglePosition += distance * timePassed * _spinSpeed;
+        _spinAnglePosition += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
       }
 
       // Set the card spin angle for this render cycle.
@@ -1738,11 +1739,22 @@ namespace MediaPortal.GUI.Library
       {
         _position = _selectedCard;
       }
+      // When the distance between the current position and the selected card is bigger than twice the -pageSize, set distance to twice the _pageSize
+      // -> workaround for stuttering when "moving" through very long lists due to many thumb allec/deallocs
+      // solves problem when jumping in very long lists
+      else if (Math.Abs(distance) > (2 * _pageSize))
+        {
+        if (distance > 0)
+          _position = (float)_selectedCard - (2 * _pageSize);
+          else
+          _position = (float)_selectedCard + (2 * _pageSize);
+        }
       else
       {
         // Compute the new position on the flow.  The larger the distance the faster the flow will move.  As the distance gets
         // smaller the flow will move more slowly as it settles onto the selected card.
-        _position += distance * timePassed * _speed;
+        // _position += distance * timePassed * _speed;
+        _position += distance * 0.02f * _speed; // looks better, until thumb loading is optimized
       }
 
       // The value of _position is dependant on rendering intervals (timePassed).  Rendering intervals are not guaranteed to
@@ -1977,7 +1989,7 @@ namespace MediaPortal.GUI.Library
         index = 0;
       }
 
-      // Set the direction in which te flow will move.
+      // Set the direction in which the flow will move.
       if (index > SelectedListItemIndex)
       {
         _direction = FlowDirection.LEFT;
@@ -2117,7 +2129,7 @@ namespace MediaPortal.GUI.Library
 
     public GUIListItem GetCard(int index)
     {
-      if (index >= 0 && index < _listItems.Count - 1)
+      if (index >= 0 && index < _listItems.Count)
       {
         return _listItems[index];
       }
