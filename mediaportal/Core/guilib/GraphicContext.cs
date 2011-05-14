@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -162,7 +163,7 @@ namespace MediaPortal.GUI.Library
     private static long m_iDesiredFrameTime = 100;
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
-    private static float lasttime = 0f;
+    private static long lasttime = 0;
     private static volatile bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
     private static bool idleTimePowerSaving = false;
@@ -1435,8 +1436,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        float difftime = time - lasttime;
+        //Guzzi, SE: Mantis 3560
+        //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+        //float difftime = time - lasttime;
+        long time = Stopwatch.GetTimestamp();
+        float difftime = (float)((time - lasttime) / Stopwatch.Frequency);
         lasttime = time;
         return (difftime);
       }
