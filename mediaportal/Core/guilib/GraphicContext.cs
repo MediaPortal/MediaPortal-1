@@ -989,7 +989,11 @@ namespace MediaPortal.GUI.Library
       get { return m_bOverlay; }
       set
       {
-        if (m_bOverlay != value)
+        //SE: Mantis 3474
+        //some windows have overlay = false, but still have videocontrol.
+        //switching to another window with overlay = false but without videocontrol will
+        //leave old videocontrol "hanging" on screen (since dimensions aren't updated)
+        //if (m_bOverlay != value)
         {
           m_bOverlay = value;
           if (!ShowBackground)
@@ -1479,6 +1483,18 @@ namespace MediaPortal.GUI.Library
     {
       get { return hasFocus; }
       set { hasFocus = value; }
+    }
+
+    /// <summary>
+    /// Returns true if the active window belongs to the my tv plugin
+    /// </summary>
+    /// <returns>
+    /// true: belongs to the my tv plugin
+    /// false: does not belong to the my tv plugin</returns>
+    public static bool IsTvWindow()
+    {
+      int windowId = GUIWindowManager.ActiveWindow;
+      return IsTvWindow(windowId);
     }
 
     /// <summary>
