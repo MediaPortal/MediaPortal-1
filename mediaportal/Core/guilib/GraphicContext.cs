@@ -1444,7 +1444,7 @@ namespace MediaPortal.GUI.Library
         //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
         //float difftime = time - lasttime;
         long time = Stopwatch.GetTimestamp();
-        float difftime = (float)((time - lasttime) / Stopwatch.Frequency);
+        float difftime = (float)(time - lasttime) / Stopwatch.Frequency;
         lasttime = time;
         return (difftime);
       }

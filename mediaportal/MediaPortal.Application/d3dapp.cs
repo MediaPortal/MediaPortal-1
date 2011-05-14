@@ -1795,7 +1795,7 @@ namespace MediaPortal
       //Guzzi, SE: Mantis 3560
       //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
       long time = Stopwatch.GetTimestamp();
-      float diffTime = (float)((time - lastTime) / Stopwatch.Frequency);
+      float diffTime = (float)(time - lastTime) / Stopwatch.Frequency;
       // Update the scene stats once per second
       if (diffTime >= 1.0f) // 1 sec. passed
       {
