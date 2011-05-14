@@ -1491,6 +1491,7 @@ namespace MediaPortal.GUI.Library
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
               GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
               GUIPropertyManager.SetProperty("#selectedindex", string.Empty);
+              GUIPropertyManager.SetProperty("#facadeview.layout", string.Empty);
               if (_shouldRestore)
               {
                 DoRestoreSkin();
