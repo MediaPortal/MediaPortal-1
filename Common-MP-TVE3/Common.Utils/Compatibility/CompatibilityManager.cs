@@ -177,7 +177,6 @@ namespace MediaPortal.Common.Utils
     /// </remarks>
     public static bool IsPluginCompatible(Type plugin)
     {
-      return true;
       var mpVersions =
         (CompatibleVersionAttribute[])plugin.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
       if (mpVersions.Length == 0)
@@ -239,7 +238,6 @@ namespace MediaPortal.Common.Utils
     /// </remarks>
     public static bool IsPluginCompatible(Assembly plugin)
     {
-      return true;
       var mpVersions =
         (CompatibleVersionAttribute[])plugin.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
 
