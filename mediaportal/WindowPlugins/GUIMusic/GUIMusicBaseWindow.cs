@@ -1842,54 +1842,54 @@ namespace MediaPortal.GUI.Music
 
         if (item.IsFolder || item.Label == "..")
         {
-          GUIPropertyManager.SetProperty("#title", string.Empty);
-          GUIPropertyManager.SetProperty("#track", string.Empty);
-          GUIPropertyManager.SetProperty("#rating", string.Empty);
-          GUIPropertyManager.SetProperty("#duration", string.Empty);
-          GUIPropertyManager.SetProperty("#artist", string.Empty);
-          GUIPropertyManager.SetProperty("#bitRate", string.Empty);
-          GUIPropertyManager.SetProperty("#comment", string.Empty);
-          GUIPropertyManager.SetProperty("#composer", string.Empty);
-          GUIPropertyManager.SetProperty("#conductor", string.Empty);
-          GUIPropertyManager.SetProperty("#lyrics", string.Empty);
-          GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
-          GUIPropertyManager.SetProperty("#filetype", string.Empty);
-          GUIPropertyManager.SetProperty("#codec", string.Empty);
-          GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
-          GUIPropertyManager.SetProperty("#bpm", string.Empty);
-          GUIPropertyManager.SetProperty("#channels", string.Empty);
-          GUIPropertyManager.SetProperty("#samplerate", string.Empty);
+          GUIPropertyManager.SetProperty("#music.title", string.Empty);
+          GUIPropertyManager.SetProperty("#music.track", string.Empty);
+          GUIPropertyManager.SetProperty("#music.rating", string.Empty);
+          GUIPropertyManager.SetProperty("#music.duration", string.Empty);
+          GUIPropertyManager.SetProperty("#music.artist", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bitRate", string.Empty);
+          GUIPropertyManager.SetProperty("#music.comment", string.Empty);
+          GUIPropertyManager.SetProperty("#music.composer", string.Empty);
+          GUIPropertyManager.SetProperty("#music.conductor", string.Empty);
+          GUIPropertyManager.SetProperty("#music.lyrics", string.Empty);
+          GUIPropertyManager.SetProperty("#music.timesplayed", string.Empty);
+          GUIPropertyManager.SetProperty("#music.filetype", string.Empty);
+          GUIPropertyManager.SetProperty("#music.codec", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bitratemode", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bpm", string.Empty);
+          GUIPropertyManager.SetProperty("#music.channels", string.Empty);
+          GUIPropertyManager.SetProperty("#music.samplerate", string.Empty);
         }
         else
         {
-          GUIPropertyManager.SetProperty("#title", tag.Title);
-          GUIPropertyManager.SetProperty("#track", strTrack);
-          GUIPropertyManager.SetProperty("#rating", strRating);
-          GUIPropertyManager.SetProperty("#duration", strDuration);
-          GUIPropertyManager.SetProperty("#artist", tag.Artist);
-          GUIPropertyManager.SetProperty("#bitRate", strBitrate);
-          GUIPropertyManager.SetProperty("#comment", tag.Comment);
-          GUIPropertyManager.SetProperty("#composer", tag.Composer);
-          GUIPropertyManager.SetProperty("#conductor", tag.Conductor);
-          GUIPropertyManager.SetProperty("#lyrics", tag.Lyrics);
-          GUIPropertyManager.SetProperty("#timesplayed", strTimesPlayed);
-          GUIPropertyManager.SetProperty("#filetype", tag.FileType);
-          GUIPropertyManager.SetProperty("#codec", tag.Codec);
-          GUIPropertyManager.SetProperty("#bitratemode", tag.BitRateMode);
-          GUIPropertyManager.SetProperty("#bpm", strBPM);
-          GUIPropertyManager.SetProperty("#channels", strChannels);
-          GUIPropertyManager.SetProperty("#samplerate", strSampleRate);
+          GUIPropertyManager.SetProperty("#music.title", tag.Title);
+          GUIPropertyManager.SetProperty("#music.track", strTrack);
+          GUIPropertyManager.SetProperty("#music.rating", strRating);
+          GUIPropertyManager.SetProperty("#music.duration", strDuration);
+          GUIPropertyManager.SetProperty("#music.artist", tag.Artist);
+          GUIPropertyManager.SetProperty("#music.bitRate", strBitrate);
+          GUIPropertyManager.SetProperty("#music.comment", tag.Comment);
+          GUIPropertyManager.SetProperty("#music.composer", tag.Composer);
+          GUIPropertyManager.SetProperty("#music.conductor", tag.Conductor);
+          GUIPropertyManager.SetProperty("#music.lyrics", tag.Lyrics);
+          GUIPropertyManager.SetProperty("#music.timesplayed", strTimesPlayed);
+          GUIPropertyManager.SetProperty("#music.filetype", tag.FileType);
+          GUIPropertyManager.SetProperty("#music.codec", tag.Codec);
+          GUIPropertyManager.SetProperty("#music.bitratemode", tag.BitRateMode);
+          GUIPropertyManager.SetProperty("#music.bpm", strBPM);
+          GUIPropertyManager.SetProperty("#music.channels", strChannels);
+          GUIPropertyManager.SetProperty("#music.samplerate", strSampleRate);
         }
 
-        GUIPropertyManager.SetProperty("#album", tag.Album);
-        GUIPropertyManager.SetProperty("#genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#year", strYear);
-        GUIPropertyManager.SetProperty("#albumArtist", tag.AlbumArtist);
-        GUIPropertyManager.SetProperty("#discid", strDiscID);
-        GUIPropertyManager.SetProperty("#disctotal", strDiscTotal);
-        GUIPropertyManager.SetProperty("#trackTotal", strTrackTotal);
-        GUIPropertyManager.SetProperty("#datelastplayed", strDateLastPlayed);
-        GUIPropertyManager.SetProperty("#dateadded", strDateAdded);
+        GUIPropertyManager.SetProperty("#music.album", tag.Album);
+        GUIPropertyManager.SetProperty("#music.genre", tag.Genre);
+        GUIPropertyManager.SetProperty("#music.year", strYear);
+        GUIPropertyManager.SetProperty("#music.albumArtist", tag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#music.discid", strDiscID);
+        GUIPropertyManager.SetProperty("#music.disctotal", strDiscTotal);
+        GUIPropertyManager.SetProperty("#music.trackTotal", strTrackTotal);
+        GUIPropertyManager.SetProperty("#music.datelastplayed", strDateLastPlayed);
+        GUIPropertyManager.SetProperty("#music.dateadded", strDateAdded);
 
         // see if we have album info
         AlbumInfo _albumInfo = new AlbumInfo();
@@ -1914,7 +1914,16 @@ namespace MediaPortal.GUI.Music
 
         // see if we have artist info
         ArtistInfo _artistInfo = new ArtistInfo();
-        if (MusicDatabase.Instance.GetArtistInfo(tag.AlbumArtist, ref _artistInfo))
+        String strArtist;
+        if (string.IsNullOrEmpty(tag.Artist))
+        {
+          strArtist = tag.AlbumArtist;
+        }
+        else
+        {
+          strArtist = tag.Artist;
+        }
+        if (MusicDatabase.Instance.GetArtistInfo(strArtist, ref _artistInfo))
         {
           GUIPropertyManager.SetProperty("#ArtistInfo.Bio", _artistInfo.AMGBio);
           GUIPropertyManager.SetProperty("#ArtistInfo.Born", _artistInfo.Born);
@@ -1937,32 +1946,32 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        GUIPropertyManager.SetProperty("#title", string.Empty);
-        GUIPropertyManager.SetProperty("#track", string.Empty);
-        GUIPropertyManager.SetProperty("#album", string.Empty);
-        GUIPropertyManager.SetProperty("#artist", string.Empty);
-        GUIPropertyManager.SetProperty("#genre", string.Empty);
-        GUIPropertyManager.SetProperty("#year", string.Empty);
-        GUIPropertyManager.SetProperty("#rating", string.Empty);
-        GUIPropertyManager.SetProperty("#duration", string.Empty);
-        GUIPropertyManager.SetProperty("#albumArtist", string.Empty);
-        GUIPropertyManager.SetProperty("#bitRate", string.Empty);
-        GUIPropertyManager.SetProperty("#comment", string.Empty);
-        GUIPropertyManager.SetProperty("#composer", string.Empty);
-        GUIPropertyManager.SetProperty("#conductor", string.Empty);
-        GUIPropertyManager.SetProperty("#discid", string.Empty);
-        GUIPropertyManager.SetProperty("#disctotal", string.Empty);
-        GUIPropertyManager.SetProperty("#lyrics", string.Empty);
-        GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
-        GUIPropertyManager.SetProperty("#trackTotal", string.Empty);
-        GUIPropertyManager.SetProperty("#filetype", string.Empty);
-        GUIPropertyManager.SetProperty("#codec", string.Empty);
-        GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
-        GUIPropertyManager.SetProperty("#bpm", string.Empty);
-        GUIPropertyManager.SetProperty("#channels", string.Empty);
-        GUIPropertyManager.SetProperty("#samplerate", string.Empty);
-        GUIPropertyManager.SetProperty("#datelastplayed", string.Empty);
-        GUIPropertyManager.SetProperty("#dateadded", string.Empty);
+        GUIPropertyManager.SetProperty("#music.title", string.Empty);
+        GUIPropertyManager.SetProperty("#music.track", string.Empty);
+        GUIPropertyManager.SetProperty("#music.album", string.Empty);
+        GUIPropertyManager.SetProperty("#music.artist", string.Empty);
+        GUIPropertyManager.SetProperty("#music.genre", string.Empty);
+        GUIPropertyManager.SetProperty("#music.year", string.Empty);
+        GUIPropertyManager.SetProperty("#music.rating", string.Empty);
+        GUIPropertyManager.SetProperty("#music.duration", string.Empty);
+        GUIPropertyManager.SetProperty("#music.albumArtist", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bitRate", string.Empty);
+        GUIPropertyManager.SetProperty("#music.comment", string.Empty);
+        GUIPropertyManager.SetProperty("#music.composer", string.Empty);
+        GUIPropertyManager.SetProperty("#music.conductor", string.Empty);
+        GUIPropertyManager.SetProperty("#music.discid", string.Empty);
+        GUIPropertyManager.SetProperty("#music.disctotal", string.Empty);
+        GUIPropertyManager.SetProperty("#music.lyrics", string.Empty);
+        GUIPropertyManager.SetProperty("#music.timesplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#music.trackTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#music.filetype", string.Empty);
+        GUIPropertyManager.SetProperty("#music.codec", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bitratemode", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bpm", string.Empty);
+        GUIPropertyManager.SetProperty("#music.channels", string.Empty);
+        GUIPropertyManager.SetProperty("#music.samplerate", string.Empty);
+        GUIPropertyManager.SetProperty("#music.datelastplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#music.dateadded", string.Empty);
       }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
@@ -2041,9 +2050,8 @@ namespace MediaPortal.GUI.Music
           GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
           if (dlgYesNo != null)
           {
-            // need localised strings here
-            dlgYesNo.SetHeading("Existing Playlist Detected");
-            dlgYesNo.SetLine(1, "Do you want to clear the current playlist?");
+            dlgYesNo.SetHeading(GUILocalizeStrings.Get(1223));  // Existing Playlist detected
+            dlgYesNo.SetLine(1, GUILocalizeStrings.Get(1224));  // Do you want to clear the current playlist?
             dlgYesNo.DoModal(GetID);
             if (dlgYesNo.IsConfirmed)
             {

@@ -42,6 +42,7 @@ using namespace std;
 #define FRAME_PROC_THRSH2 60
 #define DFT_THRESH 0.007
 #define NUM_PHASE_DEVIATIONS 32
+#define FILTER_LIST_SIZE 9
 
 // magic numbers
 #define DEFAULT_FRAME_TIME 200000 // used when fps information is not provided (PAL interlaced == 50fps)
@@ -243,6 +244,9 @@ protected:
   LONGLONG       GetDelayToRasterTarget(LONGLONG *targetTime, LONGLONG *offsetTime);
   void           DwmEnableMMCSSOnOff(bool enable);
 
+  HRESULT EnumFilters(IFilterGraph *pGraph);
+  bool GetFilterNames();
+
   CComPtr<IDirect3DDevice9>         m_pD3DDev;
   IVMR9Callback*                    m_pCallback;
   CComPtr<IDirect3DDeviceManager9>  m_pDeviceManager;
@@ -370,6 +374,15 @@ protected:
   UINT   m_LastStartOfPaintScanline;
   UINT   m_LastEndOfPaintScanline;
   UINT   m_maxScanLine;
+  UINT   m_minVisScanLine;
+  UINT   m_maxVisScanLine;
+
+  UINT   m_rasterLimitLow; 
+  UINT   m_rasterTargetPosn;
+  UINT   m_rasterLimitHigh;
+  UINT   m_rasterLimitTop;    
+  UINT   m_rasterLimitNP;    
+
   double m_dEstRefCycDiff; 
   
   LONGLONG m_SampDuration;
@@ -385,10 +398,10 @@ protected:
   LONGLONG      m_DetectedFrameTimeHistory[NB_DFTHSIZE];
   LONGLONG      m_DectedSum;
   int           m_DetectedFrameTimePos;
-  double        m_DetectedFrameRate;
   double        m_DetectedFrameTime;
   double        m_DetectedFrameTimeStdDev;
   bool          m_DetectedLock;
+  double        m_DetFrameTimeAve;
 
   int           m_frameRateRatio;
   int           m_rawFRRatio;
@@ -404,6 +417,9 @@ protected:
   LONGLONG      m_earliestPresentTime;
   LONGLONG      m_lastPresentTime;
   LONGLONG      m_lastDelayErr;
+
+  char          m_filterNames[FILTER_LIST_SIZE][MAX_FILTER_NAME];
+  int           m_numFilters;
   
   BOOL          m_bIsWin7;
   bool          m_bMsVideoCodec;

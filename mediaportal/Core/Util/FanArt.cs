@@ -91,7 +91,7 @@ namespace MediaPortal.Util
 
       filename = Path.GetFileNameWithoutExtension(filename);
       filename = Utils.RemoveTrailingSlash(filename);
-
+      
       if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
       {
         localFile = localFile.Replace("file://", "");
@@ -114,7 +114,16 @@ namespace MediaPortal.Util
         //
         if (!isUrl)
         {
-          File.Copy(localFile, dbFile, true);
+          try
+          {
+            if (!localFile.Equals(dbFile, StringComparison.OrdinalIgnoreCase) && File.Exists(localFile))
+              File.Copy(localFile, dbFile, true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+          }
+          
         }
         else
         {
@@ -137,17 +146,31 @@ namespace MediaPortal.Util
             string fileclean = CleanFilename(filename);
             _fileMovie = SetFanArtFileName(fileclean, index);
 
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
           else // DVD Video
           {
             SetDvdMovieFile(path, index);
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
         }
@@ -201,7 +224,15 @@ namespace MediaPortal.Util
           random = false;
         }
         // Download fanart xml 
-        string tmdbXml = GetPage(tmdbUrl, "utf-8", out strAbsUrl);
+        string tmdbXml = string.Empty;
+        if (!GetPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbXml))
+        {
+          if (!GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl, ref tmdbXml))
+          {
+            Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
+            return;
+          }
+        }
 
         string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
 
@@ -213,12 +244,6 @@ namespace MediaPortal.Util
         {
           MatchCollection mcBd = Regex.Matches(tmdbXml, matchBackdrop);
           // Set fanart collection
-          if (mcBd.Count == 0)
-          {
-            // Try workaround search if no fanart count
-            tmdbXml = GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl);
-            mcBd = Regex.Matches(tmdbXml, matchBackdrop);
-          }
           if (mcBd.Count != 0)
           {
             foreach (Match mBd in mcBd)
@@ -234,6 +259,11 @@ namespace MediaPortal.Util
                 _fanartList.Add(strBd);
               }
             }
+          }
+          else
+          {
+            Log.Info("Fanart Serach: No fanart found for - {0} ({1})", title, tmdbUrl);
+            return;
           }
           // Check if fanart collection is lower than wanted fanarts quantity per movie
           if (_fanartList.Count < countFA)
@@ -258,7 +288,7 @@ namespace MediaPortal.Util
                   string fileclean = CleanFilename(filename);
                   _fileMovie = SetFanArtFileName(fileclean, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
                   // DVD Video
@@ -266,7 +296,7 @@ namespace MediaPortal.Util
                 {
                   SetDvdMovieFile(path, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
               }
@@ -293,7 +323,7 @@ namespace MediaPortal.Util
                     string fileclean = CleanFilename(filename);
                     _fileMovie = SetFanArtFileName(fileclean, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                     // DVD video
@@ -301,7 +331,7 @@ namespace MediaPortal.Util
                   {
                     SetDvdMovieFile(path, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                 }
@@ -357,7 +387,7 @@ namespace MediaPortal.Util
               string fileclean = CleanFilename(filename);
               _fileMovie = SetFanArtFileName(fileclean, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
               // DVD Video
@@ -365,7 +395,7 @@ namespace MediaPortal.Util
             {
               SetDvdMovieFile(path, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
           }
@@ -571,9 +601,9 @@ namespace MediaPortal.Util
     }
 
     // Get URL HTML body
-    private string GetPage(string strUrl, string strEncode, out string absoluteUri)
+    private bool GetPage(string strUrl, string strEncode, out string absoluteUri, ref string strBody)
     {
-      string strBody = string.Empty;
+      bool sucess = true;
       absoluteUri = String.Empty;
       Stream receiveStream = null;
       StreamReader sr = null;
@@ -594,11 +624,9 @@ namespace MediaPortal.Util
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode,
-                  ex.Message,
-                  ex.StackTrace);
+        sucess = false;
       }
       finally
       {
@@ -627,7 +655,7 @@ namespace MediaPortal.Util
           catch (Exception) {}
         }
       }
-      return strBody;
+      return sucess;
     }
 
     #endregion

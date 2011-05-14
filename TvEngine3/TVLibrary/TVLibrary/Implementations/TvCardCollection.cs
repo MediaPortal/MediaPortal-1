@@ -124,6 +124,10 @@ namespace TvLibrary.Implementations
       devices = DsDevice.GetDevicesOfCat(FilterCategory.AMKSCrossbar);
       for (int i = 0; i < devices.Length; ++i)
       {
+        if (devices[i].Name == null)
+        {
+          continue;
+        }
         if (devices[i].Name.Equals("Hauppauge HD PVR Crossbar"))
         {
           Log.Log.WriteFile("Detected Hauppauge HD PVR");

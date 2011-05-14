@@ -660,7 +660,7 @@ namespace MediaPortal.GUI.Library
         btn.Height = _textureHeight + _zoomYPixels;
         btn.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
         btn.Render(timePassed);
-        if (pFocusImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
+        if (pFocusImage != null/* && _zoomXPixels == 0 && _zoomYPixels == 0*/)
         {
           pFocusImage.ImageAlignment = Alignment.ALIGN_CENTER;
           pFocusImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;

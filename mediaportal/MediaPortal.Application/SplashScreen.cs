@@ -45,8 +45,9 @@ namespace MediaPortal
     private bool AllowWindowOverlayRequested = false;
     private SplashForm frm;
     private FullScreenSplashScreen frmFull;
-    private Form OutDatedSkinForm = null;
+    private Form _overlaidForm = null;
     private string info;
+    private object _overlaidFormClosingLock = new object();
 
     public SplashScreen() {}
 
@@ -72,10 +73,14 @@ namespace MediaPortal
     /// <summary>
     /// Allows other windows to overlay the splashscreen
     /// </summary>
-    public void AllowWindowOverlay(Form FrmOutdatedSkin)
+    public void AllowWindowOverlay(Form OverlayedForm)
     {
-      AllowWindowOverlayRequested = true;
-      OutDatedSkinForm = FrmOutdatedSkin;
+      _overlaidForm = OverlayedForm;
+      if (_overlaidForm != null)
+      {
+        AllowWindowOverlayRequested = true;
+        _overlaidForm.FormClosing += OverlayedForm_FormClosing;
+      }
     }
 
     /// <summary>
@@ -146,6 +151,16 @@ namespace MediaPortal
       }
     }
 
+    private void OverlayedForm_FormClosing(object sender, FormClosingEventArgs e)
+    {
+      lock(_overlaidFormClosingLock)
+      {
+        _overlaidForm.FormClosing -= OverlayedForm_FormClosing;
+        _overlaidForm = null;
+      }
+    }
+
+
     /// <summary>
     /// handles the normal splash screen
     /// </summary>
@@ -157,27 +172,30 @@ namespace MediaPortal
       frm.Update();
       frm.FadeIn();
       string oldInfo = null;
-      while (!stopRequested && (frm.Focused || OutDatedSkinForm != null)) //run until stop of splashscreen is requested
+      while (!stopRequested && (frm.Focused || _overlaidForm != null)) //run until stop of splashscreen is requested
       {
-        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
-        // Allow other Windows to Overlay the splashscreen
+        if (AllowWindowOverlayRequested)
         {
-          if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
+          // Allow other Windows to Overlay the splashscreen
+          lock(_overlaidFormClosingLock)
           {
-            if (frm.Focused)
+            if (_overlaidForm != null && _overlaidForm.Visible) // prepare everything to let the Outdated skin message appear
             {
-              frm.TopMost = false;
-              OutDatedSkinForm.TopMost = true;
-              OutDatedSkinForm.BringToFront();
-              Cursor.Show();
+              if (frm.Focused)
+              {
+                frm.TopMost = false;
+                _overlaidForm.TopMost = true;
+                _overlaidForm.BringToFront();
+                Cursor.Show();
+              }
             }
-          }
-          else
-          {
-            AllowWindowOverlayRequested = false;
-            frm.TopMost = true;
-            frm.BringToFront();
-            Cursor.Hide();
+            else
+            {
+              AllowWindowOverlayRequested = false;
+              frm.TopMost = true;
+              frm.BringToFront();
+              Cursor.Hide();
+            }
           }
         }
         if (oldInfo != info)
@@ -221,7 +239,7 @@ namespace MediaPortal
       string oldInfo = null;
       bool delayedStopAllowed = false;
       int stopRequestTime = 0;
-      while (!delayedStopAllowed && (frmFull.Focused || OutDatedSkinForm != null))
+      while (!delayedStopAllowed && (frmFull.Focused || _overlaidForm != null))
         //run until stop of splashscreen is requested
       {
         if (stopRequested && stopRequestTime == 0) // store the current time when stop of the splashscreen is requested
@@ -229,25 +247,29 @@ namespace MediaPortal
           stopRequestTime = Environment.TickCount;
           frmFull.TopMost = false; // allow the splashscreen to be overlayed by other windows (like the mp main screen)
         }
-        if (AllowWindowOverlayRequested == true && OutDatedSkinForm != null)
-          // Allow other Windows to Overlay the splashscreen
+        if (AllowWindowOverlayRequested)
+        // Allow other Windows to Overlay the splashscreen
         {
-          if (OutDatedSkinForm.Visible) // prepare everything to let the Outdated skin message appear
+          lock (_overlaidFormClosingLock)
           {
-            if (frmFull.Focused)
+            if (_overlaidForm != null && _overlaidForm.Visible)
+              // prepare everything to let the Outdated skin message appear
             {
-              frmFull.TopMost = false;
-              OutDatedSkinForm.TopMost = true;
-              OutDatedSkinForm.BringToFront();
-              Cursor.Show();
+              if (frmFull.Focused)
+              {
+                frmFull.TopMost = false;
+                _overlaidForm.TopMost = true;
+                _overlaidForm.BringToFront();
+                Cursor.Show();
+              }
             }
-          }
-          else
-          {
-            AllowWindowOverlayRequested = false;
-            frmFull.TopMost = true;
-            frmFull.BringToFront();
-            Cursor.Hide();
+            else
+            {
+              AllowWindowOverlayRequested = false;
+              frmFull.TopMost = true;
+              frmFull.BringToFront();
+              Cursor.Hide();
+            }
           }
         }
         if ((stopRequestTime != 0) && ((Environment.TickCount - 5000) > stopRequestTime))

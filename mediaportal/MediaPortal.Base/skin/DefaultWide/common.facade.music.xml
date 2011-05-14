@@ -230,7 +230,7 @@
               <posX>20</posX>
               <posY>32</posY>
               <width>320</width>
-              <label>#(L(171)) #albumArtist</label>
+              <label>#(L(171)) #music.albumArtist</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -243,7 +243,7 @@
               <posX>20</posX>
               <posY>54</posY>
               <width>320</width>
-              <label>#(L(170)) #album</label>
+              <label>#(L(170)) #music.album</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -256,7 +256,7 @@
               <posX>20</posX>
               <posY>76</posY>
               <width>320</width>
-              <label>#(L(179)): #title</label>
+              <label>#(L(179)): #music.title</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -269,7 +269,7 @@
               <posX>20</posX>
               <posY>98</posY>
               <width>320</width>
-              <label>#(L(178)) # #track</label>
+              <label>#(L(178)) # #music.track</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -282,7 +282,7 @@
               <posX>20</posX>
               <posY>120</posY>
               <width>320</width>
-              <label>#(L(437)) #duration</label>
+              <label>#(L(437)) #music.duration</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -295,7 +295,7 @@
               <posX>20</posX>
               <posY>142</posY>
               <width>320</width>
-              <label>Filetype: #filetype</label>
+              <label>Filetype: #music.filetype</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -308,7 +308,7 @@
               <posX>20</posX>
               <posY>166</posY>
               <width>320</width>
-              <label>Codec: #codec</label>
+              <label>Codec: #music.codec</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -321,7 +321,7 @@
               <posX>20</posX>
               <posY>188</posY>
               <width>320</width>
-              <label>Bitrate: #bitratemode</label>
+              <label>Bitrate: #music.bitrate</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -334,7 +334,7 @@
               <posX>20</posX>
               <posY>210</posY>
               <width>320</width>
-              <label>BPM: #bpm</label>
+              <label>BPM: #music.bpm</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -347,7 +347,7 @@
               <posX>20</posX>
               <posY>232</posY>
               <width>320</width>
-              <label>#(L(627)) #channels</label>
+              <label>#(L(627)) #music.channels</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -360,7 +360,7 @@
               <posX>20</posX>
               <posY>254</posY>
               <width>320</width>
-              <label>Samplerate: #samplerate</label>
+              <label>Samplerate: #music.samplerate</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -373,7 +373,7 @@
               <posX>20</posX>
               <posY>276</posY>
               <width>320</width>
-              <label>Date added: #dateadded</label>
+              <label>Date added: #music.dateadded</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>
@@ -386,7 +386,7 @@
               <posX>20</posX>
               <posY>298</posY>
               <width>320</width>
-              <label>Last played: #datelastplayed</label>
+              <label>Last played: #music.datelastplayed</label>
               <font>font10</font>
               <align>left</align>
               <textcolor>gainsboro</textcolor>

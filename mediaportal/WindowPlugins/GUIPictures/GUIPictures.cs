@@ -816,7 +816,7 @@ namespace MediaPortal.GUI.Pictures
           if (fileMenuPinCode != string.Empty)
           {
             string strUserCode = string.Empty;
-            if (GetUserInputString(ref strUserCode) && strUserCode == fileMenuPinCode)
+            if (GetUserPasswordString(ref strUserCode) && strUserCode == fileMenuPinCode)
             {
               OnShowFileMenu();
             }
@@ -1180,11 +1180,13 @@ namespace MediaPortal.GUI.Pictures
           item2.Label2 = sizeItem2;
           if (sortAsc)
           {
-            return (int)(item1.FileInfo.Length - item2.FileInfo.Length);
+            long compare = (item1.FileInfo.Length - item2.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
           else
           {
-            return (int)(item2.FileInfo.Length - item1.FileInfo.Length);
+            long compare = (item2.FileInfo.Length - item1.FileInfo.Length);
+            return compare == 0 ? 0 : compare < 0 ? -1 : 1;
           }
       }
       return 0;
@@ -2013,6 +2015,25 @@ namespace MediaPortal.GUI.Pictures
       }
       keyboard.IsSearchKeyboard = true;
       keyboard.Reset();
+      keyboard.Text = sString;
+      keyboard.DoModal(GetID); // show it...
+      if (keyboard.IsConfirmed)
+      {
+        sString = keyboard.Text;
+      }
+      return keyboard.IsConfirmed;
+    }
+
+    private bool GetUserPasswordString(ref string sString)
+    {
+      VirtualKeyboard keyboard = (VirtualKeyboard)GUIWindowManager.GetWindow((int)Window.WINDOW_VIRTUAL_KEYBOARD);
+      if (null == keyboard)
+      {
+        return false;
+      }
+      keyboard.IsSearchKeyboard = true;
+      keyboard.Reset();
+      keyboard.Password = true;
       keyboard.Text = sString;
       keyboard.DoModal(GetID); // show it...
       if (keyboard.IsConfirmed)

@@ -691,7 +691,6 @@ namespace MediaPortal.GUI.Library
       // Draw each row
       int y1 = keyboardY;
       int x1 = keyboardX;
-      GUIGraphicsContext.ScalePosToScreenResolution(ref x1, ref y1);
       float fY = y1;
       ArrayList keyBoard = (ArrayList)_keyboardList[(int)_currentKeyboard];
       for (int row = 0; row < _maxRows; ++row, fY += _keyHeightScaled)
@@ -1420,7 +1419,7 @@ namespace MediaPortal.GUI.Library
           float fWidth = 0, fHeight = 0;
           _fontCharKey.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-          if (fWidth < fTextBoxWidth)
+          if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int) fTextBoxWidth)))
           {
             if (_position >= _textEntered.Length)
             {

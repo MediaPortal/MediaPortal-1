@@ -92,7 +92,7 @@ namespace MediaPortal.GUI.Library
         float fWidth = 0, fHeight = 0;
         _fontSearchText.GetTextExtent(_textEntered, ref fWidth, ref fHeight);
 
-        if (fWidth < fTextBoxWidth)
+        if (fWidth < (GUIGraphicsContext.ScaleHorizontal((int)fTextBoxWidth)))
         {
           if (_position >= _textEntered.Length)
           {
@@ -193,7 +193,7 @@ namespace MediaPortal.GUI.Library
         }
         x2 = x1 + keyboardWidth;
       }
-      fTextBoxWidth = (float)(x2 - x1);
+      fTextBoxWidth = (float)(x2 - x1 - 2 * _inputTextOffX);
 
       DrawTextBox(timePassed, x1, y1, x2, y2);
 

@@ -300,7 +300,7 @@ namespace TvPlugin
 
       SetLastChannel();
 
-      if (_autoTurnOnRadio)
+      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
       {
         Play(facadeLayout.SelectedListItem);
       }
@@ -833,6 +833,7 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
       GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
       
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))

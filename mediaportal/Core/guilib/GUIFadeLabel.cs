@@ -299,6 +299,12 @@ namespace MediaPortal.GUI.Library
         dwAlpha <<= 24;
         dwAlpha |= (_textColor & 0x00ffffff);
         _labelControl.TextColor = dwAlpha;
+        
+        dwAlpha = ((((uint)_shadowColor) >> 24) * _currentFrame) / 12;
+        dwAlpha <<= 24;
+        dwAlpha |= (_shadowColor & 0x00ffffff);
+        _labelControl.ShadowColor = dwAlpha;
+
         float fwt = 0;
         _labelControl.Label = GetShortenedText(strLabel, _width, ref fwt);
         if (_textAlignment == Alignment.ALIGN_RIGHT)

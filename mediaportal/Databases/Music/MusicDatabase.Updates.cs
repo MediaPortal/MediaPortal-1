@@ -548,7 +548,7 @@ namespace MediaPortal.Music.Database
       }
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
-      DateTime startTime = DateTime.Now;
+      DateTime startTime = DateTime.UtcNow;
 
       try
       {
@@ -595,7 +595,7 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Total Songs: {0}. {1} added / {2} updated / {3} skipped", _processCount,
                  _songsAdded, _songsUpdated, _songsSkipped);
 
-        DateTime stopTime = DateTime.Now;
+        DateTime stopTime = DateTime.UtcNow;
         TimeSpan ts = stopTime - startTime;
         float fSecsPerTrack = ((float)ts.TotalSeconds / (float)_processCount);
         string trackPerSecSummary = "";

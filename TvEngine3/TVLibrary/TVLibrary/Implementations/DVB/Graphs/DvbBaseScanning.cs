@@ -334,7 +334,7 @@ namespace TvLibrary.Implementations.DVB
                                    out pmtPid, out hasVideo, out hasAudio);
 
               string name = DvbTextConverter.Convert(serviceName, "");
-              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{9:X}", i, networkId, transportId, serviceId,
+              Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
                             pmtPid, name, serviceType);
 
               found++;

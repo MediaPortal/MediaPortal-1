@@ -75,10 +75,6 @@ namespace SetupTv.Dialogs
         {
           sb.AddConstraint(Operator.Equals, "visibleInGuide", 1);
         }
-        if (checkBoxFTA.Checked)
-        {
-          sb.AddConstraint(Operator.Equals, "freetoair", 1);
-        }
         sb.AddConstraint(Operator.Equals, "isTv", 1);
         sb.AddOrderByField(true, "sortOrder");
         sb.AddOrderByField(true, "displayName");

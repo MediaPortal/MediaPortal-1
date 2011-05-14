@@ -19,6 +19,7 @@
 #endregion
 
 using System;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
@@ -29,7 +30,7 @@ namespace MediaPortal.GUI.Video
   /// <summary>
   /// 
   /// </summary>
-  public class GUIVideoArtistInfo : GUIInternalWindow, IRenderLayer
+  public class GUIVideoArtistInfo : GUIDialogWindow
   {
     [SkinControl(3)] protected GUIToggleButtonControl btnBiography = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnMovies = null;
@@ -43,6 +44,7 @@ namespace MediaPortal.GUI.Video
       Movies,
     }
 
+    /*
     #region Base Dialog Variables
 
     private bool m_bRunning = false;
@@ -50,6 +52,7 @@ namespace MediaPortal.GUI.Video
     private GUIWindow m_pParentWindow = null;
 
     #endregion
+    */
 
     private ViewMode viewmode = ViewMode.Biography;
 
@@ -65,8 +68,9 @@ namespace MediaPortal.GUI.Video
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\DialogVideoArtistInfo.xml"));
     }
 
-    public override void PreInit() {}
+    //public override void PreInit() {}
 
+    /*
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -76,7 +80,9 @@ namespace MediaPortal.GUI.Video
       }
       base.OnAction(action);
     }
+    */
 
+    /*
     public override bool OnMessage(GUIMessage message)
     {
       switch (message.Message)
@@ -102,7 +108,9 @@ namespace MediaPortal.GUI.Video
       }
       return base.OnMessage(message);
     }
+    */
 
+    /*
     #region Base Dialog Members 
 
     private void Close()
@@ -137,6 +145,15 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+    */
+
+    public override void DoModal(int ParentID)
+    {
+      AllocResources();
+      InitControls();
+
+      base.DoModal(ParentID);
+    }
 
     protected override void OnPageLoad()
     {
@@ -146,12 +163,12 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageDestroy(int newWindowId)
     {
-      if (m_bRunning)
-      {
-        m_bRunning = false;
-        m_pParentWindow = null;
-        GUIWindowManager.UnRoute();
-      }
+      //if (m_bRunning)
+      //{
+      //  m_bRunning = false;
+      //  m_pParentWindow = null;
+      //  GUIWindowManager.UnRoute();
+      //}
 
       currentActor = null;
 
@@ -237,6 +254,7 @@ namespace MediaPortal.GUI.Video
       }
     }
     
+    /*
     #region IRenderLayer
 
     public bool ShouldRenderLayer()
@@ -250,5 +268,6 @@ namespace MediaPortal.GUI.Video
     }
 
     #endregion
+    */
   }
 }

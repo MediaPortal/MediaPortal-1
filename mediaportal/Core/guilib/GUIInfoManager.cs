@@ -2600,7 +2600,9 @@ namespace MediaPortal.GUI.Library
                   GUITextScrollUpControl control4 = pWindow.GetControl(info.m_data1) as GUITextScrollUpControl;
                   if (control4 != null)
                   {
-                    bReturn = control4.SubItemCount > 0;
+                    // SE - does not work
+                    //bReturn = control4.SubItemCount > 0;
+                    bReturn = control4.HasText;
                   }
                 }
               }
