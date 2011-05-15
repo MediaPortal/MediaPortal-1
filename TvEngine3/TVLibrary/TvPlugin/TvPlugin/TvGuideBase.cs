@@ -232,7 +232,6 @@ namespace TvPlugin
         {
           _currentChannel = channels[0];
         }
-
         PositionGuideCursorToCurrentChannel();
 
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
@@ -888,21 +887,8 @@ namespace TvPlugin
                 if (TVHome.Card.IsTimeShifting)
                 {
                   _currentChannel = TVHome.Navigator.Channel;
-                  for (int i = 0; i < _channelList.Count; i++)
-                  {
-                    Channel chan = ((GuideChannel)_channelList[i]).channel;
-                    if (chan.IdChannel == _currentChannel.IdChannel)
-                    {
-                      _cursorX = i;
-                      break;
-                    }
-                  }
+                  PositionGuideCursorToCurrentChannel();
                 }
-              }
-              while (_cursorX >= _channelCount)
-              {
-                _cursorX -= _channelCount;
-                _channelOffset += _channelCount;
               }
 
               GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
