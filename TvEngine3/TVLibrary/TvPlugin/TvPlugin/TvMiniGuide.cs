@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
@@ -733,9 +734,9 @@ namespace TvPlugin
 
     private Dictionary<int, NowAndNext> GetNowAndNext(List<Channel> tvChannelList, DateTime nextEPGupdate)
     {
+      Dictionary<int, NowAndNext> getNowAndNextSegment = new Dictionary<int, NowAndNext>();
       Dictionary<int, NowAndNext> getNowAndNext = new Dictionary<int, NowAndNext>();
       int idGroup = TVHome.Navigator.CurrentGroup.IdGroup;
-
 
       TvBusinessLayer layer = new TvBusinessLayer();
       if (_listNowNext.TryGetValue(idGroup, out getNowAndNext))
@@ -743,16 +744,37 @@ namespace TvPlugin
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
-          getNowAndNext = layer.GetNowAndNext(tvChannelList);
+          List<List<Channel>> tvChannelListSegments = SplitChannelList(tvChannelList, 100);
+          foreach (List<Channel> tvChannelListSegment in tvChannelListSegments)
+          {
+            getNowAndNextSegment = layer.GetNowAndNext(tvChannelListSegment);
+            getNowAndNext = getNowAndNext.Concat(getNowAndNextSegment).ToDictionary(x => x.Key, x => x.Value);
+          }
+
           _listNowNext[idGroup] = getNowAndNext;
         }
       }
       else
       {
-        getNowAndNext = layer.GetNowAndNext(tvChannelList);
+        getNowAndNext = new Dictionary<int, NowAndNext>();
+        List<List<Channel>> tvChannelListSegments = SplitChannelList(tvChannelList, 100);
+        foreach (List<Channel> tvChannelListSegment in tvChannelListSegments)
+        {
+          getNowAndNextSegment = layer.GetNowAndNext(tvChannelListSegment);
+          getNowAndNext = getNowAndNext.Concat(getNowAndNextSegment).ToDictionary(x => x.Key, x => x.Value);
+        }
         _listNowNext.Add(idGroup, getNowAndNext);
       }
       return getNowAndNext;
+    }
+
+    public static List<List<Channel>> SplitChannelList(List<Channel> source, int maxListSize)
+    {
+      return source
+          .Select((x, i) => new { Index = i, Value = x })
+          .GroupBy(x => x.Index / maxListSize)
+          .Select(x => x.Select(v => v.Value).ToList())
+          .ToList();
     }
 
     private void SetNextEpgUpdate(DateTime nextEPGupdate)
