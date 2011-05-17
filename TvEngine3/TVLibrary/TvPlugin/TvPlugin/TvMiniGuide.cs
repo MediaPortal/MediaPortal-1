@@ -744,6 +744,7 @@ namespace TvPlugin
         bool updateNow = (DateTime.Now >= nextEPGupdate);
         if (updateNow)
         {
+          getNowAndNext = new Dictionary<int, NowAndNext>();
           List<List<Channel>> tvChannelListSegments = SplitChannelList(tvChannelList, 100);
           foreach (List<Channel> tvChannelListSegment in tvChannelListSegments)
           {
