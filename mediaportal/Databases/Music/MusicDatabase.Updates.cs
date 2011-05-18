@@ -1313,7 +1313,7 @@ namespace MediaPortal.Music.Database
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
             0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
-            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded
+            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded.ToString("yyyy-MM-dd HH:mm:ss")
             );
         try
         {
@@ -1422,7 +1422,7 @@ namespace MediaPortal.Music.Database
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
               tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
-              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded,
+              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded.ToString("yyyy-MM-dd HH:mm:ss"),
               strFileName
               );
           try
