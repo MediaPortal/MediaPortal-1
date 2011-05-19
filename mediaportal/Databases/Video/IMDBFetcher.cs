@@ -190,25 +190,16 @@ namespace MediaPortal.Video.Database
             }
           }
           OnProgress(line1, _url.Title, string.Empty, percent);
-          // Remove ":".... from title for fanart files (forbidden filename chars)
-          string newTitle = _movieDetails.Title;
-          newTitle = newTitle.Replace(":", " -");
-          newTitle = newTitle.Replace("/", " ");
-          newTitle = newTitle.Replace("\\", " ");
-          newTitle = newTitle.Replace("*", " ");
-          newTitle = newTitle.Replace("?", "_"); // What to do with this as some movies have title "?"
-          newTitle = newTitle.Replace("\"", "'");
-          newTitle = newTitle.Replace("<", "(");
-          newTitle = newTitle.Replace(">", ")");
-          newTitle = newTitle.Replace("|", "");
-          // Strip movie title prefixes
+          
           bool stripPrefix = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
+          
           if (stripPrefix)
           {
-            Util.Utils.StripMovieNamePrefix(ref newTitle, true);
+            string tmpTitle = _movieDetails.Title;
+            Util.Utils.StripMovieNamePrefix(ref tmpTitle, true);
+            _movieDetails.Title = tmpTitle;
           }
-          _movieDetails.Title = newTitle;
-
+          
           //
           // Covers - If cover is not empty don't change it, else download new
           //
@@ -333,7 +324,7 @@ namespace MediaPortal.Video.Database
             if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
-                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);
+                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare, string.Empty);
               // Set fanart url to db
               _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
             }

@@ -121,12 +121,6 @@ namespace MediaPortal.Util
     /// </summary>
     /// <param name="imdbMovieID"></param>
     /// <param name="actorList"></param>
-    /// <summary>
-    /// Helper function for fetching actorsID from IMDB movie page using IMDBmovieID.
-    /// Parameter imdbMovieID must be in IMDB format (ie. tt0123456 including leading zeros)
-    /// </summary>
-    /// <param name="imdbMovieID"></param>
-    /// <param name="actorList"></param>
     public void SearchActors(string imdbMovieID, ref ArrayList actorList)
     {
       if (!Win32API.IsConnectedToInternet())
