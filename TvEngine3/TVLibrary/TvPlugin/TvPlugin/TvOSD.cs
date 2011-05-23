@@ -149,22 +149,12 @@ namespace TvPlugin
       get { return false; }
     }
 
-    private DateTime _updateTimer = DateTime.Now;
     public override void Render(float timePassed)
     {
-      TimeSpan ts = DateTime.Now - _updateTimer;
-      if (ts.TotalMilliseconds < 1000)
-      {
-        base.Render(timePassed);
-        return;
-      }
-
       UpdateProgressBar();
       SetVideoProgress(); // get the percentage of playback complete so far
-      GetTimeInfo(); // show the time elapsed/total playing time
+      Get_TimeInfo(); // show the time elapsed/total playing time
       SetRecorderStatus(); // BAV: fixing bug 1429: OSD is not updated with recording status 
-
-      _updateTimer = DateTime.Now;
       base.Render(timePassed); // render our controls to the screen
     }
 
@@ -403,7 +393,6 @@ namespace TvPlugin
             Reset();
             FocusControl(GetID, (int)Controls.OSD_PLAY, 0); // set focus to play button by default when window is shown
             ShowPrograms();
-            UpdateProgressBar();
             QueueAnimation(AnimationType.WindowOpen);
             for (int i = (int)Controls.Panel1; i < (int)Controls.Panel2; ++i)
             {
@@ -467,7 +456,6 @@ namespace TvPlugin
                   }
                 }
                 ShowPrograms();
-                UpdateProgressBar();
               }
               if (iControl == btnNextProgram.GetID)
               {
@@ -481,7 +469,6 @@ namespace TvPlugin
                   }
                 }
                 ShowPrograms();
-                UpdateProgressBar();
               }
             }
 
@@ -781,8 +768,8 @@ namespace TvPlugin
       }
     }
 
-    private void GetTimeInfo()
-    {      
+    private void Get_TimeInfo()
+    {
       string strTime = "";
       if (!g_Player.IsTVRecording)
       {
@@ -1448,7 +1435,6 @@ namespace TvPlugin
       TVHome.Navigator.ZapToPreviousChannel(false);
 
       ShowPrograms();
-      UpdateProgressBar();
       m_dateTime = DateTime.Now;
     }
 
@@ -1463,14 +1449,12 @@ namespace TvPlugin
       TVHome.Navigator.ZapToNextChannel(false);
 
       ShowPrograms();
-      UpdateProgressBar();
       m_dateTime = DateTime.Now;
     }
 
     public void UpdateChannelInfo()
     {
       ShowPrograms();
-      UpdateProgressBar();
     }
 
 
@@ -1506,7 +1490,7 @@ namespace TvPlugin
         return TVHome.Navigator.ZapChannel;
       }
     }
-    private static string GetChannelName()
+    private string GetChannelName()
     {
       if (g_Player.IsTVRecording)
       {
@@ -1515,14 +1499,19 @@ namespace TvPlugin
       }
       else
       {
+        string tmpDisplayName = TVHome.Navigator.ZapChannel.DisplayName;
         Channel tmpChannel = TVHome.Navigator.ZapChannel;
 
-        if (tmpChannel == null)
-        {          
-          TVHome.Navigator.ReLoad();
-          // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.          
+        if (tmpChannel != null)
+        {
+          return TVHome.Navigator.ZapChannel.DisplayName;
         }
-        return TVHome.Navigator.ZapChannel.DisplayName;
+        else
+        {
+          TVHome.Navigator.ReLoad();
+          // Let TvHome reload all channel information from the database. This makes sure that recently renamed linked subchannels handled the right way.
+          return TVHome.Navigator.ZapChannel.DisplayName;
+        }
       }
     }
 
@@ -1557,80 +1546,118 @@ namespace TvPlugin
       }
 
       Program prog = TVHome.Navigator.Channel.CurrentProgram;
-      if (prog == null && !g_Player.IsTVRecording)
+      //TVHome.Navigator.GetChannel(GetChannelName()).GetProgramAt(m_dateTime);      
+
+      if (prog != null && !g_Player.IsTVRecording)
       {
-        UpdateDynamicTvPropertiesForNoEPG(TVHome.Navigator.Channel);
+        string strTime = String.Format("{0}-{1}",
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+
+        if (lblCurrentTime != null)
+        {
+          lblCurrentTime.Label = strTime;
+        }
+        // On TV Now
+        if (tbOnTvNow != null)
+        {
+          strTime = String.Format("{0} ", prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          tbOnTvNow.Label = strTime + TVUtil.GetDisplayTitle(prog);
+          GUIPropertyManager.SetProperty("#TV.View.start", strTime);
+
+          strTime = String.Format("{0} ", prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.stop", strTime);
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+        }
+        if (tbProgramDescription != null)
+        {
+          tbProgramDescription.Label = prog.Description;
+        }
+
+        // next program
+        Channel chan = GetChannel();
+        if (chan != null)
+        {
+          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
+
+          if (prog != null)
+          {
+            if (tbOnTvNext != null)
+            {
+              tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
+            }
+          }
+        }
       }
       else if (g_Player.IsTVRecording)
       {
-        Recording rec = TvRecorded.ActiveRecording();
+        Recording rec = null;
+        string description = "";
+        string title = "";
+        string startTime = ""; // DateTime.MinValue;
+        string endTime = ""; //  DateTime.MaxValue;
+        //string remaining = "";
+
+        rec = TvRecorded.ActiveRecording();
         if (rec != null)
-        {                    
-          UpdateProgressBarForRecording();
-          string channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
-          string strLogo = GetThumbLogoForRecording(rec);         
-          UpdateStaticRecordingProperties(channelDisplayName, rec, strLogo);          
+        {
+          description = rec.Description;
+          title = rec.Title;
+          Channel ch = Channel.Retrieve(rec.IdChannel);
+          if (ch != null)
+          {
+            string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
+            if (string.IsNullOrEmpty(strLogo))                          
+            {
+              strLogo = "defaultVideoBig.png";
+            }
+            GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
+          }
+
+          long currentPosition = (long)(g_Player.CurrentPosition);
+          startTime = Utils.SecondsToHMSString((int)currentPosition);
+
+          long duration = (long)(g_Player.Duration);
+          endTime = Utils.SecondsToHMSString((int)duration);
+
+          //remaining = "0";                    
+          if (tbOnTvNow != null)
+          {
+            tbOnTvNow.Label = title;
+          }
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", title);
+          GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+          GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+
+          if (tbProgramDescription != null)
+          {
+            tbProgramDescription.Label = description;
+          }
         }
       }
-      UpdateCommonLables();
-    }
 
-    private void UpdateCommonLables()
-    {
-      if (lblCurrentChannel != null)
+      else
       {
-        lblCurrentChannel.Label = GUIPropertyManager.GetProperty("#TV.View.channel");
-      }
-
-      if (tbOnTvNow != null)
-      {
-        tbOnTvNow.Label = GUIPropertyManager.GetProperty("#TV.View.compositetitle");
-      }
-
-      if (lblCurrentTime != null)
-      {
-        lblCurrentTime.Label = GUIPropertyManager.GetProperty("#TV.View.remaining");
-      }
-
-      if (tbProgramDescription != null)
-      {
-        tbProgramDescription.Label = GUIPropertyManager.GetProperty("#TV.View.description");
-      }
-    }
-
-    private static string GetThumbLogoForRecording(Recording rec)
-    {
-      string strLogo = "";
-      Channel ch = Channel.Retrieve(rec.IdChannel);
-      if (ch != null)
-      {
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-        if (string.IsNullOrEmpty(strLogo))
+        if (tbOnTvNow != null)
         {
-          strLogo = "defaultVideoBig.png";
-        }            
+          tbOnTvNow.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        }
+        if (tbOnTvNext != null)
+        {
+          tbOnTvNext.Label = GUILocalizeStrings.Get(736); // no epg for this channel
+        }
+
+        GUIPropertyManager.SetProperty("#TV.View.start", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.stop", string.Empty);
+        GUIPropertyManager.SetProperty("#TV.View.remaining", string.Empty);
+        if (lblCurrentTime != null)
+        {
+          lblCurrentTime.Label = String.Empty;
+        }
       }
-      return strLogo;
-    }
 
-    private void UpdateDynamicRecordingProperties(double fPercent, string startTime, string endTime)
-    {
-      GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
-      GUIPropertyManager.SetProperty("#TV.View.start", startTime);
-      GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
-      GetTimeInfo();
-    }
 
-    private static void UpdateStaticRecordingProperties(string channelDisplayName, Recording rec, string strLogo)
-    {
-      GUIPropertyManager.SetProperty("#TV.View.thumb", strLogo);
-      GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
-      GUIPropertyManager.SetProperty("#TV.View.genre", rec.Genre);
-      GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
-      GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
-      GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
-      GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
-      GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
+      UpdateProgressBar();
     }
 
     private void SetRecorderStatus()
@@ -1674,136 +1701,114 @@ namespace TvPlugin
 
     private void UpdateProgressBar()
     {
-      if (g_Player.IsTVRecording)
+      if (!g_Player.IsTVRecording)
       {
-        UpdateProgressBarForRecording();       
-      }
-      else
-      {
-        UpdateProgressBarForTv();                
-      }
-    }
+        double fPercent;
+        Program prog = GetChannel().CurrentProgram;
 
-    private void UpdateProgressBarForRecording()
-    {
-      Recording rec = TvRecorded.ActiveRecording();
-      if (rec != null)
-      {
-        long currentPosition = (long)(g_Player.CurrentPosition);
-        string startTime = Utils.SecondsToHMSString((int)currentPosition);
+        if (prog == null)
+        {
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+          return;
+        }
+        string strTime = String.Format("{0}-{1}",
+                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
 
-        long duration = (long)(g_Player.Duration);
-        string endTime = Utils.SecondsToHMSString((int)duration);
-
-        string channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
-        
-        double fPercent = ((double)currentPosition) / ((double)duration);
-        fPercent *= 100.0d;
-        
-        UpdateDynamicRecordingProperties(fPercent, startTime, endTime); 
-      }
-    }
-
-  
-    
-
-    private void UpdateProgressBarForTv() 
-    {
-      Program prog = GetChannel().CurrentProgram;
-
-      if (prog == null)
-      {
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");        
-      }
-      else
-      {        
         TimeSpan ts = prog.EndTime - prog.StartTime;
         double iTotalSecs = ts.TotalSeconds;
         ts = DateTime.Now - prog.StartTime;
         double iCurSecs = ts.TotalSeconds;
-        double fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
+        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
         fPercent *= 100.0d;
         GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
-        GetTimeInfo();
-        
-        if (previousProgram == null || (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel))
+        Get_TimeInfo();
+
+        bool updateProperties = false;
+        if (previousProgram == null)
         {
           m_dateTime = DateTime.Now;
           previousProgram = prog.Clone();
           ShowPrograms();
-          UpdateDynamicTvProperties(prog);
-          UpdateLabels(prog);
+          updateProperties = true;
         }
-      }      
-    }
-
-    private void UpdateLabels(Program prog)
-    {
-      UpdateCommonLables();
-
-      // next program
-      UpdateNextTvLabel(prog);
-    }
-
-    private void UpdateNextTvLabel(Program prog)
-    {
-      if (tbOnTvNext != null)
-      {
-        Channel chan = GetChannel();
-        if (chan != null)
+        else if (previousProgram.StartTime != prog.StartTime || previousProgram.IdChannel != prog.IdChannel)
         {
-          prog = chan.GetProgramAt(prog.EndTime.AddMinutes(1));
-          if (prog != null)
-          {
-            string strTime = String.Format("{0} ",
-                                           prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-            tbOnTvNext.Label = strTime + "  " + TVUtil.GetDisplayTitle(prog);
-          }
+          m_dateTime = DateTime.Now;
+          previousProgram = prog.Clone();
+          ShowPrograms();
+          updateProperties = true;
+        }
+        if (updateProperties)
+        {
+          GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.start",
+                                         prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.stop",
+                                         prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+          GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
+          GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
+          GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
+          GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber);
         }
       }
-    }                                          
 
-    private static void UpdateDynamicTvPropertiesForNoEPG(Channel channel)
-    {
-      GUIPropertyManager.SetProperty("#TV.View.title", GUILocalizeStrings.Get(736));          // no epg for this channel
-      GUIPropertyManager.SetProperty("#TV.View.compositetitle", GUILocalizeStrings.Get(736)); // no epg for this channel
-      GUIPropertyManager.SetProperty("#TV.View.channel", channel.DisplayName);
-      GUIPropertyManager.SetProperty("#TV.View.start", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.stop", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.remaining", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.genre", String.Empty);      
-      GUIPropertyManager.SetProperty("#TV.View.subtitle", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.description", String.Empty);
-      GUIPropertyManager.SetProperty("#TV.View.episode", String.Empty);
-    }
-
-
-    private static void UpdateDynamicTvProperties(Program prog) 
-    {
-      if (prog != null)
+      else
       {
-        GUIPropertyManager.SetProperty("#TV.View.channel", prog.ReferencedChannel().DisplayName);
-        GUIPropertyManager.SetProperty("#TV.View.start",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.stop",
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        GUIPropertyManager.SetProperty("#TV.View.remaining", Utils.SecondsToHMSString(prog.EndTime - prog.StartTime));
-        GUIPropertyManager.SetProperty("#TV.View.genre", prog.Genre);
-        GUIPropertyManager.SetProperty("#TV.View.title", prog.Title);
-        GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(prog));
-        GUIPropertyManager.SetProperty("#TV.View.subtitle", prog.EpisodeName);
-        GUIPropertyManager.SetProperty("#TV.View.description", prog.Description);
-        GUIPropertyManager.SetProperty("#TV.View.episode", prog.EpisodeNumber);
-      }      
+        Recording rec = null;
+        string startTime = "";
+        string endTime = "";
+        string channelDisplayName = "";
+
+        rec = TvRecorded.ActiveRecording();
+        if (rec != null)
+        {
+          long currentPosition = (long)(g_Player.CurrentPosition);
+          startTime = Utils.SecondsToHMSString((int)currentPosition);
+
+          long duration = (long)(g_Player.Duration);
+          endTime = Utils.SecondsToHMSString((int)duration);
+
+
+          channelDisplayName = TvRecorded.GetRecordingDisplayName(rec) + " (" + GUILocalizeStrings.Get(604) + ")";
+
+          double fPercent;
+          if (rec == null)
+          {
+            GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
+            return;
+          }
+
+          fPercent = ((double)currentPosition) / ((double)duration);
+          fPercent *= 100.0d;
+
+          GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
+          Get_TimeInfo();
+
+          GUIPropertyManager.SetProperty("#TV.View.channel", channelDisplayName);
+          GUIPropertyManager.SetProperty("#TV.View.start", startTime);
+          GUIPropertyManager.SetProperty("#TV.View.stop", endTime);
+          GUIPropertyManager.SetProperty("#TV.View.genre", rec.Genre);
+          GUIPropertyManager.SetProperty("#TV.View.title", rec.Title);
+          GUIPropertyManager.SetProperty("#TV.View.compositetitle", TVUtil.GetDisplayTitle(rec));
+          GUIPropertyManager.SetProperty("#TV.View.description", rec.Description);
+          GUIPropertyManager.SetProperty("#TV.View.subtitle", rec.EpisodeName);
+          GUIPropertyManager.SetProperty("#TV.View.episode", rec.EpisodeNumber);
+        }
+      }
     }
 
     public bool InWindow(int x, int y)
     {
-      foreach (GUIControl control in controlList) 
+      for (int i = 0; i < controlList.Count; ++i)
       {
+        GUIControl control = (GUIControl)controlList[i];
+        int controlID;
         if (control.IsVisible)
         {
-          int controlID;
           if (control.InControl(x, y, out controlID))
           {
             return true;
