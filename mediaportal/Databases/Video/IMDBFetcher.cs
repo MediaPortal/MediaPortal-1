@@ -921,16 +921,7 @@ namespace MediaPortal.Video.Database
         Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       }
 
-      // Search by IMDBid
-      string strMovieName;
-      if (currentMovie.IMDBNumber != string.Empty && currentMovie.IMDBNumber.StartsWith("tt"))
-      {
-        strMovieName = currentMovie.IMDBNumber;
-      }
-      else
-      {
-        strMovieName = currentMovie.SearchString;
-      }
+      string strMovieName = currentMovie.SearchString;
       string strFileName = string.Empty;
       string path = currentMovie.Path;
       string filename = currentMovie.File;
@@ -1011,16 +1002,9 @@ namespace MediaPortal.Video.Database
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
-      // Search by IMDBid
-      if (currentMovie.IMDBNumber != string.Empty && currentMovie.IMDBNumber.StartsWith("tt"))
-      {
-        currentMovie.SearchString = currentMovie.IMDBNumber;
-      }
-      else
-      {
-        currentMovie.SearchString = strMovieName;
-      }
-
+      
+      currentMovie.SearchString = strMovieName;
+      
       if (currentMovie.ID >= 0 || !addToDatabase)
       {
         if (!Win32API.IsConnectedToInternet())
@@ -1039,8 +1023,8 @@ namespace MediaPortal.Video.Database
           }
           if (fuzzyMatching)
           {
-            IMDB _tmp = new IMDB();
-            selectedMovie = fetcher.FuzzyMatch(_tmp.GetSearchString(fetcher.MovieName));
+            IMDB tmpImdb = new IMDB();
+            selectedMovie = fetcher.FuzzyMatch(tmpImdb.GetSearchString(fetcher.MovieName));
             if (selectedMovie == -1)
             {
               if (!fetcher.OnMovieNotFound(fetcher))
