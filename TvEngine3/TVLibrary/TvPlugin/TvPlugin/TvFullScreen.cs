@@ -1320,61 +1320,43 @@ namespace TvPlugin
 
         case GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT:
           {
-            Log.Debug("TvFullScreen:deinit->OSD:Off");
-            HideMainOSD();
-            // msn related can be removed
-            //if (_msnWindowVisible)
-            //{
-            //  ///@
-            //  /// GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_DEINIT, _msnWindow.GetID, 0, 0, GetID, 0, null);
-            //  ///_msnWindow.OnMessage(msg);	// Send a de-init msg to the OSD
-            //}
+            lock (this) {
+              Log.Debug("TvFullScreen:deinit->OSD:Off");
+              HideMainOSD();
 
-            _isOsdVisible = false;
-            _isPauseOsdVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-            GUIWindowManager.IsPauseOsdVisible = false;
-            _channelInputVisible = false;
-            _keyPressedTimer = DateTime.Now;
-            _channelName = "";
+              _isOsdVisible = false;
+              _isPauseOsdVisible = false;
+              GUIWindowManager.IsOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
+              _channelInputVisible = false;
+              _keyPressedTimer = DateTime.Now;
+              _channelName = "";
 
-            _stepSeekVisible = false;
-            _statusVisible = false;
-            _groupVisible = false;
-            _notifyDialogVisible = false;
-            _dialogYesNoVisible = false;
-            _bottomDialogMenuVisible = false;
-            _statusTimeOutTimer = DateTime.Now;
+              _stepSeekVisible = false;
+              _statusVisible = false;
+              _groupVisible = false;
+              _notifyDialogVisible = false;
+              _dialogYesNoVisible = false;
+              _bottomDialogMenuVisible = false;
+              _statusTimeOutTimer = DateTime.Now;
 
-            _screenState.ContextMenuVisible = false;
-            _screenState.MsgBoxVisible = false;
-            //_screenState.MsnVisible = false;      // msn related can be removed
-            _screenState.OsdVisible = false;
-            _screenState.Paused = false;
-            _screenState.ShowGroup = false;
-            _screenState.ShowInput = false;
-            _screenState.ShowStatusLine = false;
-            _screenState.ShowTime = false;
-            _screenState.ZapOsdVisible = false;
-            _needToClearScreen = false;
+              _screenState.ContextMenuVisible = false;
+              _screenState.MsgBoxVisible = false;
+              //_screenState.MsnVisible = false;      // msn related can be removed
+              _screenState.OsdVisible = false;
+              _screenState.Paused = false;
+              _screenState.ShowGroup = false;
+              _screenState.ShowInput = false;
+              _screenState.ShowStatusLine = false;
+              _screenState.ShowTime = false;
+              _screenState.ZapOsdVisible = false;
+              _needToClearScreen = false;
 
+              GUIGraphicsContext.IsFullScreenVideo = false;
+              GUILayerManager.UnRegisterLayer(this);
 
-            base.OnMessage(message);
-            GUIGraphicsContext.IsFullScreenVideo = false;
-            if (!GUIGraphicsContext.IsTvWindow(message.Param1))
-            {
-              if (!g_Player.Playing)
-              {
-                if (GUIGraphicsContext.ShowBackground)
-                {
-                  // stop timeshifting & viewing... 
-
-                  ///@
-                  ///Recorder.StopViewing();
-                }
-              }
+              base.OnMessage(message);
             }
-            GUILayerManager.UnRegisterLayer(this);
             return true;
           }
 
@@ -1385,21 +1367,18 @@ namespace TvPlugin
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
+
             if (!SettingsLoaded)
               LoadSettings();
             GUIGraphicsContext.IsFullScreenVideo = true;
-            ///@
-            GUIGraphicsContext.VideoWindow = new Rectangle(GUIGraphicsContext.OverScanLeft,
-                                                           GUIGraphicsContext.OverScanTop,
-                                                           GUIGraphicsContext.OverScanWidth,
-                                                           GUIGraphicsContext.OverScanHeight);
+
             _osdWindow = (TvOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVOSD);
             _zapWindow = (TvZapOsd)GUIWindowManager.GetWindow((int)Window.WINDOW_TVZAPOSD);
-            ///_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
+            //_msnWindow = (GUITVMSNOSD)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TVMSNOSD);     // msn related can be removed
 
             _lastPause = g_Player.Paused;
             _lastSpeed = g_Player.Speed;
-            ///Log.Debug("start fullscreen channel:{0}", Recorder.TVChannelName);
+
             Log.Debug("TvFullScreen:init->OSD:Off");
             Log.Debug("TvFullScreen: init, playing {0}, player.CurrentFile {1}, TVHome.Card.TimeShiftFileName {2}",
                       g_Player.Playing, g_Player.CurrentFile, TVHome.Card.TimeShiftFileName);
@@ -1409,11 +1388,11 @@ namespace TvPlugin
             _channelInputVisible = false;
             _keyPressedTimer = DateTime.Now;
             _channelName = "";
-            //					m_sZapChannel="";
 
-            _isOsdVisible = false;
-            GUIWindowManager.IsOsdVisible = false;
-            //					_zapTimeOutTimer=DateTime.Now;
+            _isPauseOsdVisible = _lastPause;
+            GUIWindowManager.IsPauseOsdVisible = _lastPause;
+            //_zapTimeOutTimer=DateTime.Now;
+            _osdTimeoutTimer = DateTime.Now;
 
             _stepSeekVisible = false;
             _statusVisible = false;
@@ -1423,26 +1402,18 @@ namespace TvPlugin
             _bottomDialogMenuVisible = false;
             _statusTimeOutTimer = DateTime.Now;
             //imgVolumeBar.Current = VolumeHandler.Instance.Step;
-						//imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+            //imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
 
-						ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
-
-						RenderVolume(false);
+            ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
             ScreenStateChanged();
             UpdateGUI();
 
-            ///@
-            /// GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.Black, 1.0f, 0);
-            ///try
-            ///{
-            ///  GUIGraphicsContext.DX9Device.Present();
-            ///}
-            ///catch (Exception)
-            ///{
-            ///}
+            GUIGraphicsContext.IsFullScreenVideo = true;
             GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
 
+            RenderVolume(false);
 
+            //return base.OnMessage(message);
             return true;
           }
 

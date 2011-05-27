@@ -1065,6 +1065,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
+
             _osdWindow = (GUIVideoOSD)GUIWindowManager.GetWindow((int)Window.WINDOW_OSD);
 
             HideControl(GetID, (int)Control.LABEL_ROW1);
@@ -1076,8 +1077,10 @@ namespace MediaPortal.GUI.Video
               LoadSettings();
 
             GUIWindowManager.IsOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = g_Player.Paused;
             _isOsdVisible = false;
-            _isPauseOsdVisible = false;
+            _isPauseOsdVisible = g_Player.Paused;
+            m_dwOSDTimeOut = DateTime.Now;
             _showStep = false;
             _showStatus = false;
             _showTime = false;
@@ -1100,14 +1103,9 @@ namespace MediaPortal.GUI.Video
             NotifyDialogVisible = false;
 
             ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
-
-            GUIGraphicsContext.IsFullScreenVideo = true;
             ScreenStateChanged();
             _needToClearScreen = true;
             UpdateGUI();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
-            RenderVolume(false);
-            RenderForbidden(false);
             if (!screenState.Paused)
             {
               for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
@@ -1115,6 +1113,14 @@ namespace MediaPortal.GUI.Video
                 HideControl(GetID, i);
               }
             }
+
+            GUIGraphicsContext.IsFullScreenVideo = true;
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
+
+            RenderVolume(false);
+            RenderForbidden(false);
+
+            //return base.OnMessage(message);
             return true;
           }
 
@@ -1129,7 +1135,9 @@ namespace MediaPortal.GUI.Video
                 _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
               }
               _isOsdVisible = false;
+              _isPauseOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
 
               GUILayerManager.UnRegisterLayer(this);

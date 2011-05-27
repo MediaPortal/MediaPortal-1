@@ -294,6 +294,19 @@ namespace MediaPortal.GUI.Library
       return env.result;
     }
 
+    public static void SendThreadCallback(Callback callback, int param1, int param2, object data)
+    {
+      CallbackEnv env = new CallbackEnv();
+      env.callback = callback;
+      env.param1 = param1;
+      env.param2 = param2;
+      env.data = data;
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
+      SendThreadMessage(msg);
+    }
+
+
     /// <summary>
     /// process the thread messages and actions
     /// This method gets called by the main thread only and ensures that

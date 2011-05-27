@@ -453,7 +453,14 @@ namespace MediaPortal.InputDevices
           case WM_POWERBROADCAST:
             if (msg.WParam.ToInt32() == PBT_APMRESUMEAUTOMATIC)
             {
-              StartHcw();
+              try
+              {
+                StartHcw();
+              }
+              catch (Exception e)
+              {
+                Log.Error("StartHCW failed. Exception is: {0}", e.Message);
+              }
               return true;
             }
             break;

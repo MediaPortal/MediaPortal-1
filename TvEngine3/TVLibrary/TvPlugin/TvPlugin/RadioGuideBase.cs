@@ -3857,8 +3857,33 @@ namespace TvPlugin
 
     private void OnPageUp()
     {
+      int Steps;
+      if (_singleChannelView)
+      {
+        Steps = _channelCount; // all available rows
+      }
+      else
+      {
+        if (_guideContinuousScroll)
+        {
+          Steps = _channelCount; // all available rows
+        }
+        else
+        {
+          // If we're on the first channel in the guide then allow one step to get back to the end of the guide.
+          if (_channelOffset == 0 && _cursorX == 0)
+          {
+            Steps = 1;
+          }
+          else
+          {
+            // only number of additional avail channels
+            Steps = Math.Min(_channelOffset + _cursorX, _channelCount);
+          }
+        }
+      }
       UnFocus();
-      for (int i = 0; i < _channelCount; ++i)
+      for (int i = 0; i < Steps; ++i)
       {
         OnUp(true, true);
       }

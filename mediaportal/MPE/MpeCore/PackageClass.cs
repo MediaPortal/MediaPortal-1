@@ -136,7 +136,7 @@ namespace MpeCore
     /// </summary>
     public void UnInstall()
     {
-      for (int i = UnInstallInfo.Items.Count - 1; i > 0; i--)
+      for (int i = UnInstallInfo.Items.Count - 1; i >= 0; i--)
       {
         UnInstallItem item = UnInstallInfo.Items[i];
         if (string.IsNullOrEmpty(item.ActionType))

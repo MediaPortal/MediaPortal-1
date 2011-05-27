@@ -82,7 +82,7 @@ namespace MediaPortal
     protected DateTime _mouseTimeOutTimer = DateTime.Now;
     private Control ourRenderTarget; // The window we will render too
     protected bool isUsingMenus = true; // Should we use the default windows
-    private float lastTime = 0.0f; // The last time
+    private long lastTime = 0; // The last time
     protected int frames = 0; // Number of frames since our last update
     protected int m_iVolume = -1;
     protected bool miniTvMode = false; // minitv means minsize < 720, always on top, focus may leave
@@ -1792,11 +1792,14 @@ namespace MediaPortal
     {
       // Keep track of the frame count
       //if (frames < 10) return;
-      float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      //Guzzi, SE: Mantis 3560
+      //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+      long time = Stopwatch.GetTimestamp();
+      float diffTime = (float)(time - lastTime) / Stopwatch.Frequency;
       // Update the scene stats once per second
-      if (time - lastTime >= 1.0f)
+      if (diffTime >= 1.0f) // 1 sec. passed
       {
-        framePerSecond = (float)frames / (time - lastTime);
+        framePerSecond = (float)frames / diffTime;
         GUIGraphicsContext.CurrentFPS = framePerSecond;
         lastTime = time;
         frames = 0;

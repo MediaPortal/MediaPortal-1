@@ -1313,21 +1313,7 @@ namespace MediaPortal.Configuration.Sections
           tbIMDBNr.Text = string.Empty;
         }
       }
-      //
-      // Remove forbidden chars for filenames (cover thumbs and fanarts problem)
-      //
-      string newTitle = tbTitle.Text;
-      newTitle = newTitle.Replace(":", " -");
-      newTitle = newTitle.Replace("/", " ");
-      newTitle = newTitle.Replace("\\", " ");
-      newTitle = newTitle.Replace("*", " ");
-      newTitle = newTitle.Replace("?", "_"); // What to do with this as some movies have title "?"
-      newTitle = newTitle.Replace("\"", "'");
-      newTitle = newTitle.Replace("<", "(");
-      newTitle = newTitle.Replace(">", ")");
-      newTitle = newTitle.Replace("|", "");
-      tbTitle.Text = newTitle;
-
+      
       IMDBMovie details = CurrentMovie;
       if (details.ID >= 0)
       {
@@ -2877,10 +2863,18 @@ namespace MediaPortal.Configuration.Sections
           FanArt.DeleteFanarts(listViewFiles.Items[0].Text, CurrentMovie.Title);
           // Download fanarts
           FanArt fanartSearch = new FanArt();
-          fanartSearch.GetTmdbFanartByApi
-            (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
-             chbFanartShare.Checked);
-
+          if (!tbFASearchString.Enabled)
+          {
+            fanartSearch.GetTmdbFanartByApi
+              (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
+               chbFanartShare.Checked, string.Empty);
+          }
+          else
+          {
+            fanartSearch.GetTmdbFanartByApi
+              (strPath, strFile, CurrentMovie.IMDBNumber, CurrentMovie.Title, false, (int)fanartQ.Value,
+               chbFanartShare.Checked, tbFASearchString.Text);
+          }
           // Update database
           VideoDatabase.SetFanartURL(CurrentMovie.ID, fanartSearch.DefaultFanartUrl);
           tbFanartLocation.Text = fanartSearch.DefaultFanartUrl;
@@ -3069,7 +3063,7 @@ namespace MediaPortal.Configuration.Sections
           // Find fanart
           FanArt fanartSearch = new FanArt();
           fanartSearch.GetTmdbFanartByApi
-            (strPath, strFile, movie.IMDBNumber, movie.Title, true, (int)fanartQ.Value, chbFanartShare.Checked);
+            (strPath, strFile, movie.IMDBNumber, movie.Title, true, (int)fanartQ.Value, chbFanartShare.Checked, string.Empty);
 
           // Update fanart URL in vdb
           VideoDatabase.SetFanartURL(movie.ID, fanartSearch.DefaultFanartUrl);
@@ -3693,19 +3687,6 @@ namespace MediaPortal.Configuration.Sections
         string title = movie.Title;
         int id = movie.ID;
         //
-        // Forbidden filename chars replace
-        //
-        string newTitle = title;
-        newTitle = newTitle.Replace(":", " -");
-        newTitle = newTitle.Replace("/", " ");
-        newTitle = newTitle.Replace("\\", " ");
-        newTitle = newTitle.Replace("*", " ");
-        newTitle = newTitle.Replace("?", "_"); // What to do with this as some movies have title "?"
-        newTitle = newTitle.Replace("\"", "'");
-        newTitle = newTitle.Replace("<", "(");
-        newTitle = newTitle.Replace(">", ")");
-        newTitle = newTitle.Replace("|", "");
-        //
         // Old file names
         //
         string strThumb = Util.Utils.GetCoverArtName(Thumbs.MovieTitle, title);
@@ -3713,8 +3694,8 @@ namespace MediaPortal.Configuration.Sections
         //
         // New filenames
         //
-        string strThumbNew = Path.GetDirectoryName(strThumb) + "\\" + newTitle + "{" + id + "}.jpg";
-        string strLargeThumbNew = Path.GetDirectoryName(largeThumb) + "\\" + newTitle + "{" + id + "}L.jpg";
+        string strThumbNew = Path.GetDirectoryName(strThumb) + "\\" + title + "{" + id + "}.jpg";
+        string strLargeThumbNew = Path.GetDirectoryName(largeThumb) + "\\" + title + "{" + id + "}L.jpg";
         //
         // Copy new files and delete old ones
         //
@@ -3727,14 +3708,6 @@ namespace MediaPortal.Configuration.Sections
         {
           File.Copy(largeThumb, strLargeThumbNew, true);
           Util.Utils.FileDelete(largeThumb);
-        }
-        // Save new title only in case of change
-        if (title != newTitle)
-        {
-          movie.Title = newTitle;
-          // Save new title into database
-          IMDBMovie details = movie;
-          VideoDatabase.SetMovieInfoById(id, ref details);
         }
         //
         // Progressbar advance
@@ -3819,6 +3792,7 @@ namespace MediaPortal.Configuration.Sections
 
       Cursor = Cursors.Default;
     }
+    
 
     #endregion
 

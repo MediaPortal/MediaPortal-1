@@ -190,25 +190,16 @@ namespace MediaPortal.Video.Database
             }
           }
           OnProgress(line1, _url.Title, string.Empty, percent);
-          // Remove ":".... from title for fanart files (forbidden filename chars)
-          string newTitle = _movieDetails.Title;
-          newTitle = newTitle.Replace(":", " -");
-          newTitle = newTitle.Replace("/", " ");
-          newTitle = newTitle.Replace("\\", " ");
-          newTitle = newTitle.Replace("*", " ");
-          newTitle = newTitle.Replace("?", "_"); // What to do with this as some movies have title "?"
-          newTitle = newTitle.Replace("\"", "'");
-          newTitle = newTitle.Replace("<", "(");
-          newTitle = newTitle.Replace(">", ")");
-          newTitle = newTitle.Replace("|", "");
-          // Strip movie title prefixes
+          
           bool stripPrefix = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
+          
           if (stripPrefix)
           {
-            Util.Utils.StripMovieNamePrefix(ref newTitle, true);
+            string tmpTitle = _movieDetails.Title;
+            Util.Utils.StripMovieNamePrefix(ref tmpTitle, true);
+            _movieDetails.Title = tmpTitle;
           }
-          _movieDetails.Title = newTitle;
-
+          
           //
           // Covers - If cover is not empty don't change it, else download new
           //
@@ -333,7 +324,7 @@ namespace MediaPortal.Video.Database
             if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
-                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare);
+                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare, string.Empty);
               // Set fanart url to db
               _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
             }
@@ -930,16 +921,7 @@ namespace MediaPortal.Video.Database
         Log.Info("RefreshIMDB() - Refreshing MovieInfo for {0}-{1}", currentMovie.Title, currentMovie.SearchString);
       }
 
-      // Search by IMDBid
-      string strMovieName;
-      if (currentMovie.IMDBNumber != string.Empty && currentMovie.IMDBNumber.StartsWith("tt"))
-      {
-        strMovieName = currentMovie.IMDBNumber;
-      }
-      else
-      {
-        strMovieName = currentMovie.SearchString;
-      }
+      string strMovieName = currentMovie.SearchString;
       string strFileName = string.Empty;
       string path = currentMovie.Path;
       string filename = currentMovie.File;
@@ -1020,16 +1002,9 @@ namespace MediaPortal.Video.Database
       {
         currentMovie.ID = VideoDatabase.AddMovieFile(strFileName);
       }
-      // Search by IMDBid
-      if (currentMovie.IMDBNumber != string.Empty && currentMovie.IMDBNumber.StartsWith("tt"))
-      {
-        currentMovie.SearchString = currentMovie.IMDBNumber;
-      }
-      else
-      {
-        currentMovie.SearchString = strMovieName;
-      }
-
+      
+      currentMovie.SearchString = strMovieName;
+      
       if (currentMovie.ID >= 0 || !addToDatabase)
       {
         if (!Win32API.IsConnectedToInternet())
@@ -1048,8 +1023,8 @@ namespace MediaPortal.Video.Database
           }
           if (fuzzyMatching)
           {
-            IMDB _tmp = new IMDB();
-            selectedMovie = fetcher.FuzzyMatch(_tmp.GetSearchString(fetcher.MovieName));
+            IMDB tmpImdb = new IMDB();
+            selectedMovie = fetcher.FuzzyMatch(tmpImdb.GetSearchString(fetcher.MovieName));
             if (selectedMovie == -1)
             {
               if (!fetcher.OnMovieNotFound(fetcher))

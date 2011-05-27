@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -163,7 +164,7 @@ namespace MediaPortal.GUI.Library
     private static long m_iDesiredFrameTime = 100;
     private static float m_fCurrentFPS = 0;
     private static float m_fVMR9FPS = 0;
-    private static float lasttime = 0f;
+    private static long lasttime = 0;
     private static volatile bool vmr9RenderBusy = false;
     private static bool blankScreen = false;
     private static bool idleTimePowerSaving = false;
@@ -1072,7 +1073,11 @@ namespace MediaPortal.GUI.Library
       get { return m_bOverlay; }
       set
       {
-        if (m_bOverlay != value)
+        //SE: Mantis 3474
+        //some windows have overlay = false, but still have videocontrol.
+        //switching to another window with overlay = false but without videocontrol will
+        //leave old videocontrol "hanging" on screen (since dimensions aren't updated)
+        //if (m_bOverlay != value)
         {
           m_bOverlay = value;
           if (!ShowBackground)
@@ -1519,8 +1524,11 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-        float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
-        float difftime = time - lasttime;
+        //Guzzi, SE: Mantis 3560
+        //float time = DXUtil.Timer(DirectXTimer.GetAbsoluteTime);
+        //float difftime = time - lasttime;
+        long time = Stopwatch.GetTimestamp();
+        float difftime = (float)(time - lasttime) / Stopwatch.Frequency;
         lasttime = time;
         return (difftime);
       }
@@ -1559,6 +1567,18 @@ namespace MediaPortal.GUI.Library
     {
       get { return hasFocus; }
       set { hasFocus = value; }
+    }
+
+    /// <summary>
+    /// Returns true if the active window belongs to the my tv plugin
+    /// </summary>
+    /// <returns>
+    /// true: belongs to the my tv plugin
+    /// false: does not belong to the my tv plugin</returns>
+    public static bool IsTvWindow()
+    {
+      int windowId = GUIWindowManager.ActiveWindow;
+      return IsTvWindow(windowId);
     }
 
     /// <summary>

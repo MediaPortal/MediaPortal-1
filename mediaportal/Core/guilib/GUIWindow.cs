@@ -142,6 +142,8 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TVCONFLICT = 2017,
       WINDOW_DIALOG_CIMENU = 2018,
       WINDOW_DIALOG_TVNOTIFYYESNO = 2019,
+      WINDOW_DIALOG_OLD_SKIN = 2020,
+      WINDOW_DIALOG_INCOMPATIBLE_PLUGINS = 2021,
       WINDOW_WEATHER = 2600,
       WINDOW_SCREENSAVER = 2900,
       WINDOW_OSD = 2901,
@@ -1515,6 +1517,7 @@ namespace MediaPortal.GUI.Library
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
               GUIPropertyManager.SetProperty("#selectedthumb", string.Empty);
               GUIPropertyManager.SetProperty("#selectedindex", string.Empty);
+              GUIPropertyManager.SetProperty("#facadeview.layout", string.Empty);
               if (_shouldRestore)
               {
                 DoRestoreSkin();

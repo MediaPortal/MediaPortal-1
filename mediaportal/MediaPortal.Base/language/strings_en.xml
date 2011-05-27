@@ -1065,6 +1065,14 @@
     <String id="1654">Wind Speed Units</String>
     <String id="1655">Refresh Interval</String>
     <String id="1656">mins</String>    
+    <String id="1900">Outdated Skin</String>
+    <String id="1901">Your currently selected skin ({0}) is outdated. This could cause problems while using MediaPortal. For this reason MediaPortal has temporarily switched to the default skin. If however you would like to try using the outdated skin, press the 'Ignore and try' button, but remember: Do NOT file a bug report using this skin!
+(to dismiss this warning either wait until it closes automatically or press Back/ESC on you remote)</String>
+    <String id="1902">Do not show this message again</String>
+    <String id="1903">Ignore and try ({0})...</String>
+    <String id="1910">Incompatible plugins</String>
+    <String id="1911">The following plugins are incompatible with this version of MediaPortal and were automatically disabled:</String>
+    <String id="1912">Continue|Continue ({0})...|Continue ({0})...</String>
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Hard drive</String>
     <String id="1952">Fan</String>
@@ -1985,5 +1993,5 @@
     <String id="200087">Mute</String>
     <String id="200090">Edition</String>
     <String id="200091">Chapter</String>
-	</Section>
+  </Section>
 </Language>

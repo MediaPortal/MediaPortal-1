@@ -188,8 +188,9 @@ namespace MediaPortal.Util
     /// <param name="random"></param>
     /// <param name="countFA"></param>
     /// <param name="share"></param>
+    /// <param name="strSearch"></param>
     public void GetTmdbFanartByApi(string path, string filename, string imdbTT, string title, bool random, int countFA,
-                                   bool share)
+                                   bool share, string strSearch)
     {
       if (!Win32API.IsConnectedToInternet())
       {
@@ -217,10 +218,21 @@ namespace MediaPortal.Util
         }
         else
         {
-          tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-                    title;
-          tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                              title;
+          if (strSearch == string.Empty)
+          {
+            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+                      title;
+            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+                                title;
+            
+          }
+          else
+          {
+            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+                      strSearch;
+            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+                                strSearch;
+          }
           random = false;
         }
         // Download fanart xml 
@@ -412,6 +424,8 @@ namespace MediaPortal.Util
       // FanArt directory
       string configDir;
       GetFanArtFolder(out configDir);
+      
+      title = MakeFanartFileName(title);
 
       if (Directory.Exists(configDir))
       {
@@ -499,11 +513,54 @@ namespace MediaPortal.Util
     // Set fanart filename
     public static string SetFanArtFileName(string title, int index)
     {
+      title = MakeFanartFileName(title);
+
       string configDir = string.Empty;
       GetFanArtFolder(out configDir);
       string ext = ".jpg";
       //
       return configDir + title + "{" + index + "}" + ext;
+    }
+
+    public static string MakeFanartFileName(string strText)
+    {
+      if (strText == null) return string.Empty;
+      if (strText.Length == 0) return string.Empty;
+
+      string strFName = strText.Replace(':', ' ');
+      strFName = strFName.Replace('/', ' ');
+      strFName = strFName.Replace('\\', ' ');
+      strFName = strFName.Replace('*', ' ');
+      strFName = strFName.Replace('?', ' ');
+      strFName = strFName.Replace('\"', ' ');
+      strFName = strFName.Replace('<', ' ');
+      strFName = strFName.Replace('>', ' ');
+      strFName = strFName.Replace('|', ' ');
+
+      bool unclean = true;
+      char[] invalids = Path.GetInvalidFileNameChars();
+      while (unclean)
+      {
+        unclean = false;
+
+        char[] filechars = strFName.ToCharArray();
+
+        foreach (char c in filechars)
+        {
+          if (!unclean)
+            foreach (char i in invalids)
+            {
+              if (c == i)
+              {
+                unclean = true;
+                //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+                strFName = strFName.Replace(c, ' ');
+                break;
+              }
+            }
+        }
+      }
+      return strFName;
     }
 
     #endregion
@@ -515,6 +572,8 @@ namespace MediaPortal.Util
     {
       try
       {
+        title = MakeFanartFileName(title);
+
         _fileFanArt = SetFanArtFileName(title, index);
         var webClient = new WebClient();
         webClient.DownloadFile((string)_fanartList[index], _fileFanArt);

@@ -1007,6 +1007,9 @@
     <String id="1219">Album per indice Artista</String>
     <String id="1220">Ordina per: Data creazione</String>
     <String id="1221">Ordina per: Data modifica</String>
+    <String id="1222">Gruppi</String>
+    <String id="1223">Playlist già esistente</String>
+    <String id="1224">Si vuole rimuovere la playlist attuale ?</String>
     <String id="1230">Aggiunto in data:</String>
     <String id="1231">Ultima riproduzione:</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
