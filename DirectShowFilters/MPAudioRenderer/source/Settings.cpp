@@ -30,6 +30,12 @@ AudioRendererSettings::AudioRendererSettings() :
   m_WASAPIUseEventMode(true),
   m_bUseTimeStretching(false),
   m_bEnableAC3Encoding(false),
+  m_bQuality_USE_QUICKSEEK(false),
+  m_bQuality_USE_AA_FILTER(false),
+  m_lQuality_AA_FILTER_LENGTH(32),
+  m_lQuality_SEQUENCE_MS(82),
+  m_lQuality_SEEKWINDOW_MS(28),
+  m_lQuality_OVERLAP_MS(28),
   m_hnsPeriod(0),
   m_AC3bitrate(448), 
   m_dMaxBias(1.1),
@@ -41,7 +47,7 @@ AudioRendererSettings::AudioRendererSettings() :
   m_wWASAPIPreferredDeviceId(NULL)
 {
   LogRotate();
-  Log("MP Audio Renderer - v0.994");
+  Log("MP Audio Renderer - v0.995");
 
   LoadSettingsFromRegistry();
 }
@@ -79,6 +85,12 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   LPCTSTR WASAPIPreferredDevice = TEXT("WASAPIPreferredDevice");
   LPCTSTR HWBasedRefClock = TEXT("HWBasedRefClock");
   LPCTSTR enableSyncAdjustment = TEXT("EnableSyncAdjustment");
+  LPCTSTR quality_USE_QUICKSEEK = TEXT("Quality_USE_QUICKSEEK");
+  LPCTSTR quality_USE_AA_FILTER = TEXT("Quality_USE_AA_FILTER");
+  LPCTSTR quality_AA_FILTER_LENGTH = TEXT("Quality_AA_FILTER_LENGTH");
+  LPCTSTR quality_SEQUENCE_MS = TEXT("Quality_SEQUENCE_MS");
+  LPCTSTR quality_SEEKWINDOW_MS = TEXT("Quality_SEEKWINDOW_MS");
+  LPCTSTR quality_OVERLAP_MS = TEXT("Quality_OVERLAP_MS");
   
   // Default values for the settings in registry
   DWORD forceDirectSoundData = 0;
@@ -96,6 +108,25 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
   DWORD logSampleTimesData = 0;
   DWORD HWBasedRefClockData = 1;
   DWORD enableSyncAdjustmentData = 1;
+  DWORD quality_USE_QUICKSEEKData = 0;
+  DWORD quality_USE_AA_FILTERData = 0;
+  DWORD quality_AA_FILTER_LENGTHData = 32;  // in ms (same as soundtouch default)
+  DWORD quality_SEQUENCE_MSData = 82;       // in ms (same as soundtouch default)
+  DWORD quality_SEEKWINDOW_MSData = 28;     // in ms (same as soundtouch default)
+  DWORD quality_OVERLAP_MSData = 28;        // in ms (same as soundtouch default)
+
+  // settings from Reclock - watch CPU usage when enabling these!
+  /*bool usequickseek = false;
+  bool useaafilter = false; //seems clearer without it
+  int aafiltertaps = 56; //Def=32 doesnt matter coz its not used
+  int seqms = 120; //reclock original is 82
+  int seekwinms = 28; //reclock original is 28
+  int overlapms = seekwinms; //reduces cutting sound if this is large
+  int seqmslfe = 180; //larger value seems to preserve low frequencies better
+  int seekwinmslfe = 42; //as percentage of seqms
+  int overlapmslfe = seekwinmslfe; //reduces cutting sound if this is large
+  */
+
   LPCTSTR WASAPIPreferredDeviceData = new TCHAR[MAX_REG_LENGTH];
 
   ZeroMemory((void*)WASAPIPreferredDeviceData, MAX_REG_LENGTH);
@@ -105,7 +136,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
   if (hKey)
   {
-    // Read settings from registry
     ReadRegistryKeyDword(hKey, forceDirectSound, forceDirectSoundData);
     ReadRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
     ReadRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
@@ -121,24 +151,39 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     ReadRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
     ReadRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
     ReadRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
+
+    // Resampling quality settings
+    ReadRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
+    ReadRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
+    ReadRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
+    ReadRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
+    ReadRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
+    ReadRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+
     ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
 
-    Log("   ForceDirectSound:        %d", forceDirectSoundData);
-    Log("   EnableTimestrecthing:    %d", enableTimestretchingData);
-    Log("   WASAPIExclusive:         %d", WASAPIExclusiveData);
-    Log("   WASAPIUseEventMode:      %d", WASAPIUseEventModeData);
-    Log("   EnableAC3Encoding:       %d", enableAC3EncodingData);
-    Log("   AC3bitrate:              %d", AC3bitrateData);
-    Log("   MaxBias:                 %d", maxBiasData);
-    Log("   MinBias:                 %d", minBiasData);
-    Log("   AudioDelay:              %d", audioDelayData);
-    Log("   ChannelMaskOverride_5_1: %d", channelMaskOverride_5_1Data);
-    Log("   ChannelMaskOverride_7_1: %d", channelMaskOverride_7_1Data);
-    Log("   LogSampleTimes:          %d", logSampleTimesData);
-    Log("   HWBasedRefClock:         %d", HWBasedRefClockData);
-    Log("   EnableSyncAdjustment:    %d", enableSyncAdjustmentData);
-    Log("   DevicePeriod:            %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
-    Log("   WASAPIPreferredDevice:   %s", WASAPIPreferredDeviceData);
+    Log("   ForceDirectSound:         %d", forceDirectSoundData);
+    Log("   EnableTimestrecthing:     %d", enableTimestretchingData);
+    Log("   WASAPIExclusive:          %d", WASAPIExclusiveData);
+    Log("   WASAPIUseEventMode:       %d", WASAPIUseEventModeData);
+    Log("   EnableAC3Encoding:        %d", enableAC3EncodingData);
+    Log("   AC3bitrate:               %d", AC3bitrateData);
+    Log("   MaxBias:                  %d", maxBiasData);
+    Log("   MinBias:                  %d", minBiasData);
+    Log("   AudioDelay:               %d", audioDelayData);
+    Log("   ChannelMaskOverride_5_1:  %d", channelMaskOverride_5_1Data);
+    Log("   ChannelMaskOverride_7_1:  %d", channelMaskOverride_7_1Data);
+    Log("   LogSampleTimes:           %d", logSampleTimesData);
+    Log("   HWBasedRefClock:          %d", HWBasedRefClockData);
+    Log("   EnableSyncAdjustment:     %d", enableSyncAdjustmentData);
+    Log("   quality_USE_QUICKSEEK:    %d", quality_USE_QUICKSEEKData);
+    Log("   quality_USE_AA_FILTER:    %d", quality_USE_AA_FILTERData);
+    Log("   quality_AA_FILTER_LENGTH: %d", quality_AA_FILTER_LENGTHData);
+    Log("   quality_SEQUENCE_MS:      %d", quality_SEQUENCE_MSData);
+    Log("   quality_SEEKWINDOW_MS:    %d", quality_SEEKWINDOW_MSData);
+    Log("   quality_OVERLAP_MS:       %d", quality_OVERLAP_MSData);
+    Log("   DevicePeriod:             %d (1 == minimal, 0 == driver default, other user defined)", devicePeriodData);
+    Log("   WASAPIPreferredDevice:    %s", WASAPIPreferredDeviceData);
 
     if (forceDirectSoundData > 0)
       m_bUseWASAPI = false;
@@ -198,7 +243,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     m_hnsPeriod = devicePeriodData;
 
     bool rateOk = false;
-    for(int i = 0; i < sizeof(gAllowedAC3bitrates) / sizeof(int); i++)
+    for (int i = 0; i < sizeof(gAllowedAC3bitrates) / sizeof(int); i++)
     {
       if (gAllowedAC3bitrates[i] == AC3bitrateData)
       {
@@ -214,6 +259,16 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       m_AC3bitrate = 448000;
       Log("   invalid AC3 bitrate, using 448");
     }
+
+    if (quality_USE_QUICKSEEKData > 0)
+      m_bQuality_USE_QUICKSEEK = true;
+    else
+      m_bQuality_USE_QUICKSEEK = false;
+
+    if (quality_USE_AA_FILTERData > 0)
+      m_bQuality_USE_AA_FILTER = true;
+    else
+      m_bQuality_USE_AA_FILTER = false;
 
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
@@ -249,6 +304,13 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
       WriteRegistryKeyDword(hKey, logSampleTimes, logSampleTimesData);
       WriteRegistryKeyDword(hKey, HWBasedRefClock, HWBasedRefClockData);
       WriteRegistryKeyDword(hKey, enableSyncAdjustment, enableSyncAdjustmentData);
+      WriteRegistryKeyDword(hKey, quality_USE_QUICKSEEK, quality_USE_QUICKSEEKData);
+      WriteRegistryKeyDword(hKey, quality_USE_AA_FILTER, quality_USE_AA_FILTERData);
+      WriteRegistryKeyDword(hKey, quality_AA_FILTER_LENGTH, quality_AA_FILTER_LENGTHData);
+      WriteRegistryKeyDword(hKey, quality_SEQUENCE_MS, quality_SEQUENCE_MSData);
+      WriteRegistryKeyDword(hKey, quality_SEEKWINDOW_MS, quality_SEEKWINDOW_MSData);
+      WriteRegistryKeyDword(hKey, quality_OVERLAP_MS, quality_OVERLAP_MSData);
+
       ReadRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
     else 

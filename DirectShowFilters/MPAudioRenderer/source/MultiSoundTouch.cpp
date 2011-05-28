@@ -480,6 +480,8 @@ void CMultiSoundTouch::EndFlush()
 
 BOOL CMultiSoundTouch::setSetting(int settingId, int value)
 {
+  // TODO should LFE channel have separate settings since it is by nature quite
+  // different when it comes to frequency response
   if (m_Streams)
   {
     for(int i=0; i<m_Streams->size(); i++)

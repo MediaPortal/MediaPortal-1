@@ -40,6 +40,14 @@ public:
   bool m_bUseTimeStretching;
   bool m_bEnableAC3Encoding;
   
+  bool m_bQuality_USE_QUICKSEEK;
+  bool m_bQuality_USE_AA_FILTER;
+  
+  int m_lQuality_AA_FILTER_LENGTH;
+  int m_lQuality_SEQUENCE_MS;
+  int m_lQuality_SEEKWINDOW_MS;
+  int m_lQuality_OVERLAP_MS;
+
   int m_AC3bitrate;
   double m_dMaxBias;
   double m_dMinBias;

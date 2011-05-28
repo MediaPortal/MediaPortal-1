@@ -55,18 +55,18 @@ extern void Log(const char *fmt, ...);
 extern void LogWaveFormat(const WAVEFORMATEX* pwfx, const char *text);
 
 CMPAudioRenderer::CMPAudioRenderer(LPUNKNOWN punk, HRESULT *phr)
-: CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr)
-, m_pSoundTouch(NULL)
-, m_dRate(1.0)
-, m_pReferenceClock(NULL)
-, m_pWaveFileFormat(NULL)
-, m_dBias(1.0)
-, m_dAdjustment(1.0)
-, m_dSampleCounter(0)
-, m_rtNextSampleTime(0)
-, m_rtPrevSampleTime(0)
-, m_bFlushSamples(false)
-, m_pVolumeHandler(NULL)
+  : CBaseRenderer(__uuidof(this), NAME("MediaPortal - Audio Renderer"), punk, phr),
+  m_pSoundTouch(NULL),
+  m_dRate(1.0),
+  m_pReferenceClock(NULL),
+  m_pWaveFileFormat(NULL),
+  m_dBias(1.0),
+  m_dAdjustment(1.0),
+  m_dSampleCounter(0),
+  m_rtNextSampleTime(0),
+  m_rtPrevSampleTime(0),
+  m_bFlushSamples(false),
+  m_pVolumeHandler(NULL)
 {
   Log("CMPAudioRenderer - instance 0x%x", this);
 
@@ -467,25 +467,12 @@ HRESULT CMPAudioRenderer::SetMediaType(const CMediaType *pmt)
       m_pSoundTouch->setSampleRate(pwf->nSamplesPerSec);
       m_pSoundTouch->setTempoChange(0);
       m_pSoundTouch->setPitchSemiTones(0);
-
-      // settings from Reclock - watch CPU usage when enabling these!
-      /*bool usequickseek = false;
-      bool useaafilter = false; //seems clearer without it
-      int aafiltertaps = 56; //Def=32 doesnt matter coz its not used
-      int seqms = 120; //reclock original is 82
-      int seekwinms = 28; //reclock original is 28
-      int overlapms = seekwinms; //reduces cutting sound if this is large
-      int seqmslfe = 180; //larger value seems to preserve low frequencies better
-      int seekwinmslfe = 42; //as percentage of seqms
-      int overlapmslfe = seekwinmslfe; //reduces cutting sound if this is large
-
-      m_pSoundTouch->setSetting(SETTING_USE_QUICKSEEK, usequickseek);
-      m_pSoundTouch->setSetting(SETTING_USE_AA_FILTER, useaafilter);
-      m_pSoundTouch->setSetting(SETTING_AA_FILTER_LENGTH, aafiltertaps);
-      m_pSoundTouch->setSetting(SETTING_SEQUENCE_MS, seqms); 
-      m_pSoundTouch->setSetting(SETTING_SEEKWINDOW_MS, seekwinms);
-      m_pSoundTouch->setSetting(SETTING_OVERLAP_MS, overlapms);
-      */
+      m_pSoundTouch->setSetting(SETTING_USE_QUICKSEEK, m_Settings.m_bQuality_USE_QUICKSEEK);
+      m_pSoundTouch->setSetting(SETTING_USE_AA_FILTER, m_Settings.m_bQuality_USE_AA_FILTER);
+      m_pSoundTouch->setSetting(SETTING_AA_FILTER_LENGTH, m_Settings.m_lQuality_AA_FILTER_LENGTH);
+      m_pSoundTouch->setSetting(SETTING_SEQUENCE_MS, m_Settings.m_lQuality_SEQUENCE_MS); 
+      m_pSoundTouch->setSetting(SETTING_SEEKWINDOW_MS, m_Settings.m_lQuality_SEEKWINDOW_MS);
+      m_pSoundTouch->setSetting(SETTING_OVERLAP_MS, m_Settings.m_lQuality_SEQUENCE_MS);
     }
   }
 
