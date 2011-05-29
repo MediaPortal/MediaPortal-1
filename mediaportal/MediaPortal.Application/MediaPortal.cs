@@ -3838,7 +3838,7 @@ public class MediaPortalApp : D3DApp, IRender
     }
 
     Version versionSkin = null;
-    string filename = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml")
+    string filename = GUIGraphicsContext.GetThemedSkinFile(@"\references.xml");
     if (File.Exists(filename))
     {
       XmlDocument doc = new XmlDocument();
