@@ -508,6 +508,7 @@ namespace TvPlugin
             item.Label = channel.DisplayName;
             item.IsFolder = false;
             item.MusicTag = channel;
+            item.AlbumInfoTag = map;
             if (channel.IsWebstream())
             {
               item.IconImageBig = "DefaultMyradioStreamBig.png";
@@ -692,15 +693,19 @@ namespace TvPlugin
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
           {
+            RadioGroupMap channel1GroupMap = (RadioGroupMap)item1.AlbumInfoTag;
+            RadioGroupMap channel2GroupMap = (RadioGroupMap)item2.AlbumInfoTag;
+            int channel1GroupSort = channel1GroupMap.SortOrder;
+            int channel2GroupSort = channel2GroupMap.SortOrder;
             if (bAscending)
             {
-              if (channel1.SortOrder > channel2.SortOrder)
+              if (channel1GroupSort > channel2GroupSort)
               {
                 return 1;
               }
               return -1;
             }
-            if (channel2.SortOrder > channel1.SortOrder)
+            if (channel2GroupSort > channel1GroupSort)
             {
               return 1;
             }
