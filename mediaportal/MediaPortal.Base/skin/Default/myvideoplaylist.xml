@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
 <window>
   <id>28</id>
   <defaultcontrol>2</defaultcontrol>
@@ -152,7 +151,6 @@
       <height>160</height>
       <texture mask="video_poster_mask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -163,7 +161,6 @@
       <height>160</height>
       <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -175,7 +172,6 @@
       <label>Info:</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -187,7 +183,6 @@
       <label>#selecteditem</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -199,7 +194,6 @@
       <label>#selecteditem2</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="150" reversible="false">visible</animation>
     </control>
   </controls>
 </window>
