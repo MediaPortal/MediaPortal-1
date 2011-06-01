@@ -248,7 +248,6 @@
       <align>left</align>
       <textcolor>ffffffff</textcolor>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <type>imagelist</type>
@@ -268,7 +267,6 @@
       <imagesToDraw>10</imagesToDraw>
       <percentage>#rating</percentage>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <id>1</id>
@@ -289,7 +287,6 @@
       <height>160</height>
       <texture mask="video_poster_mask.png">#selectedthumb</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <type>image</type>
@@ -300,7 +297,6 @@
       <height>160</height>
       <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
       <visible>facadeview.list+Control.HasFocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Genre txt</description>
@@ -313,7 +309,6 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Genre value</description>
@@ -326,7 +321,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Director txt</description>
@@ -339,7 +333,6 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Director value</description>
@@ -352,7 +345,6 @@
       <width>139</width>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Year txt</description>
@@ -365,7 +357,6 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Year value</description>
@@ -378,7 +369,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Runtime txt</description>
@@ -391,7 +381,6 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Runtime value</description>
@@ -404,7 +393,6 @@
       <font>font13</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>MPAA txt</description>
@@ -417,7 +405,6 @@
       <align>left</align>
       <textcolor>FFB2D4F5</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>MPAA Rating</description>
@@ -431,7 +418,6 @@
       <align>left</align>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
     <control>
       <description>Seperator</description>
@@ -457,7 +443,6 @@
       <font>font11</font>
       <textcolor>FFFFFFFF</textcolor>
       <visible>facadeview.list + control.hasfocus(50)</visible>
-      <animation effect="slide" time="150" start="-300,0" reversible="false">visible</animation>
     </control>
   </controls>
 </window>

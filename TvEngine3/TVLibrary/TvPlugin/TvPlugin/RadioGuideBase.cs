@@ -3885,7 +3885,7 @@ namespace TvPlugin
       UnFocus();
       for (int i = 0; i < Steps; ++i)
       {
-        OnUp(true, true);
+        OnUp(false, true);
       }
       Correct();
       Update(false);
@@ -3921,7 +3921,7 @@ namespace TvPlugin
       UnFocus();
       for (int i = 0; i < Steps; ++i)
       {
-        OnDown(true);
+        OnDown(false);
       }
       Correct();
       Update(false);
