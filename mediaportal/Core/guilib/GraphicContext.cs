@@ -995,6 +995,7 @@ namespace MediaPortal.GUI.Library
         //leave old videocontrol "hanging" on screen (since dimensions aren't updated)
         //if (m_bOverlay != value)
         {
+          bool bOldOverlay = m_bOverlay;
           m_bOverlay = value;
           if (!ShowBackground)
           {
@@ -1004,7 +1005,7 @@ namespace MediaPortal.GUI.Library
           {
             VideoWindow = new Rectangle(0, 0, 1, 1);
           }
-          if (OnVideoWindowChanged != null)
+          if (bOldOverlay != m_bOverlay && OnVideoWindowChanged != null)
           {
             OnVideoWindowChanged();
           }
@@ -1298,6 +1299,11 @@ namespace MediaPortal.GUI.Library
         if (!m_bShowBackGround)
         {
           Overlay = false;
+        }
+        GUIWindow window = GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow);
+        if (window != null)
+        {
+          window.UpdateOverlay();
         }
       }
     }
