@@ -1007,6 +1007,9 @@
     <String id="1219">Album artister (oversikt)</String>
     <String id="1220">Sorter etter: Dato lagret</String>
     <String id="1221">Sorter etter: Endret dato</String>
+    <String id="1222">Grupper</String>
+    <String id="1223">En eksisterende spilleliste funnet</String>
+    <String id="1224">Vil du fjerne det som er på den gjeldende spillelisten?</String>
     <String id="1230">Dato lagt til</String>
     <String id="1231">Sist avspilt</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
@@ -1051,6 +1054,14 @@
     <String id="1600">Vil du slå av PCen?</String>
     <String id="1601">Vil du sette PCen i hvilemodus?</String>
     <String id="1602">Vil du sette PCen i dvalemodus?</String>
+    <String id="1900">Utdatert skinn funnet</String>
+    <String id="1901">Det valgte skinnet ({0}) er utdatert. Dette kan medføre problemer når du bruker MediaPortal. På grunn av dette har MediaPortal midlertidig byttet til standard skinn. Hvis du allikevel vil prøve å bruke det utdaterte skinnet, klikk på 'ignorer og prøv' knappen, men husk: IKKE lag en bug/feilmelding når dette skinnet brukes!
+(for å fjerne denne meldingen, enten vent til den avsluttes automatisk eller trykk Tilbake/ESC på fjernkontrollen)</String>
+    <String id="1902">Ikke vis denne meldingen igjen</String>
+    <String id="1903">Ignorer og prøv ({0})...</String>
+    <String id="1910">Inkompatibel tillegg oppdaget</String>
+    <String id="1911">Følgende tillegget er inkompatibel med denne versjonen av MediaPortal og ble automatisk deaktivert:</String>
+    <String id="1912">Fortsetter|Fortsetter ({0})...|Fortsetter ({0})...</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
