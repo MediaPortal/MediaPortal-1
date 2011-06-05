@@ -112,7 +112,7 @@
     <String id="152">Monodirezionale</String>
     <String id="153">Bidirezionale</String>
     <String id="154">Capacità</String>
-    <String id="155">Drive</String>
+    <String id="155">Disco</String>
     <String id="156">Liberi</String>
     <String id="157">Filmati</String>
     <String id="158">Memoria libera</String>
@@ -1054,6 +1054,14 @@
     <String id="1600">Si vuole spegnere il sistema ?</String>
     <String id="1601">Si vuole sospendere il sistema ?</String>
     <String id="1602">Si vuole ibernare il sistema ?</String>
+    <String id="1900">Skin obsoleta</String>
+    <String id="1901">La skin ({0}) selezionata è obsoleta. Questo può causare dei problemi durante l'uso di MediaPortal. Per questa ragione MediaPortal si è temporaneamente configurato con la skin di default. Se si vuole comunque provare ad usarla selezionare 'Premi e ignora', ma NON riportare bugs con questa configurazione.
+(per eliminare questa finestra attendere che si chiuda automaticamente o premere Indietro/Esc sul telecomando)</String>
+    <String id="1902">Non mostrare più questo messaggio</String>
+    <String id="1903">Premi e ignora ({0})...</String>
+    <String id="1910">Plugins incompatibili</String>
+    <String id="1911">I seguenti plugins sono incompatibili con questa versione di MediaPortal e sono stati disabilitati automaticamente:</String>
+    <String id="1912">Continua|Continua ({0})...|Continua ({0})...</String>
     <String id="1950" prefix="Il mio ">Stato</String>
     <String id="1951">Hard Disk</String>
     <String id="1952">Ventola</String>
