@@ -41,5 +41,7 @@ public:
   virtual HRESULT STDMETHODCALLTYPE GetMaxBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetMinBias(DOUBLE *bias) = 0;
   virtual HRESULT STDMETHODCALLTYPE GetClockData(CLOCKDATA *clockData) = 0;
+  virtual HRESULT STDMETHODCALLTYPE SetEVRPresentationDelay(DOUBLE EVRDelay) = 0;
+
 };
 #endif // IAVSYNCCLOCK

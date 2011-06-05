@@ -33,6 +33,7 @@ public:
   void SetBias(double pBias);
   void SetAdjustment(double pAdjustment);
   void SetAudioDelay(INT64 pAudioDelay);
+  void SetEVRDelay(double pDelay);
 
   double Bias();
   double Adjustment();
@@ -48,6 +49,7 @@ private:
   double m_dAdjustment;
   double m_dSuggestedAudioMultiplier;
     
+  double m_dEVRDelay;
   double m_dBias;
   double m_dSystemClockMultiplier;
 

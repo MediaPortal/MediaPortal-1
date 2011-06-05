@@ -55,6 +55,12 @@ void SynchCorrection::Reset()
   m_AVTracker.Reset();
 }
 
+void SynchCorrection::Reset(double dBias)
+{
+  Log("SynchCorrection::Reset");
+  Reset();
+  m_Bias.SetAdjuster(dBias);
+}
 double SynchCorrection::SuggestedAudioMultiplier(double sampleLength, double bias, double adjustment)
 {
   return GetRequiredAdjustment(sampleLength,  m_dAVmult, bias, adjustment);
@@ -151,6 +157,17 @@ INT64 SynchCorrection::GetAudioDelay() const
   return (INT64)m_dAudioDelay;
 }
 
+//EVR presenter requests a delay
+void SynchCorrection::SetPresenterInducedAudioDelay(INT64 delay)
+{
+  m_dEVRAudioDelay = (double)delay;
+}
+
+INT64 SynchCorrection::GetPresenterInducedAudioDelay() const
+{
+  return (INT64)m_dEVRAudioDelay;
+}
+
 // recalculation of the delta value for the reference clock
 INT64 SynchCorrection::GetCorrectedTimeDelta(INT64 time)
 {
@@ -168,7 +185,7 @@ double SynchCorrection::TotalAudioDrift(double AVMult)
 double SynchCorrection::GetRequiredAdjustment(double sampleTime, double AVMult, double bias, double adjustment)
 {
   double ret = AVMult * bias * adjustment;
-  double totalAudioDrift = TotalAudioDrift(AVMult) + m_dAudioDelay + m_dBiasAdjustmentDelay;
+  double totalAudioDrift = TotalAudioDrift(AVMult) + m_dAudioDelay + m_dBiasAdjustmentDelay +m_dEVRAudioDelay;
 
   if (ret > 1.0 - QUALITY_BIAS_LIMIT &&  ret < 1.0 + QUALITY_BIAS_LIMIT) 
 	m_bQualityMode = true;

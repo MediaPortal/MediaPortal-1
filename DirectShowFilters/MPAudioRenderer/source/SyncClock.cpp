@@ -33,6 +33,7 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_pPrevRefClock(0),
   m_dAdjustment(1.0),
   m_dBias(1.0),
+  m_dEVRDelay(0.0),
   m_pAudioRenderer(pRenderer),
   m_ullStartQpcHW(0),
   m_ullStartTimeHW(0),
@@ -49,6 +50,13 @@ CSyncClock::CSyncClock(LPUNKNOWN pUnk, HRESULT *phr, CMPAudioRenderer* pRenderer
   m_bDiscontinuity(false)
 {
 }
+
+void CSyncClock::SetEVRDelay(double pDelay)
+{
+  m_SynchCorrection.SetPresenterInducedAudioDelay(pDelay);
+  m_dEVRDelay = pDelay;
+}
+
 
 void CSyncClock::SetBias(double pBias)
 {
@@ -81,8 +89,8 @@ double CSyncClock::Adjustment()
 HRESULT CSyncClock::Reset()
 {
   CAutoLock cObjectLock(this);
-  m_SynchCorrection.Reset();
-  m_SynchCorrection.SetBias(m_dBias);
+  m_SynchCorrection.Reset(m_dBias);
+  m_SynchCorrection.SetPresenterInducedAudioDelay(m_dEVRDelay);
   m_bDiscontinuity = true;
   return S_OK;
 }

@@ -39,6 +39,7 @@ public:
   
   // Call reset when a discontinuity happens in the audio stream (drifting resets to zero etc)
   void Reset();
+  void Reset(double dBias);
   
   // Suggested adjustment - this can be ignored if you want
   double SuggestedAudioMultiplier(double sampleLength, double bias, double adjustment);
@@ -63,6 +64,10 @@ public:
   void SetAudioDelay(INT64 delay);
   INT64 GetAudioDelay() const;
 
+  // gets and sets the audio delay required by the EVR presenter in 10 shake units
+  void SetPresenterInducedAudioDelay(INT64 delay);
+  INT64 GetPresenterInducedAudioDelay() const;
+
   // Recalculation of the delta value for the reference clock
   INT64 GetCorrectedTimeDelta(INT64 time);
   // This is used for degugging
@@ -76,6 +81,7 @@ private:
   double m_dlastAdjustment;
 
   double m_dAudioDelay;
+  double m_dEVRAudioDelay;
   double m_dBiasAdjustmentDelay;
 
   int m_iBiasDir;

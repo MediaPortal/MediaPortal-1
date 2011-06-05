@@ -686,6 +686,29 @@ HRESULT CMPAudioRenderer::AdjustClock(DOUBLE pAdjustment)
   }
 }
 
+HRESULT CMPAudioRenderer::SetEVRPresentationDelay(DOUBLE pEVRDelay)
+{
+  CAutoLock cAutoLock(&m_csResampleLock);
+
+  bool ret = S_FALSE;
+
+  if (m_Settings.m_bUseTimeStretching)
+  {
+    Log("SetPresentationDelay: %1.10f", pEVRDelay);
+
+    m_pClock->SetEVRDelay(pEVRDelay * 10000); // Presenter sets delay in ms
+
+    ret = S_OK;
+  }
+  else
+  {
+    Log("SetPresentationDelay: %1.10f - failed, time stretching is disabled", pEVRDelay);
+    ret = S_FALSE;  
+  }
+
+  return ret;
+}
+
 HRESULT CMPAudioRenderer::SetBias(DOUBLE pBias)
 {
   CAutoLock cAutoLock(&m_csResampleLock);

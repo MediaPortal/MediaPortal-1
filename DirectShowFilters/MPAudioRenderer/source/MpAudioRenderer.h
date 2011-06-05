@@ -98,6 +98,7 @@ public:
   STDMETHOD(GetMaxBias)(DOUBLE *pMaxBias);
   STDMETHOD(GetMinBias)(DOUBLE *pMinBias);
   STDMETHOD(GetClockData)(CLOCKDATA *pClockData);
+  STDMETHOD(SetEVRPresentationDelay)(DOUBLE pEVRDelay);
 
   HRESULT AudioClock(UINT64& pTimestamp, UINT64& pQpc);
 
