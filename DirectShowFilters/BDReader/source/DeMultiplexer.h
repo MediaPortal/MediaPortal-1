@@ -213,7 +213,7 @@ private:
   vector<Packet*> m_vecVideoBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
   vector<Packet*> m_vecAudioBuffers;
-  vector<Packet*> m_t_vecAudioBuffers;
+  UINT32 m_nAudioPesLenght;
   typedef vector<Packet*>::iterator ivecVBuffers;
   typedef vector<Packet*>::iterator ivecABuffers;
   typedef vector<Packet*>::iterator ivecSBuffers;

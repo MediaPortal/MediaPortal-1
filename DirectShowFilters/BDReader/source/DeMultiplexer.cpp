@@ -114,14 +114,6 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentSubtitleBuffer;
   delete m_mpegPesParser;
 
-  ivecABuffers it = m_t_vecAudioBuffers.begin();
-  while (it != m_t_vecAudioBuffers.end())
-  {
-    Packet* audioBuffer = *it;
-    delete audioBuffer;
-    it = m_t_vecAudioBuffers.erase(it);
-  }
-
   ivecVBuffers itv = m_t_vecVideoBuffers.begin();
   while (itv != m_t_vecVideoBuffers.end())
   {
@@ -493,15 +485,7 @@ void CDeMultiplexer::FlushVideo(bool pSoftFlush)
     }
   }
 
-  if (m_vecVideoBuffers.size() > 0)
-  {
-    /*m_FirstVideoSample = m_vecVideoBuffers[0]->rtStart;
-    m_LastVideoSample = m_vecVideoBuffers[m_vecVideoBuffers.size() - 1]->rtStart;
-
-    m_lastVideoPTS.PcrReferenceBase = CONVERT_DS_90KHz(m_LastVideoSample);
-    m_lastVideoPTS.IsValid = true;*/
-  }
-  else
+  if (m_vecVideoBuffers.size() == 0)
   {
     m_FirstVideoSample = 0x7FFFFFFF00000000LL;
     m_LastVideoSample = -1;
@@ -564,31 +548,7 @@ void CDeMultiplexer::FlushAudio(bool pSoftFlush)
     }
   }
 
-  if (!pSoftFlush)
-  {
-    // Clear PES temporary queue.
-    it = m_t_vecAudioBuffers.begin();
-    while (it != m_t_vecAudioBuffers.end())
-    {
-      Packet* audioBuffer = *it;
-      {
-        delete audioBuffer;
-        it = m_t_vecAudioBuffers.erase(it);
-        LogDebug("Flush Audio (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-          pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
-      }
-    }
-  }
-
-  if (m_vecAudioBuffers.size() > 0)
-  {
-    /*m_FirstAudioSample = m_vecAudioBuffers[0]->rtStart;
-    m_LastAudioSample = m_vecAudioBuffers[m_vecAudioBuffers.size() - 1]->rtStart;
-
-    m_lastAudioPTS.PcrReferenceBase = CONVERT_DS_90KHz(m_LastAudioSample);
-    m_lastAudioPTS.IsValid = true;*/
-  }
-  else
+  if (m_vecAudioBuffers.size() == 0)
   {
     m_FirstAudioSample = 0x7FFFFFFF00000000LL;
     m_LastAudioSample = -1;
@@ -1225,151 +1185,128 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   if (m_filter.GetAudioPin()->IsConnected()==false) return;
   if (header.AdaptionFieldOnly()) return;
 
+  bool packetProcessed = false;
+
   CAutoLock lock (&m_sectionAudio);
   if (header.PayloadUnitStart)
   {
-    if (m_pCurrentAudioBuffer->GetDataSize() > 0)
+    if (!m_pCurrentAudioBuffer)
     {
-      m_t_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
       m_pCurrentAudioBuffer = new Packet();
     }
 
-    if (m_t_vecAudioBuffers.size())
+    CMediaType pmt;
+    GetAudioStreamType(m_iAudioStream, pmt);
+
+    m_pCurrentAudioBuffer->pmt = CreateMediaType(&pmt);
+
+    byte* p = tsPacket + header.PayLoadStart;
+    if ((p[0] == 0) && (p[1] == 0) && (p[2] == 1))
     {
-      Packet* packet = *m_t_vecAudioBuffers.begin();
-
-      CMediaType pmt;
-      GetAudioStreamType(m_iAudioStream, pmt);
-
-      packet->pmt = CreateMediaType(&pmt);
-
-      byte* p = packet->GetData();
-      if ((p[0] == 0) && (p[1] == 0) && (p[2] == 1))
+      CPcr pts;
+      CPcr dts;
+      if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
       {
-        CPcr pts;
-        CPcr dts;
-        if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
+        if (m_lastAudioPTS.ToClock() == 0 ||
+            ((m_rtAudioOffset != m_rtNewOffset || m_bForceUpdateAudioOffset) && 
+            ((m_bOffsetBackwards && pts > m_lastAudioPTS) ||
+            (!m_bOffsetBackwards && m_lastAudioPTS > pts))))
         {
-          if (m_lastAudioPTS.ToClock() == 0 ||
-             ((m_rtAudioOffset != m_rtNewOffset || m_bForceUpdateAudioOffset) && 
-             ((m_bOffsetBackwards && pts > m_lastAudioPTS) ||
-             (!m_bOffsetBackwards && m_lastAudioPTS > pts))))
-          {
-            LogDebug("demux: audio offset changed old: %I64d new: %I64d", m_rtAudioOffset, m_rtNewOffset);
-            m_rtAudioOffset = m_rtNewOffset;
-            m_nAudioClip = m_nClip;
-            m_nAudioPl = m_nPlaylist;
+          LogDebug("demux: audio offset changed old: %I64d new: %I64d", m_rtAudioOffset, m_rtNewOffset);
+          m_rtAudioOffset = m_rtNewOffset;
+          m_nAudioClip = m_nClip;
+          m_nAudioPl = m_nPlaylist;
+          m_bForceUpdateAudioOffset = false;
+        }
 
-            m_bForceUpdateAudioOffset = false;
-          }
-
-          CPcr correctedPts;
-          correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtAudioOffset;
-          correctedPts.IsValid = true;
+        CPcr correctedPts;
+        correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtAudioOffset;
+        correctedPts.IsValid = true;
 
 //          LogDebug("demux: aud last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
 //            m_lastAudioPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nAudioClip, m_nAudioPl);
 
-          m_lastAudioPTS = pts;
-//          pts = correctedPts;
-          packet->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
-          packet->rtStop = packet->rtStart + 1;
+        m_lastAudioPTS = pts;
+        m_pCurrentAudioBuffer->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
+        m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + 1;
           
-          packet->nClipNumber = m_nAudioClip;
-          packet->nPlaylist = m_nAudioPl;
-          
-        }
-        // Skip pes header
-        int headerLen = 9 + p[8];
-        int len = packet->GetDataSize() - headerLen;
+        m_pCurrentAudioBuffer->nClipNumber = m_nAudioClip;
+        m_pCurrentAudioBuffer->nPlaylist = m_nAudioPl;
+
+        REFERENCE_TIME Ref = m_pCurrentAudioBuffer->rtStart;
+        if (Ref < m_FirstAudioSample) m_FirstAudioSample = Ref;
+        if (Ref > m_LastAudioSample) m_LastAudioSample = Ref;
+        CorrectPacketPlaylist(m_pCurrentAudioBuffer, SUPERCEEDED_AUDIO);
+
+        BYTE pesHeader[256];
+
+        int pos = header.PayLoadStart;
+        int pesHeaderLen = tsPacket[pos+8] + 9;
+        memcpy(pesHeader, &tsPacket[pos], pesHeaderLen);
+        pos += pesHeaderLen;
+        
+        // Calculate expected payload length
+        m_nAudioPesLenght = ( pesHeader[4] << 8 ) + pesHeader[5] - (pesHeaderLen - 6);
+
+        int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
         if (len > 0)
         { 
-          byte* ps = p + headerLen;
-          packet->SetCount(len);
-          while(len--)
-          {
-            *p++ = *ps++;
-          }
+          byte* ps = p + pesHeaderLen;
+          m_pCurrentAudioBuffer->SetCount(len);
+          memcpy(m_pCurrentAudioBuffer->GetData(), ps, len);
         }
         else
         {
           LogDebug(" No data");
           m_AudioValidPES = false;
         }
+        packetProcessed = true;
       }
-      else
+    }
+    else
+    {
+      LogDebug("Pes header 0-0-1 fail");
+      m_AudioValidPES = false;
+    }
+
+    if (m_AudioValidPES)
+    {
+      if (m_bSetAudioDiscontinuity)
       {
-        LogDebug("Pes header 0-0-1 fail");
-        m_AudioValidPES = false;
+        m_bSetAudioDiscontinuity = false;
+        m_pCurrentAudioBuffer->bDiscontinuity = true;
       }
-
-      if (m_AudioValidPES)
-      {
-        if (m_bSetAudioDiscontinuity)
-        {
-          m_bSetAudioDiscontinuity = false;
-          packet->bDiscontinuity = true;
-        }
-
-        while (m_t_vecAudioBuffers.size())
-        {
-          ivecABuffers it;
-          if (m_vecAudioBuffers.size() > MAX_BUF_SIZE)
-          {
-            ivecABuffers it = m_vecAudioBuffers.begin();
-            delete *it;
-            m_vecAudioBuffers.erase(it);
-          }
-          it = m_t_vecAudioBuffers.begin();
-
-          if ((*it)->rtStart != Packet::INVALID_TIME)
-          {
-            REFERENCE_TIME Ref = (*it)->rtStart;
-            if (Ref < m_FirstAudioSample) m_FirstAudioSample = Ref;
-            if (Ref > m_LastAudioSample) m_LastAudioSample = Ref;
-          }
-
-          // Check if the audio is set incorrectly
-          CorrectPacketPlaylist(*it, SUPERCEEDED_AUDIO);
-          m_vecAudioBuffers.push_back(*it);
-          m_t_vecAudioBuffers.erase(it);
-        }
-      }
-      else
-      {
-        while (m_t_vecAudioBuffers.size())
-        {
-          ivecABuffers it;
-          it = m_t_vecAudioBuffers.begin();
-          delete *it;
-          m_t_vecAudioBuffers.erase(it);
-        }
-        m_bSetAudioDiscontinuity = true;
-      }
+    }
+    else
+    {
+      m_bSetAudioDiscontinuity = true;
     }
     m_AudioValidPES = true;     
   }
 
-  if (m_AudioValidPES)
+  if (m_AudioValidPES && !packetProcessed)
   {
     int pos = header.PayLoadStart;
-    if (m_pCurrentAudioBuffer->GetDataSize() + (188-pos) >= 0x2000)
-    {
-      int copyLen = 0x2000 - m_pCurrentAudioBuffer->GetDataSize();
-      m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize()+copyLen);
-      memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - copyLen, &tsPacket[pos], copyLen);
-      pos += copyLen;
 
-      m_pCurrentAudioBuffer->nClipNumber = m_nAudioClip;
-      m_pCurrentAudioBuffer->nPlaylist = m_nAudioPl;
-
-      m_t_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
-      m_pCurrentAudioBuffer = new Packet();
-    }
     if (pos > 0 && pos < 188)
     {
-      m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize()+188 - pos);
-      memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - (188 - pos), &tsPacket[pos], 188 - pos);
+      int dataLenght = 188 - pos;
+      m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize() + dataLenght);
+      memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - dataLenght, &tsPacket[pos], dataLenght);
+    }
+
+    if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
+    {
+      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+      m_pCurrentAudioBuffer = new Packet();
+      m_nAudioPesLenght = 0;
+    }
+    else if (m_pCurrentAudioBuffer->GetCount() > m_nAudioPesLenght)
+    {
+      delete m_pCurrentAudioBuffer;
+      m_pCurrentAudioBuffer = new Packet();
+      m_nAudioPesLenght = 0;
+      LogDebug("demux: mismatch in audio PES packet lenght! (%d vs. %d)", m_nAudioPesLenght, m_pCurrentAudioBuffer->GetCount());
     }
   }
 }
