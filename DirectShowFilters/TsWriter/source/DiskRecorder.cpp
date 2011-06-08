@@ -1017,7 +1017,8 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 						if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
               m_iTsContinuityCounter++;
-							/*if (m_tsHeader.ContinuityCounter == info.ccPrev)
+							/*
+              if (m_tsHeader.ContinuityCounter == info.ccPrev)
 							{	
 								// May be duplicated....
 								int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
@@ -1028,11 +1029,12 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 									return ; 
 								}
 								else
-									LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+                
+                LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
 							}
 							else
-								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
               */
+						  LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}
 					}
 					else
