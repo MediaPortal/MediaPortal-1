@@ -1034,7 +1034,7 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 							}
 							else
               */
-						  LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
+						  LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x ) - bad signal?", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}
 					}
 					else
