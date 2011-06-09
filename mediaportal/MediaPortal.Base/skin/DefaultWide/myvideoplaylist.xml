@@ -140,7 +140,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="video_poster_mask.png">missing_Coverart.png</texture>
-      <visible>!control.hasthumb(500)</visible>
+      <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
       <id>500</id>
@@ -150,6 +150,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="video_poster_mask.png">#selectedthumb</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
       <type>image</type>
@@ -159,6 +160,7 @@
       <width>180</width>
       <height>250</height>
       <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
       <description>Selected item Label</description>
