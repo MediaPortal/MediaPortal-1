@@ -90,7 +90,7 @@
     <String id="130">Sys. informácie</String>
     <String id="131">Obrazovka</String>
     <String id="132">Albumy</String>
-    <String id="133">Umelci</String>
+    <String id="133">Interpreti</String>
     <String id="134">Vzd. zložky</String>
     <String id="135">Žánre</String>
     <String id="136">Zoznam</String>
@@ -128,7 +128,7 @@
     <String id="168">Synchronizácia času:</String>
     <String id="169">Rozlíšenie:</String>
     <String id="170">Album:</String>
-    <String id="171">Umelec:</String>
+    <String id="171">Interpret:</String>
     <String id="172">Dátum vydania:</String>
     <String id="173">Hodnotenie:</String>
     <String id="174">Žáner:</String>
@@ -216,6 +216,7 @@
     <String id="257">Chyba</String>
     <String id="258">Povoliť ID3 značky</String>
     <String id="259">Otvorenie</String>
+    <String id="260">Shoutcast</String>
     <String id="261">Čakám na štart...</String>
     <String id="262">Výstup skriptov</String>
     <String id="263">HTTP server:</String>
@@ -253,7 +254,7 @@
     <String id="295">Prechádzať záložkami</String>
     <String id="296">Vymazať záložky</String>
     <String id="297">Posun zvuku</String>
-    <String id="298">Pravítko</String>
+    <String id="298">Posuvník</String>
     <String id="299">Čas behu:</String>
     <String id="300">1. jazyk</String>
     <String id="301">2. hlasitosť</String>
@@ -275,7 +276,7 @@
     <String id="317">Reorganizácia úspešná</String>
     <String id="318">Označenie vymazaných skladieb</String>
     <String id="319">Chyba reorganizácie skladieb</String>
-    <String id="320">Hľadanie umelcov...</String>
+    <String id="320">Hľadanie interpretov...</String>
     <String id="321">Chyba reorganizácie umelcov</String>
     <String id="322">Hľadanie žánrov...</String>
     <String id="323">Chyba reorganizácie žánrov</String>
@@ -439,7 +440,7 @@
     <String id="481">Možnosti zvuku</String>
     <String id="482">O XBMC</String>
     <String id="483">Album</String>
-    <String id="484">Umelec</String>
+    <String id="484">Interpret</String>
     <String id="485">Vymazať album</String>
     <String id="486">Opakovať</String>
     <String id="487">Opakovať jedno</String>
@@ -481,7 +482,7 @@
     <String id="524">Najviac tri hodiny.</String>
     <String id="525">Takýto skok je už definovaný</String>
     <String id="527">Triediť: Pozreté</String>
-    <String id="528">Umelci</String>
+    <String id="528">Albumy Interpretov</String>
     <String id="529">Vzhľad: Zoznam veľkých ikon</String>
     <String id="530">Foto disk vložený, chcete ho otvoriť?</String>
     <String id="531">Filmový disk vložený, chete ho otvoriť?</String>
@@ -711,6 +712,7 @@
     <String id="789">Teraz:  </String>
     <String id="790">Nasleduje:  </String>
     <String id="791">Zobrazenie: obaly</String>
+    <String id="792">Menu Hladín</String>
     <String id="798">nízko</String>
     <String id="799">vysoko</String>
     <String id="800">Začína na</String>
@@ -934,14 +936,11 @@
     <String id="1054">(záznam)</String>
     <String id="1055">(čas. posun)</String>
     <String id="1056">(nedostupn.)</String>
-    <String id="1057">Záznam Ned-Stv</String>
-    <String id="1058">Záznam Pia-Sob</String>
-    <String id="1059">Ned-Stv</String>
-    <String id="1060">Pia-Sob</String>
     <String id="1061">Vyberateľn.</String>
     <String id="1062">Objekt</String>
     <String id="1064">Záložky</String>
     <String id="1065">Skok na</String>
+    <String id="1066">MP4</String>
     <String id="1067">v. vys.</String>
     <String id="1068">vys. rozl.</String>
     <String id="1069">240x180</String>
@@ -967,6 +966,8 @@
     <String id="1089">5376 Kb/s</String>
     <String id="1090">Video štandard</String>
     <String id="1091">Film</String>
+    <String id="1092">NTSC</String>
+    <String id="1093">PAL</String>
     <String id="1100">Importovať CD</String>
     <String id="1101">Importovať vybranú stopu</String>
     <String id="1102">Zrušiť import CD</String>
@@ -989,7 +990,28 @@
     <String id="1200">Sprievodca</String>
     <String id="1201">Prehrať video od začiatku</String>
     <String id="1202">Triedenie: Automaticky</String>
+    <String id="1203">Nadchádzajúce episzódy (active:{0})</String>
+    <String id="1204">Prehrať všetky videá vo vybranom adresáry</String>
+    <String id="1205">Triediť podľa: Disc#</String>
+    <String id="1206">Program je spustený už {0} minút</String>
+    <String id="1207">Prepnúť na {0} riadok?</String>
+    <String id="1208">Trediť podľa: Skladateľ</String>
     <String id="1211">Obnoviť prehrávanie od {0}</String>
+    <String id="1212">Zrušiť pripomienku</String>
+    <String id="1213">Počúvať túto Stanicu</String>
+    <String id="1214">Skladatelia</String>
+    <String id="1215">Vodiče</String>
+    <String id="1216">Disky</String>
+    <String id="1217">Skladby umelca</String>
+    <String id="1218">Albumy podľa veku</String>
+    <String id="1219">Albumy (Index)</String>
+    <String id="1220">Zoradiť podľa: Datum vytvorenia</String>
+    <String id="1221">Zoradiť podľa: Dátum zmeny</String>
+    <String id="1222">Skupny</String>
+    <String id="1223">Aktuálny playlist nájdený</String>
+    <String id="1224">Prajete si vymazať aktuálny playlist?</String>
+    <String id="1230">Dátum pridania:</String>
+    <String id="1231">Naposledy prehrané:</String>
     <String id="1300" prefix="Moje">Seriály</String>
     <String id="1440" prefix="Môj">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1003,6 +1025,7 @@
     <String id="1449">Zastaviť nahrávanie</String>
     <String id="1450">Naozaj chcete zastaviť nahrávanie?</String>
     <String id="1451">Nie je možné prehrať</String>
+    <String id="1498">Program/Kanál nebol nájdený</String>
     <String id="1499">Nie je signál</String>
     <String id="1500">Nedá sa začať časový posun</String>
     <String id="1501">Karta nie je povolená</String>
@@ -1031,6 +1054,13 @@
     <String id="1600">Naozaj ma chcete vypnúť?</String>
     <String id="1601">Naozaj ma chcete uspať?</String>
     <String id="1602">Naozaj sa mám hibernovať?</String>
+    <String id="1900">Zastaraný skin</String>
+    <String id="1901">Práve ste vybrali skin ({0}), ktorý je zastaralý a to môže vyvolať problémy v MediaPortal. Z tohto dôvodu bol dočasne nastavený východiskový skin. Ale ak napriek upozorneniu chcete používať zastaralý skin, tak kliknite na 'Ignorovať a skúsiť', ale majte na pamäti: Nereportujte žiadne chyby pri používaní tohto skinu! (Na zrušenie buď počkajte pokiaľ sa táto hláška automaticky vypne, alebo kliknite na Späť/ESC na diaľkovom ovládaní.</String>
+    <String id="1902">Nezobrazovať túto hlášku znova</String>
+    <String id="1903">Ignorovať a skúsiť ({0})...</String>
+    <String id="1910">Nekompatibilné pluginy</String>
+    <String id="1911">Nasledujúce pluginy sú nekompatibilné s aktuálnou verziou MediaPortal a budú automaticky deaktivované:</String>
+    <String id="1912">Pokračovať|Pokračovať ({0})...|Pokračovať ({0})...</String>
     <String id="1950">Stav</String>
     <String id="1951">Pevný disk</String>
     <String id="1952">Vent.</String>
@@ -1064,7 +1094,7 @@
     <String id="2006">Názov</String>
     <String id="2007">Zisk</String>
     <String id="2008">Zloženie</String>
-    <String id="2009">Postup</String>
+    <String id="2009">Príkaz</String>
     <String id="2010">Karta</String>
     <String id="2011">Tlač</String>
     <String id="2012">Vymazať</String>
@@ -1081,6 +1111,7 @@
     <String id="2023">balenie</String>
     <String id="2024">strk.</String>
     <String id="2025">kvapk.</String>
+    <String id="2026">pomlčka</String>
     <String id="2027">kartón</String>
     <String id="2028">zväzok</String>
     <String id="2029">krajec</String>
@@ -1194,6 +1225,8 @@
     <String id="2138">Strihať</String>
     <String id="2139">Urobiť MP3 CD</String>
     <String id="2140">Urobiť MP3 DVD</String>
+    <String id="2141">MPEG2 -&gt; DivX</String>
+    <String id="2142">MPEG2 -&gt; MPEG4</String>
     <String id="2143">Domov</String>
     <String id="2144">Napáliť</String>
     <String id="2145">Importovať akt. zoznam</String>
@@ -1348,6 +1381,8 @@
     <String id="5915">Zatiaľ žiadne recenzie filmov</String>
     <String id="5916">Upútavky sa nenašli.</String>
     <String id="5917">Nemecké upútavky</String>
+    <String id="5918">Tlvision Suisse Romande VOD</String>
+    <String id="5919">Weekend box office</String>
     <String id="5920">Filmy aktuálne tento týždeň</String>
     <String id="5921">Filmy čoskoro u nás</String>
     <String id="5922">Najpredávanejšie DVD</String>
@@ -1365,9 +1400,10 @@
     <String id="6008">Triedenie kanálov</String>
     <String id="6009">DVB program</String>
     <String id="6010">XMLTV EPG sťahovač</String>
+    <String id="6011">DVB EPG:</String>
     <String id="6012">Načítač TV sprievodcu z nasledujúcich DVB kanálov:</String>
     <String id="6013">xmltv manuálne</String>
-    <String id="6014">Nastavenie TV</String>
+    <String id="6014">TV Nastavenie </String>
     <String id="6015">Nastavenie DVD</String>
     <String id="6016">Automaticky vymazať záznamy po pozretí</String>
     <String id="6017">Pridať záznamy do databázy</String>
@@ -1437,6 +1473,7 @@
     <String id="9004">Kompenzácia:</String>
     <String id="9005">Uzávierka:</String>
     <String id="9006">Dátum fotografovania:</String>
+    <String id="9007">Clona:</String>
     <String id="9008">Expozícia:</String>
     <String id="9009">Model fotoap.:</String>
     <String id="9010">Výrobca:</String>
@@ -1492,6 +1529,8 @@
     <String id="9148">Mapovanie diaľkového ovládania</String>
     <String id="9149">Normálne</String>
     <String id="9150">Stereo</String>
+    <String id="9151">VU Meter</String>
+    <String id="9152">VU Meter 2</String>
     <String id="9997">Sekundy:</String>
     <String id="9998">Minúty:</String>
     <String id="9999">Hodiny:</String>
@@ -1622,12 +1661,74 @@
     <String id="30004">Predch. stránka</String>
     <String id="30005">Nasled. stránka</String>
     <String id="30006">Stop</String>
-    <String id="30007">Hľadať iné umelcove videá</String>
+    <String id="30007">Hľadať ďalšie videá interpreta</String>
     <String id="30008">hodnotenie</String>
     <String id="30009">stránka</String>
     <String id="30010">Výsledky hľadania {0}, strana {1}</String>
+    <String id="33000">Scrobble On</String>
+    <String id="33001">Scrobble: Podobné</String>
+    <String id="33002">Scrobble: Susedia</String>
+    <String id="33003">Scrobble: Tags</String>
+    <String id="33004">Scrobble: Posledné</String>
+    <String id="33005">Konto:</String>
+    <String id="33006">Scrobble: Priatelia</String>
+    <String id="33007">Scrobble: Off-line</String>
+    <String id="33008">Žiadny playlist nie je aktívny</String>
+    <String id="33009">pre vloženie alebo pridanie skladby!</String>
+    <String id="33010">Automaticky naplň playlist z</String>
+    <String id="33011">Podobné skladby</String>
+    <String id="33012">Sledovať čo majú radi susedia</String>
+    <String id="33013">Sledovať zhodne nakonfigurované popisky</String>
+    <String id="33014">Sledovať naposledy prehrané</String>
+    <String id="33016">Sledovať čo majú priatelia radi</String>
+    <String id="33017">Náhodné skladby</String>
+    <String id="33018">Náhodné nevypočuté sklady</String>
+    <String id="33019">Náhodné obľúbené skladby</String>
+    <String id="33030">Skladby z najlepších albumov</String>
+    <String id="33031">Ostatné skladby označené s:</String>
+    <String id="33032">Skladbu z tohto top albumu nemôže</String>
+    <String id="33033">byť nájdená vo vašej kolecii!</String>
+    <String id="33040">Kopírovať teraz hrané do schránky</String>
+    <String id="33041">Vložiť album do playlistu</String>
     <String id="34000" prefix="Moje">Last.fm</String>
+    <String id="34001">Spustiť / Zmeniť  stream</String>
+    <String id="34002">Priateľ:</String>
+    <String id="34003">Sused:</String>
+    <String id="34004">Skupina:</String>
+    <String id="34005">Prepnúť používateľské konto</String>
+    <String id="34010">Láska</String>
+    <String id="34011">Zákaz</String>
+    <String id="34012">Preskočiť</String>
+    <String id="34013">Prieskumný mód</String>
+    <String id="34014">Aktivovať scrobbling</String>
+    <String id="34015">Znovu načítať nastavenia</String>
+    <String id="34016">Prehrať rovnakého umelca</String>
+    <String id="34017">Prehrať s podobnou popiskou</String>
+    <String id="34020">Aktuálny stream:</String>
+    <String id="34030">Žiadna popiska</String>
+    <String id="34031">Žiadny priatelia</String>
+    <String id="34032">Žiadny umelec</String>
+    <String id="34039">Podobný k umelcovi:</String>
+    <String id="34040">Moje odporúčania</String>
+    <String id="34041">Podobné k popiske:</String>
+    <String id="34042">Žiadna popiska nebola vybraná</String>
+    <String id="34043">Stanica rádia:</String>
+    <String id="34044">Obľúbené stopy:</String>
+    <String id="34045">Žiadny priatelia neboli doposiaľ vybraný</String>
+    <String id="34046">Moja rádio stanica</String>
+    <String id="34047">Moje obľúbené skladby</String>
+    <String id="34048">Moji susedia</String>
+    <String id="34049">Môj webový playlist</String>
+    <String id="34050">Žiany stream nie je aktívny</String>
+    <String id="34051">Stream skončený!</String>
+    <String id="34052">Žiadny ďalší obsah alebo zlé pripojenie</String>
+    <String id="34053">Zlyhalo prehrávanie vybraného streamu</String>
+    <String id="34054">Zlyhala pripojenie na radiu</String>
+    <String id="34055">Stream môže byť dočasne neprístupný</String>
     <String id="34060">Zadajte značku...</String>
+    <String id="34061">Zadajte prihlasovacie meno...</String>
+    <String id="34062">Zdajte umelca...</String>
+    <String id="34063">Interpret nebol doposiaľ vybraný</String>
     <String id="40001">Čakanie na Standby</String>
     <String id="40002">Mediaportal je stále zanprázdnený.</String>
     <String id="40003">Po dokončení úloh prejde Mediaportal do standby módu.</String>
@@ -1638,25 +1739,122 @@
     <String id="100004">Nastavenie</String>
     <String id="100005" prefix="Moja">Hudba</String>
     <String id="100006" prefix="Moje">Video</String>
+    <String id="100008">Nastavenia-&gt;Všeobecné</String>
+    <String id="100009">Nastavenia-&gt;Obrazovka</String>
+    <String id="100010">Nastavenie-&gt;Obrazovka-&gt;Kalibrácia UI</String>
+    <String id="100011">Nastavenie-&gt;Obrazovka-&gt;Kalibrácia obrazovky</String>
+    <String id="100012">Nastavenie-&gt;Prezentácia</String>
+    <String id="100013">Nastavenie-&gt;Obrazovka-&gt;Filtre</String>
+    <String id="100014">Nastavenie-&gt;Hudba</String>
+    <String id="100015">Nastavenie-&gt;Obrazovka-&gt;Titulky</String>
+    <String id="100016">Nastavenie-&gt;Obrazovka-&gt;Sporič obrazovky</String>
     <String id="100017">Nastavenie-&gt;Počasie</String>
+    <String id="100020">Nastavenie-&gt;Skripty</String>
+    <String id="100021" prefix="Môje">Videá/Žánre</String>
+    <String id="100022" prefix="Moje">Videá/Herci</String>
+    <String id="100023" prefix="Moje">Videá/rok</String>
+    <String id="100024">Nastavenia-&gt;Programy</String>
+    <String id="100025" prefix="Moje">Videá/názov</String>
+    <String id="100026">Nastavnia-&gt;Všeobecné-&gt;Cache</String>
+    <String id="100027">Nastavnia-&gt;Všeobecné-&gt;Autoštart</String>
+    <String id="100028" prefix="Môj">Videá/playlist</String>
+    <String id="100029">Nastavnia-&gt;Všeobecné-&gt;LCD</String>
     <String id="100030" prefix="Moje">Rádio</String>
+    <String id="100031">Nastavnia-&gt;Obrazovka-&gt;Rýchlosť rolovania</String>
     <String id="100034" prefix="Moje">Moduly</String>
+    <String id="100035">Základná domovká sktránka</String>
+    <String id="100100">Áno/Nie dialóg</String>
+    <String id="100101">Dialóg pokroku</String>
+    <String id="100102">Play/Stop dialóg</String>
+    <String id="100500">Hudba/playlist</String>
+    <String id="100501">Hudba/zdielania</String>
+    <String id="100502">Hudba/albumy</String>
+    <String id="100503">Hudba/Interpreti</String>
+    <String id="100504">Hudba/Žánre</String>
+    <String id="100505">Hudba/Top 100</String>
+    <String id="100506">Hudba/Obľúbené</String>
+    <String id="100507">Hudba/Roky</String>
+    <String id="100508">Hudba/Hľadanie/Výsledky</String>
+    <String id="100509">Hudba/Vyladávanie/Progres</String>
+    <String id="100510">Hudba/Teraz prehrávané</String>
+    <String id="100511">Hudba/Celá obrazovka</String>
+    <String id="100512">LastFM Love/Zakázať</String>
+    <String id="100600">TV/TV program</String>
+    <String id="100601">TV/Plánovač</String>
+    <String id="100602">TV/Celá obrazovka</String>
+    <String id="100603">TV/Nahraté TV programy</String>
+    <String id="100604">TV/Vyhľadávanie</String>
+    <String id="100605">TV/Nahraté TV Programy/Žánre</String>
+    <String id="100606">TV/Nahraté TV programy/Kanály</String>
+    <String id="100607">TV/Plánovač/Priority</String>
+    <String id="100608">TV/Plánovač/Konflikty</String>
+    <String id="100609">TV/Kompresia/Hlavná</String>
+    <String id="100610">TV/Kompresia/Nastavenia</String>
+    <String id="100611">TV/Kompresia/Automaticky</String>
+    <String id="100612">TV/Kompresia/Komprimuj</String>
+    <String id="100613">TV/Kompresia/Stav</String>
+    <String id="100614">Video Interpret Info</String>
+    <String id="100615">Sprievodca/Privítanie</String>
+    <String id="100616">Sprievodca/Detekované zariadenia</String>
+    <String id="100617">Sprievodca/Krajina</String>
+    <String id="100618">Sprievodca/Vyhľadávanie</String>
+    <String id="100619">Sprievodca/DVBC/Krajina</String>
+    <String id="100620">Sprievodca/DVBC/Vyhľadávanie</String>
+    <String id="100621">Sprievodca/DVBS/LNB</String>
+    <String id="100622">Sprievodca/DVBS/LNB detaily</String>
+    <String id="100623">Sprievodca/DVBS/Transponder</String>
+    <String id="100624">Sprievodca/DVBS/Vyhľadávanie</String>
+    <String id="100625">Sprievodca/DVBS/Vyhľadávanie</String>
+    <String id="100626">Sprievodca/Analóg/Krajina</String>
+    <String id="100627">Sprievodca/Analóg/Mesto</String>
+    <String id="100628">Sprievodca/Analóg/Importované</String>
+    <String id="100629">Sprievodca/Analóg/Manuálne</String>
+    <String id="100630">Sprievodca/Analóg/Vyhľadávanie</String>
+    <String id="100631">Sprievodca/Analóg/Premenovať</String>
+    <String id="100632">Sprievodca/Analóg/Rádio</String>
+    <String id="100633">Sprievodca/Analóg/Premenovať stanicu</String>
+    <String id="100634">Sprievodca/Diaľkové ovládanie</String>
+    <String id="100635">Sprievodca/EPG</String>
+    <String id="100636">Sprievodca/Všeobené</String>
+    <String id="100699">Sprievodca/Ukončené</String>
+    <String id="100700">TV Nastavenia</String>
+    <String id="100701">Nastavenia TV nahrávania</String>
+    <String id="100702">TV Usporiadať kanály</String>
+    <String id="100703">TV film nastavenia</String>
     <String id="100704">Nastavenie DVD</String>
     <String id="100705">Nastavenie vzhľadu</String>
     <String id="100706">Nastavenie EPG</String>
+    <String id="100707">EPG -&gt; Mapovanie kanálov</String>
+    <String id="100708">Preskočiť tento krok nastavenia</String>
+    <String id="100709">TV-Nastavenie servera</String>
+    <String id="100746">TV typ vyhľadávania</String>
+    <String id="100747">TV Vyhľadávnie</String>
     <String id="100748">Informácie o programe</String>
     <String id="100749">TV / Nie je signál</String>
     <String id="100755">Stav</String>
     <String id="100756">Stav (detaily)</String>
     <String id="100757">Stav - nastavenie</String>
+    <String id="100758">Súbor dialógov</String>
+    <String id="100759">Nahrávánie TV Info</String>
     <String id="100760">Napaľovačka</String>
     <String id="100761">TV sprievodca</String>
     <String id="100762">Rádio sprievodca</String>
+    <String id="100763">Nahraté z Rádia</String>
     <String id="100800" prefix="Moje">Rozšírenia</String>
     <String id="101000">klávesnica</String>
     <String id="101002">štandardná virtuálna klávesnica</String>
     <String id="101003">webová virtuálna klávesnica</String>
     <String id="101004">SMS virtuálna klávesnica</String>
+    <String id="102000">Vyber dialóg</String>
+    <String id="102001" prefix="Moja">Hudba/Info</String>
+    <String id="102002">Dialóg OK</String>
+    <String id="102003" prefix="Moje">Videá/Info</String>
+    <String id="102004" prefix="Moje">Skripty/Info</String>
+    <String id="102005">Video celá obrazovka</String>
+    <String id="102006">Audio vizualizácia</String>
+    <String id="102007" prefix="Moje">Obrázky/Prezentácia</String>
+    <String id="102008">Filestacking dialog</String>
+    <String id="102009">Dialóg výberu</String>
     <String id="102010">Dátum/čas</String>
     <String id="102011">Informácia o uelcovi</String>
     <String id="102012">Kontextové menu</String>
@@ -1664,6 +1862,7 @@
     <String id="102014">Info o obrázku</String>
     <String id="102015">Mini menu</String>
     <String id="102016">Oznam</String>
+    <String id="102017">Konfikty nahrávania</String>
     <String id="102018">Menu karty</String>
     <String id="102600" prefix="Moje">Počasie</String>
     <String id="102700" prefix="Moje">Správy</String>
@@ -1671,13 +1870,21 @@
     <String id="102901">Celoobrazovkové OSD</String>
     <String id="102959">Video editor</String>
     <String id="103001">DVD</String>
+    <String id="103003" prefix="Moje">TV/OSD</String>
+    <String id="103006" prefix="Moje">TV/MSN OSD</String>
+    <String id="103007" prefix="Moje">TV/Zap OSD</String>
+    <String id="103009" prefix="Moje">TV/Mini EPG</String>
     <String id="103011" prefix="Moje">Nastavenie TV/Orezania</String>
     <String id="103012">detaily TV kanála</String>
     <String id="104711" prefix="Moja">Wikipédia</String>
     <String id="106666">"Power Scheduler" čaká</String>
+    <String id="107700" prefix="Moje">TV/Teletext</String>
+    <String id="107701" prefix="Moje">TV/Teletext</String>
     <String id="107776" prefix="Môj">Tetris</String>
     <String id="107777" prefix="Moje">Sudoku</String>
     <String id="107890" prefix="Moje">Last.fm rádio</String>
+    <String id="107900">Dialóg Text</String>
+    <String id="108888">Hudba menu</String>
     <String id="109000">MiniDisplej - Nastavenie</String>
     <String id="109001">MiniDisplej - Nastavenie - Podsvietenie</String>
     <String id="109002">MiniDisplej - Nastavenie - Ovládanie displeja</String>
@@ -1685,6 +1892,7 @@
     <String id="109004">MiniDisplej - Nastavenie - Ekvalizér</String>
     <String id="109005">MiniDisplej - Nastavenie - Klávesnica</String>
     <String id="109006">MiniDisplej - Nastavenie - Ďiaľkové ovládanie</String>
+    <String id="102019">TV oznámenia</String>
     <String id="200000">Prosím, vyberte svoj sťahovač EPG. Ak vaša krajina</String>
     <String id="200001">nie je v zozname, môžete dodať EPG manuálne</String>
     <String id="200002">Teraz môžete namapovať kanály v EPG na vaše TV kanály</String>
@@ -1710,7 +1918,7 @@
     <String id="990001">{0} na kanáli {1}</String>
     <String id="200022">MediaPortal našiel nasledujúce TV karty:</String>
     <String id="200023">Stlačte tlačidlo Next na konfiguráciu kariet</String>
-    <String id="200024">Nastavenie TV</String>
+    <String id="200024">TV Nastavenie </String>
     <String id="200025">Jazyk</String>
     <String id="200026">Krajina</String>
     <String id="200027">Nastavenie - Všeobecné</String>
@@ -1756,6 +1964,22 @@
     <String id="200070">Prosím, preverte firewall</String>
     <String id="200071">Vymazať celú zložku, vrátane podzložiek?</String>
     <String id="200072">Nasledujúce diely</String>
+    <String id="200073">Postprocessing</String>
+    <String id="200074">Postprocess obrázkov</String>
+    <String id="200075">Zmeniť veľkosť</String>
+    <String id="200076">Súbory tilkov</String>
+    <String id="200077">Deinterlace</String>
+    <String id="200078">Orezať</String>
+    <String id="200079">Orezať vertikálne</String>
+    <String id="200080">Orezať horizontálne</String>
+    <String id="200081">VIDEO MENU</String>
+    <String id="200082">AUDIO MENU</String>
+    <String id="200083">TITLUKY MENU</String>
+    <String id="200084">Video Menu</String>
+    <String id="200085">Audio Menu</String>
+    <String id="200086">HLAVNÉ MENU</String>
+    <String id="200087">Stlmiť zvuk</String>
+    <String id="200090">Vydanie</String>
     <String id="200091">Kapitola</String>
   </Section>
 </Language>
