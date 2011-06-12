@@ -240,8 +240,27 @@ namespace MediaPortal.GUI.Music
         _virtualDirectory.Clear();
         foreach (Share share in _shareList)
         {
-          if (share.Name.Length > 0)
+          if (!string.IsNullOrEmpty(share.Name))
           {
+            if (strDefault == share.Name)
+            {
+              share.Default = true;
+              if (string.IsNullOrEmpty(currentFolder))
+              {
+                if (share.IsFtpShare)
+                {
+                  //remote:hostname?port?login?password?folder
+                  currentFolder = _virtualDirectory.GetShareRemoteURL(share);
+                  _startDirectory = currentFolder;
+                }
+                else
+                {
+                  currentFolder = share.Path;
+                  _startDirectory = share.Path;
+                }
+              }
+            }
+
             _virtualDirectory.Add(share);
           }
           else
