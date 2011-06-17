@@ -273,12 +273,12 @@ namespace MediaPortal.GUI.Library
             case Xkey.XK_SMS:
               if (SmsStyleText)
               {
-                //selKeyColor = _keyPressedColor;
-                key.name = "STANDARD";
+                selKeyColor = _keyPressedColor;
+                //key.name = "SMS";
               }
               else
               {
-                key.name = "SMS";
+                //key.name = "STANDARD";
               }
               break;
           }

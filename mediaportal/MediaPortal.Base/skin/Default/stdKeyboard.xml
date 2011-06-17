@@ -65,7 +65,7 @@
       <keyTextureFocus>key.png</keyTextureFocus>
       <keyTextureNoFocus>keyNF.png</keyTextureNoFocus>
       <keyHighlightColor>ffffffff</keyHighlightColor>
-      <keyPressedColor>ffffffff</keyPressedColor>
+      <keyPressedColor>ff808080</keyPressedColor>
       <keyDisabledColor>FFFFFFFF</keyDisabledColor>
       <keyFontColor>FFffffff</keyFontColor>
       <keySelFontColor>FFffffff</keySelFontColor>

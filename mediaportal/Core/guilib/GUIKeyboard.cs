@@ -368,7 +368,19 @@ namespace MediaPortal.GUI.Library
       XK_SEARCH_ALBUM, // search for album
       XK_SEARCH_TITLE, // search for title
       XK_SEARCH_ARTIST, // search for artist
-      XK_SEARCH_GENERE // search for genere
+      XK_SEARCH_GENERE, // search for genere
+
+      // SMS keyboard keys
+      XK_SMS0 = 0x12000,
+      XK_SMS1,
+      XK_SMS2,
+      XK_SMS3,
+      XK_SMS4,
+      XK_SMS5,
+      XK_SMS6,
+      XK_SMS7,
+      XK_SMS8,
+      XK_SMS9
     } ;
 
     public enum StringID
@@ -473,7 +485,18 @@ namespace MediaPortal.GUI.Library
     public bool SmsStyleText
     {
       get { return _useSmsStyleTextInsertion; }
-      set { _useSmsStyleTextInsertion = value; }
+      set
+      {
+        if (value != _useSmsStyleTextInsertion)
+        {
+          if (Password) return; //sms is disabled during password input - we cannot see chars!
+          smsLastKeyPressed = -1;
+          _lastColumn = 0;
+          _useSmsStyleTextInsertion = value;
+          InitBoard();
+        }
+        GUIPropertyManager.SetProperty("#VirtualKeyboard.SMSStyleInput", SmsStyleText.ToString().ToLowerInvariant());
+      }
     }
 
 
@@ -561,6 +584,9 @@ namespace MediaPortal.GUI.Library
             break;
           case Xkey.XK_SEARCH_IS:
             name = GUILocalizeStrings.Get(803);
+            break;
+          case Xkey.XK_SMS0:
+            name = "0 [ ]";
             break;
         }
       }
@@ -671,6 +697,7 @@ namespace MediaPortal.GUI.Library
       _keyHeightScaled = height;
 
       // Free and reallocate resources to incorporate new keys added to the keyboard.
+      RestoreToDefault();
       InitBoard();
     }
 
@@ -876,8 +903,7 @@ namespace MediaPortal.GUI.Library
           }
           break;
         case Action.ActionType.ACTION_TOGGLE_SMS_INPUT:
-          _useSmsStyleTextInsertion = !_useSmsStyleTextInsertion;
-          smsLastKeyPressed = -1;
+          SmsStyleText = !SmsStyleText;
           break;
       }
     }
@@ -886,13 +912,21 @@ namespace MediaPortal.GUI.Library
     {
       if (_useSmsStyleTextInsertion)
       {
-        if (smsLastKeyPressTime + 1500 < System.Environment.TickCount || smsLastKeyPressed != keyPressed)
+        if (smsLastKeyPressTime + 1000 < System.Environment.TickCount || smsLastKeyPressed != keyPressed)
         {
           smsLastKeyInternalPos = 0;
 
           string tmpKeys = smsKeyMap[keyPressed];
-          if (_shiftTurnedOn) tmpKeys = tmpKeys.ToUpper();
-          smsLastShiftState = _shiftTurnedOn;
+          //if (_shiftTurnedOn) tmpKeys = tmpKeys.ToUpper();
+          if ((_capsLockTurnedOn && !_shiftTurnedOn) || (!_capsLockTurnedOn && _shiftTurnedOn))
+          {
+            tmpKeys = tmpKeys.ToUpper();
+            smsLastShiftState = true;
+          }
+          else
+          {
+            smsLastShiftState = false;
+          }
           char tmpChar = tmpKeys[smsLastKeyInternalPos];
 
           /*Action tmpAction = new Action(new MediaPortal.GUI.Library.Key(tmpChar, (int)tmpChar),
@@ -945,7 +979,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    protected virtual void InitBoard()
+    protected virtual void RestoreToDefault()
     {
       // Restore keyboard to default state
       _currentRow = 0;
@@ -960,7 +994,10 @@ namespace MediaPortal.GUI.Library
       GUIGraphicsContext.ScaleVertical(ref height);
       _keyHeightScaled = height;
       _maxRows = 5;
+    }
 
+    protected virtual void InitBoard()
+    {
       // Destroy old keyboard
       _keyboardList.Clear();
 
@@ -980,16 +1017,25 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_OK, _modeKeyWidth, this));
       }
-      keyRow.Add(new Key(Xkey.XK_1, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_2, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_3, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_4, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_5, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_6, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_7, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_8, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_9, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_0, _keyWidth, this));
+      if (!_useSmsStyleTextInsertion)
+      {
+        keyRow.Add(new Key(Xkey.XK_1, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_2, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_3, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_4, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_5, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_6, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_7, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_8, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_9, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_0, _keyWidth, this));
+      }
+      else
+      {
+        keyRow.Add(new Key(Xkey.XK_SMS1, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS2, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS3, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      }
 
       keyBoard.Add(keyRow);
 
@@ -1004,17 +1050,26 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_SHIFT, _modeKeyWidth, this));
       }
+      if (!_useSmsStyleTextInsertion)
+      {
+        keyRow.Add(new Key(Xkey.XK_A, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_B, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_C, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_D, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_E, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_F, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_G, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_H, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_I, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_J, _keyWidth, this));
+      }
+      else
+      {
+        keyRow.Add(new Key(Xkey.XK_SMS4, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS5, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS6, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      }
 
-      keyRow.Add(new Key(Xkey.XK_A, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_B, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_C, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_D, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_E, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_F, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_G, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_H, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_I, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_J, _keyWidth, this));
       keyBoard.Add(keyRow);
 
       // Third row is Caps Lock, K-T
@@ -1028,7 +1083,8 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_CAPSLOCK, _modeKeyWidth, this));
       }
-
+      if (!_useSmsStyleTextInsertion)
+      {
       keyRow.Add(new Key(Xkey.XK_K, _keyWidth, this));
       keyRow.Add(new Key(Xkey.XK_L, _keyWidth, this));
       keyRow.Add(new Key(Xkey.XK_M, _keyWidth, this));
@@ -1039,6 +1095,14 @@ namespace MediaPortal.GUI.Library
       keyRow.Add(new Key(Xkey.XK_R, _keyWidth, this));
       keyRow.Add(new Key(Xkey.XK_S, _keyWidth, this));
       keyRow.Add(new Key(Xkey.XK_T, _keyWidth, this));
+      }
+      else
+      {
+        keyRow.Add(new Key(Xkey.XK_SMS7, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS8, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS9, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      }
+
       keyBoard.Add(keyRow);
 
       // Fourth row is Accents, U-Z, Backspace
@@ -1052,14 +1116,23 @@ namespace MediaPortal.GUI.Library
       {
         keyRow.Add(new Key(Xkey.XK_ACCENTS, _modeKeyWidth, this));
       }
-
-      keyRow.Add(new Key(Xkey.XK_U, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_V, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_W, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_X, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_Y, _keyWidth, this));
-      keyRow.Add(new Key(Xkey.XK_Z, _keyWidth, this));
+      if (!_useSmsStyleTextInsertion)
+      {
+        keyRow.Add(new Key(Xkey.XK_U, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_V, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_W, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_X, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_Y, _keyWidth, this));
+        keyRow.Add(new Key(Xkey.XK_Z, _keyWidth, this));
+      }
+      else
+      {
+        //keyRow.Add(new Key(Xkey.XK_NULL, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+        keyRow.Add(new Key(Xkey.XK_SMS0, (_keyWidth * 6) + (_keyHorizontalSpacing * 5), this));
+        //keyRow.Add(new Key(Xkey.XK_NULL, (_keyWidth * 2) + (_keyHorizontalSpacing * 1), this));
+      }
       keyRow.Add(new Key(Xkey.XK_BACKSPACE, (_keyWidth * 4) + (_keyHorizontalSpacing * 3), this));
+
       keyBoard.Add(keyRow);
 
       // Fifth row is SMS, Space, Left, Right
@@ -1423,7 +1496,7 @@ namespace MediaPortal.GUI.Library
           {
             if (_position >= _textEntered.Length)
             {
-              _textEntered += GetChar(xk).ToString();
+              _textEntered += GetChar(xk);
               if (TextChanged != null)
               {
                 TextChanged(_searchKind, _textEntered);
@@ -1431,7 +1504,7 @@ namespace MediaPortal.GUI.Library
             }
             else
             {
-              _textEntered = _textEntered.Insert(_position, GetChar(xk).ToString());
+              _textEntered = _textEntered.Insert(_position, GetChar(xk));
               if (TextChanged != null)
               {
                 TextChanged(_searchKind, _textEntered);
@@ -1487,7 +1560,8 @@ namespace MediaPortal.GUI.Library
             _currentKeyboard = KeyboardTypes.TYPE_ACCENTS;
             break;
           case Xkey.XK_SMS:
-            _useSmsStyleTextInsertion = !_useSmsStyleTextInsertion;
+            //_useSmsStyleTextInsertion = !_useSmsStyleTextInsertion;
+            SmsStyleText = !SmsStyleText;
             break;
           case Xkey.XK_ARROWLEFT:
             if (_position > 0)
@@ -1530,6 +1604,37 @@ namespace MediaPortal.GUI.Library
             break;
             // code by Agree ends here
             //
+
+          case Xkey.XK_SMS0:
+            ProcessSmsInsertion(0);
+            break;
+          case Xkey.XK_SMS1:
+            ProcessSmsInsertion(1);
+            break;
+          case Xkey.XK_SMS2:
+            ProcessSmsInsertion(2);
+            break;
+          case Xkey.XK_SMS3:
+            ProcessSmsInsertion(3);
+            break;
+          case Xkey.XK_SMS4:
+            ProcessSmsInsertion(4);
+            break;
+          case Xkey.XK_SMS5:
+            ProcessSmsInsertion(5);
+            break;
+          case Xkey.XK_SMS6:
+            ProcessSmsInsertion(6);
+            break;
+          case Xkey.XK_SMS7:
+            ProcessSmsInsertion(7);
+            break;
+          case Xkey.XK_SMS8:
+            ProcessSmsInsertion(8);
+            break;
+          case Xkey.XK_SMS9:
+            ProcessSmsInsertion(9);
+            break;
         }
       }
     }
@@ -1590,9 +1695,24 @@ namespace MediaPortal.GUI.Library
             }
             break;
           case 3:
-            if (_currentKey == 7) // backspace
+            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
             {
-              _currentKey = Math.Max(7, _lastColumn); // restore column
+              if (_currentKey == 7) // backspace
+              {
+                _currentKey = Math.Max(7, _lastColumn); // restore column
+              }
+            }
+            else
+            {
+              if (_currentKey == 2) // backspace
+              {
+                _currentKey = _lastColumn = 3;
+              }
+              else if (_currentKey == 1) //0
+              {
+                _currentKey = Math.Min(3, _lastColumn);
+                _lastColumn = _currentKey;
+              }
             }
             if (_currentKeyboard == KeyboardTypes.TYPE_ACCENTS && _currentKey > 8)
             {
@@ -1602,11 +1722,25 @@ namespace MediaPortal.GUI.Library
           case 4:
             if (_currentKey == 1) // spacebar
             {
-              _currentKey = Math.Min(6, _lastColumn); // restore column
+              if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+              {
+                _currentKey = Math.Min(6, _lastColumn); // restore column
+              }
+              else
+              {
+                _currentKey = 1; //0
+              }
             }
             else if (_currentKey > 1) // left and right
             {
-              _currentKey = 7; // backspace
+              if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+              {
+                _currentKey = 7; // backspace
+              }
+              else
+              {
+                _currentKey = 2; //backspace
+              }
             }
             break;
         }
@@ -1635,21 +1769,35 @@ namespace MediaPortal.GUI.Library
             }
             break;
           case 2:
-            if (_currentKey > 7) // q - t
+            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
             {
-              _lastColumn = _currentKey; // remember column
-              _currentKey = 7; // move to backspace
+              if (_currentKey > 7) // q - t
+              {
+                _lastColumn = _currentKey; // remember column
+                _currentKey = 7; // move to backspace
+              }
+            }
+            else
+            {
+              if (_currentKey > 0)
+              {
+                _lastColumn = _currentKey; // remember column
+                _currentKey = 1; // move to 0
+              }
             }
             break;
           case 3:
-            if (0 < _currentKey && _currentKey < 7) // u - z
+            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
             {
-              _lastColumn = _currentKey; // remember column
-              _currentKey = 1; // move to spacebar
-            }
-            else if (_currentKey > 6) // backspace
-            {
-              _currentKey = _lastColumn > 8 ? 3 : 2;
+              if (0 < _currentKey && _currentKey < 7) // u - z
+              {
+                _lastColumn = _currentKey; // remember column
+                _currentKey = 1; // move to spacebar
+              }
+              else if (_currentKey > 6) // backspace
+              {
+                _currentKey = _lastColumn > 8 ? 3 : 2;
+              }
             }
             break;
           case 4:
@@ -1659,10 +1807,24 @@ namespace MediaPortal.GUI.Library
                 _currentKey = Math.Min(6, _lastColumn);
                 break;
               case 2: // left arrow
-                _currentKey = Math.Max(Math.Min(8, _lastColumn), 7);
+                if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+                {
+                  _currentKey = Math.Max(Math.Min(8, _lastColumn), 7);
+                }
+                else
+                {
+                  _currentKey = _lastColumn = 3;
+                }
                 break;
               case 3: // right arrow
-                _currentKey = Math.Max(9, _lastColumn);
+                if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+                {
+                  _currentKey = Math.Max(9, _lastColumn);
+                }
+                else
+                {
+                  _currentKey = _lastColumn = 3;
+                }
                 break;
             }
             break;
@@ -1684,17 +1846,23 @@ namespace MediaPortal.GUI.Library
       ArrayList board = (ArrayList)_keyboardList[(int)_currentKeyboard];
       ArrayList row = (ArrayList)board[_currentRow];
       Key key = (Key)row[_currentKey];
-      if (key.name == "")
+      if (key.name == "" || _lastColumn == 0)
       {
         switch (key.xKey)
         {
             // Adjust the last column for the arrow keys to confine it
             // within the range of the key width
           case Xkey.XK_ARROWLEFT:
-            _lastColumn = (_lastColumn <= 7) ? 7 : 8;
+            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            {
+              _lastColumn = (_lastColumn <= 7) ? 7 : 8;
+            }
             break;
           case Xkey.XK_ARROWRIGHT:
-            _lastColumn = (_lastColumn <= 9) ? 9 : 10;
+            if (!_useSmsStyleTextInsertion || _currentKeyboard != KeyboardTypes.TYPE_ALPHABET)
+            {
+              _lastColumn = (_lastColumn <= 9) ? 9 : 10;
+            }
             break;
 
             // Single char, non-arrow
@@ -1724,11 +1892,61 @@ namespace MediaPortal.GUI.Library
           return true;
         }
       }
+
+      if (_password && key.xKey == Xkey.XK_SMS)
+      {
+        return true;
+      }
+
       return false;
     }
 
-    protected char GetChar(Xkey xk)
+    protected string GetChar(Xkey xk)
     {
+      string smsResult = string.Empty;
+      switch (xk)
+      {
+        case Xkey.XK_SMS1:
+          smsResult = "1 (.!?)";
+          break;
+        case Xkey.XK_SMS2:
+          smsResult = "2 (abc)";
+          break;
+        case Xkey.XK_SMS3:
+          smsResult = "3 (def)";
+          break;
+        case Xkey.XK_SMS4:
+          smsResult = "4 (ghi)";
+          break;
+        case Xkey.XK_SMS5:
+          smsResult = "5 (jkl)";
+          break;
+        case Xkey.XK_SMS6:
+          smsResult = "6 (mno)";
+          break;
+        case Xkey.XK_SMS7:
+          smsResult = "7 (pqrs)";
+          break;
+        case Xkey.XK_SMS8:
+          smsResult = "8 (tuv)";
+          break;
+        case Xkey.XK_SMS9:
+          smsResult = "9 (wxyz)";
+          break;
+      }
+
+      if (!string.IsNullOrEmpty(smsResult))
+      {
+        if ((_capsLockTurnedOn && !_shiftTurnedOn) || (!_capsLockTurnedOn && _shiftTurnedOn))
+        {
+          return smsResult.ToUpperInvariant();
+        }
+        else
+        {
+          return smsResult.ToLowerInvariant();
+        }
+      }
+      
       // Handle case conversion
       char wc = (char)(((uint)xk) & 0xffff);
 
@@ -1741,7 +1959,7 @@ namespace MediaPortal.GUI.Library
         wc = Char.ToLower(wc);
       }
 
-      return wc;
+      return wc.ToString();
     }
 
     protected void RenderKey(float timePassed, float fX, float fY, Key key, long keyColor, long textColor)
@@ -1751,7 +1969,7 @@ namespace MediaPortal.GUI.Library
         return;
       }
 
-      string strKey = GetChar(key.xKey).ToString();
+      string strKey = GetChar(key.xKey);
       string name = (key.name.Length == 0) ? strKey : key.name;
 
       int width = key.dwWidth;
@@ -1930,7 +2148,17 @@ namespace MediaPortal.GUI.Library
     public bool Password
     {
       get { return _password; }
-      set { _password = value; }
+      set 
+      {
+        if (_password != value)
+        {
+          if (value)
+          {
+            SmsStyleText = false;
+          }
+          _password = value;
+        }
+      }
     }
 
     public string Text
@@ -2012,10 +2240,16 @@ namespace MediaPortal.GUI.Library
       get { return _useSearchLayout; }
       set
       {
-        _useSearchLayout = value;
-        if (value)
+        if (_useSearchLayout != value)
         {
-          _useSmsStyleTextInsertion = false;
+          if (value)
+          {
+            SmsStyleText = false;
+            _useSearchLayout = value;
+            return;
+          }
+          _useSearchLayout = value;
+          InitBoard();
         }
       }
     }

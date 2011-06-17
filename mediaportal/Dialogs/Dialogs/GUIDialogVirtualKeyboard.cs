@@ -155,13 +155,15 @@ namespace MediaPortal.Dialogs
       InitializeBackground();
       _keyboard.ResetLabelAsInitialText();
 
-      if (!_keyboard._useSearchLayout)
+      if (!_keyboard._useSearchLayout && !_keyboard._password)
       {
         using (MediaPortal.Profile.MPSettings xmlreader = new MediaPortal.Profile.MPSettings())
         {
           _keyboard.SmsStyleText = xmlreader.GetValueAsBool("general", "smsstyleinput", true);
         }
       }
+
+      GUIPropertyManager.SetProperty("#VirtualKeyboard.SMSStyleInput", _keyboard.SmsStyleText.ToString().ToLowerInvariant());
 
       base.OnPageLoad();
 
@@ -170,7 +172,7 @@ namespace MediaPortal.Dialogs
 
     public void PageDestroy()
     {
-      if (!_keyboard._useSearchLayout)
+      if (!_keyboard._useSearchLayout && !_keyboard._password)
       {
         using (MediaPortal.Profile.MPSettings xmlwriter = new Profile.MPSettings())
         {
