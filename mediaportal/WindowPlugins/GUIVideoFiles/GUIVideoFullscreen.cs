@@ -101,6 +101,7 @@ namespace MediaPortal.GUI.Video
     private DateTime _updateTimer = DateTime.Now;
     private DateTime _vmr7UpdateTimer = DateTime.Now;
     private bool _IsDialogVisible = false;
+    private bool _IsClosingDialog = false;
     private bool _needToClearScreen = false;
     private bool _isVolumeVisible = false;
     private bool _isForbiddenVisible = false;
@@ -2222,11 +2223,27 @@ namespace MediaPortal.GUI.Video
     private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback was stopped, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Video || GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback ended, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Video || GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     #endregion

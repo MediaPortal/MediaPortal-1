@@ -111,6 +111,7 @@ namespace TvPlugin
     private DateTime _keyPressedTimer = DateTime.Now;
     private string _channelName = "";
     private bool _isDialogVisible = false;
+    private bool _IsClosingDialog = false;
     //bool _isMsnChatPopup = false;       // msn related can be removed
     private GUIDialogMenu dlg;
     private GUIDialogMenuBottomRight _dialogBottomMenu = null;
@@ -2321,10 +2322,16 @@ namespace TvPlugin
           g_Player.Stop();
         }
       }
-
+      
       TVHome.ShowCiMenu();
 
-      GUIGraphicsContext.IsFullScreenVideo = true;
+      if (!g_Player.Playing && !TVHome.DoingChannelChange())
+      {
+          Log.Debug("Tvfullscreen:not viewing anymore");
+          GUIWindowManager.ShowPreviousWindow();
+      }
+      else
+        GUIGraphicsContext.IsFullScreenVideo = true;
     }
 
     public bool ScreenStateChanged()
@@ -2716,8 +2723,6 @@ namespace TvPlugin
       //_msnWindowVisible = false;     // msn related can be removed
 
       GUIWindowManager.IsOsdVisible = false;
-      Log.Debug("Tvfullscreen:not viewing anymore");
-      GUIWindowManager.ShowPreviousWindow();
     }
 
     public void UpdateOSD()
@@ -3442,11 +3447,29 @@ namespace TvPlugin
     private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback was stopped, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Recording && type != g_Player.MediaType.TV) return;
+      if (GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback ended, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Recording && type != g_Player.MediaType.TV) return;
+      if (GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     #region Properties

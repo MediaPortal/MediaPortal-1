@@ -57,19 +57,7 @@ namespace MediaPortal.Dialogs
 
     public virtual void PageLoad(int ParentID)
     {
-      if (GUIWindowManager.IsRouted)
-      {
-        GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
-        if (win != null)
-        {
-          if (win is GUIDialogFile)
-            ((GUIDialogFile)win).Close();
-          else if (win is VirtualKeyboard)
-            ((VirtualKeyboard)win).PageDestroy();
-          else
-            ((GUIDialogWindow)win).PageDestroy();
-        }
-      }
+      CloseRoutedWindow();
 
       _parentWindowID = ParentID;
       _parentWindow = GUIWindowManager.GetWindow(_parentWindowID);
@@ -303,6 +291,25 @@ namespace MediaPortal.Dialogs
 
     #endregion
 
+    #endregion
+
+    #region public static methods
+    public static void CloseRoutedWindow()
+    {
+        if (GUIWindowManager.IsRouted)
+        {
+            GUIWindow win = GUIWindowManager.GetWindow(GUIWindowManager.RoutedWindow);
+            if (win != null)
+            {
+                if (win is GUIDialogFile)
+                    ((GUIDialogFile)win).Close();
+                else if (win is VirtualKeyboard)
+                    ((VirtualKeyboard)win).PageDestroy();
+                else
+                    ((GUIDialogWindow)win).PageDestroy();
+            }
+        }
+    }
     #endregion
   }
 }
