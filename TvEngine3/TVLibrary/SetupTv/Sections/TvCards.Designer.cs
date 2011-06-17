@@ -373,8 +373,7 @@ namespace SetupTv.Sections
       // 
       // mpListView1
       // 
-      this.mpListView1.AllowDrop = true;
-      this.mpListView1.AllowRowReorder = true;
+      this.mpListView1.AllowRowReorder = false;
       this.mpListView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
@@ -392,6 +391,7 @@ namespace SetupTv.Sections
             this.colDevicePath});
       this.mpListView1.ContextMenuStrip = this.contextMenuStrip2;
       this.mpListView1.FullRowSelect = true;
+      this.mpListView1.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
       this.mpListView1.HideSelection = false;
       this.mpListView1.IsChannelListView = false;
       this.mpListView1.LargeImageList = this.imageList1;
