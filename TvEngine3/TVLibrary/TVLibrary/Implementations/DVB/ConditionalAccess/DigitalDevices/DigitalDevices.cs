@@ -194,7 +194,10 @@ namespace TvLibrary.Implementations.DVB
       }
       // nothing found?
       if (_CardName == String.Empty)
+      {
+        _isGenericBDAS = false; // if this is no DD card, don't try to handle generic BDAS here.
         return;
+      }
 
       IEnumerable<IBaseFilter> nextFilters = FilterGraphTools.GetAllNextFilters(tunerFilter, PINNAME_BDA_TRANSPORT,
                                                                                 PinDirection.Output);
