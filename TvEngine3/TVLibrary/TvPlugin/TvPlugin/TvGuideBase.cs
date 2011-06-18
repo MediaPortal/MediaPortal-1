@@ -791,7 +791,13 @@ namespace TvPlugin
                 _cursorX -= _channelCount;
                 _channelOffset += _channelCount;
               }
-
+              // Mantis 3579: the above lines can lead to too large channeloffset. 
+              // Now we check if the offset is too large, and if it is, we reduce it and increase the cursor position accordingly
+              if (!_guideContinuousScroll && (_channelOffset > _channelList.Count - _channelCount))
+              {
+                _cursorX += _channelOffset - (_channelList.Count - _channelCount);
+                _channelOffset = _channelList.Count - _channelCount;
+              }
               GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
               if (cntlDay != null)
               {
