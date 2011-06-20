@@ -304,10 +304,17 @@ namespace MediaPortal.GUI.Music
 
           if ((item != null) && item.IsFolder && (item.Label == ".."))
           {
-            handler.CurrentLevel--;
-            m_iItemSelected = -1;
-            LoadDirectory("db_view");
-            return;
+            if (handler.CurrentLevel < 0)
+            {
+              handler.CurrentLevel = 0;
+            }
+            else
+            {
+              handler.CurrentLevel--;
+              m_iItemSelected = -1;
+              LoadDirectory("db_view");
+              return;
+            }
           }
         }
       }
@@ -777,7 +784,15 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      List<Song> songs = ((MusicViewHandler)handler).Execute();
+      List<Song> songs;
+      if (!((MusicViewHandler)handler).Execute(out songs))
+      {
+        GUIWaitCursor.Hide();
+        Action action = new Action();
+        action.wID = Action.ActionType.ACTION_PREVIOUS_MENU;
+        GUIGraphicsContext.OnAction(action);
+        return;
+      }
 
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
       SwitchLayout();
