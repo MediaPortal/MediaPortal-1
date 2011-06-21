@@ -2046,13 +2046,13 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-      if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
+      if (GUIGraphicsContext.Vmr9Active)
       {
         base.Render(timePassed);
-        if (_isOsdVisible)
-        {
-          _osdWindow.Render(timePassed);
-        }
+      }
+      if (_isOsdVisible)
+      {
+        _osdWindow.Render(timePassed);
       }
     }
 
@@ -2272,7 +2272,7 @@ namespace MediaPortal.GUI.Video
     public void RenderLayer(float timePassed)
     {
       Render(timePassed);
-      base.Render(timePassed);
+      //base.Render(timePassed);
     }
 
     #endregion
