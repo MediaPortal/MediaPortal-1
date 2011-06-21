@@ -1845,12 +1845,12 @@ namespace MediaPortal.Player
                   switch (FSInfos.Type)
                   {
                     case StreamType.Unknown:
-                      break;
-                    case StreamType.Video:
-                    case StreamType.Audio:
                     case StreamType.Subtitle:
-                    case StreamType.Edition:
                     case StreamType.Subtitle_file:
+                    case StreamType.Video:
+                        break;
+                    case StreamType.Audio:
+                    case StreamType.Edition:
                     case StreamType.PostProcessing:
                       if (FStreams.GetStreamCount(FSInfos.Type) == 0)
                       {
