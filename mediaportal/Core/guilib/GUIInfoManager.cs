@@ -365,6 +365,9 @@ namespace MediaPortal.GUI.Library
     public const int CONTROL_HAS_FOCUS = 30000;
     public const int BUTTON_SCROLLER_HAS_ICON = 30001;
 
+    public const int TOPBAR_HAS_FOCUS = 30002;
+    public const int TOPBAR_IS_VISIBLE = 30003;
+
     // static string VERSION_STRING = "2.0.0";
 
     // the multiple information vector
@@ -478,7 +481,19 @@ namespace MediaPortal.GUI.Library
         strCategory = strTest.Substring(0, strTest.IndexOf("."));
       }
 
-      if (strCategory == "player")
+      
+      if (strCategory == "topbar")
+      {
+        if (strTest == "topbar.focused")
+        {
+          ret = TOPBAR_HAS_FOCUS;
+        }
+        else if (strTest == "topbar.visible")
+        {
+          ret = TOPBAR_IS_VISIBLE;
+        }
+      }
+      else if (strCategory == "player")
       {
         if (strTest == "player.hasmedia")
         {
@@ -2265,6 +2280,20 @@ namespace MediaPortal.GUI.Library
         {
           bReturn = true;
         }
+      }
+      else if (condition == TOPBAR_HAS_FOCUS)
+      {
+        GUIWindow wnd = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TOPBAR);
+        if (wnd != null)
+        {
+          if (!GUIGraphicsContext.TopBarHidden && wnd.GetFocusControlId() > 0)
+            return true;
+        }
+        return false;
+      }
+      else if (condition == TOPBAR_IS_VISIBLE)
+      {
+        return !GUIGraphicsContext.TopBarHidden;
       }
       else if (g_Player.Playing)
       {

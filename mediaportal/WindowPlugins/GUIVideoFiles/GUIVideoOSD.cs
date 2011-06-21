@@ -1353,22 +1353,5 @@ namespace MediaPortal.GUI.Video
       }
       return false;
     }
-
-    public bool InWindow(int x, int y)
-    {
-      for (int i = 0; i < controlList.Count; ++i)
-      {
-        GUIControl control = (GUIControl)controlList[i];
-        int controlID;
-        if (control.IsVisible)
-        {
-          if (control.InControl(x, y, out controlID))
-          {
-            return true;
-          }
-        }
-      }
-      return false;
-    }
   }
 }

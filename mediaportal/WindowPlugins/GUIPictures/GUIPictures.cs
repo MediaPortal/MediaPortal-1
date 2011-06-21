@@ -1786,6 +1786,7 @@ namespace MediaPortal.GUI.Pictures
 
       int totalItemCount = facadeLayout.Count;
       string strSelectedItem = folderHistory.Get(currentFolder);
+      GUIControl.SelectItemControl(GetID, facadeLayout.GetID, 0);
       for (int i = 0; i < totalItemCount; i++)
       {
         if (facadeLayout[i].Label == strSelectedItem)

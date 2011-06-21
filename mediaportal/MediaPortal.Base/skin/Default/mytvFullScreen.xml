@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>602</id>
@@ -249,7 +249,7 @@
     <control>
       <description>background image to cover above images when changing screen resolution</description>
       <type>image</type>
-      <id>0</id>
+      <id>7654</id>
       <posX>309</posX>
       <posY>508</posY>
       <width>196</width>

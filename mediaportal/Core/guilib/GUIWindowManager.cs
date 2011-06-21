@@ -417,11 +417,21 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_DOUBLECLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
       {
         if (OnPostRenderAction != null)
         {
-          OnPostRenderAction(action, null, false);
+          //OnPostRenderAction(action, null, false);
+          Delegate[] delegates = OnPostRenderAction.GetInvocationList();
+          for (int i = 0; i < delegates.Length; ++i)
+          {
+            int iActiveWindow = ActiveWindow;
+            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, false });
+            if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+            {
+              return;
+            }
+          }
         }
       }
 

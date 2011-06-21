@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using MediaPortal.Configuration;
+using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
@@ -44,7 +45,7 @@ namespace TvPlugin
   /// GUIMiniGuide
   /// </summary>
   /// 
-  public class TvMiniGuide : GUIInternalWindow, IRenderLayer
+  public class TvMiniGuide : GUIDialogWindow
   {
     // Member variables                                  
     [SkinControl(34)]
@@ -62,9 +63,11 @@ namespace TvPlugin
     protected GUIListControl lstChannels = null;
 
     private bool _canceled = false;
+    /*
     private bool _running = false;
     private int _parentWindowID = 0;
     private GUIWindow _parentWindow = null;
+    */
     private Dictionary<int, List<Channel>> _tvGroupChannelListCache = null;
 
     private List<ChannelGroup> _channelGroupList = null;
@@ -168,13 +171,13 @@ namespace TvPlugin
       bool bResult = Load(GUIGraphicsContext.GetThemedSkinFile(@"\TVMiniGuide.xml"));
 
       GetID = (int)Window.WINDOW_MINI_GUIDE;
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
+      //GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       _canceled = true;
       LoadSettings();
       return bResult;
     }
 
-
+    /*
     /// <summary>
     /// Renderer
     /// </summary>
@@ -183,6 +186,7 @@ namespace TvPlugin
     {
       base.Render(timePassed); // render our controls to the screen
     }
+    */
 
     private void GetChannels(bool refresh)
     {
@@ -221,6 +225,7 @@ namespace TvPlugin
       }
     }
 
+    /*
     /// <summary>
     /// On close
     /// </summary>
@@ -239,6 +244,7 @@ namespace TvPlugin
       GUIWindowManager.IsSwitchingToNewWindow = false;
       GUILayerManager.UnRegisterLayer(this);
     }
+    */
 
     /// <summary>
     /// On Message
@@ -271,7 +277,7 @@ namespace TvPlugin
                   }
                 }
                 _canceled = false;
-                Close();
+                PageDestroy();
 
                 //This one shows the zapOSD when changing channel from mini GUIDE, this is currently unwanted.
                 /*
@@ -295,8 +301,8 @@ namespace TvPlugin
             else if (message.SenderControlId == 34) // exit button
             {
               // exit
-              Close();
               _canceled = true;
+              PageDestroy();
             }
             break;
           }
@@ -314,12 +320,12 @@ namespace TvPlugin
       {
         case Action.ActionType.ACTION_CONTEXT_MENU:
           //_running = false;
-          Close();
+          PageDestroy();
           return;
         case Action.ActionType.ACTION_PREVIOUS_MENU:
           //_running = false;
           _canceled = true;
-          Close();
+          PageDestroy();
           return;
         case Action.ActionType.ACTION_MOVE_LEFT:
         case Action.ActionType.ACTION_TVGUIDE_PREV_GROUP:
@@ -343,7 +349,7 @@ namespace TvPlugin
     {
       //Log.Debug("TvMiniGuide: OnPageDestroy");
       base.OnPageDestroy(new_windowId);
-      _running = false;
+      //_running = false;
     }
 
     /// <summary>
@@ -351,12 +357,12 @@ namespace TvPlugin
     /// </summary>
     protected override void OnPageLoad()
     {
-      Stopwatch bClock = Stopwatch.StartNew();
+      //Stopwatch bClock = Stopwatch.StartNew();
 
       //Log.Debug("TvMiniGuide: onpageload");
       // following line should stay. Problems with OSD not
       // appearing are already fixed elsewhere
-      GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
+      //GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.MiniEPG);
       AllocResources();
       ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset            
 
@@ -374,8 +380,7 @@ namespace TvPlugin
       FillGroupList();
       base.OnPageLoad();
 
-      Log.Debug("TvMiniGuide: onpageload took {0} msec", bClock.ElapsedMilliseconds);
-
+      //Log.Debug("TvMiniGuide: onpageload took {0} msec", bClock.ElapsedMilliseconds);
     }
 
     private GUIListControl getChannelList()
@@ -826,6 +831,7 @@ namespace TvPlugin
       return fprogress;
     }
 
+    /*
     /// <summary>
     /// Do this modal
     /// </summary>
@@ -879,5 +885,6 @@ namespace TvPlugin
     }
 
     #endregion
+    */
   }
 }

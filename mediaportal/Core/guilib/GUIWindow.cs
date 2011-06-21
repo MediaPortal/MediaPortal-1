@@ -202,6 +202,7 @@ namespace MediaPortal.GUI.Library
     protected string _windowXmlFileName = "";
     protected bool _isOverlayAllowed = true;
     protected int _isOverlayAllowedCondition = 0;
+    protected int _isOverlayAllowedOriginalCondition = GUIInfoManager.SYSTEM_ALWAYS_TRUE;
     private Object instance;
     protected string _loadParameter = null;
     private bool _skipAnimation = false;
@@ -393,6 +394,31 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    /// <summary>
+    /// Restores window overlay status to default value from skin condition
+    /// </summary>
+    public void UpdateOverlay()
+    {
+      UpdateOverlayAllowed(true);
+    }
+
+    public bool InWindow(int x, int y)
+    {
+      for (int i = 0; i < controlList.Count; ++i)
+      {
+        GUIControl control = (GUIControl)controlList[i];
+        int controlID;
+        if (control.IsVisible)
+        {
+          if (control.InControl(x, y, out controlID))
+          {
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
     #endregion
 
     #region load skin file
@@ -553,6 +579,10 @@ namespace MediaPortal.GUI.Library
             else
             {
               _isOverlayAllowedCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
+            }
+            if (!string.IsNullOrEmpty(allowed.Trim()))
+            {
+              _isOverlayAllowedOriginalCondition = GUIInfoManager.TranslateString(nodeOverlay.InnerText);
             }
           }
         }
@@ -830,12 +860,21 @@ namespace MediaPortal.GUI.Library
 
     private void UpdateOverlayAllowed()
     {
-      if (_isOverlayAllowedCondition == 0)
+      UpdateOverlayAllowed(false);
+    }
+
+    private void UpdateOverlayAllowed(bool useOriginal)
+    {
+      int overlayCondition = useOriginal ? _isOverlayAllowedOriginalCondition : _isOverlayAllowedCondition;
+
+      if (overlayCondition == 0)
       {
         return;
       }
+
       bool bWasAllowed = GUIGraphicsContext.Overlay;
-      _isOverlayAllowed = GUIInfoManager.GetBool(_isOverlayAllowedCondition, GetID);
+      _isOverlayAllowed = GUIInfoManager.GetBool(overlayCondition, GetID);
+
       if (bWasAllowed != _isOverlayAllowed)
       {
         GUIGraphicsContext.Overlay = _isOverlayAllowed;

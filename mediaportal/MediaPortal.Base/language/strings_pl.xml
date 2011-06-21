@@ -5,7 +5,7 @@
     <String id="1" prefix="Moje ">Obrazy</String>
     <String id="2" prefix="Moja ">Muzyka</String>
     <String id="3" prefix="Moje ">Wideo</String>
-    <String id="4">Program telewizyjny</String>
+    <String id="4">Przewodnik TV</String>
     <String id="5">Ustawienia</String>
     <String id="6">Brakująca etykieta!</String>
     <String id="7" prefix="Moje ">Pliki</String>
@@ -45,7 +45,7 @@
     <String id="44">Gru</String>
     <String id="50" prefix="Moje ">DVD</String>
     <String id="51">Odtwarzaj dysk</String>
-    <String id="60">Czekam na start serwisu TV</String>
+    <String id="60">Czekam na start usługi TV</String>
     <String id="61">Czekam {0} sekund przed startem</String>
     <String id="62">Uruchamiam DirectX</String>
     <String id="63">Uruchamiam urządzenia wejścia</String>
@@ -173,7 +173,7 @@
     <String id="213">Kalibracja interfejsu</String>
     <String id="214">Kalibracja ekranu</String>
     <String id="215">Wygładzaj</String>
-    <String id="216">Zoom</String>
+    <String id="216">Powiększ</String>
     <String id="217">Rozciągnij</String>
     <String id="218">Napęd DVD</String>
     <String id="219">Włóż dysk</String>
@@ -241,8 +241,8 @@
     <String id="282">znaleziono %i obiektów</String>
     <String id="283">Wyniki szukania</String>
     <String id="284">Brak rezultatów</String>
-    <String id="285">Filtr De-interlace</String>
-    <String id="286">Filtr Post-processing</String>
+    <String id="285">Filtr usuwania przeplotu</String>
+    <String id="286">Filtr przetwarzania</String>
     <String id="287">Napisy</String>
     <String id="288">Czcionka</String>
     <String id="289">Rozmiar</String>
@@ -253,7 +253,7 @@
     <String id="294">Stwórz zakładkę</String>
     <String id="295">Zapętlaj zakładki</String>
     <String id="296">Wyczyść zakładki</String>
-    <String id="297">AVDelay</String>
+    <String id="297">Opóźnienie AV</String>
     <String id="298">Suwak</String>
     <String id="299">Czas:</String>
     <String id="300">1. Język</String>
@@ -308,7 +308,7 @@
     <String id="349">Pokaż tylko Default.xbe</String>
     <String id="350">Programy</String>
     <String id="351">Wyłącz</String>
-    <String id="352">Dim</String>
+    <String id="352">Zciemnij</String>
     <String id="353">Czarny</String>
     <String id="354">Ścieżki Matrycy</String>
     <String id="355">Włącz wygaszacz po</String>
@@ -365,7 +365,7 @@
     <String id="406">Wilgotność</String>
     <String id="407">Silne</String>
     <String id="408">Wprowadź nazwę miasta</String>
-    <String id="409">Usuń lokację</String>
+    <String id="409">Usuń lokalizację</String>
     <String id="410">Łączenie z Weather.com</String>
     <String id="411">Pobieranie pogody dla:</String>
     <String id="412">Błąd podczas pobierania pogody</String>
@@ -407,10 +407,10 @@
     <String id="448">LCD</String>
     <String id="449">Włączone</String>
     <String id="450">Kolumny</String>
-    <String id="451">Adres wiersza 1:</String>
-    <String id="452">Adres wiersza 2:</String>
-    <String id="453">Adres wiersza 3:</String>
-    <String id="454">Adres wiersza 4:</String>
+    <String id="451">Wiersz 1 adresu:</String>
+    <String id="452">Wiersz 2 adresu:</String>
+    <String id="453">Wiersz 3 adresu:</String>
+    <String id="454">Wiersz 4 adresu:</String>
     <String id="455">Wiersze:</String>
     <String id="456">Tryb:</String>
     <String id="457">Przełącz widok</String>
@@ -432,7 +432,7 @@
     <String id="473">Wysoka jakość resamplingu</String>
     <String id="474">Wyłączone</String>
     <String id="475">Tylko muzyka</String>
-    <String id="476">Muzyka &amp; Wideo</String>
+    <String id="476">Muzyka &amp; Obraz</String>
     <String id="477">Błąd podczas ładowania listy odtwarzania</String>
     <String id="478">OSD</String>
     <String id="479">Skóra i Język</String>
@@ -480,10 +480,10 @@
     <String id="522">Tylko wartości dodatnie!</String>
     <String id="523">Zerowy krok jest niedozwolony!</String>
     <String id="524">3 godziny jest maksymalnym krokiem!</String>
-    <String id="525">Kroki przewijania są już zdefiniowane</String> 
+    <String id="525">Kroki przewijania są już zdefiniowane</String>
     <String id="527">Sortuj: Oglądane</String>
     <String id="528">Artyści albumów</String>
-    <String id="529">Widok: Lista Dużych Ikon</String>
+    <String id="529">Układ: Lista Dużych Ikon</String>
     <String id="530">Wykryto dysk z obrazami, czy chcesz go otworzyć?</String>
     <String id="531">Wykryto dysk z filmem, czy chcesz go otworzyć?</String>
     <String id="532">Wykryto dysk z muzyką, czy chcesz go otworzyć?</String>
@@ -531,16 +531,16 @@
     <String id="595">Pełny ekran</String>
     <String id="596">Oczekiwanie na stronę {0}/{1}...</String>
     <String id="599">Burza</String>
-    <String id="600">Program telewizyjny</String>
+    <String id="600">Przewodnik TV</String>
     <String id="601">Nagraj teraz</String>
     <String id="602">Kanał:</String>
     <String id="603">Zaplanowane</String>
     <String id="604">Nagrane</String>
     <String id="605" prefix="Moja ">Telewizja</String>
-    <String id="606">Ładuję nowy program telewizyjny</String>
+    <String id="606">Ładuję nowy przewodnik TV</String>
     <String id="607">Ładuj</String>
-    <String id="608">Błąd podczas importowania</String>
-    <String id="609">Importowanie zakończone pomyślnie</String>
+    <String id="608">Błąd podczas importowania przewodnika TV</String>
+    <String id="609">Importowanie przewodnika TV zakończone pomyślnie</String>
     <String id="610">Nie nagrywaj</String>
     <String id="611">Nagraj raz</String>
     <String id="612">Nagrywaj zawsze na tym kanale</String>
@@ -585,9 +585,9 @@
     <String id="651">Zawsze na dowolnym kanale</String>
     <String id="652">Nagrania TV</String>
     <String id="653">Usunąć to nagranie?</String>
-    <String id="654">Wysuń tackę</String>
-    <String id="655">Odtwarzaj nagrania</String>
-    <String id="656">Kasuj nagrania</String>
+    <String id="654">Wysuń</String>
+    <String id="655">Odtwarzaj nagranie TV</String>
+    <String id="656">Usuń nagranie TV</String>
     <String id="657">Pon</String>
     <String id="658">Wto</String>
     <String id="659">Śro</String>
@@ -649,16 +649,16 @@
     <String id="721">Widok: Ilość odtwarzań</String>
     <String id="722">Nie można odtworzyć dysku</String>
     <String id="723">Czy jest włożony dysk?</String>
-    <String id="724">Szukaj programu TV</String>
+    <String id="724">Przeszukaj przewodnik TV</String>
     <String id="725">Gatunki</String>
     <String id="726">Tytuł</String>
-    <String id="727">Telewizja na żywo w tle</String>
-    <String id="728">Brak obrazu/TV</String>
-    <String id="729">Upewnij się, że odtwarzasz wideo</String>
+    <String id="727">Odtwarzany obraz w tle</String>
+    <String id="728">Brak odtwarzanego obrazu</String>
+    <String id="729">Upewnij się, że odtwarzasz obraz</String>
     <String id="730">Zaplanowane zadanie jest nagrywane. Jeśli usuniesz</String>
     <String id="731">to zadanie to nagrywanie zostanie zatrzymane.</String>
     <String id="732">Czy na pewno?</String>
-    <String id="733">Widok: Przeźrocze</String>
+    <String id="733">Układ: Przeźrocze</String>
     <String id="734">Obraz:</String>
     <String id="735">Obróć</String>
     <String id="736">Brak danych</String>
@@ -679,7 +679,7 @@
     <String id="752">Nie wybrano nagrań</String>
     <String id="753">Nie zainstalowano kart z tunerem</String>
     <String id="754">Żaden tuner nie nagrywa wybranego programu</String>
-    <String id="755">Żaden tuner nie wyświetla obrazu</String>
+    <String id="755">Żaden tuner nie wyświetla obrazu TV</String>
     <String id="756">Żaden tuner nie może odbierać: {0}</String>
     <String id="757">Wszystkie tunery są zajęte</String>
     <String id="758">Tuner nie nagrywa</String>
@@ -699,7 +699,7 @@
     <String id="772">Czy chcesz spróbować ponownie?</String>
     <String id="773">START</String>
     <String id="774">KONIEC</String>
-    <String id="775">Uruchom TV automatycznie w sekcji Moja TV</String>
+    <String id="775">Uruchamiaj TV automatycznie</String>
     <String id="776">Nie uruchamiaj / przełączaj automatycznie do TV</String>
     <String id="777">Tryb użycia Timeshift</String>
     <String id="778">Uruchom timeshift automatycznie podczas startu</String>
@@ -712,6 +712,7 @@
     <String id="789">Teraz:</String>
     <String id="790">Następny:</String>
     <String id="791">Widok: Cover Flow</String>
+    <String id="792">Menu Układów</String>
     <String id="798">niski</String>
     <String id="799">wysoki</String>
     <String id="800">Rozpoczyna</String>
@@ -729,9 +730,9 @@
     <String id="812">Radiostacje</String>
     <String id="820">Usunąć nieobejrzane nagrania?</String>
     <String id="830">Wyczyść status obejrzane</String>
-    <String id="831">Wyjmij napęd wymienny.</String>
+    <String id="831">Wysuń napęd wymienny</String>
     <String id="832">Nie można usunąć napędu:</String>
-    <String id="833">Napęd można teraz bezpiecznie usunąć.</String>
+    <String id="833">Napęd można teraz bezpiecznie usunąć</String>
     <String id="850" prefix="Mój">Budzik</String>
     <String id="851">Lista odtwarzania</String>
     <String id="852">Budzik włączony</String>
@@ -758,9 +759,9 @@
     <String id="873">Program</String>
     <String id="874">Odcinek</String>
     <String id="875">Obecny program</String>
-    <String id="876">Do czasu zatrzymania</String>
+    <String id="876">Do ręcznego zatrzymania</String>
     <String id="877">Priorytety</String>
-    <String id="878">Magazyn</String>
+    <String id="878">Przechowywanie</String>
     <String id="879">Konflikt nagrania</String>
     <String id="880">Czas do nagrywania:</String>
     <String id="881">Wybierz nagranie aby zatrzymać:</String>
@@ -776,7 +777,7 @@
     <String id="891">Wybierz kanał TV</String>
     <String id="892">Konflikty</String>
     <String id="893">Przenośny</String>
-    <String id="894">Kompresuj nagrania</String>
+    <String id="894">Kompresuj nagrania TV</String>
     <String id="895">Automatyczna kompresja</String>
     <String id="896">Kompresja</String>
     <String id="897">Ustawienia</String>
@@ -819,7 +820,7 @@
     <String id="934">Ustaw ocenę</String>
     <String id="935">Widok: Ocena</String>
     <String id="936">Ostatnia pozycja:</String>
-    <String id="937">Import programu tv</String>
+    <String id="937">Import przewodnika TV</String>
     <String id="938">Oglądaj ten kanał</String>
     <String id="939">Zmień tryb</String>
     <String id="940">Właściwości</String>
@@ -828,8 +829,8 @@
     <String id="943">Normalne</String>
     <String id="944">Oryginalne</String>
     <String id="945">Koperta 4:3</String>
-    <String id="946">Pan&amp;Scan</String>
-    <String id="947">Zoom</String>
+    <String id="946">Rozciągnij nieliniowo</String>
+    <String id="947">Powiększ</String>
     <String id="948">Dostępny</String>
     <String id="949">Zajęty</String>
     <String id="950">Zaraz wracam</String>
@@ -877,25 +878,25 @@
     <String id="996">wybrane nagrania?</String>
     <String id="997">Zakończono</String>
     <String id="998">XviD</String>
-    <String id="999">Ten dodatek pozwala Ci na konwertowanie Twoich</String>
-    <String id="1000">nagrań z formatu dvr-ms na mpg, xvid lub wmv</String>
-    <String id="1001">Musisz mieć zainstalowany dekoder</String>
-    <String id="1002">Elecard MPEG2</String>
-    <String id="1003">dla konwertowania do formatu xvid</String>
+    <String id="999">Ten dodatek umożliwia konwertowanie</String>
+    <String id="1000">nagrań TV z formatu dvr-ms na mpg lub wmv</String>
+    <String id="1001">Upewnij się, że nagrania poddawane konwersji będą</String>
+    <String id="1002">prawidłowo odtwarzane z obrazem i dźwiękiem w MediaPortal</String>
+    <String id="1003">zanim przystąpisz do konwersji na wmv.</String>
     <String id="1004">Nagrywanie rozpocznie się</String>
     <String id="1005">na kanale</String>
     <String id="1006">Pozwól rozpocząć nagrywanie</String>
-    <String id="1007">Anuluj nagrywanie i wróć do oglądania tv</String>
+    <String id="1007">Anuluj nagrywanie i wróć do oglądania TV</String>
     <String id="1008">Kolejka</String>
     <String id="1009">Pobieranie okładki</String>
     <String id="1010">Obejrzane</String>
     <String id="1011">Biografia</String>
     <String id="1012">Ten program będzie przerwany przez</String>
     <String id="1013">Czy chcesz nagrać również drugą część?</String>
-    <String id="1014">Powiadom mnie kiedy zacznie się program</String>
+    <String id="1014">Powiadom mnie kiedy program rozpocznie się</String>
     <String id="1015">Nie powiadamiaj mnie o rozpoczęciu programu</String>
-    <String id="1016">Program zacznie się za 5 min.</String>
-    <String id="1017">Sortuj według: Czas trwania</String>
+    <String id="1016">Program rozpocznie się za 5 min.</String>
+    <String id="1017">Sortuj : Czas trwania</String>
     <String id="1018">Program rozpoczyna się za {0} minuty(ę)</String>
     <String id="1019">Program właśnie się rozpoczyna</String>
     <String id="1020">Informacja</String>
@@ -925,7 +926,7 @@
     <String id="1044">aż miejsce potrzebne</String>
     <String id="1045">aż do daty</String>
     <String id="1046">Zawsze</String>
-    <String id="1047">Startuj na pełnym ekranie</String>
+    <String id="1047">Uruchamiaj na pełnym ekranie</String>
     <String id="1048">Ustawienia</String>
     <String id="1049">Hibernacja</String>
     <String id="1050">Sob-Nie</String>
@@ -935,10 +936,6 @@
     <String id="1054">(nagrywanie)</String>
     <String id="1055">(timeshifting)</String>
     <String id="1056">(niedostępne)</String>
-    <String id="1057">Nagrywaj nie-czw</String>
-    <String id="1058">Nagrywaj pią-sob</String>
-    <String id="1059">Nie-czw</String>
-    <String id="1060">Pią-sob</String>
     <String id="1061">Przenośny</String>
     <String id="1062">Obiekt</String>
     <String id="1064">Zakładki</String>
@@ -991,9 +988,27 @@
     <String id="1197">Wyłącz DXVA</String>
     <String id="1198">Nawigator DVD</String>
     <String id="1200">Kreator konfiguracji</String>
-    <String id="1201">Odtwarzaj wideo od początku</String>
+    <String id="1201">Odtwarzaj film od początku</String>
     <String id="1202">Sortuj: Automatycznie</String>
-    <String id="1211">Rozpocznij odtwarzanie od {0}</String> <!--{0} is replaced by last stop time in HMS format-->
+    <String id="1203">Nadchodzące odcinki (aktywne:{0})</String>
+    <String id="1204">Odtwarzaj wszystkie filmy z wybranego folderu</String>
+    <String id="1205">Sortuj: Dysk#</String>
+    <String id="1206">Program trwa od {0} minut</String>
+    <String id="1207">Przełączyć na {0} teraz?</String>
+    <String id="1208">Sortuj: Kompozytor</String>
+    <String id="1211">Rozpocznij odtwarzanie od {0}</String>
+    <String id="1212">Anuluj przypomnienie</String>
+    <String id="1213">Słuchaj tej Stacji</String>
+    <String id="1214">Kompozytorzy</String>
+    <String id="1215">Dyrygenci</String>
+    <String id="1216">Dyski</String>
+    <String id="1217">Ścieżki wykonawcy</String>
+    <String id="1218">Albumy wg roku wydania</String>
+    <String id="1219">Wykonawcy albumu (Indeks)</String>
+    <String id="1220">Sortuj: Data utworzenia</String>
+    <String id="1221">Sortuj: Data modyfikacji</String>
+    <String id="1230">Data dodania:</String>
+    <String id="1231">Ostatnio odtwarzane:</String>
     <String id="1300" prefix="Moje ">Programy TV</String>
     <String id="1440" prefix="Moja ">Telegazeta</String>
     <String id="1441">Telegazeta</String>
@@ -1001,12 +1016,13 @@
     <String id="1443">Szybkość przewijania (pion)</String>
     <String id="1444">Pre-record</String>
     <String id="1445">Post-record</String>
-    <String id="1446">Nagrywanie rozpoczęte</String>
-    <String id="1447">Nagrywanie zatrzymane</String>
+    <String id="1446">Nagrywanie rozpoczęte:</String>
+    <String id="1447">Nagrywanie zatrzymane:</String>
     <String id="1448">Wybierz</String>
     <String id="1449">Zatrzymaj nagrywanie</String>
     <String id="1450">Czy na pewno zatrzymać nagrywanie?</String>
-    <String id="1451">Nie można otworzyć</String>
+    <String id="1451">Nie można odtworzyć</String>
+    <String id="1498">Program/kanał nie znaleziony</String>
     <String id="1499">Brak sygnału</String>
     <String id="1500">Timeshift nie może być uruchomiony</String>
     <String id="1501">Karta jest wyłączona</String>
@@ -1023,14 +1039,14 @@
     <String id="1512">Wrócić do poprzedniego kanału?</String>
     <String id="1513">Timeshift zatrzymany z powodu\rzaplanowanego nagrywania</String>
     <String id="1514">Timeshift zatrzymany przez\radministratora</String>
-    <String id="1515">Timeshift zatrzymany przez serwer</String>
+    <String id="1515">Timeshift zatrzymany przez serwer TV</String>
     <String id="1516">Timehift zatrzymany z nieznanego powodu</String>
     <String id="1517">Timehift zatrzymany przez innego\rużytkownika</String>
-    <String id="1518">Nie można stworzyć wykresu</String>
-    <String id="1519">Brak zainstalowanego enkodera programowego</String>
+    <String id="1518">Nie można stworzyć grafu</String>
+    <String id="1519">Nie zainstalowano żadnego wspieranego enkodera programowego</String>
     <String id="1520">Niewystarczające miejsce na dysku</String>
     <String id="1521">Pokaż wg tytułu</String>
-    <String id="1522">Pokaż wg rodzaju</String>
+    <String id="1522">Pokaż wg gatunku</String>
     <String id="1523">Szukaj w opisie</String>
     <String id="1600">Czy chcesz wyłączyć komputer?</String>
     <String id="1601">Czy chcesz wstrzymać komputer?</String>
@@ -1055,13 +1071,13 @@
     <String id="1967">górna granica alarmu</String>
     <String id="1968">dolna granica alarmu</String>
     <String id="1969">Testuj dźwięk</String>
-    <String id="1970">Opóźnienie alarmu (w sekundach)</String>
+    <String id="1970">Odstęp pomiędzy alarmami (w sekundach)</String>
     <String id="1971">Wyłącz komputer</String>
     <String id="1972">Szczegóły statusu</String>
     <String id="1973">z</String>
     <String id="1974">Pamięć</String>
     <String id="1975">Następna strona</String>
-    <String id="1976">rpm</String>
+    <String id="1976">obr/min</String>
     <String id="1977">System plików</String>
     <String id="1978">Pamięć wirtualna</String>
     <String id="2005">Usuń</String>
@@ -1167,7 +1183,7 @@
     <String id="2106">Utwórz DVD z danymi</String>
     <String id="2107">Rozpocznij kopiowanie</String>
     <String id="2108">Włóż czysty dysk CD/DVD</String>
-    <String id="2109">i naciśnij OK</String>
+    <String id="2109">Kontynuować?</String>
     <String id="2110">Włóż oryginalny dysk CD/DVD</String>
     <String id="2111">Zakończono!</String>
     <String id="2112">Czekam na płytę CD/DVD</String>
@@ -1301,7 +1317,7 @@
     <String id="4000">Przeglądarka WWW</String>
     <String id="4001">Ulubione</String>
     <String id="4002">Nie można pobrać URL</String>
-    <String id="4003">Proszę ustawić folder ulubionych w ustawieniach</String>
+    <String id="4003">Proszę ustawić folder ulubionych w ustawieniach.</String>
     <String id="4500">Pomiń albumy z istniejącymi okładkami</String>
     <String id="4501">Zapisz okładkę w folderze albumu</String>
     <String id="4502">Zapisz okładkę w folderze miniatur</String>
@@ -1334,7 +1350,7 @@
     <String id="4552">Odtwarzaj teraz</String>
     <String id="4553">Pokaż listę odtwarzania</String>
     <String id="4554">Przeszukiwanie info o CD</String>
-    <String id="4555">Obecna Lista odtw.</String>
+    <String id="4555">Obecna Lista odtwarzania</String>
     <String id="4557">Dodaj wszystko do listy odtwarzania</String>
     <String id="4558">Ostatnio dodane</String>
     <String id="5900" prefix="Moje ">Zwiastuny</String>
@@ -1356,12 +1372,12 @@
     <String id="5916">Nie znaleziono żadnych zwiastunów</String>
     <String id="5917">Niemieckie zwiastuny</String>
     <String id="5918">TSR (Szwajcaria) Wideo na żądanie</String>
-    <String id="5919">Weekend otwarcia</String>
+    <String id="5919">Weekendowe otwarcia</String>
     <String id="5920">Filmy z tego tygodnia</String>
     <String id="5921">Nadchodzące filmy</String>
-    <String id="5922">Ranking sprzedaży DVD</String>
-    <String id="5923">Nowości DVD na ten tydzień</String>
-    <String id="5924">Nowości DVD na następny tydzień</String>
+    <String id="5922">Najlepiej sprzedawane DVD</String>
+    <String id="5923">Nowości na DVD w tym tygodniu</String>
+    <String id="5924">Nowości na DVD w następnym tygodniu</String>
     <String id="5925">Przedsprzedaż DVD</String>
     <String id="6000">Kodek MPEG-2</String>
     <String id="6001">Kodek Dźwięku</String>
@@ -1375,14 +1391,14 @@
     <String id="6009">Przewodnik DVB</String>
     <String id="6010">Pobieralnia XMLTV EPG</String>
     <String id="6011">DVB EPG:</String>
-    <String id="6012">Zaktualizuj Program TV z następujących kanałów DVB:</String>
+    <String id="6012">Zaktualizuj Przewodnik TV z następujących kanałów DVB:</String>
     <String id="6013">Ręczny xmltv</String>
     <String id="6014">Konfiguracja TV</String>
     <String id="6015">Konfiguracja DVD</String>
     <String id="6016">Automatycznie usuwaj nagrania po obejrzeniu</String>
-    <String id="6017">Dodaj nagrania do bazy filmowej</String>
-    <String id="6018">minut zanim program się zacznie</String>
-    <String id="6019">minut po tym jak program się skończy</String>
+    <String id="6017">Dodaj nagrania do bazy filmów</String>
+    <String id="6018">minut zanim program się rozpocznie</String>
+    <String id="6019">minut po tym jak program się zakończy</String>
     <String id="6020">Powtarzaj pokaz slajdów</String>
     <String id="6021">Auto. kolejność losowa slajdów</String>
     <String id="6022">Konfiguracja wideo</String>
@@ -1454,10 +1470,10 @@
     <String id="9011">Komentarz:</String>
     <String id="9100" prefix="Mój">Miniwyświetlacz</String>
     <String id="9101">Dodatek nie jest skonfigurowany.</String>
-    <String id="9102">Uruchom najpierw Konfigurację MediaPortalu!</String>
+    <String id="9102">Uruchom najpierw Konfigurację MediaPortal!</String>
     <String id="9103">Opcje klawiatury</String>
     <String id="9104">Opcje wyświetlania</String>
-    <String id="9105">Opcje kontroli wyświetlania</String>
+    <String id="9105">Opcje sterowania wyświetlaniem</String>
     <String id="9106">Opcje korektora</String>
     <String id="9107">Opcje podświetlenia</String>
     <String id="9108">Opcje pilota</String>
@@ -1512,7 +1528,7 @@
     <String id="10101">Czas gry</String>
     <String id="10102">Najlepszy czas</String>
     <String id="10103" prefix="Mój ">Saper</String>
-    <String id="10104">Mini EPG</String>
+    <String id="10104">Mini Przewodnik</String>
     <String id="10105">Teraz</String>
     <String id="11000">Ustawienia przycięcia</String>
     <String id="11001">Góra:</String>
@@ -1729,7 +1745,7 @@
     <String id="100023" prefix="Moje ">Wideo/Rok</String>
     <String id="100024">Ustawienia-&gt;Programy</String>
     <String id="100025" prefix="Moje ">Wideo/Tytuł</String>
-    <String id="100026">Ustawienia-&gt;Ustawienia-&gt;Ogólne-Cache</String>
+    <String id="100026">Ustawienia-&gt;Ogólne-&gt;Cache</String>
     <String id="100027">Ustawienia-&gt;Ogólne-&gt;Auto odtwarzanie</String>
     <String id="100028" prefix="Moje ">Wideo/Lista odtwarzania</String>
     <String id="100029">Ustawienia-&gt;Ogólne-&gt;LCD</String>
@@ -1752,13 +1768,14 @@
     <String id="100509">Muzyka/Zapytanie/Postęp</String>
     <String id="100510">Muzyka/Obecnie odtwarzany</String>
     <String id="100511">Muzyka/Pełen ekran</String>
-    <String id="100600">Telewizja/Program TV</String>
+    <String id="100512">LastFM Lubię/Blokuję</String>
+    <String id="100600">Telewizja/Przewodnik TV</String>
     <String id="100601">Telewizja/Harmonogram</String>
     <String id="100602">Telewizja/Pełny ekran</String>
-    <String id="100603">Telewizja/Nagrania</String>
+    <String id="100603">Telewizja/Nagrania TV</String>
     <String id="100604">Telewizja/Szukaj</String>
-    <String id="100605">Telewizja/Nagrania/Gatunek</String>
-    <String id="100606">Telewizja/Nagrania/Programy</String>
+    <String id="100605">Telewizja/Nagrania TV/Gatunek</String>
+    <String id="100606">Telewizja/Nagrania TV/Kanały</String>
     <String id="100607">Telewizja/Harmonogram/Kolejność</String>
     <String id="100608">Telewizja/Harmonogram/Konflikty</String>
     <String id="100609">Telewizja/Kompresja/Główne</String>
@@ -1795,7 +1812,7 @@
     <String id="100702">Sortuj kanały TV</String>
     <String id="100703">Ustawienia filmów TV</String>
     <String id="100704">Ustawienia DVD</String>
-    <String id="100705">Ustawienia skórki</String>
+    <String id="100705">Ustawienia skóry</String>
     <String id="100706">Ustawienia EPG</String>
     <String id="100707">EPG -&gt;Przypisywanie kanałów</String>
     <String id="100708">Pomiń te ustawienia</String>
@@ -1805,13 +1822,14 @@
     <String id="100748">Informacje o programie</String>
     <String id="100749">Telewizja/Brak sygnału</String>
     <String id="100755">Status</String>
-    <String id="100756">Szczegóły statusu</String>
+    <String id="100756">Status szczegółowy</String>
     <String id="100757">Ustawienia statusu</String>
     <String id="100758">Okno pliku</String>
-    <String id="100759">Nagrane informacje z TV</String>
+    <String id="100759">Informacje o nagraniu TV</String>
     <String id="100760">Nagrywarka</String>
     <String id="100761">Przewodnik TV</String>
-    <String id="100762">Przewodnik Radio</String>
+    <String id="100762">Przewodnik Radiowy</String>
+    <String id="100763">Nagrana audycja</String>
     <String id="100800" prefix="Moje">Dodatki</String>
     <String id="101000">klawiatura</String>
     <String id="101002">Wirtualna klawiatura standardowa</String>
@@ -1834,6 +1852,7 @@
     <String id="102014">Informacje o obrazie</String>
     <String id="102015">Mini Menu</String>
     <String id="102016">Powiadomienie</String>
+    <String id="102017">Konflikt nagrywania</String>
     <String id="102018">Menu CI</String>
     <String id="102600">Pogoda</String>
     <String id="102700">Wiadomości</String>
@@ -1844,9 +1863,9 @@
     <String id="103003">Telewizja/OSD</String>
     <String id="103006">Telewizja/MSN OSD</String>
     <String id="103007">Telewizja/Zap OSD</String>
-    <String id="103009">Telewizja/Mini EPG</String>
+    <String id="103009">Telewizja/Mini Przewodnik</String>
     <String id="103011">Telewizja/Ustawienia przycięcia</String>
-    <String id="103012">Szczegóły ustawień kanałów</String>
+    <String id="103012">Szczegóły strojenia kanałów</String>
     <String id="104711" prefix="Moja">Wikipedia</String>
     <String id="106666">Harmonogram zasilania czeka</String>
     <String id="107700">Telewizja/Telegazeta</String>
@@ -1854,6 +1873,7 @@
     <String id="107776">Tetris</String>
     <String id="107777">Sudoku</String>
     <String id="107890">Radio Last.fm</String>
+    <String id="107900">Tekst okna</String>
     <String id="108888">Menu Muzyka</String>
     <String id="109000">Ustawienia Miniwyświetlacza</String>
     <String id="109001">Ustawienia Miniwyświetlacza - Podświetlenie</String>
@@ -1862,6 +1882,7 @@
     <String id="109004">Ustawienia Miniwyświetlacza - Korektor</String>
     <String id="109005">Ustawienia Miniwyświetlacza - klawiatura	</String>
     <String id="109006">Ustawienia Miniwyświetlacza - Pilot</String>
+    <String id="102019">Powiadomienie TV</String>
     <String id="200000">Proszę wybierz sposób pobierania EPG. Jeśli Twój kraj</String>
     <String id="200001">nie znajduję się na liście, trzeba będzie podać EPG ręcznie.</String>
     <String id="200002">Możesz teraz przypisać kanały EPG do Twoich kanałów TV</String>
@@ -1878,11 +1899,13 @@
     <String id="200013">Ten kreator pomoże Ci łatwo i szybko skonfigurować MediaPortal. Proszę wykonać wszystkie kroki,</String>
     <String id="200014">zacznij od ustawienia swojego języka oraz lokacji:</String>
     <String id="200015">Teraz naciśnij Dalej aby rozpocząć</String>
-    <String id="200017">Witamy w MediaPortal</String>
+    <String id="200017">Witamy w MediaPortal.</String>
     <String id="200018">Gratulujemy. MediaPortal jest skonfigurowany i gotowy do użycia.</String>
     <String id="200019">Naciśnij przycisk zakończ, aby zakończyć kreatora konfiguracji</String>
     <String id="200020">Zakończ</String>
     <String id="200021">Konfiguracja TV - EPG</String>
+    <String id="990000">Cotygodniowo na tym kanale</String>
+    <String id="990001">{0} na kanale {1}</String>
     <String id="200022">MediaPortal wykrył następujące karty telewizyjne:</String>
     <String id="200023">Naciśnij przycisk dalej, aby skonfigurować te karty</String>
     <String id="200024">Konfiguracja TV</String>
@@ -1921,7 +1944,7 @@
     <String id="200060">Stereo</String>
     <String id="200061">Lewy kanał do lewych i prawych głośników</String>
     <String id="200062">Prawy kanał do lewych i prawych głośników</String>
-    <String id="200063">Miksuj oba</String>
+    <String id="200063">Miksuj obydwa</String>
     <String id="200064">Połączony z Serwerem TV</String>
     <String id="200065">Kilka portów wydaje się zablokowanych</String>
     <String id="200066">Nie można połączyć się z Serwerem TV</String>
@@ -1931,8 +1954,22 @@
     <String id="200070">Sprawdź firewall</String>
     <String id="200071">Usunąć ten folder i jego podfoldery?</String>
     <String id="200072">Nadchodzące odcinki</String>
+    <String id="200073">Przetwarzanie</String>
+    <String id="200074">Przetwarzanie obrazu</String>
+    <String id="200075">Zmiana rozmiaru</String>
+    <String id="200076">Pliki napisów</String>
+    <String id="200077">Usuwanie przeplotu</String>
+    <String id="200078">Przycięcie</String>
+    <String id="200079">Pionowe przycięcie</String>
+    <String id="200080">Poziome przycięcie</String>
+    <String id="200081">MENU OBRAZU</String>
+    <String id="200082">MENU DŹWIĘKU</String>
+    <String id="200083">MENU NAPISÓW</String>
+    <String id="200084">Menu obrazu</String>
+    <String id="200085">Menu dźwięku</String>
+    <String id="200086">MENU GŁÓWNE</String>
+    <String id="200087">Wyciszenie</String>
+    <String id="200090">Edycja</String>
     <String id="200091">Rozdział</String>
-    <String id="990000">Cotygodniowo na tym kanale</String>
-    <String id="990001">{0} na kanale {1}</String>	
   </Section>
 </Language>

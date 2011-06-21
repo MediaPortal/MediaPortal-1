@@ -353,7 +353,7 @@ namespace TvLibrary.Implementations.DVB
               info.scrambled = (freeCAMode != 0);
               info.network_pmt_PID = pmtPid;
 
-              if (IsKnownServiceType(info.serviceType))
+              if (IsValidChannel(info, hasAudio, hasVideo))
               {
                 if (info.service_name.Length == 0)
                 {
@@ -534,6 +534,11 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region Helpers
+
+    protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
+    {
+      return IsKnownServiceType(info.serviceType);
+    }
 
     protected virtual bool IsKnownServiceType(int serviceType)
     {
