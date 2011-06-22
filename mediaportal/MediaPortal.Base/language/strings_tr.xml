@@ -1007,6 +1007,9 @@
     <String id="1219">Albüm Sanatçıları (İndeks)</String>
     <String id="1220">Sıralama: Oluşturulma Tarihi</String>
     <String id="1221">Sıralama: Değiştirilme Tarihi</String>
+    <String id="1222">Gruplar</String>
+    <String id="1223">Mevcut Çalma Listesi Bulundu</String>
+    <String id="1224">Geçerli çalma listesini temizlemek istiyor musunuz?</String>
     <String id="1230">Eklenme tarihi:</String>
     <String id="1231">Son oynatma:</String>
     <String id="1300">TV Şovları</String>
@@ -1051,6 +1054,14 @@
     <String id="1600">Kapatmak istiyor musunuz?</String>
     <String id="1601">Askıya almak istiyor musunuz?</String>
     <String id="1602">Uyku moduna almak istiyor musunuz?</String>
+    <String id="1900">Güncelliğini Yitirmiş Kaplama</String>
+    <String id="1901">Kullanmakta olduğunuz ({0}) kaplaması güncelliğini yitirmiştir. Bu durum, MediaPortal kullanımızda sorunlara neden olabilir. Bu neden MediaPortal geçici olarak varsayılan kaplamayı kullanacaktır. Eğer yine de güncelliğini yitirmiş olan kaplamayı kullanmayı denemek istiyorsanız, 'Yoksay ve dene' tuşuna basınız, fakat unutmayınız: bu kaplamayı kullanırken hata bildirimi yapMAyınız.
+(bu uyarıyı geçmek için kendiliğinden kapanana kadar bekleyiniz ya da kumandanızdaki Geri/ESC tuşuna basınız)</String>
+    <String id="1902">Bu mesajı tekrar gösterme</String>
+    <String id="1903">Yoksay ve dene ({0})...</String>
+    <String id="1910">Uyumsuz eklentiler</String>
+    <String id="1911">Aşağıdaki eklentiler MediaPortal'ın bu versiyonu ile uyumsuzdur ve otomatik olarak devre dışı bırakılmıştır:</String>
+    <String id="1912">Devam|Devam ({0})...|Devam ({0})...</String>
     <String id="1950">Durum</String>
     <String id="1951">Sabit disk</String>
     <String id="1952">Fan</String>
