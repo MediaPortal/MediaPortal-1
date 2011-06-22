@@ -654,11 +654,11 @@ Packet* CDeMultiplexer::GetVideo()
 {
   while (!m_playlistManager->HasVideo())
   {
-    if (m_filter.m_bStopping || m_bEndOfFile)
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
     {
       return NULL;
     }
-    ReadFromFile(false,true);
+    ReadFromFile(false, true);
   }
   Packet * ret = m_playlistManager->GetNextVideoPacket();
   //if (m_filter.GetVideoPin()->IsConnected() && m_iAudioStream == -1) return NULL;
@@ -722,7 +722,7 @@ Packet* CDeMultiplexer::GetAudio()
 {
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.m_bStopping || m_bEndOfFile)
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
     {
       return NULL;
     }
