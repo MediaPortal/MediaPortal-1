@@ -401,7 +401,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       {
         prevPl = buffer->nPlaylist;
         
-        if (demux.GetLatestPlaylist()->playlist == buffer->nPlaylist &&m_pFilter->State() == State_Running)
+        if (m_pFilter->State() == State_Running)
         {
           demux.m_videoPlSeen = true;
 
@@ -439,7 +439,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        if (m_mt != *buffer->pmt)
+        if (buffer->pmt && m_mt.cbFormat != buffer->pmt->cbFormat)
         {
           LogDebug("NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
             
@@ -485,16 +485,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (hasTimestamp)
         {
-          REFERENCE_TIME rtCompensation = demux.GetCompensationForClip(buffer->nPlaylist,buffer->nClipNumber);
-          REFERENCE_TIME myRefTime =  buffer->rtStart;
-          cRefTimeStart = myRefTime;
-
-          cRefTimeOrig = cRefTimeStart;
-          cRefTimeStart += rtCompensation;
-
-          cRefTimeStop = buffer->rtStop;
-          cRefTimeStop += rtCompensation;
-
           m_bPresentSample = true;
        }
 
@@ -514,10 +504,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //now we have the final timestamp, set timestamp in sample
             if (abs(m_dRateSeeking - 1.0) > 0.5)
             {
-              cRefTimeStart /= m_dRateSeeking;
-              cRefTimeStop /= m_dRateSeeking;
+              pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
             }
-            pSample->SetTime(&cRefTimeStart, &cRefTimeStop);
+            else
+            {
+              pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
+            }
           }
           else
           {
@@ -532,8 +524,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
           
-          LogDebug("vid: corr %6.3f orig %6.3f clip: %d playlist: %d", 
-            cRefTimeStart / 10000000.0, cRefTimeOrig / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
+          //LogDebug("vid: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
 
           delete buffer;
         }

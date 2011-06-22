@@ -37,6 +37,8 @@
 #include "MpegPesParser.h"
 #include <bluray.h>
 #include "BDEventObserver.h"
+#include "Packet.h"
+#include "PlaylistManager.h"
 
 using namespace std;
 class CBDReaderFilter;
@@ -51,7 +53,7 @@ class CBDReaderFilter;
 #define SUPERCEEDED_SUBTITLE 4
 
 // 0.5s
-#define ALLOWED_PACKET_DIFF 640000LL
+#define ALLOWED_PACKET_DIFF 2000000LL
 
 struct PlaylistInfo
 {
@@ -74,33 +76,6 @@ struct PlaylistInfo
 };
 
 
-class Packet : public CAtlArray<BYTE>
-{
-public:
-
-  Packet() 
-  { 
-    nClipNumber = -100;
-    nPlaylist = -100;
-    bDiscontinuity = false;
-    bSyncPoint = false;
-    bAppendable = false;
-    rtStart = -100;
-    rtStop = -100;
-    pmt = NULL;
-  }
-
-  virtual ~Packet() {if(pmt) DeleteMediaType(pmt);}
-  virtual int GetDataSize() {return GetCount();}
-
-  INT32 nClipNumber;
-  INT32 nPlaylist;
-  bool bDiscontinuity, bSyncPoint, bAppendable;
-	static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
-	REFERENCE_TIME rtStart, rtStop;
-	AM_MEDIA_TYPE* pmt;
-	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
-};
 
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public BDEventObserver
 {
@@ -127,9 +102,6 @@ public:
   void       CheckVideoFormat(Packet* p);
   void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
-
-  int        GetAudioBufferPts(CRefTime& First, CRefTime& Last);
-  int        GetVideoBufferPts(CRefTime& First, CRefTime& Last);
 
   bool       SetAudioStream(__int32 stream);
   bool       GetAudioStream(__int32 &stream);
@@ -170,16 +142,14 @@ public:
 
   bool m_bAudioVideoReady;
 
-  // Used for playlist/clip tracking
-  REFERENCE_TIME GetCompensationForClip(int playlist, int clip);
-  PlaylistInfo* GetLatestPlaylist();
-
   bool m_audioPlSeen;
   bool m_videoPlSeen;
 
 private:
   void ResetClipInfo(int pDebugMark);
+  Packet * GenerateFakePacket(REFERENCE_TIME rtStart, int playlist, int clip);
   Packet* GenerateFakeAudio();
+  void GenerateFakeAudio(int previousPlaylist, int missingPlaylist, int previousClip, int missingClip);
   void PacketDelivery(Packet* p, CTsHeader header);
   struct stAudioStream
   {
@@ -210,9 +180,9 @@ private:
   CMpegPesParser *m_mpegPesParser;
   CPidTable m_pids;
   vector<Packet*> m_vecSubtitleBuffers;
-  vector<Packet*> m_vecVideoBuffers;
+//  vector<Packet*> m_vecVideoBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
-  vector<Packet*> m_vecAudioBuffers;
+  //vector<Packet*> m_vecAudioBuffers;
   UINT32 m_nAudioPesLenght;
   typedef vector<Packet*>::iterator ivecVBuffers;
   typedef vector<Packet*>::iterator ivecABuffers;
@@ -319,13 +289,7 @@ private:
   // use per PID
   CMediaType m_lpcmPmt;
   CFrameHeaderParser m_audioParser;
+
   //Used for playlist/clip tracking
-  vector<PlaylistInfo*> m_vecActivePlaylists;
-  void SetNewPlaylist(int playlist, int clip, REFERENCE_TIME startTimeOffset, bool noAudio, REFERENCE_TIME duration);
-  bool CorrectPacketPlaylist(Packet* p, int packetType);
-  void ResetPlayListMonitor();
-  bool IsValidPacket(Packet* p);
-  typedef vector<PlaylistInfo*>::iterator ivecPlaylists;
-  PlaylistInfo* GetPlaylistInfo(int playlist, int clip);
-  PlaylistInfo* GetCurrentVideoPlaylist();
+  CPlaylistManager * m_playlistManager;
 };

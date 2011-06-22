@@ -97,17 +97,18 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_fakeAudioVideoSeen = false;
   m_fakeAudioPacketCount = 0;
 
-  ResetClipInfo(-11);
-  ResetPlayListMonitor();
-
   m_audioPlSeen = false;
   m_videoPlSeen = false;
+  m_playlistManager = new CPlaylistManager();
+  m_loopLastSearch=1;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
 {
   m_filter.lib.RemoveEventObserver(this);
   m_bShuttingDown = true;
+
+  delete m_playlistManager;
 
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
@@ -120,14 +121,6 @@ CDeMultiplexer::~CDeMultiplexer()
     Packet* videoBuffer = *itv;
     delete videoBuffer;
     itv = m_t_vecVideoBuffers.erase(itv);
-  }
-
-  ivecPlaylists itp = m_vecActivePlaylists.begin();
-  while (itp != m_vecActivePlaylists.end())
-  {
-    PlaylistInfo * playlistInfo = *itp;
-    delete playlistInfo;
-    itp = m_vecActivePlaylists.erase(itp);
   }
 
 
@@ -266,7 +259,7 @@ int CDeMultiplexer::GetAudioStreamCount()
 
 void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
 {
-  if (m_AudioStreamType == SERVICE_TYPE_NO_AUDIO)
+  if (m_AudioStreamType <= SERVICE_TYPE_NO_AUDIO)
   {
     pmt.InitMediaType();
     pmt.SetType(&MEDIATYPE_Audio);
@@ -449,30 +442,31 @@ void CDeMultiplexer::FlushVideo(bool pSoftFlush)
 
   LogDebug("demux:flush video");
   CAutoLock lock (&m_sectionVideo);
-  ivecVBuffers it = m_vecVideoBuffers.begin();
-  while (it != m_vecVideoBuffers.end())
-  {
-    Packet* videoBuffer = *it;
-    
-    if (!pSoftFlush)// || videoBuffer->nClipNumber != m_nClip || videoBuffer->nPlaylist != m_nPlaylist)
-    {
-      delete videoBuffer;
-      it = m_vecVideoBuffers.erase(it);
-      LogDebug("Flush Video (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
-    }
-    else
-    {
-      ++it;
-      //LogDebug("Flush Video (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        //pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
-    }
-  }
+
+  //ivecVBuffers it = m_vecVideoBuffers.begin();
+  //while (it != m_vecVideoBuffers.end())
+  //{
+  //  Packet* videoBuffer = *it;
+  //  
+  //  if (!pSoftFlush)// || videoBuffer->nClipNumber != m_nClip || videoBuffer->nPlaylist != m_nPlaylist)
+  //  {
+  //    delete videoBuffer;
+  //    it = m_vecVideoBuffers.erase(it);
+  //    LogDebug("Flush Video (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
+  //      pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
+  //  }
+  //  else
+  //  {
+  //    ++it;
+  //    //LogDebug("Flush Video (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
+  //      //pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
+  //  }
+  //}
 
   if (!pSoftFlush)
   {
     // Clear PES temporary queue.
-    it = m_t_vecVideoBuffers.begin();
+    ivecVBuffers it = m_t_vecVideoBuffers.begin();
     while (it != m_t_vecVideoBuffers.end())
     {
       Packet* videoBuffer = *it;
@@ -485,7 +479,7 @@ void CDeMultiplexer::FlushVideo(bool pSoftFlush)
     }
   }
 
-  if (m_vecVideoBuffers.size() == 0)
+  if (!pSoftFlush)
   {
     m_FirstVideoSample = 0x7FFFFFFF00000000LL;
     m_LastVideoSample = -1;
@@ -528,27 +522,28 @@ void CDeMultiplexer::FlushAudio(bool pSoftFlush)
 
   LogDebug("demux:flush audio");
   CAutoLock lock (&m_sectionAudio);
-  ivecABuffers it = m_vecAudioBuffers.begin();
-  while (it != m_vecAudioBuffers.end())
-  {
-    Packet* audioBuffer = *it;
 
-    if (!pSoftFlush)// || audioBuffer->nClipNumber != m_nClip || audioBuffer->nPlaylist != m_nPlaylist)
-    {
-      delete audioBuffer;
-      it = m_vecAudioBuffers.erase(it);
-      LogDebug("Flush Audio (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
-    }
-    else
-    {
-      ++it;
-      //LogDebug("Flush Audio (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        //pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
-    }
-  }
+  //ivecABuffers it = m_vecAudioBuffers.begin();
+  //while (it != m_vecAudioBuffers.end())
+  //{
+  //  Packet* audioBuffer = *it;
 
-  if (m_vecAudioBuffers.size() == 0)
+  //  if (!pSoftFlush)// || audioBuffer->nClipNumber != m_nClip || audioBuffer->nPlaylist != m_nPlaylist)
+  //  {
+  //    delete audioBuffer;
+  //    it = m_vecAudioBuffers.erase(it);
+  //    LogDebug("Flush Audio (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
+  //      pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
+  //  }
+  //  else
+  //  {
+  //    ++it;
+  //    //LogDebug("Flush Audio (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
+  //      //pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
+  //  }
+  //}
+
+  if (!pSoftFlush)
   {
     m_FirstAudioSample = 0x7FFFFFFF00000000LL;
     m_LastAudioSample = -1;
@@ -618,10 +613,16 @@ void CDeMultiplexer::Flush(bool pSoftFlush)
   FlushAudio(pSoftFlush);
   FlushVideo(pSoftFlush);
   FlushSubtitle(pSoftFlush);
+  if (!pSoftFlush)
+  { 
+      m_playlistManager->ClearAllButCurrentClip(true);
+//    delete m_playlistManager;
+//    m_playlistManager = new CPlaylistManager();
+  }
 
   if (!pSoftFlush)
   {
-    ResetClipInfo(-12);
+//    ResetClipInfo(-12);
 
     m_filter.m_bStreamCompensated = false;
   }
@@ -651,283 +652,193 @@ Packet* CDeMultiplexer::GetSubtitle()
 
 Packet* CDeMultiplexer::GetVideo()
 {
-  if (m_filter.GetVideoPin()->IsConnected() && m_iAudioStream == -1) return NULL;
-
-  // If there is no video pid, then simply return NULL
-  if ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid==0) || 
-    IsMediaChanging() || m_audioStreamsToBeParsed > 0 || !m_filter.m_bStreamCompensated)
+  while (!m_playlistManager->HasVideo())
   {
-    ReadFromFile(false, true);
-    return NULL;
-  }
-
-  // when there are no video packets at the moment
-  // then try to read some from the current file
-  while ((m_vecVideoBuffers.size() == 0) || (m_FirstVideoSample >= m_LastAudioSample))
-  {
-    //if filter is stopped or
-    //end of file has been reached or
-    //demuxer should stop getting video packets
-    //then return NULL
     if (m_filter.m_bStopping || m_bEndOfFile)
     {
       return NULL;
     }
-    
-    if (ReadFromFile(false, true) < READ_SIZE) 
-    {
-      break;
-    }
+    ReadFromFile(false,true);
   }
+  Packet * ret = m_playlistManager->GetNextVideoPacket();
+  //if (m_filter.GetVideoPin()->IsConnected() && m_iAudioStream == -1) return NULL;
 
-  //are there video packets in the buffer?
-  if (m_vecVideoBuffers.size() != 0 && !IsMediaChanging() || m_audioStreamsToBeParsed > 0)
-  {
-    CAutoLock lock (&m_sectionVideo);
-    //yup, then return the next one
-    ivecVBuffers it = m_vecVideoBuffers.begin();
-    if (it != m_vecVideoBuffers.end())
-    {
-      Packet* videoBuffer = *it;
-      //m_FirstVideoSample = videoBuffer->rtStart;
-      m_vecVideoBuffers.erase(it);
-      return videoBuffer;
-    }
-  }
+  //// If there is no video pid, then simply return NULL
+  //if ((m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid==0) || 
+  //  IsMediaChanging() || m_audioStreamsToBeParsed > 0 || !m_filter.m_bStreamCompensated)
+  //{
+  //  ReadFromFile(false, true);
+  //  return NULL;
+  //}
 
-  return NULL;
+  //// when there are no video packets at the moment
+  //// then try to read some from the current file
+  //while ((m_vecVideoBuffers.size() == 0) || (m_FirstVideoSample >= m_LastAudioSample))
+  //{
+  //  //if filter is stopped or
+  //  //end of file has been reached or
+  //  //demuxer should stop getting video packets
+  //  //then return NULL
+  //  if (m_filter.m_bStopping || m_bEndOfFile)
+  //  {
+  //    return NULL;
+  //  }
+  //  
+  //  if (ReadFromFile(false, true) < READ_SIZE) 
+  //  {
+  //    break;
+  //  }
+  //}
+
+  ////are there video packets in the buffer?
+  //if (m_vecVideoBuffers.size() != 0 && !IsMediaChanging() || m_audioStreamsToBeParsed > 0)
+  //{
+  //  CAutoLock lock (&m_sectionVideo);
+  //  //yup, then return the next one
+  //  ivecVBuffers it = m_vecVideoBuffers.begin();
+  //  if (it != m_vecVideoBuffers.end())
+  //  {
+  //    Packet* videoBuffer = *it;
+  //    //m_FirstVideoSample = videoBuffer->rtStart;
+  //    m_vecVideoBuffers.erase(it);
+  //    return videoBuffer;
+  //  }
+  //}
+
+  //return NULL;
 }
 
-///
-///Returns the next audio packet
-// or NULL if there is none available
+
 Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 {
-  int readSize = 0;
-  if (m_iAudioStream < 0) return NULL;
-
-  if (m_AudioStreamType == SERVICE_TYPE_NO_AUDIO)
-  {
-    m_vecAudioBuffers.push_back( GenerateFakeAudio());
-  }
-
-  // if there is no audio pid, then simply return NULL
-  if (((m_audioPid == 0) || IsMediaChanging() || m_audioStreamsToBeParsed > 0) && m_AudioStreamType != SERVICE_TYPE_NO_AUDIO)
-  {
-    ReadFromFile(true, false);
-    return NULL;
-  }
-
-  // when there are no audio packets at the moment
-  // then try to read some from the current file
-  while (m_vecAudioBuffers.size() == 0 || !m_bAudioVideoReady)
-  {
-    if (m_filter.m_bStopping || m_bEndOfFile) 
-    {
-      return NULL;
-    }
-
-    readSize = ReadFromFile(true, false);
-
-    if ((m_vecAudioBuffers.size() == 0 && readSize < READ_SIZE) || IsMediaChanging() || m_audioStreamsToBeParsed > 0)
-    {
-      return NULL;
-    }
-
-    m_bAudioVideoReady = true;
-  }
-
-  CAutoLock lock(&m_sectionAudio);
-
-  if (m_vecAudioBuffers.size() > 0)
-  {
-    ivecABuffers it = m_vecAudioBuffers.begin();
-    Packet* audiobuffer = *it;
-    //m_FirstAudioSample = audiobuffer->rtStart;
-    if (audiobuffer->nPlaylist == playlist && audiobuffer->nClipNumber == clip)
-    {
-      m_vecAudioBuffers.erase(it);
-      return audiobuffer;
-    }
-    else
-    {
-      return NULL;
-    }
-  }
-  else
-  {
-    return NULL;
-  }
+  Packet * ret = m_playlistManager->GetNextAudioPacket(playlist, clip);
+  return ret;
 }
-
 
 ///
 ///Returns the next audio packet
 // or NULL if there is none available
 Packet* CDeMultiplexer::GetAudio()
 {
-  int readSize = 0;
-  if (m_iAudioStream < 0) return NULL;
-  //remove packets which aren't as expected before going any further
-  if (m_vecAudioBuffers.size()>0)
+  while (!m_playlistManager->HasAudio())
   {
-    ivecABuffers it = m_vecAudioBuffers.begin();
-    Packet* audiobuffer = *it;
-    if (!IsValidPacket(audiobuffer)) 
+    if (m_filter.m_bStopping || m_bEndOfFile)
     {
-      if (audiobuffer) LogDebug("Droping Audio Packet: playlist %d clip %d",audiobuffer->nPlaylist, audiobuffer->nClipNumber);
-      m_vecAudioBuffers.erase(it);
+      return NULL;
     }
-  }
-
-  if (m_AudioStreamType == SERVICE_TYPE_NO_AUDIO)
-  {
-    m_vecAudioBuffers.push_back(GenerateFakeAudio());
-  }
-
-  // if there is no audio pid, then simply return NULL
-  if (((m_audioPid == 0) || IsMediaChanging() || m_audioStreamsToBeParsed > 0) && m_AudioStreamType != SERVICE_TYPE_NO_AUDIO)
-  {
     ReadFromFile(true, false);
-    return NULL;
   }
+  Packet * ret = m_playlistManager->GetNextAudioPacket();
+  return ret;
+  //int readSize = 0;
+  //if (m_iAudioStream < 0) return NULL;
+  ////remove packets which aren't as expected before going any further
+  //bool bChangeFound=false;
+  //if (m_vecAudioBuffers.size()>0)
+  //{
+  //  ivecABuffers it = m_vecAudioBuffers.begin();
+  //  
+  //  Packet* firstAudiobuffer = *it;
+  //  if (m_iAudioPlaylist!=firstAudiobuffer->nPlaylist || m_iAudioClip!=firstAudiobuffer->nClipNumber)
+  //  {
+  //    m_iAudioPlaylist=firstAudiobuffer->nPlaylist;
+  //    m_iAudioClip=firstAudiobuffer->nClipNumber;
+  //  }
 
-  // when there are no audio packets at the moment
-  // then try to read some from the current file
-  while (m_vecAudioBuffers.size() == 0 || !m_bAudioVideoReady)
-  {
-    if (m_filter.m_bStopping || m_bEndOfFile) 
-    {
-      return NULL;
-    }
+  //  while (it != m_vecAudioBuffers.end())
+  //  {
+  //    Packet* audiobuffer = *it;
+  //    if (!IsValidPacket(audiobuffer)) 
+  //    {
+  //      if (audiobuffer) 
+  //      {
+  //        LogDebug("Droping Audio Packet: playlist %d clip %d",audiobuffer->nPlaylist, audiobuffer->nClipNumber);
+  //        delete audiobuffer;
+  //      }
+  //      m_vecAudioBuffers.erase(it);
+  //    }
+  //    else if (m_iAudioPlaylist!=audiobuffer->nPlaylist || m_iAudioClip!=audiobuffer->nClipNumber)
+  //    {
+  //      //clip change in buffer - just check out the first
+  //      if (!bChangeFound && AudioMissingBetweenClips(m_iAudioPlaylist,audiobuffer->nPlaylist,m_iAudioClip,audiobuffer->nClipNumber))
+  //      {
+  //        bChangeFound=true;
+  //        GenerateFakeAudio(m_iAudioPlaylist,audiobuffer->nPlaylist,m_iAudioClip,audiobuffer->nClipNumber);
+  //      }
+  //      ++it;
+  //    }
+  //    else
+  //    {
+  //      ++it;
+  //    }
+  //  }
+  //}
 
-    readSize = ReadFromFile(true, false);
+  //if (m_AudioStreamType == SERVICE_TYPE_NO_AUDIO)
+  //{
+  //  ReadFromFile(true, false);
+  //  // Clear PES temporary queue.
+  //  delete m_pCurrentAudioBuffer;
+  //  m_pCurrentAudioBuffer = new Packet();
+  //  ivecABuffers it = m_vecAudioBuffers.begin();
+  //  while (it != m_vecAudioBuffers.end())
+  //  {
+  //    Packet* audioBuffer = *it;
+  //    {
+  //      delete audioBuffer;
+  //      it = m_vecAudioBuffers.erase(it);
+  //      LogDebug("Flush Audio (for faking) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
+  //        audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
+  //    }
+  //  }
 
-    if ((m_vecAudioBuffers.size() == 0 && readSize < READ_SIZE) || IsMediaChanging() || m_audioStreamsToBeParsed > 0)
-    {
-      return NULL;
-    }
+  //  PlaylistInfo * playlistInfo = GetCurrentVideoPlaylist();
+  //  GenerateFakeAudio(m_iAudioPlaylist,playlistInfo->playlist, m_iAudioClip, playlistInfo->clip);
+  //  m_AudioStreamType = SERVICE_TYPE_NO_AUDIO_GENERATED;
+  //}
 
-    m_bAudioVideoReady = true;
-  }
+  //// if there is no audio pid, then simply return NULL
+  //if (((m_audioPid == 0) || IsMediaChanging() || m_audioStreamsToBeParsed > 0) && m_AudioStreamType > SERVICE_TYPE_NO_AUDIO)
+  //{
+  //  ReadFromFile(true, false);
+  //  return NULL;
+  //}
 
-  CAutoLock lock(&m_sectionAudio);
+  //// when there are no audio packets at the moment
+  //// then try to read some from the current file
+  //while (m_vecAudioBuffers.size() == 0 || !m_bAudioVideoReady)
+  //{
+  //  if (m_filter.m_bStopping || m_bEndOfFile) 
+  //  {
+  //    return NULL;
+  //  }
 
-  if (m_vecAudioBuffers.size() > 0)
-  {
-    ivecABuffers it = m_vecAudioBuffers.begin();
-    Packet* audiobuffer = *it;
-    //m_FirstAudioSample = audiobuffer->rtStart;
-    m_vecAudioBuffers.erase(it);
-    return audiobuffer;
-  }
-  else
-  {
-    return NULL;
-  }
+  //  readSize = ReadFromFile(true, false);
+
+  //  if ((m_vecAudioBuffers.size() == 0 && readSize < READ_SIZE) || IsMediaChanging() || m_audioStreamsToBeParsed > 0)
+  //  {
+  //    return NULL;
+  //  }
+
+  //  m_bAudioVideoReady = true;
+  //}
+
+  //CAutoLock lock(&m_sectionAudio);
+
+  //if (m_vecAudioBuffers.size() > 0)
+  //{
+  //  ivecABuffers it = m_vecAudioBuffers.begin();
+  //  Packet* audiobuffer = *it;
+  //  //m_FirstAudioSample = audiobuffer->rtStart;
+  //  m_vecAudioBuffers.erase(it);
+  //  return audiobuffer;
+  //}
+  //else
+  //{
+  //  return NULL;
+  //}
 }
 
-Packet* CDeMultiplexer::GenerateFakeAudio()
-{
-  Packet* packet = NULL;
-  CPcr pts;
-  CRefTime firstVideo, lastVideo;
-
-  if (m_FirstAudioSample == 0x7FFFFFFF00000000LL && m_LastAudioSample == -1)
-  {
-    m_fakeAudioVideoSeen = false;
-  }
-
-  if (!m_fakeAudioVideoSeen)
-  {
-    int cntV = GetVideoBufferPts(firstVideo, lastVideo);
-
-    if (cntV > 0)
-    {
-      PlaylistInfo * playlistInfo = GetCurrentVideoPlaylist();
-      //LogDebug("demux: GenerateFakeAudio - 1st video frame seen");
-      //LogDebug("Fake Audio current start %6.3f playlist (%d,%d)",
-//        playlistInfo->firstTimestamp / 10000000.0, playlistInfo->playlist,playlistInfo->clip);
-      
-      m_fakeAudioVideoSeen = true;
-      m_fakeAudioPacketCount = 0;
-      m_LastAudioSample = m_FirstAudioSample = playlistInfo->firstTimestamp;
-
-      m_AudioValidPES = false;
-
-      delete m_pCurrentAudioBuffer;
-      m_pCurrentAudioBuffer = new Packet();
-    }
-  }
-
-  if (m_fakeAudioVideoSeen)
-  {
-    packet = new Packet();
-    pts.IsValid = true;
-
-    #define BYTES_PER_SEC 192000
-    
-    packet->nClipNumber = m_nVideoClip; // same as video
-    packet->nPlaylist = m_nVideoPl;
-
-    pts.FromClock((double)(m_fakeAudioPacketCount) / 31.2);
-
-    #define AUDIO_DATA_32ms 262140
-    
-    BYTE* data = (BYTE*)malloc(AUDIO_DATA_32ms);
-    memset(data, 0, AUDIO_DATA_32ms);
-
-    data[0] = 0x0B; // sync word
-    data[1] = 0x77;
-    data[2] = 0xF9; // CRC
-    data[3] = 0x02;
-    data[4] = 0x16; // params
-
-    packet->SetCount(AUDIO_DATA_32ms);
-    packet->SetData(data, AUDIO_DATA_32ms);    
-    packet->rtStart = m_FirstAudioSample + CONVERT_90KHz_DS(pts.PcrReferenceBase);
-    packet->rtStop = packet->rtStart + 1;
-
-    CMediaType pmt;
-    GetAudioStreamType(m_iAudioStream, pmt);
-    packet->pmt = CreateMediaType(&pmt);
-
-    if (packet->rtStart < m_FirstAudioSample) m_FirstAudioSample = packet->rtStart;
-    if (packet->rtStart > m_LastAudioSample) m_LastAudioSample = packet->rtStart;
-
-    CorrectPacketPlaylist(packet, SUPERCEEDED_AUDIO);
-    m_fakeAudioPlaylist = packet->nPlaylist;
-    m_fakeAudioClip = packet->nClipNumber;
-    PlaylistInfo * plInfo = GetPlaylistInfo(m_fakeAudioPlaylist, m_fakeAudioClip);
-//    LogDebug("testing fake audio for end %6.3f to %6.3f",plInfo->lastVideoStart/10000000.0,packet->rtStart/10000000.0);
-    if (plInfo->lastVideoStart>packet->rtStart)
-    {
-  
-//      LogDebug("Fake Audio current %6.3f playlist (%d,%d)",
-//        packet->rtStart / 10000000.0, packet->nPlaylist,packet->nClipNumber);
-
-      /*LogDebug("   count: %d pts: %06.3f first: %06.3f last: %06.3f clip: %d playlist: %d", 
-        m_fakeAudioPacketCount, pts.ToClock(), m_FirstAudioSample / 10000000.0, m_LastAudioSample / 10000000.0, 
-        packet->nClipNumber, packet->nPlaylist);
-        */
-      m_fakeAudioPacketCount++;
-    }
-    else //There is no video to add audio for
-    {
-//      LogDebug("Stalling fake generation");
-      delete packet;
-      packet=NULL;
-      if (plInfo->superceeded&SUPERCEEDED_VIDEO) // the video is over for this clip
-      {
-//        LogDebug("Stopping fake generation");
-        plInfo->superceeded|=SUPERCEEDED_AUDIO;
-        m_fakeAudioVideoSeen = false;
-      }
-    }
-  }
-
-  return packet;
-}
 
 /// Starts the demuxer
 /// This method will read the file until we found the pat/sdt
@@ -1089,9 +1000,12 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
 
+        REFERENCE_TIME clipOffset = m_rtNewOffset * -1;
+
         //TODO is m_nPlaylist always set?
-        SetNewPlaylist(m_nPlaylist, m_nClip, CONVERT_90KHz_DS(m_rtNewOffset * -1), 
-          clip->audio_stream_count == 0, CONVERT_90KHz_DS(duration));
+        m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
+//        SetNewPlaylist(m_nPlaylist, m_nClip, CONVERT_90KHz_DS(m_rtNewOffset * -1), 
+//          clip->audio_stream_count == 0, CONVERT_90KHz_DS(duration));
 
         CPcr offset;
         CPcr oldOffset;
@@ -1236,7 +1150,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         REFERENCE_TIME Ref = m_pCurrentAudioBuffer->rtStart;
         if (Ref < m_FirstAudioSample) m_FirstAudioSample = Ref;
         if (Ref > m_LastAudioSample) m_LastAudioSample = Ref;
-        CorrectPacketPlaylist(m_pCurrentAudioBuffer, SUPERCEEDED_AUDIO);
 
         BYTE pesHeader[256];
 
@@ -1297,7 +1210,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
     if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
     {
-      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+//      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
+      m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
       m_pCurrentAudioBuffer = new Packet();
       m_nAudioPesLenght = 0;
     }
@@ -1433,8 +1347,9 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       p->bDiscontinuity = true;
     }
     CheckVideoFormat(p);
-    CorrectPacketPlaylist(p, SUPERCEEDED_VIDEO);
-    m_vecVideoBuffers.push_back(p);
+    m_playlistManager->SubmitVideoPacket(p);
+//    CorrectPacketPlaylist(p, SUPERCEEDED_VIDEO);
+//    m_vecVideoBuffers.push_back(p);
   }
   else
   {
@@ -1699,7 +1614,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p
 	}
 
 	while(start <= end-4) {
-		BYTE* next = start + 1;//(m_loopLastSearch==0 ? 1 : m_loopLastSearch);
+		BYTE* next = start + (m_loopLastSearch==0 ? 1 : m_loopLastSearch);
 
 		while(next <= end-4) {
 			if (*(DWORD*)next == 0x0D010000) {
@@ -2133,8 +2048,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
               
               // ownership is transfered to vector
-              CorrectPacketPlaylist(p, SUPERCEEDED_VIDEO);
-              m_vecVideoBuffers.push_back(p);
+              //CorrectPacketPlaylist(p, SUPERCEEDED_VIDEO);
+              //m_vecVideoBuffers.push_back(p);
+              m_playlistManager->SubmitVideoPacket(p);
             }
             m_CurrentVideoPts.IsValid = false;
 
@@ -2237,19 +2153,6 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   }
 }
 
-int CDeMultiplexer::GetVideoBufferPts(CRefTime& First, CRefTime& Last)
-{
-  First = m_FirstVideoSample;
-  Last = m_LastVideoSample;
-  return m_vecVideoBuffers.size();
-}
-
-int CDeMultiplexer::GetAudioBufferPts(CRefTime& First, CRefTime& Last)
-{
-  First = m_FirstAudioSample;
-  Last = m_LastAudioSample;
-  return m_vecAudioBuffers.size();
-}
 
 /// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
 /// In this method we check if any audio/video/subtitle pid or format has changed
@@ -2509,209 +2412,4 @@ bool CDeMultiplexer::IsMediaChanging()
     }*/
   }
   return true;
-}
-
-void CDeMultiplexer::SetNewPlaylist(int playlist, int clip, REFERENCE_TIME startTimeOffset, bool noAudio, REFERENCE_TIME duration)
-{
-  PlaylistInfo * newinfo = NewPlayList();
-  newinfo->clip=clip;
-  newinfo->playlist=playlist;
-  newinfo->noAudio = noAudio;
-  newinfo->clipDuration = duration;
-  if (m_vecActivePlaylists.size()==0)
-  {
-    newinfo->firstTimestamp=startTimeOffset;
-    newinfo->timeStampCorrection = startTimeOffset * -1;
-  }
-  else if (GetLatestPlaylist()->playlist != playlist)
-  {
-    newinfo->firstTimestamp=startTimeOffset;
-    newinfo->timeStampCorrection = startTimeOffset * -1;
-  }
-  else
-  {
-    newinfo->firstTimestamp=GetLatestPlaylist()->firstTimestamp;
-    newinfo->timeStampCorrection = startTimeOffset * -1;
-  }
-  newinfo->lastStart = newinfo->lastVideoStart = newinfo->lastSubtitleStart = newinfo->firstTimestamp;
-  newinfo->superceeded = 0;
-  m_vecActivePlaylists.push_back(newinfo);
-
-}
-
-bool CDeMultiplexer::CorrectPacketPlaylist(Packet * p, int packetType)
-{
-  bool ret = true; // clip is correct
-//            LogDebug("Packet (%d,%d) type %d start %6.3f",  p->nPlaylist, p->nClipNumber, packetType, p->rtStart/10000000.0);
-  if (p->rtStart == Packet::INVALID_TIME) return ret;
-  ivecPlaylists itp = m_vecActivePlaylists.begin();
-  while (itp != m_vecActivePlaylists.end())
-  {
-    PlaylistInfo * playlistInfo = *itp;
-    if (packetType == SUPERCEEDED_AUDIO)
-    {
-      if (!((playlistInfo->superceeded&SUPERCEEDED_AUDIO)==SUPERCEEDED_AUDIO))
-      {
-        if (playlistInfo->lastStart<=p->rtStart && (playlistInfo->lastStart + ALLOWED_PACKET_DIFF)>p->rtStart)
-        {
-          if (playlistInfo->playlist!=p->nPlaylist || playlistInfo->clip!=p->nClipNumber)
-          {
-            //LogDebug("Correcting bad pl/clip aud");
-            //LogDebug("To (%d,%d) From (%d,%d)", playlistInfo->playlist, playlistInfo->clip, p->nPlaylist, p->nClipNumber);
-            //LogDebug("Playlist %6.3f p %6.3f", playlistInfo->lastStart/10000000.0, p->rtStart/10000000.0);
-            p->nPlaylist=playlistInfo->playlist;
-            p->nClipNumber = playlistInfo->clip;
-          }
-          else
-          {
-            //LogDebug("Correct aud");
-            //LogDebug("pl/cl (%d,%d) ", playlistInfo->playlist, playlistInfo->clip, p->nPlaylist, p->nClipNumber);
-            //LogDebug("Playlist %6.3f p %6.3f", playlistInfo->lastStart/10000000.0, p->rtStart/10000000.0);
-          }
-          playlistInfo->lastStart=p->rtStart;
-          return false;
-        }
-        else
-        {
-          if (playlistInfo !=m_vecActivePlaylists.back())
-          {
-            playlistInfo->superceeded|=SUPERCEEDED_AUDIO;
-          }
-          //LogDebug("Playlist (%d,%d) superceeded for Audio", playlistInfo->playlist, playlistInfo->clip);
-          //LogDebug("Playlist %6.3f p %6.3f diff %6.3f", playlistInfo->lastStart/10000000.0, p->rtStart/10000000.0, ALLOWED_PACKET_DIFF/10000000.0);
-        }
-      }
-    }
-    else if (packetType == SUPERCEEDED_VIDEO)
-    {
-      if (!(playlistInfo->superceeded & SUPERCEEDED_VIDEO))
-      {
-        if (playlistInfo->lastVideoStart-ALLOWED_PACKET_DIFF<p->rtStart && (playlistInfo->lastVideoStart + ALLOWED_PACKET_DIFF)>p->rtStart)
-        {
-          if (playlistInfo->playlist!=p->nPlaylist || playlistInfo->clip!=p->nClipNumber)
-          {
-            //LogDebug("Correcting bad pl/clip vid");
-            //LogDebug("To (%d,%d) From (%d,%d) %d", playlistInfo->playlist, playlistInfo->clip, p->nPlaylist, p->nClipNumber,playlistInfo->superceeded);
-            //LogDebug("Playlist %6.3f p %6.3f diff %6.3f", playlistInfo->lastVideoStart/10000000.0, p->rtStart/10000000.0, ALLOWED_PACKET_DIFF/10000000.0);
-            p->nPlaylist=playlistInfo->playlist;
-            p->nClipNumber = playlistInfo->clip;
-          }
-          playlistInfo->lastVideoStart=p->rtStart;
-          return false;
-        }
-        else
-        {
-          if (playlistInfo !=m_vecActivePlaylists.back())
-          {
-            playlistInfo->superceeded|=SUPERCEEDED_VIDEO;
-          }
-          //LogDebug("Playlist (%d,%d) superceeded for Video %d", playlistInfo->playlist, playlistInfo->clip,playlistInfo->superceeded);
-          //LogDebug("Playlist %6.3f p %6.3f diff %6.3f", playlistInfo->lastVideoStart/10000000.0, p->rtStart/10000000.0, ALLOWED_PACKET_DIFF/10000000.0);
-        }
-      }
-    }
-    else if (packetType == SUPERCEEDED_SUBTITLE) // does this one matter?
-    {
-      if (!((playlistInfo->superceeded&SUPERCEEDED_SUBTITLE)==SUPERCEEDED_SUBTITLE))
-      {
-        if (playlistInfo->lastSubtitleStart<=p->rtStart && (playlistInfo->lastSubtitleStart + ALLOWED_PACKET_DIFF)>p->rtStart)
-        {
-          if (playlistInfo->playlist!=p->nPlaylist || playlistInfo->clip!=p->nClipNumber)
-          {
-            //LogDebug("Correcting bad pl/clip sub");
-            //LogDebug("To (%d,%d) From (%d,%d)", playlistInfo->playlist, playlistInfo->clip, p->nPlaylist, p->nClipNumber);
-            p->nPlaylist=playlistInfo->playlist;
-            p->nClipNumber = playlistInfo->clip;
-          }
-          playlistInfo->lastSubtitleStart=p->rtStart;
-        }
-      }
-    }
-    ++itp;
-  }
-
-  return ret;
-}
-
-void CDeMultiplexer::ResetPlayListMonitor(void)
-{
-}
-
-REFERENCE_TIME CDeMultiplexer::GetCompensationForClip(int playlist, int clip)
-{
-  REFERENCE_TIME ret=0LL;
-  PlaylistInfo* playlistInfo = GetPlaylistInfo(playlist, clip);
-  if (playlistInfo!=NULL)
-  {
-    ret = playlistInfo->timeStampCorrection;
-  }
-  return ret;
-}
-
-PlaylistInfo * CDeMultiplexer::NewPlayList()
-{
-  PlaylistInfo * ret = new PlaylistInfo();
-  ret->clip = -10;
-  ret->playlist = -10;
-  ret->lastStart = 0x7FFFFFFF00000000LL;
-  ret->lastDuration = 0x7FFFFFFF00000000LL;
-  ret->firstTimestamp = 0LL;
-  ret->timeStampCorrection= 0LL;
-  ret->previousPlaylistEndTimestamp = 0LL;
-  ret->superceeded = true;
-  return ret;
-}
-
-bool CDeMultiplexer::IsValidPacket(Packet* p)
-{
-  if (p==NULL) return false;
-  ivecPlaylists itp = m_vecActivePlaylists.begin();
-  while (itp != m_vecActivePlaylists.end())
-  {
-    PlaylistInfo * playlistInfo = *itp;
-    if (playlistInfo->playlist == p->nPlaylist && playlistInfo->clip == p->nClipNumber)
-    {
-      return true;
-    }
-    ++itp;
-  }
-  return false;
-}
-
-PlaylistInfo * CDeMultiplexer::GetPlaylistInfo(int playlist, int clip)
-{
-  PlaylistInfo * ret = NULL;
-  ivecPlaylists it = m_vecActivePlaylists.begin();
-  while (it != m_vecActivePlaylists.end())
-  {
-    PlaylistInfo * playlistInfo = *it;
-    if (playlistInfo->playlist == playlist && playlistInfo->clip == clip)
-    {
-      ret = playlistInfo;
-    }
-    ++it;
-  }
-  return ret;
-}
-
-PlaylistInfo* CDeMultiplexer::GetCurrentVideoPlaylist()
-{
-  PlaylistInfo * ret = NULL;
-  ivecPlaylists it = m_vecActivePlaylists.begin();
-  while (it != m_vecActivePlaylists.end())
-  {
-    PlaylistInfo * playlistInfo = *it;
-    if (playlistInfo->superceeded == 0)
-    {
-      return playlistInfo;
-    }
-    ++it;
-  }
-  return ret;
-}
-
-PlaylistInfo* CDeMultiplexer::GetLatestPlaylist()
-{
-  PlaylistInfo * ret = m_vecActivePlaylists.back();
-  return ret;
 }

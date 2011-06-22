@@ -237,9 +237,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer && buffer->nPlaylist != prevPl)
         {
+          LogDebug("Playlist changed From %d To %d",prevPl,buffer->nPlaylist);
           prevPl = buffer->nPlaylist;
+          buffer->bDiscontinuity=true;
         
-          if (demux.GetLatestPlaylist()->playlist == buffer->nPlaylist && m_pFilter->State() == State_Running)
+          if (m_pFilter->State() == State_Running)
           {
             demux.m_audioPlSeen = true;
 
@@ -306,15 +308,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (hasTimestamp)
         {
-          REFERENCE_TIME rtCompensation = demux.GetCompensationForClip(buffer->nPlaylist, buffer->nClipNumber);
-          cRefTimeStart = buffer->rtStart;
-          cRefTimeStart += rtCompensation;
-
-          cRefTimeOrig = cRefTimeStart;
-
-          cRefTimeStop = buffer->rtStop;
-          cRefTimeStop += rtCompensation;
-
           m_bPresentSample = true;
         }
         else
@@ -338,7 +331,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             //pSample->SetSyncPoint(TRUE);
-            pSample->SetTime(&cRefTimeStart, &cRefTimeStop);
+            pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
           }
           else
           {
@@ -351,9 +344,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           pSample->SetSyncPoint(buffer->bSyncPoint);
           ProcessAudioSample(buffer, pSample);
           
-          LogDebug("aud: corr %6.3f orig %6.3f clip: %d playlist: %d", 
-            cRefTimeStart / 10000000.0, cRefTimeOrig / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
-          
+          //LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
           delete buffer;
         }
         else
@@ -402,7 +393,8 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
       if ((MAX_BUFFER_SIZE - pBuffer->GetDataSize() >= packetSize ) && 
           (maxDurationInBytes >= pBuffer->GetDataSize() + packetSize))
       {
-        Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist, pBuffer->nClipNumber);
+        //this is now broken... TODO
+        Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist,pBuffer->nClipNumber);
         if (buf)
         {
           byte* data = buf->GetData();

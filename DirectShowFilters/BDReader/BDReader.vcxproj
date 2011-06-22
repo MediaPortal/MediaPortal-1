@@ -171,6 +171,7 @@
     <ClCompile Include="source\AudioPin.cpp" />
     <ClCompile Include="source\BDReader.cpp" />
     <ClCompile Include="source\ChannelInfo.cpp" />
+    <ClCompile Include="source\Clip.cpp" />
     <ClCompile Include="source\DeMultiplexer.cpp" />
     <ClCompile Include="source\FrameHeaderParser.cpp" />
     <ClCompile Include="source\GolombBuffer.cpp" />
@@ -178,9 +179,12 @@
     <ClCompile Include="source\LibBlurayWrapper.cpp" />
     <ClCompile Include="source\MpegPesParser.cpp" />
     <ClCompile Include="source\OverlayRenderer.cpp" />
+    <ClCompile Include="source\Packet.cpp" />
     <ClCompile Include="source\PatParser.cpp" />
     <ClCompile Include="source\PcrDecoder.cpp" />
     <ClCompile Include="source\PidTable.cpp" />
+    <ClCompile Include="source\Playlist.cpp" />
+    <ClCompile Include="source\PlaylistManager.cpp" />
     <ClCompile Include="source\PmtParser.cpp" />
     <ClCompile Include="source\SubtitlePin.cpp" />
     <ClCompile Include="source\VideoPin.cpp" />
@@ -193,6 +197,7 @@
     <ClInclude Include="source\AudioPin.h" />
     <ClInclude Include="source\BDEventObserver.h" />
     <ClInclude Include="source\BDReader.h" />
+    <ClInclude Include="source\Clip.h" />
     <ClInclude Include="source\DeMultiplexer.h" />
     <ClInclude Include="source\FrameHeaderParser.h" />
     <ClInclude Include="source\GolombBuffer.h" />
@@ -203,9 +208,12 @@
     <ClInclude Include="source\MpegPesParser.h" />
     <ClInclude Include="source\OSDTexture.h" />
     <ClInclude Include="source\OverlayRenderer.h" />
+    <ClInclude Include="source\Packet.h" />
     <ClInclude Include="source\PatParser.h" />
     <ClInclude Include="source\PcrDecoder.h" />
     <ClInclude Include="source\pidtable.h" />
+    <ClInclude Include="source\Playlist.h" />
+    <ClInclude Include="source\PlaylistManager.h" />
     <ClInclude Include="source\PmtParser.h" />
     <ClInclude Include="source\StdAfx.h" />
     <ClInclude Include="source\SubtitlePin.h" />
