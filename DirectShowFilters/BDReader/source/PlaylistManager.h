@@ -45,6 +45,7 @@ public:
   Packet* GetNextVideoPacket();
   bool HasAudio();
   bool HasVideo();
+
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
   CPlaylist * GetNextAudioPlaylist(CPlaylist* currentPlaylist);
@@ -62,6 +63,8 @@ protected:
   CPlaylist * m_currentVideoSubmissionPlaylist;
   int AudioPackets;
   int VideoPackets;
+
+  int m_VideoPacketsUntilLatestplaylist;
 
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;

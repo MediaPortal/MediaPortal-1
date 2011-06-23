@@ -661,6 +661,11 @@ Packet* CDeMultiplexer::GetVideo()
     ReadFromFile(false, true);
   }
   Packet * ret = m_playlistManager->GetNextVideoPacket();
+  if (ret==NULL)
+  {
+    LogDebug("No Video Data");
+  }
+  return ret;
   //if (m_filter.GetVideoPin()->IsConnected() && m_iAudioStream == -1) return NULL;
 
   //// If there is no video pid, then simply return NULL
@@ -729,6 +734,10 @@ Packet* CDeMultiplexer::GetAudio()
     ReadFromFile(true, false);
   }
   Packet * ret = m_playlistManager->GetNextAudioPacket();
+  if (ret==NULL)
+  {
+    LogDebug("No Audio Data");
+  }
   return ret;
   //int readSize = 0;
   //if (m_iAudioStream < 0) return NULL;

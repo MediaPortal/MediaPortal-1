@@ -51,11 +51,13 @@ public:
   int  CurrentAudioSubmissionClip();
   int  CurrentVideoSubmissionClip();
   bool IsFakingAudio();
+  bool IsFakeAudioAvailable();
   REFERENCE_TIME playlistFirstPacketTime;
   void ClearAllButCurrentClip(bool resetClip);
   int AudioPacketCount();
   int VideoPacketCount();
-
+  bool HasAudio();
+  bool HasVideo();
 
 protected:
   typedef vector<CClip*>::iterator ivecClip;

@@ -314,6 +314,13 @@ void CPlaylist::FlushVideo()
   }
 }
 
+bool CPlaylist::IsFakeAudioAvailable()
+{
+  if (m_currentAudioPlayBackClip==NULL) return false;
+  CClip * nextClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+  return nextClip->FakeAudioAvailable();
+}
+
 bool CPlaylist::IsFakingAudio()
 {
   if (m_currentAudioPlayBackClip==NULL) return false;
@@ -391,4 +398,28 @@ void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
   firstPESPacketSeen=false;
   firstPESTimeStamp=0LL;
+}
+
+bool CPlaylist::HasAudio()
+{
+  if (m_currentAudioPlayBackClip==NULL) return false;
+  if (m_currentAudioPlayBackClip->HasAudio()) return true;
+  CClip* nextClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+  if (nextClip!=m_currentAudioPlayBackClip)
+  {
+    return nextClip->HasAudio();
+  }
+  return false;
+}
+
+bool CPlaylist::HasVideo()
+{
+  if (m_currentVideoPlayBackClip==NULL) return false;
+  if (m_currentVideoPlayBackClip->HasVideo()) return true;
+  CClip* nextClip = GetNextVideoClip(m_currentVideoPlayBackClip);
+  if (nextClip!=m_currentVideoPlayBackClip)
+  {
+    return nextClip->HasVideo();
+  }
+  return false;
 }

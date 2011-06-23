@@ -29,6 +29,7 @@ CPlaylistManager::CPlaylistManager(void)
   m_currentVideoPlayBackPlaylist=NULL;
   m_currentAudioSubmissionPlaylist=NULL;
   m_currentVideoSubmissionPlaylist=NULL;
+  m_VideoPacketsUntilLatestplaylist=0;
   AudioPackets=0;
   VideoPackets=0;
 }
@@ -75,6 +76,9 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
     newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration);
     m_vecPlaylists.push_back(newPlaylist);
+    m_VideoPacketsUntilLatestplaylist=1;
+    m_currentAudioSubmissionPlaylist->SetFilledAudio();
+    m_currentAudioSubmissionPlaylist=m_vecPlaylists.back();
   }
   return ret;
 }
@@ -101,7 +105,7 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
     {
       ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet, true);
       AudioPackets++;
-      LogDebug("Audio Packet %I64d Forced in %d %d", packet->rtStart, m_currentAudioSubmissionPlaylist->nPlaylist,m_currentAudioSubmissionPlaylist->CurrentAudioSubmissionClip());
+//      LogDebug("Audio Packet %I64d Forced in %d %d", packet->rtStart, m_currentAudioSubmissionPlaylist->nPlaylist,m_currentAudioSubmissionPlaylist->CurrentAudioSubmissionClip());
     }
     else
     {
@@ -121,7 +125,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
     LogDebug("m_currentVideoSubmissionPlaylist is NULL!!!");
     return false;
   }
-  bool ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,false);
+  bool ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,true);
   if (ret) 
   {
     VideoPackets++;
@@ -129,21 +133,32 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
   }
   if (!ret)
   {
-    m_currentVideoSubmissionPlaylist->SetFilledVideo();
     CPlaylist* nextPlaylist = GetNextVideoSubmissionPlaylist(m_currentVideoSubmissionPlaylist);
     if (nextPlaylist == m_currentVideoSubmissionPlaylist)
     {
-      LogDebug("Failed to find video submission playlist");
+//      LogDebug("Failed to find video submission playlist");
       ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,true);
       VideoPackets++;
-      LogDebug("Video Packet %I64d Forced in %d %d", packet->rtStart, m_currentVideoSubmissionPlaylist->nPlaylist,m_currentVideoSubmissionPlaylist->CurrentVideoSubmissionClip());
+//      LogDebug("Video Packet %I64d Forced in %d %d", packet->rtStart, m_currentVideoSubmissionPlaylist->nPlaylist,m_currentVideoSubmissionPlaylist->CurrentVideoSubmissionClip());
     }
     else
     {
+      m_currentVideoSubmissionPlaylist->SetFilledVideo();
       m_currentVideoSubmissionPlaylist = nextPlaylist;
       ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,true, false);
     }
     if (ret) VideoPackets++;
+  }
+  if(m_VideoPacketsUntilLatestplaylist)
+  {
+    m_VideoPacketsUntilLatestplaylist=0;
+    CPlaylist* nextPlaylist = GetNextVideoSubmissionPlaylist(m_currentVideoSubmissionPlaylist);
+    if (nextPlaylist != m_currentVideoSubmissionPlaylist)
+    {
+      m_currentVideoSubmissionPlaylist->SetFilledVideo();
+      LogDebug("New rule change playlist to %d",nextPlaylist->nPlaylist);
+      m_currentVideoSubmissionPlaylist = nextPlaylist;
+    }
   }
   return ret;
 }
@@ -210,7 +225,7 @@ CPlaylist * CPlaylistManager::GetNextAudioPlaylist(CPlaylist* currentPlaylist)
     CPlaylist * playlist=*it;
     if (!playlist->IsEmptiedAudio() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
     {
-      LogDebug("Next Audio Playlist %d HasAudio %d",playlist->nPlaylist,playlist->IsFakingAudio());
+//      LogDebug("Next Audio Playlist %d HasAudio %d",playlist->nPlaylist,playlist->IsFakingAudio());
       return playlist;
     }
     ++it;
@@ -228,7 +243,7 @@ CPlaylist * CPlaylistManager::GetNextVideoPlaylist(CPlaylist* currentPlaylist)
     CPlaylist * playlist=*it;
     if (!playlist->IsEmptiedVideo() && playlist->nPlaylist !=currentPlaylist->nPlaylist)
     {
-      LogDebug("Next Video Playlist %d",playlist->nPlaylist);
+//      LogDebug("Next Video Playlist %d",playlist->nPlaylist);
       return playlist;
     }
     ++it;
@@ -303,21 +318,24 @@ void CPlaylistManager::FlushVideo(void)
 bool CPlaylistManager::HasAudio()
 {
   if (m_currentAudioPlayBackPlaylist==NULL) return false;
-  if (AudioPackets>0) return true;
-  if (m_currentAudioPlayBackPlaylist->IsFakingAudio()) return true;
-  CPlaylist * nextPlayList = GetNextAudioPlaylist(m_currentAudioPlayBackPlaylist);
-  if (nextPlayList==NULL)
+  if (m_currentAudioPlayBackPlaylist->HasAudio()) return true;
+  CPlaylist * nextPlaylist = GetNextAudioPlaylist(m_currentAudioPlayBackPlaylist);
+  if (nextPlaylist!=m_currentAudioPlayBackPlaylist)
   {
-    return (m_currentAudioPlayBackPlaylist->IsFakingAudio());
+    return nextPlaylist->HasAudio();
   }
-  else
-  {
-    return (nextPlayList->IsFakingAudio());
-  }
+  return false;
 }
 bool CPlaylistManager::HasVideo()
 {
-    return (VideoPackets>0);
+  if (m_currentVideoPlayBackPlaylist==NULL) return false;
+  if (m_currentVideoPlayBackPlaylist->HasVideo()) return true;
+  CPlaylist * nextPlaylist = GetNextVideoPlaylist(m_currentVideoPlayBackPlaylist);
+  if (nextPlaylist!=m_currentVideoPlayBackPlaylist)
+  {
+    return nextPlaylist->HasVideo();
+  }
+  return false;
 }
 
 void CPlaylistManager::ClearAllButCurrentClip(bool resetClip)

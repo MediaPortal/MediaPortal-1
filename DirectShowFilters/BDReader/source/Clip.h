@@ -54,6 +54,9 @@ public:
   int AudioPacketCount();
   int VideoPacketCount();
   void Reset();
+  bool FakeAudioAvailable();
+  bool HasAudio();
+  bool HasVideo();
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;

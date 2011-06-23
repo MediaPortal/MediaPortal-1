@@ -104,10 +104,19 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   return ret;
 }
 
+bool CClip::FakeAudioAvailable()
+{
+  return (audioPlaybackpoint<lastVideoPosition);
+}
+
+
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
   if (rtStart>playlistFirstPacketTime+clipDuration) superceeded|=SUPERCEEDED_AUDIO;
   if (superceeded&SUPERCEEDED_AUDIO) return NULL;
+  if (!FakeAudioAvailable()) return NULL;
+
+//  if (audioPlaybackpoint>lastVideoPosition) return NULL;
 
   Packet* packet = new Packet();
 
@@ -182,6 +191,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
   {
     packet->nClipNumber=nClip;
     m_vecClipVideoPackets.push_back(packet);
+    lastVideoPosition=packet->rtStart;
     return true;
   }
   if (!((superceeded&SUPERCEEDED_VIDEO)==SUPERCEEDED_VIDEO))
@@ -195,6 +205,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
         //belongs to this playlist
         packet->nClipNumber=nClip;
         m_vecClipVideoPackets.push_back(packet);
+        lastVideoPosition=packet->rtStart;
         ret=true;
       }
     }
@@ -269,3 +280,15 @@ void CClip::Reset()
   firstVideo=true;
 }
 
+bool CClip::HasAudio()
+{
+  if (m_vecClipAudioPackets.size()>0) return true;
+  if (noAudio && FakeAudioAvailable()) return true;
+  return false;
+}
+
+bool CClip::HasVideo()
+{
+  if (m_vecClipVideoPackets.size()>0) return true;
+  return false;
+}
