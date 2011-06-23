@@ -764,7 +764,7 @@ namespace TvPlugin
               GetChannels(true);
               LoadSchedules(true);
               _currentProgram = null;
-              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
+              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO && message.Param1 != (int)Window.WINDOW_VIDEO_INFO)
               {
                 _viewingTime = DateTime.Now;
                 _cursorY = 0;
