@@ -27,6 +27,7 @@ using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
@@ -241,7 +242,7 @@ namespace TvPlugin
     private void CheckTvServiceStatus()
     {
       // check if we are in a single seat environment, if so check if TvService is started - if not start it
-      if (TVHome.IsSingleSeat())
+      if (Network.IsSingleSeat())
       {
         Log.Info("TvSetup: Seems we are in a single seat environment - Checking if tvservice is running");
         ServiceController ctrl = null;

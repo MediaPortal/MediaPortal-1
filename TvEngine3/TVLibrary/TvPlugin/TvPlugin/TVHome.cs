@@ -94,8 +94,7 @@ namespace TvPlugin
       SeekToEndAfterPlayback = 8
     }
 
-    private Channel _resumeChannel = null;
-    private static bool? _isSingleSeat = null; //nullable
+    private Channel _resumeChannel = null;    
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
     private static ChannelNavigator m_navigator;
@@ -1180,7 +1179,7 @@ namespace TvPlugin
             Log.Info("Prefered language {0} is {1}", _preferredLanguages.Count, lang);
           }
         }
-        _usertsp = xmlreader.GetValueAsBool("tvservice", "usertsp", !IsSingleSeat());
+        _usertsp = xmlreader.GetValueAsBool("tvservice", "usertsp", !Network.IsSingleSeat());
         _recordingpath = xmlreader.GetValueAsString("tvservice", "recordingpath", "");
         _timeshiftingpath = xmlreader.GetValueAsString("tvservice", "timeshiftingpath", "");
 
@@ -1258,7 +1257,7 @@ namespace TvPlugin
 
       if (isWakeOnLanEnabled)
       {
-        if (!IsSingleSeat())
+        if (!Network.IsSingleSeat())
         {
           WakeOnLanManager wakeOnLanManager = new WakeOnLanManager();
 
@@ -2121,44 +2120,7 @@ namespace TvPlugin
         return true;
       }
       return g_Player.ShowFullScreenWindowTVDefault();
-    }
-
-    /// <summary>
-    /// check if we have a single seat environment
-    /// </summary>
-    /// <returns></returns>
-    public static bool IsSingleSeat()
-    {
-      if (!_isSingleSeat.HasValue)
-      {
-        //we only want to bother the RemoteControl interface once, then we will cache the value for later usage.
-        _isSingleSeat = false;
-        if (RemoteControl.HostName.ToLowerInvariant() == Environment.MachineName.ToLowerInvariant())
-        {
-          Log.Debug("TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Environment.MachineName = {1}",
-                    RemoteControl.HostName, Environment.MachineName);
-          _isSingleSeat = true;
-        }
-        else
-        {
-          IPHostEntry ipEntry = Dns.GetHostEntry(Environment.MachineName);
-          IPAddress[] addr = ipEntry.AddressList;
-
-          for (int i = 0; i < addr.Length; i++)
-          {
-            if (addr[i].ToString().Equals(RemoteControl.HostName))
-            {
-              Log.Debug(
-                "TVHome: IsSingleSeat - RemoteControl.HostName = {0} / Dns.GetHostEntry(Environment.MachineName) = {1}",
-                RemoteControl.HostName, addr[i]);
-              _isSingleSeat = true;
-              break;
-            }
-          }
-        }
-      }
-      return (bool)_isSingleSeat;
-    }
+    }    
 
     public static void UpdateTimeShift() { }
 
