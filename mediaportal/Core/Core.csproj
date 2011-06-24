@@ -489,6 +489,7 @@
     <Compile Include="Util\IMDBSearch.cs" />
     <Compile Include="Util\IMPawardsSearch.cs" />
     <Compile Include="Util\NativeFileSystemOperations.cs" />
+    <Compile Include="Util\Network.cs" />
     <Compile Include="Util\PathUtility.cs" />
     <Compile Include="Util\PRNG.cs" />
     <Compile Include="Util\ProcessLock.cs" />
