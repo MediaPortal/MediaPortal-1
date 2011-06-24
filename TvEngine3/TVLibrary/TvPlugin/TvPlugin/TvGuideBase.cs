@@ -760,11 +760,18 @@ namespace TvPlugin
               int iItemHeight = cntlChannelTemplate.Height;
               _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
 
-              UnFocus();
+              bool isPreviousWindowTvGuideRelated = (message.Param1 == (int)Window.WINDOW_TV_PROGRAM_INFO ||
+                                                     message.Param1 == (int)Window.WINDOW_VIDEO_INFO);
+
+              if (!isPreviousWindowTvGuideRelated)
+              {
+                UnFocus();  
+              }
+              
               GetChannels(true);
               LoadSchedules(true);
               _currentProgram = null;
-              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO && message.Param1 != (int)Window.WINDOW_VIDEO_INFO)
+              if (!isPreviousWindowTvGuideRelated)
               {
                 _viewingTime = DateTime.Now;
                 _cursorY = 0;
@@ -856,7 +863,7 @@ namespace TvPlugin
                 Log.Debug("TvGuideBase: SpinControl cntlTimeInterval is null!");
               }
 
-              if (message.Param1 != (int)Window.WINDOW_TV_PROGRAM_INFO)
+              if (!isPreviousWindowTvGuideRelated)              
               {
                 Update(true);
               }
