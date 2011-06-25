@@ -39,6 +39,7 @@ namespace MediaPortal.Player.PostProcessing
     bool LoadPostProcessing(IGraphBuilder graphBuilder);
     int CropVertical { get; set; }
     int CropHorizontal { get; set; }
+    void FreePostProcess();
   }
 
   public class PostProcessingEngine
@@ -119,6 +120,8 @@ namespace MediaPortal.Player.PostProcessing
         get { return 0; }
         set { }
       }
+
+      public void FreePostProcess() { }
 
       #endregion
     }

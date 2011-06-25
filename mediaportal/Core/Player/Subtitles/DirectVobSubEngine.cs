@@ -40,7 +40,6 @@ namespace MediaPortal.Player.Subtitles
     private List<string> intNames = new List<string>();
     private int extCount;
     private int current;
-    private FFDShowAPI ffdshowAPI;
 
     #region ISubEngine Members
 
@@ -59,7 +58,7 @@ namespace MediaPortal.Player.Subtitles
         LOGFONT logFont = new LOGFONT();
         int txtcolor;
         bool fShadow, fOutLine, fAdvancedRenderer = false;
-        int size = Marshal.SizeOf(typeof (LOGFONT));
+        int size = Marshal.SizeOf(typeof(LOGFONT));
         vobSub.get_TextSettings(logFont, size, out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
         FontStyle fontStyle = defStyle.fontIsBold ? FontStyle.Regular : FontStyle.Bold;
         Font Subfont = new Font(defStyle.fontName, defStyle.fontSize, fontStyle, GraphicsUnit.Point,
@@ -93,23 +92,9 @@ namespace MediaPortal.Player.Subtitles
           extCount--;
         }
       }
-      {
-        IBaseFilter baseFilter = null;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
 
-        ffdshowAPI = new FFDShowAPI((object)baseFilter);
+      FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
 
-        FFDShow.Interfaces.IffdshowDec ffdshowDec = baseFilter as FFDShow.Interfaces.IffdshowDec;
-        if (ffdshowDec != null)
-        {
-          ffdshowAPI.DoShowSubtitles = false;
-          Log.Info("DirectVobSubEngine - FFDshow interfaces found -> Disable Subtitle");
-        }
-      }
       Current = 0;
       Enable = autoShow;
       return true;

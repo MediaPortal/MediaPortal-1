@@ -38,6 +38,34 @@ namespace MediaPortal.Player.Subtitles
     private FFDShowAPI ffdshowAPI;
     private bool hasPostProcessing = false;
 
+    public static void DisableFFDShowSubtitles(IGraphBuilder graphBuilder)
+    {
+      // no instance of engine yet created or no ffdshow api, try to find it
+      IBaseFilter baseFilter = null;
+      DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
+      if (baseFilter == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
+      if (baseFilter == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
+
+      if (baseFilter != null)
+      {
+        IffdshowDec ffdshowDec = baseFilter as IffdshowDec;
+        if (ffdshowDec != null)
+        {
+          // use a temporary instance of the API, as it is only used here, to disable subs
+          FFDShowAPI tempffdshowAPI = new FFDShowAPI((object)baseFilter);
+          tempffdshowAPI.DoShowSubtitles = false;
+          Log.Info("FFDshow interfaces found -> Subtitles disabled");
+          tempffdshowAPI.Dispose();
+        }
+        else
+        {
+          DirectShowUtil.ReleaseComObject(baseFilter);
+        }
+      }
+    } 
+
     protected override void LoadAdvancedSettings(Settings xmlreader)
     {
       //TODO : custom settings for FFDShow (normally hold in presets, not sure if this is useful)
@@ -132,28 +160,22 @@ namespace MediaPortal.Player.Subtitles
         return false;
 
       ffdshowAPI = new FFDShowAPI((object)baseFilter);
-      //ffdshowAPI.checkFFDShowActive();
 
       IffdshowDec ffdshowDec = baseFilter as IffdshowDec;
       if (ffdshowDec == null)
       {
-        //SubEngine.engine = new SubEngine.DummyEngine2();
-        //Log.Info("FFDshow Engine: ffdshow no present -> disable FFDShowEngine");
         Log.Error("FFdshow interfaces not found. Try to update FFDShow");
       }
       else
         Log.Info("FFdshow interfaces found");
-
       Enable = autoShow;
       return true;
-      /*return MpcSubtitles.LoadSubtitles(
-        DirectShowUtil.GetUnmanagedDevice(GUIGraphicsContext.DX9Device),
-        size, filename, graphBuilder, subPaths);*/
     }
 
     public void FreeSubtitles()
     {
-      //MpcSubtitles.FreeSubtitles();
+      if (ffdshowAPI != null)
+        ffdshowAPI.Dispose();
     }
 
     public void SaveToDisk()
@@ -341,6 +363,12 @@ namespace MediaPortal.Player.Subtitles
         ffdshowAPI.DoCropZoom = true;
         ffdshowAPI.CropHorizontal = value;
       }
+    }
+
+    public void FreePostProcess()
+    {
+      if (ffdshowAPI != null)
+        ffdshowAPI.Dispose();
     }
 
     #endregion

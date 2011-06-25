@@ -32,6 +32,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Player.Subtitles;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
@@ -412,6 +413,7 @@ namespace MediaPortal.Player
         basicAudio = null;
         basicVideo = null;
         SubEngine.GetInstance().FreeSubtitles();
+        PostProcessingEngine.GetInstance().FreePostProcess();
 
         if (Vmr9 != null)
         {

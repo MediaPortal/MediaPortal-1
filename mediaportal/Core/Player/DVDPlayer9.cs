@@ -282,8 +282,6 @@ namespace MediaPortal.Player
 
         #region PostProcessingEngine Detection
 
-        PostProcessingEngine.engine = new FFDShowEngine();
-        PostProcessingEngine.engine.LoadPostProcessing(_graphBuilder);
         IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
         if (!postengine.LoadPostProcessing(_graphBuilder))
         {
