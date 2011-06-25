@@ -260,8 +260,26 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             return NOERROR;
           }
         }
+/*
+        if (buffer->pmt==NULL)
+        {
+          LogDebug("Missing Audio PMT");
+        }
+        else
+        {
+          LogDebug("Audio buffer %I64d format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}",buffer->rtStart, buffer->pmt->cbFormat,
+            buffer->pmt->formattype.Data1, buffer->pmt->formattype.Data2, buffer->pmt->formattype.Data3,
+            buffer->pmt->formattype.Data4[0], buffer->pmt->formattype.Data4[1], buffer->pmt->formattype.Data4[2],
+            buffer->pmt->formattype.Data4[3], buffer->pmt->formattype.Data4[4], buffer->pmt->formattype.Data4[5], 
+            buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
+        }
+*/
+        if (buffer->pmt->cbFormat==0)
+        {
+          continue;
+        }
 
-        if (m_mt != *buffer->pmt)
+        if (buffer->pmt && m_mt != *buffer->pmt)
         {
           HRESULT hrAccept = S_FALSE;
 

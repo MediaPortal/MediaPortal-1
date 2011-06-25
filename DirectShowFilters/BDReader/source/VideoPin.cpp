@@ -439,6 +439,19 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
+/*        if (buffer->pmt==NULL)
+        {
+          LogDebug("Missing Video PMT");
+        }
+        else
+        {
+          LogDebug("Video buffer %I64d format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}",buffer->rtStart, buffer->pmt->cbFormat,
+            buffer->pmt->formattype.Data1, buffer->pmt->formattype.Data2, buffer->pmt->formattype.Data3,
+            buffer->pmt->formattype.Data4[0], buffer->pmt->formattype.Data4[1], buffer->pmt->formattype.Data4[2],
+            buffer->pmt->formattype.Data4[3], buffer->pmt->formattype.Data4[4], buffer->pmt->formattype.Data4[5], 
+            buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
+        }
+*/
         if (buffer->pmt && m_mt.cbFormat != buffer->pmt->cbFormat)
         {
           LogDebug("NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
