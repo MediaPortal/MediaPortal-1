@@ -60,6 +60,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
     CClip* nextAudioClip = GetNextAudioClip(m_currentAudioPlayBackClip);
     if (m_currentAudioPlayBackClip!=nextAudioClip)
     {
+      m_currentAudioPlayBackClip->Superceed(SUPERCEEDED_AUDIO);
       m_currentAudioPlayBackClip=nextAudioClip;
       ret=ReturnNextAudioPacket();
     }
@@ -200,7 +201,7 @@ CClip * CPlaylist::GetNextAudioClip(CClip * currentClip)
     CClip * clip=*it;
     if (!clip->IsSuperceeded(SUPERCEEDED_AUDIO) && currentClip->nClip !=clip->nClip)
     {
-      LogDebug("New Audio Clip %d",clip->nClip);
+//      LogDebug("New Audio Clip %d",clip->nClip);
       return clip;
     }
     ++it;
@@ -217,7 +218,7 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
     CClip * clip=*it;
     if (!clip->IsSuperceeded(SUPERCEEDED_VIDEO) && currentClip->nClip !=clip->nClip)
     {
-      LogDebug("New Video Clip %d",clip->nClip);
+//      LogDebug("New Video Clip %d",clip->nClip);
       return clip;
     }
     ++it;
