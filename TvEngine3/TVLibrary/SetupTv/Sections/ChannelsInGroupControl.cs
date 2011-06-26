@@ -346,6 +346,16 @@ namespace SetupTv.Sections
       }
     }
 
+    private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      Channel ch = ((GroupMap)e.Item.Tag).ReferencedChannel();
+      if (ch.VisibleInGuide != e.Item.Checked)
+      {
+        ch.VisibleInGuide = e.Item.Checked;
+        ch.Persist();
+      }
+    }
+
     private void mpButtonPreview_Click(object sender, EventArgs e)
     {
       ListView.SelectedIndexCollection indexes = listView1.SelectedIndices;
