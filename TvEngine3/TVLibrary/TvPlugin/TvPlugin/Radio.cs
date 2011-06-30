@@ -65,7 +65,7 @@ namespace TvPlugin
     private string currentFolder = null;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
-    private bool hideAllChannelsGroup = false;
+    private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
     private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
@@ -245,16 +245,16 @@ namespace TvPlugin
     public override void OnAdded()
     {
       Log.Info("RadioHome:OnAdded");
+
       LoadSettings();
       LoadChannelGroups();
-    } 
+    }    
 
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msgStopRecorder);
-      LoadSettings();
+      GUIWindowManager.SendMessage(msgStopRecorder);      
       switch (currentSortMethod)
       {
         case SortMethod.Name:
@@ -272,9 +272,7 @@ namespace TvPlugin
         case SortMethod.Number:
           btnSortBy.SelectedItem = 4;
           break;
-      }
-
-      LoadChannelGroups();
+      }      
 
       SelectCurrentItem();
       LoadDirectory(currentFolder);
@@ -286,14 +284,13 @@ namespace TvPlugin
         Play(facadeLayout.SelectedListItem);
       }
 
-      btnSortBy.SortChanged += SortChanged;
-    }
+      btnSortBy.SortChanged += SortChanged;       
+    }    
 
-    private void LoadChannelGroups() 
+    private static void LoadChannelGroups()
     {
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
-
 
       TvBusinessLayer layer = new TvBusinessLayer();
       IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
@@ -301,19 +298,24 @@ namespace TvPlugin
       {
         _currentChannel = channels[0];
       }
-      
-      if(AllRadioGroups.Count == 0)
+
+      if (AllRadioGroups.Count == 0)
       {
         IList<RadioChannelGroup> allGroups = RadioChannelGroup.ListAll();
-        
-        foreach (RadioChannelGroup group in allGroups) {
-          if(!(hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels)))
+
+        foreach (RadioChannelGroup group in allGroups)
+        {
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
+              allGroups.Count > 1)
           {
-            AllRadioGroups.Add(group);
+            continue;
           }
+
+          AllRadioGroups.Add(group);
         }
       }
     }
+
 
     private void SetLastChannel()
     {
