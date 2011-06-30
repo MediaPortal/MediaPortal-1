@@ -1640,6 +1640,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
             }
           }  
+          else
+          {
+            m_bSetVideoDiscontinuity = true;
+          }
           m_VideoValidPES=true ;                                    // We've just completed a frame, set flag until problem clears it 
           m_pl.RemoveAll() ;                                        
         }

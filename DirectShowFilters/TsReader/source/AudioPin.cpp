@@ -181,7 +181,6 @@ HRESULT CAudioPin::BreakConnect()
   return CSourceStream::BreakConnect();
 }
 
-extern int ShowBuffer;
 
 HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
@@ -200,7 +199,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       //we dont try to read any packets, but simply return...
       if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping())// /*|| m_bSeeking*/ || m_pTsReaderFilter->IsSeekingToEof())
       {
-        //if (ShowBuffer) LogDebug("aud:isseeking");
+        //if (m_pTsReaderFilter->m_ShowBufferAudio) LogDebug("aud:isseeking");
         Sleep(20);
         pSample->SetTime(NULL,NULL);
         pSample->SetActualDataLength(0);
@@ -391,11 +390,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               float clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
               float fTime=(float)cRefTime.Millisecs()/1000.0f - clock ;
 
-              if (ShowBuffer || fTime < 0.030)
+              if (m_pTsReaderFilter->m_ShowBufferAudio || fTime < 0.030)
               {
                 LogDebug("Aud/Ref : %03.3f, Late              Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f, (float)cRefTime.Millisecs()/1000.0f, fTime,cntA,cntV, clock, m_pTsReaderFilter->State());
               }
-              if (ShowBuffer) ShowBuffer--;
+              if (m_pTsReaderFilter->m_ShowBufferAudio) m_pTsReaderFilter->m_ShowBufferAudio--;
             }
           }
           else
