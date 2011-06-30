@@ -191,10 +191,6 @@ private:
   bool m_VideoValidPES;
   bool m_mVideoValidPES;
   int  m_WaitHeaderPES;
-  REFERENCE_TIME m_FirstAudioSample;
-  REFERENCE_TIME m_LastAudioSample;
-  REFERENCE_TIME m_FirstVideoSample;
-  REFERENCE_TIME m_LastVideoSample;
 
   Packet* m_pCurrentSubtitleBuffer;
   Packet* m_pCurrentVideoBuffer;

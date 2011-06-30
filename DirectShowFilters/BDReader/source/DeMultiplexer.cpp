@@ -80,12 +80,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bDoDelayedRebuild = false;
   SetMediaChanging(false);
 
-  m_FirstAudioSample = 0x7FFFFFFF00000000LL;
-  m_LastAudioSample = -1;
-
   m_WaitHeaderPES = -1 ;
-  m_FirstVideoSample = 0x7FFFFFFF00000000LL;
-  m_LastVideoSample = -1;
   m_mpegPesParser = new CMpegPesParser();
 
   m_audioStreamsToBeParsed = 0;
@@ -481,8 +476,6 @@ void CDeMultiplexer::FlushVideo(bool pSoftFlush)
 
   if (!pSoftFlush)
   {
-    m_FirstVideoSample = 0x7FFFFFFF00000000LL;
-    m_LastVideoSample = -1;
     m_lastVideoPTS.FromClock(0);
     m_lastVideoPTS.IsValid = false;
 
@@ -545,8 +538,6 @@ void CDeMultiplexer::FlushAudio(bool pSoftFlush)
 
   if (!pSoftFlush)
   {
-    m_FirstAudioSample = 0x7FFFFFFF00000000LL;
-    m_LastAudioSample = -1;
     m_lastAudioPTS.FromClock(0);
     m_lastAudioPTS.IsValid = false;
 
@@ -1113,21 +1104,21 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   CAutoLock lock (&m_sectionAudio);
   if (header.PayloadUnitStart)
   {
-    if (!m_pCurrentAudioBuffer)
-    {
-      m_pCurrentAudioBuffer = new Packet();
-    }
-
-    CMediaType pmt;
-    GetAudioStreamType(m_iAudioStream, pmt);
-
-    m_pCurrentAudioBuffer->pmt = CreateMediaType(&pmt);
 
     byte* p = tsPacket + header.PayLoadStart;
     if ((p[0] == 0) && (p[1] == 0) && (p[2] == 1))
     {
       CPcr pts;
       CPcr dts;
+
+
+
+//      if (m_pCurrentAudioBuffer) m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
+      m_pCurrentAudioBuffer = new Packet();
+      CMediaType pmt;
+      GetAudioStreamType(m_iAudioStream, pmt);
+      if (!m_pCurrentAudioBuffer->pmt) m_pCurrentAudioBuffer->pmt = CreateMediaType(&pmt);
+
       if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
       {
         if (m_lastAudioPTS.ToClock() == 0 ||
@@ -1157,8 +1148,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         m_pCurrentAudioBuffer->nPlaylist = m_nAudioPl;
 
         REFERENCE_TIME Ref = m_pCurrentAudioBuffer->rtStart;
-        if (Ref < m_FirstAudioSample) m_FirstAudioSample = Ref;
-        if (Ref > m_LastAudioSample) m_LastAudioSample = Ref;
 
         BYTE pesHeader[256];
 
@@ -1221,16 +1210,17 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     {
 //      m_vecAudioBuffers.push_back(m_pCurrentAudioBuffer);
       m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
-      m_pCurrentAudioBuffer = new Packet();
+//      m_pCurrentAudioBuffer = new Packet();
+      m_pCurrentAudioBuffer=NULL;
       m_nAudioPesLenght = 0;
     }
-    else if (m_pCurrentAudioBuffer->GetCount() > m_nAudioPesLenght)
-    {
-      delete m_pCurrentAudioBuffer;
-      m_pCurrentAudioBuffer = new Packet();
-      m_nAudioPesLenght = 0;
-      LogDebug("demux: mismatch in audio PES packet lenght! (%d vs. %d)", m_nAudioPesLenght, m_pCurrentAudioBuffer->GetCount());
-    }
+//    else if (m_pCurrentAudioBuffer->GetCount() > m_nAudioPesLenght)
+//    {
+//      delete m_pCurrentAudioBuffer;
+//      m_pCurrentAudioBuffer = new Packet();
+//      m_nAudioPesLenght = 0;
+//      LogDebug("demux: mismatch in audio PES packet lenght! (%d vs. %d)", m_nAudioPesLenght, m_pCurrentAudioBuffer->GetCount());
+//    }
   }
 }
 
@@ -1339,11 +1329,6 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
   {
     if (p->rtStart != Packet::INVALID_TIME)
     {
-      if (timestamp.IsValid)
-      {
-        if (p->rtStart < m_FirstVideoSample) m_FirstVideoSample = p->rtStart;
-        if (p->rtStart > m_LastVideoSample) m_LastVideoSample = p->rtStart;
-      }
       m_LastValidFrameCount++;
     }
     
@@ -2043,12 +2028,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               p->rtStop = p->rtStart + 1;
               p->nClipNumber = m_p->nClipNumber;
               p->nPlaylist = m_p->nPlaylist;
-
-              if(m_CurrentVideoPts.IsValid)
-              {
-                if (p->rtStart < m_FirstVideoSample) m_FirstVideoSample = p->rtStart;
-                if (p->rtStart > m_LastVideoSample) m_LastVideoSample = p->rtStart;
-              }
 
               if (m_bSetVideoDiscontinuity)
               {
