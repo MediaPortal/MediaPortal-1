@@ -190,6 +190,19 @@ namespace TvPlugin
       }
     }
 
+    private int ChannelOffset
+    {
+      get { return _channelOffset; }
+      set
+      {
+        _channelOffset = value;
+        if (_channelOffset < 0)
+        {
+          _channelOffset = 0;
+        }
+      }
+    }
+
     #endregion
 
     #region ctor
@@ -244,7 +257,7 @@ namespace TvPlugin
           _currentChannel = channels[0];
         }
         _cursorX = xmlreader.GetValueAsInt("tvguide", "ypos", 0);
-        _channelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
+        ChannelOffset = xmlreader.GetValueAsInt("tvguide", "yoffset", 0);
         _byIndex = xmlreader.GetValueAsBool("mytv", "byindex", true);
         _showChannelNumber = xmlreader.GetValueAsBool("mytv", "showchannelnumber", false);
         _channelNumberMaxLength = xmlreader.GetValueAsInt("mytv", "channelnumbermaxlength", 3);
@@ -269,7 +282,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue("tvguide", "channel", _currentChannel);
         xmlwriter.SetValue("tvguide", "ypos", _cursorX.ToString());
-        xmlwriter.SetValue("tvguide", "yoffset", _channelOffset.ToString());
+        xmlwriter.SetValue("tvguide", "yoffset", ChannelOffset.ToString());
         xmlwriter.SetValue("tvguide", "timeperblock", _timePerBlock);
       }
     }
@@ -347,7 +360,7 @@ namespace TvPlugin
                     _cursorX = control.GetID - (int)Controls.IMG_CHAN1;
                     _cursorY = 0;
 
-                    if (_singleChannelNumber != _cursorX + _channelOffset)
+                    if (_singleChannelNumber != _cursorX + ChannelOffset)
                     {
                       Update(false);
                     }
@@ -619,7 +632,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", TVHome.Navigator.CurrentGroup.GroupName);
 
         _cursorY = 1; // cursor should be on the program guide item
-        _channelOffset = 0;
+        ChannelOffset = 0;
         // reset to top; otherwise focus could be out of screen if new group has less then old position
         _cursorX = 0; // first channel
         GetChannels(true);
@@ -671,12 +684,12 @@ namespace TvPlugin
               {
                 fPercentage *= (float)_totalProgramCount;
                 int iChan = (int)fPercentage;
-                _channelOffset = 0;
+                ChannelOffset = 0;
                 _cursorX = 0;
                 while (iChan >= _channelCount)
                 {
                   iChan -= _channelCount;
-                  _channelOffset += _channelCount;
+                  ChannelOffset += _channelCount;
                 }
                 _cursorX = iChan;
               }
@@ -684,12 +697,12 @@ namespace TvPlugin
               {
                 fPercentage *= (float)_channelList.Count;
                 int iChan = (int)fPercentage;
-                _channelOffset = 0;
+                ChannelOffset = 0;
                 _cursorX = 0;
                 while (iChan >= _channelCount)
                 {
                   iChan -= _channelCount;
-                  _channelOffset += _channelCount;
+                  ChannelOffset += _channelCount;
                 }
                 _cursorX = iChan;
               }
@@ -752,13 +765,9 @@ namespace TvPlugin
               GUIGraphicsContext.AutoHideTopBar = _autoHideTopbar;
               GUIGraphicsContext.TopBarHidden = _autoHideTopbar;
               GUIGraphicsContext.DisableTopBar = _disableTopBar;
-              LoadSettings();
-              GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
-              GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
+              LoadSettings();              
 
-              int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
-              int iItemHeight = cntlChannelTemplate.Height;
-              _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
+              UpdateChannelCount();
 
               bool isPreviousWindowTvGuideRelated = (message.Param1 == (int)Window.WINDOW_TV_PROGRAM_INFO ||
                                                      message.Param1 == (int)Window.WINDOW_VIDEO_INFO);
@@ -776,7 +785,7 @@ namespace TvPlugin
                 _viewingTime = DateTime.Now;
                 _cursorY = 0;
                 _cursorX = 0;
-                _channelOffset = 0;
+                ChannelOffset = 0;
                 _singleChannelView = false;
                 _showChannelLogos = false;
                 if (TVHome.Card.IsTimeShifting)
@@ -796,14 +805,14 @@ namespace TvPlugin
               while (_cursorX >= _channelCount)
               {
                 _cursorX -= _channelCount;
-                _channelOffset += _channelCount;
+                ChannelOffset += _channelCount;
               }
               // Mantis 3579: the above lines can lead to too large channeloffset. 
               // Now we check if the offset is too large, and if it is, we reduce it and increase the cursor position accordingly
-              if (!_guideContinuousScroll && (_channelOffset > _channelList.Count - _channelCount))
+              if (!_guideContinuousScroll && (ChannelOffset > _channelList.Count - _channelCount))
               {
-                _cursorX += _channelOffset - (_channelList.Count - _channelCount);
-                _channelOffset = _channelList.Count - _channelCount;
+                _cursorX += ChannelOffset - (_channelList.Count - _channelCount);
+                ChannelOffset = _channelList.Count - _channelCount;
               }
               GUISpinControl cntlDay = GetControl((int)Controls.SPINCONTROL_DAY) as GUISpinControl;
               if (cntlDay != null)
@@ -958,7 +967,7 @@ namespace TvPlugin
           //if (_cursorY == -1)
           //	_cursorY = 0;
           _cursorY = 1; // cursor should be on the program guide item
-          _channelOffset = 0;
+          ChannelOffset = 0;
           // reset to top; otherwise focus could be out of screen if new group has less then old position
           _cursorX = 0; // set to top, otherwise index could be out of range in new group
 
@@ -1084,6 +1093,22 @@ namespace TvPlugin
     #endregion
 
     #region private members
+
+    private void UpdateChannelCount()
+    {
+      GetChannels(false);
+      GUIControl cntlPanel = GetControl((int)Controls.PANEL_BACKGROUND);
+      GUIImage cntlChannelTemplate = (GUIImage)GetControl((int)Controls.CHANNEL_TEMPLATE);
+
+      int iHeight = cntlPanel.Height + cntlPanel.YPosition - cntlChannelTemplate.YPosition;
+      int iItemHeight = cntlChannelTemplate.Height;
+      _channelCount = (int)(((float)iHeight) / ((float)iItemHeight));
+
+      if (_channelCount > _channelList.Count)
+      {
+        _channelCount = _channelList.Count;
+      }
+    }
 
     private void Update(bool selectCurrentShow)
     {
@@ -1344,9 +1369,9 @@ namespace TvPlugin
 
         LoadSchedules(false);
 
-        if (_channelOffset > _channelList.Count)
+        if (ChannelOffset > _channelList.Count)
         {
-          _channelOffset = 0;
+          ChannelOffset = 0;
           _cursorX = 0;
         }
 
@@ -1379,7 +1404,7 @@ namespace TvPlugin
 
           List<Channel> visibleChannels = new List<Channel>();
 
-          int chan = _channelOffset;
+          int chan = ChannelOffset;
           for (int iChannel = 0; iChannel < _channelCount; iChannel++)
           {
             if (chan < _channelList.Count)
@@ -1398,7 +1423,7 @@ namespace TvPlugin
           // make sure the TV Guide heading is visiable and the single channel labels are not.
           setGuideHeadingVisibility(true);
           setSingleChannelLabelVisibility(false);
-          chan = _channelOffset;
+          chan = ChannelOffset;
 
           int firstButtonYPos = 0;
           int lastButtonYPos = 0;
@@ -1441,7 +1466,7 @@ namespace TvPlugin
             vertLine.Height = lastButtonYPos - vertLine.YPosition + (firstButtonYPos - vertLine.YPosition);
           }
           // update selected channel
-          _singleChannelNumber = _cursorX + _channelOffset;
+          _singleChannelNumber = _cursorX + ChannelOffset;
           if (_singleChannelNumber >= _channelList.Count)
           {
             _singleChannelNumber -= _channelList.Count;
@@ -1485,7 +1510,7 @@ namespace TvPlugin
       {
         return;
       }
-      int channel = _cursorX + _channelOffset;
+      int channel = _cursorX + ChannelOffset;
       while (channel >= _channelList.Count)
       {
         channel -= _channelList.Count;
@@ -1643,7 +1668,7 @@ namespace TvPlugin
     private void RenderSingleChannel(Channel channel)
     {
       string strLogo;
-      int chan = _channelOffset;
+      int chan = ChannelOffset;
       for (int iChannel = 0; iChannel < _channelCount; iChannel++)
       {
         if (chan < _channelList.Count)
@@ -2858,31 +2883,31 @@ namespace TvPlugin
           if (_guideContinuousScroll)
           {
             // We're at the bottom of the last page of channels.
-            if (_channelOffset >= _channelList.Count)
+            if (ChannelOffset >= _channelList.Count)
             {
               // Position to first channel in guide without moving the cursor (implements continuous loops of channels).
-              _channelOffset = 0;
+              ChannelOffset = 0;
             }
             else
             {
               // Advance to next channel, wrap around if at end of list.
-              _channelOffset++;
-              if (_channelOffset >= _channelList.Count)
+              ChannelOffset++;
+              if (ChannelOffset >= _channelList.Count)
               {
-                _channelOffset = 0;
+                ChannelOffset = 0;
               }
             }
           }
           else
           {
             // Are we at the bottom of the lst page of channels?
-            if (_channelOffset > 0 && _channelOffset >= (_channelList.Count-1) - _cursorX)
+            if (ChannelOffset > 0 && ChannelOffset >= (_channelList.Count-1) - _cursorX)
             {
               // We're at the bottom of the last page of channels.
               // Reposition the guide to the top only after the key/button has been released and pressed again.
               if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
               {
-                _channelOffset = 0;
+                ChannelOffset = 0;
                 _cursorX = 0;
                 _lastCommandTime = AnimationTimer.TickCount;
               }
@@ -2890,7 +2915,7 @@ namespace TvPlugin
             else
             {
               // Advance to next channel.
-              _channelOffset++;
+              ChannelOffset++;
               _lastCommandTime = AnimationTimer.TickCount;
             }
           }
@@ -2969,18 +2994,18 @@ namespace TvPlugin
       {
         if (_cursorX == 0)
         {
-          if (_channelOffset > 0)
+          if (ChannelOffset > 0)
           {
             // Somewhere in the middle of the guide; just scroll up.
-            _channelOffset--;
+            ChannelOffset--;
           }
-          else if (_channelOffset == 0)
+          else if (ChannelOffset == 0)
           {
             // We're at the top of the first page of channels.
             // Reposition the guide to the bottom only after the key/button has been released and pressed again.
             if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
             {
-              _channelOffset = _channelList.Count - _channelCount;
+              ChannelOffset = _channelList.Count - _channelCount;
               _cursorX = _channelCount - 1;
             }
           }
@@ -3012,33 +3037,33 @@ namespace TvPlugin
       {
         if (_guideContinuousScroll)
         {
-          if (_channelOffset == 0 && _channelList.Count > _channelCount)
+          if (ChannelOffset == 0 && _channelList.Count > _channelCount)
           {
             // We're at the top of the first page of channels.  Position to last channel in guide.
-            _channelOffset = _channelList.Count - 1;
+            ChannelOffset = _channelList.Count - 1;
           }
-          else if (_channelOffset > 0)
+          else if (ChannelOffset > 0)
           {
             // Somewhere in the middle of the guide; just scroll up.
-            _channelOffset--;
+            ChannelOffset--;
           }
         }
         else
         {
-          if (_channelOffset > 0)
+          if (ChannelOffset > 0)
           {
             // Somewhere in the middle of the guide; just scroll up.
-            _channelOffset--;
+            ChannelOffset--;
             _lastCommandTime = AnimationTimer.TickCount;
           }
           // Are we at the top of the first page of channels?
-          else if (_channelOffset == 0 && _cursorX == 0)
+          else if (ChannelOffset == 0 && _cursorX == 0)
           {
             // We're at the top of the first page of channels.
             // Reposition the guide to the bottom only after the key/button has been released and pressed again.
             if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
             {
-              _channelOffset = _channelList.Count - _channelCount;
+              ChannelOffset = _channelList.Count - _channelCount;
               _cursorX = _channelCount - 1;
               _lastCommandTime = AnimationTimer.TickCount;
             }
@@ -3060,7 +3085,7 @@ namespace TvPlugin
     {
       // if cursor is on a program in guide, try to find the "best time matching" program in new channel
       int iCurY = _cursorX;
-      int iCurOff = _channelOffset;
+      int iCurOff = ChannelOffset;
       int iX1, iX2;
       int iControlId = GUIDE_COMPONENTID_START + _cursorX * RowID + (_cursorY - 1) * ColID;
       GUIControl control = GetControl(iControlId);
@@ -3144,12 +3169,12 @@ namespace TvPlugin
       if (!bOK)
       {
         _cursorX = iCurY;
-        _channelOffset = iCurOff;
+        ChannelOffset = iCurOff;
       }
       if (updateScreen)
       {
         Correct();
-        if (iCurOff == _channelOffset)
+        if (iCurOff == ChannelOffset)
         {
           UpdateCurrentProgram();
           return;
@@ -3314,7 +3339,7 @@ namespace TvPlugin
       // update selected channel
       if (!_singleChannelView)
       {
-        _singleChannelNumber = _cursorX + _channelOffset;
+        _singleChannelNumber = _cursorX + ChannelOffset;
         if (_singleChannelNumber < 0)
         {
           _singleChannelNumber = 0;
@@ -3582,7 +3607,7 @@ namespace TvPlugin
       {
         _backupCursorX = _cursorY;
         _backupCursorY = _cursorX;
-        _backupChannelOffset = _channelOffset;
+        _backupChannelOffset = ChannelOffset;
 
         _programOffset = _cursorY = _cursorX = 0;
         _recalculateProgramOffset = true;
@@ -3592,7 +3617,7 @@ namespace TvPlugin
         //focus current channel
         _cursorY = 0;
         _cursorX = _backupCursorY;
-        _channelOffset = _backupChannelOffset;
+        ChannelOffset = _backupChannelOffset;
       }
       Update(true);
       SetFocus();
@@ -3874,14 +3899,14 @@ namespace TvPlugin
         else
         {
           // If we're on the first channel in the guide then allow one step to get back to the end of the guide.
-          if (_channelOffset == 0 && _cursorX == 0)
+          if (ChannelOffset == 0 && _cursorX == 0)
           {
             Steps = 1;
           }
           else
           {
             // only number of additional avail channels
-            Steps = Math.Min(_channelOffset + _cursorX, _channelCount);
+            Steps = Math.Min(ChannelOffset + _cursorX, _channelCount);
           }
         }
       }
@@ -3909,14 +3934,14 @@ namespace TvPlugin
         else
         {
           // If we're on the last channel in the guide then allow one step to get back to top of guide.
-          if (_channelOffset + (_cursorX + 1) == _channelList.Count)
+          if (ChannelOffset + (_cursorX + 1) == _channelList.Count)
           {
             Steps = 1;
           }
           else
           {
             // only number of additional avail channels
-            Steps = Math.Min(_channelList.Count - _channelOffset - _cursorX - 1, _channelCount);
+            Steps = Math.Min(_channelList.Count - ChannelOffset - _cursorX - 1, _channelCount);
           }
         }
       }
@@ -4082,21 +4107,21 @@ namespace TvPlugin
       if (iChannelNr >= 0 && iChannelNr < _channelList.Count)
       {
         UnFocus();
-        _channelOffset = 0;
+        ChannelOffset = 0;
         _cursorX = 0;
 
         // Last page adjust (To get a full page channel listing)
         if (iChannelNr > _channelList.Count - Math.Min(_channelList.Count, _channelCount) + 1)
           // minimum of available channel/max visible channels
         {
-          _channelOffset = _channelList.Count - _channelCount;
-          iChannelNr = iChannelNr - _channelOffset;
+          ChannelOffset = _channelList.Count - _channelCount;
+          iChannelNr = iChannelNr - ChannelOffset;
         }
 
         while (iChannelNr >= Math.Min(_channelList.Count, _channelCount))
         {
           iChannelNr -= Math.Min(_channelList.Count, _channelCount);
-          _channelOffset += Math.Min(_channelList.Count, _channelCount);
+          ChannelOffset += Math.Min(_channelList.Count, _channelCount);
         }
         _cursorX = iChannelNr;
       }
@@ -4175,12 +4200,12 @@ namespace TvPlugin
       {
         return;
       }
-      int channel = _cursorX + _channelOffset;
+      int channel = _cursorX + ChannelOffset;
       while (channel > 0 && channel >= _channelList.Count)
       {
         channel -= _channelList.Count;
       }
-      float current = (float)(_cursorX + _channelOffset);
+      float current = (float)(_cursorX + ChannelOffset);
       float total = (float)_channelList.Count - 1;
 
       if (_singleChannelView)

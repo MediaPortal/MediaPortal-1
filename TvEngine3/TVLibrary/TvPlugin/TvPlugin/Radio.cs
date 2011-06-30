@@ -244,7 +244,9 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      Log.Info("RadioHome:OnAdded");     
+      Log.Info("RadioHome:OnAdded");
+      LoadSettings();
+      LoadChannelGroups();
     } 
 
     protected override void OnPageLoad()
@@ -272,6 +274,23 @@ namespace TvPlugin
           break;
       }
 
+      LoadChannelGroups();
+
+      SelectCurrentItem();
+      LoadDirectory(currentFolder);
+
+      SetLastChannel();
+
+      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
+      {
+        Play(facadeLayout.SelectedListItem);
+      }
+
+      btnSortBy.SortChanged += SortChanged;
+    }
+
+    private void LoadChannelGroups() 
+    {
       Settings xmlreader = new MPSettings();
       string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
 
@@ -294,18 +313,6 @@ namespace TvPlugin
           }
         }
       }
-      
-      SelectCurrentItem();
-      LoadDirectory(currentFolder);
-
-      SetLastChannel();
-
-      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
-      {
-        Play(facadeLayout.SelectedListItem);
-      }
-
-      btnSortBy.SortChanged += SortChanged;
     }
 
     private void SetLastChannel()
