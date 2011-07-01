@@ -821,6 +821,7 @@ namespace MediaPortal.Player
 
         if (_subSelector != null)
         {
+          if (value != -1)
           _subSelector.SetOption(value);
         }
       }

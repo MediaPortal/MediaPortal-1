@@ -2658,6 +2658,10 @@ namespace MediaPortal.Player
           CurrentSubtitleStream = -1;
         }
       }
+      else if (!EnableSubtitle && CurrentSubtitleStream == SubtitleStreams && SupportsCC)
+      {
+        CurrentSubtitleStream = -1;
+      }
       else
       {
         CurrentSubtitleStream = 0;
