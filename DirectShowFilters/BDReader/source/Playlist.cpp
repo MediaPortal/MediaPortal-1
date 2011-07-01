@@ -424,3 +424,13 @@ bool CPlaylist::HasVideo()
   }
   return false;
 }
+
+bool CPlaylist::Incomplete()
+{
+  if (m_currentAudioPlayBackClip)
+  {
+    return m_currentAudioPlayBackClip->Incomplete();
+  }
+
+  return false;
+}

@@ -56,6 +56,8 @@ protected:
   int AudioPacketCount();
   int VideoPacketCount();
 
+  bool Incomplete();
+
   vector<CPlaylist *> m_vecPlaylists;
   CPlaylist * m_currentAudioPlayBackPlaylist;
   CPlaylist * m_currentVideoPlayBackPlaylist;

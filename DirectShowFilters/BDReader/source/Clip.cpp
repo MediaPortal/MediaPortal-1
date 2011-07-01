@@ -292,3 +292,17 @@ bool CClip::HasVideo()
   if (m_vecClipVideoPackets.size()>0) return true;
   return false;
 }
+
+bool CClip::Incomplete()
+{
+  bool ret = false;
+  if (lastAudioPosition < (playlistFirstPacketTime + clipDuration - 5000000LL))
+  {
+    ret = true;
+    
+    LogDebug("clip: Incomplete - nClip: %d lastAudioPosition: %I64d first: %I64d duration: %I64d", 
+      nClip, lastAudioPosition, playlistFirstPacketTime, clipDuration);
+  }
+
+  return ret;
+}

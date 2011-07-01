@@ -195,7 +195,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
       if (!IsMediaChanging())
       {
         LogDebug("SetAudioStream : OnMediaTypeChanged(1)");
-        Flush(true);                   
+        //Flush();
         m_filter.OnMediaTypeChanged(1);
         SetMediaChanging(true);
         m_filter.m_bForceSeekOnStop = true;     // Force stream to be resumed after
@@ -426,11 +426,11 @@ void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
   }
 }
 
-void CDeMultiplexer::FlushVideo(bool pSoftFlush)
+void CDeMultiplexer::FlushVideo()
 {
   CVideoPin* videoPin = m_filter.GetVideoPin();
 
-  if (!pSoftFlush && videoPin && videoPin->IsConnected())
+  if (videoPin && videoPin->IsConnected())
   {
     videoPin->DeliverBeginFlush();
   }
@@ -438,77 +438,50 @@ void CDeMultiplexer::FlushVideo(bool pSoftFlush)
   LogDebug("demux:flush video");
   CAutoLock lock (&m_sectionVideo);
 
-  //ivecVBuffers it = m_vecVideoBuffers.begin();
-  //while (it != m_vecVideoBuffers.end())
-  //{
-  //  Packet* videoBuffer = *it;
-  //  
-  //  if (!pSoftFlush)// || videoBuffer->nClipNumber != m_nClip || videoBuffer->nPlaylist != m_nPlaylist)
-  //  {
-  //    delete videoBuffer;
-  //    it = m_vecVideoBuffers.erase(it);
-  //    LogDebug("Flush Video (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-  //      pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
-  //  }
-  //  else
-  //  {
-  //    ++it;
-  //    //LogDebug("Flush Video (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
-  //      //pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
-  //  }
-  //}
-
-  if (!pSoftFlush)
+  // Clear PES temporary queue.
+  ivecVBuffers it = m_t_vecVideoBuffers.begin();
+  while (it != m_t_vecVideoBuffers.end())
   {
-    // Clear PES temporary queue.
-    ivecVBuffers it = m_t_vecVideoBuffers.begin();
-    while (it != m_t_vecVideoBuffers.end())
+    Packet* videoBuffer = *it;
     {
-      Packet* videoBuffer = *it;
-      {
-        delete videoBuffer;
-        it = m_t_vecVideoBuffers.erase(it);
-        LogDebug("Flush Video (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-          pSoftFlush, videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
-      }
+      delete videoBuffer;
+      it = m_t_vecVideoBuffers.erase(it);
+      LogDebug("Flush Video - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
+        videoBuffer->nClipNumber, m_nVideoClip, videoBuffer->nPlaylist, m_nVideoPl, videoBuffer->rtStart / 10000000.0);
     }
   }
 
-  if (!pSoftFlush)
-  {
-    m_lastVideoPTS.FromClock(0);
-    m_lastVideoPTS.IsValid = false;
 
-    delete m_pCurrentVideoBuffer;
-    m_pCurrentVideoBuffer = NULL;
+  m_lastVideoPTS.FromClock(0);
+  m_lastVideoPTS.IsValid = false;
 
-    m_p.Free();
-    m_pBuild.Free();
-    m_lastStart = 0;
-    m_loopLastSearch = 1;
-    m_pl.RemoveAll();
-    m_fHasAccessUnitDelimiters = false;
-    m_rtPrev = Packet::INVALID_TIME;
+  delete m_pCurrentVideoBuffer;
+  m_pCurrentVideoBuffer = NULL;
 
-    m_VideoValidPES = true;
-    m_mVideoValidPES = false;  
-    m_WaitHeaderPES = -1;
-    m_rtOffset = 0;
+  m_p.Free();
+  m_pBuild.Free();
+  m_lastStart = 0;
+  m_loopLastSearch = 1;
+  m_pl.RemoveAll();
+  m_fHasAccessUnitDelimiters = false;
+  m_rtPrev = Packet::INVALID_TIME;
 
-    Reset(); // PacketSync reset. 
-  }
+  m_VideoValidPES = true;
+  m_mVideoValidPES = false;  
+  m_WaitHeaderPES = -1;
+  m_rtOffset = 0;
 
-  if (!pSoftFlush && videoPin && videoPin->IsConnected())
+  if (videoPin && videoPin->IsConnected())
   {
     videoPin->DeliverEndFlush();
   }
 }
 
-void CDeMultiplexer::FlushAudio(bool pSoftFlush)
+void CDeMultiplexer::FlushAudio()
 {
   CAudioPin* audioPin = m_filter.GetAudioPin();
 
-  if (!pSoftFlush && audioPin && audioPin->IsConnected())
+  if (audioPin && audioPin->IsConnected())
   {
     audioPin->DeliverBeginFlush();
   }
@@ -516,46 +489,21 @@ void CDeMultiplexer::FlushAudio(bool pSoftFlush)
   LogDebug("demux:flush audio");
   CAutoLock lock (&m_sectionAudio);
 
-  //ivecABuffers it = m_vecAudioBuffers.begin();
-  //while (it != m_vecAudioBuffers.end())
-  //{
-  //  Packet* audioBuffer = *it;
+  m_lastAudioPTS.FromClock(0);
+  m_lastAudioPTS.IsValid = false;
 
-  //  if (!pSoftFlush)// || audioBuffer->nClipNumber != m_nClip || audioBuffer->nPlaylist != m_nPlaylist)
-  //  {
-  //    delete audioBuffer;
-  //    it = m_vecAudioBuffers.erase(it);
-  //    LogDebug("Flush Audio (soft %d) - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-  //      pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
-  //  }
-  //  else
-  //  {
-  //    ++it;
-  //    //LogDebug("Flush Audio (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
-  //      //pSoftFlush, audioBuffer->nClipNumber, m_nAudioClip, audioBuffer->nPlaylist, m_nAudioPl, audioBuffer->rtStart / 10000000.0);
-  //  }
-  //}
+  m_AudioValidPES = false;
 
-  if (!pSoftFlush)
-  {
-    m_lastAudioPTS.FromClock(0);
-    m_lastAudioPTS.IsValid = false;
+  delete m_pCurrentAudioBuffer;
+  m_pCurrentAudioBuffer = new Packet();
 
-    m_AudioValidPES = false;
-
-    delete m_pCurrentAudioBuffer;
-    m_pCurrentAudioBuffer = new Packet();
-
-    Reset(); // PacketSync reset.   
-  }
-
-  if (!pSoftFlush && audioPin && audioPin->IsConnected())
+  if (audioPin && audioPin->IsConnected())
   {
     audioPin->DeliverEndFlush();
   }
 }
 
-void CDeMultiplexer::FlushSubtitle(bool pSoftFlush)
+void CDeMultiplexer::FlushSubtitle()
 {
   LogDebug("demux:flush subtitle");
   CAutoLock lock (&m_sectionSubtitle);
@@ -566,19 +514,10 @@ void CDeMultiplexer::FlushSubtitle(bool pSoftFlush)
   {
     Packet* subtitleBuffer = *it;
 
-    if (!pSoftFlush)// || subtitleBuffer->nClipNumber != m_nClip || subtitleBuffer->nPlaylist != m_nPlaylist)
-    {
-      delete subtitleBuffer;
-      it = m_vecSubtitleBuffers.erase(it);
-      LogDebug("Flush Subtitle - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        pSoftFlush, subtitleBuffer->nClipNumber, m_nSubtitleClip, subtitleBuffer->nPlaylist, m_nPlaylist, subtitleBuffer->rtStart / 10000000.0);
-    }
-    else
-    {
-      ++it;
-      LogDebug("Flush Subtitle (soft %d) - sample was not removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        pSoftFlush, subtitleBuffer->nClipNumber, m_nSubtitleClip, subtitleBuffer->nPlaylist, m_nSubtitlePl, subtitleBuffer->rtStart / 10000000.0);
-    }    
+    delete subtitleBuffer;
+    it = m_vecSubtitleBuffers.erase(it);
+    LogDebug("Flush Subtitle - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
+      subtitleBuffer->nClipNumber, m_nSubtitleClip, subtitleBuffer->nPlaylist, m_nPlaylist, subtitleBuffer->rtStart / 10000000.0);
   }
 
   m_pCurrentSubtitleBuffer = new Packet();
@@ -587,7 +526,7 @@ void CDeMultiplexer::FlushSubtitle(bool pSoftFlush)
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
 }
 
-void CDeMultiplexer::Flush(bool pSoftFlush)
+void CDeMultiplexer::Flush()
 {
   LogDebug("demux:flushing");
 
@@ -595,32 +534,26 @@ void CDeMultiplexer::Flush(bool pSoftFlush)
   CAutoLock lockAud(&m_sectionAudio);
   CAutoLock lockSub(&m_sectionSubtitle);
 
-  bool holdAudio = HoldAudio();
-  bool holdVideo = HoldVideo();
-  bool holdSubtitle = HoldSubtitle();
   SetHoldAudio(true);
   SetHoldVideo(true);
   SetHoldSubtitle(true);
-  FlushAudio(pSoftFlush);
-  FlushVideo(pSoftFlush);
-  FlushSubtitle(pSoftFlush);
-  if (!pSoftFlush)
-  { 
-      m_playlistManager->ClearAllButCurrentClip(true);
-//    delete m_playlistManager;
-//    m_playlistManager = new CPlaylistManager();
-  }
 
-  if (!pSoftFlush)
-  {
-//    ResetClipInfo(-12);
+  FlushAudio();
+  FlushVideo();
+  FlushSubtitle();
 
-    m_filter.m_bStreamCompensated = false;
-  }
+  Reset(); // PacketSync reset. 
 
-  SetHoldAudio(holdAudio);
-  SetHoldVideo(holdVideo);
-  SetHoldSubtitle(holdSubtitle);
+  m_playlistManager->ClearAllButCurrentClip(true);
+  //delete m_playlistManager;
+  //m_playlistManager = new CPlaylistManager();
+
+  //ResetClipInfo(-12);
+  m_filter.m_bStreamCompensated = false;
+
+  SetHoldAudio(false);
+  SetHoldVideo(false);
+  SetHoldSubtitle(false);
 }
 
 Packet* CDeMultiplexer::GetSubtitle()
@@ -643,6 +576,11 @@ Packet* CDeMultiplexer::GetSubtitle()
 
 Packet* CDeMultiplexer::GetVideo()
 {
+  if (HoldVideo())
+  {
+    return NULL;
+  }
+
   while (!m_playlistManager->HasVideo())
   {
     if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
@@ -707,6 +645,11 @@ Packet* CDeMultiplexer::GetVideo()
 
 Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 {
+  if (HoldAudio())
+  {
+    return NULL;
+  }
+
   Packet * ret = m_playlistManager->GetNextAudioPacket(playlist, clip);
   return ret;
 }
@@ -716,6 +659,11 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 // or NULL if there is none available
 Packet* CDeMultiplexer::GetAudio()
 {
+  if (HoldAudio())
+  {
+    return NULL;
+  }
+
   while (!m_playlistManager->HasAudio())
   {
     if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
@@ -878,7 +826,7 @@ HRESULT CDeMultiplexer::Start()
       }
       // Seek to start - reset the libbluray reading position
       m_filter.lib.Seek(0);
-      Flush(false);
+      Flush();
       m_streamPcr.Reset();
       m_bStarting = false;
 
@@ -897,7 +845,7 @@ HRESULT CDeMultiplexer::Start()
   m_streamPcr.Reset();
   m_bStarting = false;
 
-  Flush(false);
+  Flush();
   // Seek to start - reset the libbluray reading position
   m_filter.lib.Seek(0);
 
@@ -1003,9 +951,18 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         REFERENCE_TIME clipOffset = m_rtNewOffset * -1;
 
         //TODO is m_nPlaylist always set?
-        m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
-//        SetNewPlaylist(m_nPlaylist, m_nClip, CONVERT_90KHz_DS(m_rtNewOffset * -1), 
-//          clip->audio_stream_count == 0, CONVERT_90KHz_DS(duration));
+        bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
+
+        if (interrupted)
+        {
+          LogDebug("demux: current clip was irterrupted - triggering flush");
+
+          SetHoldVideo(true);
+          SetHoldAudio(true);
+          SetHoldSubtitle(true);
+
+          m_filter.IssueFlush();
+        }
 
         CPcr offset;
         CPcr oldOffset;
@@ -2160,7 +2117,7 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     m_iPatVersion = info.PatVersion;
     m_bSetAudioDiscontinuity = true;
     m_bSetVideoDiscontinuity = true;
-    Flush(true);
+    //Flush();
   }
   else
   {

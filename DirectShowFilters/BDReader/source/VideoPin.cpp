@@ -566,6 +566,9 @@ HRESULT CVideoPin::OnThreadStartPlay()
   m_bDiscontinuity = true;
   m_bPresentSample = false;
 
+  delete m_pCachedBuffer;
+  m_pCachedBuffer = NULL;
+
   m_pFilter->GetDemultiplexer().m_videoPlSeen = false;
 
   LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());

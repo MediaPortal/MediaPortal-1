@@ -53,7 +53,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
-  bool ret = true;
+  
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, audioPresent, duration/10000000.0);
   if (m_vecPlaylists.size()==0)
   {
@@ -80,7 +80,8 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     m_currentAudioSubmissionPlaylist->SetFilledAudio();
     m_currentAudioSubmissionPlaylist=m_vecPlaylists.back();
   }
-  return ret;
+  
+  return Incomplete(); // was current clip interrupted?
 }
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
@@ -394,4 +395,15 @@ int CPlaylistManager::VideoPacketCount()
     ++it;
   }
   return nVidPackets;
+}
+
+bool CPlaylistManager::Incomplete()
+{
+  bool ret = false;
+  if (!m_vecPlaylists.empty() && m_currentAudioPlayBackPlaylist != m_vecPlaylists.back())
+  {
+    ret = m_currentAudioPlayBackPlaylist->Incomplete();
+  }
+    
+  return ret;
 }

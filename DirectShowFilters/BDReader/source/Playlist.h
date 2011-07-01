@@ -58,6 +58,7 @@ public:
   int VideoPacketCount();
   bool HasAudio();
   bool HasVideo();
+  bool Incomplete();
 
 protected:
   typedef vector<CClip*>::iterator ivecClip;

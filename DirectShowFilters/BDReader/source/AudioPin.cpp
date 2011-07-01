@@ -579,6 +579,9 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_pFilter->GetDemultiplexer().m_bAudioVideoReady = false;
   m_pFilter->GetDemultiplexer().m_audioPlSeen = false;
 
+  delete m_pCachedBuffer;
+  m_pCachedBuffer = NULL;
+
   //set discontinuity flag indicating to codec that the new data
   //is not belonging to any previous data
   m_bDiscontinuity = true;

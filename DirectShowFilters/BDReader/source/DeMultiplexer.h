@@ -84,7 +84,7 @@ public:
   virtual ~CDeMultiplexer(void);
 
   HRESULT    Start();
-  void       Flush(bool pSoftFlush);
+  void       Flush();
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
@@ -122,14 +122,14 @@ public:
   bool       EndOfFile();
   bool       HoldAudio();
   void       SetHoldAudio(bool onOff);
-  bool       HoldVideo();
   void       SetHoldVideo(bool onOff);
-  bool       HoldSubtitle();
   void       SetHoldSubtitle(bool onOff);
+  bool       HoldVideo();
+  bool       HoldSubtitle();
   void       ThreadProc();
-  void       FlushVideo(bool pSoftFlush);
-  void       FlushAudio(bool pSoftFlush);
-  void       FlushSubtitle(bool pSoftFlush);
+  void       FlushVideo();
+  void       FlushAudio();
+  void       FlushSubtitle();
   int        GetVideoServiceType();
 
   void SetMediaChanging(bool onOff);

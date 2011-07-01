@@ -163,6 +163,7 @@ public:
   IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
   void            OnMediaTypeChanged(int mediaTypes);
+  void            IssueFlush();
   void            OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced);
   void            RefreshStreamPosition(CRefTime pPos);
 
@@ -220,5 +221,6 @@ private:
   bool            m_bIgnoreLibSeeking;
 
   bool            m_bIssueRebuild;
+  bool            m_bIssueFlush;
 };
 

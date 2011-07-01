@@ -170,7 +170,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bIgnoreLibSeeking(false),
   m_dwThreadId(0),
   m_pMediaSeeking(NULL),
-  m_bIssueRebuild(false)
+  m_bIssueRebuild(false),
+  m_bIssueFlush(false)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -308,6 +309,12 @@ void CBDReaderFilter::OnMediaTypeChanged(int mediaTypes)
 
 
   //if ( m_pCallback ) m_pCallback->OnMediaTypeChanged(mediaTypes);
+}
+
+void CBDReaderFilter::IssueFlush()
+{
+  m_bIssueFlush = true;
+  SetEvent(m_hSeekEvent);
 }
 
 void CBDReaderFilter::OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)
@@ -477,7 +484,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
             Sleep(1);
           }
         
-          m_demultiplexer.Flush(true);
+          m_demultiplexer.Flush();
 
           LONGLONG posEnd(~0);
         
@@ -487,6 +494,20 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
           m_pMediaSeeking->SetPositions((LONGLONG*)&m_fakeSeekPos.m_time, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
 
           m_bIssueRebuild = false;
+        }
+        else if (m_bIssueFlush)
+        {
+          LONGLONG pos(0);
+
+          m_bIgnoreLibSeeking = true;
+          m_bForceSeekAfterRateChange = true;
+
+          LogDebug("CBDReaderFilter::Seek thread: flush requested - pos: %06.3f", m_fakeSeekPos.Millisecs() / 1000.0);
+          m_demultiplexer.Flush();
+
+          m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, &pos, AM_SEEKING_NoPositioning);
+
+          m_bIssueFlush = false;
         }
         else
         {
@@ -754,7 +775,7 @@ void CBDReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
     if (!m_bIgnoreLibSeeking)
     {
       LogDebug("CBDReaderFilter::SeekPreStart - Flush");
-      m_demultiplexer.Flush(false);
+      m_demultiplexer.Flush();
     }
 
     if (!m_demultiplexer.IsMediaChanging())

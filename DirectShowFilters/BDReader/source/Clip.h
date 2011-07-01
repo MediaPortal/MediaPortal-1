@@ -57,6 +57,7 @@ public:
   bool FakeAudioAvailable();
   bool HasAudio();
   bool HasVideo();
+  bool Incomplete();
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
