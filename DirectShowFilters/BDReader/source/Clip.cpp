@@ -150,6 +150,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
   packet->pmt = CreateMediaType(&pmt);
   audioPlaybackpoint+=FAKE_AUDIO_DURATION;
+  lastAudioPosition+=FAKE_AUDIO_DURATION;
   return packet;
 }
 
