@@ -130,8 +130,8 @@
     <String id="170">Álbum:</String>
     <String id="171">Artista:</String>
     <String id="172">Fecha de Lanzamiento:</String>
-    <String id="173">Valoración:</String>
-    <String id="174">Genero:</String>
+    <String id="173">Calificación:</String>
+    <String id="174">Género:</String>
     <String id="175">Tonos:</String>
     <String id="176">Estilos:</String>
     <String id="177">Análisis:</String>
@@ -353,7 +353,7 @@
     <String id="394">No disponible</String>
     <String id="395">Bruma</String>
     <String id="396">Seleccionar Ubicación</String>
-    <String id="397">Tiempo de actualización</String>
+    <String id="397">Última Actualización</String>
     <String id="398">Unidad de Temperatura</String>
     <String id="399">Unidad de Velocidad</String>
     <String id="400">Tiempo</String>
@@ -497,7 +497,7 @@
     <String id="540">SE</String>
     <String id="541">SO</String>
     <String id="542">NO</String>
-    <String id="543">Trueno</String>
+    <String id="543">Truenos</String>
     <String id="544">NNE</String>
     <String id="545">ENE</String>
     <String id="546">ESE</String>
@@ -999,8 +999,17 @@
     <String id="1211">Reanudar reproducción desde {0}</String>
     <String id="1212">Cancelar notificación</String>
     <String id="1213">Escuchar esta emisora</String>
+    <String id="1214">Compositores</String>
+    <String id="1215">Directores</String>
+    <String id="1216">Discos</String>
+    <String id="1217">Canciones del Artista</String>
+    <String id="1218">Álbumes por Época</String>
+    <String id="1219">Álbumes por Artista (Índice)</String>
     <String id="1220">Ordenar por: Fecha de Creación</String>
     <String id="1221">Ordenar por: Fecha de Modificación</String>
+    <String id="1222">Grupos</String>
+    <String id="1223">Detectadas listas de reproducción</String>
+    <String id="1224">¿Quiere borrar la lista de reproducción actual?</String>
     <String id="1230">Añadido en:</String>
     <String id="1231">Última reproducción:</String>
     <String id="1300" prefix="Mis ">Series de TV</String>
@@ -1045,6 +1054,13 @@
     <String id="1600">¿Quiere apagarlo?</String>
     <String id="1601">¿Quiere suspenderlo?</String>
     <String id="1602">¿Quiere hibernarlo?</String>
+    <String id="1900">Skin Obsoleto</String>
+    <String id="1901">El skin actualmente seleccionado ({0}) no está actualizado. Esto podría causar problemas al usar MediaPortal. Por esta razón MediaPortal ha cambiado temporalmente al skin por defecto. Si de todas formas quiere usar un skin obsoleto, pulse el botón "Ignorar y probar", pero recuerde: ¡No presente informes de fallos mientras use este skin! (Para descartar este aviso puede esperar a que se cierre automaticamente o pulsar Atrás/ESC en su mando)</String>
+    <String id="1902">No mostrar este mensaje de nuevo</String>
+    <String id="1903">Ignorar y probar ({0})...</String>
+    <String id="1910">Plugins incompatibles</String>
+    <String id="1911">Los siguientes plugins son incompatibles con esta versión de MediaPortal y se deshabilitarán automáticamente:</String>
+    <String id="1912">Continuar|Continuar ({0})...|Continuar ({0})...</String>
     <String id="1950" prefix="Mi ">Estado</String>
     <String id="1951">Disco duro</String>
     <String id="1952">Ventilador</String>
@@ -1913,7 +1929,7 @@
     <String id="200032">No</String>
     <String id="200033">Configuración de TV - TV analógica</String>
     <String id="200034">Seleccione su ciudad de la siguiente lista.</String>
-    <String id="200035">Si su ciudad no está en la lista, necesitará utilizar la Sintonización Manual</String>
+    <String id="200035">Si su ciudad no está en la lista, necesitará utilizar la Sintonización Manual.</String>
     <String id="200036">Sintonización Manual</String>
     <String id="200037">Saltar &gt;</String>
     <String id="200038">En un PC de sobremesa compartido con otras aplicaciones</String>
