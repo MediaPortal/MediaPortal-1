@@ -172,7 +172,7 @@ bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
     if (packet->rtStart >=lastAudioPosition)
     {
       //make sure it's in range for this clip
-      if (packet->rtStart < playlistFirstPacketTime + clipDuration + 10000000/*1 sec for bad mastering*/)
+      if (packet->rtStart < playlistFirstPacketTime + clipDuration + 10000000LL/*1 sec for bad mastering*/)
       {
         //belongs to this playlist
         packet->nClipNumber=nClip;

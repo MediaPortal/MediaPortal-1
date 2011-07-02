@@ -32,6 +32,7 @@ CPlaylistManager::CPlaylistManager(void)
   m_VideoPacketsUntilLatestplaylist=0;
   AudioPackets=0;
   VideoPackets=0;
+  m_bInteruption=false;
 }
 
 
@@ -76,7 +77,15 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
     newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration);
     m_vecPlaylists.push_back(newPlaylist);
-    m_VideoPacketsUntilLatestplaylist=1;
+    if (m_currentVideoSubmissionPlaylist->IsFakingAudio())
+    {
+      if (m_currentVideoSubmissionPlaylist!=m_vecPlaylists.back()) m_currentVideoSubmissionPlaylist->SetFilledVideo();
+      m_currentVideoSubmissionPlaylist=m_vecPlaylists.back();
+    }
+    else
+    {
+      m_VideoPacketsUntilLatestplaylist=1;
+    }
     m_currentAudioSubmissionPlaylist->SetFilledAudio();
     m_currentAudioSubmissionPlaylist=m_vecPlaylists.back();
   }
@@ -186,7 +195,7 @@ Packet* CPlaylistManager::GetNextAudioPacket()
 Packet* CPlaylistManager::GetNextAudioPacket(int playlist, int clip)
 {
   Packet* ret=NULL;
-  CAutoLock lock (&m_sectionAudio);
+//  CAutoLock lock (&m_sectionAudio);
   if (m_currentAudioPlayBackPlaylist->nPlaylist==playlist)
   {
     ret=m_currentAudioPlayBackPlaylist->ReturnNextAudioPacket(clip);

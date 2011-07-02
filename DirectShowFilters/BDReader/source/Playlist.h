@@ -80,6 +80,8 @@ protected:
   bool playlistEmptiedVideo;
   bool playlistEmptiedAudio;
 
+  int m_VideoPacketsUntilLatestClip;
+
   bool firstPESPacketSeen;
   REFERENCE_TIME firstPESTimeStamp;
 

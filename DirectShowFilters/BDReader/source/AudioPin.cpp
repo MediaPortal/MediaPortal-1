@@ -231,7 +231,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        JoinAudioBuffers(buffer, &demux);
+//        JoinAudioBuffers(buffer, &demux);
         
         m_pFilter->m_bStreamCompensated = true; // fake
 
@@ -276,7 +276,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 */
         if (buffer->pmt->cbFormat==0)
         {
-          continue;
+          buffer->pmt = CreateMediaType(&m_mt);
         }
 
         if (buffer->pmt && m_mt != *buffer->pmt)
@@ -391,13 +391,13 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
 {
   int audioStream = 0;
   CMediaType pmt;
-
   pDemuxer->GetAudioStream(audioStream);
   pDemuxer->GetAudioStreamType(audioStream, pmt);
 
   // Currently only uncompressed PCM audio is supported
   if (pmt.subtype == MEDIASUBTYPE_PCM)
   {
+    LogDebug("Joininig Audio Buffers");
     WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.Format();
     WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 
