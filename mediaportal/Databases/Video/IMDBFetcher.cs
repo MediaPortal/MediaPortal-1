@@ -169,26 +169,7 @@ namespace MediaPortal.Video.Database
           int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
           // Also add fanart for share view
           bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
-
-          string moviePath = _movieDetails.Path;
-
-          if (folderTitle)
-          {
-            // DVD check
-            if (moviePath.ToUpper().IndexOf(@"\VIDEO_TS") >= 0)
-            {
-              moviePath = _movieDetails.Path.Substring(0, _movieDetails.Path.ToUpper().IndexOf(@"\VIDEO_TS"));
-              _movieDetails.Title = moviePath.Substring(moviePath.LastIndexOf(@"\") + 1).Trim();
-            }
-            else
-            {
-              int index = moviePath.LastIndexOf(@"\");
-              if (index > 0)
-              {
-                _movieDetails.Title = moviePath.Substring(index + 1).Trim();
-              }
-            }
-          }
+          
           OnProgress(line1, _url.Title, string.Empty, percent);
           
           bool stripPrefix = xmlreader.GetValueAsBool("moviedatabase", "striptitleprefixes", false);
@@ -207,7 +188,7 @@ namespace MediaPortal.Video.Database
           // or look for local cover named as movie file
           string localCover = string.Empty; // local cover named as movie filename
           string movieFile = string.Empty;
-          
+          string moviePath = _movieDetails.Path;
           // Find movie file(s)
           ArrayList files = new ArrayList();
           VideoDatabase.GetFiles(_movieDetails.ID, ref files);
