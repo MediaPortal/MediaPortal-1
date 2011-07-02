@@ -265,6 +265,7 @@ namespace TvPlugin
 
     public TVHome()
     {
+      TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_TV;
     }
 
@@ -300,10 +301,7 @@ namespace TvPlugin
       g_Player.ShowFullScreenWindowTV = ShowFullScreenWindowTVHandler;
 
       try
-      {
-        NameValueCollection appSettings = ConfigurationManager.AppSettings;
-        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
-
+      {        
         // Make sure that we have valid hostname for the TV server
         SetRemoteControlHostName();
 
@@ -334,6 +332,8 @@ namespace TvPlugin
 
       _notifyManager.Start();
     }
+
+    
 
     /// <summary>
     /// Gets called by the runtime when a  window will be destroyed
@@ -422,16 +422,7 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
-      // Log.Info("tv home RefreshConnectionState b4:{0}", Connected);
-      //RefreshConnectionState();
-      //Log.Info("tv home RefreshConnectionState after:{0}", Connected);
-
-      // when suspending MP while watching fullscreen TV, the player is stopped ok, but it returns to tvhome, which starts timeshifting.
-      // this could lead the tv server timeshifting even though client is asleep.
-      // although we have to make sure that resuming again activates TV, this is done by checking previous window ID.      
-
-      // disabled currently as pausing the graph stops GUI repainting
-      //GUIWaitCursor.Show();
+      Log.Info("TVHome:OnPageLoad");
 
       if (GUIWindowManager.GetWindow(GUIWindowManager.ActiveWindow).PreviousWindowId != (int)Window.WINDOW_TVFULLSCREEN)
       {

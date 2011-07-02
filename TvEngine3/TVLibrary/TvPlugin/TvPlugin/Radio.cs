@@ -106,6 +106,7 @@ namespace TvPlugin
 
     public Radio()
     {
+      TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_RADIO;
     }
 
@@ -252,6 +253,7 @@ namespace TvPlugin
 
     protected override void OnPageLoad()
     {
+      Log.Info("RadioHome:OnPageLoad");
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
       GUIWindowManager.SendMessage(msgStopRecorder);      

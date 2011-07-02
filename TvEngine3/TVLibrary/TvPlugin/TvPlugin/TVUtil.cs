@@ -20,7 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Text;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -73,6 +76,20 @@ namespace TvPlugin
     #region IDisposable Members
 
     #endregion
+
+    public static void SetGentleConfigFile()
+    {
+      try
+      {
+        NameValueCollection appSettings = ConfigurationManager.AppSettings;
+        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        throw;
+      }
+    }
 
     public IList<Schedule> GetRecordingTimes(Schedule rec)
     {
