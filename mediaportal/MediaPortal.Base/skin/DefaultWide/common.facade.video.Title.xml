@@ -5,6 +5,8 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
+      
+      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
@@ -438,7 +440,8 @@
               <keepaspectratio>yes</keepaspectratio>
               <texture>logos/mpaa/large/mpaa_nc17.png</texture>
               <visible>string.contains(#mpaarating, Rated NC-17)</visible>
-            </control>--></controls>]]></subitem>
+            </control>-->
+          </controls>]]></subitem>
       </subitems>
     </control>
     <control>
