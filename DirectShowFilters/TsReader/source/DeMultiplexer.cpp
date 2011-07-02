@@ -802,7 +802,11 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (m_pids.PcrPid==0) return;
 
   if (header.Pid==0) return;
-  if (header.TScrambling) return;
+    
+  // 'TScrambling' check commented out - headers are never scrambled, 
+  // so it's safe to detect scrambled payload at PES level (in FillVideo()/FillAudio())
+  
+  //if (header.TScrambling) return;
 
   //skip any packets with errors in it
   if (header.TransportError) return;
@@ -896,7 +900,9 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     {
       CBuffer *Cbuf=*m_t_vecAudioBuffers.begin();
       byte *p = Cbuf->Data() ;
-      if ((p[0]==0) && (p[1]==0) && (p[2]==1))
+      if ((p[0]==0) && (p[1]==0) && (p[2]==1) //Valid start code
+          && ((p[3] & 0x80)!=0)  //Valid stream ID
+          && ((p[6] & 0xE0)==0x80)) //Valid marker bits and payload not scrambled
       {
         //get pts/dts from pes header
         CPcr pts;
@@ -1116,7 +1122,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       return;
     }  
     
-    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
+    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1) //Invalid start code
+        || ((start[3] & 0x80)==0)) //Invalid stream ID
     {
       LogDebug("Pes 0-0-1 fail");
       m_VideoValidPES=false;
@@ -1132,6 +1139,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       }
       else
       { // full PES header is available.
+      	if ((start[6] & 0xE0)==0xA0) //Valid marker bits and payload scrambled
+      	{
+          return;
+      	}
         CPcr pts;
         CPcr dts;
       
@@ -1414,7 +1425,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       return;
     }  
     
-    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
+    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1) //Invalid start code
+        || ((start[3] & 0x80)==0)) //Invalid stream ID
     {
       LogDebug("Pes 0-0-1 fail");
       m_VideoValidPES=false;
@@ -1430,6 +1442,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       }
       else
       { // full PES header is available.
+      	if ((start[6] & 0xE0)==0xA0) //Valid marker bits and payload scrambled
+      	{
+          return;
+      	}
         CPcr pts;
         CPcr dts;
       
@@ -1670,6 +1686,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 /// if so store it in the subtitle buffers
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
+  if (header.TScrambling) return;
   if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
   if (m_iSubtitleStream<0 || m_iSubtitleStream>=m_subtitleStreams.size()) return;
 
@@ -1721,6 +1738,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 {
+  if (header.TScrambling) return;
   if (m_pids.TeletextPid==0) return;
   if (header.Pid!=m_pids.TeletextPid) return;
   if ( header.AdaptionFieldOnly() ) return;
