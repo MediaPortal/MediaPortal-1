@@ -3,7 +3,7 @@
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>true</disabletopbar>
+  <disabletopbar>false</disabletopbar>
   <controls>
     <control>
       <description>background image (not used!)</description>
@@ -267,6 +267,18 @@
       <imageHeight>3</imageHeight>
       <texture>volume.states.png</texture>
       <visible>no</visible>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>9999</id>
+      <posX>1250</posX>
+      <posY>635</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
   </controls>
 </window>

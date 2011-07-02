@@ -5,8 +5,6 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
@@ -36,7 +34,7 @@
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>170</itemWidth>
-          <itemHeight>130</itemHeight>
+          <itemHeight>180</itemHeight>
           <textureWidth>157</textureWidth>
           <textureHeight>120</textureHeight>
           <thumbWidth>156</thumbWidth>
@@ -44,7 +42,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <itemWidthBig>235</itemWidthBig>
-          <itemHeightBig>180</itemHeightBig>
+          <itemHeightBig>240</itemHeightBig>
           <thumbWidthBig>219</thumbWidthBig>
           <thumbHeightBig>165</thumbHeightBig>
           <textureWidthBig>219</textureWidthBig>
@@ -55,7 +53,7 @@
           <zoomYPixels>50</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>

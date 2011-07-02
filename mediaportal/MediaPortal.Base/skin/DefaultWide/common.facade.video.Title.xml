@@ -5,8 +5,6 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
       <animation effect="slide" time="70" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="70" end="800,0">WindowClose</animation>
       <control>
@@ -34,14 +32,14 @@
           <type>thumbnailpanel</type>
           <id>50</id>
           <posX>100</posX>
-          <posY>152</posY>
+          <posY>132</posY>
           <width>1200</width>
           <height>588</height>
           <scrollOffset>1</scrollOffset>
           <onleft>2</onleft>
           <onright>2</onright>
           <itemWidth>127</itemWidth>
-          <itemHeight>165</itemHeight>
+          <itemHeight>185</itemHeight>
           <textureWidth>97</textureWidth>
           <textureHeight>147</textureHeight>
           <thumbWidth>96</thumbWidth>
@@ -49,7 +47,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <itemWidthBig>170</itemWidthBig>
-          <itemHeightBig>235</itemHeightBig>
+          <itemHeightBig>255</itemHeightBig>
           <thumbWidthBig>142</thumbWidthBig>
           <thumbHeightBig>204</thumbHeightBig>
           <textureWidthBig>143</textureWidthBig>
@@ -60,7 +58,7 @@
           <zoomYPixels>30</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Videothumbmask.png</textureMask>
           <frameNoFocus>Videothumbframe.png</frameNoFocus>
@@ -440,8 +438,7 @@
               <keepaspectratio>yes</keepaspectratio>
               <texture>logos/mpaa/large/mpaa_nc17.png</texture>
               <visible>string.contains(#mpaarating, Rated NC-17)</visible>
-            </control>-->
-          </controls>]]></subitem>
+            </control>--></controls>]]></subitem>
       </subitems>
     </control>
     <control>

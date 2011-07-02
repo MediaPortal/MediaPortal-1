@@ -17,7 +17,7 @@
     </control>
     <import>common.window.xml</import>
     <import>common.time.xml</import>
-    <control>
+    <!--control>
       <description>Clock</description>
       <type>image</type>
       <id>0</id>
@@ -60,7 +60,7 @@
       <texture>clockHandSecond.png</texture>
       <animation effect="rotate" clockhandle="second" time="70" condition="true" loop="true" >Conditional</animation>
       <visible>yes</visible>
-    </control>
+    </control-->
     <control>
       <description>Menu</description>
       <type>menu</type>
