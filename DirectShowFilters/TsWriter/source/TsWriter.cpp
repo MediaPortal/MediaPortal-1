@@ -873,7 +873,7 @@ STDMETHODIMP CMpTs::GetStreamQualityCounters(int handle, int* totalTsBytes, int*
   if (pChannel->m_pRecorder)
   {
     pChannel->m_pRecorder->GetDiscontinuityCounter(recordingDiscontinuity);
-    pChannel->m_pTimeShifting->GetTotalBytes(totalRecordingBytes);
+    pChannel->m_pRecorder->GetTotalBytes(totalRecordingBytes);
   }
 
   if (pChannel->m_pRecorder || pChannel->m_pTimeShifting)
