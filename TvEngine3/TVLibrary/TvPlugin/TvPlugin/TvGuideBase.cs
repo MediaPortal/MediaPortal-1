@@ -725,8 +725,7 @@ namespace TvPlugin
               UpdateChannelCount();
 
               bool isPreviousWindowTvGuideRelated = (message.Param1 == (int)Window.WINDOW_TV_PROGRAM_INFO ||
-                                                     message.Param1 == (int)Window.WINDOW_VIDEO_INFO ||
-                                                     message.Param1 == (int)Window.WINDOW_TVFULLSCREEN);
+                                                     message.Param1 == (int)Window.WINDOW_VIDEO_INFO);
 
               if (!isPreviousWindowTvGuideRelated)
               {
@@ -887,6 +886,7 @@ namespace TvPlugin
             {
               OnSelectItem(true);
               Update(false);
+              SetFocus();
             }
             else if (_cursorY == 0)
             {
