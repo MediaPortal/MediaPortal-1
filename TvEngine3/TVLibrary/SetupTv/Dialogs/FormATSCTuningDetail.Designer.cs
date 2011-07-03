@@ -49,15 +49,16 @@ namespace SetupTv.Dialogs
       this.label22 = new System.Windows.Forms.Label();
       this.label23 = new System.Windows.Forms.Label();
       this.label24 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // mpButtonCancel
       // 
-      this.mpButtonCancel.Location = new System.Drawing.Point(180, 331);
+      this.mpButtonCancel.Location = new System.Drawing.Point(184, 308);
       // 
       // mpButtonOk
       // 
-      this.mpButtonOk.Location = new System.Drawing.Point(81, 331);
+      this.mpButtonOk.Location = new System.Drawing.Point(85, 308);
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // checkBoxQamfta
@@ -156,36 +157,36 @@ namespace SetupTv.Dialogs
       this.label26.AutoSize = true;
       this.label26.Location = new System.Drawing.Point(8, 229);
       this.label26.Name = "label26";
-      this.label26.Size = new System.Drawing.Size(43, 13);
+      this.label26.Size = new System.Drawing.Size(54, 13);
       this.label26.TabIndex = 97;
-      this.label26.Text = "PmtPid:";
+      this.label26.Text = "PMT PID:";
       // 
       // label39
       // 
       this.label39.AutoSize = true;
       this.label39.Location = new System.Drawing.Point(8, 177);
       this.label39.Name = "label39";
-      this.label39.Size = new System.Drawing.Size(64, 13);
+      this.label39.Size = new System.Drawing.Size(69, 13);
       this.label39.TabIndex = 95;
-      this.label39.Text = "TransportId:";
+      this.label39.Text = "Transport ID:";
       // 
       // label40
       // 
       this.label40.AutoSize = true;
       this.label40.Location = new System.Drawing.Point(8, 203);
       this.label40.Name = "label40";
-      this.label40.Size = new System.Drawing.Size(55, 13);
+      this.label40.Size = new System.Drawing.Size(60, 13);
       this.label40.TabIndex = 94;
-      this.label40.Text = "ServiceId:";
+      this.label40.Text = "Service ID:";
       // 
       // label41
       // 
       this.label41.AutoSize = true;
       this.label41.Location = new System.Drawing.Point(8, 151);
       this.label41.Name = "label41";
-      this.label41.Size = new System.Drawing.Size(59, 13);
+      this.label41.Size = new System.Drawing.Size(64, 13);
       this.label41.TabIndex = 93;
-      this.label41.Text = "NetworkId:";
+      this.label41.Text = "Network ID:";
       // 
       // label38
       // 
@@ -246,14 +247,24 @@ namespace SetupTv.Dialogs
       this.label24.TabIndex = 83;
       this.label24.Text = "Channel:";
       // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(235, 46);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(26, 13);
+      this.label1.TabIndex = 118;
+      this.label1.Text = "kHz";
+      // 
       // FormATSCTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(267, 366);
-      this.Controls.Add(this.checkBoxQamfta);
-      this.Controls.Add(this.label49);
+      this.ClientSize = new System.Drawing.Size(271, 343);
       this.Controls.Add(this.textBoxQamProvider);
       this.Controls.Add(this.textBoxQamPmt);
+      this.Controls.Add(this.checkBoxQamfta);
+      this.Controls.Add(this.label49);
+      this.Controls.Add(this.label1);
       this.Controls.Add(this.textBoxQamSID);
       this.Controls.Add(this.textBoxQamTSID);
       this.Controls.Add(this.textBoxQamONID);
@@ -261,10 +272,10 @@ namespace SetupTv.Dialogs
       this.Controls.Add(this.textBoxMinor);
       this.Controls.Add(this.textBoxMajor);
       this.Controls.Add(this.textBoxProgram);
-      this.Controls.Add(this.label26);
       this.Controls.Add(this.label39);
-      this.Controls.Add(this.label40);
+      this.Controls.Add(this.label26);
       this.Controls.Add(this.label41);
+      this.Controls.Add(this.label40);
       this.Controls.Add(this.label38);
       this.Controls.Add(this.comboBoxQAMModulation);
       this.Controls.Add(this.label37);
@@ -274,18 +285,16 @@ namespace SetupTv.Dialogs
       this.Name = "FormATSCTuningDetail";
       this.Text = "Add / Edit ATSC Tuningdetail";
       this.Load += new System.EventHandler(this.FormATSCTuningDetail_Load);
-      this.Controls.SetChildIndex(this.mpButtonOk, 0);
-      this.Controls.SetChildIndex(this.mpButtonCancel, 0);
       this.Controls.SetChildIndex(this.label24, 0);
       this.Controls.SetChildIndex(this.label23, 0);
       this.Controls.SetChildIndex(this.label22, 0);
       this.Controls.SetChildIndex(this.label37, 0);
       this.Controls.SetChildIndex(this.comboBoxQAMModulation, 0);
       this.Controls.SetChildIndex(this.label38, 0);
-      this.Controls.SetChildIndex(this.label41, 0);
       this.Controls.SetChildIndex(this.label40, 0);
-      this.Controls.SetChildIndex(this.label39, 0);
+      this.Controls.SetChildIndex(this.label41, 0);
       this.Controls.SetChildIndex(this.label26, 0);
+      this.Controls.SetChildIndex(this.label39, 0);
       this.Controls.SetChildIndex(this.textBoxProgram, 0);
       this.Controls.SetChildIndex(this.textBoxMajor, 0);
       this.Controls.SetChildIndex(this.textBoxMinor, 0);
@@ -293,10 +302,13 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.textBoxQamONID, 0);
       this.Controls.SetChildIndex(this.textBoxQamTSID, 0);
       this.Controls.SetChildIndex(this.textBoxQamSID, 0);
-      this.Controls.SetChildIndex(this.textBoxQamPmt, 0);
-      this.Controls.SetChildIndex(this.textBoxQamProvider, 0);
+      this.Controls.SetChildIndex(this.label1, 0);
       this.Controls.SetChildIndex(this.label49, 0);
       this.Controls.SetChildIndex(this.checkBoxQamfta, 0);
+      this.Controls.SetChildIndex(this.textBoxQamPmt, 0);
+      this.Controls.SetChildIndex(this.textBoxQamProvider, 0);
+      this.Controls.SetChildIndex(this.mpButtonOk, 0);
+      this.Controls.SetChildIndex(this.mpButtonCancel, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -325,6 +337,7 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.Label label22;
     private System.Windows.Forms.Label label23;
     private System.Windows.Forms.Label label24;
+    private System.Windows.Forms.Label label1;
 
   }
 }

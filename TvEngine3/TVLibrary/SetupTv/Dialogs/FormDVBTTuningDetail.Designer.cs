@@ -45,6 +45,7 @@ namespace SetupTv.Dialogs
       this.label19 = new System.Windows.Forms.Label();
       this.label20 = new System.Windows.Forms.Label();
       this.label21 = new System.Windows.Forms.Label();
+      this.label1 = new System.Windows.Forms.Label();
       this.SuspendLayout();
       // 
       // mpButtonCancel
@@ -101,7 +102,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxServiceId
       // 
-      this.textBoxServiceId.Location = new System.Drawing.Point(87, 115);
+      this.textBoxServiceId.Location = new System.Drawing.Point(87, 143);
       this.textBoxServiceId.Name = "textBoxServiceId";
       this.textBoxServiceId.Size = new System.Drawing.Size(146, 20);
       this.textBoxServiceId.TabIndex = 83;
@@ -109,7 +110,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxTransportId
       // 
-      this.textBoxTransportId.Location = new System.Drawing.Point(87, 89);
+      this.textBoxTransportId.Location = new System.Drawing.Point(87, 117);
       this.textBoxTransportId.Name = "textBoxTransportId";
       this.textBoxTransportId.Size = new System.Drawing.Size(146, 20);
       this.textBoxTransportId.TabIndex = 82;
@@ -117,7 +118,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxNetworkId
       // 
-      this.textBoxNetworkId.Location = new System.Drawing.Point(87, 63);
+      this.textBoxNetworkId.Location = new System.Drawing.Point(87, 91);
       this.textBoxNetworkId.Name = "textBoxNetworkId";
       this.textBoxNetworkId.Size = new System.Drawing.Size(146, 20);
       this.textBoxNetworkId.TabIndex = 81;
@@ -136,9 +137,9 @@ namespace SetupTv.Dialogs
       this.label50.AutoSize = true;
       this.label50.Location = new System.Drawing.Point(9, 172);
       this.label50.Name = "label50";
-      this.label50.Size = new System.Drawing.Size(43, 13);
+      this.label50.Size = new System.Drawing.Size(54, 13);
       this.label50.TabIndex = 92;
-      this.label50.Text = "PmtPid:";
+      this.label50.Text = "PMT PID:";
       // 
       // channelDVBT
       // 
@@ -156,7 +157,7 @@ namespace SetupTv.Dialogs
       this.comboBoxBandWidth.Items.AddRange(new object[] {
             "7 MHz",
             "8 MHz"});
-      this.comboBoxBandWidth.Location = new System.Drawing.Point(87, 142);
+      this.comboBoxBandWidth.Location = new System.Drawing.Point(87, 63);
       this.comboBoxBandWidth.Name = "comboBoxBandWidth";
       this.comboBoxBandWidth.Size = new System.Drawing.Size(146, 21);
       this.comboBoxBandWidth.TabIndex = 84;
@@ -164,7 +165,7 @@ namespace SetupTv.Dialogs
       // label17
       // 
       this.label17.AutoSize = true;
-      this.label17.Location = new System.Drawing.Point(9, 147);
+      this.label17.Location = new System.Drawing.Point(9, 66);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(60, 13);
       this.label17.TabIndex = 89;
@@ -173,43 +174,53 @@ namespace SetupTv.Dialogs
       // label18
       // 
       this.label18.AutoSize = true;
-      this.label18.Location = new System.Drawing.Point(9, 92);
+      this.label18.Location = new System.Drawing.Point(9, 120);
       this.label18.Name = "label18";
-      this.label18.Size = new System.Drawing.Size(64, 13);
+      this.label18.Size = new System.Drawing.Size(69, 13);
       this.label18.TabIndex = 88;
-      this.label18.Text = "TransportId:";
+      this.label18.Text = "Transport ID:";
       // 
       // label19
       // 
       this.label19.AutoSize = true;
-      this.label19.Location = new System.Drawing.Point(9, 119);
+      this.label19.Location = new System.Drawing.Point(9, 147);
       this.label19.Name = "label19";
-      this.label19.Size = new System.Drawing.Size(55, 13);
+      this.label19.Size = new System.Drawing.Size(60, 13);
       this.label19.TabIndex = 87;
-      this.label19.Text = "ServiceId:";
+      this.label19.Text = "Service ID:";
       // 
       // label20
       // 
       this.label20.AutoSize = true;
-      this.label20.Location = new System.Drawing.Point(9, 66);
+      this.label20.Location = new System.Drawing.Point(9, 94);
       this.label20.Name = "label20";
-      this.label20.Size = new System.Drawing.Size(59, 13);
+      this.label20.Size = new System.Drawing.Size(64, 13);
       this.label20.TabIndex = 86;
-      this.label20.Text = "NetworkId:";
+      this.label20.Text = "Network ID:";
       // 
       // label21
       // 
       this.label21.AutoSize = true;
-      this.label21.Location = new System.Drawing.Point(9, 37);
+      this.label21.Location = new System.Drawing.Point(9, 40);
       this.label21.Name = "label21";
       this.label21.Size = new System.Drawing.Size(60, 13);
       this.label21.TabIndex = 85;
       this.label21.Text = "Frequency:";
       // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(235, 40);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(26, 13);
+      this.label1.TabIndex = 118;
+      this.label1.Text = "kHz";
+      // 
       // FormDVBTTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(284, 293);
+      this.Controls.Add(this.label1);
       this.Controls.Add(this.checkBoxDVBTfta);
       this.Controls.Add(this.label48);
       this.Controls.Add(this.textBoxDVBTProvider);
@@ -249,6 +260,7 @@ namespace SetupTv.Dialogs
       this.Controls.SetChildIndex(this.textBoxDVBTProvider, 0);
       this.Controls.SetChildIndex(this.label48, 0);
       this.Controls.SetChildIndex(this.checkBoxDVBTfta, 0);
+      this.Controls.SetChildIndex(this.label1, 0);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -273,5 +285,6 @@ namespace SetupTv.Dialogs
     private System.Windows.Forms.Label label19;
     private System.Windows.Forms.Label label20;
     private System.Windows.Forms.Label label21;
+    private System.Windows.Forms.Label label1;
   }
 }

@@ -47,30 +47,30 @@ namespace SetupTv.Dialogs
       // 
       // mpButtonCancel
       // 
-      this.mpButtonCancel.Location = new System.Drawing.Point(322, 232);
+      this.mpButtonCancel.Location = new System.Drawing.Point(343, 221);
       // 
       // mpButtonOk
       // 
-      this.mpButtonOk.Location = new System.Drawing.Point(223, 232);
+      this.mpButtonOk.Location = new System.Drawing.Point(244, 221);
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // textBoxDVBIPUrl
       // 
-      this.textBoxDVBIPUrl.Location = new System.Drawing.Point(83, 168);
+      this.textBoxDVBIPUrl.Location = new System.Drawing.Point(90, 38);
       this.textBoxDVBIPUrl.Name = "textBoxDVBIPUrl";
       this.textBoxDVBIPUrl.Size = new System.Drawing.Size(321, 20);
       this.textBoxDVBIPUrl.TabIndex = 111;
       // 
       // textBoxDVBIPProvider
       // 
-      this.textBoxDVBIPProvider.Location = new System.Drawing.Point(83, 142);
+      this.textBoxDVBIPProvider.Location = new System.Drawing.Point(90, 168);
       this.textBoxDVBIPProvider.Name = "textBoxDVBIPProvider";
       this.textBoxDVBIPProvider.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPProvider.TabIndex = 107;
       // 
       // textBoxDVBIPPmtPid
       // 
-      this.textBoxDVBIPPmtPid.Location = new System.Drawing.Point(83, 116);
+      this.textBoxDVBIPPmtPid.Location = new System.Drawing.Point(90, 142);
       this.textBoxDVBIPPmtPid.Name = "textBoxDVBIPPmtPid";
       this.textBoxDVBIPPmtPid.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPPmtPid.TabIndex = 105;
@@ -78,7 +78,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxDVBIPServiceId
       // 
-      this.textBoxDVBIPServiceId.Location = new System.Drawing.Point(83, 90);
+      this.textBoxDVBIPServiceId.Location = new System.Drawing.Point(90, 116);
       this.textBoxDVBIPServiceId.Name = "textBoxDVBIPServiceId";
       this.textBoxDVBIPServiceId.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPServiceId.TabIndex = 100;
@@ -86,7 +86,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxDVBIPTransportId
       // 
-      this.textBoxDVBIPTransportId.Location = new System.Drawing.Point(83, 64);
+      this.textBoxDVBIPTransportId.Location = new System.Drawing.Point(90, 90);
       this.textBoxDVBIPTransportId.Name = "textBoxDVBIPTransportId";
       this.textBoxDVBIPTransportId.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPTransportId.TabIndex = 99;
@@ -94,7 +94,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxDVBIPNetworkId
       // 
-      this.textBoxDVBIPNetworkId.Location = new System.Drawing.Point(83, 38);
+      this.textBoxDVBIPNetworkId.Location = new System.Drawing.Point(90, 64);
       this.textBoxDVBIPNetworkId.Name = "textBoxDVBIPNetworkId";
       this.textBoxDVBIPNetworkId.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPNetworkId.TabIndex = 98;
@@ -102,7 +102,7 @@ namespace SetupTv.Dialogs
       // 
       // textBoxDVBIPChannel
       // 
-      this.textBoxDVBIPChannel.Location = new System.Drawing.Point(83, 12);
+      this.textBoxDVBIPChannel.Location = new System.Drawing.Point(90, 12);
       this.textBoxDVBIPChannel.Name = "textBoxDVBIPChannel";
       this.textBoxDVBIPChannel.Size = new System.Drawing.Size(146, 20);
       this.textBoxDVBIPChannel.TabIndex = 97;
@@ -111,7 +111,7 @@ namespace SetupTv.Dialogs
       // label53
       // 
       this.label53.AutoSize = true;
-      this.label53.Location = new System.Drawing.Point(5, 173);
+      this.label53.Location = new System.Drawing.Point(12, 41);
       this.label53.Name = "label53";
       this.label53.Size = new System.Drawing.Size(32, 13);
       this.label53.TabIndex = 110;
@@ -120,7 +120,7 @@ namespace SetupTv.Dialogs
       // checkBoxDVBIPfta
       // 
       this.checkBoxDVBIPfta.AutoSize = true;
-      this.checkBoxDVBIPfta.Location = new System.Drawing.Point(83, 194);
+      this.checkBoxDVBIPfta.Location = new System.Drawing.Point(90, 194);
       this.checkBoxDVBIPfta.Name = "checkBoxDVBIPfta";
       this.checkBoxDVBIPfta.Size = new System.Drawing.Size(78, 17);
       this.checkBoxDVBIPfta.TabIndex = 109;
@@ -131,7 +131,7 @@ namespace SetupTv.Dialogs
       // labelDVBIPProvider
       // 
       this.labelDVBIPProvider.AutoSize = true;
-      this.labelDVBIPProvider.Location = new System.Drawing.Point(5, 145);
+      this.labelDVBIPProvider.Location = new System.Drawing.Point(12, 171);
       this.labelDVBIPProvider.Name = "labelDVBIPProvider";
       this.labelDVBIPProvider.Size = new System.Drawing.Size(49, 13);
       this.labelDVBIPProvider.TabIndex = 108;
@@ -140,43 +140,43 @@ namespace SetupTv.Dialogs
       // ipPmtLabel
       // 
       this.ipPmtLabel.AutoSize = true;
-      this.ipPmtLabel.Location = new System.Drawing.Point(5, 119);
+      this.ipPmtLabel.Location = new System.Drawing.Point(12, 145);
       this.ipPmtLabel.Name = "ipPmtLabel";
-      this.ipPmtLabel.Size = new System.Drawing.Size(43, 13);
+      this.ipPmtLabel.Size = new System.Drawing.Size(54, 13);
       this.ipPmtLabel.TabIndex = 106;
-      this.ipPmtLabel.Text = "PmtPid:";
+      this.ipPmtLabel.Text = "PMT PID:";
       // 
       // label54
       // 
       this.label54.AutoSize = true;
-      this.label54.Location = new System.Drawing.Point(5, 67);
+      this.label54.Location = new System.Drawing.Point(12, 93);
       this.label54.Name = "label54";
-      this.label54.Size = new System.Drawing.Size(64, 13);
+      this.label54.Size = new System.Drawing.Size(69, 13);
       this.label54.TabIndex = 104;
-      this.label54.Text = "TransportId:";
+      this.label54.Text = "Transport ID:";
       // 
       // label55
       // 
       this.label55.AutoSize = true;
-      this.label55.Location = new System.Drawing.Point(5, 94);
+      this.label55.Location = new System.Drawing.Point(12, 119);
       this.label55.Name = "label55";
-      this.label55.Size = new System.Drawing.Size(55, 13);
+      this.label55.Size = new System.Drawing.Size(60, 13);
       this.label55.TabIndex = 103;
-      this.label55.Text = "ServiceId:";
+      this.label55.Text = "Service ID:";
       // 
       // label56
       // 
       this.label56.AutoSize = true;
-      this.label56.Location = new System.Drawing.Point(5, 41);
+      this.label56.Location = new System.Drawing.Point(12, 67);
       this.label56.Name = "label56";
-      this.label56.Size = new System.Drawing.Size(59, 13);
+      this.label56.Size = new System.Drawing.Size(64, 13);
       this.label56.TabIndex = 102;
-      this.label56.Text = "NetworkId:";
+      this.label56.Text = "Network ID:";
       // 
       // label57
       // 
       this.label57.AutoSize = true;
-      this.label57.Location = new System.Drawing.Point(5, 12);
+      this.label57.Location = new System.Drawing.Point(12, 15);
       this.label57.Name = "label57";
       this.label57.Size = new System.Drawing.Size(49, 13);
       this.label57.TabIndex = 101;
@@ -185,7 +185,7 @@ namespace SetupTv.Dialogs
       // FormDVBIPTuningDetail
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-      this.ClientSize = new System.Drawing.Size(409, 267);
+      this.ClientSize = new System.Drawing.Size(430, 256);
       this.Controls.Add(this.textBoxDVBIPUrl);
       this.Controls.Add(this.textBoxDVBIPProvider);
       this.Controls.Add(this.textBoxDVBIPPmtPid);

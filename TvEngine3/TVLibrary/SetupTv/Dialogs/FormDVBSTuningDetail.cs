@@ -41,7 +41,6 @@ namespace SetupTv.Dialogs
         textBoxTransportId.Text = TuningDetail.TransportId.ToString();
         textBoxServiceId.Text = TuningDetail.ServiceId.ToString();
         textBoxSymbolRate.Text = TuningDetail.Symbolrate.ToString();
-        textBoxSwitch.Text = TuningDetail.SwitchingFrequency.ToString();
         textBoxDVBSChannel.Text = TuningDetail.ChannelNumber.ToString();
         textBoxDVBSPmt.Text = TuningDetail.PmtPid.ToString();
         textBoxDVBSProvider.Text = TuningDetail.Provider;
@@ -60,7 +59,6 @@ namespace SetupTv.Dialogs
         textBoxTransportId.Text = "";
         textBoxServiceId.Text = "";
         textBoxSymbolRate.Text = "";
-        textBoxSwitch.Text = "";
         textBoxDVBSChannel.Text = "";
         textBoxDVBSPmt.Text = "";
         textBoxDVBSProvider.Text = "";
@@ -96,7 +94,6 @@ namespace SetupTv.Dialogs
       TuningDetail.TransportId = Int32.Parse(textBoxTransportId.Text);
       TuningDetail.ServiceId = Int32.Parse(textBoxServiceId.Text);
       TuningDetail.Symbolrate = Int32.Parse(textBoxSymbolRate.Text);
-      TuningDetail.SwitchingFrequency = Int32.Parse(textBoxSwitch.Text);
       TuningDetail.Polarisation = (int)(Polarisation)(comboBoxPol.SelectedIndex - 1);
       TuningDetail.InnerFecRate = (int)(BinaryConvolutionCodeRate)(comboBoxInnerFecRate.SelectedIndex - 1);
       TuningDetail.Pilot = (int)(Pilot)(comboBoxPilot.SelectedIndex - 1);
@@ -111,15 +108,25 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      if (textBoxFrequency.Text.Length == 0)
+      int lcn, freq, onid, tsid, sid, symbolrate, pmt;
+      if (textBoxDVBSChannel.Text.Length == 0)
       {
-        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a channel number!", "Incorrect input");
         return false;
       }
-      int lcn, freq, onid, tsid, sid, symbolrate, switchfreq, pmt;
       if (!Int32.TryParse(textBoxDVBSChannel.Text, out lcn))
       {
         MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxDisEqc.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid DiSEqC port!", "Incorrect input");
+        return false;
+      }
+      if (textBoxFrequency.Text.Length == 0)
+      {
+        MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxFrequency.Text, out freq))
@@ -127,19 +134,9 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
-      if (!Int32.TryParse(textBoxNetworkId.Text, out onid))
+      if (textBoxSymbolRate.Text.Length == 0)
       {
-        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
-        return false;
-      }
-      if (!Int32.TryParse(textBoxTransportId.Text, out tsid))
-      {
-        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
-        return false;
-      }
-      if (!Int32.TryParse(textBoxServiceId.Text, out sid))
-      {
-        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a symbol rate!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxSymbolRate.Text, out symbolrate))
@@ -147,19 +144,59 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid symbol rate!", "Incorrect input");
         return false;
       }
-      if (!Int32.TryParse(textBoxSwitch.Text, out switchfreq))
+      if (comboBoxPol.SelectedIndex < 0)
       {
-        MessageBox.Show(this, "Please enter a valid LNB switch!", "Incorrect input");
+        MessageBox.Show(this, "Please select a valid polarisation!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxModulation.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid modulation!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxInnerFecRate.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid inner FEC rate!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxPilot.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid pilot!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxRollOff.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid roll-off!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxNetworkId.Text, out onid))
+      {
+        MessageBox.Show(this, "Please enter a valid network ID!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxTransportId.Text, out tsid))
+      {
+        MessageBox.Show(this, "Please enter a valid transport ID!", "Incorrect input");
+        return false;
+      }
+      if (!Int32.TryParse(textBoxServiceId.Text, out sid))
+      {
+        MessageBox.Show(this, "Please enter a valid service ID!", "Incorrect input");
+        return false;
+      }
+      if (onid < 0 || tsid < 0 || sid < 0)
+      {
+        MessageBox.Show(this, "Please enter valid network, transport and service IDs!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxDVBSPmt.Text, out pmt))
       {
-        MessageBox.Show(this, "Please enter a valid pmt id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
-      if (onid <= 0 && tsid < 0 && sid < 0)
+      if (pmt < 0)
       {
-        MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
       return true;
