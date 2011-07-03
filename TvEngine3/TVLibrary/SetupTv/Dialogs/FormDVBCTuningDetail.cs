@@ -85,7 +85,7 @@ namespace SetupTv.Dialogs
         textBoxDVBCPmt.Text = TuningDetail.PmtPid.ToString();
         textBoxDVBCProvider.Text = TuningDetail.Provider;
         checkBoxDVBCfta.Checked = TuningDetail.FreeToAir;
-        comboBoxDvbCModulation.SelectedItem = (ModulationType)TuningDetail.Modulation;
+        comboBoxDvbCModulation.SelectedIndex = TuningDetail.Modulation + 1;
       }
       else
       {

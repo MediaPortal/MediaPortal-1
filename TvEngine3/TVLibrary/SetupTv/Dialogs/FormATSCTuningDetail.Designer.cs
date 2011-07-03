@@ -55,10 +55,12 @@ namespace SetupTv.Dialogs
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(184, 308);
+      this.mpButtonCancel.TabIndex = 12;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(85, 308);
+      this.mpButtonOk.TabIndex = 11;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // checkBoxQamfta
@@ -67,7 +69,7 @@ namespace SetupTv.Dialogs
       this.checkBoxQamfta.Location = new System.Drawing.Point(88, 278);
       this.checkBoxQamfta.Name = "checkBoxQamfta";
       this.checkBoxQamfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxQamfta.TabIndex = 100;
+      this.checkBoxQamfta.TabIndex = 10;
       this.checkBoxQamfta.Text = "Free To Air";
       this.checkBoxQamfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxQamfta.UseVisualStyleBackColor = true;
@@ -86,14 +88,14 @@ namespace SetupTv.Dialogs
       this.textBoxQamProvider.Location = new System.Drawing.Point(88, 252);
       this.textBoxQamProvider.Name = "textBoxQamProvider";
       this.textBoxQamProvider.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamProvider.TabIndex = 98;
+      this.textBoxQamProvider.TabIndex = 9;
       // 
       // textBoxQamPmt
       // 
       this.textBoxQamPmt.Location = new System.Drawing.Point(88, 226);
       this.textBoxQamPmt.Name = "textBoxQamPmt";
       this.textBoxQamPmt.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamPmt.TabIndex = 96;
+      this.textBoxQamPmt.TabIndex = 8;
       this.textBoxQamPmt.Text = "-1";
       // 
       // textBoxQamSID
@@ -101,7 +103,7 @@ namespace SetupTv.Dialogs
       this.textBoxQamSID.Location = new System.Drawing.Point(88, 200);
       this.textBoxQamSID.Name = "textBoxQamSID";
       this.textBoxQamSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamSID.TabIndex = 92;
+      this.textBoxQamSID.TabIndex = 7;
       this.textBoxQamSID.Text = "-1";
       // 
       // textBoxQamTSID
@@ -109,7 +111,7 @@ namespace SetupTv.Dialogs
       this.textBoxQamTSID.Location = new System.Drawing.Point(88, 174);
       this.textBoxQamTSID.Name = "textBoxQamTSID";
       this.textBoxQamTSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamTSID.TabIndex = 91;
+      this.textBoxQamTSID.TabIndex = 6;
       this.textBoxQamTSID.Text = "-1";
       // 
       // textBoxQamONID
@@ -117,7 +119,7 @@ namespace SetupTv.Dialogs
       this.textBoxQamONID.Location = new System.Drawing.Point(88, 148);
       this.textBoxQamONID.Name = "textBoxQamONID";
       this.textBoxQamONID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxQamONID.TabIndex = 90;
+      this.textBoxQamONID.TabIndex = 5;
       this.textBoxQamONID.Text = "-1";
       // 
       // textBoxFrequency
@@ -125,7 +127,7 @@ namespace SetupTv.Dialogs
       this.textBoxFrequency.Location = new System.Drawing.Point(88, 43);
       this.textBoxFrequency.Name = "textBoxFrequency";
       this.textBoxFrequency.Size = new System.Drawing.Size(146, 20);
-      this.textBoxFrequency.TabIndex = 88;
+      this.textBoxFrequency.TabIndex = 1;
       this.textBoxFrequency.Text = "-1";
       // 
       // textBoxMinor
@@ -133,7 +135,7 @@ namespace SetupTv.Dialogs
       this.textBoxMinor.Location = new System.Drawing.Point(88, 95);
       this.textBoxMinor.Name = "textBoxMinor";
       this.textBoxMinor.Size = new System.Drawing.Size(146, 20);
-      this.textBoxMinor.TabIndex = 82;
+      this.textBoxMinor.TabIndex = 3;
       this.textBoxMinor.Text = "-1";
       // 
       // textBoxMajor
@@ -141,7 +143,7 @@ namespace SetupTv.Dialogs
       this.textBoxMajor.Location = new System.Drawing.Point(88, 69);
       this.textBoxMajor.Name = "textBoxMajor";
       this.textBoxMajor.Size = new System.Drawing.Size(146, 20);
-      this.textBoxMajor.TabIndex = 81;
+      this.textBoxMajor.TabIndex = 2;
       this.textBoxMajor.Text = "-1";
       // 
       // textBoxProgram
@@ -149,7 +151,7 @@ namespace SetupTv.Dialogs
       this.textBoxProgram.Location = new System.Drawing.Point(88, 17);
       this.textBoxProgram.Name = "textBoxProgram";
       this.textBoxProgram.Size = new System.Drawing.Size(146, 20);
-      this.textBoxProgram.TabIndex = 80;
+      this.textBoxProgram.TabIndex = 0;
       this.textBoxProgram.Text = "1";
       // 
       // label26
@@ -209,7 +211,7 @@ namespace SetupTv.Dialogs
       this.comboBoxQAMModulation.Location = new System.Drawing.Point(88, 121);
       this.comboBoxQAMModulation.Name = "comboBoxQAMModulation";
       this.comboBoxQAMModulation.Size = new System.Drawing.Size(146, 21);
-      this.comboBoxQAMModulation.TabIndex = 86;
+      this.comboBoxQAMModulation.TabIndex = 4;
       // 
       // label37
       // 

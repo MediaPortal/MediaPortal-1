@@ -48,10 +48,12 @@ namespace SetupTv.Dialogs
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(343, 221);
+      this.mpButtonCancel.TabIndex = 9;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(244, 221);
+      this.mpButtonOk.TabIndex = 8;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // textBoxDVBIPUrl
@@ -59,21 +61,21 @@ namespace SetupTv.Dialogs
       this.textBoxDVBIPUrl.Location = new System.Drawing.Point(90, 38);
       this.textBoxDVBIPUrl.Name = "textBoxDVBIPUrl";
       this.textBoxDVBIPUrl.Size = new System.Drawing.Size(321, 20);
-      this.textBoxDVBIPUrl.TabIndex = 111;
+      this.textBoxDVBIPUrl.TabIndex = 1;
       // 
       // textBoxDVBIPProvider
       // 
       this.textBoxDVBIPProvider.Location = new System.Drawing.Point(90, 168);
       this.textBoxDVBIPProvider.Name = "textBoxDVBIPProvider";
       this.textBoxDVBIPProvider.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPProvider.TabIndex = 107;
+      this.textBoxDVBIPProvider.TabIndex = 6;
       // 
       // textBoxDVBIPPmtPid
       // 
       this.textBoxDVBIPPmtPid.Location = new System.Drawing.Point(90, 142);
       this.textBoxDVBIPPmtPid.Name = "textBoxDVBIPPmtPid";
       this.textBoxDVBIPPmtPid.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPPmtPid.TabIndex = 105;
+      this.textBoxDVBIPPmtPid.TabIndex = 5;
       this.textBoxDVBIPPmtPid.Text = "-1";
       // 
       // textBoxDVBIPServiceId
@@ -81,7 +83,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBIPServiceId.Location = new System.Drawing.Point(90, 116);
       this.textBoxDVBIPServiceId.Name = "textBoxDVBIPServiceId";
       this.textBoxDVBIPServiceId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPServiceId.TabIndex = 100;
+      this.textBoxDVBIPServiceId.TabIndex = 4;
       this.textBoxDVBIPServiceId.Text = "-1";
       // 
       // textBoxDVBIPTransportId
@@ -89,7 +91,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBIPTransportId.Location = new System.Drawing.Point(90, 90);
       this.textBoxDVBIPTransportId.Name = "textBoxDVBIPTransportId";
       this.textBoxDVBIPTransportId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPTransportId.TabIndex = 99;
+      this.textBoxDVBIPTransportId.TabIndex = 3;
       this.textBoxDVBIPTransportId.Text = "-1";
       // 
       // textBoxDVBIPNetworkId
@@ -97,7 +99,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBIPNetworkId.Location = new System.Drawing.Point(90, 64);
       this.textBoxDVBIPNetworkId.Name = "textBoxDVBIPNetworkId";
       this.textBoxDVBIPNetworkId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPNetworkId.TabIndex = 98;
+      this.textBoxDVBIPNetworkId.TabIndex = 2;
       this.textBoxDVBIPNetworkId.Text = "-1";
       // 
       // textBoxDVBIPChannel
@@ -105,7 +107,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBIPChannel.Location = new System.Drawing.Point(90, 12);
       this.textBoxDVBIPChannel.Name = "textBoxDVBIPChannel";
       this.textBoxDVBIPChannel.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBIPChannel.TabIndex = 97;
+      this.textBoxDVBIPChannel.TabIndex = 0;
       this.textBoxDVBIPChannel.Text = "0";
       // 
       // label53
@@ -123,7 +125,7 @@ namespace SetupTv.Dialogs
       this.checkBoxDVBIPfta.Location = new System.Drawing.Point(90, 194);
       this.checkBoxDVBIPfta.Name = "checkBoxDVBIPfta";
       this.checkBoxDVBIPfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBIPfta.TabIndex = 109;
+      this.checkBoxDVBIPfta.TabIndex = 7;
       this.checkBoxDVBIPfta.Text = "Free To Air";
       this.checkBoxDVBIPfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxDVBIPfta.UseVisualStyleBackColor = true;

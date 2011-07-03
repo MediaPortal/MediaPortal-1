@@ -51,10 +51,12 @@ namespace SetupTv.Dialogs
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(197, 258);
+      this.mpButtonCancel.TabIndex = 10;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(106, 258);
+      this.mpButtonOk.TabIndex = 9;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // checkBoxDVBTfta
@@ -63,7 +65,7 @@ namespace SetupTv.Dialogs
       this.checkBoxDVBTfta.Location = new System.Drawing.Point(87, 221);
       this.checkBoxDVBTfta.Name = "checkBoxDVBTfta";
       this.checkBoxDVBTfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBTfta.TabIndex = 96;
+      this.checkBoxDVBTfta.TabIndex = 8;
       this.checkBoxDVBTfta.Text = "Free To Air";
       this.checkBoxDVBTfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxDVBTfta.UseVisualStyleBackColor = true;
@@ -82,14 +84,14 @@ namespace SetupTv.Dialogs
       this.textBoxDVBTProvider.Location = new System.Drawing.Point(87, 195);
       this.textBoxDVBTProvider.Name = "textBoxDVBTProvider";
       this.textBoxDVBTProvider.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTProvider.TabIndex = 94;
+      this.textBoxDVBTProvider.TabIndex = 7;
       // 
       // textBoxPmt
       // 
       this.textBoxPmt.Location = new System.Drawing.Point(87, 169);
       this.textBoxPmt.Name = "textBoxPmt";
       this.textBoxPmt.Size = new System.Drawing.Size(146, 20);
-      this.textBoxPmt.TabIndex = 93;
+      this.textBoxPmt.TabIndex = 6;
       this.textBoxPmt.Text = "-1";
       // 
       // textBoxDVBTChannel
@@ -97,7 +99,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBTChannel.Location = new System.Drawing.Point(87, 12);
       this.textBoxDVBTChannel.Name = "textBoxDVBTChannel";
       this.textBoxDVBTChannel.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTChannel.TabIndex = 90;
+      this.textBoxDVBTChannel.TabIndex = 0;
       this.textBoxDVBTChannel.Text = "0";
       // 
       // textBoxServiceId
@@ -105,7 +107,7 @@ namespace SetupTv.Dialogs
       this.textBoxServiceId.Location = new System.Drawing.Point(87, 143);
       this.textBoxServiceId.Name = "textBoxServiceId";
       this.textBoxServiceId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxServiceId.TabIndex = 83;
+      this.textBoxServiceId.TabIndex = 5;
       this.textBoxServiceId.Text = "-1";
       // 
       // textBoxTransportId
@@ -113,7 +115,7 @@ namespace SetupTv.Dialogs
       this.textBoxTransportId.Location = new System.Drawing.Point(87, 117);
       this.textBoxTransportId.Name = "textBoxTransportId";
       this.textBoxTransportId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxTransportId.TabIndex = 82;
+      this.textBoxTransportId.TabIndex = 4;
       this.textBoxTransportId.Text = "-1";
       // 
       // textBoxNetworkId
@@ -121,7 +123,7 @@ namespace SetupTv.Dialogs
       this.textBoxNetworkId.Location = new System.Drawing.Point(87, 91);
       this.textBoxNetworkId.Name = "textBoxNetworkId";
       this.textBoxNetworkId.Size = new System.Drawing.Size(146, 20);
-      this.textBoxNetworkId.TabIndex = 81;
+      this.textBoxNetworkId.TabIndex = 3;
       this.textBoxNetworkId.Text = "-1";
       // 
       // textBoxDVBTfreq
@@ -129,7 +131,7 @@ namespace SetupTv.Dialogs
       this.textBoxDVBTfreq.Location = new System.Drawing.Point(87, 37);
       this.textBoxDVBTfreq.Name = "textBoxDVBTfreq";
       this.textBoxDVBTfreq.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBTfreq.TabIndex = 80;
+      this.textBoxDVBTfreq.TabIndex = 1;
       this.textBoxDVBTfreq.Text = "698000";
       // 
       // label50
@@ -160,7 +162,7 @@ namespace SetupTv.Dialogs
       this.comboBoxBandWidth.Location = new System.Drawing.Point(87, 63);
       this.comboBoxBandWidth.Name = "comboBoxBandWidth";
       this.comboBoxBandWidth.Size = new System.Drawing.Size(146, 21);
-      this.comboBoxBandWidth.TabIndex = 84;
+      this.comboBoxBandWidth.TabIndex = 2;
       // 
       // label17
       // 

@@ -53,10 +53,12 @@ namespace SetupTv.Dialogs
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(188, 275);
+      this.mpButtonCancel.TabIndex = 11;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(90, 275);
+      this.mpButtonOk.TabIndex = 10;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // comboBoxDvbCModulation
@@ -66,7 +68,7 @@ namespace SetupTv.Dialogs
       this.comboBoxDvbCModulation.Location = new System.Drawing.Point(90, 86);
       this.comboBoxDvbCModulation.Name = "comboBoxDvbCModulation";
       this.comboBoxDvbCModulation.Size = new System.Drawing.Size(147, 21);
-      this.comboBoxDvbCModulation.TabIndex = 97;
+      this.comboBoxDvbCModulation.TabIndex = 3;
       // 
       // label42
       // 
@@ -83,7 +85,7 @@ namespace SetupTv.Dialogs
       this.checkBoxDVBCfta.Location = new System.Drawing.Point(90, 243);
       this.checkBoxDVBCfta.Name = "checkBoxDVBCfta";
       this.checkBoxDVBCfta.Size = new System.Drawing.Size(78, 17);
-      this.checkBoxDVBCfta.TabIndex = 96;
+      this.checkBoxDVBCfta.TabIndex = 9;
       this.checkBoxDVBCfta.Text = "Free To Air";
       this.checkBoxDVBCfta.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.checkBoxDVBCfta.UseVisualStyleBackColor = true;
@@ -102,14 +104,14 @@ namespace SetupTv.Dialogs
       this.textBoxDVBCProvider.Location = new System.Drawing.Point(90, 217);
       this.textBoxDVBCProvider.Name = "textBoxDVBCProvider";
       this.textBoxDVBCProvider.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBCProvider.TabIndex = 94;
+      this.textBoxDVBCProvider.TabIndex = 8;
       // 
       // textBoxDVBCPmt
       // 
       this.textBoxDVBCPmt.Location = new System.Drawing.Point(90, 191);
       this.textBoxDVBCPmt.Name = "textBoxDVBCPmt";
       this.textBoxDVBCPmt.Size = new System.Drawing.Size(146, 20);
-      this.textBoxDVBCPmt.TabIndex = 92;
+      this.textBoxDVBCPmt.TabIndex = 7;
       this.textBoxDVBCPmt.Text = "-1";
       // 
       // textBoxSymbolRate
@@ -117,7 +119,7 @@ namespace SetupTv.Dialogs
       this.textBoxSymbolRate.Location = new System.Drawing.Point(90, 60);
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(146, 20);
-      this.textBoxSymbolRate.TabIndex = 86;
+      this.textBoxSymbolRate.TabIndex = 2;
       this.textBoxSymbolRate.Text = "6875";
       // 
       // textBoxSID
@@ -125,7 +127,7 @@ namespace SetupTv.Dialogs
       this.textBoxSID.Location = new System.Drawing.Point(90, 165);
       this.textBoxSID.Name = "textBoxSID";
       this.textBoxSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxSID.TabIndex = 85;
+      this.textBoxSID.TabIndex = 6;
       this.textBoxSID.Text = "-1";
       // 
       // textBoxTSID
@@ -133,7 +135,7 @@ namespace SetupTv.Dialogs
       this.textBoxTSID.Location = new System.Drawing.Point(90, 139);
       this.textBoxTSID.Name = "textBoxTSID";
       this.textBoxTSID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxTSID.TabIndex = 84;
+      this.textBoxTSID.TabIndex = 5;
       this.textBoxTSID.Text = "-1";
       // 
       // textBoxONID
@@ -141,7 +143,7 @@ namespace SetupTv.Dialogs
       this.textBoxONID.Location = new System.Drawing.Point(90, 113);
       this.textBoxONID.Name = "textBoxONID";
       this.textBoxONID.Size = new System.Drawing.Size(146, 20);
-      this.textBoxONID.TabIndex = 83;
+      this.textBoxONID.TabIndex = 4;
       this.textBoxONID.Text = "-1";
       // 
       // textboxFreq
@@ -149,7 +151,7 @@ namespace SetupTv.Dialogs
       this.textboxFreq.Location = new System.Drawing.Point(90, 34);
       this.textboxFreq.Name = "textboxFreq";
       this.textboxFreq.Size = new System.Drawing.Size(147, 20);
-      this.textboxFreq.TabIndex = 82;
+      this.textboxFreq.TabIndex = 1;
       this.textboxFreq.Text = "388000";
       // 
       // label43
@@ -211,7 +213,7 @@ namespace SetupTv.Dialogs
       this.textBoxChannel.Location = new System.Drawing.Point(90, 8);
       this.textBoxChannel.Name = "textBoxChannel";
       this.textBoxChannel.Size = new System.Drawing.Size(147, 20);
-      this.textBoxChannel.TabIndex = 118;
+      this.textBoxChannel.TabIndex = 0;
       this.textBoxChannel.Text = "0";
       // 
       // label47
