@@ -542,7 +542,19 @@ namespace MediaPortal.GUI.Music
             goto case "album";
 
           case "album":
-            if (item.IsFolder && _useFolderThumbs)
+
+            bool thumbFound = false;
+            MusicTag tag = item.MusicTag as MusicTag;
+            strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              item.IconImage = strThumb;
+              item.IconImageBig = strThumb;
+              item.ThumbnailImage = strThumb;
+              thumbFound = true;
+            }
+
+            if (item.IsFolder && _useFolderThumbs && !thumbFound)
             {
               strThumb = Util.Utils.GetLocalFolderThumb(item.Path);
               if (Util.Utils.FileExistsInCache(strThumb))
@@ -567,17 +579,6 @@ namespace MediaPortal.GUI.Music
                     FolderThumbCacher thumbworker = new FolderThumbCacher(Path.GetDirectoryName(strThumb), false);
                   }
                 }
-              }
-            }
-            else
-            {
-              MusicTag tag = item.MusicTag as MusicTag;
-              strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
-              if (Util.Utils.FileExistsInCache(strThumb))
-              {
-                item.IconImage = strThumb;
-                item.IconImageBig = strThumb;
-                item.ThumbnailImage = strThumb;
               }
             }
             break;
