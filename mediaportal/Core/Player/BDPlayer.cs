@@ -437,6 +437,7 @@ namespace MediaPortal.Player
     protected int _currentTitle = 0;
     protected int _currentChapter = 0;
     protected int _currentSubtitleStream = 0;
+	  protected int _newSubtitleStream = -1;
     protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
@@ -1329,7 +1330,14 @@ namespace MediaPortal.Player
       {
         if (_subSelector != null)
         {
-          _subSelector.SetOption(value);
+          try
+          {
+            _subSelector.SetOption(value);
+          }
+          catch(Exception e)
+          {
+            Log.Error("BDPlayer: CurrentSubtitleStream failed - TODO: add stream cache on .ax side");
+          }
         }
       }
     }
@@ -1669,20 +1677,26 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_AUDIO_STREAM:
             Log.Debug("BDPlayer: Audio changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xff)
-              CurrentAudioStream = bdevent.Param;
+              CurrentAudioStream = bdevent.Param - 1; // one based on libbluray
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xfff)
-              CurrentSubtitleStream = bdevent.Param;
+            {
+              int index = bdevent.Param - 1; // one based on libbluray
+              CurrentSubtitleStream = index;
+
+              if (CurrentSubtitleStream != index)
+                _newSubtitleStream = index;
+              else
+                _newSubtitleStream = -1;
+            }
             break;
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
             _currentTitle = bdevent.Param;
-            if (_currentChapter != 0xffff)
-              UpdateChapters();
             break;
 
           case (int)BDEvents.BD_EVENT_CHAPTER:
@@ -1692,6 +1706,13 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
+            if (_newSubtitleStream != -1)
+            {
+              Log.Debug("BDPlayer: try delayed subtitle stream update {0}", _newSubtitleStream);
+              CurrentSubtitleStream = _newSubtitleStream;
+              if (CurrentSubtitleStream == _newSubtitleStream)
+                CurrentSubtitleStream = -1;
+            }			
             break;
 
           case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:
