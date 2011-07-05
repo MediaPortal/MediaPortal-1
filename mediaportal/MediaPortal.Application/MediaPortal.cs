@@ -848,53 +848,67 @@ public class MediaPortalApp : D3DApp, IRender
 
   private void RenderStats()
   {
-    UpdateStats();
+    try
+    {
+      UpdateStats();
 
-    if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
-    {
-      if (m_bShowStats != m_bShowStatsPrevious)
+      if (GUIGraphicsContext.IsEvr && g_Player.HasVideo)
       {
-        // notify EVR presenter only when the setting changes
-        VMR9Util.g_vmr9.EnableEVRStatsDrawing(m_bShowStats);
-      }
-      // EVR presenter will draw the stats internaly
-      m_bShowStatsPrevious = m_bShowStats;
-      return;
-    }
-    else
-    {
-      m_bShowStatsPrevious = false;
-    }
-
-    if (m_bShowStats)
-    {
-      GetStats();
-      GUIFont font = GUIFontManager.GetFont(0);
-      if (font != null)
-      {
-        GUIGraphicsContext.SetScalingResolution(0, 0, false);
-        // '\n' doesnt work with the DirectX9 Ex device, so the string is splitted into two
-        font.DrawText(80, 40, 0xffffffff, frameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
-        font.DrawText(80, 55, 0xffffffff, frameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
-        region[0].X = m_ixpos;
-        region[0].Y = 0;
-        region[0].Width = 4;
-        region[0].Height = GUIGraphicsContext.Height;
-        GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, region);
-        float fStep = (GUIGraphicsContext.Width - 100);
-        fStep /= (2f * 16f);
-        fStep /= GUIGraphicsContext.CurrentFPS;
-        m_iFrameCount++;
-        if (m_iFrameCount >= (int)fStep)
+        if (m_bShowStats != m_bShowStatsPrevious)
         {
-          m_iFrameCount = 0;
-          m_ixpos += 12;
-          if (m_ixpos > GUIGraphicsContext.Width - 50)
+          // notify EVR presenter only when the setting changes
+          if (VMR9Util.g_vmr9 != null)
           {
-            m_ixpos = 50;
+            VMR9Util.g_vmr9.EnableEVRStatsDrawing(m_bShowStats);
+          }
+          else
+          {
+            return;
+          }
+        }
+        // EVR presenter will draw the stats internaly
+        m_bShowStatsPrevious = m_bShowStats;
+        return;
+      }
+      else
+      {
+        m_bShowStatsPrevious = false;
+      }
+
+      if (m_bShowStats)
+      {
+        GetStats();
+        GUIFont font = GUIFontManager.GetFont(0);
+        if (font != null)
+        {
+          GUIGraphicsContext.SetScalingResolution(0, 0, false);
+          // '\n' doesnt work with the DirectX9 Ex device, so the string is splitted into two
+          font.DrawText(80, 40, 0xffffffff, frameStatsLine1, GUIControl.Alignment.ALIGN_LEFT, -1);
+          font.DrawText(80, 55, 0xffffffff, frameStatsLine2, GUIControl.Alignment.ALIGN_LEFT, -1);
+          region[0].X = m_ixpos;
+          region[0].Y = 0;
+          region[0].Width = 4;
+          region[0].Height = GUIGraphicsContext.Height;
+          GUIGraphicsContext.DX9Device.Clear(ClearFlags.Target, Color.FromArgb(255, 255, 255, 255), 1.0f, 0, region);
+          float fStep = (GUIGraphicsContext.Width - 100);
+          fStep /= (2f * 16f);
+          fStep /= GUIGraphicsContext.CurrentFPS;
+          m_iFrameCount++;
+          if (m_iFrameCount >= (int)fStep)
+          {
+            m_iFrameCount = 0;
+            m_ixpos += 12;
+            if (m_ixpos > GUIGraphicsContext.Width - 50)
+            {
+              m_ixpos = 50;
+            }
           }
         }
       }
+    }
+    catch 
+    {
+      // Intentionally left blank - if stats rendering fails it is not a critical issue
     }
   }
 
