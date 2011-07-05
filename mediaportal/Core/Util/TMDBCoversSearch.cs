@@ -133,7 +133,7 @@ namespace MediaPortal.Util
         sr = new StreamReader(receiveStream, encode);
         strBody = sr.ReadToEnd();
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         Log.Info("TMDBCoverSearch: {0} unavailable.", strURL);
       }
