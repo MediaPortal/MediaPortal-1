@@ -1368,35 +1368,7 @@ namespace MediaPortal.GUI.Library
         if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_SELECT)
         {
           int iItem = message.Param1;
-          if (iItem >= 0 && iItem < _listItems.Count)
-          {
-            int iPage = 1;
-            _cursorX = 0;
-            _offset = 0;
-            while (iItem >= (_columns))
-            {
-              _offset += (_columns);
-              iItem -= (_columns);
-              iPage++;
-            }
-            if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset))
-            {
-              // adjust in the middle
-              int delta = _scrollStartOffset - iItem;
-              if (_offset >= delta)
-              {
-                iItem += delta;
-                _offset -= delta;
-              }
-            }
-            if (_upDownControl != null)
-            {
-              _upDownControl.Value = iPage;
-            }
-            _cursorX = iItem;
-            OnSelectionChanged();
-          }
-          _refresh = true;
+          SelectItemIndex(iItem);
         }
       }
 
@@ -1452,6 +1424,39 @@ namespace MediaPortal.GUI.Library
       }
 
       return false;
+    }
+
+    private void SelectItemIndex(int iItem)
+    {
+      if (iItem < 0) iItem = 0;
+      if (iItem >= _listItems.Count) iItem = _listItems.Count - 1;
+
+      int iPage = 1;
+      _cursorX = 0;
+      _offset = 0;
+      while (iItem >= (_columns))
+      {
+        _offset += (_columns);
+        iItem -= (_columns);
+        iPage++;
+      }
+      if ((iItem != _scrollStartOffset) && (_listItems.Count > _scrollStartOffset))
+      {
+        // adjust in the middle
+        int delta = _scrollStartOffset - iItem;
+        if (_offset >= delta)
+        {
+        iItem += delta;
+        _offset -= delta;
+        }
+      }
+      if (_upDownControl != null)
+      {
+        _upDownControl.Value = iPage;
+      }
+      _cursorX = iItem;
+      OnSelectionChanged();
+      _refresh = true;
     }
 
     /// <summary>
@@ -3323,6 +3328,10 @@ namespace MediaPortal.GUI.Library
           return iItem;
         }
         return -1;
+      }
+      set
+      {
+        SelectItemIndex(value);
       }
     }
 

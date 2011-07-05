@@ -503,8 +503,8 @@ namespace MediaPortal.GUI.Library
                 if (_searchString.Length > 0)
                 {
                   _searchString = _searchString.Remove(_searchString.Length - 1, 1);
+                  SearchItem(_searchString, SearchType.SEARCH_FIRST);
                 }
-                SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
 
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) ||
@@ -1976,6 +1976,9 @@ namespace MediaPortal.GUI.Library
     {
       if (index == _selectedCard)
       {
+        //we have to ensure OnSelectionChangedHappens
+        //case when filling coverflow with new data, position (selected card index) might stay the same but properties have to refresh
+        OnSelectionChanged();
         return;
       }
 
@@ -2509,6 +2512,10 @@ namespace MediaPortal.GUI.Library
           return iItem;
         }
         return -1;
+      }
+      set
+      {
+        SelectCardIndexNow(value);
       }
     }
 
