@@ -288,4 +288,6 @@ private:
 
   //Used for playlist/clip tracking
   CPlaylistManager * m_playlistManager;
+
+  int m_videoServiceType;
 };

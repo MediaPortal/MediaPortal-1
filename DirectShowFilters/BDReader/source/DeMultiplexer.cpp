@@ -96,6 +96,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_videoPlSeen = false;
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch=1;
+
+  m_videoServiceType = -1;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -118,10 +120,8 @@ CDeMultiplexer::~CDeMultiplexer()
     itv = m_t_vecVideoBuffers.erase(itv);
   }
 
-
   m_subtitleStreams.clear();
   m_audioStreams.clear();
-
 }
 
 void CDeMultiplexer::ResetClipInfo(int pDebugMark)
@@ -1254,8 +1254,36 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 
   if (m_bShuttingDown) return;
 
-  if (m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_MPEG1 ||
-      m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_MPEG2)
+  if (header.PayloadUnitStart)
+  {
+    CPcr pts;
+    CPcr dts;
+      
+    BYTE* start = tsPacket + header.PayLoadStart;
+  
+    if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
+    {
+      if (m_lastVideoPTS.ToClock() == 0 ||
+          ((m_rtVideoOffset != m_rtNewOffset || m_bForceUpdateVideoOffset) &&
+          ((m_bOffsetBackwards && pts > m_lastVideoPTS) ||
+          (!m_bOffsetBackwards && m_lastVideoPTS > pts))))
+      {
+        LogDebug("demux: video offset changed old: %I64d new: %I64d", m_rtVideoOffset, m_rtNewOffset);
+        m_rtVideoOffset = m_rtNewOffset;
+
+        m_nVideoClip = m_nClip;
+        m_nVideoPl = m_nPlaylist;
+             
+        BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+        m_videoServiceType = clip->video_streams->coding_type;
+
+        m_bForceUpdateVideoOffset = false;
+      }
+    }
+  }
+
+  if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
+      m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
   {
     FillVideoMPEG2(header, tsPacket);
   }
@@ -1315,7 +1343,7 @@ void CDeMultiplexer::CheckVideoFormat(Packet* p)
   int lastVidResY = m_mpegPesParser->basicVideoInfo.height;
   int laststreamType = m_mpegPesParser->basicVideoInfo.streamType;
 
-  m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), m_pids.videoPids[0].VideoServiceType);
+  m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
   
   p->pmt = CreateMediaType(&m_mpegPesParser->pmt);
 
@@ -1377,7 +1405,9 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> 
 
   if (!m_p) 
   {
-		m_p.Attach(new Packet());
+    //LogDebug("FillVideoH264PESPacket %I64d %d %d", p->rtStart, p->nPlaylist, p->nClipNumber);
+
+    m_p.Attach(new Packet());
     m_p->SetCount(0, PACKET_GRANULARITY);
 		m_p->bDiscontinuity = p->bDiscontinuity;
 		p->bDiscontinuity = FALSE;
@@ -1502,7 +1532,8 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> 
 				CAutoPtr<Packet> p2 = m_pl.RemoveHead();
 				p->Append(*p2);
 			}
-			PacketDelivery(p,header);
+      //LogDebug("PacketDelivery - %6.3f %d %d", pIn->rtStart / 10000000.0, pIn->nPlaylist, pIn->nClipNumber);
+			PacketDelivery(p, header);
 		}
 	}
 }
@@ -1731,19 +1762,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         m_VideoValidPES = true;
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
-          if (m_lastVideoPTS.ToClock() == 0 ||
-             ((m_rtVideoOffset != m_rtNewOffset || m_bForceUpdateVideoOffset) &&
-             ((m_bOffsetBackwards && pts > m_lastVideoPTS) ||
-             (!m_bOffsetBackwards && m_lastVideoPTS > pts))))
-          {
-            LogDebug("demux: video offset changed old: %I64d new: %I64d", m_rtVideoOffset, m_rtNewOffset);
-            m_rtVideoOffset = m_rtNewOffset;
-
-            m_nVideoClip = m_nClip;
-            m_nVideoPl = m_nPlaylist;
-            m_bForceUpdateVideoOffset = false;
-          }
-
           CPcr correctedPts;
           correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtVideoOffset;
           correctedPts.IsValid = true;
@@ -1850,20 +1868,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 //      m_VideoValidPES=true ;
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
-          if (m_lastVideoPTS.ToClock() == 0 ||
-             ((m_rtVideoOffset != m_rtNewOffset || m_bForceUpdateVideoOffset) &&
-             ((m_bOffsetBackwards && pts > m_lastVideoPTS) ||
-             (!m_bOffsetBackwards && m_lastVideoPTS > pts))))
-          {
-            LogDebug("demux: video offset changed old: %I64d new: %I64d", m_rtVideoOffset, m_rtNewOffset);
-            m_rtVideoOffset = m_rtNewOffset;
-
-            m_nVideoClip = m_nClip;
-            m_nVideoPl = m_nPlaylist;
-             
-            m_bForceUpdateVideoOffset = false;
-          }
-
           CPcr correctedPts;
           correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtVideoOffset;
           correctedPts.IsValid = true;

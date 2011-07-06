@@ -452,8 +452,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
         }
 */
-        if (buffer->pmt && m_mt.cbFormat != buffer->pmt->cbFormat)
+        if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
         {
+          // TODO: log subtype          
           LogDebug("NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
             
           HRESULT hrAccept = S_FALSE;
@@ -464,8 +465,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           }
           else if (m_pReceiver)
           {
-            LogDebug("DynamicQueryAccept - not avail"); 
-            hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+            // Dynamic format changes cause lot of issues - currently not enabled
+            //LogDebug("DynamicQueryAccept - not avail"); 
+            //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
           }
 
           if (hrAccept != S_OK)
