@@ -544,7 +544,8 @@ namespace TvPlugin
         item.Label = "..";
         item.IsFolder = true;
         listSchedules.Add(item);
-        total++;
+        //don't increment total for ".."
+        //total++;
 
         foreach (Schedule schedule in seriesList)
         {
