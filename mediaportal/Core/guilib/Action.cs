@@ -172,6 +172,7 @@ namespace MediaPortal.GUI.Library
       ACTION_SMALL_STEP_FORWARD = 124,
       // jumps a few seconds forward during playback of movie. Can be used in VideoFullScreen.xml window id=2005
       ACTION_JUMP_MUSIC_NOW_PLAYING = 125, // jump directly to now playing screen
+      ACTION_ADD_TO_PLAYLIST = 126, // add item to playlist (rather than ACTION_QUEUE_ITEM which will queue item regardless of whether a playlist is being used)
       ACTION_POWER_OFF = 991, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_SUSPEND = 992, // direct action rather than through ACTION_SHUTDOWN dialog menu
       ACTION_HIBERNATE = 993, // direct action rather than through ACTION_SHUTDOWN dialog menu

@@ -214,7 +214,7 @@ namespace MediaPortal.GUI.Music
 
         if (GetFocusControlId() == facadeLayout.GetID)
         {
-          AddSelectionToPlaylist(true);
+          AddSelectionToCurrentPlaylist(true, false);
         }
       }
     }
@@ -551,28 +551,6 @@ namespace MediaPortal.GUI.Music
           PlayCD(message.Label);
           break;
 
-        case GUIMessage.MessageType.GUI_MSG_CD_REMOVED:
-          MusicCD = null;
-          if (g_Player.Playing && Util.Utils.IsCDDA(g_Player.CurrentFile) &&
-              message.Label.Equals(g_Player.CurrentFile.Substring(0, 2), StringComparison.InvariantCultureIgnoreCase))
-            // test if it is our drive
-          {
-            g_Player.Stop();
-          }
-          if (GUIWindowManager.ActiveWindow == GetID)
-          {
-            if (Util.Utils.IsDVD(currentFolder))
-            {
-              currentFolder = string.Empty;
-              LoadDirectory(currentFolder);
-            }
-          }
-          break;
-
-        case GUIMessage.MessageType.GUI_MSG_AUTOPLAY_VOLUME:
-          PlayCD(message.Label);
-          break;
-
         case GUIMessage.MessageType.GUI_MSG_FILE_DOWNLOADING:
           facadeLayout.OnMessage(message);
           break;
@@ -627,10 +605,6 @@ namespace MediaPortal.GUI.Music
       _selectedListItem = item;
       int itemNo = facadeLayout.SelectedListItemIndex;
 
-      // when handling add to playlist items we need to override the
-      // play all setting to use this to enable us to reset it
-      bool existingPlayAll;
-
       if (item == null)
       {
         return;
@@ -658,16 +632,30 @@ namespace MediaPortal.GUI.Music
         {
           if (!isUpFolder)
           {
-            dlg.AddLocalizedString(926); // Add to playlist
-            if (!item.IsFolder)
-            {
-              dlg.AddLocalizedString(4557); // Add all to playlist
-            }
             dlg.AddLocalizedString(4552); // Play now
             if (!item.IsFolder && g_Player.Playing && g_Player.IsMusic)
             {
               dlg.AddLocalizedString(4551); // Play next
             }
+
+            // only offer to queue items if
+            // (a) playlist screen shows now playing list (_playlistIsCurrent is true) OR
+            // (b) playlist screen is showing playlist (not necessarily what is playing) and music 
+            //     is being played from TEMP playlist
+            if (_playlistIsCurrent || playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+            {
+              dlg.AddLocalizedString(1225); // Queue item
+              if (!item.IsFolder)
+              {
+                dlg.AddLocalizedString(1226); // Queue all items
+              }
+            }
+
+            if (!_playlistIsCurrent)
+            {
+              dlg.AddLocalizedString(926); // add to playlist
+            }
+
             if (!item.IsFolder && !item.IsRemote)
             {
               dlg.AddLocalizedString(930); //Add to favorites
@@ -693,7 +681,7 @@ namespace MediaPortal.GUI.Music
           }
           else // ".."
           {
-            dlg.AddLocalizedString(4557); // Add all to playlist
+            dlg.AddLocalizedString(1226); // Queue all items
             dlg.AddLocalizedString(102); //Scan
           }
         }
@@ -739,26 +727,24 @@ namespace MediaPortal.GUI.Music
           OnInfo(itemNo);
           break;
 
-        case 926: // add to playlist
-          existingPlayAll = base.PlayAllOnSingleItemPlayNow;
-          base.PlayAllOnSingleItemPlayNow = false;
-          AddSelectionToPlaylist(false);
-          base.PlayAllOnSingleItemPlayNow = existingPlayAll;
+        case 1225: // Queue item
+          AddSelectionToCurrentPlaylist(false, false);
           break;
 
-        case 4557: // add all items in current list to end of playlist
-          existingPlayAll = base.PlayAllOnSingleItemPlayNow;
-          base.PlayAllOnSingleItemPlayNow = true;
-          AddSelectionToPlaylist(false);
-          base.PlayAllOnSingleItemPlayNow = existingPlayAll;
+        case 1226: // Queue all items
+          AddSelectionToCurrentPlaylist(false, true);
           break;
 
         case 4551: // Play next
-          InsertSelectionToPlaylist();
+          InsertSelectionToPlaylist(false);
           break;
 
         case 4552: // Play now
-          AddSelectionToPlaylist(true);
+          AddSelectionToCurrentPlaylist(true, false);
+          break;
+
+        case 926: // add to playlist
+          AddSelectionToPlaylist();
           break;
 
         case 136: // show playlist
@@ -943,12 +929,11 @@ namespace MediaPortal.GUI.Music
         }
 
         bool clearPlaylist = false;
-        if (MusicState.CurrentPlayMode == MusicState.PlayMode.PLAY_MODE)
+        if (_selectOption == "play"  || !g_Player.Playing || !g_Player.IsMusic)
         {
-          // if in play mode then clear playlist
           clearPlaylist = true;
         }
-        AddSelectionToPlaylist(clearPlaylist);
+        AddSelectionToCurrentPlaylist(clearPlaylist, _addAllOnSelect);
       }
     }
 
@@ -1523,7 +1508,8 @@ namespace MediaPortal.GUI.Music
     /// Will add the current folder (and any sub-folders) to playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    protected override void AddSelectionToPlaylist(bool clearPlaylist)
+    /// <param name="addAllTracks">Whether to add all tracks in folder</param>
+    protected override void AddSelectionToCurrentPlaylist(bool clearPlaylist, bool addAllTracks)
     {
       GUIListItem selectedItem = facadeLayout.SelectedListItem;
 
@@ -1536,7 +1522,7 @@ namespace MediaPortal.GUI.Music
       }
 
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(selectedItem, ref pl, false);
+      AddFolderToPlaylist(selectedItem, ref pl, false, addAllTracks);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1544,13 +1530,32 @@ namespace MediaPortal.GUI.Music
       {
         pl.Sort(new TrackComparer());
       }
-      base.AddItemsToPlaylist(pl, clearPlaylist);
+      base.AddItemsToCurrentPlaylist(pl, clearPlaylist, addAllTracks);
     }
 
-    private void InsertSelectionToPlaylist()
+    /// <summary>
+    /// Add tracks to playlist without affecting what is playing
+    /// </summary>
+    protected override void AddSelectionToPlaylist()
+    {
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+
+      List<PlayListItem> pl = new List<PlayListItem>();
+      AddFolderToPlaylist(selectedItem, ref pl, false, false);
+
+      // only apply further sort if a folder has been selected
+      // if user has selected a track then add in order displayed
+      if (selectedItem.IsFolder)
+      {
+        pl.Sort(new TrackComparer());
+      }
+      base.AddItemsToPlaylist(pl);
+    }
+
+    private void InsertSelectionToPlaylist(bool addAllTracks)
     {
       List<PlayListItem> pl = new List<PlayListItem>();
-      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl, false);
+      AddFolderToPlaylist(facadeLayout.SelectedListItem, ref pl, false, addAllTracks);
 
       // only apply further sort if a folder has been selected
       // if user has selected a track then add in order displayed
@@ -1567,8 +1572,9 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="item">GUIListItem to be added to playlist</param>
     /// <param name="pl">Playlist to be added to</param>
-    /// <param name="playCd">Determines is whole CD playback has been requested</param>
-    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl, bool playCD)
+    /// <param name="playCD">Determines is whole CD playback has been requested</param>
+    /// <param name="addAllTracks">Whether to add all tracks in folder</param>
+    private void AddFolderToPlaylist(GUIListItem item, ref List<PlayListItem> pl, bool playCD, bool addAllTracks)
     {
       if (item.Label == "..")
       {
@@ -1582,13 +1588,13 @@ namespace MediaPortal.GUI.Music
         GetTagInfo(ref subFolders);
         foreach (GUIListItem subItem in subFolders)
         {
-          AddFolderToPlaylist(subItem, ref pl, playCD);
+          AddFolderToPlaylist(subItem, ref pl, playCD, addAllTracks);
         }
       }
       else
       {
         // add tracks
-        if (PlayAllOnSingleItemPlayNow)
+        if (addAllTracks)
         {
           GUIListItem selectedItem = null;
           if (facadeLayout != null)
@@ -1715,11 +1721,11 @@ namespace MediaPortal.GUI.Music
         GUIListItem item = new GUIListItem("CD_ROOT_FOLDER");
         item.IsFolder = true;
         item.Path = strDrive;
-        AddFolderToPlaylist(item, ref pl, true);
+        AddFolderToPlaylist(item, ref pl, true, true);
 
         pl.Sort(new TrackComparer());
 
-        base.AddItemsToPlaylist(pl, true);
+        base.AddItemsToCurrentPlaylist(pl, true, true);
       }
     }
 

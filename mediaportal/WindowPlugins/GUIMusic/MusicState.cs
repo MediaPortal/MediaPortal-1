@@ -28,31 +28,11 @@ namespace MediaPortal.GUI.Music
   /// </summary>
   public class MusicState : StateBase
   {
-    private static PlayMode m_playMode = PlayMode.PLAY_MODE;
 
     static MusicState()
     {
       m_iStartWindow = (int)GUIWindow.Window.WINDOW_MUSIC_FILES;
     }
 
-    public enum PlayMode
-    {
-      PLAY_MODE,
-      PLAYLIST_MODE,
-    }
-
-    /// <summary>
-    /// This property controls how pressing enter/ok are handled 
-    /// when viewing music tracks
-    /// in PLAY_MODE enter/ok will do the same as play (clear playlist
-    /// then start selected track)
-    /// in PLAYLIST_MODE enter/ok will add the selected track to the 
-    /// current playlist
-    /// </summary>    
-    public static PlayMode CurrentPlayMode
-    {
-      get { return m_playMode; }
-      set { m_playMode = value; }
-    }
   }
 }

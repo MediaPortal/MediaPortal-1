@@ -199,7 +199,6 @@ namespace MediaPortal.GUI.Music
     private bool _audioscrobblerEnabled = false;
     private bool _usingBassEngine = false;
     private bool _showVisualization = false;
-    private bool _enqueueDefault = true;
     private object _imageMutex = null;
     private string _vuMeter = "none";
 
@@ -237,7 +236,6 @@ namespace MediaPortal.GUI.Music
         _doArtistLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmcovers", true);
         _doAlbumLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtopalbums", true);
         _doTrackTagLookups = xmlreader.GetValueAsBool("musicmisc", "fetchlastfmtracktags", true);
-        _enqueueDefault = xmlreader.GetValueAsBool("musicmisc", "enqueuenext", true);
         _vuMeter = xmlreader.GetValueAsString("musicmisc", "vumeter", "none");
 
         _audioscrobblerEnabled = xmlreader.GetValueAsBool("plugins", "Audioscrobbler", false);
@@ -521,7 +519,7 @@ namespace MediaPortal.GUI.Music
                 {
                   if (!facadeAlbumInfo.SelectedListItem.IsPlayed)
                   {
-                    AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem, true);
+                    AddInfoTrackToPlaylist(facadeAlbumInfo.SelectedListItem);
                   }
                   else
                   {
@@ -548,7 +546,7 @@ namespace MediaPortal.GUI.Music
               {
                 if ((int)Action.ActionType.ACTION_SELECT_ITEM == message.Param1)
                 {
-                  AddInfoTrackToPlaylist(facadeSimilarTrackInfo.SelectedListItem, true);
+                  AddInfoTrackToPlaylist(facadeSimilarTrackInfo.SelectedListItem);
                 }
               }
             }
@@ -567,8 +565,8 @@ namespace MediaPortal.GUI.Music
       // because it is called by the Plugin Manager
       BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
 
-      facadeAlbumInfo.Clear();
-      facadeSimilarTrackInfo.Clear();
+      facadeAlbumInfo.Clear(); 
+      facadeSimilarTrackInfo.Clear();  
       ImagePathContainer.Clear();
 
       _trackChanged = true;
@@ -820,7 +818,7 @@ namespace MediaPortal.GUI.Music
                   Song song = (Song)albumSongs[i];
                   if (song.Title != CurrentTrackTag.Title && song.Artist == CurrentTrackTag.Artist)
                   {
-                    AddSongToPlaylist(ref song, _enqueueDefault);
+                    AddSongToPlaylist(ref song);
                   }
                 }
                 OnSongInserted();
@@ -1373,46 +1371,26 @@ namespace MediaPortal.GUI.Music
       GUIGraphicsContext.form.Invoke(new TimerElapsedDelegate(FlipPictures));
     }
 
-    private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_, bool enqueueNext_)
+    private void AddInfoTrackToPlaylist(GUIListItem chosenTrack_)
     {
       try
       {
-        PlayList currentPlaylist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
-        if (currentPlaylist.Count > 0)
-        {
-          MusicDatabase mdb = MusicDatabase.Instance;
-          Song addSong = new Song();
-          MusicTag tempTag = new MusicTag();
-          tempTag = (MusicTag)chosenTrack_.MusicTag;
+        MusicDatabase mdb = MusicDatabase.Instance;
+        Song addSong = new Song();
+        MusicTag tempTag = new MusicTag();
+        tempTag = (MusicTag)chosenTrack_.MusicTag;
 
-          if (mdb.GetSongByMusicTagInfo(tempTag.Artist, tempTag.Album, tempTag.Title, true, ref addSong))
+        if (mdb.GetSongByMusicTagInfo(tempTag.Artist, tempTag.Album, tempTag.Title, true, ref addSong))
+        {
+          if (AddSongToPlaylist(ref addSong))
           {
-            if (AddSongToPlaylist(ref addSong, _enqueueDefault))
-            {
-              Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", addSong.Artist, addSong.Title);
-            }
-          }
-          else
-          {
-            Log.Info("GUIMusicPlayingNow: DB lookup for Artist: {0} Title: {1} unsuccessful", tempTag.Artist,
-                     tempTag.Title);
+            Log.Info("GUIMusicPlayingNow: Song inserted: {0} - {1}", addSong.Artist, addSong.Title);
           }
         }
         else
-          // not using playlists here...
         {
-          Log.Warn("GUIMusicPlayingNow: You have to use a playlist to add songs to it - Press PLAY on a song or folder!");
-          GUIDialogOK dlg = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
-          if (dlg == null)
-          {
-            return;
-          }
-          //dlg. Reset();
-          dlg.SetHeading(502); // Unable to complete action
-          dlg.SetLine(2, 33008); // There is no playlist active 
-          dlg.SetLine(3, 33009); // to insert or add the track!
-
-          dlg.DoModal(GetID);
+          Log.Info("GUIMusicPlayingNow: DB lookup for Artist: {0} Title: {1} unsuccessful", tempTag.Artist,
+                   tempTag.Title);
         }
       }
       catch (Exception ex)
@@ -1739,59 +1717,8 @@ namespace MediaPortal.GUI.Music
         else
         {
           // there is no current track so blank all properties
+          GUIPropertyManager.RemovePlayerProperties();
           GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
-          GUIPropertyManager.SetProperty("#Play.Current.Track", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Album", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Artist", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Genre", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Duration", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Rating", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Year", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.AlbumArtist", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.BitRate", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Comment", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Composer", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Conductor", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.DiscID", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Lyrics", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.FileType", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Codec", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.BitRateMode", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.BPM", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.Channels", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.SampleRate", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", string.Empty);
-          GUIPropertyManager.SetProperty("#Play.Current.DateAdded", string.Empty);
-
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", String.Empty);
-
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", String.Empty);
-          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", String.Empty);
-
-          if (PlaylistPlayer == null)
-          {
-            if (PlaylistPlayer.GetCurrentItem() == null)
-            {
-              GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4542));
-            }
-            else
-            {
-              GUIPropertyManager.SetProperty("#Play.Next.Title", GUILocalizeStrings.Get(4542));
-            }
-          }
         }
 
         UpdateNextTrackInfo();
@@ -1941,9 +1868,18 @@ namespace MediaPortal.GUI.Music
     /// <param name="song">the song to add</param>
     /// <param name="enqueueNext_">if true the songs is inserted after the current track, otherwise added to the end of the list</param>
     /// <returns>if the action was successful</returns>
-    private bool AddSongToPlaylist(ref Song song, bool enqueueNext_)
+    private bool AddSongToPlaylist(ref Song song)
     {
-      PlayList playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      PlayList playlist;
+      if (PlaylistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+      {
+        playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC_TEMP);
+      }
+      else
+      {
+        playlist = PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+      }
+      
       if (playlist == null)
       {
         return false;
@@ -1964,15 +1900,7 @@ namespace MediaPortal.GUI.Music
       playlistItem.Duration = song.Duration;
 
       playlistItem.MusicTag = song.ToMusicTag();
-
-      if (enqueueNext_)
-      {
-        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Insert(playlistItem, PlaylistPlayer.CurrentSong);
-      }
-      else
-      {
-        PlaylistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC).Add(playlistItem);
-      }
+      playlist.Add(playlistItem);
 
       OnSongInserted();
       return true;

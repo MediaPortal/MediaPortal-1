@@ -106,8 +106,10 @@ namespace MediaPortal.GUI.Music
     protected PlayNowJumpToType PlayNowJumpTo = PlayNowJumpToType.None;
     protected bool UsingInternalMusicPlayer = false;
 
-    protected bool PlayAllOnSingleItemPlayNow = true;
     protected string _currentPlaying = string.Empty;
+    protected string _selectOption = string.Empty;
+    protected bool _addAllOnSelect;
+    protected bool _playlistIsCurrent;
     
     protected static BackgroundWorker bw;
     protected static bool defaultPlaylistLoaded = false;
@@ -141,7 +143,7 @@ namespace MediaPortal.GUI.Music
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "none");
+        string playNowJumpTo = xmlreader.GetValueAsString("music", "playnowjumpto", "none");
 
         switch (playNowJumpTo)
         {
@@ -199,17 +201,9 @@ namespace MediaPortal.GUI.Music
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
 
-        String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode", "play");
-        if (strPlayMode == "playlist")
-        {
-          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAYLIST_MODE;
-        }
-        else
-        {
-          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAY_MODE;
-        }
-
-        PlayAllOnSingleItemPlayNow = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+        _selectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
+        _addAllOnSelect = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+        _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
 
         for (int i = 0; i < _sortModes.Length; ++i)
         {
@@ -317,6 +311,7 @@ namespace MediaPortal.GUI.Music
       {
         return false;
       }
+      
       return true;
     }
 
@@ -358,12 +353,22 @@ namespace MediaPortal.GUI.Music
       }
       if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM)
       {
-        // when adding item only add a single item
-        // so override add all setting
-        bool existingPlayAll = PlayAllOnSingleItemPlayNow;
-        PlayAllOnSingleItemPlayNow = false;
-        AddSelectionToPlaylist(false);
-        PlayAllOnSingleItemPlayNow = existingPlayAll;
+        // if playlist screen shows current playlist or user is playing music using background playlist
+        // then queue track in that list
+        if (_playlistIsCurrent || playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+        {
+          AddSelectionToCurrentPlaylist(false,false);
+        }
+        else
+        {
+          // user is playing a playlist so add track to the playlist
+          AddSelectionToPlaylist();
+        }
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_ADD_TO_PLAYLIST)
+      {
+        AddSelectionToPlaylist();
         return;
       }
       base.OnAction(action);
@@ -1969,7 +1974,14 @@ namespace MediaPortal.GUI.Music
     /// what tracks need to be added to the playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    protected virtual void AddSelectionToPlaylist(bool clearPlaylist) {}
+    /// <param name="addAllTracks">Whether to add all tracks in folder</param>
+    protected virtual void AddSelectionToCurrentPlaylist(bool clearPlaylist, bool addAllTracks) {}
+
+    /// <summary>
+    /// Adds songs to the playlist without affecting what is playing
+    /// </summary>
+    protected virtual void AddSelectionToPlaylist() {}
+
 
     /// <summary>
     /// Just helper method to turn the enum in MusicState into
@@ -1978,10 +1990,11 @@ namespace MediaPortal.GUI.Music
     /// <returns></returns>
     protected PlayListType GetPlayListType()
     {
-      // we used to also use PLAYLIST_MUSIC_TEMP
-      // this method is here incase we want to implement
-      // multiple playlists again
-      return PlayListType.PLAYLIST_MUSIC;
+      if (_playlistIsCurrent)
+      {
+        return PlayListType.PLAYLIST_MUSIC;
+      }
+      return PlayListType.PLAYLIST_MUSIC_TEMP;
     }
 
     /// <summary>
@@ -1991,7 +2004,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="pItems">A list of PlayListItem to be added</param>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    protected void AddItemsToPlaylist(List<PlayListItem> pItems, bool clearPlaylist)
+    /// <param name="addAllTracks">Whether to add all tracks in folder to playlist</param>
+    protected void AddItemsToCurrentPlaylist(List<PlayListItem> pItems, bool clearPlaylist, bool addAllTracks)
     {
       PlayList pl = playlistPlayer.GetPlaylist(GetPlayListType());
       playlistPlayer.CurrentPlaylistType = GetPlayListType();
@@ -2008,37 +2022,6 @@ namespace MediaPortal.GUI.Music
       //then start at the end of the playlist
       int iCurrentItemCount = pl.Count;
 
-      if (!(g_Player.Playing && g_Player.IsMusic))
-      {
-        // nothing is playing or something other than music is playing
-        // and we are in playlist mode so may want to just add tracks to existing
-        // playlist but start from the track we have just added
-        if (iCurrentItemCount > 0)
-        {
-          // we are in playlist mode (play mode will have cleared list already)
-          // and playlist has existing items but is not playing
-          // so check with user if they want to clear the current playlist
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          if (dlgYesNo != null)
-          {
-            dlgYesNo.SetHeading(GUILocalizeStrings.Get(1223));  // Existing Playlist detected
-            dlgYesNo.SetLine(1, GUILocalizeStrings.Get(1224));  // Do you want to clear the current playlist?
-            dlgYesNo.DoModal(GetID);
-            if (dlgYesNo.IsConfirmed)
-            {
-              // clear playlist as requested by user
-              pl.Clear();
-              playlistPlayer.Reset();
-            }
-            else
-            {
-              // start from end of playlist
-              iStartFrom = iCurrentItemCount;
-            }
-          }
-        }
-      }
-
       foreach (PlayListItem pItem in pItems)
       {
         // actually add items to the playlist
@@ -2052,7 +2035,7 @@ namespace MediaPortal.GUI.Music
         // if playlist has been cleared before calling this
         // or there is nothing in existing playlist then
         // start playback
-        if (!facadeLayout.SelectedListItem.IsFolder && PlayAllOnSingleItemPlayNow)
+        if (!facadeLayout.SelectedListItem.IsFolder && pItems.Count > 1)
         {
           // we are here is we are in tracks listing and playlist was empty
           // we are adding multiple tracks to playlist so need to ensure
@@ -2083,6 +2066,27 @@ namespace MediaPortal.GUI.Music
       DoPlayNowJumpTo(pItems.Count);
     }
 
+    /// <summary>
+    /// When playlist is not current playlist (current tracks are added to TEMP playlist)
+    /// Then allow users to add tracks to the playlist without affecting playback
+    /// </summary>
+    /// <param name="pItems">Items to add to the playlist</param>
+    protected void AddItemsToPlaylist(List<PlayListItem> pItems)
+    {
+      PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+      foreach (PlayListItem pItem in pItems)
+      {
+        // actually add items to the playlist
+        pl.Add(pItem);
+      }
+
+      if (facadeLayout.SelectedListItemIndex < facadeLayout.Count - 1)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, facadeLayout.SelectedListItemIndex + 1);
+      }
+    }
+
     protected void InsertItemsToPlaylist(List<PlayListItem> pItems)
     {
       PlayList pl = playlistPlayer.GetPlaylist(GetPlayListType());
@@ -2091,38 +2095,6 @@ namespace MediaPortal.GUI.Music
       //if not clearing the playlist and playback is stopped
       //then start at the end of the playlist
       int iCurrentItemCount = pl.Count;
-
-
-      if (!(g_Player.Playing && g_Player.IsMusic))
-      {
-        // nothing is playing or something other than music is playing
-        if (iCurrentItemCount > 0)
-        {
-          // we are in playlist mode (play mode will have cleared list already)
-          // and playlist has existing items but is not playing
-          // so check with user if they want to clear the current playlist
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          if (dlgYesNo != null)
-          {
-            // need localised strings here
-            dlgYesNo.SetHeading("Existing Playlist Detected");
-            dlgYesNo.SetLine(1, "Do you want to clear the current playlist?");
-            dlgYesNo.DoModal(GetID);
-            if (dlgYesNo.IsConfirmed)
-            {
-              // clear playlist as requested by user
-              pl.Clear();
-              playlistPlayer.Reset();
-              iStartFrom = 0;
-            }
-            else
-            {
-              iStartFrom = iCurrentItemCount;
-            }
-          }
-        }
-      }
-
 
       int index = Math.Max(playlistPlayer.CurrentSong, 0);
       for (int i = 0; i < pItems.Count; i++)
