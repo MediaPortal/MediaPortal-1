@@ -57,6 +57,15 @@ namespace WindowPlugins
 
     #endregion
 
+    protected int SelectedFacadeItem()
+    {
+      if (facadeLayout == null) return -1;
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, facadeLayout.GetID, 0, 0, null);
+      OnMessage(msg);
+      int iItem = (int)msg.Param1;
+      return iItem;
+    }
+
     protected virtual Layout GetLayoutNumber(string s)
     {
       switch (s.Trim().ToLower())
@@ -135,21 +144,18 @@ namespace WindowPlugins
 
       if (control == facadeLayout)
       {
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_SELECTED, GetID, 0, controlId, 0, 0, null);
-        OnMessage(msg);
-        int iItem = (int)msg.Param1;
         if (actionType == Action.ActionType.ACTION_SHOW_INFO)
         {
-          OnInfo(iItem);
+          OnInfo(SelectedFacadeItem());
           facadeLayout.RefreshCoverArt();
         }
         if (actionType == Action.ActionType.ACTION_SELECT_ITEM)
         {
-          OnClick(iItem);
+          OnClick(SelectedFacadeItem());
         }
         if (actionType == Action.ActionType.ACTION_QUEUE_ITEM)
         {
-          OnQueueItem(iItem);
+          OnQueueItem(SelectedFacadeItem());
         }
       }
     }
