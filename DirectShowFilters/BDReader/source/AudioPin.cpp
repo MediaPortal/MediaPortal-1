@@ -348,18 +348,22 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTimeStart;
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
-            //pSample->SetSyncPoint(TRUE);
+            pSample->SetSyncPoint(true); // allow all packets to be seeking targets
             pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
           }
           else
           {
             // Buffer has no timestamp
             pSample->SetTime(NULL, NULL);
-            //pSample->SetSyncPoint(FALSE);
+            pSample->SetSyncPoint(false);
           }
 
-          pSample->SetMediaType(buffer->pmt);
-          pSample->SetSyncPoint(buffer->bSyncPoint);
+          // TODO - ffdshow audio decoder doesn't like invalid media types...
+          //pSample->SetMediaType(buffer->pmt);
+
+          // currently true if timestamp is present
+          //pSample->SetSyncPoint(buffer->bSyncPoint); 
+
           ProcessAudioSample(buffer, pSample);
           
 //          LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
