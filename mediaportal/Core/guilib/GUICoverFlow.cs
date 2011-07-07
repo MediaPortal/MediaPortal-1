@@ -437,14 +437,14 @@ namespace MediaPortal.GUI.Library
       {
         case Action.ActionType.ACTION_PAGE_UP:
           {
-            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
+            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
             SelectCardIndex(iItem);
           }
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
-            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
+            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
             SelectCardIndex(iItem);
           }
           break;
