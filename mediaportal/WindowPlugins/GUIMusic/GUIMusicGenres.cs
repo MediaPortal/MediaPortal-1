@@ -932,7 +932,6 @@ namespace MediaPortal.GUI.Music
         }
       }
 
-      facadeLayout.
       //set object count label, total duration
       GUIPropertyManager.SetProperty("#itemcount", Util.Utils.GetObjectCountLabel(iTotalItems));
 
