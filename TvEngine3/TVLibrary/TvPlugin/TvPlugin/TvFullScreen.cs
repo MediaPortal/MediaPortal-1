@@ -411,9 +411,19 @@ namespace TvPlugin
               }
             }
           }
-          _osdWindow.OnAction(action);
-          return;
+          Action newAction = new Action();
+          if (action.wID != Action.ActionType.ACTION_KEY_PRESSED && action.wID != Action.ActionType.ACTION_PAUSE &&
+              ActionTranslator.GetAction((int)Window.WINDOW_OSD, action.m_key, ref newAction))
+          {
+            _osdWindow.OnAction(newAction); // route keys to OSD window
+          }
+          else
+          {
+            // route unhandled actions to OSD window
+            _osdWindow.OnAction(action);
+          }
         }
+        return;
       }
         //@
         /*
