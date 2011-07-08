@@ -413,10 +413,11 @@ namespace MediaPortal.GUI.Library
         GUIPropertyManager.SetProperty("#selectedthumb", strThumb);
         GUIPropertyManager.SetProperty("#selectedindex", strIndex);
       }
-      if (!IsVisible)
-      {
-        return;
-      }
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
+      msg.SendToTargetWindow = true;
+      GUIGraphicsContext.SendMessage(msg);
+
       if (item >= 0 && item < _listItems.Count)
       {
         GUIListItem listitem = _listItems[item];
@@ -649,6 +650,7 @@ namespace MediaPortal.GUI.Library
       {
         TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
         GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        //doesn't render items when scrolling left if this "if" clause is uncommented - should be fixed later
         if (!_scrollingLeft)
         {
           if (_showFolder)
@@ -713,6 +715,7 @@ namespace MediaPortal.GUI.Library
       {
         TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
         GUIGraphicsContext.ControlTransform = new TransformMatrix();
+        //doesn't render items when scrolling left if this "if" clause is uncommented - should be fixed later
         if (!_scrollingLeft)
         {
           if (_showFolder)

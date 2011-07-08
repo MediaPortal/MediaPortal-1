@@ -2101,6 +2101,10 @@ namespace MediaPortal.GUI.Library
 
       UpdateProperties();
 
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
+      msg.SendToTargetWindow = true;
+      GUIGraphicsContext.SendMessage(msg);
+
       if (_lastSearchItem != SelectedListItemIndex)
       {
         ResetSearchString();
