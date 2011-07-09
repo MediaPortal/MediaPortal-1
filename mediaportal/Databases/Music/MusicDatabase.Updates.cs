@@ -500,6 +500,7 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     public int MusicDatabaseReorg(ArrayList shares)
     {
+      LoadDBSettings();
       return MusicDatabaseReorg(shares, null);
     }
 
