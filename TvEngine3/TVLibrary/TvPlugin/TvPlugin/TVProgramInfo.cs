@@ -352,7 +352,7 @@ namespace TvPlugin
       IList<Schedule> schedules = Schedule.ListAll();
       foreach (Schedule schedule in schedules)
       {
-        if (schedule.Canceled != Schedule.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(program.StartTime, program.IdChannel)))
+        if (schedule.Canceled != Schedule.MinSchedule || (filterCanceledRecordings && schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel)))
         {
           continue;
         }
@@ -563,12 +563,12 @@ namespace TvPlugin
         // it is going to be recorded
         if (!isActualUpcomingEps)
         {
-            isRecPrg = (episode.IsRecording || episode.IsRecordingOncePending || episode.IsRecordingSeriesPending) &&
-                          IsRecordingProgram(episode, out recordingSchedule, true);
+            isRecPrg = (episode.IsRecording || episode.IsRecordingOncePending || episode.IsRecordingSeriesPending || 
+                        episode.IsPartialRecordingSeriesPending) && IsRecordingProgram(episode, out recordingSchedule, true);
         }
         if (isRecPrg)
         {          
-          if (!recordingSchedule.IsSerieIsCanceled(episode.StartTime, episode.IdChannel))
+          if (!recordingSchedule.IsSerieIsCanceled(recordingSchedule.GetSchedStartTimeForProg(episode), episode.IdChannel))
           {
             bool hasConflict = recordingSchedule.ReferringConflicts().Count > 0;
             bool isPartialRecording = false;
@@ -1068,7 +1068,6 @@ namespace TvPlugin
       if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
       {
         TVUtil.DeleteRecAndSchedWithPrompt(schedule, program.IdChannel);        
-        Program.ResetPendingState(program.IdProgram);
         ResetCurrentScheduleAndProgram(schedule);
         return;
       }
@@ -1113,18 +1112,12 @@ namespace TvPlugin
                 
         if (deleteEntireSched)
         {
-          if (TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime))
-          {
-            ResetCurrentScheduleAndProgram(schedule);
-            Program.ResetPendingState(program.IdProgram); 
-          }          
+          TVUtil.DeleteRecAndEntireSchedWithPrompt(schedule, program.StartTime);
+          ResetCurrentScheduleAndProgram(schedule);
         }
         else
         {
-          if (TVUtil.DeleteRecAndSchedWithPrompt(schedule, program))
-          {
-            Program.ResetPendingState(program.IdProgram);
-          }
+          TVUtil.DeleteRecAndSchedWithPrompt(schedule, program);
         }                
       }
     }
@@ -1160,7 +1153,7 @@ namespace TvPlugin
                   schedule.ScheduleType);
         Log.Debug("                            - schedule= {0}", schedule.ToString());
         //schedule = Schedule.Retrieve(schedule.IdSchedule); // get the correct informations
-        if (schedule.IsSerieIsCanceled(program.StartTime, program.IdChannel))
+        if (schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(program), program.IdChannel))
         {
           //lets delete the cancelled schedule.
 

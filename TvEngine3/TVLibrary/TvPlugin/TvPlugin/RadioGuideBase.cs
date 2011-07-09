@@ -655,8 +655,8 @@ namespace TvPlugin
 
           case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
             {              
-              TVHome.WaitForGentleConnection();              
-
+              TVHome.WaitForGentleConnection();        
+      
               GUIPropertyManager.SetProperty("#itemcount", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem", string.Empty);
               GUIPropertyManager.SetProperty("#selecteditem2", string.Empty);
@@ -1861,7 +1861,7 @@ namespace TvPlugin
 
         bConflict = program.HasConflict;
         bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
-        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
+        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending || program.IsPartialRecordingSeriesPending);
         bPartialRecording = program.IsPartialRecordingSeriesPending;
         bool bManual = program.IsRecordingManual;
 

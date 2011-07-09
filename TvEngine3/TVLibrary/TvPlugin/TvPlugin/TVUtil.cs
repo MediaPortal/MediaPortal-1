@@ -96,44 +96,8 @@ namespace TvPlugin
       DateTime startTime = DateTime.Now;
       DateTime endTime = startTime.AddDays(_days);
 
-      IList<Schedule> recordings = new List<Schedule>();
-      IList<Program> programs = new List<Program>();
-
-      switch (rec.ScheduleType)
-      {
-        case (int)ScheduleRecordingType.Once:
-          recordings.Add(rec);
-          return recordings;          
-
-        case (int)ScheduleRecordingType.Daily:
-          programs = Program.RetrieveDaily(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.WorkingDays:
-          programs = Program.RetrieveWorkingDays(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekends:
-          programs = Program.RetrieveWeekends(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekly:
-          programs = Program.RetrieveWeekly(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName, _days);
-          break;
-
-        case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-          programs = Program.RetrieveWeeklyEveryTimeOnThisChannel(rec.StartTime, rec.EndTime, rec.ProgramName, rec.ReferencedChannel().IdChannel);          
-          break;
-      }
-      recordings = AddProgramsToSchedulesList(rec, programs);
+      IList<Program> programs = Schedule.GetProgramsForSchedule(rec);
+      IList<Schedule> recordings = recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }
 
@@ -150,9 +114,10 @@ namespace TvPlugin
           recNew.EndTime = prg.EndTime;
           recNew.IdChannel = prg.IdChannel;
           recNew.Series = true;
+          recNew.IdParentSchedule = rec.IdSchedule;
           recNew.ProgramName = prg.Title;
 
-          if (rec.IsSerieIsCanceled(recNew.StartTime))
+          if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
           {
             recNew.Canceled = recNew.StartTime;
           }
@@ -580,7 +545,7 @@ namespace TvPlugin
 
         if (confirmed)
         {
-          DateTime canceledStartTime = prg.StartTime;
+          DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
           int idChannel = prg.IdChannel;
           wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);
         }

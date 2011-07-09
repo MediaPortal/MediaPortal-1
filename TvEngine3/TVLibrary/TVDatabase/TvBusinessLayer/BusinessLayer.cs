@@ -3035,7 +3035,7 @@ namespace TvDatabase
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
-          if (rec.IsSerieIsCanceled(recNew.StartTime, prog.IdChannel))
+          if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prog), prog.IdChannel))
           {
             recNew.Canceled = recNew.StartTime;
           }

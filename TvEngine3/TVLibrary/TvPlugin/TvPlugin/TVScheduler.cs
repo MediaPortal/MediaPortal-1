@@ -945,9 +945,15 @@ namespace TvPlugin
           break;
 
         case 981: //Cancel this show
-          {            
-            DateTime canceledStartTime = GetCanceledStartTime(rec);
-            bool res = TVUtil.DeleteRecAndSchedWithPrompt(rec, canceledStartTime, rec.IdChannel);
+          {
+            var layer = new TvBusinessLayer();
+            // get the program that this episode is for
+            var progs = layer.GetPrograms(rec.ReferencedChannel(), rec.StartTime, rec.EndTime);
+            // pick up the schedule that is actually used for recording
+            // see TVUtil.GetRecordingTimes where schedules are all spawend as one off types
+            // and this is what rec is (ie. it does not actually exist in the database)
+            var realSchedule = Schedule.Retrieve(rec.IdParentSchedule) ?? rec;
+            bool res = TVUtil.DeleteRecAndSchedWithPrompt(realSchedule, progs[0]);
             if (res)
             {
               LoadDirectory();
@@ -960,8 +966,7 @@ namespace TvPlugin
 
         case 618: // delete entire recording
           {                        
-            DateTime canceledStartTime = GetCanceledStartTime(rec);            
-            bool res = TVUtil.DeleteRecAndEntireSchedWithPrompt(rec, canceledStartTime);
+            bool res = TVUtil.DeleteRecAndEntireSchedWithPrompt(rec, rec.StartTime);
             if (res)
             {
               if (showSeries && !item.IsFolder)
@@ -1030,20 +1035,6 @@ namespace TvPlugin
       GUIControl.SelectItemControl(GetID, listSchedules.GetID, m_iSelectedItem);
     }
    
-    private static DateTime GetCanceledStartTime(Schedule rec)
-    {      
-      Program prgFromSchedule = Program.RetrieveByTitleAndTimes(rec.ProgramName, rec.StartTime, rec.EndTime);
-      DateTime canceledStartTime = rec.StartTime;
-      
-      if (prgFromSchedule != null)
-      {     
-        canceledStartTime = prgFromSchedule.StartTime;        
-      }
-
-      return canceledStartTime;
-    }
-
-
     private void ChangeType(Schedule rec)
     {
       GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);

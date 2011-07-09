@@ -1864,7 +1864,7 @@ namespace TvPlugin
 
         bConflict = program.HasConflict;
         bSeries = (program.IsRecordingSeries || program.IsRecordingSeriesPending);
-        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending);
+        bRecording = bSeries || (program.IsRecording || program.IsRecordingOncePending || program.IsPartialRecordingSeriesPending);
         bPartialRecording = program.IsPartialRecordingSeriesPending;
         bool bManual = program.IsRecordingManual;
 

@@ -277,8 +277,8 @@ namespace TvDatabase
     /// Property relating to database column IsRecording
     /// </summary>
     public bool IsRecording
-    {
-      get { return (IsPartialRecordingSeriesPending || IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
+    { // This should reflect whether program is actually recording right now
+      get { return ( IsRecordingSeries || IsRecordingManual || IsRecordingOnce); }
     }
 
     /// <summary>
@@ -904,6 +904,7 @@ namespace TvDatabase
       {
         prg.IsRecordingOncePending = false;
         prg.IsRecordingSeriesPending = false;
+        prg.IsPartialRecordingSeriesPending = false;
       }
       prg.Persist();
     }
@@ -935,39 +936,12 @@ namespace TvDatabase
       prg.Persist();
     }
 
-    public static void ResetSingleState(DateTime startTime, int idChannel, string title)
-    {
-      //select * from 'foreigntable'
-      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (Program));
-
-      // where foreigntable.foreignkey = ourprimarykey
-      sb.AddConstraint(Operator.Equals, "Title", title);
-      sb.AddConstraint(Operator.Equals, "startTime", startTime);
-      sb.AddConstraint(Operator.Equals, "idChannel", idChannel);
-
-      // passing true indicates that we'd like a list of elements, i.e. that no primary key
-      // constraints from the type being retrieved should be added to the statement
-      SqlStatement stmt = sb.GetStatement(true);
-
-      IList<Program> result = ObjectFactory.GetCollection<Program>(stmt.Execute());
-
-      if (result == null || result.Count == 0)
-      {
-        return;
-      }
-
-      Program prg = result[0];
-      prg.IsRecordingOncePending = false;
-      prg.IsRecordingSeriesPending = false;
-      prg.Persist();
-    }
-
     public static void ResetAllStates()
     {
       string sql = "Update Program set state=0 where state<>0;";
       SqlStatement stmt = new SqlStatement(StatementType.Update, Broker.Provider.GetCommand(), sql);
       stmt.Execute();
-      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof (Program));
+      Gentle.Common.CacheManager.ClearQueryResultsByType(typeof(Program));
     }
 
     public void ClearRecordPendingState()
