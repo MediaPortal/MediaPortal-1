@@ -426,6 +426,8 @@ namespace MediaPortal.Player
           _line21Decoder = null;
         }
 
+        PostProcessingEngine.GetInstance().FreePostProcess();
+
         if (_vmr9 != null)
         {
           _vmr9.Enable(false);

@@ -632,6 +632,8 @@ namespace MediaPortal.Player
             _fileSource = null;
           }
 
+          PostProcessingEngine.GetInstance().FreePostProcess();
+
           if (_vmr9 != null)
           {
             _vmr9.Enable(false);
