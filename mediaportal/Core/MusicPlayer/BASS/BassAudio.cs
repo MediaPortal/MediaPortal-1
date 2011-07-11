@@ -260,7 +260,7 @@ namespace MediaPortal.Player
     private List<List<int>> StreamEventSyncHandles = new List<List<int>>();
     private List<int> DecoderPluginHandles = new List<int>();
     private int CurrentStreamIndex = 0;
-
+    
     private PlayState _State = PlayState.Init;
     private string FilePath = string.Empty;
     private VisualizationInfo VizPluginInfo = null;
@@ -1410,7 +1410,8 @@ namespace MediaPortal.Player
 
       if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
       {
-        Stop();
+        Log.Debug("BASS: Getting disposed. Calling Stop internal");
+        StopInternal();
       }
     }
 
@@ -2140,10 +2141,11 @@ namespace MediaPortal.Player
     /// <returns></returns>
     private void RegisterStreamSlideEndEvent(int stream)
     {
+      Log.Debug("BASS: Sliding channel to fade out.");
       PlayBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
-      int syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, PlayBackSlideEndDelegate,
+      int streamSlideHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, PlayBackSlideEndDelegate,
                                                 IntPtr.Zero);
-      if (syncHandle == 0)
+      if (streamSlideHandle == 0)
       {
         Log.Debug("BASS: RegisterSlideEndEvent of stream {0} failed with error {1}", stream,
                   Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
@@ -2701,21 +2703,17 @@ namespace MediaPortal.Player
     /// </summary>
     public override void Stop()
     {
-      //TODO: Mantis 3477
-      //Soft stop causing issues with TV when starting TV when music is playing
-      //Disabled soft stop as workaround for 1.2 beta
-
-      //int stream = GetCurrentStream();
-      //if (_SoftStop && !_isLastFMRadio && !_isRadio)
-      //{
-      //  RegisterStreamSlideEndEvent(stream);
-      //  Log.Info("BASS: Stopping song. Fading out.");
-      //  Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, _CrossFadeIntervalMS);
-      //}
-      //else
-      //{
+      int stream = GetCurrentStream();
+      if (_SoftStop && !_isLastFMRadio && !_isRadio && _CrossFadeIntervalMS > 0)
+      {
+        RegisterStreamSlideEndEvent(stream);
+        Log.Info("BASS: Stopping song. Fading out.");
+        Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, _CrossFadeIntervalMS);
+      }
+      else
+      {
         StopInternal();
-//      }
+      }
     }
 
     /// <summary>
