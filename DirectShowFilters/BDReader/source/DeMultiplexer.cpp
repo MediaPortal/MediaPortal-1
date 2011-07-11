@@ -196,9 +196,11 @@ bool CDeMultiplexer::SetAudioStream(int stream)
       {
         LogDebug("SetAudioStream : OnMediaTypeChanged(1)");
         //Flush();
-        m_filter.OnMediaTypeChanged(1);
-        SetMediaChanging(true);
-        m_filter.m_bForceSeekOnStop = true;     // Force stream to be resumed after
+
+        // TODO - check
+        //m_filter.OnMediaTypeChanged(1);
+        //SetMediaChanging(true);
+        //m_filter.m_bForceSeekOnStop = true;     // Force stream to be resumed after
       }
       else
       {
@@ -961,7 +963,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           SetHoldAudio(true);
           SetHoldSubtitle(true);
 
-          m_filter.IssueFlush();
+          m_filter.IssueCommand(FLUSH, 0);
         }
 
         CPcr offset;

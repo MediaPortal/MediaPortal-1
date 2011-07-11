@@ -77,6 +77,13 @@ public:
     virtual HRESULT STDMETHODCALLTYPE MouseMove(UINT16 x, UINT16 y);
 };
 
+enum DS_CMD_ID
+{
+  FLUSH,
+  REBUILD,
+  SEEK
+};
+
 class CBDReaderFilter : public CSource, 
                         public IFileSourceFilter, 
                         public IAMFilterMiscFlags, 
@@ -162,14 +169,13 @@ public:
   CSubtitlePin*   GetSubtitlePin();
   IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
-  void            OnMediaTypeChanged(int mediaTypes);
-  void            IssueFlush();
   void            OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced);
-  void            RefreshStreamPosition(CRefTime pPos);
 
   bool            IsSeeking();
   int             SeekingDone();
   bool            IsStopping();
+
+  void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
 
   DWORD           m_lastPause;
 
@@ -185,6 +191,13 @@ public:
   CRefTime        m_rtCompensation;
 
 private:
+
+  struct DS_CMD
+  {
+    DS_CMD_ID id;
+    CRefTime refTime; 
+  };
+
   HRESULT FindSubtitleFilter();
 
   CAudioPin*      m_pAudioPin;
@@ -212,15 +225,16 @@ private:
   // Seek thread
   static DWORD WINAPI SeekThreadEntryPoint(LPVOID lpParameter);
   DWORD WINAPI        SeekThread();
+
+  vector<DS_CMD>  m_commandQueue;
+  CCritSec        m_csCommandQueue;
+
+  typedef vector<DS_CMD>::iterator ivecCommandQueue;
   
-  CRefTime        m_fakeSeekPos;
-  HANDLE          m_hSeekThread;
-  HANDLE          m_hSeekEvent;
-  HANDLE          m_hStopSeekThreadEvent;
+  HANDLE          m_hCommandThread;
+  HANDLE          m_hCommandEvent;
+  HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
   bool            m_bIgnoreLibSeeking;
-
-  bool            m_bIssueRebuild;
-  bool            m_bIssueFlush;
 };
 

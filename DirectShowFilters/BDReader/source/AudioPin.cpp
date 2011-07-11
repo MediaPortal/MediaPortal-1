@@ -247,11 +247,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
             if (demux.m_videoPlSeen)
             {
-              CRefTime zeroTime;
-
               LogDebug("AUD: Request zeroing the stream time");
               m_pFilter->m_bForceSeekAfterRateChange = true;
-              m_pFilter->RefreshStreamPosition(zeroTime);
+              m_pFilter->IssueCommand(SEEK, 0);
             }
 
             m_pCachedBuffer = buffer;
@@ -300,7 +298,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
 
-            m_pFilter->OnMediaTypeChanged(3);
+            //m_pFilter->OnMediaTypeChanged(3);
+            m_pFilter->IssueCommand(REBUILD, 0);
 
             LogDebug("REBUILD: AUDIO");
 
