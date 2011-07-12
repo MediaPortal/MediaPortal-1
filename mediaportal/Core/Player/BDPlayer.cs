@@ -271,18 +271,13 @@ namespace MediaPortal.Player
 
     protected class BDFilterConfig
     {
-      public BDFilterConfig()
-      {
-        OtherFilters = new List<string>();
-      }
-
       public string Video { get; set; }
       public string VideoH264 { get; set; }
+      public string VideoVC1 { get; set; }
       public string Audio { get; set; }
-      public string AudioAAC { get; set; }
-      public string AudioDDPlus { get; set; }
+      //public string AudioAAC { get; set; }
+      //public string AudioDDPlus { get; set; }
       public string AudioRenderer { get; set; }
-      public List<string> OtherFilters { get; set; }
       public Geometry.Type AR { get; set; }
     }
 
@@ -444,6 +439,7 @@ namespace MediaPortal.Player
     protected double[] chapters;
 
     protected BDFilterConfig filterConfig;
+    protected bool vc1Codec = false;
 
     #endregion
 
@@ -1457,23 +1453,13 @@ namespace MediaPortal.Player
       {
 
         // get pre-defined filter setup
-        filterConfig.Video = xmlreader.GetValueAsString("mytv", "videocodec", "");
-        filterConfig.Audio = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        filterConfig.AudioAAC = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
-        filterConfig.AudioDDPlus = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
-        filterConfig.VideoH264 = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-        filterConfig.AudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-
-        // get post-processing filter setup
-        int i = 0;
-        while (xmlreader.GetValueAsString("mytv", "filter" + i, "undefined") != "undefined")
-        {
-          if (xmlreader.GetValueAsBool("mytv", "usefilter" + i, false))
-          {
-            filterConfig.OtherFilters.Add(xmlreader.GetValueAsString("mytv", "filter" + i, "undefined"));
-          }
-          i++;
-        }
+        filterConfig.Video = xmlreader.GetValueAsString("bdplayer", "mpeg2videocodec", "");
+        filterConfig.Audio = xmlreader.GetValueAsString("bdplayer", "mpeg2audiocodec", "");
+        //filterConfig.AudioAAC = xmlreader.GetValueAsString("bdplayer", "aacaudiocodec", "");
+        //filterConfig.AudioDDPlus = xmlreader.GetValueAsString("bdplayer", "ddplusaudiocodec", "");
+        filterConfig.VideoH264 = xmlreader.GetValueAsString("bdplayer", "h264videocodec", "");
+        filterConfig.VideoVC1 = xmlreader.GetValueAsString("bdplayer", "vc1videocodec", "");
+        filterConfig.AudioRenderer = xmlreader.GetValueAsString("bdplayer", "audiorenderer", "Default DirectSound Device");
 
         // get AR setting
         filterConfig.AR = Util.Utils.GetAspectRatio(xmlreader.GetValueAsString("mytv", "defaultar", "Normal"));
@@ -1494,14 +1480,16 @@ namespace MediaPortal.Player
       using (Settings xmlreader = new MPSettings())
       {
         // todo: get settings from the BD Player settings pane (to be created)
-        settings.audioLang = xmlreader.GetValueAsString("dvdplayer", "audiolanguage", "english");
-        settings.subtitleLang = xmlreader.GetValueAsString("dvdplayer", "subtitlelanguage", "english");
+        settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "english");
+        settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "english");
       }
 
       foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
       {
         if (String.Compare(cultureInformation.EnglishName, settings.audioLang, true) == 0)
         {
+          //settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "english");
+          //settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "english");
           settings.countryCode = cultureInformation.TwoLetterISOLanguageName;
           settings.audioLang = cultureInformation.ThreeLetterISOLanguageName;
         }
@@ -1976,9 +1964,42 @@ namespace MediaPortal.Player
     {
       if (format == "Video")
       {
+        IPin pinOut1 = DsFindPin.ByDirection((IBaseFilter)_interfaceBDReader, PinDirection.Output, 1); //video
+        if (pinOut1 != null)
+        {
+          //Detection if the Video Stream is VC-1 on output pin of the splitter
+          IEnumMediaTypes enumMediaTypesVideo;
+          int hr = pinOut1.EnumMediaTypes(out enumMediaTypesVideo);
+          while (true)
+          {
+            AMMediaType[] mediaTypes = new AMMediaType[1];
+            int typesFetched;
+            hr = enumMediaTypesVideo.Next(1, mediaTypes, out typesFetched);
+            if (hr != 0 || typesFetched == 0) break;
+            if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == MediaSubType.VC1)
+            {
+              Log.Info("BDPlayer: found VC-1 video out pin");
+              vc1Codec = true;
+            }
+          }
+          DirectShowUtil.ReleaseComObject(enumMediaTypesVideo);
+          enumMediaTypesVideo = null;
+          if (pinOut1 != null)
+          {
+            DirectShowUtil.ReleaseComObject(pinOut1);
+            pinOut1 = null;
+          }
+        }
+      }
+      if (format == "Video")
+      {
         if (_videoFormat.streamType == VideoStreamType.MPEG2)
         {
           return filterConfig.Video;
+        }
+        else if (vc1Codec)
+        {
+          return filterConfig.VideoVC1;
         }
         else
         {
@@ -1987,7 +2008,7 @@ namespace MediaPortal.Player
       }
       else
       {
-        if (AudioType(CurrentAudioStream).Contains("AAC"))
+        /*if (AudioType(CurrentAudioStream).Contains("AAC"))
         {
           return filterConfig.AudioAAC;
         }
@@ -1997,12 +2018,12 @@ namespace MediaPortal.Player
           {
             return filterConfig.AudioDDPlus;
           }
-          else
-          {
-            return filterConfig.Audio;
-          }
+          else*/
+        {
+          return filterConfig.Audio;
         }
       }
+      //}
     }
 
     /// <summary>
@@ -2149,12 +2170,6 @@ namespace MediaPortal.Player
         catch (Exception e)
         {
           Log.Error(e);
-        }
-
-        // Add additional filters
-        foreach (string filter in filterConfig.OtherFilters)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
         }
 
         #endregion
