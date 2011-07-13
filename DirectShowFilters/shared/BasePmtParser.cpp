@@ -73,11 +73,11 @@ void CBasePmtParser::OnTsPacket(byte* tsPacket)
 void CBasePmtParser::PmtFoundCallback(){}
 void CBasePmtParser::PidsFoundCallback(){}
 
-void CBasePmtParser::DecodePmtPidTable(CSection& section)
+bool CBasePmtParser::DecodePmtPidTable(CSection& section)
 {   
   if (section.table_id!=2)
   {
-    return;
+    return false;
   }
 
   try
@@ -155,7 +155,7 @@ void CBasePmtParser::DecodePmtPidTable(CSection& section)
         if (pointer+1>=section.section_length) 
         {
           LogDebug("pmt parser check1");
-          return ;
+          return false;
         }
         x = 0;
 
@@ -192,7 +192,7 @@ void CBasePmtParser::DecodePmtPidTable(CSection& section)
 			    if (pointer+4>=section.section_length) 
 			    {
             LogDebug("pmt parser check2");
-            return ;
+            return false;
           }
 
           bool pidFound(false);
@@ -374,6 +374,8 @@ void CBasePmtParser::DecodePmtPidTable(CSection& section)
   { 
     LogDebug("Exception in PmtParser");
   }
+
+  return true;
 }
 
 CPidTable& CBasePmtParser::GetPidInfo()

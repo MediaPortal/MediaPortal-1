@@ -152,6 +152,9 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 
     if (header.PayloadUnitStart)
     {
+      if(start >= 188)
+        return;
+
 			pointer_field = start + tsPacket[start]+1;
       if (m_section.BufferPos == 0)
 				start += tsPacket[start] + 1;

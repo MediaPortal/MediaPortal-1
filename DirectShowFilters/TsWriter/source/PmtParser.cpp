@@ -124,6 +124,14 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
       }
     }
     //end of workaround
+
+	// Boundary check
+    if(ES_info_length > sizeof(pidInfo2.rawDescriptorData)) 
+    {
+      LogDebug("pmt parser check 3");
+      return false;
+    }
+
     if (pidInfo2.streamType==SERVICE_TYPE_DVB_SUBTITLES2)
       pidInfo2.logicalStreamType=-1;
 		memset(pidInfo2.rawDescriptorData,0xFF,ES_info_length);

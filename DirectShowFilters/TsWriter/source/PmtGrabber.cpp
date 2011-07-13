@@ -139,7 +139,13 @@ void CPmtGrabber::OnNewSection(CSection& section)
       prevPmtParser.SetPid(GetPid());
       prevPmtParser.DecodePmtPidTable(m_pmtPrevSection);
       currPmtParser.SetPid(GetPid());
-      currPmtParser.DecodePmtPidTable(section);
+
+	  // Check if failed - if corrupted it can crash tv service after the callback
+      if(!currPmtParser.DecodePmtPidTable(section))
+      {
+         LogDebug("CPmtGrabber::OnNewSection() - Error decoding PMT from new section, bad signal?");
+         return;
+      }
 
       if (!(prevPmtParser.GetPidInfo() == currPmtParser.GetPidInfo()))
       {
