@@ -827,19 +827,17 @@ namespace MediaPortal.GUI.Library
             _listHistory.RemoveAt(_listHistory.Count - 1);
           }
           // Get previous window id (previous to the last active window) id
-          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          if (_listHistory.Count <= 0)
           {
-            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+            if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+            {
+              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+            }
+            else
+            {
+              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+            }
           }
-          else
-          {
-            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-          }
-          if (_listHistory.Count > 0)
-          {
-            _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
-          }
-
           newWindowId = _previousActiveWindowId;
           // Check if replacement window was fault, ifso return to home          
           if (replaceWindow)
