@@ -182,8 +182,6 @@ namespace MediaPortal.GUI.Music
     private MusicTag PreviousTrackTag = null;
     private MusicTag CurrentTrackTag = null;
     private MusicTag NextTrackTag = null;
-    private DateTime LastUpdateTime = DateTime.Now;
-    private TimeSpan UpdateInterval = new TimeSpan(0, 0, 1);
     private GUIMusicBaseWindow _MusicWindow = null;
     private AudioscrobblerUtils InfoScrobbler = null;
     private ScrobblerUtilsRequest _lastAlbumRequest;
@@ -565,8 +563,14 @@ namespace MediaPortal.GUI.Music
       // because it is called by the Plugin Manager
       BassMusicPlayer.Player.InternetStreamSongChanged += OnInternetStreamSongChanged;
 
-      facadeAlbumInfo.Clear(); 
-      facadeSimilarTrackInfo.Clear();  
+      if (facadeAlbumInfo != null)
+      {
+        facadeAlbumInfo.Clear();
+      }
+      if (facadeSimilarTrackInfo != null)
+      {
+        facadeSimilarTrackInfo.Clear();
+      }
       ImagePathContainer.Clear();
 
       _trackChanged = true;
@@ -666,24 +670,6 @@ namespace MediaPortal.GUI.Music
       BassMusicPlayer.Player.InternetStreamSongChanged -= OnInternetStreamSongChanged;
 
       base.OnPageDestroy(new_windowId);
-    }
-
-    public override void Render(float timePassed)
-    {
-      base.Render(timePassed);
-
-      if (!g_Player.Playing || !g_Player.IsMusic)
-      {
-        return;
-      }
-
-      TimeSpan ts = DateTime.Now - LastUpdateTime;
-
-      if (ts >= UpdateInterval)
-      {
-        LastUpdateTime = DateTime.Now;
-        UpdateTrackInfo();
-      }
     }
 
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
@@ -1541,7 +1527,7 @@ namespace MediaPortal.GUI.Music
 
     private void UpdateTrackInfo()
     {
-      if (CurrentTrackTag == null)
+      if (PreviousTrackTag == null)
       {
         _trackChanged = true;
       }
@@ -1572,7 +1558,7 @@ namespace MediaPortal.GUI.Music
               DoUpdateArtistInfo(null, null);
             }
 
-            if (CurrentTrackTag.Album != PreviousTrackTag.Album || facadeAlbumInfo.Count < 1)
+            if (CurrentTrackTag.Album != PreviousTrackTag.Album || (facadeAlbumInfo != null && facadeAlbumInfo.Count < 1))
             {
               // album has changed or we don't have top tracks for album so try and update
               if (LblBestAlbumTracks != null)
@@ -1580,6 +1566,7 @@ namespace MediaPortal.GUI.Music
                 LblBestAlbumTracks.Visible = false;
               }
               facadeAlbumInfo.Clear();
+              ToggleTopTrackRatings(false, PopularityRating.unknown);
               UpdateAlbumInfo();
             }
           }
@@ -1591,7 +1578,11 @@ namespace MediaPortal.GUI.Music
             {
               LblBestAlbumTracks.Visible = false;
             }
-            facadeAlbumInfo.Clear();
+            if (facadeAlbumInfo != null)
+            {
+              facadeAlbumInfo.Clear();
+            }
+            ToggleTopTrackRatings(false, PopularityRating.unknown);
             UpdateArtistInfo();
             UpdateAlbumInfo();
           }
@@ -1601,7 +1592,10 @@ namespace MediaPortal.GUI.Music
           {
             LblBestSimilarTracks.Visible = false;
           }
-          facadeSimilarTrackInfo.Clear();
+          if (facadeSimilarTrackInfo != null)
+          {
+            facadeSimilarTrackInfo.Clear();
+          }
           UpdateSimilarTrackInfo();
 
           // non-text values default to 0 and datetime.minvalue so
@@ -1644,7 +1638,6 @@ namespace MediaPortal.GUI.Music
                                   ? string.Empty
                                   : CurrentTrackTag.DateTimeModified.ToShortDateString();
 
-          // TODO: some of these properties are also set in music overlay.   Need to only set once
           GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentTrackTag.Title);
           GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
           GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentTrackTag.Album);
@@ -1820,6 +1813,11 @@ namespace MediaPortal.GUI.Music
 
     private void GetTrackTags()
     {
+      if (CurrentTrackTag != null)
+      {
+        PreviousTrackTag = CurrentTrackTag;
+      }
+
       bool isInternetStream = Util.Utils.IsAVStream(CurrentTrackFileName);
       if (isInternetStream && _usingBassEngine)
       {
@@ -1848,10 +1846,6 @@ namespace MediaPortal.GUI.Music
         NextTrackTag = null;
       }
 
-      if (CurrentTrackTag != null)
-      {
-        PreviousTrackTag = CurrentTrackTag;
-      }
     }
 
     private void OnSongInserted()

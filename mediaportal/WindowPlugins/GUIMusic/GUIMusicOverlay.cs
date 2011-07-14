@@ -370,43 +370,16 @@ namespace MediaPortal.GUI.Music
         return;
       }
 
-      GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
-
       MusicTag tag = null;
       _thumbLogo = string.Empty;
       tag = GetInfo(fileName, out _thumbLogo);
 
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
-      if (tag != null)
-      {
-        // Duration
-        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
-
-        // Track
-        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
-
-        // Year
-        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
-
-        GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
-        GUIPropertyManager.SetProperty("#Play.Current.Title", tag.Title);
-        GUIPropertyManager.SetProperty("#Play.Current.Artist", tag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Current.Album", tag.Album);
-        GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
-        GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
-        GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
-        GUIPropertyManager.SetProperty("#duration", strDuration);
-      }
 
       // Show Information of Next File in Playlist
       fileName = playlistPlayer.GetNext();
       if (fileName == string.Empty)
       {
-        // fix high cpu load due to constant checking
-        //m_strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
         return;
       }
       tag = null;
@@ -414,33 +387,6 @@ namespace MediaPortal.GUI.Music
       tag = GetInfo(fileName, out thumb);
 
       GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
-      try
-      {
-        GUIPropertyManager.SetProperty("#Play.Next.File", Path.GetFileName(fileName));
-        GUIPropertyManager.SetProperty("#Play.Next.Title", Util.Utils.GetFilename(fileName));
-      }
-      catch (Exception) {}
-
-      if (tag != null)
-      {
-        // Duration
-        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
-
-        // Track
-        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
-
-        // Year
-        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
-
-        GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);
-        GUIPropertyManager.SetProperty("#Play.Next.Title", tag.Title);
-        GUIPropertyManager.SetProperty("#Play.Next.Artist", tag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Next.Album", tag.Album);
-        GUIPropertyManager.SetProperty("#Play.Next.Track", strTrack);
-        GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
-        GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
-      }
     }
 
     public override bool Focused
