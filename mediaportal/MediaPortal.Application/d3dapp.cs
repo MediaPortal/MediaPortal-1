@@ -2658,6 +2658,17 @@ namespace MediaPortal
     {
       try
       {
+        // fully process ours
+        if (Win32API.PeekMessage(ref msgApi, this.Handle, 0, 0, 0))
+        {
+          while (Win32API.PeekMessage(ref msgApi, this.Handle, 0, 0, 1))
+          {
+            Win32API.TranslateMessage(ref msgApi);
+            Win32API.DispatchMessageA(ref msgApi);
+          }
+        }
+
+        // process others
         if (!Win32API.PeekMessage(ref msgApi, IntPtr.Zero, 0, 0, 0))
         {
           return;
