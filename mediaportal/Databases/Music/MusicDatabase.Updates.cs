@@ -227,7 +227,8 @@ namespace MediaPortal.Music.Database
         int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
         int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
 
-        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0} where idTrack='{1}'", ++iTimesPlayed, idSong);
+        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0}, dateLastPlayed='{1}' where idTrack='{2}'", 
+          ++iTimesPlayed, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), idSong);
         if (DirectExecute(strSQL).Rows.Count > 0)
         {
           Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
@@ -1314,7 +1315,7 @@ namespace MediaPortal.Music.Database
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
             0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
-            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded.ToString("yyyy-MM-dd HH:mm:ss")
+            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss"), dateadded.ToString("yyyy-MM-dd HH:mm:ss")
             );
         try
         {
