@@ -3395,7 +3395,7 @@ namespace TvPlugin
         if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
         {
           //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
-          bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel());
+          bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel(), GetID);
           //refresh view.
           if (didRecStart)
           {

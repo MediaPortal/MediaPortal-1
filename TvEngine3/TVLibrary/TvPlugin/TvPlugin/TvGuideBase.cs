@@ -21,6 +21,7 @@
 #region usings
 
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -101,7 +102,8 @@ namespace TvPlugin
 
     #region variables
 
-    private Channel _recordingExpected = null;
+    private readonly object _recordingsExpectedLock = new object();
+    private readonly List<Channel> _recordingsExpected = new List<Channel>();
     private DateTime _updateTimerRecExpected = DateTime.Now;
     private IList<Schedule> _recordingList = new List<Schedule>();
     private Dictionary<int, GUIButton3PartControl> _controls = new Dictionary<int, GUIButton3PartControl>();
@@ -941,24 +943,7 @@ namespace TvPlugin
       TVHome.UpdateProgressPercentageBar();
 
       OnKeyTimeout();
-
-      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
-      if (_recordingExpected != null)
-      {
-        TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
-        if (ts.TotalMilliseconds > 1000)
-        {
-          _updateTimerRecExpected = DateTime.Now;
-          VirtualCard card;
-          if (_server.IsRecording(_recordingExpected.IdChannel, out card))
-          {
-            _recordingExpected = null;
-            GetChannels(true);
-            LoadSchedules(true);
-            _needUpdate = true;
-          }
-        }
-      }
+      UpdateRecStateOnExpectedRecordings();
 
       if (_needUpdate)
       {
@@ -1029,6 +1014,42 @@ namespace TvPlugin
             vertLine.IsVisible = false;
           }
         }
+      }
+    }
+
+    private void UpdateRecStateOnExpectedRecordings() 
+    {
+      //if we did a manual rec. on the tvguide directly, then we have to wait for it to start and the update the GUI.
+      bool wasAnyRecordingExpectedStarted = false;
+      lock (_recordingsExpectedLock)
+      {
+        if (_recordingsExpected.Count > 0)
+        {
+          TimeSpan ts = DateTime.Now - _updateTimerRecExpected;
+          if (ts.TotalMilliseconds > 1000)
+          {
+            _updateTimerRecExpected = DateTime.Now;
+            var recordingsExpectedToRemove = new List<Channel>();
+            foreach (Channel recordingExpected in _recordingsExpected)
+            {
+              VirtualCard card;
+              if (_server.IsRecording(recordingExpected.IdChannel, out card))
+              {
+                wasAnyRecordingExpectedStarted = true;
+                recordingsExpectedToRemove.Add(recordingExpected);
+              }
+            }
+
+            _recordingsExpected.RemoveAll(recordingsExpectedToRemove.Contains);
+          }
+        }
+      }
+
+      if (wasAnyRecordingExpectedStarted)
+      {        
+        GetChannels(true);
+        LoadSchedules(true);
+        _needUpdate = true;
       }
     }
 
@@ -3154,7 +3175,7 @@ namespace TvPlugin
             {
               TVHome.StartRecordingSchedule(_currentProgram.ReferencedChannel(), true);
               _currentProgram.IsRecordingOncePending = true;
-              Update(true); //remove RED marker
+              Update(true); //add RED marker
             }
             else
             {
@@ -3421,12 +3442,27 @@ namespace TvPlugin
         if ((tvHome != null) && (tvHome.GetID != GUIWindowManager.ActiveWindow))
         {
           //tvHome.OnAction(new Action(Action.ActionType.ACTION_RECORD, 0, 0));
-          bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel());
+          bool didRecStart = TVHome.ManualRecord(_currentProgram.ReferencedChannel(), GetID);
+          _currentProgram.IsRecordingOncePending = didRecStart;          
           //refresh view.
           if (didRecStart)
           {
-            _recordingExpected = _currentProgram.ReferencedChannel();
+            lock (_recordingsExpectedLock)
+            {
+              _recordingsExpected.Add(_currentProgram.ReferencedChannel());
+            }            
           }
+          else
+          {
+            lock (_recordingsExpectedLock)
+            {
+              if (_recordingsExpected.Contains(_currentProgram.ReferencedChannel()))
+              {
+                _recordingsExpected.Remove(_currentProgram.ReferencedChannel());
+              }
+            }
+          }
+          _needUpdate = true;
         }
       }
       else

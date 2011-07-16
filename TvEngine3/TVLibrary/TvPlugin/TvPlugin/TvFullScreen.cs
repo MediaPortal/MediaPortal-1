@@ -1663,7 +1663,7 @@ namespace TvPlugin
 
         case 601: // RecordNow          
         case 265: // StopRec.          
-          TVHome.ManualRecord(TVHome.Navigator.Channel);
+          TVHome.ManualRecord(TVHome.Navigator.Channel, GetID);
           break;
 
         case 200042: // Linked channels

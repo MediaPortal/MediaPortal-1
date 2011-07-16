@@ -545,9 +545,16 @@ namespace TvPlugin
 
         if (confirmed)
         {
-          DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
-          int idChannel = prg.IdChannel;
-          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);
+          if (prg != null)
+          {
+            DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
+            int idChannel = prg.IdChannel;
+            wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
+          }
+          else
+          {
+            wasDeleted = StopRecording(schedule);
+          }
         }
       }
       return wasDeleted;
@@ -809,11 +816,20 @@ namespace TvPlugin
       return confirmed;
     }
 
-    private static bool PromptDeleteRecording(int IdSchedule, Program prg)
+    private static bool PromptDeleteRecording(int idSchedule, Program prg)
     {
-      bool confirmed = false;      
-            
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule, prg);
+      bool confirmed = false;
+      bool isRec = false;
+      if (prg != null)
+      {
+        isRec = TvDatabase.Schedule.IsScheduleRecording(idSchedule, prg);  
+      }
+      else
+      {
+        var tvServer = new TvServer();
+        VirtualCard vCard;
+        isRec = tvServer.IsRecordingSchedule(idSchedule, out vCard);
+      }      
 
       if (isRec)
       {
