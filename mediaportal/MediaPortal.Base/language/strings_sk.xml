@@ -661,7 +661,7 @@
     <String id="733">Zobraz: Filmová stopa</String>
     <String id="734">Obraz:</String>
     <String id="735">Otočiť o 90°</String>
-    <String id="736">-</String>
+    <String id="736">Dáta nie sú dostupné</String>
     <String id="737">Zobraz: Satelit</String>
     <String id="738">Zobraz: Teplota</String>
     <String id="739">Zobraz: UV Index</String>
@@ -1010,6 +1010,8 @@
     <String id="1222">Skupny</String>
     <String id="1223">Aktuálny playlist nájdený</String>
     <String id="1224">Prajete si vymazať aktuálny playlist?</String>
+    <String id="1225">Zaraď položku</String>
+    <String id="1226">Zaraď všetky položky</String>
     <String id="1230">Dátum pridania:</String>
     <String id="1231">Naposledy prehrané:</String>
     <String id="1300" prefix="Moje">Seriály</String>
@@ -1332,7 +1334,7 @@
     <String id="4501">Uložiť grafiku k dielu v jeho zložke.</String>
     <String id="4502">Uložiť grafiku k dielu v zložke náhľadov</String>
     <String id="4503">Zisťujem počet albumov, prosím čakajte...</String>
-    <String id="4504">{0}% - {1} z {2}			</String>
+    <String id="4504">{0}% - {1} z {2}</String>
     <String id="4505">Hľadám {0}...			</String>
     <String id="4506">[prázdne]</String>
     <String id="4507">Sťahovanie obalov zrušené používateľom</String>
