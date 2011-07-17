@@ -432,11 +432,11 @@ namespace MediaPortal.GUI.Video
 
         if (ageConfirmed)
         {
-          dlg.Add("Lock content"); //Lock content
+          dlg.Add(GUILocalizeStrings.Get(1240)); //Lock content
         }
         else
         {
-          dlg.Add("Unlock content"); //Unlock content
+          dlg.Add(GUILocalizeStrings.Get(1241)); //Unlock content
         }
       }
       // Show menu
