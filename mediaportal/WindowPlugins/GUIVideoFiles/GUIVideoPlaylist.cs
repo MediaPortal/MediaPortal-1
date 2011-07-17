@@ -222,7 +222,7 @@ namespace MediaPortal.GUI.Video
         // If the file is an image file, it should be mounted before playing
         if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
         {
-          if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path))
+          if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path, true))
             return;
         }
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
@@ -233,7 +233,7 @@ namespace MediaPortal.GUI.Video
       else if (control == btnNext)
       {
         playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;
-        GUIVideoFiles.PlayMovieFromPlayList(true);
+        GUIVideoFiles.PlayMovieFromPlayList(true, true);
       }
       else if (control == btnPrevious)
       {
@@ -564,7 +564,7 @@ namespace MediaPortal.GUI.Video
       // If the file is an image file, it should be mounted before playing
       if (VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(item.Path)))
       {
-        if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path))
+        if (!GUIVideoFiles.MountImageFile(GUIWindowManager.ActiveWindow, item.Path, true))
           return;
       }
       playlistPlayer.CurrentPlaylistType = PlayListType.PLAYLIST_VIDEO;

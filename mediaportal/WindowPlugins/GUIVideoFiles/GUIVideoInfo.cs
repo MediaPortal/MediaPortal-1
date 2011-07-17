@@ -343,7 +343,7 @@ namespace MediaPortal.GUI.Video
       if (control == btnPlay)
       {
         int id = currentMovie.ID;
-        GUIVideoFiles.PlayMovie(id);
+        GUIVideoFiles.PlayMovie(id, false);
         return;
       }
     }
