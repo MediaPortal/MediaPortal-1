@@ -1529,6 +1529,23 @@ namespace MediaPortal.Player
           {
             Log.Error("Error stopping graph: {0}", error.Message);
           }
+          
+          try
+          {
+            //Make sure the graph has really stopped
+            FilterState state;
+            hr = _mediaCtrl.GetState(1000, out state);
+            DsError.ThrowExceptionForHR(hr);
+            if (state != FilterState.Stopped)
+            {
+              Log.Error("TSReaderPlayer: graph still running");
+            }
+          }
+          catch (Exception error)
+          {
+            Log.Error("Error checking graph state: {0}", error.Message);
+          }
+
           if (needRebuild)
           {
             // this is a hack for MS Video Decoder and AC3 audio change
@@ -1961,6 +1978,7 @@ namespace MediaPortal.Player
         FilterInfo fInfo;
         pInfo.filter.QueryFilterInfo(out fInfo);
         Log.Debug("TSReaderPlayer: Remove filter - {0}", fInfo.achName);
+        DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
         _graphBuilder.RemoveFilter(pInfo.filter);
         DsUtils.FreePinInfo(pInfo);
         DirectShowUtil.ReleaseComObject(fInfo.pGraph);

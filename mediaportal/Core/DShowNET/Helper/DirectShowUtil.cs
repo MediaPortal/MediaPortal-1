@@ -1738,6 +1738,7 @@ namespace DShowNET.Helper
             {
               if (String.Equals(info.achName, filterName))
               {
+                DisconnectAllPins(graphBuilder, filter);
                 hr = graphBuilder.RemoveFilter(filter);
                 DsError.ThrowExceptionForHR(hr);
                 ReleaseComObject(filter);
@@ -1746,6 +1747,7 @@ namespace DShowNET.Helper
             }
             else
             {
+              DisconnectAllPins(graphBuilder, filter);
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               int i = ReleaseComObject(filter);
