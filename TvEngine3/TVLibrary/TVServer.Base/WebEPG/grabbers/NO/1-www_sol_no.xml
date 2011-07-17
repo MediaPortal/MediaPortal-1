@@ -110,7 +110,7 @@
     <Channel id="silverhd.no" siteId="silverhd" />
   </Channels>
   <Listing type="Html">
-    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" />
+    <Site url="http://www.sol.no/underholdning/tv/guiden/index.cgi?StartTime=0500&amp;EndTime=2900&amp;Date=[YYYY]-[MM]-[DD]&amp;Categories=*&amp;Channels=[ID]" post="" external="false" encoding="utf-8" user-agent="Mozilla/4.0 (compatible; MSIE 7.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)" />
     <Html>
       <Template name="default" start="tableau">
         <SectionTemplate tags="TSI">
@@ -137,7 +137,7 @@
       </Template>
       <Sublinks>
         <Sublink search="tvguiden" template="Details">
-          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="utf-8" />
+          <Link url="http://www.sol.no/underholdning/tv/guiden/expand.cgi?[1]" post="" external="false" encoding="utf-8" user-agent="Mozilla/4.0 (compatible; MSIE 7.0;  WindowsNT 5.0; .NET CLR 1 .1.4322)" />
         </Sublink>
       </Sublinks>
       <Searches>
