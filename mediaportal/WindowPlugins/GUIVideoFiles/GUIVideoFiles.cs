@@ -1596,6 +1596,12 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    [Obsolete("This method is obsolete; use method PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin) instead.")]
+    public static void PlayMovieFromPlayList(bool askForResumeMovie)
+    {
+      PlayMovieFromPlayList(askForResumeMovie, -1, false);
+    }
+
     public static void PlayMovieFromPlayList(bool askForResumeMovie, bool requestPin)
     {
       PlayMovieFromPlayList(askForResumeMovie, -1, requestPin);
@@ -1706,6 +1712,12 @@ namespace MediaPortal.GUI.Video
       return false;
     }
     */
+
+    [Obsolete("This method is obsolete; use method MountImageFile(int WindowID, string file) instead.")]
+    public static bool MountImageFile(int WindowID, string file)
+    {
+      return MountImageFile(WindowID, file, false);
+    }
 
     public static bool MountImageFile(int WindowID, string file, bool requestPin)
     {
@@ -2763,6 +2775,12 @@ namespace MediaPortal.GUI.Video
     {
       Log.Debug("GUIVideoFiles: Resetting virtual directory");
       _virtualDirectory.Reset();
+    }
+
+    [Obsolete("This method is obsolete; use method PlayMovie(int idMovie, bool requestPin) instead.")]
+    public static void PlayMovie(int idMovie)
+    {
+      PlayMovie(idMovie, false);
     }
 
     public static void PlayMovie(int idMovie, bool requestPin)
