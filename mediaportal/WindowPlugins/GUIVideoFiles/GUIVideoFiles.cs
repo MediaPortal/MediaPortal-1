@@ -954,7 +954,7 @@ namespace MediaPortal.GUI.Video
           {
             //TODO
             movies.Sort();
-            
+
             for (int i = 0; i < movies.Count; ++i)
             {
               AddFileToDatabase((string)movies[i]);
@@ -1093,12 +1093,12 @@ namespace MediaPortal.GUI.Video
     public static int MovieDuration(ArrayList files)
     {
       _totalMovieDuration = 0;
-      
+
       foreach (string file in files)
       {
         int fileID = VideoDatabase.GetFileId(file);
         int tempDuration = VideoDatabase.GetMovieDuration(fileID);
-        
+
         if (tempDuration > 0)
         {
           _totalMovieDuration += tempDuration;
@@ -1111,11 +1111,10 @@ namespace MediaPortal.GUI.Video
             VideoDatabase.SetMovieDuration(fileID, mInfo.VideoDuration / 1000);
           _totalMovieDuration += mInfo.VideoDuration / 1000;
         }
-        
       }
       return _totalMovieDuration;
     }
-    
+
     private void AddFileToDatabase(string strFile)
     {
       if (!Util.Utils.IsVideo(strFile))
@@ -1183,7 +1182,7 @@ namespace MediaPortal.GUI.Video
       string strFile = pItem.Path;
       string strMovie = pItem.Label;
       bool bFoundFile = true;
-      
+
       if ((pItem.IsFolder) && (!Util.Utils.IsDVD(pItem.Path)))
       {
         if (pItem.Label == "..")
@@ -1201,7 +1200,7 @@ namespace MediaPortal.GUI.Video
           GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         strFile = selectDVDHandler.GetFolderVideoFile(pItem.Path);
-        
+
         if (strFile == string.Empty)
         {
           bFoundFile = false;
@@ -1727,9 +1726,9 @@ namespace MediaPortal.GUI.Video
             }
           }
         }
-        
+
         List<GUIListItem> items = new List<GUIListItem>();
-        
+
         if (requestPin)
         {
           items = _virtualDirectory.GetDirectoryExt(file);
@@ -1762,16 +1761,16 @@ namespace MediaPortal.GUI.Video
       HashSet<string> watchedMovies = new HashSet<string>();
 
       int playTimePercentage = 0; // Set watched flag after 80% of total played time
-      
+
       // Stacked movies duration
       if (_isStacked && _totalMovieDuration != 0)
       {
         int duration = 0;
-        
+
         for (int i = 0; i < _stackedMovieFiles.Count; i++)
         {
           int fileID = VideoDatabase.GetFileId((string)_stackedMovieFiles[i]);
-          
+
           if (g_Player.CurrentFile != (string)_stackedMovieFiles[i])
           {
             //(int)Math.Ceiling((timeMovieStopped / g_Player.Player.Duration) * 100);
@@ -1787,7 +1786,7 @@ namespace MediaPortal.GUI.Video
         if (g_Player.Player.Duration >= 1)
           playTimePercentage = (int)Math.Ceiling((timeMovieStopped / g_Player.Player.Duration) * 100);
       }
-      
+
       if (movies.Count <= 0)
       {
         return;
@@ -1894,7 +1893,7 @@ namespace MediaPortal.GUI.Video
       if (iidMovie >= 0)
       {
         VideoDatabase.GetFiles(iidMovie, ref movies);
-        
+
         for (int i = 0; i < movies.Count; i++)
         {
           string strFilePath = (string)movies[i];
@@ -1910,11 +1909,38 @@ namespace MediaPortal.GUI.Video
           watchedMovies.Add(strFilePath);
         }
 
-        IMDBMovie details = new IMDBMovie();
-        VideoDatabase.GetMovieInfoById(iidMovie, ref details);
-        details.Watched = 1;
-        VideoDatabase.SetWatched(details);
-        VideoDatabase.SetMovieWatchedStatus(iidMovie, true);
+        int playTimePercentage = 0;
+
+        if (_isStacked && _totalMovieDuration != 0)
+        {
+          int duration = 0;
+
+          for (int i = 0; i < _stackedMovieFiles.Count; i++)
+          {
+            int fileID = VideoDatabase.GetFileId((string)_stackedMovieFiles[i]);
+
+            if (filename != (string)_stackedMovieFiles[i])
+            {
+              duration += VideoDatabase.GetMovieDuration(fileID);
+              continue;
+            }
+            playTimePercentage = (int)(100 * (duration + g_Player.Player.CurrentPosition) / _totalMovieDuration);
+            break;
+          }
+        }
+        else
+        {
+          playTimePercentage = 100;
+        }
+
+        if (playTimePercentage >= 80)
+        {
+          IMDBMovie details = new IMDBMovie();
+          VideoDatabase.GetMovieInfoById(iidMovie, ref details);
+          details.Watched = 1;
+          VideoDatabase.SetWatched(details);
+          VideoDatabase.SetMovieWatchedStatus(iidMovie, true);
+        }
       }
     }
 
@@ -2742,12 +2768,19 @@ namespace MediaPortal.GUI.Video
     public static void PlayMovie(int idMovie, bool requestPin)
     {
       int selectedFileIndex = 1;
+
+      if (_isStacked)
+      {
+        selectedFileIndex = 0;
+      }
+
       ArrayList movies = new ArrayList();
       VideoDatabase.GetFiles(idMovie, ref movies);
       if (movies.Count <= 0)
       {
         return;
       }
+      
       if (!CheckMovie(idMovie))
       {
         return;
@@ -2755,111 +2788,127 @@ namespace MediaPortal.GUI.Video
 
       bool askForResumeMovie = true;
       int movieDuration = 0;
+
+      //get all movies belonging to each other
+      List<GUIListItem> items = new List<GUIListItem>();
+      
+      // Pin protection
+      if (!requestPin)
       {
-        //get all movies belonging to each other
-        List<GUIListItem> items = new List<GUIListItem>();
-        // Pin protection
-        if (!requestPin)
-        {
-          items = _virtualDirectory.GetDirectoryUnProtectedExt(Path.GetDirectoryName((string)movies[0]), false);
-        }
-        else
-        {
-          items = _virtualDirectory.GetDirectoryExt(Path.GetDirectoryName((string)movies[0]));
-        }
+        items = _virtualDirectory.GetDirectoryUnProtectedExt(Path.GetDirectoryName((string)movies[0]), false);
+      }
+      else
+      {
+        items = _virtualDirectory.GetDirectoryExt(Path.GetDirectoryName((string)movies[0]));
+      }
 
-        if (items.Count <= 1)
-        {
-          return; // first item always ".." so 1 item means protected share
-        }
+      if (items.Count <= 1)
+      {
+        return; // first item always ".." so 1 item means protected share
+      }
 
-        //check if we can resume 1 of those movies
-        int timeMovieStopped = 0;
-        bool asked = false;
-        ArrayList newItems = new ArrayList();
-        for (int i = 0; i < items.Count; ++i)
+      //check if we can resume 1 of those movies
+      int timeMovieStopped = 0;
+      bool asked = false;
+      ArrayList newItems = new ArrayList();
+      
+      for (int i = 0; i < items.Count; ++i)
+      {
+        GUIListItem temporaryListItem = (GUIListItem)items[i];
+        bool found = false;
+
+        // reduce number of items to movie files only
+        foreach (var movie in movies)
         {
-          GUIListItem temporaryListItem = (GUIListItem)items[i];
-          if ((Util.Utils.ShouldStack(temporaryListItem.Path, (string)movies[0])) && (movies.Count > 1))
+          if (movie.ToString() == items[i].Path)
           {
-            if (!asked)
+            found = true;
+            break;
+          }
+        }
+
+        if (!found)
+          continue;
+
+        if ((Util.Utils.ShouldStack(temporaryListItem.Path, (string)movies[0])) && (movies.Count > 1))
+        {
+          if (!asked)
+          {
+            selectedFileIndex++;
+          }
+          IMDBMovie movieDetails = new IMDBMovie();
+          int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
+          if ((idMovie >= 0) && (idFile >= 0))
+          {
+            VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
+            string title = Path.GetFileName((string)movies[0]);
+            if ((VirtualDirectory.IsValidExtension((string)movies[0], Util.Utils.VideoExtensions, false)))
             {
-              selectedFileIndex++;
+              Util.Utils.RemoveStackEndings(ref title);
             }
-            IMDBMovie movieDetails = new IMDBMovie();
-            int idFile = VideoDatabase.GetFileId(temporaryListItem.Path);
-            if ((idMovie >= 0) && (idFile >= 0))
+            if (movieDetails.Title != string.Empty)
             {
-              VideoDatabase.GetMovieInfo((string)movies[0], ref movieDetails);
-              string title = Path.GetFileName((string)movies[0]);
-              if ((VirtualDirectory.IsValidExtension((string)movies[0], Util.Utils.VideoExtensions, false)))
-              {
-                Util.Utils.RemoveStackEndings(ref title);
-              }
-              if (movieDetails.Title != string.Empty)
-              {
-                title = movieDetails.Title;
-              }
+              title = movieDetails.Title;
+            }
 
-              timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
-              if (timeMovieStopped > 0)
+            timeMovieStopped = VideoDatabase.GetMovieStopTime(idFile);
+            if (timeMovieStopped > 0)
+            {
+              if (!asked)
               {
-                if (!asked)
+                asked = true;
+
+                GUIResumeDialog.Result result =
+                  GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
+                                                   GUIResumeDialog.MediaType.Video);
+
+                if (result == GUIResumeDialog.Result.Abort)
+                  return;
+
+                if (result == GUIResumeDialog.Result.PlayFromBeginning)
                 {
-                  asked = true;
-
-                  GUIResumeDialog.Result result =
-                    GUIResumeDialog.ShowResumeDialog(title, movieDuration + timeMovieStopped,
-                                                     GUIResumeDialog.MediaType.Video);
-
-                  if (result == GUIResumeDialog.Result.Abort)
-                    return;
-
-                  if (result == GUIResumeDialog.Result.PlayFromBeginning)
-                  {
-                    VideoDatabase.DeleteMovieStopTime(idFile);
-                    newItems.Add(temporaryListItem);
-                  }
-                  else
-                  {
-                    askForResumeMovie = false;
-                    newItems.Add(temporaryListItem);
-                  }
-                } //if (!asked)
-                else
-                {
+                  VideoDatabase.DeleteMovieStopTime(idFile);
                   newItems.Add(temporaryListItem);
                 }
-              } //if (timeMovieStopped>0)
+                else
+                {
+                  askForResumeMovie = false;
+                  newItems.Add(temporaryListItem);
+                }
+              } //if (!asked)
               else
               {
                 newItems.Add(temporaryListItem);
               }
-
-              // Total movie duration
-              movieDuration += VideoDatabase.GetMovieDuration(idFile);
-            }
-            else //if (idMovie >=0)
+            } //if (timeMovieStopped>0)
+            else
             {
               newItems.Add(temporaryListItem);
             }
-          } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, item.Path))
-        }
 
-        // If we have found stackable items, clear the movies array
-        // so, that we can repopulate it.
-        if (newItems.Count > 0)
-        {
-          movies.Clear();
-        }
-
-        for (int i = 0; i < newItems.Count; ++i)
-        {
-          GUIListItem temporaryListItem = (GUIListItem)newItems[i];
-          if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
-          {
-            movies.Add(temporaryListItem.Path);
+            // Total movie duration
+            movieDuration += VideoDatabase.GetMovieDuration(idFile);
           }
+          else //if (idMovie >=0)
+          {
+            newItems.Add(temporaryListItem);
+          }
+        } //if ( MediaPortal.Util.Utils.ShouldStack(temporaryListItem.Path, item.Path))
+      }
+
+      // If we have found stackable items, clear the movies array
+      // so, that we can repopulate it.
+      if (newItems.Count > 0)
+      {
+        movies.Clear();
+      }
+
+      for (int i = 0; i < newItems.Count; ++i)
+      {
+        GUIListItem temporaryListItem = (GUIListItem)newItems[i];
+        if (Util.Utils.IsVideo(temporaryListItem.Path) && !PlayListFactory.IsPlayList(temporaryListItem.Path))
+        {
+          movies.Add(temporaryListItem.Path);
         }
       }
 

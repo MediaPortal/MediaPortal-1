@@ -193,7 +193,9 @@ namespace MediaPortal.GUI.Video
         imageSearchThread.Abort();
         imageSearchThread = null;
       }
-      currentMovie = null;
+
+      if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
+        currentMovie = null;
 
       base.OnPageDestroy(newWindowId);
     }
@@ -343,6 +345,17 @@ namespace MediaPortal.GUI.Video
       if (control == btnPlay)
       {
         int id = currentMovie.ID;
+
+        ArrayList files = new ArrayList();
+        VideoDatabase.GetFiles(id, ref files);
+
+        if (files.Count > 1)
+        {
+          GUIVideoFiles._stackedMovieFiles = files;
+          GUIVideoFiles._isStacked = true;
+          GUIVideoFiles.MovieDuration(files);
+        }
+
         GUIVideoFiles.PlayMovie(id, false);
         return;
       }
