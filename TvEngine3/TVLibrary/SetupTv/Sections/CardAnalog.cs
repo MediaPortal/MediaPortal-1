@@ -1538,6 +1538,72 @@ namespace SetupTv.Sections
         layer.MapChannelToCard(card, dbChannel, false);
         layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
       }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput1))
+      {
+        string channelName = "HDMI#1 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput2))
+      {
+        string channelName = "HDMI#2 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput3))
+      {
+        string channelName = "HDMI#3 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
       MessageBox.Show(this, "Channels added.");
     }
 

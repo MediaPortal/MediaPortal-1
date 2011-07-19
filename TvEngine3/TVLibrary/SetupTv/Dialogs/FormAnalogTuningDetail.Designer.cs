@@ -243,7 +243,10 @@ namespace SetupTv.Dialogs
             "RGB #3",
             "YRYBY #1",
             "YRYBY #2",
-            "YRYBY #3"});
+            "YRYBY #3",
+            "HDMI #1",
+            "HDMI #2",
+            "HDMI #3"});
       this.comboBoxVideoSource.Location = new System.Drawing.Point(93, 32);
       this.comboBoxVideoSource.Name = "comboBoxVideoSource";
       this.comboBoxVideoSource.Size = new System.Drawing.Size(258, 21);

@@ -945,6 +945,7 @@ namespace TvLibrary.Implementations.Analog
         int videoSvhsNr = 0;
         int videoYrYbYNr = 0;
         int videoRgbNr = 0;
+        int videoHdmiNr = 0;
         for (int i = 0; i < inputs; ++i)
         {
           crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
@@ -1072,6 +1073,24 @@ namespace TvLibrary.Implementations.Analog
                 case 3:
                   _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_SerialDigital:
+              videoHdmiNr++;
+              switch (videoHdmiNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput3, relatedPinIndex);
                   break;
               }
               break;
