@@ -1142,31 +1142,17 @@ namespace TvLibrary.Implementations.DVB
       }
       //wintv ci usb module found
       Log.Log.Info("dvb:  WinTv CI module detected");
+
       //add logic to check if WinTV device should be built with this DVB graph.
-      string configfile = String.Format(@"{0}\WinTV-CI.xml", PathManager.GetDataPath);
-      string cardmoniker = "";
-      XmlDocument doc = new XmlDocument();
-      try
-      {
-        doc.Load(configfile);
-        if (doc.DocumentElement != null)
-        {
-          XmlNode cardNode = doc.DocumentElement.SelectSingleNode("/configuration/card");
-          XmlNode node = cardNode.SelectSingleNode("device/path");
-          cardmoniker = node.InnerText;
-        }
-      }
-      catch
-      {
-        Log.Log.Error("dvb:  WinTv CI configuration missing or invalid. Configure it inside SetupTv!");
-      }
-      string tuner = _tunerDevice.DevicePath;
-      if (tuner != cardmoniker)
+      TvBusinessLayer layer = new TvBusinessLayer();
+      int winTvTunerCardId = Int32.Parse(layer.GetSetting("winTvCiTuner", "-1").Value);
+      if (winTvTunerCardId != this._cardId)
       {
         Log.Log.Info("dvb:  WinTv CI module not assigned to card: {0}", _tunerDevice.Name);
         return;
       }
       Log.Log.Info("dvb:  Adding WinTv CI to graph");
+
       //add filter to graph
       IBaseFilter tmpCiFilter;
       try
