@@ -150,7 +150,7 @@ namespace TvLibrary.Implementations.Analog
     {
       int pid = PMT_PID;
       bool pmtFound = false;
-      TimeSpan waitLength;
+      TimeSpan waitLength = TimeSpan.MinValue;
       while (!pmtFound)
       {
         SetupPmtGrabber(pid, SERVICE_ID);
