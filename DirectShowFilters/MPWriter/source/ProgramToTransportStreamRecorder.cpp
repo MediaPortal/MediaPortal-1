@@ -50,6 +50,7 @@ void CProgramToTransportStreamRecorder::Initialize(wchar_t* fileNameOut)
 
 	// And, from this, a filter that converts to MPEG-2 Transport Stream frames:
 	m_tsFrames  = MPEG2TransportStreamFromPESSource::createNew(*m_env, pesSource);
+	((MPEG2TransportStreamFromPESSource*) m_tsFrames)->SetSourceType(m_iProgramType);
 
 	m_outputSink = CFileSinkRecorder::createNew(*m_env, fileNameOut);
 	if (m_outputSink == NULL) 
@@ -70,6 +71,11 @@ void CProgramToTransportStreamRecorder::Flush()
 	// LogDebug("CProgramToTransportStreamRecorder::Flush()");
 	// m_iPacketsToSkip=0;
 	// m_buffer.Clear();
+}
+void CProgramToTransportStreamRecorder::SetProgramType(int programType)
+{
+	// 0 = video, 1 = audio
+	m_iProgramType = programType;
 }
 void CProgramToTransportStreamRecorder::ClearStreams()
 {

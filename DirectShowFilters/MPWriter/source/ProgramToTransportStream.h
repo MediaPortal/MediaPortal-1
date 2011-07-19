@@ -16,7 +16,7 @@ public:
 	virtual ~CProgramToTransportStream(void);
 	void Initialize(wchar_t* fileNameOut);
 	void SetTimeShiftParams( int minFiles, int maxFiles, ULONG maxFileSize);
-	void SetChannelType(int channelType);
+	void SetProgramType(int programType);
 	void ClearStreams();
 	void Close();
 	void Write(byte* data, int len);
@@ -38,9 +38,9 @@ private:
 	bool m_bStarting;
 	int  m_iPacketsToSkip;
 	bool m_bSendVideoAudioObserverEvents;
-
 	int m_minFiles;
 	int m_maxFiles;
 	ULONG m_maxFileSize;
 	IAnalogVideoAudioObserver* m_pCallback;
+	int m_iProgramType;
 };

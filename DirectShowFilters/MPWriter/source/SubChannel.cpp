@@ -97,7 +97,8 @@ STDMETHODIMP CSubChannel::SetTimeShiftFileNameW(wchar_t* pwszFileName)
 
 STDMETHODIMP CSubChannel::SetChannelType(int channelType)
 {
-	m_pTsWriter->SetChannelType(channelType);
+	m_pTsWriter->SetProgramType(channelType);
+	m_pTsRecorder->SetProgramType(channelType);
 	return S_OK;
 }
 
