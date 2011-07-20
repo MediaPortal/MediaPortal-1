@@ -1684,7 +1684,7 @@ namespace TvDatabase
       // no channel = no EPG but we need a valid command text
       if (aEpgChannelList.Count < 1)
       {
-        completeStatement = "SELECT * FROM program WHERE 0=1";
+        completeStatement = "SELECT * FROM Program WHERE 0=1";
       }
       else
       {
@@ -1694,7 +1694,7 @@ namespace TvDatabase
           foreach (Channel ch in aEpgChannelList)
           {
             sbSelect.AppendFormat(
-              "(SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
+              "(SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM Program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
               ch.IdChannel);
           }
 
@@ -1704,7 +1704,7 @@ namespace TvDatabase
         else
         {
           //foreach (Channel ch in aEpgChannelList)
-          //  sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
+          //  sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM Program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
 
           //completeStatement = sbSelect.ToString();
           //completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
