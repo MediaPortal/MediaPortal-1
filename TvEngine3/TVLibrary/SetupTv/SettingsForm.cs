@@ -52,6 +52,7 @@ namespace SetupTv
     public SetupTvSettingsForm(bool ShowAdvancedSettings)
     {
       showAdvancedSettings = ShowAdvancedSettings;
+      InitializeComponent();
       try
       {
         Init();
@@ -743,6 +744,7 @@ namespace SetupTv
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.ClientSize = new System.Drawing.Size(716, 537);
+      this.MinimumSize = new System.Drawing.Size(724, 571);
       this.Name = "SetupTvSettingsForm";
       this.ResumeLayout(false);
       this.PerformLayout();

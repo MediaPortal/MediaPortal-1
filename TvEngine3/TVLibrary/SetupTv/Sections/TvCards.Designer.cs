@@ -313,7 +313,7 @@ namespace SetupTv.Sections
       this.label26.Name = "label26";
       this.label26.Size = new System.Drawing.Size(425, 28);
       this.label26.TabIndex = 2;
-      this.label26.Text = "If you have enough bandwidth you can enable multile IPTV cards so that you can wa" +
+      this.label26.Text = "If you have enough bandwidth you can enable multiple IPTV cards so that you can wa" +
           "tch and record multiple channels simultaneously.";
       // 
       // iptvUpDown
