@@ -468,7 +468,7 @@ bool CVideoPin::TimestampDisconChecker(REFERENCE_TIME timeStamp)
   }
 
     // Check for discontinuity
-  if (stsDiff > (m_fMTDMean + (300 * 10000))) // diff - mean > 300ms
+  if (stsDiff > (m_fMTDMean + (500 * 10000))) // diff - mean > 500ms
   {
     mtdDiscontinuity = true;
     LogDebug("vid:Timestamp discontinuity, TsDiff %0.3f ms, TsMeanDiff %0.3f ms, samples %d", (float)stsDiff/10000.0f, (float)m_fMTDMean/10000.0f, m_nNextMTD);
