@@ -472,7 +472,6 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
       }
       else if (result == WAIT_OBJECT_0 + 1) // seek request
       {
-        CAutoLock lock(&m_csCommandQueue);
         LONGLONG posEnd(~0);
         LONGLONG zeroPos(0);
 
