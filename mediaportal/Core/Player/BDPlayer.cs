@@ -736,11 +736,20 @@ namespace MediaPortal.Player
 
     public override bool Play(string strFile)
     {
-      if (_titleToPlay == -1)
-        return true;
       Log.Info("BDPlayer play: {0}", strFile);
       if (!File.Exists(strFile))
       {
+        return false;
+      }      
+
+      if (!GetInterfaces(strFile))
+      {
+        MovieEnded();
+
+        if (_titleToPlay == -1)
+          return true;
+
+        Log.Error("BDPlayer:GetInterfaces() failed");        
         return false;
       }
 
@@ -756,12 +765,6 @@ namespace MediaPortal.Player
       _isFullscreen = false;
       _geometry = Geometry.Type.Normal;
 
-      if (!GetInterfaces(strFile))
-      {
-        Log.Error("BDPlayer:GetInterfaces() failed");
-        MovieEnded();
-        return false;
-      }
       int hr = _mediaEvt.SetNotifyWindow(GUIGraphicsContext.ActiveForm, WM_GRAPHNOTIFY, IntPtr.Zero);
       if (hr < 0)
       {
@@ -2102,16 +2105,15 @@ namespace MediaPortal.Player
 
         while (true)
         {
-          int titleIdx = SelectTitle(titles);
-          if (titleIdx > -1)
+          _titleToPlay = SelectTitle(titles);
+          if (_titleToPlay > -1)
           {
             // a specific title was selected
             _forceTitle = true;
-            _titleToPlay = titleIdx;
           }
           else
           {
-            if (titleIdx == -1)
+            if (_titleToPlay == -1)
             {
               // user cancelled dialog
               return false;
@@ -2119,7 +2121,6 @@ namespace MediaPortal.Player
 
             // user choose to display menu
             _forceTitle = false;
-            _titleToPlay = 0;
           }
 
           _ireader.ForceTitleBasedPlayback(_forceTitle, (uint)_titleToPlay);
