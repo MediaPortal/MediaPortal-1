@@ -168,7 +168,14 @@ namespace MediaPortal.Player.Subtitles
       }
       else
         Log.Info("FFdshow interfaces found");
-      Enable = autoShow;
+      if (selectionOff)
+      {
+        Enable = false;
+      }
+      else
+      {
+        Enable = autoShow;
+      }
       return true;
     }
 
@@ -297,6 +304,7 @@ namespace MediaPortal.Player.Subtitles
     public bool AutoShow
     {
       get { return autoShow; }
+      set { autoShow = value; }
     }
 
     #endregion

@@ -2423,6 +2423,26 @@ namespace MediaPortal.Player
       }
     }
 
+    public static bool EnableForcedSubtitle
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return false;
+        }
+        return _player.EnableForcedSubtitle;
+      }
+      set
+      {
+        if (_player == null)
+        {
+          return;
+        }
+        _player.EnableForcedSubtitle = value;
+      }
+    }
+
     public static bool SupportsCC
     {
       get

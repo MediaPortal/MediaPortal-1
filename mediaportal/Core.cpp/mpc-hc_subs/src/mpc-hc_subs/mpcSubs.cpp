@@ -29,7 +29,12 @@ void SetAdvancedOptions(int subPicsBufferAhead, SIZE textureSize, BOOL pow2tex, 
 
 void SetShowForcedOnly(BOOL onlyShowForcedSubs)
 {
-	g_onlyShowForcedSubs = onlyShowForcedSubs;
+	if (g_subManager)	{
+	 g_subManager->ToggleForcedOnly(onlyShowForcedSubs != 0);
+	}
+	else {
+	 g_onlyShowForcedSubs = onlyShowForcedSubs;
+	}
 }
 
 

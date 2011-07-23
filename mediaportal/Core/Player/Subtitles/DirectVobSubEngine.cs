@@ -96,7 +96,14 @@ namespace MediaPortal.Player.Subtitles
       FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
 
       Current = 0;
-      Enable = autoShow;
+      if (selectionOff)
+      {
+        Enable = false;
+      }
+      else
+      {
+        Enable = autoShow;
+      }
       return true;
     }
 
@@ -271,6 +278,7 @@ namespace MediaPortal.Player.Subtitles
     public bool AutoShow
     {
       get { return autoShow; }
+      set { autoShow = value; }
     }
 
     #endregion

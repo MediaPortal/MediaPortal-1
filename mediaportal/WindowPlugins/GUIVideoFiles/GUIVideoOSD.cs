@@ -27,6 +27,7 @@ using MediaPortal.Video.Database;
 using Action = MediaPortal.GUI.Library.Action;
 using MediaPortal.Player.PostProcessing;
 using FFDShow;
+using MediaPortal.Player.Subtitles;
 
 namespace MediaPortal.GUI.Video
 {
@@ -79,6 +80,7 @@ namespace MediaPortal.GUI.Video
       OSD_SUBTITLE_DELAY_LABEL = 850,
       OSD_SUBTITLE_ONOFF = 801,
       OSD_SUBTITLE_LIST = 802,
+      OSD_SUBTITLE_FORCED_ONOFF = 803,
       OSD_TIMEINFO = 100,
       OSD_SUBMENU_BG_VOL = 300,
       // OSD_SUBMENU_BG_SYNC 301	- not used
@@ -511,10 +513,12 @@ namespace MediaPortal.GUI.Video
                 pControl.SetRange(-10, 10);
                 SetSliderValue(-10, 10, m_subtitleDelay, (int)Controls.OSD_SUBTITLE_DELAY);
                 SetCheckmarkValue(g_Player.EnableSubtitle, (int)Controls.OSD_SUBTITLE_ONOFF);
+                SetCheckmarkValue(!g_Player.EnableForcedSubtitle, (int)Controls.OSD_SUBTITLE_FORCED_ONOFF);
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
+                ShowControl(GetID, (int)Controls.OSD_SUBTITLE_FORCED_ONOFF);
                 ShowControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
 
                 FocusControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY, 0);
@@ -756,6 +760,7 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_FORCED_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
 
       // Reset the other buttons back to up except the one that's active
@@ -974,6 +979,11 @@ namespace MediaPortal.GUI.Video
             g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
           }
           break;
+        case (int)Controls.OSD_SUBTITLE_FORCED_ONOFF:
+          {
+            SubEngine.engine.AutoShow = !SubEngine.engine.AutoShow;
+          }
+          break;
         case (int)Controls.OSD_SUBTITLE_LIST:
           {
             if (wID != 0) // check to see if list control has an action ID, remote can cause 0 based events
@@ -988,7 +998,7 @@ namespace MediaPortal.GUI.Video
                   msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_GET_SELECTED_ITEM, GetID, 0,
                                        (int)Controls.OSD_SUBTITLE_LIST, msg.Param1, 0, null);
                   g_Player.EnableSubtitle = false;
-                  g_Player.CurrentSubtitleStream = - 1;
+                  g_Player.CurrentSubtitleStream = -1;
                   Log.Info("Subtitle CC selected ");
                 }
                 else
@@ -1322,6 +1332,7 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
+      HideControl(GetID, (int)Controls.OSD_SUBTITLE_FORCED_ONOFF);
       HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
       HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);

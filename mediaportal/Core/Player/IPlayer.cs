@@ -620,6 +620,12 @@ namespace MediaPortal.Player
       set { }
     }
 
+    public virtual bool EnableForcedSubtitle
+    {
+      get { return true; }
+      set { }
+    }
+
     public virtual int GetHDC()
     {
       return 0;

@@ -1716,6 +1716,12 @@ namespace MediaPortal.Player
       set { SubEngine.GetInstance().Enable = value; }
     }
 
+    public override bool EnableForcedSubtitle
+    {
+      get { return SubEngine.GetInstance().AutoShow; }
+      set { SubEngine.GetInstance().AutoShow = value; }
+    }
+
     public bool AnalyseStreams()
     {
       try

@@ -99,7 +99,14 @@ namespace MediaPortal.Player.Subtitles
     {
       LoadSettings();
       MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
-      MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      if (selectionOff)
+      {
+        MpcSubtitles.SetShowForcedOnly(false);
+      }
+      else
+      {
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
       //remove DirectVobSub
       DirectVobSubUtil.RemoveFromGraph(graphBuilder);
       {
@@ -205,6 +212,11 @@ namespace MediaPortal.Player.Subtitles
     public bool AutoShow
     {
       get { return autoShow; }
+      set
+      {
+        autoShow = value;
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
     }
 
     #endregion
