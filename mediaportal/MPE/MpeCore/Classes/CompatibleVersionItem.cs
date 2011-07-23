@@ -18,33 +18,22 @@
 
 #endregion
 
-using Microsoft.Win32;
-using MpeCore;
-using MpeCore.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace MpeCore.Classes.VersionProvider
+namespace MpeCore.Classes
 {
-  public class ExtensionVersion : IVersionProvider
+  public class CompatibleVersionItem
   {
-    public string DisplayName
-    {
-      get { return "Extension"; }
-    }
+    public string MinRequiredVersion {get; set;}
+    public string DesignedForVersion {get; set;}
 
-    public bool Validate(DependencyItem componentItem)
+    public CompatibleVersionItem()
     {
-      if (componentItem.MinVersion.CompareTo(Version(componentItem.Id)) <= 0 &&
-          componentItem.MaxVersion.CompareTo(Version(componentItem.Id)) >= 0)
-        return true;
-      return false;
-    }
-
-    public VersionInfo Version(string id)
-    {
-      PackageClass pak = MpeInstaller.InstalledExtensions.Get(id);
-      if (pak != null)
-        return pak.GeneralInfo.Version;
-      return new VersionInfo();
+      MinRequiredVersion = string.Empty;
+      DesignedForVersion = string.Empty;
     }
   }
 }

@@ -118,6 +118,8 @@ namespace MpeCore.Classes
         pak.Groups.Items.Add(new GroupItem(groupItem.Name, groupItem.Checked));
       }
       pak.Dependencies = packageClass.Dependencies;
+      pak.PluginDependencies = packageClass.PluginDependencies;
+      pak.IsSkin = packageClass.IsSkin;
       pak.Version = packageClass.Version;
       pak.Parent = this;
       Items.Add(pak);

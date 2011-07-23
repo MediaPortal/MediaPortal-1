@@ -29,6 +29,8 @@ namespace MpeCore.Classes.VersionProvider
 {
   public class MediaPortalVersion : IVersionProvider
   {
+    public static readonly VersionInfo MinimumMPVersionRequired = new VersionInfo(new Version("1.1.6.27644"));
+    
     public string DisplayName
     {
       get { return "MediaPortal"; }
@@ -36,6 +38,8 @@ namespace MpeCore.Classes.VersionProvider
 
     public bool Validate(DependencyItem componentItem)
     {
+      if (componentItem.MinVersion.CompareTo(MinimumMPVersionRequired) < 0)
+        return false;
       if (Version(componentItem.Id).CompareTo(componentItem.MinVersion) >= 0 &&
           Version(componentItem.Id).CompareTo(componentItem.MaxVersion) <= 0)
         return true;
@@ -44,7 +48,7 @@ namespace MpeCore.Classes.VersionProvider
 
     public VersionInfo Version(string id)
     {
-      RegistryKey key =
+      /*RegistryKey key =
         Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
       if (key != null)
       {
@@ -57,8 +61,8 @@ namespace MpeCore.Classes.VersionProvider
                         };
         key.Close();
         return version;
-      }
-      return new VersionInfo();
+      }*/      
+      return new VersionInfo(MediaPortal.Common.Utils.CompatibilityManager.GetCurrentVersion());
     }
   }
 }

@@ -32,6 +32,7 @@ using MpeMaker.Classes;
 using MpeMaker.Dialogs;
 using MpeMaker.Sections;
 using MpeMaker.Wizards;
+using System.Xml;
 
 namespace MpeMaker
 {
@@ -303,8 +304,12 @@ namespace MpeMaker
       packageClass.Sections.Add("Setup Complete");
       packageClass.Sections.Items[2].WizardButtonsEnum = WizardButtonsEnum.Finish;
 
+      packageClass.CreateMPDependency();
+
       return packageClass;
     }
+
+    
 
     private void OpenFileDialog()
     {
@@ -351,9 +356,30 @@ namespace MpeMaker
     {
       Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateRelativePath(Path.GetDirectoryName(filename));
+      Package.GenerateUniqueFileList();
+      Package.SetPluginsDependencies();
+      DependencyItem MPDep;
+      if (Package.CheckMPDependency(out MPDep))
+      {
+        if (MPDep.MinVersion.CompareTo(MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired) < 0)
+        {
+          MPDep.MinVersion = MpeCore.Classes.VersionProvider.MediaPortalVersion.MinimumMPVersionRequired;
+        }
+      }
+      else
+      {
+        Package.CreateMPDependency();
+      }
+      FileItem skinFile;
+      DependencyItem dep;
+      if (Package.ProvidesSkin(out skinFile) && !Package.CheckSkinDependency(out dep))
+      {
+        Package.CreateSkinDependency(skinFile);
+      }
+      Package.ProjectSettings.ProjectFilename = Util.RelativePathTo(Path.GetDirectoryName(filename), filename);
       Package.Save(filename);
+      Package.ProjectSettings.ProjectFilename = filename;
       Package.GenerateAbsolutePath(Path.GetDirectoryName(filename));
-
       SetTitle();
     }
 
@@ -401,8 +427,8 @@ namespace MpeMaker
     private static bool LoosingChangesConfirmed(string caption)
     {
       StringBuilder stringBuilder = new StringBuilder();
-      stringBuilder.AppendLine("All not saved changes will be lost,");
-      stringBuilder.AppendLine("Do you want to continue?");
+      stringBuilder.AppendLine("Unsaved changes will be lost,");
+      stringBuilder.AppendLine("Do you want to proceed?");
 
       return MessageBox.Show(stringBuilder.ToString(), caption, MessageBoxButtons.YesNo) == DialogResult.Yes;
     }

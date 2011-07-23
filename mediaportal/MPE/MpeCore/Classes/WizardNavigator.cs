@@ -67,8 +67,7 @@ namespace MpeCore.Classes
           case SectionResponseEnum.Cancel:
             if (
               MessageBox.Show(
-                "Are you want to quit " + Package.GeneralInfo.Name + " - " + Package.GeneralInfo.Version +
-                " setup ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
+                "Are you sure you want to abort setup of " + Package.GeneralInfo.Name + " - " + Package.GeneralInfo.Version + " ? ", "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) !=
               DialogResult.Yes)
               continue;
             bool sil = Package.Silent;

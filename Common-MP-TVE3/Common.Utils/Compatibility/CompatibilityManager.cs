@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Xml;
 
 namespace MediaPortal.Common.Utils
 {
@@ -43,6 +44,7 @@ namespace MediaPortal.Common.Utils
     private static readonly HashSet<Assembly> AppAssemblies = new HashSet<Assembly>();
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
+    public static readonly Version SkinVersion = new Version(1, 2, 0, 0);
 
     static CompatibilityManager()
     {
@@ -274,6 +276,88 @@ namespace MediaPortal.Common.Utils
       Version ver;
       // Have all used subsystem known versions and prior to the one the plugin was designed for?
       return subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr.Subsystem, out ver) && CompareVersions(ver, designedForVersion) <= 0);
+    }
+
+    public static Version GetCurrentVersion()
+    {
+      CheckLoadedAssemblies();
+      Version version;
+      if (!SubSystemVersions.TryGetValue("*", out version))
+      {
+        return AppVersion;
+      }
+      return version;
+    }
+
+    public static IEnumerable<UsesSubsystemAttribute> GetSubSystemsUsed(Assembly asm)
+    {
+      return ((UsesSubsystemAttribute[])asm.GetCustomAttributes(typeof(UsesSubsystemAttribute), true)).Where(attr => attr.Used);
+    }
+
+    public static IEnumerable<CompatibleVersionAttribute> GetRequestedVersions(Assembly asm)
+    {
+      return (CompatibleVersionAttribute[])asm.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
+    }
+
+    public static bool IsPluginCompatible(System.Xml.XmlElement rootNode)
+    {
+      XmlNode versionNode = rootNode.SelectSingleNode("CompatibleVersion/Items");
+      if(versionNode == null)
+      {
+        return false;
+      }
+      Version minRequiredVersion = new Version(1, 1, 7, 0); // 1.2.0 Beta(1)
+      Version designedForVersion = new Version(1, 0, 0, 0);
+      foreach (XmlNode node in versionNode.ChildNodes)
+      {
+        XmlNode minVersionNode = node.SelectSingleNode("MinRequiredVersion");
+        XmlNode designedVersionNode = node.SelectSingleNode("DesignedForVersion");
+        if (minVersionNode != null)
+        {
+          minRequiredVersion = new Version(minVersionNode.InnerText);
+        }
+        if (designedForVersion == null)
+        {
+          return false;
+        }
+        designedForVersion = new Version(designedVersionNode.InnerText);
+        break; //Break cause we only check first instance??
+      }
+
+      CheckLoadedAssemblies();
+      Version lastFullyBreakingVersion;
+
+      if (CompareVersions(AppVersion, minRequiredVersion) < 0 ||                 // MP version is too old
+          (SubSystemVersions.TryGetValue("*", out lastFullyBreakingVersion) &&
+            CompareVersions(lastFullyBreakingVersion, designedForVersion) > 0))  // MP breaking version after plugin released
+      {
+        return false;
+      }
+
+      List<string> subsystemsUsed = new List<string>();
+      XmlNode subsystemNode = rootNode.SelectSingleNode("SubSystemsUsed/Items");
+      if (subsystemNode == null)
+      {
+        return false;
+      }
+      foreach (XmlNode node in subsystemNode.ChildNodes)
+      {
+        XmlAttribute nameAttrib = node.Attributes["Name"];
+        if(nameAttrib == null || string.IsNullOrEmpty(nameAttrib.InnerText))
+        {
+          continue;
+        }
+        subsystemsUsed.Add(nameAttrib.InnerText);
+      }
+
+      if (subsystemsUsed.Count == 0)
+      {
+        return true;
+      }
+
+      Version ver;
+      // Have all used subsystem known versions and prior to the one the plugin was designed for?
+      return subsystemsUsed.All(attr => SubSystemVersions.TryGetValue(attr, out ver) && CompareVersions(ver, designedForVersion) <= 0);
     }
   }
 }
