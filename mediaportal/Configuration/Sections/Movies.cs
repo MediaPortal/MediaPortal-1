@@ -265,7 +265,7 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValue("movieplayer", "audiolanguage", ci.Name);
           }
         }
-        if (subtitlesSelectionComboBox.SelectedItem == "Subtitle won\'t be auto loaded")
+        if (subtitlesSelectionComboBox.SelectedItem == "Subtitles won\'t be auto loaded")
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", true);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
@@ -465,11 +465,11 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpLabelSubSelectMode
       // 
-      this.mpLabelSubSelectMode.Location = new System.Drawing.Point(17, 20);
+      this.mpLabelSubSelectMode.Location = new System.Drawing.Point(14, 20);
       this.mpLabelSubSelectMode.Name = "mpLabelSubSelectMode";
-      this.mpLabelSubSelectMode.Size = new System.Drawing.Size(127, 16);
+      this.mpLabelSubSelectMode.Size = new System.Drawing.Size(175, 16);
       this.mpLabelSubSelectMode.TabIndex = 19;
-      this.mpLabelSubSelectMode.Text = "Subtitle mode selection:";
+      this.mpLabelSubSelectMode.Text = "Subtitles mode selection:";
       // 
       // subtitlesSelectionComboBox
       // 
@@ -477,9 +477,9 @@ namespace MediaPortal.Configuration.Sections
       this.subtitlesSelectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.subtitlesSelectionComboBox.FormattingEnabled = true;
       this.subtitlesSelectionComboBox.Items.AddRange(new object[] {
-            "Subtitle won\'t be auto loaded",
-            "Subtitle will be auto loaded by language preference",
-            "Subtitle will only display forced subtitles *"});
+            "Subtitles won\'t be auto loaded",
+            "Subtitles will be auto loaded by language preference",
+            "Subtitles will only display forced subtitles *"});
       this.subtitlesSelectionComboBox.Location = new System.Drawing.Point(16, 39);
       this.subtitlesSelectionComboBox.Name = "subtitlesSelectionComboBox";
       this.subtitlesSelectionComboBox.Size = new System.Drawing.Size(393, 21);
