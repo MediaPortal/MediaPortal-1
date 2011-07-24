@@ -261,11 +261,11 @@ namespace MediaPortal.Player
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: HasSubtitles     : {0}", _hasSubtitles);
         Log.Info("MediaInfoWrapper.MediaInfoWrapper: NumSubtitles     : {0}", _numsubtitles);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         Log.Error(
-          "MediaInfoWrapper.MediaInfoWrapper: unable to call external DLL - mediainfo (make sure 'MediaInfo.dll' is located in MP root dir.) {0}",
-          ex.Message);
+          "MediaInfoWrapper.MediaInfoWrapper: Error occurred while scanning media: '{0}'",
+          strFile);
       }
       finally
       {
