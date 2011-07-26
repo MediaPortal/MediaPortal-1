@@ -265,19 +265,19 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.SetValue("movieplayer", "audiolanguage", ci.Name);
           }
         }
-        if (subtitlesSelectionComboBox.SelectedItem == "Subtitles won\'t be auto loaded")
+        if (subtitlesSelectionComboBox.SelectedIndex == 0) //"Subtitles won't be auto loaded"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", true);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
-        else if (subtitlesSelectionComboBox.SelectedItem == "Subtitles will be auto loaded by language preference")
+        else if (subtitlesSelectionComboBox.SelectedIndex == 1) //"Subtitles will be auto loaded by language preference"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", true);
           xmlwriter.SetValue("subtitles", "selection", subtitlesSelectionComboBox.SelectedItem);
         }
-        else if (subtitlesSelectionComboBox.SelectedItem == "Subtitles will only display forced subtitles *")
+        else if (subtitlesSelectionComboBox.SelectedIndex == 2) //"Subtitles will only display forced subtitles *"
         {
           xmlwriter.SetValueAsBool("subtitles", "selectionoff", false);
           xmlwriter.SetValueAsBool("subtitles", "enabled", false);
