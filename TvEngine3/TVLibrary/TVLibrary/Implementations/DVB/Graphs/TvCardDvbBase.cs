@@ -1025,8 +1025,8 @@ namespace TvLibrary.Implementations.DVB
         _filterNetworkProvider = FilterGraphTools.AddFilterFromClsid(_graphBuilder, internalNetworkProviderClsId,
                                                                      networkProviderName);
         _interfaceNetworkProvider = (IDvbNetworkProvider)_filterNetworkProvider;
-        string hash = TvCardCollection.GetHash(_tunerDevice.DevicePath);
-        _interfaceNetworkProvider.ConfigureLogging(TvCardCollection.GetFileName(_tunerDevice.DevicePath), hash,
+        string hash = TvCardCollection.GetHash(DevicePath);
+        _interfaceNetworkProvider.ConfigureLogging(TvCardCollection.GetFileName(DevicePath), hash,
                                                    LogLevelOption.Debug);
         return;
       }
