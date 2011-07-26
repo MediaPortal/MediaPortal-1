@@ -113,17 +113,14 @@ namespace MediaPortal.Util
       }
       if (timeout >= 10000)
       {
-        IDialogbox dlg = (IDialogbox)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
-        if (dlg == null)
-        {
-          return false;
-        }
-        dlg.Reset();
-        dlg.SetHeading(GUILocalizeStrings.Get(200093)); //Trying message
-        dlg.Add(GUILocalizeStrings.Get(186)); //OK
-        dlg.Add(GUILocalizeStrings.Get(222)); //Cancel
-        dlg.DoModal(GUIWindowManager.ActiveWindow);
-        if (dlg.SelectedId == 1)
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+        msg.Param1 = 200093;
+        msg.Param2 = 200094;
+        msg.Param3 = 0;
+        msg.Param4 = 0;
+        msg.Object2 = true;
+        GUIWindowManager.SendMessage(msg);
+        if (msg.Param1 == 1)
         {
           while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 60000))
           {
