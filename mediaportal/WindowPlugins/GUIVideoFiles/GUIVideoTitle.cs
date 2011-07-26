@@ -613,6 +613,10 @@ namespace MediaPortal.GUI.Video
         {
           SetActorThumbs(itemlist);
         }
+        else if (handler.CurrentLevelWhere.ToLower() == "year")
+        {
+          SetYearThumbs(itemlist);
+        }
           //if (handler.CurrentLevelWhere.ToLower() == "title")        
         else
         {
@@ -661,10 +665,13 @@ namespace MediaPortal.GUI.Video
       foreach (GUIListItem item in itemlist)
       {
         // get the genre somewhere since the label isn't set yet.
-        IMDBMovie Movie = item.AlbumInfoTag as IMDBMovie;
-        string GenreCover = Util.Utils.GetCoverArt(Thumbs.MovieGenre, Movie.SingleGenre);
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        if (movie != null) 
+        {
+          string genreCover = Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
 
-        SetItemThumb(item, GenreCover);
+          SetItemThumb(item, genreCover);
+        }
       }
     }
 
@@ -672,11 +679,29 @@ namespace MediaPortal.GUI.Video
     {
       foreach (GUIListItem item in itemlist)
       {
-        // get the genre somewhere since the label isn't set yet.
-        IMDBMovie Movie = item.AlbumInfoTag as IMDBMovie;
-        string ActorCover = Util.Utils.GetCoverArt(Thumbs.MovieActors, Movie.Actor);
+        // get the actors somewhere since the label isn't set yet.
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        if (movie != null) 
+        {
+          string actorCover = Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
 
-        SetItemThumb(item, ActorCover);
+          SetItemThumb(item, actorCover);
+        }
+      }
+    }
+
+    protected void SetYearThumbs(ArrayList itemlist)
+    {
+      foreach (GUIListItem item in itemlist)
+      {
+        // get the actors somewhere since the label isn't set yet.
+        IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
+        if (movie != null) 
+        {
+          string yearCover = Util.Utils.GetCoverArt(Thumbs.MovieYear, movie.Year.ToString());
+
+          SetItemThumb(item, yearCover);
+        }
       }
     }
 
@@ -688,10 +713,10 @@ namespace MediaPortal.GUI.Video
         aItem.IconImageBig = aThumbPath;
 
         // check whether there is some larger cover art
-        string LargeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
-        if (Util.Utils.FileExistsInCache(LargeCover))
+        string largeCover = Util.Utils.ConvertToLargeCoverArt(aThumbPath);
+        if (Util.Utils.FileExistsInCache(largeCover))
         {
-          aItem.ThumbnailImage = LargeCover;
+          aItem.ThumbnailImage = largeCover;
         }
         else
         {
