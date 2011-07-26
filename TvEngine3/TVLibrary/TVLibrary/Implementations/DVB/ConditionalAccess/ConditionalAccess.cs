@@ -794,8 +794,6 @@ namespace TvLibrary.Implementations.DVB
           }
         }
 
-        if (!_useCam)
-          return;
         if (_digitalEveryWhere != null)
         {
           bool isDvbc = ((channel as DVBCChannel) != null);
@@ -803,7 +801,18 @@ namespace TvLibrary.Implementations.DVB
           bool isDvbs = ((channel as DVBSChannel) != null);
           bool isAtsc = ((channel as ATSCChannel) != null);
 
-          if ((pids.Count != 0) && (isDvbs) && (((DVBSChannel)channel).ModulationType == ModulationType.ModNbc8Psk))
+          // It is not ideal to have to enable hardware PID filtering because
+          // doing so can limit the number of channels that can be viewed/recorded
+          // simultaneously. However, it does seem that there is a need for filtering
+          // on transponders with high data rates. Problems have been observed with
+          // transponders on Thor 5/6, Intelsat 10-02 (0.8W) if the filter is not enabled:
+          //   Symbol Rate: 27500, Modulation: 8 PSK, FEC rate: 5/6, Pilot: On, Roll-Off: 0.35
+          //   Symbol Rate: 30000, Modulation: 8 PSK, FEC rate: 3/4, Pilot: On, Roll-Off: 0.35
+          if (pids.Count != 0 && isDvbs &&
+              (((DVBSChannel)channel).ModulationType == ModulationType.Mod8Psk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod16Apsk ||
+              ((DVBSChannel)channel).ModulationType == ModulationType.Mod32Apsk)
+          )
           {
             for (int i = 0; i < HwPids.Count; ++i)
             {
