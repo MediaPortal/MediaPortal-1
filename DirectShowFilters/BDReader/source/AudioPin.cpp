@@ -365,7 +365,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           ProcessAudioSample(buffer, pSample);
           
-//          LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
+          LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
           delete buffer;
         }
         else

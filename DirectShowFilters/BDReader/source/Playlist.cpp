@@ -60,6 +60,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
     CClip* nextAudioClip = GetNextAudioClip(m_currentAudioPlayBackClip);
     if (m_currentAudioPlayBackClip!=nextAudioClip)
     {
+      LogDebug("Moving to %d,%d",this->nPlaylist,nextAudioClip->nClip);
       m_currentAudioPlayBackClip->Superceed(SUPERCEEDED_AUDIO);
       m_currentAudioPlayBackClip=nextAudioClip;
       ret=ReturnNextAudioPacket();
@@ -125,33 +126,34 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool forced)
 {
   bool ret = true;
   if (m_currentAudioSubmissionClip==NULL) return false;
-  else if (!m_currentAudioSubmissionClip->AcceptAudioPacket(packet, forced))
+  if (m_currentAudioSubmissionClip->nClip == packet->nClipNumber)
   {
-    m_currentAudioSubmissionClip->Superceed(SUPERCEEDED_AUDIO);
+    m_currentAudioSubmissionClip->AcceptAudioPacket(packet, true);
+  }
+  else 
+  {
     bool complete=false;
     while (!complete)
     {
       CClip* nextSubmissionClip = GetNextAudioClip(m_currentAudioSubmissionClip);
-      if (m_currentAudioSubmissionClip==nextSubmissionClip)
+      if (nextSubmissionClip->nClip==packet->nClipNumber)
       {
-        return false;
-      }
-      else if (!nextSubmissionClip->noAudio)
-      {
-        m_currentAudioSubmissionClip=nextSubmissionClip;
         complete=true;
       }
-      else
+      else if (m_currentAudioSubmissionClip==nextSubmissionClip)
       {
-        m_currentAudioSubmissionClip=nextSubmissionClip;
+        LogDebug("Playlist::Audio Clip %d not found in playlist %d",packet->nClipNumber, this->nPlaylist); 
+        return false;
       }
+      m_currentAudioSubmissionClip=nextSubmissionClip;
     }
-    ret=AcceptAudioPacket(packet, forced);
+    ret=AcceptAudioPacket(packet, true);
   }
-  if (!firstPESPacketSeen && ret)
+  if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     firstPESPacketSeen=true;
-    firstPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    firstPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    LogDebug("First Packet (aud) %I64d",packet->rtStart);
   }
   return ret;
 }
@@ -164,37 +166,33 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced
     LogDebug("m_currentVideoSubmissionClip is NULL");
     ret=false;
   }
-  //this needs well verified...
-  else if (!firstPacket && packet->rtStart == playlistFirstPacketTime)
+  else
   {
-    //next clip has arrived
-    m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
-    CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip);
-    if (nextVideoClip==m_currentVideoSubmissionClip) return false; //this playlist is finished
-    m_currentVideoSubmissionClip = nextVideoClip;
-    ret=AcceptVideoPacket(packet,true, forced);
-  }
-  else if (!m_currentVideoSubmissionClip->AcceptVideoPacket(packet, forced))
-  {
-    CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip);
-    m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
-    if (nextVideoClip != m_currentVideoSubmissionClip)
+    if (m_currentVideoSubmissionClip->nClip==packet->nClipNumber)
     {
-      m_currentVideoSubmissionClip = nextVideoClip;
-      ret=AcceptVideoPacket(packet,true, forced);
+       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet,true);
+    }
+    else
+    {
+      while (m_currentVideoSubmissionClip->nClip != packet->nClipNumber)
+      {
+        m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
+        CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip);
+        if (nextVideoClip==m_currentVideoSubmissionClip)
+        {
+          LogDebug("Playlist::Video Clip %d not found in playlist %d",packet->nClipNumber, this->nPlaylist); 
+          return false; //this playlist is finished
+        }
+        m_currentVideoSubmissionClip = nextVideoClip;
+      }
+      ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet, true);
     }
   }
   if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     firstPESPacketSeen=true;
     firstPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
-  }
-  if (m_VideoPacketsUntilLatestClip)
-  {
-    m_VideoPacketsUntilLatestClip=0;
-    CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip);
-    m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
-    m_currentVideoSubmissionClip = nextVideoClip;
+    LogDebug("First Packet (vid) %I64d",packet->rtStart);
   }
   return ret;
 }
@@ -208,7 +206,6 @@ CClip * CPlaylist::GetNextAudioClip(CClip * currentClip)
     CClip * clip=*it;
     if (!clip->IsSuperceeded(SUPERCEEDED_AUDIO) && currentClip->nClip !=clip->nClip)
     {
-//      LogDebug("New Audio Clip %d",clip->nClip);
       return clip;
     }
     ++it;
@@ -236,6 +233,7 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
 bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration)
 {
   bool ret = true;
+  if (m_vecClips.size() && m_vecClips.back()->nClip == clipNumber) return false;
   m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration));
   if (m_currentAudioPlayBackClip==NULL)
   {
@@ -244,15 +242,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
   }
   else
   {
-    if (!m_currentVideoSubmissionClip->noAudio)
-    {
-      m_VideoPacketsUntilLatestClip=1;
-    }
-    else
-    {
-      if (m_currentVideoSubmissionClip!=m_vecClips.back()) m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
-      m_currentVideoSubmissionClip=m_vecClips.back();
-    }
+    m_VideoPacketsUntilLatestClip=1;
   }
   m_currentAudioSubmissionClip=m_vecClips.back();
   return ret;

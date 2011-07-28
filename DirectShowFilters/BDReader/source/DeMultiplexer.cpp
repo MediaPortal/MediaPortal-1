@@ -875,7 +875,16 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   int dwReadBytes = 0;
   bool pause = false;
 
+
   dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, m_bStarting);
+//  m_nAudioClip=clip;
+//  m_nVideoClip=clip;
+//  m_nAudioPl=pl;
+//  m_nVideoPl=pl;
+//  LogDebug("TEST: PL %d, CLIP %d", pl, clip);
+
+  if (dwReadBytes != sizeof(m_readBuffer))
+    LogDebug("got less bytes than expected");
 
   if (dwReadBytes > 0)
   {
@@ -922,11 +931,15 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_PLAYLIST:
       //ResetStream();
-      m_nClip = -10; // to make tracking easier
+//      m_nClip = -10; // to make tracking easier
       m_nPlaylist = pEv.param;
+      m_nAudioPl = pEv.param;
+      m_nVideoPl = pEv.param;
+      
       break;
 
     case BD_EVENT_PLAYITEM:
+      LogDebug("New playitem %d",pEv.param);
       UINT64 clipStart = 0, clipIn = 0, bytePos = 0, duration = 0;
       int ret = m_filter.lib.GetClipInfo(pEv.param, &clipStart, &clipIn, &bytePos, &duration);
       if (ret) 
@@ -935,11 +948,12 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
         m_newOffsetPos = bytePos;
 
+        /*
         if (m_nClip == pEv.param)
         {
           LogDebug("demux: clip changed - same clip!");
         }
-        else
+        else*/
         {
           m_rtNewOffset = clipStart - clipIn;
         }
@@ -966,10 +980,18 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           m_filter.IssueCommand(FLUSH, 0);
         }
 
+        m_nAudioClip = pEv.param;
+        m_nVideoClip = pEv.param;
+        m_nSubtitleClip = pEv.param;
+
         CPcr offset;
         CPcr oldOffset;
         offset.PcrReferenceBase = abs(m_rtNewOffset);
         oldOffset.PcrReferenceBase = abs(rtOldOffset);
+        
+        m_rtAudioOffset = m_rtNewOffset;
+        m_rtVideoOffset = m_rtNewOffset;
+        m_rtSubtitleOffset = m_rtNewOffset;              
         
         if (m_rtNewOffset < 0)
           LogDebug("demux: clip changed - offset: %I64d (-%3.3f) oldOffset: %I64d (-%3.3f) bytepos: %I64u backwards: %d dur: %6.3f audio: %d", 
@@ -980,13 +1002,14 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             m_rtNewOffset, offset.ToClock(), rtOldOffset, oldOffset.ToClock(), m_newOffsetPos, m_bOffsetBackwards, 
             CONVERT_90KHz_DS(duration) / 10000000.0, clip->audio_stream_count);
 
+/*
         if (rtOldOffset == m_rtNewOffset)
         {
           LogDebug("demux: clip changed - offset is same as previously - force clip & pl info update");
           m_bForceUpdateAudioOffset = true;
           m_bForceUpdateVideoOffset = true;
           m_bForceUpdateSubtitleOffset = true;
-        }
+        }*/
       }
   } 
 }
@@ -1085,11 +1108,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
             ((m_bOffsetBackwards && pts > m_lastAudioPTS) ||
             (!m_bOffsetBackwards && m_lastAudioPTS > pts))))
         {
-          LogDebug("demux: audio offset changed old: %I64d new: %I64d", m_rtAudioOffset, m_rtNewOffset);
-          m_rtAudioOffset = m_rtNewOffset;
-          m_nAudioClip = m_nClip;
-          m_nAudioPl = m_nPlaylist;
-          m_bForceUpdateAudioOffset = false;
+//          LogDebug("demux: audio offset changed old: %I64d new: %I64d", m_rtAudioOffset, m_rtNewOffset);
+//          m_rtAudioOffset = m_rtNewOffset;
+//          m_nAudioClip = m_nClip;
+//          m_nAudioPl = m_nPlaylist;
+//          m_bForceUpdateAudioOffset = false;
         }
 
         CPcr correctedPts;
@@ -1261,6 +1284,9 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
     CPcr pts;
     CPcr dts;
       
+    BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+    m_videoServiceType = clip->video_streams->coding_type;      
+      
     BYTE* start = tsPacket + header.PayLoadStart;
   
     if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
@@ -1270,16 +1296,16 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
           ((m_bOffsetBackwards && pts > m_lastVideoPTS) ||
           (!m_bOffsetBackwards && m_lastVideoPTS > pts))))
       {
-        LogDebug("demux: video offset changed old: %I64d new: %I64d", m_rtVideoOffset, m_rtNewOffset);
-        m_rtVideoOffset = m_rtNewOffset;
+        //LogDebug("demux: video offset changed old: %I64d new: %I64d", m_rtVideoOffset, m_rtNewOffset);
+//        m_rtVideoOffset = m_rtNewOffset;
 
-        m_nVideoClip = m_nClip;
-        m_nVideoPl = m_nPlaylist;
+//        m_nVideoClip = m_nClip;
+//        m_nVideoPl = m_nPlaylist;
              
-        BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-        m_videoServiceType = clip->video_streams->coding_type;
+//        BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+//        m_videoServiceType = clip->video_streams->coding_type;
 
-        m_bForceUpdateVideoOffset = false;
+//        m_bForceUpdateVideoOffset = false;
       }
     }
   }
@@ -1423,8 +1449,8 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> 
 		m_p->rtStop = p->rtStop;
 		p->rtStop = Packet::INVALID_TIME;
 
-    m_p->nClipNumber = p->nClipNumber = m_nVideoClip;
-    m_p->nPlaylist = p->nPlaylist = m_nVideoPl;
+    m_p->nClipNumber = p->nClipNumber;
+    m_p->nPlaylist = p->nPlaylist;
 	}
 
 	m_p->Append(*p);
@@ -1710,6 +1736,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       m_pBuild.Attach(new Packet());
       m_pBuild->bDiscontinuity = false;
       m_pBuild->rtStart = Packet::INVALID_TIME;
+      m_pBuild->nClipNumber = m_nVideoClip;
+      m_pBuild->nPlaylist = m_nVideoPl;
       m_lastStart = 0;
       m_WaitHeaderPES = 0;
     }
@@ -1782,6 +1810,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         
         m_pBuild->nClipNumber = m_nVideoClip;
         m_pBuild->nPlaylist = m_nVideoPl;
+        LogDebug("time %I64d (%d,%d)",m_pBuild->rtStart, m_nVideoPl, m_nVideoClip);
 
         m_WaitHeaderPES = -1;
       }

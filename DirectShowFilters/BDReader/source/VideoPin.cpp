@@ -537,7 +537,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
           
-//          LogDebug("vid: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
+          LogDebug("vid: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
 
           delete buffer;
         }

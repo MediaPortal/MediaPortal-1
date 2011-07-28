@@ -53,6 +53,8 @@ protected:
   CPlaylist * GetNextVideoPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextAudioSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist);
+  CPlaylist * GetPlaylist(int playlist);
+
 
   int AudioPacketCount();
   int VideoPacketCount();
