@@ -342,30 +342,31 @@ namespace MediaPortal.GUI.Video
         {
           dlg.Reset();
           dlg.SetHeading(498); // menu
-          dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
+          dlg.AddLocalizedString(368); //IMDB
           if (pins.Count > 0)
           {
             if (ageConfirmed)
             {
-              dlg.Add("Lock content"); //Lock content
+              dlg.AddLocalizedString(1240); //Lock content
             }
             else
             {
-              dlg.Add("Unlock content"); //Unlock content
+              dlg.AddLocalizedString(1241); //Unlock content
             }
           }
 
           dlg.DoModal(GetID);
-          if (dlg.SelectedLabel == -1)
+          if (dlg.SelectedId == -1)
           {
             return;
           }
-          switch (dlg.SelectedLabel)
+          switch (dlg.SelectedId)
           {
-            case 0: // IMDB
+            case 368: // IMDB
               OnVideoArtistInfo(actor);
               break;
-            case 1: // Protected content
+            case 1240: //Lock content
+            case 1241: //Unlock content
               OnContentLock();
               break;
           }
@@ -381,43 +382,44 @@ namespace MediaPortal.GUI.Video
       // Context menu on movie title
       dlg.Reset();
       dlg.SetHeading(498); // menu
-      dlg.Add(GUILocalizeStrings.Get(925)); //delete
-      dlg.Add(GUILocalizeStrings.Get(368)); //IMDB
-      dlg.Add(GUILocalizeStrings.Get(208)); //play
-      dlg.Add(GUILocalizeStrings.Get(926)); //add to playlist
+      dlg.AddLocalizedString(925); //delete
+      dlg.AddLocalizedString(368); //IMDB
+      dlg.AddLocalizedString(208); //play
+      dlg.AddLocalizedString(926); //add to playlist
 
       if (pins.Count > 0)
       {
         if (ageConfirmed)
         {
-          dlg.Add("Lock content"); //Lock content
+          dlg.AddLocalizedString(1240); //Lock content
         }
         else
         {
-          dlg.Add("Unlock content"); //Unlock content
+          dlg.AddLocalizedString(1241); //Unlock content
         }
       }
 
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1)
+      if (dlg.SelectedId == -1)
       {
         return;
       }
-      switch (dlg.SelectedLabel)
+      switch (dlg.SelectedId)
       {
-        case 0: // Delete
+        case 925: // Delete
           OnDeleteItem(item);
           break;
-        case 1: // IMDB
+        case 368: // IMDB
           OnInfo(itemNo);
           break;
-        case 2: // play
+        case 208: // play
           OnClick(itemNo);
           break;
-        case 3: //add to playlist
+        case 926: //add to playlist
           OnQueueItem(itemNo);
           break;
-        case 4: //Lock or unlock content
+        case 1240: //Lock content
+        case 1241: //Unlock content
           OnContentLock();
           break;
       }
@@ -432,22 +434,23 @@ namespace MediaPortal.GUI.Video
 
         if (ageConfirmed)
         {
-          dlg.Add(GUILocalizeStrings.Get(1240)); //Lock content
+          dlg.AddLocalizedString(1240); //Lock content
         }
         else
         {
-          dlg.Add(GUILocalizeStrings.Get(1241)); //Unlock content
+          dlg.AddLocalizedString(1241); //Unlock content
         }
       }
       // Show menu
       dlg.DoModal(GetID);
-      if (dlg.SelectedLabel == -1)
+      if (dlg.SelectedId == -1)
       {
         return;
       }
-      switch (dlg.SelectedLabel)
+      switch (dlg.SelectedId)
       {
-        case 0: //Lock or unlock content
+        case 1240: //Lock content
+        case 1241: //Unlock content
           OnContentLock();
           break;
       }
@@ -502,12 +505,12 @@ namespace MediaPortal.GUI.Video
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIWaitCursor.Show();
-      GUIListItem SelectedItem = facadeLayout.SelectedListItem;
-      if (SelectedItem != null)
+      GUIListItem selectedItem = facadeLayout.SelectedListItem;
+      if (selectedItem != null)
       {
-        if (SelectedItem.IsFolder && SelectedItem.Label != "..")
+        if (selectedItem.IsFolder && selectedItem.Label != "..")
         {
-          m_history.Set(SelectedItem.Label, currentFolder);
+          m_history.Set(selectedItem.Label, currentFolder);
         }
       }
       currentFolder = strNewDirectory;
@@ -617,7 +620,7 @@ namespace MediaPortal.GUI.Video
         {
           SetYearThumbs(itemlist);
         }
-          //if (handler.CurrentLevelWhere.ToLower() == "title")        
+        
         else
         {
           // Assign thumbnails also for the custom views. Bugfix for Mantis 0001471: 
@@ -694,7 +697,7 @@ namespace MediaPortal.GUI.Video
     {
       foreach (GUIListItem item in itemlist)
       {
-        // get the actors somewhere since the label isn't set yet.
+        // get the years somewhere since the label isn't set yet.
         IMDBMovie movie = item.AlbumInfoTag as IMDBMovie;
         if (movie != null) 
         {
@@ -862,8 +865,6 @@ namespace MediaPortal.GUI.Video
         {
           if (movie.ID >= 0)
           {
-            //coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, movie.Title);
-            // Title suffix for problem with covers and movie with the same name
             string titleExt = movie.Title + "{" + movie.ID + "}";
             coverArtImage = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
             if (Util.Utils.FileExistsInCache(coverArtImage))
@@ -873,26 +874,6 @@ namespace MediaPortal.GUI.Video
               listItem.IconImage = coverArtImage;
             }
           }
-          //else if (movie.Actor != string.Empty)
-          //{            
-          //  coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieActors, movie.Actor);
-          //  if (System.IO.File.Exists(coverArtImage))
-          //  {
-          //    listItem.ThumbnailImage = coverArtImage;
-          //    listItem.IconImageBig = coverArtImage;
-          //    listItem.IconImage = coverArtImage;
-          //  }
-          //}
-          //else if (movie.SingleGenre != string.Empty)
-          //{
-          //  coverArtImage = MediaPortal.Util.Utils.GetCoverArt(Thumbs.MovieGenre, movie.SingleGenre);
-          //  if (System.IO.File.Exists(coverArtImage))
-          //  {
-          //    listItem.ThumbnailImage = coverArtImage;
-          //    listItem.IconImageBig = coverArtImage;
-          //    listItem.IconImage = coverArtImage;
-          //  }
-          //}
         }
         // let's try to assign better covers
         if (!string.IsNullOrEmpty(coverArtImage))
