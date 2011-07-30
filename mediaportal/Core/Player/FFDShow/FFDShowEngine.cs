@@ -37,6 +37,7 @@ namespace MediaPortal.Player.Subtitles
   {
     private FFDShowAPI ffdshowAPI;
     private bool hasPostProcessing = false;
+    protected int audiodelayInterval;
 
     public static void DisableFFDShowSubtitles(IGraphBuilder graphBuilder)
     {
@@ -313,6 +314,13 @@ namespace MediaPortal.Player.Subtitles
 
     public bool LoadPostProcessing(IGraphBuilder graphBuilder)
     {
+      //LoadSettings();
+
+      using (Settings xmlreader = new MPSettings())
+      {
+        audiodelayInterval = xmlreader.GetValueAsInt("FFDShow", "audiodelayInterval", 50);
+      }
+
       IBaseFilter baseFilter = null;
       // No Postprocessing for FFDShow DXVA decoder
       DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
@@ -377,6 +385,27 @@ namespace MediaPortal.Player.Subtitles
     {
       if (ffdshowAPI != null)
         ffdshowAPI.Dispose();
+    }
+    
+    public int AudioDelay
+    {
+      get { return ffdshowAPI.AudioDelay; }
+      set { ffdshowAPI.AudioDelay = value; }
+    }
+
+    public int AudioDelayInterval
+    {
+      get { return audiodelayInterval; }
+    }
+
+    public void AudioDelayMinus()
+    {
+      AudioDelay = AudioDelay - AudioDelayInterval;
+    }
+
+    public void AudioDelayPlus()
+    {
+      AudioDelay = AudioDelay + AudioDelayInterval;
     }
 
     #endregion

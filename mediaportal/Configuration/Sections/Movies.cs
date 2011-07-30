@@ -95,6 +95,10 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox comSkipCheckBox;
     private MPComboBox subtitlesSelectionComboBox;
     private MPLabel mpLabelSubSelectMode;
+    private MPGroupBox mpGroupBoxVideoAudioDelay;
+    private MPLabel mpLabelAVDelayTime;
+    private MPLabel mpLabelAVDelay;
+    private NumericUpDown delayVideoTextBox;
     private List<LanguageInfo> ISOLanguagePairs = new List<LanguageInfo>();
 
     //private int 
@@ -170,6 +174,7 @@ namespace MediaPortal.Configuration.Sections
         opaqueBoxRadioButton.Checked = !borderOutlineRadioButton.Checked;
 
         delayTextBox.Value = xmlreader.GetValueAsInt("subtitles", "delayInterval", 250);
+        delayVideoTextBox.Value = xmlreader.GetValueAsInt("FFDShow", "audiodelayInterval", 50);
         saveNeverRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "saveNever", true);
         saveAskRadioButton.Checked = xmlreader.GetValueAsBool("subtitles", "saveAsk", false);
         saveAlwaysRadioButton.Checked = !saveNeverRadioButton.Checked && !saveAskRadioButton.Checked;
@@ -252,6 +257,7 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValue("subtitles", "charset", fontCharset);
 
         xmlwriter.SetValue("subtitles", "delayInterval", delayTextBox.Value);
+        xmlwriter.SetValue("FFDShow", "audiodelayInterval", delayVideoTextBox.Value);
         xmlwriter.SetValueAsBool("subtitles", "saveNever", saveNeverRadioButton.Checked);
         xmlwriter.SetValueAsBool("subtitles", "saveAsk", saveAskRadioButton.Checked);
 
@@ -331,6 +337,10 @@ namespace MediaPortal.Configuration.Sections
       this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
       this.fontDialog = new System.Windows.Forms.FontDialog();
       this.tabPage1 = new MediaPortal.UserInterface.Controls.MPTabPage();
+      this.mpGroupBoxVideoAudioDelay = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.delayVideoTextBox = new System.Windows.Forms.NumericUpDown();
+      this.mpLabelAVDelayTime = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.mpLabelAVDelay = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpGroupBoxComSkip = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.comSkipCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -363,6 +373,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.borderWidthUpDown)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).BeginInit();
       this.tabPage1.SuspendLayout();
+      this.mpGroupBoxVideoAudioDelay.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.delayVideoTextBox)).BeginInit();
       this.mpGroupBoxComSkip.SuspendLayout();
       this.groupBox1.SuspendLayout();
       this.tabControl1.SuspendLayout();
@@ -750,6 +762,7 @@ namespace MediaPortal.Configuration.Sections
       // 
       // tabPage1
       // 
+      this.tabPage1.Controls.Add(this.mpGroupBoxVideoAudioDelay);
       this.tabPage1.Controls.Add(this.mpGroupBoxComSkip);
       this.tabPage1.Controls.Add(this.groupBox1);
       this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -758,6 +771,59 @@ namespace MediaPortal.Configuration.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "General";
       this.tabPage1.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBoxVideoAudioDelay
+      // 
+      this.mpGroupBoxVideoAudioDelay.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.delayVideoTextBox);
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelayTime);
+      this.mpGroupBoxVideoAudioDelay.Controls.Add(this.mpLabelAVDelay);
+      this.mpGroupBoxVideoAudioDelay.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBoxVideoAudioDelay.Location = new System.Drawing.Point(16, 261);
+      this.mpGroupBoxVideoAudioDelay.Name = "mpGroupBoxVideoAudioDelay";
+      this.mpGroupBoxVideoAudioDelay.Size = new System.Drawing.Size(432, 49);
+      this.mpGroupBoxVideoAudioDelay.TabIndex = 12;
+      this.mpGroupBoxVideoAudioDelay.TabStop = false;
+      this.mpGroupBoxVideoAudioDelay.Text = "Video/Audio Delay";
+      // 
+      // delayVideoTextBox
+      // 
+      this.delayVideoTextBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.delayVideoTextBox.Location = new System.Drawing.Point(148, 18);
+      this.delayVideoTextBox.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+      this.delayVideoTextBox.Name = "delayVideoTextBox";
+      this.delayVideoTextBox.Size = new System.Drawing.Size(52, 20);
+      this.delayVideoTextBox.TabIndex = 16;
+      this.delayVideoTextBox.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+      // 
+      // mpLabelAVDelayTime
+      // 
+      this.mpLabelAVDelayTime.Location = new System.Drawing.Point(200, 22);
+      this.mpLabelAVDelayTime.Name = "mpLabelAVDelayTime";
+      this.mpLabelAVDelayTime.Size = new System.Drawing.Size(25, 16);
+      this.mpLabelAVDelayTime.TabIndex = 15;
+      this.mpLabelAVDelayTime.Text = "ms";
+      // 
+      // mpLabelAVDelay
+      // 
+      this.mpLabelAVDelay.Location = new System.Drawing.Point(17, 22);
+      this.mpLabelAVDelay.Name = "mpLabelAVDelay";
+      this.mpLabelAVDelay.Size = new System.Drawing.Size(107, 16);
+      this.mpLabelAVDelay.TabIndex = 13;
+      this.mpLabelAVDelay.Text = "Delay interval:";
       // 
       // mpGroupBoxComSkip
       // 
@@ -980,6 +1046,8 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.borderWidthUpDown)).EndInit();
       ((System.ComponentModel.ISupportInitialize)(this.shadowDepthUpDown)).EndInit();
       this.tabPage1.ResumeLayout(false);
+      this.mpGroupBoxVideoAudioDelay.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.delayVideoTextBox)).EndInit();
       this.mpGroupBoxComSkip.ResumeLayout(false);
       this.mpGroupBoxComSkip.PerformLayout();
       this.groupBox1.ResumeLayout(false);

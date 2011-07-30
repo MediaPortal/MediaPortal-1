@@ -98,9 +98,11 @@ namespace MediaPortal.GUI.Video
     private int m_iActiveMenuButtonID = 0;
     private int m_iCurrentBookmark = 0;
     private int m_subtitleDelay = 0;
+    private int m_audioDelay = 0;
     private bool m_bNeedRefresh = false;
     private PlayListPlayer playlistPlayer;
     private int m_delayInterval = 0;
+    private int m_delayIntervalAudio = 0;
 
     public GUIVideoOSD()
     {
@@ -324,6 +326,9 @@ namespace MediaPortal.GUI.Video
             m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
             if (m_delayInterval > 0)
               m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
+            m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
+            if (m_delayIntervalAudio > 0)
+              m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
             return true;
           }
         case GUIMessage.MessageType.GUI_MSG_SETFOCUS:
@@ -575,7 +580,6 @@ namespace MediaPortal.GUI.Video
                   ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
                 }
 
-
                 //SetCheckmarkValue(g_stSettings.m_bNonInterleaved, Controls.OSD_NONINTERLEAVED);
                 //SetCheckmarkValue(g_stSettings.m_bNoCache, Controls.OSD_NOCACHE);
                 //SetCheckmarkValue(g_stSettings.m_bFrameRateConversions, Controls.OSD_ADJFRAMERATE);
@@ -603,9 +607,25 @@ namespace MediaPortal.GUI.Video
               if (m_bSubMenuOn) // is sub menu on?
               {
                 // set the controls values
-                //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetAVDelay(), Controls.OSD_AVDELAY);
+                GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_AVDELAY);
+                pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+                pControl.SetRange(-20, 20);
+                SetSliderValue(-20, 20, m_audioDelay, (int)Controls.OSD_AVDELAY);
 
                 // show the controls on this sub menu
+                bool hasPostProc = g_Player.HasPostprocessing;
+                if (hasPostProc)
+                {
+                  GUIPropertyManager.SetProperty("#VideoOSD.AudioVideoDelayPossible", "true");
+                  pControl.FloatInterval = 1;
+                }
+                else
+                { 
+                  GUIPropertyManager.SetProperty("#VideoOSD.AudioVideoDelayPossible", "false");
+                  pControl.FloatValue = 0;
+                  m_audioDelay = 0;
+                  pControl.FloatInterval = 0;
+                }
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY);
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
                 ShowControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
@@ -614,13 +634,11 @@ namespace MediaPortal.GUI.Video
                 PopulateAudioStreams(); // populate the list control with audio streams for this video
               }
             }
-
             return true;
           }
       }
       return base.OnMessage(message);
     }
-
 
     private void UpdateGammaContrastBrightness()
     {
@@ -730,6 +748,7 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
       HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
+      GUIPropertyManager.SetProperty("#VideoOSD.AudioVideoDelayPossible", " ");
       HideControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
       HideControl(GetID, (int)Controls.OSD_NOCACHE);
       HideControl(GetID, (int)Controls.OSD_ADJFRAMERATE);
@@ -1026,7 +1045,7 @@ namespace MediaPortal.GUI.Video
               {
                 MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
               }
-              else
+              else if (pControl.FloatValue > m_subtitleDelay)
               {
                 MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
               }
@@ -1051,6 +1070,25 @@ namespace MediaPortal.GUI.Video
             {
               PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
               UpdatePostProcessing();
+            }
+          }
+          break;
+        case (int)Controls.OSD_AVDELAY:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+
+            if (null != pControl && g_Player.HasPostprocessing)
+            {
+              if (pControl.FloatValue < m_audioDelay)
+              { 
+                  PostProcessingEngine.GetInstance().AudioDelayMinus();
+              }
+              else if (pControl.FloatValue > m_audioDelay)
+              { 
+                  PostProcessingEngine.GetInstance().AudioDelayPlus();
+              }
+              m_audioDelay = (int)pControl.FloatValue;
             }
           }
           break;
@@ -1310,6 +1348,7 @@ namespace MediaPortal.GUI.Video
       HideControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
       HideControl(GetID, (int)Controls.OSD_AUDIOSTREAM_LIST);
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
+      GUIPropertyManager.SetProperty("#VideoOSD.AudioVideoDelayPossible", " ");
       HideControl(GetID, (int)Controls.OSD_NONINTERLEAVED);
       HideControl(GetID, (int)Controls.OSD_NOCACHE);
       HideControl(GetID, (int)Controls.OSD_ADJFRAMERATE);
