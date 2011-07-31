@@ -125,7 +125,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 char** serviceName,
 									 int* pmtPid,
 									 int* hasVideo,
-									 int* hasAudio)
+									 int* hasAudio,
+									 int* hasCaDescriptor)
 {
 	static char sServiceName[128];
 	static char sProviderName[128];
@@ -160,6 +161,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*freeCAMode=info.FreeCAMode;
 			*hasVideo=info.hasVideo;
 			*hasAudio=info.hasAudio;
+			*hasCaDescriptor=info.hasCaDescriptor;
 		}
 	}
 	catch(...)

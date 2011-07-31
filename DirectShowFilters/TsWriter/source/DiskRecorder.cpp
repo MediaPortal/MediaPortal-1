@@ -392,8 +392,10 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	m_AudioOrVideoSeen=false ;
 	WriteLog("Old pids cleared");
 	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
-	int pcrPid; vector<PidInfo2> pidInfos;
-	if (!m_pPmtParser->DecodePmt(section,pcrPid,pidInfos))
+	int pcrPid;
+	bool hasCaDescriptor = false;
+	vector<PidInfo2> pidInfos;
+	if (!m_pPmtParser->DecodePmt(section,pcrPid,hasCaDescriptor,pidInfos))
 	{
 		WriteLog("!!! PANIC - DecodePmt(...) returned FALSE !!!");
 		return;

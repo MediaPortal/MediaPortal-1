@@ -326,12 +326,13 @@ namespace TvLibrary.Implementations.DVB
               short pmtPid;
               short hasVideo;
               short hasAudio;
+              short hasCaDescriptor;
               short lcn;
               _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
                                    out providerName, out serviceName,
-                                   out pmtPid, out hasVideo, out hasAudio);
+                                   out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
 
               string name = DvbTextConverter.Convert(serviceName, "");
               Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
@@ -350,7 +351,7 @@ namespace TvLibrary.Implementations.DVB
               info.modulation = modulation;
               info.service_provider_name = DvbTextConverter.Convert(providerName, "");
               info.service_name = DvbTextConverter.Convert(serviceName, "");
-              info.scrambled = (freeCAMode != 0);
+              info.scrambled = (freeCAMode != 0 || hasCaDescriptor != 0);
               info.network_pmt_PID = pmtPid;
 
               if (IsValidChannel(info, hasAudio, hasVideo))

@@ -51,7 +51,7 @@ void CPmtParser::SetPmtCallBack2(IPmtCallBack2* callback)
 
 //FIXME: this older code version is only for backward compatibility with dependent classes.
 //       proper fix is to change code of all classes that depend on PidInfo2 in favour of CPidTable!
-bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pidInfos)
+bool CPmtParser::DecodePmt(CSection sections, int& pcr_pid, bool& hasCaDescriptor, vector<PidInfo2>& pidInfos)
 {
 	byte* section=sections.Data;
 	int sectionLen=sections.section_length;
@@ -79,6 +79,10 @@ bool CPmtParser::DecodePmt(CSection sections, int &pcr_pid, vector<PidInfo2>& pi
 	while (len2 > 0)
 	{
 		int indicator=section[pointer];
+		if (indicator == 0x9)  // MPEG CA descriptor, implying the service is scrambled
+		{
+			hasCaDescriptor = true;
+		}
 		int descriptorLen=section[pointer+1];
 		len2 -= (descriptorLen+2);
 		pointer += (descriptorLen+2);
@@ -177,12 +181,13 @@ void CPmtParser::OnNewSection(CSection& sections)
 	if (m_isFound) return;
 
 	int pcr_pid=0;
+	bool hasCaDescriptor=false;
 
-	if (!DecodePmt(sections,pcr_pid,m_pidInfos2)) return;
+	if (!DecodePmt(sections,pcr_pid,hasCaDescriptor,m_pidInfos2)) return;
 
 	if (m_pmtCallback2!=NULL)
 	{
-		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,m_pidInfos2);
+		m_pmtCallback2->OnPmtReceived2(GetPid(),m_serviceId,pcr_pid,hasCaDescriptor,m_pidInfos2);
 		m_isFound=true;
 		m_pmtCallback2=NULL;
 	}
