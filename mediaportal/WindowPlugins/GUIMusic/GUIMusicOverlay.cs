@@ -706,16 +706,15 @@ namespace MediaPortal.GUI.Music
       }
 
       // Radio Properties are set already in Play routine
-      if (g_Player.IsRadio && !isInternetStream)
+      if (g_Player.IsRadio)
       {
         return;
       }
 
-      // When Playing an Internet Stream, via BASS, we set the properties inside the BASS audio engine to be able to detect track changes
+      // When Playing an Internet Stream, via BASS, skin properties are set during the Play method in BassAudio.cs
       if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream)
       {
-        GUIPropertyManager.RemovePlayerProperties();
-        tag = BassMusicPlayer.Player.GetStreamTags();
+        return;
       }
       else
       {
