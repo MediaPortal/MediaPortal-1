@@ -198,7 +198,7 @@ namespace MpeCore
           if (item.WarnOnly && item.Type != MPDependency.DisplayName)
           {
             if (!silent)
-              MessageBox.Show(string.Format("Installing {0} {1}", this.GeneralInfo.Name,  item.Message), "Dependency warning", MessageBoxButtons.OK,
+              MessageBox.Show(string.Format("{0}", item.Message), "Dependency warning", MessageBoxButtons.OK,
                               MessageBoxIcon.Warning);
           }
           else
