@@ -708,6 +708,7 @@ namespace MediaPortal.Configuration.Sections
       this.label9 = new System.Windows.Forms.Label();
       this.PlaylistTabPg = new System.Windows.Forms.TabPage();
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ResumePlaylistChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.SavePlaylistOnExitChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -730,7 +731,6 @@ namespace MediaPortal.Configuration.Sections
       this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBox2 = new System.Windows.Forms.CheckBox();
-      this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
@@ -812,8 +812,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -827,8 +827,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -887,9 +887,9 @@ namespace MediaPortal.Configuration.Sections
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(91, 88);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
-      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(185, 17);
+      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(97, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
-      this.FadeOnStartStopChkbox.Text = "Fade-in on start / fade-out on stop";
+      this.FadeOnStartStopChkbox.Text = "Fade-in on start";
       this.FadeOnStartStopChkbox.UseVisualStyleBackColor = true;
       // 
       // label12
@@ -921,8 +921,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -946,8 +946,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -966,8 +966,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.audioPlayerComboBox.Items.AddRange(new object[] {
@@ -1229,8 +1229,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.groupBox1.Controls.Add(this.PlaylistCurrentCheckBox);
       this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
       this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
@@ -1246,6 +1246,17 @@ namespace MediaPortal.Configuration.Sections
       this.groupBox1.TabIndex = 0;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Playlist settings";
+      // 
+      // PlaylistCurrentCheckBox
+      // 
+      this.PlaylistCurrentCheckBox.AutoSize = true;
+      this.PlaylistCurrentCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.PlaylistCurrentCheckBox.Location = new System.Drawing.Point(91, 153);
+      this.PlaylistCurrentCheckBox.Name = "PlaylistCurrentCheckBox";
+      this.PlaylistCurrentCheckBox.Size = new System.Drawing.Size(194, 17);
+      this.PlaylistCurrentCheckBox.TabIndex = 7;
+      this.PlaylistCurrentCheckBox.Text = "Playlist screen shows current playlist";
+      this.PlaylistCurrentCheckBox.UseVisualStyleBackColor = true;
       // 
       // autoShuffleCheckBox
       // 
@@ -1304,8 +1315,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // playlistFolderTextBox
       // 
-      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
       this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
       this.playlistFolderTextBox.Name = "playlistFolderTextBox";
@@ -1490,17 +1501,6 @@ namespace MediaPortal.Configuration.Sections
       this.checkBox2.TabIndex = 6;
       this.checkBox2.Text = "Add All Tracks";
       this.checkBox2.UseVisualStyleBackColor = true;
-      // 
-      // PlaylistCurrentCheckBox
-      // 
-      this.PlaylistCurrentCheckBox.AutoSize = true;
-      this.PlaylistCurrentCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.PlaylistCurrentCheckBox.Location = new System.Drawing.Point(91, 153);
-      this.PlaylistCurrentCheckBox.Name = "PlaylistCurrentCheckBox";
-      this.PlaylistCurrentCheckBox.Size = new System.Drawing.Size(194, 17);
-      this.PlaylistCurrentCheckBox.TabIndex = 7;
-      this.PlaylistCurrentCheckBox.Text = "Playlist screen shows current playlist";
-      this.PlaylistCurrentCheckBox.UseVisualStyleBackColor = true;
       // 
       // Music
       // 
