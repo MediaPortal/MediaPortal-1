@@ -426,7 +426,8 @@ namespace MediaPortal.GUI.Music
       string coverArtFileName;
       string coverArtUrl = artistInfo.ImageURL;
       coverArtFileName = GUIMusicFiles.GetArtistCoverArtName(artistInfo.Artist);
-      if (coverArtFileName != string.Empty)
+      // do not overwrite existing artist thumb
+      if (coverArtFileName != string.Empty && !Util.Utils.FileExistsInCache(coverArtFileName))
       {
         //	Download image and save as 
         //	permanent thumb
