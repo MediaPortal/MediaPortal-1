@@ -205,12 +205,13 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(baseFilter);
           baseFilter = null;
         }
+
+        #region load external audio streams
+
         // check if current "File" is a file... it could also be a URL
         // Directory.Getfiles, ... will other give us an exception
         if (File.Exists(m_strCurrentFile))
         {
-          #region load external audio streams
-
           //load audio file (ac3, dts, mka, mp3) only with if the name matches partially with video file.
           string[] audioFiles = Directory.GetFiles(Path.GetDirectoryName(m_strCurrentFile),
                                                    Path.GetFileNameWithoutExtension(m_strCurrentFile) + "*.*");
@@ -329,8 +330,11 @@ namespace MediaPortal.Player
           #endregion
 
         DirectShowUtil.RenderUnconnectedOutputPins(graphBuilder, source);
-        DirectShowUtil.ReleaseComObject(source);
-        source = null;
+        if (source != null)
+        {
+          DirectShowUtil.ReleaseComObject(source);
+          source = null;
+        }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(graphBuilder);
 
         if (Vmr9 == null || !Vmr9.IsVMR9Connected)
