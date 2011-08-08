@@ -392,16 +392,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
 void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
 {
-  int audioStream = 0;
-  CMediaType pmt;
-  pDemuxer->GetAudioStream(audioStream);
-  pDemuxer->GetAudioStreamType(audioStream, pmt);
-
   // Currently only uncompressed PCM audio is supported
-  if (pmt.subtype == MEDIASUBTYPE_PCM)
+  if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
   {
     LogDebug("Joininig Audio Buffers");
-    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.Format();
+    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
     WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 
     // Assuming all packets in the stream are the same size
@@ -443,17 +438,9 @@ void CAudioPin::ProcessAudioSample(Packet* pBuffer, IMediaSample *pSample)
 {
   BYTE* pSampleBuffer;
 
-  int audioStream = 0;
-  CMediaType pmt;
-  
-  // TODO demuxer should provide a pmt on stream type changes only
-  CDeMultiplexer& demux = m_pFilter->GetDemultiplexer();
-  demux.GetAudioStream(audioStream);
-  demux.GetAudioStreamType(audioStream, pmt);
-    
-  if (pmt.subtype == MEDIASUBTYPE_PCM)
+  if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
   {
-    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.Format();
+    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
     WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 
     int bufSize = pBuffer->GetDataSize();

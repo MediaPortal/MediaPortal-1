@@ -354,10 +354,6 @@ void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
       pmt.SetFormat(DTSAudioFormat, sizeof(DTSAudioFormat));
       break;
     case SERVICE_TYPE_AUDIO_LPCM:
-      CAutoLock lockVid(&m_sectionVideo);
-      CAutoLock lockAud(&m_sectionAudio);
-      CAutoLock lockSub(&m_sectionSubtitle);
-      
       if ((int)m_pids.audioPids.size() >= stream)
       {
         pmt = m_mAudioMediaTypes[m_pids.audioPids[stream].Pid];
