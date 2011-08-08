@@ -367,6 +367,26 @@ namespace TvDatabase
       return details[0];
     }
 
+    public TuningDetail GetTuningDetail(String url, int channelType)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "url", url);
+      sb.AddConstraint(Operator.Equals, "channelType", channelType);
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+
+      if (details == null)
+      {
+        return null;
+      }
+      if (details.Count == 0)
+      {
+        return null;
+      }
+      return details[0];
+    }
+
     public TuningDetail GetTuningDetail(int networkId, int transportId, int serviceId, int channelType)
     {
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));

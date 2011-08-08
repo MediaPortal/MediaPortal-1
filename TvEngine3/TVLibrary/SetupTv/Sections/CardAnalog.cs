@@ -841,9 +841,11 @@ namespace SetupTv.Sections
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
-        mpButtonScanRadio.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
-        mpButton1.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxNoMerge.Enabled = false;
+        mpButtonScanRadio.Enabled = false;
+        mpButtonAddSvideoChannels.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
         IUser user = new User();
@@ -1019,9 +1021,12 @@ namespace SetupTv.Sections
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;
         mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
-        mpButton1.Enabled = true;
+        checkBoxCreateSignalGroup.Enabled = true;
+        checkBoxNoMerge.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
         checkButton.Enabled = true;
       }
@@ -1125,8 +1130,10 @@ namespace SetupTv.Sections
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxNoMerge.Enabled = false;
         mpButtonScanTv.Enabled = false;
-        mpButton1.Enabled = false;
+        mpButtonAddSvideoChannels.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
@@ -1235,10 +1242,12 @@ namespace SetupTv.Sections
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;
         mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
-        mpButtonScanTv.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
-        mpButton1.Enabled = true;
+        checkBoxCreateSignalGroup.Enabled = true;
+        checkBoxNoMerge.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
       }
       ListViewItem lastItem =

@@ -178,6 +178,8 @@ namespace SetupTv.Sections
         if (playlist.Count == 0) return;
 
         mpComboBoxService.Enabled = false;
+        checkBoxCreateGroups.Enabled = false;
+        checkBoxEnableChannelMoveDetection.Enabled = false;
         TvBusinessLayer layer = new TvBusinessLayer();
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
 
@@ -244,19 +246,18 @@ namespace SetupTv.Sections
             }
             bool exists;
             TuningDetail currentDetail;
-            //User has option to skip channel move detection. There are certain providers that do not have a unique ONID + SID combination. ONID + TSID + SID is however unique.
-            if (!chkNoChannelMoveDetection.Checked)
+            //Check if we already have this tuningdetail. According to DVB-IP specifications there are two ways to identify DVB-IP
+            //services: one ONID + SID based, the other domain/URL based. At this time we don't fully and properly implement the DVB-IP
+            //specifications, so the safest method for service identification is the URL. The user has the option to enable the use of
+            //ONID + SID identification and channel move detection...
+            if (checkBoxEnableChannelMoveDetection.Checked)
             {
-              //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
-              //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
               currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
                                                                  TvBusinessLayer.GetChannelType(channel));
             }
             else
             {
-              //Find the current tuningdetail if we have that.
-              currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
-                                                                 TvBusinessLayer.GetChannelType(channel));
+              currentDetail = layer.GetTuningDetail(channel.Url, TvBusinessLayer.GetChannelType(channel));
             }
 
             if (currentDetail == null)
@@ -340,6 +341,8 @@ namespace SetupTv.Sections
         RemoteControl.Instance.EpgGrabberEnabled = true;
         progressBar1.Value = 100;
         mpComboBoxService.Enabled = true;
+        checkBoxCreateGroups.Enabled = true;
+        checkBoxEnableChannelMoveDetection.Enabled = true;
         mpButtonScanTv.Text = buttonText;
         _isScanning = false;
       }

@@ -538,6 +538,27 @@ namespace TvLibrary.Implementations.DVB
 
     protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
     {
+      // DVB/ATSC compliant services will be picked up here.
+      if (IsKnownServiceType(info.serviceType))
+      {
+        return true;
+      }
+
+      // The SDT service type is unfortunately not sufficient for service type
+      // identification. DVB-IP and some ATSC broadcasters in particular
+      // do not comply with specifications. Well, either that, or we do not
+      // fully/properly implement the specifications! In any case we need
+      // to err on the side of caution and pick up any channels that TsWriter
+      // says have video and/or audio streams until we can find a better
+      // way to properly identify TV and radio services.
+      if (hasVideo != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalTelevision;
+      }
+      else if (hasAudio != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalRadio;
+      }
       return IsKnownServiceType(info.serviceType);
     }
 

@@ -41,7 +41,7 @@ namespace SetupTv.Sections
       this.checkBoxCreateGroups = new System.Windows.Forms.CheckBox();
       this.tabControl1 = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
-      this.chkNoChannelMoveDetection = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnableChannelMoveDetection = new System.Windows.Forms.CheckBox();
       this.mpLabel9 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.mpLNB1 = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -65,7 +65,7 @@ namespace SetupTv.Sections
       this.mpLabel5 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel8 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpLabel6 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkEnableDVBS2 = new System.Windows.Forms.CheckBox();
+      this.checkBoxEnableDVBS2 = new System.Windows.Forms.CheckBox();
       this.checkBoxAdvancedTuning = new System.Windows.Forms.CheckBox();
       this.checkBoxCreateGroupsSat = new System.Windows.Forms.CheckBox();
       this.mpGrpAdvancedTuning = new MediaPortal.UserInterface.Controls.MPGroupBox();
@@ -203,7 +203,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(322, 131);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(112, 23);
-      this.mpButtonScanTv.TabIndex = 27;
+      this.mpButtonScanTv.TabIndex = 28;
       this.mpButtonScanTv.Text = "Scan for channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScanTv_Click);
@@ -266,7 +266,7 @@ namespace SetupTv.Sections
       // tabPage1
       // 
       this.tabPage1.BackColor = System.Drawing.SystemColors.Control;
-      this.tabPage1.Controls.Add(this.chkNoChannelMoveDetection);
+      this.tabPage1.Controls.Add(this.checkBoxEnableChannelMoveDetection);
       this.tabPage1.Controls.Add(this.mpLabel9);
       this.tabPage1.Controls.Add(this.checkBoxCreateSignalGroup);
       this.tabPage1.Controls.Add(this.mpLNB1);
@@ -290,7 +290,7 @@ namespace SetupTv.Sections
       this.tabPage1.Controls.Add(this.mpLabel5);
       this.tabPage1.Controls.Add(this.mpLabel8);
       this.tabPage1.Controls.Add(this.mpLabel6);
-      this.tabPage1.Controls.Add(this.checkEnableDVBS2);
+      this.tabPage1.Controls.Add(this.checkBoxEnableDVBS2);
       this.tabPage1.Controls.Add(this.checkBoxAdvancedTuning);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroupsSat);
       this.tabPage1.Controls.Add(this.checkBoxCreateGroups);
@@ -304,15 +304,15 @@ namespace SetupTv.Sections
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
       // 
-      // chkNoChannelMoveDetection
+      // checkBoxEnableChannelMoveDetection
       // 
-      this.chkNoChannelMoveDetection.AutoSize = true;
-      this.chkNoChannelMoveDetection.Location = new System.Drawing.Point(10, 180);
-      this.chkNoChannelMoveDetection.Name = "chkNoChannelMoveDetection";
-      this.chkNoChannelMoveDetection.Size = new System.Drawing.Size(308, 17);
-      this.chkNoChannelMoveDetection.TabIndex = 115;
-      this.chkNoChannelMoveDetection.Text = "Provider doesn\'t uniquely identify channels (detection errors)";
-      this.chkNoChannelMoveDetection.UseVisualStyleBackColor = true;
+      this.checkBoxEnableChannelMoveDetection.AutoSize = true;
+      this.checkBoxEnableChannelMoveDetection.Location = new System.Drawing.Point(10, 160);
+      this.checkBoxEnableChannelMoveDetection.Name = "checkBoxEnableChannelMoveDetection";
+      this.checkBoxEnableChannelMoveDetection.Size = new System.Drawing.Size(199, 17);
+      this.checkBoxEnableChannelMoveDetection.TabIndex = 26;
+      this.checkBoxEnableChannelMoveDetection.Text = "Enable channel movement detection";
+      this.checkBoxEnableChannelMoveDetection.UseVisualStyleBackColor = true;
       // 
       // mpLabel9
       // 
@@ -352,7 +352,7 @@ namespace SetupTv.Sections
       this.buttonUpdate.Location = new System.Drawing.Point(322, 157);
       this.buttonUpdate.Name = "buttonUpdate";
       this.buttonUpdate.Size = new System.Drawing.Size(112, 23);
-      this.buttonUpdate.TabIndex = 28;
+      this.buttonUpdate.TabIndex = 29;
       this.buttonUpdate.Text = "Update satellite list";
       this.buttonUpdate.UseVisualStyleBackColor = true;
       this.buttonUpdate.Click += new System.EventHandler(this.buttonUpdate_Click);
@@ -589,24 +589,24 @@ namespace SetupTv.Sections
       this.mpLabel6.TabIndex = 2;
       this.mpLabel6.Text = "DiSEqC:";
       // 
-      // checkEnableDVBS2
+      // checkBoxEnableDVBS2
       // 
-      this.checkEnableDVBS2.AutoSize = true;
-      this.checkEnableDVBS2.Location = new System.Drawing.Point(10, 137);
-      this.checkEnableDVBS2.Name = "checkEnableDVBS2";
-      this.checkEnableDVBS2.Size = new System.Drawing.Size(226, 17);
-      this.checkEnableDVBS2.TabIndex = 25;
-      this.checkEnableDVBS2.Text = "Enable DVB-S2 channels tuning/scanning";
-      this.checkEnableDVBS2.UseVisualStyleBackColor = true;
-      this.checkEnableDVBS2.CheckedChanged += new System.EventHandler(this.checkEnableDVBS2_CheckedChanged);
+      this.checkBoxEnableDVBS2.AutoSize = true;
+      this.checkBoxEnableDVBS2.Location = new System.Drawing.Point(10, 137);
+      this.checkBoxEnableDVBS2.Name = "checkBoxEnableDVBS2";
+      this.checkBoxEnableDVBS2.Size = new System.Drawing.Size(226, 17);
+      this.checkBoxEnableDVBS2.TabIndex = 25;
+      this.checkBoxEnableDVBS2.Text = "Enable DVB-S2 channels tuning/scanning";
+      this.checkBoxEnableDVBS2.UseVisualStyleBackColor = true;
+      this.checkBoxEnableDVBS2.CheckedChanged += new System.EventHandler(this.checkEnableDVBS2_CheckedChanged);
       // 
       // checkBoxAdvancedTuning
       // 
       this.checkBoxAdvancedTuning.AutoSize = true;
-      this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(10, 158);
+      this.checkBoxAdvancedTuning.Location = new System.Drawing.Point(10, 183);
       this.checkBoxAdvancedTuning.Name = "checkBoxAdvancedTuning";
       this.checkBoxAdvancedTuning.Size = new System.Drawing.Size(165, 17);
-      this.checkBoxAdvancedTuning.TabIndex = 26;
+      this.checkBoxAdvancedTuning.TabIndex = 27;
       this.checkBoxAdvancedTuning.Text = "Use advanced tuning options";
       this.checkBoxAdvancedTuning.UseVisualStyleBackColor = true;
       this.checkBoxAdvancedTuning.CheckedChanged += new System.EventHandler(this.checkBoxAdvancedTuning_CheckedChanged);
@@ -667,7 +667,7 @@ namespace SetupTv.Sections
       this.textBoxFreq.MaxLength = 8;
       this.textBoxFreq.Name = "textBoxFreq";
       this.textBoxFreq.Size = new System.Drawing.Size(63, 20);
-      this.textBoxFreq.TabIndex = 40;
+      this.textBoxFreq.TabIndex = 41;
       this.textBoxFreq.Text = "10744000";
       // 
       // mpLabel20
@@ -730,7 +730,7 @@ namespace SetupTv.Sections
       this.label17.Location = new System.Drawing.Point(172, 83);
       this.label17.Name = "label17";
       this.label17.Size = new System.Drawing.Size(29, 13);
-      this.label17.TabIndex = 38;
+      this.label17.TabIndex = 39;
       this.label17.Text = "MHz";
       // 
       // label15
@@ -739,7 +739,7 @@ namespace SetupTv.Sections
       this.label15.Location = new System.Drawing.Point(172, 60);
       this.label15.Name = "label15";
       this.label15.Size = new System.Drawing.Size(29, 13);
-      this.label15.TabIndex = 35;
+      this.label15.TabIndex = 36;
       this.label15.Text = "MHz";
       // 
       // label16
@@ -748,7 +748,7 @@ namespace SetupTv.Sections
       this.label16.Location = new System.Drawing.Point(172, 39);
       this.label16.Name = "label16";
       this.label16.Size = new System.Drawing.Size(29, 13);
-      this.label16.TabIndex = 32;
+      this.label16.TabIndex = 33;
       this.label16.Text = "MHz";
       // 
       // textBoxLNBSwitch
@@ -756,21 +756,21 @@ namespace SetupTv.Sections
       this.textBoxLNBSwitch.Location = new System.Drawing.Point(103, 81);
       this.textBoxLNBSwitch.Name = "textBoxLNBSwitch";
       this.textBoxLNBSwitch.Size = new System.Drawing.Size(63, 20);
-      this.textBoxLNBSwitch.TabIndex = 37;
+      this.textBoxLNBSwitch.TabIndex = 38;
       // 
       // textBoxLNBHi
       // 
       this.textBoxLNBHi.Location = new System.Drawing.Point(103, 58);
       this.textBoxLNBHi.Name = "textBoxLNBHi";
       this.textBoxLNBHi.Size = new System.Drawing.Size(63, 20);
-      this.textBoxLNBHi.TabIndex = 34;
+      this.textBoxLNBHi.TabIndex = 35;
       // 
       // textBoxLNBLo
       // 
       this.textBoxLNBLo.Location = new System.Drawing.Point(103, 36);
       this.textBoxLNBLo.Name = "textBoxLNBLo";
       this.textBoxLNBLo.Size = new System.Drawing.Size(63, 20);
-      this.textBoxLNBLo.TabIndex = 31;
+      this.textBoxLNBLo.TabIndex = 32;
       // 
       // chkOverrideLNB
       // 
@@ -778,7 +778,7 @@ namespace SetupTv.Sections
       this.chkOverrideLNB.Location = new System.Drawing.Point(9, 19);
       this.chkOverrideLNB.Name = "chkOverrideLNB";
       this.chkOverrideLNB.Size = new System.Drawing.Size(186, 17);
-      this.chkOverrideLNB.TabIndex = 29;
+      this.chkOverrideLNB.TabIndex = 30;
       this.chkOverrideLNB.Text = "Override default LNB frequencies:";
       this.chkOverrideLNB.UseVisualStyleBackColor = true;
       this.chkOverrideLNB.CheckedChanged += new System.EventHandler(this.chkOverrideLNB_CheckedChanged);
@@ -789,7 +789,7 @@ namespace SetupTv.Sections
       this.label14.Location = new System.Drawing.Point(6, 83);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(90, 13);
-      this.label14.TabIndex = 36;
+      this.label14.TabIndex = 37;
       this.label14.Text = "Switch (LNBSW):";
       // 
       // label13
@@ -798,7 +798,7 @@ namespace SetupTv.Sections
       this.label13.Location = new System.Drawing.Point(6, 60);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(67, 13);
-      this.label13.TabIndex = 33;
+      this.label13.TabIndex = 34;
       this.label13.Text = "High (LOF2):";
       // 
       // label10
@@ -807,7 +807,7 @@ namespace SetupTv.Sections
       this.label10.Location = new System.Drawing.Point(6, 39);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(65, 13);
-      this.label10.TabIndex = 30;
+      this.label10.TabIndex = 31;
       this.label10.Text = "Low (LOF1):";
       // 
       // mpLabel14
@@ -816,7 +816,7 @@ namespace SetupTv.Sections
       this.mpLabel14.Location = new System.Drawing.Point(6, 106);
       this.mpLabel14.Name = "mpLabel14";
       this.mpLabel14.Size = new System.Drawing.Size(60, 13);
-      this.mpLabel14.TabIndex = 39;
+      this.mpLabel14.TabIndex = 40;
       this.mpLabel14.Text = "Frequency:";
       // 
       // groupBox4
@@ -874,7 +874,7 @@ namespace SetupTv.Sections
       this.mpLabel16.Location = new System.Drawing.Point(100, 146);
       this.mpLabel16.Name = "mpLabel16";
       this.mpLabel16.Size = new System.Drawing.Size(62, 13);
-      this.mpLabel16.TabIndex = 48;
+      this.mpLabel16.TabIndex = 47;
       this.mpLabel16.Text = "Modulation:";
       // 
       // mpComboBoxMod
@@ -884,7 +884,7 @@ namespace SetupTv.Sections
       this.mpComboBoxMod.Location = new System.Drawing.Point(103, 162);
       this.mpComboBoxMod.Name = "mpComboBoxMod";
       this.mpComboBoxMod.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBoxMod.TabIndex = 49;
+      this.mpComboBoxMod.TabIndex = 48;
       // 
       // mpLabel7
       // 
@@ -892,7 +892,7 @@ namespace SetupTv.Sections
       this.mpLabel7.Location = new System.Drawing.Point(103, 106);
       this.mpLabel7.Name = "mpLabel7";
       this.mpLabel7.Size = new System.Drawing.Size(64, 13);
-      this.mpLabel7.TabIndex = 46;
+      this.mpLabel7.TabIndex = 45;
       this.mpLabel7.Text = "Polarisation:";
       // 
       // textBoxSymbolRate
@@ -901,7 +901,7 @@ namespace SetupTv.Sections
       this.textBoxSymbolRate.MaxLength = 5;
       this.textBoxSymbolRate.Name = "textBoxSymbolRate";
       this.textBoxSymbolRate.Size = new System.Drawing.Size(63, 20);
-      this.textBoxSymbolRate.TabIndex = 43;
+      this.textBoxSymbolRate.TabIndex = 44;
       this.textBoxSymbolRate.Text = "22000";
       // 
       // mpLabel17
@@ -910,7 +910,7 @@ namespace SetupTv.Sections
       this.mpLabel17.Location = new System.Drawing.Point(6, 146);
       this.mpLabel17.Name = "mpLabel17";
       this.mpLabel17.Size = new System.Drawing.Size(70, 13);
-      this.mpLabel17.TabIndex = 42;
+      this.mpLabel17.TabIndex = 43;
       this.mpLabel17.Text = "Symbol Rate:";
       // 
       // mpComboBoxPolarisation
@@ -920,7 +920,7 @@ namespace SetupTv.Sections
       this.mpComboBoxPolarisation.Location = new System.Drawing.Point(103, 122);
       this.mpComboBoxPolarisation.Name = "mpComboBoxPolarisation";
       this.mpComboBoxPolarisation.Size = new System.Drawing.Size(92, 21);
-      this.mpComboBoxPolarisation.TabIndex = 47;
+      this.mpComboBoxPolarisation.TabIndex = 46;
       // 
       // mpLabel15
       // 
@@ -928,7 +928,7 @@ namespace SetupTv.Sections
       this.mpLabel15.Location = new System.Drawing.Point(70, 127);
       this.mpLabel15.Name = "mpLabel15";
       this.mpLabel15.Size = new System.Drawing.Size(26, 13);
-      this.mpLabel15.TabIndex = 41;
+      this.mpLabel15.TabIndex = 42;
       this.mpLabel15.Text = "kHz";
       // 
       // mpGrpScanProgress
@@ -1503,7 +1503,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.TextBox textBox2;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel13;
     private System.Windows.Forms.CheckBox checkBoxAdvancedTuning;
-    private System.Windows.Forms.CheckBox checkEnableDVBS2;
+    private System.Windows.Forms.CheckBox checkBoxEnableDVBS2;
     private MediaPortal.UserInterface.Controls.MPGroupBox mpGrpScanProgress;
     private System.Windows.Forms.Label label16;
     private System.Windows.Forms.TextBox textBoxLNBSwitch;
@@ -1544,6 +1544,6 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel18;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel20;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxInnerFecRate;
-    private System.Windows.Forms.CheckBox chkNoChannelMoveDetection;
+    private System.Windows.Forms.CheckBox checkBoxEnableChannelMoveDetection;
   }
 }
