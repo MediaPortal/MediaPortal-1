@@ -121,7 +121,12 @@ namespace MpeCore
     /// </summary>
     public void Install()
     {
-      UnInstallInfo = new UnInstallInfoCollection(this);
+      if (UnInstallInfo == null)
+      {
+        UnInstallInfo = new UnInstallInfoCollection(this);
+      }
+      else
+        UnInstallInfo.SetInfo(this);
       foreach (GroupItem groupItem in Groups.Items)
       {
         if (groupItem.Checked)

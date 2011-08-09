@@ -36,6 +36,7 @@ namespace MpeCore.Classes
     public WizardNavigator(PackageClass pak)
     {
       Package = pak;
+      Package.UnInstallInfo.SetInfo(Package);
       Response = SectionResponseEnum.Error;
     }
 
