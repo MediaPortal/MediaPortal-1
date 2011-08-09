@@ -30,6 +30,8 @@
 #include "BDEventObserver.h"
 #include <map>
 
+//#define LOG_PIN_SAMPLES
+
 using namespace std;
 
 class CSubtitlePin;

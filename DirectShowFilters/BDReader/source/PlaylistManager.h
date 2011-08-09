@@ -27,6 +27,8 @@
 #include "Packet.h"
 #include <streams.h>
 
+//#define LOG_PACKETS
+
 using namespace std;
 
 class CPlaylistManager

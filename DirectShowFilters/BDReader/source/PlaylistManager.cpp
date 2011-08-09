@@ -98,7 +98,9 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
   if (ret) 
   {
     AudioPackets++;
+#ifdef LOG_PACKETS
     LogDebug("Audio Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
+#endif
   }
   if (!ret)
   {
@@ -136,11 +138,15 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
   if (ret) 
   {
     VideoPackets++;
+#ifdef LOG_PACKETS
     LogDebug("Video Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
+#endif
   }
   if (!ret)
   {
+#ifdef LOG_PACKETS
      LogDebug("Video Packet %I64d %d %d rejected from %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber, m_currentVideoSubmissionPlaylist->nPlaylist);
+#endif
 
     CPlaylist* nextPlaylist = GetNextVideoSubmissionPlaylist(m_currentVideoSubmissionPlaylist);
     if (nextPlaylist == m_currentVideoSubmissionPlaylist)
