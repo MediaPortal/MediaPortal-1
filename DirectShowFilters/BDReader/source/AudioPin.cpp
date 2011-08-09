@@ -51,8 +51,7 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_section(section),
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
-  prevPl(-1),
-  m_rtPrevSample(REFERENCE_TIME(0)),
+  m_nPrevPl(-1),
   m_pCachedBuffer(NULL)
 {
   m_bConnected = false;
@@ -233,12 +232,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
 //        JoinAudioBuffers(buffer, &demux);
         
-        m_pFilter->m_bStreamCompensated = true; // fake
+        m_pFilter->m_bStreamCompensated = true; // fake, remove whole m_bStreamCompensated at some point
 
-        if (buffer && buffer->nPlaylist != prevPl)
+        if (buffer && buffer->nPlaylist != m_nPrevPl)
         {
-          LogDebug("Playlist changed From %d To %d",prevPl,buffer->nPlaylist);
-          prevPl = buffer->nPlaylist;
+          LogDebug("Playlist changed From %d To %d", m_nPrevPl, buffer->nPlaylist);
+          m_nPrevPl = buffer->nPlaylist;
           buffer->bDiscontinuity=true;
         
           if (m_pFilter->State() == State_Running)
@@ -316,9 +315,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             SetMediaType(mt);
           }
         }
-
-        if (buffer)
-          m_rtPrevSample = buffer->rtStart;
 
         REFERENCE_TIME cRefTimeStart = -1, cRefTimeStop = -1, cRefTimeOrig = -1;
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;

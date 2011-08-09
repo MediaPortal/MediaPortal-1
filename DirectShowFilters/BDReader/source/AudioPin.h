@@ -99,8 +99,7 @@ protected:
 
   CMediaType m_mtInitial;
 
-  int prevPl;
-  CRefTime m_rtPrevSample;
+  int       m_nPrevPl;
 
   Packet* m_pCachedBuffer;
 };

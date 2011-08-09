@@ -90,11 +90,10 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_pFilter(pFilter),
   m_section(section),
   m_decoderType(general),
-  CSourceSeeking(NAME("pinVideo"),pUnk, phr, section),
+  CSourceSeeking(NAME("pinVideo"), pUnk, phr, section),
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
-  prevPl(-1),
-  m_rtPrevSample(REFERENCE_TIME(0)),
+  m_nPrevPl(-1),
   m_pCachedBuffer(NULL)
 {
   m_rtStart = 0;
@@ -393,13 +392,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         buffer = demux.GetVideo();
       }
 
-      if (buffer && (buffer->nClipNumber < 0 || buffer->nPlaylist < 0))
-        int debugMe = 0;
-
       // sample belongs to a new playlist
-      if (buffer && buffer->nPlaylist != prevPl)
+      if (buffer && buffer->nPlaylist != m_nPrevPl)
       {
-        prevPl = buffer->nPlaylist;
+        m_nPrevPl = buffer->nPlaylist;
         
         if (m_pFilter->State() == State_Running)
         {
@@ -418,9 +414,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           return NOERROR;
         }
       }
-
-      if (buffer)
-        m_rtPrevSample = buffer->rtStart;
 
       // Did we reach the end of the file?
       if (demux.EndOfFile())
@@ -499,7 +492,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         if (hasTimestamp)
         {
           m_bPresentSample = true;
-       }
+        }
 
         if (m_bPresentSample)
         {
