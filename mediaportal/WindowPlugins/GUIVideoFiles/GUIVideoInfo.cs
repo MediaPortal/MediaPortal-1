@@ -194,7 +194,9 @@ namespace MediaPortal.GUI.Video
         imageSearchThread = null;
       }
 
-      if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO && newWindowId != (int)Window.WINDOW_HOME)
+      // Reset currentMovie variable if we go to windows which initialize that variable
+      // Database and share views windows are only screens which do that
+      if (newWindowId == (int)Window.WINDOW_VIDEOS || newWindowId == (int)Window.WINDOW_VIDEO_TITLE)
         currentMovie = null;
 
       base.OnPageDestroy(newWindowId);
