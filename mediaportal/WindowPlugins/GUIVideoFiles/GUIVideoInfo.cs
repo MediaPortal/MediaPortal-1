@@ -194,7 +194,7 @@ namespace MediaPortal.GUI.Video
         imageSearchThread = null;
       }
 
-      if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO)
+      if (newWindowId != (int)Window.WINDOW_FULLSCREEN_VIDEO && newWindowId != (int)Window.WINDOW_HOME)
         currentMovie = null;
 
       base.OnPageDestroy(newWindowId);
