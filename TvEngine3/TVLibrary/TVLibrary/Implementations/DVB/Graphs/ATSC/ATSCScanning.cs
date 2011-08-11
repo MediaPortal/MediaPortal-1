@@ -63,11 +63,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      ATSCChannel tuningChannel = (ATSCChannel)_card.CurrentChannel;
+      ATSCChannel tuningChannel = (ATSCChannel)channel;
       ATSCChannel atscChannel = new ATSCChannel();
       atscChannel.Name = info.service_name;
       atscChannel.LogicalChannelNumber = info.LCN;

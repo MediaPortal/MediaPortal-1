@@ -217,9 +217,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected abstract IChannel CreateNewChannel(ChannelInfo info);
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected abstract IChannel CreateNewChannel(IChannel channel, ChannelInfo info);
 
     /// <summary>
     /// Gets the analyzer.
@@ -360,7 +361,7 @@ namespace TvLibrary.Implementations.DVB
                 {
                   SetNameForUnknownChannel(channel, info);
                 }
-                IChannel result = CreateNewChannel(info);
+                IChannel result = CreateNewChannel(channel, info);
                 if (result != null)
                 {
                   channelsFound.Add(result);
