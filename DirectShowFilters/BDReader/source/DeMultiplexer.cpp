@@ -1318,7 +1318,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> 
 				CAutoPtr<Packet> p2 = m_pl.RemoveHead();
 				p->Append(*p2);
 			}
-      //LogDebug("PacketDelivery - %6.3f %d %d", pIn->rtStart / 10000000.0, pIn->nPlaylist, pIn->nClipNumber);
+      //LogDebug("PacketDelivery - %6.3f %d %d", p->rtStart / 10000000.0, p->nPlaylist, p->nClipNumber);
 			PacketDelivery(p, header);
 		}
 	}
