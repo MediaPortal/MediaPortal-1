@@ -1599,6 +1599,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     m_p.Attach(new Packet());
     m_p->bDiscontinuity = false;
     m_p->rtStart = Packet::INVALID_TIME;
+    m_p->nPlaylist = m_nPlaylist;
+    m_p->nClipNumber = m_nClip;
     m_lastStart = 0;
     m_bInBlock=false;
   }
@@ -1674,9 +1676,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 		
         m_p->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_p->rtStop = m_p->rtStart + 1;
-
-        m_p->nClipNumber = m_nVideoClip;
-        m_p->nPlaylist = m_nVideoPl;
+        m_p->nPlaylist = m_nMPEG2LastPlaylist;
+        m_p->nClipNumber = m_nMPEG2LastClip;
+        m_nMPEG2LastPlaylist = m_nPlaylist;
+        m_nMPEG2LastClip = m_nClip;
       }
     }
   }

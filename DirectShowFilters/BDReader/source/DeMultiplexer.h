@@ -264,6 +264,8 @@ private:
   UINT64 m_newOffsetPos;
   INT32 m_nClip;
   INT32 m_nPlaylist;
+  INT32 m_nMPEG2LastClip;
+  INT32 m_nMPEG2LastPlaylist;
   bool m_bOffsetBackwards;
 
   REFERENCE_TIME m_rtVideoOffset;
