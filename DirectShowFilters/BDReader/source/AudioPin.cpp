@@ -197,9 +197,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
+      // Stall samples
       if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_audioPlSeen)
       {
-        Sleep(20);
+        Sleep(10);
         CreateEmptySample(pSample);
         
         return NOERROR;
@@ -215,10 +216,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         buffer = demux.GetAudio();
       }
 
-      // Did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("aud:set eof");
+        LogDebug("aud: set eof");
         CreateEmptySample(pSample);
         
         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
@@ -234,28 +234,23 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         
         m_pFilter->m_bStreamCompensated = true; // fake, remove whole m_bStreamCompensated at some point
 
+        if (demux.m_nActiveAudioPlaylist == -1)
+        {
+          demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
+        }
+
         if (buffer && buffer->nPlaylist != m_nPrevPl)
         {
-          LogDebug("Playlist changed From %d To %d", m_nPrevPl, buffer->nPlaylist);
+          LogDebug("aud: Playlist changed from %d To %d", m_nPrevPl, buffer->nPlaylist);
+          demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
           m_nPrevPl = buffer->nPlaylist;
-          buffer->bDiscontinuity=true;
-        
-          if (m_pFilter->State() == State_Running)
-          {
-            demux.m_audioPlSeen = true;
+          buffer->bDiscontinuity = true;
 
-            if (demux.m_videoPlSeen)
-            {
-              LogDebug("AUD: Request zeroing the stream time");
-              m_pFilter->m_bForceSeekAfterRateChange = true;
-              m_pFilter->IssueCommand(SEEK, 0);
-            }
+          demux.m_audioPlSeen = true;
+          m_pCachedBuffer = buffer;
 
-            m_pCachedBuffer = buffer;
-
-            CreateEmptySample(pSample);
-            return NOERROR;
-          }
+          CreateEmptySample(pSample);
+          return NOERROR;
         }
 /*
         if (buffer->pmt==NULL)
@@ -286,7 +281,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
           else if (m_pReceiver)
           {
-            LogDebug("DynamicQueryAccept - not avail"); 
+            LogDebug("aud: DynamicQueryAccept - not avail"); 
             hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
           }
 
@@ -300,7 +295,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //m_pFilter->OnMediaTypeChanged(3);
             m_pFilter->IssueCommand(REBUILD, 0);
 
-            LogDebug("REBUILD: AUDIO");
+            LogDebug("aud: REBUILD");
 
             m_pCachedBuffer = buffer;
 
@@ -310,7 +305,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
           else
           {
-            LogDebug("AUDIO CHANGE ACCEPTED");
+            LogDebug("aud: CHANGE ACCEPTED");
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
           }
@@ -332,7 +327,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           if (m_bDiscontinuity || buffer->bDiscontinuity)
           {
-            LogDebug("aud:set discontinuity");
+            LogDebug("aud: set discontinuity");
             pSample->SetDiscontinuity(TRUE);
             m_bDiscontinuity = FALSE;
           }
@@ -378,11 +373,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   // Should we return something else than NOERROR when hitting an exception?
   catch(int e)
   {
-    LogDebug("aud:fillbuffer exception %d", e);
+    LogDebug("aud: FillBuffer exception %d", e);
   }
   catch(...)
   {
-    LogDebug("aud:fillbuffer exception ...");
+    LogDebug("aud: FillBuffer exception ...");
   }
   return NOERROR;
 }
@@ -574,7 +569,7 @@ HRESULT CAudioPin::OnThreadStartPlay()
   m_bDiscontinuity = true;
   m_bPresentSample = false;
 
-  LogDebug("aud:OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking);
+  LogDebug("aud: OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking);
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
@@ -603,7 +598,7 @@ void CAudioPin::UpdateFromSeek()
 
 STDMETHODIMP CAudioPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest )
 {
-  //LogDebug("aud:GetAvailable");
+  //LogDebug("aud: GetAvailable");
   return CSourceSeeking::GetAvailable(pEarliest, pLatest);
 }
 
@@ -623,7 +618,7 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
 
 STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG* pCurrent)
 {
-  //LogDebug("aud:GetCurrentPosition");
+  //LogDebug("aud: GetCurrentPosition");
   return E_NOTIMPL;//CSourceSeeking::GetCurrentPosition(pCurrent);
 }
 

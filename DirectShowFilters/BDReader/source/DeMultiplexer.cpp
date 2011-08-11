@@ -94,6 +94,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_audioPlSeen = false;
   m_videoPlSeen = false;
+  m_nActiveAudioPlaylist = -1;
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch=1;
 

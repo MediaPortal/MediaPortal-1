@@ -144,6 +144,7 @@ public:
 
   bool m_audioPlSeen;
   bool m_videoPlSeen;
+  int  m_nActiveAudioPlaylist;
 
 private:
   void ResetClipInfo(int pDebugMark);

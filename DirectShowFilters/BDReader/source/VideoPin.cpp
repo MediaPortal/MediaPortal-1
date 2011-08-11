@@ -182,12 +182,12 @@ HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
   {
     if (m_decoderType == Arcsoft)
     {
-      LogDebug("CVideoPin::GetMediaType - force Arcsoft VC-1 GUID");
+      LogDebug("vid: GetMediaType - force Arcsoft VC-1 GUID");
       pmt->subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
     }
     else if (m_decoderType == Cyberlink)
     {
-      LogDebug("CVideoPin::GetMediaType - force Cyberlink VC-1 GUID");
+      LogDebug("vid: GetMediaType - force Cyberlink VC-1 GUID");
       pmt->subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
     }
   }
@@ -374,9 +374,25 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
     {
       if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_videoPlSeen)
       {
-        Sleep(5);
         CreateEmptySample(pSample);
-        
+
+        // Audio has already changed to next playlist
+        if (demux.m_nActiveAudioPlaylist == m_nPrevPl && demux.m_videoPlSeen)
+        {
+          demux.m_audioPlSeen = false;
+          demux.m_videoPlSeen = false;
+          
+          LogDebug("vid: Request zeroing the stream time - video after audio");
+          m_pFilter->m_bForceSeekAfterRateChange = true;
+          m_pFilter->IssueCommand(SEEK, 0);
+        }
+        else
+        {
+          Sleep(5);        
+        }
+
+        LogDebug("TEST VID 1: IsSeeking:%d IsStopping:%d IsMediaChanging:%d m_audioPlSeen:%d m_videoPlSeen:%d m_nActiveAudioPlaylist:%d m_nPrevPl:%d", m_pFilter->IsSeeking(), m_pFilter->IsStopping() ,demux.IsMediaChanging() ,demux.m_audioPlSeen, demux.m_videoPlSeen, demux.m_nActiveAudioPlaylist, m_nPrevPl);
+
         return NOERROR;
       }
       
@@ -392,33 +408,35 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         buffer = demux.GetVideo();
       }
 
-      // sample belongs to a new playlist
-      if (buffer && buffer->nPlaylist != m_nPrevPl)
+      if (demux.m_nActiveAudioPlaylist == -1)
       {
-        m_nPrevPl = buffer->nPlaylist;
-        
-        if (m_pFilter->State() == State_Running)
-        {
-          demux.m_videoPlSeen = true;
-
-          if (demux.m_audioPlSeen)
-          {
-            LogDebug("VID: Request zeroing the stream time");
-            m_pFilter->m_bForceSeekAfterRateChange = true;
-            m_pFilter->IssueCommand(SEEK, 0);
-          }
-
-          m_pCachedBuffer = buffer;
-
-          CreateEmptySample(pSample);
-          return NOERROR;
-        }
+        demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
       }
 
-      // Did we reach the end of the file?
+      if (buffer && buffer->nPlaylist != m_nPrevPl)
+      {
+        LogDebug("vid: Playlist changed from %d To %d", m_nPrevPl, buffer->nPlaylist);
+        m_nPrevPl = buffer->nPlaylist;
+
+        demux.m_videoPlSeen = true;
+
+        // Audio is already at the next playlist - no need to wait it 
+        if (demux.m_nActiveAudioPlaylist == buffer->nPlaylist)
+        {
+          LogDebug("vid: Request zeroing the stream time");
+          m_pFilter->m_bForceSeekAfterRateChange = true;
+          m_pFilter->IssueCommand(SEEK, 0);
+        }
+
+        m_pCachedBuffer = buffer;
+
+        CreateEmptySample(pSample);
+        return NOERROR;
+      }
+
       if (demux.EndOfFile())
       {
-        LogDebug("vid:set eof");
+        LogDebug("vid: set EOF");
         CreateEmptySample(pSample);
         
         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
@@ -446,7 +464,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
         {
           // TODO: log subtype          
-          LogDebug("NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
+          LogDebug("vid: NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
             
           HRESULT hrAccept = S_FALSE;
 
@@ -470,7 +488,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
             m_pFilter->IssueCommand(REBUILD, 0);
 
-            LogDebug("REBUILD: VIDEO");
+            LogDebug("vid: REBUILD");
 
             CreateEmptySample(pSample);
         
@@ -480,7 +498,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           }
           else
           {
-            LogDebug("VIDEO CHANGE ACCEPTED");
+            LogDebug("vid: CHANGE ACCEPTED");
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
           }
@@ -498,7 +516,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         {
           if (m_bDiscontinuity || buffer->bDiscontinuity)
           {
-            LogDebug("vid:set discontinuity");
+            LogDebug("vid: set discontinuity");
             pSample->SetDiscontinuity(true);
             m_bDiscontinuity = false;
           }
@@ -548,7 +566,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
   catch(...)
   {
-    LogDebug("vid:fillbuffer exception");
+    LogDebug("vid: FillBuffer exception");
   }
   return NOERROR;
 }
@@ -566,7 +584,7 @@ HRESULT CVideoPin::OnThreadStartPlay()
 
   m_pFilter->GetDemultiplexer().m_videoPlSeen = false;
 
-  LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());
+  LogDebug("vid: OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());
 
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay();
