@@ -391,8 +391,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           Sleep(5);        
         }
 
-        LogDebug("TEST VID 1: IsSeeking:%d IsStopping:%d IsMediaChanging:%d m_audioPlSeen:%d m_videoPlSeen:%d m_nActiveAudioPlaylist:%d m_nPrevPl:%d", m_pFilter->IsSeeking(), m_pFilter->IsStopping() ,demux.IsMediaChanging() ,demux.m_audioPlSeen, demux.m_videoPlSeen, demux.m_nActiveAudioPlaylist, m_nPrevPl);
-
         return NOERROR;
       }
       
