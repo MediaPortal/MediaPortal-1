@@ -716,11 +716,7 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   int dwReadBytes = 0;
   bool pause = false;
 
-
   dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, m_bStarting);
-
-  if (dwReadBytes != sizeof(m_readBuffer))
-    LogDebug("got less bytes than expected");
 
   if (dwReadBytes > 0)
   {
@@ -903,6 +899,12 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     {
       CPcr pts;
       CPcr dts;
+
+      if (m_pCurrentAudioBuffer)
+      {
+        delete m_pCurrentAudioBuffer;
+        m_pCurrentAudioBuffer = NULL;
+      }
 
       m_pCurrentAudioBuffer = new Packet();
       CMediaType pmt;
