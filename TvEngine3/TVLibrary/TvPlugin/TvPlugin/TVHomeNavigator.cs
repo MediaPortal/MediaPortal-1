@@ -390,8 +390,7 @@ namespace TvPlugin
       // BAV, 02.03.08: a channel change should not be delayed by rendering.
       //                by scipping this => 1 min delays in zapping should be avoided 
       //if (GUIGraphicsContext.InVmr9Render) return false;
-      reentrant = true;
-      UpdateCurrentChannel();
+      reentrant = true;      
 
       // Zapping to another group or channel?
       if (m_zapgroup != -1 || m_zapchannel != null)
@@ -399,6 +398,7 @@ namespace TvPlugin
         // Time to zap?
         if (DateTime.Now >= m_zaptime)
         {
+          UpdateCurrentChannel();
           // Zapping to another group?
           if (m_zapgroup != -1 && m_zapgroup != m_currentgroup)
           {

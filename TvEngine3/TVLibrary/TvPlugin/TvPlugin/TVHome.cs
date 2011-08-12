@@ -713,34 +713,37 @@ namespace TvPlugin
         return;
       }
 
-      UpdateRecordingIndicator();
-      UpdateStateOfRecButton();
-
-      if (!Card.IsTimeShifting)
+      try
       {
-        UpdateProgressPercentageBar();
-        // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
-        return;
-      }
+        UpdateRecordingIndicator();
+        UpdateStateOfRecButton();
 
-      // BAV, 02.03.08: a channel change should not be delayed by rendering.
-      //                by moving thisthe 1 min delays in zapping should be fixed
-      // Let the navigator zap channel if needed
-      if (Navigator.CheckChannelChange())
+        if (!Card.IsTimeShifting)
+        {
+          UpdateProgressPercentageBar();
+          // mantis #2218 : TV guide information in TV home screen does not update when program changes if TV is not playing 
+          return;
+        }
+
+        // BAV, 02.03.08: a channel change should not be delayed by rendering.
+        //                by moving thisthe 1 min delays in zapping should be fixed
+        // Let the navigator zap channel if needed
+        if (Navigator.CheckChannelChange())
+        {
+          UpdateGUIonPlaybackStateChange();
+        }
+
+        if (GUIGraphicsContext.InVmr9Render)
+        {
+          return;
+        }
+        ShowCiMenu();
+        doProcess();
+      }
+      finally
       {
-        UpdateGUIonPlaybackStateChange();
+        _updateTimer = DateTime.Now;
       }
-
-      if (GUIGraphicsContext.InVmr9Render)
-      {
-        return;
-      }
-
-      ShowCiMenu();
-
-      doProcess();
-
-      _updateTimer = DateTime.Now;
     }
 
     public override bool IsTv
