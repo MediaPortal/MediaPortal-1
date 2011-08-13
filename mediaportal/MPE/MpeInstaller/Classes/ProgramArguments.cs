@@ -37,11 +37,11 @@ namespace MpeInstaller.Classes
       {
         if (File.Exists(s))
           PackageFile = s;
-        if (s.StartsWith("/S"))
+        if (s == "/S")
           Silent = true;
-        if (s.StartsWith("/U"))
+        if (s == "/U")
           Update = true;
-        if (s.StartsWith("/MPQUEUE"))
+        if (s == "/MPQUEUE")
           MpQueue = true;
         if (s.StartsWith("/BK="))
         {

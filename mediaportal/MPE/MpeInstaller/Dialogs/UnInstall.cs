@@ -44,7 +44,7 @@ namespace MpeInstaller.Dialogs
     {
       if (!silent)
         if (
-          MessageBox.Show("Do you want to Unistall extension " + packageClass.GeneralInfo.Name, "Uninstall extension",
+          MessageBox.Show("Do you want to Uninstall extension " + packageClass.GeneralInfo.Name, "Uninstall extension",
                           MessageBoxButtons.YesNo) != DialogResult.Yes)
           return;
       packageClass.UnInstallInfo = new UnInstallInfoCollection(packageClass);
