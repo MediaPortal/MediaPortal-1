@@ -175,12 +175,10 @@ private:
   CCritSec m_sectionAudioChanging;
   CCritSec m_sectionMediaChanging;
   CPatParser m_patParser;
-  CMpegPesParser *m_mpegPesParser;
+  CMpegPesParser* m_mpegPesParser;
   CPidTable m_pids;
   vector<Packet*> m_vecSubtitleBuffers;
-//  vector<Packet*> m_vecVideoBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
-  //vector<Packet*> m_vecAudioBuffers;
   UINT32 m_nAudioPesLenght;
   typedef vector<Packet*>::iterator ivecVBuffers;
   typedef vector<Packet*>::iterator ivecABuffers;
@@ -231,8 +229,6 @@ private:
   bool m_bSetVideoDiscontinuity;
   CPcr m_subtitlePcr;
 
-  REFERENCE_TIME m_rtPrev, m_rtOffset, m_rtMaxShift;
-
   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
   // Used only for H.264 stream demuxing
@@ -256,29 +252,14 @@ private:
 
   byte m_readBuffer[READ_SIZE];
 
-  // TODO rename / cleanup
-  REFERENCE_TIME m_rtNewOffset;
-  UINT64 m_newOffsetPos;
   INT32 m_nClip;
   INT32 m_nPlaylist;
   INT32 m_nMPEG2LastClip;
   INT32 m_nMPEG2LastPlaylist;
-  bool m_bOffsetBackwards;
+  
+  bool m_bUpdateSubtitleOffset;
 
-  REFERENCE_TIME m_rtVideoOffset;
-  REFERENCE_TIME m_rtAudioOffset;
-  REFERENCE_TIME m_rtSubtitleOffset;
-
-  bool m_bForceUpdateAudioOffset;
-  bool m_bForceUpdateVideoOffset;
-  bool m_bForceUpdateSubtitleOffset;
-
-  INT32 m_nAudioClip;
-  INT32 m_nAudioPl;
-  INT32 m_nVideoClip;
-  INT32 m_nVideoPl;
-  INT32 m_nSubtitleClip;
-  INT32 m_nSubtitlePl;
+  REFERENCE_TIME m_rtOffset;
 
   PlaylistInfo* NewPlayList();
 
@@ -287,7 +268,7 @@ private:
   CFrameHeaderParser m_audioParser;
 
   //Used for playlist/clip tracking
-  CPlaylistManager * m_playlistManager;
+  CPlaylistManager* m_playlistManager;
 
   int m_videoServiceType;
 };
