@@ -421,6 +421,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         // Audio is already at the next playlist - no need to wait it 
         if (demux.m_nActiveAudioPlaylist == buffer->nPlaylist)
         {
+          demux.m_audioPlSeen = false;
+          demux.m_videoPlSeen = false;
+
           LogDebug("vid: Request zeroing the stream time");
           m_pFilter->m_bForceSeekAfterRateChange = true;
           m_pFilter->IssueCommand(SEEK, 0);
