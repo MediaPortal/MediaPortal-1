@@ -148,9 +148,6 @@ public:
 
 private:
   void ResetClipInfo(int pDebugMark);
-  Packet * GenerateFakePacket(REFERENCE_TIME rtStart, int playlist, int clip);
-  Packet* GenerateFakeAudio();
-  void GenerateFakeAudio(int previousPlaylist, int missingPlaylist, int previousClip, int missingClip);
   void PacketDelivery(Packet* p, CTsHeader header);
   struct stAudioStream
   {
