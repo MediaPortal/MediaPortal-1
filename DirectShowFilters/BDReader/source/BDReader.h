@@ -225,8 +225,8 @@ private:
   char            m_pathToBD[MAX_PATH];
 
   // Seek thread
-  static DWORD WINAPI SeekThreadEntryPoint(LPVOID lpParameter);
-  DWORD WINAPI        SeekThread();
+  static DWORD WINAPI CommandThreadEntryPoint(LPVOID lpParameter);
+  DWORD WINAPI        CommandThread();
 
   vector<DS_CMD>  m_commandQueue;
   CCritSec        m_csCommandQueue;

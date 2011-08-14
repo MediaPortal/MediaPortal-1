@@ -437,12 +437,12 @@ void STDMETHODCALLTYPE CBDReaderFilter::OnGraphRebuild(int info)
   m_bForceSeekOnStop = true;
 }
 
-DWORD WINAPI CBDReaderFilter::SeekThreadEntryPoint(LPVOID lpParameter)
+DWORD WINAPI CBDReaderFilter::CommandThreadEntryPoint(LPVOID lpParameter)
 {
-  return ((CBDReaderFilter*)lpParameter)->SeekThread();
+  return ((CBDReaderFilter*)lpParameter)->CommandThread();
 }
 
-DWORD WINAPI CBDReaderFilter::SeekThread()
+DWORD WINAPI CBDReaderFilter::CommandThread()
 {
   IFilterGraph* pGraph = NULL;    
 
@@ -467,7 +467,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
       DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
       if (result == WAIT_OBJECT_0) // exit event
       {
-        LogDebug("CBDReaderFilter::Seek thread: closing down");
+        LogDebug("CBDReaderFilter::Command thread: closing down");
         return 0;
       }
       else if (result == WAIT_OBJECT_0 + 1) // seek request
@@ -492,7 +492,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
         switch (cmd.id)
         {
         case REBUILD:
-          LogDebug("CBDReaderFilter::Seek thread: issue rebuild!");
+          LogDebug("CBDReaderFilter::Command thread: issue rebuild!");
           if ( m_pCallback ) m_pCallback->OnMediaTypeChanged(3);
 
           // TODO add media changed event so we don't have to poll
@@ -505,7 +505,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
 
           m_bIgnoreLibSeeking = true;
 
-          LogDebug("CBDReaderFilter::Seek thread: seek requested - pos: %06.3f", zeroPos / 1000000.0);
+          LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", zeroPos / 1000000.0);
           m_pMediaSeeking->SetPositions(&zeroPos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
 
           break;
@@ -514,7 +514,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
           m_bIgnoreLibSeeking = true;
           m_bForceSeekAfterRateChange = true;
 
-          LogDebug("CBDReaderFilter::Seek thread: flush requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
+          LogDebug("CBDReaderFilter::Command thread: flush requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
           m_demultiplexer.Flush();
 
           m_pMediaSeeking->SetPositions(&zeroPos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
@@ -524,7 +524,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
         case SEEK:
           m_bIgnoreLibSeeking = true;
           
-          LogDebug("CBDReaderFilter::Seek thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
+          LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
           HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_NoFlush, &posEnd, AM_SEEKING_NoPositioning);
           break;
         }
@@ -532,7 +532,7 @@ DWORD WINAPI CBDReaderFilter::SeekThread()
       else
       {
         DWORD error = GetLastError();
-        LogDebug("CBDReaderFilter::Seek thread: WaitForMultipleObjects failed: %d", error);
+        LogDebug("CBDReaderFilter::Command thread: WaitForMultipleObjects failed: %d", error);
       }
     }
   }
@@ -563,7 +563,7 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 
   if (!m_hCommandThread)
   {
-    m_hCommandThread = CreateThread(NULL, 0, CBDReaderFilter::SeekThreadEntryPoint, (LPVOID)this, 0, &m_dwThreadId);
+    m_hCommandThread = CreateThread(NULL, 0, CBDReaderFilter::CommandThreadEntryPoint, (LPVOID)this, 0, &m_dwThreadId);
   }
 
   return hr;
