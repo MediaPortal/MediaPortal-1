@@ -3252,8 +3252,7 @@ namespace TvPlugin
     }
 
     private void OnSelectItem(bool isItemSelected)
-    {
-      TVHome.Navigator.UpdateCurrentChannel();
+    {      
       if (_currentProgram == null)
       {
         return;

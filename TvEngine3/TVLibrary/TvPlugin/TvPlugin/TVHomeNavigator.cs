@@ -87,7 +87,14 @@ namespace TvPlugin
     private Channel _lastViewedChannel = null; // saves the last viewed Channel  // mPod    
     private Channel m_currentChannel = null;
     private IList channels = new ArrayList();
-    private bool reentrant = false;
+    private bool reentrant = false;    
+
+    #endregion
+
+    #region events & delegates
+
+    internal event OnZapChannelDelegate OnZapChannel;
+    internal delegate void OnZapChannelDelegate();
 
     #endregion
 
@@ -371,6 +378,7 @@ namespace TvPlugin
     public void ZapNow()
     {
       m_zaptime = DateTime.Now.AddSeconds(-1);
+      RaiseOnZapChannelEvent();
       // MediaPortal.GUI.Library.Log.Info(MediaPortal.GUI.Library.Log.LogType.Error, "zapnow group:{0} current group:{0}", m_zapgroup, m_currentgroup);
       //if (m_zapchannel == null)
       //   MediaPortal.GUI.Library.Log.Info(MediaPortal.GUI.Library.Log.LogType.Error, "zapchannel==null");
@@ -386,62 +394,61 @@ namespace TvPlugin
       if (reentrant)
       {
         return false;
-      }
-      // BAV, 02.03.08: a channel change should not be delayed by rendering.
-      //                by scipping this => 1 min delays in zapping should be avoided 
-      //if (GUIGraphicsContext.InVmr9Render) return false;
-      reentrant = true;      
-
-      // Zapping to another group or channel?
-      if (m_zapgroup != -1 || m_zapchannel != null)
+      }      
+      try
       {
-        // Time to zap?
-        if (DateTime.Now >= m_zaptime)
+        reentrant = true;        
+        // Zapping to another group or channel?
+        if (m_zapgroup != -1 || m_zapchannel != null)
         {
-          UpdateCurrentChannel();
-          // Zapping to another group?
-          if (m_zapgroup != -1 && m_zapgroup != m_currentgroup)
+          // Time to zap?
+          if (DateTime.Now >= m_zaptime)
           {
-            // Change current group and zap to the first channel of the group
-            m_currentgroup = m_zapgroup;
-            if (CurrentGroup != null && CurrentGroup.ReferringGroupMap().Count > 0)
+            // Zapping to another group?
+            if (m_zapgroup != -1 && m_zapgroup != m_currentgroup)
             {
-              GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
-              Channel chan = (Channel)gm.ReferencedChannel();
-              m_zapchannel = chan;
+              // Change current group and zap to the first channel of the group
+              m_currentgroup = m_zapgroup;
+              if (CurrentGroup != null && CurrentGroup.ReferringGroupMap().Count > 0)
+              {
+                GroupMap gm = (GroupMap)CurrentGroup.ReferringGroupMap()[0];
+                Channel chan = (Channel)gm.ReferencedChannel();
+                m_zapchannel = chan;
+              }
             }
+            m_zapgroup = -1;
+
+            //if (m_zapchannel != m_currentchannel)
+            //  lastViewedChannel = m_currentchannel;
+            // Zap to desired channel
+            if (m_zapchannel != null) // might be NULL after tuning failed
+            {
+              Channel zappingTo = m_zapchannel;
+
+              //remember to apply the new group also.
+              if (m_zapchannel.CurrentGroup != null)
+              {
+                m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
+                Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
+              }
+              else
+              {
+                Log.Info("Channel change:{0}", zappingTo.DisplayName);
+              }
+              m_zapchannel = null;
+              TVHome.ViewChannel(zappingTo);
+            }
+            m_zapChannelNr = -1;
+            reentrant = false;
+
+            return true;
           }
-          m_zapgroup = -1;
-
-          //if (m_zapchannel != m_currentchannel)
-          //  lastViewedChannel = m_currentchannel;
-          // Zap to desired channel
-          if (m_zapchannel != null) // might be NULL after tuning failed
-          {
-            Channel zappingTo = m_zapchannel;
-
-            //remember to apply the new group also.
-            if (m_zapchannel.CurrentGroup != null)
-            {
-              m_currentgroup = GetGroupIndex(m_zapchannel.CurrentGroup.GroupName);
-              Log.Info("Channel change:{0} on group {1}", zappingTo.DisplayName, m_zapchannel.CurrentGroup.GroupName);
-            }
-            else
-            {
-              Log.Info("Channel change:{0}", zappingTo.DisplayName);
-            }
-            m_zapchannel = null;
-
-            TVHome.ViewChannel(zappingTo);
-          }
-          m_zapChannelNr = -1;
-          reentrant = false;
-
-          return true;
         }
       }
-
-      reentrant = false;
+      finally
+      {
+        reentrant = false;        
+      }      
       return false;
     }
 
@@ -551,6 +558,7 @@ namespace TvPlugin
       {
         m_zaptime = DateTime.Now;
       }
+      RaiseOnZapChannelEvent();
     }
 
     /// <summary>
@@ -670,6 +678,15 @@ namespace TvPlugin
       {
         m_zaptime = DateTime.Now;
       }
+      RaiseOnZapChannelEvent();
+    }    
+
+    private void RaiseOnZapChannelEvent ()
+    {
+      if (OnZapChannel != null)
+      {
+        OnZapChannel();
+      }
     }
 
     /// <summary>
@@ -727,6 +744,7 @@ namespace TvPlugin
       {
         m_zaptime = DateTime.Now;
       }
+      RaiseOnZapChannelEvent();
     }
 
     /// <summary>
@@ -756,6 +774,7 @@ namespace TvPlugin
       {
         m_zaptime = DateTime.Now;
       }
+      RaiseOnZapChannelEvent();
     }
 
     /// <summary>
@@ -785,6 +804,7 @@ namespace TvPlugin
       {
         m_zaptime = DateTime.Now;
       }
+      RaiseOnZapChannelEvent();
     }
 
     /// <summary>
@@ -798,6 +818,7 @@ namespace TvPlugin
         m_zapchannel = _lastViewedChannel;
         m_zapChannelNr = -1;
         m_zaptime = DateTime.Now;
+        RaiseOnZapChannelEvent();
       }
     }
 
