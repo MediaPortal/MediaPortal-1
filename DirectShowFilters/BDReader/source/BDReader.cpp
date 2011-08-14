@@ -470,7 +470,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         LogDebug("CBDReaderFilter::Command thread: closing down");
         return 0;
       }
-      else if (result == WAIT_OBJECT_0 + 1) // seek request
+      else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
         LONGLONG posEnd(~0);
         LONGLONG zeroPos(0);
