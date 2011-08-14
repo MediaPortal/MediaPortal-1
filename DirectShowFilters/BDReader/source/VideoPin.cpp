@@ -406,9 +406,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         buffer = demux.GetVideo();
       }
 
-      if (demux.m_nActiveAudioPlaylist == -1)
+      if (m_nPrevPl == -1)
       {
-        demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
+        m_nPrevPl = buffer->nPlaylist;
       }
 
       if (buffer && buffer->nPlaylist != m_nPrevPl)

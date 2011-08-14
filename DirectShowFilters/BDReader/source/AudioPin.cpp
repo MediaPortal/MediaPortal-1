@@ -236,7 +236,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (demux.m_nActiveAudioPlaylist == -1)
         {
-          demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
+          demux.m_nActiveAudioPlaylist = m_nPrevPl = buffer->nPlaylist;
         }
 
         if (buffer && buffer->nPlaylist != m_nPrevPl)
