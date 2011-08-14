@@ -1522,7 +1522,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
           correctedPts.IsValid = true;
 
-//          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nVideoClip, m_nVideoPl);
+//          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
 
           m_lastVideoPTS = pts;
           //pts = correctedPts;
@@ -1631,7 +1631,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           correctedPts.IsValid = true;
 
 //          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-//            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nVideoClip, m_nVideoPl);
+//            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
 
           m_lastVideoPTS = pts;
           m_VideoPts = pts;
