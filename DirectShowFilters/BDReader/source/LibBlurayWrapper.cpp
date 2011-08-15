@@ -328,7 +328,7 @@ void  CLibBlurayWrapper::SetBDPlayerSettings(bd_player_settings settings)
 UINT32 CLibBlurayWrapper::GetTitles(UINT8 pFlags)
 {
   CAutoLock cLibLock(&m_csLibLock);
-  return _bd_get_titles(m_pBd, pFlags);
+  return _bd_get_titles(m_pBd, pFlags, 0); // TODO - provide angle!
 }
 
 bool CLibBlurayWrapper::SetAngle(UINT8 pAngle)
@@ -394,11 +394,11 @@ BLURAY_TITLE_INFO* CLibBlurayWrapper::GetTitleInfo(UINT32 pIndex)
   if (pIndex == BLURAY_TITLE_CURRENT)
   {
     UINT32 index = _bd_get_current_title(m_pBd);
-    info = _bd_get_title_info(m_pBd, index);
+    info = _bd_get_title_info(m_pBd, index, 0); // TODO - provide angle!
   }
   else
   {
-    info = _bd_get_title_info(m_pBd, pIndex);
+    info = _bd_get_title_info(m_pBd, pIndex, 0); // TODO - provide angle!
   }
   
   return info;
@@ -414,7 +414,7 @@ void CLibBlurayWrapper::MouseMove(UINT64 pPos, UINT16 pX, UINT16 pY)
   CAutoLock cLibLock(&m_csLibLock);
   if (m_pBd)
   {		
-    _bd_mouse_select(m_pBd, pPos, pX, pY);
+    _bd_mouse_select(m_pBd, pPos, pX, pY); // TODO check return value
   }    
 }
 
@@ -659,7 +659,7 @@ void CLibBlurayWrapper::UpdateTitleInfo()
   if (m_playbackMode == TitleBased)
   {
     ASSERT(m_currentTitle < m_numTitles);
-    m_pTitleInfo = _bd_get_title_info(m_pBd, m_currentTitle);
+    m_pTitleInfo = _bd_get_title_info(m_pBd, m_currentTitle, 0); // TODO - provide angle!
     LogTitleInfo(m_currentTitle);
   }
   else
@@ -667,7 +667,7 @@ void CLibBlurayWrapper::UpdateTitleInfo()
     m_currentTitleIdx = _bd_get_current_title(m_pBd);
     ASSERT(m_currentTitleIdx < m_numTitles);
 
-    m_pTitleInfo = _bd_get_title_info(m_pBd, m_currentTitleIdx);
+    m_pTitleInfo = _bd_get_title_info(m_pBd, m_currentTitleIdx, 0); // TODO - provide angle!
     LogTitleInfo(m_currentTitleIdx);
   }
 
@@ -742,7 +742,7 @@ bool CLibBlurayWrapper::ProvideUserInput(INT64 pPts, UINT32 pKey)
     }
     else
     {
-      _bd_user_input(m_pBd, pPts, pKey);
+      _bd_user_input(m_pBd, pPts, pKey); // todo check return value
       return true;
     }
   }
@@ -928,7 +928,7 @@ void CLibBlurayWrapper::LogDiskInfo(const BLURAY_DISC_INFO* pInfo)
 
 void CLibBlurayWrapper::LogTitleInfo(int pIndex, bool ignoreShort)
 {
-  BLURAY_TITLE_INFO* ti = _bd_get_title_info(m_pBd, pIndex);
+  BLURAY_TITLE_INFO* ti = _bd_get_title_info(m_pBd, pIndex, 0); // TODO - provide min_title_length!
   if (ti)
   {
     if (ignoreShort && (ti->duration / 90000 < 0))

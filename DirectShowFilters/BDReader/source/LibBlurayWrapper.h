@@ -48,9 +48,9 @@ typedef struct bd_player_settings{
 
 // Function pointer definitions for the libbluray API
 
-typedef uint32_t (__cdecl *API_bd_get_titles)(BLURAY *, uint8_t);
-typedef BLURAY_TITLE_INFO* (__cdecl *API_bd_get_title_info)(BLURAY *, uint32_t);
-typedef BLURAY_TITLE_INFO* (__cdecl *API_bd_get_playlist_info)(BLURAY *, uint32_t);
+typedef uint32_t (__cdecl *API_bd_get_titles)(BLURAY *, uint8_t, uint32_t);
+typedef BLURAY_TITLE_INFO* (__cdecl *API_bd_get_title_info)(BLURAY *, uint32_t, unsigned);
+typedef BLURAY_TITLE_INFO* (__cdecl *API_bd_get_playlist_info)(BLURAY *, uint32_t, unsigned);
 typedef void (__cdecl *API_bd_free_title_info)(BLURAY_TITLE_INFO *);
 typedef BLURAY* (__cdecl *API_bd_open)(const char*, const char*);
 typedef void (__cdecl *API_bd_close)(BLURAY *);
@@ -82,8 +82,8 @@ typedef int (__cdecl *API_bd_play_title)(BLURAY *, unsigned);
 typedef int (__cdecl *API_bd_menu_call)(BLURAY *, int64_t);
 typedef void (*bd_overlay_proc_f)(void *, const struct bd_overlay_s * const);
 typedef void (__cdecl* API_bd_register_overlay_proc)(BLURAY *, void *, bd_overlay_proc_f);
-typedef void (__cdecl* API_bd_user_input)(BLURAY *, int64_t, uint32_t);
-typedef void (__cdecl* API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
+typedef int (__cdecl* API_bd_user_input)(BLURAY *, int64_t, uint32_t);
+typedef int (__cdecl* API_bd_mouse_select)(BLURAY *, int64_t, uint16_t, uint16_t);
 typedef struct meta_dl* (__cdecl* API_bd_get_meta)(BLURAY *);
 typedef int (__cdecl* API_bd_get_clip_infos)(BLURAY *, int, uint64_t *, uint64_t *, uint64_t *, uint64_t *);
 
