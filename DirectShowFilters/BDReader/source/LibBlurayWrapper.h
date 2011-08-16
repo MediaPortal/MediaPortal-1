@@ -133,8 +133,8 @@ public:
 
 private:
 
-  void HandleBDEventQueue();
-  void HandleBDEvent(BD_EVENT& ev);
+  void HandleBDEventQueue(bool pBroadcastEvents);
+  void HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents);
   void UpdateTitleInfo();
 
   HMODULE m_hDLL;

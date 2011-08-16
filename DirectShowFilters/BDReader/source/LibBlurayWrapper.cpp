@@ -483,9 +483,8 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
     {
       // TODO add error handling
       readBytes = _bd_read_ext(m_pBd, pData, pSize, &ev); 
-      if (!pIgnoreEvents || ev.event == BD_EVENT_STILL_TIME)
       {
-        HandleBDEvent(ev);
+        HandleBDEvent(ev, !pIgnoreEvents);
       }
     }
     pPause = m_bStopReading;
@@ -496,7 +495,7 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
     pPause = false;
     
     readBytes = _bd_read(m_pBd, pData, pSize);
-    HandleBDEventQueue();
+    HandleBDEventQueue(!pIgnoreEvents);
   }
 
   return readBytes;
@@ -570,18 +569,18 @@ void CLibBlurayWrapper::RemoveEventObserver(BDEventObserver* pObserver)
   }
 }
 
-void CLibBlurayWrapper::HandleBDEventQueue()
+void CLibBlurayWrapper::HandleBDEventQueue(bool pBroadcastEvents)
 {
   BD_EVENT ev;
   while (_bd_get_event(m_pBd, &ev)) 
   {
-    HandleBDEvent(ev);
+    HandleBDEvent(ev, pBroadcastEvents);
     if (ev.event == BD_EVENT_NONE || ev.event == BD_EVENT_ERROR)
       break;
   }
 }
 
-void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev)
+void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
 {
   LogEvent(ev, true);
   switch (ev.event)
@@ -637,11 +636,14 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev)
 
   UINT64 pos = _bd_tell_time(m_pBd);
 
-  ivecObservers it = m_eventObservers.begin();
-  while (it != m_eventObservers.end())
+  if (pBroadcastEvents)
   {
-    (*it)->HandleBDEvent(ev, pos);
-    ++it;
+    ivecObservers it = m_eventObservers.begin();
+    while (it != m_eventObservers.end())
+    {
+      (*it)->HandleBDEvent(ev, pos);
+      ++it;
+    }
   }
 }
 
