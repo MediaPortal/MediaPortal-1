@@ -30,6 +30,7 @@ using System.Windows.Forms;
 using Gentle.Framework;
 using TvDatabase;
 using TvControl;
+using TvLibrary.Log;
 using SetupTv.Dialogs;
 
 #endregion
@@ -193,6 +194,9 @@ namespace SetupTv.Sections
       numericUpDownMaxFreeCardsToTry.Value = ValueSanityCheck(
         Convert.ToInt32(layer.GetSetting("recordMaxFreeCardsToTry", "0").Value), 0, 100);
 
+      comboBoxWeekend.SelectedIndex = Convert.ToInt32(layer.GetSetting("FirstDayOfWeekend", "0").Value);
+      //default is Saturday=0
+
       checkBoxAutoDelete.Checked = (layer.GetSetting("autodeletewatchedrecordings", "no").Value == "yes");
       checkBoxPreventDupes.Checked = (layer.GetSetting("PreventDuplicates", "no").Value == "yes");
       comboBoxEpisodeKey.SelectedIndex = Convert.ToInt32(layer.GetSetting("EpisodeKey", "0").Value);
@@ -273,6 +277,10 @@ namespace SetupTv.Sections
       setting.Persist();
       setting = layer.GetSetting("seriesformatindex", "0");
       setting.Value = _formatIndex[1].ToString();
+      setting.Persist();
+
+      setting = layer.GetSetting("FirstDayOfWeekend", "0"); //default is Saturday=0
+      setting.Value = comboBoxWeekend.SelectedIndex.ToString();
       setting.Persist();
 
       setting = layer.GetSetting("autodeletewatchedrecordings", "no");
@@ -439,8 +447,18 @@ namespace SetupTv.Sections
       SaveSettings();
       if (_needRestart)
       {
-        RemoteControl.Instance.ClearCache();
-        RemoteControl.Instance.Restart();
+        if (MessageBox.Show(this, "Changes made require TvService to restart. Restart it now?", "TvService",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+        {
+          var dlgNotify = new NotifyForm("Restart TvService...", "This can take some time\n\nPlease be patient...");
+          dlgNotify.Show();
+          dlgNotify.WaitForDisplay();
+
+          RemoteControl.Instance.ClearCache();
+          RemoteControl.Instance.Restart();
+
+          dlgNotify.Close();
+        }
       }
     }
 
@@ -511,6 +529,12 @@ namespace SetupTv.Sections
       {
         LoadDbImportSettings();
       }
+    }
+
+    private void comboBoxWeekend_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      Log.Debug("Weekend Updated to : {0}", comboBoxWeekend.SelectedItem);
+      _needRestart = true;
     }
 
     #endregion
