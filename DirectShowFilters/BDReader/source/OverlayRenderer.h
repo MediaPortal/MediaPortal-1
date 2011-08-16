@@ -47,7 +47,12 @@ public:
 
 private:
   
+  void DecodePalette(const BD_OVERLAY* const ov);
+  void CloseOverlay(bool pIsMenuOpen);
+
   bool m_bIsMenuOpen;
+
+  uint32_t m_palette[PALETTE_SIZE];
 
   CLibBlurayWrapper* m_pLib;
   IDirect3DDevice9* m_pD3DDevice;

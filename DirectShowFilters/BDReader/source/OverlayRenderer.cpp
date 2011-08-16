@@ -51,21 +51,9 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 {
   bool bIsMenuOpen = m_bIsMenuOpen;
 
-  if (!ov || (ov && !ov->img))
+  if (!ov)
   {
-    OSDTexture nullTexture = {0};
-
-    TRACE_PERF("OverlayProc - clear overlay");
-    m_pLib->HandleOSDUpdate(nullTexture);
-    
-    bIsMenuOpen = false;
-
-    if (bIsMenuOpen != m_bIsMenuOpen)
-    {
-      m_pLib->HandleMenuStateChange(bIsMenuOpen);
-      m_bIsMenuOpen = bIsMenuOpen;
-    }
-
+    CloseOverlay(bIsMenuOpen);
     return;
   }
   else
@@ -73,52 +61,30 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
     TRACE_PERF("OverlayProc - %d %d %d %d plane:%d pts:%d", ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
   }
 
-  uint32_t color[PALETTE_SIZE];
+  if (ov->plane > 1) 
+  {
+    return;
+  }
 
   TRACE_PERF("OverlayProc - mark 1");
 
-  for (unsigned int i = 0; i < PALETTE_SIZE; i++) 
+  if (ov->palette)
   {
-    // Convert the palette to use RGB colors instead of YUV as converting palette is
-    // much faster than converting the whole bitmap.
-    int T = ov->palette[i].T;
-    int B = (int)(1.164 * (ov->palette[i].Y - 16) + 2.018 * (ov->palette[i].Cb - 128));
-    int G = (int)(1.164 * (ov->palette[i].Y - 16) - 0.813 * (ov->palette[i].Cr - 128) - 0.391 * (ov->palette[i].Cb - 128));
-    int R = (int)(1.164 * (ov->palette[i].Y - 16) + 1.596 * (ov->palette[i].Cr - 128));
-    if (B < 0) B = 0; if (B > 255) B = 255;
-    if (G < 0) G = 0; if (G > 255) G = 255;
-    if (R < 0) R = 0; if (R > 255) R = 255; 
-  
-    R = (R * T) / 255;
-    G = (G * T) / 255;
-    B = (B * T) / 255;
-    color[i] = R << 16 | G << 8 | B | T << 24;
+    DecodePalette(ov);
+  }
+
+  if (!ov->img)
+  {
+    // Clear the whole overlay area and close overlay
+    if (ov->x == 0 && ov->y == 0 && ov->w == 1920 && ov->h == 1080) 
+    {
+      // Nothing to display
+      CloseOverlay(bIsMenuOpen);
+      return;
+    }
   }
 
   TRACE_PERF("OverlayProc - mark 2");
-
-  /*
-  __asm
-  {
-    mov   edi, [img]
-    mov   esi, [rlep]
-    mov   edx, [pixels]
-  }
-  next_run:
-  __asm
-  {
-    lodsw
-    movzx	ecx, ax
-    xor   eax, eax
-    lodsw
-    sub   edx, ecx
-    mov   eax, [color+4*eax]
-    rep stosd
-    ja    next_run
-  }
-  */
-
-  TRACE_PERF("OverlayProc - mark 3");
 
   OSDTexture osdTexture;
   osdTexture.height = ov->h;
@@ -143,16 +109,29 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
         const BD_PG_RLE_ELEM* rlep = ov->img;
         unsigned pixels = ov->w * ov->h;
 
-        for (unsigned int i = 0; i < pixels; rlep++)
+        // Copy image data to the texture
+        if (ov->img)
         {
-          for (unsigned int j = rlep->len; j > 0; j--)
+          for (unsigned int i = 0; i < pixels; rlep++)
           {
-            if (i > 0 && i % ov->w == 0)
-              dst += lockedRect.Pitch / 4 - ov->w;
+            for (unsigned int j = rlep->len; j > 0; j--)
+            {
+              if (i > 0 && i % ov->w == 0)
+                dst += lockedRect.Pitch / 4 - ov->w;
 
-            *dst = color[rlep->color];
-            dst++;
-            i++;
+              *dst = m_palette[rlep->color];
+              dst++;
+              i++;
+            }
+          }
+        }
+        else 
+        {
+          // Clear part of the overlay
+          for (int i = 0; i < ov->h; i++)
+          {
+            memset(dst, 0x00, ov->w * 4); // D3DFMT_A8R8G8B8
+            dst += lockedRect.Pitch / 4;
           }
         }
 
@@ -169,14 +148,16 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
     }
   }
 
-  TRACE_PERF("OverlayProc - mark 4");
+  TRACE_PERF("OverlayProc - mark 3");
 
   m_pLib->HandleOSDUpdate(osdTexture);
 
-  TRACE_PERF("OverlayProc - mark 5");
+  TRACE_PERF("OverlayProc - mark 4");
 
   if (ov->plane == 1)
+  {
     bIsMenuOpen = true;
+  }
 
   if (bIsMenuOpen != m_bIsMenuOpen)
   {
@@ -185,6 +166,41 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
   }
 
   TRACE_PERF("OverlayProc end");
+}
+
+void COverlayRenderer::CloseOverlay(bool pIsMenuOpen)
+{
+  OSDTexture nullTexture = {0};
+
+  TRACE_PERF("ClearOverlay - clear overlay");
+  m_pLib->HandleOSDUpdate(nullTexture);
+    
+  if (pIsMenuOpen != m_bIsMenuOpen)
+  {
+    m_pLib->HandleMenuStateChange(false);
+    m_bIsMenuOpen = false;
+  }
+}
+
+void COverlayRenderer::DecodePalette(const BD_OVERLAY* const ov)
+{
+  for (unsigned int i = 0; i < PALETTE_SIZE; i++) 
+  {
+    // Convert the palette to use RGB colors instead of YUV as converting palette is
+    // much faster than converting the whole bitmap.
+    int T = ov->palette[i].T;
+    int B = (int)(1.164 * (ov->palette[i].Y - 16) + 2.018 * (ov->palette[i].Cb - 128));
+    int G = (int)(1.164 * (ov->palette[i].Y - 16) - 0.813 * (ov->palette[i].Cr - 128) - 0.391 * (ov->palette[i].Cb - 128));
+    int R = (int)(1.164 * (ov->palette[i].Y - 16) + 1.596 * (ov->palette[i].Cr - 128));
+    if (B < 0) B = 0; if (B > 255) B = 255;
+    if (G < 0) G = 0; if (G > 255) G = 255;
+    if (R < 0) R = 0; if (R > 255) R = 255; 
+  
+    R = (R * T) / 255;
+    G = (G * T) / 255;
+    B = (B * T) / 255;
+    m_palette[i] = R << 16 | G << 8 | B | T << 24;
+  }
 }
 
 bool COverlayRenderer::IsMenuOpen()
