@@ -1562,7 +1562,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   CPcr pts;
   CPcr dts;
 
-  if(!m_p)
+  if (!m_p)
   {
     m_p.Attach(new Packet());
     m_p->bDiscontinuity = false;
@@ -1570,7 +1570,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     m_p->nPlaylist = m_nPlaylist;
     m_p->nClipNumber = m_nClip;
     m_lastStart = 0;
-    m_bInBlock=false;
+    m_bInBlock = false;
   }
   
   if (header.PayloadUnitStart)
@@ -1584,9 +1584,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   
   if (headerlen < 188)
   {            
-    int dataLen = 188-headerlen;
+    int dataLen = 188 - headerlen;
     p->SetCount(dataLen);
-    p->SetData(&tsPacket[headerlen],dataLen);
+    p->SetData(&tsPacket[headerlen], dataLen);
 
     m_p->Append(*p);
   }
@@ -1595,7 +1595,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES;
+    int AvailablePESlength = m_p->GetCount() - m_WaitHeaderPES;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
@@ -1607,13 +1607,13 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
     {
       LogDebug("Pes 0-0-1 fail");
-      m_VideoValidPES=false;
+      m_VideoValidPES = false;
       m_p->rtStart = Packet::INVALID_TIME;
       m_WaitHeaderPES = -1;
     }   
     else
     {
-      if (AvailablePESlength < 9+start[8])
+      if (AvailablePESlength < 9 + start[8])
       {
         LogDebug("demux:vid Incomplete PES ( Avail %d/%d )", AvailablePESlength, AvailablePESlength+9+start[8]) ;    
         return;
@@ -1663,7 +1663,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     {
       if (((*(DWORD*)start & 0xFFFFFFFF) == 0xb3010000) || ((*(DWORD*)start & 0xFFFFFFFF) == 0x00010000))
       {
-        if(!m_bInBlock)
+        if (!m_bInBlock)
         {
           if (m_VideoPts.IsValid) m_CurrentVideoPts = m_VideoPts;
           m_VideoPts.IsValid = false;
@@ -1690,16 +1690,16 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       }
       else
       {
-        m_bInBlock=false ;
+        m_bInBlock = false;
         int size = next - start;
 
-        CAutoPtr<Packet> p2(new Packet());		
+        CAutoPtr<Packet> p2(new Packet());
         p2->SetCount(size);
-        memcpy (p2->GetData(), m_p->GetData(), size);
+        memcpy(p2->GetData(), m_p->GetData(), size);
         
         if (*(DWORD*)p2->GetData() == 0x00010000)     // picture_start_code ?
         {
-          BYTE *p = p2->GetData() ; 
+          BYTE* p = p2->GetData();
           char frame_type = tc[((p[5]>>3)&7)];                     // Extract frame type (IBP). Just info.
           int frame_count = (p[5]>>6)+(p[4]<<2);                   // Extract temporal frame count to rebuild timestamp ( if required )
 
@@ -1714,20 +1714,20 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         
           if (m_VideoValidPES)
           {
-            CAutoPtr<Packet> packet = m_pl.RemoveHead();
-            Packet* p = packet.Detach();
+            Packet* p = m_pl.RemoveHead().Detach();
 //            LogDebug("Output Type: %x %d", *(DWORD*)p->GetData(),p->GetCount());
     
             while(m_pl.GetCount())
             {
-              CAutoPtr<Packet> p2 = m_pl.RemoveHead();
+              p->Append(*m_pl.RemoveHead().Detach());
 //              LogDebug("Output Type: %x %d", *(DWORD*)p2->GetData(),p2->GetCount());
-              p->Append(*p2);
             }
 
 //            LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFrameRate,frame_type,frame_count);
     
-            if (m_filter.GetVideoPin()->IsConnected())
+           CheckVideoFormat(p);
+            
+           if (m_filter.GetVideoPin()->IsConnected())
             {
               if (m_CurrentVideoPts.IsValid)
               {                                                     // Timestamp Ok.
@@ -1757,22 +1757,20 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               m_playlistManager->SubmitVideoPacket(p);
             }
             m_CurrentVideoPts.IsValid = false;
-
-            CheckVideoFormat(p);
           }  
           m_VideoValidPES = true;                                    // We've just completed a frame, set flag until problem clears it 
-          m_pl.RemoveAll();                                        
+          m_pl.RemoveAll();
         }
         else                                                        // sequence_header_code
         {
-          m_curFrameRate = frame_rate[*(p2->GetData()+7) & 0x0F] ;  // Extract frame rate in seconds.
+          m_curFrameRate = frame_rate[*(p2->GetData()+7) & 0x0F];   // Extract frame rate in seconds.
    	      m_pl.AddTail(p2);                                         // Add sequence header.
    	    }
       
         start = next;
         m_lastStart = start - m_p->GetData() + 1;
       }
-      if(start > m_p->GetData())
+      if (start > m_p->GetData())
       {
         m_lastStart -= (start - m_p->GetData());
         m_p->RemoveAt(0, start - m_p->GetData());
