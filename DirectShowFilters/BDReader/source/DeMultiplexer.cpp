@@ -885,8 +885,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
         correctedPts.IsValid = true;
 
-//          LogDebug("demux: aud last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-//            m_lastAudioPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nAudioClip, m_nAudioPl);
+#ifdef LOG_DEMUXER_AUDIO_SAMPLES
+          LogDebug("demux: aud last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
+            m_lastAudioPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+#endif
 
         m_lastAudioPTS = pts;
         m_pCurrentAudioBuffer->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
@@ -1450,7 +1452,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   
   if (header.PayloadUnitStart)
   {
-    //LogDebug("demux::FillVideoH264 PayLoad Unit Start");
+#ifdef LOG_DEMUXER_VIDEO_SAMPLES    
+    LogDebug("demux: FillVideoH264 PayLoad Unit Start");
+#endif
+    
     m_WaitHeaderPES = m_pBuild->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
 
@@ -1522,8 +1527,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
           correctedPts.IsValid = true;
 
-//          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
-
+#ifdef LOG_DEMUXER_VIDEO_SAMPLES
+          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
+            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+#endif
           m_lastVideoPTS = pts;
           //pts = correctedPts;
         }
@@ -1577,7 +1584,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   {
     m_WaitHeaderPES = m_p->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
-    //LogDebug("demux::FillVideo PayLoad Unit Start");
+
+#ifdef LOG_DEMUXER_VIDEO_SAMPLES
+    LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
+#endif
   }
   
   CAutoPtr<Packet> p(new Packet());
@@ -1630,8 +1640,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
           correctedPts.IsValid = true;
 
-//          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-//            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+#ifdef LOG_DEMUXER_VIDEO_SAMPLES
+          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
+            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+#endif
 
           m_lastVideoPTS = pts;
           m_VideoPts = pts;
@@ -1659,7 +1671,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     // 000001B3 sequence_header_code
     // 00000100 picture_start_code
 
-    while(start <= end-4)
+    while(start <= end - 4)
     {
       if (((*(DWORD*)start & 0xFFFFFFFF) == 0xb3010000) || ((*(DWORD*)start & 0xFFFFFFFF) == 0x00010000))
       {
@@ -1674,7 +1686,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       start++;
     }
 
-    if(start <= end - 4)
+    if (start <= end - 4)
     {
       BYTE* next = start + 1;
       if (next < m_p->GetData() + m_lastStart)
@@ -1684,7 +1696,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
       while(next <= end - 4 && ((*(DWORD*)next & 0xFFFFFFFF) != 0xb3010000) && ((*(DWORD*)next & 0xFFFFFFFF) != 0x00010000)) next++;
 
-      if(next >= end - 4)
+      if (next >= end - 4)
       {
         m_lastStart = next - m_p->GetData();
       }
@@ -1816,8 +1828,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       CRefTime refTime = -m_rtOffset * 1000 / 9;
       refTime -= m_filter.m_rtCompensation.m_time;
         
-      LogDebug("demux: Set subtitle compensation %03.3f (overal comp: %03.3f)", 
-        refTime.Millisecs() / 1000.0f, m_filter.m_rtCompensation.m_time / 10000000.0f);
+      LogDebug("demux: Set subtitle compensation %03.3f", refTime.Millisecs() / 1000.0f);
       pDVBSubtitleFilter->SetTimeCompensation(refTime);
     }    
   }
