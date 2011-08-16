@@ -37,6 +37,7 @@ Packet::Packet()
     bDiscontinuity = false;
     bSyncPoint = false;
     bAppendable = false;
+    bSeekRequired = false;
     rtStart = -100;
     rtStop = -100;
     pmt = NULL;

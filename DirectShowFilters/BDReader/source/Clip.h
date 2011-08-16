@@ -35,7 +35,7 @@ using namespace std;
 class CClip
 {
 public:
-  CClip(int clipNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration);
+  CClip(int clipNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded);
   ~CClip(void);
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
@@ -72,6 +72,7 @@ protected:
 
   bool firstAudio;
   bool firstVideo;
+  bool bSeekNeeded;
 
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
 };

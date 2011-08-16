@@ -233,8 +233,10 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
 bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration)
 {
   bool ret = true;
+  bool bSeekNeeded=false;
   if (m_vecClips.size() && m_vecClips.back()->nClip == clipNumber) return false;
-  m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration));
+  if (m_vecClips.size() && m_vecClips.back()->nClip + 1 != clipNumber ) bSeekNeeded = true;
+  m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration, bSeekNeeded));
   if (m_currentAudioPlayBackClip==NULL)
   {
     // initialise
@@ -286,6 +288,7 @@ void CPlaylist::SetFilledAudio()
 
 REFERENCE_TIME CPlaylist::GetPacketTimeStampCorrection(CClip * packetClip)
 {
+//  LogDebug("Correcting timestamp by %I64d - %I64d",packetClip->clipPlaylistOffset, firstPESTimeStamp);
   return packetClip->clipPlaylistOffset - firstPESTimeStamp;
 }
 

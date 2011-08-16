@@ -33,7 +33,7 @@
 
 extern void LogDebug(const char *fmt, ...);
 
-CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration)
+CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded)
 {
   playlistFirstPacketTime=firstPacketTime;
   lastVideoPosition=playlistFirstPacketTime;
@@ -48,6 +48,11 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   clipPlaylistOffset=clipOffset;
   firstAudio=true;
   firstVideo=true;
+  bSeekNeeded = seekNeeded;
+  if (bSeekNeeded)
+  {
+    clipPlaylistOffset = 0;
+  }
 }
 
 
@@ -191,6 +196,8 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
   if (forced)
   {
     packet->nClipNumber=nClip;
+    packet->bSeekRequired = bSeekNeeded;
+    bSeekNeeded = false;
     m_vecClipVideoPackets.push_back(packet);
     lastVideoPosition=packet->rtStart;
     return true;
@@ -205,6 +212,8 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
       {
         //belongs to this playlist
         packet->nClipNumber=nClip;
+        packet->bSeekRequired = bSeekNeeded;
+        bSeekNeeded = false;
         m_vecClipVideoPackets.push_back(packet);
         lastVideoPosition=packet->rtStart;
         ret=true;

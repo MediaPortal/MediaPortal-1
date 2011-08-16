@@ -34,7 +34,7 @@ public:
 
   INT32 nClipNumber;
   INT32 nPlaylist;
-  bool bDiscontinuity, bSyncPoint, bAppendable;  
+  bool bDiscontinuity, bSyncPoint, bAppendable, bSeekRequired;  
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
   REFERENCE_TIME rtStart, rtStop;
   AM_MEDIA_TYPE* pmt;
