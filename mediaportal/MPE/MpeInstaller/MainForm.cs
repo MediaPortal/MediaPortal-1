@@ -88,7 +88,8 @@ namespace MpeInstaller
           PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
           if (pc == null) return;
 
-          pc.UnInstall();
+          UnInstall dlg = new UnInstall();
+          dlg.Execute(pc, args.Silent);
 
           return;
         }

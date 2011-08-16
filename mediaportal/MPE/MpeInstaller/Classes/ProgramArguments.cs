@@ -52,7 +52,7 @@ namespace MpeInstaller.Classes
         if (s.StartsWith("/Uninstall="))
         {
           UninstallPackage = true;
-          PackageID = s.Substring(8).Replace("\"", "");
+          PackageID = s.Substring(11).Replace("\"", "");
         }
       }
     }
