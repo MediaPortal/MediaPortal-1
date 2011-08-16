@@ -31,8 +31,8 @@
 #include <map>
 
 //#define LOG_PIN_SAMPLES
-#define LOG_DEMUXER_AUDIO_SAMPLES
-#define LOG_DEMUXER_VIDEO_SAMPLES
+//#define LOG_DEMUXER_AUDIO_SAMPLES
+//#define LOG_DEMUXER_VIDEO_SAMPLES
 
 using namespace std;
 
