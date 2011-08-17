@@ -50,7 +50,7 @@ CPlaylistManager::~CPlaylistManager(void)
   }
 }
 
-bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration)
+bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audioPresent, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffsetTime, REFERENCE_TIME duration, bool discontinuousClip)
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
@@ -60,7 +60,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     //first playlist
     CPlaylist * firstPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration);
+    firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, false);
     m_vecPlaylists.push_back(firstPlaylist);
     m_currentAudioPlayBackPlaylist=m_currentVideoPlayBackPlaylist=m_currentAudioSubmissionPlaylist=m_currentVideoSubmissionPlaylist=firstPlaylist;
 
@@ -69,13 +69,13 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     //new clip in existing playlist
     CPlaylist * existingPlaylist = m_vecPlaylists.back();
-    existingPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration);
+    existingPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, discontinuousClip);
   }
   else
   {
     //completely new playlist
     CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration);
+    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, false);
     m_vecPlaylists.push_back(newPlaylist);
   }
   

@@ -51,7 +51,7 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   bSeekNeeded = seekNeeded;
   if (bSeekNeeded)
   {
-    clipPlaylistOffset = 0;
+    clipPlaylistOffset = firstPacketTime;
   }
 }
 

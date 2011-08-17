@@ -34,7 +34,7 @@ public:
   Packet* ReturnNextAudioPacket();
   Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
-  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration);
+  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip);
   bool AcceptAudioPacket(Packet*  packet, bool forced);
   bool AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced);
   void FlushAudio();

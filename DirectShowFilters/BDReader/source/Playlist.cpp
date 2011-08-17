@@ -230,13 +230,11 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
   return ret;
 }
 
-bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration)
+bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip)
 {
   bool ret = true;
-  bool bSeekNeeded=false;
   if (m_vecClips.size() && m_vecClips.back()->nClip == clipNumber) return false;
-  if (m_vecClips.size() && m_vecClips.back()->nClip + 1 != clipNumber ) bSeekNeeded = true;
-  m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration, bSeekNeeded));
+  m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration, discontinuousClip));
   if (m_currentAudioPlayBackClip==NULL)
   {
     // initialise

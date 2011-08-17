@@ -99,6 +99,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_nActiveAudioPlaylist = -1;
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch=1;
+  m_bDiscontinuousClip=false;
 
   m_videoServiceType = -1;
 }
@@ -735,6 +736,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
+      m_bDiscontinuousClip=true;
       // TODO: check this
       //ResetStream();
       break;
@@ -773,8 +775,8 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
         bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, 
-          CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration));
-
+          CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
+        m_bDiscontinuousClip=false;
         if (interrupted)
         {
           LogDebug("demux: current clip was interrupted - triggering flush");
