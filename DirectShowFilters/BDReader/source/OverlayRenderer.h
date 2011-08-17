@@ -48,7 +48,7 @@ public:
 private:
   
   void DecodePalette(const BD_OVERLAY* const ov);
-  void CloseOverlay(bool pIsMenuOpen);
+  void CloseOverlay();
 
   bool m_bIsMenuOpen;
 

@@ -53,7 +53,7 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 
   if (!ov)
   {
-    CloseOverlay(bIsMenuOpen);
+    CloseOverlay();
     return;
   }
   else
@@ -79,7 +79,7 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
     if (ov->x == 0 && ov->y == 0 && ov->w == 1920 && ov->h == 1080) 
     {
       // Nothing to display
-      CloseOverlay(bIsMenuOpen);
+      CloseOverlay();
       return;
     }
   }
@@ -168,14 +168,14 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
   TRACE_PERF("OverlayProc end");
 }
 
-void COverlayRenderer::CloseOverlay(bool pIsMenuOpen)
+void COverlayRenderer::CloseOverlay()
 {
   OSDTexture nullTexture = {0};
 
   TRACE_PERF("ClearOverlay - clear overlay");
   m_pLib->HandleOSDUpdate(nullTexture);
     
-  if (pIsMenuOpen != m_bIsMenuOpen)
+  if (m_bIsMenuOpen)
   {
     m_pLib->HandleMenuStateChange(false);
     m_bIsMenuOpen = false;
