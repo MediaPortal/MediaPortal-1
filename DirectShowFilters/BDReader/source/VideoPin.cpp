@@ -413,7 +413,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
       if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
       {
-        LogDebug("vid: Playlist changed from %d To %d", m_nPrevPl, buffer->nPlaylist);
+        LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
         buffer->bSeekRequired = false;
         m_nPrevPl = buffer->nPlaylist;
 
@@ -550,7 +550,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           pSample->GetPointer(&pSampleBuffer);
           memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
-#ifdef LOG_PIN_SAMPLES
+#ifdef LOG_VIDEO_PIN_SAMPLES
           LogDebug("vid: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
 #endif
 

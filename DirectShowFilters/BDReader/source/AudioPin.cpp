@@ -355,7 +355,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           //pSample->SetSyncPoint(buffer->bSyncPoint); 
 
           ProcessAudioSample(buffer, pSample);
-#ifdef LOG_PIN_SAMPLES
+#ifdef LOG_AUDIO_PIN_SAMPLES
           LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
 #endif
           delete buffer;
