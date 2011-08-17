@@ -645,11 +645,11 @@ HRESULT CDeMultiplexer::Start()
   while((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
     int BytesRead = ReadFromFile(false, false);
-    if (BytesRead == 0) Sleep(10);
-    if (dwBytesProcessed > INITIAL_READ_SIZE || GetAudioStreamCount() > 0)
+
+    if (dwBytesProcessed > INITIAL_READ_SIZE || GetAudioStreamCount() > 0 || BytesRead == 0)
     {
-      if ((!m_mpegPesParser->basicVideoInfo.isValid &&  m_pids.videoPids.size() > 0 && 
-        m_pids.videoPids[0].Pid > 1) && dwBytesProcessed < INITIAL_READ_SIZE)
+      if ((!m_mpegPesParser->basicVideoInfo.isValid &&  
+            m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1))
       {
         dwBytesProcessed += BytesRead;
         continue;
@@ -1841,7 +1841,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   {
     if (header.PayloadUnitStart)
     {
-      m_subtitlePcr = m_streamPcr;
+      m_subtitlePcr = m_streamPcr; // TODO - remove both and decode the subtitle PTS from PES header
     }
     if (m_vecSubtitleBuffers.size() > MAX_BUF_SIZE)
     {
