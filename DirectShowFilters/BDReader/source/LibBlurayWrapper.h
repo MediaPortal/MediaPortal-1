@@ -57,6 +57,7 @@ typedef void (__cdecl *API_bd_close)(BLURAY *);
 typedef int64_t (__cdecl *API_bd_seek)(BLURAY *, uint64_t);
 typedef int64_t (__cdecl *API_bd_seek_time)(BLURAY *, uint64_t);
 typedef int (__cdecl *API_bd_read)(BLURAY *, unsigned char *, int);
+typedef int (__cdecl *API_bd_read_skip_still)(BLURAY *);
 typedef int64_t (__cdecl *API_bd_seek_chapter)(BLURAY *, unsigned);
 typedef int64_t (__cdecl *API_bd_chapter_pos)(BLURAY *, unsigned);
 typedef uint32_t (__cdecl *API_bd_get_current_chapter)(BLURAY *);
@@ -106,6 +107,7 @@ public:
   bool GetChapter(UINT32* pChapter);
   bool Play();
   int Read(unsigned char* pData, int pSize, bool& pPause, bool pIgnoreEvents);
+  bool SkipStillTime();
   void SetState(FILTER_STATE newState);
   void SetEventObserver(BDEventObserver* pObserver);
   void RemoveEventObserver(BDEventObserver* pObserver);
@@ -183,6 +185,7 @@ private:
   API_bd_seek _bd_seek;
   API_bd_seek_time _bd_seek_time;
   API_bd_read _bd_read;
+  API_bd_read_skip_still _bd_read_skip_still;
   API_bd_seek_chapter _bd_seek_chapter;
   API_bd_chapter_pos _bd_chapter_pos;
   API_bd_get_current_chapter _bd_get_current_chapter;

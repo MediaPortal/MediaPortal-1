@@ -62,6 +62,7 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_seek(NULL),
   _bd_seek_time(NULL),
   _bd_read(NULL),
+  _bd_read_skip_still(NULL),
   _bd_seek_chapter(NULL),
   _bd_chapter_pos(NULL),
   _bd_get_current_chapter(NULL),
@@ -150,6 +151,7 @@ bool CLibBlurayWrapper::Initialize()
   _bd_seek = (API_bd_seek)GetProcAddress(m_hDLL, "bd_seek");
   _bd_seek_time = (API_bd_seek_time)GetProcAddress(m_hDLL, "bd_seek_time");
   _bd_read = (API_bd_read)GetProcAddress(m_hDLL, "bd_read");
+  _bd_read_skip_still = (API_bd_read_skip_still)GetProcAddress(m_hDLL, "bd_read_skip_still");
   _bd_seek_chapter = (API_bd_seek_chapter)GetProcAddress(m_hDLL, "bd_seek_chapter");
   _bd_chapter_pos = (API_bd_chapter_pos)GetProcAddress(m_hDLL, "bd_chapter_pos");
   _bd_get_current_chapter = (API_bd_get_current_chapter)GetProcAddress(m_hDLL, "bd_get_current_chapter");
@@ -190,6 +192,7 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_seek ||
       !_bd_seek_time ||
       !_bd_read ||
+      !_bd_read_skip_still ||
       !_bd_seek_chapter ||
       !_bd_chapter_pos ||
       !_bd_get_current_chapter ||
@@ -499,6 +502,19 @@ int CLibBlurayWrapper::Read(unsigned char* pData, int pSize, bool& pPause, bool 
   }
 
   return readBytes;
+}
+
+bool CLibBlurayWrapper::SkipStillTime()
+{
+  CAutoLock cLibLock(&m_csLibLock);
+  
+  bool ret = false;
+  if (m_pBd)
+  {
+    ret = _bd_read_skip_still(m_pBd) ? true : false;
+  }
+
+  return ret;
 }
 
 void CLibBlurayWrapper::Seek(UINT64 pPos)
