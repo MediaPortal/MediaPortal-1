@@ -139,6 +139,8 @@ private:
   void HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents);
   void UpdateTitleInfo();
 
+  void StillMode(unsigned int pSeconds);
+
   HMODULE m_hDLL;
 
   BLURAY* m_pBd;
@@ -174,6 +176,10 @@ private:
   FILTER_STATE m_state;
   bool m_bStopping;
   bool m_bStopReading;
+
+  bool m_bStillModeOn;
+
+  DWORD m_nStillEndTime;
 
   // libbluray API function pointers from DLL
   API_bd_get_titles _bd_get_titles;

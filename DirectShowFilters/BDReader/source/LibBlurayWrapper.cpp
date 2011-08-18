@@ -47,6 +47,8 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   m_bForceTitleBasedPlayback(false),
   m_bStopping(false),
   m_bStopReading(false),
+  m_bStillModeOn(false),
+  m_nStillEndTime(0),
   m_settingRegionCode(0),
   m_settingParentalControl(NULL),
   m_settingAudioLang(NULL),
@@ -602,21 +604,18 @@ void CLibBlurayWrapper::HandleBDEvent(BD_EVENT& ev, bool pBroadcastEvents)
   switch (ev.event)
   {
     case BD_EVENT_SEEK:
+      m_bStillModeOn = false;
+      m_nStillEndTime = 0;
       break;
 
     case BD_EVENT_STILL_TIME:
-      if (ev.param == 0)
-      {
-        Sleep(50);
-        m_bStopReading = true;
-      }
-      else
-      {
-        // TODO
-      }
+      StillMode(ev.param);
+      m_bStopReading = true;
       break;
 
     case BD_EVENT_STILL:
+      // TODO - check if it would be good to pause the graph (at least pl's duration would be correct)
+      m_bStillModeOn = ev.param ? true : false;
       break;
 
     case BD_EVENT_ANGLE:
@@ -781,6 +780,30 @@ bool CLibBlurayWrapper::OpenMenu(INT64 pPts)
   }
 }
 
+void CLibBlurayWrapper::StillMode(unsigned pSeconds)
+{
+  if (m_nStillEndTime > 0) 
+  {
+    if (GetTickCount() / 1000 >= m_nStillEndTime) 
+    {
+      LogDebug("Still image ends");
+      m_nStillEndTime = 0;
+      _bd_read_skip_still(m_pBd);
+      return;
+    }
+  }
+  else if (pSeconds > 0) 
+  {
+    if (pSeconds > 300) 
+    {
+      pSeconds = 300;
+    }
+
+    LogDebug("Still image, pause for %d seconds", pSeconds);
+    m_nStillEndTime = GetTickCount() / 1000 + pSeconds;
+  }
+}
+
 void CLibBlurayWrapper::ForceTitleBasedPlayback(bool pForce)
 {
   m_bForceTitleBasedPlayback = pForce;
@@ -908,10 +931,13 @@ void CLibBlurayWrapper::LogEvent(const BD_EVENT& pEvent, bool pIgnoreNoneEvent)
     LogDebug("    BD_EVENT_SEEK - %d", pEvent.param);
     break;
   case BD_EVENT_STILL:
-    LogDebug("    BD_EVENT_STILL - %d", pEvent.param);
+    if (m_bStillModeOn && pEvent.param == 0)
+      LogDebug("    BD_EVENT_STILL - off");
+    if (!m_bStillModeOn && pEvent.param == 1)
+      LogDebug("    BD_EVENT_STILL - on");
     break;
   case BD_EVENT_STILL_TIME:
-    LogDebug("    BD_EVENT_STILL_TIME - %d", pEvent.param);
+    //LogDebug("    BD_EVENT_STILL_TIME - %d", pEvent.param);
     break;
   default:
     LogDebug("    ERROR - no event!");
