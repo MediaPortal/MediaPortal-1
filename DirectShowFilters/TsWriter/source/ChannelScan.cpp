@@ -247,7 +247,7 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     *type=1;
     return 0;
   }
-  if (m_nit.m_nit.cableNIT.size()>0)
+  if (m_nit.m_nit.terrestialNIT.size()>0)
   {
     if (channel<0 || channel >=m_nit.m_nit.terrestialNIT.size()) return 0;
     NITTerrestrialDescriptor& des = m_nit.m_nit.terrestialNIT[channel];
