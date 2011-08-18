@@ -958,6 +958,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       {
         m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
       }
+      else
+      {
+        delete m_pCurrentAudioBuffer;
+      }
       m_pCurrentAudioBuffer = NULL;
       m_nAudioPesLenght = 0;
     }
@@ -1062,7 +1066,7 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
   if (p->rtStart != Packet::INVALID_TIME)
   {
     timestamp.PcrReferenceBase = CONVERT_DS_90KHz(p->rtStart);
-    timestamp.IsValid=true;
+    timestamp.IsValid = true;
   }
     
   if (m_filter.GetVideoPin()->IsConnected())
@@ -1082,11 +1086,17 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
     {
       m_playlistManager->SubmitVideoPacket(p);
     }
+    else
+    {
+      delete p;
+      p = NULL;
+    }
   }
   else
   {
     CheckVideoFormat(p);
     delete p;
+    p = NULL;
   }
 }
 
@@ -1758,6 +1768,11 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               if (!m_bStarting)
               {
                 m_playlistManager->SubmitVideoPacket(p);
+              }
+              else
+              {
+                delete p;
+                p = NULL;
               }
             }
             m_CurrentVideoPts.IsValid = false;
