@@ -657,7 +657,6 @@ HRESULT CDeMultiplexer::Start()
       // Seek to start - reset the libbluray reading position
       m_filter.lib.Seek(0);
       Flush();
-      m_streamPcr.Reset();
       m_bStarting = false;
 
       CMediaType pmt;
@@ -672,7 +671,6 @@ HRESULT CDeMultiplexer::Start()
     dwBytesProcessed += BytesRead;
   }
   
-  m_streamPcr.Reset();
   m_bStarting = false;
 
   Flush();
@@ -819,23 +817,6 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (header.TScrambling) return;
   if (header.TransportError) return;
 
-  if (header.Pid == m_pids.PcrPid)
-  {
-    CAdaptionField field;
-    field.Decode(header,tsPacket);
-    if (field.Pcr.IsValid)
-    {
-      // Then update our stream pcr which holds the current playback timestamp
-      m_streamPcr = field.Pcr;
-    }
-  }
-
-  // As long as we dont have a stream pcr timestamp we return
-  if (m_streamPcr.IsValid == false)
-  {
-    return;
-  }
-
   FillSubtitle(header, tsPacket);
   FillAudio(header, tsPacket);
   FillVideo(header, tsPacket);
@@ -862,7 +843,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   CAutoLock lock (&m_sectionAudio);
   if (header.PayloadUnitStart)
   {
-
     byte* p = tsPacket + header.PayLoadStart;
     if ((p[0] == 0) && (p[1] == 0) && (p[2] == 1))
     {
@@ -1839,10 +1819,6 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   CAutoLock lock (&m_sectionSubtitle);
   if (!header.AdaptionFieldOnly())
   {
-    if (header.PayloadUnitStart)
-    {
-      m_subtitlePcr = m_streamPcr; // TODO - remove both and decode the subtitle PTS from PES header
-    }
     if (m_vecSubtitleBuffers.size() > MAX_BUF_SIZE)
     {
       ivecSBuffers it = m_vecSubtitleBuffers.begin();
@@ -1851,7 +1827,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       m_vecSubtitleBuffers.erase(it);
     }
 
-    m_pCurrentSubtitleBuffer->rtStart = CONVERT_90KHz_DS(m_subtitlePcr.PcrReferenceBase);
+    m_pCurrentSubtitleBuffer->rtStart = 0;
     m_pCurrentSubtitleBuffer->SetCount(m_pCurrentSubtitleBuffer->GetDataSize() + 188);
     memcpy(m_pCurrentSubtitleBuffer->GetData() + m_pCurrentSubtitleBuffer->GetDataSize() - 188, tsPacket, 188);
 

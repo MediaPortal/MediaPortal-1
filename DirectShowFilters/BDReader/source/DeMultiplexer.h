@@ -192,7 +192,6 @@ private:
   Packet* m_pCurrentVideoBuffer;
   Packet* m_pCurrentAudioBuffer;
 
-  CPcr m_streamPcr;
   CPcr m_lastVideoPTS;
   CPcr m_lastAudioPTS;
   CBDReaderFilter& m_filter;
@@ -227,7 +226,6 @@ private:
   bool m_bDoDelayedRebuild;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
-  CPcr m_subtitlePcr;
 
   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 

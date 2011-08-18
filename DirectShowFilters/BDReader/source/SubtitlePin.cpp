@@ -62,12 +62,10 @@ CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT *ph
 
 CSubtitlePin::~CSubtitlePin()
 {
-  LogDebug("sub pin:dtor()");
 }
 
 bool CSubtitlePin::IsConnected()
 {
-  //LogDebug("CSubtitlePin connected? %i",m_bConnected);
   return m_bConnected;
 }
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
@@ -159,7 +157,6 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
 
   if (SUCCEEDED(hr))
   {
-    LogDebug("pin:CompleteConnect() done");
     m_bConnected = true;
   }
   else
@@ -196,28 +193,26 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       {
         //LogDebug("sub:isseeking:%d %d",m_pFilter->IsSeeking() ,m_bSeeking);
         Sleep(20);
-        pSample->SetTime(NULL,NULL);
+        pSample->SetTime(NULL, NULL);
         pSample->SetActualDataLength(0);
-        pSample->SetSyncPoint(FALSE);
-        pSample->SetDiscontinuity(FALSE);  // TRUE seems to hold sometimes the working thread....( ambass )
+        pSample->SetSyncPoint(false);
+        pSample->SetDiscontinuity(false);
         m_bInFillBuffer = false;
         return NOERROR;
       }
 
-      // Get next buffer from demultiplexer
       {
         CAutoLock lock(&m_bufferLock);
         buffer = demux.GetSubtitle();
       }
 
-      //did we reach the end of the file
       if (demux.EndOfFile())
       {
-        LogDebug("sub:set eof");
+        LogDebug("sub: Set EOF");
         pSample->SetTime(NULL, NULL);
         pSample->SetActualDataLength(0);
-        pSample->SetSyncPoint(FALSE);
-        pSample->SetDiscontinuity(TRUE);
+        pSample->SetSyncPoint(false);
+        pSample->SetDiscontinuity(true);
         m_bInFillBuffer = false;
         return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
       }
@@ -229,56 +224,21 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        REFERENCE_TIME cRefTimeStart, cRefTimeStop;
-        bool hasTimestamp = buffer->rtStart!=Packet::INVALID_TIME;
-
-        if (hasTimestamp)
-         {
-          cRefTimeStart = buffer->rtStart;
-          cRefTimeStart -= m_rtStart;
-          cRefTimeStop = buffer->rtStop;
-          cRefTimeStop -= m_rtStart;
-
-          if (cRefTimeStart >= 0)
-          {
-            m_bPresentSample = true;
-          }
-          else
-            //  Sample is too late.
-            m_bPresentSample = false;              
-        }
-
-        if (m_bPresentSample)
+        if (m_bDiscontinuity || buffer->bDiscontinuity)
         {
-          if (m_bDiscontinuity || buffer->bDiscontinuity)
-          {
-            LogDebug("vid:set discontinuity");
-            pSample->SetDiscontinuity(TRUE);
-            m_bDiscontinuity = FALSE;
-          }
+          LogDebug("sub: Set discontinuity");
+          pSample->SetDiscontinuity(TRUE);
+          m_bDiscontinuity = FALSE;
+        }
 
-          if (hasTimestamp)
-          {
-            pSample->SetSyncPoint(TRUE);
-            pSample->SetTime(&cRefTimeStart, &cRefTimeStop);
-          }
-          else
-          {
-            pSample->SetTime(NULL, NULL);
-            pSample->SetSyncPoint(FALSE);
-          }
-          BYTE* pSampleBuffer;
-          pSample->SetActualDataLength(buffer->GetDataSize());
-          pSample->GetPointer(&pSampleBuffer);
-          memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
-          //delete the buffer and return
-          delete buffer;
-        }
-        else
-        { // Buffer was not displayed because it was out of date, search for next.
-          delete buffer;
-          buffer = NULL;
-        }
+        pSample->SetTime(NULL, NULL);
+        pSample->SetSyncPoint(FALSE);
+        BYTE* pSampleBuffer;
+        pSample->SetActualDataLength(buffer->GetDataSize());
+        pSample->GetPointer(&pSampleBuffer);
+        memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+
+        delete buffer;
       }
       m_bInFillBuffer = false;
     } while (buffer == NULL);
@@ -286,7 +246,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
   }
   catch(...)
   {
-    LogDebug("sub:fillbuffer exception");
+    LogDebug("sub: Fillbuffer exception");
   }
 
   m_bInFillBuffer = false;
@@ -318,7 +278,7 @@ HRESULT CSubtitlePin::OnThreadStartPlay()
 //  if (m_pFilter->GetVideoPin()->IsConnected())
 //    while(demux.IsMediaChanging() && !m_pFilter->m_bStopping) Sleep(5);
 
-  LogDebug("sub:OnThreadStartPlay(%f)", fStart);
+  LogDebug("sub: OnThreadStartPlay(%f)", fStart);
 
   //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
