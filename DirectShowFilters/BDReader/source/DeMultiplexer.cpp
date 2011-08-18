@@ -769,7 +769,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         }
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-        m_videoServiceType = clip->video_streams->coding_type;
         if (clip)
         {
           m_videoServiceType = clip->video_streams->coding_type;   
