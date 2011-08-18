@@ -532,7 +532,6 @@ void CDeMultiplexer::Flush()
   Reset(); // PacketSync reset. 
 
   m_playlistManager->ClearAllButCurrentClip(true);
-  m_filter.m_bStreamCompensated = false;
 
   SetHoldAudio(false);
   SetHoldVideo(false);
@@ -1823,12 +1822,11 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       }
     }
 
-    if (m_bUpdateSubtitleOffset && m_filter.m_bStreamCompensated)
+    if (m_bUpdateSubtitleOffset)
     {
       m_bUpdateSubtitleOffset = false;
 
       CRefTime refTime = -m_rtOffset * 1000 / 9;
-      refTime -= m_filter.m_rtCompensation.m_time;
         
       LogDebug("demux: Set subtitle compensation %03.3f", refTime.Millisecs() / 1000.0f);
       pDVBSubtitleFilter->SetTimeCompensation(refTime);

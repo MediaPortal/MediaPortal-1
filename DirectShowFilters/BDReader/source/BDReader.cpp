@@ -198,7 +198,6 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bForceSeekOnStop = false;
   m_bForceSeekAfterRateChange = false;
   m_bSeekAfterRcDone = false;
-  m_bStreamCompensated = false;
   m_MPmainThreadID = GetCurrentThreadId();
 
   lib.Initialize();

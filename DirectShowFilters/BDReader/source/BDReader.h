@@ -192,9 +192,6 @@ public:
   bool            m_bForceSeekAfterRateChange;
   bool            m_bSeekAfterRcDone;
 
-  bool            m_bStreamCompensated;
-  CRefTime        m_rtCompensation;
-
 private:
 
   struct DS_CMD

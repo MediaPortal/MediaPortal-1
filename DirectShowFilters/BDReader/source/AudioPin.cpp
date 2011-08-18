@@ -232,8 +232,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
 //        JoinAudioBuffers(buffer, &demux);
         
-        m_pFilter->m_bStreamCompensated = true; // fake, remove whole m_bStreamCompensated at some point
-
         if (demux.m_nActiveAudioPlaylist == -1)
         {
           demux.m_nActiveAudioPlaylist = m_nPrevPl = buffer->nPlaylist;
