@@ -701,6 +701,7 @@ namespace MediaPortal.GUI.Music
           string duration = Util.Utils.SecondsToHMSString(tag.Duration);
           pItem.Label = string.Format("{0} - {1}", tag.Artist, tag.Title);
           pItem.Label2 = duration;
+          pItem.MusicTag = pi.MusicTag;
         }
 
         pItem.Path = pi.FileName;
@@ -719,6 +720,7 @@ namespace MediaPortal.GUI.Music
         Util.Utils.SetDefaultIcons(pItem);
 
         pItem.OnRetrieveArt += new GUIListItem.RetrieveCoverArtHandler(OnRetrieveCoverArt);
+        pItem.OnItemSelected += new GUIListItem.ItemSelectedHandler(item_OnItemSelected);
 
         facadeLayout.Add(pItem);
       }
