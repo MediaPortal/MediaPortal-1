@@ -642,18 +642,6 @@ HRESULT CDeMultiplexer::Start()
   const DWORD readTimeout = 5000;
 #endif
 
-  BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-  if (clip)
-  {
-    m_videoServiceType = clip->video_streams->coding_type;   
-  }
-  else
-  {
-    LogDebug("demux: Start - failed to get clip info!");
-    m_bStarting = false;
-    return S_FALSE;
-  }
-
   while((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
     int BytesRead = ReadFromFile(false, false);
@@ -714,7 +702,7 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   int dwReadBytes = 0;
   bool pause = false;
 
-  dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, m_bStarting);
+  dwReadBytes = m_filter.lib.Read(m_readBuffer, sizeof(m_readBuffer), pause, false);
 
   if (dwReadBytes > 0)
   {
@@ -782,12 +770,22 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
         m_videoServiceType = clip->video_streams->coding_type;
+        if (clip)
+        {
+          m_videoServiceType = clip->video_streams->coding_type;   
+        }
+        else
+        {
+          LogDebug("demux: HandleBDEvent - failed to get clip info!");
+          return;
+        }
 
         REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
         bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, 
           CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
-        m_bDiscontinuousClip=false;
+        m_bDiscontinuousClip = false;
+        
         if (interrupted)
         {
           LogDebug("demux: current clip was interrupted - triggering flush");
