@@ -642,6 +642,18 @@ HRESULT CDeMultiplexer::Start()
   const DWORD readTimeout = 5000;
 #endif
 
+  BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+  if (clip)
+  {
+    m_videoServiceType = clip->video_streams->coding_type;   
+  }
+  else
+  {
+    LogDebug("demux: Start - failed to get clip info!");
+    m_bStarting = false;
+    return S_FALSE;
+  }
+
   while((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
     int BytesRead = ReadFromFile(false, false);
@@ -654,6 +666,7 @@ HRESULT CDeMultiplexer::Start()
         dwBytesProcessed += BytesRead;
         continue;
       }
+
       // Seek to start - reset the libbluray reading position
       m_filter.lib.Seek(0);
       Flush();
@@ -768,6 +781,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         }
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+        m_videoServiceType = clip->video_streams->coding_type;
 
         REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
@@ -888,7 +902,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         pos += pesHeaderLen;
         
         // Calculate expected payload length
-        m_nAudioPesLenght = ( pesHeader[4] << 8 ) + pesHeader[5] - (pesHeaderLen - 6);
+        m_nAudioPesLenght = (pesHeader[4] << 8 ) + pesHeader[5] - (pesHeaderLen - 6);
 
         int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
         if (len > 0)
@@ -1018,19 +1032,6 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   CAutoLock lock (&m_sectionVideo);
 
   if (m_bShuttingDown) return;
-
-  if (header.PayloadUnitStart)
-  {
-    CPcr pts;
-    CPcr dts;
-      
-    BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-    m_videoServiceType = clip->video_streams->coding_type;      
-      
-    BYTE* start = tsPacket + header.PayLoadStart;
-  
-    CPcr::DecodeFromPesHeader(start, 0, pts, dts);
-  }
 
   if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
       m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
