@@ -780,21 +780,24 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           return;
         }
 
-        REFERENCE_TIME clipOffset = m_rtOffset * -1;
-
-        bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, 
-          CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
-        m_bDiscontinuousClip = false;
-        
-        if (interrupted)
+        if (!m_bStarting)
         {
-          LogDebug("demux: current clip was interrupted - triggering flush");
+          REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
-          SetHoldVideo(true);
-          SetHoldAudio(true);
-          SetHoldSubtitle(true);
+          bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, 
+            CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
+          m_bDiscontinuousClip = false;
+        
+          if (interrupted)
+          {
+            LogDebug("demux: current clip was interrupted - triggering flush");
 
-          m_filter.IssueCommand(FLUSH, 0);
+            SetHoldVideo(true);
+            SetHoldAudio(true);
+            SetHoldSubtitle(true);
+
+            m_filter.IssueCommand(FLUSH, 0);
+          }
         }
       }
   } 
@@ -951,8 +954,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
     if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
     {
-      m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
-      m_pCurrentAudioBuffer=NULL;
+      if (!m_bStarting)
+      {
+        m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
+      }
+      m_pCurrentAudioBuffer = NULL;
       m_nAudioPesLenght = 0;
     }
   }
@@ -1072,7 +1078,10 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       p->bDiscontinuity = true;
     }
     CheckVideoFormat(p);
-    m_playlistManager->SubmitVideoPacket(p);
+    if (!m_bStarting)
+    {
+      m_playlistManager->SubmitVideoPacket(p);
+    }
   }
   else
   {
@@ -1724,7 +1733,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               if (m_CurrentVideoPts.IsValid)
               {                                                     // Timestamp Ok.
                 m_LastValidFrameCount = frame_count;
-                m_LastValidFramePts=m_CurrentVideoPts;
+                m_LastValidFramePts = m_CurrentVideoPts;
               }
               else
               {                    
@@ -1742,11 +1751,14 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
               if (m_bSetVideoDiscontinuity)
               {
-                m_bSetVideoDiscontinuity=false;
+                m_bSetVideoDiscontinuity = false;
                 p->bDiscontinuity = true;
               }
               
-              m_playlistManager->SubmitVideoPacket(p);
+              if (!m_bStarting)
+              {
+                m_playlistManager->SubmitVideoPacket(p);
+              }
             }
             m_CurrentVideoPts.IsValid = false;
           }  
