@@ -164,10 +164,18 @@ bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
   bool ret=false;
   if (forced)
   {
-    packet->nClipNumber=nClip;
-    m_vecClipAudioPackets.push_back(packet);
-    lastAudioPosition=packet->rtStart;
-    noAudio=false;
+    if (packet->nClipNumber != nClip)
+    {
+      // Oh dear, not for this clip so throw it away
+      delete packet;
+    }
+    else
+    {
+      packet->nClipNumber=nClip;
+      m_vecClipAudioPackets.push_back(packet);
+      lastAudioPosition=packet->rtStart;
+      noAudio=false;
+    }
     return true;
   }
   if (noAudio) return false;
@@ -193,13 +201,23 @@ bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
 bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
 {
   bool ret=false;
+  //check if this clip is looping (Fixes some menus which repeat a clip)
+  if (!firstVideo && packet->rtStart == playlistFirstPacketTime) bSeekNeeded = true;
   if (forced)
   {
-    packet->nClipNumber=nClip;
-    packet->bSeekRequired = bSeekNeeded;
-    bSeekNeeded = false;
-    m_vecClipVideoPackets.push_back(packet);
-    lastVideoPosition=packet->rtStart;
+    if (packet->nClipNumber != nClip)
+    {
+      // Oh dear, not for this clip so throw it away
+      delete packet;
+    }
+    else
+    {
+      packet->nClipNumber=nClip;
+      packet->bSeekRequired = bSeekNeeded;
+      bSeekNeeded = false;
+      m_vecClipVideoPackets.push_back(packet);
+      lastVideoPosition=packet->rtStart;
+    }
     return true;
   }
   if (!((superceeded&SUPERCEEDED_VIDEO)==SUPERCEEDED_VIDEO))
