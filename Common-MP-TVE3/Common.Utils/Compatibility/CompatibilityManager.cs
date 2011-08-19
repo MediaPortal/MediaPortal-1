@@ -45,6 +45,7 @@ namespace MediaPortal.Common.Utils
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
     public static readonly Version SkinVersion = new Version(1, 2, 0, 0);
+    private static readonly string MinRequiredVersionDefault = "1.1.7.0"; // 1.2 Beta(1)
 
     static CompatibilityManager()
     {
@@ -185,7 +186,7 @@ namespace MediaPortal.Common.Utils
       {
         mpVersions = (CompatibleVersionAttribute[])plugin.Assembly.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
       }
-      var minRequiredVersion = new Version(1, 1, 6, 0);
+      var minRequiredVersion = new Version(MinRequiredVersionDefault);
       var designedForVersion = new Version(1, 0, 0, 0);
 
       if (mpVersions.Length > 0)
@@ -243,7 +244,7 @@ namespace MediaPortal.Common.Utils
       var mpVersions =
         (CompatibleVersionAttribute[])plugin.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
 
-      var minRequiredVersion = new Version(1, 1, 7, 0); // 1.2.0 Beta(1)
+      var minRequiredVersion = new Version(MinRequiredVersionDefault);
       var designedForVersion = new Version(1, 0, 0, 0);
 
       if (mpVersions.Length > 0)
@@ -306,8 +307,9 @@ namespace MediaPortal.Common.Utils
       {
         return false;
       }
-      Version minRequiredVersion = new Version(1, 1, 7, 0); // 1.2.0 Beta(1)
-      Version designedForVersion = new Version(1, 0, 0, 0);
+      var minRequiredVersion = new Version(MinRequiredVersionDefault);
+      var designedForVersion = new Version(1, 0, 0, 0);
+
       foreach (XmlNode node in versionNode.ChildNodes)
       {
         XmlNode minVersionNode = node.SelectSingleNode("MinRequiredVersion");
