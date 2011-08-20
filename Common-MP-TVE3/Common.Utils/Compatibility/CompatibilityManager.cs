@@ -45,7 +45,7 @@ namespace MediaPortal.Common.Utils
     private static readonly Dictionary<string, Version> SubSystemVersions = new Dictionary<string, Version>();
     private static readonly Version AppVersion;
     public static readonly Version SkinVersion = new Version(1, 2, 0, 0);
-    private static readonly string MinRequiredVersionDefault = "1.1.7.0"; // 1.2 Beta(1)
+    private static readonly string MinRequiredVersionDefault = "1.1.8.0"; // 1.2.0 RC1
 
     static CompatibilityManager()
     {

@@ -548,12 +548,12 @@ namespace MediaPortal.DeployTool
         case "min":
           major = 1;
           minor = 0;
-          revision = 5; // 1.0.5 = RC1
+          revision = 5; // 1.0.5 = 1.1.0 RC1
           break;
         case "max":
           major = 1;
           minor = 1;
-          revision = 7; // 1.1.7 = 1.2.0 Beta
+          revision = 7; // 1.1.8 = 1.2.0 RC1
           break;
       }
       return CalculateVersion(major, minor, revision);
