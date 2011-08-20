@@ -52,6 +52,6 @@ using System.Reflection;
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion("1.1.8.0")]
-[assembly: AssemblyFileVersion("1.1.8.0")
+[assembly: AssemblyFileVersion("1.1.8.0")]
 
 //[assembly: CompatibleVersion("1.1.8.*", "1.1.8.*")]
