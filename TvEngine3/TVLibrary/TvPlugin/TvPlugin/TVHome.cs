@@ -307,9 +307,11 @@ namespace TvPlugin
         HandleWakeUpTvServer();
         startHeartBeatThread();
 
+        TVHome.OnChannelChanged -= new OnChannelChangedDelegate(ForceUpdates);
         TVHome.OnChannelChanged += new OnChannelChangedDelegate(ForceUpdates);
 
         m_navigator = new ChannelNavigator();
+        m_navigator.OnZapChannel -= new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
         m_navigator.OnZapChannel += new ChannelNavigator.OnZapChannelDelegate(ForceUpdates);
         LoadSettings();
 
