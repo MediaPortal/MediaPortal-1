@@ -561,7 +561,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.2.0 Beta";
+      return "1.2.0 RC1";
     }
 
     #endregion
