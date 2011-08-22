@@ -124,11 +124,9 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 //  if (audioPlaybackpoint>lastVideoPosition) return NULL;
 
   Packet* packet = new Packet();
-
     
   packet->nClipNumber = nClip;
   //packet->nPlaylist = nPlaylist; set by the playlist
-
     
   BYTE* data = (BYTE*)malloc(AUDIO_DATA_32ms);
   memset(data, 0, AUDIO_DATA_32ms);
@@ -140,9 +138,11 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   data[4] = 0x16; // params
 
   packet->SetCount(AUDIO_DATA_32ms);
-  packet->SetData(data, AUDIO_DATA_32ms);    
+  packet->SetData(data, AUDIO_DATA_32ms);
   packet->rtStart = rtStart;
   packet->rtStop = packet->rtStart + 1;
+
+  free(data);
 
   CMediaType pmt;
   pmt.InitMediaType();
