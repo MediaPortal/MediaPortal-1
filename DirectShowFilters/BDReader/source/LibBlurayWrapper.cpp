@@ -110,6 +110,11 @@ CLibBlurayWrapper::~CLibBlurayWrapper()
 
   delete m_pOverlayRenderer;
 
+  if (m_pTitleInfo)
+  {
+    _bd_free_title_info(m_pTitleInfo);
+  }
+
   FreeLibrary(m_hDLL);
 }
 
