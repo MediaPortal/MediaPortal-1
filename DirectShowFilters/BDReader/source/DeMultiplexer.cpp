@@ -1152,11 +1152,7 @@ void CDeMultiplexer::CheckVideoFormat(Packet* p)
         //SetMediaChanging(true);
         //m_filter.OnMediaTypeChanged(3);
         m_bRebuildOnVideoChange = false;
-      }
-      LogDebug("demux: triggering OnVideoFormatChanged");
-      m_filter.OnVideoFormatChanged(m_mpegPesParser->basicVideoInfo.streamType, m_mpegPesParser->basicVideoInfo.width,
-        m_mpegPesParser->basicVideoInfo.height, m_mpegPesParser->basicVideoInfo.arx,
-        m_mpegPesParser->basicVideoInfo.ary, 15000000, m_mpegPesParser->basicVideoInfo.isInterlaced);
+      }      
     }
     else
     {

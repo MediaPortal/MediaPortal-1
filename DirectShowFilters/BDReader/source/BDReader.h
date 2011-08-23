@@ -50,8 +50,7 @@ DEFINE_GUID(IID_IBDReader, 0x79a37017, 0x3178, 0x4859, 0x80, 0x79, 0xec, 0xb9, 0
 
 DECLARE_INTERFACE_(IBDReaderCallback, IUnknown)
 {
-	STDMETHOD(OnMediaTypeChanged)(int mediaTypes)PURE;	
-	STDMETHOD(OnVideoFormatChanged)(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced)PURE;
+  STDMETHOD(OnMediaTypeChanged)(int videoRate, int videoFormat, const GUID audioFormat)PURE;	
   STDMETHOD(OnBDEvent)(BD_EVENT event)PURE;
   STDMETHOD(OnOSDUpdate)(OSDTexture texture)PURE;
 };
@@ -174,14 +173,13 @@ public:
   CSubtitlePin*   GetSubtitlePin();
   IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
-  void            OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate, int isInterlaced);
-
+  
   bool            IsSeeking();
   int             SeekingDone();
   bool            IsStopping();
 
   void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
-
+  void			  TriggerOnMediaChanged();
   DWORD           m_lastPause;
 
   CLibBlurayWrapper lib;

@@ -144,11 +144,7 @@ namespace MediaPortal.Player
   public interface IBDReaderCallback
   {
     [PreserveSig]
-    int OnMediaTypeChanged(int mediaType);
-
-    [PreserveSig]
-    int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY, int bitrate,
-                             int isInterlaced);
+    int OnMediaTypeChanged(int videoRate, int videoFormat, Guid audioFormat);    
 
     [PreserveSig]
     int OnBDevent([Out] BDEvent bdEvent);
@@ -363,6 +359,26 @@ namespace MediaPortal.Player
       BD_CUSTOM_EVENT_MENU_VISIBILITY = 1000  /* 0 - not shown, 1 shown*/
     }
 
+    protected enum VideoFormats
+    {
+      SERVICE_TYPE_VIDEO_UNKNOWN = -1,
+      SERVICE_TYPE_VIDEO_MPEG1 = 0x1,
+      SERVICE_TYPE_VIDEO_MPEG2 = 0x2,
+      SERVICE_TYPE_VIDEO_MPEG4 = 0x10,
+      SERVICE_TYPE_VIDEO_H264 = 0x1b,
+      SERVICE_TYPE_VIDEO_VC1 = 0xea
+    }
+
+    protected enum VideoRate
+    {
+      BLURAY_VIDEO_RATE_24000_1001 = 1,  // 23.976
+      BLURAY_VIDEO_RATE_24 = 2,
+      BLURAY_VIDEO_RATE_25 = 3,
+      BLURAY_VIDEO_RATE_30000_1001 = 4,  // 29.97
+      BLURAY_VIDEO_RATE_50 = 6,
+      BLURAY_VIDEO_RATE_60000_1001 = 7   // 59.94
+    }
+
     #endregion
 
     #region variables
@@ -424,10 +440,7 @@ namespace MediaPortal.Player
     protected DateTime _updateTimer = DateTime.Now;
     protected Geometry.Type _geometry = Geometry.Type.Normal;
     protected int iChangedMediaTypes;
-    protected VideoStreamFormat _videoFormat;
-    protected int _lastFrameCounter;
-    protected string videoFilter = "";
-    protected string audioFilter = "";
+    protected int _lastFrameCounter;    
     protected bool _bMediaTypeChanged;
     protected int _currentTitle = 0;
     protected int _currentChapter = 0;
@@ -437,9 +450,9 @@ namespace MediaPortal.Player
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
     protected double[] chapters;
-
     protected BDFilterConfig filterConfig;
-    protected bool vc1Codec = false;
+    protected int _currentVideoFormat;
+    protected Guid _currentAudioFormat;
 
     #endregion
 
@@ -452,11 +465,8 @@ namespace MediaPortal.Player
     }
 
     public BDPlayer(g_Player.MediaType mediaType)
-    {
-      _videoFormat = new VideoStreamFormat();
+    {      
     }
-
-
 
     #endregion
 
@@ -1289,10 +1299,10 @@ namespace MediaPortal.Player
       get { return menuItems; }
     }
 
-    public override VideoStreamFormat GetVideoFormat()
-    {
-      return _videoFormat;
-    }
+    //public override VideoStreamFormat GetVideoFormat()
+    //{
+    //  return ;
+    //}
 
     /// <summary>
     /// Property to get the total number of subtitle streams
@@ -1333,7 +1343,7 @@ namespace MediaPortal.Player
           {
             _subSelector.SetOption(value);
           }
-          catch(Exception e)
+          catch(Exception)
           {
             Log.Error("BDPlayer: CurrentSubtitleStream failed - TODO: add stream cache on .ax side");
           }
@@ -1407,27 +1417,24 @@ namespace MediaPortal.Player
       return 0;
     }
 
-    public int OnMediaTypeChanged(int mediaType)
+    public int OnMediaTypeChanged(int videoRate, int videoFormat, Guid audioFormat)
     {
-      _bMediaTypeChanged = true;
-      iChangedMediaTypes = mediaType;
+      Log.Debug("BDPlayer OnMediaTypeChanged(): vrate {0}, vformat {1}, aformat {2}", videoRate, videoFormat, audioFormat);
+      if (videoFormat != _currentVideoFormat)
+      {
+        iChangedMediaTypes = 2;
+        _bMediaTypeChanged = Playing ? true : false;
+        _currentVideoFormat = videoFormat;
+      }
+      if (audioFormat != _currentAudioFormat)
+      {
+        iChangedMediaTypes = 1;
+        _bMediaTypeChanged = Playing ? true : false;
+        _currentAudioFormat = audioFormat;
+      }
+      RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);      
       return 0;
-    }
-
-    public int OnVideoFormatChanged(int streamType, int width, int height, int aspectRatioX, int aspectRatioY,
-                                    int bitrate, int isInterlaced)
-    {
-      _videoFormat.IsValid = true;
-      _videoFormat.streamType = (VideoStreamType)streamType;
-      _videoFormat.width = width;
-      _videoFormat.height = height;
-      _videoFormat.arX = aspectRatioX;
-      _videoFormat.arY = aspectRatioY;
-      _videoFormat.bitrate = bitrate;
-      _videoFormat.isInterlaced = (isInterlaced == 1);
-      Log.Info("BDPlayer: OnVideoFormatChanged - {0}", _videoFormat.ToString());
-      return 0;
-    }
+    }    
 
     public int OnBDevent(BDEvent bdevent)
     {
@@ -1673,10 +1680,18 @@ namespace MediaPortal.Player
               CurrentAudioStream = bdevent.Param - 1; // one based on libbluray
             break;
 
+          case (int)BDEvents.BD_EVENT_PG_TEXTST:
+            Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
+            EnableSubtitle = bdevent.Param == 1 ? true : false || SubtitleStreams > 0;
+            break;
+
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
-            if (bdevent.Param != 0xfff)
+            if (bdevent.Param != 0xfff && EnableSubtitle)
             {
+              /*
+              CurrentSubtitleStream = bdevent.Param - 1;
+              
               int index = bdevent.Param - 1; // one based on libbluray
               CurrentSubtitleStream = index;
 
@@ -1684,6 +1699,7 @@ namespace MediaPortal.Player
                 _newSubtitleStream = index;
               else
                 _newSubtitleStream = -1;
+               */
             }
             break;
 
@@ -1699,12 +1715,12 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
-            if (_newSubtitleStream != -1)
+            //if (_newSubtitleStream != -1)
             {
-              Log.Debug("BDPlayer: try delayed subtitle stream update {0}", _newSubtitleStream);
-              CurrentSubtitleStream = _newSubtitleStream;
-              if (CurrentSubtitleStream == _newSubtitleStream)
-                CurrentSubtitleStream = -1;
+              //Log.Debug("BDPlayer: try delayed subtitle stream update {0}", _newSubtitleStream);
+              //CurrentSubtitleStream = _newSubtitleStream;
+              //if (CurrentSubtitleStream == _newSubtitleStream)
+              //  CurrentSubtitleStream = -1;
             }			
             break;
 
@@ -1964,43 +1980,14 @@ namespace MediaPortal.Player
     }
 
     protected string MatchFilters(string format)
-    {
+    {      
       if (format == "Video")
       {
-        IPin pinOut1 = DsFindPin.ByDirection((IBaseFilter)_interfaceBDReader, PinDirection.Output, 1); //video
-        if (pinOut1 != null)
-        {
-          //Detection if the Video Stream is VC-1 on output pin of the splitter
-          IEnumMediaTypes enumMediaTypesVideo;
-          int hr = pinOut1.EnumMediaTypes(out enumMediaTypesVideo);
-          while (true)
-          {
-            AMMediaType[] mediaTypes = new AMMediaType[1];
-            int typesFetched;
-            hr = enumMediaTypesVideo.Next(1, mediaTypes, out typesFetched);
-            if (hr != 0 || typesFetched == 0) break;
-            if (mediaTypes[0].majorType == MediaType.Video && mediaTypes[0].subType == MediaSubType.VC1)
-            {
-              Log.Info("BDPlayer: found VC-1 video out pin");
-              vc1Codec = true;
-            }
-          }
-          DirectShowUtil.ReleaseComObject(enumMediaTypesVideo);
-          enumMediaTypesVideo = null;
-          if (pinOut1 != null)
-          {
-            DirectShowUtil.ReleaseComObject(pinOut1);
-            pinOut1 = null;
-          }
-        }
-      }
-      if (format == "Video")
-      {
-        if (_videoFormat.streamType == VideoStreamType.MPEG2)
+        if (_currentVideoFormat == (int)VideoFormats.SERVICE_TYPE_VIDEO_MPEG2)
         {
           return filterConfig.Video;
         }
-        else if (vc1Codec)
+        else if (_currentVideoFormat == (int)VideoFormats.SERVICE_TYPE_VIDEO_VC1)
         {
           return filterConfig.VideoVC1;
         }
@@ -2011,22 +1998,19 @@ namespace MediaPortal.Player
       }
       else
       {
-        /*if (AudioType(CurrentAudioStream).Contains("AAC"))
+        //if (_currentAudioFormat == MEDIASUBTYPE_AAC_AUDIO)
         {
-          return filterConfig.AudioAAC;
+        //  return filterConfig.AudioAAC;
         }
-        else
+        //else if (_currentAudioFormat == MEDIASUBTYPE_DDPLUS_AUDIO)
         {
-          if (AudioType(CurrentAudioStream).Equals("AC3plus"))
-          {
-            return filterConfig.AudioDDPlus;
-          }
-          else*/
+        //  return filterConfig.AudioDDPlus;
+        }
+        //else
         {
           return filterConfig.Audio;
         }
       }
-      //}
     }
 
     /// <summary>
@@ -2374,6 +2358,26 @@ namespace MediaPortal.Player
       }
     }
 
+    protected double VideoRatetoDouble(int videoRate)
+    {
+      switch (videoRate)
+      {
+        case 1:
+          return 24000 / 1001;
+        case 2:
+          return 24;
+        case 3:
+          return 25;
+        case 4:
+          return 30000 / 1001;
+        case 6:
+          return 50;
+        case 7:
+          return 60000 / 1001;
+        default:
+          return 0;
+      }
+    }
     #endregion
 
     #region IDisposable Members

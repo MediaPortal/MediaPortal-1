@@ -322,10 +322,22 @@ void CBDReaderFilter::IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime)
   SetEvent(m_hCommandEvent);
 }
 
-void CBDReaderFilter::OnVideoFormatChanged(int streamType,int width,int height,int aspectRatioX,int aspectRatioY,int bitrate,int isInterlaced)
+void CBDReaderFilter::TriggerOnMediaChanged()
 {
-  //if ( m_pCallback )
-  //  m_pCallback->OnVideoFormatChanged(streamType,width,height,aspectRatioX,aspectRatioY,bitrate,isInterlaced);
+  if(m_pCallback)
+  {		
+    CMediaType pmt;
+	int audioStream;
+	int videoRate = 0;
+	BLURAY_CLIP_INFO* clip = lib.CurrentClipInfo();
+    if (clip)
+    {
+      videoRate = clip->video_streams->rate;
+    }
+	m_demultiplexer.GetAudioStream(audioStream);
+	m_demultiplexer.GetAudioStreamType(audioStream, pmt);
+	m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
+  }
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -492,7 +504,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         {
         case REBUILD:
           LogDebug("CBDReaderFilter::Command thread: issue rebuild!");
-          if ( m_pCallback ) m_pCallback->OnMediaTypeChanged(3);
+          TriggerOnMediaChanged();
 
           // TODO add media changed event so we don't have to poll
           while (m_demultiplexer.IsMediaChanging())
@@ -682,7 +694,7 @@ STDMETHODIMP CBDReaderFilter::Start()
   m_WaitForSeekToEof = 0;
 
   HRESULT hr = m_demultiplexer.Start();
-  
+  TriggerOnMediaChanged();
   // Close BD so the HDVM etc. are reset completely after querying the initial data.
   // This is required so we wont lose the initial events.
   lib.CloseBluray();
