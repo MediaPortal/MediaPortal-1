@@ -734,7 +734,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
-      m_bDiscontinuousClip=true;
+      m_bDiscontinuousClip = true;
       // TODO: check this
       //ResetStream();
       break;
@@ -751,6 +751,28 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
     case BD_EVENT_PLAYLIST:
       m_nPlaylist = pEv.param;
       break;
+
+    case BD_EVENT_CHAPTER:
+    {
+      BLURAY_TITLE_INFO* title = m_filter.lib.GetTitleInfo(m_nPlaylist);
+      
+      if (title)
+      {
+        UINT64 start = 0;
+        if (title->chapter_count > 0 && title->chapter_count >= pEv.param)
+        {
+          start = title->chapters[pEv.param - 1].start;
+        }
+        LogDebug("demux: New chapter %d - start: %6.3f", pEv.param, CONVERT_90KHz_DS(start) / 10000000.0);
+        
+        m_filter.lib.FreeTitleInfo(title);
+      }
+      else
+      {
+        LogDebug("demux: New chapter %d - title info N/A", pEv.param); 
+      }
+      break;
+    }
 
     case BD_EVENT_PLAYITEM:
       LogDebug("demux: New playitem %d", pEv.param);
@@ -771,7 +793,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
         if (clip)
         {
-          m_videoServiceType = clip->video_streams->coding_type;   
+          m_videoServiceType = clip->video_streams->coding_type;
         }
         else
         {
