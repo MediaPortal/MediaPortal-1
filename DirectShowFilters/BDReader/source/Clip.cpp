@@ -25,8 +25,7 @@
 #include <streams.h>
 #include "mediaformats.h"
 
-#define BYTES_PER_SEC 192000
-#define AUDIO_DATA_32ms 262140
+#define AC3_FRAME_LENGTH 6144
 #define FAKE_AUDIO_DURATION 320000LL
 
 #define MAX_VIDEO_DRIFT 5000000LL
@@ -128,21 +127,22 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   packet->nClipNumber = nClip;
   //packet->nPlaylist = nPlaylist; set by the playlist
     
-  BYTE* data = (BYTE*)malloc(AUDIO_DATA_32ms);
-  memset(data, 0, AUDIO_DATA_32ms);
+  BYTE* frame = (BYTE*)malloc(AC3_FRAME_LENGTH);
 
-  data[0] = 0x0B; // sync word
-  data[1] = 0x77;
-  data[2] = 0xF9; // CRC
-  data[3] = 0x02;
-  data[4] = 0x16; // params
+  memset(frame, 0, AC3_FRAME_LENGTH);
 
-  packet->SetCount(AUDIO_DATA_32ms);
-  packet->SetData(data, AUDIO_DATA_32ms);
+  frame[0] = 0x0B; // sync word
+  frame[1] = 0x77;
+  frame[2] = 0xF9; // CRC
+  frame[3] = 0x02;
+  frame[4] = 0x16; // params
+
+  packet->SetCount(AC3_FRAME_LENGTH);
+  packet->SetData(frame, AC3_FRAME_LENGTH);
   packet->rtStart = rtStart;
   packet->rtStop = packet->rtStart + 1;
 
-  free(data);
+  free(frame);
 
   CMediaType pmt;
   pmt.InitMediaType();
