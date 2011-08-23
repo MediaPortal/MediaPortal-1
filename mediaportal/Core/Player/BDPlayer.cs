@@ -2255,6 +2255,8 @@ namespace MediaPortal.Player
       Log.Info("BDPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
+        BDOSDRenderer.Release();
+        
         if (_mediaCtrl != null)
         {
           int counter = 0;

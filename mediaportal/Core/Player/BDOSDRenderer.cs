@@ -67,6 +67,11 @@ namespace MediaPortal.Player
       return _instance;
     }
 
+    public static void Release()
+    {
+      _instance = null;
+    }
+    
     public void DrawItem(OSDTexture item)
     {
       try
