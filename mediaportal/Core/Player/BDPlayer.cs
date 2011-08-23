@@ -2363,17 +2363,17 @@ namespace MediaPortal.Player
       switch (videoRate)
       {
         case 1:
-          return 24000 / 1001;
+          return 23.976;
         case 2:
           return 24;
         case 3:
           return 25;
         case 4:
-          return 30000 / 1001;
+          return 29.97;
         case 6:
           return 50;
         case 7:
-          return 60000 / 1001;
+          return 59.94;
         default:
           return 0;
       }
