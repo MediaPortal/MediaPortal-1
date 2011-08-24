@@ -179,7 +179,7 @@ public:
   bool            IsStopping();
 
   void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
-  void			  TriggerOnMediaChanged();
+  void            TriggerOnMediaChanged();
   DWORD           m_lastPause;
 
   CLibBlurayWrapper lib;

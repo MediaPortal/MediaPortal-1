@@ -324,19 +324,21 @@ void CBDReaderFilter::IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime)
 
 void CBDReaderFilter::TriggerOnMediaChanged()
 {
-  if(m_pCallback)
+  if (m_pCallback)
   {		
     CMediaType pmt;
-	int audioStream;
-	int videoRate = 0;
-	BLURAY_CLIP_INFO* clip = lib.CurrentClipInfo();
+    int audioStream = 0;
+    int videoRate = 0;
+    
+    BLURAY_CLIP_INFO* clip = lib.CurrentClipInfo();
     if (clip)
     {
       videoRate = clip->video_streams->rate;
     }
-	m_demultiplexer.GetAudioStream(audioStream);
-	m_demultiplexer.GetAudioStreamType(audioStream, pmt);
-	m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
+    
+    m_demultiplexer.GetAudioStream(audioStream);
+    m_demultiplexer.GetAudioStreamType(audioStream, pmt);
+    m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
   }
 }
 
