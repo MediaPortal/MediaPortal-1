@@ -76,8 +76,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   pSubUpdateCallback = NULL;
   m_lastVideoPTS.IsValid = false;
   m_lastAudioPTS.IsValid = false;
-  m_bRebuildOnVideoChange = false;
-  m_bDoDelayedRebuild = false;
   SetMediaChanging(false);
 
   m_WaitHeaderPES = -1 ;
@@ -625,8 +623,6 @@ HRESULT CDeMultiplexer::Start()
 {
   m_bReadFailed = false;
   m_bStarting = true;
-  m_bRebuildOnVideoChange = false;
-  m_bDoDelayedRebuild = false;
   m_bEndOfFile = false;
   m_bHoldAudio = false;
   m_bHoldVideo = false;
@@ -1102,7 +1098,7 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       m_bSetVideoDiscontinuity = false;
       p->bDiscontinuity = true;
     }
-    CheckVideoFormat(p);
+    ParseVideoFormat(p);
     if (!m_bStarting)
     {
       m_playlistManager->SubmitVideoPacket(p);
@@ -1115,66 +1111,16 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
   }
   else
   {
-    CheckVideoFormat(p);
+    ParseVideoFormat(p);
     delete p;
     p = NULL;
   }
 }
 
-void CDeMultiplexer::CheckVideoFormat(Packet* p)
+void CDeMultiplexer::ParseVideoFormat(Packet* p)
 {
-  int lastVidResX = m_mpegPesParser->basicVideoInfo.width;
-  int lastVidResY = m_mpegPesParser->basicVideoInfo.height;
-  int laststreamType = m_mpegPesParser->basicVideoInfo.streamType;
-
   m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
-  
   p->pmt = CreateMediaType(&m_mpegPesParser->pmt);
-
-  if ((lastVidResX != 0 && lastVidResY != 0 ) && 
-    (lastVidResX != m_mpegPesParser->basicVideoInfo.width || 
-    lastVidResY != m_mpegPesParser->basicVideoInfo.height ||
-    laststreamType != m_mpegPesParser->basicVideoInfo.streamType))
-  {
-    CMediaType pmt;
-    GetAudioStreamType(m_iAudioStream, pmt);
-			  
-    if (m_audioStreams.size() == 0 || pmt.formattype != GUID_NULL)
-    {                
-      LogDebug("demux: video format changed: res = %dx%d aspectRatio = %d:%d fps = %d isInterlaced = %d",
-        m_mpegPesParser->basicVideoInfo.width, m_mpegPesParser->basicVideoInfo.height,
-        m_mpegPesParser->basicVideoInfo.arx, m_mpegPesParser->basicVideoInfo.ary,
-        m_mpegPesParser->basicVideoInfo.fps, m_mpegPesParser->basicVideoInfo.isInterlaced);
-
-      if (m_bRebuildOnVideoChange)
-      {
-        LogDebug("demux: OnMediaFormatChange triggered by mpeg2Parser");
-        //SetMediaChanging(true);
-        //m_filter.OnMediaTypeChanged(3);
-        m_bRebuildOnVideoChange = false;
-      }      
-    }
-    else
-    {
-      LogDebug("demux: audio is not ready yet - m_bDoDelayedRebuild = true");
-      m_bDoDelayedRebuild = true;
-    }
-  }
-  else
-  {
-    if (m_bRebuildOnVideoChange && m_bDoDelayedRebuild)
-    {
-      CMediaType pmt;
-      GetAudioStreamType(m_iAudioStream, pmt);
-			  
-      if (m_audioStreams.size() == 0 || pmt.formattype != GUID_NULL)
-      {                
-        LogDebug("demux: triggering a delayed rebuild");
-        m_bRebuildOnVideoChange = false;
-        m_bDoDelayedRebuild = false;
-      }
-    }
-  }
 }
 
 void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> p)
@@ -1753,7 +1699,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
 //            LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFrameRate,frame_type,frame_count);
     
-           CheckVideoFormat(p);
+           ParseVideoFormat(p);
             
            if (m_filter.GetVideoPin()->IsConnected())
             {

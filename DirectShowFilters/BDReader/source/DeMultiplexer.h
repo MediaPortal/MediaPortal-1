@@ -99,7 +99,7 @@ public:
   void       FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p);
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
-  void       CheckVideoFormat(Packet* p);
+  void       ParseVideoFormat(Packet* p);
   void       SetEndOfFile(bool bEndOfFile);
   CPidTable  GetPidTable();
 
@@ -222,8 +222,6 @@ private:
   bool m_bStarting;
   bool m_bReadFailed;
 
-  bool m_bRebuildOnVideoChange;
-  bool m_bDoDelayedRebuild;
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
 
