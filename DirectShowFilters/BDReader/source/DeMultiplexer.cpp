@@ -89,8 +89,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bUpdateSubtitleOffset = false;
 
   m_fHasAccessUnitDelimiters = false;
-  m_fakeAudioVideoSeen = false;
-  m_fakeAudioPacketCount = 0;
 
   m_audioPlSeen = false;
   m_videoPlSeen = false;

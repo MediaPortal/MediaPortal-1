@@ -802,9 +802,6 @@ void CBDReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
     }
 
     if (!m_bIgnoreLibSeeking)
-      m_demultiplexer.m_bAudioVideoReady = false;
-    
-    if (!m_bIgnoreLibSeeking)
     {
       LogDebug("CBDReaderFilter::SeekPreStart - Flush");
       m_demultiplexer.Flush();

@@ -264,7 +264,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
         }
 */
-        if (buffer->pmt->cbFormat==0)
+        if (buffer->pmt->cbFormat == 0)
         {
           buffer->pmt = CreateMediaType(&m_mt);
         }
@@ -290,7 +290,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
 
-            //m_pFilter->OnMediaTypeChanged(3);
             m_pFilter->IssueCommand(REBUILD, 0);
 
             LogDebug("aud: REBUILD");
@@ -346,11 +345,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             pSample->SetSyncPoint(false);
           }
 
-          // TODO - ffdshow audio decoder doesn't like invalid media types...
+          // TODO - enable this
           //pSample->SetMediaType(buffer->pmt);
-
-          // currently true if timestamp is present
-          //pSample->SetSyncPoint(buffer->bSyncPoint); 
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
@@ -555,8 +551,6 @@ HRESULT CAudioPin::ChangeRate()
 ///
 HRESULT CAudioPin::OnThreadStartPlay()
 {
-  //set flag to compensate any differences in the stream time & file time
-  m_pFilter->GetDemultiplexer().m_bAudioVideoReady = false;
   m_pFilter->GetDemultiplexer().m_audioPlSeen = false;
 
   delete m_pCachedBuffer;

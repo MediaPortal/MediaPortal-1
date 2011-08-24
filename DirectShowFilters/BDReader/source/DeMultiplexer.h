@@ -140,8 +140,6 @@ public:
   void HandleOSDUpdate(OSDTexture& pTexture);
   void HandleMenuStateChange(bool pVisible);
 
-  bool m_bAudioVideoReady;
-
   bool m_audioPlSeen;
   bool m_videoPlSeen;
   int  m_nActiveAudioPlaylist;
@@ -209,10 +207,6 @@ private:
   int m_iPatVersion;
 
   int m_loopLastSearch;
-  int m_fakeAudioPacketCount;
-  bool m_fakeAudioVideoSeen;
-  int m_fakeAudioPlaylist;
-  int m_fakeAudioClip;
 
   bool  m_bWaitForMediaChange;
   DWORD m_tWaitForMediaChange;
@@ -257,8 +251,6 @@ private:
   bool m_bUpdateSubtitleOffset;
 
   REFERENCE_TIME m_rtOffset;
-
-  PlaylistInfo* NewPlayList();
 
   // use per PID
   CMediaType m_lpcmPmt;
