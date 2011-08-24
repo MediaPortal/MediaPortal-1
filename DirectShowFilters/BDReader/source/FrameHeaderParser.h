@@ -17,34 +17,33 @@
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
+ *  Most of this file's content is based on MPC-HC's source code 
+ *  http://mpc-hc.sourceforge.net/
+ *
  */
-#ifndef FRAMEHEADERPARSER_H
-#define FRAMEHEADERPARSER_H
+
+#pragma once
 
 #include "StdAfx.h"
-
 #include <strmif.h>
-//#include <mtype.h>
+
 #include "GolombBuffer.h"
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
-struct pshdr
-	{
+	struct pshdr {
 		mpeg_t type;
 		UINT64 scr, bitrate;
 	};
 
-	struct pssyshdr
-	{
+	struct pssyshdr {
 		DWORD rate_bound;
 		BYTE video_bound, audio_bound;
 		bool fixed_rate, csps;
 		bool sys_video_loc_flag, sys_audio_loc_flag;
 	};
 
-	struct peshdr
-	{
+	struct peshdr {
 		WORD len;
 
 		BYTE type:2, fpts:1, fdts:1;
@@ -58,7 +57,9 @@ struct pshdr
 		BYTE escr:1, esrate:1, dsmtrickmode:1, morecopyright:1, crc:1, extension:1;
 		BYTE hdrlen;
 
-		struct peshdr() {memset(this, 0, sizeof(*this));}
+		struct peshdr() {
+			memset(this, 0, sizeof(*this));
+		}
 	};
 
 	class seqhdr
@@ -103,7 +104,7 @@ struct pshdr
 		WORD copyright:1;
 		WORD original:1;
 		WORD emphasis:2;
-		
+
 		int nSamplesPerSec, FrameSize, nBytesPerSec;
 		REFERENCE_TIME rtDuration;
 	};
@@ -134,6 +135,12 @@ struct pshdr
 		REFERENCE_TIME rtDuration;
 	};
 
+	class latm_aachdr
+	{
+	public:
+		// nothing ;)
+	};
+
 	class ac3hdr
 	{
 	public:
@@ -148,6 +155,14 @@ struct pshdr
 		BYTE surmixlev:2;
 		BYTE dsurmod:2;
 		BYTE lfeon:1;
+		BYTE sr_shift;
+		// E-AC3 header
+		BYTE frame_type;
+		BYTE substreamid;
+		WORD frame_size;
+		BYTE sr_code;
+		WORD sample_rate;
+		BYTE num_blocks;
 		// the rest is unimportant for us
 	};
 
@@ -220,7 +235,7 @@ struct pshdr
 	public:
 		// nothing ;)
 	};
-	
+
 	class svcdspuhdr
 	{
 	public:
@@ -252,8 +267,7 @@ struct pshdr
 		// nothing ;)
 	};
 
-	struct trhdr
-	{
+	struct trhdr {
 		BYTE sync; // 0x47
 		BYTE error:1;
 		BYTE payloadstart:1;
@@ -268,19 +282,19 @@ struct pshdr
 		BYTE discontinuity:1;
 		BYTE randomaccess:1;
 		BYTE priority:1;
-		BYTE PCR:1;
+		BYTE fPCR:1;
 		BYTE OPCR:1;
 		BYTE splicingpoint:1;
 		BYTE privatedata:1;
 		BYTE extension:1;
 		// TODO: add more fields here when the flags above are set (they aren't very interesting...)
+		__int64 PCR;
 
 		int bytes;
 		__int64 next;
 	};
 
-	struct trsechdr
-	{
+	struct trsechdr {
 		BYTE table_id;
 		WORD section_syntax_indicator:1;
 		WORD zero:1;
@@ -296,8 +310,7 @@ struct pshdr
 
 	// http://www.technotrend.de/download/av_format_v1.pdf
 
-	struct pvahdr
-	{
+	struct pvahdr {
 		WORD sync; // 'VA'
 		BYTE streamid; // 1 - video, 2 - audio
 		BYTE counter;
@@ -389,8 +402,9 @@ public:
 	bool Read(seqhdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(mpahdr& h, int len, bool fAllowV25, CMediaType* pmt = NULL);
 	bool Read(aachdr& h, int len, CMediaType* pmt = NULL);
-	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL);
-	bool Read(dtshdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(latm_aachdr& h, int len, CMediaType* pmt = NULL);
+	bool Read(ac3hdr& h, int len, CMediaType* pmt = NULL, bool find_sync = true);
+	bool Read(dtshdr& h, int len, CMediaType* pmt = NULL, bool find_sync = true);
 	bool Read(lpcmhdr& h, CMediaType* pmt = NULL);
 	bool Read(hdmvlpcmhdr& h, CMediaType* pmt = NULL);
 	bool Read(dvdspuhdr& h, CMediaType* pmt = NULL);
@@ -404,12 +418,13 @@ public:
 	bool Read(pvahdr& h, bool fSync = true);
 	bool Read(avchdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
-    bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
+  bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);
 
 	void DumpSequenceHeader(seqhdr h);
 	void DumpAvcHeader(avchdr h);
-};
 
-#endif
+private:
+  REFERENCE_TIME m_rtPTSOffset;
+};
