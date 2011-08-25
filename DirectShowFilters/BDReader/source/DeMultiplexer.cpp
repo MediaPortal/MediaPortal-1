@@ -562,9 +562,9 @@ HRESULT CDeMultiplexer::Start()
       break;
     }
 
-    if (!m_videoParser->basicVideoInfo.isValid &&  
-         m_videoParser->pmt.formattype == GUID_NULL &&
-         m_audioParser->pmt.formattype == GUID_NULL)
+    if (!m_videoParser->basicVideoInfo.isValid ||
+        m_videoParser->pmt.formattype == GUID_NULL ||
+        (m_AudioStreamType > SERVICE_TYPE_NO_AUDIO && m_audioParser->pmt.formattype == GUID_NULL))
     {
       dwBytesProcessed += BytesRead;
       continue;
