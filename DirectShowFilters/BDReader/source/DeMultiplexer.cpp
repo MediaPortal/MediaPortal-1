@@ -706,9 +706,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
         if (clip)
         {
-          m_videoServiceType = clip->video_streams->coding_type;
-          m_nVideoPid = clip->video_streams->pid;
-
+          ParseVideoStream(clip);
           ParseAudioStreams(clip);
           ParseSubtitleStreams(clip);
         }
@@ -1673,6 +1671,17 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   }
 }
 
+void CDeMultiplexer::ParseVideoStream(BLURAY_CLIP_INFO* clip)
+{
+  if (clip)
+  {
+    m_videoServiceType = clip->video_streams->coding_type;
+    m_nVideoPid = clip->video_streams->pid;
+
+    LogDebug("   Video    [%4d]     %s", m_nVideoPid, StreamFormatAsString(m_videoServiceType));
+  }
+}
+
 void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
 {
   if (clip)
@@ -1703,6 +1712,8 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       audio.audioType = BLURAY_STREAM_TYPE_AUDIO_AC3;
       audio.pid = -1;
 
+      LogDebug("   Audio    [%4d] %s %s (fake)", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
+
       m_audioStreams.push_back(audio);
     }
 
@@ -1719,6 +1730,8 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
 
         audio.audioType = clip->audio_streams[i].coding_type;
         audio.pid = clip->audio_streams[i].pid;
+
+        LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
 
         m_audioStreams.push_back(audio);
       }
@@ -1743,6 +1756,8 @@ void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
 
       subtitle.subtitleType = clip->pg_streams[i].coding_type;
       subtitle.pid = clip->pg_streams[i].pid;
+
+      LogDebug("   Subtitle [%4d] %s %s", subtitle.pid, subtitle.language, StreamFormatAsString(subtitle.subtitleType));
 
       m_subtitleStreams.push_back(subtitle);
     }
@@ -1819,4 +1834,49 @@ bool CDeMultiplexer::IsMediaChanging()
   CAutoLock lock (&m_sectionMediaChanging);
   if (!m_bWaitForMediaChange) return false;
   return true;
+}
+
+LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
+{
+	switch (pStreamType)
+	{
+	case BLURAY_STREAM_TYPE_VIDEO_MPEG1:
+		return _T("MPEG1");
+	case BLURAY_STREAM_TYPE_VIDEO_MPEG2:
+		return _T("MPEG2");
+	case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+		return _T("MPEG1");
+	case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+		return _T("MPEG2");
+	case BLURAY_STREAM_TYPE_VIDEO_H264:
+		return _T("H264");
+	case BLURAY_STREAM_TYPE_VIDEO_VC1:
+		return _T("VC1");
+	case BLURAY_STREAM_TYPE_AUDIO_LPCM:
+		return _T("LPCM");
+	case BLURAY_STREAM_TYPE_AUDIO_AC3:
+		return _T("AC3");
+	case BLURAY_STREAM_TYPE_AUDIO_DTS:
+		return _T("DTS");
+	case BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+		return _T("TrueHD");
+	case BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+		return _T("AC3+");
+	case BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+		return _T("DTS-HD");
+	case BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+		return _T("DTS-HD Master");
+  case 0x0f:
+		return _T("AAC");
+	case 0x11:
+		return _T("LATM AAC");
+	case BLURAY_STREAM_TYPE_SUB_PG:
+		return _T("PGS");
+	case BLURAY_STREAM_TYPE_SUB_IG:
+		return _T("IG");
+	case BLURAY_STREAM_TYPE_SUB_TEXT:
+		return _T("Text");
+	default:
+		return _T("Unknown");
+	}
 }

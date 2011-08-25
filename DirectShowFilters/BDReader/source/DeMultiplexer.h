@@ -102,6 +102,7 @@ public:
 
   void       ParseVideoFormat(Packet* p);
   void       ParseAudioFormat(Packet* p);
+  void       ParseVideoStream(BLURAY_CLIP_INFO* clip);
   void       ParseAudioStreams(BLURAY_CLIP_INFO* clip);
   void       ParseSubtitleStreams(BLURAY_CLIP_INFO* clip);
 
@@ -151,6 +152,8 @@ public:
 private:
   void ResetClipInfo(int pDebugMark);
   void PacketDelivery(Packet* p, CTsHeader header);
+
+  LPCTSTR StreamFormatAsString(int pStreamType);
 
   struct stAudioStream
   {
