@@ -1698,7 +1698,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       audio.language[0] = 'F';
       audio.language[1] = 'F';
       audio.language[2] = 'F';
-      audio.language[3] = '0';
+      audio.language[3] = 0;
 
       audio.audioType = BLURAY_STREAM_TYPE_AUDIO_AC3;
       audio.pid = -1;
