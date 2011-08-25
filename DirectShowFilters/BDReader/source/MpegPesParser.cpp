@@ -23,14 +23,9 @@
 #pragma warning(disable:4995)
 #include "StdAfx.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
-
-#include <commdlg.h>
-#include <bdatypes.h>
-#include <time.h>
 #include <streams.h>
 #include <initguid.h>
+#include <bluray.h>
 
 #include "MpegPesParser.h"
 
@@ -41,19 +36,19 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CMpegPesParser::CMpegPesParser()
 {
-	pmt=CMediaType();
+	pmt = CMediaType();
 	pmt.InitMediaType();
-	pmt.bFixedSizeSamples=false;
-	basicVideoInfo=BasicVideoInfo();
-
+	pmt.bFixedSizeSamples = false;
+	basicVideoInfo = BasicVideoInfo();
 }
 
 bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
 {
-	bool parsed=false;
-	__int64 framesize=hdrParser.GetSize();
+	bool parsed = false;
+	__int64 framesize = hdrParser.GetSize();
 
-	if (serviceType == SERVICE_TYPE_VIDEO_MPEG2)
+	if (serviceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
+      serviceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
 	{
 		seqhdr seq;
 		if (hdrParser.Read(seq,framesize,&pmt))
@@ -73,27 +68,27 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
 			parsed=true;
 		}
 	}
-	else if (serviceType == SERVICE_TYPE_VIDEO_H264)
+	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_H264)
 	{
 		avchdr avc;
 		if (hdrParser.Read(avc,framesize,&pmt))
 		{
 			//hdrParser.DumpAvcHeader(avc);
-			basicVideoInfo.width=avc.width;
-			basicVideoInfo.height=avc.height;
-			basicVideoInfo.fps=1000 / (avc.AvgTimePerFrame /10000);
-			basicVideoInfo.arx=avc.arx;
-			basicVideoInfo.ary=avc.ary;
+			basicVideoInfo.width = avc.width;
+			basicVideoInfo.height = avc.height;
+			basicVideoInfo.fps = 1000 / (avc.AvgTimePerFrame / 10000);
+			//basicVideoInfo.arx=avc.arx;
+			//basicVideoInfo.ary=avc.ary;
 			if (!avc.progressive)
-				basicVideoInfo.isInterlaced=1;
+				basicVideoInfo.isInterlaced = 1;
 			else
-				basicVideoInfo.isInterlaced=0;
-			basicVideoInfo.streamType=2; // H264
-			basicVideoInfo.isValid=true;
-			parsed=true;
+				basicVideoInfo.isInterlaced = 0;
+			basicVideoInfo.streamType = 2; // H264
+			basicVideoInfo.isValid = true;
+			parsed = true;
 		}
 	}
-	else if (serviceType == SERVICE_TYPE_VIDEO_VC1)
+	else if (serviceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
 	{
 		vc1hdr vc1;
 		if (hdrParser.Read(vc1,framesize,&pmt))
@@ -117,13 +112,55 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
 			parsed = true;
 		}
 	}
+
+  // TODO split these to separate class?
+
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG1 ||
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG2)
+  {
+		mpahdr mpa;
+		parsed = hdrParser.Read(mpa, framesize, &pmt);
+  }
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_AC3 ||
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_AC3PLUS)
+  {
+    ac3hdr ac3;
+		parsed = hdrParser.Read(ac3, framesize, &pmt);
+  }
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_AC3)
+  {
+		aachdr aac;
+		parsed = hdrParser.Read(aac, framesize, &pmt);
+  }
+  else if (serviceType == SERVICE_TYPE_AUDIO_LATM_AAC) // not in lib
+  {
+		latm_aachdr latm_aac;
+		parsed = hdrParser.Read(latm_aac, framesize, &pmt);
+  }
+  else if (serviceType == SERVICE_TYPE_AUDIO_LPCM)
+  {
+		bdlpcmhdr lpcm;
+		parsed = hdrParser.Read(lpcm, framesize, &pmt);
+  }
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_DTS ||
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD ||      // TODO ?
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER) // TODO ?
+  {
+		dtshdr dts;
+		parsed = hdrParser.Read(dts, framesize, &pmt);
+  }
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_TRUHD)
+  {
+    // TODO no real support for now...
+    ac3hdr ac3;
+		parsed = hdrParser.Read(ac3, framesize, &pmt);
+  }
+
 	return parsed;
 }
 
 bool CMpegPesParser::OnTsPacket(byte *Frame, int Length, int serviceType)
 {
-	//LogDebug("Framesize: %i",Length);
-	//if (Length<=100) return false ; // arbitrary for safety.
 	hdrParser.Reset(Frame, Length);
 	return ParseVideo(Frame, serviceType);
 }

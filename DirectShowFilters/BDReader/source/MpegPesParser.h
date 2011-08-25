@@ -19,16 +19,8 @@
  *
  */
 #pragma once
-#include "pcrdecoder.h"
-#include "..\..\shared\packetSync.h"
-#include "pidtable.h"
 #include "..\..\shared\tsheader.h"
 #include "patparser.h"
-#include "channelInfo.h"
-#include "PidTable.h"
-#include "..\..\shared\Pcr.h"
-#include <vector>
-#include <map>
 #include <dvdmedia.h>
 #include "FrameHeaderParser.h"
 
