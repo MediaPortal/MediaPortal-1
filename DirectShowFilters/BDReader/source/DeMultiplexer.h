@@ -27,7 +27,6 @@
 #include "..\..\shared\packetSync.h"
 #include "pidtable.h"
 #include "..\..\shared\tsheader.h"
-#include "patparser.h"
 #include "channelInfo.h"
 #include "PidTable.h"
 #include "..\..\shared\Pcr.h"
@@ -77,11 +76,13 @@ struct PlaylistInfo
 
 
 
-class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public BDEventObserver
+class CDeMultiplexer : public CPacketSync, public BDEventObserver
 {
 public:
   CDeMultiplexer(CBDReaderFilter& filter);
   virtual ~CDeMultiplexer(void);
+
+  // TODO - not all of these should be puclic!
 
   HRESULT    Start();
   void       Flush();
@@ -90,18 +91,21 @@ public:
   Packet*    GetAudio(int playlist, int clip);
   Packet*    GetSubtitle();
   void       OnTsPacket(byte* tsPacket);
-  void       OnNewChannel(CChannelInfo& info);
+
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
-  void       ParseAudioHeader(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
   void       FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> p);
   void       FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p);
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
+
   void       ParseVideoFormat(Packet* p);
+  void       ParseAudioFormat(Packet* p);
+  void       ParseAudioStreams(BLURAY_CLIP_INFO* clip);
+  void       ParseSubtitleStreams(BLURAY_CLIP_INFO* clip);
+
   void       SetEndOfFile(bool bEndOfFile);
-  CPidTable  GetPidTable();
 
   bool       SetAudioStream(__int32 stream);
   bool       GetAudioStream(__int32 &stream);
@@ -147,12 +151,14 @@ public:
 private:
   void ResetClipInfo(int pDebugMark);
   void PacketDelivery(Packet* p, CTsHeader header);
+
   struct stAudioStream
   {
     int pid;
     int audioType;
     char language[7];
   };
+
   struct stSubtitleStream
   {
     int pid;
@@ -162,6 +168,9 @@ private:
 
   vector<struct stAudioStream> m_audioStreams;
   vector<struct stSubtitleStream> m_subtitleStreams;
+
+  int m_nVideoPid;
+
   int ReadFromFile(bool isAudio, bool isVideo);
   void ResetStream();
   bool m_bEndOfFile;
@@ -172,9 +181,8 @@ private:
   CCritSec m_sectionRead;
   CCritSec m_sectionAudioChanging;
   CCritSec m_sectionMediaChanging;
-  CPatParser m_patParser;
-  CMpegPesParser* m_mpegPesParser;
-  CPidTable m_pids;
+  CMpegPesParser* m_videoParser;
+  CMpegPesParser* m_audioParser;
   vector<Packet*> m_vecSubtitleBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
   UINT32 m_nAudioPesLenght;
@@ -196,6 +204,8 @@ private:
   unsigned int m_iAudioStream;
   int m_AudioStreamType;
 
+  int m_videoServiceType;
+
   unsigned int m_audioPid;
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
@@ -204,7 +214,6 @@ private:
   bool m_bHoldVideo;
   bool m_bHoldSubtitle;
   int m_iAudioIdx;
-  int m_iPatVersion;
 
   int m_loopLastSearch;
 
@@ -236,10 +245,6 @@ private:
 
   bool m_bShuttingDown;
 
-  map<int, CMediaType> m_mAudioMediaTypes;
-  int m_audioStreamsToBeParsed;
-  bool m_bDelayedAudioTypeChange;
-
   byte m_readBuffer[READ_SIZE];
 
   INT32 m_nClip;
@@ -252,12 +257,6 @@ private:
 
   REFERENCE_TIME m_rtOffset;
 
-  // use per PID
-  CMediaType m_lpcmPmt;
-  CFrameHeaderParser m_audioParser;
-
-  //Used for playlist/clip tracking
+  // Used for playlist/clip tracking
   CPlaylistManager* m_playlistManager;
-
-  int m_videoServiceType;
 };

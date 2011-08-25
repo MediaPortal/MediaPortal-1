@@ -55,7 +55,6 @@ extern void LogDebug(const char *fmt, ...);
 CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 {
   m_filter.lib.SetEventObserver(this);
-  m_patParser.SetCallBack(this);
   m_pCurrentVideoBuffer = NULL;
   m_pCurrentAudioBuffer = new Packet();
   m_pCurrentSubtitleBuffer = new Packet();
@@ -70,7 +69,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bHoldSubtitle = false;
   m_bShuttingDown = false;
   m_iAudioIdx = -1;
-  m_iPatVersion = -1;
   m_bSetAudioDiscontinuity = false;
   m_bSetVideoDiscontinuity = false;
   pSubUpdateCallback = NULL;
@@ -79,10 +77,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   SetMediaChanging(false);
 
   m_WaitHeaderPES = -1 ;
-  m_mpegPesParser = new CMpegPesParser();
-
-  m_audioStreamsToBeParsed = 0;
-  m_bDelayedAudioTypeChange = false;
+  m_videoParser = new CMpegPesParser();
+  m_audioParser = new CMpegPesParser();
 
   m_bReadFailed = false;
 
@@ -97,7 +93,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_loopLastSearch=1;
   m_bDiscontinuousClip=false;
 
-  m_videoServiceType = -1;
+  m_videoServiceType = SERVICE_TYPE_VIDEO_UNKNOWN;
+  m_nVideoPid = -1;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -110,7 +107,8 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_pCurrentVideoBuffer;
   delete m_pCurrentAudioBuffer;
   delete m_pCurrentSubtitleBuffer;
-  delete m_mpegPesParser;
+  delete m_videoParser;
+  delete m_audioParser;
 
   ivecVBuffers itv = m_t_vecVideoBuffers.begin();
   while (itv != m_t_vecVideoBuffers.end())
@@ -136,31 +134,38 @@ void CDeMultiplexer::ResetClipInfo(int pDebugMark)
 
 int CDeMultiplexer::GetVideoServiceType()
 {
-  if (m_pids.videoPids.size() > 0)
-  {
-    return m_pids.videoPids[0].VideoServiceType;
-  }
-  else
-  {
-    return SERVICE_TYPE_VIDEO_UNKNOWN;
-  }
+  return m_videoServiceType;
 }
-
-CPidTable CDeMultiplexer::GetPidTable()
-{
-  return m_pids;
-}
-
 
 /// This methods selects the audio stream specified
 /// and updates the audio output pin media type if needed
 bool CDeMultiplexer::SetAudioStream(int stream)
 {
-  LogDebug("SetAudioStream : %d", stream);
+  LogDebug("SetAudioStream : %d - TODO - not implemented!", stream);
   if (stream < 0 || stream >= (int)m_audioStreams.size())
     return S_FALSE;
 
+  return true; // TODO audio stream switching
+
   m_iAudioStream = stream;
+  /*
+  BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
+  if (clip)
+  {
+    if (clip->audio_stream_count < stream)
+    {
+      m_AudioStreamType = clip->audio_streams[stream].coding_type;
+    }
+    else
+    {
+      LogDebug("demux: SetAudioStream - requested stream > stream count");
+    }
+  }
+  else
+  {
+    LogDebug("demux: SetAudioStream - failed to get clip info!");
+    return;
+  }*/
 
   // Get the new audio stream type
   int newAudioStreamType = SERVICE_TYPE_AUDIO_MPEG2;
@@ -252,100 +257,13 @@ void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
     pmt.SetVariableSize();
     pmt.SetFormatType(&FORMAT_WaveFormatEx);
     pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
-
-    return;
   }
-
-  if (m_iAudioStream < 0 || stream >= (int)m_audioStreams.size())
+  else
   {
-    pmt.InitMediaType();
-    return;
-  }
-
-  switch (m_audioStreams[stream].audioType)
-  {
-    // MPEG1 shouldn't be mapped to MPEG2 audio as it will break Cyberlink audio codec
-    // (and MPA is not working with the MPEG1 to MPEG2 mapping...)
-    case SERVICE_TYPE_AUDIO_MPEG1:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_MPEG1Payload);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG1AudioFormat, sizeof(MPEG1AudioFormat));
-      break;
-  case SERVICE_TYPE_AUDIO_MPEG2:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_MPEG2_AUDIO);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(MPEG2AudioFormat, sizeof(MPEG2AudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_AAC:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_AAC);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AACAudioFormat, sizeof(AACAudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_LATM_AAC:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_LATM_AAC);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AACAudioFormat, sizeof(AACAudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_AC3:
-    case SERVICE_TYPE_AUDIO_DD_PLUS:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_AC3);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_MLP:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_DOLBY_AC3);//MEDIASUBTYPE_ARCSOFT_MLP);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_DTS:
-    case SERVICE_TYPE_AUDIO_DTS_HD:
-    case SERVICE_TYPE_AUDIO_TS_HD_XLL:
-      pmt.InitMediaType();
-      pmt.SetType(&MEDIATYPE_Audio);
-      pmt.SetSubtype(&MEDIASUBTYPE_DTS);
-      pmt.SetSampleSize(1);
-      pmt.SetTemporalCompression(FALSE);
-      pmt.SetVariableSize();
-      pmt.SetFormatType(&FORMAT_WaveFormatEx);
-      pmt.SetFormat(DTSAudioFormat, sizeof(DTSAudioFormat));
-      break;
-    case SERVICE_TYPE_AUDIO_LPCM:
-      if ((int)m_pids.audioPids.size() >= stream)
-      {
-        pmt = m_mAudioMediaTypes[m_pids.audioPids[stream].Pid];
-      }
+    pmt = m_audioParser->pmt;
   }
 }
+
 // This methods selects the subtitle stream specified
 bool CDeMultiplexer::SetSubtitleStream(__int32 stream)
 {
@@ -404,9 +322,9 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
 
 void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
 {
-  if (m_pids.videoPids.size() != 0 && m_mpegPesParser != NULL)
+  if (m_videoParser)
   {
-    pmt = m_mpegPesParser->pmt;
+    pmt = m_videoParser->pmt;
   }
 }
 
@@ -434,7 +352,6 @@ void CDeMultiplexer::FlushVideo()
         videoBuffer->nClipNumber, m_nClip, videoBuffer->nPlaylist, m_nPlaylist, videoBuffer->rtStart / 10000000.0);
     }
   }
-
 
   m_lastVideoPTS.FromClock(0);
   m_lastVideoPTS.IsValid = false;
@@ -624,7 +541,6 @@ HRESULT CDeMultiplexer::Start()
   m_bEndOfFile = false;
   m_bHoldAudio = false;
   m_bHoldVideo = false;
-  m_iPatVersion = -1;
   m_bSetAudioDiscontinuity = false;
   m_bSetVideoDiscontinuity = false;
   DWORD dwBytesProcessed = 0;
@@ -640,30 +556,33 @@ HRESULT CDeMultiplexer::Start()
   {
     int BytesRead = ReadFromFile(false, false);
 
-    if (dwBytesProcessed > INITIAL_READ_SIZE || GetAudioStreamCount() > 0 || BytesRead == 0)
+    if (dwBytesProcessed > INITIAL_READ_SIZE)
     {
-      if ((!m_mpegPesParser->basicVideoInfo.isValid &&  
-            m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 1))
-      {
-        dwBytesProcessed += BytesRead;
-        continue;
-      }
-
-      // Seek to start - reset the libbluray reading position
-      m_filter.lib.Seek(0);
-      Flush();
-      m_bStarting = false;
-
-      CMediaType pmt;
-      GetAudioStreamType(m_iAudioStream, pmt);
-      m_filter.GetAudioPin()->SetInitialMediaType(&pmt);
-
-      GetVideoStreamType(pmt);
-      m_filter.GetVideoPin()->SetInitialMediaType(&pmt);
-
-      return S_OK;
+      m_bReadFailed = true;
+      break;
     }
-    dwBytesProcessed += BytesRead;
+
+    if (!m_videoParser->basicVideoInfo.isValid &&  
+         m_videoParser->pmt.formattype == GUID_NULL &&
+         m_audioParser->pmt.formattype == GUID_NULL)
+    {
+      dwBytesProcessed += BytesRead;
+      continue;
+    }
+
+    // Seek to start - reset the libbluray reading position
+    m_filter.lib.Seek(0);
+    Flush();
+    m_bStarting = false;
+
+    CMediaType pmt;
+    GetAudioStreamType(m_iAudioStream, pmt);
+    m_filter.GetAudioPin()->SetInitialMediaType(&pmt);
+
+    GetVideoStreamType(pmt);
+    m_filter.GetVideoPin()->SetInitialMediaType(&pmt);
+
+    return S_OK;
   }
   
   m_bStarting = false;
@@ -788,6 +707,10 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         if (clip)
         {
           m_videoServiceType = clip->video_streams->coding_type;
+          m_nVideoPid = clip->video_streams->pid;
+
+          ParseAudioStreams(clip);
+          ParseSubtitleStreams(clip);
         }
         else
         {
@@ -834,15 +757,6 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
 {
   CTsHeader header(tsPacket);
 
-  m_patParser.OnTsPacket(tsPacket);
-
-  if (m_iPatVersion == -1)
-  {
-    // First PAT not found
-    return;
-  }
-
-  if (m_pids.PcrPid == 0) return;
   if (header.Pid == 0) return;
   if (header.TScrambling) return;
   if (header.TransportError) return;
@@ -859,13 +773,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 {
   //LogDebug("FillAudio - audio PID %d", m_audioPid );
 
-  ParseAudioHeader(header, tsPacket);
-
   if (m_iAudioStream < 0 || m_iAudioStream >= m_audioStreams.size()) return;
 
   m_audioPid = m_audioStreams[m_iAudioStream].pid;
   if (m_audioPid == 0 || m_audioPid != header.Pid) return;
-  if (m_filter.GetAudioPin()->IsConnected()==false) return;
   if (header.AdaptionFieldOnly()) return;
 
   bool packetProcessed = false;
@@ -886,9 +797,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       }
 
       m_pCurrentAudioBuffer = new Packet();
-      CMediaType pmt;
-      GetAudioStreamType(m_iAudioStream, pmt);
-      if (!m_pCurrentAudioBuffer->pmt) m_pCurrentAudioBuffer->pmt = CreateMediaType(&pmt);
 
       if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
       {
@@ -969,6 +877,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
     if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
     {
+      ParseAudioFormat(m_pCurrentAudioBuffer);
+
       if (!m_bStarting)
       {
         m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
@@ -983,72 +893,11 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   }
 }
 
-void CDeMultiplexer::ParseAudioHeader(CTsHeader& header, byte* tsPacket)
-{
-  if (m_audioStreamsToBeParsed > 0)
-  {
-    bool isAudioPid = false;
-
-    for (unsigned int i = 0; i < m_pids.audioPids.size() ; i++)
-    {
-      if (m_pids.audioPids[i].Pid == header.Pid)
-      {
-        isAudioPid = true;
-        break;
-      }
-    }
-
-    if (isAudioPid)
-    {
-      CAutoLock lockVid(&m_sectionVideo);
-      CAutoLock lockAud(&m_sectionAudio);
-      CAutoLock lockSub(&m_sectionSubtitle);
-      
-      if (header.PayloadUnitStart)
-      {
-        int pos = header.PayLoadStart;
-
-        if ((tsPacket[pos] == 0) && (tsPacket[pos + 1] == 0) && (tsPacket[pos + 2] == 1))
-        {
-          // Skip pes header
-          int headerLen = 9 + tsPacket[pos + 8];
-          int len = 188 - headerLen;
-          if (len > 0)
-          { 
-            byte* dataStart = &tsPacket[headerLen + pos];
-
-            map<int, CMediaType>::iterator it;
-            it = m_mAudioMediaTypes.find(header.Pid);
-
-            if (it == m_mAudioMediaTypes.end())
-            {
-              CMediaType pmt;
-              bdlpcmhdr hr;
-              m_audioParser.Reset(dataStart, len);
-              if (m_audioParser.Read(hr, len, &pmt))
-              {
-                m_mAudioMediaTypes.insert(pair<int, CMediaType>(header.Pid, pmt));
-                m_audioStreamsToBeParsed--;
-                
-                if (m_audioStreamsToBeParsed == 0 && m_bDelayedAudioTypeChange)
-                {
-                  LogDebug("DEBUG parse  m_filter.OnMediaTypeChanged(1)");
-                  //m_filter.OnMediaTypeChanged(1);
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 /// This method will check if the tspacket is an video packet
 void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
 {
-  if (m_pids.videoPids.size() == 0 || m_pids.videoPids[0].Pid == 0) return;
-  if (header.Pid != m_pids.videoPids[0].Pid) return;
+  if (m_nVideoPid == -1) return;
+  if (header.Pid != m_nVideoPid) return;
 
   if (header.AdaptionFieldOnly()) return;
 
@@ -1117,8 +966,14 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
 
 void CDeMultiplexer::ParseVideoFormat(Packet* p)
 {
-  m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
-  p->pmt = CreateMediaType(&m_mpegPesParser->pmt);
+  m_videoParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
+  p->pmt = CreateMediaType(&m_videoParser->pmt);
+}
+
+void CDeMultiplexer::ParseAudioFormat(Packet* p)
+{
+  m_audioParser->OnTsPacket(p->GetData(), p->GetCount(), m_AudioStreamType);
+  p->pmt = CreateMediaType(&m_audioParser->pmt);
 }
 
 void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> p)
@@ -1419,7 +1274,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     m_WaitHeaderPES = m_pBuild->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
 
-    if (m_pids.videoPids[0].VideoServiceType == SERVICE_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
+    if (m_videoServiceType == SERVICE_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
     {
       FillVideoVC1PESPacket(header, m_pBuild);
       m_pBuild.Free();
@@ -1438,9 +1293,9 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   
   if (headerlen < 188)
   {            
-    int dataLen = 188-headerlen;
+    int dataLen = 188 - headerlen;
     p->SetCount(dataLen);
-    p->SetData(&tsPacket[headerlen],dataLen);
+    p->SetData(&tsPacket[headerlen], dataLen);
 
     m_pBuild->Append(*p);
   }
@@ -1509,7 +1364,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     }
   }//waitPESheader
 
-  if (m_pBuild->GetCount() && m_pids.videoPids[0].VideoServiceType != SERVICE_TYPE_VIDEO_VC1)
+  if (m_pBuild->GetCount() && m_videoServiceType != SERVICE_TYPE_VIDEO_VC1)
   {
     FillVideoH264PESPacket(header, m_pBuild);
     m_pBuild.Free();
@@ -1777,16 +1632,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       pDVBSubtitleFilter->SetFirstPcr(0);
       m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
 
-      // TODO - this should be set based on the selected subtitle stream, but its not likely that
-      // same TS / MT2S file would contain both DVB and Blu-ray subtitles
-      if( m_pids.subtitlePids.size() > 0 && m_pids.subtitlePids[0].SubtitleServiceType == 0x90)
-      {
-        pDVBSubtitleFilter->SetHDMV(true);
-      }
-      else
-      {
-        pDVBSubtitleFilter->SetHDMV(false);
-      }
+      pDVBSubtitleFilter->SetHDMV(true);
     }
 
     if (m_bUpdateSubtitleOffset)
@@ -1827,188 +1673,78 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
   }
 }
 
-
-/// This method gets called-back from the pat parser when a new PAT/PMT/SDT has been received
-/// In this method we check if any audio/video/subtitle pid or format has changed
-/// If not, we simply return
-/// If something has changed we ask the MP to rebuild the graph
-void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
+void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
 {
-  CAutoLock lockVid(&m_sectionVideo);
-  CAutoLock lockAud(&m_sectionAudio);
-  CAutoLock lockSub(&m_sectionSubtitle);
-
-  CPidTable pids = info.PidTable;
-
-  if (info.PatVersion != m_iPatVersion)
+  if (clip)
   {
-    LogDebug("OnNewChannel pat version:%d->%d", m_iPatVersion, info.PatVersion);
-    m_iPatVersion = info.PatVersion;
-    m_bSetAudioDiscontinuity = true;
-    m_bSetVideoDiscontinuity = true;
-    //Flush();
-  }
-  else
-  {
-    if (m_pids == pids)
-    { 
-      return;
-    }
-  }
+    m_audioStreams.clear();
 
-  CAutoLock lock (&m_sectionMediaChanging);
-
-  // Remember the old audio & video formats
-  int oldVideoServiceType(-1);
-  if (m_pids.videoPids.size() > 0)
-  {
-    oldVideoServiceType = m_pids.videoPids[0].VideoServiceType;
-  }
-
-  CPidTable tmpPids; // This is only for logging
-  tmpPids = m_pids = pids;
-  LogDebug("PAT/PMT/SDT changed");
-
-  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-  if( pDVBSubtitleFilter )
-  {
-    // Make sure that subtitle cache is reset ( in filter & MP )
-    pDVBSubtitleFilter->NotifyChannelChange();
-  }
-
-  m_audioStreams.clear();
-  m_audioStreamsToBeParsed = 0;
-  m_mAudioMediaTypes.clear();
-
-  BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();  
-
-  for (unsigned int i(0); i < m_pids.audioPids.size(); i++)
-  {
-    struct stAudioStream audio;
-    audio.pid = m_pids.audioPids[i].Pid;
-
-    if (clip)
+    // TODO - use correct stream on clip changes
+    if (clip->audio_stream_count > m_iAudioStream && m_iAudioStream >= 0)
     {
-      for (int j(0); j < clip->audio_stream_count; j++)
-      {
-        if (clip->audio_streams[j].pid == audio.pid)
-        {
-          tmpPids.audioPids[i].Lang[0] = audio.language[0] = clip->audio_streams[j].lang[0];
-          tmpPids.audioPids[i].Lang[1] = audio.language[1] = clip->audio_streams[j].lang[1];
-          tmpPids.audioPids[i].Lang[2] = audio.language[2] = clip->audio_streams[j].lang[2];
-          tmpPids.audioPids[i].Lang[3] = audio.language[3] = clip->audio_streams[j].lang[3];
-        }
-      }
-
-      if (clip->audio_stream_count == 0)
-      {
-        tmpPids.audioPids[i].Lang[0] = audio.language[0] = 'U';
-        tmpPids.audioPids[i].Lang[1] = audio.language[1] = 'N';
-        tmpPids.audioPids[i].Lang[2] = audio.language[2] = 'K';
-        tmpPids.audioPids[i].Lang[3] = audio.language[3] = 0;
-      }
+      m_AudioStreamType = clip->audio_streams[m_iAudioStream].coding_type;
     }
-    audio.audioType = m_pids.audioPids[i].AudioServiceType;
-
-    if (audio.audioType == SERVICE_TYPE_AUDIO_LPCM)
+    else if (clip->audio_stream_count > 0)
     {
-      m_audioStreamsToBeParsed++;
-    }
-
-    m_audioStreams.push_back(audio);
-  }
-
-  m_subtitleStreams.clear();
-  
-  for (unsigned int i(0); i < m_pids.subtitlePids.size(); i++)
-  {
-    struct stSubtitleStream subtitle;
-    subtitle.pid = m_pids.subtitlePids[i].Pid;
-
-    if (clip)
-    {
-      for (int j(0); j < clip->pg_stream_count; j++)
-      {
-        if (clip->pg_streams[j].pid == subtitle.pid)
-        {
-          tmpPids.subtitlePids[i].Lang[0] = subtitle.language[0] = clip->pg_streams[j].lang[0];
-          tmpPids.subtitlePids[i].Lang[1] = subtitle.language[1] = clip->pg_streams[j].lang[1];
-          tmpPids.subtitlePids[i].Lang[2] = subtitle.language[2] = clip->pg_streams[j].lang[2];
-          tmpPids.subtitlePids[i].Lang[3] = subtitle.language[3] = clip->pg_streams[j].lang[3];
-        }
-      }
-    }
-    m_subtitleStreams.push_back(subtitle);
-  }
-
-  tmpPids.LogPIDs();
-
-  bool changed = false;
-  bool videoChanged = false;
-  
-  // Did the video format change?
-  if (m_pids.videoPids.size() > 0 && oldVideoServiceType != m_pids.videoPids[0].VideoServiceType)
-  {
-    if (m_filter.GetVideoPin()->IsConnected())
-    {
-      changed = true;
-      videoChanged = true;
-    }
-  }
-
-  m_iAudioStream = 0;
-
-  LogDebug ("Setting initial audio index to : %i", m_iAudioStream);
-
-  // Get the new audio format
-  int newAudioStreamType = SERVICE_TYPE_NO_AUDIO;
-  if (m_iAudioStream >= 0 && m_iAudioStream < m_audioStreams.size())
-  {
-    newAudioStreamType = m_audioStreams[m_iAudioStream].audioType;
-  }
-
-  // Did the audio format change?
-  if (m_AudioStreamType != newAudioStreamType)
-  {
-    changed = true;
-  }
-
-  // Did audio/video format change?
-  if (changed)
-  {
-    // If we have a video stream and it's format changed, let the mpeg parser trigger the OnMediaTypeChanged
-    if (m_pids.videoPids.size() > 0 && m_pids.videoPids[0].Pid > 0x1 && videoChanged)  
-    {
-      LogDebug("demux: Video type changed - m_bRebuildOnVideoChange = true");
-      //m_bRebuildOnVideoChange = true;
-
-      //SetMediaChanging(true);
+      m_AudioStreamType = clip->audio_streams[0].coding_type;
+      LogDebug("demux: ParseAudioStreams - requested stream > stream count");
     }
     else
     {
-      if ((m_AudioStreamType != SERVICE_TYPE_AUDIO_NOT_INIT) && 
-          (m_AudioStreamType != newAudioStreamType))
+      m_AudioStreamType = SERVICE_TYPE_NO_AUDIO;
+
+      stAudioStream audio;
+
+      audio.language[0] = 'F';
+      audio.language[1] = 'F';
+      audio.language[2] = 'F';
+      audio.language[3] = '0';
+
+      audio.audioType = BLURAY_STREAM_TYPE_AUDIO_AC3;
+      audio.pid = -1;
+
+      m_audioStreams.push_back(audio);
+    }
+
+    if (m_AudioStreamType != SERVICE_TYPE_NO_AUDIO)
+    {
+      for (int i(0); i < clip->audio_stream_count; i++)
       {
-        LogDebug("demux: Audio media types changed. Trigger OnMediaTypeChanged()");
-            
-        if (m_audioStreamsToBeParsed > 0)
-        {
-          LogDebug("demux: m_bDelayedAudioTypeChange = true;");  
-          //m_bDelayedAudioTypeChange = true;
-        }
+        stAudioStream audio;
+
+        audio.language[0] = clip->audio_streams[i].lang[0];
+        audio.language[1] = clip->audio_streams[i].lang[1];
+        audio.language[2] = clip->audio_streams[i].lang[2];
+        audio.language[3] = clip->audio_streams[i].lang[3];
+
+        audio.audioType = clip->audio_streams[i].coding_type;
+        audio.pid = clip->audio_streams[i].pid;
+
+        m_audioStreams.push_back(audio);
       }
     }
   }
+}
 
-  m_AudioStreamType = newAudioStreamType;
-
-  if (pSubUpdateCallback)
+void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
+{
+  if (clip)
   {
-    int bitmap_index = -1;
-    (*pSubUpdateCallback)(m_subtitleStreams.size(), (m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL), &bitmap_index);
-    if (bitmap_index >= 0)
+    m_subtitleStreams.clear();
+
+    for (int i(0); i < clip->pg_stream_count; i++)
     {
-      SetSubtitleStream(bitmap_index);
+      stSubtitleStream subtitle;
+
+      subtitle.language[0] = clip->pg_streams[i].lang[0];
+      subtitle.language[1] = clip->pg_streams[i].lang[1];
+      subtitle.language[2] = clip->pg_streams[i].lang[2];
+      subtitle.language[3] = clip->pg_streams[i].lang[3];
+
+      subtitle.subtitleType = clip->pg_streams[i].coding_type;
+      subtitle.pid = clip->pg_streams[i].pid;
+
+      m_subtitleStreams.push_back(subtitle);
     }
   }
 }
