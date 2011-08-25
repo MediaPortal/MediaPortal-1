@@ -71,7 +71,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_iAudioIdx = -1;
   m_bSetAudioDiscontinuity = false;
   m_bSetVideoDiscontinuity = false;
-  pSubUpdateCallback = NULL;
+  m_pSubUpdateCallback = NULL;
   m_lastVideoPTS.IsValid = false;
   m_lastAudioPTS.IsValid = false;
   SetMediaChanging(false);
@@ -304,7 +304,7 @@ bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
 
 bool CDeMultiplexer::SetSubtitleResetCallback(int(CALLBACK *cb)(int, void*, int*))
 {
-  pSubUpdateCallback = cb;
+  m_pSubUpdateCallback = cb;
   return S_OK;
 }
 
@@ -1745,6 +1745,24 @@ void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
       subtitle.pid = clip->pg_streams[i].pid;
 
       m_subtitleStreams.push_back(subtitle);
+    }
+
+    // TODO - do not trigger on every clip change
+    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+    if (pDVBSubtitleFilter)
+    {
+      // Make sure that subtitle cache is reset (in filter & MP)
+      pDVBSubtitleFilter->NotifyChannelChange();
+    }
+
+    if (m_pSubUpdateCallback)
+    {
+      int bitmap_index = -1;
+      (*m_pSubUpdateCallback)(m_subtitleStreams.size(), (m_subtitleStreams.size() > 0 ? &m_subtitleStreams[0] : NULL), &bitmap_index);
+      if (bitmap_index >= 0)
+      {
+        SetSubtitleStream(bitmap_index);
+      }
     }
   }
 }

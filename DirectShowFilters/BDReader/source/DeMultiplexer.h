@@ -228,7 +228,7 @@ private:
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
 
-  int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
+  int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts,int* bi);
 
   // Used only for H.264 stream demuxing
   CAutoPtr<Packet> m_p;
