@@ -379,6 +379,12 @@ namespace MediaPortal.Player
       BLURAY_VIDEO_RATE_60000_1001 = 7   // 59.94
     }
 
+    protected enum MediaType
+    {
+      Video = 1,
+      Audio = 2,
+      AudioVideo = 3
+    }
     #endregion
 
     #region variables
@@ -439,7 +445,7 @@ namespace MediaPortal.Player
     protected DateTime _elapsedTimer = DateTime.Now;
     protected DateTime _updateTimer = DateTime.Now;
     protected Geometry.Type _geometry = Geometry.Type.Normal;
-    protected int iChangedMediaTypes;
+    protected MediaType _mChangedMediaType;
     protected int _lastFrameCounter;    
     protected bool _bMediaTypeChanged;
     protected int _currentTitle = 0;
@@ -856,9 +862,9 @@ namespace MediaPortal.Player
 
       if (_bMediaTypeChanged)
       {
-        _bMediaTypeChanged = false;
+        _bMediaTypeChanged = false;        
         DoGraphRebuild();
-        _ireader.OnGraphRebuild(iChangedMediaTypes);
+        _ireader.OnGraphRebuild((int)_mChangedMediaType);
       }
 
       HandleBDEvent();
@@ -1422,18 +1428,18 @@ namespace MediaPortal.Player
       Log.Debug("BDPlayer OnMediaTypeChanged(): vrate {0}, vformat {1}, aformat {2}", videoRate, videoFormat, audioFormat);
       if (videoFormat != _currentVideoFormat)
       {
-        iChangedMediaTypes = 2;
+        _mChangedMediaType = MediaType.Video;
         _bMediaTypeChanged = Playing ? true : false;
         _currentVideoFormat = videoFormat;
       }
       if (audioFormat != _currentAudioFormat)
       {
-        iChangedMediaTypes = 1;
+        _mChangedMediaType = MediaType.Audio;
         _bMediaTypeChanged = Playing ? true : false;
         _currentAudioFormat = audioFormat;
       }
       RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);      
-      return 0;
+      return _bMediaTypeChanged ? 0 : 1;
     }    
 
     public int OnBDevent(BDEvent bdevent)
@@ -1682,7 +1688,7 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
-            EnableSubtitle = bdevent.Param == 1 ? true : false || SubtitleStreams > 0;
+            //EnableSubtitle = bdevent.Param == 1 ? true : false || SubtitleStreams > 0;
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
@@ -1834,21 +1840,21 @@ namespace MediaPortal.Player
         _graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
         if (MSVideoCodec != null)
         {
-          iChangedMediaTypes = 3;
+          _mChangedMediaType = MediaType.AudioVideo;
           DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
         }
         // hack end
-        switch (iChangedMediaTypes)
+        switch (_mChangedMediaType)
         {
-          case 1: // audio changed
+          case MediaType.Audio: // audio changed
             Log.Info("Rerendering audio pin of BDReader filter.");
             UpdateFilters("Audio");
             break;
-          case 2: // video changed
+          case MediaType.Video: // video changed
             Log.Info("Rerendering video pin of BDReader filter.");
             UpdateFilters("Video");
             break;
-          case 3: // both changed
+          case MediaType.AudioVideo: // both changed
             Log.Info("Rerendering audio and video pins of BDReader filter.");
             UpdateFilters("Audio");
             UpdateFilters("Video");
