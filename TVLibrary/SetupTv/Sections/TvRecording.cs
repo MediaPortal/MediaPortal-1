@@ -983,7 +983,8 @@ namespace SetupTv.Sections
                                aTag.episodeName,
                                aTag.seriesNum,
                                aTag.episodeNum,
-                               aTag.episodePart
+                               aTag.episodePart,
+                               Convert.ToInt32(aTag.mediaType)
           );
       }
       catch (Exception ex)

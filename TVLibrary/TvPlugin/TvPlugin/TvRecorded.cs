@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Gentle.Common;
@@ -74,7 +75,7 @@ namespace TvPlugin
         {
           _thumbCreationActive = true;
 
-          IList<Recording> recordings = Recording.ListAll();
+          IList<Recording> recordings = Recording.ListAllTv();
           for (int i = recordings.Count - 1; i >= 0; i--)
           {
             string recFileName = TVUtil.GetFileNameForRecording(recordings[i]);
@@ -775,109 +776,48 @@ namespace TvPlugin
       try
       {
         GUIControl.ClearControl(GetID, facadeLayout.GetID);
+        IList<Recording> recordings = Recording.ListAllTv();
 
-        IList<RadioGroupMap> radiogroups = RadioGroupMap.ListAll();
-        IList<Recording> recordings = Recording.ListAll();
+
         if (_currentLabel == string.Empty)
-        {
-          foreach (Recording rec in recordings)
+        {          
+          Func<Recording, string> keySelector = (rec => rec.Title);
+          switch (_currentDbView)
           {
-            // catch exceptions here so MP will go on and list further recs
-            try
-            {
-              bool isRadioChannel = false;
-              foreach (RadioGroupMap radiogroup in radiogroups)
-              {
-                if (rec.IdChannel == radiogroup.IdChannel)
-                {
-                  isRadioChannel = true;
-                  break;
-                }
-              }
-              if (isRadioChannel == true) continue;  // only TVChannels are allowed 
-              bool add = true;
-
-              // combine recordings with the same name to a folder located on top
-              foreach (GUIListItem item in itemlist)
-              {
-                if (item.TVTag != null)
-                {
-                  bool merge = false;
-                  Recording listRec = item.TVTag as Recording;
-                  if (listRec != null)
-                  {
-                    switch (_currentDbView)
-                    {
-                      case DBView.History:
-                        merge = GetSpokenViewDate(rec.StartTime).Equals(GetSpokenViewDate(listRec.StartTime));
-                        break;
-                      case DBView.Recordings:
-                        merge = rec.Title.Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
-                        //merge = TVUtil.GetDisplayTitle(rec).Equals(listRec.Title, StringComparison.InvariantCultureIgnoreCase);
-                        break;
-                      case DBView.Channel:
-                        merge = rec.IdChannel == listRec.IdChannel;
-                        break;
-                      case DBView.Genre:
-                        merge = rec.Genre.Equals(listRec.Genre, StringComparison.InvariantCultureIgnoreCase);
-                        break;
-                    }
-                    if (merge)
-                    {
-                      if (listRec.StartTime < rec.StartTime)
-                      {
-                        // Make sure that the folder items shows the information of the most recent subitem
-                        // e.g. the Start time might be relevant for sorting the folders correctly.
-                        item.TVTag = (BuildItemFromRecording(rec)).TVTag;
-                      }
-
-                      item.IsFolder = true;
-                      // NO thumbnails for folders please so we can distinguish between single files and folders
-                      Utils.SetDefaultIcons(item);
-                      item.ThumbnailImage = item.IconImageBig;
-                      add = false;
-                      break;
-                    }
-                  }
-                }
-              }
-
-              GUIListItem it = BuildItemFromRecording(rec);
-              if (it != null)
-              {
-                if (add)
-                {
-                  // Add new list item for this recording
-                  itemlist.Add(it);
-                }
-                else
-                {
-                  if (IsRecordingActual(rec))
-                  {
-                    for (int i = 0; i < itemlist.Count; i++)
-                    {
-                      if (itemlist[i].IsFolder &&
-                          (TVUtil.GetDisplayTitle(rec).Equals(itemlist[i].Label,
-                                                              StringComparison.InvariantCultureIgnoreCase) ||
-                           (itemlist[i].Label.Equals(rec.Title, StringComparison.InvariantCultureIgnoreCase))))
-                      {
-                        it.IsFolder = true;
-                        Utils.SetDefaultIcons(it);
-                        itemlist.RemoveAt(i);
-                        itemlist.Insert(i, it);
-                        break;
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            catch (Exception recex)
-            {
-              Log.Error("TVRecorded: error processing recordings - {0}", recex.Message);
-            }
+            case DBView.History:
+              keySelector = (rec => GetSpokenViewDate(rec.StartTime).ToUpperInvariant());
+              break;
+            case DBView.Recordings:
+              keySelector = (rec => rec.Title.ToUpperInvariant());
+              break;
+            case DBView.Channel:
+              keySelector = (rec => rec.IdChannel.ToString());
+              break;
+            case DBView.Genre:
+              keySelector = (rec => rec.Genre.ToUpperInvariant());
+              break;
           }
-        }
+
+          ILookup<string, Recording> recItems = recordings.ToLookup(keySelector);            
+
+          itemlist = recItems.Select(recs =>
+          {
+            var item =
+              BuildItemFromRecording(
+                recs.Aggregate(
+                  (ra, r) =>
+                    ra == null ? r :
+                    IsRecordingActual(r) ? r :
+                    r.StartTime > ra.StartTime ? r : ra));
+            if (recs.Count() > 1)
+            {
+              item.IsFolder = true;
+              Utils.SetDefaultIcons(item);
+              item.ThumbnailImage = item.IconImageBig;
+            }
+            return item;
+          }).ToList();
+        }        
         else
         {
           // Showing a merged folders content
@@ -978,7 +918,7 @@ namespace TvPlugin
 
     public static bool IsRecordingActual(Recording aRecording)
     {
-      return aRecording.IsRecording;
+      return aRecording.IsRecording;      
     }
 
     private GUIListItem BuildItemFromRecording(Recording aRecording)
@@ -986,8 +926,7 @@ namespace TvPlugin
       string strDefaultUnseenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoBig.png";
       string strDefaultSeenIcon = GUIGraphicsContext.Skin + @"\Media\defaultVideoSeenBig.png";
       GUIListItem item = null;
-      string strChannelName = GUILocalizeStrings.Get(2014); // unknown
-      string strGenre = GUILocalizeStrings.Get(2014); // unknown
+      string strChannelName = GUILocalizeStrings.Get(2014); // unknown      
 
       try
       {
@@ -1001,11 +940,7 @@ namespace TvPlugin
         if (refCh != null)
         {
           strChannelName = refCh.DisplayName;
-        }
-        if (!String.IsNullOrEmpty(aRecording.Genre))
-        {
-          strGenre = aRecording.Genre;
-        }
+        }        
 
         // Log.Debug("TVRecorded: BuildItemFromRecording [{0}]: {1} ({2}) on channel {3}", _currentDbView.ToString(), aRecording.Title, aRecording.Genre, strChannelName);
         item = new GUIListItem();
@@ -1167,11 +1102,10 @@ namespace TvPlugin
       }
 
       Recording rec = (Recording)pItem.TVTag;
-      IList<Recording> itemlist = Recording.ListAll();
+      IList<Recording> itemlist = Recording.ListAllTv();
 
       _oActiveRecording = rec;
-      _bIsLiveRecording = false;
-      TvServer server = new TvServer();
+      _bIsLiveRecording = false;      
       foreach (Recording recItem in itemlist)
       {
         if (rec.IdRecording == recItem.IdRecording && IsRecordingActual(recItem))

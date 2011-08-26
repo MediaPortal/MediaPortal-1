@@ -3234,8 +3234,8 @@ namespace TvPlugin
       ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, Card.User);
       if (CurrentChanState == ChannelState.nottunable)
       {
-        ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-        return false;
+        //ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+        //return false;
       }
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide

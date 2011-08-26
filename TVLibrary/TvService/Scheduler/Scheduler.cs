@@ -1409,7 +1409,9 @@ namespace TvService
         info.startTime = RecDetail.RecordingStartDateTime;
         info.endTime = RecDetail.EndTime;
 
-        MatroskaTagHandler.WriteTag(System.IO.Path.ChangeExtension(fileName, ".xml"), info);
+        info.mediaType = Convert.ToString(RecDetail.Recording.MediaType);
+
+        MatroskaTagHandler.WriteTag(Path.ChangeExtension(fileName, ".xml"), info);
       }
     }
 

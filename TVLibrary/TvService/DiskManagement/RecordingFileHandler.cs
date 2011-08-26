@@ -44,7 +44,7 @@ namespace TvService
     {
       wasPendingDeletionAdded = false;
       Log.Debug("DeleteRecordingOnDisk: '{0}'", fileNameForRec);
-      bool filesDeleted = false;
+      bool filesDeleted = true;
       try
       {
         // Check if directory exists first, otherwise GetFiles throws an error
@@ -59,9 +59,8 @@ namespace TvService
           catch (Exception)
           {
             wasPendingDeletionAdded = true;
-          }
-          filesDeleted = true;
-        }
+          }          
+        }        
       }
       catch (Exception ex)
       {

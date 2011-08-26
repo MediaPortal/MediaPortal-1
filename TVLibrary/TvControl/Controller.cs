@@ -215,12 +215,7 @@ namespace TvControl
     /// </summary>
     /// <param name="idRecording">The id recording.</param>
     bool DeleteRecording(int idRecording);
-
-    /// <summary>
-    /// Checks if the files of a recording still exist
-    /// </summary>
-    /// <param name="idRecording">The id of the recording</param>
-    bool IsRecordingValid(int idRecording);
+ 
 
     /// <summary>
     /// Deletes invalid recordings from database. A recording is invalid if the corresponding file no longer exists.

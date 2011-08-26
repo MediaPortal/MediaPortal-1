@@ -2207,28 +2207,14 @@ namespace TvService
     /// <summary>
     /// Checks if the files of a recording still exist
     /// </summary>
-    /// <param name="idRecording">The id of the recording</param>
-    public bool IsRecordingValid(int idRecording)
+    /// <param name="rec">recording</param>
+    private bool IsRecordingValid(Recording rec)
     {
       try
-      {
-        Recording rec = Recording.Retrieve(idRecording);
+      {        
         if (rec == null)
         {
           return false;
-        }
-        if (!IsLocal(rec.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = rec.ReferencedServer().HostName;
-            return RemoteControl.Instance.IsRecordingValid(rec.IdRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
-          }
-          return true;
         }
         return (File.Exists(rec.FileName));
       }
@@ -2248,7 +2234,7 @@ namespace TvService
       bool foundInvalidRecording = false;
       foreach (Recording rec in itemlist)
       {
-        if (!IsRecordingValid(rec.IdRecording))
+        if (!IsRecordingValid(rec))
         {
           try
           {
