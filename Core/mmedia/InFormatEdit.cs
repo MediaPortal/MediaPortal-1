@@ -22,7 +22,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.UserInterface.Controls;
 using WaveLib;
 

@@ -20,8 +20,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
-using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using Microsoft.Win32;

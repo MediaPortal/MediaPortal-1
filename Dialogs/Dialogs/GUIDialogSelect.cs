@@ -21,8 +21,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
-using MediaPortal.ExtensionMethods;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.Dialogs

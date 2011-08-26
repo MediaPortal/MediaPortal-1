@@ -26,7 +26,7 @@ using System.IO;
 using System.Timers;
 using System.Windows.Forms;
 using System.Xml;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using Microsoft.DirectX;

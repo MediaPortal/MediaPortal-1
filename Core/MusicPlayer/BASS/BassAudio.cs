@@ -27,7 +27,7 @@ using System.Text;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.DSP;
 using MediaPortal.TagReader;

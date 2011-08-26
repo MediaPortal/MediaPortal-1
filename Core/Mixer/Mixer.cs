@@ -20,7 +20,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.Mixer
 {

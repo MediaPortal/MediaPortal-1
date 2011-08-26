@@ -24,7 +24,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Direct3D = Microsoft.DirectX.Direct3D;

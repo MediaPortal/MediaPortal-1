@@ -18,9 +18,9 @@
 
 #endregion
 
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Video
 {

@@ -25,7 +25,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DShowNET.Helper;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Configuration;

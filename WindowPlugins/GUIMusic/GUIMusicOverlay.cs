@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Music.Database;
@@ -29,7 +30,6 @@ using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
 using MediaPortal.Util;
-using MediaPortal.ExtensionMethods;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Music

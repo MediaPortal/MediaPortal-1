@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Serialization;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

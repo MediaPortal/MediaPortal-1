@@ -22,9 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Drawing;
 using Microsoft.DirectX.Direct3D;
-using MediaPortal.ExtensionMethods;
 
 // used for Keys definition
 

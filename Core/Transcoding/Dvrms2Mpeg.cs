@@ -23,7 +23,7 @@ using DShowNET;
 using DShowNET.Helper;
 using DirectShowLib;
 using DirectShowLib.SBE;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using System.Runtime.InteropServices;
 

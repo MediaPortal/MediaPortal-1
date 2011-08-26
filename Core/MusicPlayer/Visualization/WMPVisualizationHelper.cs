@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using DShowNET.Helper;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.Visualization
 {

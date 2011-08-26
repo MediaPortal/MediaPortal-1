@@ -23,11 +23,11 @@
 using System;
 using System.Drawing;
 using System.IO;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using MediaPortal.ExtensionMethods;
 
 #endregion
 

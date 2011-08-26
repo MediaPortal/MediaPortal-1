@@ -24,9 +24,9 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using DShowNET.Helper;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using Microsoft.DirectX.Direct3D;
 using System.Runtime.CompilerServices;
-using MediaPortal.ExtensionMethods;
 
 //using MediaPortal.EventSubscriptionManager;
 

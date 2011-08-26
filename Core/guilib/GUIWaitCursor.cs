@@ -22,8 +22,8 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Media.Animation;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Drawing;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

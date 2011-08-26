@@ -22,8 +22,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
-using MediaPortal.ExtensionMethods;
 using MediaPortal.Localisation;
 using MediaPortal.Profile;
 

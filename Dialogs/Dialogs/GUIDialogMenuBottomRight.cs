@@ -19,8 +19,8 @@
 #endregion
 
 using System;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.Dialogs
 {

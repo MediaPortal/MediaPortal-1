@@ -24,10 +24,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Threading;
-using MediaPortal.ExtensionMethods;
 //using System.Reflection;
 //using System.Security;
 //using System.Runtime.InteropServices;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 

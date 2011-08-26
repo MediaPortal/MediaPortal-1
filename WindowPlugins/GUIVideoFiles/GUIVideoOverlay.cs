@@ -20,11 +20,11 @@
 
 using System;
 using System.IO;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using MediaPortal.ExtensionMethods;
 using Action = MediaPortal.GUI.Library.Action;
 
 namespace MediaPortal.GUI.Video

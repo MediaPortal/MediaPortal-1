@@ -26,10 +26,10 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Animation;
 using System.Xml;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using System.Drawing.Imaging;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

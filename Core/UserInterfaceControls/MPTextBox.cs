@@ -21,7 +21,7 @@
 using System;
 using System.Windows.Forms;
 using System.Drawing;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.UserInterface.Controls
 {

@@ -20,7 +20,7 @@
 
 using System.Diagnostics;
 using System.IO;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

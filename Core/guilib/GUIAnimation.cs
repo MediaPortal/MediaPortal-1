@@ -23,10 +23,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media.Animation;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
 using MediaPortal.Drawing;
 using MediaPortal.Profile;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

@@ -26,11 +26,11 @@ using System.Drawing.Text;
 using System.Runtime.InteropServices;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Font = System.Drawing.Font;
-using MediaPortal.ExtensionMethods;
 
 
 namespace MediaPortal.Player.Subtitles

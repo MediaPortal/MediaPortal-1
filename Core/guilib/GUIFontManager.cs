@@ -28,13 +28,13 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Xml;
 using DShowNET.Helper;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Util;
 using Microsoft.DirectX;
 using Microsoft.DirectX.Direct3D;
 using Filter = Microsoft.DirectX.Direct3D.Filter;
 using Font = Microsoft.DirectX.Direct3D.Font;
 using Matrix = Microsoft.DirectX.Matrix;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

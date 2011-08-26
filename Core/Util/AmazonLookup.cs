@@ -23,7 +23,7 @@ using System.IO;
 using System.Collections;
 using System.Net;
 using ConsoleApplication2.com.amazon.webservices;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.Util
 {

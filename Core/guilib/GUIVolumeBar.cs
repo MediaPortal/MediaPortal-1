@@ -20,7 +20,7 @@
 
 using System;
 using System.Drawing;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

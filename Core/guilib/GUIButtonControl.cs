@@ -21,7 +21,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Controls;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

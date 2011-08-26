@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 

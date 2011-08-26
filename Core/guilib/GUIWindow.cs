@@ -31,8 +31,8 @@ using System.Windows.Controls;
 using System.Windows.Media.Animation;
 using System.Windows.Serialization;
 using System.Xml;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Player;
-using MediaPortal.ExtensionMethods;
 using System.Linq;
 
 namespace MediaPortal.GUI.Library

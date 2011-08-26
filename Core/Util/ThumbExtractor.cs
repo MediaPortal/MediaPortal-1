@@ -22,7 +22,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.Util
 {

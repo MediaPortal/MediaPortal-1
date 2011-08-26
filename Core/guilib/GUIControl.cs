@@ -30,7 +30,6 @@ using MediaPortal.Drawing;
 using MediaPortal.Drawing.Layouts;
 using Point = System.Drawing.Point;
 using Size = MediaPortal.Drawing.Size;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

@@ -21,8 +21,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Util;
-using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {

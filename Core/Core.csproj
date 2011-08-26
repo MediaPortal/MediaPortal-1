@@ -328,11 +328,6 @@
     <Compile Include="DShowNET\MediaSubTypeEx.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ExtensionMethods\ArrayExtMethods.cs" />
-    <Compile Include="ExtensionMethods\DisposeHelper.cs" />
-    <Compile Include="ExtensionMethods\ListExtMethods.cs" />
-    <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
-    <Compile Include="ExtensionMethods\ObjectMethods.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
@@ -1978,7 +1973,11 @@
     <None Include="UserInterfaceControls\Resources\config.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Drawing\6oi3iogp.bmp" />
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ExtensionMethods\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

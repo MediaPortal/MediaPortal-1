@@ -26,10 +26,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
 using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
-using MediaPortal.ExtensionMethods;
 using InvalidDataException = Microsoft.DirectX.Direct3D.InvalidDataException;
 
 namespace MediaPortal.GUI.Library

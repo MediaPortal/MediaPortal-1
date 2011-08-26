@@ -22,8 +22,8 @@ using System;
 using System.Windows.Forms;
 using DirectShowLib;
 using DShowNET.Helper;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using MediaPortal.Configuration;
-using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 

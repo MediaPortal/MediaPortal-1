@@ -22,7 +22,7 @@ using System;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
-using MediaPortal.ExtensionMethods;
+using MediaPortal.Common.Utils.ExtensionMethods;
 
 namespace MediaPortal.Configuration.Controls
 {
