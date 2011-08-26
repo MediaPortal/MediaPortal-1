@@ -76,9 +76,7 @@ namespace TvService
     ///   Removes the specified user.
     /// </summary>
     /// <param name = "user">The user.</param>
-    void Remove(IUser user);
-
-    void HeartBeatUser(IUser user);
+    void Remove(IUser user);    
 
     /// <summary>
     ///   Gets the user.

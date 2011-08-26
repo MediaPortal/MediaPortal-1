@@ -44,19 +44,19 @@ namespace TvPlugin
 
     //list of all notifies (alert me n minutes before program starts)
     private IList<Program> _notifiesList;
-    private IList _notifiedRecordings;
-
-    private static IList<Recording> _actualRecordings;
 
     private User _dummyuser;
+    private TCPClient _tcpClient;
 
-    public TvNotifyManager()
-    {
+    public TvNotifyManager(TCPClient tcpClient)
+    {      
       using (Settings xmlreader = new MPSettings())
       {
         _enableRecNotification = xmlreader.GetValueAsBool("mytv", "enableRecNotifier", false);
         _preNotifyConfig = xmlreader.GetValueAsInt("mytv", "notifyTVBefore", 300);
       }
+
+      _tcpClient = tcpClient;              
 
       _busy = false;
       _timer = new Timer();
@@ -68,19 +68,103 @@ namespace TvPlugin
       _timer.Interval = 15000;
       _timer.Enabled = true;
       _timer.Tick += new EventHandler(_timer_Tick);
+    }
 
-      _notifiedRecordings = new ArrayList();
+    private void _udpEventClient_RecordingFailed(int idSchedule)
+    {
+      Schedule failedSchedule = Schedule.Retrieve(idSchedule);
+      if (failedSchedule != null)
+      {
+        Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", failedSchedule.ProgramName);
+
+        Notify(GUILocalizeStrings.Get(1004),
+               String.Format("{0}. {1}", failedSchedule.ProgramName, GUILocalizeStrings.Get(200055)),
+               TVHome.Navigator.Channel);
+      }
+    }
+
+    private void _udpEventClient_RecordingStarted(int idRecording)
+    {
+      Recording startedRec = Recording.Retrieve(idRecording);
+      if (startedRec != null)
+      {
+        Schedule parentSchedule = startedRec.ReferencedSchedule();
+        if (parentSchedule != null && parentSchedule.IdSchedule > 0)
+        {
+          string endTime = string.Empty;
+          if (parentSchedule != null)
+          {
+            endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
+                                                                                                    CultureInfo.
+                                                                                                      CurrentCulture.
+                                                                                                      DateTimeFormat);
+            string text = String.Format("{0} {1}-{2}",
+                                        startedRec.Title,
+                                        startedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                        endTime);
+            //Recording started                            
+            Notify(GUILocalizeStrings.Get(1446), text, startedRec.ReferencedChannel());
+          }
+        }
+      }
+    }
+
+    private void _udpEventClient_RecordingEnded(int idRecording)
+    {
+      Recording stoppedRec = Recording.Retrieve(idRecording);
+      if (stoppedRec != null)
+      {
+        string textPrg = "";
+        IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
+                                                                      stoppedRec.EndTime);
+
+        Program prg = null;
+        if (prgs != null && prgs.Count > 0)
+        {
+          prg = prgs[0];
+        }
+        if (prg != null)
+        {
+          textPrg = String.Format("{0} {1}-{2}",
+                                  prg.Title,
+                                  prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        }
+        else
+        {
+          textPrg = String.Format("{0} {1}-{2}",
+                                  stoppedRec.Title,
+                                  stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
+                                  DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+        }
+        //Recording stopped:                                    
+        Notify(GUILocalizeStrings.Get(1447), textPrg, stoppedRec.ReferencedChannel());
+      }
     }
 
     public void Start()
     {
       Log.Info("TvNotify: start");
+
+      if (_enableRecNotification)
+      {
+        _tcpClient.RecordingEnded += new TCPClient.RecordingEndedDelegate(_udpEventClient_RecordingEnded);
+        _tcpClient.RecordingStarted += new TCPClient.RecordingStartedDelegate(_udpEventClient_RecordingStarted);
+        _tcpClient.RecordingFailed += new TCPClient.RecordingFailedDelegate(_udpEventClient_RecordingFailed);
+      }
       _timer.Start();
     }
 
     public void Stop()
     {
       Log.Info("TvNotify: stop");
+
+      if (_enableRecNotification)
+      {
+        _tcpClient.RecordingEnded -= new TCPClient.RecordingEndedDelegate(_udpEventClient_RecordingEnded);
+        _tcpClient.RecordingStarted -= new TCPClient.RecordingStartedDelegate(_udpEventClient_RecordingStarted);
+        _tcpClient.RecordingFailed -= new TCPClient.RecordingFailedDelegate(_udpEventClient_RecordingFailed);
+      }
       _timer.Stop();
     }
 
@@ -89,15 +173,6 @@ namespace TvPlugin
       get { return _enableRecNotification; }
     }
 
-    public static void ForceUpdate()
-    {
-      if (!_enableRecNotification)
-      {
-        return;
-      }
-      AddActiveRecordings();
-      CheckForStoppedRecordings();
-    }
 
     public static void OnNotifiesChanged()
     {
@@ -105,61 +180,9 @@ namespace TvPlugin
       _notifiesListChanged = true;
     }
 
-    private static Recording CheckForStoppedRecordings()
-    {
-      Recording stoppedRec = null;
-      IList<Recording> recordings = Recording.ListAllActive();
-      bool found = false;
-      foreach (Recording actRec in _actualRecordings)
-      {
-        foreach (Recording rec in recordings)
-        {
-          if (rec.IdRecording == actRec.IdRecording)
-          {
-            found = true;
-            break;
-          }
-        }
-        if (found)
-        {
-          break;
-        }
-        else
-        {          
-          stoppedRec = Recording.Refresh(actRec.IdRecording);
-        }
-      }
+   
 
-      if (stoppedRec != null)
-      {
-        UpdateActiveRecordings();
-      }
-      return stoppedRec;
-    }
-
-    private static Recording AddActiveRecordings()
-    {
-      Recording newRecAdded = null;
-      IList<Recording> recordings = Recording.ListAllActive();
-      if (_actualRecordings == null)
-      {
-        _actualRecordings = new List<Recording>();
-      }
-      foreach (Recording rec in recordings)
-      {
-        if (!_actualRecordings.Contains(rec))
-        {
-          _actualRecordings.Add(rec);
-          newRecAdded = rec;
-        }
-      }
-      return newRecAdded;
-    }
-
-    private static void UpdateActiveRecordings()
-    {
-      _actualRecordings = Recording.ListAllActive();
-    }
+   
 
     private void LoadNotifies()
     {
@@ -167,14 +190,12 @@ namespace TvPlugin
       {
         Log.Info("TvNotify:LoadNotifies");
         _notifiesList = Program.RetrieveAllNotifications();
-        _notifiedRecordings.Clear();
 
         if (_notifiesList != null)
         {
           Log.Info("TvNotify: {0} notifies", _notifiesList.Count);
         }
 
-        UpdateActiveRecordings();
       }
       catch (Exception e)
       {
@@ -233,143 +254,6 @@ namespace TvPlugin
       }
     }
 
-    private void ProcessRecordings(DateTime preNotifySecs)
-    {
-      //Log.Debug("TVPlugIn: Notifier checking for recording to start at {0}", preNotifySecs);
-      //if (g_Player.IsTV && TVHome.Card.IsTimeShifting && g_Player.Playing)
-      IList<Schedule> schedulesList = null;
-      //if (_enableRecNotification && g_Player.Playing)
-      if (_enableRecNotification)
-      {
-        if (TVHome.TvServer.IsTimeToRecord(preNotifySecs))
-        {
-          try
-          {
-            schedulesList = Schedule.ListAll();
-            foreach (Schedule rec in schedulesList)
-            {
-              bool bContinue = false;
-              //Check if alerady notified user
-              foreach (Schedule notifiedRec in _notifiedRecordings)
-              {
-                if (rec == notifiedRec)
-                {
-                  bContinue = true;
-                  break;
-                }
-              }
-              if (bContinue)
-                continue;
-
-              //Check if timing it's time 
-              Log.Debug("TVPlugIn: Notifier checking program {0}", rec.ProgramName);
-              if (TVHome.TvServer.IsTimeToRecord(preNotifySecs, rec.IdSchedule))
-              {
-                //check if freecard is available. 
-                //Log.Debug("TVPlugIn: Notify verified program {0} about to start recording. {1} / {2}", rec.ProgramName, rec.StartTime, preNotifySecs);
-                if (TVHome.Navigator.Channel.IdChannel != rec.IdChannel &&
-                    (int)TVHome.TvServer.GetChannelState(rec.IdChannel, _dummyuser) == 0) //not tunnable
-                {
-                  Log.Debug("TVPlugIn: No free card available for {0}. Notifying user.", rec.ProgramName);
-
-                  Notify(GUILocalizeStrings.Get(1004),
-                         String.Format("{0}. {1}", rec.ProgramName, GUILocalizeStrings.Get(200055)),
-                         TVHome.Navigator.Channel);
-
-                  _notifiedRecordings.Add(rec);
-                  return;
-                }
-              }
-            }
-          }
-          catch (Exception ex)
-          {
-            Log.Debug("Tv NotifyManager: Exception at recording notification {0}", ex.ToString());
-          }
-        }
-
-        //check if rec. has started
-        if (!_enableRecNotification)
-        {
-          return;
-        }
-
-        Recording newRecording = AddActiveRecordings();
-
-        if (newRecording != null && newRecording.IsRecording)
-        {
-          Schedule parentSchedule = newRecording.ReferencedSchedule();
-
-          if (parentSchedule != null && parentSchedule.IdSchedule > 0)
-          {
-            string endTime = string.Empty;
-            if (parentSchedule != null)
-            {
-              endTime = parentSchedule.EndTime.AddMinutes(parentSchedule.PostRecordInterval).ToString("t",
-                                                                                                      CultureInfo.
-                                                                                                        CurrentCulture.
-                                                                                                        DateTimeFormat);
-            }
-            string text = String.Format("{0} {1}-{2}",
-                                        newRecording.Title,
-                                        newRecording.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                        endTime);
-            //Recording started            
-
-            TimeSpan tsStart = DateTime.Now - newRecording.StartTime;
-            // do not show rec. that have been started a while ago.
-            if (tsStart.TotalSeconds < 60)
-            {
-              Notify(GUILocalizeStrings.Get(1446), text, newRecording.ReferencedChannel());
-            }
-            return;
-          }
-        }
-        //check if rec. has ended.                
-        Recording stoppedRec = CheckForStoppedRecordings();
-        if (stoppedRec == null)
-        {
-          return;
-        }
-
-        TimeSpan tsEnd = DateTime.Now - stoppedRec.EndTime; // do not show rec. that have been stopped a while ago.
-        if (tsEnd.TotalSeconds > 60)
-        {
-          _actualRecordings.Remove(stoppedRec);
-          return;
-        }
-
-        string textPrg = "";
-        IList<Program> prgs = Program.RetrieveByTitleAndTimesInterval(stoppedRec.Title, stoppedRec.StartTime,
-                                                                      stoppedRec.EndTime);
-
-        Program prg = null;
-        if (prgs != null && prgs.Count > 0)
-        {
-          prg = prgs[0];
-        }
-        if (prg != null)
-        {
-          textPrg = String.Format("{0} {1}-{2}",
-                                  prg.Title,
-                                  prg.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  prg.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        }
-        else
-        {
-          textPrg = String.Format("{0} {1}-{2}",
-                                  stoppedRec.Title,
-                                  stoppedRec.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                  DateTime.Now.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-        }
-        //Recording stopped:                            
-        Notify(GUILocalizeStrings.Get(1447), textPrg, stoppedRec.ReferencedChannel());
-        _actualRecordings.Remove(stoppedRec);
-
-        return; //we do not want to show any more notifications.        
-      }
-    }
-
     private void _timer_Tick(object sender, EventArgs e)
     {
       try
@@ -386,11 +270,6 @@ namespace TvPlugin
 
         _busy = true;
 
-        if (_actualRecordings == null)
-        {
-          AddActiveRecordings();
-        }
-
         if (!TVHome.Connected)
         {
           return;
@@ -399,7 +278,6 @@ namespace TvPlugin
       
         DateTime preNotifySecs = DateTime.Now.AddSeconds(_preNotifyConfig);
         ProcessNotifies(preNotifySecs);
-        ProcessRecordings(preNotifySecs);
       }
       catch (Exception ex)
       {        

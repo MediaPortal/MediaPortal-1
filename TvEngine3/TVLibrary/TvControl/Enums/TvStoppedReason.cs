@@ -18,11 +18,14 @@
 
 #endregion
 
+using System;
+
 namespace TvControl
 {
   /// <summary>
   /// enum describing the possible result codes for the tv engine when TV suddenly stops
   /// </summary>
+  [Serializable]
   public enum TvStoppedReason
   {
     /// <summary>

@@ -58,8 +58,7 @@ namespace TvPlugin
   public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
     #region constants
-
-    private const int HEARTBEAT_INTERVAL = 1; //seconds
+    
     private const int MAX_WAIT_FOR_SERVER_CONNECTION = 10; //seconds
     private const int WM_POWERBROADCAST = 0x0218;
     private const int WM_QUERYENDSESSION = 0x0011;
@@ -94,8 +93,9 @@ namespace TvPlugin
       CardChange = 2,
       SeekToEnd = 4,
       SeekToEndAfterPlayback = 8
-    }    
-    
+    }
+
+    private TCPClient _tcpClient = new TCPClient();
     private Channel _resumeChannel = null;
     private Thread heartBeatTransmitterThread = null;
     private static DateTime _updateProgressTimer = DateTime.MinValue;
@@ -107,7 +107,7 @@ namespace TvPlugin
     private static int _waitonresume = 0;
     public static bool settingsLoaded = false;
     private TvCropManager _cropManager = new TvCropManager();
-    private TvNotifyManager _notifyManager = new TvNotifyManager();
+    private TvNotifyManager _notifyManager;    
     private static List<string> _preferredLanguages;
     private static bool _usertsp;
     private static string _recordingpath = "";
@@ -264,7 +264,7 @@ namespace TvPlugin
     {
       TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_TV;
-
+      _notifyManager = new TvNotifyManager(_tcpClient);
     }
 
     #region Overrides
@@ -276,10 +276,7 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      Log.Info("TVHome:OnAdded");
-      RemoteControl.OnRemotingDisconnected +=
-        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+      Log.Info("TVHome:OnAdded");     
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived += new VideoReceivedHandler(OnVideoReceived);
@@ -305,7 +302,7 @@ namespace TvPlugin
 
         // Wake up the TV server, if required
         HandleWakeUpTvServer();
-        startHeartBeatThread();
+        SetupTCPclient();     
 
         TVHome.OnChannelChanged -= new OnChannelChangedDelegate(ForceUpdates);
         TVHome.OnChannelChanged += new OnChannelChangedDelegate(ForceUpdates);
@@ -336,6 +333,105 @@ namespace TvPlugin
       _notifyManager.Start();
     }
 
+    private void SetupTCPclient()
+    {
+      RemoveTCPClientEventHandlers();
+
+      _tcpClient.OnTCPConnected += new TCPClient.TCPConnectedDelegate(TCPclient_OnTCPconnected);
+      _tcpClient.OnTCPDisconnected += new TCPClient.TCPDisconnectedDelegate(TCPclient_OnTCPdisconnected);
+
+      _tcpClient.TimeShiftingForcefullyStopped += new TCPClient.TimeShiftingForcefullyStoppedDelegate(_tcpClient_TimeShiftingForcefullyStopped);
+      _tcpClient.RecordingEnded += new TCPClient.RecordingEndedDelegate(_tcpClient_RecordingEnded);
+      _tcpClient.RecordingStarted += new TCPClient.RecordingStartedDelegate(_tcpClient_RecordingStarted);
+      _tcpClient.ChannelStates += new TCPClient.ChannelStatesDelegate(_tcpClient_ChannelStates);
+      _tcpClient.Start();
+    }
+
+    private void RemoveTCPClientEventHandlers()
+    {
+      _tcpClient.OnTCPConnected -= new TCPClient.TCPConnectedDelegate(TCPclient_OnTCPconnected);
+      _tcpClient.OnTCPDisconnected -= new TCPClient.TCPDisconnectedDelegate(TCPclient_OnTCPdisconnected);
+
+      _tcpClient.TimeShiftingForcefullyStopped -= new TCPClient.TimeShiftingForcefullyStoppedDelegate(_tcpClient_TimeShiftingForcefullyStopped);
+      _tcpClient.RecordingEnded -= new TCPClient.RecordingEndedDelegate(_tcpClient_RecordingEnded);
+      _tcpClient.RecordingStarted -= new TCPClient.RecordingStartedDelegate(_tcpClient_RecordingStarted);
+      _tcpClient.ChannelStates -= new TCPClient.ChannelStatesDelegate(_tcpClient_ChannelStates);
+    }
+
+    private void _tcpClient_TimeShiftingForcefullyStopped(string username, TvStoppedReason tvStoppedReason)
+    {
+      if (username.Equals(TVHome.Card.User.Name))
+      {
+        Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
+        GUIGraphicsContext.OnAction(keyAction);
+        _playbackStopped = true;
+
+        if (tvStoppedReason != TvStoppedReason.UnknownReason)
+        {
+          Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", tvStoppedReason);
+          string errMsg = "";
+
+          switch (tvStoppedReason)
+          {
+            case TvStoppedReason.HeartBeatTimeOut:
+              errMsg = GUILocalizeStrings.Get(1515);
+              break;
+            case TvStoppedReason.KickedByAdmin:
+              errMsg = GUILocalizeStrings.Get(1514);
+              break;
+            case TvStoppedReason.RecordingStarted:
+              errMsg = GUILocalizeStrings.Get(1513);
+              break;
+            case TvStoppedReason.OwnerChangedTS:
+              errMsg = GUILocalizeStrings.Get(1517);
+              break;
+            default:
+              errMsg = GUILocalizeStrings.Get(1516);
+              break;
+          }
+          NotifyUser(errMsg);
+        }
+      }
+    }
+
+    private void _tcpClient_RecordingEnded(int idRecording)
+    {
+      if (Connected)
+      {
+        _isAnyCardRecording = TvServer.IsAnyCardRecording();
+      }
+      UpdateRecordingIndicator();
+      UpdateStateOfRecButton();
+    }
+
+    private void _tcpClient_RecordingStarted(int idRecording)
+    {
+      if (Connected)
+      {
+        _isAnyCardRecording = true;
+      }
+      UpdateRecordingIndicator();
+      UpdateStateOfRecButton();
+    }
+
+    private static Dictionary<int, ChannelState> _tvChannelStatesList = new Dictionary<int, ChannelState>();
+    private readonly static object _channelStatesLock = new object();
+
+    private void _tcpClient_ChannelStates(Dictionary<int, ChannelState> channelStates)
+    {
+      lock (_channelStatesLock)
+      {
+        _tvChannelStatesList = channelStates;
+      }
+    }
+
+    private static void RetrieveChannelStatesFromServer()
+    {
+      lock (_channelStatesLock)
+      {
+        _tvChannelStatesList = TvServer.GetAllChannelStatesCached(Card.User);
+      }
+    }
 
 
     /// <summary>
@@ -345,11 +441,7 @@ namespace TvPlugin
     /// <returns></returns>
     public override void DeInit()
     {
-      OnPageDestroy(-1);
-
-      RemoteControl.OnRemotingDisconnected -=
-       new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
+      OnPageDestroy(-1);      
 
       GUIGraphicsContext.OnBlackImageRendered -= new BlackImageRenderedHandler(OnBlackImageRendered);
       GUIGraphicsContext.OnVideoReceived -= new VideoReceivedHandler(OnVideoReceived);
@@ -529,6 +621,8 @@ namespace TvPlugin
 
       UpdateGUIonPlaybackStateChange();
       UpdateCurrentChannel();
+      UpdateRecordingIndicator();
+      UpdateStateOfRecButton();
     }
 
     private void AutoTurnOnTv(Channel channel)
@@ -731,10 +825,7 @@ namespace TvPlugin
       }
 
       try
-      {
-        UpdateRecordingIndicator();
-        UpdateStateOfRecButton();
-
+      {        
         if (!Card.IsTimeShifting)
         {
           UpdateProgressPercentageBar();
@@ -1343,10 +1434,14 @@ namespace TvPlugin
     //  }
     //}
 
-    private static void RemoteControl_OnRemotingConnected()
+    private void TCPclient_OnTCPconnected()
     {
+      bool recovered = false;
       if (!Connected)
-        Log.Info("TVHome: OnRemotingConnected, recovered from a disconnection");
+      {
+        Log.Info("TVHome: OnTCPconnected, recovered from a disconnection");
+        recovered = true;
+      }
       Connected = true;
       _ServerNotConnectedHandled = false;
       if (_recoverTV)
@@ -1357,12 +1452,24 @@ namespace TvPlugin
                                  null);
         GUIWindowManager.SendThreadMessage(initMsg);
       }
+      if (recovered)
+      {
+        //System.Diagnostics.Debugger.Launch();
+        _isAnyCardRecording = TvServer.IsAnyCardRecording();
+
+        RetrieveChannelStatesFromServer();
+        UpdateStateOfRecButton();
+        UpdateProgressPercentageBar();
+        UpdateRecordingIndicator();
+      }
     }
 
-    private static void RemoteControl_OnRemotingDisconnected()
+    private void TCPclient_OnTCPdisconnected()
     {
       if (Connected)
-        Log.Info("TVHome: OnRemotingDisconnected");
+      {
+        Log.Info("TVHome: OnTCPdisconnected");
+      }
       Connected = false;
       HandleServerNotConnected();
     }
@@ -1371,95 +1478,24 @@ namespace TvPlugin
     {
       try
       {
+        _notifyManager.Stop();
+        DeInitTCPclient();
+
         if (Card.IsTimeShifting)
         {
           Card.User.Name = new User().Name;
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        stopHeartBeatThread();
       }
       catch (Exception) { }
     }
 
-    private void HeartBeatTransmitter()
+    private void DeInitTCPclient()
     {
-      int countToHBLoop = 5;
-
-      while (true)
-      {
-        // 1 second loop
-        if (Connected)
-        {
-          _isAnyCardRecording = TvServer.IsAnyCardRecording();
-        }
-
-        // HeartBeat loop (5 seconds)
-        if (countToHBLoop >= 5)
-        {
-          countToHBLoop = 0;
-          if (!Connected) // is this needed to update connection status
-            RefreshConnectionState();
-          if (Connected && !_suspended)
-          {
-            bool isTS = (Card != null && Card.IsTimeShifting);
-            if (Connected && isTS)
-            {
-              // send heartbeat to tv server each 5 sec.
-              // this way we signal to the server that we are alive thus avoid being kicked.
-              // Log.Debug("TVHome: sending HeartBeat signal to server.");
-
-              // when debugging we want to disable heartbeats
-#if !DEBUG
-            try
-            {
-              RemoteControl.Instance.HeartBeat(Card.User);
-            }
-            catch (Exception e)
-            {
-              Log.Error("TVHome: failed sending HeartBeat signal to server. ({0})", e.Message);
-            }
-#endif
-            }
-            else if (Connected && !isTS && !_playbackStopped && _onPageLoadDone &&
-                     (!g_Player.IsTVRecording && (g_Player.IsTV || g_Player.IsRadio)))
-            {
-              // check the possible reason why timeshifting has suddenly stopped
-              // maybe the server kicked the client b/c a recording on another transponder was due.
-
-              TvStoppedReason result = Card.GetTimeshiftStoppedReason;
-              if (result != TvStoppedReason.UnknownReason)
-              {
-                Log.Debug("TVHome: Timeshifting seems to have stopped - TvStoppedReason:{0}", result);
-                string errMsg = "";
-
-                switch (result)
-                {
-                  case TvStoppedReason.HeartBeatTimeOut:
-                    errMsg = GUILocalizeStrings.Get(1515);
-                    break;
-                  case TvStoppedReason.KickedByAdmin:
-                    errMsg = GUILocalizeStrings.Get(1514);
-                    break;
-                  case TvStoppedReason.RecordingStarted:
-                    errMsg = GUILocalizeStrings.Get(1513);
-                    break;
-                  case TvStoppedReason.OwnerChangedTS:
-                    errMsg = GUILocalizeStrings.Get(1517);
-                    break;
-                  default:
-                    errMsg = GUILocalizeStrings.Get(1516);
-                    break;
-                }
-                NotifyUser(errMsg);
-              }
-            }
-          }
-        }
-        Thread.Sleep(HEARTBEAT_INTERVAL * 1000); //sleep for 1 sec. before sending heartbeat again
-        countToHBLoop++;
-      }
-    }
+      RemoveTCPClientEventHandlers();
+      _tcpClient.Stop();
+    }      
 
     /// <summary>
     /// Notify the user about the reason of stopped live tv. 
@@ -1495,40 +1531,7 @@ namespace TvPlugin
           pDlgOK.SetLine(1 + i, line);
         }
         pDlgOK.DoModal(GUIWindowManager.ActiveWindowEx);
-      }
-      Action keyAction = new Action(Action.ActionType.ACTION_STOP, 0, 0);
-      GUIGraphicsContext.OnAction(keyAction);
-      _playbackStopped = true;
-    }
-
-    private void startHeartBeatThread()
-    {
-      // setup heartbeat transmitter thread.						
-      // thread already running, then leave it.
-      if (heartBeatTransmitterThread != null)
-      {
-        if (heartBeatTransmitterThread.IsAlive)
-        {
-          return;
-        }
-      }
-      Log.Debug("TVHome: HeartBeat Transmitter started.");
-      heartBeatTransmitterThread = new Thread(HeartBeatTransmitter);
-      heartBeatTransmitterThread.IsBackground = true;
-      heartBeatTransmitterThread.Name = "TvClient-TvHome: HeartBeat transmitter thread";
-      heartBeatTransmitterThread.Start();
-    }
-
-    private void stopHeartBeatThread()
-    {
-      if (heartBeatTransmitterThread != null)
-      {
-        if (heartBeatTransmitterThread.IsAlive)
-        {
-          Log.Debug("TVHome: HeartBeat Transmitter stopped.");
-          heartBeatTransmitterThread.Abort();
-        }
-      }
+      } 
     }
 
     #endregion
@@ -1609,10 +1612,6 @@ namespace TvPlugin
     {
       Log.Debug("TVHome.OnSuspend()");
 
-      RemoteControl.OnRemotingDisconnected -=
-        new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-      RemoteControl.OnRemotingConnected -= new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
-
       try
       {
         if (Card.IsTimeShifting)
@@ -1621,7 +1620,7 @@ namespace TvPlugin
           Card.StopTimeShifting();
         }
         _notifyManager.Stop();
-        stopHeartBeatThread();
+        DeInitTCPclient();
         //Connected = false;
         _ServerNotConnectedHandled = false;
       }
@@ -1639,11 +1638,8 @@ namespace TvPlugin
       try
       {
         Connected = false;
-        RemoteControl.OnRemotingDisconnected +=
-          new RemoteControl.RemotingDisconnectedDelegate(RemoteControl_OnRemotingDisconnected);
-        RemoteControl.OnRemotingConnected += new RemoteControl.RemotingConnectedDelegate(RemoteControl_OnRemotingConnected);
         HandleWakeUpTvServer();
-        startHeartBeatThread();
+        SetupTCPclient();  
         _notifyManager.Start();
         if (_resumeChannel != null)
         {
@@ -1651,6 +1647,10 @@ namespace TvPlugin
           AutoTurnOnTv(_resumeChannel);
           AutoFullScreenTv();
           _resumeChannel = null;
+        }
+        else
+        {
+          RetrieveChannelStatesFromServer();
         }
       }
       finally
@@ -3078,7 +3078,7 @@ namespace TvPlugin
           break;
         case TvResult.UnknownError:
           // this error can also happen if we have no connection to the server.
-          if (!Connected) // || !IsRemotingConnected())
+          if (!Connected)
           {
             TextID = 1510;
           }
@@ -3107,7 +3107,7 @@ namespace TvPlugin
           break;
         default:
           // this error can also happen if we have no connection to the server.
-          if (!Connected) // || !IsRemotingConnected())
+          if (!Connected)
           {
             TextID = 1510;
           }
@@ -3550,6 +3550,23 @@ namespace TvPlugin
     public static ChannelNavigator Navigator
     {
       get { return m_navigator; }
+    }
+
+    public static Dictionary<int, ChannelState> TvChannelStatesList
+    {
+      get
+      {
+        lock (_channelStatesLock)
+        {
+          //return copy, as it is threadsafe.
+          if (_tvChannelStatesList != null)
+          {
+            return new Dictionary<int, ChannelState>(_tvChannelStatesList);
+          }
+
+          return new Dictionary<int, ChannelState>();
+        }
+      }
     }
 
     private static void StartPlay()

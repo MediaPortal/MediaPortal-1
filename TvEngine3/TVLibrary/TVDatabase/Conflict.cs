@@ -30,6 +30,7 @@ namespace TvDatabase
   /// Instances of this class represent the properties and methods of a row in the table <b>Conflicts</b>.
   /// </summary>
   [TableName("Conflict", CacheStrategy.Temporary)]
+  [Serializable]
   public class Conflict : Persistent
   {
     #region Members

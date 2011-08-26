@@ -150,6 +150,10 @@ namespace TvService
       return allUsers;
     }
 
+    public delegate void OnChannelStatesSetDelegate(Dictionary<int, ChannelState> channelStates);
+
+    public event OnChannelStatesSetDelegate OnChannelStatesSet;
+
     [MethodImpl(MethodImplOptions.Synchronized)]
     private void DoSetChannelStates(Dictionary<int, ITvCardHandler> cards, ICollection<Channel> channels,
                                     bool checkTransponders, IList<IUser> allUsers, TVController tvController)
@@ -248,7 +252,7 @@ namespace TvService
           UpdateRecOrTSChannelStateForUsers(ch, allUsers, TSandRecStates);
         }
 
-        RemoveAllTunableChannelStates(allUsers);
+        RemoveAllTunableChannelStates(allUsers);        
       }
       catch (InvalidOperationException tex)
       {
@@ -262,7 +266,7 @@ namespace TvService
       finally
       {
         stopwatch.Stop();
-        Log.Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);
+        Log.Info("ChannelStates.DoSetChannelStates took {0} msec", stopwatch.ElapsedMilliseconds);        
       }
     }
 
@@ -425,6 +429,11 @@ namespace TvService
       allUsers.Add(user);
 
       DoSetChannelStates(cards, channels, checkTransponders, allUsers, tvController);
+
+      if (OnChannelStatesSet != null)
+      {
+        OnChannelStatesSet(allUsers[0].ChannelStates);
+      }
 
       if (allUsers.Count > 0)
       {

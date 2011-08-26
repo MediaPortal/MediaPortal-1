@@ -50,18 +50,7 @@ namespace TvControl
     private const int MAX_TCP_TIMEOUT = 1000; //msecs
     private const int REMOTING_PORT = 31456;
 
-    #endregion
-
-    #region delegates / events
-
-    public delegate void RemotingDisconnectedDelegate();
-
-    public delegate void RemotingConnectedDelegate();
-
-    public static event RemotingDisconnectedDelegate OnRemotingDisconnected;
-    public static event RemotingConnectedDelegate OnRemotingConnected;
-
-    #endregion
+    #endregion   
 
     #region private members
 
@@ -177,35 +166,6 @@ namespace TvControl
         Log.Info("RemoteControl - RefreshRemotingConnectionStatus exception : {0} {1} {2}", e.Message, e.Source,
                  e.StackTrace);
         //ignore
-      }
-      finally
-      {
-        InvokeEvents();
-      }
-    }
-
-    private static void InvokeEvents()
-    {
-      if (!_isRemotingConnected)
-      {
-        if (OnRemotingDisconnected != null) //raise event
-        {
-          if (!_firstFailure)
-          {
-            Log.Info("RemoteControl - Disconnected st : {0}", Environment.StackTrace);
-            OnRemotingDisconnected();
-          }
-          _firstFailure = false;
-        }
-      }
-      else
-      {
-        _firstFailure = true;
-        if (OnRemotingConnected != null)
-        {
-          Log.Info("RemoteControl - Connected");
-          OnRemotingConnected();
-        }
       }
     }
 
@@ -339,14 +299,6 @@ namespace TvControl
         {
           if (_tvControl != null)
           {
-            //only query state if the caller has subcribed to the disconnect/connect events
-            if (OnRemotingDisconnected != null || OnRemotingConnected != null)
-            {
-              RefreshRemotingConnectionStatus();
-              if (!_isRemotingConnected)
-                return null;
-            }
-
             return _tvControl;
           }
 
@@ -357,16 +309,6 @@ namespace TvControl
             (IController)
             Activator.GetObject(typeof (IController),
                                 String.Format("tcp://{0}:{1}/TvControl", _hostName, REMOTING_PORT));
-
-          //only query state if the caller has subcribed to the disconnect/connect events
-          if (OnRemotingDisconnected != null || OnRemotingConnected != null)
-          {
-            //StartConnectionMonitorThread();
-
-            RefreshRemotingConnectionStatus();
-            if (!_isRemotingConnected)
-              return null;
-          }
 
           return _tvControl;
         }
@@ -385,14 +327,6 @@ namespace TvControl
               (IController)
               Activator.GetObject(typeof (IController),
                                   String.Format("tcp://{0}:{1}/TvControl", _hostName, REMOTING_PORT));
-
-            //only query state if the caller has subcribed to the disconnect/connect events
-            if (OnRemotingDisconnected != null || OnRemotingConnected != null)
-            {
-              RefreshRemotingConnectionStatus();
-              if (!_isRemotingConnected)
-                return null;
-            }
 
             return _tvControl;
           }

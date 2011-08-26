@@ -131,9 +131,11 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CardManagement\CardHandler\TvCardHandler.cs" />
+    <Compile Include="TCPEventServer\TCPServer.cs" />
     <Compile Include="TsCopier.cs" />
     <Compile Include="TvCardContext.cs" />
     <Compile Include="TVController.cs" />
+    <Compile Include="TCPEventServer\TCPClientData.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>

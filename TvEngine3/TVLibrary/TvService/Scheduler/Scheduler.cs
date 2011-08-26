@@ -967,6 +967,11 @@ namespace TvService
           }
 
           recSucceded = FindAvailCardAndStartRecord(RecDetail, user, availCards, maxCards);
+
+          if (!recSucceded)
+          {
+            RecordingFailedNotification(RecDetail);
+          }
         }
         else
         {
@@ -1273,6 +1278,14 @@ namespace TvService
         }
       }
       return cardInfo;
+    }
+
+    private void RecordingFailedNotification(RecordingDetail RecDetail)
+    {
+      IUser user = RecDetail.User;
+      _tvController.Fire(this,
+                         new TvServerEventArgs(TvServerEventType.RecordingFailed, new VirtualCard(user), (User)user,
+                                               RecDetail.Schedule, RecDetail.Recording));
     }
 
 

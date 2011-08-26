@@ -83,6 +83,10 @@
     <Compile Include="Enums\TvStoppedReason.cs" />
     <Compile Include="Interfaces\IUser.cs" />
     <Compile Include="RemoteControl.cs" />
+    <Compile Include="Constants\TCPconsts.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TCP\PacketProtocol.cs" />
     <Compile Include="TvServer.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Util.cs" />
@@ -96,6 +100,7 @@
       <Name>TvLibrary.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
