@@ -379,11 +379,12 @@ namespace MediaPortal.Player
       BLURAY_VIDEO_RATE_60000_1001 = 7   // 59.94
     }
 
+    [Flags]
     protected enum MediaType
     {
+      None = 0,
       Video = 1,
-      Audio = 2,
-      AudioVideo = 3
+      Audio = 2
     }
     #endregion
 
@@ -1426,19 +1427,25 @@ namespace MediaPortal.Player
     public int OnMediaTypeChanged(int videoRate, int videoFormat, Guid audioFormat)
     {
       Log.Debug("BDPlayer OnMediaTypeChanged(): vrate {0}, vformat {1}, aformat {2}", videoRate, videoFormat, audioFormat);
+      _mChangedMediaType = MediaType.None;
+
       if (videoFormat != _currentVideoFormat)
       {
-        _mChangedMediaType = MediaType.Video;
-        _bMediaTypeChanged = Playing ? true : false;
+        _mChangedMediaType = MediaType.Video;        
         _currentVideoFormat = videoFormat;
       }
+
       if (audioFormat != _currentAudioFormat)
       {
-        _mChangedMediaType = MediaType.Audio;
-        _bMediaTypeChanged = Playing ? true : false;
+        _mChangedMediaType = _mChangedMediaType | MediaType.Audio;
         _currentAudioFormat = audioFormat;
       }
-      RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);      
+
+      if (_mChangedMediaType != MediaType.None)
+      {
+        _bMediaTypeChanged = Playing ? true : false;
+        RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+      }
       return _bMediaTypeChanged ? 0 : 1;
     }    
 
@@ -1840,7 +1847,7 @@ namespace MediaPortal.Player
         _graphBuilder.FindFilterByName("Microsoft DTV-DVD Video Decoder", out MSVideoCodec);
         if (MSVideoCodec != null)
         {
-          _mChangedMediaType = MediaType.AudioVideo;
+          _mChangedMediaType = MediaType.Audio | MediaType.Video;
           DirectShowUtil.ReleaseComObject(MSVideoCodec); MSVideoCodec = null;
         }
         // hack end
@@ -1854,7 +1861,7 @@ namespace MediaPortal.Player
             Log.Info("Rerendering video pin of BDReader filter.");
             UpdateFilters("Video");
             break;
-          case MediaType.AudioVideo: // both changed
+          case MediaType.Audio & MediaType.Video: // both changed
             Log.Info("Rerendering audio and video pins of BDReader filter.");
             UpdateFilters("Audio");
             UpdateFilters("Video");
