@@ -161,18 +161,7 @@ namespace TvService
           _cardHandler.Card.StopGraph();
         }
       }
-    }
-
-    public void HeartBeartUser(IUser user)
-    {
-      ITvCardContext context = _cardHandler.Card.Context as ITvCardContext;
-      if (context == null)
-        return;
-      if (!context.DoesExists(user))
-        return;
-
-      context.HeartBeatUser(user);
-    }
+    }   
 
     public TvStoppedReason GetTvStoppedReason(IUser user)
     {

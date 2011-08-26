@@ -75,6 +75,7 @@
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Events\TvServerEventArgsTranslator.cs" />
     <Compile Include="Interfaces\IPowerEventHandler.cs" />
     <Compile Include="Events\ITvServerEvent.cs" />
     <Compile Include="Events\TvServerEventArgs.cs" />

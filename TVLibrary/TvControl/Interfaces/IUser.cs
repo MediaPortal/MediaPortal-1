@@ -73,11 +73,7 @@ namespace TvControl
     /// </summary>
     /// <value>The history.</value>
     object History { get; set; }
-
-    /// <summary>
-    /// Gets/Sets the time of the last heartbeat
-    /// </summary>
-    DateTime HeartBeat { get; set; }
+    
 
     /// <summary>
     /// Gets/Sets the stop reason

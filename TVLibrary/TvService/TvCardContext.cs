@@ -188,18 +188,7 @@ namespace TvService
           _owner = null;
         }
       }
-    }
-
-    public void HeartBeatUser(IUser user)
-    {
-      //Log.Debug("user:{0} heartbeat received", user.Name);
-
-      IUser existingUser = _users.Find(t => t.Name == user.Name);
-      if (existingUser != null)
-      {
-        existingUser.HeartBeat = DateTime.Now;
-      }
-    }
+    }   
 
     /// <summary>
     ///   Gets the user.

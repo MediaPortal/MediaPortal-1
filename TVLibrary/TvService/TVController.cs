@@ -58,6 +58,8 @@ namespace TvService
 
     #region variables
 
+    private TCPServer _tcpServer;
+
     private ICardAllocation _cardAllocation;
 
     /// <summary>
@@ -78,9 +80,7 @@ namespace TvService
     /// <summary>
     /// Indicates if we're the master server or not
     /// </summary>
-    private bool _isMaster;
-
-    private Thread heartBeatMonitorThread;
+    private bool _isMaster;    
 
     /// <summary>
     /// Reference to our server
@@ -181,6 +181,7 @@ namespace TvService
     /// </summary>
     public TVController()
     {
+      _tcpServer = new TCPServer(this);
       _cardAllocation = new AdvancedCardAllocation(new TvBusinessLayer(), this);
     }
 
@@ -766,7 +767,9 @@ namespace TvService
           _scheduler.Start();
         }
 
-        SetupHeartbeatThread();
+
+        SetupTCPserver();
+
         ExecutePendingDeletions();
 
         // Re-evaluate program states
@@ -784,25 +787,40 @@ namespace TvService
       return true;
     }
 
-    private void SetupHeartbeatThread()
+    private void SetupTCPserver() 
     {
-      // setup heartbeat monitoring thread.
-      // useful for kicking idle/dead clients.
-      Log.Info("Controller: setup HeartBeat Monitor");
+      _tcpServer.HeartbeatUserLost -= new TCPServer.HeartbeatUserLostDelegate(_tcpServer_HeartbeatUserLost);
+      _tcpServer.HeartbeatUserLost += new TCPServer.HeartbeatUserLostDelegate(_tcpServer_HeartbeatUserLost);
+      _tcpServer.Start();
+    }
 
-      //stop thread, just incase it is running.
-      if (heartBeatMonitorThread != null)
+    private void _tcpServer_HeartbeatUserLost(string username)
+    {
+      Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
+
+      //for each card
+      while (enumerator.MoveNext())
       {
-        if (heartBeatMonitorThread.IsAlive)
+        KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
+        //get a list of all users for this card
+        IUser[] users = keyPair.Value.Users.GetUsers();        
+
+        if (users != null)
         {
-          heartBeatMonitorThread.Abort();
+          //for each user
+          for (int i = 0; i < users.Length; ++i)
+          {
+            IUser tmpUser = users[i];
+            if (tmpUser.Name.Equals(username))
+            {                            
+              Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
+              StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
+              return;
+            }
+          }
         }
       }
-      heartBeatMonitorThread = new Thread(HeartBeatMonitor);
-      heartBeatMonitorThread.Name = "HeartBeatMonitor";
-      heartBeatMonitorThread.IsBackground = true;
-      heartBeatMonitorThread.Start();
-    }
+    }    
 
     #endregion
 
@@ -833,21 +851,7 @@ namespace TvService
       Log.Info("Controller: DeInit.");
       try
       {
-        if (heartBeatMonitorThread != null)
-        {
-          if (!Service1.HasThreadCausedAnUnhandledException(heartBeatMonitorThread))
-          {
-            if (heartBeatMonitorThread.IsAlive)
-            {
-              Log.Info("Controller: HeartBeat monitor stopped...");
-              try
-              {
-                heartBeatMonitorThread.Abort();
-              }
-              catch (Exception) {}
-            }
-          }
-        }
+        DeInitTCPserver();
 
         //stop the RTSP streamer server
         if (_streamer != null)
@@ -887,6 +891,11 @@ namespace TvService
       {
         Log.Error("TvController: Deinit failed - {0}", ex.Message);
       }
+    }
+
+    private void DeInitTCPserver() {
+      _tcpServer.HeartbeatUserLost -= new TCPServer.HeartbeatUserLostDelegate(_tcpServer_HeartbeatUserLost);
+      _tcpServer.Stop();
     }
 
     #endregion
@@ -1906,6 +1915,10 @@ namespace TvService
       if (ValidateTvControllerParams(user))
         return false;
       _cards[user.CardId].Users.SetTvStoppedReason(user, reason);
+
+      user.TvStoppedReason = reason;
+      Fire(this, new TvServerEventArgs(TvServerEventType.ForcefullyStoppedTimeShifting, GetVirtualCard(user), (User)user));
+
       return StopTimeShifting(ref user);
     }
 
@@ -3346,33 +3359,44 @@ namespace TvService
       }
     }
 
+    public Dictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached()
+    {
+      return _channelStatesCachedForIdleUser;
+    }
+
     /// <summary>
     /// Fetches all channel states for a specific user (cached - faster)
     /// </summary>    
     /// <param name="user"></param>      
     public Dictionary<int, ChannelState> GetAllChannelStatesCached(IUser user)
     {
-      if (user == null || user.CardId < 1)
-      {
-        return null;
-      }
+      Dictionary<int, ChannelState> allChannelStatesCached = null;
 
-      IUser[] users = _cards[user.CardId].Users.GetUsers();
-
-      if (users != null)
+      if (user != null && user.CardId > 0)
       {
-        for (int i = 0; i < users.Length; i++)
+        IUser[] users = _cards[user.CardId].Users.GetUsers();
+
+        if (users != null)
         {
-          IUser u = users[i];
-
-          if (u.Name.Equals(user.Name))
+          for (int i = 0; i < users.Length; i++)
           {
-            return u.ChannelStates;
+            IUser u = users[i];
+
+            if (u.Name.Equals(user.Name))
+            {
+              allChannelStatesCached = u.ChannelStates;
+              break;
+            }
           }
-        }
+        }  
       }
 
-      return null;
+      if (allChannelStatesCached == null)
+      {
+        allChannelStatesCached = _channelStatesCachedForIdleUser;
+      }
+
+      return allChannelStatesCached;
     }
 
 
@@ -3658,13 +3682,17 @@ namespace TvService
 
     #region private members
 
+    private Dictionary<int, ChannelState> _channelStatesCachedForIdleUser = new Dictionary<int, ChannelState>();
+
     private void UpdateChannelStatesForUsers()
-    {
+    {      
       TvBusinessLayer layer = new TvBusinessLayer();
 
       //System.Diagnostics.Debugger.Launch();
       // this section makes sure that all users are updated in regards to channel states.      
       ChannelStates channelStates = new ChannelStates(layer, this);
+
+      channelStates.OnChannelStatesSet += new ChannelStates.OnChannelStatesSetDelegate(channelStates_OnChannelStatesSet);
 
       if (channelStates != null)
       {
@@ -3699,51 +3727,27 @@ namespace TvService
             }
           }
         }
-
         channelStates.SetChannelStates(_cards, _tvChannelListGroups, true, this);
+        
+        IUser idleUser = new User("idle", false, 0);
+        idleUser.ChannelStates = new Dictionary<int, ChannelState>();
+
+        ThreadPool.QueueUserWorkItem(delegate { channelStates.GetChannelStates(_cards, _tvChannelListGroups, ref idleUser, true, this); });        
       }
     }
 
-    private void HeartBeatMonitor()
+    private void channelStates_OnChannelStatesSet(Dictionary<int, ChannelState> channelStates)
     {
-      Log.Info("Controller: Heartbeat Monitor initiated, max timeout allowed is {0} sec.",
-               HEARTBEAT_MAX_SECS_EXCEED_ALLOWED);
-      while (true)
-      {
-        Dictionary<int, ITvCardHandler>.Enumerator enumerator = _cards.GetEnumerator();
-
-        //for each card
-        while (enumerator.MoveNext())
-        {
-          KeyValuePair<int, ITvCardHandler> keyPair = enumerator.Current;
-          //get a list of all users for this card
-          IUser[] users = keyPair.Value.Users.GetUsers();
-          if (users != null)
-          {
-            //for each user
-            for (int i = 0; i < users.Length; ++i)
-            {
-              IUser tmpUser = users[i];
-              if (tmpUser.HeartBeat > DateTime.MinValue)
-              {
-                DateTime now = DateTime.Now;
-                TimeSpan ts = tmpUser.HeartBeat - now;
-
-                // more than 30 seconds have elapsed since last heartbeat was received. lets kick the client
-                if (ts.TotalSeconds < (-1 * HEARTBEAT_MAX_SECS_EXCEED_ALLOWED))
-                {
-                  Log.Write("Controller: Heartbeat Monitor - kicking idle user {0}", tmpUser.Name);
-                  StopTimeShifting(ref tmpUser, TvStoppedReason.HeartBeatTimeOut);
-                }
-              }
-            }
-          }
-        }
-        // note; client signals heartbeats each 15 sec.
-        Thread.Sleep(HEARTBEAT_MAX_SECS_EXCEED_ALLOWED * 1000); //sleep for 30 secs. before checking heartbeat again
-        //throw new Exception("heartbeat died on purpose, causing an unhandled exception");
-      }
+      _channelStatesCachedForIdleUser = channelStates;
+      User user = new User("channel_states_unknown_user", false);
+      Fire(this,
+                         new TvServerEventArgs(TvServerEventType.ChannelStatesChanged, new VirtualCard(user), user));
     }
+
+    /*private void channelStates_OnChannelStatesSet(Dictionary<int, ChannelState> channelStates)
+    {      
+      _tcpServer.ChannelStatesUpdated();
+    }*/
 
     /// <summary>
     /// Determines whether the the user is the owner of the card
@@ -3796,17 +3800,7 @@ namespace TvService
 
       return _cards[cardId].SupportsSubChannels;
     }
-
-    public void HeartBeat(IUser user)
-    {
-      if (ValidateTvControllerParams(user))
-      {
-        return;
-      }
-
-      _cards[user.CardId].Users.HeartBeartUser(user);
-    }
-
+   
     /// <summary>
     /// Tune the card to the specified channel
     /// </summary>
@@ -4051,6 +4045,11 @@ namespace TvService
       }
     }
 
+    public TCPServer TCPserver
+    {
+      get { return _tcpServer; }
+    }
+
     #region private methods
 
     private bool ValidateTvControllerParams(int cardId, bool checkCardPresent)
@@ -4277,7 +4276,7 @@ namespace TvService
       if (!_onResumeDone)
       {
         Log.Info("TvController.OnResume()");
-        SetupHeartbeatThread();
+        SetupTCPserver();        
 
         if (_scheduler != null)
         {
@@ -4291,11 +4290,8 @@ namespace TvService
     {
       _onResumeDone = false;
       Log.Info("TvController.OnSuspend()");
-      if (heartBeatMonitorThread != null && heartBeatMonitorThread.IsAlive)
-      {
-        heartBeatMonitorThread.Abort();
-        heartBeatMonitorThread = null;
-      }
+
+      DeInitTCPserver();
       if (_scheduler != null)
       {
         _scheduler.Stop();

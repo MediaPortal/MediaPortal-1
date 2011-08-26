@@ -556,6 +556,23 @@ namespace TvControl
       return null;
     }
 
+    /// <summary>
+    /// Fetches all channel states for a specific user (cached - faster)
+    /// </summary>    
+    /// <param name="user"></param>      
+    public Dictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached()
+    {
+      try
+      {
+        return RemoteControl.Instance.GetAllChannelStatesForIdleUserCached();
+      }
+      catch (Exception)
+      {
+        HandleFailure();
+      }
+      return null;
+    }
+
 
     /// <summary>
     /// Fetches all channel states for a specific group

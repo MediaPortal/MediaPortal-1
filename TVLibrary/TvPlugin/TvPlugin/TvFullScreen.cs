@@ -1015,8 +1015,7 @@ namespace TvPlugin
           dlgNotify.TimeOut = 5;
 
           _notifyDialogVisible = true;
-          dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-          TvNotifyManager.ForceUpdate();
+          dlgNotify.DoModal(GUIWindowManager.ActiveWindow);          
           _notifyDialogVisible = false;
           return true;
         }
@@ -1097,9 +1096,6 @@ namespace TvPlugin
           dlgNotify.TimeOut = 5;
           _notifyDialogVisible = true;
           dlgNotify.DoModal(GUIWindowManager.ActiveWindow);
-
-          TvNotifyManager.ForceUpdate();
-
 
           _notifyDialogVisible = false;
         }

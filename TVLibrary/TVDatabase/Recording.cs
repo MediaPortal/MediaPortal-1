@@ -29,6 +29,7 @@ namespace TvDatabase
   /// Instances of this class represent the properties and methods of a row in the table <b>Recording</b>.
   /// </summary>
   [TableName("Recording")]
+  [Serializable]
   public class Recording : Persistent
   {
     #region Members

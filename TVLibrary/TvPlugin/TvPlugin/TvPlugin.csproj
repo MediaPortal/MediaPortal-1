@@ -103,6 +103,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\TVDatabase\references\log4net.dll</HintPath>
     </Reference>
+    <Reference Include="PluginBase">
+      <HintPath>..\..\Plugins\PluginBase\bin\Debug\PluginBase.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
@@ -192,6 +195,7 @@
     <Compile Include="TVTuningDetails.cs" />
     <Compile Include="TVUtil.cs" />
     <Compile Include="TVZapOSD.cs" />
+    <Compile Include="TCPEventClient\TCPClient.cs" />
     <Compile Include="WakeOnLanManager.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -37,8 +37,7 @@ namespace TvControl
     private int _failedCardId;
     private int _subChannel;
     private int _idChannel;
-    private TvStoppedReason _timeshiftStoppedReason;
-    private DateTime _lastHeartBeat;
+    private TvStoppedReason _timeshiftStoppedReason;    
     [NonSerialized] private object _history;
     private Dictionary<int, ChannelState> _channelStates; //used primarily for miniepg.
 
@@ -53,7 +52,6 @@ namespace TvControl
       _failedCardId = -1;
       _idChannel = -1;
       _subChannel = -1;
-      _lastHeartBeat = DateTime.MinValue;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
       _channelStates = new Dictionary<int, ChannelState>();
     }
@@ -70,6 +68,7 @@ namespace TvControl
       _cardId = -1;
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
     }
 
     /// <summary>
@@ -85,6 +84,7 @@ namespace TvControl
       _cardId = cardId;
       _subChannel = -1;
       _timeshiftStoppedReason = TvStoppedReason.UnknownReason;
+      _channelStates = new Dictionary<int, ChannelState>();
     }
 
     /// <summary>
@@ -165,16 +165,7 @@ namespace TvControl
     {
       get { return _history; }
       set { _history = value; }
-    }
-
-    /// <summary>
-    /// Gets/Sets the time of the last heartbeat
-    /// </summary>
-    public DateTime HeartBeat
-    {
-      get { return _lastHeartBeat; }
-      set { _lastHeartBeat = value; }
-    }
+    }    
 
     /// <summary>
     /// Gets/Sets the stop reason

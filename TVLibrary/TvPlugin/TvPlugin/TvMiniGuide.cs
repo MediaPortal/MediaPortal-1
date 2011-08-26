@@ -508,29 +508,7 @@ namespace TvPlugin
         benchClock.Reset();
         benchClock.Start();
 
-        if (TVHome.Navigator.CurrentGroup.GroupName.Equals(TvConstants.TvGroupNames.AllChannels) ||
-            (!g_Player.IsTV && !g_Player.Playing))
-        {
-          //we have no way of using the cached channelstates on the server in the following situations.
-          // 1) when the "all channels" group is selected - too many channels.
-          // 2) when user is not timeshifting - no user object on the server.
-          User currentUser = new User();
-          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                            currentUser);
-        }
-        else
-        {
-          // use the more speedy approach
-          // ask the server of the cached list of channel states corresponding to the user.
-          tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesCached(TVHome.Card.User);
-
-          if (tvChannelStatesList == null)
-          {
-            //slow approach.
-            tvChannelStatesList = TVHome.TvServer.GetAllChannelStatesForGroup(TVHome.Navigator.CurrentGroup.IdGroup,
-                                                                              TVHome.Card.User);
-          }
-        }
+        tvChannelStatesList = TVHome.TvChannelStatesList;        
 
         benchClock.Stop();
         if (tvChannelStatesList != null)

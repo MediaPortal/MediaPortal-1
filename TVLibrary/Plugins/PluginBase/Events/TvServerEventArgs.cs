@@ -30,6 +30,7 @@ namespace TvEngine.Events
   /// <summary>
   /// Enum for the different event types
   /// </summary>
+  [Serializable]
   public enum TvServerEventType
   {
     /// <summary>
@@ -49,6 +50,10 @@ namespace TvEngine.Events
     /// </summary>
     EndTimeShifting,
     /// <summary>
+    /// Event indicating that the tvserver has forcefully stopped timeshifting
+    /// </summary>
+    ForcefullyStoppedTimeShifting,
+    /// <summary>
     /// Event indicating that the tvserver is going to stop timeshifting
     /// </summary>
     StartRecording,
@@ -58,6 +63,10 @@ namespace TvEngine.Events
     RecordingStarted,
     /// <summary>
     /// Event indicating that the tvserver is recording has stopped
+    /// </summary>
+    RecordingFailed,
+    /// <summary>
+    /// Event indicating that the tvserver recording failed
     /// </summary>
     RecordingEnded,
     /// <summary>
@@ -84,18 +93,30 @@ namespace TvEngine.Events
     /// Event indicating that new EPG data is about to be imported
     /// </summary>
     ImportEpgPrograms,
+    /// <summary>
+    /// Event indicating that new channelstate data is available
+    /// </summary>
+    ChannelStatesChanged
   } ;
 
+  [Serializable]
   public class TvServerEventArgs : EventArgs
   {
     #region variables
-
+    
     private readonly User _user;
+
+    [NonSerialized]
     private readonly VirtualCard _card;
+
+    [NonSerialized]
     private readonly IChannel _channel;
+
+    [NonSerialized]
     private IController _controller = null;
     //Channel _databaseChannel = null;
     //TuningDetail _tuningDetail = null;
+
     private readonly Schedule _schedule;
     private readonly Recording _recording;
     private Conflict _conflict;
@@ -103,6 +124,8 @@ namespace TvEngine.Events
     private IList<Schedule> _schedules;
     private IList<Conflict> _conflicts;
     private object _argsUpdatedState;
+
+    [NonSerialized]
     private EpgChannel _epgChannel;
     //
     private readonly TvServerEventType _eventType;
@@ -218,6 +241,7 @@ namespace TvEngine.Events
     /// Gets the controller.
     /// </summary>
     /// <value>The controller.</value>
+    [System.Xml.Serialization.XmlIgnore]
     public IController Controller
     {
       get { return _controller; }
@@ -226,16 +250,17 @@ namespace TvEngine.Events
     /// <summary>
     /// Gets the user.
     /// </summary>
-    /// <value>The user.</value>
+    /// <value>The user.</value>    
     public User User
     {
-      get { return _user; }
+      get { return _user; }      
     }
 
     /// <summary>
     /// Gets the card.
     /// </summary>
     /// <value>The card.</value>
+    [System.Xml.Serialization.XmlIgnore]
     public VirtualCard Card
     {
       get { return _card; }
@@ -245,6 +270,7 @@ namespace TvEngine.Events
     /// Gets the channel.
     /// </summary>
     /// <value>The channel.</value>
+    [System.Xml.Serialization.XmlIgnore]
     public IChannel channel
     {
       get { return _channel; }
@@ -300,6 +326,7 @@ namespace TvEngine.Events
     /// <summary>
     /// The received epgChannel
     /// </summary>
+    [System.Xml.Serialization.XmlIgnore]
     public EpgChannel EpgChannel
     {
       get { return _epgChannel; }

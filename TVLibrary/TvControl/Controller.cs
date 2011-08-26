@@ -897,13 +897,7 @@ namespace TvControl
     /// </summary>
     /// <param name="cardId">card id</param>
     /// <returns>true, if the card supports sub channels; false otherwise</returns>
-    bool SupportsSubChannels(int cardId);
-
-    /// <summary>
-    /// Signals heartbeat to the server
-    /// </summary>
-    /// <param name="user">The user.</param>
-    void HeartBeat(IUser user);
+    bool SupportsSubChannels(int cardId);    
 
     /// <summary>
     /// Gets the number of channels decrypting.
@@ -1054,5 +1048,7 @@ namespace TvControl
     void GetStreamQualityCounters(IUser user, out int totalTSpackets, out int discontinuityCounter);
 
     #endregion
+
+    Dictionary<int, ChannelState> GetAllChannelStatesForIdleUserCached();
   }
 }
