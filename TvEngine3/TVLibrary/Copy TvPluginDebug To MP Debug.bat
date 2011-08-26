@@ -1,1 +1,0 @@
-xcopy _TvPluginDebug\MediaPortal\*.* ..\..\mediaportal\MediaPortal.Application\bin\Debug\ /E /R /Y
