@@ -29,7 +29,7 @@ namespace TvPlugin
   /// <summary>
   /// 
   /// </summary>
-  public class RadioGuide : RadioGuideBase
+  public sealed class RadioGuide : RadioGuideBase
   {
     public RadioGuide()
     {
