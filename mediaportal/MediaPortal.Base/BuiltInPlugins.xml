@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<whitelist>
-  <plugin>ProcessPlugins.dll</plugin>
-  <plugin>PowerScheduler.Interfaces.dll</plugin>
-  <plugin>PowerSchedulerClientPlugin.dll</plugin>
-  <plugin>WindowPlugins.dll</plugin>
-  <plugin>Dialogs.dll</plugin>
-  <plugin>TvPlugin.dll</plugin>
-</whitelist>
