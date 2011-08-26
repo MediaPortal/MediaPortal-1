@@ -26,15 +26,14 @@ using MediaPortal.GUI.Library;
 
 namespace TvPlugin
 {
-  public class TVGuide : TvGuideBase
+  public sealed class TVGuide : TvGuideBase
   {
-    [SkinControl(98)] protected GUIImage videoBackground;
-    [SkinControl(99)] protected GUIVideoControl videoWindow;
+    [SkinControl(98)] private GUIImage _videoBackground;
+    [SkinControl(99)] private GUIVideoControl _videoWindow;
 
     #region Ctor
 
     public TVGuide()
-      : base()
     {
       GetID = (int)Window.WINDOW_TVGUIDE;
     }
