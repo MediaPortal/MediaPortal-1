@@ -110,7 +110,7 @@ namespace TvLibrary.Implementations
     /// <summary>
     /// Indicates, if the card supports pausegraph, otherwise stopgraph will be used when card is idle.
     /// </summary>
-    protected bool _stopGraph;
+    protected bool _stopGraph = true;
 
     /// <summary>
     /// Scanning Paramters

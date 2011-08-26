@@ -1131,14 +1131,13 @@ namespace TvEngine
         return;
       }
       //int iAnsiPos=0;
-      StringWriter writer = new StringWriter();
+      using (var writer = new StringWriter())
+      {
 
-      System.Web.HttpUtility.HtmlDecode(html, writer);
-
-      String DecodedString = writer.ToString();
-      strippedHtml = DecodedString.Replace("<br>", "\n");
-      if (true)
-        return;
+        System.Web.HttpUtility.HtmlDecode(html, writer);
+        String DecodedString = writer.ToString();
+        strippedHtml = DecodedString.Replace("<br>", "\n");
+      }            
     }
 
     #region Sort Members

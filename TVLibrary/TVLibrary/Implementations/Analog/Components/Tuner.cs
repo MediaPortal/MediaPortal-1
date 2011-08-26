@@ -221,22 +221,38 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #region Dispose
 
-    /// <summary>
-    /// Diposes the tuner component
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+        DevicesInUse.Instance.Remove(_tunerDevice);
+        _tunerDevice.Dispose();
+      }      
       _tuner = null;
       if (_audioPin != null)
       {
-        Release.ComObject("_audioPin", _audioPin);
+        Release.ComObject("_audioPin", _audioPin);        
       }
       if (_filterTvTuner != null)
       {
-        while (Release.ComObject(_filterTvTuner) > 0) {}
-        _filterTvTuner = null;
-      }
-      DevicesInUse.Instance.Remove(_tunerDevice);
+        while (Release.ComObject(_filterTvTuner) > 0) { }
+        _filterTvTuner = null;        
+      }     
+    }    
+
+    /// <summary>
+    /// Diposes the tuner component
+    /// </summary>  
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~Tuner()
+    {
+      Dispose(false);
     }
 
     #endregion

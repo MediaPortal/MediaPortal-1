@@ -457,8 +457,7 @@ namespace TvLibrary.Log
               int threadId = Thread.CurrentThread.ManagedThreadId;
 
               writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of file
-              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);
-              writer.Close();
+              writer.WriteLine("{0:yyyy-MM-dd HH:mm:ss.ffffff} [{1}({2})]: {3}", DateTime.Now, threadName, threadId, logLine);              
             }
           }
         }

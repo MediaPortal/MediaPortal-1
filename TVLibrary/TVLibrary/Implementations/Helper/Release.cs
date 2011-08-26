@@ -58,7 +58,6 @@ namespace TvLibrary
         //Log.Log.Debug("  Release {0} returns {1}", line, hr);
       }
     }
-
     /// <summary>
     /// Releases a com object
     /// </summary>
@@ -87,32 +86,6 @@ namespace TvLibrary
 
         o = default(E);
       }
-    }
-
-    /// <summary>
-    /// Disposes a object if possible and sets the reference to null.
-    /// </summary>
-    /// <param name="o">Object reference to dispose</param>
-    public static void DisposeToNull<E>(ref E o)
-    {
-      System.IDisposable oDisp = o as System.IDisposable;
-      if (oDisp != null)
-      {
-        oDisp.Dispose();
-      }
-      o = default(E);
-    }
-
-    /// <summary>
-    /// Disposes a object if possible.
-    /// </summary>
-    /// <param name="oDisp">IDisposable to dispose</param>
-    public static void Dispose(System.IDisposable oDisp)
-    {
-      if (oDisp != null)
-      {
-        oDisp.Dispose();
-      }
-    }
+    }   
   }
 }

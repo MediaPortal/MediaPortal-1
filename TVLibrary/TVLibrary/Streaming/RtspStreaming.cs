@@ -372,24 +372,26 @@ namespace TvLibrary.Streaming
       List<IPAddress> addresses = new List<IPAddress>();
       try
       {
-        ManagementObjectSearcher searcher =
+        using (ManagementObjectSearcher searcher =
           new ManagementObjectSearcher("root\\CIMV2",
-                                       "SELECT DefaultIPGateway, IPAddress FROM Win32_NetworkAdapterConfiguration");
-
-        foreach (ManagementObject queryObj in searcher.Get())
+                                       "SELECT DefaultIPGateway, IPAddress FROM Win32_NetworkAdapterConfiguration"))
         {
-          if (queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
+
+          foreach (ManagementObject queryObj in searcher.Get())
           {
-            String[] arrDefaultIPGateway = (String[])(queryObj["DefaultIPGateway"]);
-            String[] arrIPAddress = (String[])(queryObj["IPAddress"]);
-            if (arrDefaultIPGateway.Length > 0 && arrIPAddress.Length > 0)
+            if (queryObj["DefaultIPGateway"] != null && queryObj["IPAddress"] != null)
             {
-              foreach (string address in arrIPAddress)
+              String[] arrDefaultIPGateway = (String[])(queryObj["DefaultIPGateway"]);
+              String[] arrIPAddress = (String[])(queryObj["IPAddress"]);
+              if (arrDefaultIPGateway.Length > 0 && arrIPAddress.Length > 0)
               {
-                IPAddress ipAddress = IPAddress.Parse(address);
-                if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                foreach (string address in arrIPAddress)
                 {
-                  addresses.Add(ipAddress);
+                  IPAddress ipAddress = IPAddress.Parse(address);
+                  if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                  {
+                    addresses.Add(ipAddress);
+                  }
                 }
               }
             }

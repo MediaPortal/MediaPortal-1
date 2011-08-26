@@ -292,19 +292,20 @@ namespace TvEngine.PowerScheduler
 
     private void button1_Click(object sender, EventArgs e)
     {
-      SelectProcessForm spf = new SelectProcessForm();
-      DialogResult dr = spf.ShowDialog();
-      if (DialogResult.OK == dr)
-      {
-        if (!spf.SelectedProcess.Equals(String.Empty))
+      using (var spf = new SelectProcessForm()) {
+        DialogResult dr = spf.ShowDialog();
+        if (DialogResult.OK == dr)
         {
-          if (textBox1.Text.Equals(String.Empty))
+          if (!spf.SelectedProcess.Equals(String.Empty))
           {
-            textBox1.Text = spf.SelectedProcess;
-          }
-          else
-          {
-            textBox1.Text = String.Format("{0}, {1}", textBox1.Text, spf.SelectedProcess);
+            if (textBox1.Text.Equals(String.Empty))
+            {
+              textBox1.Text = spf.SelectedProcess;
+            }
+            else
+            {
+              textBox1.Text = String.Format("{0}, {1}", textBox1.Text, spf.SelectedProcess);
+            }
           }
         }
       }

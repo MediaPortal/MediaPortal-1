@@ -85,6 +85,7 @@
     <PlatformTarget>x86</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <Optimize>false</Optimize>
+    <CodeAnalysisRuleSet>..\..\..\..\..\code analysis rule sets\gibman.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\Release\</OutputPath>

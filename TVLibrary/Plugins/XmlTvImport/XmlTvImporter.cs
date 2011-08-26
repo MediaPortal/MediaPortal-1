@@ -319,10 +319,9 @@ namespace TvEngine
                 //IOUtil.CheckFileAccessRights(path, FileMode.Open, FileAccess.Write, FileShare.Write);
                 if (!fileWritten)
                 {
-                  using (FileStream fs = new FileStream(path, FileMode.Create))
+                  using (var fs = new FileStream(path, FileMode.Create))
                   {
                     fs.Write(e.Result, 0, e.Result.Length);
-                    fs.Close();
                     fileWritten = true;
                   }
                 }
@@ -423,73 +422,72 @@ namespace TvEngine
       lastTransferAt = DateTime.Now.ToString();
       transferStatus = "downloading...";
 
-      WebClient Client = new WebClient();
-
-
-      bool isHTTP = (URL.ToLowerInvariant().IndexOf("http://") == 0);
-      bool isFTP = (URL.ToLowerInvariant().IndexOf("ftp://") == 0);
-
-      if (isFTP)
+      using (var webClient = new WebClient())
       {
-        // grab username, password and server from the URL
-        // ftp://user:pass@www.somesite.com/TVguide.xml
+        bool isFTP = (URL.ToLowerInvariant().IndexOf("ftp://") == 0);
 
-        Log.Info("FTP URL detected.");
-
-        int passwordEndIdx = URL.IndexOf("@");
-
-        if (passwordEndIdx > -1)
+        if (isFTP)
         {
-          Log.Info("FTP username/password detected.");
+          // grab username, password and server from the URL
+          // ftp://user:pass@www.somesite.com/TVguide.xml
 
-          int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
-          int userEndIdx = URL.IndexOf(":", userStartIdx);
+          Log.Info("FTP URL detected.");
 
-          string user = URL.Substring(userStartIdx, (userEndIdx - userStartIdx));
-          string pass = URL.Substring(userEndIdx + 1, (passwordEndIdx - userEndIdx - 1));
-          URL = "ftp://" + URL.Substring(passwordEndIdx + 1);
+          int passwordEndIdx = URL.IndexOf("@");
 
-          Client.Credentials = new NetworkCredential(user, pass);
-          Client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          if (passwordEndIdx > -1)
+          {
+            Log.Info("FTP username/password detected.");
+
+            int userStartIdx = 6; //6 is the length of chars in  --> "ftp://"
+            int userEndIdx = URL.IndexOf(":", userStartIdx);
+
+            string user = URL.Substring(userStartIdx, (userEndIdx - userStartIdx));
+            string pass = URL.Substring(userEndIdx + 1, (passwordEndIdx - userEndIdx - 1));
+            URL = "ftp://" + URL.Substring(passwordEndIdx + 1);
+
+            webClient.Credentials = new NetworkCredential(user, pass);
+            webClient.Proxy.Credentials = CredentialCache.DefaultCredentials;
+          }
+          else
+          {
+            Log.Info("no FTP username/password detected. Using anonymous access.");
+          }
         }
         else
         {
-          Log.Info("no FTP username/password detected. Using anonymous access.");
+          Log.Info("HTTP URL detected.");
         }
-      }
-      else
-      {
-        Log.Info("HTTP URL detected.");
-      }
 
-      Log.Info("initiating download of remote file from " + URL);
-      Uri uri = new Uri(URL);
-      Client.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
+        Log.Info("initiating download of remote file from " + URL);
+        Uri uri = new Uri(URL);
+        webClient.DownloadDataCompleted += new DownloadDataCompletedEventHandler(DownloadFileCallback);
 
-      try
-      {
-        SetStandbyAllowed(false);
-        _remoteFileDownloadInProgress = true;
-        _remoteFileDonwloadInProgressAt = DateTime.Now;
-        Client.DownloadDataAsync(uri);
-      }
-      catch (WebException ex)
-      {
-        errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
-        Log.Error(errMsg);
-        lastTransferAt = errMsg;
-      }
-      catch (InvalidOperationException ex)
-      {
-        errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
-        Log.Error(errMsg);
-        lastTransferAt = errMsg;
-      }
-      catch (Exception ex)
-      {
-        errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
-        Log.Error(errMsg);
-        lastTransferAt = errMsg;
+        try
+        {
+          SetStandbyAllowed(false);
+          _remoteFileDownloadInProgress = true;
+          _remoteFileDonwloadInProgressAt = DateTime.Now;
+          webClient.DownloadDataAsync(uri);
+        }
+        catch (WebException ex)
+        {
+          errMsg = "An error occurred while downloading the file: " + URL + " (" + ex.Message + ").";
+          Log.Error(errMsg);
+          lastTransferAt = errMsg;
+        }
+        catch (InvalidOperationException ex)
+        {
+          errMsg = "The " + folder + @"\tvguide.xml file is in use by another thread (" + ex.Message + ").";
+          Log.Error(errMsg);
+          lastTransferAt = errMsg;
+        }
+        catch (Exception ex)
+        {
+          errMsg = "Unknown error @ " + URL + "(" + ex.Message + ").";
+          Log.Error(errMsg);
+          lastTransferAt = errMsg;
+        }
       }
 
       setting = layer.GetSetting("xmlTvRemoteScheduleTransferStatus", "");

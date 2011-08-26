@@ -670,14 +670,31 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region IDisposable members
+   
 
-    /// <summary>
-    /// Disposes COM task memory resources
-    /// </summary>
-    public override void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
-      StopCiHandlerThread();
-      base.Dispose();
+      if (disposing)
+      {
+        // get rid of managed resources
+        StopCiHandlerThread();
+      }
+      // get rid of unmanaged resources            
+    }
+
+
+     /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>  
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~DigitalDevices()
+    {
+      Dispose(false);
     }
 
     #endregion

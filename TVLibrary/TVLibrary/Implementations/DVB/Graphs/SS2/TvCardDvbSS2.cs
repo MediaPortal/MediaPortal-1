@@ -109,7 +109,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles the SkyStar 2 DVB-S card
   /// </summary>
-  public class TvCardDvbSS2 : TvCardDvbBase, IDisposable, ITVCard, IDiSEqCController
+  public class TvCardDvbSS2 : TvCardDvbBase, IDiSEqCController
   {
     #region private consts
 
@@ -1136,12 +1136,20 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Disposes this instance.
-    /// </summary>
-    public override void Dispose()
-    {
-      if (_graphBuilder == null)
+
+    #endregion
+
+    #region Dispose
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+		  }
+		
+		  // get rid of unmanaged resources
+		  if (_graphBuilder == null)
         return;
       if (!CheckThreadId())
         return;
@@ -1149,18 +1157,32 @@ namespace TvLibrary.Implementations.DVB
       base.Dispose();
 
       Log.Log.WriteFile("ss2:Decompose");
-
       _interfaceB2C2DataCtrl = null;
       _interfaceB2C2TunerCtrl = null;
 
       if (_filterB2C2Adapter != null)
       {
         Release.ComObject("tuner filter", _filterB2C2Adapter);
-        _filterB2C2Adapter = null;
+        _filterB2C2Adapter = null;        
       }
-    }
-
-    #endregion
+		}
+		
+		
+		/// <summary>
+		/// Disposes this instance.
+		/// </summary>    
+		public override void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~TvCardDvbSS2()
+		{
+		  Dispose(false);
+		}
+		
+		#endregion
 
     #region IDiSEqCController Members
 

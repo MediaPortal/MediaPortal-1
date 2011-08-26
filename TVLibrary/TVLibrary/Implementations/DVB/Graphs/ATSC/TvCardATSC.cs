@@ -32,7 +32,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Implementation of <see cref="T:TvLibrary.Interfaces.ITVCard"/> which handles ATSC BDA cards
   /// </summary>
-  public class TvCardATSC : TvCardDvbBase, IDisposable, ITVCard
+  public class TvCardATSC : TvCardDvbBase
   {
     #region variables
 

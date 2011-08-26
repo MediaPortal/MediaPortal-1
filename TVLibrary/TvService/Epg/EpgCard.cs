@@ -757,17 +757,38 @@ namespace TvService
 
     #endregion
 
-    #region IDisposable Members
+    #region IDisposable Members    
 
-    public void Dispose()
-    {
-      if (!_disposed)
-      {
-        _epgTimer.Dispose();
-
-        _disposed = true;
-      }
-    }
+    protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        if (!_disposed)
+        {
+          _epgTimer.Dispose();
+          _disposed = true;
+        }
+		  }
+		
+		  // get rid of unmanaged resources
+		  
+		}
+		
+		
+		/// <summary>
+		/// Disposes the EPG card
+		/// </summary>    
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~EpgCard()
+		{
+		  Dispose(false);
+		}
 
     private void controller_OnTvServerEvent(object sender, EventArgs eventArgs)
     {

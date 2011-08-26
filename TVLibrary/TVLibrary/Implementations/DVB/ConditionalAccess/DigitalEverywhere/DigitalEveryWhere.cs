@@ -1391,23 +1391,42 @@ namespace TvLibrary.Implementations.DVB
     #endregion
 
     #region IDisposable Member
+        
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (CiMenuThread != null)
+        {
+          try
+          {
+            CiMenuThread.Abort();
+          }
+          catch { }
+        }
+      }
+
+      // get rid of unmanaged resources
+      Marshal.FreeCoTaskMem(_ptrDataInstance);
+      Marshal.FreeCoTaskMem(_ptrDataReturned);
+      Marshal.FreeCoTaskMem(_ptrDataCiHandler);  
+    }
+
 
     /// <summary>
     /// Disposes DE class and free up memory
-    /// </summary>
+    /// </summary>  
     public void Dispose()
     {
-      if (CiMenuThread != null)
-      {
-        try
-        {
-          CiMenuThread.Abort();
-        }
-        catch {}
-      }
-      Marshal.FreeCoTaskMem(_ptrDataInstance);
-      Marshal.FreeCoTaskMem(_ptrDataReturned);
-      Marshal.FreeCoTaskMem(_ptrDataCiHandler);
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~DigitalEverywhere()
+    {
+      Dispose(false);
     }
 
     #endregion

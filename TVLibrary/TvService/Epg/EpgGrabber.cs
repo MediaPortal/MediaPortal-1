@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Log;
@@ -181,20 +182,37 @@ namespace TvService
 
     #endregion
 
-    #region IDisposable Members
+    #region IDisposable Members    
 
-    public void Dispose()
-    {
-      if (!_disposed)
-      {
-        _epgTimer.Dispose();
-        foreach (EpgCard epgCard in _epgCards)
+    protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        if (!_disposed)
         {
-          epgCard.Dispose();
+          _epgTimer.SafeDispose();
+          _epgCards.SafeDispose();
+          _disposed = true;
         }
-        _disposed = true;
-      }
-    }
+		  }
+		  // get rid of unmanaged resources
+		}
+		
+		
+		/// <summary>
+		/// Disposes the EPG card grabber
+		/// </summary>    
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~EpgGrabber()
+		{
+		  Dispose(false);
+		}
 
     #endregion
 

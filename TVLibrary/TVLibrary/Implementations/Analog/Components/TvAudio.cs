@@ -80,24 +80,44 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #region Dispose
 
-    /// <summary>
-    /// Disposes the TvAudio component
-    /// </summary>
-    public void Dispose()
+
+
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_audioDevice != null)
+        {
+          DevicesInUse.Instance.Remove(_audioDevice);
+          _audioDevice.Dispose();
+          _audioDevice = null;
+        }
+      }
+
+      // get rid of unmanaged resources
       if (mode == TvAudioVariant.Normal)
       {
         if (_filterTvAudioTuner != null)
         {
-          while (Release.ComObject(_filterTvAudioTuner) > 0) {}
-          _filterTvAudioTuner = null;
-        }
-        if (_audioDevice != null)
-        {
-          DevicesInUse.Instance.Remove(_audioDevice);
-          _audioDevice = null;
+          while (Release.ComObject(_filterTvAudioTuner) > 0) { }
+          _filterTvAudioTuner = null;          
         }
       }
+    }
+
+    /// <summary>
+    /// Disposes the TvAudio component
+    /// </summary>    
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~TvAudio()
+    {
+      Dispose(false);
     }
 
     #endregion

@@ -401,241 +401,238 @@ namespace TvLibrary.Teletext
       // We are in transparent mode and fullscreen. Make beckground transparent
       if (_transparentMode && _fullscreenMode)
         bgColor = Color.HotPink;
-      Brush backBrush = new SolidBrush(bgColor);
-      Brush foreBrush = new SolidBrush(GetColor(fColor));
-      Pen backPen = new Pen(backBrush, 1);
-      Pen forePen = new Pen(foreBrush, 1);
-      // Draw the graphic
-      try
+      using (Brush backBrush = new SolidBrush(bgColor)) 
       {
-        if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
+        using (Brush foreBrush = new SolidBrush(GetColor(fColor))) 
         {
-          int w1 = w / 2;
-          int w2 = w - w1;
-          int y1;
-
-          chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
-          if ((attrib & 0x200) > 0)
-            for (y1 = 0; y1 < 3; y1++)
-            {
-              graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 1) > 0)
-                graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
-              graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2,
-                                    mosaicY[y1 + 1] - mosaicY[y1] - 2);
-              chr >>= 2;
-            }
-          else
-            for (y1 = 0; y1 < 3; y1++)
-            {
-              if ((chr & 1) > 0)
-                graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              else
-                graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
-              if ((chr & 2) > 0)
-                graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-              else
-                graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
-
-              chr >>= 2;
-            }
-
-          x += w;
-          return;
-        }
-
-        int factor = (attrib & 1 << 10) > 0 ? 2 : 1;
-
-        bool charReady = false;
-        // If character is still not drawn, then we analyse it again
-        switch (chr)
-        {
-          case 0x00:
-          case 0x20:
-            graph.FillRectangle(backBrush, x, y, w, h);
-            if (factor == 2)
-              graph.FillRectangle(backBrush, x, y + h, w, h);
-            x += w;
-            charReady = true;
-            break;
-          case 0x23:
-          case 0x24:
-            chr2 = m_charTableA[txtLanguage, chr - 0x23];
-            break;
-          case 0x40:
-            chr2 = m_charTableB[txtLanguage];
-            break;
-          case 0x5B:
-          case 0x5C:
-          case 0x5D:
-          case 0x5E:
-          case 0x5F:
-          case 0x60:
-            chr2 = m_charTableC[txtLanguage, chr - 0x5B];
-            break;
-          case 0x7B:
-          case 0x7C:
-          case 0x7D:
-          case 0x7E:
-            chr2 = m_charTableD[txtLanguage, chr - 0x7B];
-            break;
-          case 0x7F:
-            graph.FillRectangle(backBrush, x, y, w, factor * h);
-            graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
-            x += w;
-            charReady = true;
-            break;
-          case 0xE0:
-            graph.FillRectangle(backBrush, x + 1, y + 1, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            graph.DrawLine(forePen, x, y, x, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE1:
-            graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE2:
-            graph.FillRectangle(backBrush, x, y + 1, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y, x + w, y);
-            graph.DrawLine(forePen, x + w - 1, y + 1, x + w - 1, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE3:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
-            graph.DrawLine(forePen, x, y, x, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE4:
-            graph.FillRectangle(backBrush, x, y, w - 1, h);
-            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE5:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            graph.DrawLine(forePen, x, y, x, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE6:
-            graph.FillRectangle(backBrush, x, y, w, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE7:
-            graph.FillRectangle(backBrush, x, y, w - 1, h - 1);
-            graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
-            graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h - 1);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE8:
-            graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
-            for (int r = 0; r < w / 2; r++)
-              graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
-            x += w;
-            charReady = true;
-            break;
-          case 0xE9:
-            graph.FillRectangle(backBrush, x + w / 2, y, (w + 1) / 2, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEA:
-            graph.FillRectangle(backBrush, x, y, w, h);
-            graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEB:
-            graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
-            for (int r = 0; r < w / 2; r++)
-              graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
-            x += w;
-            charReady = true;
-            break;
-          case 0xEC:
-            graph.FillRectangle(backBrush, x, y + (w / 2), w, h - (w / 2));
-            graph.FillRectangle(foreBrush, x, y, w, h / 2);
-            x += w;
-            charReady = true;
-            break;
-          case 0xED:
-          case 0xEE:
-          case 0xEF:
-          case 0xF0:
-          case 0xF1:
-          case 0xF2:
-          case 0xF3:
-          case 0xF4:
-          case 0xF5:
-          case 0xF6:
-            chr2 = m_charTableE[chr - 0xED];
-            break;
-          default:
-            chr2 = (char)chr;
-            break;
-        }
-        // If still not drawn than it's a text and we draw the string
-        if (charReady == false)
-        {
-          string text = "" + chr2;
-          graph.FillRectangle(backBrush, x, y, w, h);
-          SizeF width = graph.MeasureString(text, _fontTeletext);
-          PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), y);
-          graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
-          if (factor == 2)
+          using (var backPen = new Pen(backBrush, 1)) 
           {
-            graph.FillRectangle(backBrush, x, y + h, w, h);
-            Color[,] pixelColor = new Color[w + 1,h + 1];
-            // save char
-            for (int ypos = 0; ypos < h; ypos++)
-            {
-              for (int xpos = 0; xpos < w; xpos++)
+            using (var forePen = new Pen(foreBrush, 1)) 
+            {              
+              if (((attrib & 0x300) > 0) && ((chr & 0xA0) == 0x20))
               {
-                pixelColor[xpos, ypos] = _pageBitmap.GetPixel(xpos + x, ypos + y); // backup old line
-              }
-            }
-            // draw doubleheight
-            for (int ypos = 0; ypos < h; ypos++)
-            {
-              for (int xpos = 0; xpos < w; xpos++)
-              {
-                try
-                {
-                  if (y + (ypos * 2) + 1 < _pageBitmap.Height)
+                int w1 = w / 2;
+                int w2 = w - w1;
+                int y1;
+
+                chr = (byte)((chr & 0x1f) | ((chr & 0x40) >> 1));
+                if ((attrib & 0x200) > 0)
+                  for (y1 = 0; y1 < 3; y1++)
                   {
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos * 2), pixelColor[xpos, ypos]); // backup old line
-                    _pageBitmap.SetPixel(x + xpos, y + (ypos * 2) + 1, pixelColor[xpos, ypos]);
+                    graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+                    if ((chr & 1) > 0)
+                      graph.FillRectangle(foreBrush, x + 1, y + mosaicY[y1] + 1, w1 - 2, mosaicY[y1 + 1] - mosaicY[y1] - 2);
+                    graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+                    if ((chr & 2) > 0)
+                      graph.FillRectangle(foreBrush, x + w1 + 1, y + mosaicY[y1] + 1, w2 - 2,
+                                          mosaicY[y1 + 1] - mosaicY[y1] - 2);
+                    chr >>= 2;
+                  }
+                else
+                  for (y1 = 0; y1 < 3; y1++)
+                  {
+                    if ((chr & 1) > 0)
+                      graph.FillRectangle(foreBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+                    else
+                      graph.FillRectangle(backBrush, x, y + mosaicY[y1], w1, mosaicY[y1 + 1] - mosaicY[y1]);
+                    if ((chr & 2) > 0)
+                      graph.FillRectangle(foreBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+                    else
+                      graph.FillRectangle(backBrush, x + w1, y + mosaicY[y1], w2, mosaicY[y1 + 1] - mosaicY[y1]);
+
+                    chr >>= 2;
+                  }
+
+                x += w;
+                return;
+              }
+
+              int factor = (attrib & 1 << 10) > 0 ? 2 : 1;
+
+              bool charReady = false;
+              // If character is still not drawn, then we analyse it again
+              switch (chr)
+              {
+                case 0x00:
+                case 0x20:
+                  graph.FillRectangle(backBrush, x, y, w, h);
+                  if (factor == 2)
+                    graph.FillRectangle(backBrush, x, y + h, w, h);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0x23:
+                case 0x24:
+                  chr2 = m_charTableA[txtLanguage, chr - 0x23];
+                  break;
+                case 0x40:
+                  chr2 = m_charTableB[txtLanguage];
+                  break;
+                case 0x5B:
+                case 0x5C:
+                case 0x5D:
+                case 0x5E:
+                case 0x5F:
+                case 0x60:
+                  chr2 = m_charTableC[txtLanguage, chr - 0x5B];
+                  break;
+                case 0x7B:
+                case 0x7C:
+                case 0x7D:
+                case 0x7E:
+                  chr2 = m_charTableD[txtLanguage, chr - 0x7B];
+                  break;
+                case 0x7F:
+                  graph.FillRectangle(backBrush, x, y, w, factor * h);
+                  graph.FillRectangle(foreBrush, x + (w / 12), y + factor * (h * 5 / 20), w * 10 / 12, factor * (h * 11 / 20));
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE0:
+                  graph.FillRectangle(backBrush, x + 1, y + 1, w - 1, h - 1);
+                  graph.DrawLine(forePen, x, y, x + w, y);
+                  graph.DrawLine(forePen, x, y, x, y + h);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE1:
+                  graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
+                  graph.DrawLine(forePen, x, y, x + w, y);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE2:
+                  graph.FillRectangle(backBrush, x, y + 1, w - 1, h - 1);
+                  graph.DrawLine(forePen, x, y, x + w, y);
+                  graph.DrawLine(forePen, x + w - 1, y + 1, x + w - 1, y + h - 1);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE3:
+                  graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
+                  graph.DrawLine(forePen, x, y, x, y + h);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE4:
+                  graph.FillRectangle(backBrush, x, y, w - 1, h);
+                  graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE5:
+                  graph.FillRectangle(backBrush, x + 1, y, w - 1, h - 1);
+                  graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+                  graph.DrawLine(forePen, x, y, x, y + h - 1);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE6:
+                  graph.FillRectangle(backBrush, x, y, w, h - 1);
+                  graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE7:
+                  graph.FillRectangle(backBrush, x, y, w - 1, h - 1);
+                  graph.DrawLine(forePen, x, y + h - 1, x + w, y + h - 1);
+                  graph.DrawLine(forePen, x + w - 1, y, x + w - 1, y + h - 1);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE8:
+                  graph.FillRectangle(backBrush, x + 1, y, w - 1, h);
+                  for (int r = 0; r < w / 2; r++)
+                    graph.DrawLine(forePen, x + r, y + r, x + r, y + h - r);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xE9:
+                  graph.FillRectangle(backBrush, x + w / 2, y, (w + 1) / 2, h);
+                  graph.FillRectangle(foreBrush, x, y, w / 2, h);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xEA:
+                  graph.FillRectangle(backBrush, x, y, w, h);
+                  graph.FillRectangle(foreBrush, x, y, w / 2, h / 2);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xEB:
+                  graph.FillRectangle(backBrush, x, y + 1, w, h - 1);
+                  for (int r = 0; r < w / 2; r++)
+                    graph.DrawLine(forePen, x + r, y + r, x + w - r, y + r);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xEC:
+                  graph.FillRectangle(backBrush, x, y + (w / 2), w, h - (w / 2));
+                  graph.FillRectangle(foreBrush, x, y, w, h / 2);
+                  x += w;
+                  charReady = true;
+                  break;
+                case 0xED:
+                case 0xEE:
+                case 0xEF:
+                case 0xF0:
+                case 0xF1:
+                case 0xF2:
+                case 0xF3:
+                case 0xF4:
+                case 0xF5:
+                case 0xF6:
+                  chr2 = m_charTableE[chr - 0xED];
+                  break;
+                default:
+                  chr2 = (char)chr;
+                  break;
+              }
+              // If still not drawn than it's a text and we draw the string
+              if (charReady == false)
+              {
+                string text = "" + chr2;
+                graph.FillRectangle(backBrush, x, y, w, h);
+                SizeF width = graph.MeasureString(text, _fontTeletext);
+                PointF xyPos = new PointF((float)x + ((w - ((int)width.Width)) / 2), y);
+                graph.DrawString(text, _fontTeletext, foreBrush, xyPos);
+                if (factor == 2)
+                {
+                  graph.FillRectangle(backBrush, x, y + h, w, h);
+                  Color[,] pixelColor = new Color[w + 1,h + 1];
+                  // save char
+                  for (int ypos = 0; ypos < h; ypos++)
+                  {
+                    for (int xpos = 0; xpos < w; xpos++)
+                    {
+                      pixelColor[xpos, ypos] = _pageBitmap.GetPixel(xpos + x, ypos + y); // backup old line
+                    }
+                  }
+                  // draw doubleheight
+                  for (int ypos = 0; ypos < h; ypos++)
+                  {
+                    for (int xpos = 0; xpos < w; xpos++)
+                    {
+                      try
+                      {
+                        if (y + (ypos * 2) + 1 < _pageBitmap.Height)
+                        {
+                          _pageBitmap.SetPixel(x + xpos, y + (ypos * 2), pixelColor[xpos, ypos]); // backup old line
+                          _pageBitmap.SetPixel(x + xpos, y + (ypos * 2) + 1, pixelColor[xpos, ypos]);
+                        }
+                      }
+                      catch (Exception ex)
+                      {
+                        Log.Log.Info("Error in teletext page renderer: ", ex);
+                      }
+                    }
                   }
                 }
-                catch (Exception ex)
-                {
-                  Log.Log.Info("Error in teletext page renderer: ", ex);
-                }
-              }
+                x += w;
+              }              
             }
           }
-          x += w;
         }
-      }
-      finally
-      {
-        foreBrush.Dispose();
-        backBrush.Dispose();
-        forePen.Dispose();
-        backPen.Dispose();
       }
       return;
     }

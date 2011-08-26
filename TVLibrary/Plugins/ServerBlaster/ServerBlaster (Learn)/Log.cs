@@ -56,12 +56,11 @@ namespace MediaPortal.GUI.Library
       {
         try
         {
-          using (StreamWriter writer = new StreamWriter(_logFilename, true, Encoding.UTF8))
+          using (var writer = new StreamWriter(_logFilename, true, Encoding.UTF8))
           {
             writer.BaseStream.Seek(0, SeekOrigin.End); // set the file pointer to the end of 
             writer.Write(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " ");
             writer.WriteLine(strFormat, arg);
-            writer.Close();
           }
 
           Console.WriteLine(string.Format(strFormat, arg));

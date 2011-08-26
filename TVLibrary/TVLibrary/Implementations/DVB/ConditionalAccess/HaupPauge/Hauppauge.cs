@@ -247,16 +247,38 @@ namespace TvLibrary.Implementations.DVB
           Log.Log.Info("Hauppauge: Set Roll-Off returned: 0x{0:X} - {1}", hr, DsError.GetErrorText(hr));
         }
       }
+    }  
+
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Marshal.FreeCoTaskMem(_tempInstance);
+      Marshal.FreeCoTaskMem(_tempValue);
     }
+
 
     /// <summary>
     /// Disposes COM task memory resources
     /// </summary>
     public void Dispose()
     {
-      Marshal.FreeCoTaskMem(_ptrDiseqc);
-      Marshal.FreeCoTaskMem(_tempInstance);
-      Marshal.FreeCoTaskMem(_tempValue);
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
+
+    ~Hauppauge()
+    {
+      Dispose(false);
+    }
+
+    #endregion
   }
 }

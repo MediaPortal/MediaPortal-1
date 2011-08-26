@@ -815,15 +815,33 @@ namespace TvService
 
     #endregion
 
-    #region IDisposable Members
+    #region IDisposable Members    
+
+ 		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        DeInit();
+		  }
+		
+		  // get rid of unmanaged resources      
+		}
+
 
     /// <summary>
     /// Clean up the controller when service is stopped
-    /// </summary>
-    public void Dispose()
-    {
-      DeInit();
-    }
+    /// </summary> 
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~TVController()
+		{
+		  Dispose(false);
+		}
 
     /// <summary>
     /// Cleans up the controller
@@ -870,6 +888,7 @@ namespace TvService
         {
           Log.Info("Controller: stop epg grabber...");
           _epgGrabber.Stop();
+          _epgGrabber.Dispose();
           _epgGrabber = null;
           Log.Info("Controller: epg stopped...");
         }

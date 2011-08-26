@@ -1410,16 +1410,34 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IDisposable Member
+    #region IDisposable Member       
 
-    /// <summary>
-    /// Disposes TT API
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
       CloseCI();
       Marshal.FreeCoTaskMem(ptrPmt);
       Marshal.FreeCoTaskMem(_ptrDataInstance);
+    }
+
+
+     /// <summary>
+    /// Disposes TT API
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~TechnoTrendAPI()
+    {
+      Dispose(false);
     }
 
     #endregion

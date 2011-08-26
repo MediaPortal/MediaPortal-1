@@ -72,28 +72,25 @@ namespace TvService
           string targetTs = Path.GetDirectoryName(_recording) + "\\" + Path.GetFileNameWithoutExtension(_recording) +
                             "_tsbuffers\\" + Path.GetFileName(currentSourceBuffer);
           Log.Info("TsCopier: Copying - source: {0}, target: {1}", currentSourceBuffer, targetTs);
-          FileStream reader = new FileStream(currentSourceBuffer, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-          FileStream writer = new FileStream(targetTs, FileMode.CreateNew, FileAccess.Write);
-
-          reader.Seek(_posStart, SeekOrigin.Begin);
-          byte[] buf = new byte[1024];
-          int bytesRead = reader.Read(buf, 0, 1024);
-          while (bytesRead > 0)
+          using (var reader = new FileStream(currentSourceBuffer, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
           {
-            if (reader.Position > _posEnd && currentSourceBuffer == _fileEnd)
-              bytesRead -= (int)(reader.Position - _posEnd);
-            if (bytesRead <= 0)
-              break;
-            writer.Write(buf, 0, bytesRead);
-            bytesRead = reader.Read(buf, 0, 1024);
-          }
-          writer.Flush();
-          writer.Close();
-          writer.Dispose();
-          writer = null;
-          reader.Close();
-          reader.Dispose();
-          reader = null;
+            using (var writer = new FileStream(targetTs, FileMode.CreateNew, FileAccess.Write))
+            {
+              reader.Seek(_posStart, SeekOrigin.Begin);
+              byte[] buf = new byte[1024];
+              int bytesRead = reader.Read(buf, 0, 1024);
+              while (bytesRead > 0)
+              {
+                if (reader.Position > _posEnd && currentSourceBuffer == _fileEnd)
+                  bytesRead -= (int)(reader.Position - _posEnd);
+                if (bytesRead <= 0)
+                  break;
+                writer.Write(buf, 0, bytesRead);
+                bytesRead = reader.Read(buf, 0, 1024);
+              }
+              writer.Flush();
+            }
+          }          
           Log.Info("TsCopier: copying done.");
           idCurrent++;
           if (idCurrent > maxFiles)

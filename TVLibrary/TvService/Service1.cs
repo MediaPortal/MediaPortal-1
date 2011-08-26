@@ -115,15 +115,17 @@ namespace TvService
       }
       if (opt != null && opt.ToUpperInvariant() == "/UNINSTALL")
       {
-        TransactedInstaller ti = new TransactedInstaller();
-        ProjectInstaller mi = new ProjectInstaller();
-        ti.Installers.Add(mi);
-        String path = String.Format("/assemblypath={0}",
-                                    System.Reflection.Assembly.GetExecutingAssembly().Location);
-        String[] cmdline = {path};
-        InstallContext ctx = new InstallContext("", cmdline);
-        ti.Context = ctx;
-        ti.Uninstall(null);
+        using (TransactedInstaller ti = new TransactedInstaller())
+        {
+          ProjectInstaller mi = new ProjectInstaller();
+          ti.Installers.Add(mi);
+          String path = String.Format("/assemblypath={0}",
+                                      System.Reflection.Assembly.GetExecutingAssembly().Location);
+          String[] cmdline = {path};
+          InstallContext ctx = new InstallContext("", cmdline);
+          ti.Context = ctx;
+          ti.Uninstall(null);
+        }
         return;
       }
       // When using /DEBUG switch (in visual studio) the TvService is not run as a service

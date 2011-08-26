@@ -129,13 +129,35 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Info("ViXS ATSC: Get ModulationType returned value: {0}", Marshal.ReadInt32(_tempValue));
       }
     }
-
-    /// <summary>
+        
+    #region Dispose
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+		  }
+		
+		  // get rid of unmanaged resources
+		  Marshal.FreeCoTaskMem(_tempValue);
+		}
+		
+		
+	  /// <summary>
     /// Disposes COM task memory resources
     /// </summary>
-    public void Dispose()
-    {
-      Marshal.FreeCoTaskMem(_tempValue);
-    }
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~ViXSATSC()
+		{
+		  Dispose(false);
+		}
+		
+		#endregion
   }
 }

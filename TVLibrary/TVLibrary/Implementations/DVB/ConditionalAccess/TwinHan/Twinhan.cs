@@ -922,21 +922,24 @@ namespace TvLibrary.Implementations.DVB
 
     #endregion
 
-    #region IDisposable Member
+    #region IDisposable Member        
 
-    /// <summary>
-    /// Disposes unmanaged resources
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
-      if (CiMenuThread != null)
+      if (disposing)
       {
-        try
+        // get rid of managed resources
+        if (CiMenuThread != null)
         {
-          CiMenuThread.Abort();
+          try
+          {
+            CiMenuThread.Abort();
+          }
+          catch {}
         }
-        catch {}
       }
+
+      // get rid of unmanaged resources
       Marshal.FreeCoTaskMem(_ptrPmt);
       Marshal.FreeCoTaskMem(_ptrDwBytesReturned); // int32
       Marshal.FreeCoTaskMem(_thbdaBuf);
@@ -944,6 +947,21 @@ namespace TvLibrary.Implementations.DVB
       Marshal.FreeCoTaskMem(_ptrOutBuffer2);
       Marshal.FreeCoTaskMem(_ptrDiseqc);
       Marshal.FreeCoTaskMem(_ptrMMIBuffer);
+    }
+
+
+    /// <summary>
+    /// Disposes unmanaged resources
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~Twinhan()
+    {
+      Dispose(false);
     }
 
     #endregion

@@ -259,8 +259,11 @@ namespace SetupTv.Sections
                     channelLogo = GifBasePath + @"tvmovie_senderlogoplatzhalter.gif";
 
                   // convert gif to ico
-                  Bitmap tvmLogo = new Bitmap(channelLogo);
-                  IntPtr iconHandle = tvmLogo.GetHicon();
+                  IntPtr iconHandle;
+                  using (var tvmLogo = new Bitmap(channelLogo)) 
+                  {
+                    iconHandle = tvmLogo.GetHicon();
+                  }
                   Icon stationThumb = Icon.FromHandle(iconHandle);
                   imageListTvmStations.Images.Add(new Icon(stationThumb, new Size(32, 22)));
                 }

@@ -300,12 +300,29 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable Member
 
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources      
+      }
+
+      // get rid of unmanaged resources
+      Shutdown();
+    }
+
     /// <summary>
     /// Disposing ressources
-    /// </summary>
+    /// </summary>  
     public void Dispose()
     {
-      Shutdown();
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~WinTvCiModule()
+    {
+      Dispose(false);
     }
 
     #endregion

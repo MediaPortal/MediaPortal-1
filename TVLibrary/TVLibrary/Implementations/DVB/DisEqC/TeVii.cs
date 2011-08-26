@@ -260,18 +260,40 @@ namespace TvLibrary.Hardware
     {
       Log.Log.Debug("TeVii: Closing card {0} ", m_iDeviceIndex);
       CloseDevice(m_iDeviceIndex);
-    }
+    }      
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources        
+      }
+
+      // get rid of unmanaged resources
       if (m_bIsTeVii)
       {
         Close();
       }
     }
+
+
+   /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~TeVii()
+    {
+      Dispose(false);
+    }
+
+    #endregion
 
     #region IHardwareProvider Member
 

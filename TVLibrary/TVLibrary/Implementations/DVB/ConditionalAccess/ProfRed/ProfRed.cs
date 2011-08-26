@@ -226,13 +226,36 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #endregion
+        
+
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
+      Marshal.FreeCoTaskMem(_ptrDiseqc);
+    }
+
 
     /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
+    /// </summary>    
     public void Dispose()
     {
-      Marshal.FreeCoTaskMem(_ptrDiseqc);
+      Dispose(true);
+      GC.SuppressFinalize(this);
     }
+
+    ~ProfRed()
+    {
+      Dispose(false);
+    }
+
+    #endregion
   }
 }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using DirectShowLib;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using TvLibrary.Channels;
 using TvLibrary.Implementations.DVB.Structures;
 using TvLibrary.Interfaces;
@@ -135,7 +136,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("KNC card detected");
             return;
           }
-          Release.DisposeToNull(ref _knc);
+          _knc.DisposeToNull();
 
           Log.Log.WriteFile("Check for Digital Everywhere");
           _digitalEveryWhere = new DigitalEverywhere(tunerFilter);
@@ -152,7 +153,7 @@ namespace TvLibrary.Implementations.DVB
             //_digitalEveryWhere.ResetCAM();
             return;
           }
-          Release.DisposeToNull(ref _digitalEveryWhere);
+          _digitalEveryWhere.DisposeToNull();
 
           Log.Log.WriteFile("Check for Twinhan");
           _twinhan = new Twinhan(tunerFilter);
@@ -164,7 +165,7 @@ namespace TvLibrary.Implementations.DVB
             _ciMenu = _twinhan; // Register Twinhan CI Menu capabilities when CAM detected and ready
             return;
           }
-          Release.DisposeToNull(ref _twinhan);
+          _twinhan.DisposeToNull();
 
           Log.Log.WriteFile("Check for TechnoTrend");
           _technoTrend = new TechnoTrendAPI(tunerFilter);
@@ -175,7 +176,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("TechnoTrend card detected");
             return;
           }
-          Release.DisposeToNull(ref _technoTrend);
+          _technoTrend.DisposeToNull();
 
           Log.Log.WriteFile("Check for Hauppauge");
           _hauppauge = new Hauppauge(tunerFilter);
@@ -194,8 +195,8 @@ namespace TvLibrary.Implementations.DVB
             _diSEqCMotor = new DiSEqCMotor(_hauppauge);
             return;
           }
-          Release.DisposeToNull(ref _hauppauge);
-          Release.DisposeToNull(ref _winTvCiModule);
+          _hauppauge.DisposeToNull();
+          _winTvCiModule.DisposeToNull();
 
           /*Log.Log.Info("Check for anysee");
           _anysee = new anysee(tunerFilter, analyzerFilter);
@@ -213,7 +214,7 @@ namespace TvLibrary.Implementations.DVB
             _diSEqCMotor = new DiSEqCMotor(_profred);
             return;
           }
-          Release.DisposeToNull(ref _profred);
+          _profred.DisposeToNull();
 
           // TeVii support
           _TeVii = new TeVii();
@@ -233,7 +234,7 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          Release.DisposeToNull(ref _TeVii);
+          _TeVii.DisposeToNull();
 
           // DigitalDevices support
           _DigitalDevices = new DigitalDevices(tunerFilter);
@@ -246,7 +247,7 @@ namespace TvLibrary.Implementations.DVB
             }
             return; // detected
           }
-          Release.DisposeToNull(ref _DigitalDevices);
+          _DigitalDevices.DisposeToNull();
 
           Log.Log.WriteFile("Check for Conexant based card");
           _conexant = new ConexantBDA(tunerFilter);
@@ -261,8 +262,8 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          Release.DisposeToNull(ref _conexant);
-          Release.DisposeToNull(ref _winTvCiModule);
+          _conexant.DisposeToNull();
+          _winTvCiModule.DisposeToNull();
 
           Log.Log.WriteFile("Check for GenPix BDA based card");
           _genpix = new GenPixBDA(tunerFilter);
@@ -277,8 +278,8 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          Release.DisposeToNull(ref _genpix);
-          Release.DisposeToNull(ref _winTvCiModule);
+          _genpix.DisposeToNull();
+          _winTvCiModule.DisposeToNull();
 
           Log.Log.WriteFile("Check for Generic DVB-S card");
           _genericbdas = new GenericBDAS(tunerFilter);
@@ -293,7 +294,7 @@ namespace TvLibrary.Implementations.DVB
             }
             return;
           }
-          Release.DisposeToNull(ref _genericbdas);
+          _genericbdas.DisposeToNull();
 
           //Final WinTV-CI check for DVB-T hybrid cards
           Log.Log.WriteFile("Check for Hauppauge WinTV CI");
@@ -303,7 +304,7 @@ namespace TvLibrary.Implementations.DVB
             _winTvCiModule = new WinTvCiModule(winTvUsbCiFilter);
             return;
           }
-          Release.DisposeToNull(ref _winTvCiModule);
+          _winTvCiModule.DisposeToNull();
         }
 
         //ATSC checks
@@ -317,7 +318,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("ViXS ATSC QAM card detected");
             return;
           }
-          Release.DisposeToNull(ref _isvixsatsc);
+          _isvixsatsc.DisposeToNull();
 
           Log.Log.WriteFile("Check for Generic ATSC QAM card");
           _isgenericatsc = new GenericATSC(tunerFilter);
@@ -326,7 +327,7 @@ namespace TvLibrary.Implementations.DVB
             Log.Log.WriteFile("Generic ATSC QAM card detected");
             return;
           }
-          Release.DisposeToNull(ref _isgenericatsc);
+          _isgenericatsc.DisposeToNull();
         }
       }
       catch (Exception ex)
@@ -1090,25 +1091,45 @@ namespace TvLibrary.Implementations.DVB
     }
 
     #region IDisposable Member
+      
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        _knc.SafeDispose();
+        _technoTrend.SafeDispose();
+        _digitalEveryWhere.SafeDispose();
+        _hauppauge.SafeDispose();
+        _conexant.SafeDispose();
+        _genericbdas.SafeDispose();
+        _isgenericatsc.SafeDispose();
+        _isvixsatsc.SafeDispose();
+        _genpix.SafeDispose();
+        _winTvCiModule.SafeDispose();
+        _twinhan.SafeDispose();
+        _profred.SafeDispose();
+        _TeVii.SafeDispose();
+        _DigitalDevices.SafeDispose();
+      }
+
+      // get rid of unmanaged resources
+  
+    }
 
     /// <summary>
     /// Disposing CI and API resources
     /// </summary>
     public void Dispose()
     {
-      Release.Dispose(_knc);
-      Release.Dispose(_technoTrend);
-      Release.Dispose(_digitalEveryWhere);
-      Release.Dispose(_hauppauge);
-      Release.Dispose(_conexant);
-      Release.Dispose(_genericbdas);
-      Release.Dispose(_isgenericatsc);
-      Release.Dispose(_isvixsatsc);
-      Release.Dispose(_genpix);
-      Release.Dispose(_winTvCiModule);
-      Release.Dispose(_twinhan);
-      Release.Dispose(_profred);
-      Release.Dispose(_TeVii);
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~ConditionalAccess()
+    {
+      Dispose(false);
     }
 
     #endregion

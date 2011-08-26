@@ -45,18 +45,22 @@ namespace MediaPortal.Utils.Web
 
     public void SendAsyncGetRequest(String _url)
     {
-      BackgroundWorker worker = new BackgroundWorker();
-      _requestDelay = 0;
-      worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
-      worker.RunWorkerAsync(_url);
+      using (var worker = new BackgroundWorker()) 
+      {
+        _requestDelay = 0;
+        worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
+        worker.RunWorkerAsync(_url);
+      }
     }
 
     public void SendDelayedAsyncGetRequest(String _url, int _delayMSecs)
     {
-      BackgroundWorker worker = new BackgroundWorker();
-      _requestDelay = _delayMSecs;
-      worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
-      worker.RunWorkerAsync(_url);
+      using (var worker = new BackgroundWorker()) 
+      {
+        _requestDelay = _delayMSecs;
+        worker.DoWork += new DoWorkEventHandler(RequestWorker_DoWork);
+        worker.RunWorkerAsync(_url);
+      }
     }
 
 

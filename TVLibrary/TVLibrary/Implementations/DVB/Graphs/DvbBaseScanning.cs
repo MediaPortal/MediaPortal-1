@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
 using TvLibrary.Channels;
@@ -257,14 +258,32 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable
 
-    /// <summary>
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_event != null)
+        {
+          _event.Close();
+        }        
+      }
+      // get rid of unmanaged resources
+  }
+
+
+     /// <summary>
     /// Disposes this instance.
-    /// </summary>
+    /// </summary>    
     public void Dispose()
     {
-      if (_analyzer == null)
-        return;
-      //_analyzer.SetPidFilterCallback(null);
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~DvbBaseScanning()
+    {
+      Dispose(false);
     }
 
     #endregion

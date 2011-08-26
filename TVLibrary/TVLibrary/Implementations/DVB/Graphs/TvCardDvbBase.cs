@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Xml;
 using DirectShowLib;
 using DirectShowLib.BDA;
+using MediaPortal.Common.Utils.ExtensionMethods;
 using TvLibrary.Hardware;
 using TvLibrary.Interfaces;
 using TvLibrary.Interfaces.Analyzer;
@@ -1889,13 +1890,33 @@ namespace TvLibrary.Implementations.DVB
 
     #region IDisposable
 
-    /// <summary>
+    protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+        winTvCiHandler.SafeDispose();
+		  }
+		
+		  // get rid of unmanaged resources
+      Decompose();  
+		}
+		
+		
+		 /// <summary>
     /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public virtual void Dispose()
-    {
-      Decompose();
-    }
+    /// </summary>   
+		public virtual void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~TvCardDvbBase()
+		{
+		  Dispose(false);
+		}
+		
 
     /// <summary>
     /// destroys the graph and cleans up any resources

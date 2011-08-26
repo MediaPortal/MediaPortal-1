@@ -28,7 +28,7 @@ namespace TvLibrary.Implementations.DVB
   /// <summary>
   /// Generic BDA DiSEqC support.
   /// </summary>
-  public class GenericBDAS : IDisposable
+  public class GenericBDAS
   {
     #region variables
 
@@ -52,7 +52,7 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="tunerFilter">The tuner filter.</param>
     public GenericBDAS(IBaseFilter tunerFilter)
     {
-      _TunerDevice = (IBDA_Topology)tunerFilter;
+      _TunerDevice = (IBDA_Topology)tunerFilter;           
       //check if the BDA driver supports DiSEqC
       IPin pin = DsFindPin.ByName(tunerFilter, "MPEG2 Transport");
       if (pin != null)
@@ -242,12 +242,6 @@ namespace TvLibrary.Implementations.DVB
     public bool IsGenericBDAS
     {
       get { return _isGenericBDAS; }
-    }
-
-    #region IDisposable Member
-
-    public virtual void Dispose() {}
-
-    #endregion
+    }   
   }
 }

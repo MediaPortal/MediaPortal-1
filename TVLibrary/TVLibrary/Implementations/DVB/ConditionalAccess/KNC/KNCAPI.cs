@@ -446,17 +446,39 @@ namespace TvLibrary.Implementations.DVB
       OpenCI();
     }
 
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
       CloseCI();
       Log.Log.Debug("KNC: Disposing CI handler");
       Marshal.FreeCoTaskMem(ptrPmt);
       Marshal.FreeCoTaskMem(ptrCallback);
       Marshal.FreeCoTaskMem(_ptrDataInstance);
     }
+
+
+     /// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>    
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~KNCAPI()
+    {
+      Dispose(false);
+    }
+
+    #endregion
 
     /// <summary>
     /// Determines whether cam is ready.

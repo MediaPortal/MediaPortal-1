@@ -269,87 +269,89 @@ namespace TvEngine
       string sqlSelect =
         "SELECT * FROM Sender WHERE (Favorit = true) AND (GueltigBis >=Now()) ORDER BY Bezeichnung ASC;";
 
-      DataSet tvMovieTable = new DataSet("Sender");
-      try
+      using (var tvMovieTable = new DataSet("Sender")) 
       {
-        _databaseConnection.Open();
-        using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
+        try
         {
-          using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
+          _databaseConnection.Open();
+          using (OleDbCommand databaseCommand = new OleDbCommand(sqlSelect, _databaseConnection))
           {
+            using (OleDbDataAdapter databaseAdapter = new OleDbDataAdapter(databaseCommand))
+            {
+              try
+              {
+                databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
+                databaseAdapter.Fill(tvMovieTable);
+              }
+              catch (Exception dsex)
+              {
+                Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
+                return false;
+              }
+            }
+          }
+        }
+        catch (System.Data.OleDb.OleDbException ex)
+        {
+          Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
+          Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
+          _canceled = true;
+          return false;
+        }
+        catch (Exception ex2)
+        {
+          Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
+          _canceled = true;
+          return false;
+        }
+        finally
+        {
+          _databaseConnection.Close();
+        }
+
+        try
+        {
+          _tvmEpgChannels = new List<TVMChannel>();
+          foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+          {
+            string senderId = sender["ID"].ToString();
+            string senderKennung = sender["SenderKennung"].ToString();
+            string senderBez = sender["Bezeichnung"].ToString();
+            // these are non-vital for now.
+            string senderUrl = String.Empty;
+            string senderSort = "-1";
+            string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
+            // Somehow TV Movie's db does not necessarily contain these columns...
             try
             {
-              databaseAdapter.FillSchema(tvMovieTable, SchemaType.Source, "Sender");
-              databaseAdapter.Fill(tvMovieTable);
+              senderUrl = sender["Webseite"].ToString();
             }
-            catch (Exception dsex)
+            catch (Exception) {}
+            try
             {
-              Log.Info("TVMovie: Exception filling Sender DataSet - {0}\n{1}", dsex.Message, dsex.StackTrace);
-              return false;
+              senderSort = sender["SortNrTVMovie"].ToString();
             }
+            catch (Exception) {}
+            try
+            {
+              senderZeichen = sender["Zeichen"].ToString();
+            }
+            catch (Exception) {}
+
+            TVMChannel current = new TVMChannel(senderId,
+                                                senderKennung,
+                                                senderBez,
+                                                senderUrl,
+                                                senderSort,
+                                                senderZeichen
+              );
+            _tvmEpgChannels.Add(current);
           }
         }
-      }
-      catch (System.Data.OleDb.OleDbException ex)
-      {
-        Log.Info("TVMovie: Error accessing TV Movie Clickfinder database while reading stations: {0}", ex.Message);
-        Log.Info("TVMovie: Exception: {0}", ex.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      catch (Exception ex2)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex2.Message, ex2.StackTrace);
-        _canceled = true;
-        return false;
-      }
-      finally
-      {
-        _databaseConnection.Close();
-      }
-
-      try
-      {
-        _tvmEpgChannels = new List<TVMChannel>();
-        foreach (DataRow sender in tvMovieTable.Tables["Table"].Rows)
+        catch (Exception ex)
         {
-          string senderId = sender["ID"].ToString();
-          string senderKennung = sender["SenderKennung"].ToString();
-          string senderBez = sender["Bezeichnung"].ToString();
-          // these are non-vital for now.
-          string senderUrl = String.Empty;
-          string senderSort = "-1";
-          string senderZeichen = @"tvmovie_senderlogoplatzhalter.gif";
-          // Somehow TV Movie's db does not necessarily contain these columns...
-          try
-          {
-            senderUrl = sender["Webseite"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderSort = sender["SortNrTVMovie"].ToString();
-          }
-          catch (Exception) {}
-          try
-          {
-            senderZeichen = sender["Zeichen"].ToString();
-          }
-          catch (Exception) {}
-
-          TVMChannel current = new TVMChannel(senderId,
-                                              senderKennung,
-                                              senderBez,
-                                              senderUrl,
-                                              senderSort,
-                                              senderZeichen
-            );
-          _tvmEpgChannels.Add(current);
+          Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
         }
-      }
-      catch (Exception ex)
-      {
-        Log.Info("TVMovie: Exception: {0}, {1}", ex.Message, ex.StackTrace);
       }
 
       _channelList = GetChannels();
@@ -571,7 +573,6 @@ namespace TvEngine
               counter++;
             }
             databaseTransaction.Commit();
-            reader.Close();
           }
         }
         catch (OleDbException ex)

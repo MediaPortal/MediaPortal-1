@@ -68,21 +68,38 @@ namespace TvLibrary.Implementations.Analog.Components
     /// </summary>
     public void Dispose()
     {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
       if (_filterWstDecoder != null)
       {
         Release.ComObject("wst codec filter", _filterWstDecoder);
-        _filterWstDecoder = null;
+        _filterWstDecoder = null;        
       }
       if (_teeSink != null)
       {
         Release.ComObject("teesink filter", _teeSink);
-        _teeSink = null;
+        _teeSink = null;        
       }
       if (_pinWST_VBI != null)
       {
         Release.ComObject("wst/vbi codec pinout", _pinWST_VBI);
-        _pinWST_VBI = null;
+        _pinWST_VBI = null;        
       }
+    }
+    
+    ~TeletextComponent()
+    {
+      Dispose(false);
     }
 
     #endregion

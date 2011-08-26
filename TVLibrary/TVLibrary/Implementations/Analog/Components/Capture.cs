@@ -221,11 +221,27 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #region Dispose
 
-    /// <summary>
-    /// Disposes the capture component
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
+        {
+          DevicesInUse.Instance.Remove(_audioCaptureDevice);
+          _audioCaptureDevice.Dispose();
+        }
+        _audioCaptureDevice = null; 
+        if (_videoCaptureDevice != null)
+        {
+          DevicesInUse.Instance.Remove(_videoCaptureDevice);
+          _videoCaptureDevice.Dispose();
+          _videoCaptureDevice = null;
+        }
+        _videoCaptureDevice = null;
+      }
+
+      // get rid of unmanaged resources
       if (_pinVBI != null)
       {
         Release.ComObject("vbipin filter", _pinVBI);
@@ -233,7 +249,7 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterAudioCapture != null && _filterVideoCapture != _filterAudioCapture)
       {
-        Release.ComObject("audio capture filter", _filterAudioCapture);
+        Release.ComObject("audio capture filter", _filterAudioCapture);        
       }
       if (_filterVideoCapture != null)
       {
@@ -242,16 +258,21 @@ namespace TvLibrary.Implementations.Analog.Components
         _analogVideoDecoder = null;
       }
       _filterAudioCapture = null;
-      if (_audioCaptureDevice != null && _audioCaptureDevice != _videoCaptureDevice)
-      {
-        DevicesInUse.Instance.Remove(_audioCaptureDevice);
-      }
-      if (_videoCaptureDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_videoCaptureDevice);
-        _videoCaptureDevice = null;
-      }
-      _audioCaptureDevice = null;
+    }
+
+
+    /// <summary>
+    /// Disposes the capture component
+    /// </summary>    
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~Capture()
+    {
+      Dispose(false);
     }
 
     #endregion

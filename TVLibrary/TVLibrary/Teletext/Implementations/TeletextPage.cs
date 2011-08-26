@@ -486,18 +486,37 @@ namespace TvLibrary.Teletext
 
     #endregion
 
-    #region IDisposable Members
-
-    /// <summary>
-    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-    /// </summary>
-    public void Dispose()
-    {
-      for (int i = 0; i < MAX_SUB_PAGES; ++i)
+    #region IDisposable Members   
+		
+		protected virtual void Dispose(bool disposing)
+		{
+		  if (disposing)
+		  {
+		    // get rid of managed resources
+		  }
+		
+		  // get rid of unmanaged resources
+		  for (int i = 0; i < MAX_SUB_PAGES; ++i)
       {
         FreePage(i);
       }
-    }
+		}
+		
+		
+		/// <summary>
+    /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+    /// </summary>  
+		public void Dispose()
+		{
+		  Dispose(true);
+		  GC.SuppressFinalize(this);
+		}
+		
+		~TeletextPage()
+		{
+		  Dispose(false);
+		}
+		
 
     #endregion
   }

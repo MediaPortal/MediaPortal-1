@@ -185,13 +185,36 @@ namespace TvLibrary.Implementations.DVB
       }
     }
 
-    /// <summary>
-    /// Disposes COM task memory resources
-    /// </summary>
-    public void Dispose()
+    #region Dispose
+
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+      }
+
+      // get rid of unmanaged resources
       Marshal.FreeCoTaskMem(_ptrDiseqc);
       Marshal.FreeCoTaskMem(_ptrTempInstance);
+    
     }
+
+
+    /// <summary>
+    /// Disposes COM task memory resources
+    /// </summary>  
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~GenPixBDA()
+    {
+      Dispose(false);
+    }
+
+    #endregion
   }
 }

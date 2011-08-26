@@ -245,18 +245,20 @@ namespace TvEngine
     {
       try
       {
-        Process process = new Process();
-        process.StartInfo = new ProcessStartInfo();
-        process.StartInfo.Arguments = parameters;
-        process.StartInfo.FileName = program;
-        process.StartInfo.WindowStyle = windowStyle;
-        process.StartInfo.WorkingDirectory = workingFolder;
-        if (OSInfo.OSInfo.VistaOrLater())
+        using (var process = new Process()) 
         {
-          process.StartInfo.Verb = "runas";
-        }
+          process.StartInfo = new ProcessStartInfo();
+          process.StartInfo.Arguments = parameters;
+          process.StartInfo.FileName = program;
+          process.StartInfo.WindowStyle = windowStyle;
+          process.StartInfo.WorkingDirectory = workingFolder;
+          if (OSInfo.OSInfo.VistaOrLater())
+          {
+            process.StartInfo.Verb = "runas";
+          }
 
-        process.Start();
+          process.Start();
+        }
       }
       catch (Exception ex)
       {

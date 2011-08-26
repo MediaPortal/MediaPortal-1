@@ -141,11 +141,20 @@ namespace TvLibrary.Implementations.Analog.Components
 
     #region Dispose
 
-    /// <summary>
-    /// Disposes the crossbar component
-    /// </summary>
-    public void Dispose()
+    protected virtual void Dispose(bool disposing)
     {
+      if (disposing)
+      {
+        // get rid of managed resources
+        if (_crossBarDevice != null)
+        {
+          DevicesInUse.Instance.Remove(_crossBarDevice);
+          _crossBarDevice.Dispose();
+          _crossBarDevice = null;
+        }
+      }
+
+      // get rid of unmanaged resources
       if (_audioTunerIn != null)
       {
         Release.ComObject("_audioTunerIn", _audioTunerIn);
@@ -160,14 +169,24 @@ namespace TvLibrary.Implementations.Analog.Components
       }
       if (_filterCrossBar != null)
       {
-        Release.ComObject("crossbar filter", _filterCrossBar);
+        Release.ComObject("crossbar filter", _filterCrossBar);        
         _filterCrossBar = null;
       }
-      if (_crossBarDevice != null)
-      {
-        DevicesInUse.Instance.Remove(_crossBarDevice);
-        _crossBarDevice = null;
-      }
+    }
+
+
+    /// <summary>
+    /// Disposes the crossbar component
+    /// </summary>   
+    public void Dispose()
+    {
+      Dispose(true);
+      GC.SuppressFinalize(this);
+    }
+
+    ~Crossbar()
+    {
+      Dispose(false);
     }
 
     #endregion
