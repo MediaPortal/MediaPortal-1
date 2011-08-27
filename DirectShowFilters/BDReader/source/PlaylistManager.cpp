@@ -98,7 +98,7 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
   if (ret) 
   {
     AudioPackets++;
-#ifdef LOG_PACKETS
+#ifdef LOG_AUDIO_PACKETS
     LogDebug("Audio Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
 #endif
   }
@@ -138,13 +138,20 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
   if (ret) 
   {
     VideoPackets++;
-#ifdef LOG_PACKETS
-    LogDebug("Video Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
+#ifdef LOG_VIDEO_PACKETS
+    AM_MEDIA_TYPE* pmt = packet->pmt;
+
+    LogDebug("Video Packet %I64d Accepted in %d %d - format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", 
+      packet->rtStart, packet->nPlaylist, packet->nClipNumber, 
+      pmt->cbFormat, pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
+      pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
+      pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
+      pmt->subtype.Data4[6], pmt->subtype.Data4[7]);
 #endif
   }
   if (!ret)
   {
-#ifdef LOG_PACKETS
+#ifdef LOG_VIDEO_PACKETS
      LogDebug("Video Packet %I64d %d %d rejected from %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber, m_currentVideoSubmissionPlaylist->nPlaylist);
 #endif
 
