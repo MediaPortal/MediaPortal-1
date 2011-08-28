@@ -198,7 +198,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
     do
     {
       // Stall samples
-      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_audioPlSeen)
+      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_bAudioPlSeen)
       {
         Sleep(10);
         CreateEmptySample(pSample);
@@ -230,6 +230,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
+        bool useEmptySample = false;
+
 //        JoinAudioBuffers(buffer, &demux);
         
         if (demux.m_nActiveAudioPlaylist == -1)
@@ -240,15 +242,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         if (buffer && buffer->nPlaylist != m_nPrevPl)
         {
           LogDebug("aud: Playlist changed from %d To %d", m_nPrevPl, buffer->nPlaylist);
-          demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
           m_nPrevPl = buffer->nPlaylist;
           buffer->bDiscontinuity = true;
 
-          demux.m_audioPlSeen = true;
-          m_pCachedBuffer = buffer;
-
-          CreateEmptySample(pSample);
-          return NOERROR;
+          demux.m_bAudioPlSeen = true;
+          useEmptySample = true;
         }
 /*
         if (buffer->pmt==NULL)
@@ -273,41 +271,44 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         {
           HRESULT hrAccept = S_FALSE;
 
-          if (m_pPinConnection)
+          if (m_pPinConnection && false) // TODO - DS audio renderer seems to be only one that supports this
           {
             hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
           }
           else if (m_pReceiver)
           {
-            LogDebug("aud: DynamicQueryAccept - not avail"); 
+            //LogDebug("aud: DynamicQueryAccept - not avail"); 
             hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
           }
 
           if (hrAccept != S_OK)
           {
-            demux.SetMediaChanging(true);
-
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
 
-            m_pFilter->IssueCommand(REBUILD, 0);
+            LogDebug("aud: graph rebuilding required");
 
-            LogDebug("aud: REBUILD");
-
-            m_pCachedBuffer = buffer;
-
-            CreateEmptySample(pSample);
-        
-            return NOERROR;
+            demux.m_bAudioRequiresRebuild = true;
+            useEmptySample = true;
           }
           else
           {
-            LogDebug("aud: CHANGE ACCEPTED");
+            LogDebug("aud: format change accepted");
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
           }
         }
 
+        demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
+
+        if (useEmptySample)
+        {
+          CreateEmptySample(pSample);
+          m_pCachedBuffer = buffer;
+
+          return NOERROR;
+        }
+  
         REFERENCE_TIME cRefTimeStart = -1, cRefTimeStop = -1, cRefTimeOrig = -1;
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
@@ -551,10 +552,10 @@ HRESULT CAudioPin::ChangeRate()
 ///
 HRESULT CAudioPin::OnThreadStartPlay()
 {
-  m_pFilter->GetDemultiplexer().m_audioPlSeen = false;
+  m_pFilter->GetDemultiplexer().m_bAudioPlSeen = false;
 
-  delete m_pCachedBuffer;
-  m_pCachedBuffer = NULL;
+  //delete m_pCachedBuffer;
+  //m_pCachedBuffer = NULL;
 
   //set discontinuity flag indicating to codec that the new data
   //is not belonging to any previous data

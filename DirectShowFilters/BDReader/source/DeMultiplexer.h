@@ -100,7 +100,7 @@ public:
   void       FillVideoH264(CTsHeader& header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
 
-  void       ParseVideoFormat(Packet* p);
+  bool       ParseVideoFormat(Packet* p);
   void       ParseAudioFormat(Packet* p);
   void       ParseVideoStream(BLURAY_CLIP_INFO* clip);
   void       ParseAudioStreams(BLURAY_CLIP_INFO* clip);
@@ -145,8 +145,10 @@ public:
   void HandleOSDUpdate(OSDTexture& pTexture);
   void HandleMenuStateChange(bool pVisible);
 
-  bool m_audioPlSeen;
-  bool m_videoPlSeen;
+  bool m_bAudioPlSeen;
+  bool m_bVideoPlSeen;
+  bool m_bAudioRequiresRebuild;
+  bool m_bVideoRequiresRebuild;
   int  m_nActiveAudioPlaylist;
 
 private:
@@ -221,9 +223,6 @@ private:
   int m_loopLastSearch;
 
   bool  m_bWaitForMediaChange;
-  DWORD m_tWaitForMediaChange;
-  bool  m_bWaitForAudioSelection;
-  DWORD m_tWaitForAudioSelection;
 
   bool m_bStarting;
   bool m_bReadFailed;
@@ -231,7 +230,7 @@ private:
   bool m_bSetAudioDiscontinuity;
   bool m_bSetVideoDiscontinuity;
 
-  int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts,int* bi);
+  int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts, int* bi);
 
   // Used only for H.264 stream demuxing
   CAutoPtr<Packet> m_p;
@@ -255,6 +254,7 @@ private:
   INT32 m_nMPEG2LastClip;
   INT32 m_nMPEG2LastPlaylist;
   bool m_bDiscontinuousClip;
+  bool m_bVideoFormatParsed;
   
   bool m_bUpdateSubtitleOffset;
 

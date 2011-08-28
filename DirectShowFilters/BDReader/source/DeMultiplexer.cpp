@@ -86,12 +86,15 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_fHasAccessUnitDelimiters = false;
 
-  m_audioPlSeen = false;
-  m_videoPlSeen = false;
+  m_bAudioPlSeen = false;
+  m_bVideoPlSeen = false;
+  m_bAudioRequiresRebuild = false;
+  m_bVideoRequiresRebuild = false;
   m_nActiveAudioPlaylist = -1;
   m_playlistManager = new CPlaylistManager();
-  m_loopLastSearch=1;
-  m_bDiscontinuousClip=false;
+  m_loopLastSearch = 1;
+  m_bDiscontinuousClip = false;
+  m_bVideoFormatParsed = false;
 
   m_videoServiceType = SERVICE_TYPE_VIDEO_UNKNOWN;
   m_nVideoPid = -1;
@@ -689,6 +692,9 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_PLAYITEM:
       LogDebug("demux: New playitem %d", pEv.param);
+      
+      m_bVideoFormatParsed = false;
+      
       UINT64 clipStart = 0, clipIn = 0, bytePos = 0, duration = 0;
       int ret = m_filter.lib.GetClipInfo(pEv.param, &clipStart, &clipIn, &bytePos, &duration);
       if (ret) 
@@ -943,8 +949,8 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       m_bSetVideoDiscontinuity = false;
       p->bDiscontinuity = true;
     }
-    ParseVideoFormat(p);
-    if (!m_bStarting)
+    bool videoReady = ParseVideoFormat(p);
+    if (!m_bStarting && videoReady)
     {
       m_playlistManager->SubmitVideoPacket(p);
     }
@@ -962,10 +968,27 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
   }
 }
 
-void CDeMultiplexer::ParseVideoFormat(Packet* p)
+bool CDeMultiplexer::ParseVideoFormat(Packet* p)
 {
-  m_videoParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
-  p->pmt = CreateMediaType(&m_videoParser->pmt);
+  if (!m_bVideoFormatParsed)
+  {
+    m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
+    if (!m_bVideoFormatParsed)
+    {
+      LogDebug("demux: ParseVideoFormat - failed to parse video format!");
+    }
+    else
+    {
+      LogDebug("demux: ParseVideoFormat - succeeded");
+    }
+  }
+
+  if (m_bVideoFormatParsed)
+  {
+    p->pmt = CreateMediaType(&m_videoParser->pmt); 
+  }
+
+  return m_bVideoFormatParsed;
 }
 
 void CDeMultiplexer::ParseAudioFormat(Packet* p)
@@ -1550,8 +1573,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
 //            LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFrameRate,frame_type,frame_count);
     
-           ParseVideoFormat(p);
-            
+           bool videoReady = ParseVideoFormat(p);
+           
            if (m_filter.GetVideoPin()->IsConnected())
             {
               if (m_CurrentVideoPts.IsValid)
@@ -1579,7 +1602,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                 p->bDiscontinuity = true;
               }
               
-              if (!m_bStarting)
+              if (!m_bStarting && videoReady)
               {
                 m_playlistManager->SubmitVideoPacket(p);
               }
@@ -1826,14 +1849,12 @@ void CDeMultiplexer::SetMediaChanging(bool onOff)
   CAutoLock lock (&m_sectionMediaChanging);
   LogDebug("demux:Wait for media format change:%d", onOff);
   m_bWaitForMediaChange = onOff;
-  m_tWaitForMediaChange = GetTickCount();
 }
 
 bool CDeMultiplexer::IsMediaChanging()
 {
   CAutoLock lock (&m_sectionMediaChanging);
-  if (!m_bWaitForMediaChange) return false;
-  return true;
+  return m_bWaitForMediaChange;
 }
 
 LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)

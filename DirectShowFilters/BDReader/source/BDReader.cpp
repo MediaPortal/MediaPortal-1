@@ -326,6 +326,8 @@ void CBDReaderFilter::TriggerOnMediaChanged()
 {
   if (m_pCallback)
   {		
+    m_demultiplexer.SetMediaChanging(true);
+
     CMediaType pmt;
     int audioStream = 0;
     int videoRate = 0;
@@ -338,13 +340,24 @@ void CBDReaderFilter::TriggerOnMediaChanged()
     
     m_demultiplexer.GetAudioStream(audioStream);
     m_demultiplexer.GetAudioStreamType(audioStream, pmt);
-    m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
+    
+    HRESULT hr = m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
+
+    if (hr == S_FALSE)
+    {
+      // There was no need for the graph rebuilding
+      m_demultiplexer.SetMediaChanging(false);
+    }
+  }
+  else
+  {
+    LogDebug("CBDReaderFilter: TriggerOnMediaChanged - no callback set!");
   }
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
 {
-  LogDebug("CALLBACK SET");
+  LogDebug("callback set");
   m_pCallback = pCallback;
   return S_OK;
 }
@@ -513,8 +526,6 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           {
             Sleep(1);
           }
-        
-          m_demultiplexer.Flush();
 
           m_bIgnoreLibSeeking = true;
 
