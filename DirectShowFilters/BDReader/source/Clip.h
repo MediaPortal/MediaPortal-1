@@ -22,6 +22,7 @@
 #include "Packet.h"
 #include <map>
 #include <vector>
+#include <dshow.h>
 //#include <mtype.h>
 
 using namespace std;
@@ -58,12 +59,14 @@ public:
   bool HasAudio();
   bool HasVideo();
   bool Incomplete();
+  void SetPMT(AM_MEDIA_TYPE *pmt);
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
   typedef vector<Packet*>::iterator ivecAudioBuffers;
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
+  AM_MEDIA_TYPE *m_pmt;
   REFERENCE_TIME clipDuration;
   REFERENCE_TIME audioPlaybackpoint;
   REFERENCE_TIME lastAudioPosition;

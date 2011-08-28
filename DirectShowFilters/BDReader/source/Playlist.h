@@ -59,12 +59,15 @@ public:
   bool HasAudio();
   bool HasVideo();
   bool Incomplete();
+  void SetPmt(AM_MEDIA_TYPE * pmt, int nClip);
 
 protected:
   typedef vector<CClip*>::iterator ivecClip;
 
   CClip * GetNextAudioClip(CClip * currentClip);
   CClip * GetNextVideoClip(CClip * currentClip);
+  CClip * GetClip(int nClip);
+
   REFERENCE_TIME GetPacketTimeStampCorrection(CClip * packetClip);
   Packet * CorrectTimeStamp(CClip * packetClip, Packet* packet);
   void Reset(int playlistNumber, REFERENCE_TIME firstPacketTime);
@@ -85,5 +88,6 @@ protected:
   bool firstPESPacketSeen;
   REFERENCE_TIME firstPESTimeStamp;
 
+  bool firstPacketRead;
 };
 

@@ -950,7 +950,7 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       p->bDiscontinuity = true;
     }
     bool videoReady = ParseVideoFormat(p);
-    if (!m_bStarting && videoReady)
+    if (!m_bStarting && videoReady) // TODO remove videoReady when MPEG2 parsing is fixed
     {
       m_playlistManager->SubmitVideoPacket(p);
     }
@@ -980,12 +980,11 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
     else
     {
       LogDebug("demux: ParseVideoFormat - succeeded");
+      if (!m_bStarting)
+      {
+        m_playlistManager->SetPMT(CreateMediaType(&m_videoParser->pmt), m_nPlaylist, m_nClip);
+      }
     }
-  }
-
-  if (m_bVideoFormatParsed)
-  {
-    p->pmt = CreateMediaType(&m_videoParser->pmt); 
   }
 
   return m_bVideoFormatParsed;
@@ -1602,7 +1601,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                 p->bDiscontinuity = true;
               }
               
-              if (!m_bStarting && videoReady)
+              if (!m_bStarting && videoReady) // TODO remove videoReady when MPEG2 parsing is fixed
               {
                 m_playlistManager->SubmitVideoPacket(p);
               }

@@ -52,6 +52,7 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   {
     clipPlaylistOffset = firstPacketTime;
   }
+  m_pmt=NULL;
 }
 
 
@@ -59,6 +60,7 @@ CClip::~CClip(void)
 {
   FlushAudio();
   FlushVideo();
+  DeleteMediaType(m_pmt);
 }
 
 Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
@@ -105,6 +107,9 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
     ret->bDiscontinuity=true;
     firstVideo=false;
   }
+
+  if (ret) ret->pmt = CreateMediaType(m_pmt);
+
   return ret;
 }
 
@@ -317,6 +322,8 @@ bool CClip::HasAudio()
 
 bool CClip::HasVideo()
 {
+  if (firstVideo && m_vecClipVideoPackets.size()<3) return false;
+  if (m_pmt==NULL) return false;
   if (m_vecClipVideoPackets.size()>0) return true;
   return false;
 }
@@ -333,4 +340,10 @@ bool CClip::Incomplete()
   }
 
   return ret;
+}
+
+void CClip::SetPMT(AM_MEDIA_TYPE *pmt)
+{
+  if (m_pmt)DeleteMediaType(m_pmt);
+  m_pmt = CreateMediaType(pmt);
 }

@@ -66,6 +66,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
       ret=ReturnNextAudioPacket();
     }
   }
+  if (ret!=NULL) firstPacketRead=true;
   return ret;
 }
 
@@ -86,6 +87,7 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
       CorrectTimeStamp(m_currentAudioPlayBackClip,ret);
     }
   }
+  if (ret!=NULL) firstPacketRead=true;
   return ret;
 }
 
@@ -107,6 +109,7 @@ Packet* CPlaylist::ReturnNextVideoPacket()
       ret=ReturnNextVideoPacket();
     }
   }
+  if (ret!=NULL) firstPacketRead=true;
   return ret;
 }
 
@@ -155,6 +158,10 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool forced)
     firstPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
     LogDebug("First Packet (aud) %I64d",packet->rtStart);
   }
+  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)
+  {
+    firstPESTimeStamp=packet->rtStart;
+  }
   return ret;
 }
 
@@ -193,6 +200,10 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced
     firstPESPacketSeen=true;
     firstPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
     LogDebug("First Packet (vid) %I64d",packet->rtStart);
+  }
+  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)
+  {
+    firstPESTimeStamp=packet->rtStart;
   }
   return ret;
 }
@@ -408,6 +419,7 @@ void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
   firstPESPacketSeen=false;
   firstPESTimeStamp=0LL;
+  firstPacketRead=false;
 }
 
 bool CPlaylist::HasAudio()
@@ -442,4 +454,26 @@ bool CPlaylist::Incomplete()
   }
 
   return false;
+}
+
+CClip * CPlaylist::GetClip(int nClip)
+{
+  CClip *ret=NULL;
+  ivecClip it = m_vecClips.end();
+  while (it!=m_vecClips.begin())
+  {
+    --it;
+    CClip * clip=*it;
+    if (clip->nClip==nClip) return clip;
+  }
+  return ret;
+}
+
+void CPlaylist::SetPmt(AM_MEDIA_TYPE * pmt, int nClip)
+{
+  CClip * clip = GetClip(nClip);
+  if (clip!=NULL)
+  {
+    clip->SetPMT(pmt);
+  }
 }

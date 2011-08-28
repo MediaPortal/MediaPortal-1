@@ -436,3 +436,13 @@ bool CPlaylistManager::Incomplete()
     
   return ret;
 }
+
+void CPlaylistManager::SetPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
+{
+  LogDebug("Setting PMT %d for (%d,%d)",pmt->cbFormat, nPlaylist, nClip);
+  CPlaylist* pl=GetPlaylist(nPlaylist);
+  if (pl!=NULL)
+  {
+    pl->SetPmt(pmt, nClip);
+  }
+}
