@@ -139,14 +139,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
   {
     VideoPackets++;
 #ifdef LOG_VIDEO_PACKETS
-    AM_MEDIA_TYPE* pmt = packet->pmt;
-
-    LogDebug("Video Packet %I64d Accepted in %d %d - format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", 
-      packet->rtStart, packet->nPlaylist, packet->nClipNumber, 
-      pmt->cbFormat, pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
-      pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
-      pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
-      pmt->subtype.Data4[6], pmt->subtype.Data4[7]);
+    LogDebug("Video Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
 #endif
   }
   if (!ret)
@@ -439,10 +432,17 @@ bool CPlaylistManager::Incomplete()
 
 void CPlaylistManager::SetPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
-  LogDebug("Setting PMT %d for (%d,%d)",pmt->cbFormat, nPlaylist, nClip);
-  CPlaylist* pl=GetPlaylist(nPlaylist);
-  if (pl!=NULL)
+  if (pmt)
   {
-    pl->SetPmt(pmt, nClip);
+    LogDebug("Setting PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
+	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
+      pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
+      pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
+      pmt->subtype.Data4[6], pmt->subtype.Data4[7], nPlaylist, nClip);
+    CPlaylist* pl=GetPlaylist(nPlaylist);
+    if (pl!=NULL)
+    {
+      pl->SetPmt(pmt, nClip);
+    }  
   }
 }
