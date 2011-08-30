@@ -204,7 +204,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   }
   else
   {
-    m_filter.GetAudioPin()->SetDiscontinuity(true);
+    //m_filter.GetAudioPin()->SetDiscontinuity(true);
   }
 
   return S_OK;

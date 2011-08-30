@@ -98,7 +98,6 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
 {
   m_rtStart = 0;
   m_bConnected = false;
-  m_bPresentSample = false;
   m_dwSeekingCaps =
     AM_SEEKING_CanSeekAbsolute  |
     AM_SEEKING_CanSeekForwards  |
@@ -262,11 +261,6 @@ HRESULT CVideoPin::BreakConnect()
 {
   m_bConnected = false;
   return CSourceStream::BreakConnect();
-}
-
-void CVideoPin::SetDiscontinuity(bool onOff)
-{
-  m_bDiscontinuity = onOff;
 }
 
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
@@ -510,16 +504,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (hasTimestamp)
         {
-          m_bPresentSample = true;
-        }
-
-        if (m_bPresentSample)
-        {
-          if (m_bDiscontinuity || buffer->bDiscontinuity)
+          if (buffer->bDiscontinuity)
           {
             LogDebug("vid: set discontinuity");
             pSample->SetDiscontinuity(true);
-            m_bDiscontinuity = false;
           }
 
           //LogDebug("vid: video buffer type = %d", buffer->GetVideoServiceType());
@@ -578,14 +566,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 ///
 HRESULT CVideoPin::OnThreadStartPlay()
 {
-  m_bDiscontinuity = true;
-  m_bPresentSample = false;
-
-  //delete m_pCachedBuffer;
-  //m_pCachedBuffer = NULL;
-
-  m_pFilter->GetDemultiplexer().m_bVideoPlSeen = false;
-
   LogDebug("vid: OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());
 
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);

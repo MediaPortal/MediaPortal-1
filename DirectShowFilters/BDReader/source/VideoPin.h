@@ -71,7 +71,6 @@ public:
   HRESULT OnThreadStartPlay();
   void SetStart(CRefTime rtStartTime);
   bool IsConnected();
-  void SetDiscontinuity(bool onOff);
 
   void SetInitialMediaType(const CMediaType* pmt);
 
@@ -83,9 +82,7 @@ protected:
   
   CBDReaderFilter * const m_pFilter;
   bool      m_bConnected;
-  BOOL      m_bDiscontinuity;
   CCritSec* m_section;
-  bool      m_bPresentSample;
 
   VIDEO_DECODER m_decoderType;
 

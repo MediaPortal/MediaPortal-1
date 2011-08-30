@@ -64,7 +64,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
     AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
-  m_bPresentSample = false;
 }
 
 CAudioPin::~CAudioPin()
@@ -97,11 +96,6 @@ HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
   }
 
   return S_OK;
-}
-
-void CAudioPin::SetDiscontinuity(bool onOff)
-{
-  m_bDiscontinuity = onOff;
 }
 
 HRESULT CAudioPin::CheckConnect(IPin *pReceivePin)
@@ -312,22 +306,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         REFERENCE_TIME cRefTimeStart = -1, cRefTimeStop = -1, cRefTimeOrig = -1;
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
-        if (hasTimestamp)
+        if (hasTimestamp && m_dRateSeeking == 1.0)
         {
-          m_bPresentSample = true;
-        }
-        else
-        {
-          LogDebug("No Timestamp");
-        }
-
-        if (m_bPresentSample && m_dRateSeeking == 1.0)
-        {
-          if (m_bDiscontinuity || buffer->bDiscontinuity)
+          if (buffer->bDiscontinuity)
           {
             LogDebug("aud: set discontinuity");
             pSample->SetDiscontinuity(TRUE);
-            m_bDiscontinuity = FALSE;
           }
 
           if (hasTimestamp)
@@ -552,16 +536,6 @@ HRESULT CAudioPin::ChangeRate()
 ///
 HRESULT CAudioPin::OnThreadStartPlay()
 {
-  m_pFilter->GetDemultiplexer().m_bAudioPlSeen = false;
-
-  //delete m_pCachedBuffer;
-  //m_pCachedBuffer = NULL;
-
-  //set discontinuity flag indicating to codec that the new data
-  //is not belonging to any previous data
-  m_bDiscontinuity = true;
-  m_bPresentSample = false;
-
   LogDebug("aud: OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking);
 
   //start playing
