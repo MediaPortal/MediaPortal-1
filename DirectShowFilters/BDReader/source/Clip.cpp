@@ -25,11 +25,6 @@
 #include <streams.h>
 #include "mediaformats.h"
 
-#define AC3_FRAME_LENGTH 6144
-#define FAKE_AUDIO_DURATION 320000LL
-
-#define MAX_VIDEO_DRIFT 5000000LL
-
 extern void LogDebug(const char *fmt, ...);
 
 CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded)
@@ -121,26 +116,15 @@ bool CClip::FakeAudioAvailable()
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
-  if (rtStart>playlistFirstPacketTime+clipDuration) superceeded|=SUPERCEEDED_AUDIO;
+  if (rtStart>playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO;
   if (superceeded&SUPERCEEDED_AUDIO) return NULL;
   if (!FakeAudioAvailable()) return NULL;
 
-//  if (audioPlaybackpoint>lastVideoPosition) return NULL;
-
   Packet* packet = new Packet();
-    
   packet->nClipNumber = nClip;
-  //packet->nPlaylist = nPlaylist; set by the playlist
     
   BYTE* frame = (BYTE*)malloc(AC3_FRAME_LENGTH);
-
-  memset(frame, 0, AC3_FRAME_LENGTH);
-
-  frame[0] = 0x0B; // sync word
-  frame[1] = 0x77;
-  frame[2] = 0xF9; // CRC
-  frame[3] = 0x02;
-  frame[4] = 0x16; // params
+  memcpy(frame, ac3_224k2_48, AC3_HEADER_LENGHT);
 
   packet->SetCount(AC3_FRAME_LENGTH);
   packet->SetData(frame, AC3_FRAME_LENGTH);
