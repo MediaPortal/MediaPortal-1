@@ -1431,13 +1431,13 @@ namespace MediaPortal.Player
 
       if (videoFormat != _currentVideoFormat)
       {
-        _mChangedMediaType = MediaType.Video;        
+        _mChangedMediaType |= MediaType.Video;        
         _currentVideoFormat = videoFormat;
       }
 
       if (audioFormat != _currentAudioFormat)
       {
-        _mChangedMediaType = _mChangedMediaType | MediaType.Audio;
+        _mChangedMediaType |= MediaType.Audio;
         _currentAudioFormat = audioFormat;
       }
 
@@ -1861,7 +1861,7 @@ namespace MediaPortal.Player
             Log.Info("Rerendering video pin of BDReader filter.");
             UpdateFilters("Video");
             break;
-          case MediaType.Audio & MediaType.Video: // both changed
+          case MediaType.Audio | MediaType.Video: // both changed
             Log.Info("Rerendering audio and video pins of BDReader filter.");
             UpdateFilters("Audio");
             UpdateFilters("Video");
