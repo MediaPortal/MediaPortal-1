@@ -98,6 +98,9 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_videoServiceType = SERVICE_TYPE_VIDEO_UNKNOWN;
   m_nVideoPid = -1;
+
+  m_nMPEG2LastPlaylist = -1;
+  m_nMPEG2LastClip = -1;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -949,8 +952,8 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn, CTsHeader header)
       m_bSetVideoDiscontinuity = false;
       p->bDiscontinuity = true;
     }
-    bool videoReady = ParseVideoFormat(p);
-    if (!m_bStarting && videoReady) // TODO remove videoReady when MPEG2 parsing is fixed
+    ParseVideoFormat(p);
+    if (!m_bStarting)
     {
       m_playlistManager->SubmitVideoPacket(p);
     }
@@ -1393,20 +1396,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 {                                                
-  static const double frame_rate[16]={1.0/25.0,       1001.0/24000.0, 1.0/24.0, 1.0/25.0,
-                                    1001.0/30000.0, 1.0/30.0,       1.0/50.0, 1001.0/60000.0,
-                                    1.0/60.0,       1.0/25.0,       1.0/25.0, 1.0/25.0,
-                                    1.0/25.0,       1.0/25.0,       1.0/25.0, 1.0/25.0 };
-  static const char tc[]="XIPBXXXX";
-    
   int headerlen = header.PayLoadStart;
-
-  CPcr pts;
-  CPcr dts;
 
   if (!m_p)
   {
     m_p.Attach(new Packet());
+    m_p->SetCount(0, PACKET_GRANULARITY);
     m_p->bDiscontinuity = false;
     m_p->rtStart = Packet::INVALID_TIME;
     m_p->nPlaylist = m_nPlaylist;
@@ -1468,167 +1463,61 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         CPcr pts;
         CPcr dts;
       
-//      m_VideoValidPES=true ;
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
-          CPcr correctedPts;
-          correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
-          correctedPts.IsValid = true;
-
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
-          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+          LogDebug("demux: vid last pts: %6.3f pts %6.3f clip: %d playlist: %d", 
+            m_lastVideoPTS.ToClock(), pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
 
           m_lastVideoPTS = pts;
           m_VideoPts = pts;
         }
 
-        m_lastStart -= 9 + start[8];
-        m_p->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
-
         m_WaitHeaderPES = -1;
 		
         m_p->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_p->rtStop = m_p->rtStart + 1;
+
+        /*
+        if (m_nMPEG2LastPlaylist == -1)
+          m_nMPEG2LastPlaylist = m_nPlaylist;
+
+        if (m_nMPEG2LastClip == -1)
+          m_nMPEG2LastClip = m_nClip;
+
         m_p->nPlaylist = m_nMPEG2LastPlaylist;
         m_p->nClipNumber = m_nMPEG2LastClip;
         m_nMPEG2LastPlaylist = m_nPlaylist;
         m_nMPEG2LastClip = m_nClip;
-      }
-    }
-  }
-  
-  if (m_p->GetCount())
-  {
-    BYTE* start = m_p->GetData();
-    BYTE* end = start + m_p->GetCount();
-    // 000001B3 sequence_header_code
-    // 00000100 picture_start_code
+        */
 
-    while(start <= end - 4)
-    {
-      if (((*(DWORD*)start & 0xFFFFFFFF) == 0xb3010000) || ((*(DWORD*)start & 0xFFFFFFFF) == 0x00010000))
-      {
-        if (!m_bInBlock)
+        m_p->nPlaylist = m_nPlaylist;
+        m_p->nClipNumber = m_nClip;
+
+        if (m_p->GetCount())
         {
-          if (m_VideoPts.IsValid) m_CurrentVideoPts = m_VideoPts;
-          m_VideoPts.IsValid = false;
-          m_bInBlock = true;
-        }
-        break;
-      }
-      start++;
-    }
+          if (m_VideoPts.IsValid) 
+            m_CurrentVideoPts = m_VideoPts;  
 
-    if (start <= end - 4)
-    {
-      BYTE* next = start + 1;
-      if (next < m_p->GetData() + m_lastStart)
-      {
-        next = m_p->GetData() + m_lastStart;
-      }
+          //m_p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
+          //m_p->rtStop = p->rtStart + 1;
 
-      while(next <= end - 4 && ((*(DWORD*)next & 0xFFFFFFFF) != 0xb3010000) && ((*(DWORD*)next & 0xFFFFFFFF) != 0x00010000)) next++;
-
-      if (next >= end - 4)
-      {
-        m_lastStart = next - m_p->GetData();
-      }
-      else
-      {
-        m_bInBlock = false;
-        int size = next - start;
-
-        CAutoPtr<Packet> p2(new Packet());
-        p2->SetCount(size);
-        memcpy(p2->GetData(), m_p->GetData(), size);
-        
-        if (*(DWORD*)p2->GetData() == 0x00010000)     // picture_start_code ?
-        {
-          BYTE* p = p2->GetData();
-          char frame_type = tc[((p[5]>>3)&7)];                     // Extract frame type (IBP). Just info.
-          int frame_count = (p[5]>>6)+(p[4]<<2);                   // Extract temporal frame count to rebuild timestamp ( if required )
-
-          // TODO: try to drop non I-Frames when > 2.0x playback speed
-          //if (frame_type != 'I')
-
-			//double rate = 0.0;
-            //m_filter.GetVideoPin()->GetRate(&rate);
-
-          m_pl.AddTail(p2);
-//          LogDebug("demux::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
-        
-          if (m_VideoValidPES)
+          ParseVideoFormat(m_p);
+          
+          if (!m_bStarting)
           {
-            Packet* p = m_pl.RemoveHead().Detach();
-//            LogDebug("Output Type: %x %d", *(DWORD*)p->GetData(),p->GetCount());
-    
-            while(m_pl.GetCount())
-            {
-              p->Append(*m_pl.RemoveHead().Detach());
-//              LogDebug("Output Type: %x %d", *(DWORD*)p2->GetData(),p2->GetCount());
-            }
-
-//            LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFrameRate,frame_type,frame_count);
-    
-           bool videoReady = ParseVideoFormat(p);
-           
-           if (m_filter.GetVideoPin()->IsConnected())
-            {
-              if (m_CurrentVideoPts.IsValid)
-              {                                                     // Timestamp Ok.
-                m_LastValidFrameCount = frame_count;
-                m_LastValidFramePts = m_CurrentVideoPts;
-              }
-              else
-              {                    
-                if (m_LastValidFrameCount >= 0)                       // No timestamp, but we've latest GOP timestamp.
-                {
-                  double d = m_LastValidFramePts.ToClock() + (frame_count-m_LastValidFrameCount) * m_curFrameRate ;
-                  m_CurrentVideoPts.FromClock(d);                   // Rebuild it from 1st frame in GOP timestamp.
-                  m_CurrentVideoPts.IsValid = true;
-                }
-              }
-              p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
-              p->rtStop = p->rtStart + 1;
-              p->nClipNumber = m_p->nClipNumber;
-              p->nPlaylist = m_p->nPlaylist;
-
-              if (m_bSetVideoDiscontinuity)
-              {
-                m_bSetVideoDiscontinuity = false;
-                p->bDiscontinuity = true;
-              }
-              
-              if (!m_bStarting && videoReady) // TODO remove videoReady when MPEG2 parsing is fixed
-              {
-                m_playlistManager->SubmitVideoPacket(p);
-              }
-              else
-              {
-                delete p;
-                p = NULL;
-              }
-            }
-            m_CurrentVideoPts.IsValid = false;
-          }  
-          m_VideoValidPES = true;                                    // We've just completed a frame, set flag until problem clears it 
-          m_pl.RemoveAll();
+            Packet* p = new Packet();
+            p->Append(*m_p);
+            p->rtStart = m_p->rtStart;
+            p->rtStop = m_p->rtStop;
+            p->nClipNumber = m_p->nClipNumber;
+            p->nPlaylist = m_p->nPlaylist;
+            m_playlistManager->SubmitVideoPacket(p);
+          }
         }
-        else                                                        // sequence_header_code
-        {
-          m_curFrameRate = frame_rate[*(p2->GetData()+7) & 0x0F];   // Extract frame rate in seconds.
-   	      m_pl.AddTail(p2);                                         // Add sequence header.
-   	    }
-      
-        start = next;
-        m_lastStart = start - m_p->GetData() + 1;
-      }
-      if (start > m_p->GetData())
-      {
-        m_lastStart -= (start - m_p->GetData());
-        m_p->RemoveAt(0, start - m_p->GetData());
+
+        m_p->RemoveAll();
       }
     }
   }
@@ -1813,7 +1702,7 @@ bool CDeMultiplexer::HoldAudio()
 ///Sets whether the demuxer may block in GetAudio() or not
 void CDeMultiplexer::SetHoldAudio(bool onOff)
 {
-  LogDebug("demux:set hold audio:%d", onOff);
+  LogDebug("demux: set hold audio:%d", onOff);
   m_bHoldAudio = onOff;
 }
 
@@ -1826,7 +1715,7 @@ bool CDeMultiplexer::HoldVideo()
 ///Sets whether the demuxer may block in GetVideo() or not
 void CDeMultiplexer::SetHoldVideo(bool onOff)
 {
-  LogDebug("demux:set hold video:%d", onOff);
+  LogDebug("demux: set hold video:%d", onOff);
   m_bHoldVideo = onOff;
 }
 
@@ -1839,14 +1728,14 @@ bool CDeMultiplexer::HoldSubtitle()
 ///Sets whether the demuxer may block in GetSubtitle() or not
 void CDeMultiplexer::SetHoldSubtitle(bool onOff)
 {
-  LogDebug("demux:set hold subtitle:%d", onOff);
+  LogDebug("demux: set hold subtitle:%d", onOff);
   m_bHoldSubtitle = onOff;
 }
 
 void CDeMultiplexer::SetMediaChanging(bool onOff)
 {
   CAutoLock lock (&m_sectionMediaChanging);
-  LogDebug("demux:Wait for media format change:%d", onOff);
+  LogDebug("demux: Wait for media format change:%d", onOff);
   m_bWaitForMediaChange = onOff;
 }
 
