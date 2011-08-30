@@ -290,6 +290,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             LogDebug("aud: format change accepted");
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
+            pSample->SetMediaType(mt);
           }
         }
 
@@ -329,9 +330,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             pSample->SetTime(NULL, NULL);
             pSample->SetSyncPoint(false);
           }
-
-          // TODO - enable this
-          //pSample->SetMediaType(buffer->pmt);
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
