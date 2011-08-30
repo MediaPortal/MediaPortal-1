@@ -46,36 +46,6 @@ class CBDReaderFilter;
 #define READ_SIZE (1344 * 60)
 #define INITIAL_READ_SIZE (READ_SIZE * 1024)
 
-// TODO - enum
-#define SUPERCEEDED_AUDIO 1
-#define SUPERCEEDED_VIDEO 2
-#define SUPERCEEDED_SUBTITLE 4
-
-// 0.5s
-#define ALLOWED_PACKET_DIFF 2000000LL
-
-struct PlaylistInfo
-{
-  int playlist;
-  int clip;
-  bool noAudio;
-
-  REFERENCE_TIME lastStart;
-  REFERENCE_TIME lastDuration;
-  REFERENCE_TIME lastVideoStart;
-  REFERENCE_TIME lastVideoDuration;
-  REFERENCE_TIME lastSubtitleStart;
-  REFERENCE_TIME lastSubtitleDuration;
-  REFERENCE_TIME firstTimestamp;
-  REFERENCE_TIME previousPlaylistEndTimestamp;
-  REFERENCE_TIME timeStampCorrection;
-  REFERENCE_TIME clipDuration;
-
-  int superceeded;
-};
-
-
-
 class CDeMultiplexer : public CPacketSync, public BDEventObserver
 {
 public:
