@@ -419,23 +419,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         buffer = demux.GetVideo();
       }
 
-      if (m_nPrevPl == -1)
-      {
-        m_nPrevPl = buffer->nPlaylist;
-      }
-
-      bool useEmptySample = false;
-
-      if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
-      {
-        LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
-        buffer->bSeekRequired = false;
-        m_nPrevPl = buffer->nPlaylist;
-
-        demux.m_bVideoPlSeen = true;
-        useEmptySample = true;
-      }
-
       if (!buffer)
       {
         Sleep(10);
@@ -455,6 +438,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
         }
 */
+        if (m_nPrevPl == -1)
+        {
+          m_nPrevPl = buffer->nPlaylist;
+        }
+
+        bool useEmptySample = false;
+
+        if (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired)
+        {
+          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
+          buffer->bSeekRequired = false;
+          m_nPrevPl = buffer->nPlaylist;
+
+          demux.m_bVideoPlSeen = true;
+          useEmptySample = true;
+        }
+
         if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
         {
           // TODO: log subtype          
