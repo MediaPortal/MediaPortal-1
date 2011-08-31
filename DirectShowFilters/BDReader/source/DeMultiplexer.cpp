@@ -871,7 +871,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     m_AudioValidPES = true;     
   }
 
-  if (m_AudioValidPES && !packetProcessed)
+  if (m_AudioValidPES && !packetProcessed && m_pCurrentAudioBuffer)
   {
     int pos = header.PayLoadStart;
 
