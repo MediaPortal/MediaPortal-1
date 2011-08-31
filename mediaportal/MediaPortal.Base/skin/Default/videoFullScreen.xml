@@ -4,7 +4,7 @@
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>true</disabletopbar>
+  <disabletopbar>false</disabletopbar>
   <controls>
     <control>
       <description>background image (not used!)</description>

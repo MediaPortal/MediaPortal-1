@@ -22,50 +22,50 @@
     <!--     *******************************************************************************************  -->
     <!--     *************************       ANALOG CLOCK               ********************************  -->
     <!--     *******************************************************************************************  -->
-    <control>
+    <!--control>
       <description>Clock</description>
       <type>image</type>
       <id>0</id>
-      <posX>340</posX>
-      <posY>15</posY>
-      <width>40</width>
-      <height>40</height>
+      <posX>605</posX>
+      <posY>19</posY>
+      <width>70</width>
+      <height>70</height>
       <texture>clock.png</texture>
       <visible>yes</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>340</posX>
-      <posY>16</posY>
-      <width>40</width>
-      <height>40</height>
+      <posX>605</posX>
+      <posY>20</posY>
+      <width>70</width>
+      <height>70</height>
       <texture>clockHandMinute.png</texture>
-      <animation effect="rotate" clockhandle="minute" time="150" condition="true" loop="true">Conditional</animation>
+      <animation effect="rotate" clockhandle="minute" time="70" condition="true" loop="true" >Conditional</animation>
       <visible>yes</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>340</posX>
-      <posY>16</posY>
-      <width>40</width>
-      <height>40</height>
+      <posX>605</posX>
+      <posY>20</posY>
+      <width>70</width>
+      <height>70</height>
       <texture>clockHandHour.png</texture>
-      <animation effect="rotate" clockhandle="hour" time="150" condition="true" loop="true">Conditional</animation>
+      <animation effect="rotate" clockhandle="hour" time="70" condition="true" loop="true" >Conditional</animation>
       <visible>yes</visible>
     </control>
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>340</posX>
-      <posY>16</posY>
-      <width>40</width>
-      <height>40</height>
+      <posX>605</posX>
+      <posY>20</posY>
+      <width>70</width>
+      <height>70</height>
       <texture>clockHandSecond.png</texture>
-      <animation effect="rotate" clockhandle="second" time="150" condition="true" loop="true">Conditional</animation>
+      <animation effect="rotate" clockhandle="second" time="70" condition="true" loop="true" >Conditional</animation>
       <visible>yes</visible>
-    </control>
+    </control-->
     <!--     *******************************************************************************************  -->
     <!--     *************************             3D-Buttons           ********************************  -->
     <!--     *******************************************************************************************  -->
