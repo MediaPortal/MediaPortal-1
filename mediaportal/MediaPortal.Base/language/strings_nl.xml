@@ -134,7 +134,7 @@
     <String id="174">Genre:</String>
     <String id="175">Stemmingen:</String>
     <String id="176">Stijlen:</String>
-    <String id="177">Bekijk:</String>
+    <String id="177">Recensie:</String>
     <String id="178">Nummers:</String>
     <String id="179">Lied</String>
     <String id="180">Tijdsduur</String>
@@ -269,28 +269,28 @@
     <String id="310">Automatische helderheid/contrast</String>
     <String id="311">Dering</String>
     <String id="312">(0=auto)</String>
-    <String id="313">Muziekdatabase reorganiseren?</String>
+    <String id="313">Muziekdatabase bijwerken?</String>
     <String id="314">Voorbereiden...</String>
     <String id="315">Databasefout</String>
     <String id="316">Liedjes doorzoeken...</String>
-    <String id="317">Reorganisatie geslaagd</String>
+    <String id="317">Bijwerken geslaagd</String>
     <String id="318">Markeren verwijderde liedjes</String>
-    <String id="319">Fout tijdens reorganiseren liedjes</String>
+    <String id="319">Fout tijdens bijwerken liedjes</String>
     <String id="320">Doorzoeken van artiesten...</String>
-    <String id="321">Fout tijdens reorganiseren van artiesten</String>
+    <String id="321">Fout tijdens bijwerken van artiesten</String>
     <String id="322">Doorzoeken van genres...</String>
-    <String id="323">Fout tijdens reorganiseren van genres</String>
+    <String id="323">Fout tijdens bijwerken van genres</String>
     <String id="324">Doorzoeken van mappen...</String>
-    <String id="325">Fout tijdens reorganiseren van mappen</String>
+    <String id="325">Fout tijdens bijwerken van mappen</String>
     <String id="326">Doorzoeken van albums...</String>
-    <String id="327">Fout tijdens reorganiseren van albums</String>
+    <String id="327">Fout tijdens bijwerken van albums</String>
     <String id="328">Wijzigingen wegschrijven...</String>
     <String id="329">Fout tijdens wegschrijven van veranderingen</String>
     <String id="330">Dit kan enige tijd duren...</String>
     <String id="331">Comprimeren database...</String>
     <String id="332">Fout tijdens comprimeren van database</String>
-    <String id="333">Wilt u de muziekdatabase reorganiseren?</String>
-    <String id="334">Reorganiseer muziekdatabase</String>
+    <String id="333">Wilt u de muziekdatabase bijwerken?</String>
+    <String id="334">Bijwerken muziekdatabase</String>
     <String id="335">Begin</String>
     <String id="336">Aanpassen beeldsnelheid</String>
     <String id="337">Audio-uitvoer:</String>
@@ -509,8 +509,8 @@
     <String id="552">NNW</String>
     <String id="553">Laat</String>
     <String id="554">erg</String>
-    <String id="555">uit {0} met {1} {2}</String>
-    <String id="556">verschillende</String>
+    <String id="555">{0}met {1} {2}</String>
+    <String id="556">verschillende richtingen</String>
     <String id="557">rustig</String>
     <String id="558">Geen wind</String>
     <String id="559">in de buurt</String>
@@ -601,7 +601,7 @@
     <String id="667">Automatisch afstemmen</String>
     <String id="668">Sorteer op: Type</String>
     <String id="669">Sorteer op: Genre</String>
-    <String id="670">Sorteer op: Bitrate</String>
+    <String id="670">Sorteer op: Bitwaarde</String>
     <String id="671">Sorteer op: Gekeken</String>
     <String id="672">Opnemen op weekdagen</String>
     <String id="673">Rolsnelheid</String>
@@ -741,7 +741,7 @@
     <String id="855">Alarmtijd</String>
     <String id="856">Sleep timer Aan/Uit</String>
     <String id="857">Dutten</String>
-    <String id="858">Duttijd</String>
+    <String id="858">Sluimertijd</String>
     <String id="859">Slaaptijd</String>
     <String id="860">Volume langzaam verhogen</String>
     <String id="861">Alarm details</String>
@@ -869,7 +869,7 @@
     <String id="987">Jaren</String>
     <String id="988">Kwaliteit</String>
     <String id="989">FPS</String>
-    <String id="990">Bitrate</String>
+    <String id="990">Bitwaarde</String>
     <String id="991">Prioriteit</String>
     <String id="992">Originele opname verwijderen</String>
     <String id="993">Aangepast</String>
@@ -919,7 +919,7 @@
     <String id="1037" prefix="Mijn ">TV-programma informatie</String>
     <String id="1038">Geavanceerde opname</String>
     <String id="1039">Niet opnemen</String>
-    <String id="1040">Waarschuw me</String>
+    <String id="1040">Herinnering instellen</String>
     <String id="1041">Komende afleveringen</String>
     <String id="1042">Bewaar tot</String>
     <String id="1043">tot bekeken</String>
@@ -930,7 +930,7 @@
     <String id="1048">Instellingen</String>
     <String id="1049">Sluimerstand</String>
     <String id="1050">Weekends</String>
-    <String id="1051">Opnemen weekends</String>
+    <String id="1051">Weekends opnemen</String>
     <String id="1052">Nummers</String>
     <String id="1053">Onbekende oproep</String>
     <String id="1054">(opnemen)</String>
@@ -1002,7 +1002,7 @@
     <String id="1214">Componisten</String>
     <String id="1215">Dirigenten</String>
     <String id="1216">Schijven</String>
-    <String id="1217">Artiest nummers</String>
+    <String id="1217">Artiestnummers</String>
     <String id="1218">Albums op leeftijd</String>
     <String id="1219">Albumartiesten (Index)</String>
     <String id="1220">Sorteer op: Datum gecreëerd</String>
@@ -1010,10 +1010,12 @@
     <String id="1222">Groepen</String>
     <String id="1223">Bestaande afspeellijst gevonden</String>
     <String id="1224">Wilt u de huidige afspeellijst leegmaken?</String>
-    <String id="1225">Item aan afspeellijst toevoegen</String>
-    <String id="1226">Alle items aan afspeellijst toevoegen</String>
+    <String id="1225">Voeg item toe aan afspeellijst</String>
+    <String id="1226">Voeg alle items toe aan afspeellijst</String>
     <String id="1230">Datum toegevoegd</String>
-    <String id="1231">Laatste keer afgespeeld:</String>
+    <String id="1231">Laatst afgespeeld:</String>
+    <String id="1240">Inhoud vergrendelen</String>
+    <String id="1241">Inhoud ontgrendelen</String>
     <String id="1300" prefix="Mijn ">TV-Programma's</String>
     <String id="1440" prefix="Mijn ">Teletekst</String>
     <String id="1441">Teletekst</String>
@@ -1984,5 +1986,8 @@
     <String id="200087">Dempen</String>
     <String id="200090">Editie</String>
     <String id="200091">Hoofdstuk</String>
+    <String id="200092">Alleen geforceerd</String>
+    <String id="200093">Verbindingstijd naar schijf is bereikt!</String>
+    <String id="200094">Blijven proberen voor 60 extra seconden?</String>
   </Section>
 </Language>
