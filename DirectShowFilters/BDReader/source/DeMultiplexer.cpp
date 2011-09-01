@@ -244,10 +244,9 @@ int CDeMultiplexer::GetAudioStreamCount()
   }
 }
 
-// TODO - use stream parser to get real channel numbers etc.
-
 void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
 {
+  // Fake audio in use
   if (m_AudioStreamType == NO_STREAM)
   {
     pmt.InitMediaType();
