@@ -1286,7 +1286,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   if (header.PayloadUnitStart)
   {
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES    
-    LogDebug("demux: FillVideoH264 PayLoad Unit Start");
+    //LogDebug("demux: FillVideoH264 PayLoad Unit Start");
 #endif
     
     m_WaitHeaderPES = m_pBuild->GetCount();
@@ -1411,7 +1411,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     m_mVideoValidPES = m_VideoValidPES;
 
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
-    LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
+    //LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
 #endif
   }
   
