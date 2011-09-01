@@ -123,15 +123,10 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   Packet* packet = new Packet();
   packet->nClipNumber = nClip;
     
-  BYTE* frame = (BYTE*)malloc(AC3_FRAME_LENGTH);
-  memcpy(frame, ac3_224k2_48, AC3_HEADER_LENGHT);
-
   packet->SetCount(AC3_FRAME_LENGTH);
-  packet->SetData(frame, AC3_FRAME_LENGTH);
+  packet->SetData(ac3_sample, AC3_FRAME_LENGTH);
   packet->rtStart = rtStart;
   packet->rtStop = packet->rtStart + 1;
-
-  free(frame);
 
   CMediaType pmt;
   pmt.InitMediaType();
@@ -142,6 +137,11 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   pmt.SetVariableSize();
   pmt.SetFormatType(&FORMAT_WaveFormatEx);
   pmt.SetFormat(AC3AudioFormat, sizeof(AC3AudioFormat));
+  WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pmt.pbFormat;
+  wfe->Format.nChannels=6;
+  wfe->Format.nSamplesPerSec=48000;
+  wfe->Format.wFormatTag = WAVE_FORMAT_DOLBY_AC3;
+
   packet->pmt = CreateMediaType(&pmt);
   audioPlaybackpoint+=FAKE_AUDIO_DURATION;
   lastAudioPosition+=FAKE_AUDIO_DURATION;
