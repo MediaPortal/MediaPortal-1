@@ -27,14 +27,14 @@
 #include <initguid.h>
 #include <bluray.h>
 
-#include "MpegPesParser.h"
+#include "StreamParser.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 
-CMpegPesParser::CMpegPesParser()
+StreamParser::StreamParser()
 {
 	pmt = CMediaType();
 	pmt.InitMediaType();
@@ -42,7 +42,7 @@ CMpegPesParser::CMpegPesParser()
 	basicVideoInfo = BasicVideoInfo();
 }
 
-bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
+bool StreamParser::ParseVideo(byte* tsPacket, int serviceType)
 {
 	bool parsed = false;
 	__int64 framesize = hdrParser.GetSize();
@@ -112,9 +112,6 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
 			parsed = true;
 		}
 	}
-
-  // TODO split these to separate class?
-
   else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG1 ||
            serviceType == BLURAY_STREAM_TYPE_AUDIO_MPEG2)
   {
@@ -149,7 +146,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
 	return parsed;
 }
 
-bool CMpegPesParser::OnTsPacket(byte *Frame, int Length, int serviceType)
+bool StreamParser::OnTsPacket(byte *Frame, int Length, int serviceType)
 {
 	hdrParser.Reset(Frame, Length);
 	return ParseVideo(Frame, serviceType);

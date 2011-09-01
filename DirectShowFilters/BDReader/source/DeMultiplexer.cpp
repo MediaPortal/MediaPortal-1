@@ -34,7 +34,6 @@
 #include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "mediaFormats.h"
 #include "h264nalu.h"
-#include "FrameHeaderParser.h"
 #include <cassert>
 #include <ks.h>
 #include <ksmedia.h>
@@ -78,8 +77,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   SetMediaChanging(false);
 
   m_WaitHeaderPES = -1 ;
-  m_videoParser = new CMpegPesParser();
-  m_audioParser = new CMpegPesParser();
+  m_videoParser = new StreamParser();
+  m_audioParser = new StreamParser();
 
   m_bReadFailed = false;
 

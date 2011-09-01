@@ -24,16 +24,16 @@
 #include <dvdmedia.h>
 #include "FrameHeaderParser.h"
 
-class CMpegPesParser
+class StreamParser
 {
-private:
-	CFrameHeaderParser hdrParser;
-	bool ParseVideo(byte* tsPacket, int serviceTyoe);
-
 public:
-	CMpegPesParser();
+	StreamParser();
 	bool OnTsPacket(byte* Frame, int Length, int serviceType);
 	CMediaType pmt;
 	BasicVideoInfo basicVideoInfo;
+
+private:
+	CFrameHeaderParser hdrParser;
+	bool ParseVideo(byte* tsPacket, int serviceTyoe);
 };
 

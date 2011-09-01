@@ -34,7 +34,7 @@
 #include <vector>
 #include <map>
 #include <dvdmedia.h>
-#include "MpegPesParser.h"
+#include "StreamParser.h"
 #include <bluray.h>
 #include "BDEventObserver.h"
 #include "Packet.h"
@@ -157,8 +157,8 @@ private:
   CCritSec m_sectionRead;
   CCritSec m_sectionAudioChanging;
   CCritSec m_sectionMediaChanging;
-  CMpegPesParser* m_videoParser;
-  CMpegPesParser* m_audioParser;
+  StreamParser* m_videoParser;
+  StreamParser* m_audioParser;
   vector<Packet*> m_vecSubtitleBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
   UINT32 m_nAudioPesLenght;
