@@ -1010,8 +1010,12 @@
     <String id="1222">Grupos</String>
     <String id="1223">Detectadas listas de reproducción</String>
     <String id="1224">¿Quiere borrar la lista de reproducción actual?</String>
+    <String id="1225">Poner elemento en cola</String>
+    <String id="1226">Porner todos los elementos en cola</String>
     <String id="1230">Añadido en:</String>
     <String id="1231">Última reproducción:</String>
+    <String id="1240">Bloquear contenido</String>
+    <String id="1241">Desbloquear contenido</String>
     <String id="1300" prefix="Mis ">Series de TV</String>
     <String id="1440" prefix="Mi ">TeleTexto</String>
     <String id="1441">TeleTexto</String>
@@ -1981,5 +1985,8 @@
     <String id="200087">Silencio</String>
     <String id="200090">Edición</String>
     <String id="200091">Capítulo</String>
+    <String id="200092">Solo Forzados</String>
+    <String id="200093">¡Se supero el tiempo para montar el Disco!</String>
+    <String id="200094">¿Reintentar durante otros 60 segundos?</String>
   </Section>
 </Language>
