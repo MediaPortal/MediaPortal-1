@@ -24,14 +24,10 @@
 #include <afx.h>
 #include <afxwin.h>
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <streams.h>
-#include <sbe.h>
 #include "bdreader.h"
 #include "audiopin.h"
 #include "videopin.h"
-#include "pmtparser.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"

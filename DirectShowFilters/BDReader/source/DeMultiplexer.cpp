@@ -44,6 +44,7 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+#define NO_STREAM -1
 #define PACKET_GRANULARITY 80000
 #define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * (1000.0 / 9.0))
 #define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / (1000.0 / 9.0))
@@ -59,7 +60,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_pCurrentAudioBuffer = new Packet();
   m_pCurrentSubtitleBuffer = new Packet();
   m_iAudioStream = 0;
-  m_AudioStreamType = SERVICE_TYPE_AUDIO_NOT_INIT;
+  m_AudioStreamType = -1;
   m_iSubtitleStream = 0;
   m_audioPid = 0;
   m_currentSubtitlePid = 0;
@@ -96,7 +97,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bDiscontinuousClip = false;
   m_bVideoFormatParsed = false;
 
-  m_videoServiceType = SERVICE_TYPE_VIDEO_UNKNOWN;
+  m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
 
   m_nMPEG2LastPlaylist = -1;
@@ -174,7 +175,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   }*/
 
   // Get the new audio stream type
-  int newAudioStreamType = SERVICE_TYPE_AUDIO_MPEG2;
+  int newAudioStreamType = BLURAY_STREAM_TYPE_AUDIO_MPEG2;
   if (m_iAudioStream >= 0 && m_iAudioStream < m_audioStreams.size())
   {
     newAudioStreamType = m_audioStreams[m_iAudioStream].audioType;
@@ -182,7 +183,7 @@ bool CDeMultiplexer::SetAudioStream(int stream)
 
   LogDebug("Old Audio %d, New Audio %d", m_AudioStreamType, newAudioStreamType);
 
-  if ((m_AudioStreamType != SERVICE_TYPE_AUDIO_NOT_INIT) && 
+  if ((m_AudioStreamType != -1) && 
       (m_AudioStreamType != newAudioStreamType))
   {
     m_AudioStreamType = newAudioStreamType;
@@ -238,7 +239,7 @@ void CDeMultiplexer::GetAudioStreamInfo(int stream, char* szName)
 
 int CDeMultiplexer::GetAudioStreamCount()
 {
-  if (m_AudioStreamType == SERVICE_TYPE_NO_AUDIO)
+  if (m_AudioStreamType == NO_STREAM)
   {
     // TODO - return 1?
     return -1; // fake audio stream is present
@@ -253,7 +254,7 @@ int CDeMultiplexer::GetAudioStreamCount()
 
 void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
 {
-  if (m_AudioStreamType <= SERVICE_TYPE_NO_AUDIO)
+  if (m_AudioStreamType == NO_STREAM)
   {
     pmt.InitMediaType();
     pmt.SetType(&MEDIATYPE_Audio);
@@ -570,7 +571,7 @@ HRESULT CDeMultiplexer::Start()
 
     if (!m_videoParser->basicVideoInfo.isValid ||
         m_videoParser->pmt.formattype == GUID_NULL ||
-        (m_AudioStreamType > SERVICE_TYPE_NO_AUDIO && m_audioParser->pmt.formattype == GUID_NULL))
+        (m_AudioStreamType > NO_STREAM && m_audioParser->pmt.formattype == GUID_NULL))
     {
       dwBytesProcessed += BytesRead;
       continue;
@@ -1297,7 +1298,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     m_WaitHeaderPES = m_pBuild->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
 
-    if (m_videoServiceType == SERVICE_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
+    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
     {
       FillVideoVC1PESPacket(header, m_pBuild);
       m_pBuild.Free();
@@ -1387,7 +1388,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     }
   }//waitPESheader
 
-  if (m_pBuild->GetCount() && m_videoServiceType != SERVICE_TYPE_VIDEO_VC1)
+  if (m_pBuild->GetCount() && m_videoServiceType != BLURAY_STREAM_TYPE_VIDEO_VC1)
   {
     FillVideoH264PESPacket(header, m_pBuild);
     m_pBuild.Free();
@@ -1611,7 +1612,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
     }
     else
     {
-      m_AudioStreamType = SERVICE_TYPE_NO_AUDIO;
+      m_AudioStreamType = NO_STREAM;
 
       stAudioStream audio;
 
@@ -1628,7 +1629,7 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       m_audioStreams.push_back(audio);
     }
 
-    if (m_AudioStreamType != SERVICE_TYPE_NO_AUDIO)
+    if (m_AudioStreamType != NO_STREAM)
     {
       for (int i(0); i < clip->audio_stream_count; i++)
       {

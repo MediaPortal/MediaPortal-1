@@ -127,17 +127,7 @@ bool CMpegPesParser::ParseVideo(byte* tsPacket, int serviceType)
     ac3hdr ac3;
 		parsed = hdrParser.Read(ac3, framesize, &pmt);
   }
-  else if (serviceType == SERVICE_TYPE_AUDIO_AAC)
-  {
-		aachdr aac;
-		parsed = hdrParser.Read(aac, framesize, &pmt);
-  }
-  else if (serviceType == SERVICE_TYPE_AUDIO_LATM_AAC) // not in lib
-  {
-		latm_aachdr latm_aac;
-		parsed = hdrParser.Read(latm_aac, framesize, &pmt);
-  }
-  else if (serviceType == SERVICE_TYPE_AUDIO_LPCM)
+  else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_LPCM)
   {
 		bdlpcmhdr lpcm;
 		parsed = hdrParser.Read(lpcm, framesize, &pmt);

@@ -20,7 +20,6 @@
  */
 #pragma once
 #include "..\..\shared\tsheader.h"
-#include "patparser.h"
 #include <dvdmedia.h>
 #include "FrameHeaderParser.h"
 
