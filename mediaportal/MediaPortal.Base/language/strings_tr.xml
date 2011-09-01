@@ -1014,6 +1014,8 @@
     <String id="1226">Hepsini kuyruğa at</String>
     <String id="1230">Eklenme tarihi:</String>
     <String id="1231">Son oynatma:</String>
+    <String id="1240">İçeriği kilitle</String>
+    <String id="1241">İçerik kilidini aç</String>
     <String id="1300">TV Şovları</String>
     <String id="1440">Telemetin</String>
     <String id="1441">Telemetin</String>
@@ -1984,5 +1986,8 @@
     <String id="200087">Sessiz</String>
     <String id="200090">Sürüm</String>
     <String id="200091">Bölüm</String>
+    <String id="200092">Sadece Mecburi</String>
+    <String id="200093">Disk yükleme zamanı aşıldı!</String>
+    <String id="200094">60 saniye daha denemeye devam edilsin mi?</String>
   </Section>
 </Language>
