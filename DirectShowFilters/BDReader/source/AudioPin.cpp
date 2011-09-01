@@ -32,10 +32,6 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-// you will get NO sound if you enable debugging as there is a lot of output 
-//#define SOUNDDEBUG 
-
-#define MAX_TIME  86400000L
 #define LPCM_HEADER_SIZE 4
 
 extern void LogDebug(const char *fmt, ...);

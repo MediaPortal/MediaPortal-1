@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __AudioPin_H
-#define __AudioPin_H
+#pragma once
+
 #include "bdreader.h"
 
 #define MAX_BUFFER_SIZE 0x40000
@@ -102,4 +102,3 @@ protected:
   Packet* m_pCachedBuffer;
 };
 
-#endif

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "StdAfx.h"
 #include "bdreader.h"
 
 class CSubtitlePin: public CSourceStream, public CSourceSeeking

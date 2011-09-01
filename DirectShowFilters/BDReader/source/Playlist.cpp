@@ -28,7 +28,6 @@ CPlaylist::CPlaylist(int playlistNumber, REFERENCE_TIME firstPacketTime)
   Reset(playlistNumber, firstPacketTime);
 }
 
-
 CPlaylist::~CPlaylist(void)
 {
   if (m_vecClips.size()>0)

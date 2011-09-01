@@ -20,20 +20,23 @@
  */
 
 #pragma once
+#include <bluray.h>
+#include <map>
+
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
 #include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "ISubtitleStream.h"
 #include "IAudioStream.h"
-#include <bluray.h>
 #include "LibBlurayWrapper.h"
 #include "BDEventObserver.h"
-#include <map>
 
 //#define LOG_VIDEO_PIN_SAMPLES
 //#define LOG_AUDIO_PIN_SAMPLES
 //#define LOG_DEMUXER_AUDIO_SAMPLES
 //#define LOG_DEMUXER_VIDEO_SAMPLES
+
+//#define SOUNDDEBUG // you will get NO sound if you enable debugging as there is a lot of output 
 
 using namespace std;
 

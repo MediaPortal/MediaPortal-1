@@ -20,6 +20,7 @@
  */
 
 #pragma once
+
 #include <afx.h>
 #include <atlbase.h>
 #include <atlcoll.h>

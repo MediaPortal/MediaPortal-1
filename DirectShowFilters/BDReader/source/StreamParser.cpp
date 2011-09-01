@@ -21,13 +21,13 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
+
 #include "StdAfx.h"
 
 #include <streams.h>
+#include "StreamParser.h"
 #include <initguid.h>
 #include <bluray.h>
-
-#include "StreamParser.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"

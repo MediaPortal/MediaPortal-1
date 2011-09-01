@@ -26,6 +26,7 @@
 
 #include "StdAfx.h"
 #include <strmif.h>
+#include <streams.h>
 
 #include "GolombBuffer.h"
 

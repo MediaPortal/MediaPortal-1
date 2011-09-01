@@ -23,11 +23,7 @@
 #pragma warning(disable:4995)
 #include "StdAfx.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <commdlg.h>
-#include <bdatypes.h>
-#include <sbe.h>
 #include <time.h>
 #include <streams.h>
 #include <initguid.h>
@@ -39,10 +35,7 @@
 #include "subtitlepin.h"
 #include "..\..\shared\DebugSettings.h"
 #include <cassert>
-#include <D3d9.h>
-#include <Vmr9.h>
-#include <evr.h>
-#include <evr9.h>
+
 #include <keys.h>
 
 // For more details for memory leak detection see the alloctracing.h header

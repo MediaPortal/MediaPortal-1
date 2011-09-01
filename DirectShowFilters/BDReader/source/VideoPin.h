@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __VideoPin_H
-#define __VideoPin_H
+#pragma once
+
 #include "bdreader.h"
 #include <initguid.h>
 
@@ -96,4 +96,3 @@ protected:
   Packet* m_pCachedBuffer;
 };
 
-#endif

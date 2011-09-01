@@ -23,9 +23,9 @@
 #pragma warning(disable:4995)
 #include <afx.h>
 #include <streams.h>
-#include <math.h>
-#include <wmcodecdsp.h>
 #include "demultiplexer.h"
+#include <cassert>
+#include <bluray.h>
 #include "..\..\shared\adaptionfield.h"
 #include "bdreader.h"
 #include "audioPin.h"
@@ -34,11 +34,6 @@
 #include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "mediaFormats.h"
 #include "h264nalu.h"
-#include <cassert>
-#include <ks.h>
-#include <ksmedia.h>
-
-#include <bluray.h>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"

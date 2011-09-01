@@ -20,6 +20,7 @@
  */
 
 #pragma once
+
 #include "Packet.h"
 #include "Clip.h"
 #include <vector>

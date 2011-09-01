@@ -25,7 +25,6 @@
 #include <streams.h>
 
 #include "FrameHeaderParser.h"
-#include <wxdebug.h>
 #include <dvdmedia.h>
 #include <uuids.h>
 #include <amvideo.h>

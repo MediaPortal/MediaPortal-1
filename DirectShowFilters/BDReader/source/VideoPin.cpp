@@ -23,10 +23,7 @@
 #pragma warning(disable:4995)
 #include "StdAfx.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
 #include <streams.h>
-#include <sbe.h>
 #include "bdreader.h"
 #include "AudioPin.h"
 #include "Videopin.h"
@@ -35,8 +32,6 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
-
-#define MAX_TIME  86400000L
 
 extern void LogDebug(const char *fmt, ...) ;
 

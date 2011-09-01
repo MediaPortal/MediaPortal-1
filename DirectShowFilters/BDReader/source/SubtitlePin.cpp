@@ -21,21 +21,15 @@
 
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
-#include "StdAfx.h"
 
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include "StdAfx.h"
 #include <streams.h>
-#include <sbe.h>
-#include "bdreader.h"
 #include "SubtitlePin.h"
-#include "AudioPin.h"
-#include "Videopin.h"
+#include "bdreader.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-#define MAX_TIME  86400000L
 extern void LogDebug(const char *fmt, ...) ;
 
 CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
@@ -359,38 +353,12 @@ void CSubtitlePin::UpdateFromSeek()
   //if a pin-output thread exists...
   if (ThreadExists())
   {
-    //normally the audio pin does the actual seeking
-    //check if its connected. If not, we'll do the seeking
-    if (!m_pFilter->GetAudioPin()->IsConnected())
-    {
-      //tell the filter we are starting a seek operation
-//      m_pFilter->SeekStart();
-    }
-
-    //deliver a begin-flush to the codec filter so it stops asking for data
     HRESULT hr = DeliverBeginFlush();
 
-    //stop the thread
     Stop();
-    if (!m_pFilter->GetAudioPin()->IsConnected())
-    {
-      //do the seek..
-//      m_pFilter->Seek(rtSeek, true);
-    }
 
-    //deliver a end-flush to the codec filter so it will start asking for data again
     hr = DeliverEndFlush();
 
-    if (!m_pFilter->GetAudioPin()->IsConnected())
-    {
-      //tell filter we're done with seeking
-//      m_pFilter->SeekDone(rtSeek);
-    }
-
-    //set our start time
-    //m_rtStart=rtSeek;
-
-    // and restart the thread
     Run();
   }
   else

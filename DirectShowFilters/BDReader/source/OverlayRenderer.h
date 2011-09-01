@@ -26,9 +26,6 @@
 #include <overlay.h>
 #include <streams.h>
 #include <D3d9.h>
-#include <Vmr9.h>
-#include <evr.h>
-#include <evr9.h>
 
 #define PALETTE_SIZE 256
 
