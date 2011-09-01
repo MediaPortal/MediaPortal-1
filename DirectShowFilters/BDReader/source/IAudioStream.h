@@ -1,6 +1,6 @@
 /*
- *	Copyright (C) 2006-2009 Team MediaPortal
- *	http://www.team-mediaportal.com
+ *  Copyright (C) 2005-2011 Team MediaPortal
+ *  http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  *
  */
 
-
 #include "StdAfx.h"
 
 #include <xprtdefs.h>
@@ -30,8 +29,6 @@
 // {558D9EA6-B177-4c30-9ED5-BF2D714BCBCA}
 DEFINE_GUID(IID_IAudioStream, 
   0x558d9ea6, 0xb177, 0x4c30, 0x9e, 0xd5, 0xbf, 0x2d, 0x71, 0x4b, 0xcb, 0xca);
-
-
 
 DECLARE_INTERFACE_( IAudioStream, IUnknown )
 {    

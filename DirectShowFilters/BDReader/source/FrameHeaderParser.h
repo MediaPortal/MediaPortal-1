@@ -1,5 +1,5 @@
 /* 
- *	Copyright (C) 2006 Team MediaPortal
+ *	Copyright (C) 2005-2011 Team MediaPortal
  *	http://www.team-mediaportal.com
  *
  *  This Program is free software; you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
- *  Most of this file's content is based on MPC-HC's source code 
+ *  MAjor part of this file's content is based on MPC-HC's source code 
  *  http://mpc-hc.sourceforge.net/
  *
  */
