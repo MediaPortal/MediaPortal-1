@@ -36,6 +36,53 @@ using namespace std;
 #define FAKE_AUDIO_DURATION 320000LL
 #define AC3_FRAME_LENGTH 1792
 
+class CClip
+{
+public:
+  CClip(int clipNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded);
+  ~CClip(void);
+  Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
+  Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
+  bool AcceptAudioPacket(Packet*  packet, bool forced);
+  bool AcceptVideoPacket(Packet*  packet, bool forced);
+  void FlushAudio(void);
+  void FlushVideo(void);
+  int  nClip;
+  bool noAudio;
+  bool clipFilled;
+  bool clipEmptied;
+  void Superceed(int superceedType);
+  bool IsSuperceeded(int superceedType);
+  REFERENCE_TIME playlistFirstPacketTime;
+  REFERENCE_TIME clipPlaylistOffset;
+  int AudioPacketCount();
+  int VideoPacketCount();
+  void Reset();
+  bool FakeAudioAvailable();
+  bool HasAudio();
+  bool HasVideo();
+  bool Incomplete();
+  void SetPMT(AM_MEDIA_TYPE *pmt);
+
+protected:
+  typedef vector<Packet*>::iterator ivecVideoBuffers;
+  typedef vector<Packet*>::iterator ivecAudioBuffers;
+  vector<Packet*> m_vecClipAudioPackets;
+  vector<Packet*> m_vecClipVideoPackets;
+  AM_MEDIA_TYPE *m_pmt;
+  REFERENCE_TIME clipDuration;
+  REFERENCE_TIME audioPlaybackpoint;
+  REFERENCE_TIME lastAudioPosition;
+  REFERENCE_TIME lastVideoPosition;
+  int superceeded;
+
+  bool firstAudio;
+  bool firstVideo;
+  bool bSeekNeeded;
+
+  Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
+};
+
 // Silent AC3 frame
 static unsigned char ac3_sample[AC3_FRAME_LENGTH] = {
 0x0B, 0x77, 0x9E, 0xCC, 0x1E, 0x40, 0xE1, 0xDE, 0xAC, 0xC0, 0x3F, 0xC4, 0xFF, 0x59, 0x70, 0x83, 
@@ -150,52 +197,3 @@ static unsigned char ac3_sample[AC3_FRAME_LENGTH] = {
 0xC7, 0x49, 0x27, 0x6B, 0x80, 0x76, 0xED, 0x7D, 0x6E, 0x07, 0xCD, 0xB7, 0x8D, 0xDB, 0xB6, 0xDB, 
 0xC0, 0x1E, 0x3C, 0x78, 0xF1, 0xA1, 0x83, 0x6D, 0xB6, 0xDB, 0x03, 0x7D, 0x6F, 0x5A, 0xF1, 0xAD, 
 0x53, 0xE4, 0xB6, 0xBA, 0xE9, 0x29, 0x38, 0x39, 0x33, 0xFB, 0xE9, 0x88, 0xF0, 0x00, 0xF5, 0x65};
-
-
-class CClip
-{
-public:
-  CClip(int clipNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded);
-  ~CClip(void);
-  Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
-  Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
-  bool AcceptAudioPacket(Packet*  packet, bool forced);
-  bool AcceptVideoPacket(Packet*  packet, bool forced);
-  void FlushAudio(void);
-  void FlushVideo(void);
-  int  nClip;
-  bool noAudio;
-  bool clipFilled;
-  bool clipEmptied;
-  void Superceed(int superceedType);
-  bool IsSuperceeded(int superceedType);
-  REFERENCE_TIME playlistFirstPacketTime;
-  REFERENCE_TIME clipPlaylistOffset;
-  int AudioPacketCount();
-  int VideoPacketCount();
-  void Reset();
-  bool FakeAudioAvailable();
-  bool HasAudio();
-  bool HasVideo();
-  bool Incomplete();
-  void SetPMT(AM_MEDIA_TYPE *pmt);
-
-protected:
-  typedef vector<Packet*>::iterator ivecVideoBuffers;
-  typedef vector<Packet*>::iterator ivecAudioBuffers;
-  vector<Packet*> m_vecClipAudioPackets;
-  vector<Packet*> m_vecClipVideoPackets;
-  AM_MEDIA_TYPE *m_pmt;
-  REFERENCE_TIME clipDuration;
-  REFERENCE_TIME audioPlaybackpoint;
-  REFERENCE_TIME lastAudioPosition;
-  REFERENCE_TIME lastVideoPosition;
-  int superceeded;
-
-  bool firstAudio;
-  bool firstVideo;
-  bool bSeekNeeded;
-
-  Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
-};
-
