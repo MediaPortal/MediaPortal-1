@@ -42,8 +42,9 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   clipPlaylistOffset=clipOffset;
   firstAudio=true;
   firstVideo=true;
-  bSeekNeeded = seekNeeded;
-  if (bSeekNeeded)
+  bSeekNeededVideo = seekNeeded;
+  bSeekNeededAudio = seekNeeded;
+  if (seekNeeded)
   {
     clipPlaylistOffset = firstPacketTime;
   }
@@ -113,7 +114,6 @@ bool CClip::FakeAudioAvailable()
   return (audioPlaybackpoint<lastVideoPosition);
 }
 
-
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
   if (rtStart>playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO;
@@ -148,9 +148,11 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   return packet;
 }
 
-bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
+bool CClip::AcceptAudioPacket(Packet* packet, bool forced)
 {
   bool ret=false;
+  //check if this clip is looping (Fixes some menus which repeat a clip)
+  if (!firstAudio && packet->rtStart == playlistFirstPacketTime) bSeekNeededAudio = true;
   if (forced)
   {
     if (packet->nClipNumber != nClip)
@@ -161,6 +163,8 @@ bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
     else
     {
       packet->nClipNumber=nClip;
+      packet->bSeekRequired = bSeekNeededAudio;
+      bSeekNeededAudio = false;
       m_vecClipAudioPackets.push_back(packet);
       lastAudioPosition=packet->rtStart;
       noAudio=false;
@@ -178,6 +182,8 @@ bool CClip::AcceptAudioPacket(Packet*  packet, bool forced)
       {
         //belongs to this playlist
         packet->nClipNumber=nClip;
+        packet->bSeekRequired = bSeekNeededAudio;
+        bSeekNeededAudio = false;
         m_vecClipAudioPackets.push_back(packet);
         lastAudioPosition=packet->rtStart;
         ret=true;
@@ -191,7 +197,7 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
 {
   bool ret=false;
   //check if this clip is looping (Fixes some menus which repeat a clip)
-  if (!firstVideo && packet->rtStart == playlistFirstPacketTime) bSeekNeeded = true;
+  if (!firstVideo && packet->rtStart == playlistFirstPacketTime) bSeekNeededVideo = true;
   if (forced)
   {
     if (packet->nClipNumber != nClip)
@@ -202,8 +208,8 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
     else
     {
       packet->nClipNumber=nClip;
-      packet->bSeekRequired = bSeekNeeded;
-      bSeekNeeded = false;
+      packet->bSeekRequired = bSeekNeededVideo;
+      bSeekNeededVideo = false;
       m_vecClipVideoPackets.push_back(packet);
       lastVideoPosition=packet->rtStart;
     }
@@ -219,8 +225,8 @@ bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
       {
         //belongs to this playlist
         packet->nClipNumber=nClip;
-        packet->bSeekRequired = bSeekNeeded;
-        bSeekNeeded = false;
+        packet->bSeekRequired = bSeekNeededVideo;
+        bSeekNeededVideo = false;
         m_vecClipVideoPackets.push_back(packet);
         lastVideoPosition=packet->rtStart;
         ret=true;

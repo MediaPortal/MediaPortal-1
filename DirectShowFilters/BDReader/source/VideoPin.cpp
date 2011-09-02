@@ -366,7 +366,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         CreateEmptySample(pSample);
 
         // Audio has already changed to next playlist
-        if (demux.m_nActiveAudioPlaylist == m_nPrevPl && demux.m_bVideoPlSeen)
+        if (demux.m_bAudioPlSeen && demux.m_bVideoPlSeen)
         {
           demux.m_bAudioPlSeen = false;
           demux.m_bVideoPlSeen = false;
@@ -445,7 +445,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
           buffer->bSeekRequired = false;
           m_nPrevPl = buffer->nPlaylist;
-
           demux.m_bVideoPlSeen = true;
           useEmptySample = true;
         }

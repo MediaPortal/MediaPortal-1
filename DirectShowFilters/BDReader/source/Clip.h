@@ -78,7 +78,8 @@ protected:
 
   bool firstAudio;
   bool firstVideo;
-  bool bSeekNeeded;
+  bool bSeekNeededVideo;
+  bool bSeekNeededAudio;
 
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
 };

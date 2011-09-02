@@ -116,7 +116,6 @@ public:
   bool m_bVideoPlSeen;
   bool m_bAudioRequiresRebuild;
   bool m_bVideoRequiresRebuild;
-  int  m_nActiveAudioPlaylist;
 
 private:
   void ResetClipInfo(int pDebugMark);

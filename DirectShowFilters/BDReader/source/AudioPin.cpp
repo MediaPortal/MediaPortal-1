@@ -220,17 +220,16 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
 //        JoinAudioBuffers(buffer, &demux);
         
-        if (demux.m_nActiveAudioPlaylist == -1)
+        if (m_nPrevPl == -1)
         {
-          demux.m_nActiveAudioPlaylist = m_nPrevPl = buffer->nPlaylist;
+          m_nPrevPl = buffer->nPlaylist;
         }
 
-        if (buffer && buffer->nPlaylist != m_nPrevPl)
+        if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
         {
-          LogDebug("aud: Playlist changed from %d To %d", m_nPrevPl, buffer->nPlaylist);
+          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
           m_nPrevPl = buffer->nPlaylist;
-          buffer->bDiscontinuity = true;
-
+          buffer->bSeekRequired = false;
           demux.m_bAudioPlSeen = true;
           useEmptySample = true;
         }
@@ -285,8 +284,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             pSample->SetMediaType(mt);
           }
         }
-
-        demux.m_nActiveAudioPlaylist = buffer->nPlaylist;
 
         if (useEmptySample)
         {

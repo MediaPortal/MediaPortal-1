@@ -85,7 +85,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bVideoPlSeen = false;
   m_bAudioRequiresRebuild = false;
   m_bVideoRequiresRebuild = false;
-  m_nActiveAudioPlaylist = -1;
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch = 1;
   m_bDiscontinuousClip = false;
