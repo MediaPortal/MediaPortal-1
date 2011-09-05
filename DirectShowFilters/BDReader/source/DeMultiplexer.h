@@ -181,6 +181,8 @@ private:
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
 
+  void FlushPESBuffers();
+
   bool m_bHoldAudio;
   bool m_bHoldVideo;
   bool m_bHoldSubtitle;
