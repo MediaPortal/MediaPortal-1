@@ -761,18 +761,19 @@ void CBDReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
   {   
     if ((m_bStoppedForUnexpectedSeek || (m_absSeekTime == rtAbsSeek)) && !m_bForceSeekOnStop && !m_bForceSeekAfterRateChange)
     {
-      LogDebug("CBDReaderFilter::--SeekStart()--   BAIL OUT!");
+      //LogDebug("CBDReaderFilter::--SeekStart()--   BAIL OUT!");
       m_bStoppedForUnexpectedSeek = false;
       m_absSeekTime = rtAbsSeek;
       m_bIgnoreLibSeeking = false;
+      m_WaitForSeekToEof = 0;
       return;
     }
   }
 
   if (((m_absSeekTime == rtAbsSeek) && !m_bForceSeekAfterRateChange) || (m_demultiplexer.IsMediaChanging() && !m_bForceSeekOnStop && !m_bForceSeekAfterRateChange))
   {
-    LogDebug("CBDReaderFilter::--SeekStart()-- No new seek %f ( Abs %f ) - Force %d, Media changing: %d", 
-		(float)rtAbsSeek.Millisecs() / 1000.0f, (float)rtAbsSeek.Millisecs() / 1000.0f, m_bForceSeekOnStop, m_demultiplexer.IsMediaChanging());
+    //LogDebug("CBDReaderFilter::--SeekStart()-- No new seek %f ( Abs %f ) - Force %d, Media changing: %d", 
+		//(float)rtAbsSeek.Millisecs() / 1000.0f, (float)rtAbsSeek.Millisecs() / 1000.0f, m_bForceSeekOnStop, m_demultiplexer.IsMediaChanging());
     m_bForceSeekOnStop = false;
     m_bIgnoreLibSeeking = false;
   }
@@ -820,8 +821,6 @@ void CBDReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       m_bIgnoreLibSeeking = false;
     }
 
-    m_WaitForSeekToEof = 0;
-
     REFERENCE_TIME duration;
     GetDuration(&duration);
     if (rtAbsSeek >= duration)
@@ -849,6 +848,8 @@ void CBDReaderFilter::SeekPreStart(CRefTime& rtAbsSeek)
       m_pDVBSubtitle->SeekDone(rtAbsSeek);
     }
   }
+
+  m_WaitForSeekToEof = 0;
 }
 
 // When a IMediaSeeking.SetPositions() is done on one of the output pins the output pin will do:

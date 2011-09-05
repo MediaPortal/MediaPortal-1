@@ -368,9 +368,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         // Audio has already changed to next playlist
         if (demux.m_bAudioPlSeen && demux.m_bVideoPlSeen)
         {
-          demux.m_bAudioPlSeen = false;
-          demux.m_bVideoPlSeen = false;
-          
           if (demux.m_bVideoRequiresRebuild || demux.m_bAudioRequiresRebuild)
           {
             demux.m_bVideoRequiresRebuild = false;
@@ -383,8 +380,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           {
             LogDebug("vid: Request zeroing the stream time - video after audio");
             m_pFilter->m_bForceSeekAfterRateChange = true;
+            m_pFilter->m_WaitForSeekToEof = 1;
             m_pFilter->IssueCommand(SEEK, 0);
           }
+
+          demux.m_bAudioPlSeen = false;
+          demux.m_bVideoPlSeen = false;
         }
         else
         {
