@@ -308,6 +308,7 @@ Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
   {
     ret->rtStart -= GetPacketTimeStampCorrection(packetClip);
     ret->rtStop -= GetPacketTimeStampCorrection(packetClip);
+    ret->rtStreamPosition = 0 - firstPESTimeStamp;
   }
   return ret;
 }

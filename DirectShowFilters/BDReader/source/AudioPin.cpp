@@ -227,7 +227,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
         {
-          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
+          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d time %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtStreamPosition);
           m_nPrevPl = buffer->nPlaylist;
           buffer->bSeekRequired = false;
           demux.m_bAudioPlSeen = true;

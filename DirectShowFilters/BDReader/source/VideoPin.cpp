@@ -443,7 +443,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired)
         {
-          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired);
+          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d timestamp %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtStreamPosition);
           buffer->bSeekRequired = false;
           m_nPrevPl = buffer->nPlaylist;
           demux.m_bVideoPlSeen = true;
