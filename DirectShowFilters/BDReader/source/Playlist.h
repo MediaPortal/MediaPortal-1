@@ -37,8 +37,8 @@ public:
   Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
   bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip);
-  bool AcceptAudioPacket(Packet*  packet, bool forced);
-  bool AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced);
+  bool AcceptAudioPacket(Packet*  packet);
+  bool AcceptVideoPacket(Packet*  packet, bool firstPacket);
   void FlushAudio();
   void FlushVideo();
   bool IsEmptiedAudio();
@@ -56,8 +56,6 @@ public:
   bool IsFakeAudioAvailable();
   REFERENCE_TIME playlistFirstPacketTime;
   void ClearAllButCurrentClip(bool resetClip);
-  int AudioPacketCount();
-  int VideoPacketCount();
   bool HasAudio();
   bool HasVideo();
   bool Incomplete();

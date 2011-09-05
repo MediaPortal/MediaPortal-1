@@ -125,13 +125,13 @@ int CPlaylist::CurrentVideoSubmissionClip()
   return m_currentVideoSubmissionClip->nClip;
 }
 
-bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool forced)
+bool CPlaylist::AcceptAudioPacket(Packet*  packet)
 {
   bool ret = true;
   if (m_currentAudioSubmissionClip==NULL) return false;
   if (m_currentAudioSubmissionClip->nClip == packet->nClipNumber)
   {
-    m_currentAudioSubmissionClip->AcceptAudioPacket(packet, true);
+    m_currentAudioSubmissionClip->AcceptAudioPacket(packet);
   }
   else 
   {
@@ -150,7 +150,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool forced)
       }
       m_currentAudioSubmissionClip=nextSubmissionClip;
     }
-    ret=AcceptAudioPacket(packet, true);
+    ret=AcceptAudioPacket(packet);
   }
   if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
@@ -165,7 +165,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool forced)
   return ret;
 }
 
-bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced)
+bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket)
 {
   bool ret = true;
   if (m_currentVideoSubmissionClip==NULL) 
@@ -177,7 +177,7 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced
   {
     if (m_currentVideoSubmissionClip->nClip==packet->nClipNumber)
     {
-       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet,true);
+       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
     }
     else
     {
@@ -192,7 +192,7 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket, bool forced
         }
         m_currentVideoSubmissionClip = nextVideoClip;
       }
-      ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet, true);
+      ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
     }
   }
   if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
@@ -377,31 +377,6 @@ void CPlaylist::ClearAllButCurrentClip(bool resetClip)
   }
 }
 
-int CPlaylist::AudioPacketCount()
-{
-  int totalAudioPackets=0;
-  ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
-  {
-    CClip * clip=*it;
-    totalAudioPackets+=clip->AudioPacketCount();
-    ++it;
-  }
-  return totalAudioPackets;
-}
-
-int CPlaylist::VideoPacketCount()
-{
-  int totalVideoPackets=0;
-  ivecClip it = m_vecClips.begin();
-  while (it!=m_vecClips.end())
-  {
-    CClip * clip=*it;
-    totalVideoPackets+=clip->VideoPacketCount();
-    ++it;
-  }
-  return totalVideoPackets;
-}
 void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 {
   nPlaylist=playlistNumber;

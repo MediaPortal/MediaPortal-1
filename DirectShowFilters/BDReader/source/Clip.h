@@ -43,8 +43,8 @@ public:
   ~CClip(void);
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
-  bool AcceptAudioPacket(Packet*  packet, bool forced);
-  bool AcceptVideoPacket(Packet*  packet, bool forced);
+  bool AcceptAudioPacket(Packet*  packet);
+  bool AcceptVideoPacket(Packet*  packet);
   void FlushAudio(void);
   void FlushVideo(void);
   int  nClip;
@@ -55,8 +55,6 @@ public:
   bool IsSuperceeded(int superceedType);
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
-  int AudioPacketCount();
-  int VideoPacketCount();
   void Reset();
   bool FakeAudioAvailable();
   bool HasAudio();

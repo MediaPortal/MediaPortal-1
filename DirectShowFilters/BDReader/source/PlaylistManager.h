@@ -62,10 +62,6 @@ protected:
   CPlaylist * GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetPlaylist(int playlist);
 
-
-  int AudioPacketCount();
-  int VideoPacketCount();
-
   bool Incomplete();
 
   vector<CPlaylist *> m_vecPlaylists;
@@ -73,8 +69,6 @@ protected:
   CPlaylist * m_currentVideoPlayBackPlaylist;
   CPlaylist * m_currentAudioSubmissionPlaylist;
   CPlaylist * m_currentVideoSubmissionPlaylist;
-  int AudioPackets;
-  int VideoPackets;
 
   bool m_bInteruption;
 

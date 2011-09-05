@@ -149,98 +149,52 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   return packet;
 }
 
-bool CClip::AcceptAudioPacket(Packet* packet, bool forced)
+bool CClip::AcceptAudioPacket(Packet* packet)
 {
-  bool ret=false;
   //check if this clip is looping (Fixes some menus which repeat a clip)
   if (!firstAudio && packet->rtStart == playlistFirstPacketTime) bSeekNeededAudio = true;
-  if (forced)
+  if (packet->nClipNumber != nClip)
   {
-    if (packet->nClipNumber != nClip)
-    {
-      // Oh dear, not for this clip so throw it away
-      delete packet;
-    }
-    else
-    {
-      packet->nClipNumber=nClip;
-      packet->bSeekRequired = bSeekNeededAudio;
-      bSeekNeededAudio = false;
-      m_vecClipAudioPackets.push_back(packet);
-      lastAudioPosition=packet->rtStart;
-      noAudio=false;
-    }
-    return true;
+    // Oh dear, not for this clip so throw it away
+    delete packet;
   }
-  if (noAudio) return false;
-  if (!((superceeded&SUPERCEEDED_AUDIO)==SUPERCEEDED_AUDIO))
+  else
   {
-    //new packet must be after the last for audio
-    if (packet->rtStart >=lastAudioPosition)
-    {
-      //make sure it's in range for this clip
-      if (packet->rtStart < playlistFirstPacketTime + clipDuration + 10000000LL/*1 sec for bad mastering*/)
-      {
-        //belongs to this playlist
-        packet->nClipNumber=nClip;
-        packet->bSeekRequired = bSeekNeededAudio;
-        bSeekNeededAudio = false;
-        m_vecClipAudioPackets.push_back(packet);
-        lastAudioPosition=packet->rtStart;
-        ret=true;
-      }
-    }
+    packet->nClipNumber=nClip;
+    packet->bSeekRequired = bSeekNeededAudio;
+    bSeekNeededAudio = false;
+    m_vecClipAudioPackets.push_back(packet);
+    lastAudioPosition=packet->rtStart;
+    noAudio=false;
   }
-  return ret;
+  return true;
 }
 
-bool CClip::AcceptVideoPacket(Packet*  packet, bool forced)
+bool CClip::AcceptVideoPacket(Packet*  packet)
 {
-  bool ret=false;
   //check if this clip is looping (Fixes some menus which repeat a clip)
   if (!firstVideo && packet->rtStart == playlistFirstPacketTime) bSeekNeededVideo = true;
-  if (forced)
+  if (packet->nClipNumber != nClip)
   {
-    if (packet->nClipNumber != nClip)
-    {
-      // Oh dear, not for this clip so throw it away
-      delete packet;
-    }
-    else
-    {
-      packet->nClipNumber=nClip;
-      packet->bSeekRequired = bSeekNeededVideo;
-      bSeekNeededVideo = false;
-      m_vecClipVideoPackets.push_back(packet);
-      lastVideoPosition=packet->rtStart;
-    }
-    return true;
+    // Oh dear, not for this clip so throw it away
+    delete packet;
   }
-  if (!((superceeded&SUPERCEEDED_VIDEO)==SUPERCEEDED_VIDEO))
+  else
   {
-    //this will be hard to get right...
-    if (packet->rtStart >= playlistFirstPacketTime || packet->rtStart==Packet::INVALID_TIME)
-    {
-      //make sure it's in range for this clip
-      if (packet->rtStart <= playlistFirstPacketTime + clipDuration || packet->rtStart==Packet::INVALID_TIME)
-      {
-        //belongs to this playlist
-        packet->nClipNumber=nClip;
-        packet->bSeekRequired = bSeekNeededVideo;
-        bSeekNeededVideo = false;
-        m_vecClipVideoPackets.push_back(packet);
-        lastVideoPosition=packet->rtStart;
-        ret=true;
-      }
-    }
+    packet->nClipNumber=nClip;
+    packet->bSeekRequired = bSeekNeededVideo;
+    bSeekNeededVideo = false;
+    m_vecClipVideoPackets.push_back(packet);
+    lastVideoPosition=packet->rtStart;
   }
-  return ret;
+  return true;
 }
 
 void CClip::Superceed(int superceedType)
 {
   superceeded|=superceedType;
 }
+
 bool CClip::IsSuperceeded(int superceedType)
 {
   return ((superceeded&superceedType)==superceedType);
@@ -256,6 +210,7 @@ void CClip::FlushAudio(void)
     delete packet;
   }
 }
+
 void CClip::FlushVideo(void)
 {
   ivecVideoBuffers itv = m_vecClipVideoPackets.begin();
@@ -264,29 +219,6 @@ void CClip::FlushVideo(void)
     Packet * packet=*itv;
     itv=m_vecClipVideoPackets.erase(itv);
     delete packet;
-  }
-}
-int CClip::AudioPacketCount()
-{
-  if (IsSuperceeded(SUPERCEEDED_AUDIO))
-  {
-    return 0;
-  }
-  else
-  {
-    if (noAudio) return 0;
-    return m_vecClipAudioPackets.size();
-  }
-}
-int CClip::VideoPacketCount()
-{
-  if (IsSuperceeded(SUPERCEEDED_VIDEO))
-  {
-    return 0;
-  }
-  else
-  {
-    return m_vecClipVideoPackets.size();
   }
 }
 
@@ -329,7 +261,6 @@ bool CClip::Incomplete()
     LogDebug("clip: Incomplete - nClip: %d lastAudioPosition: %I64d first: %I64d duration: %I64d", 
       nClip, lastAudioPosition, playlistFirstPacketTime, clipDuration);
   }
-
   return ret;
 }
 
