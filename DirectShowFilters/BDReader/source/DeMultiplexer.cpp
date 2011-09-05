@@ -901,6 +901,8 @@ void CDeMultiplexer:: FlushPESBuffers()
   m_p.Free();
   m_pBuild.Free();
   m_loopLastSearch==1;
+  delete m_pCurrentAudioBuffer;
+  m_pCurrentAudioBuffer = NULL;
 }
 
 /// This method will check if the tspacket is an video packet
