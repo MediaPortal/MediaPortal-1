@@ -65,7 +65,8 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (!noAudio && !firstAudio && m_vecClipAudioPackets.size()==0)
   {
     LogDebug("Swithching to fake Audio for clip %d",nClip);
-    noAudio=true;
+    firstAudio = true;
+    noAudio = true;
   }
   if (noAudio)
   {
