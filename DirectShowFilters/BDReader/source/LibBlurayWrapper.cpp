@@ -239,7 +239,7 @@ bool CLibBlurayWrapper::Initialize()
 
 bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
 {
-  LogDebug("CLibBlurayWrapper - OpenBluray");
+  LogDebug("CLibBlurayWrapper - OpenBluray: %s",pRootPath);
 
   CAutoLock cLibLock(&m_csLibLock);
 
