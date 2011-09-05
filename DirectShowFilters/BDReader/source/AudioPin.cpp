@@ -293,7 +293,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           return NOERROR;
         }
   
-        REFERENCE_TIME cRefTimeStart = -1, cRefTimeStop = -1, cRefTimeOrig = -1;
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
         if (hasTimestamp && m_dRateSeeking == 1.0)
@@ -301,7 +300,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (buffer->bDiscontinuity)
           {
             LogDebug("aud: set discontinuity");
-            pSample->SetDiscontinuity(TRUE);
+            pSample->SetDiscontinuity(true);
+            pSample->SetMediaType(buffer->pmt);
           }
 
           if (hasTimestamp)
