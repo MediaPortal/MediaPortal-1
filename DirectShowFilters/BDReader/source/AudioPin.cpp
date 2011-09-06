@@ -227,7 +227,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
         {
-          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d time %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtStreamPosition);
+          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d offset %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset);
           m_nPrevPl = buffer->nPlaylist;
           buffer->bSeekRequired = false;
           demux.m_bAudioPlSeen = true;
@@ -311,7 +311,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
+            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
+            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
+            pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
           else
           {
@@ -322,7 +324,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
-          LogDebug("aud: %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
+          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart, (buffer->rtStart - buffer->rtOffset) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
 #endif
           delete buffer;
         }

@@ -443,7 +443,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired)
         {
-          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d timestamp %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtStreamPosition);
+          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d offset %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset);
           buffer->bSeekRequired = false;
           m_nPrevPl = buffer->nPlaylist;
           demux.m_bVideoPlSeen = true;
@@ -510,13 +510,16 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           if (hasTimestamp)
           {
             //now we have the final timestamp, set timestamp in sample
+            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
+            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
+
             if (abs(m_dRateSeeking - 1.0) > 0.5)
             {
-              pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
+              pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
             }
             else
             {
-              pSample->SetTime(&buffer->rtStart, &buffer->rtStop);
+              pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
             }
           }
           else
@@ -533,7 +536,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-          LogDebug("vid: %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, 
+          LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
             buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
 

@@ -646,7 +646,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   switch (pEv.event)
   {
     case BD_EVENT_SEEK:
-      m_bDiscontinuousClip = true;
+      //m_bDiscontinuousClip = true;
       // TODO: check this
       //ResetStream();
       break;

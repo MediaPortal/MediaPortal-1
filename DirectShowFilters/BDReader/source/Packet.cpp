@@ -38,7 +38,7 @@ Packet::Packet()
   bSeekRequired = false;
   rtStart = -100;
   rtStop = -100;
-  rtStreamPosition = -100;
+  rtOffset = -100;
   pmt = NULL;
 }
 

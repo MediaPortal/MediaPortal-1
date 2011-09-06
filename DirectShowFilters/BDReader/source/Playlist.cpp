@@ -298,7 +298,7 @@ void CPlaylist::SetFilledAudio()
 REFERENCE_TIME CPlaylist::GetPacketTimeStampCorrection(CClip * packetClip)
 {
 //  LogDebug("Correcting timestamp by %I64d - %I64d",packetClip->clipPlaylistOffset, firstPESTimeStamp);
-  return packetClip->clipPlaylistOffset - firstPESTimeStamp;
+  return packetClip->clipPlaylistOffset;
 }
 
 Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
@@ -308,7 +308,7 @@ Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
   {
     ret->rtStart -= GetPacketTimeStampCorrection(packetClip);
     ret->rtStop -= GetPacketTimeStampCorrection(packetClip);
-    ret->rtStreamPosition = 0 - firstPESTimeStamp;
+    ret->rtOffset = 0 - firstPESTimeStamp;
   }
   return ret;
 }

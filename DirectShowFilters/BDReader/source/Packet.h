@@ -37,6 +37,6 @@ public:
   INT32 nPlaylist;
   bool bDiscontinuity, bSyncPoint, bAppendable, bSeekRequired;  
   static const REFERENCE_TIME INVALID_TIME = _I64_MIN;  
-  REFERENCE_TIME rtStart, rtStop, rtStreamPosition;
+  REFERENCE_TIME rtStart, rtStop, rtOffset;
   AM_MEDIA_TYPE* pmt;
 };
