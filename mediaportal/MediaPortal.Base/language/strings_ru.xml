@@ -1,51 +1,51 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Language name="Russian" characters="1105">
   <Section name="unmapped">
-    <String id="0" prefix="Мои ">Программы</String>
-    <String id="1" prefix="Мои ">Изображения</String>
-    <String id="2" prefix="Моя ">Музыка</String>
-    <String id="3" prefix="Моё ">Видео</String>
+    <String id="0" prefix="Мои ">программы</String>
+    <String id="1" prefix="Мои ">изображения</String>
+    <String id="2" prefix="Моя ">музыка</String>
+    <String id="3" prefix="Моё ">видео</String>
     <String id="4">Телепрограмма</String>
     <String id="5">Настройка</String>
     <String id="6">Текст отсутствует!</String>
-    <String id="7" prefix="Мои ">Файлы</String>
-    <String id="8" prefix="Моя ">Погода</String>
+    <String id="7" prefix="Мои ">файлы</String>
+    <String id="8" prefix="Моя ">погода</String>
     <String id="9" prefix="Мои ">RSS</String>
-    <String id="10" prefix="Мои ">Рецепты</String>
-    <String id="11">Понедельник</String>
-    <String id="12">Вторник</String>
-    <String id="13">Среда</String>
-    <String id="14">Четверг</String>
-    <String id="15">Пятница</String>
-    <String id="16">Суббота</String>
-    <String id="17">Воскресенье</String>
-    <String id="21">Январь</String>
-    <String id="22">Февраль</String>
-    <String id="23">Март</String>
-    <String id="24">Апрель</String>
-    <String id="25">Май</String>
-    <String id="26">Июнь</String>
-    <String id="27">Июль</String>
-    <String id="28">Август</String>
-    <String id="29">Сентябрь</String>
-    <String id="30">Октябрь</String>
-    <String id="31">Ноябрь</String>
-    <String id="32">Декабрь</String>
-    <String id="33">Янв</String>
-    <String id="34">Фев</String>
-    <String id="35">Мар</String>
-    <String id="36">Апр</String>
-    <String id="37">Май</String>
-    <String id="38">Июн</String>
-    <String id="39">Июл</String>
-    <String id="40">Авг</String>
-    <String id="41">Сен</String>
-    <String id="42">Окт</String>
-    <String id="43">Ноя</String>
-    <String id="44">Дек</String>
+    <String id="10" prefix="Мои ">рецепты</String>
+    <String id="11">понедельник</String>
+    <String id="12">вторник</String>
+    <String id="13">среда</String>
+    <String id="14">четверг</String>
+    <String id="15">пятница</String>
+    <String id="16">суббота</String>
+    <String id="17">воскресенье</String>
+    <String id="21">январь</String>
+    <String id="22">февраль</String>
+    <String id="23">март</String>
+    <String id="24">апрель</String>
+    <String id="25">май</String>
+    <String id="26">июнь</String>
+    <String id="27">июль</String>
+    <String id="28">август</String>
+    <String id="29">сентябрь</String>
+    <String id="30">октябрь</String>
+    <String id="31">ноябрь</String>
+    <String id="32">декабрь</String>
+    <String id="33">янв</String>
+    <String id="34">фев</String>
+    <String id="35">мар</String>
+    <String id="36">апр</String>
+    <String id="37">май</String>
+    <String id="38">июн</String>
+    <String id="39">июл</String>
+    <String id="40">авг</String>
+    <String id="41">сен</String>
+    <String id="42">окт</String>
+    <String id="43">ноя</String>
+    <String id="44">дек</String>
     <String id="50" prefix="Мои ">DVD</String>
     <String id="51">Играть диск</String>
-    <String id="60">Ожидание запуска ТВ Службы...</String>
+    <String id="60">Ожидание запуска ТВ-службы...</String>
     <String id="61">Ожидание {0} секунд(ы) перед запуском...</String>
     <String id="62">Инициализация DirectX...</String>
     <String id="63">Инициализация устройств ввода...</String>
@@ -55,23 +55,23 @@
     <String id="67">Кеширование графики...</String>
     <String id="68">Загрузка шрифтов...</String>
     <String id="69">Загрузка скина ({0})...</String>
-    <String id="70">Загрузка оконных плагинов...</String>
+    <String id="70">Загрузка плагинов...</String>
     <String id="71">Инициализация оконного менеджера...</String>
     <String id="100">Вид: Иконки</String>
     <String id="101">Вид: Список</String>
     <String id="102">Сканировать</String>
-    <String id="103">Сорт. по: Имени</String>
-    <String id="104">Сорт. по: Дате</String>
-    <String id="105">Сорт. по: Размеру</String>
+    <String id="103">Сорт. по: имени</String>
+    <String id="104">Сорт. по: дате</String>
+    <String id="105">Сорт. по: размеру</String>
     <String id="106">Нет</String>
     <String id="107">Да</String>
     <String id="108">Показ слайдов</String>
     <String id="109">Создать миниатюры</String>
     <String id="110">Создать миниатюры</String>
     <String id="111">Ярлыки</String>
-    <String id="112">ПАУЗА</String>
-    <String id="113" prefix="Мои ">Файлы : Источник</String>
-    <String id="114" prefix="Мои ">Файлы : Назначение</String>
+    <String id="112">Пауза</String>
+    <String id="113" prefix="Мои ">Файлы : источник</String>
+    <String id="114" prefix="Мои ">Файлы : назначение</String>
     <String id="115">Копировать</String>
     <String id="116">Переместить</String>
     <String id="117">Удалить</String>
@@ -95,11 +95,11 @@
     <String id="135">Жанры</String>
     <String id="136">Плейлист</String>
     <String id="137">Поиск</String>
-    <String id="138">ИНФОРМАЦИЯ О СИСТЕМЕ</String>
+    <String id="138">Информация о системе</String>
     <String id="139">Температура:</String>
     <String id="140">CPU:</String>
     <String id="141">GPU:</String>
-    <String id="142">Время:</String>
+    <String id="142">Время запуска:</String>
     <String id="143">Текущий:</String>
     <String id="144">Сборка:</String>
     <String id="145">Сеть:</String>
@@ -124,7 +124,7 @@
     <String id="164">Нет диска</String>
     <String id="165">Диск установлен</String>
     <String id="166">Скин:</String>
-    <String id="167">FTP сервер:</String>
+    <String id="167">FTP-сервер:</String>
     <String id="168">Время синхронизации:</String>
     <String id="169">Разрешение:</String>
     <String id="170">Альбом:</String>
@@ -166,10 +166,10 @@
     <String id="206">Актёры</String>
     <String id="207">Описание</String>
     <String id="208">Играть</String>
-    <String id="209">Вперед</String>
+    <String id="209">Вперёд</String>
     <String id="210">Назад</String>
     <String id="211">Поиск приложений</String>
-    <String id="212">приложения найдены</String>
+    <String id="212">Приложения найдены</String>
     <String id="213">Калибровка интерфейса</String>
     <String id="214">Калибровка экрана</String>
     <String id="215">Смягчение</String>
@@ -196,9 +196,9 @@
     <String id="236">Кубическое Гаусса</String>
     <String id="237">Уменьшение:</String>
     <String id="238">Увеличение:</String>
-    <String id="240">Автозапуск Видео-DVD</String>
+    <String id="240">Автозапуск видео-DVD</String>
     <String id="241">Автозапуск VCD/SVCD</String>
-    <String id="242">Автозапуск Аудио-CD</String>
+    <String id="242">Автозапуск аудио-CD</String>
     <String id="243">Автозапуск игр XBOX</String>
     <String id="244">Автозапуск видео</String>
     <String id="245">Автозапуск музыки</String>
@@ -264,8 +264,8 @@
     <String id="305">Включено</String>
     <String id="306">Прогрессивный</String>
     <String id="307">Авто</String>
-    <String id="308">фильтр вертикального деблокинга</String>
-    <String id="309">фильтр горизонтального деблокинга</String>
+    <String id="308">Фильтр вертикального деблокинга</String>
+    <String id="309">Фильтр горизонтального деблокинга</String>
     <String id="310">Авто яркость/контраст</String>
     <String id="311">Dering</String>
     <String id="312">(0=авто)</String>
@@ -292,8 +292,8 @@
     <String id="333">Вы хотите обновить музыкальную базу?</String>
     <String id="334">Обновление музыкальной базы</String>
     <String id="335">Старт</String>
-    <String id="336">Сред. частота кадров</String>
-    <String id="337">Аудио выход:</String>
+    <String id="336">Средняя частота кадров</String>
+    <String id="337">Аудиовыход:</String>
     <String id="338">Аналоговый</String>
     <String id="339">Цифровой</String>
     <String id="340">Разные исполнители</String>
@@ -457,10 +457,10 @@
     <String id="499">Вид</String>
     <String id="500">Файл</String>
     <String id="501">Установить как назначение</String>
-    <String id="502">Не удалось завершите действие</String>
+    <String id="502">Не удалось завершить действие</String>
     <String id="503">Удалить этот каталог</String>
     <String id="504">Перейти к назначению</String>
-    <String id="505">Подсчет</String>
+    <String id="505">Подсчёт</String>
     <String id="506">Вы уверены?</String>
     <String id="507">элементы</String>
     <String id="508">в</String>
@@ -468,7 +468,7 @@
     <String id="510">Отмена</String>
     <String id="511">Всегда</String>
     <String id="512">Никогда</String>
-    <String id="513">Элемент защищен, действие не завершено</String>
+    <String id="513">Элемент защищён, действие не завершено</String>
     <String id="514">Ошибка при создании каталога, действие не завершено</String>
     <String id="515">Ошибка при удалении каталога, действие не завершено</String>
     <String id="516">Не удалось удалить файл, действие не завершено</String>
@@ -481,7 +481,7 @@
     <String id="523">Нулевой шаг не разрешён!</String>
     <String id="524">Шаг не более 3х часов!</String>
     <String id="525">Шаг уже определён</String>
-    <String id="527">Сорт. по: Просмотрено</String>
+    <String id="527">Сорт. по: просмотрено</String>
     <String id="528">Артисты</String>
     <String id="529">Вид: Большие иконки</String>
     <String id="530">Вставлен фотодиск, хотите его открыть?</String>
@@ -551,21 +551,21 @@
     <String id="617">Создать</String>
     <String id="618">Удалить</String>
     <String id="619">Редактировать дату/время</String>
-    <String id="620">Сорт. по: Каналу</String>
-    <String id="621">Сорт. по: Дате</String>
-    <String id="622">Сорт. по: Имени</String>
-    <String id="623">Сорт. по: Типу</String>
+    <String id="620">Сорт. по: каналу</String>
+    <String id="621">Сорт. по: дате</String>
+    <String id="622">Сорт. по: имени</String>
+    <String id="623">Сорт. по: типу</String>
     <String id="624">Очистка</String>
     <String id="625">Удалено из расписания:</String>
-    <String id="626">Изменит тип</String>
+    <String id="626">Изменить тип</String>
     <String id="627">Каналы:</String>
     <String id="628">Программы:</String>
     <String id="629">Остановить запись</String>
     <String id="630">Хотите перезагрузить компьютер?</String>
     <String id="631">Хотите выключить компьютер?</String>
     <String id="632">Объект(ов)</String>
-    <String id="633">Начало Дата/Время</String>
-    <String id="634">Конец Дата/Время</String>
+    <String id="633">Дата/время начала</String>
+    <String id="634">Дата/время окончания</String>
     <String id="635">Время</String>
     <String id="636">Дата</String>
     <String id="637">Редактировать запись</String>
@@ -576,9 +576,9 @@
     <String id="642">Загрузка телеканалов</String>
     <String id="643">Загрузка телепрограмм</String>
     <String id="644">Сортировка телепрограмм</String>
-    <String id="645">Загрузка XML файла</String>
+    <String id="645">Загрузка XML-файла</String>
     <String id="646">Запланированные записи</String>
-    <String id="647">Однократный</String>
+    <String id="647">Однократно</String>
     <String id="648">Ежедневно</String>
     <String id="649">Каждый</String>
     <String id="650">Всегда на {0}</String>
@@ -588,42 +588,42 @@
     <String id="654">Извлечь</String>
     <String id="655">Воспроизвести записанную передачу</String>
     <String id="656">Удалить записанную передачу</String>
-    <String id="657">Пн</String>
-    <String id="658">Вт</String>
-    <String id="659">Ср</String>
-    <String id="660">Чт</String>
-    <String id="661">Пт</String>
-    <String id="662">Сб</String>
-    <String id="663">Вс</String>
+    <String id="657">пн</String>
+    <String id="658">вт</String>
+    <String id="659">ср</String>
+    <String id="660">чт</String>
+    <String id="661">пт</String>
+    <String id="662">сб</String>
+    <String id="663">вс</String>
     <String id="664">Удалить это изображение?</String>
-    <String id="665" prefix="Моё ">Радио</String>
+    <String id="665" prefix="Моё ">радио</String>
     <String id="666">Станции</String>
     <String id="667">Авто-настройка</String>
-    <String id="668">Сорт. по: Типу</String>
-    <String id="669">Сорт. по: Жанру</String>
-    <String id="670">Сорт. по: Качеству</String>
-    <String id="671">Сорт. по: Просмотренным</String>
-    <String id="672">Записывать Пн-Пт</String>
+    <String id="668">Сорт. по: типу</String>
+    <String id="669">Сорт. по: жанру</String>
+    <String id="670">Сорт. по: качеству</String>
+    <String id="671">Сорт. по: просмотренным</String>
+    <String id="672">Записывать пн-пт</String>
     <String id="673">Скорость прокрутки</String>
     <String id="674">Настройка GUI</String>
     <String id="675">Пример:</String>
     <String id="676">Удалить просмотренные записи?</String>
     <String id="677">время</String>
-    <String id="678">Сорт. по: Жанру</String>
+    <String id="678">Сорт. по: жанру</String>
     <String id="679">Еженедельно</String>
-    <String id="680">Пн-Пт</String>
+    <String id="680">пн-пт</String>
     <String id="681">Ожидание</String>
     <String id="682">Запись</String>
     <String id="683">Завершено</String>
     <String id="684">Отменено</String>
-    <String id="685">Сорт. по: Статусу</String>
+    <String id="685">Сорт. по: статусу</String>
     <String id="686">Родился</String>
     <String id="687">Годы работы</String>
     <String id="688">Инструменты</String>
     <String id="689">Био.</String>
-    <String id="690">Дискография (Альбомы)</String>
-    <String id="691">Дискография (Сборники)</String>
-    <String id="692">TV потоки</String>
+    <String id="690">Дискография (альбомы)</String>
+    <String id="691">Дискография (сборники)</String>
+    <String id="692">ТВ-потоки</String>
     <String id="699">ТВ</String>
     <String id="700">Дискография (синглы, прочее)</String>
     <String id="701">Дискография (видео, интервью)</String>
@@ -632,7 +632,7 @@
     <String id="704">Лента восстановлена</String>
     <String id="705">Получение RSS с</String>
     <String id="706">Выберите ленту</String>
-    <String id="707">ТВ Вкл</String>
+    <String id="707">ТВ включён</String>
     <String id="708">Сдвиг времени</String>
     <String id="709">Автоматическое обновление</String>
     <String id="710">Доступна новая версия</String>
@@ -645,8 +645,8 @@
     <String id="717">Погода</String>
     <String id="718">Очистить Топ100</String>
     <String id="719">Вы точно хотите очистить Топ100?</String>
-    <String id="720">Показать: Длительность</String>
-    <String id="721">Показать: Кол-во воспроизведений</String>
+    <String id="720">Показать: длительность</String>
+    <String id="721">Показать: кол-во воспроизведений</String>
     <String id="722">Не удалось воспроизвести диск</String>
     <String id="723">Вы вставили диск?</String>
     <String id="724">Поиск в телепрограмме</String>
@@ -658,16 +658,16 @@
     <String id="730">Это расписание уже записывается. Если вы его удалите,</String>
     <String id="731">то запись будет остановлена.</String>
     <String id="732">Вы уверены?</String>
-    <String id="733">Вид: Предпросмотр</String>
+    <String id="733">Вид: предпросмотр</String>
     <String id="734">Изображение:</String>
     <String id="735">Повернуть</String>
     <String id="736">Данные недоступны</String>
-    <String id="737">Вид: Спутник</String>
-    <String id="738">Вид: Температура</String>
-    <String id="739">Вид: UV индекс</String>
-    <String id="740">Вид: Ветер</String>
-    <String id="741">Вид: Влажность</String>
-    <String id="742">Вид: Осадки</String>
+    <String id="737">Вид: спутник</String>
+    <String id="738">Вид: температура</String>
+    <String id="739">Вид: УФ индекс</String>
+    <String id="740">Вид: ветер</String>
+    <String id="741">Вид: влажность</String>
+    <String id="742">Вид: осадки</String>
     <String id="743">На 4 дня</String>
     <String id="744">Восход</String>
     <String id="745">Закат</String>
@@ -683,27 +683,27 @@
     <String id="756">Ни один тюнер не может получить:{0}</String>
     <String id="757">Все тюнеры заняты</String>
     <String id="758">Тюнер не записывает</String>
-    <String id="759">Не удалось начать timeshifting</String>
-    <String id="760">Нет доступного тюнера для timeshifting'а</String>
-    <String id="761">Не удалось остановить timeshifting</String>
+    <String id="759">Не удалось начать timeshift</String>
+    <String id="760">Нет доступного тюнера для timeshift'а</String>
+    <String id="761">Не удалось остановить timeshift</String>
     <String id="762">Не удалось включить ТВ</String>
     <String id="763">Рекордер занят</String>
     <String id="764">Рекордер на паузе</String>
     <String id="765">Нет места на диске</String>
     <String id="766">уже импортируется...</String>
-    <String id="767">Ошибочный XMLТВ файл</String>
+    <String id="767">Ошибочный XMLTV-файл</String>
     <String id="768">Каналы не найдены</String>
     <String id="769">Программы не найдены</String>
-    <String id="770">xmltv файл не найден</String>
-    <String id="771">Введенный PIN не может быть принят</String>
+    <String id="770">XMLTV-файл не найден</String>
+    <String id="771">Введённый PIN не может быть принят</String>
     <String id="772">Хотите попробовать еще раз?</String>
-    <String id="773">НАЧАЛО</String>
-    <String id="774">КОНЕЦ</String>
+    <String id="773">Начало</String>
+    <String id="774">Конец</String>
     <String id="775">Запускать ТВ в разделе "Моё ТВ" автоматически</String>
-    <String id="776">Не начинать / автоматически переключаться на ТВ</String>
-    <String id="777">Настройка сдвига по времени</String>
-    <String id="778">Начинать с включенным сдвигом по времени</String>
-    <String id="779">Включать сдвиг времени вручную</String>
+    <String id="776">Не переключаться и не запускать ТВ автоматически</String>
+    <String id="777">Настройка timeshift</String>
+    <String id="778">Начинать с включенным timeshift</String>
+    <String id="779">Включать timeshift вручную</String>
     <String id="780">Выберите режим планировщика</String>
     <String id="781">Быстрая запись</String>
     <String id="782">Продвинутая запись</String>
@@ -711,10 +711,10 @@
     <String id="784">Поворот на 270°</String>
     <String id="789">Сейчас: </String>
     <String id="790">Далее: </String>
-    <String id="791">Вид: 3D Обложки</String>
-    <String id="792">Меню Видов</String>
-    <String id="798">низкий</String>
-    <String id="799">высокий</String>
+    <String id="791">Вид: 3D-Обложки</String>
+    <String id="792">Меню видов</String>
+    <String id="798">Низкий</String>
+    <String id="799">Высокий</String>
     <String id="800">Начинается с</String>
     <String id="801">Содержит</String>
     <String id="802">Оканчивается на</String>
@@ -730,16 +730,16 @@
     <String id="812">Радиостанции</String>
     <String id="820">Удалить непросмотренные записи?</String>
     <String id="830">Сбросить статус "просмотрено"</String>
-    <String id="831">Извлечь съемный диск</String>
-    <String id="832">Не могу удалить диск: </String>
-    <String id="833">Устр-во можно безопасно отключить</String>
+    <String id="831">Извлечь съёмный диск</String>
+    <String id="832">Не могу удалить диск:</String>
+    <String id="833">Устройство можно безопасно отключить</String>
     <String id="850" prefix="Мои ">Напоминания</String>
     <String id="851">Плейлист</String>
-    <String id="852">Напоминание вкл</String>
+    <String id="852">Напоминание включено</String>
     <String id="853">Имя:</String>
     <String id="854">Включать в эти дни</String>
     <String id="855">Время напоминания</String>
-    <String id="856">Таймер сна Вкл.</String>
+    <String id="856">Таймер сна включён</String>
     <String id="857">Подремать</String>
     <String id="858">Отменить</String>
     <String id="859">Таймер сна</String>
@@ -785,15 +785,15 @@
     <String id="899">WMV</String>
     <String id="900">Начать с прерванного момента?</String>
     <String id="901">MSN Messenger</String>
-    <String id="902">Сетевые контакты</String>
-    <String id="903">Подписаться</String>
-    <String id="904">Отписаться</String>
+    <String id="902">Контакты в сети</String>
+    <String id="903">Подключиться</String>
+    <String id="904">Отключиться</String>
     <String id="905">Сначала вам нужно настроить этот плагин</String>
     <String id="906">Введите Ваш почтовый адрес при установке</String>
     <String id="907">Не удалось подключиться к MSN</String>
     <String id="908">пишет сообщение...</String>
     <String id="909">Подключение...</String>
-    <String id="910">Идёт подписка...</String>
+    <String id="910">Вход в сеть...</String>
     <String id="911">Нет каналов</String>
     <String id="912">Не удалось загрузить RSS</String>
     <String id="913" prefix="Мои ">Плагины</String>
@@ -802,9 +802,9 @@
     <String id="916">Удалённый файл</String>
     <String id="917">Этот файл находится на удалённом сервере</String>
     <String id="918">Надо ли загрузить его на</String>
-    <String id="919">на локальный компьютер?</String>
+    <String id="919">локальный компьютер?</String>
     <String id="920">Не удалось загрузить файл</String>
-    <String id="921">Файл уже скачан</String>
+    <String id="921">Файл скачивается</String>
     <String id="922">Описание</String>
     <String id="923">Показ</String>
     <String id="924">Меню</String>
@@ -829,8 +829,8 @@
     <String id="943">Норма</String>
     <String id="944">Оригинальное</String>
     <String id="945">Letterbox 14:9</String>
-    <String id="946">Pan/Scan</String>
-    <String id="947">Зум</String>
+    <String id="946">Растянуть нелинейно</String>
+    <String id="947">Увеличение</String>
     <String id="948">Онлайн</String>
     <String id="949">Занят</String>
     <String id="950">Скоро буду</String>
@@ -875,7 +875,7 @@
     <String id="993">Заданный</String>
     <String id="994">Включить автом. сжатие</String>
     <String id="995">Вы уверены, что нужно</String>
-    <String id="996">сжать эту запись?</String>
+    <String id="996">сжать выбранные записи?</String>
     <String id="997">Завершено</String>
     <String id="998">XviD</String>
     <String id="999">Этот плагин позволит вам перекодировать ваши</String>
@@ -978,7 +978,7 @@
     <String id="1111">Пропустить конфликтную запись(и)</String>
     <String id="1112">Не решать конфликт</String>
     <String id="1113">Пропустить конфликтный эпизод(ы)</String>
-    <String id="1190">Зум 14:9</String>
+    <String id="1190">Увеличение 14:9</String>
     <String id="1191">Повторять список проигрывания</String>
     <String id="1192">Использовать VMR9 для Web Потоков</String>
     <String id="1193">Включить звуковые эффекты интерфейса</String>
@@ -1016,7 +1016,7 @@
     <String id="1231">Воспроизводилось:</String>
     <String id="1240">Блокировать содержимое</String>
     <String id="1241">Разблокировать содержимое</String>
-    <String id="1300" prefix="Мои ">ТВ шоу</String>
+    <String id="1300" prefix="Мои ">ТВ-передачи</String>
     <String id="1440" prefix="Мой ">Телетекст</String>
     <String id="1441">Телетекст</String>
     <String id="1442">Скорость прокрутки (гор.)</String>
@@ -1059,12 +1059,12 @@
     <String id="1601">Перейти в ждущий режим?</String>
     <String id="1602">Перейти в спящий режим?</String>
     <String id="1900">Устаревший скин</String>
-    <String id="1901">Выбранный скин ({0}) устарел. Это может вызвать проблемы при работе MediaPortal, поэтому MediaPortal временно будет использовать скин по умолчанию. Если Вы всё-таки хотите попробовать использовать этот скин, то нажмите кнопку 'Проигнорировать и продолжить использовать', но помните: НЕ сообщайте об ошибках в работе, пока Вы используете этот скин!
+    <String id="1901">Выбранный скин ({0}) устарел. Это может вызвать проблемы при работе МедиаПортала, поэтому МедиаПортал временно будет использовать скин по умолчанию. Если Вы всё-таки хотите попробовать использовать этот скин, то нажмите кнопку 'Проигнорировать и продолжить использовать', но помните: НЕ сообщайте об ошибках в работе, пока Вы используете этот скин!
     (чтобы это сообщение исчезло, или подождите, пока оно исчезнет автоматически, или нажмите кнопку 'Back/ESC' на Вашем пульте)</String>
     <String id="1902">Больше не показывать это сообщение</String>
     <String id="1903">Проигнорировать и продолжить использовать ({0})...</String>
     <String id="1910">Несовместимые плагины</String>
-    <String id="1911">Следующие плагины несовместимы с этой версией MediaPortal и были автоматически отключены:</String>
+    <String id="1911">Следующие плагины несовместимы с этой версией МедиаПортала и были автоматически отключены:</String>
     <String id="1912">Продолжить|Продолжить ({0})...|Продолжить ({0})...</String>
     <String id="1950" prefix="Мой ">Статус</String>
     <String id="1951">Жёсткий диск</String>
@@ -1394,17 +1394,17 @@
     <String id="5923">DVD, вышедшие на этой неделе</String>
     <String id="5924">DVD, выходящие на следующей неделе</String>
     <String id="5925">Предварительный заказ DVD</String>
-    <String id="6000">Видео кодек</String>
-    <String id="6001">Аудио кодек</String>
-    <String id="6002">Аудио рендеринг</String>
+    <String id="6000">Видеокодек</String>
+    <String id="6001">Аудиокодек</String>
+    <String id="6002">Аудиорендерер</String>
     <String id="6003">Деинтерлейсинг</String>
     <String id="6004">Соотношение сторон</String>
     <String id="6005">Буфер Timeshift'а</String>
     <String id="6006">Включение ТВ</String>
     <String id="6007">Настройка записи</String>
     <String id="6008">Сортировка каналов</String>
-    <String id="6009">DVB Программа</String>
-    <String id="6010">XMLТВ EPG граббер</String>
+    <String id="6009">DVB-Программа</String>
+    <String id="6010">XMLТВ EPG-граббер</String>
     <String id="6011">DVB EPG:</String>
     <String id="6012">Обновить телепрограмму из следующего DVB канала:</String>
     <String id="6013">Вручную</String>
@@ -1430,10 +1430,10 @@
     <String id="6033">Поиск по ключ. слову</String>
     <String id="6034">Поиск по жанру</String>
     <String id="6035">Добавить расписание</String>
-    <String id="6036">H.264 Видео кодек</String>
+    <String id="6036">H.264 видеокодек</String>
     <String id="6037">Многофайловый фильм</String>
-    <String id="6038">Выберите диск.</String>
-    <String id="6039">LATM AAC Аудио кодек</String>
+    <String id="6038">Выберите диск</String>
+    <String id="6039">LATM AAC аудиокодек</String>
     <String id="6040">Вчера</String>
     <String id="6041">Позавчера</String>
     <String id="6042">Введите длительность шага в секундах</String>
@@ -1441,8 +1441,8 @@
     <String id="6060">Текущий месяц</String>
     <String id="6070">Текущий год</String>
     <String id="6080">Прошлый год</String>
-    <String id="6090">Еще раньше</String>
-    <String id="8000" prefix="Моя ">Почта</String>
+    <String id="6090">Ещё раньше</String>
+    <String id="8000" prefix="Моя ">почта</String>
     <String id="8001">Проверить почту</String>
     <String id="8002">Автопроверка выкл</String>
     <String id="8003">Автопроверка вкл</String>
@@ -1681,7 +1681,7 @@
     <String id="33008">Нет активного плейлиста</String>
     <String id="33009">для вставки трека!</String>
     <String id="33010">Автоматически заполнить плейлист</String>
-    <String id="33011">похожими треками</String>
+    <String id="33011">похожие треки</String>
     <String id="33012">треки, похожие на ваши любимые</String>
     <String id="33013">треки, соотв. выбранному тегу</String>
     <String id="33014">треки, воспроизведённые недавно</String>
@@ -1897,10 +1897,10 @@
     <String id="109004">MiniDisplay - Настройка - Эквалайзер</String>
     <String id="109005">MiniDisplay - Настройка - Клавиши</String>
     <String id="109006">MiniDisplay - Настройка - ПДУ</String>
-    <String id="102019">ТВ напоминание</String>
-    <String id="200000">Выберите Ваш EPG граббер. Если Ваша страна не указана</String>
+    <String id="102019">ТВ уведомление</String>
+    <String id="200000">Выберите Ваш EPG-граббер. Если Ваша страна не указана</String>
     <String id="200001">в списке, то вам придётся загружать EPG самостоятельно.</String>
-    <String id="200002">Теперь вы можете назначить EPG каналы вашим телеканалам</String>
+    <String id="200002">Теперь вы можете назначить EPG-каналы вашим телеканалам</String>
     <String id="200003">выберите канал и нажмите Enter для смены раскладки</String>
     <String id="200004">Ручная установка tvguide.xml</String>
     <String id="200005">Выберите ваш пульт:</String>
@@ -1911,7 +1911,7 @@
     <String id="200010">МедиаПортал превращает Ваш компьютер в продвинутый мультимедиа-центр / HTPC.</String>
     <String id="200011">С МедиаПорталом Вы можете прослушивать Вашу любимую музыку, радио, просматривать фотографии,</String>
     <String id="200012">видео, DVD, телевидение, и делать массу других вещей.</String>
-    <String id="200013">Этот мастер поможет вам быстро и просто настроить Mediaportal.</String>
+    <String id="200013">Этот мастер поможет вам быстро и просто настроить МедиаПортал.</String>
     <String id="200014">Для начала, укажите Вашу страну и язык интерфейса:</String>
     <String id="200015">Нажмите кнопку Далее для начала настройки</String>
     <String id="200017">Добро пожаловать в МедиаПортал.</String>
@@ -1948,12 +1948,12 @@
     <String id="200046">Создать эскизы (в этой папке)</String>
     <String id="200047">Создать эскизы (включая подпапки)</String>
     <String id="200048">Обновить все эскизы</String>
-    <String id="200049">Только просмотренная запись для данной программы/String>
+    <String id="200049">Только просмотренная запись для данной программы</String>
     <String id="200050">Это удалит эту запись с жёсткого диска</String>
     <String id="200051">Удалить эту серию?</String>
     <String id="200052">Активные записи</String>
     <String id="200053">Нет активных записей</String>
-    <String id="200054">Невозможно удалить ТВ запись.</String>
+    <String id="200054">Невозможно удалить ТВ-запись.</String>
     <String id="200055">Просмотр прямого эфира ТВ может быть прерван.</String>
     <String id="200059">Режим Dual Mono</String>
     <String id="200060">Стерео</String>
