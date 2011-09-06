@@ -801,13 +801,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
       if (CPcr::DecodeFromPesHeader(p, 0, pts, dts))
       {
-        CPcr correctedPts;
-        correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
-        correctedPts.IsValid = true;
-
 #ifdef LOG_DEMUXER_AUDIO_SAMPLES
-          LogDebug("demux: aud last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-            m_lastAudioPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+        LogDebug("demux: aud last pts: %6.3f pts %6.3f clip: %d playlist: %d", m_lastAudioPTS.ToClock(), pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
 
         m_lastAudioPTS = pts;
@@ -1366,16 +1361,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         m_VideoValidPES = true;
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
-          CPcr correctedPts;
-          correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
-          correctedPts.IsValid = true;
-
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
-          LogDebug("demux: vid last pts: %6.3f pts %6.3f corr %6.3f clip: %d playlist: %d", 
-            m_lastVideoPTS.ToClock(), pts.ToClock(), correctedPts.ToClock(), m_nClip, m_nPlaylist);
+          LogDebug("demux: vid last pts: %6.3f pts %6.3f clip: %d playlist: %d", m_lastVideoPTS.ToClock(), pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
           m_lastVideoPTS = pts;
-          //pts = correctedPts;
         }
 
         m_lastStart -= 9 + start[8];
@@ -1479,15 +1468,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       
         if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
         {
-          CPcr correctedPts;
-          correctedPts.PcrReferenceBase = pts.PcrReferenceBase + m_rtOffset;
-          correctedPts.IsValid = true;
-
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
-          LogDebug("demux: vid last pts: %6.3f pts %6.3f clip: %d playlist: %d", 
-            m_lastVideoPTS.ToClock(), pts.ToClock(), m_nClip, m_nPlaylist);
+          LogDebug("demux: vid last pts: %6.3f pts %6.3f clip: %d playlist: %d", m_lastVideoPTS.ToClock(), pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
-
           m_lastVideoPTS = pts;
           m_VideoPts = pts;
         }
@@ -1498,7 +1481,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 		
         m_p->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_p->rtStop = m_p->rtStart + 1;
-
         
         if (m_nMPEG2LastPlaylist == -1)
           m_nMPEG2LastPlaylist = m_nPlaylist;
@@ -1510,7 +1492,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         m_p->nClipNumber = m_nMPEG2LastClip;
         m_nMPEG2LastPlaylist = m_nPlaylist;
         m_nMPEG2LastClip = m_nClip;
-        
       }
     }
   }
