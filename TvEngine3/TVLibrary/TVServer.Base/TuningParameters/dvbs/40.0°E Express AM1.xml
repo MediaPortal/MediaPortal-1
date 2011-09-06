@@ -37,12 +37,12 @@
     <Rolloff>NotSet</Rolloff>
   </Transponder>
   <Transponder>
-    <CarrierFrequency>11060000</CarrierFrequency>
-    <Polarisation>LinearV</Polarisation>
-    <SymbolRate>6000</SymbolRate>
-    <Modulation>ModQpsk</Modulation>
-    <InnerFecRate>Rate3_4</InnerFecRate>
-    <Pilot>Off</Pilot>
+    <CarrierFrequency>4037000</CarrierFrequency>
+    <Polarisation>CircularR</Polarisation>
+    <SymbolRate>12580</SymbolRate>
+    <Modulation>Mod8Psk</Modulation>
+    <InnerFecRate>Rate3_5</InnerFecRate>
+    <Pilot>On</Pilot>
     <Rolloff>ThirtyFive</Rolloff>
   </Transponder>
 </ArrayOfTransponder>
