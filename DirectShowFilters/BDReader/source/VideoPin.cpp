@@ -536,7 +536,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-          LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
+          LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
             buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
 
