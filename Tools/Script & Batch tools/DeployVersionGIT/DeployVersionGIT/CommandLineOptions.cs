@@ -29,6 +29,7 @@ namespace DeployVersionGIT
     public enum Option
     {
       git,
+      path,
       revert,
       GetVersion,
       UpdateCopyright
@@ -50,6 +51,7 @@ namespace DeployVersionGIT
     {
       Console.WriteLine("Vaid Command Line options:");
       Console.WriteLine("/git=<directory>  git directory");
+      Console.WriteLine("/path=<directory> working directory");
       Console.WriteLine("/revert           revert to build 0");
       Console.WriteLine("/GetVersion       writes the git revision in textfile version.txt");
     }

@@ -7,8 +7,8 @@ call BuildInit.bat %1
 rem build
 echo.
 echo Writing GIT revision assemblies...
-rem %DeployVersionGIT% /git="%TVLibrary%" >> %log%
-%DeployVersionGIT% /git="%CommonMPTV%" >> %log%
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%TVLibrary%" >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
 echo Building TV Server...
@@ -19,12 +19,12 @@ echo Building TV Client plugin...
 
 echo.
 echo Reverting assemblies...
-rem %DeployVersionGIT% /git="%TVLibrary%" /revert >> %log%
-%DeployVersionGIT% /git="%CommonMPTV%" /revert >> %log%
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%TVLibrary%" /revert >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" /revert >> %log%
 
 echo.
 echo Reading the GIT revision...
-%DeployVersionGIT% /git="%CommonMPTV%" /GetVersion >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" /GetVersion >> %log%
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%

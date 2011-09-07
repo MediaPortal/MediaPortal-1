@@ -47,12 +47,12 @@ namespace DeployVersionGIT
 
       CommandLineOptions options = argsOptions as CommandLineOptions;
 
-      if (!options.IsOption(CommandLineOptions.Option.git))
+      if (!options.IsOption(CommandLineOptions.Option.path))
       {
         argsOptions.DisplayOptions();
         Environment.Exit(0);
       }
-      string directory = options.GetOption(CommandLineOptions.Option.git);
+      string directory = options.GetOption(CommandLineOptions.Option.path);
 
       if (options.IsOption(CommandLineOptions.Option.UpdateCopyright))
       {
@@ -67,8 +67,9 @@ namespace DeployVersionGIT
 
       if (options.IsOption(CommandLineOptions.Option.GetVersion))
       {
+        string gitDir = options.GetOption(CommandLineOptions.Option.git);
         VersionGIT git = new VersionGIT();
-        bool versionExists = git.ReadVersion(directory);
+        bool versionExists = git.ReadVersion(gitDir);
 
         if (File.Exists("version.txt"))
         {
@@ -99,8 +100,9 @@ namespace DeployVersionGIT
       }
       else
       {
+        string gitDir = options.GetOption(CommandLineOptions.Option.git);
         VersionGIT git = new VersionGIT();
-        bool versionExists = git.ReadVersion(directory);
+        bool versionExists = git.ReadVersion(gitDir);
 
         if (!versionExists)
         {

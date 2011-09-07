@@ -7,8 +7,8 @@ call BuildInit.bat %1
 rem build
 echo.
 echo Writing GIT revision assemblies...
-rem %DeployVersionGIT% /git="%MediaPortal%" >> %log%
-%DeployVersionGIT% /git="%CommonMPTV%" >> %log%
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
 echo Building MediaPortal...
@@ -16,12 +16,12 @@ echo Building MediaPortal...
 
 echo.
 echo Reverting assemblies...
-rem %DeployVersionGIT% /git="%MediaPortal%" /revert >> %log%
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" /revert >> %log%
 %DeployVersionGIT% /git="%CommonMPTV%" /revert >> %log%
 
 echo.
 echo Reading the git revision...
-%DeployVersionGIT% /git="%CommonMPTV%" /GetVersion >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" /GetVersion >> %log%
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%
