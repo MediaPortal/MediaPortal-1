@@ -6,9 +6,9 @@ call BuildInit.bat %1
 
 rem build
 echo.
-echo Writing SVN revision assemblies...
-rem %DeployVersionSVN% /svn="%TVLibrary%" >> %log%
-%DeployVersionSVN% /svn="%CommonMPTV%" >> %log%
+echo Writing GIT revision assemblies...
+rem %DeployVersionGIT% /git="%TVLibrary%" >> %log%
+%DeployVersionGIT% /git="%CommonMPTV%" >> %log%
 
 echo.
 echo Building TV Server...
@@ -19,12 +19,12 @@ echo Building TV Client plugin...
 
 echo.
 echo Reverting assemblies...
-rem %DeployVersionSVN% /svn="%TVLibrary%" /revert >> %log%
-%DeployVersionSVN% /svn="%CommonMPTV%" /revert >> %log%
+rem %DeployVersionGIT% /git="%TVLibrary%" /revert >> %log%
+%DeployVersionGIT% /git="%CommonMPTV%" /revert >> %log%
 
 echo.
-echo Reading the svn revision...
-%DeployVersionSVN% /svn="%CommonMPTV%" /GetVersion >> %log%
+echo Reading the GIT revision...
+%DeployVersionGIT% /git="%CommonMPTV%" /GetVersion >> %log%
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%
