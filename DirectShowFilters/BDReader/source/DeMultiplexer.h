@@ -42,6 +42,7 @@ class CBDReaderFilter;
 #define MAX_BUF_SIZE 200000
 #define READ_SIZE (1344 * 60)
 #define INITIAL_READ_SIZE (READ_SIZE * 1024)
+#define MAX_CONSECUTIVE_READ_ERRORS 5 
 
 class CDeMultiplexer : public CPacketSync, public BDEventObserver
 {
@@ -228,6 +229,7 @@ private:
 
   REFERENCE_TIME m_rtOffset;
 
+  unsigned int m_iReadErrors;
   // Used for playlist/clip tracking
   CPlaylistManager* m_playlistManager;
 };
