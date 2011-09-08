@@ -22,7 +22,7 @@ namespace MediaPortal.ServiceImplementations
       string logPath = Config.GetFolder(Config.Dir.Log);
       using (Settings xmlreader = new MPSettings())
       {
-        _minLevel = (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "3"));
+        _minLevel = (Level)Enum.Parse(typeof(Level), xmlreader.GetValueAsString("general", "loglevel", "2"));
       }
       _configuration = false;
       string appPath = Path.GetDirectoryName(Application.ExecutablePath);
