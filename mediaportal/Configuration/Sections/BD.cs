@@ -42,8 +42,8 @@ namespace MediaPortal.Configuration.Sections
   {
     private FolderBrowserDialog folderBrowserDialog;
     private FontDialog fontDialog;
-    private readonly string m_strDefaultSubtitleLanguageISO = "EN";
-    private readonly string m_strDefaultAudioLanguageISO = "EN";
+    private readonly string m_strDefaultSubtitleLanguageISO = "English";
+    private readonly string m_strDefaultAudioLanguageISO = "English";
     private MPTabPage mpTabPage1;
     private MPGroupBox mpGroupBox4;
     private MPLabel mpLabel7;
@@ -68,14 +68,13 @@ namespace MediaPortal.Configuration.Sections
       InitializeComponent();
 
       // Populate combo boxes with languages
-      string curCultureName = CultureInfo.CurrentCulture.Name;
-      string curCultureTwoLetter = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
+      string curCultureName = CultureInfo.CurrentCulture.EnglishName;      
 
       m_strDefaultSubtitleLanguageISO = curCultureName;
       m_strDefaultAudioLanguageISO = curCultureName;
 
-      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureTwoLetter);
-      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureTwoLetter);
+      Util.Utils.PopulateLanguagesToComboBox(defaultSubtitleLanguageComboBox, curCultureName);
+      Util.Utils.PopulateLanguagesToComboBox(defaultAudioLanguageComboBox, curCultureName);
     }
 
     public override void LoadSettings()
@@ -84,9 +83,7 @@ namespace MediaPortal.Configuration.Sections
       {
         try
         {
-          CultureInfo ci =
-            new CultureInfo(xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", m_strDefaultSubtitleLanguageISO));
-          defaultSubtitleLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
+          defaultSubtitleLanguageComboBox.SelectedItem = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", m_strDefaultSubtitleLanguageISO);
         }
         catch (Exception ex)
         {
@@ -97,9 +94,7 @@ namespace MediaPortal.Configuration.Sections
 
         try
         {
-          CultureInfo ci =
-            new CultureInfo(xmlreader.GetValueAsString("bdplayer", "audiolanguage", m_strDefaultAudioLanguageISO));
-          defaultAudioLanguageComboBox.SelectedItem = !ci.IsNeutralCulture ? ci.Parent.EnglishName : ci.EnglishName;
+          defaultAudioLanguageComboBox.SelectedItem=xmlreader.GetValueAsString("bdplayer", "audiolanguage", m_strDefaultAudioLanguageISO);         
         }
         catch (Exception ex)
         {
@@ -114,22 +109,8 @@ namespace MediaPortal.Configuration.Sections
     {
       using (Settings xmlwriter = new MPSettings())
       {
-
-        foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-        {
-          if (ci.EnglishName == defaultSubtitleLanguageComboBox.Text)
-          {
-            xmlwriter.SetValue("bdplayer", "subtitlelanguage", ci.Name);
-          }
-        }
-
-        foreach (CultureInfo ci in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
-        {
-          if (ci.EnglishName == defaultAudioLanguageComboBox.Text)
-          {
-            xmlwriter.SetValue("bdplayer", "audiolanguage", ci.Name);
-          }
-        }
+        xmlwriter.SetValue("bdplayer", "subtitlelanguage", defaultSubtitleLanguageComboBox.Text);
+        xmlwriter.SetValue("bdplayer", "audiolanguage", defaultAudioLanguageComboBox.Text);
       }
     }
 
