@@ -52,7 +52,7 @@ namespace DeployVersionGIT
         {
           string git = proc.StandardOutput.ReadToEnd();
 
-          Regex tortoiseRegex = new Regex(@"^.*-(?<version>[0-9]+)-[0-9a-f]{8}$");
+          Regex tortoiseRegex = new Regex(@"^.*\-(?<version>[0-9]+)\-[0-9a-z]{8}\s*$", RegexOptions.Multiline);
 
           string ver = tortoiseRegex.Match(git).Groups["version"].Value;
           if (String.IsNullOrEmpty(ver))
@@ -61,7 +61,7 @@ namespace DeployVersionGIT
             return false;
           }
           _version = ver;
-          _fullVersion = git;
+          _fullVersion = git.Trim(' ','\n','\r','\t');
         }
         else
         {
@@ -75,9 +75,9 @@ namespace DeployVersionGIT
         {
           string git = proc.StandardOutput.ReadToEnd();
 
-          Regex tortoiseRegex = new Regex(@"^[*]\s*(?<branch>.*)$");
+          Regex tortoiseRegex = new Regex(@"^[*]\s*(?<branch>.*)\s*$", RegexOptions.Multiline);
 
-          string branch = tortoiseRegex.Match(git).Groups["branch"].Value;
+          string branch = tortoiseRegex.Match(git).Groups["branch"].Value.Trim(' ', '\n', '\r', '\t');
           if (String.IsNullOrEmpty(branch))
           {
             Console.WriteLine("Unable to determine GIT branch.");
