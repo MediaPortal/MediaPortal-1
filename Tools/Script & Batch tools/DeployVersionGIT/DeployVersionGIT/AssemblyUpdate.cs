@@ -98,7 +98,7 @@ namespace DeployVersionGIT
 
         if (_updateMode == UpdateMode.Copyright)
           newtext = Regex.Replace(filetext, "^(.*AssemblyCopyright.*)$",
-                                  "[assembly: AssemblyCopyright(\"Copyright © " + _version + "\")]",
+                                  "[assembly: AssemblyCopyright(\"Copyright © " + _version + "\")]\r",
                                   RegexOptions.Multiline);
         else
         {
@@ -106,11 +106,11 @@ namespace DeployVersionGIT
                                   "${version}" + _version);
           if (string.IsNullOrEmpty(_fullVersion))
           {
-            newtext = Regex.Replace(newtext, "^(.*AssemblyInformationalVersion.*)$", "//[assembly: AssemblyInformationalVersion(\"\")]", RegexOptions.Multiline);
+            newtext = Regex.Replace(newtext, "^(.*AssemblyInformationalVersion.*)$", "//[assembly: AssemblyInformationalVersion(\"\")]\r", RegexOptions.Multiline);
           }
           else
           {
-            newtext = Regex.Replace(newtext, "^(.*AssemblyInformationalVersion.*)$", "[assembly: AssemblyInformationalVersion(\"" + _fullVersion + "\")]", RegexOptions.Multiline);
+            newtext = Regex.Replace(newtext, "^(.*AssemblyInformationalVersion.*)$", "[assembly: AssemblyInformationalVersion(\"" + _fullVersion + "\")]\r", RegexOptions.Multiline);
           }
         }
 
