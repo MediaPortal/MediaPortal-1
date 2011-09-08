@@ -401,7 +401,9 @@ STDMETHODIMP CBDReaderFilter::SetAngle(UINT8 angle)
 
 STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
 {
-  return lib.SetChapter(chapter) ? S_OK : S_FALSE;
+  HRESULT hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
+  if (hr == S_OK) m_demultiplexer.Flush();
+  return hr;
 }
 
 STDMETHODIMP CBDReaderFilter::GetAngle(UINT8* angle)
