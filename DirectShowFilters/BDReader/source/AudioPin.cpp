@@ -218,7 +218,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         bool useEmptySample = false;
 
-//        JoinAudioBuffers(buffer, &demux);
+        JoinAudioBuffers(buffer, &demux);
         
         if (m_nPrevPl == -1)
         {
@@ -355,7 +355,7 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
   // Currently only uncompressed PCM audio is supported
   if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
   {
-    LogDebug("Joininig Audio Buffers");
+//    LogDebug("Joininig Audio Buffers");
     WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
     WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 

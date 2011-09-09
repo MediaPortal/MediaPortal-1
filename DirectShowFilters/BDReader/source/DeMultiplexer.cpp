@@ -499,7 +499,16 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
     return NULL;
   }
 
-  Packet * ret = m_playlistManager->GetNextAudioPacket(playlist, clip);
+  while (!m_playlistManager->HasAudio())
+  {
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
+    {
+      return NULL;
+    }
+    ReadFromFile(true, false);
+  }
+  Packet * ret = m_playlistManager->GetNextAudioPacket(playlist,clip);
+
   return ret;
 }
 

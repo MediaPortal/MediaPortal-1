@@ -80,7 +80,7 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
   }
   if (m_currentAudioPlayBackClip->nClip==clip)
   {
-    Packet * ret = m_currentAudioPlayBackClip->ReturnNextAudioPacket(playlistFirstPacketTime);
+    ret = m_currentAudioPlayBackClip->ReturnNextAudioPacket(playlistFirstPacketTime);
     if (ret!=NULL)
     {
       ret->nPlaylist=nPlaylist;
