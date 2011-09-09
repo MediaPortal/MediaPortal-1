@@ -37,14 +37,15 @@ enum PLAYBACK_MODE
   TitleBased
 };
 
-typedef struct bd_player_settings{
+typedef struct bd_player_settings
+{
   int regionCode;
   int parentalControl;
   const char* audioLang;
   const char* menuLang;
   const char* subtitleLang;
   const char* countryCode;
-}bd_player_settings;
+} bd_player_settings;
 
 // Function pointer definitions for the libbluray API
 
@@ -120,7 +121,8 @@ public:
   bool OpenMenu(INT64 pPts);
   void ForceTitleBasedPlayback(bool pForce);
   void SetD3DDevice(IDirect3DDevice9* device);
-  void SetBDPlayerSettings(bd_player_settings settings);
+  void SetBDPlayerSettings(bd_player_settings pSettings);
+  bd_player_settings& GetBDPlayerSettings();
 
   static void StaticOverlayProc(void *this_gen, const BD_OVERLAY * const ov);
 
@@ -166,12 +168,7 @@ private:
   vector<BDEventObserver*> m_eventObservers;
   typedef vector<BDEventObserver*>::iterator ivecObservers;
 
-  int m_settingRegionCode;
-  int m_settingParentalControl;
-  const char* m_settingAudioLang;
-  const char* m_settingMenuLang;
-  const char* m_settingSubtitleLang;
-  const char* m_settingCountryCode;
+  bd_player_settings m_playerSettings;
 
   FILTER_STATE m_state;
   bool m_bStopping;

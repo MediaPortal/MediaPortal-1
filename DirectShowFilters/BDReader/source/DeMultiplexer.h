@@ -151,7 +151,6 @@ private:
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionRead;
-  CCritSec m_sectionAudioChanging;
   CCritSec m_sectionMediaChanging;
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;

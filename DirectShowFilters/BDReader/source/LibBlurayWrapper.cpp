@@ -49,12 +49,6 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   m_bStopReading(false),
   m_bStillModeOn(false),
   m_nStillEndTime(0),
-  m_settingRegionCode(0),
-  m_settingParentalControl(NULL),
-  m_settingAudioLang(NULL),
-  m_settingMenuLang(NULL),
-  m_settingSubtitleLang(NULL),
-  m_settingCountryCode(NULL),
   _bd_get_titles(NULL),
   _bd_get_title_info(NULL),
   _bd_get_playlist_info(NULL),
@@ -95,6 +89,7 @@ CLibBlurayWrapper::CLibBlurayWrapper() :
   _bd_get_clip_infos(NULL)
 {
   m_pOverlayRenderer = new COverlayRenderer(this);
+  ZeroMemory((void*)&m_playerSettings, sizeof(bd_player_settings));
 }
 
 CLibBlurayWrapper::~CLibBlurayWrapper()
@@ -291,12 +286,12 @@ bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
     m_playbackMode = Navigation;
   }
 
-  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_REGION_CODE, m_settingRegionCode);
-  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_PARENTAL, m_settingParentalControl);
-  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_AUDIO_LANG, m_settingAudioLang);
-  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_PG_LANG, m_settingSubtitleLang);
-  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_MENU_LANG, m_settingMenuLang);
-  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_COUNTRY_CODE, m_settingCountryCode);
+  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_REGION_CODE, m_playerSettings.regionCode);
+  _bd_set_player_setting(m_pBd, BLURAY_PLAYER_SETTING_PARENTAL, m_playerSettings.parentalControl);
+  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_AUDIO_LANG, m_playerSettings.audioLang);
+  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_PG_LANG, m_playerSettings.subtitleLang);
+  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_MENU_LANG, m_playerSettings.menuLang);
+  _bd_set_player_setting_str(m_pBd, BLURAY_PLAYER_SETTING_COUNTRY_CODE, m_playerSettings.countryCode);
 
   m_numTitles = GetTitles(TITLES_ALL);
 
@@ -323,16 +318,16 @@ bool CLibBlurayWrapper::CloseBluray()
   return true;
 }
 
-void  CLibBlurayWrapper::SetBDPlayerSettings(bd_player_settings settings)
+void CLibBlurayWrapper::SetBDPlayerSettings(bd_player_settings pSettings)
 {
-  LogDebug("CLibBlurayWrapper - Settings: Audio(%s), Menu(%s), Sub(%s), Ctry(%s), Reg(%i), Prtl(%i)", settings.audioLang,
-		settings.menuLang, settings.subtitleLang, settings.countryCode, settings.regionCode, settings.parentalControl);
-  m_settingRegionCode = settings.regionCode;
-  m_settingParentalControl = settings.parentalControl;	
-  m_settingAudioLang = settings.audioLang;
-  m_settingMenuLang = settings.menuLang;
-  m_settingSubtitleLang = settings.subtitleLang;
-  m_settingCountryCode = settings.countryCode;
+  LogDebug("CLibBlurayWrapper - Settings: Audio(%s), Menu(%s), Sub(%s), Ctry(%s), Reg(%i), Prtl(%i)", pSettings.audioLang,
+		pSettings.menuLang, pSettings.subtitleLang, pSettings.countryCode, pSettings.regionCode, pSettings.parentalControl);
+  m_playerSettings = pSettings;
+}
+
+bd_player_settings& CLibBlurayWrapper::GetBDPlayerSettings()
+{
+  return m_playerSettings;
 }
 
 UINT32 CLibBlurayWrapper::GetTitles(UINT8 pFlags)

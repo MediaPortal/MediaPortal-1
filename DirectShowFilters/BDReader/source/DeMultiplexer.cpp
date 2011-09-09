@@ -141,76 +141,45 @@ int CDeMultiplexer::GetVideoServiceType()
 /// and updates the audio output pin media type if needed
 bool CDeMultiplexer::SetAudioStream(int stream)
 {
-  LogDebug("SetAudioStream : %d - TODO - not implemented!", stream);
-  if (stream < 0 || stream >= (int)m_audioStreams.size())
-    return S_FALSE;
+  CAutoLock lock (&m_sectionAudio);
 
-  return true; // TODO audio stream switching
-
-  m_iAudioStream = stream;
-  /*
-  BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-  if (clip)
+  if (stream == m_iAudioStream)
   {
-    if (clip->audio_stream_count < stream)
-    {
-      m_AudioStreamType = clip->audio_streams[stream].coding_type;
-    }
-    else
-    {
-      LogDebug("demux: SetAudioStream - requested stream > stream count");
-    }
+    LogDebug("demux: SetAudioStream : %d - no change", stream);
+    return true;
   }
-  else
+
+  if (stream < 0 || stream >= (int)m_audioStreams.size())
   {
-    LogDebug("demux: SetAudioStream - failed to get clip info!");
-    return;
-  }*/
+    LogDebug("demux: SetAudioStream : %d - fail (size %d)", stream, m_audioStreams.size());
+    return false;
+  }
 
   // Get the new audio stream type
-  int newAudioStreamType = BLURAY_STREAM_TYPE_AUDIO_MPEG2;
-  if (m_iAudioStream >= 0 && m_iAudioStream < m_audioStreams.size())
-  {
-    newAudioStreamType = m_audioStreams[m_iAudioStream].audioType;
-  }
+  int newAudioStreamType =  m_audioStreams[stream].audioType;   
+	m_iAudioStream = stream;
 
-  LogDebug("Old Audio %d, New Audio %d", m_AudioStreamType, newAudioStreamType);
-
-  if ((m_AudioStreamType != -1) && 
-      (m_AudioStreamType != newAudioStreamType))
-  {
-    m_AudioStreamType = newAudioStreamType;
-    if (m_filter.GetAudioPin()->IsConnected())
-    {
-	    // Here, stream is not parsed yet
-      if (!IsMediaChanging())
-      {
-        LogDebug("SetAudioStream : OnMediaTypeChanged(1)");
-        //Flush();
-
-        // TODO - check
-        //m_filter.OnMediaTypeChanged(1);
-        //SetMediaChanging(true);
-        //m_filter.m_bForceSeekOnStop = true;     // Force stream to be resumed after
-      }
-      else
-      {
-        LogDebug("SetAudioStream : Media already changing");
-      }
-    }
+  if (m_AudioStreamType != newAudioStreamType)
+  {    
+    LogDebug("demux: old %s new audio %s", StreamFormatAsString(m_AudioStreamType), StreamFormatAsString(newAudioStreamType));
+		m_AudioStreamType = newAudioStreamType;
   }
   else
   {
-    //m_filter.GetAudioPin()->SetDiscontinuity(true);
+    LogDebug("demux: no change in audio type (%s)", StreamFormatAsString(m_AudioStreamType));      
   }
 
-  return S_OK;
+  delete m_pCurrentAudioBuffer;
+  m_pCurrentAudioBuffer = NULL;
+  m_nAudioPesLenght = 0;
+
+  return true;
 }
 
 bool CDeMultiplexer::GetAudioStream(__int32 &audioIndex)
 {
   audioIndex = m_iAudioStream;
-  return S_OK;
+  return true;
 }
 
 void CDeMultiplexer::GetAudioStreamInfo(int stream, char* szName)
@@ -295,6 +264,7 @@ bool CDeMultiplexer::GetSubtitleStreamLanguage(__int32 stream, char* szLanguage)
 
   return S_OK;
 }
+
 bool CDeMultiplexer::GetSubtitleStreamCount(__int32 &count)
 {
   count =(__int32) m_subtitleStreams.size();
@@ -491,7 +461,6 @@ Packet* CDeMultiplexer::GetVideo()
   return ret;
 }
 
-
 Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 {
   if (HoldAudio())
@@ -537,7 +506,6 @@ Packet* CDeMultiplexer::GetAudio()
   }
   return ret;
 }
-
 
 /// Starts the demuxer
 /// This method will read the file until we found the pat/sdt
@@ -637,11 +605,11 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
     m_bReadFailed = true;
 	m_iReadErrors++;
 
-	if (m_iReadErrors > MAX_CONSECUTIVE_READ_ERRORS)
-	{
-		LogDebug("Read failed too many times... EOF or broken disc?");
-		m_bEndOfFile = true;
-	}
+    if (m_iReadErrors > MAX_CONSECUTIVE_READ_ERRORS)
+    {
+      LogDebug("Read failed too many times... EOF or broken disc?");
+      m_bEndOfFile = true;
+    }
   }
   else if (!pause)
   {
@@ -679,6 +647,10 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_PLAYLIST:
       m_nPlaylist = pEv.param;
+      break;
+
+    case BD_EVENT_AUDIO_STREAM:
+      m_iAudioIdx = pEv.param - 1;			
       break;
 
     case BD_EVENT_CHAPTER:
@@ -783,7 +755,6 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   FillAudio(header, tsPacket);
   FillVideo(header, tsPacket);
 }
-
 
 /// This method will check if the tspacket is an audio packet
 /// ifso, it decodes the PES audio packet and stores it in the audio buffers
@@ -1723,21 +1694,10 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
   if (clip)
   {
     m_audioStreams.clear();
-
-    // TODO - use correct stream on clip changes
-    if (clip->audio_stream_count > m_iAudioStream && m_iAudioStream >= 0)
-    {
-      m_AudioStreamType = clip->audio_streams[m_iAudioStream].coding_type;
-    }
-    else if (clip->audio_stream_count > 0)
-    {
-      m_AudioStreamType = clip->audio_streams[0].coding_type;
-      LogDebug("demux: ParseAudioStreams - requested stream > stream count");
-    }
-    else
+    
+    if (clip->audio_stream_count <= 0)
     {
       m_AudioStreamType = NO_STREAM;
-
       stAudioStream audio;
 
       audio.language[0] = 'F';
@@ -1751,26 +1711,52 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       LogDebug("   Audio    [%4d] %s %s (fake)", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
 
       m_audioStreams.push_back(audio);
+      return;
+    }	
+		
+    bd_player_settings& settings = m_filter.lib.GetBDPlayerSettings();
+    bool defaultLanguageFound = false;
+    for (int i(0); i < clip->audio_stream_count; i++)
+    {
+      stAudioStream audio;
+
+      audio.language[0] = clip->audio_streams[i].lang[0];
+      audio.language[1] = clip->audio_streams[i].lang[1];
+      audio.language[2] = clip->audio_streams[i].lang[2];
+      audio.language[3] = clip->audio_streams[i].lang[3];
+
+      audio.audioType = clip->audio_streams[i].coding_type;
+      audio.pid = clip->audio_streams[i].pid;
+			
+      if (strncmp(audio.language, settings.audioLang, 3) == 0 && !defaultLanguageFound)
+      {
+        defaultLanguageFound = true;
+        m_iAudioStream = i;
+        m_AudioStreamType = audio.audioType;
+        LogDebug("   Audio*    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+      }
+      else
+      {
+        LogDebug("   Audio     [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
+      }
+				
+      m_audioStreams.push_back(audio);
+    }
+		
+    if (m_iAudioStream != m_iAudioIdx && m_iAudioIdx >= 0 && m_iAudioIdx < clip->audio_stream_count)
+    {					
+      m_AudioStreamType = clip->audio_streams[m_iAudioIdx].coding_type;
+      m_iAudioStream = m_iAudioIdx;
+      m_iAudioIdx = -1;
+      LogDebug("demux: ParseAudioStreams - requested stream mismatch, obey lib");
+      return;
     }
 
-    if (m_AudioStreamType != NO_STREAM)
+    if (!defaultLanguageFound)
     {
-      for (int i(0); i < clip->audio_stream_count; i++)
-      {
-        stAudioStream audio;
-
-        audio.language[0] = clip->audio_streams[i].lang[0];
-        audio.language[1] = clip->audio_streams[i].lang[1];
-        audio.language[2] = clip->audio_streams[i].lang[2];
-        audio.language[3] = clip->audio_streams[i].lang[3];
-
-        audio.audioType = clip->audio_streams[i].coding_type;
-        audio.pid = clip->audio_streams[i].pid;
-
-        LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
-
-        m_audioStreams.push_back(audio);
-      }
+      m_iAudioStream = 0;
+      m_AudioStreamType = clip->audio_streams[0].coding_type;
+      LogDebug("demux: ParseAudioStreams - requested stream not found, 1st selected");
     }
   }
 }
