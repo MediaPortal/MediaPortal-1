@@ -77,8 +77,8 @@ public:
 protected:
   void DetectVideoDecoder();
   void UpdateFromSeek();
-
   void CreateEmptySample(IMediaSample* pSample);
+  void LogMediaType(AM_MEDIA_TYPE* pmt);
   
   CBDReaderFilter * const m_pFilter;
   bool      m_bConnected;

@@ -88,6 +88,8 @@ protected:
 
   inline void ConvertLPCMFromBE(BYTE* src, void* dest, int channels, int nSamples, int sampleSize, int channelMap);
   
+  void LogMediaType(AM_MEDIA_TYPE* pmt);
+
   CBDReaderFilter* const m_pFilter;
   bool      m_bConnected;
   CCritSec* m_section;

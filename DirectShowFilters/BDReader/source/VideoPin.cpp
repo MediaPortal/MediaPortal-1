@@ -421,19 +421,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-/*        if (buffer->pmt==NULL)
-        {
-          LogDebug("Missing Video PMT");
-        }
-        else
-        {
-          LogDebug("Video buffer %I64d format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}",buffer->rtStart, buffer->pmt->cbFormat,
-            buffer->pmt->formattype.Data1, buffer->pmt->formattype.Data2, buffer->pmt->formattype.Data3,
-            buffer->pmt->formattype.Data4[0], buffer->pmt->formattype.Data4[1], buffer->pmt->formattype.Data4[2],
-            buffer->pmt->formattype.Data4[3], buffer->pmt->formattype.Data4[4], buffer->pmt->formattype.Data4[5], 
-            buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
-        }
-*/
         if (m_nPrevPl == -1)
         {
           m_nPrevPl = buffer->nPlaylist;
@@ -452,8 +439,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
         {
-          // TODO: log subtype          
-          LogDebug("vid: NEW VIDEO FORMAT %d - old %d", buffer->pmt->cbFormat, m_mt.cbFormat);
+          LogMediaType(buffer->pmt);
             
           HRESULT hrAccept = S_FALSE;
 
@@ -504,8 +490,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             LogDebug("vid: set discontinuity");
             pSample->SetDiscontinuity(true);
           }
-
-          //LogDebug("vid: video buffer type = %d", buffer->GetVideoServiceType());
 
           if (hasTimestamp)
           {
@@ -559,9 +543,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
-//******************************************************
-/// Called when thread is about to start delivering data to the codec
-///
 HRESULT CVideoPin::OnThreadStartPlay()
 {
   LogDebug("vid: OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());
@@ -570,7 +551,6 @@ HRESULT CVideoPin::OnThreadStartPlay()
   return CSourceStream::OnThreadStartPlay();
 }
 
-// CSourceSeeking
 HRESULT CVideoPin::ChangeStart()
 {
   UpdateFromSeek();
@@ -644,5 +624,21 @@ STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)
 STDMETHODIMP CVideoPin::Notify(IBaseFilter* pSender, Quality q)
 {
   return E_NOTIMPL;
+}
+
+void CVideoPin::LogMediaType(AM_MEDIA_TYPE* pmt)
+{
+  if (!pmt)
+  {
+    LogDebug("Missing Video PMT");
+  }
+  else
+  {
+    LogDebug("Video format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", pmt->cbFormat,
+      pmt->formattype.Data1, pmt->formattype.Data2, pmt->formattype.Data3,
+      pmt->formattype.Data4[0], pmt->formattype.Data4[1], pmt->formattype.Data4[2],
+      pmt->formattype.Data4[3], pmt->formattype.Data4[4], pmt->formattype.Data4[5], 
+      pmt->formattype.Data4[6], pmt->formattype.Data4[7]);
+  }
 }
 

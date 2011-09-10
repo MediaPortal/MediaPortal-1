@@ -233,20 +233,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           demux.m_bAudioPlSeen = true;
           useEmptySample = true;
         }
-/*
-        if (buffer->pmt==NULL)
-        {
-          LogDebug("Missing Audio PMT");
-        }
-        else
-        {
-          LogDebug("Audio buffer %I64d format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}",buffer->rtStart, buffer->pmt->cbFormat,
-            buffer->pmt->formattype.Data1, buffer->pmt->formattype.Data2, buffer->pmt->formattype.Data3,
-            buffer->pmt->formattype.Data4[0], buffer->pmt->formattype.Data4[1], buffer->pmt->formattype.Data4[2],
-            buffer->pmt->formattype.Data4[3], buffer->pmt->formattype.Data4[4], buffer->pmt->formattype.Data4[5], 
-            buffer->pmt->formattype.Data4[6], buffer->pmt->formattype.Data4[7]);
-        }
-*/
+
         if (buffer->pmt->cbFormat == 0)
         {
           buffer->pmt = CreateMediaType(&m_mt);
@@ -255,6 +242,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         if (buffer->pmt && m_mt != *buffer->pmt)
         {
           HRESULT hrAccept = S_FALSE;
+          LogMediaType(buffer->pmt);
 
           if (m_pPinConnection && false) // TODO - DS audio renderer seems to be only one that supports this
           {
@@ -355,7 +343,7 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
   // Currently only uncompressed PCM audio is supported
   if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
   {
-//    LogDebug("Joininig Audio Buffers");
+    //LogDebug("aud: Joinig Audio Buffers");
     WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
     WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 
@@ -369,7 +357,6 @@ void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
       if ((MAX_BUFFER_SIZE - pBuffer->GetDataSize() >= packetSize ) && 
           (maxDurationInBytes >= pBuffer->GetDataSize() + packetSize))
       {
-        //this is now broken... TODO
         Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist,pBuffer->nClipNumber);
         if (buf)
         {
@@ -520,14 +507,9 @@ HRESULT CAudioPin::ChangeRate()
   return S_OK;
 }
 
-//******************************************************
-/// Called when thread is about to start delivering data to the codec
-///
 HRESULT CAudioPin::OnThreadStartPlay()
 {
   LogDebug("aud: OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking);
-
-  //start playing
   DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay();
 }
@@ -581,4 +563,20 @@ STDMETHODIMP CAudioPin::GetCurrentPosition(LONGLONG* pCurrent)
 STDMETHODIMP CAudioPin::Notify(IBaseFilter* pSender, Quality q)
 {
   return E_NOTIMPL;
+}
+
+void CAudioPin::LogMediaType(AM_MEDIA_TYPE* pmt)
+{
+  if (!pmt)
+  {
+    LogDebug("aud: missing audio PMT");
+  }
+  else
+  {
+    LogDebug("aud: format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", pmt->cbFormat,
+      pmt->formattype.Data1, pmt->formattype.Data2, pmt->formattype.Data3,
+      pmt->formattype.Data4[0], pmt->formattype.Data4[1], pmt->formattype.Data4[2],
+      pmt->formattype.Data4[3], pmt->formattype.Data4[4], pmt->formattype.Data4[5], 
+      pmt->formattype.Data4[6], pmt->formattype.Data4[7]);
+  }
 }
