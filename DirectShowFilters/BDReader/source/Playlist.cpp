@@ -155,7 +155,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet)
   if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     firstPESPacketSeen=true;
-    firstPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    firstPESTimeStamp=0LL;
     LogDebug("First Packet (aud) %I64d",packet->rtStart);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)
@@ -198,7 +198,7 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket)
   if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     firstPESPacketSeen=true;
-    firstPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    firstPESTimeStamp=0LL;
     LogDebug("First Packet (vid) %I64d",packet->rtStart);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)

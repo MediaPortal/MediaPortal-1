@@ -81,6 +81,7 @@ public:
 
   void       GetAudioStreamInfo(int stream, char* szName);
   int        GetAudioStreamType(int stream);
+  int        GetCurrentAudioStreamType();
   void       GetAudioStreamPMT(CMediaType& pmt);
   void       GetVideoStreamPMT(CMediaType &pmt);
   int        GetAudioStreamCount();

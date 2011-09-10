@@ -234,9 +234,25 @@ void CDeMultiplexer::GetAudioStreamPMT(CMediaType& pmt)
 int CDeMultiplexer::GetAudioStreamType(int stream)
 {
   if (stream < 0 || stream >= m_audioStreams.size())
+  {
     return 0;
+  }
   else
+  {
     return m_audioStreams[stream].audioType;
+  }
+}
+
+int CDeMultiplexer::GetCurrentAudioStreamType()
+{
+  if (m_iAudioStream >= m_audioStreams.size())
+  {
+    return 0;
+  }
+  else
+  {
+    return m_audioStreams[m_iAudioStream].audioType;
+  }
 }
 
 // This methods selects the subtitle stream specified

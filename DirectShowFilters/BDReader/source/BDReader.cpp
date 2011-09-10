@@ -322,15 +322,16 @@ void CBDReaderFilter::TriggerOnMediaChanged()
     m_demultiplexer.SetMediaChanging(true);
 
     int videoRate = 0;
-    int audioType = 0;
+    int audioType = m_demultiplexer.GetCurrentAudioStreamType();
+    int videoType = m_demultiplexer.GetVideoServiceType();
     
     BLURAY_CLIP_INFO* clip = lib.CurrentClipInfo();
     if (clip)
     {
       videoRate = clip->video_streams->rate;
-      audioType = clip->audio_streams->coding_type;
     }
-    HRESULT hr = m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), audioType);
+
+    HRESULT hr = m_pCallback->OnMediaTypeChanged(videoRate, videoType, audioType);
 
     if (hr == S_FALSE)
     {
@@ -520,8 +521,11 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
 
           m_bIgnoreLibSeeking = true;
 
-          LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", zeroPos / 1000000.0);
-          m_pMediaSeeking->SetPositions(&zeroPos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
+          if (cmd.refTime.m_time >= 0)
+          {
+            LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
+            m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
+          }
 
           break;
 

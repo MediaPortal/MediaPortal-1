@@ -304,8 +304,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
-            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
+            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset - m_rtStart;
+            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset - m_rtStart;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
           else
@@ -317,7 +317,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
-          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
+          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset - m_rtStart) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
 #endif
           delete buffer;
         }
@@ -345,42 +345,45 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
 void CAudioPin::JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer)
 {
-  // Currently only uncompressed PCM audio is supported
-  if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
+  if (pBuffer->pmt)
   {
-    //LogDebug("aud: Joinig Audio Buffers");
-    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
-    WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
-
-    // Assuming all packets in the stream are the same size
-    int packetSize = pBuffer->GetDataSize();
-
-    int maxDurationInBytes = wf->nAvgBytesPerSec / 10; // max 100 ms buffer
-
-    while (true)
+    // Currently only uncompressed PCM audio is supported
+    if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
     {
-      if ((MAX_BUFFER_SIZE - pBuffer->GetDataSize() >= packetSize ) && 
-          (maxDurationInBytes >= pBuffer->GetDataSize() + packetSize))
+      //LogDebug("aud: Joinig Audio Buffers");
+      WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
+      WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
+
+      // Assuming all packets in the stream are the same size
+      int packetSize = pBuffer->GetDataSize();
+
+      int maxDurationInBytes = wf->nAvgBytesPerSec / 10; // max 100 ms buffer
+
+      while (true)
       {
-        Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist,pBuffer->nClipNumber);
-        if (buf)
+        if ((MAX_BUFFER_SIZE - pBuffer->GetDataSize() >= packetSize ) && 
+            (maxDurationInBytes >= pBuffer->GetDataSize() + packetSize))
         {
-          byte* data = buf->GetData();
-          // Skip LPCM header when copying the next buffer
-          pBuffer->SetCount(pBuffer->GetDataSize() + buf->GetDataSize() - LPCM_HEADER_SIZE);
-          memcpy(pBuffer->GetData()+pBuffer->GetDataSize() - (buf->GetDataSize() - LPCM_HEADER_SIZE), &data[LPCM_HEADER_SIZE], buf->GetDataSize() - LPCM_HEADER_SIZE);
-          delete buf;
+          Packet* buf = pDemuxer->GetAudio(pBuffer->nPlaylist,pBuffer->nClipNumber);
+          if (buf)
+          {
+            byte* data = buf->GetData();
+            // Skip LPCM header when copying the next buffer
+            pBuffer->SetCount(pBuffer->GetDataSize() + buf->GetDataSize() - LPCM_HEADER_SIZE);
+            memcpy(pBuffer->GetData()+pBuffer->GetDataSize() - (buf->GetDataSize() - LPCM_HEADER_SIZE), &data[LPCM_HEADER_SIZE], buf->GetDataSize() - LPCM_HEADER_SIZE);
+            delete buf;
+          }
+          else
+          {
+            // No new buffer was available in the demuxer
+            break;
+          }
         }
         else
         {
-          // No new buffer was available in the demuxer
+          // buffer limit reached
           break;
         }
-      }
-      else
-      {
-        // buffer limit reached
-        break;
       }
     }
   }

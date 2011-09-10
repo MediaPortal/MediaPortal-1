@@ -361,7 +361,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_bVideoPlSeen)
+      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_bVideoPlSeen ||
+         demux.m_bAudioRequiresRebuild && !demux.m_bAudioPlSeen)        
       {
         CreateEmptySample(pSample);
 
@@ -386,6 +387,13 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
           demux.m_bAudioPlSeen = false;
           demux.m_bVideoPlSeen = false;
+        }
+        else if (!demux.m_bAudioPlSeen && !demux.m_bVideoPlSeen && demux.m_bAudioRequiresRebuild)
+        {
+          demux.m_bAudioRequiresRebuild = false;
+
+          LogDebug("vid: REBUILD - keep stream position");
+          m_pFilter->IssueCommand(REBUILD, -1);
         }
         else
         {
@@ -495,8 +503,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           }
 
           //now we have the final timestamp, set timestamp in sample
-          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
-          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
+          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset - m_rtStart;
+          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset - m_rtStart;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
           {
@@ -520,7 +528,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
+        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset - m_rtStart) / 10000000.0, 
           buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
         delete buffer;
