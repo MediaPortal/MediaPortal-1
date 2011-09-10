@@ -467,6 +467,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             LogDebug("vid: format change accepted");
             CMediaType* mt = new CMediaType(*buffer->pmt);
             SetMediaType(mt);
+            pSample->SetMediaType(mt);
           }
         }
 
@@ -478,7 +479,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           return NOERROR;
         }
 
-        REFERENCE_TIME cRefTimeStart = -1, cRefTimeStop = -1, cRefTimeOrig = -1;
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
         if (hasTimestamp)
@@ -489,48 +489,38 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             pSample->SetDiscontinuity(true);
           }
 
-          if (hasTimestamp)
-          {
-            //now we have the final timestamp, set timestamp in sample
-            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
-            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
+          //now we have the final timestamp, set timestamp in sample
+          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset;
+          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset;
 
-            if (abs(m_dRateSeeking - 1.0) > 0.5)
-            {
-              pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-            }
-            else
-            {
-              pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-            }
+          if (abs(m_dRateSeeking - 1.0) > 0.5)
+          {
+            pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
           else
           {
-            // Buffer has no timestamp
-            pSample->SetTime(NULL, NULL);
+            pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
+        }
+        else // Buffer has no timestamp
+        {
+          pSample->SetTime(NULL, NULL);
+        }
 
-          pSample->SetSyncPoint(buffer->bSyncPoint);
-          // Copy buffer into the sample
-          BYTE* pSampleBuffer;
-          pSample->SetActualDataLength(buffer->GetDataSize());
-          pSample->GetPointer(&pSampleBuffer);
-          memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+        pSample->SetSyncPoint(buffer->bSyncPoint);
+        // Copy buffer into the sample
+        BYTE* pSampleBuffer;
+        pSample->SetActualDataLength(buffer->GetDataSize());
+        pSample->GetPointer(&pSampleBuffer);
+        memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-          LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
-            buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
+        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset) / 10000000.0, 
+          buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
-
-          delete buffer;
-        }
-        else
-        { // Buffer was not displayed because it was out of date, search for next.
-          delete buffer;
-          buffer = NULL;
-        }
+        delete buffer;
       }
-    } while (buffer == NULL);
+    } while (!buffer);
     return NOERROR;
   }
 
