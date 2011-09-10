@@ -600,6 +600,16 @@ namespace MediaPortal.Player
     public override bool CanSeek()
     {
       return _state == PlayState.Playing;
+      /*//Workarround to do not enable seek when we are on menu
+      HandleBDEvent();
+      if (_state == PlayState.Menu)
+      {
+        return false;
+      }
+      else
+      {
+        return _state == PlayState.Playing;
+      }*/
     }
 
     /// <summary>
@@ -1719,6 +1729,8 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
             _currentTitle = bdevent.Param;
+            if (_currentChapter != 0xffff) //SEB
+              UpdateChapters();
             break;
 
           case (int)BDEvents.BD_EVENT_CHAPTER:
