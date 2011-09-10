@@ -56,7 +56,7 @@ internal class Grabber : IIMDBScriptGrabber
 	try
     {
       string absoluteUri;
-      string strUrl = "http://akas.imdb.com/find?s=tt;q=" + strSearch;
+      string strUrl = "http://www.imdb.com/find?s=tt;q=" + strSearch;
 
       string strBody = GetPage(strUrl, "utf-8", out absoluteUri);
 
@@ -181,13 +181,13 @@ internal class Grabber : IIMDBScriptGrabber
               {
                 bSkipThisEntry = true;
               }
-			}
+			      }
 			
 			      if (bSkipThisEntry == false)
             {
               //Original Movie title (Extension "IMDB")
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
               elements.Add(url);
               iCount++;
 
@@ -220,7 +220,7 @@ internal class Grabber : IIMDBScriptGrabber
                 {
                   //AKA movie title (extension "IMDB_With_AKA")
                   url = new IMDB.IMDBUrl
-                    ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+                    ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
                   elements.Add(url);
                 }
                 imdbAlias = imdbAlias.NextMatch();
@@ -295,13 +295,13 @@ internal class Grabber : IIMDBScriptGrabber
               {
                 bSkipThisEntry = true;
               }
-			}
+			      }
 			
 			      if (bSkipThisEntry == false)
             {
               //Original movie name (extension (" IMDB"))
               IMDB.IMDBUrl url = new IMDB.IMDBUrl
-                ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
+                ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbOptions + "", "IMDB");
               elements.Add(url);
               iCount++;
 
@@ -334,7 +334,7 @@ internal class Grabber : IIMDBScriptGrabber
                 {
                   //AKA movie name (extension "IMDB_With_AKA")
                   url = new IMDB.IMDBUrl
-                    ("http://akas.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
+                    ("http://www.imdb.com" + imdbURL, imdbTitle + " " + imdbakaOptions + " (IMDB_With_AKA)", "IMDB");
                   elements.Add(url);
                   imdbAlias = imdbAlias.NextMatch();
                 }
@@ -385,6 +385,9 @@ internal class Grabber : IIMDBScriptGrabber
           movieDetails.IMDBNumber = movieDetails.IMDBNumber.Substring(0, pos);
       }
 
+			// Get covers
+      movieDetails.ThumbURL = SearchCover(movieDetails.IMDBNumber, strBody);
+			
       // Title
       bool tryEng = true; // set-> false <-for original IMDB
 
@@ -626,7 +629,7 @@ internal class Grabber : IIMDBScriptGrabber
         }
 
       // Votes
-      regexPattern = @"""ratings""[^>]+>(?<moviePopularity>[^\s]+) votes</a>";
+      regexPattern = @"""ratingCount"">(?<moviePopularity>.*?)<";
       string votes = Regex.Match(strBody, regexPattern).Groups["moviePopularity"].Value;
       movieDetails.Votes = votes.Replace(",", "");
 
@@ -637,7 +640,7 @@ internal class Grabber : IIMDBScriptGrabber
       movieDetails.PlotOutline = HttpUtility.HtmlDecode(Utils.stripHTMLtags(shortPlot));
 
       // Plot long
-      string strPlotUrl = "http://akas.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
+      string strPlotUrl = "http://www.imdb.com/title/" + movieDetails.IMDBNumber + "/plotsummary";
       try
       {
         string absoluteUri;
@@ -681,6 +684,30 @@ internal class Grabber : IIMDBScriptGrabber
     catch (Exception) { }
     return false;
   }
+	
+	private string SearchCover(string imdbID,  string strBody)
+	{
+		string absoluteUri = string.Empty;
+		if (imdbID == null) return string.Empty;
+		if (imdbID == string.Empty | !imdbID.StartsWith("tt")) return string.Empty;
+
+		string cover = "";
+
+		// Get Main Movie page and find default poster link
+		Match posterPageLink = Regex.Match(strBody,
+																			 @"id=""img_primary"">.*?src='/rg/title-overview/primary/images.*?href=""(?<defaultPic>.*?)""",
+																			 RegexOptions.Singleline);
+
+		// Now parse default cover picture html page to get default cover
+		strBody = GetPage("http://www.imdb.com" + posterPageLink.Groups["defaultPic"].Value, "utf-8", out absoluteUri);
+		Match jpgDefault = Regex.Match(strBody, @"<img[\s]id=.*?alt=.*?src=""(?<jpg>.*?jpg)");
+
+		if (jpgDefault.Success)
+		{
+			cover = HttpUtility.HtmlDecode(jpgDefault.Groups["jpg"].Value);
+		}
+		return cover;
+	}
 
   string IIMDBScriptGrabber.GetName()
   {
@@ -704,6 +731,7 @@ internal class Grabber : IIMDBScriptGrabber
       // Make the Webrequest
       //Log.Info("IMDB: get page:{0}", strURL);
       WebRequest req = WebRequest.Create(strUrl);
+			req.Headers.Add("Accept-Language", "en-US");
 
       result = req.GetResponse();
       receiveStream = result.GetResponseStream();
