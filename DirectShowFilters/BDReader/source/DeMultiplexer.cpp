@@ -211,7 +211,7 @@ int CDeMultiplexer::GetAudioStreamCount()
   }
 }
 
-void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
+void CDeMultiplexer::GetAudioStreamPMT(CMediaType& pmt)
 {
   // Fake audio in use
   if (m_AudioStreamType == NO_STREAM)
@@ -229,6 +229,14 @@ void CDeMultiplexer::GetAudioStreamType(int stream, CMediaType& pmt)
   {
     pmt = m_audioParser->pmt;
   }
+}
+
+int CDeMultiplexer::GetAudioStreamType(int stream)
+{
+  if (stream < 0 || stream >= m_audioStreams.size())
+    return 0;
+  else
+    return m_audioStreams[stream].audioType;
 }
 
 // This methods selects the subtitle stream specified
@@ -288,7 +296,7 @@ bool CDeMultiplexer::GetSubtitleStreamType(__int32 stream, __int32 &type)
   return S_OK;
 }
 
-void CDeMultiplexer::GetVideoStreamType(CMediaType &pmt)
+void CDeMultiplexer::GetVideoStreamPMT(CMediaType &pmt)
 {
   if (m_videoParser)
   {
@@ -551,10 +559,10 @@ HRESULT CDeMultiplexer::Start()
     m_bStarting = false;
 
     CMediaType pmt;
-    GetAudioStreamType(m_iAudioStream, pmt);
+    GetAudioStreamPMT(pmt);
     m_filter.GetAudioPin()->SetInitialMediaType(&pmt);
 
-    GetVideoStreamType(pmt);
+    GetVideoStreamPMT(pmt);
     m_filter.GetVideoPin()->SetInitialMediaType(&pmt);
 
     return S_OK;
@@ -1732,11 +1740,11 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
         defaultLanguageFound = true;
         m_iAudioStream = i;
         m_AudioStreamType = audio.audioType;
-        LogDebug("   Audio*    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+        LogDebug("   Audio*   [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
       }
       else
       {
-        LogDebug("   Audio     [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
+        LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
       }
 				
       m_audioStreams.push_back(audio);

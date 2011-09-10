@@ -53,7 +53,7 @@ DEFINE_GUID(IID_IBDReader, 0x79a37017, 0x3178, 0x4859, 0x80, 0x79, 0xec, 0xb9, 0
 
 DECLARE_INTERFACE_(IBDReaderCallback, IUnknown)
 {
-  STDMETHOD(OnMediaTypeChanged)(int videoRate, int videoFormat, const GUID audioFormat)PURE;	
+  STDMETHOD(OnMediaTypeChanged)(int videoRate, int videoFormat, int audioFormat)PURE;	
   STDMETHOD(OnBDEvent)(BD_EVENT event)PURE;
   STDMETHOD(OnOSDUpdate)(OSDTexture texture)PURE;
 };
@@ -125,7 +125,7 @@ private:
   // IAMStreamSelect
   STDMETHODIMP Count(DWORD* streamCount);
   STDMETHODIMP Enable(long index, DWORD flags);
-  STDMETHODIMP Info( long lIndex, AM_MEDIA_TYPE** ppmt, DWORD* pdwFlags, LCID* plcid, DWORD* pdwGroup, WCHAR** ppszName, IUnknown** ppObject, IUnknown** ppUnk);	
+  STDMETHODIMP Info(long lIndex, AM_MEDIA_TYPE** ppmt, DWORD* pdwFlags, LCID* plcid, DWORD* pdwGroup, WCHAR** ppszName, IUnknown** ppObject, IUnknown** ppUnk);	
 
   // IAudioStream
   STDMETHODIMP GetAudioStream(__int32 &stream);

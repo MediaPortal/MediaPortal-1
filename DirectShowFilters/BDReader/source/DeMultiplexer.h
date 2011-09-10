@@ -80,8 +80,9 @@ public:
   bool       GetAudioStream(__int32 &stream);
 
   void       GetAudioStreamInfo(int stream, char* szName);
-  void       GetAudioStreamType(int stream, CMediaType& pmt);
-  void       GetVideoStreamType(CMediaType &pmt);
+  int        GetAudioStreamType(int stream);
+  void       GetAudioStreamPMT(CMediaType& pmt);
+  void       GetVideoStreamPMT(CMediaType &pmt);
   int        GetAudioStreamCount();
 
   // BDReader::ISubtitleStream uses these

@@ -321,20 +321,16 @@ void CBDReaderFilter::TriggerOnMediaChanged()
   {		
     m_demultiplexer.SetMediaChanging(true);
 
-    CMediaType pmt;
-    int audioStream = 0;
     int videoRate = 0;
+    int audioType = 0;
     
     BLURAY_CLIP_INFO* clip = lib.CurrentClipInfo();
     if (clip)
     {
       videoRate = clip->video_streams->rate;
+      audioType = clip->audio_streams->coding_type;
     }
-    
-    m_demultiplexer.GetAudioStream(audioStream);
-    m_demultiplexer.GetAudioStreamType(audioStream, pmt);
-    
-    HRESULT hr = m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), *pmt.Subtype());
+    HRESULT hr = m_pCallback->OnMediaTypeChanged(videoRate, m_demultiplexer.GetVideoServiceType(), audioType);
 
     if (hr == S_FALSE)
     {
@@ -712,7 +708,6 @@ STDMETHODIMP CBDReaderFilter::Start()
   return hr;
 }
 
-
 STDMETHODIMP CBDReaderFilter::GetCurFile(LPOLESTR * ppszFileName, AM_MEDIA_TYPE *pmt)
 {
   CheckPointer(ppszFileName, E_POINTER);
@@ -959,7 +954,7 @@ STDMETHODIMP CBDReaderFilter::Info(long lIndex, AM_MEDIA_TYPE**ppmt, DWORD* pdwF
       *pdwFlags = 0;
   }
   if (plcid) *plcid = 0;
-  if (pdwGroup) *pdwGroup = 1;
+  if (pdwGroup) *pdwGroup = m_demultiplexer.GetAudioStreamType((int)lIndex); //*pdwGroup = 1;
   if (ppObject) *ppObject = NULL;
   if (ppUnk) *ppUnk = NULL;
   if (ppszName)
@@ -972,7 +967,7 @@ STDMETHODIMP CBDReaderFilter::Info(long lIndex, AM_MEDIA_TYPE**ppmt, DWORD* pdwF
   if (ppmt)
   {
     CMediaType mediaType;
-    m_demultiplexer.GetAudioStreamType((int)lIndex, mediaType);
+    m_demultiplexer.GetAudioStreamPMT(mediaType);
     AM_MEDIA_TYPE* mType = (AM_MEDIA_TYPE*)(&mediaType);
     *ppmt = (AM_MEDIA_TYPE*)CoTaskMemAlloc(sizeof(AM_MEDIA_TYPE));
     if (*ppmt)
