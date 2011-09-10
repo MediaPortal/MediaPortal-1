@@ -203,8 +203,7 @@ int CDeMultiplexer::GetAudioStreamCount()
 {
   if (m_AudioStreamType == NO_STREAM)
   {
-    // TODO - return 1?
-    return -1; // fake audio stream is present
+    return 0; // only fake audio stream is present (no need to tell it to player)
   }
   else
   {

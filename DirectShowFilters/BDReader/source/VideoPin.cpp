@@ -403,8 +403,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         return S_FALSE;
       }
 
-      bool noAudioStreams = demux.GetAudioStreamCount() == -1;
-
       if (m_pCachedBuffer)
       {
         buffer = m_pCachedBuffer;
