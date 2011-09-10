@@ -1683,7 +1683,7 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_AUDIO_STREAM:
             Log.Debug("BDPlayer: Audio changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xff)
-              CurrentAudioStream = bdevent.Param;
+              CurrentAudioStream = bdevent.Param - 1;
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
@@ -1712,7 +1712,7 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_CHAPTER:
             Log.Debug("BDPlayer: Chapter changed to {0}", bdevent.Param);
             _currentChapter = bdevent.Param;
-            if (_currentChapter != 0xffff && chapters == null && _state != PlayState.Menu)
+            if (_currentChapter != 0xffff && chapters == null)
               _updateItems |= UpdateItems.Chapter;
             else
               _updateItems &= ~UpdateItems.Chapter;
@@ -1754,7 +1754,7 @@ namespace MediaPortal.Player
             _updateNow++;
         }
 
-        if ((_updateItems & UpdateItems.Chapter) == UpdateItems.Chapter)
+        if ((_updateItems & UpdateItems.Chapter) == UpdateItems.Chapter && _state != PlayState.Menu)
         {
           if ((_updateNow & 32) == 32)
           {
