@@ -48,40 +48,46 @@ namespace MediaPortal.DeployTool.Sections
       //
 
       // MediaPortal
+      int major = 0;
+      int minor = 0;
+      int revision = 0;
       RegistryKey key =
         Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal");
-      int MpVer = 0;
       string MpBuild = "0";
       string MpDisplayVer = string.Empty;
       if (key != null)
       {
-        MpVer = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"),
-                                       (int)key.GetValue("VersionRevision"));
         MpBuild = key.GetValue("VersionBuild").ToString();
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
         MpDisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
       }
+      Version MpVer = new Version(major, minor, revision);
 
       // TV-Server
+      major = 0;
+      minor = 0;
+      revision = 0;
       key =
-        Registry.LocalMachine.OpenSubKey(
-          "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
-      int Tv3Ver = 0;
+        Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\MediaPortal TV Server");
       string Tv3Build = "0";
       string Tv3DisplayVer = string.Empty;
       if (key != null)
       {
-        Tv3Ver = Utils.CalculateVersion((int)key.GetValue("VersionMajor"), (int)key.GetValue("VersionMinor"),
-                                        (int)key.GetValue("VersionRevision"));
         Tv3Build = key.GetValue("VersionBuild").ToString();
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
         Tv3DisplayVer = key.GetValue("DisplayVersion").ToString().Replace(" for TESTING ONLY", string.Empty);
         key.Close();
       }
+      Version Tv3Ver = new Version(major, minor, revision);
 
       rbUpdate.Enabled = false;
       bUpdate.Enabled = false;
-      if ((MpVer >= Utils.GetPackageVersion("min") && MpVer <= Utils.GetPackageVersion("max")) ||
-          (Tv3Ver >= Utils.GetPackageVersion("min") && Tv3Ver <= Utils.GetPackageVersion("max")) &&
+      if ((Utils.IsPackageUpdatabled(MpVer) || Utils.IsPackageUpdatabled(Tv3Ver)) &&
           (Utils.IsOfficialBuild(MpBuild) && Utils.IsOfficialBuild(Tv3Build)))
       {
         rbUpdate.Enabled = true;
