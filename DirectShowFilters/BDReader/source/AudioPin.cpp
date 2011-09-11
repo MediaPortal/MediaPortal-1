@@ -218,7 +218,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         bool useEmptySample = false;
 
-        JoinAudioBuffers(buffer, &demux);
+        //JoinAudioBuffers(buffer, &demux);
         
         if (m_nPrevPl == -1)
         {
