@@ -41,10 +41,10 @@ typedef struct bd_player_settings
 {
   int regionCode;
   int parentalControl;
-  const char* audioLang;
-  const char* menuLang;
-  const char* subtitleLang;
-  const char* countryCode;
+  char audioLang[4];
+  char menuLang[4];
+  char subtitleLang[4];
+  char countryCode[4];
 } bd_player_settings;
 
 // Function pointer definitions for the libbluray API

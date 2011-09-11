@@ -43,9 +43,13 @@ namespace MediaPortal.Player
   {
     public int regionCode;
     public int parentalControl;
+    [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
     public string audioLang;
+    [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
     public string menuLang;
+    [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
     public string subtitleLang;
+    [MarshalAsAttribute(UnmanagedType.ByValTStr, SizeConst = 4)] 
     public string countryCode;
   }
 

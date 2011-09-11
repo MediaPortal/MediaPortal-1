@@ -322,7 +322,7 @@ void CLibBlurayWrapper::SetBDPlayerSettings(bd_player_settings pSettings)
 {
   LogDebug("CLibBlurayWrapper - Settings: Audio(%s), Menu(%s), Sub(%s), Ctry(%s), Reg(%i), Prtl(%i)", pSettings.audioLang,
 		pSettings.menuLang, pSettings.subtitleLang, pSettings.countryCode, pSettings.regionCode, pSettings.parentalControl);
-  m_playerSettings = pSettings;
+  memcpy(&m_playerSettings, &pSettings, sizeof(bd_player_settings));
 }
 
 bd_player_settings& CLibBlurayWrapper::GetBDPlayerSettings()
