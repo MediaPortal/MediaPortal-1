@@ -89,6 +89,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_loopLastSearch = 1;
   m_bDiscontinuousClip = false;
   m_bVideoFormatParsed = false;
+  m_bAudioFormatParsed = false;
 
   m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
@@ -173,6 +174,8 @@ bool CDeMultiplexer::SetAudioStream(int stream)
   m_pCurrentAudioBuffer = NULL;
   m_nAudioPesLenght = 0;
 
+  m_bAudioFormatParsed = false;
+
   return true;
 }
 
@@ -233,7 +236,7 @@ void CDeMultiplexer::GetAudioStreamPMT(CMediaType& pmt)
 
 int CDeMultiplexer::GetAudioStreamType(int stream)
 {
-  if (stream < 0 || stream >= m_audioStreams.size())
+  if (stream < 0 || stream >= (int)m_audioStreams.size())
   {
     return 0;
   }
@@ -702,6 +705,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       LogDebug("demux: New playitem %d", pEv.param);
       
       m_bVideoFormatParsed = false;
+      m_bAudioFormatParsed = false;
       
       UINT64 clipStart = 0, clipIn = 0, bytePos = 0, duration = 0;
       int ret = m_filter.lib.GetClipInfo(pEv.param, &clipStart, &clipIn, &bytePos, &duration);
@@ -989,7 +993,7 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
       LogDebug("demux: ParseVideoFormat - succeeded");
       if (!m_bStarting)
       {
-        m_playlistManager->SetPMT(CreateMediaType(&m_videoParser->pmt), m_nPlaylist, m_nClip);
+        m_playlistManager->SetVideoPMT(CreateMediaType(&m_videoParser->pmt), m_nPlaylist, m_nClip);
       }
     }
   }
@@ -997,10 +1001,26 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
   return m_bVideoFormatParsed;
 }
 
-void CDeMultiplexer::ParseAudioFormat(Packet* p)
+bool CDeMultiplexer::ParseAudioFormat(Packet* p)
 {
-  m_audioParser->OnTsPacket(p->GetData(), p->GetCount(), m_AudioStreamType);
-  p->pmt = CreateMediaType(&m_audioParser->pmt);
+  if (!m_bAudioFormatParsed)
+  {
+    m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->GetData(), p->GetCount(), m_AudioStreamType);
+    if (!m_bAudioFormatParsed)
+    {
+      LogDebug("demux: ParseAudioFormat - failed to parse audio format!");
+    }
+    else
+    {
+      LogDebug("demux: ParseAudioFormat - succeeded");
+      if (!m_bStarting)
+      {
+        m_playlistManager->SetAudioPMT(CreateMediaType(&m_audioParser->pmt), m_nPlaylist, m_nClip);
+      }
+    }
+  }
+
+  return m_bAudioFormatParsed;
 }
 
 void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> p)

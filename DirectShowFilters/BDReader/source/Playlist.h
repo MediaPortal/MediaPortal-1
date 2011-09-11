@@ -59,7 +59,8 @@ public:
   bool HasAudio();
   bool HasVideo();
   bool Incomplete();
-  void SetPmt(AM_MEDIA_TYPE * pmt, int nClip);
+  void SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip);
+  void SetAudioPMT(AM_MEDIA_TYPE * pmt, int nClip);
 
 protected:
   typedef vector<CClip*>::iterator ivecClip;

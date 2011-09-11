@@ -69,7 +69,7 @@ public:
   void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
 
   bool       ParseVideoFormat(Packet* p);
-  void       ParseAudioFormat(Packet* p);
+  bool       ParseAudioFormat(Packet* p);
   void       ParseVideoStream(BLURAY_CLIP_INFO* clip);
   void       ParseAudioStreams(BLURAY_CLIP_INFO* clip);
   void       ParseSubtitleStreams(BLURAY_CLIP_INFO* clip);
@@ -225,6 +225,7 @@ private:
   INT32 m_nMPEG2LastPlaylist;
   bool m_bDiscontinuousClip;
   bool m_bVideoFormatParsed;
+  bool m_bAudioFormatParsed;
   
   bool m_bUpdateSubtitleOffset;
 

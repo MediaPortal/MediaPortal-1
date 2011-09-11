@@ -410,11 +410,11 @@ bool CPlaylistManager::Incomplete()
   return ret;
 }
 
-void CPlaylistManager::SetPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
+void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
-    LogDebug("Setting PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
+    LogDebug("Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
       pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
@@ -422,7 +422,24 @@ void CPlaylistManager::SetPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
     CPlaylist* pl=GetPlaylist(nPlaylist);
     if (pl!=NULL)
     {
-      pl->SetPmt(pmt, nClip);
+      pl->SetVideoPMT(pmt, nClip);
+    }  
+  }
+}
+
+void CPlaylistManager::SetAudioPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
+{
+  if (pmt)
+  {
+    LogDebug("Setting audio PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
+	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
+      pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
+      pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
+      pmt->subtype.Data4[6], pmt->subtype.Data4[7], nPlaylist, nClip);
+    CPlaylist* pl=GetPlaylist(nPlaylist);
+    if (pl!=NULL)
+    {
+      pl->SetAudioPMT(pmt, nClip);
     }  
   }
 }

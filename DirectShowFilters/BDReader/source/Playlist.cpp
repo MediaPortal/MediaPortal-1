@@ -445,11 +445,20 @@ CClip * CPlaylist::GetClip(int nClip)
   return ret;
 }
 
-void CPlaylist::SetPmt(AM_MEDIA_TYPE * pmt, int nClip)
+void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
 {
   CClip * clip = GetClip(nClip);
   if (clip!=NULL)
   {
-    clip->SetPMT(pmt);
+    clip->SetVideoPMT(pmt);
+  }
+}
+
+void CPlaylist::SetAudioPMT(AM_MEDIA_TYPE * pmt, int nClip)
+{
+  CClip * clip = GetClip(nClip);
+  if (clip!=NULL)
+  {
+    clip->SetAudioPMT(pmt);
   }
 }

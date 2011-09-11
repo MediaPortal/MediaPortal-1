@@ -60,14 +60,16 @@ public:
   bool HasAudio();
   bool HasVideo();
   bool Incomplete();
-  void SetPMT(AM_MEDIA_TYPE *pmt);
+  void SetVideoPMT(AM_MEDIA_TYPE *pmt);
+  void SetAudioPMT(AM_MEDIA_TYPE *pmt);
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
   typedef vector<Packet*>::iterator ivecAudioBuffers;
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
-  AM_MEDIA_TYPE *m_pmt;
+  AM_MEDIA_TYPE *m_videoPmt;
+  AM_MEDIA_TYPE *m_audioPmt;
   REFERENCE_TIME clipDuration;
   REFERENCE_TIME audioPlaybackpoint;
   REFERENCE_TIME lastAudioPosition;
