@@ -836,7 +836,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         if (len > 0)
         { 
           byte* ps = p + pesHeaderLen;
-          m_pCurrentAudioBuffer->SetCount(len);
+          m_pCurrentAudioBuffer->SetCount(len, m_nAudioPesLenght);
           memcpy(m_pCurrentAudioBuffer->GetData(), ps, len);
         }
         else
