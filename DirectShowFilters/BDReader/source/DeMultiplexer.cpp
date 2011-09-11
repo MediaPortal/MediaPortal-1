@@ -825,15 +825,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
         REFERENCE_TIME Ref = m_pCurrentAudioBuffer->rtStart;
 
-        BYTE pesHeader[256];
-
-        int pos = header.PayLoadStart;
-        int pesHeaderLen = tsPacket[pos+8] + 9;
-        memcpy(pesHeader, &tsPacket[pos], pesHeaderLen);
-        pos += pesHeaderLen;
-        
-        // Calculate expected payload length
-        m_nAudioPesLenght = (pesHeader[4] << 8 ) + pesHeader[5] - (pesHeaderLen - 6);
+        int pesHeaderLen = p[8] + 9;
+        m_nAudioPesLenght = (p[4] << 8) + p[5] - (pesHeaderLen - 6);
 
         int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
         if (len > 0)
