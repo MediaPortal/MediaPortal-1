@@ -622,14 +622,14 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   if (dwReadBytes > 0)
   {
     OnRawData(m_readBuffer, (int)dwReadBytes);
-	m_iReadErrors = 0;
+    m_iReadErrors = 0;
     return dwReadBytes;
   }
   else if (dwReadBytes == -1)
   {
     LogDebug("Read failed...failure on libbluray side");
     m_bReadFailed = true;
-	m_iReadErrors++;
+    m_iReadErrors++;
 
     if (m_iReadErrors > MAX_CONSECUTIVE_READ_ERRORS)
     {
