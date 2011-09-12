@@ -33,19 +33,31 @@
 !define VER_MAJOR       1
 !define VER_MINOR       2
 !define VER_REVISION    0
-!define VER_TYPE        ""                 # can be "RC", "Beta", and similar....
+;!define VER_TYPE        ""                 # can be "RC", "Beta". Please comment if Final release
 
+#**********************************************************************************************************#
 
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 
-!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} ${VER_TYPE}"
+!ifndef ${VER_TYPE}
+	!define VER_TYPE ""
+	!define SPC ""
+!else
+	!define SPC " "
+!endif
 
 !if ${BUILD_TYPE} == "Debug"               # it's a debug release
-    !define VER_DEBUG = ">>DEBUG<<"
+    !define VER_DEBUG " >>DEBUG<<"
+!else
+	!define VER_DEBUG ""
 !endif
 
 !if ${VER_BUILD} != 0                      # it's a svn release
-      !define VERSION "${VERSION} ${VER_DEBUG} build ${VER_BUILD} for TESTING ONLY"
+    !define VER_SVN "${VER_DEBUG} for TESTING ONLY"
+!else
+	!define VER_SVN ""
 !endif
+
+!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${SPC}${VER_TYPE}${VER_SVN}"
