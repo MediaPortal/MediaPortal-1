@@ -94,21 +94,55 @@ namespace MediaPortal.DeployTool.Sections
         bUpdate.Enabled = true;
       }
 
+      var strMPDisplayVer = MpDisplayVer;
+      if (MpVer.Major == 1 && MpVer.Minor == 1)
+      {
+        switch (MpVer.Build)
+        {
+          case 6:
+            strMPDisplayVer = "1.2.0 Alpha";
+            break;
+          case 7:
+            strMPDisplayVer = "1.2.0 Beta";
+            break;
+          case 8:
+            strMPDisplayVer = "1.2.0 RC";
+            break;
+        }
+      }
+
+      var strTVDisplayVer = Tv3DisplayVer;
+      if (Tv3Ver.Major == 1 && Tv3Ver.Minor == 1)
+      {
+        switch (Tv3Ver.Build)
+        {
+          case 6:
+            strTVDisplayVer = "1.2.0 Alpha";
+            break;
+          case 7:
+            strTVDisplayVer = "1.2.0 Beta";
+            break;
+          case 8:
+            strTVDisplayVer = "1.2.0 RC";
+            break;
+        }
+      }
+
       if (!String.IsNullOrEmpty(MpBuild))
       {
         labelSectionHeader.Text = !Utils.IsOfficialBuild(MpBuild)
                                     ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
-                                                    MpDisplayVer, MpBuild)
+                                                    strMPDisplayVer, MpBuild)
                                     : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
-                                                    MpDisplayVer);
+                                                    strMPDisplayVer);
       }
       else
       {
         labelSectionHeader.Text = !Utils.IsOfficialBuild(Tv3Build)
                                     ? String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader_SVN"),
-                                                    Tv3DisplayVer, Tv3Build)
+                                                    strTVDisplayVer, Tv3Build)
                                     : String.Format(Localizer.GetBestTranslation("Upgrade_labelSectionHeader"),
-                                                    Tv3DisplayVer);
+                                                    strTVDisplayVer);
       }
 
       rbUpdate.Text = String.Format(Localizer.GetBestTranslation("Upgrade_yes"), Utils.GetDisplayVersion());
