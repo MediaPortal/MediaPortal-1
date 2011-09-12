@@ -92,8 +92,8 @@
           <frame>DVD Cover.png</frame>
           <frameFocus>DVD Cover.png</frameFocus>
           <background>emtpy.png</background>
-          <thumbs mask="video_poster_mask.png"></thumbs>
-          <InfoImage mask="video_poster_mask.png"></InfoImage>
+          <thumbs mask="videothumbmask.png"></thumbs>
+          <InfoImage mask="videothumbmask.png"></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
@@ -167,7 +167,7 @@
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
           <scrollbarYOff>285</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="video_poster_mask.png"></cards>
+          <cards mask="videothumbmask.png"></cards>
           <subitems>
             <subitem>
               <![CDATA[                 <controls>
@@ -178,7 +178,7 @@
                 <posY>0</posY>
                 <width>190</width>
                 <height>280</height>
-                <texture mask="video_poster_mask.png">background2.png</texture>
+                <texture mask="videothumbmask.png">background2.png</texture>
               </control>
               <control>
                 <description>Movie Details</description>
