@@ -437,8 +437,6 @@ void CDeMultiplexer::Flush()
   FlushVideo();
   FlushSubtitle();
 
-  Reset(); // PacketSync reset. 
-
   m_playlistManager->ClearAllButCurrentClip(true);
 
   SetHoldAudio(false);
@@ -621,7 +619,13 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 
   if (dwReadBytes > 0)
   {
-    OnRawData(m_readBuffer, (int)dwReadBytes);
+    int pos = 4;
+    while (pos < dwReadBytes)
+    {
+      OnTsPacket(&m_readBuffer[pos]);
+      pos += 192;
+    }
+  
     m_iReadErrors = 0;
     return dwReadBytes;
   }

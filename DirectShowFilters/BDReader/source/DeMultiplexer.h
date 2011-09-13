@@ -44,7 +44,7 @@ class CBDReaderFilter;
 #define INITIAL_READ_SIZE (READ_SIZE * 1024)
 #define MAX_CONSECUTIVE_READ_ERRORS 5 
 
-class CDeMultiplexer : public CPacketSync, public BDEventObserver
+class CDeMultiplexer : public BDEventObserver
 {
 public:
   CDeMultiplexer(CBDReaderFilter& filter);
