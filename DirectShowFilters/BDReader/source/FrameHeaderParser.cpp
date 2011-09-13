@@ -46,6 +46,29 @@ extern void LogDebug(const char *fmt, ...) ;
 
 #define MAX_SPS 256			// Max size for a SPS packet
 
+#define TRUEHD_SYNC_WORD    0xf8726f
+
+// LR C LFE LRs LRvh LRc LRrs Cs Ts LRsd LRw Cvh LFE2
+static const UINT8 thd_chancount[13] = {2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 1, 1};
+static const UINT8 mlp_quants[16] = {16, 20, 24, 0, 0, 0, 0, 0, 0,  0,  0, 0, 0, 0, 0, 0,};
+static const UINT8 mlp_channels[32] = {1, 2, 3, 4, 3, 4, 5, 3, 4, 5, 4, 5, 6, 4, 5, 4, 5, 6, 5, 5, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,};
+
+static int mlp_samplerate(int in)
+{
+  if (in == 0xF) 
+    return 0; 
+  return (in & 8 ? 44100 : 48000) << (in & 7);
+}
+
+static int truehd_channels(int chanmap)
+{ 
+  int channels = 0, i; 
+   
+  for (i = 0; i < 13; i++) 
+    channels += thd_chancount[i] * ((chanmap >> i) & 1); 
+  return channels; 
+}
+
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -1772,6 +1795,103 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 	}
 
 	return(true);
+}
+ 
+bool CFrameHeaderParser::Read(thdhdr& h, int len, CMediaType* pmt) 
+{
+  int ratebits = 0;
+  int channels = 0;
+
+  DWORD sync = 0;
+  bool syncFound = false;
+  
+  int size = (((BitRead(8, true) << 8) | BitRead(8, true)) & 0xfff) * 2;
+
+  while (GetRemaining() > 4)
+  {
+    sync = BitRead(24, true);
+    if (sync == TRUEHD_SYNC_WORD)
+    {
+      syncFound = true;
+      break;
+    }
+    BitRead(8);
+  }
+
+  if (!syncFound)
+    return false;
+
+  BitRead(24);
+  h.stream_type = BitRead(8);
+
+  if (h.stream_type == 0xbb) 
+  {
+    h.group1_bits = mlp_quants[BitRead(4)];  
+    h.group2_bits = mlp_quants[BitRead(4)];  
+    ratebits = BitRead(4); 
+    h.group1_samplerate = mlp_samplerate(ratebits);  
+    h.group2_samplerate = mlp_samplerate(BitRead(4));  
+    BitRead(11);
+    h.channels_mlp = BitRead(5);
+    channels = mlp_channels[h.channels_mlp];
+  } 
+  else if (h.stream_type == 0xba) 
+  {  
+    h.group1_bits = 24; // TODO: Is this information actually conveyed anywhere?  
+    h.group2_bits = 0;
+    ratebits = BitRead(4);
+    h.group1_samplerate = mlp_samplerate(ratebits);
+    h.group2_samplerate = 0;
+    BitRead(8);
+    h.channels_thd_stream1 = BitRead(5);
+    BitRead(2);
+    h.channels_thd_stream2 = BitRead(13);
+
+    if (h.channels_thd_stream2) 
+    { 
+      channels = truehd_channels(h.channels_thd_stream2); 
+      //avctx->channel_layout = ff_truehd_layout(mh.channels_thd_stream2);
+    } 
+    else 
+    {  
+      channels = truehd_channels(h.channels_thd_stream1);
+      //avctx->channel_layout = ff_truehd_layout(mh.channels_thd_stream1);
+    }
+  } 
+  else
+  {
+    return false;
+  }
+
+  h.access_unit_size = 40 << (ratebits & 7);
+  h.access_unit_size_pow2 = 64 << (ratebits & 7); 
+ 
+  BitRead(48);  
+ 
+  h.is_vbr = BitRead(1); 
+  h.peak_bitrate = (BitRead(15) * h.group1_samplerate + 8) >> 4;  
+  h.num_substreams = BitRead(4);  
+ 
+  //skip_bits_long(gb, 4 + 11 * 8);
+
+  if (pmt)
+  {
+    pmt->majortype = MEDIATYPE_Audio;
+    pmt->subtype = MEDIASUBTYPE_DOLBY_TRUEHD;
+    pmt->formattype = FORMAT_WaveFormatEx;
+    pmt->SetSampleSize(0);
+		
+    WAVEFORMATEX* wfe     = (WAVEFORMATEX*)pmt->AllocFormatBuffer(sizeof(WAVEFORMATEX));
+    wfe->wFormatTag       = WAVE_FORMAT_UNKNOWN;
+    wfe->nChannels        = channels;
+    wfe->nSamplesPerSec   = h.group1_samplerate;
+    wfe->nAvgBytesPerSec  = h.peak_bitrate /8;
+  	//wfe->nBlockAlign      = m_framesize;
+    wfe->wBitsPerSample  = h.group1_bits;
+   wfe->cbSize = 0;
+  }
+
+  return true;
 }
 
 bool CFrameHeaderParser::Read(bdlpcmhdr& h, int len, CMediaType* pmt)

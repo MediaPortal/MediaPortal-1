@@ -366,6 +366,23 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		unsigned int width, height;
 	};
 
+  struct thdhdr
+  {
+    int stream_type;            // 0xBB for MLP, 0xBA for TrueHD
+    int group1_bits;            // The bit depth of the first substream
+    int group2_bits;            // Bit depth of the second substream (MLP only)
+    int group1_samplerate;      // Sample rate of first substream
+    int group2_samplerate;      // Sample rate of second substream (MLP only)
+    int channels_mlp;           // Channel arrangement for MLP streams
+    int channels_thd_stream1;   // Channel arrangement for substream 1 of TrueHD streams (5.1)
+    int channels_thd_stream2;   // Channel arrangement for substream 2 of TrueHD streams (7.1)
+    int access_unit_size;       // Number of samples per coded frame
+    int access_unit_size_pow2;  // Next power of two above number of samples per frame
+    int is_vbr;                 // Stream is VBR instead of CBR
+    int peak_bitrate;           // Peak bitrate for VBR, actual bitrate (==peak) for CBR
+    int num_substreams;         // Number of substreams within stream
+  };
+
 struct BasicVideoInfo
 {
 	int width;
@@ -419,7 +436,8 @@ public:
 	bool Read(pvahdr& h, bool fSync = true);
 	bool Read(avchdr& h, int len, CMediaType* pmt = NULL);
 	bool Read(vc1hdr& h, int len, CMediaType* pmt = NULL);
-  bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
+    bool Read(bdlpcmhdr& h, int len, CMediaType* pmt = NULL);
+    bool Read(thdhdr& h, int len, CMediaType* pmt = NULL);
 
 	void RemoveMpegEscapeCode(BYTE* dst, BYTE* src, int length);
 

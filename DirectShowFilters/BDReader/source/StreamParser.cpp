@@ -139,8 +139,8 @@ bool StreamParser::ParseVideo(byte* tsPacket, int serviceType)
   else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_TRUHD)
   {
     // TODO no real support for now...
-    ac3hdr ac3;
-		parsed = hdrParser.Read(ac3, framesize, &pmt);
+    thdhdr thd;
+		parsed = hdrParser.Read(thd, framesize, &pmt);
   }
 
 	return parsed;
