@@ -42,7 +42,7 @@ StreamParser::StreamParser()
 	basicVideoInfo = BasicVideoInfo();
 }
 
-bool StreamParser::ParseVideo(byte* tsPacket, int serviceType)
+bool StreamParser::Parse(byte* tsPacket, int serviceType)
 {
 	bool parsed = false;
 	__int64 framesize = hdrParser.GetSize();
@@ -149,6 +149,6 @@ bool StreamParser::ParseVideo(byte* tsPacket, int serviceType)
 bool StreamParser::OnTsPacket(byte *Frame, int Length, int serviceType)
 {
 	hdrParser.Reset(Frame, Length);
-	return ParseVideo(Frame, serviceType);
+	return Parse(Frame, serviceType);
 }
 

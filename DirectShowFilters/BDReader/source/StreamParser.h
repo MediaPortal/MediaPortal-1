@@ -35,6 +35,6 @@ public:
 
 private:
 	CFrameHeaderParser hdrParser;
-	bool ParseVideo(byte* tsPacket, int serviceTyoe);
+	bool Parse(byte* tsPacket, int serviceTyoe);
 };
 
