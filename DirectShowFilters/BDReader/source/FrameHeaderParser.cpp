@@ -1888,7 +1888,7 @@ bool CFrameHeaderParser::Read(thdhdr& h, int len, CMediaType* pmt)
     wfe->nAvgBytesPerSec  = h.peak_bitrate /8;
   	//wfe->nBlockAlign      = m_framesize;
     wfe->wBitsPerSample  = h.group1_bits;
-   wfe->cbSize = 0;
+    wfe->cbSize = 0;
   }
 
   return true;
