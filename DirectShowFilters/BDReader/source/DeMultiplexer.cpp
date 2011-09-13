@@ -450,9 +450,10 @@ Packet* CDeMultiplexer::GetSubtitle()
   if (m_bEndOfFile) return NULL;
   if (m_bHoldSubtitle) return NULL;
 
+  CAutoLock lock (&m_sectionSubtitle);
+
   if (m_vecSubtitleBuffers.size() != 0)
   {
-    CAutoLock lock (&m_sectionSubtitle);
     ivecSBuffers it = m_vecSubtitleBuffers.begin();
     Packet* subtitleBuffer = *it;
     m_vecSubtitleBuffers.erase(it);
