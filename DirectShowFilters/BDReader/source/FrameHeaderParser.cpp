@@ -1805,7 +1805,7 @@ bool CFrameHeaderParser::Read(thdhdr& h, int len, CMediaType* pmt)
   DWORD sync = 0;
   bool syncFound = false;
   
-  int size = (((BitRead(8, true) << 8) | BitRead(8, true)) & 0xfff) * 2;
+  h.size = (((BitRead(8, true) << 8) | BitRead(8, true)) & 0xfff) * 2;
 
   while (GetRemaining() > 4)
   {

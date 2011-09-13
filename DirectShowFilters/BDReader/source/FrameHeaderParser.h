@@ -381,6 +381,7 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
     int is_vbr;                 // Stream is VBR instead of CBR
     int peak_bitrate;           // Peak bitrate for VBR, actual bitrate (==peak) for CBR
     int num_substreams;         // Number of substreams within stream
+    int size;
   };
 
 struct BasicVideoInfo
