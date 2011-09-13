@@ -592,10 +592,11 @@ namespace MediaPortal.Player
               if (_state != PlayState.Playing)
                 return false;
               Speed = 1;
-              uint chapter = 0;
-              _ireader.GetChapter(ref chapter);
-              Log.Debug("BDPlayer: NextChapter, current: {0}", chapter);
-              _ireader.SetChapter(chapter + 1);
+              //uint chapter = 0;
+              //_ireader.GetChapter(ref chapter);
+              Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter);
+              //_ireader.SetChapter(chapter + 1);
+              SeekAbsolute(chapters[_currentChapter]);
               return true;
             }
 
@@ -604,13 +605,15 @@ namespace MediaPortal.Player
               if (_state != PlayState.Playing)
                 return false;
               Speed = 1;
-              uint chapter = 0;
-              _ireader.GetChapter(ref chapter);
-              Log.Debug("BDPlayer: PrevChapter, current: {0}", chapter);
-              if (chapter > 0)
-                _ireader.SetChapter(chapter - 1);
-              else if (chapter == 0)
-                _ireader.SetChapter(0);
+              //uint chapter = 0;
+              //_ireader.GetChapter(ref chapter);
+              Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter);
+              if (_currentChapter > 1)
+                SeekAbsolute(chapters[_currentChapter-2]);
+                //_ireader.SetChapter(chapter - 1);
+              else if (_currentChapter == 1)
+                SeekAbsolute(chapters[_currentChapter-1]);
+                //_ireader.SetChapter(0);
               return true;
             }
         }
@@ -1196,7 +1199,7 @@ namespace MediaPortal.Player
               _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               Log.Info("BDPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
-              if (lStreamPos > lContentStart)
+              if (lStreamPos >= lContentStart)
               {
                 Log.Info("BDPlayer seek done:{0:X}", hr);
                 SeekTries = 0;
@@ -1585,7 +1588,7 @@ namespace MediaPortal.Player
     {
       double[] chapters = new double[titleInfo.chapter_count];
 
-      if (chapters.Length > 1)
+      if (chapters.Length > 2) // only two chapters means beginning and end - no real chapters
       {
         for (int i = 0; i < chapters.Length; i++)
         {
@@ -1692,36 +1695,33 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
-            //EnableSubtitle = bdevent.Param == 1 ? true : false || SubtitleStreams > 0;
+            EnableSubtitle = bdevent.Param == 1 ? true : false; //|| SubtitleStreams > 0;
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
-            if (bdevent.Param != 0xfff && _state == PlayState.Menu)
+            if (bdevent.Param != 0xfff && EnableSubtitle) // && _state == PlayState.Menu)
               CurrentSubtitleStream = bdevent.Param;
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
-            chapters = null;
-            break;
+            if(_forceTitle || _currentTitle != 0xffff)
+              _updateItems |= UpdateItems.Chapter;
+            break;            
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
-            _currentTitle = bdevent.Param;
-
-            chapters = null;
+            if (bdevent.Param != 0xffff)
+              _currentTitle = bdevent.Param;          
             break;
 
           case (int)BDEvents.BD_EVENT_CHAPTER:
             Log.Debug("BDPlayer: Chapter changed to {0}", bdevent.Param);
-            _currentChapter = bdevent.Param;
-            if (_currentChapter != 0xffff && chapters == null)
-              _updateItems |= UpdateItems.Chapter;
-            else
-              _updateItems &= ~UpdateItems.Chapter;
+            if (bdevent.Param != 0xffff)
+              _currentChapter = bdevent.Param;
             break;
-          
+
           case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:            
             if (bdevent.Param == 1)
             {
@@ -1758,15 +1758,19 @@ namespace MediaPortal.Player
             _updateNow++;
         }
 
-        if ((_updateItems & UpdateItems.Chapter) == UpdateItems.Chapter && _state != PlayState.Menu)
+        if ((_updateItems & UpdateItems.Chapter) == UpdateItems.Chapter)
         {
           if ((_updateNow & 32) == 32)
           {
             _updateNow -= 32;
             Log.Debug("BDPlayer: Chapters update");
+            _updateItems &= ~UpdateItems.Chapter;            
             UpdateChapters();
-            if (chapters != null)
-              _updateItems &= ~UpdateItems.Chapter;            
+            if (chapters != null && _state == PlayState.Menu) //direct play to main movie
+            {
+              menuItems = MenuItems.All;
+              _state = PlayState.Playing;
+            }
           }
           else
             _updateNow += 8;
@@ -2414,15 +2418,15 @@ namespace MediaPortal.Player
       switch (stream)
       { 
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3:
-          return "AC3";          
+          return "AC-3";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
-          return "AC3plus";          
+          return "DD+";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTS:
           return "DTS";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD:
           return "DTS-HD";          
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
-          return "DTS-HD master";
+          return "DTS-HD Master";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_LPCM:
           return "LPCM";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_MPEG1:
@@ -2432,7 +2436,7 @@ namespace MediaPortal.Player
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_MPEG2:
           return "MPEG2";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_AUDIO_TRUHD:
-          return "TRUHD";
+          return "TrueHD";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_H264:
           return "H264";
         case (int)BluRayStreamFormats.BLURAY_STREAM_TYPE_VIDEO_VC1:
