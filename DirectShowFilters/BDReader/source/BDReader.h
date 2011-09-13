@@ -239,5 +239,6 @@ private:
   HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
   bool            m_bIgnoreLibSeeking;
+  bool            m_bFirstPlay;
 };
 

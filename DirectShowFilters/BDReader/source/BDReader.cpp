@@ -673,6 +673,7 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   strncpy(m_pathToBD, path, pathLen - extLen);
   m_pathToBD[pathLen - extLen] = '\0';
 
+  m_bFirstPlay = true;
   lib.OpenBluray(m_pathToBD);
   UINT32 titleCount = lib.GetTitles(TITLES_ALL);
 
@@ -706,6 +707,7 @@ STDMETHODIMP CBDReaderFilter::Start()
   // Close BD so the HDVM etc. are reset completely after querying the initial data.
   // This is required so we wont lose the initial events.
   lib.CloseBluray();
+  m_bFirstPlay = false;
   lib.OpenBluray(m_pathToBD);
   lib.Play();
 
@@ -901,7 +903,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
   }
 
   // Send event to the callback - filter out the none events
-  if (m_pCallback && pEv.event != BD_EVENT_NONE)
+  if (m_pCallback && pEv.event != BD_EVENT_NONE && !m_bFirstPlay)
   {
     m_pCallback->OnBDEvent(pEv);
   }
