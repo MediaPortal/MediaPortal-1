@@ -34,6 +34,7 @@ namespace MpeCore.Classes
       UpdateAll = false;
       DoUpdateInStartUp = true;
       ShowOnlyStable = true;
+      ShowOnlyCompatible = true;
       IgnoredUpdates = new List<string>();
     }
 
