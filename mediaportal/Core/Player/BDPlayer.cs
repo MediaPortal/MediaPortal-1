@@ -591,12 +591,9 @@ namespace MediaPortal.Player
             {
               if (_state != PlayState.Playing)
                 return false;
-              Speed = 1;
-              //uint chapter = 0;
-              //_ireader.GetChapter(ref chapter);
-              Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter);
-              //_ireader.SetChapter(chapter + 1);
-              SeekAbsolute(chapters[_currentChapter]);
+              Speed = 1;              
+              Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter + 1);
+              _ireader.SetChapter((uint)_currentChapter + 1);              
               return true;
             }
 
@@ -604,16 +601,12 @@ namespace MediaPortal.Player
             {
               if (_state != PlayState.Playing)
                 return false;
-              Speed = 1;
-              //uint chapter = 0;
-              //_ireader.GetChapter(ref chapter);
-              Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter);
-              if (_currentChapter > 1)
-                SeekAbsolute(chapters[_currentChapter-2]);
-                //_ireader.SetChapter(chapter - 1);
-              else if (_currentChapter == 1)
-                SeekAbsolute(chapters[_currentChapter-1]);
-                //_ireader.SetChapter(0);
+              Speed = 1;              
+              Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter + 1);
+              if (_currentChapter > 0)
+                _ireader.SetChapter((uint)_currentChapter - 1);
+              else if (_currentChapter == 0)                
+                _ireader.SetChapter(0);
               return true;
             }
         }
@@ -819,6 +812,7 @@ namespace MediaPortal.Player
         MovieEnded();
         return false;
       }
+      _state = PlayState.Playing;
       GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
       msg.Label = strFile;
       GUIWindowManager.SendThreadMessage(msg);
@@ -833,13 +827,11 @@ namespace MediaPortal.Player
 
       if (_forceTitle)
       {
-        menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
-        _state = PlayState.Playing;
+        menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;        
       }
       else
       {
-        menuItems = MenuItems.MainMenu;
-        _state = PlayState.Menu;
+        menuItems = MenuItems.MainMenu;        
       }
       return true;
     }
@@ -1695,7 +1687,8 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
-            EnableSubtitle = bdevent.Param == 1 ? true : false; //|| SubtitleStreams > 0;
+            if(!_forceTitle)
+              EnableSubtitle = bdevent.Param == 1 ? true : false; //|| SubtitleStreams > 0;
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
@@ -1708,7 +1701,11 @@ namespace MediaPortal.Player
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
             if(_forceTitle || _currentTitle != 0xffff)
               _updateItems |= UpdateItems.Chapter;
-            break;            
+            break;
+
+          case (int)BDEvents.BD_EVENT_PLAYITEM:
+            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);            
+            break; 
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
@@ -1719,7 +1716,7 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_CHAPTER:
             Log.Debug("BDPlayer: Chapter changed to {0}", bdevent.Param);
             if (bdevent.Param != 0xffff)
-              _currentChapter = bdevent.Param;
+              _currentChapter = bdevent.Param - 1;
             break;
 
           case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:            
@@ -1766,10 +1763,9 @@ namespace MediaPortal.Player
             Log.Debug("BDPlayer: Chapters update");
             _updateItems &= ~UpdateItems.Chapter;            
             UpdateChapters();
-            if (chapters != null && _state == PlayState.Menu) //direct play to main movie
+            if (chapters != null && menuItems == MenuItems.MainMenu) //direct play to main movie
             {
               menuItems = MenuItems.All;
-              _state = PlayState.Playing;
             }
           }
           else
@@ -2235,7 +2231,7 @@ namespace MediaPortal.Player
 
         // if only dvb subs are enabled, pass null for ttxtDecoder
         _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
-
+        
         if (_audioRendererFilter != null)
         {
           //Log.Info("BDPlayer:set reference clock");
