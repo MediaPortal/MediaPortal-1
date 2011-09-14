@@ -472,14 +472,13 @@ Packet* CDeMultiplexer::GetVideo()
 
   while (!m_playlistManager->HasVideo())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(false, true) <= 0)
     {
       return NULL;
     }
-    ReadFromFile(false, true);
   }
-  Packet * ret = m_playlistManager->GetNextVideoPacket();
-  if (ret==NULL)
+  Packet* ret = m_playlistManager->GetNextVideoPacket();
+  if (!ret)
   {
     LogDebug("No Video Data");
   }
@@ -495,13 +494,12 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(true, false) <= 0)
     {
       return NULL;
     }
-    ReadFromFile(true, false);
   }
-  Packet * ret = m_playlistManager->GetNextAudioPacket(playlist,clip);
+  Packet* ret = m_playlistManager->GetNextAudioPacket(playlist, clip);
 
   return ret;
 }
@@ -518,11 +516,10 @@ Packet* CDeMultiplexer::GetAudio()
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking())
+    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(true, false) <= 0)
     {
       return NULL;
     }
-    ReadFromFile(true, false);
   }
   Packet * ret = m_playlistManager->GetNextAudioPacket();
   if (ret==NULL)
