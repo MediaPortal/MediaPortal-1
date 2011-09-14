@@ -1854,7 +1854,7 @@ namespace MediaPortal.Player
         }
         catch (Exception error)
         {
-          Log.Error("Error stopping graph: {0}", error.Message);
+          Log.Error("BDPlayer: Error stopping graph: {0}", error.Message);
           MovieEnded();
         }
 
@@ -1871,15 +1871,15 @@ namespace MediaPortal.Player
         switch (_mChangedMediaType)
         {
           case MediaType.Audio: // audio changed
-            Log.Info("Rerendering audio pin of BDReader filter.");
+            Log.Info("BDPlayer: Rerendering audio pin of BDReader filter.");
             UpdateFilters("Audio");
             break;
           case MediaType.Video: // video changed
-            Log.Info("Rerendering video pin of BDReader filter.");
+            Log.Info("BDPlayer: Rerendering video pin of BDReader filter.");
             UpdateFilters("Video");
             break;
           case MediaType.Audio | MediaType.Video: // both changed
-            Log.Info("Rerendering audio and video pins of BDReader filter.");
+            Log.Info("BDPlayer: Rerendering audio and video pins of BDReader filter.");
             UpdateFilters("Audio");
             UpdateFilters("Video");
             break;
@@ -1894,36 +1894,35 @@ namespace MediaPortal.Player
         }
         catch (Exception error)
         {
-          Log.Error("Error starting graph: {0}", error.Message);
+          Log.Error("BDPlayer: Error starting graph: {0}", error.Message);
           MovieEnded();
           return;
         }
-        Log.Info("Reconfigure graph done");
+        Log.Info("BDPlayer: Reconfigure graph done");
       }
     }
 
     protected void OnGraphNotify()
     {
-      if (_mediaEvt == null)
+      int param1, param2;
+      EventCode eventCode;
+      while (_mediaEvt != null && _mediaEvt.GetEvent(out eventCode, out param1, out param2, 0) >= 0)
       {
-        return;
+        _mediaEvt.FreeEventParams(eventCode, param1, param2);
+        switch (eventCode)
+        {
+          case EventCode.Complete:
+            Log.Debug("BDPlayer - GraphNotify: Complete");
+            MovieEnded();
+            break;
+          case EventCode.ErrorAbort:
+            Log.Debug("BDPlayer - GraphNotify: Error");
+            // skip for now
+            break;
+          default:
+            break;
+        }        
       }
-      int p1, p2, hr = 0;
-      EventCode code;
-      do
-      {
-        hr = _mediaEvt.GetEvent(out code, out p1, out p2, 0);
-        if (hr < 0)
-        {
-          break;
-        }
-        hr = _mediaEvt.FreeEventParams(code, p1, p2);
-        if (code == EventCode.Complete || code == EventCode.ErrorAbort)
-        {
-          MovieEnded();
-          break;
-        }
-      } while (hr == 0);
     }
 
     protected void OnInitialized()
@@ -2266,7 +2265,7 @@ namespace MediaPortal.Player
         return;
       }
       int hr;
-      Log.Info("BDPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+      Log.Info("BDPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
         BDOSDRenderer.Release();
