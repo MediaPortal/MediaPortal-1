@@ -38,7 +38,7 @@ Packet::Packet()
   bSeekRequired = false;
   rtStart = -100;
   rtStop = -100;
-  rtOffset = -100;
+  rtOffset = 0;//-100; /// is this needed? i.e. fixed somewhere else so that all packets will have a valid offset (initial versions did have some packets where this was left at -100)
   pmt = NULL;
 }
 
