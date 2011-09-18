@@ -81,12 +81,13 @@ void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
   }
 };
 
-CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* section) :
+CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux) :
   CSourceStream(NAME("pinVideo"), phr, pFilter, L"Video"),
   m_pFilter(pFilter),
-  m_section(section),
+  m_section(pSection),
+  m_demux(pDemux),
   m_decoderType(general),
-  CSourceSeeking(NAME("pinVideo"), pUnk, phr, section),
+  CSourceSeeking(NAME("pinVideo"), pUnk, phr, pSection),
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
   m_pCachedBuffer(NULL),
@@ -367,23 +368,23 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
   }
 }
 
-void CVideoPin::CheckPlaybackState(CDeMultiplexer& pDemux)
+void CVideoPin::CheckPlaybackState()
 {
-  if (pDemux.m_bVideoPlSeen)
+  if (m_demux.m_bVideoPlSeen)
   {
-    pDemux.m_eAudioPlSeen->Wait();
+    m_demux.m_eAudioPlSeen->Wait();
 
-    if (pDemux.m_bVideoRequiresRebuild || pDemux.m_bAudioRequiresRebuild)
+    if (m_demux.m_bVideoRequiresRebuild || m_demux.m_bAudioRequiresRebuild)
     {
-      pDemux.m_bVideoRequiresRebuild = false;
-      pDemux.m_bAudioRequiresRebuild = false;
+      m_demux.m_bVideoRequiresRebuild = false;
+      m_demux.m_bAudioRequiresRebuild = false;
 
       LogDebug("vid: REBUILD");
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
     }
     else
     {
-      LogDebug("vid: Request zeroing the stream time - video after audio");
+      LogDebug("vid: Request zeroing the stream time");
 
       //m_pReceiver->EndOfStream();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
@@ -391,19 +392,22 @@ void CVideoPin::CheckPlaybackState(CDeMultiplexer& pDemux)
       m_eFlushStart->Reset();
     }
 
-    pDemux.m_eAudioPlSeen->Reset();
-    pDemux.m_bVideoPlSeen = false;
-  }
-  else if (!pDemux.m_eAudioPlSeen->Check() && !pDemux.m_bVideoPlSeen && pDemux.m_bAudioRequiresRebuild)
-  {
-    pDemux.m_bAudioRequiresRebuild = false;
-
-    LogDebug("vid: REBUILD - keep stream position");
-    m_pFilter->IssueCommand(REBUILD, -1);
+    m_demux.m_eAudioPlSeen->Reset();
+    m_demux.m_bVideoPlSeen = false;
   }
   else
   {
-    Sleep(5);        
+    if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
+    {
+      m_demux.m_bAudioRequiresRebuild = false;
+
+      LogDebug("vid: REBUILD for audio - keep stream position");
+      m_pFilter->IssueCommand(REBUILD, -1);
+    }
+    else
+    {
+      Sleep(5);        
+    }
   }
 }
 
@@ -411,28 +415,27 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 {
   try
   {
-    CDeMultiplexer& demux = m_pFilter->GetDemultiplexer();
     Packet* buffer = NULL;
 
     do
     {
-      if (m_pFilter->IsStopping() || demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone)
+      if (m_pFilter->IsStopping() || m_demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone)
       {
         CreateEmptySample(pSample);
         return S_OK;
       }
 
-      if (demux.EndOfFile())
+      if (m_demux.EndOfFile())
       {
         LogDebug("vid: set EOF");
         CreateEmptySample(pSample);
         return S_FALSE;
       }
 
-      if (demux.m_bVideoPlSeen || demux.m_bAudioRequiresRebuild && !demux.m_eAudioPlSeen->Check())
+      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_eAudioPlSeen->Check())
       {
         CreateEmptySample(pSample);
-        CheckPlaybackState(demux);
+        CheckPlaybackState();
         return S_OK;
       }
 
@@ -444,7 +447,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
       }
       else
       {
-        buffer = demux.GetVideo();
+        buffer = m_demux.GetVideo();
       }
 
       if (!buffer)
@@ -455,60 +458,64 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
       {
         bool useEmptySample = false;
 
-        if (buffer->bSeekRequired)
         {
-          LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-          demux.m_bVideoPlSeen = true;
-          buffer->bSeekRequired = false;
-          useEmptySample = true;
+          CAutoLock lock(m_section);
 
-          // HACK - currenlty Playlist / Clip aren't setting the playlist changes to zero if
-          // 1st sample doesn't start from zero - this causes fake seek to be filtered out
-          // when two sequential clips share the same offset.
-
-          if (buffer->rtOffset < 10000000)
-            buffer->rtOffset = 0;
-
-          buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
-        }
-
-        if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
-        {
-          LogMediaType(buffer->pmt);
-            
-          HRESULT hrAccept = S_FALSE;
-
-          if (m_pPinConnection)
+          if (buffer->bSeekRequired)
           {
-            hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-          }
-          else if (m_pReceiver)
-          {
-            // Dynamic format changes cause lot of issues - currently not enabled
-            //LogDebug("DynamicQueryAccept - not avail");
-            //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
-          }
-
-          if (hrAccept != S_OK)
-          {
-            CMediaType* mt = new CMediaType(*buffer->pmt);
-            SetMediaType(mt);
-
-            LogDebug("vid: graph rebuilding required");
-
-            demux.m_bVideoRequiresRebuild = true;
+            LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
+            m_demux.m_bVideoPlSeen = true;
+            buffer->bSeekRequired = false;
             useEmptySample = true;
 
-            //m_pReceiver->EndOfStream();
+            // HACK - currenlty Playlist / Clip aren't setting the playlist changes to zero if
+            // 1st sample doesn't start from zero - this causes fake seek to be filtered out
+            // when two sequential clips share the same offset.
+
+            if (buffer->rtOffset < 10000000)
+              buffer->rtOffset = 0;
+
+            buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
           }
-          else
+
+          if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
           {
-            LogDebug("vid: format change accepted");
-            CMediaType* mt = new CMediaType(*buffer->pmt);
-            SetMediaType(mt);
-            pSample->SetMediaType(mt);
+            LogMediaType(buffer->pmt);
+            
+            HRESULT hrAccept = S_FALSE;
+
+            if (m_pPinConnection)
+            {
+              hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
+            }
+            else if (m_pReceiver)
+            {
+              // Dynamic format changes cause lot of issues - currently not enabled
+              //LogDebug("DynamicQueryAccept - not avail");
+              //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+            }
+
+            if (hrAccept != S_OK)
+            {
+              CMediaType* mt = new CMediaType(*buffer->pmt);
+              SetMediaType(mt);
+
+              LogDebug("vid: graph rebuilding required");
+
+              m_demux.m_bVideoRequiresRebuild = true;
+              useEmptySample = true;
+
+              //m_pReceiver->EndOfStream();
+            }
+            else
+            {
+              LogDebug("vid: format change accepted");
+              CMediaType* mt = new CMediaType(*buffer->pmt);
+              SetMediaType(mt);
+              pSample->SetMediaType(mt);
+            }
           }
-        }
+        } // lock ends
 
         if (useEmptySample)
         {
@@ -516,7 +523,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           LogDebug("vid: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
          
           CreateEmptySample(pSample);
-          CheckPlaybackState(demux);
+          CheckPlaybackState();
 
           return S_OK;
         }

@@ -43,7 +43,7 @@ public:
     Cyberlink
   };
 
-  CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT *phr,CCritSec* section);
+  CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux);
   ~CVideoPin();
 
   STDMETHODIMP NonDelegatingQueryInterface( REFIID riid, void ** ppv );
@@ -84,9 +84,10 @@ protected:
   void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
   
-  void CheckPlaybackState(CDeMultiplexer& pDemux);
+  void CheckPlaybackState();
 
   CBDReaderFilter* const m_pFilter;
+  CDeMultiplexer& m_demux;
   bool      m_bConnected;
   CCritSec* m_section;
 

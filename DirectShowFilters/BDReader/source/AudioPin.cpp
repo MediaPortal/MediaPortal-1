@@ -230,51 +230,54 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         //JoinAudioBuffers(buffer, &demux);
         
-        if (buffer->bSeekRequired)
         {
-          LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-          demux.m_eAudioPlSeen->Set();
-          buffer->bSeekRequired = false;
-          //m_pReceiver->EndOfStream();
-          useEmptySample = true;
-          m_bSeekDone = false;
-        }
+          CAutoLock lock(m_section);
 
-        if (buffer->pmt && m_mt != *buffer->pmt)
-        {
-          HRESULT hrAccept = S_FALSE;
-          LogMediaType(buffer->pmt);
-
-          if (m_pPinConnection && false) // TODO - DS audio renderer seems to be only one that supports this
+          if (buffer->bSeekRequired)
           {
-            hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-          }
-          else if (m_pReceiver)
-          {
-            //LogDebug("aud: DynamicQueryAccept - not avail"); 
-            hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
-          }
-
-          if (hrAccept != S_OK)
-          {
-            CMediaType* mt = new CMediaType(*buffer->pmt);
-            SetMediaType(mt);
-
-            LogDebug("aud: graph rebuilding required");
-
-            demux.m_bAudioRequiresRebuild = true;
-            useEmptySample = true;
-
+            LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
+            buffer->bSeekRequired = false;
             //m_pReceiver->EndOfStream();
+            useEmptySample = true;
+            m_bSeekDone = false;
           }
-          else
+
+          if (buffer->pmt && m_mt != *buffer->pmt)
           {
-            LogDebug("aud: format change accepted");
-            CMediaType* mt = new CMediaType(*buffer->pmt);
-            SetMediaType(mt);
-            pSample->SetMediaType(mt);
+            HRESULT hrAccept = S_FALSE;
+            LogMediaType(buffer->pmt);
+
+            if (m_pPinConnection && false) // TODO - DS audio renderer seems to be only one that supports this
+            {
+              hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
+            }
+            else if (m_pReceiver)
+            {
+              //LogDebug("aud: DynamicQueryAccept - not avail"); 
+              hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+            }
+
+            if (hrAccept != S_OK)
+            {
+              CMediaType* mt = new CMediaType(*buffer->pmt);
+              SetMediaType(mt);
+
+              LogDebug("aud: graph rebuilding required");
+
+              demux.m_bAudioRequiresRebuild = true;
+              useEmptySample = true;
+
+              //m_pReceiver->EndOfStream();
+            }
+            else
+            {
+              LogDebug("aud: format change accepted");
+              CMediaType* mt = new CMediaType(*buffer->pmt);
+              SetMediaType(mt);
+              pSample->SetMediaType(mt);
+            }
           }
-        }
+        } // lock ends
 
         if (useEmptySample)
         {
@@ -282,6 +285,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+
+          demux.m_eAudioPlSeen->Set();
 
           return S_OK;
         }
