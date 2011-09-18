@@ -397,9 +397,10 @@ void CVideoPin::CheckPlaybackState()
   }
   else
   {
-    if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
+    if (m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
     {
       m_demux.m_bAudioRequiresRebuild = false;
+      m_demux.m_eAudioPlSeen->Reset();
 
       LogDebug("vid: REBUILD for audio - keep stream position");
       m_pFilter->IssueCommand(REBUILD, -1);
@@ -432,7 +433,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         return S_FALSE;
       }
 
-      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_eAudioPlSeen->Check())
+      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoPlSeen)
       {
         CreateEmptySample(pSample);
         CheckPlaybackState();
