@@ -689,7 +689,6 @@ STDMETHODIMP CBDReaderFilter::GetCurFile(LPOLESTR * ppszFileName, AM_MEDIA_TYPE 
   return S_OK;
 }
 
-// IAMFilterMiscFlags
 ULONG CBDReaderFilter::GetMiscFlags()
 {
   return AM_FILTER_MISC_FLAGS_IS_SOURCE;
@@ -724,13 +723,6 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
   }
 }
 
-// When a IMediaSeeking.SetPositions() is done on one of the output pins the output pin will do:
-//  SeekStart() ->indicates to any other output pins we're busy seeking
-//  Seek()      ->Does the seeking
-//  SeekDone()  ->indicates that seeking has finished
-// This prevents the situation where multiple outputpins are seeking in the file at the same time
-
-///Returns the audio output pin
 CAudioPin* CBDReaderFilter::GetAudioPin()
 {
   return m_pAudioPin;
