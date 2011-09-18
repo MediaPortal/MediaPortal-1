@@ -1129,7 +1129,7 @@ DWORD CBDReaderFilter::ThreadProc()
 
     while (!CheckRequest(&cmd)) 
     {
-      Sleep(5) // TODO remove polling or maybe start to use the worker thread for pre-caching data
+      Sleep(5); // TODO remove polling or maybe start to use the worker thread for pre-caching data
     }
 
     // If we didnt exit by request, deliver end-of-stream
