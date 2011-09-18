@@ -22,6 +22,7 @@
 #pragma once
 #include <bluray.h>
 #include <map>
+#include <set>
 
 #include "pcrdecoder.h"
 #include "demultiplexer.h"
@@ -98,7 +99,9 @@ class CBDReaderFilter : public CSource,
                         public ISubtitleStream, 
                         public IAudioStream,
                         public IBDReader,
-                        public BDEventObserver
+                        public BDEventObserver,
+                        public CCritSec,
+                        protected CAMThread
 {
 public:
   DECLARE_IUNKNOWN
@@ -150,7 +153,7 @@ public:
   BLURAY_TITLE_INFO* STDMETHODCALLTYPE GetTitleInfo(UINT32 pIndex);
   STDMETHODIMP FreeTitleInfo(BLURAY_TITLE_INFO* info);
   STDMETHODIMP Start();
-	STDMETHODIMP MouseMove(UINT16 x, UINT16 y);
+  STDMETHODIMP MouseMove(UINT16 x, UINT16 y);
 
   void STDMETHODCALLTYPE OnGraphRebuild(int info);
   void STDMETHODCALLTYPE ForceTitleBasedPlayback(bool force, UINT32 pTitle);
@@ -165,20 +168,19 @@ public:
   // IFileSourceFilter
   STDMETHODIMP    Load(LPCOLESTR pszFileName,const AM_MEDIA_TYPE *pmt);
   STDMETHODIMP    GetCurFile(LPOLESTR * ppszFileName,AM_MEDIA_TYPE *pmt);
-  STDMETHODIMP    GetDuration(REFERENCE_TIME *pDuration);
   CDeMultiplexer& GetDemultiplexer();
-  void            Seek(CRefTime&  seekTime, bool seekInFile);
-  void            SeekDone(CRefTime& refTime);
-  void            SeekStart();
-  void            SeekPreStart(CRefTime& rtSeek);
+  void            Seek(REFERENCE_TIME rtAbsSeek);
   CAudioPin*      GetAudioPin();
   CVideoPin*      GetVideoPin();
   CSubtitlePin*   GetSubtitlePin();
   IDVBSubtitle*   GetSubtitleFilter();
   FILTER_STATE    State() {return m_State;}
+
+  // IMediaSeeking
+  STDMETHODIMP GetDuration(LONGLONG* pDuration);
+  STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
+  STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   
-  bool            IsSeeking();
-  int             SeekingDone();
   bool            IsStopping();
 
   void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
@@ -188,10 +190,12 @@ public:
   CLibBlurayWrapper lib;
 
   bool            m_bStopping;
-  int             m_WaitForSeekToEof;
-  bool            m_bForceSeekOnStop;
-  bool            m_bForceSeekAfterRateChange;
-  bool            m_bSeekAfterRcDone;
+
+protected:
+
+  // CAMThread
+  enum {CMD_EXIT, CMD_SEEK};
+  DWORD ThreadProc();
 
 private:
 
@@ -200,6 +204,9 @@ private:
     DS_CMD_ID id;
     CRefTime refTime; 
   };
+
+  void DeliverBeginFlush();
+  void DeliverEndFlush();
 
   HRESULT FindSubtitleFilter();
 
@@ -210,15 +217,10 @@ private:
   CCritSec        m_section;
   CDeMultiplexer  m_demultiplexer;
 
-  DWORD           m_tickCount;
-  CRefTime        m_seekTime;
-  CRefTime        m_absSeekTime;
-  IBaseFilter*    m_pEvr;
   IDVBSubtitle*   m_pDVBSubtitle;
   IBDReaderCallback* m_pCallback;
   IBDReaderAudioChange* m_pRequestAudioCallback;
 
-  bool            m_bStoppedForUnexpectedSeek;
   DWORD           m_MPmainThreadID;
 
   IMediaSeeking*  m_pMediaSeeking;
@@ -239,6 +241,24 @@ private:
   HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
   bool            m_bIgnoreLibSeeking;
-  bool            m_bFirstPlay;
-};
 
+  bool m_bFirstPlay;
+
+  // Times
+  REFERENCE_TIME m_rtStart;
+  REFERENCE_TIME m_rtStop;
+  REFERENCE_TIME m_rtCurrent;
+  REFERENCE_TIME m_rtNewStart; 
+  REFERENCE_TIME m_rtNewStop;
+  double m_dRate;
+
+  // Seeking
+  REFERENCE_TIME m_rtLastStart;
+  REFERENCE_TIME m_rtLastStop;
+  std::set<void *> m_lastSeekers;
+
+  // Flushing
+  bool m_bFlushing;
+  CAMEvent m_eEndFlush;
+  CAMEvent m_eEndNewSegment;
+};

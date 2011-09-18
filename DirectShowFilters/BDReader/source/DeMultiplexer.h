@@ -54,6 +54,7 @@ public:
 
   HRESULT    Start();
   void       Flush();
+  void       IgnoreNextDiscontinuity();
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
@@ -115,7 +116,7 @@ public:
   void HandleOSDUpdate(OSDTexture& pTexture);
   void HandleMenuStateChange(bool pVisible);
 
-  bool m_bAudioPlSeen;
+  CAMEvent* m_eAudioPlSeen;
   bool m_bVideoPlSeen;
   bool m_bAudioRequiresRebuild;
   bool m_bVideoRequiresRebuild;

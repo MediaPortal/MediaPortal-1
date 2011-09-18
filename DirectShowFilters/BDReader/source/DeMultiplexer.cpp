@@ -81,7 +81,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_fHasAccessUnitDelimiters = false;
 
-  m_bAudioPlSeen = false;
+  m_eAudioPlSeen = new CAMEvent(true);
   m_bVideoPlSeen = false;
   m_bAudioRequiresRebuild = false;
   m_bVideoRequiresRebuild = false;
@@ -102,6 +102,8 @@ CDeMultiplexer::~CDeMultiplexer()
 {
   m_filter.lib.RemoveEventObserver(this);
   m_bShuttingDown = true;
+
+  delete m_eAudioPlSeen;
 
   delete m_playlistManager;
 
@@ -325,13 +327,6 @@ void CDeMultiplexer::GetVideoStreamPMT(CMediaType &pmt)
 
 void CDeMultiplexer::FlushVideo()
 {
-  CVideoPin* videoPin = m_filter.GetVideoPin();
-
-  if (videoPin && videoPin->IsConnected())
-  {
-    videoPin->DeliverBeginFlush();
-  }
-
   LogDebug("demux:flush video");
   CAutoLock lock (&m_sectionVideo);
 
@@ -365,22 +360,10 @@ void CDeMultiplexer::FlushVideo()
   m_mVideoValidPES = false;  
   m_WaitHeaderPES = -1;
   m_rtOffset = 0;
-
-  if (videoPin && videoPin->IsConnected())
-  {
-    videoPin->DeliverEndFlush();
-  }
 }
 
 void CDeMultiplexer::FlushAudio()
 {
-  CAudioPin* audioPin = m_filter.GetAudioPin();
-
-  if (audioPin && audioPin->IsConnected())
-  {
-    audioPin->DeliverBeginFlush();
-  }
-
   LogDebug("demux:flush audio");
   CAutoLock lock (&m_sectionAudio);
 
@@ -391,11 +374,6 @@ void CDeMultiplexer::FlushAudio()
 
   delete m_pCurrentAudioBuffer;
   m_pCurrentAudioBuffer = new Packet();
-
-  if (audioPin && audioPin->IsConnected())
-  {
-    audioPin->DeliverEndFlush();
-  }
 }
 
 void CDeMultiplexer::FlushSubtitle()
@@ -425,23 +403,34 @@ void CDeMultiplexer::Flush()
 {
   LogDebug("demux:flushing");
 
-  CAutoLock lockVid(&m_sectionVideo);
-  CAutoLock lockAud(&m_sectionAudio);
-  CAutoLock lockSub(&m_sectionSubtitle);
-
   SetHoldAudio(true);
   SetHoldVideo(true);
   SetHoldSubtitle(true);
+
+  // Make sure data isn't being processed
+  CAutoLock lockRead(&m_sectionRead);
+
+  FlushPESBuffers();
+
+  CAutoLock lockVid(&m_sectionVideo);
+  CAutoLock lockAud(&m_sectionAudio);
+  CAutoLock lockSub(&m_sectionSubtitle);
 
   FlushAudio();
   FlushVideo();
   FlushSubtitle();
 
   m_playlistManager->ClearAllButCurrentClip(true);
+  IgnoreNextDiscontinuity();
 
   SetHoldAudio(false);
   SetHoldVideo(false);
   SetHoldSubtitle(false);
+}
+
+void CDeMultiplexer::IgnoreNextDiscontinuity()
+{
+  m_playlistManager->IgnoreNextDiscontinuity();
 }
 
 Packet* CDeMultiplexer::GetSubtitle()
@@ -472,7 +461,7 @@ Packet* CDeMultiplexer::GetVideo()
 
   while (!m_playlistManager->HasVideo())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(false, true) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(false, true) <= 0)
     {
       return NULL;
     }
@@ -494,7 +483,7 @@ Packet* CDeMultiplexer::GetAudio(int playlist, int clip)
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(true, false) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
     {
       return NULL;
     }
@@ -516,7 +505,7 @@ Packet* CDeMultiplexer::GetAudio()
 
   while (!m_playlistManager->HasAudio())
   {
-    if (m_filter.IsStopping() || m_bEndOfFile || m_filter.IsSeeking() || ReadFromFile(true, false) <= 0)
+    if (m_filter.IsStopping() || m_bEndOfFile || ReadFromFile(true, false) <= 0)
     {
       return NULL;
     }
@@ -608,7 +597,7 @@ bool CDeMultiplexer::EndOfFile()
 //  which in its turn deals with the packet
 int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
 {
-  if (m_filter.IsSeeking() || m_filter.IsStopping()) return 0;
+  if (m_filter.IsStopping()) return 0;
   CAutoLock lock (&m_sectionRead);
   int dwReadBytes = 0;
   bool pause = false;
@@ -745,6 +734,8 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
         
+          // TODO serialise the FLUSH
+          /*
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
@@ -754,7 +745,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             SetHoldSubtitle(true);
 
             m_filter.IssueCommand(FLUSH, 0);
-          }
+          }*/
         }
       }
   } 

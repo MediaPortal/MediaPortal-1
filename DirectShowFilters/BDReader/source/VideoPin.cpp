@@ -33,7 +33,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...);
+extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
 void LogMediaSample(IMediaSample * pSample, int iFrameNumber)
 {
@@ -88,8 +89,11 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   CSourceSeeking(NAME("pinVideo"), pUnk, phr, section),
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
-  m_nPrevPl(-1),
-  m_pCachedBuffer(NULL)
+  m_pCachedBuffer(NULL),
+  m_rtStreamOffset(0),
+  m_bFlushing(false),
+  m_bSeekDone(true),
+  m_bDiscontinuity(false)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -101,10 +105,14 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
     AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
+
+  m_eFlushStart = new CAMEvent(true);
 }
 
 CVideoPin::~CVideoPin()
 {
+  m_eFlushStart->Set();
+  delete m_eFlushStart;
 }
 
 void CVideoPin::DetectVideoDecoder()
@@ -258,6 +266,12 @@ HRESULT CVideoPin::BreakConnect()
   return CSourceStream::BreakConnect();
 }
 
+DWORD CVideoPin::ThreadProc()
+{
+  SetThreadName(-1, "BDReader_VIDEO");
+  return __super::ThreadProc();
+}
+
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
 {
   Command com;
@@ -268,6 +282,7 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
     while (!CheckRequest(&com)) 
     {
       IMediaSample* pSample;
+
       HRESULT hr = GetDeliveryBuffer(&pSample, NULL, NULL, 0);
       if (FAILED(hr)) 
       {
@@ -352,7 +367,47 @@ void CVideoPin::CreateEmptySample(IMediaSample *pSample)
   }
 }
 
-HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
+void CVideoPin::CheckPlaybackState(CDeMultiplexer& pDemux)
+{
+  if (pDemux.m_bVideoPlSeen)
+  {
+    pDemux.m_eAudioPlSeen->Wait();
+
+    if (pDemux.m_bVideoRequiresRebuild || pDemux.m_bAudioRequiresRebuild)
+    {
+      pDemux.m_bVideoRequiresRebuild = false;
+      pDemux.m_bAudioRequiresRebuild = false;
+
+      LogDebug("vid: REBUILD");
+      m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
+    }
+    else
+    {
+      LogDebug("vid: Request zeroing the stream time - video after audio");
+
+      //m_pReceiver->EndOfStream();
+      m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
+      m_eFlushStart->Wait();
+      m_eFlushStart->Reset();
+    }
+
+    pDemux.m_eAudioPlSeen->Reset();
+    pDemux.m_bVideoPlSeen = false;
+  }
+  else if (!pDemux.m_eAudioPlSeen->Check() && !pDemux.m_bVideoPlSeen && pDemux.m_bAudioRequiresRebuild)
+  {
+    pDemux.m_bAudioRequiresRebuild = false;
+
+    LogDebug("vid: REBUILD - keep stream position");
+    m_pFilter->IssueCommand(REBUILD, -1);
+  }
+  else
+  {
+    Sleep(5);        
+  }
+}
+
+HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 {
   try
   {
@@ -361,58 +416,29 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_bVideoPlSeen ||
-         demux.m_bAudioRequiresRebuild && !demux.m_bAudioPlSeen)        
+      if (m_pFilter->IsStopping() || demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone)
       {
         CreateEmptySample(pSample);
-
-        // Audio has already changed to next playlist
-        if (demux.m_bAudioPlSeen && demux.m_bVideoPlSeen)
-        {
-          if (demux.m_bVideoRequiresRebuild || demux.m_bAudioRequiresRebuild)
-          {
-            demux.m_bVideoRequiresRebuild = false;
-            demux.m_bAudioRequiresRebuild = false;
-
-            LogDebug("vid: REBUILD");
-            m_pFilter->IssueCommand(REBUILD, 0);
-          }
-          else
-          {
-            LogDebug("vid: Request zeroing the stream time - video after audio");
-            m_pFilter->m_bForceSeekAfterRateChange = true;
-            m_pFilter->m_WaitForSeekToEof = 1;
-            m_pFilter->IssueCommand(SEEK, 0);
-          }
-
-          demux.m_bAudioPlSeen = false;
-          demux.m_bVideoPlSeen = false;
-        }
-        else if (!demux.m_bAudioPlSeen && !demux.m_bVideoPlSeen && demux.m_bAudioRequiresRebuild)
-        {
-          demux.m_bAudioRequiresRebuild = false;
-
-          LogDebug("vid: REBUILD - keep stream position");
-          m_pFilter->IssueCommand(REBUILD, -1);
-        }
-        else
-        {
-          Sleep(5);        
-        }
-
-        return NOERROR;
+        return S_OK;
       }
-      
+
       if (demux.EndOfFile())
       {
         LogDebug("vid: set EOF");
         CreateEmptySample(pSample);
-        
         return S_FALSE;
+      }
+
+      if (demux.m_bVideoPlSeen || demux.m_bAudioRequiresRebuild && !demux.m_eAudioPlSeen->Check())
+      {
+        CreateEmptySample(pSample);
+        CheckPlaybackState(demux);
+        return S_OK;
       }
 
       if (m_pCachedBuffer)
       {
+        LogDebug("vid: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
       }
@@ -427,20 +453,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        if (m_nPrevPl == -1)
-        {
-          m_nPrevPl = buffer->nPlaylist;
-        }
-
         bool useEmptySample = false;
 
-        if (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired)
+        if (buffer->bSeekRequired)
         {
-          LogDebug("vid: Playlist changed from %d To %d - bSeekRequired: %d offset %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset);
-          buffer->bSeekRequired = false;
-          m_nPrevPl = buffer->nPlaylist;
+          LogDebug("vid: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
           demux.m_bVideoPlSeen = true;
+          buffer->bSeekRequired = false;
           useEmptySample = true;
+
+          // HACK - currenlty Playlist / Clip aren't setting the playlist changes to zero if
+          // 1st sample doesn't start from zero - this causes fake seek to be filtered out
+          // when two sequential clips share the same offset.
+
+          if (buffer->rtOffset < 10000000)
+            buffer->rtOffset = 0;
+
+          buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
         }
 
         if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
@@ -456,7 +485,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           else if (m_pReceiver)
           {
             // Dynamic format changes cause lot of issues - currently not enabled
-            //LogDebug("DynamicQueryAccept - not avail"); 
+            //LogDebug("DynamicQueryAccept - not avail");
             //hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
           }
 
@@ -470,10 +499,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             demux.m_bVideoRequiresRebuild = true;
             useEmptySample = true;
 
-            if (m_pReceiver)
-            {
-              m_pReceiver->EndOfStream();
-            }
+            //m_pReceiver->EndOfStream();
           }
           else
           {
@@ -486,25 +512,29 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
         if (useEmptySample)
         {
-          CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
+          LogDebug("vid: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
          
-          return NOERROR;
+          CreateEmptySample(pSample);
+          CheckPlaybackState(demux);
+
+          return S_OK;
         }
 
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
         if (hasTimestamp)
         {
-          if (buffer->bDiscontinuity)
+          if (m_bDiscontinuity)
           {
             LogDebug("vid: set discontinuity");
             pSample->SetDiscontinuity(true);
+            pSample->SetMediaType(buffer->pmt);
+            m_bDiscontinuity = false;
           }
 
-          //now we have the final timestamp, set timestamp in sample
-          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset - m_rtStart;
-          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset - m_rtStart;
+          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - m_rtStart;
+          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - m_rtStart;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
           {
@@ -528,7 +558,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
         memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset - m_rtStart) / 10000000.0, 
+        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - m_rtStart) / 10000000.0, 
           buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
         delete buffer;
@@ -546,59 +576,55 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 
 HRESULT CVideoPin::OnThreadStartPlay()
 {
-  LogDebug("vid: OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking, m_pFilter->IsSeeking());
-
-  DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-  return CSourceStream::OnThreadStartPlay();
-}
-
-HRESULT CVideoPin::ChangeStart()
-{
-  UpdateFromSeek();
-  return S_OK;
-}
-
-HRESULT CVideoPin::ChangeStop()
-{
-  UpdateFromSeek();
-  return S_OK;
-}
-
-HRESULT CVideoPin::ChangeRate()
-{
-  if( m_dRateSeeking <= 0 )
   {
-    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
-    return E_FAIL;
+    CAutoLock lock(CSourceSeeking::m_pLock);
+    m_bDiscontinuity = true;
   }
-  LogDebug("vid: ChangeRate, m_dRateSeeking %f, Force seek done %d",(float)m_dRateSeeking, m_pFilter->m_bSeekAfterRcDone);
-  if (!m_pFilter->m_bSeekAfterRcDone) //Don't force seek if another pin has already triggered it
-  {
-    m_pFilter->m_bForceSeekAfterRateChange = true;
-  }
-  UpdateFromSeek();
+
   return S_OK;
 }
 
-void CVideoPin::SetStart(CRefTime rtStartTime)
+HRESULT CVideoPin::DeliverBeginFlush()
 {
-  m_rtStart = rtStartTime;
-  LogDebug("vid: SetStart, m_rtStart %f", (float)m_rtStart.Millisecs() / 1000.0f);
+  m_eFlushStart->Set();
+  m_bFlushing = true;
+  m_bSeekDone = false;
+  HRESULT hr = __super::DeliverBeginFlush();
+  LogDebug("vid: DeliverBeginFlush - hr: %08lX", hr);
+  return hr;
+}
+
+HRESULT CVideoPin::DeliverEndFlush()
+{
+  HRESULT hr = __super::DeliverEndFlush();
+  LogDebug("vid: DeliverEndFlush - hr: %08lX", hr);
+  m_bFlushing = false;
+  return hr;
+}
+
+HRESULT CVideoPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
+{
+  if (m_bFlushing || !ThreadExists()) 
+  {
+    m_bSeekDone = true;
+    return S_FALSE;
+  }
+
+  LogDebug("vid: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
+  m_rtStart = tStart;
+  
+  HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
+  if (FAILED(hr))
+    LogDebug("vid: DeliverNewSegment - error: %08lX", hr);
+
+  m_bSeekDone = true;
+
+  return hr;
 }
 
 STDMETHODIMP CVideoPin::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags)
 {
-  return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop, StopFlags);
-}
-
-//******************************************************
-/// UpdateFromSeek() called when need to seek to a specific timestamp in the file
-/// m_rtStart contains the time we need to seek to...
-///
-void CVideoPin::UpdateFromSeek()
-{
-  m_pFilter->SeekPreStart(m_rtStart);
-  LogDebug("vid: UpdateFromSeek, m_rtStart %f, m_dRateSeeking %f", (float)m_rtStart.Millisecs() / 1000.0f, (float)m_dRateSeeking);
+  return m_pFilter->SetPositionsInternal(this, pCurrent, CurrentFlags, pStop, StopFlags);
 }
 
 STDMETHODIMP CVideoPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
@@ -614,6 +640,21 @@ STDMETHODIMP CVideoPin::GetDuration(LONGLONG *pDuration)
   m_rtDuration = CRefTime(refTime);
 
   return CSourceSeeking::GetDuration(pDuration);
+}
+
+HRESULT CVideoPin::ChangeStart()
+{
+  return S_OK;
+}
+
+HRESULT CVideoPin::ChangeStop()
+{
+  return S_OK;
+}
+
+HRESULT CVideoPin::ChangeRate()
+{
+  return S_OK;
 }
 
 STDMETHODIMP CVideoPin::GetCurrentPosition(LONGLONG *pCurrent)

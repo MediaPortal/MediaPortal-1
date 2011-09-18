@@ -55,6 +55,8 @@ public:
   bool IsConnected();
 
 protected:
+  DWORD ThreadProc();
+
   void UpdateFromSeek();
 
   CBDReaderFilter* const m_pFilter;

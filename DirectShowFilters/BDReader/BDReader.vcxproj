@@ -183,6 +183,7 @@
     <ClCompile Include="source\PlaylistManager.cpp" />
     <ClCompile Include="source\StreamParser.cpp" />
     <ClCompile Include="source\SubtitlePin.cpp" />
+    <ClCompile Include="source\utils.cpp" />
     <ClCompile Include="source\VideoPin.cpp" />
   </ItemGroup>
   <ItemGroup>

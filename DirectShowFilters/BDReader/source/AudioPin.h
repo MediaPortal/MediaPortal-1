@@ -68,23 +68,27 @@ public:
   HRESULT ChangeStart();
   HRESULT ChangeStop();
   HRESULT ChangeRate();
+  HRESULT OnThreadStartPlay();
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
   STDMETHODIMP GetDuration(LONGLONG* pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG* pCurrent);
   STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
+    
+  HRESULT DeliverBeginFlush();
+  HRESULT DeliverEndFlush();
 
-  HRESULT OnThreadStartPlay();
-  void SetStart(CRefTime rtStartTime);
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   bool IsConnected();
 
   void SetInitialMediaType(const CMediaType* pmt);
 
 protected:
-  void      UpdateFromSeek();
-  void      JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer);
-  void      ProcessAudioSample(Packet* pBuffer, IMediaSample* pSample);
-  void      CreateEmptySample(IMediaSample* pSample);
+  DWORD ThreadProc();
+
+  void JoinAudioBuffers(Packet* pBuffer, CDeMultiplexer* pDemuxer);
+  void ProcessAudioSample(Packet* pBuffer, IMediaSample* pSample);
+  void CreateEmptySample(IMediaSample* pSample);
 
   inline void ConvertLPCMFromBE(BYTE* src, void* dest, int channels, int nSamples, int sampleSize, int channelMap);
   
@@ -99,8 +103,11 @@ protected:
 
   CMediaType m_mtInitial;
 
-  int       m_nPrevPl;
-
   Packet* m_pCachedBuffer;
+
+  CAMEvent* m_eFlushStart;
+  bool m_bFlushing;
+  bool m_bSeekDone;
+  bool m_bDiscontinuity;
 };
 

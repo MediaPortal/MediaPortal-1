@@ -31,7 +31,8 @@ CPlaylistManager::CPlaylistManager(void)
   m_currentAudioSubmissionPlaylist=NULL;
   m_currentVideoSubmissionPlaylist=NULL;
   m_VideoPacketsUntilLatestplaylist=0;
-  m_bInteruption=false;
+  m_bIgnoreAudioSeeking=false;
+  m_bIgnoreVideoSeeking=false;
 }
 
 
@@ -91,10 +92,12 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
   }
   if (m_currentAudioSubmissionPlaylist->nPlaylist==packet->nPlaylist)
   {
-    ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet);
+    ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet, m_bIgnoreAudioSeeking);
   }
   if (ret) 
   {
+    m_bIgnoreAudioSeeking = false;
+
 #ifdef LOG_AUDIO_PACKETS
     LogDebug("Audio Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
 #endif
@@ -106,7 +109,9 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
     {
       if (packet->nPlaylist == m_currentAudioSubmissionPlaylist->nPlaylist)
       {
-        ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet);
+        ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet, m_bIgnoreAudioSeeking);
+        if (ret)
+          m_bIgnoreAudioSeeking = false;
       }
       else
       {
@@ -137,10 +142,12 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
   }
   if (m_currentVideoSubmissionPlaylist->nPlaylist==packet->nPlaylist)
   {
-    ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false);
+    ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,m_bIgnoreVideoSeeking);
   }
   if (ret) 
   {
+    m_bIgnoreVideoSeeking = false;
+
 #ifdef LOG_VIDEO_PACKETS
     LogDebug("Video Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
 #endif
@@ -157,7 +164,9 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
 //      LogDebug("Failed to find video submission playlist");
       if (packet->nPlaylist == m_currentVideoSubmissionPlaylist->nPlaylist)
       {
-        ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false);
+        ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,m_bIgnoreVideoSeeking);
+        if (ret)
+          m_bIgnoreVideoSeeking = false;
       }
       else
       {
@@ -171,7 +180,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
       m_currentVideoSubmissionPlaylist = nextPlaylist;
       if (m_currentVideoSubmissionPlaylist->nPlaylist == packet->nPlaylist)
       {
-        ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,true);
+        ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,true,m_bIgnoreVideoSeeking);
       }
       else
       {
@@ -180,6 +189,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
       }
     }
   }
+
   return ret;
 }
 
@@ -371,6 +381,13 @@ bool CPlaylistManager::HasVideo()
   return false;
 }
 
+void CPlaylistManager::IgnoreNextDiscontinuity()
+{
+  LogDebug("CPlaylistManager::IgnoreNextDiscontinuity point in stream");
+  m_bIgnoreAudioSeeking=true;
+  m_bIgnoreVideoSeeking=true;
+}
+
 void CPlaylistManager::ClearAllButCurrentClip(bool resetClip)
 {
   CAutoLock locka (&m_sectionAudio);
@@ -413,13 +430,13 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
-    LogDebug("Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
+    LogDebug("CPlaylistManager: Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
       pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
       pmt->subtype.Data4[6], pmt->subtype.Data4[7], nPlaylist, nClip);
     CPlaylist* pl=GetPlaylist(nPlaylist);
-    if (pl!=NULL)
+    if (pl)
     {
       pl->SetVideoPMT(pmt, nClip);
     }  
@@ -430,13 +447,13 @@ void CPlaylistManager::SetAudioPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
-    LogDebug("Setting audio PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
+    LogDebug("CPlaylistManager: Setting audio PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
       pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
       pmt->subtype.Data4[6], pmt->subtype.Data4[7], nPlaylist, nClip);
     CPlaylist* pl=GetPlaylist(nPlaylist);
-    if (pl!=NULL)
+    if (pl)
     {
       pl->SetAudioPMT(pmt, nClip);
     }  

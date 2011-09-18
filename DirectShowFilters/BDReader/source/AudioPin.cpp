@@ -35,6 +35,7 @@
 #define LPCM_HEADER_SIZE 4
 
 extern void LogDebug(const char *fmt, ...);
+extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
 CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* section) :
   CSourceStream(NAME("pinAudio"), phr, pFilter, L"Audio"),
@@ -43,8 +44,10 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_section(section),
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
-  m_nPrevPl(-1),
-  m_pCachedBuffer(NULL)
+  m_pCachedBuffer(NULL),
+  m_bFlushing(false),
+  m_bSeekDone(true),
+  m_bDiscontinuity(false)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -56,11 +59,14 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
     AM_SEEKING_CanGetDuration |
     //AM_SEEKING_CanGetCurrentPos |
     AM_SEEKING_Source;
+
+  m_eFlushStart = new CAMEvent(true);
 }
 
 CAudioPin::~CAudioPin()
 {
-  LogDebug("pin:dtor()");
+  m_eFlushStart->Set();
+  delete m_eFlushStart;
 }
 
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -154,6 +160,12 @@ HRESULT CAudioPin::BreakConnect()
   return CSourceStream::BreakConnect();
 }
 
+DWORD CAudioPin::ThreadProc()
+{
+  SetThreadName(-1, "BDReader_AUDIO");
+  return __super::ThreadProc();
+}
+
 void CAudioPin::SetInitialMediaType(const CMediaType* pmt)
 {
   m_mtInitial = *pmt;
@@ -183,17 +195,15 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      // Stall samples
-      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || demux.IsMediaChanging() || demux.m_bAudioPlSeen)
+      if (!m_bSeekDone|| m_pFilter->IsStopping() || demux.IsMediaChanging())// || !demux.m_eAudioPlSeen->Check())
       {
-        Sleep(10);
         CreateEmptySample(pSample);
-        
-        return NOERROR;
+        return S_OK;
       }
 
       if (m_pCachedBuffer)
       {
+        LogDebug("aud: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
       }
@@ -204,10 +214,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
       if (demux.EndOfFile())
       {
-        LogDebug("aud: set eof");
+        LogDebug("aud: set EOF");
         CreateEmptySample(pSample);
         
-        return S_FALSE; //S_FALSE will notify the graph that end of file has been reached
+        return S_FALSE;
       }
 
       if (!buffer)
@@ -220,18 +230,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
         //JoinAudioBuffers(buffer, &demux);
         
-        if (m_nPrevPl == -1)
+        if (buffer->bSeekRequired)
         {
-          m_nPrevPl = buffer->nPlaylist;
-        }
-
-        if (buffer && (buffer->nPlaylist != m_nPrevPl || buffer->bSeekRequired))
-        {
-          LogDebug("aud: Playlist changed from %d To %d - bSeekRequired: %d offset %I64d", m_nPrevPl, buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset);
-          m_nPrevPl = buffer->nPlaylist;
+          LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
+          demux.m_eAudioPlSeen->Set();
           buffer->bSeekRequired = false;
-          demux.m_bAudioPlSeen = true;
+          //m_pReceiver->EndOfStream();
           useEmptySample = true;
+          m_bSeekDone = false;
         }
 
         if (buffer->pmt && m_mt != *buffer->pmt)
@@ -259,10 +265,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             demux.m_bAudioRequiresRebuild = true;
             useEmptySample = true;
 
-            if (m_pReceiver)
-            {
-              m_pReceiver->EndOfStream();
-            }
+            //m_pReceiver->EndOfStream();
           }
           else
           {
@@ -276,20 +279,23 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         if (useEmptySample)
         {
           CreateEmptySample(pSample);
+          
           m_pCachedBuffer = buffer;
+          LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
 
-          return NOERROR;
+          return S_OK;
         }
   
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
 
         if (hasTimestamp && m_dRateSeeking == 1.0)
         {
-          if (buffer->bDiscontinuity)
+          if (m_bDiscontinuity)
           {
             LogDebug("aud: set discontinuity");
             pSample->SetDiscontinuity(true);
             pSample->SetMediaType(buffer->pmt);
+            m_bDiscontinuity = false;
           }
 
           if (hasTimestamp)
@@ -299,8 +305,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - buffer->rtOffset - m_rtStart;
-            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - buffer->rtOffset - m_rtStart;
+            REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - m_rtStart;
+            REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - m_rtStart;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           }
           else
@@ -312,7 +318,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
-          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - buffer->rtOffset - m_rtStart) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
+          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - m_rtStart) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
 #endif
           delete buffer;
         }
@@ -327,11 +333,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
   }
 
   // Should we return something else than NOERROR when hitting an exception?
-  catch(int e)
+  catch (int e)
   {
     LogDebug("aud: FillBuffer exception %d", e);
   }
-  catch(...)
+  catch (...)
   {
     LogDebug("aud: FillBuffer exception ...");
   }
@@ -485,59 +491,57 @@ bool CAudioPin::IsConnected()
   return m_bConnected;
 }
 
-HRESULT CAudioPin::ChangeStart()
-{
-  UpdateFromSeek();
-  return S_OK;
-}
-
-HRESULT CAudioPin::ChangeStop()
-{
-  UpdateFromSeek();
-  return S_OK;
-}
-
-HRESULT CAudioPin::ChangeRate()
-{
-  /*if( m_dRateSeeking <= 0 )
-  {
-    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
-    return E_FAIL;
-  }*/
-  LogDebug("aud: ChangeRate, m_dRateSeeking %f, Force seek done %d",(float)m_dRateSeeking, m_pFilter->m_bSeekAfterRcDone);
-  if (!m_pFilter->m_bSeekAfterRcDone) //Don't force seek if another pin has already triggered it
-  {
-    m_pFilter->m_bForceSeekAfterRateChange = true;
-  }
-  UpdateFromSeek();
-  return S_OK;
-}
-
 HRESULT CAudioPin::OnThreadStartPlay()
 {
-  LogDebug("aud: OnThreadStartPlay(%f) %02.2f", (float)m_rtStart.Millisecs() / 1000.0f, m_dRateSeeking);
-  DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-  return CSourceStream::OnThreadStartPlay();
+  {
+    CAutoLock lock(CSourceSeeking::m_pLock);
+    m_bDiscontinuity = true;
+  }
+
+  return S_OK;
 }
 
-void CAudioPin::SetStart(CRefTime rtStartTime)
+HRESULT CAudioPin::DeliverBeginFlush()
 {
-  m_rtStart = rtStartTime;
+  m_eFlushStart->Set();
+  m_bFlushing = true;
+  m_bSeekDone = false;
+  HRESULT hr = __super::DeliverBeginFlush();
+  LogDebug("aud: DeliverBeginFlush - hr: %08lX", hr);
+  return hr;
+}
+
+HRESULT CAudioPin::DeliverEndFlush()
+{
+  HRESULT hr = __super::DeliverEndFlush();
+  LogDebug("aud: DeliverEndFlush - hr: %08lX", hr);
+  m_bFlushing = false;
+  return hr;
+}
+
+HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate)
+{
+  if (m_bFlushing || !ThreadExists())
+  {
+    m_bSeekDone = true;
+    return S_FALSE;
+  }
+
+  LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
+  m_rtStart = tStart;
+
+  HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
+  if (FAILED(hr))
+    LogDebug("aud: DeliverNewSegment - error: %08lX", hr);
+
+  m_bSeekDone = true;
+
+  return hr;
 }
 
 STDMETHODIMP CAudioPin::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags)
 {
-  return CSourceSeeking::SetPositions(pCurrent, CurrentFlags, pStop, StopFlags);
-}
-
-//******************************************************
-/// UpdateFromSeek() called when need to seek to a specific timestamp in the file
-/// m_rtStart contains the time we need to seek to...
-///
-void CAudioPin::UpdateFromSeek()
-{
-  m_pFilter->SeekPreStart(m_rtStart);
-  LogDebug("aud: seek done %f/%f",(float)m_rtStart.Millisecs()/1000.0f,(float)m_rtDuration.Millisecs()/1000.0f);
+  return m_pFilter->SetPositionsInternal(this, pCurrent, CurrentFlags, pStop, StopFlags);
 }
 
 STDMETHODIMP CAudioPin::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest )
@@ -557,6 +561,21 @@ STDMETHODIMP CAudioPin::GetDuration(LONGLONG *pDuration)
   {
     return CSourceSeeking::GetDuration(pDuration);
   }
+  return S_OK;
+}
+
+HRESULT CAudioPin::ChangeStart()
+{
+  return S_OK;
+}
+
+HRESULT CAudioPin::ChangeStop()
+{
+  return S_OK;
+}
+
+HRESULT CAudioPin::ChangeRate()
+{
   return S_OK;
 }
 

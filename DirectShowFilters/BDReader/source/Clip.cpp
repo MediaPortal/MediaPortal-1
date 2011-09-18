@@ -64,15 +64,28 @@ CClip::~CClip(void)
 Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 {
   Packet* ret=NULL;
-  if (!noAudio && !firstAudio && m_vecClipAudioPackets.size()==0)
+
+  // Disabled for now - causes issues with clip changes on rare situatios.
+  // we should't need this since audio and video pins are syncronized for the
+  // playlist boundaries. Also Seamless BDs could have issues when clip
+  // joints are having extra data.
+
+  /*if (!noAudio && !firstAudio && m_vecClipAudioPackets.size()==0)
   {
     LogDebug("Swithching to fake Audio for clip %d",nClip);
     firstAudio = true;
     noAudio = true;
-  }
+  }*/
+
   if (noAudio)
   {
     ret=GenerateFakeAudio(audioPlaybackpoint);
+    if (ret && bSeekNeededAudio)
+    {
+      LogDebug("Setting bSeekRequired for fake Audio");
+      ret->bSeekRequired = true;
+      bSeekNeededAudio = false;
+    }
   }
   else
   {
@@ -91,7 +104,8 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   }
   
   if (ret && !noAudio) ret->pmt = CreateMediaType(m_audioPmt);
-
+  
+  //LogDebug("Clip: aud: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
   return ret;
 }
 
@@ -111,7 +125,8 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   }
 
   if (ret) ret->pmt = CreateMediaType(m_videoPmt);
-
+  
+  //LogDebug("Clip: vid: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
   return ret;
 }
 
@@ -166,8 +181,13 @@ bool CClip::AcceptAudioPacket(Packet* packet)
   else
   {
     packet->nClipNumber=nClip;
-    packet->bSeekRequired = bSeekNeededAudio;
-    bSeekNeededAudio = false;
+    if (packet->rtStart!=Packet::INVALID_TIME)
+    {
+      if (bSeekNeededAudio) 
+        LogDebug("Setting bSeekRequired for audio");
+      packet->bSeekRequired = bSeekNeededAudio;
+      bSeekNeededAudio = false;
+    }
     m_vecClipAudioPackets.push_back(packet);
     lastAudioPosition=packet->rtStart;
     noAudio=false;
@@ -187,8 +207,13 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
   else
   {
     packet->nClipNumber=nClip;
-    packet->bSeekRequired = bSeekNeededVideo;
-    bSeekNeededVideo = false;
+    if (packet->rtStart!=Packet::INVALID_TIME)
+    {
+      if (bSeekNeededVideo) 
+        LogDebug("Setting bSeekRequired for video");
+      packet->bSeekRequired = bSeekNeededVideo;
+      bSeekNeededVideo = false;
+    }
     m_vecClipVideoPackets.push_back(packet);
     lastVideoPosition=packet->rtStart;
   }
@@ -205,25 +230,43 @@ bool CClip::IsSuperceeded(int superceedType)
   return ((superceeded&superceedType)==superceedType);
 }
 
-void CClip::FlushAudio(void)
+void CClip::FlushAudio(Packet* pPacketToKeep)
 {
   ivecAudioBuffers ita = m_vecClipAudioPackets.begin();
   while (ita!=m_vecClipAudioPackets.end())
   {
     Packet * packet=*ita;
-    ita=m_vecClipAudioPackets.erase(ita);
-    delete packet;
+    if (packet!=pPacketToKeep)
+    {
+      ita=m_vecClipAudioPackets.erase(ita);
+      delete packet;
+      //LogDebug("clip: FlushAudio -  packet removed");
+    }
+    else
+    {
+      //LogDebug("clip: FlushAudio - skipped packet");
+      ++ita;
+    }
   }
 }
 
-void CClip::FlushVideo(void)
+void CClip::FlushVideo(Packet* pPacketToKeep)
 {
   ivecVideoBuffers itv = m_vecClipVideoPackets.begin();
   while (itv!=m_vecClipVideoPackets.end())
   {
     Packet * packet=*itv;
-    itv=m_vecClipVideoPackets.erase(itv);
-    delete packet;
+    if (packet!=pPacketToKeep)
+    {
+      itv=m_vecClipVideoPackets.erase(itv);
+      delete packet;
+      //LogDebug("clip: FlushVideo -  packet removed");
+    }
+    else
+    {
+      //LogDebug("clip: FlushVideo - skipped packet");
+      ++itv;
+    }
   }
 }
 
@@ -239,6 +282,8 @@ void CClip::Reset()
   audioPlaybackpoint=playlistFirstPacketTime;
   firstAudio=true;
   firstVideo=true;
+  bSeekNeededAudio=true;
+  bSeekNeededVideo=true;
 }
 
 bool CClip::HasAudio()

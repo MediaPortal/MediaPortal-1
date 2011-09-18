@@ -48,6 +48,7 @@ public:
   void FlushAudio(void);
   void FlushVideo(void);
   void ClearAllButCurrentClip(bool resetClip);
+  void IgnoreNextDiscontinuity();
   Packet* GetNextAudioPacket();
   Packet* GetNextAudioPacket(int playlist, int clip);
   Packet* GetNextVideoPacket();
@@ -71,11 +72,12 @@ protected:
   CPlaylist * m_currentAudioSubmissionPlaylist;
   CPlaylist * m_currentVideoSubmissionPlaylist;
 
-  bool m_bInteruption;
-
   int m_VideoPacketsUntilLatestplaylist;
 
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
+
+  bool m_bIgnoreAudioSeeking;
+  bool m_bIgnoreVideoSeeking;
 };
 

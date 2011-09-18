@@ -50,7 +50,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
     m_currentAudioPlayBackClip=*m_vecClips.begin();
   }
   Packet * ret = m_currentAudioPlayBackClip->ReturnNextAudioPacket(playlistFirstPacketTime);
-  if (ret!=NULL)
+  if (ret)
   {
     ret->nPlaylist=nPlaylist;
     CorrectTimeStamp(m_currentAudioPlayBackClip,ret);
@@ -66,7 +66,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
       ret=ReturnNextAudioPacket();
     }
   }
-  if (ret!=NULL) firstPacketRead=true;
+  if (ret) firstPacketRead=true;
   return ret;
 }
 
@@ -87,15 +87,14 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
       CorrectTimeStamp(m_currentAudioPlayBackClip,ret);
     }
   }
-  if (ret!=NULL) firstPacketRead=true;
+  if (ret) firstPacketRead=true;
   return ret;
 }
-
 
 Packet* CPlaylist::ReturnNextVideoPacket()
 {
   Packet * ret = m_currentVideoPlayBackClip->ReturnNextVideoPacket(playlistFirstPacketTime);
-  if (ret!=NULL)
+  if (ret)
   {
     ret->nPlaylist=nPlaylist;
     CorrectTimeStamp(m_currentVideoPlayBackClip,ret);
@@ -109,7 +108,7 @@ Packet* CPlaylist::ReturnNextVideoPacket()
       ret=ReturnNextVideoPacket();
     }
   }
-  if (ret!=NULL) firstPacketRead=true;
+  if (ret) firstPacketRead=true;
   return ret;
 }
 
@@ -125,10 +124,10 @@ int CPlaylist::CurrentVideoSubmissionClip()
   return m_currentVideoSubmissionClip->nClip;
 }
 
-bool CPlaylist::AcceptAudioPacket(Packet*  packet)
+bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
 {
   bool ret = true;
-  if (m_currentAudioSubmissionClip==NULL) return false;
+  if (!m_currentAudioSubmissionClip) return false;
   if (m_currentAudioSubmissionClip->nClip == packet->nClipNumber)
   {
     m_currentAudioSubmissionClip->AcceptAudioPacket(packet);
@@ -150,25 +149,36 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet)
       }
       m_currentAudioSubmissionClip=nextSubmissionClip;
     }
-    ret=AcceptAudioPacket(packet);
+    ret=AcceptAudioPacket(packet, seeking);
   }
-  if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
+  if (!firstAudioPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
-    firstPESPacketSeen=true;
-    firstPESTimeStamp=0LL;
-    LogDebug("First Packet (aud) %I64d",packet->rtStart);
+    REFERENCE_TIME oldPEStime = firstAudioPESTimeStamp;
+
+    firstAudioPESPacketSeen=true;
+    firstAudioPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    
+    packet->rtOffset = 0 - firstAudioPESTimeStamp;
+    if (packet->rtOffset != 0)
+    {
+      packet->bSeekRequired=!seeking;
+      m_currentAudioSubmissionClip->FlushAudio(packet);
+      m_currentVideoSubmissionClip->FlushVideo();
+    }
+    LogDebug("First Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired);
   }
-  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)
+  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstAudioPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {
-    firstPESTimeStamp=packet->rtStart;
-  }
+    firstAudioPESTimeStamp=m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+  } 
+
   return ret;
 }
 
-bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket)
+bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking)
 {
   bool ret = true;
-  if (m_currentVideoSubmissionClip==NULL) 
+  if (!m_currentVideoSubmissionClip) 
   {
     LogDebug("m_currentVideoSubmissionClip is NULL");
     ret=false;
@@ -195,16 +205,26 @@ bool CPlaylist::AcceptVideoPacket(Packet*  packet, bool firstPacket)
       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
     }
   }
-  if (!firstPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
+  if (!firstVideoPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
-    firstPESPacketSeen=true;
-    firstPESTimeStamp=0LL;
-    LogDebug("First Packet (vid) %I64d",packet->rtStart);
+    REFERENCE_TIME oldPEStime = firstVideoPESTimeStamp;
+
+    firstVideoPESPacketSeen=true;
+    firstVideoPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    
+    packet->rtOffset = 0 - firstVideoPESTimeStamp;
+    if (packet->rtOffset != 0)
+    {
+      packet->bSeekRequired=!seeking;
+      m_currentAudioSubmissionClip->FlushVideo(packet);
+      m_currentVideoSubmissionClip->FlushAudio();
+    }
+    LogDebug("First Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired);
   }
-  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstPESTimeStamp > packet->rtStart)
+  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstVideoPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {
-    firstPESTimeStamp=packet->rtStart;
-  }
+    firstVideoPESTimeStamp=m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+  } 
   return ret;
 }
 
@@ -233,7 +253,7 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
     CClip * clip=*it;
     if (!clip->IsSuperceeded(SUPERCEEDED_VIDEO) && currentClip->nClip !=clip->nClip)
     {
-//      LogDebug("New Video Clip %d",clip->nClip);
+      //LogDebug("New Video Clip %d",clip->nClip);
       return clip;
     }
     ++it;
@@ -273,6 +293,7 @@ void CPlaylist::SetEmptiedVideo()
 {
   playlistEmptiedVideo=true;
 }
+
 void CPlaylist::SetEmptiedAudio()
 {
   playlistEmptiedAudio=true;
@@ -282,14 +303,17 @@ bool CPlaylist::IsFilledAudio()
 {
   return playlistFilledAudio;
 }
+
 bool CPlaylist::IsFilledVideo()
 {
   return playlistFilledVideo;
 }
+
 void CPlaylist::SetFilledVideo()
 {
   playlistFilledVideo=true;
 }
+
 void CPlaylist::SetFilledAudio()
 {
   playlistFilledAudio=true;
@@ -308,7 +332,7 @@ Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
   {
     ret->rtStart -= GetPacketTimeStampCorrection(packetClip);
     ret->rtStop -= GetPacketTimeStampCorrection(packetClip);
-    ret->rtOffset = 0 - firstPESTimeStamp;
+    ret->rtOffset = 0 - firstAudioPESTimeStamp; // use only audio offset
   }
   return ret;
 }
@@ -393,8 +417,11 @@ void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
 
   m_VideoPacketsUntilLatestClip=0;
 
-  firstPESPacketSeen=false;
-  firstPESTimeStamp=0LL;
+  firstAudioPESPacketSeen=false;
+  firstVideoPESPacketSeen=false;
+  firstAudioPESTimeStamp=0LL;
+  firstVideoPESTimeStamp=0LL;
+
   firstPacketRead=false;
 }
 
@@ -448,7 +475,7 @@ CClip * CPlaylist::GetClip(int nClip)
 void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
 {
   CClip * clip = GetClip(nClip);
-  if (clip!=NULL)
+  if (clip)
   {
     clip->SetVideoPMT(pmt);
   }
@@ -457,7 +484,7 @@ void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
 void CPlaylist::SetAudioPMT(AM_MEDIA_TYPE * pmt, int nClip)
 {
   CClip * clip = GetClip(nClip);
-  if (clip!=NULL)
+  if (clip)
   {
     clip->SetAudioPMT(pmt);
   }

@@ -30,7 +30,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-extern void LogDebug(const char *fmt, ...) ;
+extern void LogDebug(const char *fmt, ...);
+extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
 CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT *phr,CCritSec* section) :
   CSourceStream(NAME("pinSubtitle"), phr, pFilter, L"Subtitle"),
@@ -165,12 +166,17 @@ HRESULT CSubtitlePin::CompleteConnect(IPin *pReceivePin)
   return hr;
 }
 
-
 HRESULT CSubtitlePin::BreakConnect()
 {
   //LogDebug("sub:BreakConnect() ok");
   m_bConnected = false;
   return CSourceStream::BreakConnect();
+}
+
+DWORD CSubtitlePin::ThreadProc()
+{
+  SetThreadName(-1, "BDReader_SUBTITLE");
+  return __super::ThreadProc();
 }
 
 HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
@@ -183,7 +189,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
     {
       m_bInFillBuffer = true;
 
-      if (m_pFilter->IsSeeking() || m_pFilter->IsStopping() || !m_bRunning)
+      if (m_pFilter->IsStopping() || !m_bRunning)
       {
         //LogDebug("sub:isseeking:%d %d",m_pFilter->IsSeeking() ,m_bSeeking);
         Sleep(20);
@@ -342,7 +348,7 @@ void CSubtitlePin::UpdateFromSeek()
 
   //if another output pin is seeking, then wait until its finished
   m_bSeeking = true;
-  while (m_pFilter->IsSeeking()) Sleep(1);
+  //while (m_pFilter->IsSeeking()) Sleep(1);
 
   //tell demuxer to stop deliver subtitle data and wait until
   //FillBuffer() finished
@@ -364,7 +370,7 @@ void CSubtitlePin::UpdateFromSeek()
   else
   {
     //no thread running? then simply seek to the position
-    m_pFilter->Seek(rtSeek, false);
+    //m_pFilter->Seek(rtSeek, false);
   }
 
   //tell demuxer to start deliver subtitle packets again

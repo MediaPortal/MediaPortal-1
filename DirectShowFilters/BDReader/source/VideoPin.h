@@ -62,25 +62,31 @@ public:
   HRESULT ChangeStart();
   HRESULT ChangeStop();
   HRESULT ChangeRate();
+  HRESULT OnThreadStartPlay();
   STDMETHODIMP SetPositions(LONGLONG *pCurrent, DWORD CurrentFlags, LONGLONG *pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable( LONGLONG * pEarliest, LONGLONG * pLatest );
   STDMETHODIMP GetDuration(LONGLONG *pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG *pCurrent);
   STDMETHODIMP Notify(IBaseFilter * pSender, Quality q);
 
-  HRESULT OnThreadStartPlay();
-  void SetStart(CRefTime rtStartTime);
-  bool IsConnected();
+  HRESULT DeliverBeginFlush();
+  HRESULT DeliverEndFlush();
 
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
+  
+  bool IsConnected();
   void SetInitialMediaType(const CMediaType* pmt);
 
 protected:
+  DWORD ThreadProc();
+
   void DetectVideoDecoder();
-  void UpdateFromSeek();
   void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
   
-  CBDReaderFilter * const m_pFilter;
+  void CheckPlaybackState(CDeMultiplexer& pDemux);
+
+  CBDReaderFilter* const m_pFilter;
   bool      m_bConnected;
   CCritSec* m_section;
 
@@ -91,8 +97,13 @@ protected:
 
   CMediaType m_mtInitial;
 
-  int       m_nPrevPl;
+  REFERENCE_TIME m_rtStreamOffset;
 
   Packet* m_pCachedBuffer;
+
+  CAMEvent* m_eFlushStart;
+  bool m_bFlushing;
+  bool m_bSeekDone;
+  bool m_bDiscontinuity;
 };
 

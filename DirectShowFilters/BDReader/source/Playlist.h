@@ -37,8 +37,8 @@ public:
   Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
   bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip);
-  bool AcceptAudioPacket(Packet*  packet);
-  bool AcceptVideoPacket(Packet*  packet, bool firstPacket);
+  bool AcceptAudioPacket(Packet*  packet, bool seeking);
+  bool AcceptVideoPacket(Packet*  packet, bool firstPacket, bool seeking);
   void FlushAudio();
   void FlushVideo();
   bool IsEmptiedAudio();
@@ -86,8 +86,10 @@ protected:
 
   int m_VideoPacketsUntilLatestClip;
 
-  bool firstPESPacketSeen;
-  REFERENCE_TIME firstPESTimeStamp;
+  bool firstAudioPESPacketSeen;
+  bool firstVideoPESPacketSeen;
+  REFERENCE_TIME firstAudioPESTimeStamp;
+  REFERENCE_TIME firstVideoPESTimeStamp;
 
   bool firstPacketRead;
 };

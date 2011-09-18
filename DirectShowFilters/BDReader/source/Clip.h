@@ -43,10 +43,10 @@ public:
   ~CClip(void);
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
-  bool AcceptAudioPacket(Packet*  packet);
-  bool AcceptVideoPacket(Packet*  packet);
-  void FlushAudio(void);
-  void FlushVideo(void);
+  bool AcceptAudioPacket(Packet* packet);
+  bool AcceptVideoPacket(Packet* packet);
+  void FlushAudio(Packet* pPacketToKeep = NULL);
+  void FlushVideo(Packet* pPacketToKeep = NULL);
   int  nClip;
   bool noAudio;
   bool clipFilled;
