@@ -506,7 +506,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               m_demux.m_bVideoRequiresRebuild = true;
               useEmptySample = true;
 
-              //m_pReceiver->EndOfStream();
+              m_pReceiver->EndOfStream();
             }
             else
             {

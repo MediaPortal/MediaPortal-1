@@ -268,7 +268,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               m_demux.m_bAudioRequiresRebuild = true;
               useEmptySample = true;
 
-              //m_pReceiver->EndOfStream();
+              m_pReceiver->EndOfStream();
             }
             else
             {
