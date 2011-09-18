@@ -51,7 +51,7 @@ const int channel_map_layouts[16] =
 class CAudioPin : public CSourceStream, public CSourceSeeking
 {
 public:
-  CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT* phr, CCritSec* section);
+  CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux);
   ~CAudioPin();
 
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
@@ -95,6 +95,7 @@ protected:
   void LogMediaType(AM_MEDIA_TYPE* pmt);
 
   CBDReaderFilter* const m_pFilter;
+  CDeMultiplexer& m_demux;
   bool      m_bConnected;
   CCritSec* m_section;
 

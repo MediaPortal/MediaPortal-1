@@ -37,11 +37,13 @@
 extern void LogDebug(const char *fmt, ...);
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
 
-CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* section) :
+CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCritSec* pSection, CDeMultiplexer& pDemux) :
   CSourceStream(NAME("pinAudio"), phr, pFilter, L"Audio"),
   m_pFilter(pFilter),
-  CSourceSeeking(NAME("pinAudio"), pUnk, phr, section),
-  m_section(section),
+  m_section(pSection),
+  m_demux(pDemux),
+  CSourceSeeking(NAME("pinAudio"), pUnk, phr, pSection),
+
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
   m_pCachedBuffer(NULL),
@@ -190,12 +192,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 {
   try
   {
-    CDeMultiplexer& demux = m_pFilter->GetDemultiplexer();
     Packet* buffer = NULL;
 
     do
     {
-      if (!m_bSeekDone|| m_pFilter->IsStopping() || demux.IsMediaChanging())// || !demux.m_eAudioPlSeen->Check())
+      if (!m_bSeekDone|| m_pFilter->IsStopping() || m_demux.IsMediaChanging())// || !m_demux.m_eAudioPlSeen->Check())
       {
         CreateEmptySample(pSample);
         return S_OK;
@@ -209,10 +210,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
       else
       {
-        buffer = demux.GetAudio();
+        buffer = m_demux.GetAudio();
       }
 
-      if (demux.EndOfFile())
+      if (m_demux.EndOfFile())
       {
         LogDebug("aud: set EOF");
         CreateEmptySample(pSample);
@@ -264,7 +265,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
               LogDebug("aud: graph rebuilding required");
 
-              demux.m_bAudioRequiresRebuild = true;
+              m_demux.m_bAudioRequiresRebuild = true;
               useEmptySample = true;
 
               //m_pReceiver->EndOfStream();
@@ -286,7 +287,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
 
-          demux.m_eAudioPlSeen->Set();
+          m_demux.m_eAudioPlSeen->Set();
 
           return S_OK;
         }
