@@ -119,7 +119,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_dRate(1.0),
   m_rtLastStart(0),
   m_rtLastStop(0),
-  m_bFlushing(false)
+  m_bFlushing(false),
+  m_bRebuildOngoing(false)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -158,6 +159,8 @@ CBDReaderFilter::~CBDReaderFilter()
   LogDebug("CBDReaderFilter::dtor");
 
   CAutoLock cAutoLock(this);
+
+  m_eRebuild.Set(); // Release the command thead if graph rebuild was interrupted
 
   CAMThread::CallWorker(CMD_EXIT);
   CAMThread::Close();
@@ -277,6 +280,7 @@ void CBDReaderFilter::TriggerOnMediaChanged()
   if (m_pCallback)
   {		
     m_demultiplexer.SetMediaChanging(true);
+    m_bRebuildOngoing = true;
 
     int videoRate = 0;
     int audioType = m_demultiplexer.GetCurrentAudioStreamType();
@@ -294,6 +298,8 @@ void CBDReaderFilter::TriggerOnMediaChanged()
     {
       // There was no need for the graph rebuilding
       m_demultiplexer.SetMediaChanging(false);
+      m_eRebuild.Set();
+      m_bRebuildOngoing = false;
     }
   }
   else
@@ -406,7 +412,8 @@ STDMETHODIMP CBDReaderFilter::FreeTitleInfo(BLURAY_TITLE_INFO* info)
 void STDMETHODCALLTYPE CBDReaderFilter::OnGraphRebuild(int info)
 {
   LogDebug("CBDReaderFilter::OnGraphRebuild %d", info);
-  m_demultiplexer.SetMediaChanging(false);
+  m_bRebuildOngoing = false;
+  m_eRebuild.Set();
 }
 
 DWORD WINAPI CBDReaderFilter::CommandThreadEntryPoint(LPVOID lpParameter)
@@ -467,12 +474,15 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         {
         case REBUILD:
           LogDebug("CBDReaderFilter::Command thread: issue rebuild!");
+          
+          m_eRebuild.Reset();
           TriggerOnMediaChanged();
+          m_eRebuild.Wait();
 
-          // TODO add media changed event so we don't have to poll
-          while (m_demultiplexer.IsMediaChanging())
+          if (m_bRebuildOngoing)
           {
-            Sleep(1);
+            LogDebug("CBDReaderFilter::Command thread: graph rebuild has failed?");
+            return 0;
           }
 
           m_bIgnoreLibSeeking = true;
@@ -482,6 +492,8 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
             m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
           }
+
+          m_demultiplexer.SetMediaChanging(false);
 
           break;
 
@@ -975,7 +987,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   // to a correct position after the rebuild has been done
   //
   // - Ignore seek request when playback is stopping
-  if (m_demultiplexer.IsMediaChanging() || m_bStopping)
+  if (m_bRebuildOngoing || m_bStopping)
     return S_OK;
 
   if (!pCurrent && !pStop
@@ -1133,7 +1145,7 @@ DWORD CBDReaderFilter::ThreadProc()
     }
 
     // If we didnt exit by request, deliver end-of-stream
-    if(!CheckRequest(&cmd)) 
+    if (!CheckRequest(&cmd)) 
     {
       m_pAudioPin->EndOfStream();
       m_pVideoPin->EndOfStream();
