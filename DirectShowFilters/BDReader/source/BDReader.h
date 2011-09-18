@@ -185,7 +185,6 @@ public:
 
   void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
   void            TriggerOnMediaChanged();
-  DWORD           m_lastPause;
 
   CLibBlurayWrapper lib;
 

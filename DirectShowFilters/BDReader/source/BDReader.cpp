@@ -587,11 +587,6 @@ STDMETHODIMP CBDReaderFilter::Pause()
   CAutoLock cObjectLock(m_pLock);
   lib.SetState(State_Paused);
 
-  if (m_State == State_Running)
-  {
-    m_lastPause = GetTickCount();
-  }
-
   HRESULT hr = CSource::Pause();
 
   LogDebug("CBDReaderFilter::Pause() - END - state = %d", m_State);
