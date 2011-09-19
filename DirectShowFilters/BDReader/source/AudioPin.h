@@ -63,18 +63,18 @@ public:
   HRESULT CheckConnect(IPin* pReceivePin);
   HRESULT FillBuffer(IMediaSample* pSample);
   HRESULT BreakConnect();
+  HRESULT OnThreadStartPlay();
+  HRESULT OnThreadDestroy();  
 
   // CSourceSeeking
   HRESULT ChangeStart();
   HRESULT ChangeStop();
   HRESULT ChangeRate();
-  HRESULT OnThreadStartPlay();
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags);
   STDMETHODIMP GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest);
   STDMETHODIMP GetDuration(LONGLONG* pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG* pCurrent);
   STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
-    
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
 

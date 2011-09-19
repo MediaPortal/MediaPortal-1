@@ -67,8 +67,14 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
 
 CAudioPin::~CAudioPin()
 {
-  m_eFlushStart->Set();
-  delete m_eFlushStart;
+  if (m_eFlushStart)
+  {
+    m_eFlushStart->Set();
+   delete m_eFlushStart;
+  }
+
+  if (m_demux.m_eAudioPlSeen)
+    m_demux.m_eAudioPlSeen->Set();
 }
 
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -503,6 +509,15 @@ HRESULT CAudioPin::OnThreadStartPlay()
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
   }
+
+  return S_OK;
+}
+
+HRESULT CAudioPin::OnThreadDestroy()
+{
+  // Make sure video pin is not waiting for us
+  if (m_demux.m_eAudioPlSeen)
+    m_demux.m_eAudioPlSeen->Set(); 
 
   return S_OK;
 }
