@@ -239,7 +239,7 @@ private:
   HANDLE          m_hCommandEvent;
   HANDLE          m_hStopCommandThreadEvent;
   DWORD           m_dwThreadId;
-  bool            m_bIgnoreLibSeeking;
+  bool            m_bUpdateStreamPositionOnly;
 
   bool m_bFirstPlay;
 
