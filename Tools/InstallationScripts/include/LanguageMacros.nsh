@@ -38,7 +38,7 @@ _____________________________________________________________________________
 !ifdef MUI_INCLUDED
   !insertmacro MUI_LANGUAGE "${LANGLOAD}"
 !endif
-  !include "${svn_InstallScripts}\languages\${LANGLOAD}.nsh"
+  !include "${git_InstallScripts}\languages\${LANGLOAD}.nsh"
   !undef LANG
 !macroend
  

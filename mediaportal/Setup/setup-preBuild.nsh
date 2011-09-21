@@ -34,11 +34,11 @@
 ;!define BUILD_DeployTool
 ;!define BUILD_Installer
 
-!define svn_UninstallFilelist "${svn_ROOT}\Tools\Script & Batch tools\UninstallFilelist"
+!define git_UninstallFilelist "${git_ROOT}\Tools\Script & Batch tools\UninstallFilelist"
 
 # At first build UninstallFilelist.exe
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release "${svn_UninstallFilelist}\UninstallFilelist.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release "${git_UninstallFilelist}\UninstallFilelist.sln"' = 0
 # execute UninstallFilelist.exe, it will create the heasder file with uninstall commands
-!system '"${svn_UninstallFilelist}\UninstallFilelist\bin\Release\UninstallFilelist.exe" /dir="${svn_MP}\MediaPortal.Base" /ignore="${svn_MP}\Setup\uninstall-ignore.txt" /output="${svn_MP}\Setup\uninstall.nsh"' = 0
+!system '"${git_UninstallFilelist}\UninstallFilelist\bin\Release\UninstallFilelist.exe" /dir="${git_MP}\MediaPortal.Base" /ignore="${git_MP}\Setup\uninstall-ignore.txt" /output="${git_MP}\Setup\uninstall.nsh"' = 0
 
-!undef svn_UninstallFilelist
+!undef git_UninstallFilelist

@@ -31,10 +31,10 @@
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
 !define SKRIPT_NAME "MediaPortal Unpacker"
 # path definitions, all others are done in MediaPortalScriptInit
-!define svn_ROOT "..\.."
-!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!define git_ROOT "..\.."
+!define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
-!include "${svn_InstallScripts}\include\MediaPortalScriptInit.nsh"
+!include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
 
 
 #---------------------------------------------------------------------------
@@ -52,12 +52,12 @@
   !include "version.txt"
   !delfile "version.txt"
   !if ${VER_BUILD} == 0
-    !warning "It seems there was an error, reading the svn revision. 0 will be used."
+    !warning "It seems there was an error, reading the git revision. 0 will be used."
   !endif
 !endif
 
 ; import version from shared file
-!include "${svn_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
+!include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 #---------------------------------------------------------------------------
 # BUILD sources
@@ -75,8 +75,8 @@
 # INCLUDE FILES
 #---------------------------------------------------------------------------
 !define NO_INSTALL_LOG
-!include "${svn_InstallScripts}\include\LanguageMacros.nsh"
-!include "${svn_InstallScripts}\include\MediaPortalMacros.nsh"
+!include "${git_InstallScripts}\include\LanguageMacros.nsh"
+!include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
 
 
 #---------------------------------------------------------------------------
@@ -84,12 +84,12 @@
 #---------------------------------------------------------------------------
 Name          "${SKRIPT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
-Icon "${svn_DeployTool}\Install.ico"
+Icon "${git_DeployTool}\Install.ico"
 !define /date buildTIMESTAMP "%Y-%m-%d-%H-%M"
 !if ${VER_BUILD} == 0
-  OutFile "${svn_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
+  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
 !else
-  OutFile "${svn_OUT}\MediaPortalSetup_${VERSION}_SVN${VER_BUILD}_${buildTIMESTAMP}.exe"
+  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_GIT${VER_BUILD}_${buildTIMESTAMP}.exe"
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
 
@@ -121,23 +121,23 @@ Section
     RMDir /r "$INSTDIR"
 
   SetOutPath $INSTDIR
-  File /r /x .svn /x *.pdb /x *.vshost.exe "${svn_DeployTool}\bin\Release\*"
+  File /r /x .git /x *.pdb /x *.vshost.exe "${git_DeployTool}\bin\Release\*"
 
   SetOutPath $INSTDIR\deploy
 #code after build scripts are fixed
 !if "$%COMPUTERNAME%" != "S15341228"
-  File "${svn_OUT}\package-mediaportal.exe"
-  File "${svn_OUT}\package-tvengine.exe"
+  File "${git_OUT}\package-mediaportal.exe"
+  File "${git_OUT}\package-tvengine.exe"
 !else
 
 #code before build scripts are fixed
-  File "${svn_MP}\Setup\Release\package-mediaportal.exe"
-  File "${svn_TVServer}\Setup\Release\package-tvengine.exe"
+  File "${git_MP}\Setup\Release\package-mediaportal.exe"
+  File "${git_TVServer}\Setup\Release\package-tvengine.exe"
 #end of workaound code
 !endif
  
   SetOutPath $INSTDIR\HelpContent\DeployToolGuide
-  File /r /x .svn "${svn_DeployTool}\HelpContent\DeployToolGuide\*"
+  File /r /x .git "${git_DeployTool}\HelpContent\DeployToolGuide\*"
 
 SectionEnd
 
