@@ -397,7 +397,8 @@ void CVideoPin::CheckPlaybackState()
   }
   else
   {
-    if (m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
+    // Audio stream requires a rebuild (in middle of the clip - user initiated)
+	if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
     {
       m_demux.m_bAudioRequiresRebuild = false;
       m_demux.m_eAudioPlSeen->Reset();
@@ -433,7 +434,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         return S_FALSE;
       }
 
-      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoPlSeen)
+      if (m_demux.m_bVideoPlSeen || m_demux.m_bAudioRequiresRebuild && !m_demux.m_bVideoPlSeen && !m_demux.m_eAudioPlSeen->Check())
       {
         CreateEmptySample(pSample);
         CheckPlaybackState();
