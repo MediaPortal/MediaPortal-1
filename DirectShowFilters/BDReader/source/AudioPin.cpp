@@ -245,7 +245,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
             buffer->bSeekRequired = false;
             //m_pReceiver->EndOfStream();
-            m_demux.m_eAudioPlSeen->Set();
             useEmptySample = true;
             m_bSeekDone = false;
           }
@@ -292,6 +291,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
+          m_demux.m_eAudioPlSeen->Set();
           return S_OK;
         }
   
