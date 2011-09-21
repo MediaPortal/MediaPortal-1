@@ -470,13 +470,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->bSeekRequired = false;
             useEmptySample = true;
 
-            // HACK - currenlty Playlist / Clip aren't setting the playlist changes to zero if
-            // 1st sample doesn't start from zero - this causes fake seek to be filtered out
-            // when two sequential clips share the same offset.
-
-            if (buffer->rtOffset < 10000000)
-              buffer->rtOffset = 0;
-
             buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
           }
 

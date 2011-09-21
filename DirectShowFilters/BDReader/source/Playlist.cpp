@@ -44,6 +44,7 @@ CPlaylist::~CPlaylist(void)
 
 Packet* CPlaylist::ReturnNextAudioPacket()
 {
+  firstPacketRead=true;
   if (m_currentAudioPlayBackClip==NULL)
   {
     LogDebug("m_currentAudioPlayBackClip is NULL");
@@ -57,16 +58,15 @@ Packet* CPlaylist::ReturnNextAudioPacket()
   }
   else
   {
-    CClip* nextAudioClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+    CClip* nextAudioClip = GetNextAudioClip(m_currentAudioPlayBackClip, SUPERCEEDED_AUDIO_RETURN);
     if (m_currentAudioPlayBackClip!=nextAudioClip)
     {
       LogDebug("Moving to %d,%d",this->nPlaylist,nextAudioClip->nClip);
-      m_currentAudioPlayBackClip->Superceed(SUPERCEEDED_AUDIO);
+      m_currentAudioPlayBackClip->Superceed(SUPERCEEDED_AUDIO_RETURN);
       m_currentAudioPlayBackClip=nextAudioClip;
       ret=ReturnNextAudioPacket();
     }
   }
-  if (ret) firstPacketRead=true;
   return ret;
 }
 
@@ -93,6 +93,7 @@ Packet* CPlaylist::ReturnNextAudioPacket(int clip)
 
 Packet* CPlaylist::ReturnNextVideoPacket()
 {
+  firstPacketRead=true;
   Packet * ret = m_currentVideoPlayBackClip->ReturnNextVideoPacket(playlistFirstPacketTime);
   if (ret)
   {
@@ -101,14 +102,14 @@ Packet* CPlaylist::ReturnNextVideoPacket()
   }
   else
   {
-    CClip* nextVideoClip = GetNextVideoClip(m_currentVideoPlayBackClip);
+    CClip* nextVideoClip = GetNextVideoClip(m_currentVideoPlayBackClip,SUPERCEEDED_VIDEO_RETURN);
     if (m_currentVideoPlayBackClip!=nextVideoClip)
     {
+      m_currentVideoPlayBackClip->Superceed(SUPERCEEDED_VIDEO_RETURN);
       m_currentVideoPlayBackClip=nextVideoClip;
       ret=ReturnNextVideoPacket();
     }
   }
-  if (ret) firstPacketRead=true;
   return ret;
 }
 
@@ -137,7 +138,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     bool complete=false;
     while (!complete)
     {
-      CClip* nextSubmissionClip = GetNextAudioClip(m_currentAudioSubmissionClip);
+      CClip* nextSubmissionClip = GetNextAudioClip(m_currentAudioSubmissionClip, SUPERCEEDED_AUDIO_FILL);
       if (nextSubmissionClip->nClip==packet->nClipNumber)
       {
         complete=true;
@@ -158,7 +159,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     firstAudioPESPacketSeen=true;
     firstAudioPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
-    packet->rtOffset = 0 - firstAudioPESTimeStamp;
+    packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0;
     if (packet->rtOffset != 0)
     {
       packet->bSeekRequired=!seeking;
@@ -193,8 +194,8 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     {
       while (m_currentVideoSubmissionClip->nClip != packet->nClipNumber)
       {
-        m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO);
-        CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip);
+        m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO_FILL);
+        CClip * nextVideoClip = GetNextVideoClip(m_currentVideoSubmissionClip, SUPERCEEDED_VIDEO_FILL);
         if (nextVideoClip==m_currentVideoSubmissionClip)
         {
           LogDebug("Playlist::Video Clip %d not found in playlist %d",packet->nClipNumber, this->nPlaylist); 
@@ -228,14 +229,14 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
   return ret;
 }
 
-CClip * CPlaylist::GetNextAudioClip(CClip * currentClip)
+CClip * CPlaylist::GetNextAudioClip(CClip * currentClip, int superceedType)
 {
   CClip * ret = currentClip;
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
   {
     CClip * clip=*it;
-    if (!clip->IsSuperceeded(SUPERCEEDED_AUDIO) && currentClip->nClip !=clip->nClip)
+    if (!clip->IsSuperceeded(superceedType) && currentClip->nClip !=clip->nClip)
     {
       return clip;
     }
@@ -244,14 +245,14 @@ CClip * CPlaylist::GetNextAudioClip(CClip * currentClip)
   return ret;
 }
 
-CClip * CPlaylist::GetNextVideoClip(CClip * currentClip)
+CClip * CPlaylist::GetNextVideoClip(CClip * currentClip, int superceedType)
 {
   CClip * ret = currentClip;
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
   {
     CClip * clip=*it;
-    if (!clip->IsSuperceeded(SUPERCEEDED_VIDEO) && currentClip->nClip !=clip->nClip)
+    if (!clip->IsSuperceeded(superceedType) && currentClip->nClip !=clip->nClip)
     {
       //LogDebug("New Video Clip %d",clip->nClip);
       return clip;
@@ -332,7 +333,7 @@ Packet * CPlaylist::CorrectTimeStamp(CClip * packetClip, Packet* packet)
   {
     ret->rtStart -= GetPacketTimeStampCorrection(packetClip);
     ret->rtStop -= GetPacketTimeStampCorrection(packetClip);
-    ret->rtOffset = 0 - firstAudioPESTimeStamp; // use only audio offset
+    ret->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0; // use only audio offset
   }
   return ret;
 }
@@ -361,14 +362,14 @@ void CPlaylist::FlushVideo()
 bool CPlaylist::IsFakeAudioAvailable()
 {
   if (m_currentAudioPlayBackClip==NULL) return false;
-  CClip * nextClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+  CClip * nextClip = GetNextAudioClip(m_currentAudioPlayBackClip, SUPERCEEDED_AUDIO_RETURN);
   return nextClip->FakeAudioAvailable();
 }
 
 bool CPlaylist::IsFakingAudio()
 {
   if (m_currentAudioPlayBackClip==NULL) return false;
-  CClip * nextClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+  CClip * nextClip = GetNextAudioClip(m_currentAudioPlayBackClip, SUPERCEEDED_AUDIO_RETURN);
   return nextClip->noAudio;
 }
 
@@ -429,7 +430,7 @@ bool CPlaylist::HasAudio()
 {
   if (m_currentAudioPlayBackClip==NULL) return false;
   if (m_currentAudioPlayBackClip->HasAudio()) return true;
-  CClip* nextClip = GetNextAudioClip(m_currentAudioPlayBackClip);
+  CClip* nextClip = GetNextAudioClip(m_currentAudioPlayBackClip, SUPERCEEDED_AUDIO_RETURN);
   if (nextClip!=m_currentAudioPlayBackClip)
   {
     return nextClip->HasAudio();
@@ -441,7 +442,7 @@ bool CPlaylist::HasVideo()
 {
   if (m_currentVideoPlayBackClip==NULL) return false;
   if (m_currentVideoPlayBackClip->HasVideo()) return true;
-  CClip* nextClip = GetNextVideoClip(m_currentVideoPlayBackClip);
+  CClip* nextClip = GetNextVideoClip(m_currentVideoPlayBackClip, SUPERCEEDED_VIDEO_RETURN);
   if (nextClip!=m_currentVideoPlayBackClip)
   {
     return nextClip->HasVideo();

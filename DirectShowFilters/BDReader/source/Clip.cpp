@@ -137,8 +137,8 @@ bool CClip::FakeAudioAvailable()
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 {
-  if (rtStart>playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO;
-  if (superceeded&SUPERCEEDED_AUDIO) return NULL;
+  if (rtStart>playlistFirstPacketTime+clipDuration)superceeded|=SUPERCEEDED_AUDIO_RETURN;
+  if (superceeded&SUPERCEEDED_AUDIO_RETURN) return NULL;
   if (!FakeAudioAvailable()) return NULL;
 
   Packet* packet = new Packet();

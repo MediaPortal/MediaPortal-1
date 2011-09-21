@@ -65,8 +65,8 @@ public:
 protected:
   typedef vector<CClip*>::iterator ivecClip;
 
-  CClip * GetNextAudioClip(CClip * currentClip);
-  CClip * GetNextVideoClip(CClip * currentClip);
+  CClip * GetNextAudioClip(CClip * currentClip, int superceedType);
+  CClip * GetNextVideoClip(CClip * currentClip, int superceedType);
   CClip * GetClip(int nClip);
 
   REFERENCE_TIME GetPacketTimeStampCorrection(CClip * packetClip);
