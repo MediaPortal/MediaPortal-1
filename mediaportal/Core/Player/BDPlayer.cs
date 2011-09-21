@@ -1916,8 +1916,8 @@ namespace MediaPortal.Player
             MovieEnded();
             break;
           case EventCode.ErrorAbort:
-            Log.Debug("BDPlayer - GraphNotify: Error");
-            // skip for now
+            Log.Debug("BDPlayer - GraphNotify: Error: {0}", param1);
+            MovieEnded();
             break;
           default:
             break;
