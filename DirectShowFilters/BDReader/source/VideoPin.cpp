@@ -398,7 +398,7 @@ void CVideoPin::CheckPlaybackState()
   else
   {
     // Audio stream requires a rebuild (in middle of the clip - user initiated)
-	if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
+    if (!m_demux.m_eAudioPlSeen->Check() && !m_demux.m_bVideoPlSeen && m_demux.m_bAudioRequiresRebuild)
     {
       m_demux.m_bAudioRequiresRebuild = false;
       m_demux.m_eAudioPlSeen->Reset();
