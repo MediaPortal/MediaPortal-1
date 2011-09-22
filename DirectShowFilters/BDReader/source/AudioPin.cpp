@@ -624,9 +624,9 @@ void CAudioPin::LogMediaType(AM_MEDIA_TYPE* pmt)
   else
   {
     LogDebug("aud: format %d {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X}", pmt->cbFormat,
-      pmt->formattype.Data1, pmt->formattype.Data2, pmt->formattype.Data3,
-      pmt->formattype.Data4[0], pmt->formattype.Data4[1], pmt->formattype.Data4[2],
-      pmt->formattype.Data4[3], pmt->formattype.Data4[4], pmt->formattype.Data4[5], 
-      pmt->formattype.Data4[6], pmt->formattype.Data4[7]);
+      pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
+      pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
+      pmt->subtype.Data4[3], pmt->subtype.Data4[4], pmt->subtype.Data4[5], 
+      pmt->subtype.Data4[6], pmt->subtype.Data4[7]);
   }
 }
