@@ -473,30 +473,35 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         switch (cmd.id)
         {
         case REBUILD:
-          LogDebug("CBDReaderFilter::Command thread: issue rebuild!");
+          {
+            LogDebug("CBDReaderFilter::Command thread: issue rebuild!");
           
-          m_eRebuild.Reset();
-          TriggerOnMediaChanged();
-          m_eRebuild.Wait();
+            LONGLONG pos = 0;
+            if (cmd.refTime.m_time < 0)
+              m_pMediaSeeking->GetCurrentPosition(&pos);
+            else
+              pos = cmd.refTime.m_time;
 
-          if (m_bRebuildOngoing)
-          {
-            LogDebug("CBDReaderFilter::Command thread: graph rebuild has failed?");
-            return 0;
-          }
+            m_eRebuild.Reset();
+            TriggerOnMediaChanged();
+            m_eRebuild.Wait();
 
-          m_bUpdateStreamPositionOnly = true;
+            if (m_bRebuildOngoing)
+            {
+              LogDebug("CBDReaderFilter::Command thread: graph rebuild has failed?");
+              return 0;
+            }
 
-          if (cmd.refTime.m_time >= 0)
-          {
+            m_bUpdateStreamPositionOnly = true;
+
             LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
-            m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
-          }
+            m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
 
-          m_demultiplexer.SetMediaChanging(false);
+            m_demultiplexer.SetMediaChanging(false);
 
-          break;
-
+            break;
+		      }
+          
         case FLUSH:
           m_bUpdateStreamPositionOnly = true;
 

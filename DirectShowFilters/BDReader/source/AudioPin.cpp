@@ -202,7 +202,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (!m_bSeekDone|| m_pFilter->IsStopping() || m_demux.IsMediaChanging())// || !m_demux.m_eAudioPlSeen->Check())
+      if (!m_bSeekDone|| m_pFilter->IsStopping() || m_demux.IsMediaChanging())
       {
         CreateEmptySample(pSample);
         return S_OK;
@@ -243,7 +243,6 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (buffer->bSeekRequired)
           {
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-            buffer->bSeekRequired = false;
             //m_pReceiver->EndOfStream();
             useEmptySample = true;
             m_bSeekDone = false;
@@ -291,7 +290,12 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           CreateEmptySample(pSample);
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
-          m_demux.m_eAudioPlSeen->Set();
+          
+          if (buffer->bSeekRequired)
+            m_demux.m_eAudioPlSeen->Set();
+
+          m_pCachedBuffer->bSeekRequired = false;
+
           return S_OK;
         }
   
@@ -505,6 +509,9 @@ HRESULT CAudioPin::OnThreadStartPlay()
   {
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
+
+    if (m_demux.m_eAudioPlSeen)
+      m_demux.m_eAudioPlSeen->Reset();
   }
 
   return S_OK;
