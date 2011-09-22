@@ -1193,7 +1193,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p
 	BYTE* start = m_p->GetData();
 	BYTE* end = start + m_p->GetCount();
 
-  start = m_p->GetData();
+    start = m_p->GetData();
 
 	bool bSeqFound = false;
 	while(start <= end-4) {
@@ -1220,7 +1220,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p
 			}
 			next++;
 		}
-    m_loopLastSearch = next - start;
+        m_loopLastSearch = next - start;
 		if(next >= end-4) {
 			break;
 		}
@@ -1229,6 +1229,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p
 		UNUSED_ALWAYS(size);
 
 		CAutoPtr<Packet> p2(new Packet());
+        p2->SetCount(0, PACKET_GRANULARITY);
 		p2->bDiscontinuity = m_p->bDiscontinuity;
 		m_p->bDiscontinuity = FALSE;
 
@@ -1244,8 +1245,8 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p
 		p2->pmt = m_p->pmt;
 		m_p->pmt = NULL;
 
-    p2->nClipNumber = m_p->nClipNumber;
-    p2->nPlaylist = m_p->nPlaylist;
+        p2->nClipNumber = m_p->nClipNumber;
+        p2->nPlaylist = m_p->nPlaylist;
 
 		p2->SetData(start, next - start);
 
