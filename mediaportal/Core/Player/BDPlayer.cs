@@ -486,6 +486,7 @@ namespace MediaPortal.Player
     protected int _currentAudioFormat;
     protected UpdateItems _updateItems;
     protected int _updateNow = 0;
+    protected static BDPlayerSettings settings;
     #endregion
 
     #region ctor/dtor
@@ -1453,6 +1454,11 @@ namespace MediaPortal.Player
       }
       return 0;
     }
+
+    public static BDPlayerSettings Settings
+    {
+      get { return settings; }
+    }
     #endregion
 
     #region private/protected members
@@ -1491,7 +1497,7 @@ namespace MediaPortal.Player
     /// <param name="reader">IBDReader object</param>
     protected virtual void LoadSettings(IBDReader reader)
     {
-      BDPlayerSettings settings = new BDPlayerSettings();
+      settings = new BDPlayerSettings();
 
       using (Settings xmlreader = new MPSettings())
       {
