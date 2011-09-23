@@ -161,11 +161,9 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     
     packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0;
     if (packet->rtOffset != 0)
-    {
       packet->bSeekRequired=!seeking;
-      m_currentAudioSubmissionClip->FlushAudio(packet);
-      m_currentVideoSubmissionClip->FlushVideo();
-    }
+
+    m_currentAudioSubmissionClip->FlushAudio(packet);
     LogDebug("First Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstAudioPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
@@ -215,11 +213,9 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     
     packet->rtOffset = 0 - firstVideoPESTimeStamp;
     if (packet->rtOffset != 0)
-    {
       packet->bSeekRequired=!seeking;
-      m_currentAudioSubmissionClip->FlushVideo(packet);
-      m_currentVideoSubmissionClip->FlushAudio();
-    }
+
+    m_currentAudioSubmissionClip->FlushVideo(packet);
     LogDebug("First Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstVideoPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
