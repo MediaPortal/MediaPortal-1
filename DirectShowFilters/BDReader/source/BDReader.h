@@ -87,7 +87,6 @@ public:
 
 enum DS_CMD_ID
 {
-  FLUSH,
   REBUILD,
   SEEK
 };

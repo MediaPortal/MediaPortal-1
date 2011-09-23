@@ -501,16 +501,6 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
 
             break;
 		      }
-          
-        case FLUSH:
-          m_bUpdateStreamPositionOnly = true;
-
-          LogDebug("CBDReaderFilter::Command thread: flush requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
-          m_demultiplexer.Flush(); 
-
-          m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
-
-          break;
 
         case SEEK:
           m_bUpdateStreamPositionOnly = true;
@@ -713,7 +703,7 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
   if (!m_bUpdateStreamPositionOnly)
   {
     LogDebug("CBDReaderFilter::Seek - Flush");
-    m_demultiplexer.Flush();
+    m_demultiplexer.Flush(true);
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 

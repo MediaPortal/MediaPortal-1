@@ -53,7 +53,7 @@ public:
   // TODO - not all of these should be puclic!
 
   HRESULT    Start();
-  void       Flush();
+  void       Flush(bool pSeeking);
   void       IgnoreNextDiscontinuity();
   Packet*    GetVideo();
   Packet*    GetAudio();

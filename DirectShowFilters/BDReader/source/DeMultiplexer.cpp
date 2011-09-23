@@ -399,7 +399,7 @@ void CDeMultiplexer::FlushSubtitle()
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
 }
 
-void CDeMultiplexer::Flush()
+void CDeMultiplexer::Flush(bool pSeeking)
 {
   LogDebug("demux:flushing");
 
@@ -421,7 +421,9 @@ void CDeMultiplexer::Flush()
   FlushSubtitle();
 
   m_playlistManager->ClearAllButCurrentClip(true);
-  IgnoreNextDiscontinuity();
+
+  if (pSeeking)
+    IgnoreNextDiscontinuity();
 
   SetHoldAudio(false);
   SetHoldVideo(false);
@@ -559,7 +561,7 @@ HRESULT CDeMultiplexer::Start()
 
     // Seek to start - reset the libbluray reading position
     m_filter.lib.Seek(0);
-    Flush();
+    Flush(false);
     m_bStarting = false;
 
     CMediaType pmt;
@@ -574,7 +576,7 @@ HRESULT CDeMultiplexer::Start()
   
   m_bStarting = false;
 
-  Flush();
+  Flush(false);
   // Seek to start - reset the libbluray reading position
   m_filter.lib.Seek(0);
 
@@ -649,8 +651,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
   {
     case BD_EVENT_SEEK:
       m_bDiscontinuousClip = true;
-      // TODO: check this
-      //ResetStream();
       break;
 
     case BD_EVENT_STILL_TIME:
@@ -734,18 +734,11 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
         
-          // TODO serialise the FLUSH
-          /*
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
-
-            SetHoldVideo(true);
-            SetHoldAudio(true);
-            SetHoldSubtitle(true);
-
-            m_filter.IssueCommand(FLUSH, 0);
-          }*/
+            Flush(false);
+          }
         }
       }
   } 
