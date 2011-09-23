@@ -90,6 +90,7 @@ namespace TvDatabase
       this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
       this.NetProvider = NetProvider;
+      stopGraph = true;
     }
 
     /// <summary> 
@@ -114,6 +115,7 @@ namespace TvDatabase
       this.recordingFormat = recordingFormat;
       this.decryptLimit = decryptLimit;
       this.NetProvider = NetProvider;
+      stopGraph = true;
     }
 
     #endregion
