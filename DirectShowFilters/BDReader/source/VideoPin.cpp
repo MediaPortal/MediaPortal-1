@@ -198,6 +198,23 @@ HRESULT CVideoPin::GetMediaType(CMediaType* pmt)
   return S_OK;
 }
 
+bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt)
+{
+  if (lhs_pmt->subtype == rhs_pmt->subtype) return true;
+  if (lhs_pmt->subtype == FOURCCMap('1CVW'))
+  {
+    if (m_decoderType == Arcsoft)
+    {
+      if (rhs_pmt->subtype == MEDIASUBTYPE_WVC1_ARCSOFT) return true;
+    }
+    else if (m_decoderType == Cyberlink)
+    {
+      if (rhs_pmt->subtype == MEDIASUBTYPE_WVC1_CYBERLINK) return true;
+    }
+  }
+  return false;
+}
+
 void CVideoPin::SetInitialMediaType(const CMediaType* pmt)
 {
   m_mtInitial = *pmt;
@@ -473,7 +490,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
           }
 
-          if (buffer->pmt && m_mt.subtype != buffer->pmt->subtype)
+          if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
           {
             LogMediaType(buffer->pmt);
             

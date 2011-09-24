@@ -83,6 +83,7 @@ protected:
   void DetectVideoDecoder();
   void CreateEmptySample(IMediaSample* pSample);
   void LogMediaType(AM_MEDIA_TYPE* pmt);
+  bool CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt);
   
   void CheckPlaybackState();
 
