@@ -296,7 +296,8 @@ namespace MediaPortal.Player
       Playing,
       Paused,
       Ended,
-      Menu
+      Menu,
+      PopUp
     }
 
     protected enum BDKeys
@@ -539,7 +540,7 @@ namespace MediaPortal.Player
         switch (action.wID)
         {
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             int x = (int)(action.fAmount1 / ((float)GUIGraphicsContext.Width / 1920.0f));
             int y = (int)(action.fAmount2 / ((float)GUIGraphicsContext.Height / 1080.0f));
@@ -548,42 +549,42 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Mouse select");
             _ireader.Action((int)BDKeys.BD_VK_MOUSE_ACTIVATE);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_LEFT:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Move left");
             _ireader.Action((int)BDKeys.BD_VK_LEFT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_RIGHT:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Move right");
             _ireader.Action((int)BDKeys.BD_VK_RIGHT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_UP:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Move up");
             _ireader.Action((int)BDKeys.BD_VK_UP);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_DOWN:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Move down");
             _ireader.Action((int)BDKeys.BD_VK_DOWN);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
             Log.Debug("BDPlayer: Select");
             _ireader.Action((int)BDKeys.BD_VK_ENTER);
@@ -604,11 +605,11 @@ namespace MediaPortal.Player
             Speed = 1;
             Log.Debug("BDPlayer: Popup menu toggle");
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
-            _state = PlayState.Menu;
+            _state = PlayState.PopUp;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
-            if (_state != PlayState.Menu)
+            if (_state != PlayState.PopUp)
               return false;
             Speed = 1;
             Log.Debug("BDPlayer: Popup menu off");
@@ -1131,7 +1132,7 @@ namespace MediaPortal.Player
 
     public override bool Playing
     {
-      get { return (_state == PlayState.Playing || _state == PlayState.Paused || _state == PlayState.Menu); }
+      get { return (_state != PlayState.Init && _state != PlayState.Ended); }
     }
 
     public override bool Stopped
@@ -1751,7 +1752,9 @@ namespace MediaPortal.Player
               _currentChapter = bdevent.Param - 1;
             break;
 
-          case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:            
+          case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:
+            if (_state == PlayState.PopUp)
+              break;
             if (bdevent.Param == 1)
             {
               Log.Debug("BDPlayer: Menu toggle on");
