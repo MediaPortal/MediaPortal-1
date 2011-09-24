@@ -28,6 +28,7 @@
 #include "bdreader.h"
 #include "audiopin.h"
 #include "videopin.h"
+#include "mediaformats.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
@@ -49,7 +50,8 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_pCachedBuffer(NULL),
   m_bFlushing(false),
   m_bSeekDone(true),
-  m_bDiscontinuity(false)
+  m_bDiscontinuity(false),
+  m_bUsePCM(false)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -90,16 +92,48 @@ STDMETHODIMP CAudioPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
   return CSourceStream::NonDelegatingQueryInterface(riid, ppv);
 }
 
-HRESULT CAudioPin::GetMediaType(CMediaType *pmt)
+HRESULT CAudioPin::CheckMediaType(const CMediaType* pmt)
+{
+  CAutoLock lock(m_pFilter->pStateLock());
+
+  CMediaType mt;
+  GetMediaTypeInternal(&mt);
+
+  if (pmt->subtype == MEDIASUBTYPE_BD_LPCM_AUDIO)
+    mt.subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
+
+  if (mt == *pmt) 
+    return NOERROR;
+
+  return E_FAIL;  
+}
+
+HRESULT CAudioPin::GetMediaType(int iPosition, CMediaType* pMediaType)
+{
+  CAutoLock lock(m_pFilter->pStateLock());
+
+  CMediaType mt;
+  GetMediaTypeInternal(&mt);
+
+  if (mt.subtype == MEDIASUBTYPE_PCM && iPosition == 0)
+  {
+    mt.subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
+    *pMediaType = mt;
+  }
+  else if ((mt.subtype == MEDIASUBTYPE_PCM && iPosition == 1) || iPosition == 0)
+    *pMediaType = mt;
+  else
+    return VFW_S_NO_MORE_ITEMS;
+
+  return S_OK;
+}
+
+HRESULT CAudioPin::GetMediaTypeInternal(CMediaType *pmt)
 {
   if (m_mt.formattype == GUID_NULL)
-  {
     *pmt = m_mtInitial;
-  }
   else
-  {
     *pmt = m_mt;
-  }
 
   return S_OK;
 }
@@ -248,6 +282,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_bSeekDone = false;
           }
 
+          // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
+          if (!m_bUsePCM && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
+            buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
+
           if (buffer->pmt && m_mt != *buffer->pmt)
           {
             HRESULT hrAccept = S_FALSE;
@@ -259,8 +297,22 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             }
             else if (m_pReceiver)
             {
-              //LogDebug("aud: DynamicQueryAccept - not avail"); 
-              hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              //LogDebug("aud: DynamicQueryAccept - not avail");
+              GUID guid = buffer->pmt->subtype;
+              if (buffer->pmt->subtype == MEDIASUBTYPE_PCM)
+              {
+                buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
+                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+              }
+              
+              if (hrAccept != S_OK)
+              {
+                buffer->pmt->subtype = guid;
+                hrAccept = m_pReceiver->QueryAccept(buffer->pmt);
+                m_bUsePCM = true;
+              }
+              else
+                m_bUsePCM = false;
             }
 
             if (hrAccept != S_OK)

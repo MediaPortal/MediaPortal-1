@@ -57,7 +57,9 @@ public:
   STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
 
   // CSourceStream
-  HRESULT GetMediaType(CMediaType* pMediaType);
+  HRESULT CheckMediaType(const CMediaType* pmt);
+  HRESULT GetMediaType(int iPosition, CMediaType* pMediaType);
+  HRESULT GetMediaTypeInternal(CMediaType* pMediaType);
   HRESULT DecideBufferSize(IMemAllocator* pAlloc, ALLOCATOR_PROPERTIES* pRequest);
   HRESULT CompleteConnect(IPin* pReceivePin);
   HRESULT CheckConnect(IPin* pReceivePin);
@@ -110,5 +112,7 @@ protected:
   bool m_bFlushing;
   bool m_bSeekDone;
   bool m_bDiscontinuity;
+
+  bool m_bUsePCM;
 };
 

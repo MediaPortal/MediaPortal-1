@@ -202,6 +202,7 @@
     <ClInclude Include="source\IAudioStream.h" />
     <ClInclude Include="source\ISubtitleStream.h" />
     <ClInclude Include="source\LibBlurayWrapper.h" />
+    <ClInclude Include="source\mediaformats.h" />
     <ClInclude Include="source\OSDTexture.h" />
     <ClInclude Include="source\OverlayRenderer.h" />
     <ClInclude Include="source\Packet.h" />
