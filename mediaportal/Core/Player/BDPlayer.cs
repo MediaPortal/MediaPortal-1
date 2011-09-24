@@ -595,38 +595,45 @@ namespace MediaPortal.Player
             Speed = 1;
             Log.Debug("BDPlayer: Main menu");
             _ireader.Action((int)BDKeys.BD_VK_ROOT_MENU);
+            _state = PlayState.Menu;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_BD_POPUP_MENU:
             if (!Playing || _forceTitle)
               return false;
             Speed = 1;
-            Log.Debug("BDPlayer: Popup menu");
+            Log.Debug("BDPlayer: Popup menu toggle");
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
+            _state = PlayState.Menu;
+            return true;
+
+          case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
+            if (_state != PlayState.Menu)
+              return false;
+            Speed = 1;
+            Log.Debug("BDPlayer: Popup menu off");
+            _ireader.Action((int)BDKeys.BD_VK_POPUP);
+            _state = PlayState.Playing;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_NEXT_CHAPTER:
-            {
-              if (_state != PlayState.Playing)
-                return false;
-              Speed = 1;              
-              Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter + 1);
-              _ireader.SetChapter((uint)_currentChapter + 1);              
-              return true;
-            }
+            if (_state != PlayState.Playing)
+              return false;
+            Speed = 1;
+            Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter + 1);
+            _ireader.SetChapter((uint)_currentChapter + 1);
+            return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREV_CHAPTER:
-            {
-              if (_state != PlayState.Playing)
-                return false;
-              Speed = 1;              
-              Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter + 1);
-              if (_currentChapter > 0)
-                _ireader.SetChapter((uint)_currentChapter - 1);
-              else if (_currentChapter == 0)                
-                _ireader.SetChapter(0);
-              return true;
-            }
+            if (_state != PlayState.Playing)
+              return false;
+            Speed = 1;
+            Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter + 1);
+            if (_currentChapter > 0)
+              _ireader.SetChapter((uint)_currentChapter - 1);
+            else if (_currentChapter == 0)
+              _ireader.SetChapter(0);
+            return true;
         }
       }
       catch (Exception ex)
