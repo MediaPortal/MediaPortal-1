@@ -61,57 +61,59 @@ namespace MediaPortal.Player
   }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct BDTitleInfo
+  public unsafe struct BDTitleInfo
   {
-    public int idx;
-    public int playlist;
-    public ulong duration;
-    public int clip_count;
-    public int angle_count;
-    public int chapter_count;
-    public unsafe BDClipInfo* clips;
-    public unsafe BDChapter* chapters;
+    public UInt32 idx;
+    public UInt32 playlist;
+    public UInt64 duration;
+    public UInt32 clip_count;
+    public byte angle_count;
+    public UInt32 chapter_count;
+    public BDClipInfo* clips;
+    public BDChapter* chapters;
   }
 
   [StructLayout(LayoutKind.Sequential)]
   public struct BDChapter
   {
-    public int idx;
-    public long start;
-    public long duration;
-    public long offset;
+    public UInt32 idx;
+    public UInt64 start;
+    public UInt64 duration;
+    public UInt64 offset;
   }
 
   [StructLayout(LayoutKind.Sequential)]
-  public struct BDClipInfo
+  public unsafe struct BDClipInfo
   {
-    public int pkt_count;
-    public int still_mode;
-    public int still_time;  /* seconds */
-    public int video_stream_count;
-    public int audio_stream_count;
-    public int pg_stream_count;
-    public int ig_stream_count;
-    public int sec_audio_stream_count;
-    public int sec_video_stream_count;
-    public unsafe BDStreamInfo* video_streams;
-    public unsafe BDStreamInfo* audio_streams;
-    public unsafe BDStreamInfo* pg_streams;
-    public unsafe BDStreamInfo* ig_streams;
-    public unsafe BDStreamInfo* sec_audio_streams;
-    public unsafe BDStreamInfo* sec_video_streams;
+    public UInt32 pkt_count;
+    public byte still_mode;
+    public UInt16 still_time;  /* seconds */
+    public byte video_stream_count;
+    public byte audio_stream_count;
+    public byte pg_stream_count;
+    public byte ig_stream_count;
+    public byte sec_audio_stream_count;
+    public byte sec_video_stream_count;
+    public byte raw_stream_count;    
+    public BDStreamInfo* video_streams;
+    public BDStreamInfo* audio_streams;
+    public BDStreamInfo* pg_streams;
+    public BDStreamInfo* ig_streams;
+    public BDStreamInfo* sec_audio_streams;
+    public BDStreamInfo* sec_video_streams;
+    public BDStreamInfo* raw_streams;
   }
 
   [StructLayout(LayoutKind.Sequential)]
   public struct BDStreamInfo
   {
-    public int coding_type;
-    public int format;
-    public int rate;
-    public int char_code;
-    public int lang;
-    public int pid;
-    public int aspect;
+    public byte coding_type;
+    public byte format;
+    public byte rate;
+    public byte char_code;
+    public byte lang;
+    public UInt16 pid;
+    public byte aspect;
   }
 
   [StructLayout(LayoutKind.Sequential)]
@@ -473,6 +475,7 @@ namespace MediaPortal.Player
     protected MediaType _mChangedMediaType;
     protected int _lastFrameCounter;    
     protected bool _bMediaTypeChanged;
+    protected int _currentPlayList = 0;
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
@@ -657,12 +660,12 @@ namespace MediaPortal.Player
       {
         if (value > AudioStreams)
         {
-          Log.Info("BDPlayer: Unable to set CurrentAudioStream -> value does not exist");
+          Log.Warn("BDPlayer: Unable to set CurrentAudioStream -> value does not exist");
           return;
         }
         if (_interfaceBDReader == null)
         {
-          Log.Info("BDPlayer: Unable to set CurrentAudioStream -> BDReader not initialized");
+          Log.Warn("BDPlayer: Unable to set CurrentAudioStream -> BDReader not initialized");
           return;
         }
         IAMStreamSelect pStrm = _interfaceBDReader as IAMStreamSelect;
@@ -673,7 +676,7 @@ namespace MediaPortal.Player
         }
         else
         {
-          Log.Info("BDPlayer: Unable to set CurrentAudioStream -> IAMStreamSelect == null");
+          Log.Warn("BDPlayer: Unable to set CurrentAudioStream -> IAMStreamSelect == null");
         }
         return;
       }
@@ -691,7 +694,7 @@ namespace MediaPortal.Player
 
       if (_interfaceBDReader == null)
       {
-        Log.Info("BDPlayer: Unable to get AudioType -> BDReader not initialized");
+        Log.Warn("BDPlayer: Unable to get AudioType -> BDReader not initialized");
         return Strings.Unknown;
       }
       
@@ -723,7 +726,7 @@ namespace MediaPortal.Player
 
       if (_interfaceBDReader == null)
       {
-        Log.Info("BDPlayer: Unable to get AudioLanguage -> BDReader not initialized");
+        Log.Warn("BDPlayer: Unable to get AudioLanguage -> BDReader not initialized");
         return Strings.Unknown;
       }
 
@@ -797,7 +800,7 @@ namespace MediaPortal.Player
           MovieEnded();
           return false;
         }
-        Log.Info("BDPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
+        Log.Debug("BDPlayer:VideoSize:{0}x{1}", _videoWidth, _videoHeight);
       }
       GUIGraphicsContext.VideoSize = new Size(_videoWidth, _videoHeight);
       if (_mediaCtrl == null)
@@ -824,7 +827,7 @@ namespace MediaPortal.Player
       _geometry = GUIGraphicsContext.ARType;
       UpdateCurrentPosition();
       OnInitialized();
-      Log.Info("BDPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);
+      Log.Debug("BDPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);
 
       if (_forceTitle)
       {
@@ -940,7 +943,7 @@ namespace MediaPortal.Player
           int hr = _mediaSeeking.SetRate((double)iSpeed);
           if (hr == 0)
           {
-            Log.Info("BDPlayer: Successfully set rate to {0}", iSpeed);
+            Log.Debug("BDPlayer: Successfully set rate to {0}", iSpeed);
             if (iSpeed != 1)
             {
               _usingFastSeeking = true;
@@ -949,7 +952,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            Log.Info("BDPlayer: Could not set rate to {0}, error: 0x{1:x}", iSpeed, hr);
+            Log.Warn("BDPlayer: Could not set rate to {0}, error: 0x{1:x}", iSpeed, hr);
           }
 
           if (iSpeed == 1)
@@ -1184,14 +1187,14 @@ namespace MediaPortal.Player
               long lContentStart, lContentEnd;
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
               lTime += lContentStart;
-              Log.Info("BDPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
+              Log.Debug("BDPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
 
               int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
                                                   new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
               long lStreamPos;
               _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
               _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-              Log.Info("BDPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
+              Log.Debug("BDPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
               if (lStreamPos >= lContentStart)
               {
                 Log.Info("BDPlayer seek done:{0:X}", hr);
@@ -1203,7 +1206,7 @@ namespace MediaPortal.Player
                 // Only way to recover correct position is to seek again on "start"
                 SeekTries--;
                 lTime = 0;
-                Log.Info("BDPlayer seek again : pos: {0} lower than start:{1} end:{2} ( Cnt {3} )", lStreamPos, lContentStart, lContentEnd, SeekTries);
+                Log.Warn("BDPlayer seek again : pos: {0} lower than start:{1} end:{2} ( Cnt {3} )", lStreamPos, lContentStart, lContentEnd, SeekTries);
               }
             }
 
@@ -1420,7 +1423,7 @@ namespace MediaPortal.Player
 
     public int OnMediaTypeChanged(int videoRate, int videoFormat, int audioFormat)
     {
-      Log.Debug("BDPlayer OnMediaTypeChanged() - Video: {0}({1} fps), Audio: {2}", StreamTypetoString(videoFormat), VideoRatetoDouble(videoRate), StreamTypetoString(audioFormat));
+      Log.Info("BDPlayer OnMediaTypeChanged() - Video: {0}({1} fps), Audio: {2}", StreamTypetoString(videoFormat), VideoRatetoDouble(videoRate), StreamTypetoString(audioFormat));
       _mChangedMediaType = MediaType.None;
 
       if (videoFormat != _currentVideoFormat)
@@ -1619,7 +1622,7 @@ namespace MediaPortal.Player
 
       while (true)
       {
-        List<int> titleOptions = new List<int>();
+        List<uint> titleOptions = new List<uint>();
 
         dialog.Reset();
         dialog.SetHeading(GUILocalizeStrings.Get(1701));   // Select play mode
@@ -1658,7 +1661,7 @@ namespace MediaPortal.Player
           }
 
           // user selected a title we now return the index of
-          int titleIdx = titleOptions[dialog.SelectedId - 2];
+          int titleIdx = (int)titleOptions[dialog.SelectedId - 2];
           Log.Debug("BDPlayer: title with idx {0} selected", titleIdx);
           return titleIdx;
         }
@@ -1711,6 +1714,7 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
             Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);            
+            _currentPlayList = bdevent.Param;
             break; 
 
           case (int)BDEvents.BD_EVENT_TITLE:
@@ -1810,7 +1814,6 @@ namespace MediaPortal.Player
     {
       _currentFile = "";
       CloseInterfaces();
-      ExclusiveMode(false);
       _state = PlayState.Ended;
     }
 
@@ -2105,14 +2108,14 @@ namespace MediaPortal.Player
         int hr = _graphBuilder.AddFilter(_interfaceBDReader, BD_READER_GRAPH_NAME);
         DsError.ThrowExceptionForHR(hr);
 
-        Log.Info("BDPlayer: Add BDReader to graph");
+        Log.Debug("BDPlayer: Add BDReader to graph");
 
         IFileSourceFilter interfaceFile = (IFileSourceFilter)_interfaceBDReader;
         hr = interfaceFile.Load(filename, null);
 
         DsError.ThrowExceptionForHR(hr);
 
-        Log.Info("BDPlayer: BDReader loaded: {0}", filename);
+        Log.Debug("BDPlayer: BDReader loaded: {0}", filename);
 
         #region setup BDReader
 
@@ -2144,7 +2147,7 @@ namespace MediaPortal.Player
 
           _ireader.ForceTitleBasedPlayback(_forceTitle, (uint)_titleToPlay);
 
-          Log.Info("BDPlayer: Starting BDReader");
+          Log.Debug("BDPlayer: Starting BDReader");
           hr = _ireader.Start();
           if (hr != 0)
           {
@@ -2160,7 +2163,7 @@ namespace MediaPortal.Player
           }
           else
           {
-            Log.Info("BDPlayer: BDReader started: {0}", filename);
+            Log.Info("BDPlayer: BDReader started");
           }
 
           break;
@@ -2271,7 +2274,7 @@ namespace MediaPortal.Player
         return;
       }
       int hr;
-      Log.Info("BDPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+      Log.Debug("BDPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
       try
       {
         BDOSDRenderer.Release();
@@ -2363,15 +2366,13 @@ namespace MediaPortal.Player
         Log.Error("BDPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
       }
       //switch back to directx windowed mode
-      Log.Info("BDPlayer: Disabling DX9 exclusive mode");
-      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msg);
+      ExclusiveMode(false);
     }
 
-    protected void ExclusiveMode(bool onOff)
+    protected void ExclusiveMode(bool bOnOff)
     {
       GUIMessage msg = null;
-      if (onOff)
+      if (bOnOff)
       {
         Log.Info("BDPlayer: Enabling DX9 exclusive mode");
         msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 1, 0, null);
