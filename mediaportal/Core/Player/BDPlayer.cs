@@ -192,7 +192,10 @@ namespace MediaPortal.Player
       IntPtr GetTitleInfo(int index);
 
       [PreserveSig]
-      int FreeTitleInfo(IntPtr info);
+      int GetCurrentClipStreamInfo(ref BDStreamInfo stream);
+
+      [PreserveSig]
+      int FreeTitleInfo(IntPtr info);      
 
       [PreserveSig]
       int OnGraphRebuild(int info);
@@ -396,6 +399,17 @@ namespace MediaPortal.Player
       BLURAY_VIDEO_RATE_60000_1001 = 7   // 59.94
     }
 
+    protected enum VideoFormat
+    {
+      BLURAY_VIDEO_FORMAT_480I = 1,  // ITU-R BT.601-5
+      BLURAY_VIDEO_FORMAT_576I = 2,  // ITU-R BT.601-4
+      BLURAY_VIDEO_FORMAT_480P = 3,  // SMPTE 293M
+      BLURAY_VIDEO_FORMAT_1080I = 4,  // SMPTE 274M
+      BLURAY_VIDEO_FORMAT_720P = 5,  // SMPTE 296M
+      BLURAY_VIDEO_FORMAT_1080P = 6,  // SMPTE 274M
+      BLURAY_VIDEO_FORMAT_576P = 7   // ITU-R BT.1358
+    }
+
     [Flags]
     protected enum MediaType
     {
@@ -475,7 +489,6 @@ namespace MediaPortal.Player
     protected MediaType _mChangedMediaType;
     protected int _lastFrameCounter;    
     protected bool _bMediaTypeChanged;
-    protected int _currentPlayList = 0;
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
@@ -487,6 +500,7 @@ namespace MediaPortal.Player
     protected BDFilterConfig filterConfig;
     protected int _currentVideoFormat;
     protected int _currentAudioFormat;
+    protected int _currentVideoFormatRate;
     protected UpdateItems _updateItems;
     protected int _updateNow = 0;
     protected static BDPlayerSettings settings;
@@ -1438,13 +1452,14 @@ namespace MediaPortal.Player
         _currentAudioFormat = audioFormat;
       }
 
+      UpdateRefreshRate(videoRate);      
+
       if (_mChangedMediaType != MediaType.None)
       {
         _bMediaTypeChanged = Playing ? true : false;
-        RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
       }
       return _bMediaTypeChanged ? 0 : 1;
-    }    
+    }  
 
     public int OnBDevent(BDEvent bdevent)
     {
@@ -1713,8 +1728,8 @@ namespace MediaPortal.Player
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
-            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);            
-            _currentPlayList = bdevent.Param;
+            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
+            CurrentStreamInfo();
             break; 
 
           case (int)BDEvents.BD_EVENT_TITLE:
@@ -1744,6 +1759,30 @@ namespace MediaPortal.Player
         }
       }
     }
+
+    protected void CurrentStreamInfo()
+    {
+      try
+      {
+        BDStreamInfo clipInfo = new BDStreamInfo();
+        _ireader.GetCurrentClipStreamInfo(ref clipInfo);
+        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate));
+        UpdateRefreshRate(clipInfo.rate);
+      }
+      catch
+      {
+        Log.Error("BDPlayer: CurrentStreamInfo() failed.");
+      }      
+    }
+
+    protected void UpdateRefreshRate(int videoRate)
+    {
+      if (_currentVideoFormatRate != videoRate)
+      {
+        _currentVideoFormatRate = videoRate;
+        RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
+      }
+    } 
 
     protected void DoDelayedUpdate()
     {
@@ -2412,6 +2451,27 @@ namespace MediaPortal.Player
           return 59.94;
         default:
           return 0;
+      }
+    }
+
+    protected string VideoFormattoString(int videoFormat)
+    {
+      switch (videoFormat)
+      {
+        case 1:
+          return "480i";
+        case 2:
+          return "576i";
+        case 3:
+          return "480p";
+        case 4:
+          return "1080i";
+        case 6:
+          return "1080p";
+        case 7:
+          return "576p";
+        default:
+          return Strings.Unknown;
       }
     }
 

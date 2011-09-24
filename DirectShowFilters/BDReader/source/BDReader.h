@@ -76,6 +76,7 @@ public:
     virtual HRESULT STDMETHODCALLTYPE GetChapter(UINT32* chapter) = 0;
     virtual HRESULT STDMETHODCALLTYPE GetTitleCount(UINT32* count) = 0;
     virtual BLURAY_TITLE_INFO* STDMETHODCALLTYPE GetTitleInfo(UINT32 pIndex) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetCurrentClipStreamInfo(BLURAY_STREAM_INFO* stream) = 0;
     virtual HRESULT STDMETHODCALLTYPE FreeTitleInfo(BLURAY_TITLE_INFO* info) = 0;
     virtual void    STDMETHODCALLTYPE OnGraphRebuild(int info) = 0;
     virtual void    STDMETHODCALLTYPE ForceTitleBasedPlayback(bool force, UINT32 pTitle) = 0;
@@ -150,6 +151,7 @@ public:
   STDMETHODIMP GetChapter(UINT32* chapter);
   STDMETHODIMP GetTitleCount(UINT32* count);
   BLURAY_TITLE_INFO* STDMETHODCALLTYPE GetTitleInfo(UINT32 pIndex);
+  STDMETHODIMP GetCurrentClipStreamInfo(BLURAY_STREAM_INFO* stream);
   STDMETHODIMP FreeTitleInfo(BLURAY_TITLE_INFO* info);
   STDMETHODIMP Start();
   STDMETHODIMP MouseMove(UINT16 x, UINT16 y);

@@ -403,6 +403,12 @@ BLURAY_TITLE_INFO* STDMETHODCALLTYPE CBDReaderFilter::GetTitleInfo(UINT32 pIndex
   return lib.GetTitleInfo(pIndex);
 }
 
+STDMETHODIMP CBDReaderFilter::GetCurrentClipStreamInfo(BLURAY_STREAM_INFO* stream)
+{
+  (*stream) = lib.CurrentClipInfo()->video_streams[0];
+  return S_OK;
+}
+
 STDMETHODIMP CBDReaderFilter::FreeTitleInfo(BLURAY_TITLE_INFO* info)
 {
   lib.FreeTitleInfo(info);
