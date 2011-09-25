@@ -507,6 +507,7 @@ namespace TvEngine
                   string episodePart = "";
                   int starRating = -1;
                   string classification = "";
+                  bool repeat = false;
 
                   string title = ConvertHTMLToAnsi(nodeTitle);
 
@@ -654,6 +655,8 @@ namespace TvEngine
                     date = nodeDate;
                   }
 
+                  repeat = (nodeRepeat != null);
+
                   if (nodeStarRating != null)
                   {
                     starRating = ParseStarRating(nodeStarRating);
@@ -709,6 +712,10 @@ namespace TvEngine
                                                    description, category, Program.ProgramState.None,
                                                    System.Data.SqlTypes.SqlDateTime.MinValue.Value, seriesNum,
                                                    episodeNum, episodeName, episodePart, starRating, classification, -1);
+                        prog.PreviouslyShown = repeat;
+
+                        bool exists =ProgramCategory.CategoryExists(category);
+
                         channelPrograms.programs.Add(prog);
                         programIndex++;
                         //prog.Description = ConvertHTMLToAnsi(strDescription);

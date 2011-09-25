@@ -19,7 +19,13 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Serialization;
 using Gentle.Framework;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
@@ -52,9 +58,20 @@ namespace TvDatabase
   [TableName("Schedule")]
   public class Schedule : Persistent
   {
+    private ScheduleConditionList _scheduleConditions;
     public static DateTime MinSchedule = new DateTime(2000, 1, 1);
     public static readonly int HighestPriority = Int32.MaxValue;
     //public static readonly int LowestPriority;
+
+    private void DeserializeRules()
+    {
+      _scheduleConditions = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(rules);      
+    }
+
+    private void SerializeRules()
+    {
+      rules = ScheduleConditionHelper.Serialize<ScheduleConditionList>(_scheduleConditions);
+    }
 
     #region Members
 
@@ -80,6 +97,8 @@ namespace TvDatabase
     [TableColumn("canceled", NotNull = true)] private DateTime canceled;
     [TableColumn("recommendedCard", NotNull = true)] private int recommendedCard;
     [TableColumn("series", NotNull = true)] private bool series;
+
+    [TableColumn("rules", NotNull = true)] private string rules;
 
     #endregion
 
@@ -194,6 +213,25 @@ namespace TvDatabase
     #endregion
 
     #region Public Properties
+
+    /// <summary>
+    /// Property relating to database column id_Schedule
+    /// </summary>
+    public ScheduleConditionList Rules
+    {
+      get
+      {
+        if (_scheduleConditions == null)
+        {
+          DeserializeRules();
+        }
+        return _scheduleConditions;        
+      }
+      set
+      {
+        _scheduleConditions = value;        
+      }
+    }
 
     /// <summary>
     /// Indicates whether the entity is changed and requires saving or not.
@@ -494,7 +532,7 @@ namespace TvDatabase
       // execute the statement/query and create a collection of User instances from the result set
       IList<Schedule> getList = ObjectFactory.GetCollection<Schedule>(stmt.Execute());
       if (getList.Count != 0)
-      {
+      {        
         return getList[0];
       }
       return null;
@@ -725,7 +763,8 @@ namespace TvDatabase
       if (IsChanged || !IsPersisted)
       {
         try
-        {
+        {          
+          SerializeRules();
           base.Persist();
 
           //WE HAVE TO HANDLE CANCELLED SCHEDULES AND SKIP THOSE - WE DO NOT WANT TO MARK CANCLLED AS recpending.
@@ -739,7 +778,7 @@ namespace TvDatabase
         }
         isChanged = false;
       }
-    }
+    }    
 
     /// <summary>
     /// Retreives the first found instance of a 'Series' typed schedule given its Channel,Title

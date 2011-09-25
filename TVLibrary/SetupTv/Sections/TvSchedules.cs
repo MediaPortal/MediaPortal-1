@@ -23,6 +23,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
+using Gentle.Framework;
+using SetupControls;
 using TvControl;
 using TvDatabase;
 using MediaPortal.UserInterface.Controls;
@@ -48,7 +50,22 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       base.OnSectionActivated();
+      contextMenuStrip1.Items[0].Visible = true;
+      contextMenuStrip1.Items[1].Visible = false;      
       LoadSchedules();
+      AddGroups();
+      RefreshEPG();
+    }
+
+    private void AddGroups()
+    {
+      comboBoxGroups.Items.Clear();
+      IList<ChannelGroup> groups = ChannelGroup.ListAll();
+      foreach (ChannelGroup group in groups)
+        comboBoxGroups.Items.Add(new ComboBoxExItem(group.GroupName, -1, group.IdGroup));
+      if (comboBoxGroups.Items.Count == 0)
+        comboBoxGroups.Items.Add(new ComboBoxExItem("(no groups defined)", -1, -1));
+      comboBoxGroups.SelectedIndex = 0;
     }
 
     private void LoadSchedules()
@@ -159,6 +176,171 @@ namespace SetupTv.Sections
         listView1.Items.Remove(item);
       }
       listView1.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+    }
+
+    private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+    {
+      RefreshEPG();
+    }
+
+    private void RefreshEPG()
+    {
+      IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
+      int channelId = ((ComboBoxExItem)comboBoxChannels.SelectedItem).Id;
+      IList<Program> prgs = Program.RetrieveByChannelAndTimesInterval(dateTimePicker1.Value, dateTimePicker1.Value.AddDays(1), channelId);
+
+      if (prgs != null)
+      {
+        listView2.Items.Clear();
+        foreach (var prg in prgs)
+        {
+          var item = new ListViewItem(prg.Title);
+          item.SubItems.Add(prg.StartTime.ToString("HH:mm:ss", mmddFormat));
+          item.Tag = prg;
+
+          item.SubItems.Add(prg.EndTime.ToString("HH:mm:ss", mmddFormat));
+          item.SubItems.Add(prg.Description);
+
+          item.SubItems.Add(prg.SeriesNum);
+          item.SubItems.Add(prg.EpisodeNum);
+          item.SubItems.Add(prg.Genre);
+          item.SubItems.Add(prg.OriginalAirDate.ToString("HH:mm:ss", mmddFormat));
+          item.SubItems.Add(prg.Classification);
+          item.SubItems.Add(Convert.ToString(prg.StarRating));
+          item.SubItems.Add(Convert.ToString(prg.ParentalRating));
+          item.SubItems.Add(prg.EpisodeName);
+          item.SubItems.Add(prg.EpisodePart);
+          item.SubItems.Add("state");
+
+          listView2.Items.Add(item);
+          listView2.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+        }
+      }
+
+    }
+
+    private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      RefreshEPG();
+    }
+
+    private void comboBoxGroups_SelectedIndexChanged(object sender, EventArgs e)
+    {
+      ComboBoxExItem idItem = (ComboBoxExItem)comboBoxGroups.Items[comboBoxGroups.SelectedIndex];
+      comboBoxChannels.Items.Clear();
+      if (idItem.Id == -1)
+      {
+        SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(Channel));
+        sb.AddOrderByField(true, "sortOrder");
+        SqlStatement stmt = sb.GetStatement(true);
+        IList<Channel> channels = ObjectFactory.GetCollection<Channel>(stmt.Execute());
+        foreach (Channel ch in channels)
+        {
+          if (ch.IsTv == false) continue;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+
+          comboBoxChannels.Items.Add(item);
+        }
+      }
+      else
+      {
+        ChannelGroup group = ChannelGroup.Retrieve(idItem.Id);
+        IList<GroupMap> maps = group.ReferringGroupMap();
+        foreach (GroupMap map in maps)
+        {
+          Channel ch = map.ReferencedChannel();
+          if (ch.IsTv == false) continue;
+          bool hasFta = false;
+          bool hasScrambled = false;
+          IList<TuningDetail> tuningDetails = ch.ReferringTuningDetail();
+          foreach (TuningDetail detail in tuningDetails)
+          {
+            if (detail.FreeToAir)
+            {
+              hasFta = true;
+            }
+            if (!detail.FreeToAir)
+            {
+              hasScrambled = true;
+            }
+          }
+
+          int imageIndex;
+          if (hasFta && hasScrambled)
+          {
+            imageIndex = 5;
+          }
+          else if (hasScrambled)
+          {
+            imageIndex = 4;
+          }
+          else
+          {
+            imageIndex = 3;
+          }
+          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+          comboBoxChannels.Items.Add(item);
+        }
+      }
+      if (comboBoxChannels.Items.Count > 0)
+        comboBoxChannels.SelectedIndex = 0;
+    }
+
+    private void mpButton1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tabControl1_Selected(object sender, TabControlEventArgs e)
+    {
+      contextMenuStrip1.Items[0].Visible = (e.TabPageIndex == 0);
+      contextMenuStrip1.Items[1].Visible = (e.TabPageIndex == 1);      
+    }
+
+    private void addScheduleToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      foreach (ListViewItem item in listView2.SelectedItems)
+      {
+        var program = item.Tag as Program;
+        if (program != null)
+        {
+          var dlg = new FormEditSchedule();
+          dlg.Schedule = null;
+          dlg.Program = program;
+          dlg.ShowDialog();          
+          break;
+        }
+      }
+
+    
     }
   }
 }

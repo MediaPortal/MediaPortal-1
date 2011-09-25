@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvService", "..\..\TvService\TvService.csproj", "{3BE4F3AA-36EB-4956-B000-E29C74FC6AB0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TvLibrary.Interfaces", "..\..\TvLibrary.Interfaces\TvLibrary.Interfaces.csproj", "{AE752FB4-7450-4150-9BAD-19EFA9D2AC37}"
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PluginBase", "..\..\Plugins\PluginBase\PluginBase.csproj", "{5EE20DC0-B22B-4BDB-828B-8DC5723A1873}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectShowLib", "..\..\..\..\Common-MP-TVE3\DirectShowLib\DirectShowLib.csproj", "{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SetupTv", "..\..\SetupTv\SetupTv.csproj", "{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,14 @@ Global
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.ActiveCfg = Release|x86
 		{CE009BFA-5EF6-4153-B2A1-2FA79698A9AE}.Release|x86.Build.0 = Release|x86
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Debug|x86.ActiveCfg = Debug|x86
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Debug|x86.Build.0 = Debug|x86
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Release|x86.ActiveCfg = Release|x86
+		{FF9AAD68-BBE0-41F7-9183-F2B8474B9224}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
