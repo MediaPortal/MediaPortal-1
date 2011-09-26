@@ -147,22 +147,26 @@ private:
   int m_nVideoPid;
 
   int ReadFromFile(bool isAudio, bool isVideo);
-  void ResetStream();
   bool m_bEndOfFile;
   HRESULT RenderFilterPin(CBasePin* pin, bool isAudio, bool isVideo);
+  
   CCritSec m_sectionAudio;
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionRead;
   CCritSec m_sectionMediaChanging;
+
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;
+
   vector<Packet*> m_vecSubtitleBuffers;
   vector<Packet*> m_t_vecVideoBuffers;
   UINT32 m_nAudioPesLenght;
+  
   typedef vector<Packet*>::iterator ivecVBuffers;
   typedef vector<Packet*>::iterator ivecABuffers;
   typedef vector<Packet*>::iterator ivecSBuffers;
+  
   bool m_AudioValidPES;
   bool m_VideoValidPES;
   bool m_mVideoValidPES;
@@ -172,12 +176,10 @@ private:
   Packet* m_pCurrentVideoBuffer;
   Packet* m_pCurrentAudioBuffer;
 
-  CPcr m_lastVideoPTS;
-  CPcr m_lastAudioPTS;
   CBDReaderFilter& m_filter;
   unsigned int m_iAudioStream;
-  int m_AudioStreamType;
 
+  int m_AudioStreamType;
   int m_videoServiceType;
 
   unsigned int m_audioPid;
