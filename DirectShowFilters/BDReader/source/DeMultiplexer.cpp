@@ -1938,3 +1938,9 @@ LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
 		return _T("Unknown");
 	}
 }
+
+void CDeMultiplexer::ForcedChapterChange()
+{
+  FlushPESBuffers();
+  m_playlistManager->ClearAllButCurrentClip(true);
+}
