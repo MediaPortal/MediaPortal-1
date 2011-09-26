@@ -361,7 +361,15 @@ STDMETHODIMP CBDReaderFilter::SetAngle(UINT8 angle)
 
 STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
 {
-  HRESULT hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
+  CAutoLock lock(&(m_demultiplexer.m_sectionRead));
+  CAutoLock slock(&m_section);
+  HRESULT hr = S_FALSE;
+  if (!((m_demultiplexer.m_bAudioRequiresRebuild || m_demultiplexer.m_bVideoRequiresRebuild) &&
+    !(m_demultiplexer.m_eAudioPlSeen->Check() && m_demultiplexer.m_bVideoPlSeen)))
+  {
+    hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
+    m_demultiplexer.ForcedChapterChange();
+  }
   return hr;
 }
 
