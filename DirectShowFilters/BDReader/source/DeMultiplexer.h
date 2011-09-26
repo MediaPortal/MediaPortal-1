@@ -64,10 +64,10 @@ public:
   void       FillSubtitle(CTsHeader& header, byte* tsPacket);
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
-  void       FillVideoH264PESPacket(CTsHeader& header, CAutoPtr<Packet> p);
-  void       FillVideoVC1PESPacket(CTsHeader& header, CAutoPtr<Packet> p);
-  void       FillVideoH264(CTsHeader& header, byte* tsPacket);
-  void       FillVideoMPEG2(CTsHeader& header, byte* tsPacket);
+  void       FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
+  void       FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
+  void       FillVideoH264(CTsHeader* header, byte* tsPacket);
+  void       FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlushBuffers = false);
 
   bool       ParseVideoFormat(Packet* p);
   bool       ParseAudioFormat(Packet* p);
@@ -123,7 +123,7 @@ public:
 
 private:
   void ResetClipInfo(int pDebugMark);
-  void PacketDelivery(Packet* p, CTsHeader header);
+  void PacketDelivery(Packet* p);
 
   LPCTSTR StreamFormatAsString(int pStreamType);
 
@@ -219,6 +219,7 @@ private:
   CPcr m_LastValidFramePts;
 
   bool m_bShuttingDown;
+  bool m_bFlushBuffersOnPause;
 
   byte m_readBuffer[READ_SIZE];
 
