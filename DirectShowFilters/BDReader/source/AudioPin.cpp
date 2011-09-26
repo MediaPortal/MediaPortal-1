@@ -44,7 +44,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_section(pSection),
   m_demux(pDemux),
   CSourceSeeking(NAME("pinAudio"), pUnk, phr, pSection),
-
   m_pPinConnection(NULL),
   m_pReceiver(NULL),
   m_pCachedBuffer(NULL),
