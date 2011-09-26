@@ -703,18 +703,13 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           m_bUpdateSubtitleOffset = true;
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
-        if (clip)
-        {
-          FlushPESBuffers();
-          ParseVideoStream(clip);
-          ParseAudioStreams(clip);
-          ParseSubtitleStreams(clip);
-        }
-        else
+        if (!clip)
         {
           LogDebug("demux: HandleBDEvent - failed to get clip info!");
           return;
         }
+
+        bool interrupted = false;
 
         if (!m_bStarting)
         {
@@ -724,7 +719,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           // and there is still no real audio data available
           bool hasAudio = clip->raw_stream_count > 1 && clip->audio_stream_count > 0;
           
-          bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, hasAudio, 
+          interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, hasAudio, 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
         
@@ -734,6 +729,13 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
             Flush(false);
           }
         }
+
+        if (!interrupted)
+          FlushPESBuffers();
+
+        ParseVideoStream(clip);
+        ParseAudioStreams(clip);
+        ParseSubtitleStreams(clip);
       }
   } 
 }
