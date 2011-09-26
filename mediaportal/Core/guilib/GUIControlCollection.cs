@@ -23,10 +23,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using MediaPortal.ExtensionMethods;
 
 namespace MediaPortal.GUI.Library
 {
-  public sealed class GUIControlCollection : IList<GUIControl>
+  public sealed class GUIControlCollection : IList<GUIControl>, IDisposable
   {
     // we maintain ids to avoid expensive virtual property calls
     private List<GUIControl> list = new List<GUIControl>();
@@ -183,5 +184,20 @@ namespace MediaPortal.GUI.Library
     }
 
     #endregion
+
+    #region IDisposable Members
+
+    ~GUIControlCollection()
+    {
+      Dispose();
+    }
+
+    public void Dispose()
+    {
+      list.Dispose(); //only dispose items, do not remove collection.
+    }
+
+    #endregion
+
   }
 }
