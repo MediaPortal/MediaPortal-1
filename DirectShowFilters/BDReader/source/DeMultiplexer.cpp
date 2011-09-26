@@ -686,9 +686,8 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         m_filter.lib.FreeTitleInfo(title);
       }
       else
-      {
         LogDebug("demux: New chapter %d - title info N/A", pEv.param); 
-      }
+
       break;
     }
 
@@ -708,9 +707,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         m_nClip = pEv.param;
 
         if (m_rtOffset != rtOldOffset)
-        {
           m_bUpdateSubtitleOffset = true;
-        }
 
         BLURAY_CLIP_INFO* clip = m_filter.lib.CurrentClipInfo();
         if (clip)
@@ -730,7 +727,11 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
-          bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, clip->audio_stream_count > 0, 
+          // Assume video is always present - some BDs have audio streams in clip info 
+          // and there is still no real audio data available
+          bool hasAudio = clip->raw_stream_count > 1 && clip->audio_stream_count > 0;
+          
+          bool interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, hasAudio, 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
         
