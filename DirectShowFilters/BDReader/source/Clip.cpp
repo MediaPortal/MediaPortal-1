@@ -104,7 +104,10 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   }
   
   if (ret && !noAudio) ret->pmt = CreateMediaType(m_audioPmt);
-  
+
+  if (ret && ret->rtStart!=Packet::INVALID_TIME)
+    ret->rtPlaylistTime = ret->rtStart - clipPlaylistOffset;
+
   //LogDebug("Clip: aud: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
   return ret;
 }
@@ -126,6 +129,9 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 
   if (ret) ret->pmt = CreateMediaType(m_videoPmt);
   
+  if (ret && ret->rtStart!=Packet::INVALID_TIME)
+    ret->rtPlaylistTime = ret->rtStart - clipPlaylistOffset;
+
   //LogDebug("Clip: vid: return Packet rtStart: %I64d offset: %I64d seekRequired %d",ret->rtStart, ret->rtOffset,ret->bSeekRequired);
   return ret;
 }
