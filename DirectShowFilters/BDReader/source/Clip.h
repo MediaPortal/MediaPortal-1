@@ -52,8 +52,6 @@ public:
   void FlushVideo(Packet* pPacketToKeep = NULL);
   int  nClip;
   bool noAudio;
-  bool clipFilled;
-  bool clipEmptied;
   void Superceed(int superceedType);
   bool IsSuperceeded(int superceedType);
   REFERENCE_TIME playlistFirstPacketTime;

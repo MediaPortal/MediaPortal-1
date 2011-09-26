@@ -36,8 +36,6 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   clipDuration=duration;
   noAudio=!audioPresent;
   superceeded=0;
-  clipFilled=false;
-  clipEmptied=false;
   audioPlaybackpoint=firstPacketTime;
   clipPlaylistOffset=clipOffset;
   firstAudio=true;
@@ -283,8 +281,6 @@ void CClip::Reset()
   lastVideoPosition=playlistFirstPacketTime;
   lastAudioPosition = playlistFirstPacketTime;
   superceeded=0;
-  clipFilled=false;
-  clipEmptied=false;
   audioPlaybackpoint=playlistFirstPacketTime;
   firstAudio=true;
   firstVideo=true;
@@ -302,6 +298,7 @@ bool CClip::HasAudio()
 bool CClip::HasVideo()
 {
   if (firstVideo && m_vecClipVideoPackets.size()<3) return false;
+  if (!noAudio  && firstAudio ) return false;
   if (!m_videoPmt) return false;
   if (m_vecClipVideoPackets.size()>0) return true;
   return false;
