@@ -103,6 +103,7 @@
     <Compile Include="ChannelLinkageMap.cs" />
     <Compile Include="ChannelMap.cs" />
     <Compile Include="Conflict.cs" />
+    <Compile Include="RuleBasedSchedule.cs" />
     <Compile Include="ScheduleRulesTemplate.cs" />
     <Compile Include="ProgramCredit.cs" />
     <Compile Include="ProgramCategory.cs" />

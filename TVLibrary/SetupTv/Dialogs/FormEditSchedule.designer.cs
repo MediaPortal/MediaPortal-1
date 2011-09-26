@@ -1,3 +1,5 @@
+using System.Windows.Forms;
+
 namespace SetupTv.Sections
 {
   partial class FormEditSchedule
@@ -28,7 +30,6 @@ namespace SetupTv.Sections
     /// </summary>
     private void InitializeComponent()
     {
-      this.mpListViewPrograms = new MediaPortal.UserInterface.Controls.MPListView();      
       this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.mpButtonSave = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonCancel = new MediaPortal.UserInterface.Controls.MPButton();
@@ -55,36 +56,41 @@ namespace SetupTv.Sections
       this.mpButtonCreditRemove = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBoxPerson = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpComboBoxRoles = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpListViewCredits = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listBoxCredits = new System.Windows.Forms.CheckedListBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.listBoxPrograms = new System.Windows.Forms.ListBox();
       this.mpComboBoxOperators = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButton2 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAddProgramCondition = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonRemoveProgramSchedule = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpTextBoxProgramValue = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.mpComboBoxProgramFields = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.mpButtonChannelAddAll = new MediaPortal.UserInterface.Controls.MPButton();
+      this.radioOnAllChannels = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.mpButtonAddAllChannelCondition = new MediaPortal.UserInterface.Controls.MPButton();
       this.radioNotOnChannels = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.radioOnChannels = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpComboBoxChannels = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpButtonChannelAdd = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButtonChannelRemove = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAddChannelCondition = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonRemoveChannelCondition = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxChannelsGroup = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpListViewChannels = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listBoxChannels = new System.Windows.Forms.ListBox();
       this.groupBox3 = new System.Windows.Forms.GroupBox();
-      this.mpButton3 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpRadioButtonInAllCategories = new MediaPortal.UserInterface.Controls.MPRadioButton();
+      this.mpButtonAddAllCategoryCondition = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpRadioButtonNotInCategory = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.mpRadioButtonInCategory = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.mpButton4 = new MediaPortal.UserInterface.Controls.MPButton();
-      this.mpButton5 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAddCategoryCondition = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonRemoveCategoryCondition = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxCategories = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpListViewCategories = new MediaPortal.UserInterface.Controls.MPListView();
+      this.listBoxCategories = new System.Windows.Forms.CheckedListBox();
       this.groupBox6 = new System.Windows.Forms.GroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.checkBoxSkipRepeats = new System.Windows.Forms.CheckBox();
       this.checkBoxNewTitles = new System.Windows.Forms.CheckBox();
       this.checkBoxOnlyNewEpisodes = new System.Windows.Forms.CheckBox();
       this.groupBox7 = new System.Windows.Forms.GroupBox();
+      this.mpNumericTextBoxPostRec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
+      this.mpNumericTextBoxPreRec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.label8 = new System.Windows.Forms.Label();
       this.mpNumericTextBoxPriority = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
       this.label7 = new System.Windows.Forms.Label();
@@ -112,9 +118,6 @@ namespace SetupTv.Sections
       this.mpButtonSaveTemplate = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonApplyTemplate = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpComboBoxTemplates = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpNumericTextBoxPreRec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      this.mpNumericTextBoxPostRec = new MediaPortal.UserInterface.Controls.MPNumericTextBox();
-      
       this.groupBox4.SuspendLayout();
       this.groupBox5.SuspendLayout();
       this.groupBox1.SuspendLayout();
@@ -124,21 +127,6 @@ namespace SetupTv.Sections
       this.groupBox7.SuspendLayout();
       this.groupBox8.SuspendLayout();
       this.SuspendLayout();
-      // 
-      // mpListViewPrograms
-      // 
-      mpListViewPrograms.AllowDrop = true;
-      mpListViewPrograms.AllowRowReorder = false;
-      mpListViewPrograms.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-      mpListViewPrograms.HideSelection = false;
-      mpListViewPrograms.IsChannelListView = true;
-      mpListViewPrograms.Location = new System.Drawing.Point(6, 19);
-      mpListViewPrograms.Name = "mpListViewPrograms";
-      mpListViewPrograms.ShowGroups = false;
-      mpListViewPrograms.Size = new System.Drawing.Size(224, 80);
-      mpListViewPrograms.TabIndex = 0;
-      mpListViewPrograms.UseCompatibleStateImageBehavior = false;
-      mpListViewPrograms.View = System.Windows.Forms.View.List;
       // 
       // columnHeader1
       // 
@@ -219,9 +207,12 @@ namespace SetupTv.Sections
       this.mpNumericTextBoxStartingAroundDeviation.Name = "mpNumericTextBoxStartingAroundDeviation";
       this.mpNumericTextBoxStartingAroundDeviation.Size = new System.Drawing.Size(52, 20);
       this.mpNumericTextBoxStartingAroundDeviation.TabIndex = 29;
+      this.mpNumericTextBoxStartingAroundDeviation.Text = "0";
+      this.mpNumericTextBoxStartingAroundDeviation.Value = 0;
       // 
       // dateTimePickerStartingBetweenTo
       // 
+      this.dateTimePickerStartingBetweenTo.Checked = false;
       this.dateTimePickerStartingBetweenTo.CustomFormat = "HH:mm";
       this.dateTimePickerStartingBetweenTo.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.dateTimePickerStartingBetweenTo.Location = new System.Drawing.Point(211, 88);
@@ -242,6 +233,7 @@ namespace SetupTv.Sections
       // 
       // dateTimePickerStartingBetweenFrom
       // 
+      this.dateTimePickerStartingBetweenFrom.Checked = false;
       this.dateTimePickerStartingBetweenFrom.CustomFormat = "HH:mm";
       this.dateTimePickerStartingBetweenFrom.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
       this.dateTimePickerStartingBetweenFrom.Location = new System.Drawing.Point(117, 88);
@@ -270,6 +262,7 @@ namespace SetupTv.Sections
       this.dateTimePickerStartingAround.ShowUpDown = true;
       this.dateTimePickerStartingAround.Size = new System.Drawing.Size(83, 20);
       this.dateTimePickerStartingAround.TabIndex = 19;
+      this.dateTimePickerStartingAround.ValueChanged += new System.EventHandler(this.dateTimePickerStartingAround_ValueChanged);
       // 
       // label25
       // 
@@ -371,7 +364,7 @@ namespace SetupTv.Sections
       this.groupBox5.Controls.Add(this.mpButtonCreditRemove);
       this.groupBox5.Controls.Add(this.mpTextBoxPerson);
       this.groupBox5.Controls.Add(this.mpComboBoxRoles);
-      this.groupBox5.Controls.Add(this.mpListViewCredits);
+      this.groupBox5.Controls.Add(this.listBoxCredits);
       this.groupBox5.Location = new System.Drawing.Point(735, 193);
       this.groupBox5.Name = "groupBox5";
       this.groupBox5.Size = new System.Drawing.Size(412, 133);
@@ -387,6 +380,7 @@ namespace SetupTv.Sections
       this.mpButtonCreditAdd.TabIndex = 11;
       this.mpButtonCreditAdd.Text = "Add";
       this.mpButtonCreditAdd.UseVisualStyleBackColor = true;
+      this.mpButtonCreditAdd.Click += new System.EventHandler(this.mpButtonCreditAdd_Click);
       // 
       // mpButtonCreditRemove
       // 
@@ -396,6 +390,7 @@ namespace SetupTv.Sections
       this.mpButtonCreditRemove.TabIndex = 10;
       this.mpButtonCreditRemove.Text = "Remove";
       this.mpButtonCreditRemove.UseVisualStyleBackColor = true;
+      this.mpButtonCreditRemove.Click += new System.EventHandler(this.mpButtonCreditRemove_Click);
       // 
       // mpTextBoxPerson
       // 
@@ -413,35 +408,35 @@ namespace SetupTv.Sections
       this.mpComboBoxRoles.Size = new System.Drawing.Size(103, 21);
       this.mpComboBoxRoles.TabIndex = 8;
       // 
-      // mpListViewCredits
+      // listBoxCredits
       // 
-      this.mpListViewCredits.AllowDrop = true;
-      this.mpListViewCredits.AllowRowReorder = false;
-      this.mpListViewCredits.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-      this.mpListViewCredits.HideSelection = false;
-      this.mpListViewCredits.IsChannelListView = true;
-      this.mpListViewCredits.Location = new System.Drawing.Point(6, 19);
-      this.mpListViewCredits.Name = "mpListViewCredits";
-      this.mpListViewCredits.ShowGroups = false;
-      this.mpListViewCredits.Size = new System.Drawing.Size(121, 104);
-      this.mpListViewCredits.TabIndex = 0;
-      this.mpListViewCredits.UseCompatibleStateImageBehavior = false;
-      this.mpListViewCredits.View = System.Windows.Forms.View.List;
+      this.listBoxCredits.Location = new System.Drawing.Point(6, 19);
+      this.listBoxCredits.Name = "listBoxCredits";
+      this.listBoxCredits.Size = new System.Drawing.Size(121, 94);
+      this.listBoxCredits.TabIndex = 0;
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.listBoxPrograms);
       this.groupBox1.Controls.Add(this.mpComboBoxOperators);
-      this.groupBox1.Controls.Add(this.mpButton1);
-      this.groupBox1.Controls.Add(this.mpButton2);
+      this.groupBox1.Controls.Add(this.mpButtonAddProgramCondition);
+      this.groupBox1.Controls.Add(this.mpButtonRemoveProgramSchedule);
       this.groupBox1.Controls.Add(this.mpTextBoxProgramValue);
       this.groupBox1.Controls.Add(this.mpComboBoxProgramFields);
-      this.groupBox1.Controls.Add(mpListViewPrograms);
       this.groupBox1.Location = new System.Drawing.Point(12, 72);
       this.groupBox1.Name = "groupBox1";
       this.groupBox1.Size = new System.Drawing.Size(560, 115);
       this.groupBox1.TabIndex = 12;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Program";
+      // 
+      // listBoxPrograms
+      // 
+      this.listBoxPrograms.Location = new System.Drawing.Point(9, 15);
+      this.listBoxPrograms.Name = "listBoxPrograms";
+      this.listBoxPrograms.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+      this.listBoxPrograms.Size = new System.Drawing.Size(221, 82);
+      this.listBoxPrograms.TabIndex = 17;
       // 
       // mpComboBoxOperators
       // 
@@ -452,24 +447,25 @@ namespace SetupTv.Sections
       this.mpComboBoxOperators.Size = new System.Drawing.Size(80, 21);
       this.mpComboBoxOperators.TabIndex = 12;
       // 
-      // mpButton1
+      // mpButtonAddProgramCondition
       // 
-      this.mpButton1.Location = new System.Drawing.Point(236, 46);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(75, 23);
-      this.mpButton1.TabIndex = 11;
-      this.mpButton1.Text = "Add";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      this.mpButtonAddProgramCondition.Location = new System.Drawing.Point(236, 46);
+      this.mpButtonAddProgramCondition.Name = "mpButtonAddProgramCondition";
+      this.mpButtonAddProgramCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAddProgramCondition.TabIndex = 11;
+      this.mpButtonAddProgramCondition.Text = "Add";
+      this.mpButtonAddProgramCondition.UseVisualStyleBackColor = true;
+      this.mpButtonAddProgramCondition.Click += new System.EventHandler(this.mpButton1_Click);
       // 
-      // mpButton2
+      // mpButtonRemoveProgramSchedule
       // 
-      this.mpButton2.Location = new System.Drawing.Point(236, 75);
-      this.mpButton2.Name = "mpButton2";
-      this.mpButton2.Size = new System.Drawing.Size(75, 23);
-      this.mpButton2.TabIndex = 10;
-      this.mpButton2.Text = "Remove";
-      this.mpButton2.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveProgramSchedule.Location = new System.Drawing.Point(236, 75);
+      this.mpButtonRemoveProgramSchedule.Name = "mpButtonRemoveProgramSchedule";
+      this.mpButtonRemoveProgramSchedule.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonRemoveProgramSchedule.TabIndex = 10;
+      this.mpButtonRemoveProgramSchedule.Text = "Remove";
+      this.mpButtonRemoveProgramSchedule.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveProgramSchedule.Click += new System.EventHandler(this.mpButton2_Click);
       // 
       // mpTextBoxProgramValue
       // 
@@ -490,14 +486,15 @@ namespace SetupTv.Sections
       // 
       // groupBox2
       // 
-      this.groupBox2.Controls.Add(this.mpButtonChannelAddAll);
+      this.groupBox2.Controls.Add(this.radioOnAllChannels);
+      this.groupBox2.Controls.Add(this.mpButtonAddAllChannelCondition);
       this.groupBox2.Controls.Add(this.radioNotOnChannels);
       this.groupBox2.Controls.Add(this.radioOnChannels);
       this.groupBox2.Controls.Add(this.mpComboBoxChannels);
-      this.groupBox2.Controls.Add(this.mpButtonChannelAdd);
-      this.groupBox2.Controls.Add(this.mpButtonChannelRemove);
+      this.groupBox2.Controls.Add(this.mpButtonAddChannelCondition);
+      this.groupBox2.Controls.Add(this.mpButtonRemoveChannelCondition);
       this.groupBox2.Controls.Add(this.mpComboBoxChannelsGroup);
-      this.groupBox2.Controls.Add(this.mpListViewChannels);
+      this.groupBox2.Controls.Add(this.listBoxChannels);
       this.groupBox2.Location = new System.Drawing.Point(12, 193);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(412, 133);
@@ -505,69 +502,90 @@ namespace SetupTv.Sections
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Channels";
       // 
-      // mpButtonChannelAddAll
+      // radioOnAllChannels
       // 
-      this.mpButtonChannelAddAll.Location = new System.Drawing.Point(276, 70);
-      this.mpButtonChannelAddAll.Name = "mpButtonChannelAddAll";
-      this.mpButtonChannelAddAll.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonChannelAddAll.TabIndex = 15;
-      this.mpButtonChannelAddAll.Text = "Add All";
-      this.mpButtonChannelAddAll.UseVisualStyleBackColor = true;
+      this.radioOnAllChannels.AutoSize = true;
+      this.radioOnAllChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.radioOnAllChannels.Location = new System.Drawing.Point(9, 19);
+      this.radioOnAllChannels.Name = "radioOnAllChannels";
+      this.radioOnAllChannels.Size = new System.Drawing.Size(97, 17);
+      this.radioOnAllChannels.TabIndex = 16;
+      this.radioOnAllChannels.Text = "On all channels";
+      this.radioOnAllChannels.UseVisualStyleBackColor = true;
+      this.radioOnAllChannels.CheckedChanged += new System.EventHandler(this.radioOnAllChannels_CheckedChanged);
+      // 
+      // mpButtonAddAllChannelCondition
+      // 
+      this.mpButtonAddAllChannelCondition.Enabled = false;
+      this.mpButtonAddAllChannelCondition.Location = new System.Drawing.Point(276, 70);
+      this.mpButtonAddAllChannelCondition.Name = "mpButtonAddAllChannelCondition";
+      this.mpButtonAddAllChannelCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAddAllChannelCondition.TabIndex = 15;
+      this.mpButtonAddAllChannelCondition.Text = "Add All";
+      this.mpButtonAddAllChannelCondition.UseVisualStyleBackColor = true;
       // 
       // radioNotOnChannels
       // 
       this.radioNotOnChannels.AutoSize = true;
       this.radioNotOnChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioNotOnChannels.Location = new System.Drawing.Point(79, 20);
+      this.radioNotOnChannels.Location = new System.Drawing.Point(195, 19);
       this.radioNotOnChannels.Name = "radioNotOnChannels";
       this.radioNotOnChannels.Size = new System.Drawing.Size(102, 17);
       this.radioNotOnChannels.TabIndex = 14;
-      this.radioNotOnChannels.TabStop = true;
       this.radioNotOnChannels.Text = "Not on channels";
       this.radioNotOnChannels.UseVisualStyleBackColor = true;
+      this.radioNotOnChannels.CheckedChanged += new System.EventHandler(this.radioNotOnChannels_CheckedChanged);
       // 
       // radioOnChannels
       // 
       this.radioOnChannels.AutoSize = true;
+      this.radioOnChannels.Checked = true;
       this.radioOnChannels.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.radioOnChannels.Location = new System.Drawing.Point(5, 20);
+      this.radioOnChannels.Location = new System.Drawing.Point(112, 19);
       this.radioOnChannels.Name = "radioOnChannels";
       this.radioOnChannels.Size = new System.Drawing.Size(68, 17);
       this.radioOnChannels.TabIndex = 13;
       this.radioOnChannels.TabStop = true;
       this.radioOnChannels.Text = "Channels";
       this.radioOnChannels.UseVisualStyleBackColor = true;
+      this.radioOnChannels.CheckedChanged += new System.EventHandler(this.radioOnChannels_CheckedChanged);
       // 
       // mpComboBoxChannels
       // 
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxChannels.Enabled = false;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(304, 43);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
       this.mpComboBoxChannels.Size = new System.Drawing.Size(103, 21);
       this.mpComboBoxChannels.TabIndex = 12;
       // 
-      // mpButtonChannelAdd
+      // mpButtonAddChannelCondition
       // 
-      this.mpButtonChannelAdd.Location = new System.Drawing.Point(195, 70);
-      this.mpButtonChannelAdd.Name = "mpButtonChannelAdd";
-      this.mpButtonChannelAdd.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonChannelAdd.TabIndex = 11;
-      this.mpButtonChannelAdd.Text = "Add";
-      this.mpButtonChannelAdd.UseVisualStyleBackColor = true;
+      this.mpButtonAddChannelCondition.Enabled = false;
+      this.mpButtonAddChannelCondition.Location = new System.Drawing.Point(195, 70);
+      this.mpButtonAddChannelCondition.Name = "mpButtonAddChannelCondition";
+      this.mpButtonAddChannelCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAddChannelCondition.TabIndex = 11;
+      this.mpButtonAddChannelCondition.Text = "Add";
+      this.mpButtonAddChannelCondition.UseVisualStyleBackColor = true;
+      this.mpButtonAddChannelCondition.Click += new System.EventHandler(this.mpButtonAddChannelCondition_Click);
       // 
-      // mpButtonChannelRemove
+      // mpButtonRemoveChannelCondition
       // 
-      this.mpButtonChannelRemove.Location = new System.Drawing.Point(195, 100);
-      this.mpButtonChannelRemove.Name = "mpButtonChannelRemove";
-      this.mpButtonChannelRemove.Size = new System.Drawing.Size(75, 23);
-      this.mpButtonChannelRemove.TabIndex = 10;
-      this.mpButtonChannelRemove.Text = "Remove";
-      this.mpButtonChannelRemove.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveChannelCondition.Enabled = false;
+      this.mpButtonRemoveChannelCondition.Location = new System.Drawing.Point(195, 100);
+      this.mpButtonRemoveChannelCondition.Name = "mpButtonRemoveChannelCondition";
+      this.mpButtonRemoveChannelCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonRemoveChannelCondition.TabIndex = 10;
+      this.mpButtonRemoveChannelCondition.Text = "Remove";
+      this.mpButtonRemoveChannelCondition.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveChannelCondition.Click += new System.EventHandler(this.mpButtonRemoveChannelCondition_Click);
       // 
       // mpComboBoxChannelsGroup
       // 
       this.mpComboBoxChannelsGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.mpComboBoxChannelsGroup.Enabled = false;
       this.mpComboBoxChannelsGroup.FormattingEnabled = true;
       this.mpComboBoxChannelsGroup.Location = new System.Drawing.Point(195, 43);
       this.mpComboBoxChannelsGroup.Name = "mpComboBoxChannelsGroup";
@@ -575,30 +593,25 @@ namespace SetupTv.Sections
       this.mpComboBoxChannelsGroup.TabIndex = 8;
       this.mpComboBoxChannelsGroup.SelectedIndexChanged += new System.EventHandler(this.mpComboBoxChannelsGroup_SelectedIndexChanged);
       // 
-      // mpListViewChannels
+      // listBoxChannels
       // 
-      this.mpListViewChannels.AllowDrop = true;
-      this.mpListViewChannels.AllowRowReorder = false;
-      this.mpListViewChannels.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-      this.mpListViewChannels.HideSelection = false;
-      this.mpListViewChannels.IsChannelListView = true;
-      this.mpListViewChannels.Location = new System.Drawing.Point(6, 43);
-      this.mpListViewChannels.Name = "mpListViewChannels";
-      this.mpListViewChannels.ShowGroups = false;
-      this.mpListViewChannels.Size = new System.Drawing.Size(183, 80);
-      this.mpListViewChannels.TabIndex = 0;
-      this.mpListViewChannels.UseCompatibleStateImageBehavior = false;
-      this.mpListViewChannels.View = System.Windows.Forms.View.List;
+      this.listBoxChannels.Enabled = false;
+      this.listBoxChannels.Location = new System.Drawing.Point(6, 43);
+      this.listBoxChannels.Name = "listBoxChannels";
+      this.listBoxChannels.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+      this.listBoxChannels.Size = new System.Drawing.Size(183, 82);
+      this.listBoxChannels.TabIndex = 0;
       // 
       // groupBox3
       // 
-      this.groupBox3.Controls.Add(this.mpButton3);
+      this.groupBox3.Controls.Add(this.mpRadioButtonInAllCategories);
+      this.groupBox3.Controls.Add(this.mpButtonAddAllCategoryCondition);
       this.groupBox3.Controls.Add(this.mpRadioButtonNotInCategory);
       this.groupBox3.Controls.Add(this.mpRadioButtonInCategory);
-      this.groupBox3.Controls.Add(this.mpButton4);
-      this.groupBox3.Controls.Add(this.mpButton5);
+      this.groupBox3.Controls.Add(this.mpButtonAddCategoryCondition);
+      this.groupBox3.Controls.Add(this.mpButtonRemoveCategoryCondition);
       this.groupBox3.Controls.Add(this.mpComboBoxCategories);
-      this.groupBox3.Controls.Add(this.mpListViewCategories);
+      this.groupBox3.Controls.Add(this.listBoxCategories);
       this.groupBox3.Location = new System.Drawing.Point(431, 193);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(298, 133);
@@ -606,56 +619,72 @@ namespace SetupTv.Sections
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Categories";
       // 
-      // mpButton3
+      // mpRadioButtonInAllCategories
       // 
-      this.mpButton3.Location = new System.Drawing.Point(219, 70);
-      this.mpButton3.Name = "mpButton3";
-      this.mpButton3.Size = new System.Drawing.Size(75, 23);
-      this.mpButton3.TabIndex = 15;
-      this.mpButton3.Text = "Add All";
-      this.mpButton3.UseVisualStyleBackColor = true;
+      this.mpRadioButtonInAllCategories.AutoSize = true;
+      this.mpRadioButtonInAllCategories.Checked = true;
+      this.mpRadioButtonInAllCategories.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpRadioButtonInAllCategories.Location = new System.Drawing.Point(6, 20);
+      this.mpRadioButtonInAllCategories.Name = "mpRadioButtonInAllCategories";
+      this.mpRadioButtonInAllCategories.Size = new System.Drawing.Size(98, 17);
+      this.mpRadioButtonInAllCategories.TabIndex = 16;
+      this.mpRadioButtonInAllCategories.TabStop = true;
+      this.mpRadioButtonInAllCategories.Text = "In all categories";
+      this.mpRadioButtonInAllCategories.UseVisualStyleBackColor = true;
+      this.mpRadioButtonInAllCategories.CheckedChanged += new System.EventHandler(this.mpRadioButtonInAllCategories_CheckedChanged);
+      // 
+      // mpButtonAddAllCategoryCondition
+      // 
+      this.mpButtonAddAllCategoryCondition.Location = new System.Drawing.Point(219, 70);
+      this.mpButtonAddAllCategoryCondition.Name = "mpButtonAddAllCategoryCondition";
+      this.mpButtonAddAllCategoryCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAddAllCategoryCondition.TabIndex = 15;
+      this.mpButtonAddAllCategoryCondition.Text = "Add All";
+      this.mpButtonAddAllCategoryCondition.UseVisualStyleBackColor = true;
       // 
       // mpRadioButtonNotInCategory
       // 
       this.mpRadioButtonNotInCategory.AutoSize = true;
       this.mpRadioButtonNotInCategory.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRadioButtonNotInCategory.Location = new System.Drawing.Point(79, 20);
+      this.mpRadioButtonNotInCategory.Location = new System.Drawing.Point(187, 20);
       this.mpRadioButtonNotInCategory.Name = "mpRadioButtonNotInCategory";
       this.mpRadioButtonNotInCategory.Size = new System.Drawing.Size(104, 17);
       this.mpRadioButtonNotInCategory.TabIndex = 14;
-      this.mpRadioButtonNotInCategory.TabStop = true;
       this.mpRadioButtonNotInCategory.Text = "Not in categories";
       this.mpRadioButtonNotInCategory.UseVisualStyleBackColor = true;
+      this.mpRadioButtonNotInCategory.CheckedChanged += new System.EventHandler(this.mpRadioButtonNotInCategory_CheckedChanged);
       // 
       // mpRadioButtonInCategory
       // 
       this.mpRadioButtonInCategory.AutoSize = true;
       this.mpRadioButtonInCategory.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpRadioButtonInCategory.Location = new System.Drawing.Point(5, 20);
+      this.mpRadioButtonInCategory.Location = new System.Drawing.Point(113, 20);
       this.mpRadioButtonInCategory.Name = "mpRadioButtonInCategory";
       this.mpRadioButtonInCategory.Size = new System.Drawing.Size(74, 17);
       this.mpRadioButtonInCategory.TabIndex = 13;
-      this.mpRadioButtonInCategory.TabStop = true;
       this.mpRadioButtonInCategory.Text = "Categories";
       this.mpRadioButtonInCategory.UseVisualStyleBackColor = true;
+      this.mpRadioButtonInCategory.CheckedChanged += new System.EventHandler(this.mpRadioButtonInCategory_CheckedChanged);
       // 
-      // mpButton4
+      // mpButtonAddCategoryCondition
       // 
-      this.mpButton4.Location = new System.Drawing.Point(138, 70);
-      this.mpButton4.Name = "mpButton4";
-      this.mpButton4.Size = new System.Drawing.Size(75, 23);
-      this.mpButton4.TabIndex = 11;
-      this.mpButton4.Text = "Add";
-      this.mpButton4.UseVisualStyleBackColor = true;
+      this.mpButtonAddCategoryCondition.Location = new System.Drawing.Point(138, 70);
+      this.mpButtonAddCategoryCondition.Name = "mpButtonAddCategoryCondition";
+      this.mpButtonAddCategoryCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonAddCategoryCondition.TabIndex = 11;
+      this.mpButtonAddCategoryCondition.Text = "Add";
+      this.mpButtonAddCategoryCondition.UseVisualStyleBackColor = true;
+      this.mpButtonAddCategoryCondition.Click += new System.EventHandler(this.mpButtonAddCategoryCondition_Click);
       // 
-      // mpButton5
+      // mpButtonRemoveCategoryCondition
       // 
-      this.mpButton5.Location = new System.Drawing.Point(138, 100);
-      this.mpButton5.Name = "mpButton5";
-      this.mpButton5.Size = new System.Drawing.Size(75, 23);
-      this.mpButton5.TabIndex = 10;
-      this.mpButton5.Text = "Remove";
-      this.mpButton5.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveCategoryCondition.Location = new System.Drawing.Point(138, 100);
+      this.mpButtonRemoveCategoryCondition.Name = "mpButtonRemoveCategoryCondition";
+      this.mpButtonRemoveCategoryCondition.Size = new System.Drawing.Size(75, 23);
+      this.mpButtonRemoveCategoryCondition.TabIndex = 10;
+      this.mpButtonRemoveCategoryCondition.Text = "Remove";
+      this.mpButtonRemoveCategoryCondition.UseVisualStyleBackColor = true;
+      this.mpButtonRemoveCategoryCondition.Click += new System.EventHandler(this.mpButtonRemoveCategoryCondition_Click);
       // 
       // mpComboBoxCategories
       // 
@@ -666,20 +695,12 @@ namespace SetupTv.Sections
       this.mpComboBoxCategories.Size = new System.Drawing.Size(103, 21);
       this.mpComboBoxCategories.TabIndex = 8;
       // 
-      // mpListViewCategories
+      // listBoxCategories
       // 
-      this.mpListViewCategories.AllowDrop = true;
-      this.mpListViewCategories.AllowRowReorder = false;
-      this.mpListViewCategories.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.None;
-      this.mpListViewCategories.HideSelection = false;
-      this.mpListViewCategories.IsChannelListView = true;
-      this.mpListViewCategories.Location = new System.Drawing.Point(6, 43);
-      this.mpListViewCategories.Name = "mpListViewCategories";
-      this.mpListViewCategories.ShowGroups = false;
-      this.mpListViewCategories.Size = new System.Drawing.Size(121, 80);
-      this.mpListViewCategories.TabIndex = 0;
-      this.mpListViewCategories.UseCompatibleStateImageBehavior = false;
-      this.mpListViewCategories.View = System.Windows.Forms.View.List;
+      this.listBoxCategories.Location = new System.Drawing.Point(6, 43);
+      this.listBoxCategories.Name = "listBoxCategories";
+      this.listBoxCategories.Size = new System.Drawing.Size(121, 79);
+      this.listBoxCategories.TabIndex = 0;
       // 
       // groupBox6
       // 
@@ -755,6 +776,24 @@ namespace SetupTv.Sections
       this.groupBox7.TabStop = false;
       this.groupBox7.Text = "Schedule";
       // 
+      // mpNumericTextBoxPostRec
+      // 
+      this.mpNumericTextBoxPostRec.Location = new System.Drawing.Point(911, 19);
+      this.mpNumericTextBoxPostRec.Name = "mpNumericTextBoxPostRec";
+      this.mpNumericTextBoxPostRec.Size = new System.Drawing.Size(44, 20);
+      this.mpNumericTextBoxPostRec.TabIndex = 30;
+      this.mpNumericTextBoxPostRec.Text = "0";
+      this.mpNumericTextBoxPostRec.Value = 0;
+      // 
+      // mpNumericTextBoxPreRec
+      // 
+      this.mpNumericTextBoxPreRec.Location = new System.Drawing.Point(762, 19);
+      this.mpNumericTextBoxPreRec.Name = "mpNumericTextBoxPreRec";
+      this.mpNumericTextBoxPreRec.Size = new System.Drawing.Size(52, 20);
+      this.mpNumericTextBoxPreRec.TabIndex = 29;
+      this.mpNumericTextBoxPreRec.Text = "0";
+      this.mpNumericTextBoxPreRec.Value = 0;
+      // 
       // label8
       // 
       this.label8.AutoSize = true;
@@ -770,6 +809,8 @@ namespace SetupTv.Sections
       this.mpNumericTextBoxPriority.Name = "mpNumericTextBoxPriority";
       this.mpNumericTextBoxPriority.Size = new System.Drawing.Size(52, 20);
       this.mpNumericTextBoxPriority.TabIndex = 27;
+      this.mpNumericTextBoxPriority.Text = "0";
+      this.mpNumericTextBoxPriority.Value = 0;
       // 
       // label7
       // 
@@ -946,20 +987,6 @@ namespace SetupTv.Sections
       this.mpComboBoxTemplates.Size = new System.Drawing.Size(103, 21);
       this.mpComboBoxTemplates.TabIndex = 21;
       // 
-      // mpNumericTextBoxPreRec
-      // 
-      this.mpNumericTextBoxPreRec.Location = new System.Drawing.Point(762, 19);
-      this.mpNumericTextBoxPreRec.Name = "mpNumericTextBoxPreRec";
-      this.mpNumericTextBoxPreRec.Size = new System.Drawing.Size(52, 20);
-      this.mpNumericTextBoxPreRec.TabIndex = 29;
-      // 
-      // mpNumericTextBoxPostRec
-      // 
-      this.mpNumericTextBoxPostRec.Location = new System.Drawing.Point(911, 19);
-      this.mpNumericTextBoxPostRec.Name = "mpNumericTextBoxPostRec";
-      this.mpNumericTextBoxPostRec.Size = new System.Drawing.Size(44, 20);
-      this.mpNumericTextBoxPostRec.TabIndex = 30;
-      // 
       // FormEditSchedule
       // 
       this.AcceptButton = this.mpButtonSave;
@@ -1009,7 +1036,6 @@ namespace SetupTv.Sections
 
     #endregion
 
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewPrograms;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonSave;
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCancel;
     private System.Windows.Forms.CheckBox checkBoxMonday;
@@ -1033,30 +1059,30 @@ namespace SetupTv.Sections
     private MediaPortal.UserInterface.Controls.MPButton mpButtonCreditRemove;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxPerson;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxRoles;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewCredits;
+    private System.Windows.Forms.CheckedListBox listBoxCredits;
     private System.Windows.Forms.GroupBox groupBox1;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxOperators;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton2;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddProgramCondition;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveProgramSchedule;
     private MediaPortal.UserInterface.Controls.MPTextBox mpTextBoxProgramValue;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxProgramFields;
     private System.Windows.Forms.GroupBox groupBox2;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxChannels;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonChannelAdd;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonChannelRemove;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddChannelCondition;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveChannelCondition;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxChannelsGroup;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewChannels;
+    private System.Windows.Forms.ListBox listBoxChannels;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioNotOnChannels;
     private MediaPortal.UserInterface.Controls.MPRadioButton radioOnChannels;
-    private MediaPortal.UserInterface.Controls.MPButton mpButtonChannelAddAll;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddAllChannelCondition;
     private System.Windows.Forms.GroupBox groupBox3;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton3;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddAllCategoryCondition;
     private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButtonNotInCategory;
     private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButtonInCategory;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton4;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton5;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddCategoryCondition;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonRemoveCategoryCondition;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxCategories;
-    private MediaPortal.UserInterface.Controls.MPListView mpListViewCategories;
+    private System.Windows.Forms.CheckedListBox listBoxCategories;
     private System.Windows.Forms.GroupBox groupBox6;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.CheckBox checkBoxSkipRepeats;
@@ -1095,5 +1121,8 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ColumnHeader columnHeader1;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxPostRec;
     private MediaPortal.UserInterface.Controls.MPNumericTextBox mpNumericTextBoxPreRec;
+    private MediaPortal.UserInterface.Controls.MPRadioButton radioOnAllChannels;
+    private ListBox listBoxPrograms;
+    private MediaPortal.UserInterface.Controls.MPRadioButton mpRadioButtonInAllCategories;
   }
 }

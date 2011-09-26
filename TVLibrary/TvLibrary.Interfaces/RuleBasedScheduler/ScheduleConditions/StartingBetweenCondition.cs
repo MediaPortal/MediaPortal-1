@@ -10,10 +10,10 @@ namespace TvLibrary.Interfaces
   [Serializable]
   public class StartingBetweenCondition : IScheduleCondition
   {
-    private readonly DateTime _startTimeInterval;
-    private readonly DateTime _endTimeInterval;
+    private readonly DateTime? _startTimeInterval;
+    private readonly DateTime? _endTimeInterval;
 
-    public StartingBetweenCondition(DateTime startTimeInterval, DateTime endTimeInterval)
+    public StartingBetweenCondition(DateTime? startTimeInterval, DateTime? endTimeInterval)
     {
       _startTimeInterval = startTimeInterval;
       _endTimeInterval = endTimeInterval;
@@ -21,12 +21,15 @@ namespace TvLibrary.Interfaces
 
     public StartingBetweenCondition()
     {
-      
     }
 
     public IQueryable<ProgramDTO> ApplyCondition(IQueryable<ProgramDTO> baseQuery)
     {
-      return baseQuery.Where(program => program.StartTime >= _startTimeInterval && program.StartTime <= _endTimeInterval);
+      if (_startTimeInterval.HasValue && _endTimeInterval.HasValue)
+      {
+        return baseQuery.Where(program => program.StartTime >= _startTimeInterval.GetValueOrDefault() && program.StartTime <= _endTimeInterval.GetValueOrDefault()); 
+      }
+      return baseQuery;
     }
 
   }

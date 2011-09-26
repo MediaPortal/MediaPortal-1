@@ -29,7 +29,7 @@ namespace TvLibrary.Interfaces
    
     public IQueryable<ProgramDTO> ApplyCondition(IQueryable<ProgramDTO> baseQuery)
     {
-      return DynamicLinqBuilder.ApplyFilter(baseQuery, _programFieldName, _programFieldValue, _operator);      
+      return DynamicLinqBuilder.ApplyFilter(baseQuery, _programFieldName, _programFieldValue, _operator);        
     }
 
     public override string ToString()

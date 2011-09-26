@@ -10,5 +10,10 @@ namespace TvLibrary.Interfaces
   {
     public int IdCategory { get; set; }
     public string Category { get; set; }
+
+    public override string ToString()
+    {
+      return Category;
+    }
   }
 }

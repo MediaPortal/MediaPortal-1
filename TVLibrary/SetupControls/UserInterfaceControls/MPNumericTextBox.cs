@@ -74,7 +74,12 @@ namespace MediaPortal.UserInterface.Controls
 
     public int Value
     {
-      get { return int.Parse(Text, NumberStyles.Integer); }
+      get
+      {
+        int val = 0;
+        int.TryParse(Text, out val);
+        return val;
+      }
       set { Text = value.ToString(); }
     }
   }

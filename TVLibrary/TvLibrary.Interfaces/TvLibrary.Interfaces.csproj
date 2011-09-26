@@ -121,6 +121,7 @@
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
+    <Compile Include="RuleBasedScheduler\DTO\ProgramAttribute.cs" />
     <Compile Include="RuleBasedScheduler\Helpers\DynamicLinqBuilder.cs" />
     <Compile Include="RuleBasedScheduler\ScheduleConditionHelper.cs" />
     <Compile Include="RuleBasedScheduler\ScheduleConditionList.cs" />

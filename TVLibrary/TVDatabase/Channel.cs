@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 namespace TvDatabase
@@ -764,6 +765,25 @@ namespace TvDatabase
         }
       }
       return false;
+    }
+
+    public ChannelDTO ConvertToDTO()
+    {
+      var channelDto = new ChannelDTO();
+      channelDto.DisplayName = DisplayName;
+      channelDto.EpgHasGaps = EpgHasGaps;
+      channelDto.ExternalId = ExternalId;
+      channelDto.GrabEpg = GrabEpg;
+      channelDto.IdChannel = IdChannel;
+      channelDto.IsRadio = IsRadio;
+      channelDto.IsTv = IsTv;
+      channelDto.LastGrabTime = LastGrabTime;
+      //channelDto.Name= 
+      channelDto.SortOrder = SortOrder;
+      channelDto.TimesWatched = TimesWatched;
+      channelDto.TotalTimeWatched = TotalTimeWatched;
+      channelDto.VisibleInGuide = VisibleInGuide;
+      return channelDto;
     }
   }
 }

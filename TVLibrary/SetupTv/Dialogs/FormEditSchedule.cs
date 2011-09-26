@@ -21,7 +21,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using Gentle.Framework;
@@ -59,9 +61,87 @@ namespace SetupTv.Sections
     private void FormEditSchedule_Load(object sender, System.EventArgs e)
     {
       Init();
+      PreFillInProgramData();
+
     }
 
-    private void AddGroups()
+    private void PreFillInProgramData()
+    {
+      PreFillInProgramDataForPrograms();
+      PreFillInProgramDataForChannels();
+      PreFillInProgramDataForCategories();
+      PreFillInProgramDataForCredits();
+      PreFillInProgramDataForDates();
+    }
+
+    private void PreFillInProgramDataForDates()
+    {
+      dateTimePickerOnDate.Value = Program.StartTime;
+      dateTimePickerStartingAround.Value = Program.StartTime;
+      mpNumericTextBoxStartingAroundDeviation.Value = 0;
+      dateTimePickerStartingBetweenFrom.Value = Program.StartTime;
+      dateTimePickerStartingBetweenTo.Value = Program.EndTime;
+      dateTimePickerStartingBetweenFrom.Checked = false;
+      dateTimePickerStartingBetweenTo.Checked = false;
+    }
+
+    private void PreFillInProgramDataForChannels()
+    {
+      var channel = Program.ReferencedChannel().ConvertToDTO();
+      listBoxChannels.Items.Add(channel);
+    }
+
+    private void PreFillInProgramDataForPrograms()
+    {
+      var props = GetProgramPropertyInfos();
+      foreach (PropertyInfo prop in props)
+      {
+        if (prop.Name.ToUpperInvariant().Equals("TITLE"))
+        {
+          var prgField = new ProgramField(prop.Name, prop.PropertyType);
+          ConditionOperator op = ConditionOperator.Equals;          
+          var prgCond = new SelectedProgramCondition<string>(prgField.Name, Program.Title, op);
+          AddToListBox(prgCond, prgField.Name, listBoxPrograms);
+          break;
+        }
+      }
+                                    
+    }
+
+    private void PreFillInProgramDataForCredits()
+    {
+      IList<ProgramCredit> programCredits = Program.ReferringProgramCredit();
+
+      if (programCredits.Count == 0)
+      {
+        programCredits = ProgramCredit.ListAll();
+      }
+
+      if (programCredits != null)
+      {
+        IList<ProgramCreditDTO> programCreditDtoList = ProgramCredit.ConvertToDtoList(programCredits);
+        foreach (var programCreditDto in programCreditDtoList)
+        {
+          AddToCheckedListBox(programCreditDto, programCreditDto.ToString(), listBoxCredits, false);  
+        }
+      }
+    }
+
+    private void PreFillInProgramDataForCategories()
+    {
+      ProgramCategory category = Program.ReferencedProgramCategory();
+      if (category == null)
+      {
+        category = ProgramCategory.ListAll().FirstOrDefault();
+      }
+      if (category != null)
+      {
+        ProgramCategoryDTO programCategoryDto = category.ConvertToDto();
+        AddToCheckedListBox(programCategoryDto, programCategoryDto.ToString(), listBoxCategories, false);
+      }
+    }
+
+    private void AddTvGroups()
     {
       mpComboBoxChannelsGroup.Items.Clear();
       IList<ChannelGroup> groups = ChannelGroup.ListAll();
@@ -74,27 +154,54 @@ namespace SetupTv.Sections
 
     private void Init()
     {
-      TvBusinessLayer layer = new TvBusinessLayer();
-      mpNumericTextBoxPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
-      mpNumericTextBoxPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
+      SetRecordingInterval();
+      AddTvGroups();
+      SetScheduleName();
+      PopulateProgramFieldsComboBox();              
+      PopulateCategoriesComboBox();
+      PopulateOperatorsComboBox();
+      PopulateRolesComboBox();
+      PopulateKeepMethodsComboBox();      
+    }
 
-      ProgramDTO programDto = new ProgramDTO();
-      Type t = programDto.GetType();
-      PropertyInfo[] pi = t.GetProperties();
-      foreach (PropertyInfo prop in pi)
+    private void PopulateKeepMethodsComboBox()
+    {
+      foreach (string name in Enum.GetNames(typeof (KeepMethodType)))
       {
-        if (prop.PropertyType == typeof(string) ||
-            prop.PropertyType == typeof(DateTime) ||
-            prop.PropertyType == typeof(int)
-          )
-        {
-          ProgramField pField = new ProgramField(prop.Name, prop.PropertyType);          
-          mpComboBoxProgramFields.Items.Add(pField);
-        }        
+        mpComboBoxKeepMethods.Items.Add(name);
       }
-        
+    }
 
-      AddGroups();
+    private void PopulateRolesComboBox()
+    {
+      IList<ProgramCredit> roles = ProgramCredit.ListAllDistinctRoles();
+      IList<ProgramCreditDTO> rolesDtos = ProgramCredit.ConvertToDtoList(roles);
+      foreach (var programCredit in rolesDtos)
+      {
+        mpComboBoxRoles.Items.Add(programCredit.Role);
+      }
+    }
+
+    private void PopulateOperatorsComboBox()
+    {
+      foreach (object enumValue in Enum.GetValues(typeof (ConditionOperator)))
+      {
+        mpComboBoxOperators.Items.Add(enumValue);
+      }
+    }
+
+    private void PopulateCategoriesComboBox()
+    {
+      IList<ProgramCategory> categories = ProgramCategory.ListAll();
+      IList<ProgramCategoryDTO> categoriesDtos = ProgramCategory.ConvertToDtoList(categories);
+      foreach (var programCategory in categoriesDtos)
+      {
+        mpComboBoxCategories.Items.Add(programCategory);
+      }
+    }
+
+    private void SetScheduleName()
+    {
       if (_program != null)
       {
         mpTextBoxScheduleName.Text = _program.Title;
@@ -103,39 +210,214 @@ namespace SetupTv.Sections
       {
         mpTextBoxScheduleName.Text = _schedule.ProgramName;
       }
+    }
 
-      IList<ProgramCategory> categories = ProgramCategory.ListAll();
-      foreach (var programCategory in categories)
+    private void SetRecordingInterval()
+    {
+      var layer = new TvBusinessLayer();
+      mpNumericTextBoxPreRec.Value = int.Parse(layer.GetSetting("preRecordInterval", "7").Value);
+      mpNumericTextBoxPostRec.Value = int.Parse(layer.GetSetting("postRecordInterval", "10").Value);
+    }
+
+    private void PopulateProgramFieldsComboBox()
+    {
+      IEnumerable<PropertyInfo> props = GetProgramPropertyInfos();
+      foreach (ProgramField pField in from prop in props
+                                      where prop.PropertyType == typeof (string) ||
+                                            prop.PropertyType == typeof (DateTime) ||
+                                            prop.PropertyType == typeof (int)
+                                      select new ProgramField(prop.Name, prop.PropertyType))
       {
-        mpComboBoxCategories.Items.Add(programCategory);
+        mpComboBoxProgramFields.Items.Add(pField);
       }
+    }
 
-
-      foreach (object enumValue in Enum.GetValues(typeof(ConditionOperator)))
-      {
-        mpComboBoxOperators.Items.Add(enumValue);
-      }
-      
-
-
-      IList<ProgramCredit> roles = ProgramCredit.ListAllDistinctRoles();
-      foreach (var programCredit in roles)
-      {
-        mpComboBoxRoles.Items.Add(programCredit.Role);
-      }
-      
-      
-
-      foreach(string name in Enum.GetNames(typeof(KeepMethodType)))
-      {
-        mpComboBoxKeepMethods.Items.Add(name);
-      }
+    private static IEnumerable<PropertyInfo> GetProgramPropertyInfos()
+    {
+      var programDto = new ProgramDTO();
+      Type t = programDto.GetType();
+      var props = t.GetProperties().Where(
+        prop => Attribute.IsDefined(prop, typeof (ProgramAttribute)));
+      return props;
     }
 
 
     private void mpButtonSave_Click(object sender, EventArgs e)
     {
-     Close();
+      KeepMethodType enumKeepMethodType;
+      Enum.TryParse((string)mpComboBoxKeepMethods.SelectedItem, out enumKeepMethodType);
+      var schedule = new RuleBasedSchedule(mpTextBoxScheduleName.Text, 
+        int.MaxValue, mpNumericTextBoxPriority.Value, "", (int)QualityType.NotSet,
+        (int)enumKeepMethodType, dateTimePickerOnDate.MinDate, mpNumericTextBoxPreRec.Value, 
+        mpNumericTextBoxPostRec.Value);
+
+      var rules = new ScheduleConditionList();
+
+      foreach (object obj in listBoxPrograms.Items)
+      {
+        if (obj is SelectedProgramCondition<string>)
+        {
+          var selectedProgramCondition = obj as SelectedProgramCondition<string>;
+          var programCondition = new ProgramCondition<string>(selectedProgramCondition.Name, selectedProgramCondition.Value, selectedProgramCondition.ConditionOperator);
+          rules.Add(programCondition);
+        }
+        else if (obj is SelectedProgramCondition<int>)
+        {
+          var selectedProgramCondition = obj as SelectedProgramCondition<int>;
+          var programCondition = new ProgramCondition<int>(selectedProgramCondition.Name, selectedProgramCondition.Value, selectedProgramCondition.ConditionOperator);
+          rules.Add(programCondition);
+        }
+        else if (obj is SelectedProgramCondition<DateTime>)
+        {
+          var selectedProgramCondition = obj as SelectedProgramCondition<DateTime>;
+          var programCondition = new ProgramCondition<DateTime>(selectedProgramCondition.Name, selectedProgramCondition.Value, selectedProgramCondition.ConditionOperator);
+          rules.Add(programCondition);
+        }
+      }
+
+      if (radioOnChannels.Checked)
+      {
+        IList<ChannelDTO> channelList = new ObservableCollection<ChannelDTO>();
+        foreach (ChannelDTO channel in listBoxChannels.Items)
+        {
+          channelList.Add(channel);          
+        }
+        if (channelList.Count > 0)
+        {
+          var onChannelsCondition = new OnChannelsCondition(channelList);
+          rules.Add(onChannelsCondition);
+        }
+      }
+      else if (radioNotOnChannels.Checked)
+      {
+        IList<ChannelDTO> channelList = new ObservableCollection<ChannelDTO>();
+        foreach (ChannelDTO channel in listBoxChannels.Items)
+        {
+          channelList.Add(channel);
+        }
+        if (channelList.Count > 0)
+        {
+          var notOnChannelsCondition = new NotOnChannelsCondition(channelList);
+          rules.Add(notOnChannelsCondition);
+        }
+      }
+
+
+
+      if (mpRadioButtonInCategory.Checked)
+      {
+        IList<ProgramCategoryDTO> categoryList = new ObservableCollection<ProgramCategoryDTO>();
+        foreach (ProgramCategoryDTO categoryDto in listBoxCategories.CheckedItems)
+        {
+          categoryList.Add(categoryDto);
+        }
+        if (categoryList.Count > 0)
+        {
+          var onCategoryCondition = new OnCategoryCondition(categoryList);
+          rules.Add(onCategoryCondition);
+        }
+      }
+      else if (mpRadioButtonNotInCategory.Checked)
+      {
+        IList<ProgramCategoryDTO> categoryList = new ObservableCollection<ProgramCategoryDTO>();
+        foreach (ProgramCategoryDTO categoryDto in listBoxCategories.CheckedItems)
+        {
+          categoryList.Add(categoryDto);
+        }
+        if (categoryList.Count > 0)
+        {
+          var notOnCategoryCondition = new NotOnCategoryCondition(categoryList);
+          rules.Add(notOnCategoryCondition);
+        }
+      }
+
+
+      IList<ProgramCreditDTO> creditsList = new ObservableCollection<ProgramCreditDTO>();
+      foreach (ProgramCreditDTO creditDto in listBoxCredits.CheckedItems)
+      {
+        creditsList.Add(creditDto);
+      }
+      if (creditsList.Count > 0)
+      {
+        var creditCondition = new CreditCondition(creditsList);
+        rules.Add(creditCondition);
+      }
+
+      if (dateTimePickerOnDate.Checked)
+      {
+        var onDateCondition = new OnDateCondition(dateTimePickerOnDate.Value);
+        rules.Add(onDateCondition);
+      }
+
+    if (dateTimePickerStartingAround.Checked)
+      {
+        var startingAroundCondition = new StartingAroundCondition(dateTimePickerStartingAround.Value, mpNumericTextBoxStartingAroundDeviation.Value);
+        rules.Add(startingAroundCondition);
+      }
+
+      if (dateTimePickerStartingBetweenFrom.Checked && dateTimePickerStartingBetweenTo.Checked)
+      {
+        var startingBetweenCondition = new StartingBetweenCondition(dateTimePickerStartingBetweenFrom.Value, dateTimePickerStartingBetweenTo.Value);
+        rules.Add(startingBetweenCondition);
+      }
+
+      IList<DayOfWeek> ondays = new ObservableCollection<DayOfWeek>();
+      if (checkBoxMonday.Checked)
+      {        
+        ondays.Add(DayOfWeek.Monday);
+      }            
+      if (checkBoxTuesday.Checked)
+      {
+        ondays.Add(DayOfWeek.Tuesday);
+      }            
+      if (checkBoxWednesday.Checked)
+      {
+        ondays.Add(DayOfWeek.Wednesday);
+      }            
+      if (checkBoxThursday.Checked)
+      {
+        ondays.Add(DayOfWeek.Thursday);
+      }            
+      if (checkBoxFriday.Checked)
+      {
+        ondays.Add(DayOfWeek.Friday);
+      }            
+      if (checkBoxSaturday.Checked)
+      {
+        ondays.Add(DayOfWeek.Saturday);
+      }            
+      if (checkBoxSunday.Checked)
+      {
+        ondays.Add(DayOfWeek.Sunday);
+      }            
+      
+      if (ondays.Count > 0)
+      {       
+        var onDayCondition = new OnDayCondition(ondays);
+        rules.Add(onDayCondition);
+      }
+
+      if (checkBoxOnlyNewEpisodes.Checked)
+      {
+        var onlyRecordNewEpisodesCondition = new OnlyRecordNewEpisodesCondition();  //todo populate episodes list.
+        rules.Add(onlyRecordNewEpisodesCondition);
+      }
+
+      if (checkBoxSkipRepeats.Checked)
+      {        
+        var skipRepeatsCondition = new SkipRepeatsCondition();
+        rules.Add(skipRepeatsCondition);
+      }
+
+      if (checkBoxNewTitles.Checked)
+      {
+        var onlyRecordNewTitlesCondition = new OnlyRecordNewTitlesCondition(); //todo populate titles list.
+        rules.Add(onlyRecordNewTitlesCondition);
+      }
+
+      schedule.Rules = rules;
+      schedule.Persist();
+      Close();
     }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)
@@ -183,10 +465,9 @@ namespace SetupTv.Sections
           else
           {
             imageIndex = 3;
-          }
-          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
-
-          mpComboBoxChannels.Items.Add(item);
+          }          
+          //ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);         
+          mpComboBoxChannels.Items.Add(ch.ConvertToDTO());
         }
       }
       else
@@ -225,8 +506,9 @@ namespace SetupTv.Sections
           {
             imageIndex = 3;
           }
-          ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
-          mpComboBoxChannels.Items.Add(item);
+          //ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
+          mpComboBoxChannels.Items.Add(ch.ConvertToDTO());
+          //mpComboBoxChannels.Items.Add(item);
         }
       }
       if (mpComboBoxChannels.Items.Count > 0)
@@ -242,7 +524,6 @@ namespace SetupTv.Sections
         Size size = mpTextBoxProgramValue.Size;
         string name = mpTextBoxProgramValue.Name;
         
-        //groupBox1.Controls.Remove(mpTextBoxProgramValue);
         groupBox1.Controls.RemoveByKey("mpTextBoxProgramValue");
         mpTextBoxProgramValue.Dispose();
 
@@ -258,51 +539,207 @@ namespace SetupTv.Sections
           mpComboBoxOperators.Items.Add(cond);          
         }
       }
+      mpComboBoxOperators.SelectedIndex = 0;
     }
 
     private void mpButton1_Click(object sender, EventArgs e)
     {
-      ProgramField prgField = mpComboBoxProgramFields.SelectedItem as ProgramField;
-      if(prgField != null)
-      {
-        ConditionOperator op = (ConditionOperator) mpComboBoxOperators.SelectedItem;
-        if (prgField.Type == typeof (string))
-        {
-          int index = groupBox1.Controls.IndexOfKey("mpTextBoxProgramValue");
-          if (index > -1)
-          {            
-            var prgCond = new ProgramCondition<string>(prgField.Name, groupBox1.Controls[index].Text, op);
-            var item = new ListViewItem
-                                  {Tag = prgCond, Text = prgCond.ToString(), ToolTipText = prgCond.ToString()};
-            mpListViewPrograms.Items.Add(item);
-          }
-        }
-        else if (prgField.Type == typeof(int))
-        {          
-          int index = groupBox1.Controls.IndexOfKey("mpTextBoxProgramValue");
-          if (index > -1)
-          {
-            var prgCond = new ProgramCondition<int>(prgField.Name, ((MPNumericTextBox)groupBox1.Controls[index]).Value, op);
-            var item = new ListViewItem
-                                  {Tag = prgCond, Text = prgCond.ToString(), ToolTipText = prgCond.ToString()};
-            mpListViewPrograms.Items.Add(item);
-          }
-        }
-
-        else if (prgField.Type == typeof(DateTime))
-        {
-          int index = groupBox1.Controls.IndexOfKey("mpTextBoxProgramValue");
-          if (index > -1)
-          {
-            var prgCond = new ProgramCondition<DateTime>(prgField.Name, ((DateTimePicker)groupBox1.Controls[index]).Value, op);
-            var item = new ListViewItem { Tag = prgCond, Text = prgCond.ToString(), ToolTipText = prgCond.ToString() };
-            mpListViewPrograms.Items.Add(item);
-          }
-        }
-        
-      }
-      
+      AddProgramCondition();
     }
+
+    private void AddProgramCondition()
+    {
+      var prgField = mpComboBoxProgramFields.SelectedItem as ProgramField;
+      if (prgField != null)
+      {
+        ConditionOperator op = (ConditionOperator)mpComboBoxOperators.SelectedItem;
+        object prgCond = null;
+        int index = groupBox1.Controls.IndexOfKey("mpTextBoxProgramValue");
+        if (index > -1)
+        {
+          prgCond = CreateSelectedProgramCondition(groupBox1.Controls[index], op, prgField);
+          AddToListBox(prgCond, prgField.Name, listBoxPrograms);
+        }
+      }
+    }
+
+    private object CreateSelectedProgramCondition(Control ctrl, ConditionOperator op, ProgramField prgField)
+    {
+      object prgCond;      
+      if (prgField.Type == typeof (int))
+      {
+        prgCond = new SelectedProgramCondition<int>(prgField.Name,
+                                                    ((MPNumericTextBox)ctrl).Value, op);
+      }
+      else if (prgField.Type == typeof (DateTime))
+      {
+        prgCond = new SelectedProgramCondition<DateTime>(prgField.Name,
+                                                         ((DateTimePicker)ctrl).Value, op);
+      }
+      else
+      {
+        prgCond = new SelectedProgramCondition<string>(prgField.Name, ctrl.Text, op);
+      }
+      return prgCond;
+    }
+
+    private void AddToCheckedListBox(object prgCond, string name, CheckedListBox checkedListBox, bool isChecked)
+    {
+      if (DoesListBoxItemAlreadyExist(prgCond, name, checkedListBox)) return;      
+      checkedListBox.Items.Add(prgCond, isChecked);            
+    }
+
+    private void AddToListBox(object prgCond, string name, ListBox listBox)
+    {      
+      if (DoesListBoxItemAlreadyExist(prgCond, name, listBox)) return;      
+      listBox.Items.Add(prgCond); 
+    }
+
+    private static bool DoesListBoxItemAlreadyExist(object prgCond, string name, ListBox listBox)
+    {
+      if (listBox.Items.Cast<object>().Any(it => it.ToString().IndexOf(name) >= 0))
+      {
+        MessageBox.Show("item already exits '" + prgCond.ToString() + "'");
+        return true;
+      }
+      return false;
+    }
+
+    private void mpButton2_Click(object sender, EventArgs e)
+    {
+      ClearListBoxSelection(listBoxPrograms);
+    }
+
+    private void ClearListBoxSelection(ListBox listBox)
+    {
+      while (listBox.SelectedItems.Count > 0)
+      {
+        listBox.Items.Remove(listBox.SelectedItems[0]);
+      }
+    }
+
+    private void mpButtonAddChannelCondition_Click(object sender, EventArgs e)
+    {
+      ChannelDTO channel = mpComboBoxChannels.SelectedItem as ChannelDTO;
+      if (channel != null)
+      {
+        AddToListBox(channel, channel.DisplayName, listBoxChannels);
+      }
+    }
+
+    private void mpButtonRemoveChannelCondition_Click(object sender, EventArgs e)
+    {
+      ClearListBoxSelection(listBoxChannels);
+    }
+
+    private void mpButtonRemoveCategoryCondition_Click(object sender, EventArgs e)
+    {
+      ClearListBoxSelection(listBoxCategories);
+    }
+
+    private void mpButtonAddCategoryCondition_Click(object sender, EventArgs e)
+    {
+      ProgramCategoryDTO categoryDto = mpComboBoxCategories.SelectedItem as ProgramCategoryDTO;
+      if (categoryDto != null)
+      {
+        AddToCheckedListBox(categoryDto, categoryDto.Category, listBoxCategories, true);        
+      }      
+    }
+
+    private void radioOnAllChannels_CheckedChanged(object sender, EventArgs e)
+    {
+      listBoxChannels.Items.Clear();
+      SetEnabledStateForChannelsControls();
+    }
+
+    private void SetEnabledStateForChannelsControls()
+    {
+      listBoxChannels.Enabled = !radioOnAllChannels.Checked;
+      mpComboBoxChannelsGroup.Enabled = !radioOnAllChannels.Checked;
+      mpComboBoxChannels.Enabled = !radioOnAllChannels.Checked;
+      mpButtonAddChannelCondition.Enabled = !radioOnAllChannels.Checked;
+      mpButtonAddAllChannelCondition.Enabled = !radioOnAllChannels.Checked;
+      mpButtonRemoveChannelCondition.Enabled = !radioOnAllChannels.Checked;
+    }
+
+    private void radioOnChannels_CheckedChanged(object sender, EventArgs e)
+    {
+      listBoxChannels.Items.Clear();
+      SetEnabledStateForChannelsControls();
+    }
+
+    private void radioNotOnChannels_CheckedChanged(object sender, EventArgs e)
+    {
+      listBoxChannels.Items.Clear();
+      SetEnabledStateForChannelsControls();
+    }
+
+    private void mpButtonCreditAdd_Click(object sender, EventArgs e)
+    {
+      ProgramCreditDTO credit = new ProgramCreditDTO
+                                  {Role = mpComboBoxRoles.SelectedItem as string, Person = mpTextBoxPerson.Text};
+
+      AddToCheckedListBox(credit, credit.ToString(), listBoxCredits, true);
+    }
+
+    private void mpButtonCreditRemove_Click(object sender, EventArgs e)
+    {
+      ClearListBoxSelection(listBoxCredits);
+    }
+
+    private void mpRadioButtonInAllCategories_CheckedChanged(object sender, EventArgs e)
+    {
+
+      listBoxCategories.Items.Clear();
+      SetEnabledStateForCategoriesControls();
+    }
+
+    private void SetEnabledStateForCategoriesControls()
+    {
+      listBoxCategories.Enabled = !mpRadioButtonInAllCategories.Checked;
+      mpComboBoxCategories.Enabled = !mpRadioButtonInAllCategories.Checked;
+      mpButtonAddCategoryCondition.Enabled = !mpRadioButtonInAllCategories.Checked;
+      mpButtonAddAllCategoryCondition.Enabled = !mpRadioButtonInAllCategories.Checked;
+      mpButtonRemoveCategoryCondition.Enabled = !mpRadioButtonInAllCategories.Checked;
+    }
+
+    private void mpRadioButtonInCategory_CheckedChanged(object sender, EventArgs e)
+    {
+      listBoxCategories.Items.Clear();
+      SetEnabledStateForCategoriesControls();
+    }
+
+    private void mpRadioButtonNotInCategory_CheckedChanged(object sender, EventArgs e)
+    {
+      listBoxCategories.Items.Clear();
+      SetEnabledStateForCategoriesControls();
+    }
+
+    private void dateTimePickerStartingAround_ValueChanged(object sender, EventArgs e)
+    {
+      mpNumericTextBoxStartingAroundDeviation.Enabled = dateTimePickerStartingAround.Checked;
+    }    
+
+
+  }
+
+  internal class SelectedProgramCondition<T>
+  {
+    public SelectedProgramCondition(string name, T value, ConditionOperator op)
+    {
+      Name = name;
+      Value = value;
+      ConditionOperator = op;
+    }
+
+    public override string ToString()
+    {
+      return ("[" + Name + "] " + ConditionOperator + " [" + Value + "]");
+    }
+
+    public T Value { get; private set; }
+    public ConditionOperator ConditionOperator { get; private set; }
+    public string Name { get; set; }
   }
 
   internal class ProgramField
@@ -313,7 +750,6 @@ namespace SetupTv.Sections
       Type = type;
       ConditionOperators = GetConditionOperator(type);
       Control = GetControl(type);
-      
     }
 
     private Control GetControl(Type type)

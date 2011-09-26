@@ -28,6 +28,19 @@ namespace TvLibrary.Interfaces
   [CollectionDataContract]
   public class ScheduleConditionList : List<IScheduleCondition>
   {
-        
+
+    // would the param in  GetTitle(ProgramDTO program) be needed at all here ? 
+    // <<-- yep because GetTitle would get info from program to replace the placeholders in the title template
+    public string GetTitle(ProgramDTO program)
+    {
+      //todo impl
+      return null;
+    }
+
+    public string GetDescription(ProgramDTO program)
+    {
+      //todo impl
+      return null;
+    }
   }
 }

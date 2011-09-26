@@ -10,15 +10,15 @@ namespace TvLibrary.Interfaces
   [Serializable]
   public class OnDateCondition : IScheduleCondition
   {
-    private DateTime _onDate;
+    private DateTime? _onDate;
 
-    public DateTime OnDate
+    public DateTime? OnDate
     {
       get { return _onDate; }
       set { _onDate = value; }
     }
 
-    public OnDateCondition(DateTime onDate)
+    public OnDateCondition(DateTime? onDate)
     {
       _onDate = onDate;
     }
@@ -29,7 +29,11 @@ namespace TvLibrary.Interfaces
 
     public IQueryable<ProgramDTO> ApplyCondition(IQueryable<ProgramDTO> baseQuery)
     {
-      return baseQuery.Where(program => (program.StartTime.Equals(_onDate)));
+      if (_onDate.HasValue)
+      {
+        return baseQuery.Where(program => (program.StartTime.Equals(_onDate)));  
+      }
+      return baseQuery;
     }
   }
 }

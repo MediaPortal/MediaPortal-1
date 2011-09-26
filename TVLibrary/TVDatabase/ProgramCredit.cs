@@ -20,8 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using Gentle.Framework;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
 
@@ -198,6 +200,16 @@ namespace TvDatabase
 
     #endregion
 
+    public static IList<ProgramCreditDTO> ConvertToDtoList(IEnumerable<ProgramCredit> roles)
+    {
+      IList<ProgramCreditDTO> creditDtos = new ObservableCollection<ProgramCreditDTO>();
+      foreach (var role in roles)
+      {
+        var creditDto = new ProgramCreditDTO { Person = role.Person,  Role = role.Role, IdCredit = role.IdProgramCredit};
+        creditDtos.Add(creditDto);
+      }
 
+      return creditDtos;
+    }
   }
 }

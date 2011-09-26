@@ -9,11 +9,10 @@ namespace TvLibrary.Interfaces
 {
   [Serializable]
   public class SkipRepeatsCondition : IScheduleCondition
-  {
+  {    
     public IQueryable<ProgramDTO> ApplyCondition(IQueryable<ProgramDTO> baseQuery)
     {
        return baseQuery.Where(program => !program.PreviouslyShown);
     }
-
   }
 }

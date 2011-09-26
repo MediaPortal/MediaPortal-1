@@ -20,7 +20,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Gentle.Framework;
+using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 namespace TvDatabase
@@ -154,6 +156,24 @@ namespace TvDatabase
     public override string ToString()
     {
       return category;
+    }
+
+    public static IList<ProgramCategoryDTO> ConvertToDtoList(IEnumerable<ProgramCategory> categories)
+    {
+      IList<ProgramCategoryDTO> categoryDtos = new ObservableCollection<ProgramCategoryDTO>();
+      foreach (var programCategory in categories)
+      {
+        var programCategoryDto = programCategory.ConvertToDto();
+        categoryDtos.Add(programCategoryDto);
+      }
+      
+      return categoryDtos;
+    }
+
+    public ProgramCategoryDTO ConvertToDto()
+    {
+      var programCategoryDto = new ProgramCategoryDTO { Category = Category, IdCategory = IdProgramCategory };
+      return programCategoryDto;
     }
   }
 }

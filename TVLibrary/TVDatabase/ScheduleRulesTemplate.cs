@@ -83,7 +83,7 @@ namespace TvDatabase
       rules = ScheduleConditionHelper.Serialize<ScheduleConditionList>(_scheduleConditions);
     }
 
-    #region Public Properties   
+    #region Public Properties         
 
     /// <summary>
     /// Indicates whether the entity is changed and requires saving or not.
