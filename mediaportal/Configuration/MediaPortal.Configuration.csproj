@@ -621,6 +621,7 @@
     <Compile Include="WeatherChannel.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Content Include="Resources\blu-ray_regions.png" />
     <EmbeddedResource Include="ConfigSplashScreen.resx">
       <DependentUpon>ConfigSplashScreen.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -1529,6 +1529,20 @@ namespace MediaPortal.Player
       {
         settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "English");
         settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "English");
+        settings.parentalControl = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
+        string regionCode = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
+        switch (regionCode)
+        {
+          case "A":
+            settings.regionCode = 1;
+            break;
+          case "B":
+            settings.regionCode = 2;
+            break;
+          case "C":
+            settings.regionCode = 4;
+            break;
+        }
       }
 
       foreach (CultureInfo cultureInformation in CultureInfo.GetCultures(CultureTypes.NeutralCultures))
@@ -1544,9 +1558,6 @@ namespace MediaPortal.Player
         }
       }
       settings.menuLang = settings.audioLang;
-      settings.parentalControl = 0; // what to do with this?
-      settings.regionCode = 7; // what to do with this?
-
       reader.SetBDPlayerSettings(settings);
     }
 
