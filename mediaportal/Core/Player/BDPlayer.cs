@@ -594,7 +594,7 @@ namespace MediaPortal.Player
             if (!Playing || _forceTitle)
               return false;
             Speed = 1;
-            Log.Debug("BDPlayer: Main menu");
+            //Log.Debug("BDPlayer: Main menu");
             _ireader.Action((int)BDKeys.BD_VK_ROOT_MENU);
             _state = PlayState.Menu;
             return true;
@@ -603,7 +603,7 @@ namespace MediaPortal.Player
             if (!Playing || _forceTitle)
               return false;
             Speed = 1;
-            Log.Debug("BDPlayer: Popup menu toggle");
+            //Log.Debug("BDPlayer: Popup menu toggle");
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
             _state = PlayState.PopUp;
             return true;
@@ -612,7 +612,7 @@ namespace MediaPortal.Player
             if (_state != PlayState.PopUp)
               return false;
             Speed = 1;
-            Log.Debug("BDPlayer: Popup menu off");
+            //Log.Debug("BDPlayer: Popup menu off");
             _ireader.Action((int)BDKeys.BD_VK_POPUP);
             _state = PlayState.Playing;
             return true;
@@ -1764,12 +1764,11 @@ namespace MediaPortal.Player
             break;
 
           case (int)BDEvents.BD_CUSTOM_EVENT_MENU_VISIBILITY:
-            if (_state == PlayState.PopUp)
-              break;
             if (bdevent.Param == 1)
             {
-              Log.Debug("BDPlayer: Menu toggle on");
-              _state = PlayState.Menu;
+              Log.Debug("BDPlayer: Toggle {0} menu on", _state == PlayState.Menu ? "main" : "popup");
+              if (_state != PlayState.PopUp)
+                _state = PlayState.Menu;
               _updateItems = UpdateItems.None;
               GUIGraphicsContext.DisableTopBar = true;
               menuItems = MenuItems.MainMenu | MenuItems.PopUpMenu;
@@ -1814,7 +1813,7 @@ namespace MediaPortal.Player
           if ((_updateNow & 4) == 4)
           {
             _updateNow -= 4;
-            Log.Debug("BDPlayer: Menu toggle off");
+            Log.Debug("BDPlayer: Toggle menu off");
             _updateItems &= ~UpdateItems.Menu;
             _state = PlayState.Playing;
             GUIGraphicsContext.DisableTopBar = false;
