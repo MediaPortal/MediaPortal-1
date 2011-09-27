@@ -487,7 +487,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->bSeekRequired = false;
             useEmptySample = true;
 
-            buffer->rtOffset == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtOffset;
+            buffer->rtPlaylistTime == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtPlaylistTime;
           }
 
           if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
