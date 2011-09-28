@@ -55,7 +55,6 @@ public:
   HRESULT    Start();
   void       Flush(bool pSeeking);
   void       IgnoreNextDiscontinuity();
-  void       ForcedChapterChange();
   Packet*    GetVideo();
   Packet*    GetAudio();
   Packet*    GetAudio(int playlist, int clip);
@@ -112,9 +111,6 @@ public:
   void SetMediaChanging(bool onOff);
   bool IsMediaChanging();
 
-  CCritSec m_sectionRead;
-
-
   // From BDEventObserver
   void HandleBDEvent(BD_EVENT& pEv, UINT64 pPos);
   void HandleOSDUpdate(OSDTexture& pTexture);
@@ -158,6 +154,7 @@ private:
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionMediaChanging;
+  CCritSec m_sectionRead;
 
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;

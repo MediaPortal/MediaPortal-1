@@ -129,6 +129,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
 {
   bool ret = true;
   if (!m_currentAudioSubmissionClip) return false;
+  REFERENCE_TIME prevAudioPosition = m_currentAudioSubmissionClip->lastAudioPosition;
   if (m_currentAudioSubmissionClip->nClip == packet->nClipNumber)
   {
     m_currentAudioSubmissionClip->AcceptAudioPacket(packet);
@@ -152,19 +153,26 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     }
     ret=AcceptAudioPacket(packet, seeking);
   }
+
+  if (packet->rtStart != Packet::INVALID_TIME && prevAudioPosition != Packet::INVALID_TIME && abs(prevAudioPosition - packet->rtStart) > 10000000)
+  {
+    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d", prevAudioPosition, packet->rtStart);
+    firstAudioPESPacketSeen=false;
+  }
+
   if (!firstAudioPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     REFERENCE_TIME oldPEStime = firstAudioPESTimeStamp;
 
     firstAudioPESPacketSeen=true;
-    firstAudioPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
+    firstAudioPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
     packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0;
     if (packet->rtOffset != 0)
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushAudio(packet);
-    LogDebug("First Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired);
+    LogDebug("clip: first Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstAudioPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {
@@ -177,6 +185,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
 bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking)
 {
   bool ret = true;
+  REFERENCE_TIME prevVideoPosition = 0;
   if (!m_currentVideoSubmissionClip) 
   {
     LogDebug("m_currentVideoSubmissionClip is NULL");
@@ -186,7 +195,8 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
   {
     if (m_currentVideoSubmissionClip->nClip==packet->nClipNumber)
     {
-       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
+      prevVideoPosition = m_currentVideoSubmissionClip->lastVideoPosition; 
+      ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
     }
     else
     {
@@ -201,9 +211,17 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
         }
         m_currentVideoSubmissionClip = nextVideoClip;
       }
+      prevVideoPosition = m_currentVideoSubmissionClip->lastVideoPosition;
       ret=m_currentVideoSubmissionClip->AcceptVideoPacket(packet);
     }
   }
+
+  if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 10000000)
+  {
+    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d", prevVideoPosition, packet->rtStart);
+    firstVideoPESPacketSeen=false;
+  }
+
   if (!firstVideoPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     REFERENCE_TIME oldPEStime = firstVideoPESTimeStamp;
@@ -216,7 +234,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushVideo(packet);
-    LogDebug("First Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired);
+    LogDebug("clip: first Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstVideoPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {

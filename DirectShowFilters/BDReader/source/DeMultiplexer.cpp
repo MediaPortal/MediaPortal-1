@@ -1929,8 +1929,3 @@ LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
 	}
 }
 
-void CDeMultiplexer::ForcedChapterChange()
-{
-  FlushPESBuffers(true);
-  m_playlistManager->ClearAllButCurrentClip(true);
-}

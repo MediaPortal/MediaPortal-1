@@ -64,6 +64,9 @@ public:
   void SetVideoPMT(AM_MEDIA_TYPE *pmt);
   void SetAudioPMT(AM_MEDIA_TYPE *pmt);
 
+  REFERENCE_TIME lastAudioPosition;
+  REFERENCE_TIME lastVideoPosition;
+
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
   typedef vector<Packet*>::iterator ivecAudioBuffers;
@@ -73,8 +76,6 @@ protected:
   AM_MEDIA_TYPE *m_audioPmt;
   REFERENCE_TIME clipDuration;
   REFERENCE_TIME audioPlaybackpoint;
-  REFERENCE_TIME lastAudioPosition;
-  REFERENCE_TIME lastVideoPosition;
   int superceeded;
 
   bool firstAudio;
