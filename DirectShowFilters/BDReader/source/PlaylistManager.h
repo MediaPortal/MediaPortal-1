@@ -54,7 +54,6 @@ public:
   Packet* GetNextVideoPacket();
   bool HasAudio();
   bool HasVideo();
-  bool UserInteracted();
 
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
