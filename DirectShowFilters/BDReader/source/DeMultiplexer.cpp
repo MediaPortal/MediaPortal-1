@@ -403,7 +403,7 @@ void CDeMultiplexer::Flush(bool pSeeking)
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
-  FlushPESBuffers();
+  FlushPESBuffers(pSeeking);
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
@@ -631,7 +631,7 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
   else if (pause && m_bFlushBuffersOnPause)
   {
     m_bFlushBuffersOnPause = false;
-    FlushPESBuffers();
+    FlushPESBuffers(false);
   }
 
   return 0;
@@ -686,8 +686,6 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
     case BD_EVENT_PLAYITEM:
       LogDebug("demux: New playitem %d", pEv.param);
       
-      m_bVideoFormatParsed = false;
-      m_bAudioFormatParsed = false;
       m_bFlushBuffersOnPause = true;
       
       UINT64 clipStart = 0, clipIn = 0, bytePos = 0, duration = 0;
@@ -731,7 +729,10 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         }
 
         if (!interrupted)
-          FlushPESBuffers();
+          FlushPESBuffers(false);
+
+        m_bVideoFormatParsed = false;
+        m_bAudioFormatParsed = false;
 
         ParseVideoStream(clip);
         ParseAudioStreams(clip);
@@ -872,9 +873,9 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   }
 }
 
-void CDeMultiplexer::FlushPESBuffers()
+void CDeMultiplexer::FlushPESBuffers(bool pSeeking)
 {
-  if (m_videoServiceType != NO_STREAM)
+  if (m_videoServiceType != NO_STREAM && !pSeeking)
   {
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
         m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
@@ -972,16 +973,12 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
   {
     m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
     if (!m_bVideoFormatParsed)
-    {
       LogDebug("demux: ParseVideoFormat - failed to parse video format!");
-    }
     else
     {
       LogDebug("demux: ParseVideoFormat - succeeded");
       if (!m_bStarting)
-      {
-        m_playlistManager->SetVideoPMT(CreateMediaType(&m_videoParser->pmt), m_nPlaylist, m_nClip);
-      }
+        m_playlistManager->SetVideoPMT(CreateMediaType(&m_videoParser->pmt), p->nPlaylist, p->nClipNumber);
     }
   }
 
@@ -994,16 +991,12 @@ bool CDeMultiplexer::ParseAudioFormat(Packet* p)
   {
     m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->GetData(), p->GetCount(), m_AudioStreamType);
     if (!m_bAudioFormatParsed)
-    {
       LogDebug("demux: ParseAudioFormat - failed to parse audio format!");
-    }
     else
     {
       LogDebug("demux: ParseAudioFormat - succeeded");
       if (!m_bStarting)
-      {
         m_playlistManager->SetAudioPMT(CreateMediaType(&m_audioParser->pmt), m_nPlaylist, m_nClip);
-      }
     }
   }
 
@@ -1597,45 +1590,42 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             while(m_pl.GetCount())
               p->Append(*m_pl.RemoveHead().Detach());
     
-            ParseVideoFormat(p);
-           
-            if (m_filter.GetVideoPin()->IsConnected())
+            if (m_CurrentVideoPts.IsValid)
             {
-              if (m_CurrentVideoPts.IsValid)
+              m_LastValidFrameCount = frame_count;
+              m_LastValidFramePts = m_CurrentVideoPts;
+            }
+            else
+            {                    
+              if (m_LastValidFrameCount >= 0)                       // No timestamp, but we've latest GOP timestamp.
               {
-                m_LastValidFrameCount = frame_count;
-                m_LastValidFramePts = m_CurrentVideoPts;
-              }
-              else
-              {                    
-                if (m_LastValidFrameCount >= 0)                       // No timestamp, but we've latest GOP timestamp.
-                {
-                  double d = m_LastValidFramePts.ToClock() + (frame_count-m_LastValidFrameCount) * m_curFrameRate ;
-                  m_CurrentVideoPts.FromClock(d);                   // Rebuild it from 1st frame in GOP timestamp.
-                  m_CurrentVideoPts.IsValid = true;
-                }
-              }
-              p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
-              p->rtStop = p->rtStart + 1;
-              p->nClipNumber = m_p->nClipNumber;
-              p->nPlaylist = m_p->nPlaylist;
-
-              if (m_bSetVideoDiscontinuity)
-              {
-                m_bSetVideoDiscontinuity = false;
-                p->bDiscontinuity = true;
-              }
-              
-              if (!m_bStarting)
-                m_playlistManager->SubmitVideoPacket(p);
-              else
-              {
-                delete p;
-                p = NULL;
+                double d = m_LastValidFramePts.ToClock() + (frame_count-m_LastValidFrameCount) * m_curFrameRate ;
+                m_CurrentVideoPts.FromClock(d);                   // Rebuild it from 1st frame in GOP timestamp.
+                m_CurrentVideoPts.IsValid = true;
               }
             }
-            m_CurrentVideoPts.IsValid = false;
-          }  
+            p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
+            p->rtStop = p->rtStart + 1;
+            p->nClipNumber = m_p->nClipNumber;
+            p->nPlaylist = m_p->nPlaylist;
+
+            ParseVideoFormat(p);
+
+            if (m_bSetVideoDiscontinuity)
+            {
+              m_bSetVideoDiscontinuity = false;
+              p->bDiscontinuity = true;
+            }
+              
+            if (!m_bStarting)
+              m_playlistManager->SubmitVideoPacket(p);
+            else
+            {
+              delete p;
+              p = NULL;
+            }
+          }
+          m_CurrentVideoPts.IsValid = false;
           m_VideoValidPES = true;                                    // We've just completed a frame, set flag until problem clears it 
           m_pl.RemoveAll();
         }
@@ -1941,6 +1931,6 @@ LPCTSTR CDeMultiplexer::StreamFormatAsString(int pStreamType)
 
 void CDeMultiplexer::ForcedChapterChange()
 {
-  FlushPESBuffers();
+  FlushPESBuffers(true);
   m_playlistManager->ClearAllButCurrentClip(true);
 }
