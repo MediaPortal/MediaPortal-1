@@ -113,7 +113,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
 Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 {
   Packet* ret=NULL;
-  if (m_vecClipVideoPackets.size()>0)
+  if (m_vecClipVideoPackets.size()>0 && m_videoPmt)
   {
     ivecVideoBuffers it = m_vecClipVideoPackets.begin();
     ret=*it;
