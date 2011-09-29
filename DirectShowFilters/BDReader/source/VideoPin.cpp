@@ -205,12 +205,13 @@ bool CVideoPin::CompareMediaTypes(AM_MEDIA_TYPE* lhs_pmt, AM_MEDIA_TYPE* rhs_pmt
   {
     if (m_decoderType == Arcsoft)
     {
-      if (rhs_pmt->subtype == MEDIASUBTYPE_WVC1_ARCSOFT) return true;
+      lhs_pmt->subtype = MEDIASUBTYPE_WVC1_ARCSOFT;
     }
     else if (m_decoderType == Cyberlink)
     {
-      if (rhs_pmt->subtype == MEDIASUBTYPE_WVC1_CYBERLINK) return true;
+      lhs_pmt->subtype = MEDIASUBTYPE_WVC1_CYBERLINK;
     }
+    return (lhs_pmt->subtype == rhs_pmt->subtype);
   }
   return false;
 }
