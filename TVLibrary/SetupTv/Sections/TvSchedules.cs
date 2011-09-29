@@ -24,10 +24,21 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Globalization;
 using Gentle.Framework;
+using RuleBasedScheduler;
 using SetupControls;
 using TvControl;
 using TvDatabase;
 using MediaPortal.UserInterface.Controls;
+using TvLibrary.Interfaces;
+
+using Channel = TvDatabase.Channel;
+using ChannelGroup = TvDatabase.ChannelGroup;
+using GroupMap = TvDatabase.GroupMap;
+using Program = TvDatabase.Program;
+using RuleBasedSchedule = TvDatabase.RuleBasedSchedule;
+using Schedule = TvDatabase.Schedule;
+using ScheduleRulesTemplate = TvDatabase.ScheduleRulesTemplate;
+using TuningDetail = TvDatabase.TuningDetail;
 
 namespace SetupTv.Sections
 {
@@ -55,6 +66,38 @@ namespace SetupTv.Sections
       LoadSchedules();
       AddGroups();
       RefreshEPG();
+      RefreshTemplates();
+      SetupScheduleTemplatesMenuItems();
+    }
+
+    private void SetupScheduleTemplatesMenuItems()
+    {
+      IList<ScheduleRulesTemplate> templates = ScheduleRulesTemplate.ListAll();
+      foreach (var template in templates)
+      {
+        ToolStripItem toolStripItem = new ToolStripButton();
+        toolStripItem.Tag = template;
+        toolStripItem.Text = template.ToString();
+        toolStripItem.Click += new EventHandler(toolStripItem_Click);
+        addScheduleByTemplateToolStripMenuItem.DropDown.Items.Add(toolStripItem); 
+      }      
+    }
+
+    private void toolStripItem_Click(object sender, EventArgs e)
+    {
+      if (listView2.SelectedItems.Count > 0)
+      {
+        var program = listView2.SelectedItems[0].Tag as Program;
+        if (program != null)
+        {
+          var item = sender as ToolStripItem;
+          if (item != null)
+          {
+            var template = item.Tag as ScheduleRulesTemplate;
+            ShowEditScheduleDialogue(program, null, template);
+          }
+        }
+      }
     }
 
     private void AddGroups()
@@ -183,8 +226,61 @@ namespace SetupTv.Sections
       RefreshEPG();
     }
 
+    private void RefreshTemplates()
+    {
+      IList<ScheduleRulesTemplate> templates = ScheduleRulesTemplate.ListAll();
+
+      if (templates != null)
+      {
+        listViewTemplates.Items.Clear();
+        foreach (var template in templates)
+        {
+          var item = new ListViewItem();
+          item.Tag = template;
+
+          item.SubItems.Add(Convert.ToString(template.Name));
+          item.SubItems.Add(Convert.ToString(template.Usages));
+          item.SubItems.Add(Convert.ToString(template.Editable));
+          ScheduleConditionList rules = template.Rules;
+          if (rules != null)
+          {
+            item.SubItems.Add(template.Rules.ToString());  
+          }
+          else
+          {
+            item.SubItems.Add("n/a");
+          }
+          
+
+          item.Checked = template.Enabled;
+
+          listViewTemplates.Items.Add(item);
+          listViewTemplates.AutoResizeColumns(ColumnHeaderAutoResizeStyle.HeaderSize);
+        }
+        
+      }
+    }
+
     private void RefreshEPG()
     {
+
+      /*using (var ctx = new TVDatabaseEntities())
+      {
+        ObjectSet<TVDatabaseModel.Channel> channels = ctx.Channels;        
+        foreach (var channel in channels)
+        {
+          string a = channel.displayName;
+        }
+
+
+        IQueryable<TVDatabaseModel.Program> query = GetProgramsMatchingChannelName(ctx, "DR1");
+
+        foreach (var program in query)
+        {
+          string a = program.title;
+        }
+      }*/
+
       IFormatProvider mmddFormat = new CultureInfo(String.Empty, false);
       int channelId = ((ComboBoxExItem)comboBoxChannels.SelectedItem).Id;
       IList<Program> prgs = Program.RetrieveByChannelAndTimesInterval(dateTimePicker1.Value, dateTimePicker1.Value.AddDays(1), channelId);
@@ -218,6 +314,14 @@ namespace SetupTv.Sections
       }
 
     }
+
+    /*public static IQueryable<TVDatabaseModel.Program> GetProgramsMatchingChannelName(TVDatabaseEntities ctx, string name)
+    {
+      var query = from s in ctx.Programs
+                  where s.Channel.displayName.Equals(name)
+                  select s;
+      return query;
+    }*/
 
     private void mpComboBox1_SelectedIndexChanged(object sender, EventArgs e)
     {
@@ -322,8 +426,10 @@ namespace SetupTv.Sections
     private void tabControl1_Selected(object sender, TabControlEventArgs e)
     {
       contextMenuStrip1.Items[0].Visible = (e.TabPageIndex == 0);
-      contextMenuStrip1.Items[1].Visible = (e.TabPageIndex == 1);      
-    }
+      contextMenuStrip1.Items[1].Visible = (e.TabPageIndex == 1);
+      contextMenuStrip1.Items[2].Visible = (e.TabPageIndex == 1);
+      contextMenuStrip1.Items[3].Visible = (e.TabPageIndex == 2);   
+    }    
 
     private void addScheduleToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -332,15 +438,38 @@ namespace SetupTv.Sections
         var program = item.Tag as Program;
         if (program != null)
         {
-          var dlg = new FormEditSchedule();
-          dlg.Schedule = null;
-          dlg.Program = program;
-          dlg.ShowDialog();          
+          ShowEditScheduleDialogue(program, null, null);
           break;
         }
       }
+    }
 
-    
+    private static void ShowEditScheduleDialogue(Program program, Schedule schedule, ScheduleRulesTemplate template)
+    {
+      var dlg = new FormEditSchedule {Schedule = schedule, Program = program, ScheduleRulesTemplate = template};
+      dlg.ShowDialog();
+    }
+
+    private void editScheduleTemplateToolStripMenuItem_Click(object sender, System.EventArgs e)
+    {
+      foreach (ListViewItem item in listViewTemplates.SelectedItems)
+      {
+        var ruleBasedSchedule = item.Tag as RuleBasedSchedule;
+        if (ruleBasedSchedule != null)
+        {
+          /*var dlg = new FormEditScheduleTemplate();
+          dlg.Schedule = null;
+          dlg.Program = ruleBasedSchedule;
+          dlg.ShowDialog();
+           */
+          break;
+        }
+      }
+    }
+
+    private void mpButtonAddNewTemplate_Click(object sender, EventArgs e)
+    {
+
     }
   }
 }

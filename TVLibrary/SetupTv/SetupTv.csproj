@@ -76,11 +76,13 @@
       <HintPath>..\TVDatabase\references\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -538,6 +540,14 @@
     <ProjectReference Include="..\TvControl\TvControl.csproj">
       <Project>{0DB878C6-1B68-4DC5-B6EF-564B7C08486F}</Project>
       <Name>TvControl</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabaseEntities\TVDatabaseEntities.csproj">
+      <Project>{4C2D9698-AF44-4157-99B6-48F5269F20CC}</Project>
+      <Name>TVDatabaseEntities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TVDatabaseModel\TVDatabaseModel.csproj">
+      <Project>{4D0F06A3-DE88-4395-823F-67B27DE30E81}</Project>
+      <Name>TVDatabaseModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\TVDatabase\TvBusinessLayer\TvBusinessLayer.csproj">
       <Project>{58C35C9D-F18D-40F2-8024-24E50D01E9C5}</Project>

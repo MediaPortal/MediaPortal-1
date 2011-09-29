@@ -165,6 +165,7 @@ namespace SetupTv.Sections
       this.checkBoxMonday.TabIndex = 6;
       this.checkBoxMonday.Text = "Mo";
       this.checkBoxMonday.UseVisualStyleBackColor = true;
+      this.checkBoxMonday.CheckedChanged += new System.EventHandler(this.checkBoxMonday_CheckedChanged);
       // 
       // groupBox4
       // 
@@ -187,7 +188,7 @@ namespace SetupTv.Sections
       this.groupBox4.Controls.Add(this.checkBoxThursday);
       this.groupBox4.Location = new System.Drawing.Point(578, 72);
       this.groupBox4.Name = "groupBox4";
-      this.groupBox4.Size = new System.Drawing.Size(384, 115);
+      this.groupBox4.Size = new System.Drawing.Size(454, 115);
       this.groupBox4.TabIndex = 10;
       this.groupBox4.TabStop = false;
       this.groupBox4.Text = "When";
@@ -262,7 +263,6 @@ namespace SetupTv.Sections
       this.dateTimePickerStartingAround.ShowUpDown = true;
       this.dateTimePickerStartingAround.Size = new System.Drawing.Size(83, 20);
       this.dateTimePickerStartingAround.TabIndex = 19;
-      this.dateTimePickerStartingAround.ValueChanged += new System.EventHandler(this.dateTimePickerStartingAround_ValueChanged);
       // 
       // label25
       // 
@@ -282,6 +282,7 @@ namespace SetupTv.Sections
       this.dateTimePickerOnDate.ShowCheckBox = true;
       this.dateTimePickerOnDate.Size = new System.Drawing.Size(157, 20);
       this.dateTimePickerOnDate.TabIndex = 17;
+      this.dateTimePickerOnDate.ValueChanged += new System.EventHandler(this.dateTimePickerOnDate_ValueChanged);
       // 
       // mpLabel2
       // 
@@ -302,6 +303,7 @@ namespace SetupTv.Sections
       this.checkBoxSunday.TabIndex = 16;
       this.checkBoxSunday.Text = "Su";
       this.checkBoxSunday.UseVisualStyleBackColor = true;
+      this.checkBoxSunday.CheckedChanged += new System.EventHandler(this.checkBoxSunday_CheckedChanged);
       // 
       // checkBoxTuesday
       // 
@@ -313,6 +315,7 @@ namespace SetupTv.Sections
       this.checkBoxTuesday.TabIndex = 11;
       this.checkBoxTuesday.Text = "Tu";
       this.checkBoxTuesday.UseVisualStyleBackColor = true;
+      this.checkBoxTuesday.CheckedChanged += new System.EventHandler(this.checkBoxTuesday_CheckedChanged);
       // 
       // checkBoxSaturday
       // 
@@ -324,6 +327,7 @@ namespace SetupTv.Sections
       this.checkBoxSaturday.TabIndex = 15;
       this.checkBoxSaturday.Text = "Sa";
       this.checkBoxSaturday.UseVisualStyleBackColor = true;
+      this.checkBoxSaturday.CheckedChanged += new System.EventHandler(this.checkBoxSaturday_CheckedChanged);
       // 
       // checkBoxWednesday
       // 
@@ -335,6 +339,7 @@ namespace SetupTv.Sections
       this.checkBoxWednesday.TabIndex = 12;
       this.checkBoxWednesday.Text = "We";
       this.checkBoxWednesday.UseVisualStyleBackColor = true;
+      this.checkBoxWednesday.CheckedChanged += new System.EventHandler(this.checkBoxWednesday_CheckedChanged);
       // 
       // checkBoxFriday
       // 
@@ -346,6 +351,7 @@ namespace SetupTv.Sections
       this.checkBoxFriday.TabIndex = 14;
       this.checkBoxFriday.Text = "Fr";
       this.checkBoxFriday.UseVisualStyleBackColor = true;
+      this.checkBoxFriday.CheckedChanged += new System.EventHandler(this.checkBoxFriday_CheckedChanged);
       // 
       // checkBoxThursday
       // 
@@ -357,6 +363,7 @@ namespace SetupTv.Sections
       this.checkBoxThursday.TabIndex = 13;
       this.checkBoxThursday.Text = "Th";
       this.checkBoxThursday.UseVisualStyleBackColor = true;
+      this.checkBoxThursday.CheckedChanged += new System.EventHandler(this.checkBoxThursday_CheckedChanged);
       // 
       // groupBox5
       // 
@@ -516,7 +523,6 @@ namespace SetupTv.Sections
       // 
       // mpButtonAddAllChannelCondition
       // 
-      this.mpButtonAddAllChannelCondition.Enabled = false;
       this.mpButtonAddAllChannelCondition.Location = new System.Drawing.Point(276, 70);
       this.mpButtonAddAllChannelCondition.Name = "mpButtonAddAllChannelCondition";
       this.mpButtonAddAllChannelCondition.Size = new System.Drawing.Size(75, 23);
@@ -553,7 +559,6 @@ namespace SetupTv.Sections
       // mpComboBoxChannels
       // 
       this.mpComboBoxChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxChannels.Enabled = false;
       this.mpComboBoxChannels.FormattingEnabled = true;
       this.mpComboBoxChannels.Location = new System.Drawing.Point(304, 43);
       this.mpComboBoxChannels.Name = "mpComboBoxChannels";
@@ -562,7 +567,6 @@ namespace SetupTv.Sections
       // 
       // mpButtonAddChannelCondition
       // 
-      this.mpButtonAddChannelCondition.Enabled = false;
       this.mpButtonAddChannelCondition.Location = new System.Drawing.Point(195, 70);
       this.mpButtonAddChannelCondition.Name = "mpButtonAddChannelCondition";
       this.mpButtonAddChannelCondition.Size = new System.Drawing.Size(75, 23);
@@ -573,7 +577,6 @@ namespace SetupTv.Sections
       // 
       // mpButtonRemoveChannelCondition
       // 
-      this.mpButtonRemoveChannelCondition.Enabled = false;
       this.mpButtonRemoveChannelCondition.Location = new System.Drawing.Point(195, 100);
       this.mpButtonRemoveChannelCondition.Name = "mpButtonRemoveChannelCondition";
       this.mpButtonRemoveChannelCondition.Size = new System.Drawing.Size(75, 23);
@@ -585,7 +588,6 @@ namespace SetupTv.Sections
       // mpComboBoxChannelsGroup
       // 
       this.mpComboBoxChannelsGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.mpComboBoxChannelsGroup.Enabled = false;
       this.mpComboBoxChannelsGroup.FormattingEnabled = true;
       this.mpComboBoxChannelsGroup.Location = new System.Drawing.Point(195, 43);
       this.mpComboBoxChannelsGroup.Name = "mpComboBoxChannelsGroup";
@@ -595,7 +597,6 @@ namespace SetupTv.Sections
       // 
       // listBoxChannels
       // 
-      this.listBoxChannels.Enabled = false;
       this.listBoxChannels.Location = new System.Drawing.Point(6, 43);
       this.listBoxChannels.Name = "listBoxChannels";
       this.listBoxChannels.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
@@ -708,9 +709,9 @@ namespace SetupTv.Sections
       this.groupBox6.Controls.Add(this.checkBoxSkipRepeats);
       this.groupBox6.Controls.Add(this.checkBoxNewTitles);
       this.groupBox6.Controls.Add(this.checkBoxOnlyNewEpisodes);
-      this.groupBox6.Location = new System.Drawing.Point(968, 72);
+      this.groupBox6.Location = new System.Drawing.Point(1038, 72);
       this.groupBox6.Name = "groupBox6";
-      this.groupBox6.Size = new System.Drawing.Size(179, 115);
+      this.groupBox6.Size = new System.Drawing.Size(109, 115);
       this.groupBox6.TabIndex = 16;
       this.groupBox6.TabStop = false;
       this.groupBox6.Text = "Misc.";

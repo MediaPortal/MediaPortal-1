@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
@@ -28,10 +29,23 @@ using System.Reflection;
 using System.Windows.Forms;
 using Gentle.Framework;
 using MediaPortal.UserInterface.Controls;
+using RuleBasedScheduler;
+using RuleBasedScheduler.ScheduleConditions;
 using SetupControls;
+using TVDatabaseEntities;
 using TvDatabase;
 using TvLibrary.Implementations.DVB;
 using TvLibrary.Interfaces;
+using Channel = TvDatabase.Channel;
+using ChannelGroup = TvDatabase.ChannelGroup;
+using GroupMap = TvDatabase.GroupMap;
+using Program = TvDatabase.Program;
+using ProgramCategory = TvDatabase.ProgramCategory;
+using ProgramCredit = TvDatabase.ProgramCredit;
+using RuleBasedSchedule = TvDatabase.RuleBasedSchedule;
+using Schedule = TvDatabase.Schedule;
+using ScheduleRulesTemplate = TvDatabase.ScheduleRulesTemplate;
+using TuningDetail = TvDatabase.TuningDetail;
 
 namespace SetupTv.Sections
 {
@@ -40,6 +54,7 @@ namespace SetupTv.Sections
 
     private Schedule _schedule;
     private Program _program;
+    private ScheduleRulesTemplate _scheduleRulesTemplate;
 
     public FormEditSchedule()
     {
@@ -58,6 +73,12 @@ namespace SetupTv.Sections
       set { _program = value; }
     }
 
+    public ScheduleRulesTemplate ScheduleRulesTemplate
+    {
+      get { return _scheduleRulesTemplate; }
+      set { _scheduleRulesTemplate = value; }
+    }
+
     private void FormEditSchedule_Load(object sender, System.EventArgs e)
     {
       Init();
@@ -72,22 +93,31 @@ namespace SetupTv.Sections
       PreFillInProgramDataForCategories();
       PreFillInProgramDataForCredits();
       PreFillInProgramDataForDates();
+      SetupEventHandlersForDates();
+    }
+
+    private void SetupEventHandlersForDates()
+    {
+      this.dateTimePickerStartingBetweenTo.ValueChanged += new System.EventHandler(this.dateTimePickerStartingBetweenTo_ValueChanged);
+      this.dateTimePickerStartingAround.ValueChanged += new System.EventHandler(this.dateTimePickerStartingAround_ValueChanged);
+      this.dateTimePickerStartingBetweenFrom.ValueChanged += new System.EventHandler(this.dateTimePickerStartingBetweenFrom_ValueChanged);
     }
 
     private void PreFillInProgramDataForDates()
     {
-      dateTimePickerOnDate.Value = Program.StartTime;
-      dateTimePickerStartingAround.Value = Program.StartTime;
-      mpNumericTextBoxStartingAroundDeviation.Value = 0;
+      dateTimePickerOnDate.Value = Program.StartTime;      
       dateTimePickerStartingBetweenFrom.Value = Program.StartTime;
       dateTimePickerStartingBetweenTo.Value = Program.EndTime;
       dateTimePickerStartingBetweenFrom.Checked = false;
-      dateTimePickerStartingBetweenTo.Checked = false;
+      dateTimePickerStartingBetweenTo.Checked = false;      
+      dateTimePickerStartingAround.Value = Program.StartTime;      
+      mpNumericTextBoxStartingAroundDeviation.Value = 0;
+      SetStartingBetweenState();
     }
 
     private void PreFillInProgramDataForChannels()
     {
-      var channel = Program.ReferencedChannel().ConvertToDTO();
+      var channel = Program.ReferencedChannel().ConvertToEntity();
       listBoxChannels.Items.Add(channel);
     }
 
@@ -119,7 +149,7 @@ namespace SetupTv.Sections
 
       if (programCredits != null)
       {
-        IList<ProgramCreditDTO> programCreditDtoList = ProgramCredit.ConvertToDtoList(programCredits);
+        IList<TVDatabaseEntities.ProgramCredit> programCreditDtoList = ProgramCredit.ConvertToEntities(programCredits);
         foreach (var programCreditDto in programCreditDtoList)
         {
           AddToCheckedListBox(programCreditDto, programCreditDto.ToString(), listBoxCredits, false);  
@@ -136,7 +166,7 @@ namespace SetupTv.Sections
       }
       if (category != null)
       {
-        ProgramCategoryDTO programCategoryDto = category.ConvertToDto();
+        TVDatabaseEntities.ProgramCategory programCategoryDto = category.ConvertToEntity();
         AddToCheckedListBox(programCategoryDto, programCategoryDto.ToString(), listBoxCategories, false);
       }
     }
@@ -175,10 +205,10 @@ namespace SetupTv.Sections
     private void PopulateRolesComboBox()
     {
       IList<ProgramCredit> roles = ProgramCredit.ListAllDistinctRoles();
-      IList<ProgramCreditDTO> rolesDtos = ProgramCredit.ConvertToDtoList(roles);
+      IList<TVDatabaseEntities.ProgramCredit> rolesDtos = ProgramCredit.ConvertToEntities(roles);
       foreach (var programCredit in rolesDtos)
       {
-        mpComboBoxRoles.Items.Add(programCredit.Role);
+        mpComboBoxRoles.Items.Add(programCredit.role);
       }
     }
 
@@ -193,7 +223,7 @@ namespace SetupTv.Sections
     private void PopulateCategoriesComboBox()
     {
       IList<ProgramCategory> categories = ProgramCategory.ListAll();
-      IList<ProgramCategoryDTO> categoriesDtos = ProgramCategory.ConvertToDtoList(categories);
+      IList<TVDatabaseEntities.ProgramCategory> categoriesDtos = ProgramCategory.ConvertToEntities(categories);
       foreach (var programCategory in categoriesDtos)
       {
         mpComboBoxCategories.Items.Add(programCategory);
@@ -233,11 +263,24 @@ namespace SetupTv.Sections
     }
 
     private static IEnumerable<PropertyInfo> GetProgramPropertyInfos()
-    {
-      var programDto = new ProgramDTO();
+    {      
+      /*var programDto = new TVDatabaseEntities.Program();
       Type t = programDto.GetType();
       var props = t.GetProperties().Where(
-        prop => Attribute.IsDefined(prop, typeof (ProgramAttribute)));
+        prop => Attribute.IsDefined(prop, typeof(MetadataTypeAttribute)));
+      return props;*/
+
+      MetadataTypeAttribute[] metadataTypes = typeof(TVDatabaseEntities.Program).GetCustomAttributes(typeof(MetadataTypeAttribute), true).OfType<MetadataTypeAttribute>().ToArray();
+      MetadataTypeAttribute metadata = metadataTypes.FirstOrDefault();
+      IList<PropertyInfo> props = new List<PropertyInfo>();
+      if (metadata != null)
+      {
+        PropertyInfo[] properties = metadata.MetadataClassType.GetProperties();
+        foreach (PropertyInfo propertyInfo in properties.Where(propertyInfo => Attribute.IsDefined(propertyInfo, typeof(ProgramAttribute)))) 
+        {
+          props.Add(propertyInfo);
+        }
+      }
       return props;
     }
 
@@ -277,8 +320,8 @@ namespace SetupTv.Sections
 
       if (radioOnChannels.Checked)
       {
-        IList<ChannelDTO> channelList = new ObservableCollection<ChannelDTO>();
-        foreach (ChannelDTO channel in listBoxChannels.Items)
+        var channelList = new ObservableCollection<TVDatabaseEntities.Channel>();
+        foreach (TVDatabaseEntities.Channel channel in listBoxChannels.Items)
         {
           channelList.Add(channel);          
         }
@@ -290,8 +333,8 @@ namespace SetupTv.Sections
       }
       else if (radioNotOnChannels.Checked)
       {
-        IList<ChannelDTO> channelList = new ObservableCollection<ChannelDTO>();
-        foreach (ChannelDTO channel in listBoxChannels.Items)
+        var channelList = new ObservableCollection<TVDatabaseEntities.Channel>();
+        foreach (TVDatabaseEntities.Channel channel in listBoxChannels.Items)
         {
           channelList.Add(channel);
         }
@@ -306,8 +349,8 @@ namespace SetupTv.Sections
 
       if (mpRadioButtonInCategory.Checked)
       {
-        IList<ProgramCategoryDTO> categoryList = new ObservableCollection<ProgramCategoryDTO>();
-        foreach (ProgramCategoryDTO categoryDto in listBoxCategories.CheckedItems)
+        IList<TVDatabaseEntities.ProgramCategory> categoryList = new ObservableCollection<TVDatabaseEntities.ProgramCategory>();
+        foreach (TVDatabaseEntities.ProgramCategory categoryDto in listBoxCategories.CheckedItems)
         {
           categoryList.Add(categoryDto);
         }
@@ -319,8 +362,8 @@ namespace SetupTv.Sections
       }
       else if (mpRadioButtonNotInCategory.Checked)
       {
-        IList<ProgramCategoryDTO> categoryList = new ObservableCollection<ProgramCategoryDTO>();
-        foreach (ProgramCategoryDTO categoryDto in listBoxCategories.CheckedItems)
+        IList<TVDatabaseEntities.ProgramCategory> categoryList = new ObservableCollection<TVDatabaseEntities.ProgramCategory>();
+        foreach (TVDatabaseEntities.ProgramCategory categoryDto in listBoxCategories.CheckedItems)
         {
           categoryList.Add(categoryDto);
         }
@@ -332,8 +375,8 @@ namespace SetupTv.Sections
       }
 
 
-      IList<ProgramCreditDTO> creditsList = new ObservableCollection<ProgramCreditDTO>();
-      foreach (ProgramCreditDTO creditDto in listBoxCredits.CheckedItems)
+      IList<TVDatabaseEntities.ProgramCredit> creditsList = new ObservableCollection<TVDatabaseEntities.ProgramCredit>();
+      foreach (TVDatabaseEntities.ProgramCredit creditDto in listBoxCredits.CheckedItems)
       {
         creditsList.Add(creditDto);
       }
@@ -467,7 +510,7 @@ namespace SetupTv.Sections
             imageIndex = 3;
           }          
           //ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);         
-          mpComboBoxChannels.Items.Add(ch.ConvertToDTO());
+          mpComboBoxChannels.Items.Add(ch.ConvertToEntity());
         }
       }
       else
@@ -507,7 +550,7 @@ namespace SetupTv.Sections
             imageIndex = 3;
           }
           //ComboBoxExItem item = new ComboBoxExItem(ch.DisplayName, imageIndex, ch.IdChannel);
-          mpComboBoxChannels.Items.Add(ch.ConvertToDTO());
+          mpComboBoxChannels.Items.Add(ch.ConvertToEntity());
           //mpComboBoxChannels.Items.Add(item);
         }
       }
@@ -620,10 +663,10 @@ namespace SetupTv.Sections
 
     private void mpButtonAddChannelCondition_Click(object sender, EventArgs e)
     {
-      ChannelDTO channel = mpComboBoxChannels.SelectedItem as ChannelDTO;
+      var channel = mpComboBoxChannels.SelectedItem as TVDatabaseEntities.Channel;
       if (channel != null)
       {
-        AddToListBox(channel, channel.DisplayName, listBoxChannels);
+        AddToListBox(channel, channel.displayName, listBoxChannels);
       }
     }
 
@@ -639,10 +682,10 @@ namespace SetupTv.Sections
 
     private void mpButtonAddCategoryCondition_Click(object sender, EventArgs e)
     {
-      ProgramCategoryDTO categoryDto = mpComboBoxCategories.SelectedItem as ProgramCategoryDTO;
+      var categoryDto = mpComboBoxCategories.SelectedItem as TVDatabaseEntities.ProgramCategory;
       if (categoryDto != null)
       {
-        AddToCheckedListBox(categoryDto, categoryDto.Category, listBoxCategories, true);        
+        AddToCheckedListBox(categoryDto, categoryDto.category, listBoxCategories, true);        
       }      
     }
 
@@ -676,8 +719,8 @@ namespace SetupTv.Sections
 
     private void mpButtonCreditAdd_Click(object sender, EventArgs e)
     {
-      ProgramCreditDTO credit = new ProgramCreditDTO
-                                  {Role = mpComboBoxRoles.SelectedItem as string, Person = mpTextBoxPerson.Text};
+      TVDatabaseEntities.ProgramCredit credit = new TVDatabaseEntities.ProgramCredit
+                                  {role = mpComboBoxRoles.SelectedItem as string, person = mpTextBoxPerson.Text};
 
       AddToCheckedListBox(credit, credit.ToString(), listBoxCredits, true);
     }
@@ -718,9 +761,107 @@ namespace SetupTv.Sections
     private void dateTimePickerStartingAround_ValueChanged(object sender, EventArgs e)
     {
       mpNumericTextBoxStartingAroundDeviation.Enabled = dateTimePickerStartingAround.Checked;
+      SetStartingBetweenState();
     }    
 
+    private void dateTimePickerOnDate_ValueChanged(object sender, EventArgs e)
+    {
+      checkBoxMonday.Checked = false;
+      checkBoxMonday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxTuesday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxWednesday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxThursday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxFriday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxSaturday.Enabled = !dateTimePickerOnDate.Checked;
+      checkBoxSunday.Enabled = !dateTimePickerOnDate.Checked;
+    }
 
+    private void checkBoxMonday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void SetStartingBetweenState()
+    {
+      
+      dateTimePickerStartingBetweenFrom.Enabled = !dateTimePickerStartingAround.Checked;
+      if (!dateTimePickerStartingBetweenFrom.Enabled)
+      {
+        dateTimePickerStartingBetweenFrom.Checked = false;
+      }
+      
+      dateTimePickerStartingBetweenTo.Enabled = !dateTimePickerStartingAround.Checked;
+      if (!dateTimePickerStartingBetweenTo.Enabled)
+      {
+        dateTimePickerStartingBetweenTo.Checked = false;  
+      }
+    }
+
+    private void SetStartingAroundState()
+    {      
+      dateTimePickerStartingAround.Enabled = !dateTimePickerStartingBetweenFrom.Checked &&
+                                             !dateTimePickerStartingBetweenTo.Checked;
+
+      mpNumericTextBoxStartingAroundDeviation.Enabled = !dateTimePickerStartingBetweenFrom.Checked &&
+                                             !dateTimePickerStartingBetweenTo.Checked;
+
+      if (!dateTimePickerStartingAround.Enabled)
+      {
+        dateTimePickerStartingAround.Checked = false;
+      }
+    }
+
+
+    private void SetOnDateState()
+    {      
+      dateTimePickerOnDate.Enabled = !checkBoxMonday.Checked && !checkBoxTuesday.Checked &&
+                                     !checkBoxWednesday.Checked && !checkBoxThursday.Checked && !checkBoxFriday.Checked &&
+                                     !checkBoxSaturday.Checked && !checkBoxSunday.Checked;
+      if (!dateTimePickerOnDate.Enabled)
+      {
+        dateTimePickerOnDate.Checked = false;   
+      }
+    }
+   
+    private void checkBoxTuesday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void checkBoxWednesday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void checkBoxThursday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void checkBoxFriday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void checkBoxSaturday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void checkBoxSunday_CheckedChanged(object sender, EventArgs e)
+    {
+      SetOnDateState();
+    }
+
+    private void dateTimePickerStartingBetweenFrom_ValueChanged(object sender, EventArgs e)
+    {
+      SetStartingAroundState();
+    }
+
+    private void dateTimePickerStartingBetweenTo_ValueChanged(object sender, EventArgs e)
+    {
+      SetStartingAroundState();
+    }    
   }
 
   internal class SelectedProgramCondition<T>

@@ -33,9 +33,11 @@ namespace SetupTv.Sections
       this.imageList1 = new System.Windows.Forms.ImageList(this.components);
       this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
       this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.addSCheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addScheduleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.addScheduleByTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.editScheduleTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
-      this.tabControl1 = new System.Windows.Forms.TabControl();
+      this.tabControlTemplates = new System.Windows.Forms.TabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
       this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
       this.listView1 = new System.Windows.Forms.ListView();
@@ -71,10 +73,19 @@ namespace SetupTv.Sections
       this.columnHeader17 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader18 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.columnHeader19 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.Templates = new System.Windows.Forms.TabPage();
+      this.mpButtonAddNewTemplate = new MediaPortal.UserInterface.Controls.MPButton();
+      this.listViewTemplates = new System.Windows.Forms.ListView();
+      this.columnHeader20 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader21 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader22 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader23 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader24 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.contextMenuStrip1.SuspendLayout();
-      this.tabControl1.SuspendLayout();
+      this.tabControlTemplates.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.Programs.SuspendLayout();
+      this.Templates.SuspendLayout();
       this.SuspendLayout();
       // 
       // imageList1
@@ -87,8 +98,11 @@ namespace SetupTv.Sections
       // contextMenuStrip1
       // 
       this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.deleteToolStripMenuItem, this.addSCheduleToolStripMenuItem,
-            this.toolStripMenuItem1});
+            this.deleteToolStripMenuItem,
+            this.addScheduleToolStripMenuItem,
+            this.addScheduleByTemplateToolStripMenuItem,
+            this.editScheduleTemplateToolStripMenuItem,
+            this.toolStripMenuItem1      });
       this.contextMenuStrip1.Name = "contextMenuStrip1";
       this.contextMenuStrip1.Size = new System.Drawing.Size(108, 32);
       // 
@@ -99,32 +113,49 @@ namespace SetupTv.Sections
       this.deleteToolStripMenuItem.Text = "Delete";
       this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
 
+      
       // 
-      // deleteToolStripMenuItem
+      // addScheduleToolStripMenuItem
       // 
-      this.addSCheduleToolStripMenuItem.Name = "addSCheduleToolStripMenuItem";
-      this.addSCheduleToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
-      this.addSCheduleToolStripMenuItem.Text = "Add schedule";
-      this.addSCheduleToolStripMenuItem.Click += new System.EventHandler(this.addScheduleToolStripMenuItem_Click);
+      this.addScheduleByTemplateToolStripMenuItem.Name = "addScheduleByTemplateToolStripMenuItem";
+      this.addScheduleByTemplateToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+      this.addScheduleByTemplateToolStripMenuItem.Text = "Add schedule by template:";      
+
+      // 
+      // addScheduleToolStripMenuItem
+      // 
+      this.addScheduleToolStripMenuItem.Name = "addSCheduleToolStripMenuItem";
+      this.addScheduleToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+      this.addScheduleToolStripMenuItem.Text = "Add schedule";
+      this.addScheduleToolStripMenuItem.Click += new System.EventHandler(this.addScheduleToolStripMenuItem_Click);
+
+      // 
+      // editScheduleTemplateToolStripMenuItem
+      // 
+      this.editScheduleTemplateToolStripMenuItem.Name = "editScheduleTemplateToolStripMenuItem";
+      this.editScheduleTemplateToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+      this.editScheduleTemplateToolStripMenuItem.Text = "Edit template";
+      this.editScheduleTemplateToolStripMenuItem.Click += new System.EventHandler(editScheduleTemplateToolStripMenuItem_Click);
       // 
       // toolStripMenuItem1
       // 
       this.toolStripMenuItem1.Name = "toolStripMenuItem1";
       this.toolStripMenuItem1.Size = new System.Drawing.Size(104, 6);
       // 
-      // tabControl1
+      // tabControlTemplates
       // 
-      this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+      this.tabControlTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                   | System.Windows.Forms.AnchorStyles.Left)
                   | System.Windows.Forms.AnchorStyles.Right)));
-      this.tabControl1.Controls.Add(this.tabPage1);
-      this.tabControl1.Controls.Add(this.Programs);
-      this.tabControl1.Location = new System.Drawing.Point(3, 3);
-      this.tabControl1.Name = "tabControl1";
-      this.tabControl1.SelectedIndex = 0;
-      this.tabControl1.Size = new System.Drawing.Size(881, 414);
-      this.tabControl1.TabIndex = 9;
-      this.tabControl1.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
+      this.tabControlTemplates.Controls.Add(this.tabPage1);
+      this.tabControlTemplates.Controls.Add(this.Programs);
+      this.tabControlTemplates.Controls.Add(this.Templates);
+      this.tabControlTemplates.Location = new System.Drawing.Point(3, 3);
+      this.tabControlTemplates.Name = "tabControlTemplates";
+      this.tabControlTemplates.SelectedIndex = 0;
+      this.tabControlTemplates.Size = new System.Drawing.Size(881, 414);
+      this.tabControlTemplates.TabIndex = 9;
+      this.tabControlTemplates.Selected += new System.Windows.Forms.TabControlEventHandler(this.tabControl1_Selected);
       // 
       // tabPage1
       // 
@@ -388,31 +419,102 @@ namespace SetupTv.Sections
       // 
       this.columnHeader19.Text = "State";
       // 
+      // Templates
+      // 
+      this.Templates.Controls.Add(this.mpButtonAddNewTemplate);
+      this.Templates.Controls.Add(this.listViewTemplates);
+      this.Templates.Location = new System.Drawing.Point(4, 22);
+      this.Templates.Name = "Templates";
+      this.Templates.Padding = new System.Windows.Forms.Padding(3);
+      this.Templates.Size = new System.Drawing.Size(873, 388);
+      this.Templates.TabIndex = 2;
+      this.Templates.Text = "Templates";
+      this.Templates.UseVisualStyleBackColor = true;
+      // 
+      // mpButtonAddNewTemplate
+      // 
+      this.mpButtonAddNewTemplate.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+      this.mpButtonAddNewTemplate.Location = new System.Drawing.Point(6, 359);
+      this.mpButtonAddNewTemplate.Name = "mpButtonAddNewTemplate";
+      this.mpButtonAddNewTemplate.Size = new System.Drawing.Size(113, 23);
+      this.mpButtonAddNewTemplate.TabIndex = 6;
+      this.mpButtonAddNewTemplate.Text = "Add new template";
+      this.mpButtonAddNewTemplate.UseVisualStyleBackColor = true;
+      this.mpButtonAddNewTemplate.Click += new System.EventHandler(this.mpButtonAddNewTemplate_Click);
+      // 
+      // listViewTemplates
+      // 
+      this.listViewTemplates.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.listViewTemplates.CheckBoxes = true;
+      this.listViewTemplates.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader20,
+            this.columnHeader21,
+            this.columnHeader22,
+            this.columnHeader23,
+            this.columnHeader24});
+      this.listViewTemplates.ContextMenuStrip = this.contextMenuStrip1;
+      this.listViewTemplates.FullRowSelect = true;
+      this.listViewTemplates.LargeImageList = this.imageList1;
+      this.listViewTemplates.Location = new System.Drawing.Point(6, 6);
+      this.listViewTemplates.Name = "listViewTemplates";
+      this.listViewTemplates.Size = new System.Drawing.Size(844, 347);
+      this.listViewTemplates.SmallImageList = this.imageList1;
+      this.listViewTemplates.TabIndex = 5;
+      this.listViewTemplates.UseCompatibleStateImageBehavior = false;
+      this.listViewTemplates.View = System.Windows.Forms.View.Details;
+      // 
+      // columnHeader20
+      // 
+      this.columnHeader20.Text = "Enabled";
+      // 
+      // columnHeader21
+      // 
+      this.columnHeader21.Text = "Name";
+      // 
+      // columnHeader22
+      // 
+      this.columnHeader22.Text = "Usages";
+      // 
+      // columnHeader23
+      // 
+      this.columnHeader23.Text = "Editable";
+      // 
+      // columnHeader24
+      // 
+      this.columnHeader24.Text = "Rules";
+      // 
       // TvSchedules
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.Controls.Add(this.tabControl1);
+      this.Controls.Add(this.tabControlTemplates);
       this.Name = "TvSchedules";
       this.Size = new System.Drawing.Size(887, 419);
       this.contextMenuStrip1.ResumeLayout(false);
-      this.tabControl1.ResumeLayout(false);
+      this.tabControlTemplates.ResumeLayout(false);
       this.tabPage1.ResumeLayout(false);
       this.tabPage1.PerformLayout();
       this.Programs.ResumeLayout(false);
       this.Programs.PerformLayout();
+      this.Templates.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
+
+    
 
     #endregion
 
     private System.Windows.Forms.ImageList imageList1;
     private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-    private System.Windows.Forms.ToolStripMenuItem addSCheduleToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem addScheduleToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem addScheduleByTemplateToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem editScheduleTemplateToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
-    private System.Windows.Forms.TabControl tabControl1;
+    private System.Windows.Forms.TabControl tabControlTemplates;
     private System.Windows.Forms.TabPage tabPage1;
     private System.Windows.Forms.ListView listView1;
     private System.Windows.Forms.ColumnHeader columnHeader5;
@@ -448,5 +550,13 @@ namespace SetupTv.Sections
     private SetupControls.ComboBoxEx comboBoxGroups;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel2;
     private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private System.Windows.Forms.TabPage Templates;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddNewTemplate;
+    private System.Windows.Forms.ListView listViewTemplates;
+    private System.Windows.Forms.ColumnHeader columnHeader20;
+    private System.Windows.Forms.ColumnHeader columnHeader21;
+    private System.Windows.Forms.ColumnHeader columnHeader22;
+    private System.Windows.Forms.ColumnHeader columnHeader23;
+    private System.Windows.Forms.ColumnHeader columnHeader24;
   }
 }
