@@ -84,6 +84,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml" />
@@ -121,30 +122,6 @@
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="PathManager.cs" />
     <Compile Include="RtspClient.cs" />
-    <Compile Include="RuleBasedScheduler\DTO\ProgramAttribute.cs" />
-    <Compile Include="RuleBasedScheduler\Helpers\DynamicLinqBuilder.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditionHelper.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditionList.cs" />
-    <Compile Include="RuleBasedScheduler\DTO\ChannelDTO.cs" />
-    <Compile Include="RuleBasedScheduler\DTO\ProgramCategoryDTO.cs" />
-    <Compile Include="RuleBasedScheduler\DTO\ProgramCreditDTO.cs" />
-    <Compile Include="RuleBasedScheduler\DTO\ProgramDTO.cs" />
-    <Compile Include="RuleBasedScheduler\IScheduleCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\ConditionOperator.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\CreditCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\NotOnCategoryCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\NotOnChannelsCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\NotOnDayCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnCategoryCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnChannelsCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnDateCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnDayCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnlyRecordNewEpisodesCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\OnlyRecordNewTitlesCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\ProgramCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\SkipRepeatsCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\StartingAroundCondition.cs" />
-    <Compile Include="RuleBasedScheduler\ScheduleConditions\StartingBetweenCondition.cs" />
     <Compile Include="ScanParameters.cs" />
     <Compile Include="ServiceProvider\ServiceProvider.cs" />
     <Compile Include="Epg\Languages.cs" />
@@ -203,6 +180,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
