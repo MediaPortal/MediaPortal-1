@@ -216,9 +216,9 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     }
   }
 
-  if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 10000000)
+  if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 20000000)
   {
-    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d", prevVideoPosition, packet->rtStart);
+    LogDebug("clip: video stream's discontinuity detected: old: %I64d new: %I64d", prevVideoPosition, packet->rtStart);
     firstVideoPESPacketSeen=false;
   }
 
@@ -503,4 +503,25 @@ void CPlaylist::SetAudioPMT(AM_MEDIA_TYPE * pmt, int nClip)
   {
     clip->SetAudioPMT(pmt);
   }
+}
+
+bool CPlaylist::RemoveRedundantClips()
+{
+  ivecClip it = m_vecClips.end();
+  if (it != m_vecClips.begin()) --it;
+  while (it != m_vecClips.begin())
+  {
+    CClip * clip=*it;
+    if (clip->IsSuperceeded(SUPERCEEDED_AUDIO_RETURN|SUPERCEEDED_VIDEO_RETURN|SUPERCEEDED_AUDIO_FILL|SUPERCEEDED_VIDEO_FILL)) 
+    {
+      it=m_vecClips.erase(it);
+      delete clip;
+    }
+    else
+    {
+      --it;
+    }
+  }
+  if (m_vecClips.size()==0) return true;
+  return false;
 }
