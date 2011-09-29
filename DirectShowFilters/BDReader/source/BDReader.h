@@ -82,8 +82,8 @@ public:
     virtual void    STDMETHODCALLTYPE ForceTitleBasedPlayback(bool force, UINT32 pTitle) = 0;
     virtual void    STDMETHODCALLTYPE SetD3DDevice(IDirect3DDevice9* device) = 0;
     virtual void    STDMETHODCALLTYPE SetBDPlayerSettings(bd_player_settings settings) = 0;
-    virtual HRESULT STDMETHODCALLTYPE Start();
-    virtual HRESULT STDMETHODCALLTYPE MouseMove(UINT16 x, UINT16 y);
+    virtual HRESULT STDMETHODCALLTYPE Start() = 0;
+    virtual HRESULT STDMETHODCALLTYPE MouseMove(UINT16 x, UINT16 y) = 0;
 };
 
 enum DS_CMD_ID
