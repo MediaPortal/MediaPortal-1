@@ -424,9 +424,7 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(REBUILD, -1);
     }
     else
-    {
       Sleep(5);        
-    }
   }
 }
 
@@ -441,6 +439,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
       if (m_pFilter->IsStopping() || m_demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone)
       {
         CreateEmptySample(pSample);
+        Sleep(1);
         return S_OK;
       }
 
@@ -465,14 +464,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         m_pCachedBuffer = NULL;
       }
       else
-      {
         buffer = m_demux.GetVideo();
-      }
 
       if (!buffer)
-      {
         Sleep(10);
-      }
       else
       {
         bool useEmptySample = false;
@@ -497,9 +492,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             HRESULT hrAccept = S_FALSE;
 
             if (m_pPinConnection)
-            {
               hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-            }
             else if (m_pReceiver)
             {
               // Dynamic format changes cause lot of issues - currently not enabled
@@ -556,18 +549,12 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - m_rtStart;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
-          {
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-          }
           else
-          {
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
-          }
         }
         else // Buffer has no timestamp
-        {
           pSample->SetTime(NULL, NULL);
-        }
 
         pSample->SetSyncPoint(buffer->bSyncPoint);
         // Copy buffer into the sample

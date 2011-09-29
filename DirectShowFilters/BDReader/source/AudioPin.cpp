@@ -235,9 +235,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (!m_bSeekDone|| m_pFilter->IsStopping() || m_demux.IsMediaChanging())
+      if (!m_bSeekDone|| m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging())
       {
         CreateEmptySample(pSample);
+        Sleep(1);
         return S_OK;
       }
 
@@ -248,22 +249,17 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         m_pCachedBuffer = NULL;
       }
       else
-      {
         buffer = m_demux.GetAudio();
-      }
 
       if (m_demux.EndOfFile())
       {
         LogDebug("aud: set EOF");
         CreateEmptySample(pSample);
-        
         return S_FALSE;
       }
 
       if (!buffer)
-      {
         Sleep(10);
-      }
       else
       {
         bool useEmptySample = false;
@@ -291,9 +287,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             LogMediaType(buffer->pmt);
 
             if (m_pPinConnection && false) // TODO - DS audio renderer seems to be only one that supports this
-            {
               hrAccept = m_pPinConnection->DynamicQueryAccept(buffer->pmt);
-            }
             else if (m_pReceiver)
             {
               //LogDebug("aud: DynamicQueryAccept - not avail");
