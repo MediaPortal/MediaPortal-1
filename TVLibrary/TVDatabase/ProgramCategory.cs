@@ -22,7 +22,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Gentle.Framework;
-using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
 namespace TvDatabase
@@ -158,21 +157,21 @@ namespace TvDatabase
       return category;
     }
 
-    public static IList<ProgramCategoryDTO> ConvertToDtoList(IEnumerable<ProgramCategory> categories)
+    public static IList<TVDatabaseEntities.ProgramCategory> ConvertToEntities(IEnumerable<ProgramCategory> categories)
     {
-      IList<ProgramCategoryDTO> categoryDtos = new ObservableCollection<ProgramCategoryDTO>();
+      var categoryDtos = new ObservableCollection<TVDatabaseEntities.ProgramCategory>();
       foreach (var programCategory in categories)
       {
-        var programCategoryDto = programCategory.ConvertToDto();
+        var programCategoryDto = programCategory.ConvertToEntity();
         categoryDtos.Add(programCategoryDto);
       }
       
       return categoryDtos;
     }
 
-    public ProgramCategoryDTO ConvertToDto()
+    public TVDatabaseEntities.ProgramCategory ConvertToEntity()
     {
-      var programCategoryDto = new ProgramCategoryDTO { Category = Category, IdCategory = IdProgramCategory };
+      var programCategoryDto = new TVDatabaseEntities.ProgramCategory { category = Category, idProgramCategory = IdProgramCategory };
       return programCategoryDto;
     }
   }

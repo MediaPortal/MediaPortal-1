@@ -27,6 +27,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using Gentle.Framework;
+using RuleBasedScheduler;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
@@ -45,7 +46,14 @@ namespace TvDatabase
 
     private void DeserializeRules()
     {
-      _scheduleConditions = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(rules);      
+      try
+      {
+        _scheduleConditions = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(rules);      
+      }
+      catch (Exception ex)
+      {
+        Log.Error("RuleBasedSchedule could not Deserialize Rules");
+      }      
     }
 
     private void SerializeRules()
@@ -128,9 +136,7 @@ namespace TvDatabase
     /// Create an object from an existing row of data. This will be used by Gentle to 
     /// construct objects from retrieved rows. 
     /// </summary> 
-    public RuleBasedSchedule (int idRuleBasedSchedule, int idChannel, string scheduleName,
-                    DateTime startTime,
-                    DateTime endTime, int maxAirings, int priority, string directory, int quality, int keepMethod,
+    public RuleBasedSchedule (int idRuleBasedSchedule, string scheduleName, int maxAirings, int priority, string directory, int quality, int keepMethod,
                     DateTime keepDate, int preRecordInterval, int postRecordInterval)
     {
       this.idRuleBasedSchedule = idRuleBasedSchedule;

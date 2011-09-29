@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using Gentle.Framework;
-using TvLibrary.Interfaces;
 using TvLibrary.Log;
 using StatementType = Gentle.Framework.StatementType;
 
@@ -200,12 +199,12 @@ namespace TvDatabase
 
     #endregion
 
-    public static IList<ProgramCreditDTO> ConvertToDtoList(IEnumerable<ProgramCredit> roles)
+    public static IList<TVDatabaseEntities.ProgramCredit> ConvertToEntities(IEnumerable<ProgramCredit> roles)
     {
-      IList<ProgramCreditDTO> creditDtos = new ObservableCollection<ProgramCreditDTO>();
+      var creditDtos = new ObservableCollection<TVDatabaseEntities.ProgramCredit>();
       foreach (var role in roles)
       {
-        var creditDto = new ProgramCreditDTO { Person = role.Person,  Role = role.Role, IdCredit = role.IdProgramCredit};
+        var creditDto = new TVDatabaseEntities.ProgramCredit { person = role.Person, role = role.Role, idProgramCredit = role.IdProgramCredit };
         creditDtos.Add(creditDto);
       }
 

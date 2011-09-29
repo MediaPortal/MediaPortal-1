@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using Gentle.Framework;
+using RuleBasedScheduler;
 using TvLibrary.Interfaces;
 using TvLibrary.Log;
 
@@ -61,11 +62,10 @@ namespace TvDatabase
     /// <summary> 
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
-    public ScheduleRulesTemplate(string name, ScheduleConditionList rules, bool enabled, int usages, bool editable)
+    public ScheduleRulesTemplate(string name, bool enabled, int usages, bool editable)
     {
       isChanged = true;
-      this.name = name;
-      this._scheduleConditions = rules;
+      this.name = name;      
       this.enabled = enabled;
       this.usages = usages;
       this.editable = editable;
@@ -75,7 +75,14 @@ namespace TvDatabase
 
     private void DeserializeRules()
     {
-      _scheduleConditions = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(rules);      
+      try
+      {
+        _scheduleConditions = ScheduleConditionHelper.Deserialize<ScheduleConditionList>(rules);      
+      }
+      catch (Exception ex)
+      {
+        Log.Error("ScheduleRulesTemplate could not Deserialize Rules");
+      }      
     }
 
     private void SerializeRules()
