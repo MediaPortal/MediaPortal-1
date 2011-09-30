@@ -54,6 +54,8 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
+  m_bIgnoreAudioSeeking=false;
+  m_bIgnoreVideoSeeking=false;
   
   // remove old playlists
   ivecPlaylists it = m_vecPlaylists.begin();
@@ -195,6 +197,8 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
       if (m_currentVideoSubmissionPlaylist->nPlaylist == packet->nPlaylist)
       {
         ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,true,m_bIgnoreVideoSeeking);
+        if (ret)
+          m_bIgnoreVideoSeeking = false;
       }
       else
       {
