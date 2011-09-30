@@ -66,6 +66,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_iAudioIdx = -1;
   m_bSetAudioDiscontinuity = false;
   m_bSetVideoDiscontinuity = false;
+  m_bRebuildOngoing = false;
   m_pSubUpdateCallback = NULL;
   SetMediaChanging(false);
 

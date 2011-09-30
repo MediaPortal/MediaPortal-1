@@ -418,6 +418,7 @@ void STDMETHODCALLTYPE CBDReaderFilter::OnGraphRebuild(int info)
 {
   LogDebug("CBDReaderFilter::OnGraphRebuild %d", info);
   m_bRebuildOngoing = false;
+  m_demultiplexer.m_bRebuildOngoing = false;
   m_eRebuild.Set();
 }
 
@@ -967,7 +968,9 @@ STDMETHODIMP CBDReaderFilter::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFl
 
 STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
 {
-  //DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; current: %I64d; start: %I64d; stop: %I64d; flags: %ul", m_rtCurrent, pCurrent ? *pCurrent : -1, pStop ? *pStop : -1, dwStopFlags));
+#ifdef LOG_SEEK_INFORMATION
+  DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; current: %I64d; start: %I64d; stop: %I64d; flags: %ul", m_rtCurrent, pCurrent ? *pCurrent : -1, pStop ? *pStop : -1, dwStopFlags));
+#endif
   CAutoLock cAutoLock(this);
 
   // - Graph rebuild triggers seeking when stopping the graph - ignore, we are going to seek

@@ -37,6 +37,8 @@
 //#define LOG_DEMUXER_AUDIO_SAMPLES
 //#define LOG_DEMUXER_VIDEO_SAMPLES
 
+//#define LOG_SEEK_INFORMATION
+
 //#define SOUNDDEBUG // you will get NO sound if you enable debugging as there is a lot of output 
 
 using namespace std;

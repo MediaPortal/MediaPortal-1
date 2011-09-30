@@ -399,6 +399,7 @@ void CVideoPin::CheckPlaybackState()
 
       LogDebug("vid: REBUILD");
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
+      m_demux.m_bRebuildOngoing = true;
     }
     else
     {
@@ -437,7 +438,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
     do
     {
-      if (m_pFilter->IsStopping() || m_demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone)
+      if (m_pFilter->IsStopping() || m_demux.IsMediaChanging() || m_bFlushing || !m_bSeekDone || m_demux.m_bRebuildOngoing)
       {
         CreateEmptySample(pSample);
         Sleep(1);
