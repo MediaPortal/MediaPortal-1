@@ -969,7 +969,8 @@ STDMETHODIMP CBDReaderFilter::SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFl
 STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags)
 {
 #ifdef LOG_SEEK_INFORMATION
-  DbgLog((LOG_TRACE, 20, "::SetPositions() - seek request; current: %I64d; start: %I64d; stop: %I64d; flags: %ul", m_rtCurrent, pCurrent ? *pCurrent : -1, pStop ? *pStop : -1, dwStopFlags));
+  LogDebug("  ::SetPositions() - seek request - current: %I64d; start: %I64d; stop: %I64d; flags: %ul m_bRebuildOngoing: %d m_bStopping: %d", 
+    m_rtCurrent, pCurrent ? *pCurrent : -1, pStop ? *pStop : -1, dwStopFlags, m_bRebuildOngoing, m_bStopping);
 #endif
   CAutoLock cAutoLock(this);
 
@@ -991,8 +992,14 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
 
   bool resetStreamPosition = *pCurrent == _I64_MAX && caller == m_pVideoPin;
 
-  if (*pCurrent == _I64_MAX) 
+  if (*pCurrent == _I64_MAX)
+  {
+#ifdef LOG_SEEK_INFORMATION   
+    LogDebug("  ::SetPositions() - fake seek to zero stream time");
+#endif
+
     *pCurrent = 0;
+  }
 
   if (pCurrent) 
   {
@@ -1020,10 +1027,20 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   bool alreadySeekedPos = m_rtCurrent == rtCurrent && m_rtStop == rtStop && !resetStreamPosition;
 
   if (alreadySeekedPos)
+  {
+#ifdef LOG_SEEK_INFORMATION   
+    LogDebug("  ::SetPositions() - already seeked to pos - mark 1");
+#endif
+
     return S_OK;
+  }
 
   if (alreadySeekedPos && m_lastSeekers.find(caller) == m_lastSeekers.end()) 
   {
+#ifdef LOG_SEEK_INFORMATION   
+    LogDebug("  ::SetPositions() - already seeked to pos - mark 2");
+#endif
+
     m_lastSeekers.insert(caller);
     return S_OK;
   }
@@ -1046,6 +1063,12 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
 
     // Do not allow new seek to happen before the old one is completed 
     m_eEndNewSegment.Wait();
+  }
+  else
+  {
+#ifdef LOG_SEEK_INFORMATION   
+    LogDebug("  ::SetPositions() - no ThreadExists()");
+#endif
   }
 
   return S_OK;
