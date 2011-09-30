@@ -882,14 +882,29 @@ void CDeMultiplexer::FlushPESBuffers(bool pSeeking)
         m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
     {
       FillVideoMPEG2(NULL, NULL, true);
+      m_p.Free();
+      m_pBuild.Free();
+      m_lastStart = 0;
+      m_loopLastSearch = 1;
+      m_pl.RemoveAll();
     }
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_H264)
     {
       FillVideoH264PESPacket(NULL, m_pBuild, true);
+      m_p.Free();
+      m_pBuild.Free();
+      m_lastStart = 0;
+      m_loopLastSearch = 1;
+      m_pl.RemoveAll();
     }
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
     {
       FillVideoVC1PESPacket(NULL, m_pBuild, true);
+      m_p.Free();
+      m_pBuild.Free();
+      m_lastStart = 0;
+      m_loopLastSearch = 1;
+      m_pl.RemoveAll();
     }
   }
 
