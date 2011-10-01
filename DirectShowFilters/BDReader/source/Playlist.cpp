@@ -229,7 +229,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     firstVideoPESPacketSeen=true;
     firstVideoPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
-    packet->rtOffset = 0 - firstVideoPESTimeStamp;
+    packet->rtOffset = (0 - firstVideoPESTimeStamp) > 10000000 ? 0 - firstVideoPESTimeStamp : 0;
     if (packet->rtOffset != 0)
       packet->bSeekRequired=!seeking;
 
