@@ -1207,13 +1207,11 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
   bool bSeqFound = false;
   while(start <= end - 4)
   {
-    if (*(DWORD*)start == 0x0D010000) 
+    if (*(DWORD*)start == 0x0D010000 || *(DWORD*)start == 0x0F010000) 
     {
       bSeqFound = true;
       break;
     } 
-    else if (*(DWORD*)start == 0x0F010000) 
-      break;
     start++;
   }
 
