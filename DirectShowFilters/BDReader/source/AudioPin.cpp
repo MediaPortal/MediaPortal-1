@@ -71,7 +71,7 @@ CAudioPin::~CAudioPin()
   if (m_eFlushStart)
   {
     m_eFlushStart->Set();
-   delete m_eFlushStart;
+    delete m_eFlushStart;
   }
 
   if (m_demux.m_eAudioPlSeen)
