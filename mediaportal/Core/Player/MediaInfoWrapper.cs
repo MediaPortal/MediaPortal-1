@@ -109,6 +109,8 @@ namespace MediaPortal.Player
         return;
       }
 
+      if(strFile.StartsWith(Util.DaemonTools.GetVirtualDrive()))
+        isDVD = false;
       //currently mediainfo is only used for local video related material (if enabled)
       if ((!isVideo && !isDVD) || (isDVD && !_DVDenabled))
       {
@@ -123,8 +125,18 @@ namespace MediaPortal.Player
         _mI.Option("ParseSpeed", _ParseSpeed);
 
         if (Util.VirtualDirectory.IsImageFile(System.IO.Path.GetExtension(strFile)))
+        {
           strFile = Util.DaemonTools.GetVirtualDrive() + @"\VIDEO_TS\VIDEO_TS.IFO";
 
+          if (!File.Exists(strFile))
+          {
+            strFile = Util.DaemonTools.GetVirtualDrive() + @"\BDMV\index.bdmv";
+
+            if (!File.Exists(strFile))
+              return;            
+          }
+        }
+        
         if (strFile.ToLower().EndsWith(".ifo"))
         {
           string path = Path.GetDirectoryName(strFile);
@@ -143,6 +155,11 @@ namespace MediaPortal.Player
           }
           // get all other info from main title's 1st vob
           strFile = mainTitle;
+        }
+        else if (strFile.ToLower().EndsWith(".bdmv"))
+        {
+          string path = Path.GetDirectoryName(strFile) + @"\STREAM";
+          strFile = GetLargestFileInDirectory(path, "*.m2ts");          
         }
 
         _mI.Open(strFile);

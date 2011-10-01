@@ -2947,7 +2947,8 @@ namespace MediaPortal.Player
     {
       try
       {
-        _mediaInfo = new MediaInfoWrapper(FileName);
+        if (_mediaInfo == null)
+          _mediaInfo = new MediaInfoWrapper(FileName);
 
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CODEC_MISSING, 0, 0, 0, 0, 0, null);
         msg.Label = string.Format("{0}: {1}", GUILocalizeStrings.Get(1451), Path.GetFileName(FileName));
@@ -2958,6 +2959,7 @@ namespace MediaPortal.Player
                        ? string.Empty
                        : string.Format("Audio codec: {0}", _mediaInfo.AudioCodec);
         GUIGraphicsContext.SendMessage(msg);
+        _mediaInfo = null;
       }
       catch (Exception ex)
       {
