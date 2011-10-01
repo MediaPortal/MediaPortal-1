@@ -1202,24 +1202,24 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
   BYTE* start = m_p->GetData();
   BYTE* end = start + m_p->GetCount();
 
-  start = m_p->GetData();
-
   bool bSeqFound = false;
   while(start <= end - 4)
   {
-    if (*(DWORD*)start == 0x0D010000 || *(DWORD*)start == 0x0F010000) 
+    if (*(DWORD*)start == 0x0D010000)
     {
       bSeqFound = true;
       break;
     } 
+    if (*(DWORD*)start == 0x0F010000)
+      break;
     start++;
   }
 
-  while(start <= end - 4)
+  while (start <= end - 4)
   {
     BYTE* next = start + (m_loopLastSearch == 0 ? 1 : m_loopLastSearch);
 
-    while(next <= end - 4)
+    while (next <= end - 4)
     {
       if (*(DWORD*)next == 0x0D010000) 
       {
@@ -1239,13 +1239,9 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     if (next >= end - 4) 
     {
       if (pFlushBuffers)
-      {
         next = end;
-      }
       else
-      {
         break;
-      }
     }
 
     int size = next - start - 4;
@@ -1254,10 +1250,10 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     CAutoPtr<Packet> p2(new Packet());
     p2->SetCount(0, PACKET_GRANULARITY);
     p2->bDiscontinuity = m_p->bDiscontinuity;
-    m_p->bDiscontinuity = FALSE;
+    m_p->bDiscontinuity = false;
 
     p2->bSyncPoint = m_p->bSyncPoint;
-    m_p->bSyncPoint = FALSE;
+    m_p->bSyncPoint = false;
 
     p2->rtStart = m_p->rtStart;
     m_p->rtStart = Packet::INVALID_TIME;
@@ -1279,7 +1275,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     {
       if (p->rtStart != Packet::INVALID_TIME) 
       {
-        m_p->rtStart = p->rtStop; //p->rtStart; //Sebastiii for enable VC1 decoding in FFDshow (no more shutter)
+        m_p->rtStart = p->rtStart;
         m_p->rtStop = p->rtStop;
         p->rtStart = Packet::INVALID_TIME;
       }
@@ -1306,17 +1302,19 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     }
 
     start = next;
-    if (!pFlushBuffers  || start!=end)
-    {
+    if (!pFlushBuffers || start!=end)
       bSeqFound = (*(DWORD*)start == 0x0D010000);
-      m_loopLastSearch = 1;
-      m_p->RemoveAt(0, start - m_p->GetData());
-    }
     else
     {
       m_p.Free();
       m_loopLastSearch = 1;
     }
+  }
+	
+  if (m_p && start > m_p->GetData())
+  {
+    m_loopLastSearch = 1;
+    m_p->RemoveAt(0, start - m_p->GetData());
   }
 }
 

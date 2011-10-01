@@ -69,6 +69,20 @@ static int truehd_channels(int chanmap)
   return channels; 
 }
 
+inline int LNKO(int a, int b)
+{
+	if (a == 0 || b == 0) 
+		return 1;
+	while(a != b) 
+  {
+		if (a < b) 
+			b -= a;
+		else if (a > b) 
+			a -= b;
+	}
+	return a;
+}
+
 int CFrameHeaderParser::MakeAACInitData(BYTE* pData, int profile, int freq, int channels)
 {
 	int srate_idx;
@@ -1654,6 +1668,8 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt)
 
 bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 {
+	memset(&h, 0, sizeof(h));
+
 	__int64 endpos = GetPos() + len; // - sequence header length
 	__int64 extrapos = -1, extralen = 0;
 	int		nFrameRateNum = 0, nFrameRateDen = 1;
@@ -1667,7 +1683,7 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 
 		// Check if advanced profile
 		if (h.profile != 3) {
-			return(false);
+			return false;
 		}
 
 		h.level = BitRead (3);
@@ -1690,19 +1706,17 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 		h.psf				= BitRead (1);
 		if(BitRead (1)) {
 			int ar = 0;
-			h.ArX  = BitRead (14) + 1;
-			h.ArY  = BitRead (14) + 1;
+			BitRead (14);
+			BitRead (14);
 			if(BitRead (1)) {
 				ar = BitRead (4);
 			}
-			// TODO : next is not the true A/R!
 			if(ar && ar < 14) {
-				//				h.ArX = ff_vc1_pixel_aspect[ar].num;
-				//				h.ArY = ff_vc1_pixel_aspect[ar].den;
+				h.sar.num = pixel_aspect[ar][0];
+				h.sar.den = pixel_aspect[ar][1];
 			} else if(ar == 15) {
-				/*h.ArX =*/ BitRead (8);
-				/*h.ArY =*/
-				BitRead (8);
+				h.sar.num = BitRead (8);
+				h.sar.den = BitRead (8);
 			}
 
 			// Read framerate
@@ -1730,48 +1744,21 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 		extralen = 0;
 		long	parse = 0;
 
-		while (GetPos() < endpos-4 && ((parse == 0x0000010E) || (parse & 0xFFFFFF00) != 0x00000100)) {
+		while (GetPos() < endpos+4 && ((parse == 0x0000010E) || (parse & 0xFFFFFF00) != 0x00000100)) {
 			parse = (parse<<8) | BitRead(8);
 			extralen++;
 		}
 	}
-//  else
-//    return false;// hack
 
-	if(extrapos==-1 || !extralen) {
-		return(false);
+	if (extrapos == -1 || !extralen) {
+		return false;
 	}
 
 	if(!pmt) {
-		return(true);
+		return true;
 	}
 
 	{
-		//pmt->majortype = MEDIATYPE_Video;
-		//pmt->subtype = FOURCCMap('1CVW');
-		//pmt->formattype = FORMAT_MPEG2_VIDEO;
-		//int len = FIELD_OFFSET(MPEG2VIDEOINFO, dwSequenceHeader) + extralen + 1;
-		//MPEG2VIDEOINFO* vi = (MPEG2VIDEOINFO*)DNew BYTE[len];
-		//memset(vi, 0, len);
-		//// vi->hdr.dwBitRate = ;
-		//vi->hdr.AvgTimePerFrame = (10000000I64*nFrameRateNum)/nFrameRateDen;
-		//vi->hdr.dwPictAspectRatioX = h.width;
-		//vi->hdr.dwPictAspectRatioY = h.height;
-		//vi->hdr.bmiHeader.biSize = sizeof(vi->hdr.bmiHeader);
-		//vi->hdr.bmiHeader.biWidth = h.width;
-		//vi->hdr.bmiHeader.biHeight = h.height;
-		//vi->hdr.bmiHeader.biCompression = '1CVW';
-		//vi->dwProfile = h.profile;
-		//vi->dwFlags = 4; // ?
-		//vi->dwLevel = h.level;
-		//vi->cbSequenceHeader = extralen+1;
-		//BYTE* p = (BYTE*)&vi->dwSequenceHeader[0];
-		//*p++ = 0;
-		//Seek(extrapos);
-		//ByteRead(p, extralen);
-		//pmt->SetFormat((BYTE*)vi, len);
-		//delete [] vi;
-
 		pmt->majortype = MEDIATYPE_Video;
  		pmt->subtype = FOURCCMap('1CVW');
     
@@ -1780,8 +1767,20 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 		VIDEOINFOHEADER2* vi = (VIDEOINFOHEADER2*)DNew BYTE[len];
 		memset(vi, 0, len);
 		vi->AvgTimePerFrame = (10000000I64*nFrameRateNum)/nFrameRateDen;
-		vi->dwPictAspectRatioX = h.width;
-		vi->dwPictAspectRatioY = h.height;
+
+		if(!h.sar.num) h.sar.num = 1;
+		if(!h.sar.den) h.sar.den = 1;
+		CSize aspect = CSize(h.width * h.sar.num, h.height * h.sar.den);
+		if(h.width == h.sar.num && h.height == h.sar.den) {
+			aspect = CSize(h.width, h.height);
+		}
+		int lnko = LNKO(aspect.cx, aspect.cy);
+		if(lnko > 1) {
+			aspect.cx /= lnko, aspect.cy /= lnko;
+		}
+
+		vi->dwPictAspectRatioX = aspect.cx;
+		vi->dwPictAspectRatioY = aspect.cy;
 		vi->bmiHeader.biSize = sizeof(vi->bmiHeader);
 		vi->bmiHeader.biWidth = h.width;
 		vi->bmiHeader.biHeight = h.height;

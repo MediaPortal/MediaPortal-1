@@ -17,7 +17,7 @@
  *  the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA. 
  *  http://www.gnu.org/copyleft/gpl.html
  *
- *  MAjor part of this file's content is based on MPC-HC's source code 
+ *  Major part of this file's content is based on MPC-HC's source code 
  *  http://mpc-hc.sourceforge.net/
  *
  */
@@ -29,6 +29,25 @@
 #include <streams.h>
 
 #include "GolombBuffer.h"
+static const byte pixel_aspect[17][2]={
+	{0, 1},
+	{1, 1},
+	{12, 11},
+	{10, 11},
+	{16, 11},
+	{40, 33},
+	{24, 11},
+	{20, 11},
+	{32, 11},
+	{80, 33},
+	{18, 11},
+	{15, 11},
+	{64, 33},
+	{160,99},
+	{4, 3},
+	{3, 2},
+	{2, 1},
+};
 
 enum mpeg_t {mpegunk, mpeg1, mpeg2};
 
@@ -361,9 +380,11 @@ enum mpeg_t {mpegunk, mpeg1, mpeg2};
 		BYTE		tfcntrflag;
 		BYTE		finterpflag;
 		BYTE		psf;
-		UINT		ArX;
-		UINT		ArY;
 		unsigned int width, height;
+		struct sar{
+			BYTE num;
+			BYTE den;
+		}sar;		
 	};
 
   struct thdhdr
