@@ -75,6 +75,7 @@ public:
   HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   
   bool IsConnected();
+  void StopWait();
   void SetInitialMediaType(const CMediaType* pmt);
 
 protected:

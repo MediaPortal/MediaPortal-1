@@ -566,9 +566,10 @@ STDMETHODIMP CBDReaderFilter::Stop()
   lib.SetState(State_Stopped);
 
   if (m_pSubtitlePin)
-  {
     m_pSubtitlePin->SetRunningStatus(false);
-  }
+
+  if (m_pVideoPin)
+    m_pVideoPin->StopWait();
 
   LogDebug("CBDReaderFilter::Stop()  -stop source");
   HRESULT hr = CSource::Stop();

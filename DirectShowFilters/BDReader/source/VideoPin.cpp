@@ -291,6 +291,12 @@ DWORD CVideoPin::ThreadProc()
   return __super::ThreadProc();
 }
 
+void CVideoPin::StopWait()
+{
+  if (m_eFlushStart)
+    m_eFlushStart->Set();  
+}
+
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
 {
   Command com;
