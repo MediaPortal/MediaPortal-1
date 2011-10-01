@@ -255,6 +255,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       {
         LogDebug("aud: set EOF");
         CreateEmptySample(pSample);
+        m_demux.m_eAudioPlSeen->Set();
         return S_FALSE;
       }
 
