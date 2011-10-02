@@ -23,19 +23,19 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using System.Xml;
 using Gentle.Framework;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Handles the logic for channel zapping. This is used by the different GUI modules in the TV section.

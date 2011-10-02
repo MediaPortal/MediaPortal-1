@@ -24,7 +24,7 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVConflictDialog: GUIDialogWindow
   {

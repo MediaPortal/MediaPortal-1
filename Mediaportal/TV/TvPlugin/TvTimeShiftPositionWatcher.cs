@@ -19,17 +19,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using TvControl;
-using TvDatabase;
-using System.IO;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Configuration;
 using MediaPortal.Player;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   internal class TvTimeShiftPositionWatcher
   {

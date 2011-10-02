@@ -34,16 +34,18 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using Timer = System.Timers.Timer;
-using Action = MediaPortal.GUI.Library.Action;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 using MediaPortal.Player.PostProcessing;
+using Mediaportal.TV.TvPlugin.Helper;
+using Action = MediaPortal.GUI.Library.Action;
+using Timer = System.Timers.Timer;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// 

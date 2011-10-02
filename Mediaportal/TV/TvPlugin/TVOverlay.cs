@@ -20,9 +20,8 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using TvControl;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// 

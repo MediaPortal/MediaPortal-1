@@ -24,7 +24,7 @@ using MediaPortal.GUI.Library;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.EPG
 {
   /// <summary>
   /// 

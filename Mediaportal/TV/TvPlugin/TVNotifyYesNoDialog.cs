@@ -19,13 +19,10 @@
 #endregion
 
 using System.Drawing;
-using System.IO;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using Alignment = MediaPortal.GUI.Library.GUIControl.Alignment;
-using VAlignment = MediaPortal.GUI.Library.GUIControl.VAlignment;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVNotifyYesNoDialog: GUIDialogYesNo
   {
@@ -108,8 +105,8 @@ namespace TvPlugin
       imgLogo.Width = size.Width;
       imgLogo.Height = size.Height;
       imgLogo.KeepAspectRatio = keepAspectRatio;
-      imgLogo.ImageAlignment = Alignment.ALIGN_CENTER;
-      imgLogo.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
+      imgLogo.ImageAlignment = GUIControl.Alignment.ALIGN_CENTER;
+      imgLogo.ImageVAlignment = GUIControl.VAlignment.ALIGN_MIDDLE;
     }
   }
 }

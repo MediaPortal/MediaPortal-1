@@ -33,11 +33,11 @@ using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Mediaportal.TV.TvPlugin.Helper;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace Mediaportal.TV.TvPlugin
+namespace Mediaportal.TV.TvPlugin.Radio
 {
   /// <summary>
   /// </summary>
-  public class TvSearch : GUIInternalWindow
+  public class RadioSearch : GUIInternalWindow
   {
     [SkinControl(2)] protected GUISortButtonControl btnSortBy = null;
     [SkinControl(4)] protected GUIToggleButtonControl btnSearchByGenre = null;
@@ -102,9 +102,9 @@ namespace Mediaportal.TV.TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
-          currentSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("tvsearch", "cursortmethod", "Name"), true);
-           chosenSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("tvsearch", "chosortmethod", "Auto"), true);
-          currentSearchMode = (SearchMode)Enum.Parse(typeof(SearchMode), xmlreader.GetValueAsString("tvsearch", "searchmode", "Title"), true);
+          currentSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("radiosearch", "cursortmethod", "Name"), true);
+           chosenSortMethod = (SortMethod)Enum.Parse(typeof(SortMethod), xmlreader.GetValueAsString("radiosearch", "chosortmethod", "Auto"), true);
+          currentSearchMode = (SearchMode)Enum.Parse(typeof(SearchMode), xmlreader.GetValueAsString("radiosearch", "searchmode", "Title"), true);
       }
     }
 
@@ -112,27 +112,27 @@ namespace Mediaportal.TV.TvPlugin
     {
       using (Settings xmlwriter = new MPSettings())
       {
-        xmlwriter.SetValue("tvsearch", "cursortmethod", currentSortMethod.ToString());
-        xmlwriter.SetValue("tvsearch", "chosortmethod", chosenSortMethod.ToString());
-        xmlwriter.SetValue("tvsearch",  "searchmode",    currentSearchMode.ToString());
+        xmlwriter.SetValue("radiosearch", "cursortmethod", currentSortMethod.ToString());
+        xmlwriter.SetValue("radiosearch", "chosortmethod", chosenSortMethod.ToString());
+        xmlwriter.SetValue("radiosearch",  "searchmode",    currentSearchMode.ToString());
       }
     }
 
     #endregion
 
-    public TvSearch()
+    public RadioSearch()
     {
-      GetID = (int)Window.WINDOW_SEARCHTV;
+      GetID = (int)Window.WINDOW_SEARCH_RADIO;
     }
-
+    
     public override bool IsTv
     {
-      get { return true; }
+      get { return false; }
     }
 
     public override bool Init()
     {
-      bool bResult = Load(GUIGraphicsContext.Skin + @"\mytvsearch.xml");
+      bool bResult = Load(GUIGraphicsContext.Skin + @"\myradiosearch.xml");
       LoadSettings();
       return bResult;
     }
@@ -140,6 +140,7 @@ namespace Mediaportal.TV.TvPlugin
     {
       SaveSettings();
     }
+ 
     public override void OnAction(Action action)
     {
       if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
@@ -172,8 +173,9 @@ namespace Mediaportal.TV.TvPlugin
     protected override void OnPageLoad()
     {
       TVHome.WaitForGentleConnection();
-
+      
       base.OnPageLoad();
+
       listRecordings = Schedule.ListAll();
 
       if (btnShow != null) btnShow.RestoreSelection = false;
@@ -572,7 +574,7 @@ namespace Mediaportal.TV.TvPlugin
 
             IList<Program> titles;
             TvBusinessLayer layer = new TvBusinessLayer();
-            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow,ChannelType.Tv);
+            titles = layer.SearchProgramsPerGenre(currentGenre, filterShow,ChannelType.Radio);
             foreach (Program program in titles)
             {
               //dont show programs which have ended
@@ -685,23 +687,23 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms("%[^a-z]", ChannelType.Tv);
+                titles = layer.SearchPrograms("%[^a-z]",ChannelType.Radio);
                 //titles = layer.SearchPrograms("");
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Radio);
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchPrograms(filterLetter, ChannelType.Tv);
+                titles = layer.SearchPrograms(filterLetter, ChannelType.Radio);
               }
               else
               {
-                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Tv);
+                titles = layer.SearchPrograms("%" + filterShow, ChannelType.Radio);
               }
             }
             foreach (Program program in titles)
@@ -828,22 +830,22 @@ namespace Mediaportal.TV.TvPlugin
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription("", ChannelType.Tv);
+                titles = layer.SearchProgramsByDescription("", ChannelType.Radio);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Radio);
               }
             }
             else
             {
               if (filterShow == String.Empty)
               {
-                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Tv);
+                titles = layer.SearchProgramsByDescription(filterLetter, ChannelType.Radio);
               }
               else
               {
-                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Tv);
+                titles = layer.SearchProgramsByDescription(filterShow, ChannelType.Radio);
               }
             }
             foreach (Program program in titles)
@@ -1160,15 +1162,15 @@ namespace Mediaportal.TV.TvPlugin
       {
         strLogo = Utils.GetCoverArt(Thumbs.TVShows, prog.Title);
       }
-      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))             
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
         Channel channel = channelMap[prog.IdChannel];
-        strLogo = Utils.GetCoverArt(Thumbs.TVChannel, channel.DisplayName);
+        strLogo = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
       }
-      
-      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo)) 
+
+      if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        strLogo = "defaultVideoBig.png";
+        strLogo = "defaultMyradioBig.png";
       }
 
       item.ThumbnailImage = strLogo;
@@ -1316,31 +1318,31 @@ namespace Mediaportal.TV.TvPlugin
       {
         prog = item.TVTag as Program;
       }
-
+      
       if (item == null || item.Label == ".." || item.IsFolder || prog == null)
       {
         lblProgramTime.Label = String.Empty;
         lblProgramDescription.Label = String.Empty;
         lblChannel.Label = String.Empty;
-        GUIPropertyManager.SetProperty("#TV.Search.Time", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Description", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.thumb", String.Empty);
-        GUIPropertyManager.SetProperty("#TV.Search.Channel", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Search.Time", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Search.Description", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Search.thumb", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Search.Channel", String.Empty);
         if (prog == null)
         {
           // see comment at top of method
           //lblProgramTitle.Label = String.Empty;
           lblProgramGenre.Label = String.Empty;
-          GUIPropertyManager.SetProperty("#TV.Search.Title", String.Empty);
-          GUIPropertyManager.SetProperty("#TV.Search.Genre", String.Empty);
+          GUIPropertyManager.SetProperty("#Radio.Search.Title", String.Empty);
+          GUIPropertyManager.SetProperty("#Radio.Search.Genre", String.Empty);
         }
         else
         {
           // see comment at top of method
           //lblProgramTitle.Label = prog.Title;
           lblProgramGenre.Label = prog.Genre;
-          GUIPropertyManager.SetProperty("#TV.Search.Title", prog.Title);
-          GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
+          GUIPropertyManager.SetProperty("#Radio.Search.Title", prog.Title);
+          GUIPropertyManager.SetProperty("#Radio.Search.Genre", prog.Genre);
         }
         return;
       }
@@ -1350,11 +1352,11 @@ namespace Mediaportal.TV.TvPlugin
                                      prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
                                      prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
       
-      GUIPropertyManager.SetProperty("#TV.Search.Title", TVUtil.GetDisplayTitle(prog));      
-      GUIPropertyManager.SetProperty("#TV.Search.Time", strTime);
-      GUIPropertyManager.SetProperty("#TV.Search.Description", prog.Description);
-      GUIPropertyManager.SetProperty("#TV.Search.Genre", prog.Genre);
-      GUIPropertyManager.SetProperty("#TV.Search.Channel", prog.ReferencedChannel().DisplayName);
+      GUIPropertyManager.SetProperty("#Radio.Search.Title", TVUtil.GetDisplayTitle(prog));      
+      GUIPropertyManager.SetProperty("#Radio.Search.Time", strTime);
+      GUIPropertyManager.SetProperty("#Radio.Search.Description", prog.Description);
+      GUIPropertyManager.SetProperty("#Radio.Search.Genre", prog.Genre);
+      GUIPropertyManager.SetProperty("#Radio.Search.Channel", prog.ReferencedChannel().DisplayName);
 
       // see comment at top of method
       //lblProgramTitle.Label = TVUtil.GetDisplayTitle(prog);
@@ -1367,13 +1369,13 @@ namespace Mediaportal.TV.TvPlugin
         lblChannel.Label = prog.ReferencedChannel().DisplayName;
       }
 
-      string strLogo = Utils.GetCoverArt(Thumbs.TVChannel, prog.ReferencedChannel().DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, prog.ReferencedChannel().DisplayName);
       if (string.IsNullOrEmpty(strLogo) || !File.Exists(strLogo))
       {
-        strLogo = "defaultVideoBig.png";
+        strLogo = "defaultMyradioBig.png";
       }
-
-      GUIPropertyManager.SetProperty("#TV.Search.thumb", strLogo);
+      
+      GUIPropertyManager.SetProperty("#Radio.Search.thumb", strLogo);
     }
 
     private void UpdateButtonStates()

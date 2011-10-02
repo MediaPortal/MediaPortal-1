@@ -22,7 +22,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -31,12 +30,15 @@ using System.Text;
 using System.Threading;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvControl;
-using TvEngine.Events;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Constants;
+using Mediaportal.TV.Server.TVControl.Enums;
+using Mediaportal.TV.Server.TVControl.TCP;
+using Mediaportal.TV.Server.Plugins.Base.Events;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.TCPEventClient
 {
   public class TCPClient
   {
@@ -44,15 +46,18 @@ namespace TvPlugin
     #region private vars
 
     private PacketProtocol _packetProtocol;
-    private TcpClient _client;
+    private readonly TcpClient _client = new TcpClient();
     private Thread _isConnectedThread;
     private Thread _heartBeatTransmitterThread;
     private Thread _handleServerCommThread;
     private const int HEARTBEAT_INTERVAL_SEC = 5;
+    private const int IS_SOCKET_CONNECTED_THREAD_POLLING_SEC = 30;
     private readonly static ManualResetEvent _evtHeartbeatCtrl = new ManualResetEvent(false);
     private readonly static ManualResetEvent _evtTCPCtrl = new ManualResetEvent(false);
     private readonly static ManualResetEvent _evtIsConnectedCtrl = new ManualResetEvent(false);
-    private bool _isConnected = false;
+    private readonly static ManualResetEvent _evtIsConnectedWaitCtrl = new ManualResetEvent(false);
+    private bool _isConnected;
+    private bool _isRunning;
 
     #endregion
 
@@ -91,16 +96,15 @@ namespace TvPlugin
 
     public void Start()
     {
-      //System.Diagnostics.Debugger.Launch();      
+      System.Diagnostics.Debugger.Launch();      
       StartIsConnectedThread();        
-
       try
       {
         ConnectToTCPserver();
-
         _packetProtocol = new PacketProtocol(10000);
         _packetProtocol.MessageArrived -= new PacketProtocol.MessageArrivedDelegate(_packetProtocol_MessageArrived);
         _packetProtocol.MessageArrived += new PacketProtocol.MessageArrivedDelegate(_packetProtocol_MessageArrived);
+        _isRunning = true;
       } 
       finally
       {
@@ -113,9 +117,9 @@ namespace TvPlugin
     public void Stop()
     {      
       _packetProtocol.MessageArrived -= new PacketProtocol.MessageArrivedDelegate(_packetProtocol_MessageArrived);
+      _isRunning = false;
 
       StopIsConnectedThread();  
-
       StopHeartBeatThread();
       DisconnectTCPserver();
       StopListenForServerThread();
@@ -146,8 +150,10 @@ namespace TvPlugin
     private void StartIsConnectedThread()
     {
       if (_isConnectedThread == null || !_isConnectedThread.IsAlive)
-      {
+      {        
         _evtIsConnectedCtrl.Reset();
+        _evtIsConnectedWaitCtrl.Set();
+
         Log.Debug("TCPClient: IsConnected thread started.");
         _isConnectedThread = new Thread(IsSocketConnectedThread);
         _isConnectedThread.IsBackground = true;
@@ -162,6 +168,7 @@ namespace TvPlugin
       {
         try
         {
+          _evtIsConnectedWaitCtrl.Set();
           _evtIsConnectedCtrl.Set();
           _isConnectedThread.Join();
           Log.Debug("TCPClient: IsSocketConnected Thread stopped.");
@@ -172,64 +179,99 @@ namespace TvPlugin
 
     private void IsSocketConnectedThread()
     {
-      //detect any sudden disconnections
-      byte[] checkConn = new byte[1];
+      //detect any sudden disconnections      
       bool wasConnected = _isConnected;
-      while (!_evtIsConnectedCtrl.WaitOne(100))
+      while (!_evtIsConnectedCtrl.WaitOne(1))
       {
-        if (_isConnected && !wasConnected)
-        {
-          //reconnected
-          if (OnTCPConnected != null)
-          {
-            OnTCPConnected();
-          }
-          wasConnected = _isConnected;
-        }
-        else if (!_isConnected && wasConnected)
-        {
-          //disconnected
-          if (OnTCPDisconnected != null)
-          {
-            OnTCPDisconnected();
-          }
-          DisconnectTCPserver();
-          ConnectToTCPserver();
-
-          if (_client.Connected)
-          {
-            wasConnected = _isConnected;
-          }
-        }
-        else
+        bool resetTimer = _evtIsConnectedWaitCtrl.WaitOne(IS_SOCKET_CONNECTED_THREAD_POLLING_SEC * 1000);
+        if (_isRunning)
         {
           try
           {
-            if (_client.Client.Poll(0, SelectMode.SelectRead))
+            if (_isConnected && !wasConnected)
             {
-              try
+              //reconnected
+              if (OnTCPConnected != null)
               {
-                if (_client.Client.Receive(checkConn, SocketFlags.Peek) == 0)
-                {
-                  _isConnected = true;
-                }
+                OnTCPConnected();
               }
-              catch (SocketException)
+              wasConnected = _isConnected;
+            }
+            else if (!_isConnected && wasConnected)
+            {
+              //disconnected
+              if (OnTCPDisconnected != null)
               {
-                _isConnected = false;
+                OnTCPDisconnected();
               }
+              DisconnectTCPserver();
+              ConnectToTCPserver();
+
+              if (_client.Connected)
+              {
+                wasConnected = _isConnected;
+              }
+            }
+            else if (!_client.Client.Connected)
+            {
+              ConnectToTCPserver();
+              _isConnected = IsSocketConnected();
             }
             else
             {
-              _isConnected = true;
+              _isConnected = IsSocketConnected();
             }
           }
-          catch (SocketException)
+          finally
           {
-            _isConnected = false;
+            if (resetTimer)
+            {
+              _evtIsConnectedWaitCtrl.Reset();
+            }
           }
         }
       }
+    }
+
+    private bool IsSocketConnected()
+    {      
+      bool isConnected = false;
+      /*try
+      {
+        if (_client.Client.Connected)
+        {
+          if ((_client.Client.Poll(0, SelectMode.SelectWrite)) && (!_client.Client.Poll(0, SelectMode.SelectError)))
+          {            
+            byte[] buffer = new byte[1];
+            isConnected = (_client.Client.Receive(buffer, SocketFlags.Peek) == 0);                        
+          }          
+        }        
+      }
+      catch (SocketException)
+      {        
+        //ignore
+      }*/     
+      if (_client.Client.Connected)
+      {
+        bool blockingState = _client.Client.Blocking;
+        try
+        {
+          var tmp = new byte[1];
+          _client.Client.Blocking = false;
+          _client.Client.Send(tmp, 0, 0);
+          isConnected = true;
+        }
+        catch (SocketException e)
+        {
+          //ignore
+        }
+        finally
+        {
+          _client.Client.Blocking = blockingState;
+        }
+      }
+
+      return isConnected;
     }
 
     private IPAddress GetActiveIPAddress()
@@ -264,9 +306,7 @@ namespace TvPlugin
     }
     
     private void ConnectToTCPserver()
-    {
-      _client = new TcpClient();
-
+    {      
       bool isSingleSeat = Network.IsSingleSeat();
       try
       {
@@ -300,9 +340,10 @@ namespace TvPlugin
         else
         {
           Log.Debug("TCPClient: connected to server : {0}", RemoteControl.HostName);
+          SignalIsSocketConnectedThread();
           if (OnTCPConnected != null)
           {
-            OnTCPConnected();
+            OnTCPConnected();            
           }          
         }
         
@@ -311,7 +352,12 @@ namespace TvPlugin
       {
         Log.Error("TCPClient: could not connect to TCP server {0} - {1}", RemoteControl.HostName, e.Message);        
       }
-    }       
+    }
+
+    private static void SignalIsSocketConnectedThread()
+    {
+      _evtIsConnectedWaitCtrl.Set();
+    }
 
     private void DisconnectTCPserver()
     {
@@ -338,51 +384,57 @@ namespace TvPlugin
     
     private void HandleServerComm()
     {
-      NetworkStream clientStream = _client.GetStream();      
-
-      byte[] message = new byte[_client.ReceiveBufferSize];
-      int bytesRead;
-
+      NetworkStream clientStream = null;
+      var message = new byte[] {};
       while (!_evtTCPCtrl.WaitOne(1))
-      {            
-
-        if (_client.Connected)
+      {
+        if (_client != null)
         {
-          bytesRead = 0;
-          
-          try
+          if (clientStream == null && _client.Connected)
           {
-            
-            if (!_isConnected)
-            {
-              clientStream = _client.GetStream();
-            }
-            //blocks until a client sends a message
-            Array.Clear(message, 0, message.Length); //clear previous buffer contents
-            bytesRead = clientStream.Read(message, 0, message.Length);
-            _isConnected = true;
+            clientStream = _client.GetStream();
+            message = new byte[_client.ReceiveBufferSize];
           }
-          catch
-          {
-            //a socket error has occured
-            _isConnected = false;
-          }
-
-          if (bytesRead == 0)
-          {
-            //the client has disconnected from the server          
-            _isConnected = false;
-          }          
-
-          if (_isConnected)
+          if (clientStream != null)
           {            
-            try
+            if (_client.Connected)
             {
-              _packetProtocol.DataReceived(message);                            
-            }
-            catch (Exception ex)
-            {
-              Log.Error("TCPClient.HandleServerComm - error during TCP packet parsing {0}", ex);
+              SignalIsSocketConnectedThread();
+              int bytesRead = 0;
+              try
+              {
+                if (!_isConnected)
+                {
+                  clientStream = _client.GetStream();
+                }
+                //blocks until a client sends a message
+                Array.Clear(message, 0, message.Length); //clear previous buffer contents
+                bytesRead = clientStream.Read(message, 0, message.Length);
+                _isConnected = true;
+              }
+              catch
+              {
+                //a socket error has occured
+                _isConnected = false;
+              }
+
+              if (bytesRead == 0)
+              {
+                //the client has disconnected from the server          
+                _isConnected = false;
+              }
+
+              if (_isConnected)
+              {
+                try
+                {
+                  _packetProtocol.DataReceived(message);
+                }
+                catch (Exception ex)
+                {
+                  Log.Error("TCPClient.HandleServerComm - error during TCP packet parsing {0}", ex);
+                }
+              }
             }
           }
         }
@@ -439,9 +491,8 @@ namespace TvPlugin
     private void StartHeartBeatThread()
     {
       if (_heartBeatTransmitterThread ==null || !_heartBeatTransmitterThread.IsAlive)
-      {
+      {        
         _evtHeartbeatCtrl.Reset();
-
         Log.Debug("TCPClient: HeartBeat Transmitter started.");
         _heartBeatTransmitterThread = new Thread(HeartBeatTransmitterThread);
         _heartBeatTransmitterThread.IsBackground = true;
@@ -453,32 +504,36 @@ namespace TvPlugin
     private void HeartBeatTransmitterThread()
     {      
       while (!_evtHeartbeatCtrl.WaitOne(HEARTBEAT_INTERVAL_SEC * 1000))      
-      {        
-        // send heartbeat to tv server each 5 sec.
-        // this way we signal to the server that we are alive thus avoid being kicked.
-        // Log.Debug("TVHome: sending HeartBeat signal to server.");
-        // when debugging we want to disable heartbeats
-        try
+      {
+        if (_isRunning)
         {
-          if (_isConnected)
+          // send heartbeat to tv server each 5 sec.
+          // this way we signal to the server that we are alive thus avoid being kicked.
+          // Log.Debug("TVHome: sending HeartBeat signal to server.");
+          // when debugging we want to disable heartbeats
+          try
           {
-            SendHeartBeat();
+            SignalIsSocketConnectedThread();
+            if (_isConnected)
+            {
+              SendHeartBeat();
+            }
+            else
+            {
+              Log.Error("TCPClient: failed sending HeartBeat signal to server. currently not connected to server");
+            }
           }
-          else
+          catch (Exception e)
           {
-            Log.Error("TCPClient: failed sending HeartBeat signal to server. currently not connected to server");
+            Log.Error("TCPClient: failed sending HeartBeat signal to server. ({0})", e.Message);
           }
         }
-        catch (Exception e)
-        {
-          Log.Error("TCPClient: failed sending HeartBeat signal to server. ({0})", e.Message);        
-        }       
       }                 
     }
 
    private void SendHeartBeat()
     {
-      ASCIIEncoding encoder = new ASCIIEncoding();
+      var encoder = new ASCIIEncoding();
       byte[] data = encoder.GetBytes("heartbeat");
       NetworkStream clientStream = _client.GetStream();
       clientStream.Write(data, 0, data.Length);

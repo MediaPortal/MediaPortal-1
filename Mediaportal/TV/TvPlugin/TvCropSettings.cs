@@ -28,7 +28,7 @@ using Action = MediaPortal.GUI.Library.Action;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// TvCropSettings

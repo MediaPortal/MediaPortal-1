@@ -22,7 +22,7 @@ using System;
 using MediaPortal.GUI.Library;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin.teletext
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
   /// <summary>
   /// Teletext window of TVE3

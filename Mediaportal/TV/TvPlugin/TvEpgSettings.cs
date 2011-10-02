@@ -21,11 +21,11 @@
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
 
 //using MediaPortal.Utils.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvEpgSettings : GUIInternalWindow
   {

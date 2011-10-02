@@ -28,12 +28,14 @@ using MediaPortal.GUI.Video;
 using MediaPortal.Player;
 using MediaPortal.Util;
 using MediaPortal.Video.Database;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.TvPlugin.Helper;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.EPG
 {
   /// <summary>
   /// 

@@ -21,14 +21,13 @@
 #region usings
 
 using System;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   internal class TvCropManager
   {

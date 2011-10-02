@@ -41,20 +41,27 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
-using TvLibrary.Implementations.DVB;
-using TvLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVControl.Enums;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Implementations.AudioStream;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
+using Mediaportal.TV.TvPlugin.Helper;
+using Mediaportal.TV.TvPlugin.TCPEventClient;
 using Action = MediaPortal.GUI.Library.Action;
 
-#endregion
-
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
+
+  #endregion
+
   /// <summary>
   /// TV Home screen.
   /// </summary>
-  [PluginIcons("TvPlugin.TVPlugin.gif", "TvPlugin.TVPluginDisabled.gif")]
+  [PluginIcons("Resources\\TvPlugin.TVPlugin.gif", "Resources\\TvPlugin.TVPluginDisabled.gif")]
   public class TVHome : GUIInternalWindow, ISetupForm, IShowPlugin, IPluginReceiver
   {
     #region constants
@@ -756,7 +763,7 @@ namespace TvPlugin
           ViewChannelAndCheck(Navigator.Channel);
         }
         else
-        // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
+          // current channel seems to be non-tv (radio ?), get latest known tv channel from xml config and use this instead
         {
           Settings xmlreader = new MPSettings();
           string currentchannelName = xmlreader.GetValueAsString("mytv", "channel", String.Empty);
@@ -1089,7 +1096,7 @@ namespace TvPlugin
       {
         try
         {
-          IList<Card> cards = TvDatabase.Card.ListAll();
+          IList<Card> cards = Mediaportal.TV.Server.TVDatabase.Gentle.Card.ListAll();
           success = true;
         }
         catch (Exception)
@@ -1459,7 +1466,7 @@ namespace TvPlugin
         UpdateStateOfRecButton();
         UpdateProgressPercentageBar();
         UpdateRecordingIndicator();
-    }
+      }
     }
 
     private void TCPclient_OnTCPdisconnected()
@@ -1493,7 +1500,7 @@ namespace TvPlugin
     {
       RemoveTCPClientEventHandlers();
       _tcpClient.Stop();
-        }
+    }
 
     /// <summary>
     /// Notify the user about the reason of stopped live tv. 
@@ -1649,7 +1656,7 @@ namespace TvPlugin
         else
         {
           RetrieveChannelStatesFromServer();
-      }
+        }
       }
       finally
       {
@@ -1837,8 +1844,8 @@ namespace TvPlugin
                 else if (c.IsRadio)
                 {
                   MediaPortal.GUI.Library.GUIWindowManager.ActivateWindow((int)MediaPortal.GUI.Library.GUIWindow.Window.WINDOW_RADIO);
-                  Radio.CurrentChannel = c;
-                  Radio.Play();
+                  Radio.Radio.CurrentChannel = c;
+                  Radio.Radio.Play();
                 }
               }
               catch (Exception e)
@@ -2191,7 +2198,7 @@ namespace TvPlugin
       dlg.SetHeading(692); // Active Tv Streams
       int selected = 0;
 
-      IList<Card> cards = TvDatabase.Card.ListAll();
+      IList<Card> cards = Mediaportal.TV.Server.TVDatabase.Gentle.Card.ListAll();
       List<Channel> channels = new List<Channel>();
       int count = 0;
       TvServer server = new TvServer();
@@ -2634,7 +2641,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#TV.Next.title", next.Title);
         GUIPropertyManager.SetProperty("#TV.Next.compositetitle", TVUtil.GetDisplayTitle(next));
         GUIPropertyManager.SetProperty("#TV.Next.start",
-                                               next.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
+                                       next.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.Next.stop",
                                        next.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
         GUIPropertyManager.SetProperty("#TV.Next.description", next.Description);
@@ -2684,7 +2691,7 @@ namespace TvPlugin
     /// run and/or modify the unit tests accordingly.
     /// </summary>
     public static int GetPreferedAudioStreamIndex(out eAudioDualMonoMode dualMonoMode)
-    // also used from tvrecorded class
+      // also used from tvrecorded class
     {
       int idxFirstAc3 = -1; // the index of the first avail. ac3 found
       int idxFirstmpeg = -1; // the index of the first avail. mpg found
@@ -2737,7 +2744,7 @@ namespace TvPlugin
       }
 
       if (idx == -1 || !_preferAC3)
-      // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
+        // we end up here if ac3 selection didnt happen (no ac3 avail.) or if preferac3 is disabled.
       {
         if (IsPreferredAudioLanguageAvailable())
         {
@@ -2828,7 +2835,7 @@ namespace TvPlugin
         Log.Info("Audio stream: switching to preferred MPEG audio stream {0}, based on LANG {1}", idx,
                  mpegBasedOnLang);
       }
-      //if not, did we even find a mpeg track ?
+        //if not, did we even find a mpeg track ?
       else if (idxFirstmpeg > -1)
       {
         //we did find a AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -2856,7 +2863,7 @@ namespace TvPlugin
         idx = idxStreamIndexAc3;
         Log.Info("Audio stream: switching to preferred AC3 audio stream {0}, based on LANG {1}", idx, ac3BasedOnLang);
       }
-      //if not, did we even find an ac3 track ?
+        //if not, did we even find an ac3 track ?
       else if (idxFirstAc3 > -1)
       {
         //we did find an AC3 track, but not based on LANG - should we choose this or the mpeg track which is based on LANG.
@@ -3230,11 +3237,11 @@ namespace TvPlugin
       {
         userCopy.Name = Dns.GetHostName();
         ChannelState CurrentChanState = TvServer.GetChannelState(channel.IdChannel, userCopy);
-      if (CurrentChanState == ChannelState.nottunable)
-      {
-        //ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
-        //return false;
-      }
+        if (CurrentChanState == ChannelState.nottunable)
+        {
+          //ChannelTuneFailedNotifyUser(TvResult.AllCardsBusy, false, channel);
+          //return false;
+        }
       }      
 
       //BAV: fixing mantis bug 1263: TV starts with no video if Radio is previously ON & channel selected from TV guide
@@ -3267,7 +3274,7 @@ namespace TvPlugin
         }
       }
       else if (g_Player.IsTVRecording && _userChannelChanged)
-      //we are watching a recording, we have now issued a ch. change..stop the player.
+        //we are watching a recording, we have now issued a ch. change..stop the player.
       {
         _userChannelChanged = false;
         g_Player.Stop(true);
@@ -3281,7 +3288,7 @@ namespace TvPlugin
       if (Card != null)
       {
         if (g_Player.Playing && g_Player.IsTV && !g_Player.IsTVRecording)
-        //modified by joboehl. Avoids other video being played instead of TV. 
+          //modified by joboehl. Avoids other video being played instead of TV. 
         {
           //if we're already watching this channel, then simply return
           if (Card.IsTimeShifting == true && Card.IdChannel == channel.IdChannel)
@@ -3586,7 +3593,7 @@ namespace TvPlugin
       string timeshiftFileName = Card.TimeShiftFileName;
       Log.Info("tvhome:file:{0}", timeshiftFileName);
 
-      TvLibrary.Interfaces.IChannel channel = Card.Channel;
+      IChannel channel = Card.Channel;
       if (channel == null)
       {
         Log.Info("tvhome:startplay channel=null");
@@ -3758,8 +3765,8 @@ namespace TvPlugin
 
       switch (currentCiMenu.State)
       {
-        // choices available, so show them
-        case TvLibrary.Interfaces.CiMenuState.Ready:
+          // choices available, so show them
+        case CiMenuState.Ready:
           dlgCiMenu.Reset();
           dlgCiMenu.SetHeading(currentCiMenu.Title, currentCiMenu.Subtitle, currentCiMenu.BottomText); // CI Menu
 
@@ -3768,7 +3775,7 @@ namespace TvPlugin
 
           // show dialog and wait for result       
           dlgCiMenu.DoModal(GUIWindowManager.ActiveWindow);
-          if (currentCiMenu.State != TvLibrary.Interfaces.CiMenuState.Error)
+          if (currentCiMenu.State != CiMenuState.Error)
           {
             if (dlgCiMenu.SelectedId != -1)
             {
@@ -3786,9 +3793,9 @@ namespace TvPlugin
           }
           break;
 
-        // errors and menu options with no choices
-        case TvLibrary.Interfaces.CiMenuState.Error:
-        case TvLibrary.Interfaces.CiMenuState.NoChoices:
+          // errors and menu options with no choices
+        case CiMenuState.Error:
+        case CiMenuState.NoChoices:
 
           if (_dialogNotify == null)
           {
@@ -3805,8 +3812,8 @@ namespace TvPlugin
           }
           break;
 
-        // requests require users input so open keyboard
-        case TvLibrary.Interfaces.CiMenuState.Request:
+          // requests require users input so open keyboard
+        case CiMenuState.Request:
           String result = "";
           if (
             GetKeyboard(currentCiMenu.RequestText, currentCiMenu.AnswerLength, currentCiMenu.Password, ref result) ==
@@ -3839,36 +3846,36 @@ namespace TvPlugin
 
     #endregion
   }
-}
 
-#region CI Menu
+  #region CI Menu
 
-/// <summary>
-/// Handler class for gui interactions of ci menu
-/// </summary>
-public class CiMenuHandler : CiMenuCallbackSink
-{
   /// <summary>
-  /// eventhandler to show CI Menu dialog
+  /// Handler class for gui interactions of ci menu
   /// </summary>
-  /// <param name="Menu"></param>
-  protected override void CiMenuCallback(CiMenu Menu)
+  public class CiMenuHandler : CiMenuCallbackSink
   {
-    try
+    /// <summary>
+    /// eventhandler to show CI Menu dialog
+    /// </summary>
+    /// <param name="Menu"></param>
+    protected override void CiMenuCallback(CiMenu Menu)
     {
-      Log.Debug("Callback from tvserver {0}", Menu.Title);
+      try
+      {
+        Log.Debug("Callback from tvserver {0}", Menu.Title);
 
-      // pass menu to calling dialog
-      TvPlugin.TVHome.ProcessCiMenu(Menu);
-    }
-    catch
-    {
-      Menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
-                        TvLibrary.Interfaces.CiMenuState.Error);
-      // pass menu to calling dialog
-      TvPlugin.TVHome.ProcessCiMenu(Menu);
+        // pass menu to calling dialog
+        TvPlugin.TVHome.ProcessCiMenu(Menu);
+      }
+      catch
+      {
+        Menu = new CiMenu("Remoting Exception", "Communication with server failed", null,
+                          CiMenuState.Error);
+        // pass menu to calling dialog
+        TvPlugin.TVHome.ProcessCiMenu(Menu);
+      }
     }
   }
-}
 
-#endregion
+  #endregion
+}

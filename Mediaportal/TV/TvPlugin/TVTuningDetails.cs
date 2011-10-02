@@ -21,11 +21,13 @@
 using System;
 using System.Collections.Generic;
 using MediaPortal.GUI.Library;
-using TvDatabase;
-using TvLibrary.Interfaces;
-using TvControl;
+using Mediaportal.TV.Server.TVControl.Interfaces;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVLibrary.Interfaces;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVLibrary.Interfaces.Interfaces;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TVTuningDetails : GUIInternalWindow
   {
@@ -65,35 +67,35 @@ namespace TvPlugin
           TuningDetail detail = null;
           switch (TVHome.Card.Type)
           {
-            case TvLibrary.Interfaces.CardType.Analog:
+            case CardType.Analog:
               foreach (TuningDetail t in details)
               {
                 if (t.ChannelType == 0)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.Atsc:
+            case CardType.Atsc:
               foreach (TuningDetail t in details)
               {
                 if (t.ChannelType == 1)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbC:
+            case CardType.DvbC:
               foreach (TuningDetail t in details)
               {
                 if (t.ChannelType == 2)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbS:
+            case CardType.DvbS:
               foreach (TuningDetail t in details)
               {
                 if (t.ChannelType == 3)
                   detail = t;
               }
               break;
-            case TvLibrary.Interfaces.CardType.DvbT:
+            case CardType.DvbT:
               foreach (TuningDetail t in details)
               {
                 if (t.ChannelType == 4)

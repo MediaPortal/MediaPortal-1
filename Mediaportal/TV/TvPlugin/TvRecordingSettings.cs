@@ -20,12 +20,13 @@
 
 using System;
 using MediaPortal.GUI.Library;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 using Action = MediaPortal.GUI.Library.Action;
 
 //using MediaPortal.Utils.Services;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Summary description for GUISettingsRecordings.

@@ -18,16 +18,14 @@
 
 #endregion
 
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Gentle.Framework;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.Server.TVDatabase.TVBusinessLayer;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class ChannelSettings : GUIInternalWindow, IComparer<Channel>
   {

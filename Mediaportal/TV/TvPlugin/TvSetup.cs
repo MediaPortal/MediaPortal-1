@@ -23,16 +23,15 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.ServiceProcess;
 using Gentle.Framework;
-using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvSetup : GUIInternalWindow
   {
@@ -207,8 +206,8 @@ namespace TvPlugin
       {
         try
         {
-          IList<Server> servers = Server.ListAll();
-          foreach (Server server in servers)
+          IList<Server.TVDatabase.Gentle.Server> servers = Server.TVDatabase.Gentle.Server.ListAll();
+          foreach (Server.TVDatabase.Gentle.Server server in servers)
           {
             if (server.IsMaster)
             {

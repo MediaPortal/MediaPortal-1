@@ -23,13 +23,11 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
-using TvLibrary.Teletext;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.Teletext
 {
 
   #region enum

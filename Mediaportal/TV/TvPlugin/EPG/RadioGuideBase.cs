@@ -26,12 +26,13 @@ using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.TvPlugin.Helper;
 
 #endregion
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin.EPG
 {
   /// <summary>
   /// 
@@ -71,7 +72,7 @@ namespace TvPlugin
 
     protected override int ChannelGroupCount
     {
-      get { return Radio.AllRadioGroups.Count; }
+      get { return Radio.Radio.AllRadioGroups.Count; }
     }
 
     protected override string Thumb
@@ -86,7 +87,7 @@ namespace TvPlugin
 
     protected override string CurrentGroupName
     {
-      get { return Radio.SelectedGroup.GroupName; }
+      get { return Radio.Radio.SelectedGroup.GroupName; }
     }
 
     #endregion
@@ -101,13 +102,13 @@ namespace TvPlugin
     {
       // in single channel view there would be errors when changing group
       if (_singleChannelView) return;
-      int countGroups = Radio.AllRadioGroups.Count; // all
+      int countGroups = Radio.Radio.AllRadioGroups.Count; // all
       int newIndex = 0;
       int oldIndex = 0;
 
       for (int i = 0; i < countGroups; ++i)
       {
-        if (Radio.AllRadioGroups[i].IdGroup == Radio.SelectedGroup.IdGroup)
+        if (Radio.Radio.AllRadioGroups[i].IdGroup == Radio.Radio.SelectedGroup.IdGroup)
         {
           newIndex = oldIndex = i;
           break;
@@ -135,8 +136,8 @@ namespace TvPlugin
       {
         // update list
         GUIWaitCursor.Show();
-        Radio.SelectedGroup = Radio.AllRadioGroups[newIndex];
-        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", Radio.SelectedGroup.GroupName);
+        Radio.Radio.SelectedGroup = Radio.Radio.AllRadioGroups[newIndex];
+        GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", Radio.Radio.SelectedGroup.GroupName);
 
         _cursorY = 1; // cursor should be on the program guide item
         ChannelOffset = 0;
@@ -165,7 +166,7 @@ namespace TvPlugin
         _showChannelLogos = false;
         if (TVHome.Card.IsTimeShifting)
         {
-          _currentChannel = Radio.CurrentChannel;
+          _currentChannel = Radio.Radio.CurrentChannel;
           for (int i = 0; i < _channelList.Count; i++)
           {
             Channel chan = (_channelList[i]).Channel;
@@ -271,9 +272,9 @@ namespace TvPlugin
     protected override void OnSelectChannelGroup()
     {
       // only if more groups present and not in singleChannelView
-      if (Radio.AllRadioGroups.Count > 1 && !_singleChannelView)
+      if (Radio.Radio.AllRadioGroups.Count > 1 && !_singleChannelView)
       {
-        int prevGroup = Radio.SelectedGroup.IdGroup;
+        int prevGroup = Radio.Radio.SelectedGroup.IdGroup;
 
         var dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
         if (dlg == null)
@@ -284,10 +285,10 @@ namespace TvPlugin
         dlg.SetHeading(971); // group
         int selected = 0;
 
-        for (int i = 0; i < Radio.AllRadioGroups.Count; ++i)
+        for (int i = 0; i < Radio.Radio.AllRadioGroups.Count; ++i)
         {
-          dlg.Add(Radio.AllRadioGroups[i].GroupName);
-          if (Radio.AllRadioGroups[i].GroupName == Radio.SelectedGroup.GroupName)
+          dlg.Add(Radio.Radio.AllRadioGroups[i].GroupName);
+          if (Radio.Radio.AllRadioGroups[i].GroupName == Radio.Radio.SelectedGroup.GroupName)
           {
             selected = i;
           }
@@ -300,10 +301,10 @@ namespace TvPlugin
           return;
         }
 
-        Radio.SelectedGroup = Radio.AllRadioGroups[dlg.SelectedId - 1];
+        Radio.Radio.SelectedGroup = Radio.Radio.AllRadioGroups[dlg.SelectedId - 1];
         GUIPropertyManager.SetProperty(SkinPropertyPrefix + ".Guide.Group", dlg.SelectedLabelText);
 
-        if (prevGroup != Radio.SelectedGroup.IdGroup)
+        if (prevGroup != Radio.Radio.SelectedGroup.IdGroup)
         {
           GUIWaitCursor.Show();
           _cursorY = 1; // cursor should be on the program guide item
@@ -477,7 +478,7 @@ namespace TvPlugin
           }
         }
 
-        if (Radio.AllRadioGroups.Count > 1)
+        if (Radio.Radio.AllRadioGroups.Count > 1)
         {
           dlg.AddLocalizedString(971); // Group
         }
@@ -504,7 +505,7 @@ namespace TvPlugin
           case 1213: // listen to station
 
             Log.Debug("viewch channel:{0}", _currentChannel);
-            Radio.Play();
+            Radio.Radio.Play();
             if (_currentProgram != null && (TVHome.Card.IsTimeShifting && TVHome.Card.IdChannel == _currentProgram.ReferencedChannel().IdChannel))
             {
               g_Player.ShowFullScreenWindow();
@@ -547,7 +548,7 @@ namespace TvPlugin
       {
         return;
       }
-      Radio.CurrentChannel = _currentChannel;
+      Radio.Radio.CurrentChannel = _currentChannel;
       if (isItemSelected)
       {
         if (_currentProgram.IsRunningAt(DateTime.Now) || _currentProgram.EndTime <= DateTime.Now)
@@ -622,7 +623,7 @@ namespace TvPlugin
 
                   case 1213: // listen to this station
                     {
-                      Radio.Play();
+                      Radio.Radio.Play();
                       if (g_Player.Playing)
                       {
                         g_Player.ShowFullScreenWindow();
@@ -639,7 +640,7 @@ namespace TvPlugin
 
               if (string.IsNullOrEmpty(fileName))
               {
-                Radio.Play();
+                Radio.Radio.Play();
                 if (g_Player.Playing)
                 {
                   g_Player.ShowFullScreenWindow();
@@ -649,7 +650,7 @@ namespace TvPlugin
             else //not recording
             {
               // clicked the show we're currently watching
-              if (Radio.CurrentChannel != null && Radio.CurrentChannel.IdChannel == _currentChannel.IdChannel &&
+              if (Radio.Radio.CurrentChannel != null && Radio.Radio.CurrentChannel.IdChannel == _currentChannel.IdChannel &&
                   g_Player.Playing)
               {
                 Log.Debug("RadioGuide: clicked on a currently running show");
@@ -679,7 +680,7 @@ namespace TvPlugin
                   case 1213:
                     Log.Debug("RadioGuide: switch currently running show to fullscreen");
                     GUIWaitCursor.Show();
-                    Radio.Play();
+                    Radio.Radio.Play();
                     GUIWaitCursor.Hide();
                     if (g_Player.Playing)
                     {
@@ -699,7 +700,7 @@ namespace TvPlugin
                 TVHome.UserChannelChanged = true;
                 // fixing mantis 1874: TV doesn't start when from other playing media to TVGuide & select program
                 GUIWaitCursor.Show();
-                Radio.Play();
+                Radio.Radio.Play();
                 GUIWaitCursor.Hide();
                 if (g_Player.Playing)
                 {
@@ -757,12 +758,12 @@ namespace TvPlugin
 
     protected override IList<Channel> GetGuideChannelsForGroup()
     {
-      return _layer.GetRadioGuideChannelsForGroup(Radio.SelectedGroup.IdGroup);
+      return _layer.GetRadioGuideChannelsForGroup(Radio.Radio.SelectedGroup.IdGroup);
     }
 
     protected override bool HasSelectedGroup()
     {
-      return (Radio.SelectedGroup != null);
+      return (Radio.Radio.SelectedGroup != null);
     }
 
     protected override bool IsChannelTypeCorrect(Channel channel)

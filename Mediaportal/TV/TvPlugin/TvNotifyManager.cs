@@ -19,19 +19,16 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Windows.Forms;
-using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
-using MediaPortal.Player;
 using MediaPortal.Profile;
-using MediaPortal.Util;
-using TvControl;
-using TvDatabase;
+using Mediaportal.TV.Server.TVControl;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
+using Mediaportal.TV.TvPlugin.TCPEventClient;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   public class TvNotifyManager
   {

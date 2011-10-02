@@ -23,10 +23,10 @@ using System.Globalization;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
-using TvDatabase;
+using Mediaportal.TV.Server.TVDatabase.Gentle;
 using Action = MediaPortal.GUI.Library.Action;
 
-namespace TvPlugin
+namespace Mediaportal.TV.TvPlugin
 {
   /// <summary>
   /// Summary description for TvRecordedInfo.

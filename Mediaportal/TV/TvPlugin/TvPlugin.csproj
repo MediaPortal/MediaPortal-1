@@ -84,14 +84,17 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\mediaportal\Dialogs\bin\Release\Dialogs.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Common">
-      <HintPath>..\Server\TVDatabase\Gentle\references\Gentle.Common.dll</HintPath>
+    <Reference Include="Gentle.Common, Version=1.5.0.29111, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Server\TVDatabase\Gentle\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Framework">
-      <HintPath>..\Server\TVDatabase\Gentle\references\Gentle.Framework.dll</HintPath>
+    <Reference Include="Gentle.Framework, Version=1.5.0.29111, Culture=neutral, PublicKeyToken=80b5de62e27be49b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Server\TVDatabase\Gentle\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\Server\TVDatabase\Gentle\references\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=1.2.9.0, Culture=neutral, PublicKeyToken=b32731d11ce58905">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\TVDatabase\Gentle\references\log4net.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -128,7 +131,9 @@
     <Compile Include="Radio\Radio.cs" />
     <Compile Include="EPG\RadioGuide.cs" />
     <Compile Include="EPG\RadioGuideBase.cs" />
-    <Compile Include="Radio\RadioSetupForm.cs" />
+    <Compile Include="Radio\RadioSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Radio\RadioSetupForm.Designer.cs">
       <DependentUpon>RadioSetupForm.cs</DependentUpon>
     </Compile>
@@ -164,11 +169,15 @@
     <Compile Include="Teletext\TvTeletext.cs" />
     <Compile Include="TvRecordingSettings.cs" />
     <Compile Include="TvSetup.cs" />
-    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.cs" />
+    <Compile Include="PluginSetup\TvSetupAudioLanguageForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginSetup\TvSetupAudioLanguageForm.Designer.cs">
       <DependentUpon>TvSetupAudioLanguageForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PluginSetup\TvSetupForm.cs" />
+    <Compile Include="PluginSetup\TvSetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="PluginSetup\TvSetupForm.Designer.cs">
       <DependentUpon>TvSetupForm.cs</DependentUpon>
     </Compile>
