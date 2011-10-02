@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="fr" availableDays="14" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="tf1.fr" siteId="1" />
+    <Channel id="france2.fr" siteId="2" />
+    <Channel id="france3.fr" siteId="3" />
+    <Channel id="cplus.fr" siteId="4" />
+    <Channel id="arte-tv.com" siteId="5" />
+    <Channel id="m6.fr" siteId="6" />
+    <Channel id="france5.fr" siteId="7" />
+    <Channel id="rtl9.com" siteId="8" />
+    <Channel id="tmc.tv" siteId="9" />
+    <Channel id="tv5.org" siteId="10" />
+    <Channel id="parispremiere@m6.fr" siteId="11" />
+    <Channel id="eurosport.fr" siteId="12" />
+    <Channel id="serieclub@m6.fr" siteId="13" />
+    <Channel id="planete@planete.com" siteId="14" />
+    <Channel id="odyssee.com" siteId="15" />
+    <Channel id="voyage.fr" siteId="16" />
+    <Channel id="histoire.fr" siteId="17" />
+    <Channel id="disneychannel@disney.fr" siteId="18" />
+    <Channel id="teletoon.fr" siteId="19" />
+    <Channel id="jetix@canalsat.fr" siteId="20" />
+    <Channel id="canalj.net" siteId="21" />
+    <Channel id="canaljimmy.fr" siteId="22" />
+    <Channel id="cinetoile@tps.fr" siteId="23" />
+    <Channel id="cinestar@tps.fr" siteId="26" />
+    <Channel id="homecinema@tps.fr" siteId="27" />
+    <Channel id="france4.tv" siteId="28" />
+    <Channel id="mezzo.tv" siteId="29" />
+    <Channel id="mcm@mcm.fr" siteId="30" />
+    <Channel id="mtv.fr" siteId="31" />
+    <Channel id="funtv@m6.fr" siteId="33" />
+    <Channel id="teva@m6.fr" siteId="34" />
+    <Channel id="la1.be" siteId="35" />
+    <Channel id="bbcprime.com" siteId="36" />
+    <Channel id="tsr1@tsr.ch" siteId="37" />
+    <Channel id="w9.fr" siteId="38" />
+    <Channel id="13emerue.fr" siteId="39" />
+    <Channel id="ab1tv.fr" siteId="40" />
+    <Channel id="raiuno.rai.it" siteId="42" />
+    <Channel id="raidue.rai.it" siteId="43" />
+    <Channel id="zdf.de" siteId="44" />
+    <Channel id="tve1@tve.es" siteId="45" />
+    <Channel id="seasons.fr" siteId="47" />
+    <Channel id="sport+@canalsat.fr" siteId="48" />
+    <Channel id="franceo.rfo.fr" siteId="49" />
+    <Channel id="animauxtv.fr" siteId="50" />
+    <Channel id="comedie.com" siteId="51" />
+    <Channel id="multivision1@tps.fr" siteId="52" />
+    <Channel id="multivision2@tps.fr" siteId="53" />
+    <Channel id="tvi@rtl.be" siteId="54" />
+    <Channel id="multivision3@tps.fr" siteId="55" />
+    <Channel id="multivision4@tps.fr" siteId="56" />
+    <Channel id="multivision5@tps.fr" siteId="57" />
+    <Channel id="multivision6@tps.fr" siteId="58" />
+    <Channel id="multivision7@tps.fr" siteId="59" />
+    <Channel id="kiosque1@canalsat.fr" siteId="60" />
+    <Channel id="kiosque2@canalsat.fr" siteId="61" />
+    <Channel id="kiosque3@canalsat.fr" siteId="62" />
+    <Channel id="kiosque4@canalsat.fr" siteId="63" />
+    <Channel id="kiosque5@canalsat.fr" siteId="64" />
+    <Channel id="kiosque6@canalsat.fr" siteId="65" />
+    <Channel id="kiosque7@canalsat.fr" siteId="66" />
+    <Channel id="kiosque8@canalsat.fr" siteId="67" />
+    <Channel id="kiosque9@canalsat.fr" siteId="68" />
+    <Channel id="kiosque10@canalsat.fr" siteId="69" />
+    <Channel id="canalcinema@canalsat.fr" siteId="71" />
+    <Channel id="cplusdecale@canalsat.fr" siteId="72" />
+    <Channel id="cplussport@canalsat.fr" siteId="73" />
+    <Channel id="rtp.pt" siteId="78" />
+    <Channel id="bbcworld.com" siteId="79" />
+    <Channel id="mangas.fr" siteId="80" />
+    <Channel id="escalestv.fr" siteId="81" />
+    <Channel id="ard.de" siteId="83" />
+    <Channel id="1@betv.be" siteId="87" />
+    <Channel id="cartoonnetwork.fr" siteId="88" />
+    <Channel id="club@rtl.be" siteId="89" />
+    <Channel id="1@vrt.be" siteId="93" />
+    <Channel id="rtl.be" siteId="95" />
+    <Channel id="abmoteurs.fr" siteId="98" />
+    <Channel id="xxltv.fr" siteId="100" />
+    <Channel id="ladeux.be" siteId="104" />
+    <Channel id="SWF" siteId="105" />
+    <Channel id="tsr2@tsr.ch" siteId="107" />
+    <Channel id="tsi1@rtsi.ch" siteId="108" />
+    <Channel id="DRS" siteId="109" />
+    <Channel id="chasseetpechetv.com" siteId="113" />
+    <Channel id="cineculte@tps.fr" siteId="114" />
+    <Channel id="tmc.tv" siteId="115" />
+    <Channel id="equidia.fr" siteId="116" />
+    <Channel id="lequipetv.fr" siteId="117" />
+    <Channel id="lci.fr" siteId="118" />
+    <Channel id="cnn.com" siteId="120" />
+    <Channel id="euronews.net" siteId="121" />
+    <Channel id="itelevision.fr" siteId="122" />
+    <Channel id="gameone.boomtown.net" siteId="124" />
+    <Channel id="tf6.fr" siteId="125" />
+    <Channel id="tvbreizh.fr" siteId="126" />
+    <Channel id="tpsstar@tps.fr" siteId="130" />
+    <Channel id="action@tps.fr" siteId="131" />
+    <Channel id="ab3.be" siteId="132" />
+    <Channel id="match-tv.fr" siteId="133" />
+    <Channel id="ngcfrance.tv" siteId="134" />
+    <Channel id="cinepremier@canalsat.fr" siteId="135" />
+    <Channel id="cineemotion@canalsat.fr" siteId="136" />
+    <Channel id="cinefrisson@canalsat.fr" siteId="137" />
+    <Channel id="cinefamiz@canalsat.fr" siteId="138" />
+    <Channel id="cineauteur@canalsat.fr" siteId="139" />
+    <Channel id="cineclassic@canalsat.fr" siteId="140" />
+    <Channel id="planete-thalassa@planete.com" siteId="141" />
+    <Channel id="ab4@absat.fr" siteId="142" />
+    <Channel id="cine2@betv.be" siteId="143" />
+    <Channel id="cine1@betv.be" siteId="144" />
+    <Channel id="cinepolar@absat.fr" siteId="147" />
+    <Channel id="cinefamily@tps.fr" siteId="150" />
+    <Channel id="cinextreme@tps.fr" siteId="151" />
+    <Channel id="plug@rtl.be" siteId="152" />
+    <Channel id="espn.com" siteId="155" />
+    <Channel id="toutelhistoire.com" siteId="159" />
+    <Channel id="mcmpop@mcm.fr" siteId="160" />
+    <Channel id="trace.tv" siteId="161" />
+    <Channel id="bloomberg.co.uk" siteId="162" />
+    <Channel id="ftv.fr" siteId="163" />
+    <Channel id="boomerang@tps.fr" siteId="164" />
+    <Channel id="discoverychannel.fr" siteId="165" />
+    <Channel id="pinktv.fr" siteId="166" />
+    <Channel id="direct8.fr" siteId="167" />
+    <Channel id="nt1.tv" siteId="168" />
+    <Channel id="nrj12.fr" siteId="169" />
+    <Channel id="lcp@assemblee-nat.fr" siteId="170" />
+    <Channel id="piwi@tps.fr" siteId="171" />
+    <Channel id="Entertainment" siteId="172" />
+    <Channel id="2m.tv" siteId="173" />
+    <Channel id="AlgerianTV" siteId="174" />
+    <Channel id="canale5.com" siteId="175" />
+    <Channel id="cnbceurope.com" siteId="176" />
+    <Channel id="cuisine.tv" siteId="177" />
+    <Channel id="extreme.com" siteId="178" />
+    <Channel id="fillestv.com" siteId="179" />
+    <Channel id="musicblack@m6musichits.m6.fr" siteId="180" />
+    <Channel id="ma-planete@planete.com" siteId="182" />
+    <Channel id="motorstv.com" siteId="183" />
+    <Channel id="nba+@canalsat.fr" siteId="184" />
+    <Channel id="Sailing" siteId="185" />
+    <Channel id="Télif" siteId="186" />
+    <Channel id="tfou.fr" siteId="187" />
+    <Channel id="toon@disney.fr" siteId="188" />
+    <Channel id="vh1.com" siteId="189" />
+    <Channel id="infosport.tm.fr" siteId="190" />
+    <Channel id="m6musichits.m6.fr" siteId="191" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://telepoche.guidetele.com/gtv/journee?openagent&amp;c=[ID]&amp;d=[DAY_OFFSET]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="semaine">
+        <SectionTemplate tags="TA">
+          <TemplateText>
+	&lt;td&gt;
+	&lt;a href="" class="" id="" onMouseover="showmenu('&lt;#START&gt;-&lt;#END&gt;&lt;br&gt;&lt;#GENRE&gt;&lt;br&gt;&lt;#DESCRIPTION&gt;','&lt;#TITLE&gt;')"&gt;&lt;/a&gt;
+	&lt;/td&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

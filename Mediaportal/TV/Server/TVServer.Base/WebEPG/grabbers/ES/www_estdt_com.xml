@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Grabber>
+ <Info availableDays="7" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="TVE 1" siteId="1" />
+    <Channel id="La 2" siteId="2" />
+    <Channel id="Antena 3" siteId="3" />
+    <Channel id="Cuatro" siteId="4" />
+    <Channel id="Telecinco" siteId="5" />
+    <Channel id="La Sexta" siteId="6" />
+    <Channel id="24 Horas" siteId="7" />
+    <Channel id="Clan TVE" siteId="8" />
+    <Channel id="Teledeporte" siteId="10" />
+    <Channel id="Antena.Neox" siteId="11" />
+    <Channel id="Antena.Nova" siteId="12" />
+    <Channel id="CNN+" siteId="13" />
+    <Channel id="40 Latino" siteId="14" />
+    <Channel id="FDF" siteId="15" />
+    <Channel id="Telecinco 2" siteId="16" />
+    <Channel id="Veo TV" siteId="17" />
+    <Channel id="Sony Entertainment Television " siteId="165" />
+    <Channel id="Telemadrid" siteId="168" />
+    <Channel id="TV3" siteId="167" />
+    <Channel id="Intereconomia TV" siteId="18" />
+  </Channels>
+
+  <Listing type="Html">
+    <Site url="http://www.estdt.com/3,[YYYY][MM][DD],[ID],1.html" post="" external="false" encoding="" />
+      <Html>
+         <Template name="default" start="prginclude" end="cuadrofec2">
+            <SectionTemplate tags="D">
+               <TemplateText>
+&lt;div class="prghora"&gt;&lt;#START&gt;&lt;/div&gt;
+&lt;div class="prgprog"&gt;
+&lt;div class="prgptit"&gt;&lt;#TITLE&gt;&lt;/div&gt;
+&lt;div class="prgpsub"&gt;
+&lt;#DESCRIPTION&gt;
+&lt;div class="rels"&gt;
+&lt;/div&gt;
+&lt;div class="icons"&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+               </TemplateText>
+	    </SectionTemplate>
+         </Template>
+      </Html>
+   </Listing>
+</Grabber>
+ 	  	 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="en" availableDays="4" timezone="" version="2.0" />
+  <Channels>
+    <Channel id="sbs@sbs.com.au" siteId="SBS" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.sbs.com.au/whatson/index.php3?progdate=[DD]:[MM]:[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="MORNING">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;br&gt;&lt;/td&gt;
+&lt;/tr&gt;
+    </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>

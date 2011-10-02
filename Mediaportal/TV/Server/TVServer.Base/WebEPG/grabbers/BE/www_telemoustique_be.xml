@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="3" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="la1.be" siteId="LA%20UNE" />
+    <Channel id="ladeux.be" siteId="La%20Deux" />
+    <Channel id="tvi@rtl.be" siteId="RTL%20TVI" />
+    <Channel id="club@rtl.be" siteId="Club%20RTL" />
+    <Channel id="ab3@rtl.be" siteId="AB3" />
+    <Channel id="ab4@rtl.be" siteId="AB4" />
+    <Channel id="plug@rtl.be" siteId="PLUGTV" />
+    <Channel id="1@betv.be" siteId="BE1" />
+    <Channel id="cine1@betv.be" siteId="BE%20CINE1" />
+    <Channel id="cine2@betv.be" siteId="BE%20CINE2" />
+    <Channel id="sport1@betv.be" siteId="BE%20SPORT1" />
+    <Channel id="sport2@betv.be" siteId="BE%20SPORT2" />
+    <Channel id="mcm.be" siteId="MCM" />
+    <Channel id="een.be" siteId="TV1" />
+    <Channel id="ketnet.be" siteId="Ketnet" />
+    <Channel id="canvas.be" siteId="Canvas" />
+    <Channel id="vtm.be" siteId="VTM" />
+    <Channel id="vt4.be" siteId="VT4" />
+    <Channel id="tf1.fr" siteId="TF1" />
+    <Channel id="france2.fr" siteId="France2" />
+    <Channel id="france3.fr" siteId="France3" />
+    <Channel id="arte-tv.com" siteId="ARTE" />
+    <Channel id="france5.fr" siteId="La%20CINQ" />
+    <Channel id="f@tv5.fr" siteId="TV5" />
+    <Channel id="m6.fr" siteId="M6" />
+    <Channel id="bbc1@bbc.co.uk" siteId="BBC1" />
+    <Channel id="bbc2@bbc.co.uk" siteId="BBC2" />
+    <Channel id="bbcworld.com" siteId="BBC%20World" />
+    <Channel id="euronews.net" siteId="EuroNews" />
+    <Channel id="ned1@omroep.nl" siteId="Hollande1" />
+    <Channel id="ned2@omroep.nl" siteId="Hollande2" />
+    <Channel id="ned3@omroep.nl" siteId="Hollande3" />
+    <Channel id="ard.de" siteId="ALL1" />
+    <Channel id="zdf.de" siteId="ALL2" />
+    <Channel id="wdr.de" siteId="ALL3%20WDR" />
+    <Channel id="sw.de" siteId="ALL3%20SWF" />
+    <Channel id="rtl.de" siteId="RTL%20Allemagne" />
+    <Channel id="raiuno.rai.it" siteId="RAI" />
+    <Channel id="tve.es" siteId="TVE" />
+    <Channel id="international@rtp.pt" siteId="RTP%20Internacional" />
+    <Channel id="cnni-emea@cnn.com" siteId="CNN" />
+    <Channel id="cnbc.com" siteId="CNBC" />
+    <Channel id="mtv.com" siteId="MTV" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.telemoustique.be/epg/fr/zender.asp?move=full&amp;channel=[ID]&amp;dag=[_M]/[_D]/[YYYY]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="Complet" end="&lt;/body&gt;">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#END&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#GENRE&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Template name="Details">
+        <SectionTemplate tags="T">
+          <TemplateText>
+            &lt;tbody&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;z(&gt;
+            &lt;tr&gt;
+            &lt;td&gt;&lt;*MATCH&gt;&lt;/td&gt;
+            &lt;td&gt; :&lt;/td&gt;
+            &lt;td&gt;&lt;*VALUE&gt;&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;/z)?&gt;
+            &lt;/tbody&gt;
+          </TemplateText>
+          <MatchList>
+            <Match field="#GENRE" match="Le genre" />
+            <Match field="#ACTORS" match="Acteurs" />
+            <Match field="#SUBTITLE" match="Titre de l'&#233;pisode" />
+            <Match field="#DESCRIPTION" match="Info" />
+            <Match field="#DESCRIPTION" match="Contenu" />
+          </MatchList>
+        </SectionTemplate>
+      </Template>
+      <Sublinks>
+        <Sublink search="detail" template="Details" />
+      </Sublinks>
+    </Html>
+  </Listing>
+</Grabber>

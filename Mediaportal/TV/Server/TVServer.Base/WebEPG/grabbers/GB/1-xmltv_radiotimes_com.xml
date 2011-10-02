@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info language="en" availableDays="0" timezone="GMT Standard Time" version="2.0.4" />
+  <Channels>
+    <Channel id="3e.com" siteId="2502" />
+    <Channel id="4Music.com" siteId="1544" />
+    <Channel id="5*.com" siteId="2062" />
+    <Channel id="5* +1.com" siteId="2578" />
+    <Channel id="5USA.com" siteId="2008" />
+    <Channel id="5USA +1.com" siteId="2577" />
+    <Channel id="ABC News Now.com" siteId="2553" />
+    <Channel id="Al Jazeera English.com" siteId="2055" />
+    <Channel id="Alibi.com" siteId="292" />
+    <Channel id="Alibi +1.com" siteId="1993" />
+    <Channel id="Animal Planet.com" siteId="39" />
+    <Channel id="Animal Planet +1.com" siteId="1761" />
+    <Channel id="Asia 1.com" siteId="2421" />
+    <Channel id="Asianet.com" siteId="2625" />
+    <Channel id="Attheraces.com" siteId="661" />
+    <Channel id="B4U Movies.com" siteId="43" />
+    <Channel id="BBC Alba.com" siteId="2098" />
+    <Channel id="BBC Entertainment.com" siteId="50" />
+    <Channel id="BBC HD.com" siteId="1994" />
+    <Channel id="BBC News.com" siteId="48" />
+    <Channel id="BBC Parliament.com" siteId="49" />
+    <Channel id="BBC Sport Interactive: (Freeview).com" siteId="2040" />
+    <Channel id="BBC Sport Interactive: BBC1.com" siteId="2612" />
+    <Channel id="BBC Sport Interactive: BBC2.com" siteId="2610" />
+    <Channel id="BBC Sport Interactive: BBC3.com" siteId="2613" />
+    <Channel id="BBC World News.com" siteId="2164" />
+    <Channel id="BBC1.com" siteId="92" />
+    <Channel id="BBC1 East.com" siteId="93" />
+    <Channel id="BBC1 East Midlands.com" siteId="2240" />
+    <Channel id="BBC1 HD.com" siteId="2667" />
+    <Channel id="BBC1 London.com" siteId="94" />
+    <Channel id="BBC1 Midlands.com" siteId="95" />
+    <Channel id="BBC1 North.com" siteId="96" />
+    <Channel id="BBC1 North East.com" siteId="97" />
+    <Channel id="BBC1 North West.com" siteId="98" />
+    <Channel id="BBC1 Northern Ireland.com" siteId="99" />
+    <Channel id="BBC1 Scotland.com" siteId="101" />
+    <Channel id="BBC1 South.com" siteId="102" />
+    <Channel id="BBC1 South East.com" siteId="1869" />
+    <Channel id="BBC1 South West.com" siteId="103" />
+    <Channel id="BBC1 Wales.com" siteId="100" />
+    <Channel id="BBC1 West.com" siteId="104" />
+    <Channel id="BBC2.com" siteId="105" />
+    <Channel id="BBC2 East.com" siteId="106" />
+    <Channel id="BBC2 East Midlands.com" siteId="2241" />
+    <Channel id="BBC2 London.com" siteId="107" />
+    <Channel id="BBC2 Midlands.com" siteId="108" />
+    <Channel id="BBC2 North.com" siteId="110" />
+    <Channel id="BBC2 North East.com" siteId="111" />
+    <Channel id="BBC2 North West.com" siteId="109" />
+    <Channel id="BBC2 Northern Ireland.com" siteId="112" />
+    <Channel id="BBC2 Scotland.com" siteId="113" />
+    <Channel id="BBC2 South.com" siteId="115" />
+    <Channel id="BBC2 South East.com" siteId="1862" />
+    <Channel id="BBC2 South West.com" siteId="116" />
+    <Channel id="BBC2 Wales.com" siteId="114" />
+    <Channel id="BBC2 West.com" siteId="117" />
+    <Channel id="BBC3.com" siteId="45" />
+    <Channel id="BBC4.com" siteId="47" />
+    <Channel id="Best Direct.com" siteId="2527" />
+    <Channel id="BET +1.com" siteId="2597" />
+    <Channel id="BET International.com" siteId="2244" />
+    <Channel id="Bid TV.com" siteId="594" />
+    <Channel id="Bio.com" siteId="119" />
+    <Channel id="Bio HD.com" siteId="2143" />
+    <Channel id="Blighty.com" siteId="1602" />
+    <Channel id="Blighty +1.com" siteId="2618" />
+    <Channel id="Bliss.com" siteId="1144" />
+    <Channel id="Bloomberg TV.com" siteId="120" />
+    <Channel id="Body in Balance.com" siteId="2604" />
+    <Channel id="Boomerang.com" siteId="1661" />
+    <Channel id="Boomerang +1.com" siteId="129" />
+    <Channel id="Bravo.com" siteId="122" />
+    <Channel id="Bravo +1.com" siteId="1221" />
+    <Channel id="Bravo 2.com" siteId="2010" />
+    <Channel id="Cartoon Network.com" siteId="128" />
+    <Channel id="Cartoonito.com" siteId="1983" />
+    <Channel id="CBBC.com" siteId="482" />
+    <Channel id="CBeebies.com" siteId="483" />
+    <Channel id="CBS Action.com" siteId="2178" />
+    <Channel id="CBS Drama.com" siteId="2177" />
+    <Channel id="CBS Reality.com" siteId="2586" />
+    <Channel id="Challenge.com" siteId="131" />
+    <Channel id="Challenge +1.com" siteId="1872" />
+    <Channel id="Channel 4.com" siteId="132" />
+    <Channel id="Channel 4 +1.com" siteId="2047" />
+    <Channel id="Channel 4 HD.com" siteId="2056" />
+    <Channel id="Channel 5.com" siteId="134" />
+    <Channel id="Channel 5 HD.com" siteId="2615" />
+    <Channel id="Channel 7.com" siteId="2550" />
+    <Channel id="Channel 9.com" siteId="2429" />
+    <Channel id="Channel M.com" siteId="1944" />
+    <Channel id="Channel One.com" siteId="2049" />
+    <Channel id="Channel One +1.com" siteId="2169" />
+    <Channel id="Channel S.com" siteId="2531" />
+    <Channel id="Chart Show TV.com" siteId="2439" />
+    <Channel id="Chelsea TV.com" siteId="1741" />
+    <Channel id="Cinemoi.com" siteId="2181" />
+    <Channel id="CITV.com" siteId="1981" />
+    <Channel id="City Channel.com" siteId="2492" />
+    <Channel id="CN Too.com" siteId="742" />
+    <Channel id="CNBC.com" siteId="125" />
+    <Channel id="CNN.com" siteId="126" />
+    <Channel id="Comedy Central.com" siteId="1061" />
+    <Channel id="Comedy Central +1.com" siteId="2013" />
+    <Channel id="Comedy Central Extra.com" siteId="1201" />
+    <Channel id="Comedy Central Extra +1.com" siteId="2596" />
+    <Channel id="Comedy Central HD.com" siteId="2646" />
+    <Channel id="Crime + Investigation.com" siteId="2165" />
+    <Channel id="Crime + Investigation +1.com" siteId="2583" />
+    <Channel id="Crime + Investigation HD.com" siteId="2144" />
+    <Channel id="Dave.com" siteId="2050" />
+    <Channel id="Dave ja vu.com" siteId="2052" />
+    <Channel id="Deutsche Welle.com" siteId="2530" />
+    <Channel id="Discovery +1.5.com" siteId="2619" />
+    <Channel id="Discovery Channel.com" siteId="147" />
+    <Channel id="Discovery Channel +1.com" siteId="152" />
+    <Channel id="Discovery HD.com" siteId="2145" />
+    <Channel id="Discovery History.com" siteId="2668" />
+    <Channel id="Discovery History +1.com" siteId="2672" />
+    <Channel id="Discovery Home + Health.com" siteId="149" />
+    <Channel id="Discovery Home + Health +1.com" siteId="1953" />
+    <Channel id="Discovery Knowledge.com" siteId="148" />
+    <Channel id="Discovery Knowledge +1.com" siteId="2601" />
+    <Channel id="Discovery Quest +1.com" siteId="2588" />
+    <Channel id="Discovery Real Time.com" siteId="150" />
+    <Channel id="Discovery Real Time +1.com" siteId="1764" />
+    <Channel id="Discovery Science.com" siteId="153" />
+    <Channel id="Discovery Science +1.com" siteId="2600" />
+    <Channel id="Discovery Shed.com" siteId="2057" />
+    <Channel id="Discovery Travel + Living.com" siteId="154" />
+    <Channel id="Discovery Travel + Living +1.com" siteId="2574" />
+    <Channel id="Discovery Turbo.com" siteId="155" />
+    <Channel id="Disney Cinemagic.com" siteId="1984" />
+    <Channel id="Disney Cinemagic +1.com" siteId="1985" />
+    <Channel id="Disney Cinemagic HD.com" siteId="2146" />
+    <Channel id="Disney XD.com" siteId="165" />
+    <Channel id="Disney XD +1.com" siteId="166" />
+    <Channel id="Diva.com" siteId="2537" />
+    <Channel id="Diva +1.com" siteId="2589" />
+    <Channel id="DMAX.com" siteId="2545" />
+    <Channel id="DMAX +1.com" siteId="2595" />
+    <Channel id="E!.com" siteId="1421" />
+    <Channel id="E! Europe.com" siteId="2518" />
+    <Channel id="E4.com" siteId="158" />
+    <Channel id="E4 +1.com" siteId="1161" />
+    <Channel id="E4 HD.com" siteId="2195" />
+    <Channel id="Eden.com" siteId="1601" />
+    <Channel id="Eden +1.com" siteId="625" />
+    <Channel id="Eden HD.com" siteId="2662" />
+    <Channel id="ESPN.com" siteId="2142" />
+    <Channel id="ESPN America.com" siteId="1543" />
+    <Channel id="ESPN Classic.com" siteId="2011" />
+    <Channel id="ESPN HD.com" siteId="2147" />
+    <Channel id="EuroNews.com" siteId="159" />
+    <Channel id="Eurosport.com" siteId="123" />
+    <Channel id="Eurosport 2.com" siteId="1876" />
+    <Channel id="Eurosport HD.com" siteId="2148" />
+    <Channel id="Extreme Sports.com" siteId="582" />
+    <Channel id="Fashion TV.com" siteId="1969" />
+    <Channel id="Film4.com" siteId="160" />
+    <Channel id="Film4 +1.com" siteId="2021" />
+    <Channel id="Film4 HD.com" siteId="2617" />
+    <Channel id="FilmFlex.com" siteId="2505" />
+    <Channel id="Fitness TV.com" siteId="2638" />
+    <Channel id="Flaunt.com" siteId="2457" />
+    <Channel id="Flava.com" siteId="2551" />
+    <Channel id="Food Network.com" siteId="2185" />
+    <Channel id="Food Network +1.com" siteId="2186" />
+    <Channel id="FX.com" siteId="1461" />
+    <Channel id="FX HD.com" siteId="2149" />
+    <Channel id="FX+.com" siteId="1971" />
+    <Channel id="Gem Collector.com" siteId="2529" />
+    <Channel id="Gems TV.com" siteId="2528" />
+    <Channel id="GMTV Digital.com" siteId="2331" />
+    <Channel id="GOD Channel.com" siteId="137" />
+    <Channel id="Gold.com" siteId="288" />
+    <Channel id="Gold +1.com" siteId="665" />
+    <Channel id="Good Food.com" siteId="2136" />
+    <Channel id="Good Food +1.com" siteId="2137" />
+    <Channel id="Health.com" siteId="2250" />
+    <Channel id="History.com" siteId="182" />
+    <Channel id="History +1.com" siteId="183" />
+    <Channel id="History HD.com" siteId="2526" />
+    <Channel id="Home.com" siteId="2134" />
+    <Channel id="Home +1.com" siteId="2135" />
+    <Channel id="Horse + Country.com" siteId="2549" />
+    <Channel id="Ideal World.com" siteId="1802" />
+    <Channel id="Investigation Discovery.com" siteId="2570" />
+    <Channel id="ITV1 Anglia.com" siteId="24" />
+    <Channel id="ITV1 Border North.com" siteId="461" />
+    <Channel id="ITV1 Border South.com" siteId="25" />
+    <Channel id="ITV1 Carlton-Central.com" siteId="27" />
+    <Channel id="ITV1 Carlton-Westcountry.com" siteId="33" />
+    <Channel id="ITV1 Central +1.com" siteId="2678" />
+    <Channel id="ITV1 Channel.com" siteId="28" />
+    <Channel id="ITV1 Granada.com" siteId="29" />
+    <Channel id="ITV1 Granada +1.com" siteId="2676" />
+    <Channel id="ITV1 HD.com" siteId="2118" />
+    <Channel id="ITV1 London.com" siteId="26" />
+    <Channel id="ITV1 London +1.com" siteId="2682" />
+    <Channel id="ITV1 Meridian.com" siteId="30" />
+    <Channel id="ITV1 South East +1.com" siteId="2680" />
+    <Channel id="ITV1 STV +1.com" siteId="2681" />
+    <Channel id="ITV1 Thames Valley North.com" siteId="2514" />
+    <Channel id="ITV1 Thames Valley South.com" siteId="2515" />
+    <Channel id="ITV1 Tyne Tees.com" siteId="31" />
+    <Channel id="ITV1 UTV +1.com" siteId="2677" />
+    <Channel id="ITV1 Wales.com" siteId="35" />
+    <Channel id="ITV1 West.com" siteId="36" />
+    <Channel id="ITV1 West +1.com" siteId="2679" />
+    <Channel id="ITV1 Yorkshire Tyne Tees +1.com" siteId="2683" />
+    <Channel id="ITV2.com" siteId="185" />
+    <Channel id="ITV2 +1.com" siteId="1990" />
+    <Channel id="ITV2 HD.com" siteId="2661" />
+    <Channel id="ITV3.com" siteId="1859" />
+    <Channel id="ITV3 +1.com" siteId="2511" />
+    <Channel id="ITV4.com" siteId="1961" />
+    <Channel id="ITV4 +1.com" siteId="2568" />
+    <Channel id="Kerrang!.com" siteId="191" />
+    <Channel id="Kiss.com" siteId="609" />
+    <Channel id="Living +1.com" siteId="841" />
+    <Channel id="Living +2.com" siteId="287" />
+    <Channel id="Livingit +1.com" siteId="2190" />
+    <Channel id="M95 TV Marbella.com" siteId="2487" />
+    <Channel id="Magic.com" siteId="588" />
+    <Channel id="MGM.com" siteId="2196" />
+    <Channel id="MGM HD.com" siteId="2645" />
+    <Channel id="Military History.com" siteId="2559" />
+    <Channel id="More4.com" siteId="1959" />
+    <Channel id="More4 +1.com" siteId="1972" />
+    <Channel id="Motors TV.com" siteId="1958" />
+    <Channel id="Movies24.com" siteId="2197" />
+    <Channel id="Movies24+.com" siteId="2590" />
+    <Channel id="Movies4Men.com" siteId="2058" />
+    <Channel id="Movies4Men +1.com" siteId="2598" />
+    <Channel id="Movies4Men2.com" siteId="2558" />
+    <Channel id="Movies4Men2 +1.com" siteId="2599" />
+    <Channel id="MTV.com" siteId="202" />
+    <Channel id="MTV +1.com" siteId="2547" />
+    <Channel id="MTV Base.com" siteId="203" />
+    <Channel id="MTV Classic.com" siteId="294" />
+    <Channel id="MTV Dance.com" siteId="610" />
+    <Channel id="MTV Hits.com" siteId="204" />
+    <Channel id="MTV Rocks.com" siteId="205" />
+    <Channel id="MTV Shows.com" siteId="2592" />
+    <Channel id="MTVN HD.com" siteId="2150" />
+    <Channel id="Multi Channel.com" siteId="2636" />
+    <Channel id="Music Choice Blues.com" siteId="2252" />
+    <Channel id="Music Choice Classical.com" siteId="2253" />
+    <Channel id="Music Choice Country.com" siteId="2254" />
+    <Channel id="Music Choice Dance.com" siteId="2255" />
+    <Channel id="Music Choice Easy Listening.com" siteId="2256" />
+    <Channel id="Music Choice Europe.com" siteId="2637" />
+    <Channel id="Music Choice Gold.com" siteId="2257" />
+    <Channel id="Music Choice Hits.com" siteId="2258" />
+    <Channel id="Music Choice Jazz.com" siteId="2259" />
+    <Channel id="Music Choice Love.com" siteId="2260" />
+    <Channel id="Music Choice Rock.com" siteId="2261" />
+    <Channel id="MUTV.com" siteId="206" />
+    <Channel id="Nat Geo Wild.com" siteId="22" />
+    <Channel id="Nat Geo Wild HD.com" siteId="2152" />
+    <Channel id="National Geographic.com" siteId="213" />
+    <Channel id="National Geographic +1.com" siteId="214" />
+    <Channel id="National Geographic HD.com" siteId="2151" />
+    <Channel id="National Geographic HD Pan European.com" siteId="2557" />
+    <Channel id="NHK World.com" siteId="2594" />
+    <Channel id="Nick Jr.com" siteId="215" />
+    <Channel id="Nick Jr 2.com" siteId="2593" />
+    <Channel id="Nickelodeon.com" siteId="217" />
+    <Channel id="Nickelodeon Replay.com" siteId="216" />
+    <Channel id="Nicktoons Replay.com" siteId="2602" />
+    <Channel id="Nicktoons TV.com" siteId="664" />
+    <Channel id="Phoenix CNE.com" siteId="2246" />
+    <Channel id="Pick TV.com" siteId="1963" />
+    <Channel id="Pick TV +1.com" siteId="2647" />
+    <Channel id="Playhouse Disney.com" siteId="421" />
+    <Channel id="Playhouse Disney+.com" siteId="2542" />
+    <Channel id="Pop.com" siteId="2544" />
+    <Channel id="Price-drop.tv.com" siteId="2640" />
+    <Channel id="Propeller TV.com" siteId="2014" />
+    <Channel id="Q.com" siteId="2639" />
+    <Channel id="Quest.com" siteId="2179" />
+    <Channel id="QVC.com" siteId="228" />
+    <Channel id="Racing UK.com" siteId="1949" />
+    <Channel id="Rai Uno.com" siteId="2249" />
+    <Channel id="Really.com" siteId="1882" />
+    <Channel id="Rocks + Co.com" siteId="2572" />
+    <Channel id="RTE1.com" siteId="231" />
+    <Channel id="RTE2.com" siteId="1870" />
+    <Channel id="Rush HD.com" siteId="2173" />
+    <Channel id="S4C.com" siteId="721" />
+    <Channel id="S4C Clirlun.com" siteId="2624" />
+    <Channel id="S4C2.com" siteId="2427" />
+    <Channel id="Sat 1.com" siteId="2264" />
+    <Channel id="Screenshop.com" siteId="246" />
+    <Channel id="Scuzz.com" siteId="1143" />
+    <Channel id="Setanta Ireland.com" siteId="2479" />
+    <Channel id="Setanta Sports 1 Ireland.com" siteId="2533" />
+    <Channel id="Showcase.com" siteId="2622" />
+    <Channel id="Simply Shopping.com" siteId="2251" />
+    <Channel id="Sky 3D.com" siteId="2606" />
+    <Channel id="Sky Arts 1.com" siteId="40" />
+    <Channel id="Sky Arts 1 HD.com" siteId="2154" />
+    <Channel id="Sky Arts 2.com" siteId="2122" />
+    <Channel id="Sky Arts 2 HD.com" siteId="2155" />
+    <Channel id="Sky Atlantic.com" siteId="2685" />
+    <Channel id="Sky Atlantic HD.com" siteId="2684" />
+    <Channel id="Sky Living.com" siteId="197" />
+    <Channel id="Sky Living HD.com" siteId="2585" />
+    <Channel id="Sky Livingit.com" siteId="2189" />
+    <Channel id="Sky Movies Action + Adventure.com" siteId="2204" />
+    <Channel id="Sky Movies Action + Adventure HD.com" siteId="2205" />
+    <Channel id="Sky Movies Box Offfice HD1.com" siteId="2507" />
+    <Channel id="Sky Movies Box Offfice HD2.com" siteId="2506" />
+    <Channel id="Sky Movies Box Office.com" siteId="1261" />
+    <Channel id="Sky Movies Classics.com" siteId="259" />
+    <Channel id="Sky Movies Comedy.com" siteId="257" />
+    <Channel id="Sky Movies Comedy HD.com" siteId="2157" />
+    <Channel id="Sky Movies Crime + Thriller.com" siteId="2206" />
+    <Channel id="Sky Movies Crime + Thriller HD.com" siteId="2207" />
+    <Channel id="Sky Movies Drama + Romance.com" siteId="2208" />
+    <Channel id="Sky Movies Drama + Romance HD.com" siteId="2209" />
+    <Channel id="Sky Movies Family.com" siteId="258" />
+    <Channel id="Sky Movies Family HD.com" siteId="2159" />
+    <Channel id="Sky Movies Indie.com" siteId="253" />
+    <Channel id="Sky Movies Indie HD.com" siteId="2587" />
+    <Channel id="Sky Movies Modern Greats.com" siteId="260" />
+    <Channel id="Sky Movies Modern Greats HD.com" siteId="2160" />
+    <Channel id="Sky Movies Premiere.com" siteId="249" />
+    <Channel id="Sky Movies Premiere +1.com" siteId="250" />
+    <Channel id="Sky Movies Premiere HD.com" siteId="2552" />
+    <Channel id="Sky Movies Sci-Fi/Horror.com" siteId="2168" />
+    <Channel id="Sky Movies Sci-Fi/Horror HD.com" siteId="2161" />
+    <Channel id="Sky Movies Showcase.com" siteId="2210" />
+    <Channel id="Sky Movies Showcase HD.com" siteId="2211" />
+    <Channel id="Sky News.com" siteId="256" />
+    <Channel id="Sky News HD.com" siteId="2217" />
+    <Channel id="Sky Real Lives.com" siteId="266" />
+    <Channel id="Sky Real Lives 2.com" siteId="1662" />
+    <Channel id="Sky Real Lives HD.com" siteId="2162" />
+    <Channel id="Sky Sports 1.com" siteId="262" />
+    <Channel id="Sky Sports 1 HD.com" siteId="2174" />
+    <Channel id="Sky Sports 2.com" siteId="264" />
+    <Channel id="Sky Sports 2 HD.com" siteId="2175" />
+    <Channel id="Sky Sports 3.com" siteId="265" />
+    <Channel id="Sky Sports 3 HD.com" siteId="2176" />
+    <Channel id="Sky Sports 4.com" siteId="2200" />
+    <Channel id="Sky Sports 4 HD.com" siteId="2607" />
+    <Channel id="Sky Sports News.com" siteId="300" />
+    <Channel id="Sky1.com" siteId="248" />
+    <Channel id="Sky1 HD.com" siteId="2139" />
+    <Channel id="Sky2.com" siteId="922" />
+    <Channel id="Smash Hits!.com" siteId="592" />
+    <Channel id="Sony Entertainment TV Asia.com" siteId="267" />
+    <Channel id="Star News.com" siteId="590" />
+    <Channel id="Star Plus.com" siteId="591" />
+    <Channel id="STV Central.com" siteId="37" />
+    <Channel id="STV HD.com" siteId="2219" />
+    <Channel id="STV North.com" siteId="2203" />
+    <Channel id="Sumo TV.com" siteId="2575" />
+    <Channel id="Super Casino.com" siteId="2569" />
+    <Channel id="Syfy.com" siteId="2212" />
+    <Channel id="SyFy +1.com" siteId="2213" />
+    <Channel id="Syfy HD.com" siteId="2214" />
+    <Channel id="TCM.com" siteId="271" />
+    <Channel id="TCM2.com" siteId="2016" />
+    <Channel id="Teachers TV.com" siteId="1956" />
+    <Channel id="TeleG.com" siteId="1804" />
+    <Channel id="TG4.com" siteId="273" />
+    <Channel id="The Active Channel.com" siteId="2605" />
+    <Channel id="The Box.com" siteId="281" />
+    <Channel id="The Community Channel.com" siteId="1542" />
+    <Channel id="The Disney Channel.com" siteId="156" />
+    <Channel id="The Disney Channel +1.com" siteId="157" />
+    <Channel id="The Horror Channel.com" siteId="2476" />
+    <Channel id="The Horror Channel +1.com" siteId="2561" />
+    <Channel id="The Pakistani Channel.com" siteId="2422" />
+    <Channel id="The Style Network.com" siteId="2563" />
+    <Channel id="Tiny Pop.com" siteId="2543" />
+    <Channel id="travelchannel.com" siteId="1462" />
+    <Channel id="travelchannel +1.com" siteId="1855" />
+    <Channel id="True Movies.com" siteId="2059" />
+    <Channel id="True Movies 2.com" siteId="2192" />
+    <Channel id="TrueEnt.com" siteId="2603" />
+    <Channel id="TV3.com" siteId="2642" />
+    <Channel id="TV3 (Spanish).com" siteId="941" />
+    <Channel id="TV5.com" siteId="276" />
+    <Channel id="TVE Internacional.com" siteId="1865" />
+    <Channel id="Ulster.com" siteId="38" />
+    <Channel id="Universal.com" siteId="180" />
+    <Channel id="Universal +1.com" siteId="2591" />
+    <Channel id="Universal HD.com" siteId="2620" />
+    <Channel id="VH1.com" siteId="293" />
+    <Channel id="Viva.com" siteId="2184" />
+    <Channel id="Watch.com" siteId="2115" />
+    <Channel id="Watch +1.com" siteId="2116" />
+    <Channel id="Wedding TV.com" siteId="2566" />
+    <Channel id="Yesterday.com" siteId="801" />
+    <Channel id="Yesterday +1.com" siteId="1521" />
+    <Channel id="YTV.com" siteId="32" />
+    <Channel id="Zee TV.com" siteId="581" />
+  </Channels>
+  <Listing type="Data">
+    <Site url="http://xmltv.radiotimes.com/xmltv/[ID].dat" post="" external="false" encoding="" />
+    <Data rowDelimitor="&#xA;" dataDelimitor="~">#TITLE~~#SUBTITLE~~~#ACTORS~~~#REPEAT~#SUBTITLES~~~~~~~#GENRE~#DESCRIPTION~~#DATE~#START~#END~
+</Data>
+  </Listing>
+</Grabber>

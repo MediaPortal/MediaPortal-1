@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info treatErrorAsWarning="true" availableDays="26" timezone="W. Europe Standard Time" version="2.2.0" />
+  <Channels>
+    <Channel id="svt1@svt.se" siteId="74532" />
+    <Channel id="svt2@svt.se" siteId="74527" />
+    <Channel id="barnkanalen@svt.se" siteId="74518" />
+    <Channel id="24@svt.se" siteId="74525" />
+    <Channel id="kunskapskanalen@svt.se" siteId="74514" />
+    <Channel id="europa@svt.se" siteId="74505" />
+    <Channel id="tv3.se" siteId="74497" />
+    <Channel id="tv4@tv4.se" siteId="74490" />
+    <Channel id="kanal5.se" siteId="74488" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://svt.se/svt/jsp/Crosslink.jsp?d=[ID]&amp;selectedDate=[YYYY][MM][DD]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="class=&quot;tabDiv ch" end="&lt;!-- TOOLBOX --&gt;">
+        <SectionTemplate tags="HT">
+          <TemplateText>
+&lt;td&gt;&lt;#START&gt;-&lt;#END&gt;&lt;/td&gt;
+&lt;td&gt;&lt;h2&gt;&lt;#TITLE&gt;&lt;/h2&gt;
+&lt;#DESCRIPTION&gt;&lt;/td&gt;&lt;td&gt;
+          </TemplateText>
+        </SectionTemplate>
+      </Template>
+      <Searches>
+        <Search match="[^a-z][Dd]el \d+" field="#EPISODE" remove="false"/>
+        <Search match="Säsong \d+" field="#SEASON" remove="false"/>
+        <Search match="Textat sid\. \d\d\d" field="#SUBTITLESNOTFALSE" remove="true"/>
+        <Search match="Bredbild." field="#WIDESCREEN" remove="true"/>
+      </Searches>
+    </Html>
+  </Listing>
+  <Actions>
+    <Modify channel="*" field="#TITLE" search=" \? " action="Replace"> - </Modify>
+    <Modify channel="*" field="#TITLE" search="(?&lt;=\w)\?(?=\w)" action="Replace">-</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search=" \? " action="Replace"> - </Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=\d)\?(?=\d)" action="Replace">-</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=[A-Za-z])\?(?=[A-Za-z])" action="Replace">'</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\?(?=\w(\w|\s)+\?)" action="Replace">"</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="(?&lt;=&quot;\w(\w|\s)+)\?" action="Replace">"</Modify>
+    <Modify channel="tv3.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
+    <Modify channel="tv4@tv4.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
+    <Modify channel="kanal5.se" field="#DESCRIPTION" search="4:3-format" action="Replace"></Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="4:3-format" action="Replace"> 4:3-format</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="5.1-ljud" action="Replace"> 5.1-ljud</Modify>
+	<Modify channel="*" field="#DESCRIPTION" search="Samsänds" action="Replace"> Samsänds</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\.Från" action="Replace">. Från</Modify>
+    <Modify channel="*" field="#DESCRIPTION" search="\.Även" action="Replace">. Även</Modify>
+  </Actions>
+</Grabber>

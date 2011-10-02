@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+  <Info availableDays="3" timezone="W. Europe Standard Time" version="2.0" />
+  <Channels>
+    <Channel id="sf1@sfdrs.ch" siteId="1" />
+    <Channel id="sf2@sfdrs.ch" siteId="2" />
+    <Channel id="sfi@sfdrs.ch" siteId="3" />
+  </Channels>
+  <Listing type="Html">
+    <Site url="http://www.sf.tv/tvprogramm/index.php?tvdate=[YYYY]-[MM]-[DD]&amp;channel=[ID]" post="" external="false" encoding="" />
+    <Html>
+      <Template name="default" start="cm_tvprogramm_tbody" end="End TABLE Body">
+        <SectionTemplate tags="T">
+          <TemplateText>
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#START&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#TITLE&gt;&lt;/td&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;/td&gt;
+&lt;td&gt;&lt;#DESCRIPTION&gt;&lt;/td&gt;
+&lt;/tr&gt;   </TemplateText>
+        </SectionTemplate>
+      </Template>
+    </Html>
+  </Listing>
+</Grabber>
