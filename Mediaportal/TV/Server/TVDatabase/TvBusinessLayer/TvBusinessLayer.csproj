@@ -72,21 +72,20 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Gentle.Common, Version=1.2.9.1285, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Gentle.Common.dll</HintPath>
+    <Reference Include="Gentle.Common">
+      <HintPath>..\Gentle\references\Gentle.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Framework, Version=1.2.9.1286, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Gentle.Framework.dll</HintPath>
+    <Reference Include="Gentle.Framework">
+      <HintPath>..\Gentle\references\Gentle.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="Gentle.Provider.SQLServer, Version=1.2.9.1289, Culture=neutral, PublicKeyToken=80b5de62e27be49b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\Gentle.Provider.SQLServer.dll</HintPath>
+    <Reference Include="Gentle.Provider.MySQL">
+      <HintPath>..\Gentle\references\Gentle.Provider.MySQL.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data, Version=1.0.7.30072, Culture=neutral, PublicKeyToken=c5687fc88969c44d">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\references\MySql.Data.dll</HintPath>
+    <Reference Include="Gentle.Provider.SQLServer">
+      <HintPath>..\Gentle\references\Gentle.Provider.SQLServer.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\Gentle\references\MySql.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
