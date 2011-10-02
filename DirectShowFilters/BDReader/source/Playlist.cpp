@@ -45,6 +45,7 @@ CPlaylist::~CPlaylist(void)
 Packet* CPlaylist::ReturnNextAudioPacket()
 {
   firstPacketRead=true;
+  firstAudioPESPacketSeen=true;
   if (m_currentAudioPlayBackClip==NULL)
   {
     LogDebug("m_currentAudioPlayBackClip is NULL");
