@@ -1180,6 +1180,16 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       PacketDelivery(p);
     }
   }
+  if (pFlushBuffers && m_pl.GetCount()>0)
+  {
+    p = m_pl.RemoveHead();
+    while (!m_pl.IsEmpty())
+    {
+        CAutoPtr<Packet> p2 = m_pl.RemoveHead();
+        p->Append(*p2);
+    }
+    PacketDelivery(p);
+  }
 }
 
 void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers) 
