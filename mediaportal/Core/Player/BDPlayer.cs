@@ -494,7 +494,7 @@ namespace MediaPortal.Player
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
 	  protected int _newSubtitleStream = -1;
-    protected int _currentAudioStream = 0xff;
+    protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
     protected double[] chapters;
