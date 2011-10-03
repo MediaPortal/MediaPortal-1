@@ -92,6 +92,7 @@ namespace MediaPortal.Player
 
             GUIGraphicsContext.DX9Device.StretchRectangle(itemTexture.GetSurfaceLevel(0), sourceRect,
               _OSDTexture.GetSurfaceLevel(0), dstRect, 0);
+            itemTexture.Dispose();
           }
           else
           {
@@ -121,27 +122,29 @@ namespace MediaPortal.Player
           }
 
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;
-          float rationW = 1.0f, rationH = 1.0f;
-
+          
           if (GUIGraphicsContext.IsFullScreenVideo)
           {
-            rationH = (float)GUIGraphicsContext.Height / 1080.0f;
-            rationW = rationH;
+            wheight = PlaneScene.DestRect.Height;
+            wwidth = PlaneScene.DestRect.Width;
 
             wx = GUIGraphicsContext.OverScanLeft;
             wy = GUIGraphicsContext.OverScanTop;
+            
+            if (PlaneScene.DestRect.X == 0 || PlaneScene.DestRect.Y == 0)
+            {
+              wx += PlaneScene.DestRect.X;
+              wy += PlaneScene.DestRect.Y;
+            }
           }
           else // Video overlay
           {
-            rationH = (float)GUIGraphicsContext.VideoWindow.Height / 1080.0f;
-            rationW = rationH;
+            wheight = GUIGraphicsContext.VideoWindow.Height;
+            wwidth = GUIGraphicsContext.VideoWindow.Width;
 
             wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width);
             wy = GUIGraphicsContext.VideoWindow.Top;
           }
-
-          wwidth = (int)(1920.0f * rationW);
-          wheight = (int)(1080.0f * rationH);
           
           FontEngineSetAlphaBlend(1); //TRUE
           CreateVertexBuffer(wx, wy, wwidth, wheight);

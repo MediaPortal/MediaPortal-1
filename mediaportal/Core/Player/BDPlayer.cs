@@ -493,8 +493,7 @@ namespace MediaPortal.Player
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
-	  protected int _newSubtitleStream = -1;
-    protected int _currentAudioStream = 0;
+	protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
     protected double[] chapters;
@@ -542,8 +541,8 @@ namespace MediaPortal.Player
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
             if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
-            int x = (int)(action.fAmount1 / ((float)GUIGraphicsContext.Width / 1920.0f));
-            int y = (int)(action.fAmount2 / ((float)GUIGraphicsContext.Height / 1080.0f));
+            int x = (int)((action.fAmount1 - PlaneScene.DestRect.X) / ((float)PlaneScene.DestRect.Width / 1920.0f));
+            int y = (int)((action.fAmount2 - PlaneScene.DestRect.Y) / ((float)PlaneScene.DestRect.Height / 1080.0f));
             //Log.Debug("BDPlayer: Mouse move: {0},{1}", x, y);
             _ireader.MouseMove(x, y);
             return true;
