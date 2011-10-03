@@ -809,8 +809,37 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         int pesHeaderLen = p[8] + 9;
         m_nAudioPesLenght = (p[4] << 8) + p[5] - (pesHeaderLen - 6);
 
+        unsigned int flags = p[7];
+        const BYTE* pos = p + 9;
+
+        if ((flags & 0xc0) == 0x80) 
+          pos += 5; // PTS
+        else if ((flags & 0xc0) == 0xc0) 
+          pos += 10; // PTS & DTS
+
+        bool AC3SubStream = false;
+
+        if (flags & 0x01) // PES extension
+        {
+          unsigned int pes_ext = *pos++;
+          // Skip PES private data, program packet sequence counter and P-STD buffer
+          unsigned int skip = (pes_ext >> 4) & 0xb;
+          skip += skip & 0x9;
+          pos += skip;
+          
+          if ((pes_ext & 0x41) == 0x01 && (pos + 2) <= (p + pesHeaderLen)) 
+          {  
+            // PES extension 2
+            if ((pos[0] & 0x7f) > 0 && (pos[1] & 0x80) == 0)
+            {
+              if (pos[1] == 0x76)
+                AC3SubStream = true; // this stream will get discarded
+            }
+          }
+        }
+
         int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
-        if (len > 0)
+        if (len > 0 && !AC3SubStream)
         { 
           byte* ps = p + pesHeaderLen;
           m_pCurrentAudioBuffer->SetCount(len, m_nAudioPesLenght);
@@ -818,7 +847,8 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         }
         else
         {
-          LogDebug(" No data");
+          if (!AC3SubStream)
+            LogDebug(" No data");
           m_AudioValidPES = false;
         }
         packetProcessed = true;
