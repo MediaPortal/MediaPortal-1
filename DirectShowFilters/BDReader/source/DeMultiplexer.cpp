@@ -91,6 +91,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bVideoFormatParsed = false;
   m_bAudioFormatParsed = false;
 
+  m_bAC3Substream = false;
+
   m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
 
@@ -365,6 +367,7 @@ void CDeMultiplexer::FlushAudio()
   CAutoLock lock (&m_sectionAudio);
 
   m_AudioValidPES = false;
+  m_bAC3Substream = false;
 
   delete m_pCurrentAudioBuffer;
   m_pCurrentAudioBuffer = new Packet();
@@ -797,6 +800,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 #ifdef LOG_DEMUXER_AUDIO_SAMPLES
         LogDebug("demux: aud pts %6.3f clip: %d playlist: %d", pts.ToClock(), m_nClip, m_nPlaylist);
 #endif
+        m_bAC3Substream = false;
 
         m_pCurrentAudioBuffer->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + 1;
@@ -817,8 +821,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         else if ((flags & 0xc0) == 0xc0) 
           pos += 10; // PTS & DTS
 
-        bool AC3SubStream = false;
-
         if (flags & 0x01) // PES extension
         {
           unsigned int pes_ext = *pos++;
@@ -833,25 +835,34 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
             if ((pos[0] & 0x7f) > 0 && (pos[1] & 0x80) == 0)
             {
               if (pos[1] == 0x76)
-                AC3SubStream = true; // this stream will get discarded
+                m_bAC3Substream = true; // this stream will get discarded
             }
           }
         }
 
         int len = 188 - pesHeaderLen - 4; // 4 for TS packet header
-        if (len > 0 && !AC3SubStream)
+        if (len > 0 && !m_bAC3Substream)
         { 
           byte* ps = p + pesHeaderLen;
-          m_pCurrentAudioBuffer->SetCount(len, m_nAudioPesLenght);
-          memcpy(m_pCurrentAudioBuffer->GetData(), ps, len);
+
+          if (len < m_nAudioPesLenght)
+          {
+            m_pCurrentAudioBuffer->SetCount(len, m_nAudioPesLenght);
+            memcpy(m_pCurrentAudioBuffer->GetData(), ps, len);
+            packetProcessed = true;
+          }
+          else
+          {
+            m_pCurrentAudioBuffer->SetCount(m_nAudioPesLenght);
+            memcpy(m_pCurrentAudioBuffer->GetData(), ps, m_nAudioPesLenght);
+          }
         }
         else
         {
-          if (!AC3SubStream)
+          if (!m_bAC3Substream)
             LogDebug(" No data");
           m_AudioValidPES = false;
         }
-        packetProcessed = true;
       }
     }
     else
@@ -860,44 +871,32 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
       m_AudioValidPES = false;
     }
 
-    if (m_AudioValidPES)
-    {
-      if (m_bSetAudioDiscontinuity)
-      {
-        m_bSetAudioDiscontinuity = false;
-        m_pCurrentAudioBuffer->bDiscontinuity = true;
-      }
-    }
-    else
-    {
-      m_bSetAudioDiscontinuity = true;
-    }
     m_AudioValidPES = true;     
   }
 
-  if (m_AudioValidPES && !packetProcessed && m_pCurrentAudioBuffer)
+  if (m_AudioValidPES && !packetProcessed && m_pCurrentAudioBuffer && !m_bAC3Substream)
   {
-    int pos = header.PayLoadStart;
-
-    if (pos > 0 && pos < 188)
+    if (m_pCurrentAudioBuffer->GetCount() != m_nAudioPesLenght)
     {
-      int dataLenght = 188 - pos;
-      m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize() + dataLenght);
-      memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - dataLenght, &tsPacket[pos], dataLenght);
-    }
+      int pos = header.PayLoadStart;
 
+      if (pos > 0 && pos < 188)
+      {
+        int dataLenght = 188 - pos;
+        m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize() + dataLenght);
+        memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - dataLenght, &tsPacket[pos], dataLenght);
+      }
+    }
+    
     if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
     {
       ParseAudioFormat(m_pCurrentAudioBuffer);
 
       if (!m_bStarting)
-      {
         m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
-      }
       else
-      {
         delete m_pCurrentAudioBuffer;
-      }
+
       m_pCurrentAudioBuffer = NULL;
       m_nAudioPesLenght = 0;
     }
