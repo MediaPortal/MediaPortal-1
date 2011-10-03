@@ -130,15 +130,14 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 		parsed = hdrParser.Read(lpcm, framesize, &pmt);
   }
   else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_DTS ||
-           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD ||      // TODO ?
-           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER) // TODO ?
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD ||
+           serviceType == BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER)
   {
 		dtshdr dts;
 		parsed = hdrParser.Read(dts, framesize, &pmt);
   }
   else if (serviceType == BLURAY_STREAM_TYPE_AUDIO_TRUHD)
   {
-    // TODO no real support for now...
     thdhdr thd;
 		parsed = hdrParser.Read(thd, framesize, &pmt);
   }
