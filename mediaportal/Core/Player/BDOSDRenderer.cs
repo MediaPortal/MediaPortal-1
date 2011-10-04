@@ -125,16 +125,18 @@ namespace MediaPortal.Player
           
           if (GUIGraphicsContext.IsFullScreenVideo)
           {
-            wheight = PlaneScene.DestRect.Height;
-            wwidth = PlaneScene.DestRect.Width;
+            wheight = GUIGraphicsContext.Height;
+            wwidth = GUIGraphicsContext.Width;
 
             wx = GUIGraphicsContext.OverScanLeft;
             wy = GUIGraphicsContext.OverScanTop;
             
-            if (PlaneScene.DestRect.X == 0 || PlaneScene.DestRect.Y == 0)
+            if (GUIGraphicsContext.Height < 1080 && (PlaneScene.DestRect.X == 0 || PlaneScene.DestRect.Y == 0))
             {
               wx += PlaneScene.DestRect.X;
               wy += PlaneScene.DestRect.Y;
+              wwidth = PlaneScene.DestRect.Width;
+              wheight = PlaneScene.DestRect.Height;
             }
           }
           else // Video overlay
