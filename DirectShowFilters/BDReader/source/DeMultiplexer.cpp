@@ -816,8 +816,6 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         m_pCurrentAudioBuffer->nClipNumber = m_nClip;
         m_pCurrentAudioBuffer->nPlaylist = m_nPlaylist;
 
-        REFERENCE_TIME Ref = m_pCurrentAudioBuffer->rtStart;
-
         int pesHeaderLen = p[8] + 9;
         m_nAudioPesLenght = (p[4] << 8) + p[5] - (pesHeaderLen - 6);
 
