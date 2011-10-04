@@ -666,6 +666,14 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       m_iAudioIdx = pEv.param - 1;			
       break;
 
+    case BD_EVENT_PG_TEXTST_STREAM:
+    {
+      IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+      if (pDVBSubtitleFilter)
+        pDVBSubtitleFilter->NotifyChannelChange();
+      break;
+    }
+
     case BD_EVENT_CHAPTER:
     {
       BLURAY_TITLE_INFO* title = m_filter.lib.GetTitleInfo(m_nPlaylist);
@@ -1180,13 +1188,13 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       PacketDelivery(p);
     }
   }
-  if (pFlushBuffers && m_pl.GetCount()>0)
+  if (pFlushBuffers && m_pl.GetCount() > 0)
   {
     p = m_pl.RemoveHead();
     while (!m_pl.IsEmpty())
     {
-        CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-        p->Append(*p2);
+      CAutoPtr<Packet> p2 = m_pl.RemoveHead();
+      p->Append(*p2);
     }
     PacketDelivery(p);
   }
@@ -1865,14 +1873,6 @@ void CDeMultiplexer::ParseSubtitleStreams(BLURAY_CLIP_INFO* clip)
       LogDebug("   Subtitle [%4d] %s %s", subtitle.pid, subtitle.language, StreamFormatAsString(subtitle.subtitleType));
 
       m_subtitleStreams.push_back(subtitle);
-    }
-
-    // TODO - do not trigger on every clip change
-    IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
-    if (pDVBSubtitleFilter)
-    {
-      // Make sure that subtitle cache is reset (in filter & MP)
-      pDVBSubtitleFilter->NotifyChannelChange();
     }
 
     if (m_pSubUpdateCallback)
