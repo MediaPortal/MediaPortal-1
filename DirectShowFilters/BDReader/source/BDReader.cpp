@@ -459,8 +459,10 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
       }
       else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
-        LONGLONG posEnd(~0);
-        LONGLONG zeroPos(0);
+        LONGLONG posEnd = 0;
+        LONGLONG zeroPos = 0;
+
+        m_pMediaSeeking->GetDuration(&posEnd);
 
         ivecCommandQueue it;
         DS_CMD cmd;
@@ -603,13 +605,9 @@ STDMETHODIMP CBDReaderFilter::GetDuration(REFERENCE_TIME* pDuration)
   ULONGLONG pos = 0, dur = 0;
 
   if (lib.CurrentPosition(pos, dur))
-  {
     *pDuration = CONVERT_90KHz_DS(dur);
-  }
   else
-  {
     pDuration = 0;
-  }
 
   return NOERROR;
 }
