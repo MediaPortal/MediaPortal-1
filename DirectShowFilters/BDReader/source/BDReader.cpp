@@ -991,7 +991,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     rtCurrent = m_rtCurrent,
     rtStop = m_rtStop;
 
-  bool resetStreamPosition = *pCurrent == _I64_MAX && caller == m_pVideoPin;
+  bool resetStreamPosition = caller == m_pVideoPin && (*pCurrent == 0 || *pCurrent == _I64_MAX);
 
   if (*pCurrent == _I64_MAX)
   {
