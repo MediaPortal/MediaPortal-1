@@ -57,7 +57,7 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>80</posX>
-          <posY>140</posY>
+          <posY>160</posY>
           <width>1280</width>
           <height>548</height>
           <scrollOffset>0</scrollOffset>
@@ -66,9 +66,9 @@
           <textureWidthBig>155</textureWidthBig>
           <textureHeightBig>155</textureHeightBig>
           <itemWidthBig>191</itemWidthBig>
-          <itemHeightBig>175</itemHeightBig>
+          <itemHeightBig>215</itemHeightBig>
           <itemWidth>145</itemWidth>
-          <itemHeight>135</itemHeight>
+          <itemHeight>165</itemHeight>
           <thumbWidthBig>155</thumbWidthBig>
           <thumbHeightBig>155</thumbHeightBig>
           <thumbPosXBig>0</thumbPosXBig>
@@ -83,7 +83,7 @@
           <zoomYPixels>40</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>

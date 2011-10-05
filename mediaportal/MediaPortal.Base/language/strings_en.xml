@@ -1014,8 +1014,12 @@
     <String id="1222">Groups</String>
     <String id="1223">Existing Playlist Detected</String>
     <String id="1224">Do you want to clear the current playlist?</String>
+    <String id="1225">Queue item</String>
+    <String id="1226">Queue all items</String>
     <String id="1230">Date added:</String>
     <String id="1231">Last played:</String>
+		<String id="1240">Lock content</String>
+		<String id="1241">Unlock content</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1993,5 +1997,8 @@
     <String id="200087">Mute</String>
     <String id="200090">Edition</String>
     <String id="200091">Chapter</String>
+    <String id="200092">Forced Only</String>
+    <String id="200093">Disc mount time out reached!</String>
+    <String id="200094">Keep trying for further 60 seconds?</String>
   </Section>
 </Language>

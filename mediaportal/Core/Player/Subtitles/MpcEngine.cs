@@ -34,8 +34,6 @@ namespace MediaPortal.Player.Subtitles
 {
   public class MpcEngine : SubSettings, ISubEngine
   {
-    private FFDShowAPI ffdshowAPI;
-
     protected override void LoadAdvancedSettings(Settings xmlreader)
     {
       int subPicsBufferAhead = xmlreader.GetValueAsInt("subtitles", "subPicsBufferAhead", 3);
@@ -101,7 +99,14 @@ namespace MediaPortal.Player.Subtitles
     {
       LoadSettings();
       MpcSubtitles.SetDefaultStyle(ref this.defStyle, this.overrideASSStyle);
-      MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      if (selectionOff)
+      {
+        MpcSubtitles.SetShowForcedOnly(false);
+      }
+      else
+      {
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
       //remove DirectVobSub
       DirectVobSubUtil.RemoveFromGraph(graphBuilder);
       {
@@ -115,23 +120,7 @@ namespace MediaPortal.Player.Subtitles
         }
       }
 
-      {
-        IBaseFilter baseFilter = null;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
-
-        ffdshowAPI = new FFDShowAPI((object)baseFilter);
-
-        IffdshowDec ffdshowDec = baseFilter as IffdshowDec;
-        if (ffdshowDec != null)
-        {
-          ffdshowAPI.DoShowSubtitles = false;
-          Log.Info("MPCEngine - FFDshow interfaces found -> Disable Subtitle");
-        }
-      }
+      FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
 
       Size size = new Size(GUIGraphicsContext.Width, GUIGraphicsContext.Height);
 
@@ -223,6 +212,11 @@ namespace MediaPortal.Player.Subtitles
     public bool AutoShow
     {
       get { return autoShow; }
+      set
+      {
+        autoShow = value;
+        MpcSubtitles.SetShowForcedOnly(!this.autoShow);
+      }
     }
 
     #endregion

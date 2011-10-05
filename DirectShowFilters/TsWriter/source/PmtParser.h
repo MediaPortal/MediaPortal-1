@@ -48,7 +48,7 @@ typedef vector<stPidInfo2>::iterator ivecPidInfo2;
 class IPmtCallBack2
 {
 public:
-	virtual void OnPmtReceived2(int pid, int serviceId, int pcrPid,vector<PidInfo2> info)=0;
+	virtual void OnPmtReceived2(int pid, int serviceId, int pcrPid, bool hasCaDescriptor, vector<PidInfo2> info)=0;
 };
 
 class CPmtParser: public CBasePmtParser
@@ -56,7 +56,7 @@ class CPmtParser: public CBasePmtParser
 public:
   CPmtParser(void);
   virtual ~CPmtParser(void);
-	bool		DecodePmt(CSection sections, int& pcr_pid, vector<PidInfo2>& pidInfos);
+	bool		DecodePmt(CSection sections, int& pcr_pid, bool& hasCaDescriptor, vector<PidInfo2>& pidInfos);
 	void		OnNewSection(CSection& sections);
 	void    SetPmtCallBack2(IPmtCallBack2* callback);
 	void	  Reset();

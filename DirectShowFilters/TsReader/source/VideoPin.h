@@ -23,6 +23,8 @@
 #define __VideoPin_H
 #include "tsreader.h"
 
+#define NB_MTDSIZE 32
+
 class CVideoPin : public CSourceStream, public CSourceSeeking
 {
 public:
@@ -38,6 +40,7 @@ public:
   HRESULT CheckConnect(IPin *pReceivePin);
   HRESULT FillBuffer(IMediaSample *pSample);
   HRESULT BreakConnect();
+
 
   HRESULT DoBufferProcessingLoop(void);
 
@@ -66,6 +69,17 @@ protected:
   bool      m_bPresentSample;
 
   FILTER_INFO m_filterInfo;
+  
+  int      m_delayedDiscont;
+ 
+  bool TimestampDisconChecker(REFERENCE_TIME timeStamp);
+    
+  REFERENCE_TIME  m_pllMTD [NB_MTDSIZE];   // timestamp buffer for average Video sample timestamp calculation
+  REFERENCE_TIME  m_llLastMTDts;
+  int             m_nNextMTD;
+	REFERENCE_TIME  m_fMTDMean;
+	REFERENCE_TIME  m_llMTDSumAvg;	
+
 };
 
 #endif

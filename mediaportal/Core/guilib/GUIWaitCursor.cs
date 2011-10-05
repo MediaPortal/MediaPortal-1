@@ -49,6 +49,22 @@ namespace MediaPortal.GUI.Library
       _animation = null;
     }
 
+    public static void Show()
+    {
+        //do increment here rather than in thread since if wait cursor is running
+        //thread is NOT null, we will not incrment _showCount
+        //after that hide is called twice which result in _showCount less than 0
+        //read - not working wait cursor any more
+        Interlocked.Increment(ref _showCount);
+        if (guiWaitCursorThread == null)
+        {
+            guiWaitCursorThread = new Thread(GUIWaitCursorThread);
+            guiWaitCursorThread.IsBackground = true;
+            guiWaitCursorThread.Name = "Waitcursor";
+            guiWaitCursorThread.Start();
+        }
+    }
+
     public static void Hide()
     {
       Interlocked.Decrement(ref _showCount);
@@ -59,7 +75,9 @@ namespace MediaPortal.GUI.Library
 
     private static void GUIWaitCursorThread()
     {
-      if (Interlocked.Increment(ref _showCount) == 1)
+      //start animation only if _showCount equals 1
+      //this is to prevent animation starting from beginning every time Show() is called, making it "jumpy"
+      if (Interlocked.Equals(_showCount, 1))
       {
         _animation.Begin();
       }
@@ -207,17 +225,6 @@ namespace MediaPortal.GUI.Library
       }
 
       _animation.Render(GUIGraphicsContext.TimePassed);
-    }
-
-    public static void Show()
-    {
-      if (guiWaitCursorThread == null)
-      {
-        guiWaitCursorThread = new Thread(GUIWaitCursorThread);
-        guiWaitCursorThread.IsBackground = true;
-        guiWaitCursorThread.Name = "Waitcursor";
-        guiWaitCursorThread.Start();
-      }
     }
 
     #endregion Methods

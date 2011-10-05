@@ -140,6 +140,12 @@ namespace SetupTv.Dialogs
         return false;
       }
 
+      if (comboBoxAudioSource.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a audio source!", "Incorrect input");
+        return false;
+      }
+
       return true;
     }
 

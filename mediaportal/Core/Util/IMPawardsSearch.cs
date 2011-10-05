@@ -70,8 +70,8 @@ namespace MediaPortal.Util
       string resultGoogle = string.Empty;
       string resultImpAw = string.Empty;
 
-      string url = "http://www.google.com/custom?domains=www.impawards.com&q=" + movieName +
-                   "+poster&sa=Google+Search&sitesearch=www.impawards.com";
+      string url = "http://www.google.com/search?as_q=" + movieName + "+poster&as_sitesearch=www.impawards.com";
+
       IMPAwardsSearch x = new IMPAwardsSearch();
 
       WebClient wc = new WebClient();

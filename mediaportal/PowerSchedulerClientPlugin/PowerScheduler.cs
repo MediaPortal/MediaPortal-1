@@ -714,9 +714,6 @@ namespace MediaPortal.Plugins.Process
     private bool LoadSettings()
     {
       bool changed = false;
-      bool boolSetting;
-      int intSetting;
-      string stringSetting;
       PowerSetting setting;
       PowerSchedulerEventArgs args;
 
@@ -734,16 +731,17 @@ namespace MediaPortal.Plugins.Process
         if (!_refreshSettings)
         {
           setting = _settings.GetSetting("SingleSeat");
-          stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
-          if (stringSetting != String.Empty && IsLocal(stringSetting))
-          {
-            Log.Info("PowerScheduler: detected a singleseat setup - delegating suspend/hibernate requests to tvserver");
-            setting.Set<bool>(true);
-          }
-          else if (stringSetting == String.Empty)
+          string stringSetting = reader.GetValueAsString("tvservice", "hostname", String.Empty);
+                    
+          if (stringSetting == String.Empty)
           {
             Log.Info("Detected client-only setup - using local methods to suspend/hibernate system");
             setting.Set<bool>(false);
+          }
+          else if (Network.IsSingleSeat())
+          {
+            Log.Info("PowerScheduler: detected a singleseat setup - delegating suspend/hibernate requests to tvserver");
+            setting.Set<bool>(true);
           }
           else
           {
@@ -761,7 +759,7 @@ namespace MediaPortal.Plugins.Process
         }
 
         // Check if logging should be verbose
-        boolSetting = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
+        bool boolSetting = reader.GetValueAsBool("psclientplugin", "extensivelogging", false);
         if (_settings.ExtensiveLogging != boolSetting)
         {
           _settings.ExtensiveLogging = boolSetting;
@@ -796,7 +794,7 @@ namespace MediaPortal.Plugins.Process
         }
 
         // Check configured PowerScheduler idle timeout
-        intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
+        int intSetting = reader.GetValueAsInt("psclientplugin", "idletimeout", 5);
         if (_settings.IdleTimeout != intSetting)
         {
           _settings.IdleTimeout = intSetting;
@@ -849,36 +847,6 @@ namespace MediaPortal.Plugins.Process
         }
       }
       return true;
-    }
-
-    /// <summary>
-    ///  Checks if the given hostname/IP address is the local host
-    /// </summary>
-    /// <param name="serverName">hostname/IP address to check</param>
-    /// <returns>is this name/address local?</returns>
-    private bool IsLocal(string serverName)
-    {
-      LogVerbose("IsLocal(): checking if {0} is local...", serverName);
-      foreach (string name in new string[] {"localhost", "127.0.0.1", Dns.GetHostName()})
-      {
-        LogVerbose("Checking against {0}", name);
-        if (serverName.Equals(name, StringComparison.CurrentCultureIgnoreCase))
-        {
-          return true;
-        }
-      }
-
-      IPHostEntry hostEntry = Dns.GetHostEntry(Dns.GetHostName());
-      foreach (IPAddress address in hostEntry.AddressList)
-      {
-        LogVerbose("Checking against {0}", address);
-        if (address.ToString().Equals(serverName, StringComparison.CurrentCultureIgnoreCase))
-        {
-          return true;
-        }
-      }
-
-      return false;
     }
 
     /// <summary>

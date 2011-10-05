@@ -31,27 +31,33 @@
 
 
 !define VER_MAJOR       1
-!define VER_MINOR       1
-!define VER_REVISION    7
+!define VER_MINOR       2
+!define VER_REVISION    0
+;!define VER_TYPE        ""                 # can be "RC", "Beta". Please comment if Final release
+
+#**********************************************************************************************************#
+
 !ifndef VER_BUILD
     !define VER_BUILD   0
 !endif
 
-!if "${SKRIPT_NAME}" == "MediaPortal Unpacker"
-  ;this is for display purposes
-  !define VERSION "1.2.0 Beta"
+!ifndef ${VER_TYPE}
+	!define VER_TYPE ""
+	!define SPC ""
 !else
-
-  !if ${BUILD_TYPE} == "Debug"
-    !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION} >>DEBUG<< build ${VER_BUILD} for TESTING ONLY"
-  !else
-
-    !if ${VER_BUILD} == 0       # it's an official release
-      !define VERSION "1.2.0"
-    !else                       # it's a svn release
-      !define VERSION "1.2.0 SVN build ${VER_BUILD} for TESTING ONLY"
-    !endif
-
-  !endif
-
+	!define SPC " "
 !endif
+
+!if ${BUILD_TYPE} == "Debug"               # it's a debug release
+    !define VER_DEBUG " >>DEBUG<<"
+!else
+	!define VER_DEBUG ""
+!endif
+
+!if ${VER_BUILD} != 0                      # it's a svn release
+    !define VER_SVN "${VER_DEBUG} for TESTING ONLY"
+!else
+	!define VER_SVN ""
+!endif
+
+!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${SPC}${VER_TYPE}${VER_SVN}"

@@ -24,6 +24,7 @@ using System.Drawing;
 using System.IO;
 using MediaPortal.Configuration;
 using MediaPortal.GUI.Library;
+using MediaPortal.Music.Database;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.TagReader;
@@ -81,6 +82,12 @@ namespace MediaPortal.GUI.Music
 
     #endregion
 
+    #region delegates
+
+    protected delegate void PlaybackChangedDelegate(g_Player.MediaType type, string filename);
+
+    #endregion
+
     #region Constructors/Destructors
 
     public GUIMusicOverlay()
@@ -94,6 +101,9 @@ namespace MediaPortal.GUI.Music
         _visualisationEnabled = _settingVisEnabled;
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
       }
+
+      g_Player.PlayBackStarted += OnPlayBackStarted;
+      g_Player.PlayBackEnded += OnPlayBackEnded;
     }
 
     #endregion
@@ -158,7 +168,6 @@ namespace MediaPortal.GUI.Music
             {
               _fileName = pitem.FileName;
               _visualisationEnabled = false;
-              SetCurrentFile(_fileName);
             }
           }
           else
@@ -167,7 +176,6 @@ namespace MediaPortal.GUI.Music
             {
               _fileName = g_Player.CurrentFile;
               _visualisationEnabled = false;
-              SetCurrentFile(_fileName);
             }
           }
         }
@@ -178,7 +186,6 @@ namespace MediaPortal.GUI.Music
           {
             _visualisationEnabled = true;
           }
-          SetCurrentFile(_fileName);
         }
       }
 
@@ -229,7 +236,6 @@ namespace MediaPortal.GUI.Music
         if (GUIPropertyManager.GetProperty("#Play.Current.Thumb") != _thumbLogo)
         {
           _fileName = g_Player.CurrentFile;
-          SetCurrentFile(_fileName);
         }
 
         long lPTS1 = (long)(g_Player.CurrentPosition);
@@ -344,105 +350,6 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-
-    private void SetCurrentFile(string fileName)
-    {
-      if ((fileName == null) || (fileName == string.Empty))
-      {
-        return;
-      }
-      // last.fm radio sets properties manually therefore do not overwrite them.
-      if (Util.Utils.IsLastFMStream(fileName))
-      {
-        return;
-      }
-
-      // When Playing an Internet Stream, via BASS, we set the properties inside the BASS audio engine to be able to detect track changes
-      if (BassMusicPlayer.IsDefaultMusicPlayer &&
-          (fileName.ToLower().StartsWith("http") || fileName.ToLower().StartsWith("mms")))
-      {
-        return;
-      }
-
-      // Radio Properties are set already in Play routine
-      if (g_Player.IsRadio)
-      {
-        return;
-      }
-
-      GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.Title", Util.Utils.GetFilename(fileName));
-      GUIPropertyManager.SetProperty("#Play.Current.File", Path.GetFileName(fileName));
-
-      MusicTag tag = null;
-      _thumbLogo = string.Empty;
-      tag = GetInfo(fileName, out _thumbLogo);
-
-      GUIPropertyManager.SetProperty("#Play.Current.Thumb", _thumbLogo);
-      if (tag != null)
-      {
-        // Duration
-        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
-
-        // Track
-        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
-
-        // Year
-        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
-
-        GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
-        GUIPropertyManager.SetProperty("#Play.Current.Title", tag.Title);
-        GUIPropertyManager.SetProperty("#Play.Current.Artist", tag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Current.Album", tag.Album);
-        GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
-        GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
-        GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
-        GUIPropertyManager.SetProperty("#duration", strDuration);
-      }
-
-      // Show Information of Next File in Playlist
-      fileName = playlistPlayer.GetNext();
-      if (fileName == string.Empty)
-      {
-        // fix high cpu load due to constant checking
-        //m_strThumb = (string)GUIPropertyManager.GetProperty("#Play.Current.Thumb");
-        return;
-      }
-      tag = null;
-      string thumb = string.Empty;
-      tag = GetInfo(fileName, out thumb);
-
-      GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
-      try
-      {
-        GUIPropertyManager.SetProperty("#Play.Next.File", Path.GetFileName(fileName));
-        GUIPropertyManager.SetProperty("#Play.Next.Title", Util.Utils.GetFilename(fileName));
-      }
-      catch (Exception) {}
-
-      if (tag != null)
-      {
-        // Duration
-        string strDuration = tag.Duration <= 0 ? string.Empty : Util.Utils.SecondsToHMSString(tag.Duration);
-
-        // Track
-        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
-
-        // Year
-        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
-
-        GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);
-        GUIPropertyManager.SetProperty("#Play.Next.Title", tag.Title);
-        GUIPropertyManager.SetProperty("#Play.Next.Artist", tag.Artist);
-        GUIPropertyManager.SetProperty("#Play.Next.Album", tag.Album);
-        GUIPropertyManager.SetProperty("#Play.Next.Track", strTrack);
-        GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
-        GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
-      }
-    }
-
     public override bool Focused
     {
       get { return _isFocused; }
@@ -483,35 +390,9 @@ namespace MediaPortal.GUI.Music
       }
     }
 
-    private MusicTag GetInfo(string fileName, out string thumb)
+    private MusicTag GetTag(string fileName)
     {
-      thumb = string.Empty;
       MusicTag tag = null;
-
-      if (g_Player.IsRadio)
-      {
-        // then check which radio station we're playing
-        tag = new MusicTag();
-        string strFName = g_Player.CurrentFile;
-        string coverart;
-        // check if radio via TVPlugin
-        if (strFName.EndsWith(".tsbuffer", StringComparison.InvariantCultureIgnoreCase) ||
-            strFName.StartsWith("rtsp://", StringComparison.InvariantCultureIgnoreCase))
-        {
-          // yes
-          string strChan = GUIPropertyManager.GetProperty("#Play.Current.ArtistThumb");
-          tag.Title = strChan;
-          coverart = Util.Utils.GetCoverArt(Thumbs.Radio, strChan);
-          if (coverart != string.Empty)
-          {
-            thumb = coverart;
-          }
-          else
-          {
-            thumb = string.Empty;
-          }
-        }
-      }
 
       // efforts only for important track
       bool isCurrent = (g_Player.CurrentFile == fileName);
@@ -542,37 +423,332 @@ namespace MediaPortal.GUI.Music
         }
       }
 
+      return tag;
+    }
 
-      string strThumb = string.Empty;
-
+    private static void SetCurrentSkinProperties(MusicTag tag, String fileName)
+    {
+      var thumb = string.Empty;
       if (tag != null)
       {
-        strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
         if (Util.Utils.FileExistsInCache(strThumb))
         {
           thumb = strThumb;
         }
-      }
 
-      // no succes with album cover try folder cache
-      if (string.IsNullOrEmpty(thumb))
-      {
-        thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);
-      }
+        // no succes with album cover try folder cache
+        if (string.IsNullOrEmpty(thumb))
+        {
+          thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);
+        }
 
-      if (isCurrent)
-      {
         // let us test if there is a larger cover art image
         string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
         if (Util.Utils.FileExistsInCache(strLarge))
         {
-          //Log.Debug("GUIMusicOverlay: using larger thumb - {0}", strLarge);
           thumb = strLarge;
         }
+
+        GUIPropertyManager.SetProperty("#Play.Current.Thumb", thumb);
+
+        // non-text values default to 0 and datetime.minvalue so
+        // set the appropriate properties to string.empty
+
+        // Duration
+        string strDuration = tag.Duration <= 0
+                               ? string.Empty
+                               : MediaPortal.Util.Utils.SecondsToHMSString(tag.Duration);
+        // Track
+        string strTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
+        // Year
+        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
+        // Rating
+        string strRating = (Convert.ToDecimal(2 * tag.Rating + 1)).ToString();
+        // Bitrate
+        string strBitrate = tag.BitRate <= 0 ? string.Empty : tag.BitRate.ToString();
+        // Disc ID
+        string strDiscID = tag.DiscID <= 0 ? string.Empty : tag.DiscID.ToString();
+        // Disc Total
+        string strDiscTotal = tag.DiscTotal <= 0 ? string.Empty : tag.DiscTotal.ToString();
+        // Times played
+        string strTimesPlayed = tag.TimesPlayed <= 0
+                                  ? string.Empty
+                                  : tag.TimesPlayed.ToString();
+        // track total
+        string strTrackTotal = tag.TrackTotal <= 0 ? string.Empty : tag.TrackTotal.ToString();
+        // BPM
+        string strBPM = tag.BPM <= 0 ? string.Empty : tag.BPM.ToString();
+        // Channels
+        string strChannels = tag.Channels <= 0 ? string.Empty : tag.Channels.ToString();
+        // Sample Rate
+        string strSampleRate = tag.SampleRate <= 0 ? string.Empty : tag.SampleRate.ToString();
+        // Date Last Played
+        string strDateLastPlayed = tag.DateTimePlayed == DateTime.MinValue
+                                     ? string.Empty
+                                     : tag.DateTimePlayed.ToShortDateString();
+        // Date Added
+        string strDateAdded = tag.DateTimeModified == DateTime.MinValue
+                                ? string.Empty
+                                : tag.DateTimeModified.ToShortDateString();
+
+        GUIPropertyManager.SetProperty("#Play.Current.Title", tag.Title);
+        GUIPropertyManager.SetProperty("#Play.Current.Track", strTrack);
+        GUIPropertyManager.SetProperty("#Play.Current.Album", tag.Album);
+        GUIPropertyManager.SetProperty("#Play.Current.Artist", tag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Current.Genre", tag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Current.Year", strYear);
+        GUIPropertyManager.SetProperty("#Play.Current.Rating", strRating);
+        GUIPropertyManager.SetProperty("#Play.Current.Duration", strDuration);
+        GUIPropertyManager.SetProperty("#duration", strDuration);
+        GUIPropertyManager.SetProperty("#Play.Current.AlbumArtist", tag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#Play.Current.BitRate", strBitrate);
+        GUIPropertyManager.SetProperty("#Play.Current.Comment", tag.Comment);
+        GUIPropertyManager.SetProperty("#Play.Current.Composer", tag.Composer);
+        GUIPropertyManager.SetProperty("#Play.Current.Conductor", tag.Conductor);
+        GUIPropertyManager.SetProperty("#Play.Current.DiscID", strDiscID);
+        GUIPropertyManager.SetProperty("#Play.Current.DiscTotal", strDiscTotal);
+        GUIPropertyManager.SetProperty("#Play.Current.Lyrics", tag.Lyrics);
+        GUIPropertyManager.SetProperty("#Play.Current.TimesPlayed", strTimesPlayed);
+        GUIPropertyManager.SetProperty("#Play.Current.TrackTotal", strTrackTotal);
+        GUIPropertyManager.SetProperty("#Play.Current.FileType", tag.FileType);
+        GUIPropertyManager.SetProperty("#Play.Current.Codec", tag.Codec);
+        GUIPropertyManager.SetProperty("#Play.Current.BitRateMode", tag.BitRateMode);
+        GUIPropertyManager.SetProperty("#Play.Current.BPM", strBPM);
+        GUIPropertyManager.SetProperty("#Play.Current.Channels", strChannels);
+        GUIPropertyManager.SetProperty("#Play.Current.SampleRate", strSampleRate);
+        GUIPropertyManager.SetProperty("#Play.Current.DateLastPlayed", strDateLastPlayed);
+        GUIPropertyManager.SetProperty("#Play.Current.DateAdded", strDateAdded);
+
+        var albumInfo = new AlbumInfo();
+        if (MusicDatabase.Instance.GetAlbumInfo(tag.Album, tag.AlbumArtist, ref albumInfo))
+        {
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", albumInfo.Review);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", albumInfo.Rating.ToString());
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", albumInfo.Genre);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", albumInfo.Styles);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", albumInfo.Tones);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", albumInfo.Year.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Review", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Rating", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Genre", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Styles", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Tones", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.AlbumInfo.Year", String.Empty);
+        }
+        var artistInfo = new ArtistInfo();
+        if (MusicDatabase.Instance.GetArtistInfo(tag.Artist, ref artistInfo))
+        {
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", artistInfo.AMGBio);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", artistInfo.Born);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", artistInfo.Genres);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", artistInfo.Instruments);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", artistInfo.Styles);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", artistInfo.Tones);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", artistInfo.YearsActive);
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Bio", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Born", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Genres", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Instruments", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Styles", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.Tones", String.Empty);
+          GUIPropertyManager.SetProperty("#Play.ArtistInfo.YearsActive", String.Empty);
+        }
+      }
+      else
+      {
+        // there is no current track so blank all properties
+        GUIPropertyManager.RemovePlayerProperties();
+        GUIPropertyManager.SetProperty("#Play.Current.Title", GUILocalizeStrings.Get(4543));
+      }
+    }
+
+    private static void SetNextSkinProperties(MusicTag tag, String fileName)
+    {
+      var thumb = string.Empty;
+      if (tag != null)
+      {
+        string strThumb = Util.Utils.GetAlbumThumbName(tag.Artist, tag.Album);
+        if (Util.Utils.FileExistsInCache(strThumb))
+        {
+          thumb = strThumb;
+        }
+
+        // no succes with album cover try folder cache
+        if (string.IsNullOrEmpty(thumb))
+        {
+          thumb = Util.Utils.TryEverythingToGetFolderThumbByFilename(fileName, false);
+        }
+
+        // let us test if there is a larger cover art image
+        string strLarge = Util.Utils.ConvertToLargeCoverArt(thumb);
+        if (Util.Utils.FileExistsInCache(strLarge))
+        {
+          thumb = strLarge;
+        }
+
+        if (!string.IsNullOrEmpty(thumb))
+        {
+          GUIPropertyManager.SetProperty("#Play.Next.Thumb", thumb);
+        }
+
+        // Duration
+        string strDuration = tag.Duration <= 0 ? string.Empty : tag.Duration.ToString();
+
+        // Track
+        string strNextTrack = tag.Track <= 0 ? string.Empty : tag.Track.ToString();
+
+        // Year
+        string strYear = tag.Year <= 1900 ? string.Empty : tag.Year.ToString();
+
+        // Rating
+        string strRating = (Convert.ToDecimal(2 * tag.Rating + 1)).ToString();
+
+        GUIPropertyManager.SetProperty("#Play.Next.Duration", strDuration);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", tag.Title);
+        GUIPropertyManager.SetProperty("#Play.Next.Track", strNextTrack);
+        GUIPropertyManager.SetProperty("#Play.Next.Album", tag.Album);
+        GUIPropertyManager.SetProperty("#Play.Next.Artist", tag.Artist);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", tag.Genre);
+        GUIPropertyManager.SetProperty("#Play.Next.Year", strYear);
+        GUIPropertyManager.SetProperty("#Play.Next.Rating", strRating);
+        GUIPropertyManager.SetProperty("#Play.Next.AlbumArtist", tag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRate", tag.BitRate.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Comment", tag.Comment);
+        GUIPropertyManager.SetProperty("#Play.Next.Composer", tag.Composer);
+        GUIPropertyManager.SetProperty("#Play.Next.Conductor", tag.Conductor);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscID", tag.DiscID.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.DiscTotal", tag.DiscTotal.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Lyrics", tag.Lyrics);
+        GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", tag.TimesPlayed.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", tag.TrackTotal.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.FileType", tag.FileType);
+        GUIPropertyManager.SetProperty("#Play.Next.Codec", tag.Codec);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRateMode", tag.BitRateMode);
+        GUIPropertyManager.SetProperty("#Play.Next.BPM", tag.BPM.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.Channels", tag.Channels.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.SampleRate", tag.SampleRate.ToString());
+        GUIPropertyManager.SetProperty("#Play.Next.DateLastPlayed", tag.DateTimePlayed.ToShortDateString());
+        GUIPropertyManager.SetProperty("#Play.Next.DateAdded", tag.DateTimeModified.ToShortDateString());
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#Play.Next.Thumb", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Track", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Album", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Artist", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Genre", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Year", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Rating", "0");
+        GUIPropertyManager.SetProperty("#Play.Next.AlbumArtist", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRate", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Comment", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Composer", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Conductor", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscID", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DiscTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Lyrics", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.TimesPlayed", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.TrackTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.FileType", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Codec", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BitRateMode", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.BPM", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.Channels", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.SampleRate", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DateLastPlayed", string.Empty);
+        GUIPropertyManager.SetProperty("#Play.Next.DateAdded", string.Empty);
+      }
+    }
+
+    #region playback Events
+
+    private void OnPlayBackEnded(g_Player.MediaType type, string filename)
+    {
+      if (type != g_Player.MediaType.Music)
+      {
+        return;
       }
 
-      return tag;
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnEnded), new object[] {type, filename});
     }
+
+    private void OnPlayBackStarted(g_Player.MediaType type, string filename)
+    {
+      if (type != g_Player.MediaType.Music && type != g_Player.MediaType.Radio)
+      {
+        return;
+      }
+
+      GUIGraphicsContext.form.BeginInvoke(new PlaybackChangedDelegate(DoOnStarted), new object[] {type, filename});
+    }
+
+    private void DoOnStarted(g_Player.MediaType type, string filename)
+    {
+      var isInternetStream = Util.Utils.IsAVStream(filename);
+      MusicTag tag;
+
+      if (string.IsNullOrEmpty(filename))
+      {
+        return;
+      }
+      // last.fm radio sets properties manually therefore do not overwrite them.
+      if (Util.Utils.IsLastFMStream(filename))
+      {
+        return;
+      }
+
+      // Radio Properties are set already in Play routine
+      if (g_Player.IsRadio)
+      {
+        return;
+      }
+
+      // When Playing an Internet Stream, via BASS, skin properties are set during the Play method in BassAudio.cs
+      if (BassMusicPlayer.IsDefaultMusicPlayer && isInternetStream)
+      {
+        return;
+      }
+      else
+      {
+        tag = GetTag(filename);
+      }
+
+      SetCurrentSkinProperties(tag, filename);
+
+      if (isInternetStream)
+      {
+        SetNextSkinProperties(null, string.Empty);
+        return;
+      }
+
+      // Show Information of Next File in Playlist
+      string nextFilename = playlistPlayer.GetNext();
+      if (nextFilename == string.Empty)
+      {
+        return;
+      }
+      tag = GetTag(nextFilename);
+      SetNextSkinProperties(tag, nextFilename);
+    }
+
+
+    private void DoOnEnded(g_Player.MediaType type, string filename)
+    {
+      if (type == g_Player.MediaType.Music || type == g_Player.MediaType.Radio)
+      {
+        GUIPropertyManager.RemovePlayerProperties();
+      }
+    }
+
+    #endregion
 
     #region IRenderLayer
 

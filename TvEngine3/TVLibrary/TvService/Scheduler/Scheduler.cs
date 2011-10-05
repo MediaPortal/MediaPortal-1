@@ -508,7 +508,6 @@ namespace TvService
 
           ToRecordTitle = CleanEpisodeTitle(newRecording.Program.Title);
 
-          IList<Recording> pastRecordings = Recording.ListAll();
           Log.Debug("Scheduler: Check recordings for schedule {0}...", ToRecordTitle);
           // EPG needs to have episode information to distinguish between repeatings and new broadcasts
           if (ToRecordEpisode.Equals(String.Empty) || ToRecordEpisode.Equals(".."))
@@ -522,6 +521,7 @@ namespace TvService
           }
           else
           {
+            IList<Recording> pastRecordings = Recording.ListAll();
             string pastRecordEpisode = "";
             for (int i = 0; i < pastRecordings.Count; i++)
             {
@@ -549,7 +549,8 @@ namespace TvService
                   // and simply took care of creating a unique filename.
                   // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
                   // the recording process should be resume because of previous failures.
-                  if (pastRecordings[i].StartTime.Date != newRecording.Program.StartTime.Date)
+                  if (pastRecordings[i].StartTime <= newRecording.Program.EndTime.AddMinutes(newRecording.Schedule.PostRecordInterval) &&
+                      pastRecordings[i].EndTime >= newRecording.Program.StartTime.AddMinutes(-newRecording.Schedule.PreRecordInterval))
                   {
                     // Check whether the file itself does really exist
                     // There could be faulty drivers 

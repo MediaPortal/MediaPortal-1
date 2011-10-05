@@ -217,9 +217,10 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected abstract IChannel CreateNewChannel(ChannelInfo info);
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected abstract IChannel CreateNewChannel(IChannel channel, ChannelInfo info);
 
     /// <summary>
     /// Gets the analyzer.
@@ -326,12 +327,13 @@ namespace TvLibrary.Implementations.DVB
               short pmtPid;
               short hasVideo;
               short hasAudio;
+              short hasCaDescriptor;
               short lcn;
               _analyzer.GetChannel((short)i,
                                    out networkId, out transportId, out serviceId, out majorChannel, out minorChannel,
                                    out frequency, out lcn, out freeCAMode, out serviceType, out modulation,
                                    out providerName, out serviceName,
-                                   out pmtPid, out hasVideo, out hasAudio);
+                                   out pmtPid, out hasVideo, out hasAudio, out hasCaDescriptor);
 
               string name = DvbTextConverter.Convert(serviceName, "");
               Log.Log.Write("{0}) 0x{1:X} 0x{2:X} 0x{3:X} 0x{4:X} {5} type:{6:X}", i, networkId, transportId, serviceId,
@@ -350,7 +352,7 @@ namespace TvLibrary.Implementations.DVB
               info.modulation = modulation;
               info.service_provider_name = DvbTextConverter.Convert(providerName, "");
               info.service_name = DvbTextConverter.Convert(serviceName, "");
-              info.scrambled = (freeCAMode != 0);
+              info.scrambled = (freeCAMode != 0 || hasCaDescriptor != 0);
               info.network_pmt_PID = pmtPid;
 
               if (IsValidChannel(info, hasAudio, hasVideo))
@@ -359,7 +361,7 @@ namespace TvLibrary.Implementations.DVB
                 {
                   SetNameForUnknownChannel(channel, info);
                 }
-                IChannel result = CreateNewChannel(info);
+                IChannel result = CreateNewChannel(channel, info);
                 if (result != null)
                 {
                   channelsFound.Add(result);
@@ -537,6 +539,27 @@ namespace TvLibrary.Implementations.DVB
 
     protected virtual bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
     {
+      // DVB/ATSC compliant services will be picked up here.
+      if (IsKnownServiceType(info.serviceType))
+      {
+        return true;
+      }
+
+      // The SDT service type is unfortunately not sufficient for service type
+      // identification. DVB-IP and some ATSC broadcasters in particular
+      // do not comply with specifications. Well, either that, or we do not
+      // fully/properly implement the specifications! In any case we need
+      // to err on the side of caution and pick up any channels that TsWriter
+      // says have video and/or audio streams until we can find a better
+      // way to properly identify TV and radio services.
+      if (hasVideo != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalTelevision;
+      }
+      else if (hasAudio != 0)
+      {
+        info.serviceType = (int)DvbServiceType.DigitalRadio;
+      }
       return IsKnownServiceType(info.serviceType);
     }
 

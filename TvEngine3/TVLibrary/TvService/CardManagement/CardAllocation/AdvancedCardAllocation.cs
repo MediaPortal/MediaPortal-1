@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TvControl;
 using TvDatabase;
 using TvLibrary.Interfaces;
@@ -69,11 +70,7 @@ namespace TvService
       IUser[] users = card.Users.GetUsers();
       if (users != null)
       {
-        for (int i = 0; i < users.Length; ++i)
-        {
-          if (users[i].Name != user.Name && !users[i].Name.Equals("epg"))
-            nrOfOtherUsers++;
-        }
+        nrOfOtherUsers = users.Count(t => t.Name != user.Name && !t.Name.Equals("epg"));
       }
       return nrOfOtherUsers;
     }
@@ -99,9 +96,11 @@ namespace TvService
         {
           Log.Info("Controller: find free card for channel {0}", dbChannel.DisplayName);
         }
-        List<CardDetail> cardsAvailable = new List<CardDetail>();
+        var cardsAvailable = new List<CardDetail>();
 
-        List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user);
+
+        Dictionary<int, TvResult> cardsUnAvailable;
+        List<CardDetail> cardDetails = GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
         foreach (CardDetail cardDetail in cardDetails)
         {
           bool checkTransponder = CheckTransponder(user, cards[cardDetail.Card.IdCard], cardDetail.Card.DecryptLimit,
@@ -122,7 +121,8 @@ namespace TvService
         }
         else
         {
-          result = cardDetails.Count == 0 ? TvResult.ChannelNotMappedToAnyCard : TvResult.AllCardsBusy;
+          TvResult resultNoCards = GetResultNoCards(cardsUnAvailable);
+          result = cardDetails.Count == 0 ? resultNoCards : TvResult.AllCardsBusy;
         }
         if (LogEnabled)
         {
@@ -144,6 +144,18 @@ namespace TvService
       }
     }
 
+    private static TvResult GetResultNoCards(Dictionary<int, TvResult> cardsUnAvailable) 
+    {
+      TvResult resultNoCards = TvResult.ChannelNotMappedToAnyCard;
+      Dictionary<int, TvResult>.ValueCollection values = cardsUnAvailable.Values;
+
+      if (values.Any(tvResult => tvResult == TvResult.ChannelIsScrambled)) 
+      {
+        resultNoCards = TvResult.ChannelIsScrambled;
+      }
+      return resultNoCards;
+    }
+
     /// <summary>
     /// Gets a list of all available cards which can receive the channel specified
     /// List is sorted.
@@ -152,13 +164,24 @@ namespace TvService
     public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
                                                         ref IUser user)
     {
+      Dictionary<int, TvResult> cardsUnAvailable;
+      return GetAvailableCardsForChannel(cards, dbChannel, ref user, out cardsUnAvailable);
+    }
+
+    /// <summary>
+    /// Gets a list of all available cards which can receive the channel specified
+    /// List is sorted.
+    /// </summary>
+    /// <returns>list containg all cards which can receive the channel</returns>
+    public List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out Dictionary<int, TvResult> cardsUnAvailable)
+    {      
       Stopwatch stopwatch = Stopwatch.StartNew();
+      cardsUnAvailable = new Dictionary<int, TvResult>();
       try
       {
         //Log.Info("GetFreeCardsForChannel st {0}", Environment.StackTrace);
         //construct list of all cards we can use to tune to the new channel
-        List<CardDetail> cardsAvailable = new List<CardDetail>();
-        List<int> cardsUnAvailable = new List<int>();
+        var cardsAvailable = new List<CardDetail>();        
         if (LogEnabled)
         {
           Log.Info("Controller: find card for channel {0}", dbChannel.DisplayName);
@@ -196,7 +219,7 @@ namespace TvService
           {
             int cardId = cardHandler.DataBaseCard.IdCard;
 
-            if (cardsUnAvailable.Contains(cardId))
+            if (cardsUnAvailable.ContainsKey(cardId))
             {
               if (LogEnabled)
               {
@@ -206,7 +229,13 @@ namespace TvService
             }
             if (!CanCardTuneChannel(cardHandler, dbChannel, tuningDetail))
             {
-              AddCardUnAvailable(ref cardsUnAvailable, cardId);
+              AddCardUnAvailable(ref cardsUnAvailable, cardId, TvResult.ChannelNotMappedToAnyCard);
+              continue;
+            }
+
+            if (!CanCardDecodeChannel(cardHandler, tuningDetail))
+            {
+              AddCardUnAvailable(ref cardsUnAvailable, cardId, TvResult.ChannelIsScrambled);
               continue;
             }
 
@@ -247,6 +276,18 @@ namespace TvService
         stopwatch.Stop();
         Log.Info("AdvancedCardAllocation.GetAvailableCardsForChannel took {0} msec", stopwatch.ElapsedMilliseconds);
       }
+    }
+
+    private static bool CanCardDecodeChannel(ITvCardHandler cardHandler, IChannel tuningDetail)
+    {
+      bool canCardDecodeChannel = true;
+      int cardId = cardHandler.DataBaseCard.IdCard;
+      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.CAM)
+      {
+        Log.Info("Controller:    card:{0} type:{1} channel is encrypted but card has no CAM", cardId, cardHandler.Type);
+        canCardDecodeChannel = false;
+      }
+      return canCardDecodeChannel;
     }
 
     private bool CanCardTuneChannel(ITvCardHandler cardHandler, Channel dbChannel, IChannel tuningDetail)
@@ -291,23 +332,14 @@ namespace TvService
         }
         return false;
       }
-
-      if (!tuningDetail.FreeToAir && !cardHandler.DataBaseCard.CAM)
-      {
-        if (LogEnabled)
-        {
-          Log.Info("Controller:    card:{0} type:{1} channel is encrypted but card has no CAM", cardId, cardHandler.Type);
-        }
-        return false;
-      }
       return true;
     }
 
-    private static void AddCardUnAvailable(ref List<int> cardsUnAvailable, int cardId)
+    private static void AddCardUnAvailable(ref Dictionary<int, TvResult> cardsUnAvailable, int cardId, TvResult tvResult)
     {
-      if (!cardsUnAvailable.Contains(cardId))
+      if (!cardsUnAvailable.ContainsKey(cardId))
       {
-        cardsUnAvailable.Add(cardId);
+        cardsUnAvailable.Add(cardId, tvResult);
       }
     }
 

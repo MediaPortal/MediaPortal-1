@@ -263,7 +263,7 @@ namespace SetupTv.Sections
         {
           mpGroupBox1.Visible = true;
           mpGroupBox1.Text = String.Format("Status of card {0}", card.Name);
-          mpLabelTunerLocked.Text = card.IsTunerLocked ? "yes" : "no";
+          mpLabelTunerLocked.Text = card.IsTunerLocked ? "Yes" : "No";
           progressBarLevel.Value = Math.Min(100, card.SignalLevel);
           mpLabelSignalLevel.Text = card.SignalLevel.ToString();
           progressBarQuality.Value = Math.Min(100, card.SignalQuality);

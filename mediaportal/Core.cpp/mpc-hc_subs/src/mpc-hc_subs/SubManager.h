@@ -32,6 +32,7 @@ public:
 	void SetDelay(int delay);
 	bool IsModified() { return m_subresync.IsModified(); };
 	void SaveToDisk();
+	void ToggleForcedOnly(bool onlyShowForcedSubs);
 private:
 	friend class CTextPassThruInputPin;
 	friend class CTextPassThruFilter;

@@ -841,9 +841,11 @@ namespace SetupTv.Sections
         Card card = layer.GetCardByDevicePath(RemoteControl.Instance.CardDevice(_cardNumber));
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
-        mpButtonScanRadio.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
-        mpButton1.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxNoMerge.Enabled = false;
+        mpButtonScanRadio.Enabled = false;
+        mpButtonAddSvideoChannels.Enabled = false;
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
         IUser user = new User();
@@ -1019,9 +1021,12 @@ namespace SetupTv.Sections
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;
         mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
-        mpButton1.Enabled = true;
+        checkBoxCreateSignalGroup.Enabled = true;
+        checkBoxNoMerge.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
         checkButton.Enabled = true;
       }
@@ -1125,8 +1130,10 @@ namespace SetupTv.Sections
         mpComboBoxCountry.Enabled = false;
         mpComboBoxSource.Enabled = false;
         mpComboBoxSensitivity.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxNoMerge.Enabled = false;
         mpButtonScanTv.Enabled = false;
-        mpButton1.Enabled = false;
+        mpButtonAddSvideoChannels.Enabled = false;
         UpdateStatus();
         mpListView1.Items.Clear();
         CountryCollection countries = new CountryCollection();
@@ -1199,11 +1206,8 @@ namespace SetupTv.Sections
             dbChannel.IsRadio = channel.IsRadio;
             dbChannel.Persist();
 
-            if (dbChannel.IsTv)
-            {
-              layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.Analog);
-            }
-            if (dbChannel.IsRadio)
+            layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.AllChannels);
+            if (checkBoxCreateSignalGroup.Checked)
             {
               layer.AddChannelToRadioGroup(dbChannel, TvConstants.RadioGroupNames.Analog);
             }
@@ -1235,10 +1239,12 @@ namespace SetupTv.Sections
         progressBar1.Value = 100;
         mpComboBoxCountry.Enabled = true;
         mpComboBoxSource.Enabled = true;
-        mpButtonScanRadio.Enabled = true;
-        mpButtonScanTv.Enabled = true;
         mpComboBoxSensitivity.Enabled = true;
-        mpButton1.Enabled = true;
+        checkBoxCreateSignalGroup.Enabled = true;
+        checkBoxNoMerge.Enabled = true;
+        mpButtonScanTv.Enabled = true;
+        mpButtonScanRadio.Enabled = true;
+        mpButtonAddSvideoChannels.Enabled = true;
         _isScanning = false;
       }
       ListViewItem lastItem =
@@ -1534,6 +1540,72 @@ namespace SetupTv.Sections
         tuningDetail.IsTv = true;
         tuningDetail.Name = dbChannel.DisplayName;
         tuningDetail.VideoSource = AnalogChannel.VideoInputType.YRYBYInput3;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput1))
+      {
+        string channelName = "HDMI#1 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput1;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput2))
+      {
+        string channelName = "HDMI#2 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput2;
+        layer.AddTuningDetails(dbChannel, tuningDetail);
+        layer.MapChannelToCard(card, dbChannel, false);
+        layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);
+      }
+      if (videoPinMap.ContainsKey(AnalogChannel.VideoInputType.HdmiInput3))
+      {
+        string channelName = "HDMI#3 on " + card.IdCard;
+        IList<TuningDetail> tuningDetails = layer.GetTuningDetailsByName(channelName, 0);
+        if (tuningDetails != null && tuningDetails.Count > 0)
+        {
+          dbChannel = tuningDetails[0].ReferencedChannel();
+        }
+        else
+        {
+          dbChannel = layer.AddNewChannel(channelName);
+        }
+        dbChannel.IsTv = true;
+        dbChannel.Persist();
+        tuningDetail = new AnalogChannel();
+        tuningDetail.IsTv = true;
+        tuningDetail.Name = dbChannel.DisplayName;
+        tuningDetail.VideoSource = AnalogChannel.VideoInputType.HdmiInput3;
         layer.AddTuningDetails(dbChannel, tuningDetail);
         layer.MapChannelToCard(card, dbChannel, false);
         layer.AddChannelToGroup(dbChannel, TvConstants.TvGroupNames.AllChannels);

@@ -32,6 +32,8 @@ namespace MpeCore.Classes
       Id = Guid.NewGuid().ToString();
       ReleaseDate = DateTime.Now;
       Tags = string.Empty;
+      ExtensionDescription = string.Empty;
+      VersionDescription = string.Empty;
       Params = new SectionParamCollection();
       Params.Add(new SectionParam(ParamNamesConst.ICON, "", ValueTypeEnum.File,
                                   "The icon file of the package (jpg,png,bmp)"));

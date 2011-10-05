@@ -274,17 +274,21 @@ namespace MediaPortal.DeployTool
       if (key != null)
       {
         int _IsInstalled = (int)key.GetValue(MementoSection, 0);
-        string version = (string)key.GetValue("DisplayVersion", null);
+        int major = (int)key.GetValue("VersionMajor", 0);
+        int minor = (int)key.GetValue("VersionMinor", 0);
+        int revision = (int)key.GetValue("VersionRevision", 0);
         key.Close();
 
+        Version ver = new Version(major, minor, revision);
+
 #if DEBUG
-        MessageBox.Show("Registry version = <" + version + ">, DeployTool display version = <" + GetDisplayVersion() +
-                        ">, IsInstalled=" + _IsInstalled);
+        MessageBox.Show("Registry version = <" + ver + ">, IsUpdatable= " + IsPackageUpdatabled(ver) + ", IsInstalled=" + _IsInstalled,
+          "Debug information: " +  MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
         if (_IsInstalled == 1)
         {
-          result.state = version == GetDisplayVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
+          result.state = IsPackageUpdatabled(ver) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
         }
         else
         {
@@ -521,12 +525,7 @@ namespace MediaPortal.DeployTool
 
     #endregion
 
-    #region Version checks
-
-    public static int CalculateVersion(int major, int minor, int revision)
-    {
-      return major * 100 + minor * 10 + revision;
-    }
+    #region Version & Registry checks
 
     public static bool IsOfficialBuild(string build)
     {
@@ -537,7 +536,7 @@ namespace MediaPortal.DeployTool
       return (build == "0" || build == "25546");
     }
 
-    public static int GetPackageVersion(string type)
+    public static Version GetPackageVersion(string type)
     {
       int major = 0;
       int minor = 0;
@@ -548,20 +547,62 @@ namespace MediaPortal.DeployTool
         case "min":
           major = 1;
           minor = 0;
-          revision = 5; // 1.0.5 = RC1
+          revision = 5; // 1.0.5 = 1.1.0 RC1
           break;
         case "max":
           major = 1;
           minor = 1;
-          revision = 7; // 1.1.7 = 1.2.0 Beta
+          revision = 8; // 1.1.8 = 1.2.0 RC1
           break;
       }
-      return CalculateVersion(major, minor, revision);
+      Version ver = new Version(major, minor, revision);
+      return ver;
+    }
+
+    public static bool IsPackageUpdatabled(Version pkgVer)
+    {
+      if (pkgVer.CompareTo(GetPackageVersion("min")) >= 0 &&
+          pkgVer.CompareTo(GetPackageVersion("max")) <= 0)
+      {
+        return true;
+      }
+      return false;
+    }
+
+    public static string PathFromRegistry(string regkey)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      string Tv3Path = null;
+
+      if (key != null)
+      {
+        Tv3Path = (string)key.GetValue("UninstallString");
+        key.Close();
+
+      }
+      return Tv3Path;
+    }
+
+    public static Version VersionFromRegistry(string regkey)
+    {
+      RegistryKey key = Registry.LocalMachine.OpenSubKey(regkey);
+      int major = 0;
+      int minor = 0;
+      int revision = 0;
+
+      if (key != null)
+      {
+        major = (int)key.GetValue("VersionMajor", 0);
+        minor = (int)key.GetValue("VersionMinor", 0);
+        revision = (int)key.GetValue("VersionRevision", 0);
+        key.Close();
+      }
+      return new Version(major, minor, revision);
     }
 
     public static string GetDisplayVersion()
     {
-      return "1.2.0 Beta";
+      return "1.2.0";
     }
 
     #endregion

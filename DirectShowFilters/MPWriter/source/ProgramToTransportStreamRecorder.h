@@ -15,6 +15,7 @@ public:
 	CProgramToTransportStreamRecorder(void);
 	virtual ~CProgramToTransportStreamRecorder(void);
 	void Initialize(wchar_t* fileNameOut);
+	void SetProgramType(int programType);
 	void ClearStreams();
 	void Close();
 	void Write(byte* data, int len);
@@ -37,5 +38,5 @@ private:
 	bool m_bStarting;
 	int  m_iPacketsToSkip;
 	IAnalogVideoAudioObserver* m_pCallback;
-
+	int m_iProgramType;
 };

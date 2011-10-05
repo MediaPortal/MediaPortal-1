@@ -108,14 +108,29 @@ void MPEG2TransportStreamMultiplexor
     if (streamType == 0) {
       // Instead, set the stream's type to default values, based on whether
       // the stream is audio or video, and whether it's MPEG-1 or MPEG-2:
-      if ((stream_id&0xF0) == 0xE0) { // video
-	streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 : 0x1B;
-      } else if ((stream_id&0xE0) == 0xC0) { // audio
-	streamType = mpegVersion == 1 ? 3 : mpegVersion == 2 ? 4 : 0xF;
-      } else if (stream_id == 0xBD) { // private_stream1 (usually AC-3)
-	streamType = 0x06; // for DVB; for ATSC, use 0x81
-      } else { // something else, e.g., AC-3 uses private_stream1 (0xBD)
-	streamType = 0x81; // private
+      if ((stream_id&0xF0) == 0xE0)       // video
+      {
+        // Ignore the video stream (which will be blank) if this is a radio channel.
+        if (fHaveVideoStreams)
+        {
+          streamType = mpegVersion == 1 ? 1 : mpegVersion == 2 ? 2 : mpegVersion == 4 ? 0x10 : 0x1B;
+        }
+        else
+        {
+          fInputBufferSize = 0;
+        }
+      }
+      else if ((stream_id&0xE0) == 0xC0)  // audio
+      {
+        streamType = mpegVersion == 1 ? 3 : mpegVersion == 2 ? 4 : 0xF;
+      }
+      else if (stream_id == 0xBD)         // private_stream1 (usually AC-3)
+      {
+        streamType = 0x06;                // for DVB; for ATSC, use 0x81
+      }
+      else                                // something else, e.g., AC-3 uses private_stream1 (0xBD)
+      {
+        streamType = 0x81;                // private
       }
     }
 
@@ -343,6 +358,12 @@ void MPEG2TransportStreamMultiplexor::setProgramStreamMap(unsigned frameSize) {
 
   while (offset + 4 <= frameSize) {
     u_int8_t stream_type = fInputBuffer[offset];
+    // Don't put video streams into the PMT if the channel is specified to be a radio channel.
+    if (!fHaveVideoStreams && (stream_type == 1 || stream_type == 2 || stream_type == 0x10 || stream_type == 0x1B))
+    {
+      continue;
+    }
+
     u_int8_t elementary_stream_id = fInputBuffer[offset+1];
 
     fPIDState[elementary_stream_id].streamType = stream_type;

@@ -90,6 +90,8 @@
     <Compile Include="Classes\ActionType\Script.cs" />
     <Compile Include="Classes\ActionType\ShowMessageBox.cs" />
     <Compile Include="Classes\ApplicationSettings.cs" />
+    <Compile Include="Classes\CompatibleVersionCollection.cs" />
+    <Compile Include="Classes\CompatibleVersionItem.cs" />
     <Compile Include="Classes\DependencyItemCollection.cs" />
     <Compile Include="Classes\DependencyItem.cs" />
     <Compile Include="Classes\DownloadItem.cs" />
@@ -103,11 +105,19 @@
     <Compile Include="Classes\InstallerType\GenericSkinFile.cs" />
     <Compile Include="Classes\ParamNamesConst.cs" />
     <Compile Include="Classes\PathProvider\TvServerPaths.cs" />
+    <Compile Include="Classes\PluginDependencyItem.cs" />
+    <Compile Include="Classes\PluginDependencyItemCollection.cs" />
     <Compile Include="Classes\PluginLoader.cs" />
     <Compile Include="Classes\Project\FolderGroup.cs" />
     <Compile Include="Classes\Project\ProjectSettings.cs" />
     <Compile Include="Classes\QueueCommand.cs" />
     <Compile Include="Classes\QueueCommandCollection.cs" />
+    <Compile Include="Classes\SectionPanel\EtchedLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Classes\SectionPanel\EtchedLine.Designer.cs">
+      <DependentUpon>EtchedLine.cs</DependentUpon>
+    </Compile>
     <Compile Include="Classes\SectionPanel\GroupCheck.cs" />
     <Compile Include="Classes\SectionPanel\GroupCheckScript.cs" />
     <Compile Include="Classes\SectionPanel\BaseLayout.cs">
@@ -122,6 +132,8 @@
     <Compile Include="Classes\SectionPanel\UserVericalLayout.Designer.cs">
       <DependentUpon>UserVericalLayout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Classes\SubSystemItem.cs" />
+    <Compile Include="Classes\SubSystemItemCollection.cs" />
     <Compile Include="Classes\TagCollection.cs" />
     <Compile Include="Classes\Util.cs" />
     <Compile Include="Classes\ProviderHelpers\SectionProviderHelper.cs" />
@@ -196,6 +208,7 @@
     <Compile Include="Classes\VersionProvider\ExtensionVersion.cs" />
     <Compile Include="Classes\VersionProvider\InstallerVersion.cs" />
     <Compile Include="Classes\VersionProvider\MediaPortalVersion.cs" />
+    <Compile Include="Classes\VersionProvider\SkinVersion.cs" />
     <Compile Include="Classes\VersionProvider\TvServerVersion.cs" />
     <Compile Include="Classes\WizardButtonsEnum.cs" />
     <Compile Include="Classes\WizardNavigator.cs" />
@@ -214,8 +227,17 @@
     <Compile Include="Classes\SectionItem.cs" />
     <Compile Include="Classes\SectionItemCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Common-MP-TVE3\Common.Utils\Common.Utils.csproj">
+      <Project>{F6EDA1F3-3DCD-43F4-8A90-E32DA70C8227}</Project>
+      <Name>Common.Utils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\Core.csproj">
       <Project>{02FFFC1F-2555-4B99-8B01-3432D0673855}</Project>
       <Name>Core</Name>
@@ -264,6 +286,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Classes\SectionPanel\Welcome.resx">
       <DependentUpon>Welcome.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

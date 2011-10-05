@@ -56,6 +56,7 @@ void CChannelInfo::Reset()
   strcpy(ServiceName,"");
 	hasVideo=0;
 	hasAudio=0;
+	hasCaDescriptor=0;
 	OtherMux=false;
 	PmtReceived=false;
 	SdtReceived=false;
@@ -84,6 +85,7 @@ void CChannelInfo::Copy(const CChannelInfo &info)
   strcpy(ServiceName,info.ServiceName);
 	hasVideo=info.hasVideo;
 	hasAudio=info.hasAudio;
+	hasCaDescriptor=info.hasCaDescriptor;
 	OtherMux=info.OtherMux;
 	PmtReceived=info.PmtReceived;
 	SdtReceived=info.SdtReceived;

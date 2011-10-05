@@ -182,7 +182,7 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>314</posX>
+      <posX>300</posX>
       <posY>284</posY>
       <label>303</label>
       <font>font10</font>
@@ -220,7 +220,25 @@
       <onup>218</onup>
       <ondown>800</ondown>
       <onleft>801</onleft>
-      <onright>801</onright>
+      <onright>803</onright>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>Forced SubTitles On/Off Checkbox</description>
+      <type>checkmark</type>
+      <id>803</id>
+      <posX>350</posX>
+      <posY>284</posY>
+      <label>Forced</label>
+      <MarkWidth>11</MarkWidth>
+      <MarkHeight>16</MarkHeight>
+      <font>font10</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <onup>218</onup>
+      <ondown>800</ondown>
+      <onleft>801</onleft>
+      <onright>800</onright>
       <visible>no</visible>
     </control>
     <control>

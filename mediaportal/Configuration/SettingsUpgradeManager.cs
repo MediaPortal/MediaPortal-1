@@ -61,6 +61,7 @@ namespace MediaPortal.Configuration
       RemoveEntry(settings, "myplugins", "VideoEditor");
       RemoveEntry(settings, "pluginswindows", "MediaPortal.GUI.GUIBurner.GUIBurner");
       RemoveEntry(settings, "pluginswindows", "WindowPlugins.VideoEditor.GUIVideoEditor");
+      RemoveEntry(settings, "musicmisc", "playnowjumpto");
 
       // Moved entries
       MoveEntry(settings, "general", "gui", "mousesupport");

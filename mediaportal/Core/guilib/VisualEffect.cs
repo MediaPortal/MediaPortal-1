@@ -576,6 +576,11 @@ namespace MediaPortal.GUI.Library
 
     public void Animate(uint time, bool startAnim)
     {
+      if (_type == AnimationType.Conditional)
+      {
+        UpdateCondition();
+      }
+
       // First start any queued animations
       if (_queuedProcess == AnimationProcess.Normal)
       {
@@ -608,10 +613,6 @@ namespace MediaPortal.GUI.Library
         _queuedProcess = AnimationProcess.None;
       }
 
-      if (_type == AnimationType.Conditional)
-      {
-        UpdateCondition();
-      }
 
       // Update our animation process
       if (_currentProcess == AnimationProcess.Normal)
@@ -790,9 +791,8 @@ namespace MediaPortal.GUI.Library
       }
       else
       {
-        _currentProcess = AnimationProcess.Normal;
-        _currentState = AnimationState.StateApplied;
-        _amount = 1.0f;
+        _currentProcess = AnimationProcess.None;
+        _currentState = AnimationState.None;
       }
       Calculate();
     }

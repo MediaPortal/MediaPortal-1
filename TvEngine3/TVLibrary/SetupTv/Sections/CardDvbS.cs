@@ -699,7 +699,7 @@ namespace SetupTv.Sections
       checkBoxCreateSignalGroup.Checked =
         (layer.GetSetting("dvbs" + _cardNumber + "createsignalgroup", "false").Value == "true");
 
-      checkEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
+      checkBoxEnableDVBS2.Checked = (layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false").Value == "true");
 
       _enableEvents = true;
       mpLNB1_CheckedChanged(null, null);
@@ -793,7 +793,7 @@ namespace SetupTv.Sections
       setting.Persist();
 
       setting = layer.GetSetting("dvbs" + _cardNumber + "enabledvbs2", "false");
-      setting.Value = checkEnableDVBS2.Checked ? "true" : "false";
+      setting.Value = checkBoxEnableDVBS2.Checked ? "true" : "false";
       setting.Persist();
 
       bool restart = false;
@@ -1066,7 +1066,7 @@ namespace SetupTv.Sections
         if ((tuneChannel.Rolloff == RollOff.Twenty ||
              tuneChannel.Rolloff == RollOff.TwentyFive ||
              tuneChannel.Pilot == Pilot.On) &&
-            !checkEnableDVBS2.Checked)
+            !checkBoxEnableDVBS2.Checked)
         {
           continue;
         }
@@ -1123,17 +1123,20 @@ namespace SetupTv.Sections
           DVBSChannel channel = (DVBSChannel)channels[i];
           bool exists;
           TuningDetail currentDetail;
-          //User has option to skip channel move detection. There are certain providers that do not have a unique ONID + SID combination. ONID + TSID + SID is however unique.
-          if (!chkNoChannelMoveDetection.Checked)
+          //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
+          if (checkBoxEnableChannelMoveDetection.Checked)
           {
-            //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
-            //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
+            //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
+            //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
+            //track channel movements.
             currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
                                                                TvBusinessLayer.GetChannelType(channel));
           }
           else
           {
-            //Find the current tuningdetail if we have that.
+            //There are certain providers that do not maintain unique ONID + SID combinations.
+            //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
+            //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
             currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
                                                                TvBusinessLayer.GetChannelType(channel));
           }
@@ -1736,7 +1739,7 @@ namespace SetupTv.Sections
     {
       mpComboBoxPilot.Enabled = false;
       mpComboBoxRollOff.Enabled = false;
-      if (checkEnableDVBS2.Enabled && checkEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
+      if (checkBoxEnableDVBS2.Enabled && checkBoxEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
       {
         mpComboBoxPilot.Enabled = true;
         mpComboBoxRollOff.Enabled = true;
@@ -1817,7 +1820,8 @@ namespace SetupTv.Sections
                                    mpBand1, mpBand2, mpBand3, mpBand4,
                                    mpTransponder1, mpTransponder2, mpTransponder3, mpTransponder4,
                                    checkBoxCreateGroupsSat, checkBoxCreateGroups, checkBoxCreateSignalGroup,
-                                   checkEnableDVBS2, checkBoxAdvancedTuning, buttonUpdate
+                                   checkBoxEnableDVBS2, checkBoxEnableChannelMoveDetection, checkBoxAdvancedTuning,
+                                   buttonUpdate
                                  };
       for (int ctlIndex = 0; ctlIndex < scanControls.Length; ctlIndex++)
       {
@@ -1841,7 +1845,7 @@ namespace SetupTv.Sections
       // fields are for from doing something they shouldn't.
       mpComboBoxPilot.Enabled = false;
       mpComboBoxRollOff.Enabled = false;
-      if (checkEnableDVBS2.Enabled && checkEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
+      if (checkBoxEnableDVBS2.Enabled && checkBoxEnableDVBS2.Checked && ActiveScanType != ScanTypes.Predefined)
       {
         mpComboBoxPilot.Enabled = true;
         mpComboBoxRollOff.Enabled = true;
@@ -1918,7 +1922,7 @@ namespace SetupTv.Sections
       tuneChannel.Polarisation = (Polarisation)mpComboBoxPolarisation.SelectedIndex - 1;
       tuneChannel.ModulationType = (ModulationType)mpComboBoxMod.SelectedIndex - 1;
       tuneChannel.InnerFecRate = (BinaryConvolutionCodeRate)mpComboBoxInnerFecRate.SelectedIndex - 1;
-      if (checkEnableDVBS2.Checked)
+      if (checkBoxEnableDVBS2.Checked)
       {
         tuneChannel.Pilot = (Pilot)mpComboBoxPilot.SelectedIndex - 1;
         tuneChannel.Rolloff = (RollOff)mpComboBoxRollOff.SelectedIndex - 1;

@@ -1738,6 +1738,7 @@ namespace DShowNET.Helper
             {
               if (String.Equals(info.achName, filterName))
               {
+                DisconnectAllPins(graphBuilder, filter);
                 hr = graphBuilder.RemoveFilter(filter);
                 DsError.ThrowExceptionForHR(hr);
                 ReleaseComObject(filter);
@@ -1746,6 +1747,7 @@ namespace DShowNET.Helper
             }
             else
             {
+              DisconnectAllPins(graphBuilder, filter);
               hr = graphBuilder.RemoveFilter(filter);
               DsError.ThrowExceptionForHR(hr);
               int i = ReleaseComObject(filter);
@@ -1962,6 +1964,89 @@ namespace DShowNET.Helper
               }
             }
             DirectShowUtil.ReleaseComObject(pins[0]);
+          }
+        }
+        DirectShowUtil.ReleaseComObject(pinEnum);
+      }
+      return null;
+    }
+
+    public static IPin FindFirstFreePinSub(IBaseFilter filter, PinDirection dir, string strPinName)
+    {
+      int hr = 0;
+
+      IEnumPins pinEnum;
+      hr = filter.EnumPins(out pinEnum);
+      if ((hr == 0) && (pinEnum != null))
+      {
+        pinEnum.Reset();
+        IPin[] pins = new IPin[1];
+        int f;
+        IEnumMediaTypes enumMediaTypesAudioVideo;
+        while (pinEnum.Next(1, pins, out f) == 0)
+        {
+          if (pins[0] != null)
+          {
+            hr = pins[0].EnumMediaTypes(out enumMediaTypesAudioVideo);
+            AMMediaType[] mediaTypes = new AMMediaType[1];
+            int typesFetched;
+            hr = enumMediaTypesAudioVideo.Next(1, mediaTypes, out typesFetched);
+            if (mediaTypes[0].majorType != MediaType.Audio && mediaTypes[0].majorType != MediaType.Video)
+            {
+              PinDirection pinDir;
+              pins[0].QueryDirection(out pinDir);
+              if (pinDir == dir)
+              {
+                IPin other;
+                hr = pins[0].ConnectedTo(out other);
+                if (other != null)
+                {
+                  IPin pinToVideo;
+                  hr = pins[0].ConnectedTo(out pinToVideo);
+                  if (hr >= 0 && pinToVideo != null)
+                  {
+                    PinInfo pInfo;
+                    pinToVideo.QueryPinInfo(out pInfo);
+                    FilterInfo fInfo;
+                    pInfo.filter.QueryFilterInfo(out fInfo);
+                    if (!fInfo.achName.Contains("DirectVobSub") && !fInfo.achName.Contains("DirectVobSub (auto-loading version)"))
+                    {
+                      //Log.Debug("DirectShowUtil: Disconnect Pin from filter - {0}", fInfo.achName);
+                      pins[0].Disconnect();
+                    }
+                    DsUtils.FreePinInfo(pInfo);
+                    DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+                    DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+                    DirectShowUtil.ReleaseComObject(other); other = null;
+                    hr = pins[0].ConnectedTo(out other);
+                  }
+                }
+                if (hr != 0 && other == null)
+                {
+                  PinInfo info;
+                  pins[0].QueryPinInfo(out info);
+                  DsUtils.FreePinInfo(info);
+                  if (!String.IsNullOrEmpty(strPinName))
+                  {
+                    if (String.Compare(info.name, strPinName) == 0)
+                    {
+                      //Log.Debug("*** pin {0}", info.name);
+                      DirectShowUtil.ReleaseComObject(pinEnum);
+                      return pins[0];
+                    }
+                  }
+                  else
+                  {
+                    //Log.Debug("*** pin {0}", info.name);
+                    DirectShowUtil.ReleaseComObject(pinEnum);
+                    return pins[0];
+                  }
+                }
+              }
+              DirectShowUtil.ReleaseComObject(pins[0]);
+            }
+            DirectShowUtil.ReleaseComObject(enumMediaTypesAudioVideo);
+            enumMediaTypesAudioVideo = null;
           }
         }
         DirectShowUtil.ReleaseComObject(pinEnum);

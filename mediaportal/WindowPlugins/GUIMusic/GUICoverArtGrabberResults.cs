@@ -263,7 +263,7 @@ namespace MediaPortal.GUI.Music
     {
       base.OnPageLoad();
       coverArtTexture = null;
-      Reset();
+      ResetData();
 
       listView.NavigateRight = (int)ControlIDs.LIST_ALBUM;
 
@@ -790,7 +790,7 @@ namespace MediaPortal.GUI.Music
       return modified;
     }
 
-    private void Reset()
+    private void ResetData()
     {
       if (amazonWS == null)
       {

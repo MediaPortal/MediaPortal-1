@@ -111,7 +111,7 @@ namespace MediaPortal.GUI.Library
 
         if (def.SqlOperator == "group")
         {
-          GUILocalizeStrings.Get(1222);
+          return GUILocalizeStrings.Get(1222);
         }
         
         return(GetLocalizedViewLevel(def.Where));

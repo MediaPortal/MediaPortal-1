@@ -1010,8 +1010,12 @@
     <String id="1222">Gruppi</String>
     <String id="1223">Playlist già esistente</String>
     <String id="1224">Si vuole rimuovere la playlist attuale ?</String>
+    <String id="1225">Accoda oggetto</String>
+    <String id="1226">Accoda tutti gli oggetti</String>
     <String id="1230">Aggiunto in data:</String>
     <String id="1231">Ultima riproduzione:</String>
+    <String id="1240">Blocca contenuto</String>
+    <String id="1241">Sblocca contenuto</String>
     <String id="1300" prefix="Le mie ">Serie TV</String>
     <String id="1440" prefix="Il mio ">Televideo</String>
     <String id="1441">Televideo</String>
@@ -1982,5 +1986,7 @@
     <String id="200087">Muto</String>
     <String id="200090">Edizione</String>
     <String id="200091">Capitolo</String>
+    <String id="200092">Solo forzato</String>
+    <String id="200093">Riprovando per altri 60 secondi</String>
   </Section>
 </Language>

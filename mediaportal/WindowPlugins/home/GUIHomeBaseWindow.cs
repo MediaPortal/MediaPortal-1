@@ -260,8 +260,8 @@ namespace MediaPortal.GUI.Home
           break;
 
         case GUIMessage.MessageType.GUI_MSG_ASKYESNO:
-          string Head = "", Line1 = "", Line2 = "", Line3 = "";
-          ;
+          string Head = "", Line1 = "", Line2 = "", Line3 = "", Line4 = "";
+          bool DefaultYes = false;
           if (message.Param1 != 0)
           {
             Head = GUILocalizeStrings.Get(message.Param1);
@@ -294,7 +294,19 @@ namespace MediaPortal.GUI.Home
           {
             Line3 = message.Label4;
           }
-          if (AskYesNo(Head, Line1, Line2, Line3))
+          if (message.Object != null && message.Object is int && (int)message.Object != 0)
+          {
+            Line4 = GUILocalizeStrings.Get((int)message.Object);
+          }
+          else if (message.Object != null && message.Object is string && (string)message.Object != string.Empty)
+          {
+            Line4 = (string)message.Object;
+          }
+          if (message.Object2 != null && message.Object2 is bool)
+          {
+            DefaultYes = (bool)message.Object2;
+          }
+          if (AskYesNo(Head, Line1, Line2, Line3, Line4, DefaultYes))
           {
             message.Param1 = 1;
           }
@@ -419,13 +431,15 @@ namespace MediaPortal.GUI.Home
       dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
     }
 
-    private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3)
+    private bool AskYesNo(string strHeading, string strLine1, string strLine2, string strLine3, string strLine4, bool defaultYes)
     {
       GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
       dlgYesNo.SetHeading(strHeading);
       dlgYesNo.SetLine(1, strLine1);
       dlgYesNo.SetLine(2, strLine2);
       dlgYesNo.SetLine(3, strLine3);
+      dlgYesNo.SetLine(4, strLine4);
+      dlgYesNo.SetDefaultToYes(defaultYes);
       dlgYesNo.DoModal(GUIWindowManager.ActiveWindow);
       return dlgYesNo.IsConfirmed;
     }

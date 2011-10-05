@@ -53,8 +53,8 @@ namespace MpeCore.Classes.ZipProvider
           if (fileItem.SystemFile)
           {
             string tempfil = Path.GetTempFileName();
-            tempfil = Path.GetDirectoryName(tempfil) + Path.GetFileNameWithoutExtension(tempfil) +
-                      Path.GetExtension(fileItem.LocalFileName);
+            tempfil = Path.Combine(Path.GetDirectoryName(tempfil), Path.GetFileNameWithoutExtension(tempfil) +
+                      Path.GetExtension(fileItem.LocalFileName));
             Extract(fileItem, tempfil);
             fileItem.TempFileLocation = tempfil;
             //fileItem.LocalFileName = tempfil;

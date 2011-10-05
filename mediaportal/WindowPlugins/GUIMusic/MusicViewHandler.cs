@@ -166,7 +166,16 @@ namespace MediaPortal.GUI.Music
 
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
-          database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          // only group special characters into a "#" entry is field is text based
+          if (defRoot.Where == "rating" || defRoot.Where == "year" || defRoot.Where == "track" || defRoot.Where == "disc#" ||
+              defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date")
+          {
+            database.GetSongsByFilter(sql, out songs, table);
+          }
+          else
+          {
+            database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          }
 
           previousLevel = currentLevel;
           

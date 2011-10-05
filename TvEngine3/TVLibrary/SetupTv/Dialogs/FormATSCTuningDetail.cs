@@ -125,13 +125,18 @@ namespace SetupTv.Dialogs
     {
       if (textBoxProgram.Text.Length == 0)
       {
-        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a physical channel number!", "Incorrect input");
         return false;
       }
       int physical, frequency, major, minor, onid, tsid, sid, pmt;
       if (!Int32.TryParse(textBoxProgram.Text, out physical))
       {
-        MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid physical channel number!", "Incorrect input");
+        return false;
+      }
+      if (textBoxFrequency.Text.Length == 0)
+      {
+        MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxFrequency.Text, out frequency))
@@ -139,39 +144,59 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
+      if (frequency < 0)
+      {
+        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        return false;
+      }
       if (!Int32.TryParse(textBoxMajor.Text, out major))
       {
-        MessageBox.Show(this, "Please enter a valid major!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid major channel number!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxMinor.Text, out minor))
       {
-        MessageBox.Show(this, "Please enter a valid minor!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid minor channel number!", "Incorrect input");
+        return false;
+      }
+      if (physical <= 0 && (major <= 0 || minor <= 0))
+      {
+        MessageBox.Show(this, "Please enter valid physical or major and minor channel numbers!", "Incorrect input");
+        return false;
+      }
+      if (comboBoxQAMModulation.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please enter a valid modulation!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxQamONID.Text, out onid))
       {
-        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid network ID!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxQamTSID.Text, out tsid))
       {
-        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid transport ID!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxQamSID.Text, out sid))
       {
-        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid service ID!", "Incorrect input");
+        return false;
+      }
+      if (onid < 0 || tsid < 0 || sid < 0)
+      {
+        MessageBox.Show(this, "Please enter valid network, transport and service IDs!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxQamPmt.Text, out pmt))
       {
-        MessageBox.Show(this, "Please enter a valid pmt id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
-      if (physical <= 0 && major < 0 && minor < 0)
+      if (pmt < 0)
       {
-        MessageBox.Show(this, "Please enter a valid channel number, major and minor!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
       return true;

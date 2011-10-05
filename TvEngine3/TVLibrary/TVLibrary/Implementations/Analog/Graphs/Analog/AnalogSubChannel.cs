@@ -171,7 +171,7 @@ namespace TvLibrary.Implementations.Analog
         return false;
       }
 
-      //  0=tv, 1=radio
+      // Important: this call needs to be made *before* the call to StartTimeShifting().
       _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
 
       _mpRecord.StartTimeShifting(_subChannelId);
@@ -204,7 +204,12 @@ namespace TvLibrary.Implementations.Analog
       Log.Log.WriteFile("analog:StartRecord({0})", fileName);
       _mpRecord.SetRecordingFileNameW(_subChannelId, fileName);
       _mpRecord.SetRecorderVideoAudioObserver(_subChannelId, this);
+
+      // Important: this call needs to be made *before* the call to StartRecord().
+      _mpRecord.SetChannelType(_subChannelId, (CurrentChannel.IsTv ? 0 : 1));
+
       _mpRecord.StartRecord(_subChannelId);
+      _dateRecordingStarted = DateTime.Now;
     }
 
     /// <summary>

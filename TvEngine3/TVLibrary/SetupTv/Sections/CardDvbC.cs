@@ -518,17 +518,20 @@ namespace SetupTv.Sections
             DVBCChannel channel = (DVBCChannel)channels[i];
             bool exists;
             TuningDetail currentDetail;
-            //User has option to skip channel move detection. There are certain providers that do not have a unique ONID + SID combination. ONID + TSID + SID is however unique.
-            if (!chkNoChannelMoveDetection.Checked)
+            //Check if we already have this tuningdetail. The user has the option to enable channel move detection...
+            if (checkBoxEnableChannelMoveDetection.Checked)
             {
-              //Find the current tuningdetail if we have that. Since according to the specs ONID + SID is unique we do not use the TSID. 
-              //That way we can also detect if a channel moves (as long as the provider does not change the SID. The DVB spec recommends that the SID should not change.)
+              //According to the DVB specs ONID + SID is unique, therefore we do not need to use the TSID to identify a service.
+              //The DVB spec recommends that the SID should not change if a service moves. This theoretically allows us to
+              //track channel movements.
               currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.ServiceId,
                                                                  TvBusinessLayer.GetChannelType(channel));
             }
             else
             {
-              //Find the current tuningdetail if we have that.
+              //There are certain providers that do not maintain unique ONID + SID combinations.
+              //In those cases, ONID + TSID + SID is generally unique. The consequence of using the TSID to identify
+              //a service is that channel movement tracking won't work (each transponder/mux should have its own TSID).
               currentDetail = layer.GetTuningDetail(channel.NetworkId, channel.TransportId, channel.ServiceId,
                                                                  TvBusinessLayer.GetChannelType(channel));
             }
@@ -707,12 +710,18 @@ namespace SetupTv.Sections
       {
         mpGrpAdvancedTuning.Visible = false;
         mpGrpScanProgress.Visible = true;
+        checkBoxCreateGroups.Enabled = false;
+        checkBoxCreateSignalGroup.Enabled = false;
+        checkBoxEnableChannelMoveDetection.Enabled = false;
         checkBoxAdvancedTuning.Enabled = false;
       }
       else
       {
         mpGrpAdvancedTuning.Visible = checkBoxAdvancedTuning.Checked && !_isScanning;
         mpGrpScanProgress.Visible = _isScanning;
+        checkBoxCreateGroups.Enabled = !_isScanning;
+        checkBoxCreateSignalGroup.Enabled = !_isScanning;
+        checkBoxEnableChannelMoveDetection.Enabled = !_isScanning;
         checkBoxAdvancedTuning.Enabled = !_isScanning;
       }
 

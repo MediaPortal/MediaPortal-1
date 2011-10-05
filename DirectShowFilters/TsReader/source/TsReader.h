@@ -32,6 +32,10 @@
 #include "IAudioStream.h"
 #include "ITeletextSource.h"
 #include <map>
+
+#define INIT_SHOWBUFFERVIDEO 20
+#define INIT_SHOWBUFFERAUDIO 5
+
 using namespace std;
 
 class CSubtitlePin;
@@ -43,6 +47,15 @@ class CTsReaderFilter;
 DEFINE_GUID(CLSID_TSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x3f);
 DEFINE_GUID(IID_ITSReader, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x4f);
 //DEFINE_GUID(IID_ITSReaderAudioChange, 0xb9559486, 0xe1bb, 0x45d3, 0xa2, 0xa2, 0x9a, 0x7a, 0xfe, 0x49, 0xb2, 0x5f);
+
+// CLSIDs used to identify connected filters
+// {04FE9017-F873-410e-871E-AB91661A4EF7}
+DEFINE_GUID(CLSID_FFDSHOWVIDEO, 0x04fe9017, 0xf873, 0x410e, 0x87, 0x1e, 0xab, 0x91, 0x66, 0x1a, 0x4e, 0xf7);
+// {0B390488-D80F-4a68-8408-48DC199F0E97}
+DEFINE_GUID(CLSID_FFDSHOWDXVA, 0xb0eff97, 0xc750, 0x462c, 0x94, 0x88, 0xb1, 0xe, 0x7d, 0x87, 0xf1, 0xa6);
+// {DBF9000E-F08C-4858-B769-C914A0FBB1D7}
+DEFINE_GUID(CLSID_FFDSHOWSUBTITLES, 0xdbf9000e, 0xf08c, 0x4858, 0xb7, 0x69, 0xc9, 0x14, 0xa0, 0xfb, 0xb1, 0xd7);
+
 
 DECLARE_INTERFACE_(ITSReaderCallback, IUnknown)
 {
@@ -185,6 +198,14 @@ public:
   bool            m_bRenderingClockTooFast;
   bool            m_bForceSeekAfterRateChange;
   bool            m_bSeekAfterRcDone;
+
+  int             m_ShowBufferAudio;
+  int             m_ShowBufferVideo;
+
+  CLSID           m_videoDecoderCLSID;
+  bool            m_bFastSyncFFDShow;
+
+  CLSID           GetCLSIDFromPin(IPin* pPin);
 
 protected:
   void ThreadProc();

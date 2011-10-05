@@ -88,7 +88,19 @@ namespace TvLibrary.Implementations
       /// <summary>
       /// RGB input #3
       /// </summary>
-      YRYBYInput3
+      YRYBYInput3,
+      /// <summary>
+      /// HDMI input #1
+      /// </summary>
+      HdmiInput1,
+      /// <summary>
+      /// HDMI input #2
+      /// </summary>
+      HdmiInput2,
+      /// <summary>
+      /// HDMI input #3
+      /// </summary>
+      HdmiInput3
     }
 
     /// <summary>

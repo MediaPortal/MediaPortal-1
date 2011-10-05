@@ -5,8 +5,6 @@
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
       <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="150" end="800,0">WindowClose</animation>
       <control>
@@ -57,7 +55,7 @@
           <zoomYPixels>40</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
@@ -104,6 +102,8 @@
           <showInfoImage>no</showInfoImage>
           <keepaspectratio>no</keepaspectratio>
           <dimColor>80ffffff</dimColor>
+          <renderFocusText>no</renderFocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <thumbAnimation effect="zoom" start="100,100" end="130,130" time="150">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="130,130" end="100,100" time="150">unfocus</thumbAnimation>
         </control>

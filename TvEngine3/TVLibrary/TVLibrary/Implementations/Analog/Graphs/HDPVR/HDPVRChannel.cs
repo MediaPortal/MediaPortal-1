@@ -63,13 +63,7 @@ namespace TvLibrary.Implementations.Analog
 
       // Keep a reference to the card for quality control.
       _card = card;
-
-      // What kind of device is this (assumed to be HD PVR by default)?
       _deviceType = deviceType;
-      if (deviceType.Equals("Colossus"))
-      {
-        PMT_PID = 0x20;
-      }
 
       _tsFilterInterface = (ITsFilter)filterTsWriter;
       _tsFilterInterface.AddChannel(ref _subChannelIndex);
@@ -154,46 +148,34 @@ namespace TvLibrary.Implementations.Analog
     /// <returns><c>true</c> if PMT was found, otherwise <c>false</c></returns>
     protected override bool WaitForPMT()
     {
-      SetupPmtGrabber(PMT_PID, SERVICE_ID);
-      if (!_eventPMT.WaitOne(_parameters.TimeOutPMT * 1000, true))
+      int pid = PMT_PID;
+      bool pmtFound = false;
+      TimeSpan waitLength = TimeSpan.MinValue;
+      while (!pmtFound)
       {
-        return false;
-      }
-
-      // Once we receive PMT...
-      IntPtr pmtMem = Marshal.AllocCoTaskMem(4096); // max. size for pmt
-      try
-      {
-        _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex, pmtMem);
-        if (_pmtLength < 6)
+        SetupPmtGrabber(pid, SERVICE_ID);
+        _pmtRequested = true;
+        DateTime dtStartWait = DateTime.Now;
+        pmtFound = _eventPMT.WaitOne(_parameters.TimeOutPMT * 1000, true);
+        waitLength = DateTime.Now - dtStartWait;
+        if (!pmtFound)
         {
-          return false;
+          Log.Log.Debug("HDPVR: timed out waiting for PMT after {0} seconds", waitLength.TotalSeconds);
+          if (pid == 0)
+          {
+            Log.Log.Debug("Giving up waiting for PMT. You might need to increase the PMT timeout value.");
+            return false;
+          }
+          else
+          {
+            Log.Log.Debug("Setting pid to 0 to search for new PMT.");
+            pid = 0;
+          }
         }
-
-        // Check the program number.
-        _pmtData = new byte[_pmtLength];
-        Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
-        int version = ((_pmtData[5] >> 1) & 0x1F);
-        int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
-        Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
-        if (pmtProgramNumber != SERVICE_ID)
-        {
-          throw new TvException("HDPVRChannel.WaitForPMT: PMT program doesn't match HDPVR service ID");
-        }
-
-        // Get the program PIDs.
-        _pmtVersion = version;
-        _channelInfo = new ChannelInfo();
-        _channelInfo.DecodePmt(_pmtData);
-        _channelInfo.serviceID = pmtProgramNumber;
-        _channelInfo.network_pmt_PID = _pmtPid;
-        SetMpegPidMapping(_channelInfo);
-        return true;
       }
-      finally
-      {
-        Marshal.FreeCoTaskMem(pmtMem);
-      }
+
+      Log.Log.Debug("HDPVR: found PMT after {0} seconds", waitLength.TotalSeconds);
+      return HandlePmt();
     }
 
     /// <summary>
@@ -217,12 +199,54 @@ namespace TvLibrary.Implementations.Analog
     public override int OnPMTReceived(int pmtPid)
     {
       Log.Log.WriteFile("HDPVR: OnPMTReceived() subch:{0} pid 0x{1:X}", _subChannelId, pmtPid);
+      _pmtPid = pmtPid;
       if (_eventPMT != null)
       {
         _eventPMT.Set();
       }
-      _pmtPid = pmtPid;
+      if (!_pmtRequested)
+      {
+        HandlePmt();
+      }
+      _pmtRequested = false;
       return 0;
+    }
+
+    private bool HandlePmt()
+    {
+      IntPtr pmtMem = Marshal.AllocCoTaskMem(4096); // max. size for pmt
+      try
+      {
+        _pmtLength = _tsFilterInterface.PmtGetPMTData(_subChannelIndex, pmtMem);
+        if (_pmtLength < 6)
+        {
+          return false;
+        }
+
+        // Check the program number.
+        _pmtData = new byte[_pmtLength];
+        Marshal.Copy(pmtMem, _pmtData, 0, _pmtLength);
+        int version = ((_pmtData[5] >> 1) & 0x1F);
+        int pmtProgramNumber = (_pmtData[3] << 8) + _pmtData[4];
+        Log.Log.Info("HDPVR: PMT sid=0x{0:X} pid=0x{1:X} version=0x{2:X}", pmtProgramNumber, _pmtPid, version);
+        if (pmtProgramNumber != SERVICE_ID)
+        {
+          throw new TvException("HDPVRChannel: PMT program number doesn't match expected service ID");
+        }
+
+        // Get the program PIDs.
+        _pmtVersion = version;
+        _channelInfo = new ChannelInfo();
+        _channelInfo.DecodePmt(_pmtData);
+        _channelInfo.serviceID = pmtProgramNumber;
+        _channelInfo.network_pmt_PID = _pmtPid;
+        SetMpegPidMapping(_channelInfo);
+        return true;
+      }
+      finally
+      {
+        Marshal.FreeCoTaskMem(pmtMem);
+      }
     }
 
     #endregion

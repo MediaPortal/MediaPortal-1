@@ -25,6 +25,7 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Util;
+using System.Linq;
 
 namespace MediaPortal.Ripper
 {
@@ -112,7 +113,8 @@ namespace MediaPortal.Ripper
       if (!enabled)
         return;
 
-      if (string.IsNullOrEmpty(strDrive) || (g_Player.Playing && DaemonTools.GetVirtualDrive().StartsWith(strDrive)))
+      if (string.IsNullOrEmpty(strDrive) || (!forcePlay && DaemonTools.GetVirtualDrive().StartsWith(strDrive)))
+
         return;
 
       StopListening();
@@ -330,7 +332,11 @@ namespace MediaPortal.Ripper
         ArrayList videoFiles = new ArrayList();
         mediaSubType = MediaSubType.FILES;
 
-        string[] files = Directory.GetFiles(strFolder, "*.*", SearchOption.AllDirectories);
+        string[] files = null;
+        DirectoryInfo di = new DirectoryInfo(strFolder);
+        if (di != null)
+          files = di.GetFiles("*.*", SearchOption.AllDirectories).Select(a => a.FullName).ToArray();
+
         if (files != null && files.Length > 0)
         {
           //for (int i = files.Length - 1; i >= 0; i--)

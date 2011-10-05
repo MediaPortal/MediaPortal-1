@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
       Process setup = Process.Start(_fileName,
                                     String.Format("/S /noClient /DeployMode {0} {1} {2} /D={3}", UpdateMode, sqlparam,
                                                   pwdparam, targetDir));
- 
+
       if (setup != null)
       {
         setup.WaitForExit();
@@ -102,15 +102,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.needsDownload = true;
       FileInfo tvServerFile = new FileInfo(_fileName);
 
+      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+
       if (tvServerFile.Exists && tvServerFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
+      else
+      {
+        result.needsDownload = true;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      result = Utils.CheckNSISUninstallString("MediaPortal TV Server", "MementoSection_SecServer");
+
       return result;
     }
   }

@@ -89,6 +89,63 @@ namespace MpeCore.Classes
       }
     }
 
+    public static bool IsPlugin(string pluginFile)
+    {
+      if (!File.Exists(pluginFile))
+      {
+        return false;
+      }
+      Assembly pluginAssembly = null;
+      try
+      {
+        pluginAssembly = Assembly.LoadFrom(pluginFile);
+      }
+      catch (BadImageFormatException)
+      {
+        return false;
+      }
+      if (pluginAssembly != null)
+      {
+        try
+        {
+          Type[] exportedTypes = pluginAssembly.GetExportedTypes();
+
+          foreach (Type type in exportedTypes)
+          {
+            if (type.IsAbstract)
+            {
+              continue;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.ISetupForm") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.IPlugin") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("MediaPortal.GUI.Library.IWakeable") != null)
+            {
+              return true;
+            }
+            if (type.GetInterface("TvEngine.ITvServerPlugin") != null)
+            {
+              return true;
+            }
+            if(type.IsClass && type.IsSubclassOf(typeof(GUIWindow)))
+            {
+              return true;
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          return false;
+        }
+      }
+      return false;
+    }
+
 
     /// <summary>
     /// Creates a relative path from one file or folder to another.

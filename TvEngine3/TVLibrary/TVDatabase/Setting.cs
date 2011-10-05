@@ -145,6 +145,20 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Retrieves a setting entity based on tag
+    /// </summary>
+    public static Setting RetrieveByTag(string tag)
+    {
+      // Return null if id is smaller than seed and/or increment for autokey
+      if (string.IsNullOrEmpty(tag))
+      {
+        return null;
+      }
+      var key = new Key(typeof(Setting), true, "tag", tag);
+      return Broker.RetrieveInstance<Setting>(key);
+    }
+
+    /// <summary>
     /// Persists the entity if it was never persisted or was changed.
     /// </summary>
     public override void Persist()

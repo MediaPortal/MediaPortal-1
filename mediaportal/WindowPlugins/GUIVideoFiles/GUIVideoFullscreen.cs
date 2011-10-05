@@ -2135,9 +2135,10 @@ namespace MediaPortal.GUI.Video
       {
         if (VolumeHandler.Instance.IsMuted)
         {
+          imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          imgVolumeBar.Current = 0;
           imgVolumeMuteIcon.Visible = true;
           imgVolumeBar.Image1 = 1;
-          imgVolumeBar.Current = 0;
         }
         else
         {

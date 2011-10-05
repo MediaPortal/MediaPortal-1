@@ -404,8 +404,12 @@ void CNITDecoder::DVB_GetSatDelivSys(byte* b,int maxLen)
 			0011 3/4 conv. code rate
 			0100 5/6 conv. code rate
 			0101 7/8 conv. code rate
+			0110 8/9 conv. code rate
+			0111 3/5 conv. code rate
+			1000 4/5 conv. code rate
+			1001 9/10 conv. code rate
 			1111 No conv. coding
-			0110 to 1110 reserved for future use
+			1010 to 1110 reserved for future use
 			*/
 			int fec=(b[12] & 0xF);
 			switch(fec)
@@ -462,19 +466,26 @@ void CNITDecoder::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
 				return;
 			}
 			NITTerrestrialDescriptor terrestialNIT;
-			terrestialNIT.CentreFrequency= (b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5];
-			if (terrestialNIT.CentreFrequency < 40000000 ||
-				terrestialNIT.CentreFrequency >900000000) return; // invalid frequency
+			// Frequency is specified in units of 10 Hz. We want the value in kHz.
+			terrestialNIT.CentreFrequency= ((b[2]<<24)+(b[3]<<16)+(b[4]<<8)+b[5]) / 100;
+      if (terrestialNIT.CentreFrequency < MIN_TERRESTRIAL_FREQUENCY_KHZ ||
+        terrestialNIT.CentreFrequency > MAX_TERRESTRIAL_FREQUENCY_KHZ) return; // invalid frequency
 
 			terrestialNIT.Bandwidth = (b[6]>>5);
 			// bandwith
 			// 0- 8 MHz
 			// 1- 7 MHz
 			// 2- 6 MHz
+			// 3- 5 MHz
 			if (terrestialNIT.Bandwidth==0) terrestialNIT.Bandwidth=8;
 			else if (terrestialNIT.Bandwidth==1) terrestialNIT.Bandwidth=7;
 			else if (terrestialNIT.Bandwidth==2) terrestialNIT.Bandwidth=6;
+			else if (terrestialNIT.Bandwidth==3) terrestialNIT.Bandwidth=5;
 			else terrestialNIT.Bandwidth=8;
+
+			terrestialNIT.IsHighPriority=(b[6]&0x10);
+			terrestialNIT.TimeSlicingIndicator=(b[6]&0x08);
+			terrestialNIT.MpeFecIndicator=(b[6]&0x04);
 
 			terrestialNIT.Constellation=(b[7]>>6);
 			// constellation
@@ -486,7 +497,9 @@ void CNITDecoder::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
 			else if (terrestialNIT.Constellation==2) terrestialNIT.Constellation=BDA_MOD_64QAM ;
 			else  terrestialNIT.Constellation=BDA_MOD_NOT_SET;
 
-			terrestialNIT.HierarchyInformation=(b[7]>>3)& 7;
+			terrestialNIT.IndepthInterleaverUsed=(b[7]>>5) & 1;
+
+			terrestialNIT.HierarchyInformation=(b[7]>>3) & 3;
 			// 0- non-hierarchical
 			// 1- a == 1
 			// 2- a == 2
@@ -547,11 +560,13 @@ void CNITDecoder::DVB_GetTerrestrialDelivSys(byte*b , int maxLen)
 			terrestialNIT.TransmissionMode=(b[8]>>1) & 3;
 			// 0 - 2k Mode
 			// 1 - 8k Mode
+			// 2 - 4k Mode
 			if (terrestialNIT.TransmissionMode==0) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_2K;
 			else if (terrestialNIT.TransmissionMode==1) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_8K;
+			else if (terrestialNIT.TransmissionMode==2) terrestialNIT.TransmissionMode=BDA_XMIT_MODE_4K;
 			else terrestialNIT.TransmissionMode=BDA_XMIT_MODE_NOT_SET;
 			
-			terrestialNIT.OtherFrequencyFlag=(b[8] & 3);
+			terrestialNIT.OtherFrequencyFlag=(b[8] & 1);
 			// 0 - no other frequency in use
 			bool alreadyAdded=false;
 			for (int i=0; i < m_nit.terrestialNIT.size();++i)
@@ -654,6 +669,9 @@ void CNITDecoder::DVB_GetCableDelivSys(byte* b, int maxLen)
 			// 4- 5/6 conv. code rate
 			// 5- 7/8 conv. code rate
 			// 6- 8/9 conv. code rate
+			// 7- 3/5 conv. code rate
+			// 8- 4/5 conv. code rate
+			// 9- 9/10 conv. code rate
 			// 15- No conv. coding
 			switch (cableNIT.FECInner)
 			{
@@ -663,7 +681,10 @@ void CNITDecoder::DVB_GetCableDelivSys(byte* b, int maxLen)
 				case 3:cableNIT.FECInner=BDA_BCC_RATE_3_4;break;
 				case 4:cableNIT.FECInner=BDA_BCC_RATE_5_6;break;
 				case 5:cableNIT.FECInner=BDA_BCC_RATE_7_8;break;
-				case 6:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
+				case 6:cableNIT.FECInner=BDA_BCC_RATE_8_9;break;
+				case 7:cableNIT.FECInner=BDA_BCC_RATE_3_5;break;
+				case 8:cableNIT.FECInner=BDA_BCC_RATE_4_5;break;
+				case 9:cableNIT.FECInner=BDA_BCC_RATE_9_10;break;
 				case 15:cableNIT.FECInner=BDA_BCC_RATE_NOT_DEFINED;break;
 				default:cableNIT.FECInner=BDA_BCC_RATE_NOT_SET;break;
 			}

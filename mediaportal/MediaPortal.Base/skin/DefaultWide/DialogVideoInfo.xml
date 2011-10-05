@@ -315,7 +315,7 @@
       <posY>125</posY>
       <width>240</width>
       <height>343</height>
-      <texture flipY="true" mask="video_poster_mask.png">#thumb</texture>
+      <texture flipY="true" mask="videothumbmask.png">#thumb</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
@@ -329,7 +329,7 @@
       <posY>125</posY>
       <width>240</width>
       <height>343</height>
-      <texture flipY="true" mask="video_poster_mask.png">Videothumbframe.png</texture>
+      <texture flipY="true" mask="videothumbmask.png">Videothumbframe.png</texture>
       
       
     </control>

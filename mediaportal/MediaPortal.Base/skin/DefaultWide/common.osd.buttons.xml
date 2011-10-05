@@ -181,8 +181,8 @@
       <description>SubTitle Delay label</description>
       <type>label</type>
       <id>850</id>
-      <posX>1092</posX>
-      <posY>605</posY>
+      <posX>950</posX>
+      <posY>635</posY>
       <label>303</label>
       <font>font10</font>
       <textcolor>ffffffff</textcolor>
@@ -192,7 +192,7 @@
       <description>SubTitle Delay Slider</description>
       <type>slider</type>
       <id>800</id>
-      <posX>1000</posX>
+      <posX>1080</posX>
       <posY>635</posY>
       <spintype>float</spintype>
       <showrange>yes</showrange>
@@ -219,7 +219,25 @@
       <onup>218</onup>
       <ondown>800</ondown>
       <onleft>801</onleft>
-      <onright>801</onright>
+      <onright>803</onright>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>Forced SubTitles On/Off Checkbox</description>
+      <type>checkmark</type>
+      <id>803</id>
+      <posX>1080</posX>
+      <posY>605</posY>
+      <label>Forced</label>
+      <MarkWidth>20</MarkWidth>
+      <MarkHeight>20</MarkHeight>
+      <font>font10</font>
+      <textcolor>ffffffff</textcolor>
+      <align>right</align>
+      <onup>218</onup>
+      <ondown>800</ondown>
+      <onleft>801</onleft>
+      <onright>800</onright>
       <visible>no</visible>
     </control>
     <control>

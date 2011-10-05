@@ -2112,11 +2112,7 @@ namespace TvService
       ScanParameters settings = new ScanParameters();
       TvBusinessLayer layer = new TvBusinessLayer();
       settings.TimeOutTune = Int32.Parse(layer.GetSetting("timeoutTune", "2").Value);
-      settings.TimeOutPAT = Int32.Parse(layer.GetSetting("timeoutPAT", "5").Value);
-      settings.TimeOutCAT = Int32.Parse(layer.GetSetting("timeoutCAT", "5").Value);
-      settings.TimeOutPMT = Int32.Parse(layer.GetSetting("timeoutPMT", "10").Value);
-      settings.TimeOutSDT = Int32.Parse(layer.GetSetting("timeoutSDT", "20").Value);
-      settings.TimeOutAnalog = Int32.Parse(layer.GetSetting("timeoutAnalog", "20").Value);
+      _cards[cardId].SetParameters();
       return _cards[cardId].Scanner.ScanNIT(channel, settings);
     }
 

@@ -21,6 +21,7 @@
 using System.ComponentModel;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 
 #pragma warning disable 108
@@ -311,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
         return;
       }
 
-      singleSeat = Common.IsSingleSeat();
+      singleSeat = Network.IsSingleSeat();
 
       bool rtsp;
       using (Settings xmlreader = new MPSettings())

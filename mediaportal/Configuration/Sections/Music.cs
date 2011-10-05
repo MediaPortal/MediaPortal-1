@@ -159,10 +159,7 @@ namespace MediaPortal.Configuration.Sections
     private MPButton playlistButton;
     private MPTextBox playlistFolderTextBox;
     private MPLabel label1;
-    private TabPage MiscTabPg;
-    private GroupBox groupBox2;
-    private ComboBox PlayNowJumpToCmbBox;
-    private Label label8;
+    private TabPage PlaySettingsTabPg;
     private CheckBox GaplessPlaybackChkBox;
     private HScrollBar hScrollBarCrossFade;
     private HScrollBar hScrollBarBuffering;
@@ -184,12 +181,15 @@ namespace MediaPortal.Configuration.Sections
     private MPRadioButton radioButtonVUAnalog;
     private MPRadioButton radioButtonVUNone;
     private MPRadioButton radioButtonVULed;
+    private CheckBox chkAddAllTracks;
+    private ComboBox cmbSelectOption;
+    private GroupBox grpSelectOptions;
+    private GroupBox groupBox3;
+    private ComboBox PlayNowJumpToCmbBox;
+    private Label label8;
+    private CheckBox checkBox2;
+    private MPCheckBox PlaylistCurrentCheckBox;
     private MPCheckBox checkBoxSwitchArtistOnLastFMSubmit;
-    private GroupBox groupBoxPlayBehaviour;
-    private RadioButton radioPlaylist;
-    private RadioButton radioPlay;
-    private Label lblPlayMode;
-    private CheckBox checkBoxAddAll;
 
     #endregion
 
@@ -360,20 +360,14 @@ namespace MediaPortal.Configuration.Sections
 
         SavePlaylistOnExitChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "savePlaylistOnExit", true);
         ResumePlaylistChkBox.Checked = xmlreader.GetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", true);
+        PlaylistCurrentCheckBox.Checked = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
 
-        String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode", "play");
-        if (strPlayMode == "playlist")
-        {
-          radioPlaylist.Checked = true;
-        }
-        else
-        {
-          radioPlay.Checked = true;
-        }
-        checkBoxAddAll.Checked = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+        String strSelectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
+        cmbSelectOption.Text = strSelectOption == "play" ? "Play" : "Queue";
+        chkAddAllTracks.Checked = xmlreader.GetValueAsBool("musicfiles", "addall", true);
 
         // Misc Settings
-        string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", JumpToValue3);
+        string playNowJumpTo = xmlreader.GetValueAsString("music", "playnowjumpto", JumpToValue0);
 
         switch (playNowJumpTo)
         {
@@ -527,20 +521,11 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool("musicfiles", "autoshuffle", autoShuffleCheckBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "savePlaylistOnExit", SavePlaylistOnExitChkBox.Checked);
         xmlwriter.SetValueAsBool("musicfiles", "resumePlaylistOnMusicEnter", ResumePlaylistChkBox.Checked);
+        xmlwriter.SetValueAsBool("musicfiles", "playlistIsCurrent", PlaylistCurrentCheckBox.Checked);
 
         //Play behaviour
-        String strPlayMode;
-        if (radioPlay.Checked)
-        {
-          strPlayMode = "play";
-        }
-        else
-        {
-          strPlayMode = "playlist";
-        }
-        xmlwriter.SetValue("musicfiles", "playmode", strPlayMode);
-        xmlwriter.SetValueAsBool("musicfiles", "addall", checkBoxAddAll.Checked);
-
+        xmlwriter.SetValue("musicfiles", "selectOption", cmbSelectOption.Text.ToLower());
+        xmlwriter.SetValueAsBool("musicfiles", "addall", chkAddAllTracks.Checked);
 
         // Misc Settings
         string playNowJumpTo = string.Empty;
@@ -580,7 +565,7 @@ namespace MediaPortal.Configuration.Sections
             break;
         }
 
-        xmlwriter.SetValue("musicmisc", "playnowjumpto", playNowJumpTo);
+        xmlwriter.SetValue("music", "playnowjumpto", playNowJumpTo);
 
         string showLyrics = string.Empty;
 
@@ -700,31 +685,13 @@ namespace MediaPortal.Configuration.Sections
       this.soundDeviceComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label2 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.audioPlayerComboBox = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
-      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
-      this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.label11 = new System.Windows.Forms.Label();
-      this.label10 = new System.Windows.Forms.Label();
-      this.VizPresetsCmbBox = new System.Windows.Forms.ComboBox();
-      this.VisualizationsCmbBox = new System.Windows.Forms.ComboBox();
-      this.label7 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
-      this.PlaylistTabPg = new System.Windows.Forms.TabPage();
-      this.groupBoxPlayBehaviour = new System.Windows.Forms.GroupBox();
-      this.radioPlaylist = new System.Windows.Forms.RadioButton();
-      this.radioPlay = new System.Windows.Forms.RadioButton();
-      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
-      this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.ResumePlaylistChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.SavePlaylistOnExitChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
-      this.playlistButton = new MediaPortal.UserInterface.Controls.MPButton();
-      this.playlistFolderTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
-      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.PlaySettingsTabPg = new System.Windows.Forms.TabPage();
+      this.groupBox3 = new System.Windows.Forms.GroupBox();
+      this.PlayNowJumpToCmbBox = new System.Windows.Forms.ComboBox();
+      this.label8 = new System.Windows.Forms.Label();
+      this.grpSelectOptions = new System.Windows.Forms.GroupBox();
+      this.cmbSelectOption = new System.Windows.Forms.ComboBox();
+      this.chkAddAllTracks = new System.Windows.Forms.CheckBox();
       this.tabPageNowPlaying = new System.Windows.Forms.TabPage();
       this.groupBoxVUMeter = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.radioButtonVULed = new MediaPortal.UserInterface.Controls.MPRadioButton();
@@ -739,47 +706,64 @@ namespace MediaPortal.Configuration.Sections
       this.ShowVizInNowPlayingChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.ShowLyricsCmbBox = new System.Windows.Forms.ComboBox();
       this.label9 = new System.Windows.Forms.Label();
-      this.MiscTabPg = new System.Windows.Forms.TabPage();
-      this.groupBox2 = new System.Windows.Forms.GroupBox();
-      this.PlayNowJumpToCmbBox = new System.Windows.Forms.ComboBox();
-      this.label8 = new System.Windows.Forms.Label();
+      this.PlaylistTabPg = new System.Windows.Forms.TabPage();
+      this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.PlaylistCurrentCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.autoShuffleCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.ResumePlaylistChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.SavePlaylistOnExitChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.repeatPlaylistCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.playlistButton = new MediaPortal.UserInterface.Controls.MPButton();
+      this.playlistFolderTextBox = new MediaPortal.UserInterface.Controls.MPTextBox();
+      this.label1 = new MediaPortal.UserInterface.Controls.MPLabel();
+      this.VisualizationsTabPg = new System.Windows.Forms.TabPage();
+      this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.groupBoxWinampVis = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.btWinampConfig = new MediaPortal.UserInterface.Controls.MPButton();
+      this.EnableStatusOverlaysChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.ShowTrackInfoChkBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.label11 = new System.Windows.Forms.Label();
+      this.label10 = new System.Windows.Forms.Label();
+      this.VizPresetsCmbBox = new System.Windows.Forms.ComboBox();
+      this.VisualizationsCmbBox = new System.Windows.Forms.ComboBox();
+      this.label7 = new System.Windows.Forms.Label();
+      this.label5 = new System.Windows.Forms.Label();
+      this.VisualizationFpsNud = new System.Windows.Forms.NumericUpDown();
       this.label4 = new MediaPortal.UserInterface.Controls.MPLabel();
-      this.checkBoxAddAll = new System.Windows.Forms.CheckBox();
-      this.lblPlayMode = new System.Windows.Forms.Label();
+      this.checkBox2 = new System.Windows.Forms.CheckBox();
       this.MusicSettingsTabCtl.SuspendLayout();
       this.PlayerTabPg.SuspendLayout();
       this.PlaybackSettingsGrpBox.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).BeginInit();
       this.mpGroupBox1.SuspendLayout();
-      this.VisualizationsTabPg.SuspendLayout();
-      this.mpGroupBox3.SuspendLayout();
-      this.groupBoxWinampVis.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
-      this.PlaylistTabPg.SuspendLayout();
-      this.groupBoxPlayBehaviour.SuspendLayout();
-      this.groupBox1.SuspendLayout();
+      this.PlaySettingsTabPg.SuspendLayout();
+      this.groupBox3.SuspendLayout();
+      this.grpSelectOptions.SuspendLayout();
       this.tabPageNowPlaying.SuspendLayout();
       this.groupBoxVUMeter.SuspendLayout();
       this.groupBoxDynamicContent.SuspendLayout();
       this.groupBoxVizOptions.SuspendLayout();
-      this.MiscTabPg.SuspendLayout();
-      this.groupBox2.SuspendLayout();
+      this.PlaylistTabPg.SuspendLayout();
+      this.groupBox1.SuspendLayout();
+      this.VisualizationsTabPg.SuspendLayout();
+      this.mpGroupBox3.SuspendLayout();
+      this.groupBoxWinampVis.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).BeginInit();
       this.SuspendLayout();
       // 
       // MusicSettingsTabCtl
       // 
       this.MusicSettingsTabCtl.Controls.Add(this.PlayerTabPg);
-      this.MusicSettingsTabCtl.Controls.Add(this.VisualizationsTabPg);
-      this.MusicSettingsTabCtl.Controls.Add(this.PlaylistTabPg);
+      this.MusicSettingsTabCtl.Controls.Add(this.PlaySettingsTabPg);
       this.MusicSettingsTabCtl.Controls.Add(this.tabPageNowPlaying);
-      this.MusicSettingsTabCtl.Controls.Add(this.MiscTabPg);
+      this.MusicSettingsTabCtl.Controls.Add(this.PlaylistTabPg);
+      this.MusicSettingsTabCtl.Controls.Add(this.VisualizationsTabPg);
       this.MusicSettingsTabCtl.Location = new System.Drawing.Point(0, 8);
       this.MusicSettingsTabCtl.Name = "MusicSettingsTabCtl";
       this.MusicSettingsTabCtl.SelectedIndex = 0;
       this.MusicSettingsTabCtl.Size = new System.Drawing.Size(472, 400);
       this.MusicSettingsTabCtl.TabIndex = 1;
-      this.MusicSettingsTabCtl.SelectedIndexChanged +=
-        new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
+      this.MusicSettingsTabCtl.SelectedIndexChanged += new System.EventHandler(this.MusicSettingsTabCtl_SelectedIndexChanged);
       // 
       // PlayerTabPg
       // 
@@ -828,10 +812,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarBuffering
       // 
-      this.hScrollBarBuffering.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarBuffering.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarBuffering.LargeChange = 500;
       this.hScrollBarBuffering.Location = new System.Drawing.Point(91, 161);
       this.hScrollBarBuffering.Maximum = 8499;
@@ -845,10 +827,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // hScrollBarCrossFade
       // 
-      this.hScrollBarCrossFade.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.hScrollBarCrossFade.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.hScrollBarCrossFade.LargeChange = 500;
       this.hScrollBarCrossFade.Location = new System.Drawing.Point(91, 137);
       this.hScrollBarCrossFade.Maximum = 16499;
@@ -895,13 +875,11 @@ namespace MediaPortal.Configuration.Sections
       this.StreamOutputLevelNud.Name = "StreamOutputLevelNud";
       this.StreamOutputLevelNud.Size = new System.Drawing.Size(52, 20);
       this.StreamOutputLevelNud.TabIndex = 1;
-      this.StreamOutputLevelNud.Value = new decimal(new int[]
-                                                      {
-                                                        85,
-                                                        0,
-                                                        0,
-                                                        0
-                                                      });
+      this.StreamOutputLevelNud.Value = new decimal(new int[] {
+            85,
+            0,
+            0,
+            0});
       // 
       // FadeOnStartStopChkbox
       // 
@@ -909,9 +887,9 @@ namespace MediaPortal.Configuration.Sections
       this.FadeOnStartStopChkbox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.FadeOnStartStopChkbox.Location = new System.Drawing.Point(91, 88);
       this.FadeOnStartStopChkbox.Name = "FadeOnStartStopChkbox";
-      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(185, 17);
+      this.FadeOnStartStopChkbox.Size = new System.Drawing.Size(97, 17);
       this.FadeOnStartStopChkbox.TabIndex = 2;
-      this.FadeOnStartStopChkbox.Text = "Fade-in on start / fade-out on stop";
+      this.FadeOnStartStopChkbox.Text = "Fade-in on start";
       this.FadeOnStartStopChkbox.UseVisualStyleBackColor = true;
       // 
       // label12
@@ -943,10 +921,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // mpGroupBox1
       // 
-      this.mpGroupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpGroupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.mpGroupBox1.Controls.Add(this.mpLabel2);
       this.mpGroupBox1.Controls.Add(this.soundDeviceComboBox);
       this.mpGroupBox1.Controls.Add(this.label2);
@@ -970,10 +946,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // soundDeviceComboBox
       // 
-      this.soundDeviceComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.soundDeviceComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.soundDeviceComboBox.BorderColor = System.Drawing.Color.Empty;
       this.soundDeviceComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
       this.soundDeviceComboBox.Location = new System.Drawing.Point(91, 51);
@@ -992,329 +966,91 @@ namespace MediaPortal.Configuration.Sections
       // 
       // audioPlayerComboBox
       // 
-      this.audioPlayerComboBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.audioPlayerComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
       this.audioPlayerComboBox.BorderColor = System.Drawing.Color.Empty;
       this.audioPlayerComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.audioPlayerComboBox.Items.AddRange(new object[]
-                                                {
-                                                  "Internal dshow player",
-                                                  "BASS engine"
-                                                });
+      this.audioPlayerComboBox.Items.AddRange(new object[] {
+            "Internal dshow player",
+            "BASS engine"});
       this.audioPlayerComboBox.Location = new System.Drawing.Point(91, 24);
       this.audioPlayerComboBox.Name = "audioPlayerComboBox";
       this.audioPlayerComboBox.Size = new System.Drawing.Size(289, 21);
       this.audioPlayerComboBox.TabIndex = 1;
-      this.audioPlayerComboBox.SelectedIndexChanged +=
-        new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
+      this.audioPlayerComboBox.SelectedIndexChanged += new System.EventHandler(this.audioPlayerComboBox_SelectedIndexChanged);
       // 
-      // VisualizationsTabPg
+      // PlaySettingsTabPg
       // 
-      this.VisualizationsTabPg.Controls.Add(this.mpGroupBox3);
-      this.VisualizationsTabPg.Location = new System.Drawing.Point(4, 22);
-      this.VisualizationsTabPg.Name = "VisualizationsTabPg";
-      this.VisualizationsTabPg.Size = new System.Drawing.Size(464, 374);
-      this.VisualizationsTabPg.TabIndex = 4;
-      this.VisualizationsTabPg.Text = "Visualizations";
-      this.VisualizationsTabPg.UseVisualStyleBackColor = true;
-      // 
-      // mpGroupBox3
-      // 
-      this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
-      this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
-      this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
-      this.mpGroupBox3.Controls.Add(this.label11);
-      this.mpGroupBox3.Controls.Add(this.label10);
-      this.mpGroupBox3.Controls.Add(this.VizPresetsCmbBox);
-      this.mpGroupBox3.Controls.Add(this.VisualizationsCmbBox);
-      this.mpGroupBox3.Controls.Add(this.label7);
-      this.mpGroupBox3.Controls.Add(this.label5);
-      this.mpGroupBox3.Controls.Add(this.VisualizationFpsNud);
-      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.mpGroupBox3.Location = new System.Drawing.Point(16, 16);
-      this.mpGroupBox3.Name = "mpGroupBox3";
-      this.mpGroupBox3.Size = new System.Drawing.Size(432, 343);
-      this.mpGroupBox3.TabIndex = 0;
-      this.mpGroupBox3.TabStop = false;
-      this.mpGroupBox3.Text = "Visualization settings";
-      // 
-      // groupBoxWinampVis
-      // 
-      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
-      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
-      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
-      this.groupBoxWinampVis.Size = new System.Drawing.Size(289, 56);
-      this.groupBoxWinampVis.TabIndex = 11;
-      this.groupBoxWinampVis.TabStop = false;
-      this.groupBoxWinampVis.Text = "Winamp Vis.";
-      // 
-      // btWinampConfig
-      // 
-      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
-      this.btWinampConfig.Name = "btWinampConfig";
-      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
-      this.btWinampConfig.TabIndex = 4;
-      this.btWinampConfig.Text = "Config";
-      this.btWinampConfig.UseVisualStyleBackColor = true;
-      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
-      // 
-      // EnableStatusOverlaysChkBox
-      // 
-      this.EnableStatusOverlaysChkBox.AutoSize = true;
-      this.EnableStatusOverlaysChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 246);
-      this.EnableStatusOverlaysChkBox.Name = "EnableStatusOverlaysChkBox";
-      this.EnableStatusOverlaysChkBox.Size = new System.Drawing.Size(299, 17);
-      this.EnableStatusOverlaysChkBox.TabIndex = 9;
-      this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
-      this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
-      this.EnableStatusOverlaysChkBox.CheckedChanged +=
-        new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
-      // 
-      // ShowTrackInfoChkBox
-      // 
-      this.ShowTrackInfoChkBox.AutoSize = true;
-      this.ShowTrackInfoChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 267);
-      this.ShowTrackInfoChkBox.Name = "ShowTrackInfoChkBox";
-      this.ShowTrackInfoChkBox.Size = new System.Drawing.Size(178, 17);
-      this.ShowTrackInfoChkBox.TabIndex = 10;
-      this.ShowTrackInfoChkBox.Text = "Show song info on track change";
-      this.ShowTrackInfoChkBox.UseVisualStyleBackColor = true;
-      // 
-      // label11
-      // 
-      this.label11.AutoSize = true;
-      this.label11.Location = new System.Drawing.Point(45, 54);
-      this.label11.Name = "label11";
-      this.label11.Size = new System.Drawing.Size(40, 13);
-      this.label11.TabIndex = 2;
-      this.label11.Text = "Preset:";
-      // 
-      // label10
-      // 
-      this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(17, 27);
-      this.label10.Name = "label10";
-      this.label10.Size = new System.Drawing.Size(68, 13);
-      this.label10.TabIndex = 0;
-      this.label10.Text = "Visualization:";
-      // 
-      // VizPresetsCmbBox
-      // 
-      this.VizPresetsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.VizPresetsCmbBox.FormattingEnabled = true;
-      this.VizPresetsCmbBox.Location = new System.Drawing.Point(91, 51);
-      this.VizPresetsCmbBox.Name = "VizPresetsCmbBox";
-      this.VizPresetsCmbBox.Size = new System.Drawing.Size(289, 21);
-      this.VizPresetsCmbBox.TabIndex = 3;
-      this.VizPresetsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VizPresetsCmbBox_SelectedIndexChanged);
-      // 
-      // VisualizationsCmbBox
-      // 
-      this.VisualizationsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.VisualizationsCmbBox.FormattingEnabled = true;
-      this.VisualizationsCmbBox.Location = new System.Drawing.Point(91, 24);
-      this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
-      this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
-      this.VisualizationsCmbBox.TabIndex = 1;
-      this.VisualizationsCmbBox.SelectedIndexChanged +=
-        new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
-      // 
-      // label7
-      // 
-      this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(149, 220);
-      this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(166, 13);
-      this.label7.TabIndex = 8;
-      this.label7.Text = "(use lower value for slow systems)";
-      // 
-      // label5
-      // 
-      this.label5.AutoSize = true;
-      this.label5.Location = new System.Drawing.Point(21, 220);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(64, 13);
-      this.label5.TabIndex = 6;
-      this.label5.Text = "Target FPS:";
-      // 
-      // VisualizationFpsNud
-      // 
-      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 218);
-      this.VisualizationFpsNud.Maximum = new decimal(new int[]
-                                                       {
-                                                         50,
-                                                         0,
-                                                         0,
-                                                         0
-                                                       });
-      this.VisualizationFpsNud.Minimum = new decimal(new int[]
-                                                       {
-                                                         5,
-                                                         0,
-                                                         0,
-                                                         0
-                                                       });
-      this.VisualizationFpsNud.Name = "VisualizationFpsNud";
-      this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
-      this.VisualizationFpsNud.TabIndex = 7;
-      this.VisualizationFpsNud.Value = new decimal(new int[]
-                                                     {
-                                                       30,
-                                                       0,
-                                                       0,
-                                                       0
-                                                     });
-      this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
-      // 
-      // PlaylistTabPg
-      // 
-      this.PlaylistTabPg.Controls.Add(this.groupBoxPlayBehaviour);
-      this.PlaylistTabPg.Controls.Add(this.groupBox1);
-      this.PlaylistTabPg.Location = new System.Drawing.Point(4, 22);
-      this.PlaylistTabPg.Name = "PlaylistTabPg";
-      this.PlaylistTabPg.Size = new System.Drawing.Size(464, 374);
-      this.PlaylistTabPg.TabIndex = 2;
-      this.PlaylistTabPg.Text = "Playlist settings";
-      this.PlaylistTabPg.UseVisualStyleBackColor = true;
+      this.PlaySettingsTabPg.Controls.Add(this.groupBox3);
+      this.PlaySettingsTabPg.Controls.Add(this.grpSelectOptions);
+      this.PlaySettingsTabPg.Location = new System.Drawing.Point(4, 22);
+      this.PlaySettingsTabPg.Name = "PlaySettingsTabPg";
+      this.PlaySettingsTabPg.Size = new System.Drawing.Size(464, 374);
+      this.PlaySettingsTabPg.TabIndex = 3;
+      this.PlaySettingsTabPg.Text = "Play Settings";
+      this.PlaySettingsTabPg.UseVisualStyleBackColor = true;
       // 
       // groupBox3
       // 
-      this.groupBoxPlayBehaviour.Controls.Add(this.lblPlayMode);
-      this.groupBoxPlayBehaviour.Controls.Add(this.checkBoxAddAll);
-      this.groupBoxPlayBehaviour.Controls.Add(this.radioPlaylist);
-      this.groupBoxPlayBehaviour.Controls.Add(this.radioPlay);
-      this.groupBoxPlayBehaviour.Location = new System.Drawing.Point(16, 210);
-      this.groupBoxPlayBehaviour.Name = "groupBox3";
-      this.groupBoxPlayBehaviour.Size = new System.Drawing.Size(432, 143);
-      this.groupBoxPlayBehaviour.TabIndex = 1;
-      this.groupBoxPlayBehaviour.TabStop = false;
-      this.groupBoxPlayBehaviour.Text = "Playlist Behaviour";
+      this.groupBox3.Controls.Add(this.PlayNowJumpToCmbBox);
+      this.groupBox3.Controls.Add(this.label8);
+      this.groupBox3.Location = new System.Drawing.Point(14, 128);
+      this.groupBox3.Name = "groupBox3";
+      this.groupBox3.Size = new System.Drawing.Size(432, 74);
+      this.groupBox3.TabIndex = 7;
+      this.groupBox3.TabStop = false;
+      this.groupBox3.Text = "Jump To Behaviour";
       // 
-      // radioPlaylist
+      // PlayNowJumpToCmbBox
       // 
-      this.radioPlaylist.AutoSize = true;
-      this.radioPlaylist.Location = new System.Drawing.Point(136, 67);
-      this.radioPlaylist.Name = "radioPlaylist";
-      this.radioPlaylist.Size = new System.Drawing.Size(87, 17);
-      this.radioPlaylist.TabIndex = 1;
-      this.radioPlaylist.Text = "Playlist Mode";
-      this.radioPlaylist.UseVisualStyleBackColor = true;
+      this.PlayNowJumpToCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.PlayNowJumpToCmbBox.FormattingEnabled = true;
+      this.PlayNowJumpToCmbBox.Location = new System.Drawing.Point(124, 27);
+      this.PlayNowJumpToCmbBox.Name = "PlayNowJumpToCmbBox";
+      this.PlayNowJumpToCmbBox.Size = new System.Drawing.Size(293, 21);
+      this.PlayNowJumpToCmbBox.TabIndex = 7;
       // 
-      // radioPlay
+      // label8
       // 
-      this.radioPlay.AutoSize = true;
-      this.radioPlay.Checked = true;
-      this.radioPlay.Location = new System.Drawing.Point(17, 67);
-      this.radioPlay.Name = "radioPlay";
-      this.radioPlay.Size = new System.Drawing.Size(75, 17);
-      this.radioPlay.TabIndex = 0;
-      this.radioPlay.TabStop = true;
-      this.radioPlay.Text = "Play Mode";
-      this.radioPlay.UseVisualStyleBackColor = true;
+      this.label8.AutoSize = true;
+      this.label8.Location = new System.Drawing.Point(16, 31);
+      this.label8.Name = "label8";
+      this.label8.Size = new System.Drawing.Size(106, 13);
+      this.label8.TabIndex = 6;
+      this.label8.Text = "Jump on \"Play now\":";
+      this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
       // 
-      // groupBox1
+      // grpSelectOptions
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
-      this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
-      this.groupBox1.Controls.Add(this.SavePlaylistOnExitChkBox);
-      this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
-      this.groupBox1.Controls.Add(this.playlistButton);
-      this.groupBox1.Controls.Add(this.playlistFolderTextBox);
-      this.groupBox1.Controls.Add(this.label1);
-      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.groupBox1.Location = new System.Drawing.Point(16, 16);
-      this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(432, 174);
-      this.groupBox1.TabIndex = 0;
-      this.groupBox1.TabStop = false;
-      this.groupBox1.Text = "Playlist settings";
+      this.grpSelectOptions.Controls.Add(this.cmbSelectOption);
+      this.grpSelectOptions.Controls.Add(this.chkAddAllTracks);
+      this.grpSelectOptions.Location = new System.Drawing.Point(14, 17);
+      this.grpSelectOptions.Name = "grpSelectOptions";
+      this.grpSelectOptions.Size = new System.Drawing.Size(432, 74);
+      this.grpSelectOptions.TabIndex = 6;
+      this.grpSelectOptions.TabStop = false;
+      this.grpSelectOptions.Text = "OK / Enter / Select Button";
       // 
-      // autoShuffleCheckBox
+      // cmbSelectOption
       // 
-      this.autoShuffleCheckBox.AutoSize = true;
-      this.autoShuffleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.autoShuffleCheckBox.Location = new System.Drawing.Point(91, 84);
-      this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
-      this.autoShuffleCheckBox.Size = new System.Drawing.Size(180, 17);
-      this.autoShuffleCheckBox.TabIndex = 4;
-      this.autoShuffleCheckBox.Text = "Auto shuffle playlists after loading";
-      this.autoShuffleCheckBox.UseVisualStyleBackColor = true;
+      this.cmbSelectOption.FormattingEnabled = true;
+      this.cmbSelectOption.Items.AddRange(new object[] {
+            "Play",
+            "Queue"});
+      this.cmbSelectOption.Location = new System.Drawing.Point(15, 31);
+      this.cmbSelectOption.Name = "cmbSelectOption";
+      this.cmbSelectOption.Size = new System.Drawing.Size(211, 21);
+      this.cmbSelectOption.TabIndex = 3;
       // 
-      // ResumePlaylistChkBox
+      // chkAddAllTracks
       // 
-      this.ResumePlaylistChkBox.AutoSize = true;
-      this.ResumePlaylistChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.ResumePlaylistChkBox.Location = new System.Drawing.Point(91, 130);
-      this.ResumePlaylistChkBox.Name = "ResumePlaylistChkBox";
-      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(229, 17);
-      this.ResumePlaylistChkBox.TabIndex = 5;
-      this.ResumePlaylistChkBox.Text = "Load default playlist on MediaPortal startup ";
-      this.ResumePlaylistChkBox.UseVisualStyleBackColor = true;
-      // 
-      // SavePlaylistOnExitChkBox
-      // 
-      this.SavePlaylistOnExitChkBox.AutoSize = true;
-      this.SavePlaylistOnExitChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.SavePlaylistOnExitChkBox.Location = new System.Drawing.Point(91, 107);
-      this.SavePlaylistOnExitChkBox.Name = "SavePlaylistOnExitChkBox";
-      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(293, 17);
-      this.SavePlaylistOnExitChkBox.TabIndex = 5;
-      this.SavePlaylistOnExitChkBox.Text = "Save current playlist as default when leaving MediaPortal";
-      this.SavePlaylistOnExitChkBox.UseVisualStyleBackColor = true;
-      // 
-      // repeatPlaylistCheckBox
-      // 
-      this.repeatPlaylistCheckBox.AutoSize = true;
-      this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(91, 61);
-      this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
-      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(219, 17);
-      this.repeatPlaylistCheckBox.TabIndex = 3;
-      this.repeatPlaylistCheckBox.Text = "Repeat/loop music playlists (m3u, b4, pls)";
-      this.repeatPlaylistCheckBox.UseVisualStyleBackColor = true;
-      // 
-      // playlistButton
-      // 
-      this.playlistButton.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.playlistButton.Location = new System.Drawing.Point(365, 22);
-      this.playlistButton.Name = "playlistButton";
-      this.playlistButton.Size = new System.Drawing.Size(61, 22);
-      this.playlistButton.TabIndex = 2;
-      this.playlistButton.Text = "Browse";
-      this.playlistButton.UseVisualStyleBackColor = true;
-      this.playlistButton.Click += new System.EventHandler(this.playlistButton_Click);
-      // 
-      // playlistFolderTextBox
-      // 
-      this.playlistFolderTextBox.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
-      this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
-      this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
-      this.playlistFolderTextBox.Name = "playlistFolderTextBox";
-      this.playlistFolderTextBox.Size = new System.Drawing.Size(268, 20);
-      this.playlistFolderTextBox.TabIndex = 1;
-      // 
-      // label1
-      // 
-      this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(14, 27);
-      this.label1.Name = "label1";
-      this.label1.Size = new System.Drawing.Size(71, 13);
-      this.label1.TabIndex = 0;
-      this.label1.Text = "Playlist folder:";
+      this.chkAddAllTracks.AutoSize = true;
+      this.chkAddAllTracks.Location = new System.Drawing.Point(259, 33);
+      this.chkAddAllTracks.Name = "chkAddAllTracks";
+      this.chkAddAllTracks.Size = new System.Drawing.Size(95, 17);
+      this.chkAddAllTracks.TabIndex = 4;
+      this.chkAddAllTracks.Text = "Add All Tracks";
+      this.chkAddAllTracks.UseVisualStyleBackColor = true;
       // 
       // tabPageNowPlaying
       // 
@@ -1398,8 +1134,7 @@ namespace MediaPortal.Configuration.Sections
       this.checkBoxSwitchArtistOnLastFMSubmit.Name = "checkBoxSwitchArtistOnLastFMSubmit";
       this.checkBoxSwitchArtistOnLastFMSubmit.Size = new System.Drawing.Size(404, 17);
       this.checkBoxSwitchArtistOnLastFMSubmit.TabIndex = 13;
-      this.checkBoxSwitchArtistOnLastFMSubmit.Text =
-        "Switch artist on internet lookup. i.e. LastName, Firstname -> FirstName LastName";
+      this.checkBoxSwitchArtistOnLastFMSubmit.Text = "Switch artist on internet lookup. i.e. LastName, Firstname -> FirstName LastName";
       this.checkBoxSwitchArtistOnLastFMSubmit.UseVisualStyleBackColor = true;
       // 
       // checkBoxDisableTagLookups
@@ -1482,45 +1217,273 @@ namespace MediaPortal.Configuration.Sections
       this.label9.TextAlign = System.Drawing.ContentAlignment.TopRight;
       this.label9.Visible = false;
       // 
-      // MiscTabPg
+      // PlaylistTabPg
       // 
-      this.MiscTabPg.Controls.Add(this.groupBox2);
-      this.MiscTabPg.Location = new System.Drawing.Point(4, 22);
-      this.MiscTabPg.Name = "MiscTabPg";
-      this.MiscTabPg.Size = new System.Drawing.Size(464, 374);
-      this.MiscTabPg.TabIndex = 3;
-      this.MiscTabPg.Text = "Misc settings";
-      this.MiscTabPg.UseVisualStyleBackColor = true;
+      this.PlaylistTabPg.Controls.Add(this.groupBox1);
+      this.PlaylistTabPg.Location = new System.Drawing.Point(4, 22);
+      this.PlaylistTabPg.Name = "PlaylistTabPg";
+      this.PlaylistTabPg.Size = new System.Drawing.Size(464, 374);
+      this.PlaylistTabPg.TabIndex = 2;
+      this.PlaylistTabPg.Text = "Playlist settings";
+      this.PlaylistTabPg.UseVisualStyleBackColor = true;
       // 
-      // groupBox2
+      // groupBox1
       // 
-      this.groupBox2.Controls.Add(this.PlayNowJumpToCmbBox);
-      this.groupBox2.Controls.Add(this.label8);
-      this.groupBox2.Location = new System.Drawing.Point(14, 13);
-      this.groupBox2.Name = "groupBox2";
-      this.groupBox2.Size = new System.Drawing.Size(432, 64);
-      this.groupBox2.TabIndex = 1;
-      this.groupBox2.TabStop = false;
-      this.groupBox2.Text = "Play now behavior";
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.PlaylistCurrentCheckBox);
+      this.groupBox1.Controls.Add(this.autoShuffleCheckBox);
+      this.groupBox1.Controls.Add(this.ResumePlaylistChkBox);
+      this.groupBox1.Controls.Add(this.SavePlaylistOnExitChkBox);
+      this.groupBox1.Controls.Add(this.repeatPlaylistCheckBox);
+      this.groupBox1.Controls.Add(this.playlistButton);
+      this.groupBox1.Controls.Add(this.playlistFolderTextBox);
+      this.groupBox1.Controls.Add(this.label1);
+      this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBox1.Location = new System.Drawing.Point(16, 16);
+      this.groupBox1.Name = "groupBox1";
+      this.groupBox1.Size = new System.Drawing.Size(432, 222);
+      this.groupBox1.TabIndex = 0;
+      this.groupBox1.TabStop = false;
+      this.groupBox1.Text = "Playlist settings";
       // 
-      // PlayNowJumpToCmbBox
+      // PlaylistCurrentCheckBox
       // 
-      this.PlayNowJumpToCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-      this.PlayNowJumpToCmbBox.FormattingEnabled = true;
-      this.PlayNowJumpToCmbBox.Location = new System.Drawing.Point(114, 23);
-      this.PlayNowJumpToCmbBox.Name = "PlayNowJumpToCmbBox";
-      this.PlayNowJumpToCmbBox.Size = new System.Drawing.Size(293, 21);
-      this.PlayNowJumpToCmbBox.TabIndex = 1;
+      this.PlaylistCurrentCheckBox.AutoSize = true;
+      this.PlaylistCurrentCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.PlaylistCurrentCheckBox.Location = new System.Drawing.Point(91, 153);
+      this.PlaylistCurrentCheckBox.Name = "PlaylistCurrentCheckBox";
+      this.PlaylistCurrentCheckBox.Size = new System.Drawing.Size(194, 17);
+      this.PlaylistCurrentCheckBox.TabIndex = 7;
+      this.PlaylistCurrentCheckBox.Text = "Playlist screen shows current playlist";
+      this.PlaylistCurrentCheckBox.UseVisualStyleBackColor = true;
       // 
-      // label8
+      // autoShuffleCheckBox
       // 
-      this.label8.AutoSize = true;
-      this.label8.Location = new System.Drawing.Point(6, 27);
-      this.label8.Name = "label8";
-      this.label8.Size = new System.Drawing.Size(106, 13);
-      this.label8.TabIndex = 0;
-      this.label8.Text = "Jump on \"Play now\":";
-      this.label8.TextAlign = System.Drawing.ContentAlignment.TopRight;
+      this.autoShuffleCheckBox.AutoSize = true;
+      this.autoShuffleCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.autoShuffleCheckBox.Location = new System.Drawing.Point(91, 84);
+      this.autoShuffleCheckBox.Name = "autoShuffleCheckBox";
+      this.autoShuffleCheckBox.Size = new System.Drawing.Size(180, 17);
+      this.autoShuffleCheckBox.TabIndex = 4;
+      this.autoShuffleCheckBox.Text = "Auto shuffle playlists after loading";
+      this.autoShuffleCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // ResumePlaylistChkBox
+      // 
+      this.ResumePlaylistChkBox.AutoSize = true;
+      this.ResumePlaylistChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ResumePlaylistChkBox.Location = new System.Drawing.Point(91, 130);
+      this.ResumePlaylistChkBox.Name = "ResumePlaylistChkBox";
+      this.ResumePlaylistChkBox.Size = new System.Drawing.Size(229, 17);
+      this.ResumePlaylistChkBox.TabIndex = 5;
+      this.ResumePlaylistChkBox.Text = "Load default playlist on MediaPortal startup ";
+      this.ResumePlaylistChkBox.UseVisualStyleBackColor = true;
+      // 
+      // SavePlaylistOnExitChkBox
+      // 
+      this.SavePlaylistOnExitChkBox.AutoSize = true;
+      this.SavePlaylistOnExitChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.SavePlaylistOnExitChkBox.Location = new System.Drawing.Point(91, 107);
+      this.SavePlaylistOnExitChkBox.Name = "SavePlaylistOnExitChkBox";
+      this.SavePlaylistOnExitChkBox.Size = new System.Drawing.Size(293, 17);
+      this.SavePlaylistOnExitChkBox.TabIndex = 5;
+      this.SavePlaylistOnExitChkBox.Text = "Save current playlist as default when leaving MediaPortal";
+      this.SavePlaylistOnExitChkBox.UseVisualStyleBackColor = true;
+      // 
+      // repeatPlaylistCheckBox
+      // 
+      this.repeatPlaylistCheckBox.AutoSize = true;
+      this.repeatPlaylistCheckBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.repeatPlaylistCheckBox.Location = new System.Drawing.Point(91, 61);
+      this.repeatPlaylistCheckBox.Name = "repeatPlaylistCheckBox";
+      this.repeatPlaylistCheckBox.Size = new System.Drawing.Size(219, 17);
+      this.repeatPlaylistCheckBox.TabIndex = 3;
+      this.repeatPlaylistCheckBox.Text = "Repeat/loop music playlists (m3u, b4, pls)";
+      this.repeatPlaylistCheckBox.UseVisualStyleBackColor = true;
+      // 
+      // playlistButton
+      // 
+      this.playlistButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistButton.Location = new System.Drawing.Point(365, 22);
+      this.playlistButton.Name = "playlistButton";
+      this.playlistButton.Size = new System.Drawing.Size(61, 22);
+      this.playlistButton.TabIndex = 2;
+      this.playlistButton.Text = "Browse";
+      this.playlistButton.UseVisualStyleBackColor = true;
+      this.playlistButton.Click += new System.EventHandler(this.playlistButton_Click);
+      // 
+      // playlistFolderTextBox
+      // 
+      this.playlistFolderTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.playlistFolderTextBox.BorderColor = System.Drawing.Color.Empty;
+      this.playlistFolderTextBox.Location = new System.Drawing.Point(91, 24);
+      this.playlistFolderTextBox.Name = "playlistFolderTextBox";
+      this.playlistFolderTextBox.Size = new System.Drawing.Size(268, 20);
+      this.playlistFolderTextBox.TabIndex = 1;
+      // 
+      // label1
+      // 
+      this.label1.AutoSize = true;
+      this.label1.Location = new System.Drawing.Point(14, 27);
+      this.label1.Name = "label1";
+      this.label1.Size = new System.Drawing.Size(71, 13);
+      this.label1.TabIndex = 0;
+      this.label1.Text = "Playlist folder:";
+      // 
+      // VisualizationsTabPg
+      // 
+      this.VisualizationsTabPg.Controls.Add(this.mpGroupBox3);
+      this.VisualizationsTabPg.Location = new System.Drawing.Point(4, 22);
+      this.VisualizationsTabPg.Name = "VisualizationsTabPg";
+      this.VisualizationsTabPg.Size = new System.Drawing.Size(464, 374);
+      this.VisualizationsTabPg.TabIndex = 4;
+      this.VisualizationsTabPg.Text = "Visualizations";
+      this.VisualizationsTabPg.UseVisualStyleBackColor = true;
+      // 
+      // mpGroupBox3
+      // 
+      this.mpGroupBox3.Controls.Add(this.groupBoxWinampVis);
+      this.mpGroupBox3.Controls.Add(this.EnableStatusOverlaysChkBox);
+      this.mpGroupBox3.Controls.Add(this.ShowTrackInfoChkBox);
+      this.mpGroupBox3.Controls.Add(this.label11);
+      this.mpGroupBox3.Controls.Add(this.label10);
+      this.mpGroupBox3.Controls.Add(this.VizPresetsCmbBox);
+      this.mpGroupBox3.Controls.Add(this.VisualizationsCmbBox);
+      this.mpGroupBox3.Controls.Add(this.label7);
+      this.mpGroupBox3.Controls.Add(this.label5);
+      this.mpGroupBox3.Controls.Add(this.VisualizationFpsNud);
+      this.mpGroupBox3.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.mpGroupBox3.Location = new System.Drawing.Point(16, 16);
+      this.mpGroupBox3.Name = "mpGroupBox3";
+      this.mpGroupBox3.Size = new System.Drawing.Size(432, 343);
+      this.mpGroupBox3.TabIndex = 0;
+      this.mpGroupBox3.TabStop = false;
+      this.mpGroupBox3.Text = "Visualization settings";
+      // 
+      // groupBoxWinampVis
+      // 
+      this.groupBoxWinampVis.Controls.Add(this.btWinampConfig);
+      this.groupBoxWinampVis.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.groupBoxWinampVis.Location = new System.Drawing.Point(91, 86);
+      this.groupBoxWinampVis.Name = "groupBoxWinampVis";
+      this.groupBoxWinampVis.Size = new System.Drawing.Size(289, 56);
+      this.groupBoxWinampVis.TabIndex = 11;
+      this.groupBoxWinampVis.TabStop = false;
+      this.groupBoxWinampVis.Text = "Winamp Vis.";
+      // 
+      // btWinampConfig
+      // 
+      this.btWinampConfig.Location = new System.Drawing.Point(6, 24);
+      this.btWinampConfig.Name = "btWinampConfig";
+      this.btWinampConfig.Size = new System.Drawing.Size(75, 23);
+      this.btWinampConfig.TabIndex = 4;
+      this.btWinampConfig.Text = "Config";
+      this.btWinampConfig.UseVisualStyleBackColor = true;
+      this.btWinampConfig.Click += new System.EventHandler(this.btWinampConfig_Click);
+      // 
+      // EnableStatusOverlaysChkBox
+      // 
+      this.EnableStatusOverlaysChkBox.AutoSize = true;
+      this.EnableStatusOverlaysChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.EnableStatusOverlaysChkBox.Location = new System.Drawing.Point(91, 246);
+      this.EnableStatusOverlaysChkBox.Name = "EnableStatusOverlaysChkBox";
+      this.EnableStatusOverlaysChkBox.Size = new System.Drawing.Size(299, 17);
+      this.EnableStatusOverlaysChkBox.TabIndex = 9;
+      this.EnableStatusOverlaysChkBox.Text = "Enable status display in fullscreen mode (fast systems only)";
+      this.EnableStatusOverlaysChkBox.UseVisualStyleBackColor = true;
+      this.EnableStatusOverlaysChkBox.CheckedChanged += new System.EventHandler(this.EnableStatusOverlaysChkBox_CheckedChanged);
+      // 
+      // ShowTrackInfoChkBox
+      // 
+      this.ShowTrackInfoChkBox.AutoSize = true;
+      this.ShowTrackInfoChkBox.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.ShowTrackInfoChkBox.Location = new System.Drawing.Point(110, 267);
+      this.ShowTrackInfoChkBox.Name = "ShowTrackInfoChkBox";
+      this.ShowTrackInfoChkBox.Size = new System.Drawing.Size(178, 17);
+      this.ShowTrackInfoChkBox.TabIndex = 10;
+      this.ShowTrackInfoChkBox.Text = "Show song info on track change";
+      this.ShowTrackInfoChkBox.UseVisualStyleBackColor = true;
+      // 
+      // label11
+      // 
+      this.label11.AutoSize = true;
+      this.label11.Location = new System.Drawing.Point(45, 54);
+      this.label11.Name = "label11";
+      this.label11.Size = new System.Drawing.Size(40, 13);
+      this.label11.TabIndex = 2;
+      this.label11.Text = "Preset:";
+      // 
+      // label10
+      // 
+      this.label10.AutoSize = true;
+      this.label10.Location = new System.Drawing.Point(17, 27);
+      this.label10.Name = "label10";
+      this.label10.Size = new System.Drawing.Size(68, 13);
+      this.label10.TabIndex = 0;
+      this.label10.Text = "Visualization:";
+      // 
+      // VizPresetsCmbBox
+      // 
+      this.VizPresetsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.VizPresetsCmbBox.FormattingEnabled = true;
+      this.VizPresetsCmbBox.Location = new System.Drawing.Point(91, 51);
+      this.VizPresetsCmbBox.Name = "VizPresetsCmbBox";
+      this.VizPresetsCmbBox.Size = new System.Drawing.Size(289, 21);
+      this.VizPresetsCmbBox.TabIndex = 3;
+      this.VizPresetsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VizPresetsCmbBox_SelectedIndexChanged);
+      // 
+      // VisualizationsCmbBox
+      // 
+      this.VisualizationsCmbBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.VisualizationsCmbBox.FormattingEnabled = true;
+      this.VisualizationsCmbBox.Location = new System.Drawing.Point(91, 24);
+      this.VisualizationsCmbBox.Name = "VisualizationsCmbBox";
+      this.VisualizationsCmbBox.Size = new System.Drawing.Size(289, 21);
+      this.VisualizationsCmbBox.TabIndex = 1;
+      this.VisualizationsCmbBox.SelectedIndexChanged += new System.EventHandler(this.VisualizationsCmbBox_SelectedIndexChanged);
+      // 
+      // label7
+      // 
+      this.label7.AutoSize = true;
+      this.label7.Location = new System.Drawing.Point(149, 220);
+      this.label7.Name = "label7";
+      this.label7.Size = new System.Drawing.Size(166, 13);
+      this.label7.TabIndex = 8;
+      this.label7.Text = "(use lower value for slow systems)";
+      // 
+      // label5
+      // 
+      this.label5.AutoSize = true;
+      this.label5.Location = new System.Drawing.Point(21, 220);
+      this.label5.Name = "label5";
+      this.label5.Size = new System.Drawing.Size(64, 13);
+      this.label5.TabIndex = 6;
+      this.label5.Text = "Target FPS:";
+      // 
+      // VisualizationFpsNud
+      // 
+      this.VisualizationFpsNud.Location = new System.Drawing.Point(91, 218);
+      this.VisualizationFpsNud.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+      this.VisualizationFpsNud.Minimum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+      this.VisualizationFpsNud.Name = "VisualizationFpsNud";
+      this.VisualizationFpsNud.Size = new System.Drawing.Size(52, 20);
+      this.VisualizationFpsNud.TabIndex = 7;
+      this.VisualizationFpsNud.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+      this.VisualizationFpsNud.ValueChanged += new System.EventHandler(this.VisualizationFpsNud_ValueChanged);
       // 
       // label4
       // 
@@ -1529,26 +1492,15 @@ namespace MediaPortal.Configuration.Sections
       this.label4.Size = new System.Drawing.Size(100, 23);
       this.label4.TabIndex = 0;
       // 
-      // checkBoxAddAll
+      // checkBox2
       // 
-      this.checkBoxAddAll.AutoSize = true;
-      this.checkBoxAddAll.Checked = true;
-      this.checkBoxAddAll.CheckState = System.Windows.Forms.CheckState.Checked;
-      this.checkBoxAddAll.Location = new System.Drawing.Point(17, 101);
-      this.checkBoxAddAll.Name = "checkBoxAddAll";
-      this.checkBoxAddAll.Size = new System.Drawing.Size(136, 17);
-      this.checkBoxAddAll.TabIndex = 2;
-      this.checkBoxAddAll.Text = "Add all tracks to playlist";
-      this.checkBoxAddAll.UseVisualStyleBackColor = true;
-      // 
-      // label3
-      // 
-      this.lblPlayMode.Location = new System.Drawing.Point(14, 22);
-      this.lblPlayMode.Name = "label3";
-      this.lblPlayMode.Size = new System.Drawing.Size(329, 42);
-      this.lblPlayMode.TabIndex = 3;
-      this.lblPlayMode.Text = "These options determine how the play and enter/ok buttons behave.  See the Wiki f" +
-                              "or details";
+      this.checkBox2.AutoSize = true;
+      this.checkBox2.Location = new System.Drawing.Point(259, 21);
+      this.checkBox2.Name = "checkBox2";
+      this.checkBox2.Size = new System.Drawing.Size(95, 17);
+      this.checkBox2.TabIndex = 6;
+      this.checkBox2.Text = "Add All Tracks";
+      this.checkBox2.UseVisualStyleBackColor = true;
       // 
       // Music
       // 
@@ -1562,16 +1514,11 @@ namespace MediaPortal.Configuration.Sections
       ((System.ComponentModel.ISupportInitialize)(this.StreamOutputLevelNud)).EndInit();
       this.mpGroupBox1.ResumeLayout(false);
       this.mpGroupBox1.PerformLayout();
-      this.VisualizationsTabPg.ResumeLayout(false);
-      this.mpGroupBox3.ResumeLayout(false);
-      this.mpGroupBox3.PerformLayout();
-      this.groupBoxWinampVis.ResumeLayout(false);
-      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
-      this.PlaylistTabPg.ResumeLayout(false);
-      this.groupBoxPlayBehaviour.ResumeLayout(false);
-      this.groupBoxPlayBehaviour.PerformLayout();
-      this.groupBox1.ResumeLayout(false);
-      this.groupBox1.PerformLayout();
+      this.PlaySettingsTabPg.ResumeLayout(false);
+      this.groupBox3.ResumeLayout(false);
+      this.groupBox3.PerformLayout();
+      this.grpSelectOptions.ResumeLayout(false);
+      this.grpSelectOptions.PerformLayout();
       this.tabPageNowPlaying.ResumeLayout(false);
       this.groupBoxVUMeter.ResumeLayout(false);
       this.groupBoxVUMeter.PerformLayout();
@@ -1579,10 +1526,16 @@ namespace MediaPortal.Configuration.Sections
       this.groupBoxDynamicContent.PerformLayout();
       this.groupBoxVizOptions.ResumeLayout(false);
       this.groupBoxVizOptions.PerformLayout();
-      this.MiscTabPg.ResumeLayout(false);
-      this.groupBox2.ResumeLayout(false);
-      this.groupBox2.PerformLayout();
+      this.PlaylistTabPg.ResumeLayout(false);
+      this.groupBox1.ResumeLayout(false);
+      this.groupBox1.PerformLayout();
+      this.VisualizationsTabPg.ResumeLayout(false);
+      this.mpGroupBox3.ResumeLayout(false);
+      this.mpGroupBox3.PerformLayout();
+      this.groupBoxWinampVis.ResumeLayout(false);
+      ((System.ComponentModel.ISupportInitialize)(this.VisualizationFpsNud)).EndInit();
       this.ResumeLayout(false);
+
     }
 
     #endregion

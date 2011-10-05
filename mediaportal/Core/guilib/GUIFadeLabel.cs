@@ -400,14 +400,7 @@ namespace MediaPortal.GUI.Library
         }
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_ADD)
         {
-          if (message.Label != null)
-          {
-            string strLabel = message.Label;
-            if (strLabel.Length > 0)
-            {
-              _listLabels.Add(strLabel);
-            }
-          }
+          Add(message.Label);
         }
 
         if (message.Message == GUIMessage.MessageType.GUI_MSG_LABEL_RESET)
@@ -780,11 +773,19 @@ namespace MediaPortal.GUI.Library
     /// <param name="strLabel"></param>
     public void Add(string strLabel)
     {
-      if (strLabel == null)
+      if (strLabel == null || strLabel.Length < 1)
       {
         return;
       }
-      _listLabels.Add(strLabel);
+      if (_label == null || _label.Length < 1)
+      {
+        _label = strLabel;
+      }
+      else
+      {
+        _label += "\r" + strLabel;
+      }
+      // control will split labels when rendering
     }
 
     /// <summary>

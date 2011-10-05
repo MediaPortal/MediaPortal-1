@@ -125,14 +125,32 @@ HRESULT CVideoPin::CheckConnect(IPin *pReceivePin)
   //LogDebug("vid:CheckConnect()");
   return CBaseOutputPin::CheckConnect(pReceivePin);
 }
+
+
 HRESULT CVideoPin::CompleteConnect(IPin *pReceivePin)
 {
-  //LogDebug("vid:CompleteConnect()");
   HRESULT hr = CBaseOutputPin::CompleteConnect(pReceivePin);
   if (SUCCEEDED(hr))
   {
+    CLSID &ref=m_pTsReaderFilter->GetCLSIDFromPin(pReceivePin);
+    m_pTsReaderFilter->m_videoDecoderCLSID = ref;
+    if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO)
+    {
+      m_pTsReaderFilter->m_bFastSyncFFDShow=true;
+      LogDebug("vid:CompleteConnect() FFDShow Video Decoder connected, fast sync enabled");
+    }
+    else if (m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWDXVA)
+    {
+      m_pTsReaderFilter->m_bFastSyncFFDShow=true;
+      LogDebug("vid:CompleteConnect() FFDShow DXVA Video Decoder connected, fast sync enabled");
+    }
+    else
+    {
+      m_pTsReaderFilter->m_bFastSyncFFDShow=false;
+    }
+    
+    m_bConnected=true;    
     LogDebug("vid:CompleteConnect() done");
-    m_bConnected=true;
   }
   else
   {
@@ -245,7 +263,6 @@ HRESULT CVideoPin::DoBufferProcessingLoop(void)
   return S_FALSE;
 }
 
-int ShowBuffer=100;
 
 HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
 {
@@ -264,7 +281,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
       //we dont try to read any packets, but simply return...
       if (m_pTsReaderFilter->IsSeeking() || m_pTsReaderFilter->IsStopping()) //|| m_bSeeking*/ || m_pTsReaderFilter->IsSeekingToEof())
       {
-        //if (ShowBuffer) LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
+        //if (m_pTsReaderFilter->m_ShowBufferVideo) LogDebug("vid:isseeking:%d %d",m_pTsReaderFilter->IsSeeking() ,m_bSeeking);
         Sleep(5);
         pSample->SetActualDataLength(0);
         return NOERROR;
@@ -304,30 +321,29 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
           cRefTime -= m_rtStart;
           //adjust the timestamp with the compensation
           cRefTime -= m_pTsReaderFilter->Compensation;
-          cRefTime -= AddOffset;
-          cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
 
-          CRefTime Dur;
-          Dur = (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE);
+          //CRefTime Dur;
+          //Dur = (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE);
 
-          if (cRefTime.m_time < (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE))
+          if (!m_pTsReaderFilter->m_bFastSyncFFDShow && (cRefTime.m_time < (m_pTsReaderFilter->AddVideoComp.m_time * DRIFT_RATE)) )
           {
             // Ambass : try to stretch video after zapping
+            cRefTime -= AddOffset;
+            cRefTime -= m_pTsReaderFilter->m_ClockOnStart.m_time;
             AddOffset = cRefTime.m_time / DRIFT_RATE;
             // LogDebug("%03.3f, %03.3f, %03.3f", (float)AddOffset.Millisecs()/1000.0f,(float)cRefTime.Millisecs()/1000.0f, (float)m_pTsReaderFilter->AddVideoComp.Millisecs()/1000.0f);
             // m_pTsReaderFilter->AddVideoComp.m_time =0;
+            cRefTime += AddOffset;
+            cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time;
           }
-
-          cRefTime += AddOffset;
-          cRefTime += m_pTsReaderFilter->m_ClockOnStart.m_time;
                                                                       
           if (cRefTime.m_time >= 0)
+          {
             Sleep(1); // Ambass : avoid blocking audio FillBuffer method ( on audio/video starting ) by excessive video Fill buffer preemption
+          }
+
           m_bPresentSample = true;
-          //else
-          // Sample is too late.
-          //m_ShowSample = false ;
-       }
+        }
 
         if (m_bPresentSample)
         {
@@ -346,17 +362,44 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
             //now we have the final timestamp, set timestamp in sample
             REFERENCE_TIME refTime=(REFERENCE_TIME)cRefTime;
             pSample->SetSyncPoint(TRUE);
+            
+            bool stsDiscon = TimestampDisconChecker(refTime); //Update with current timestamp
 
             refTime /= m_dRateSeeking;
             pSample->SetTime(&refTime,&refTime);
             if (m_dRateSeeking == 1.0)
             {
+              if (m_pTsReaderFilter->m_bFastSyncFFDShow)
+              {
+                if (stsDiscon || (pSample->IsDiscontinuity()==S_OK))
+                {
+                   pSample->SetDiscontinuity(TRUE);
+                   m_delayedDiscont = 2;
+                }
+  
+                if ((m_delayedDiscont > 0) && (buffer->GetFrameType() == 'I'))
+                {
+                  if ((buffer->GetVideoServiceType() == SERVICE_TYPE_VIDEO_MPEG1 ||
+                       buffer->GetVideoServiceType() == SERVICE_TYPE_VIDEO_MPEG2))
+                  {
+                     //Use delayed discontinuity
+                     pSample->SetDiscontinuity(TRUE);
+                     m_delayedDiscont--;
+                     LogDebug("vid:set I-frame discontinuity");
+                  }
+                  else
+                  {
+                     m_delayedDiscont = 0;
+                  }      
+                }                
+              }
+              
               REFERENCE_TIME RefClock = 0;
               m_pTsReaderFilter->GetMediaPosition(&RefClock) ;
               float clock = (double)(RefClock-m_rtStart.m_time)/10000000.0 ;
               float fTime=(float)cRefTime.Millisecs()/1000.0f - clock ;
 
-              if (ShowBuffer || fTime < 0.030)
+              if (m_pTsReaderFilter->m_ShowBufferVideo || fTime < 0.030)
               {
                 int cntA, cntV;
                 CRefTime firstAudio, lastAudio;
@@ -364,9 +407,10 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
                 cntA = demux.GetAudioBufferPts(firstAudio, lastAudio); 
                 cntV = demux.GetVideoBufferPts(firstVideo, lastVideo) + 1;
 
-                LogDebug("Vid/Ref : %03.3f, Late %c-frame(%02d), Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d", (float)RefTime.Millisecs()/1000.0f,buffer->GetFrameType(),buffer->GetFrameCount(), (float)cRefTime.Millisecs()/1000.0f, fTime, cntA,cntV,clock, m_pTsReaderFilter->State());
-								}
-              if (ShowBuffer) ShowBuffer--;
+                LogDebug("Vid/Ref : %03.3f, Late %c-frame(%02d), Compensated = %03.3f ( %0.3f A/V buffers=%02d/%02d), Clk : %f, State %d, TsMeanDiff %0.3f ms", (float)RefTime.Millisecs()/1000.0f,buffer->GetFrameType(),buffer->GetFrameCount(), (float)cRefTime.Millisecs()/1000.0f, fTime, cntA,cntV,clock, m_pTsReaderFilter->State(), (float)m_fMTDMean/10000.0f);
+              }
+              
+              if (m_pTsReaderFilter->m_ShowBufferVideo) m_pTsReaderFilter->m_ShowBufferVideo--;
             }
           }
           else
@@ -402,6 +446,48 @@ HRESULT CVideoPin::FillBuffer(IMediaSample *pSample)
   return NOERROR;
 }
 
+// Check for timestamp discontinuities
+bool CVideoPin::TimestampDisconChecker(REFERENCE_TIME timeStamp)
+{
+  bool mtdDiscontinuity = false;
+  REFERENCE_TIME stsDiff = timeStamp - m_llLastMTDts;
+  m_llLastMTDts = timeStamp;
+        
+    // Calculate the mean timestamp difference
+  if (m_nNextMTD >= NB_MTDSIZE)
+  {
+    m_fMTDMean = m_llMTDSumAvg / (REFERENCE_TIME)NB_MTDSIZE;
+  }
+  else if (m_nNextMTD > 0)
+  {
+    m_fMTDMean = m_llMTDSumAvg / (REFERENCE_TIME)m_nNextMTD;
+  }
+  else
+  {
+    m_fMTDMean = stsDiff;
+  }
+
+    // Check for discontinuity
+  if (stsDiff > (m_fMTDMean + (500 * 10000))) // diff - mean > 500ms
+  {
+    mtdDiscontinuity = true;
+    LogDebug("vid:Timestamp discontinuity, TsDiff %0.3f ms, TsMeanDiff %0.3f ms, samples %d", (float)stsDiff/10000.0f, (float)m_fMTDMean/10000.0f, m_nNextMTD);
+  }
+
+    // Update the rolling timestamp difference sum
+    // (these values are initialised in OnThreadStartPlay())
+  int tempNextMTD = (m_nNextMTD % NB_MTDSIZE);
+  m_llMTDSumAvg -= m_pllMTD[tempNextMTD];
+  m_pllMTD[tempNextMTD] = stsDiff;
+  m_llMTDSumAvg += stsDiff;
+  m_nNextMTD++;
+  
+  //LogDebug("vid:TimestampDisconChecker, nextMTD %d, TsMeanDiff %0.3f, stsDiff %0.3f", m_nNextMTD, (float)m_fMTDMean/10000.0f, (float)stsDiff/10000.0f);
+  
+  return mtdDiscontinuity;
+}
+
+
 //******************************************************
 /// Called when thread is about to start delivering data to the codec
 ///
@@ -411,6 +497,13 @@ HRESULT CVideoPin::OnThreadStartPlay()
   //is not belonging to any previous data
   m_bDiscontinuity=TRUE;
   m_bPresentSample=false;
+  m_delayedDiscont = 0;
+
+  m_llLastMTDts = 0;
+  m_nNextMTD = 0;
+	m_fMTDMean = 0;
+	m_llMTDSumAvg = 0;
+  ZeroMemory((void*)&m_pllMTD, sizeof(REFERENCE_TIME) * NB_MTDSIZE);
 
   LogDebug("vid:OnThreadStartPlay(%f) %02.2f %d", (float)m_rtStart.Millisecs()/1000.0f,m_dRateSeeking,m_pTsReaderFilter->IsSeeking());
 
@@ -434,6 +527,12 @@ HRESULT CVideoPin::ChangeRate()
 {
   if( m_dRateSeeking <= 0 )
   {
+    m_dRateSeeking = 1.0;  // Reset to a reasonable value.
+    return E_FAIL;
+  }
+  if( m_dRateSeeking > 2.0 && m_pTsReaderFilter->m_videoDecoderCLSID == CLSID_FFDSHOWVIDEO)
+  {
+    //FFDShow video decoder doesn't handle rate > 2.0 properly
     m_dRateSeeking = 1.0;  // Reset to a reasonable value.
     return E_FAIL;
   }

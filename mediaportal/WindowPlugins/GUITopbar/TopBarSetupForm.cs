@@ -158,7 +158,7 @@ namespace MediaPortal.Topbar
       this.chkOverrideSkinAutoHide.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
       this.chkOverrideSkinAutoHide.Location = new System.Drawing.Point(16, 16);
       this.chkOverrideSkinAutoHide.Name = "chkOverrideSkinAutoHide";
-      this.chkOverrideSkinAutoHide.Size = new System.Drawing.Size(177, 17);
+      this.chkOverrideSkinAutoHide.Size = new System.Drawing.Size(184, 17);
       this.chkOverrideSkinAutoHide.TabIndex = 0;
       this.chkOverrideSkinAutoHide.Text = "Override skin \"AutoHide\" setting";
       this.chkOverrideSkinAutoHide.UseVisualStyleBackColor = true;

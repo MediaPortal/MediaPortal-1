@@ -113,8 +113,33 @@ namespace MediaPortal.Util
       }
       if (timeout >= 10000)
       {
-        Log.Error("Mounting failed (timed out). Recheck your settings.");
-        return false;
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ASKYESNO, 0, 0, 0, 0, 0, 0);
+        msg.Param1 = 200093;
+        msg.Param2 = 200094;
+        msg.Param3 = 0;
+        msg.Param4 = 0;
+        msg.Object2 = true;
+        GUIWindowManager.SendMessage(msg);
+        if (msg.Param1 == 1)
+        {
+          while ((!p.HasExited || !drive.IsReady || !System.IO.Directory.Exists(_Drive + @"\")) && (timeout < 60000))
+          {
+            System.Threading.Thread.Sleep(100);
+            timeout += 100;
+          }
+          if (timeout >= 60000)
+          {
+            Log.Error("Mounting failed after {0}s (second timeout). Check your settings.", (int)(timeout / 1000));
+            UnMount();
+            return false;
+          }
+        }
+        else
+        {
+          Log.Error("Mounting failed after {0}s (first timeout). Check your settings.", (int)(timeout / 1000));
+          UnMount();
+          return false;
+        }
       }
       VirtualDrive = _Drive;
       _MountedIsoFile = IsoFile;

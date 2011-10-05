@@ -114,8 +114,8 @@ namespace MediaPortal.GUI.Video
       {
         case "modified":
           return VideoSort.SortMethod.Modified;
-        case "created":
-          return VideoSort.SortMethod.Created;
+        case "date":
+          return VideoSort.SortMethod.Date;
         case "label":
           return VideoSort.SortMethod.Label;
         case "name":
@@ -301,7 +301,7 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Modified:
           strLine = GUILocalizeStrings.Get(1221);
           break;
-        case VideoSort.SortMethod.Created:
+        case VideoSort.SortMethod.Date:
           strLine = GUILocalizeStrings.Get(1220);
           break;
         case VideoSort.SortMethod.Size:
@@ -440,7 +440,7 @@ namespace MediaPortal.GUI.Video
           {
             item.Label2 = strSize1;
           }
-          else if (CurrentSortMethod == VideoSort.SortMethod.Modified || CurrentSortMethod == VideoSort.SortMethod.Created)
+          else if (CurrentSortMethod == VideoSort.SortMethod.Modified || CurrentSortMethod == VideoSort.SortMethod.Date)
           {
             item.Label2 = strDate;
           }
@@ -463,8 +463,8 @@ namespace MediaPortal.GUI.Video
       dlg.SetHeading(495); // Sort options
 
       dlg.AddLocalizedString(365); // name
-      dlg.AddLocalizedString(1221); // date modified
-      dlg.AddLocalizedString(1220); // date created 
+      dlg.AddLocalizedString(1220); // date created (date)
+      dlg.AddLocalizedString(1221); // date modified 
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(366); // year
       dlg.AddLocalizedString(367); // rating
@@ -492,7 +492,7 @@ namespace MediaPortal.GUI.Video
           CurrentSortAsc = false;
           break;
         case 1220:
-          CurrentSortMethod = VideoSort.SortMethod.Created;
+          CurrentSortMethod = VideoSort.SortMethod.Date;
           CurrentSortAsc = false;
           break;
         case 105:

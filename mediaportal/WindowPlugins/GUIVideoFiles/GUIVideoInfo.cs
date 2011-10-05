@@ -193,7 +193,11 @@ namespace MediaPortal.GUI.Video
         imageSearchThread.Abort();
         imageSearchThread = null;
       }
-      currentMovie = null;
+
+      // Reset currentMovie variable if we go to windows which initialize that variable
+      // Database and share views windows are only screens which do that
+      if (newWindowId == (int)Window.WINDOW_VIDEOS || newWindowId == (int)Window.WINDOW_VIDEO_TITLE)
+        currentMovie = null;
 
       base.OnPageDestroy(newWindowId);
     }
@@ -343,7 +347,18 @@ namespace MediaPortal.GUI.Video
       if (control == btnPlay)
       {
         int id = currentMovie.ID;
-        GUIVideoFiles.PlayMovie(id);
+
+        ArrayList files = new ArrayList();
+        VideoDatabase.GetFiles(id, ref files);
+
+        if (files.Count > 1)
+        {
+          GUIVideoFiles._stackedMovieFiles = files;
+          GUIVideoFiles._isStacked = true;
+          GUIVideoFiles.MovieDuration(files);
+        }
+
+        GUIVideoFiles.PlayMovie(id, false);
         return;
       }
     }

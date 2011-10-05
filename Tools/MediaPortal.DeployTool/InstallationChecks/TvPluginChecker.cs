@@ -93,15 +93,23 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.needsDownload = true;
       FileInfo tvPluginFile = new FileInfo(_fileName);
 
+      result = Utils.CheckNSISUninstallString("Mediaportal TV Server", "MementoSection_SecClient");
+
       if (tvPluginFile.Exists && tvPluginFile.Length != 0)
+      {
         result.needsDownload = false;
+      }
+      else
+      {
+        result.needsDownload = true;
+      }
 
       if (InstallationProperties.Instance["InstallType"] == "download_only")
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
       }
-      result = Utils.CheckNSISUninstallString("Mediaportal Tv Server", "MementoSection_SecClient");
+
       return result;
     }
   }

@@ -122,7 +122,7 @@
           <zoomYPixels>30</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Picturethumbmask.png</textureMask>
           <frameNoFocus>Picturethumbframe.png</frameNoFocus>

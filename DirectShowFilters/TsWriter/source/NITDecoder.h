@@ -26,6 +26,9 @@ using namespace std;
 
 #define PID_NIT 0x10
 
+#define MIN_TERRESTRIAL_FREQUENCY_KHZ 40000
+#define MAX_TERRESTRIAL_FREQUENCY_KHZ 900000
+
 typedef  struct stNITLCN
 {
 	int network_id;
@@ -62,7 +65,11 @@ typedef struct stNITTerrestrialDescriptor
 {
 	int CentreFrequency;
 	int Bandwidth;
+	bool IsHighPriority;
+	bool TimeSlicingIndicator;
+	bool MpeFecIndicator;
 	int Constellation;
+	bool IndepthInterleaverUsed;
 	int HierarchyInformation;
 	int CoderateHPStream;
 	int CoderateLPStream;

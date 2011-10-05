@@ -91,18 +91,6 @@ namespace SetupTv.Sections
 
     public override void OnSectionDeActivated()
     {
-      for (int i = 0; i < mpListView1.Items.Count; ++i)
-      {
-        Channel ch = (Channel)mpListView1.Items[i].Tag;
-        if (ch.SortOrder != i + 1)
-        {
-          ch.SortOrder = i + 1;
-        }
-        ch.VisibleInGuide = mpListView1.Items[i].Checked;
-        ch.Persist();
-      }
-
-      //DatabaseManager.Instance.SaveChanges();
       RemoteControl.Instance.OnNewSchedule();
       base.OnSectionDeActivated();
     }
@@ -401,6 +389,16 @@ namespace SetupTv.Sections
         Channel channel = (Channel)mpListView1.Items[e.Item].Tag;
         channel.DisplayName = e.Label;
         channel.Persist();
+      }
+    }
+
+    private void mpListView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      Channel ch = (Channel)e.Item.Tag;
+      if (ch.VisibleInGuide != e.Item.Checked && !_lvChannelHandler.PopulateRunning)
+      {
+        ch.VisibleInGuide = e.Item.Checked;
+        ch.Persist();
       }
     }
 

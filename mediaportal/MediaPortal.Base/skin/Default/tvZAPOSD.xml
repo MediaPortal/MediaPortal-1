@@ -1,10 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>3007</id>
   <defaultcontrol>213</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>true</disabletopbar>
   <controls>
     <control>
       <description>background botton</description>

@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-
 <window>
   <controls>
     <control>
       <description>group element</description>
       <type>group</type>
       <visible>!Control.HasFocus(50)</visible>
-      
-      
       <animation effect="slide" time="150" start="0,-300">WindowOpen</animation>
       <animation effect="slide" time="150" end="800,0">WindowClose</animation>
       <control>
@@ -61,7 +58,7 @@
           <zoomYPixels>30</zoomYPixels>
           <hideUnfocusTexture>yes</hideUnfocusTexture>
           <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <renderUnfocusText>yes</renderUnfocusText>
           <showFrame>true</showFrame>
           <textureMask>Videothumbmask.png</textureMask>
           <frameNoFocus>Videothumbframe.png</frameNoFocus>
@@ -95,10 +92,8 @@
           <frame>DVD Cover.png</frame>
           <frameFocus>DVD Cover.png</frameFocus>
           <background>emtpy.png</background>
-          <thumbs mask="video_poster_mask.png">
-          </thumbs>
-          <InfoImage mask="video_poster_mask.png">
-          </InfoImage>
+          <thumbs mask="videothumbmask.png"></thumbs>
+          <InfoImage mask="videothumbmask.png"></InfoImage>
           <showFrame>yes</showFrame>
           <showFolder>yes</showFolder>
           <showBackGround>no</showBackGround>
@@ -172,7 +167,7 @@
           <scrollbarRight>mouse_right_horizontal.png</scrollbarRight>
           <scrollbarYOff>285</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
-          <cards mask="video_poster_mask.png"></cards>
+          <cards mask="videothumbmask.png"></cards>
           <subitems>
             <subitem>
               <![CDATA[                 <controls>
@@ -183,7 +178,7 @@
                 <posY>0</posY>
                 <width>190</width>
                 <height>280</height>
-                <texture mask="video_poster_mask.png">background2.png</texture>
+                <texture mask="videothumbmask.png">background2.png</texture>
               </control>
               <control>
                 <description>Movie Details</description>
@@ -451,16 +446,16 @@
             </control>
           </controls>]]></subitem>
       </subitems>
-        </control>
-        <control>
-          <description>playlist listcontrol</description>
-          <type>playlistcontrol</type>
-          <id>50</id>
-          <onleft>2</onleft>
-          <onright>2</onright>
-          <scrollOffset>2</scrollOffset>
-        </control>
-      </control>
     </control>
-  </controls>
+    <control>
+      <description>playlist listcontrol</description>
+      <type>playlistcontrol</type>
+      <id>50</id>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <scrollOffset>2</scrollOffset>
+    </control>
+  </control>
+</control>
+</controls>
 </window>

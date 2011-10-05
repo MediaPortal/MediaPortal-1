@@ -148,9 +148,21 @@ namespace MediaPortal.GUI.Library
     private bool _reAllocate = false;
 
     // Card spinning
-    private float _selectedSpinAngle = 0.0f;
-    private float _spinAnglePosition = 0.0f;
+    //private float _selectedSpinAngle = 0.0f;
+    //private float _spinAnglePosition = 0.0f;
+    private Dictionary<int, SpinningCardsHelper> _spinningCards = new Dictionary<int, SpinningCardsHelper>();
     private Action _queuedAction = null;
+    private class SpinningCardsHelper
+    {
+        public float current = 0.0f;
+        public float expected = 0.0f;
+
+        public SpinningCardsHelper(float curr, float exp)
+        {
+            current = curr;
+            expected = exp;
+        }
+    }
 
     // Search            
     private DateTime _timerKey = DateTime.Now;
@@ -408,39 +420,37 @@ namespace MediaPortal.GUI.Library
 
     public override void OnAction(Action action)
     {
-      // If the selected card is spinning then throw away the action.
-      if (CardIsSpinning())
-      {
-        //return;
-      }
+      bool isSpinningFront = CardIsSpinningFront();
+      bool isSpinningBack = CardIsSpinningBack();
+      bool isSpinning = isSpinningFront || isSpinningBack;
+      bool isSpun = CardIsSpun();
 
       // If the card is spun around then unspin the card before executing the action.  The action is queued to execute after
       // the card has been unspun.
-      if (CardIsSpun() || CardIsSpinning())
+      if (isSpun || isSpinningBack)
       {
-        // Don't queue invalid actions or actions that are designed to spin the card in the first place.
-        if (action.wID != Action.ActionType.ACTION_SHOW_INFO &&
-            action.wID != Action.ActionType.ACTION_INVALID)
+        //UnspinCard();
+        if (action.wID == Action.ActionType.ACTION_SHOW_INFO)
         {
-          QueueAction(action);
+          OnDefaultAction(action);
+          UnspinCard();
+          return;
         }
-
         UnspinCard();
-        return;
       }
 
       switch (action.wID)
       {
         case Action.ActionType.ACTION_PAGE_UP:
           {
-            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
+            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
             SelectCardIndex(iItem);
           }
           break;
 
         case Action.ActionType.ACTION_PAGE_DOWN:
           {
-            int iItem = Math.Max(SelectedListItemIndex - _pageSize, 0);
+            int iItem = Math.Min(SelectedListItemIndex + _pageSize, _listItems.Count - 1);
             SelectCardIndex(iItem);
           }
           break;
@@ -509,8 +519,8 @@ namespace MediaPortal.GUI.Library
                 if (_searchString.Length > 0)
                 {
                   _searchString = _searchString.Remove(_searchString.Length - 1, 1);
+                  SearchItem(_searchString, SearchType.SEARCH_FIRST);
                 }
-                SearchItem(_searchString, SearchType.SEARCH_FIRST);
               }
 
               if (((action.m_key.KeyChar >= 65) && (action.m_key.KeyChar <= 90)) ||
@@ -559,10 +569,7 @@ namespace MediaPortal.GUI.Library
 
         default:
           {
-            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
-                                            (int)action.wID, 0, null);
-            GUIGraphicsContext.SendMessage(msg);
-            ResetSearchString();
+            OnDefaultAction(action);
           }
           break;
       }
@@ -1052,14 +1059,16 @@ namespace MediaPortal.GUI.Library
       // The selected card may have its front or back shown.
       if (index == SelectedListItemIndex)
       {
+        SpinningCardsHelper spinningCard;
+        _spinningCards.TryGetValue(index, out spinningCard);
         // If the card spin angle is not yet 90 degrees then render the front of the card.
-        if (Math.Abs(_spinAnglePosition) <= 90)
+        if (spinningCard != null && Math.Abs(spinningCard.current) > 90)
         {
-          RenderCardFront(timePassed, index, shouldFocus);
+          RenderCardBack(timePassed, index, shouldFocus);
         }
         else
         {
-          RenderCardBack(timePassed, index, shouldFocus);
+          RenderCardFront(timePassed, index, shouldFocus);
         }
       }
       else
@@ -1450,10 +1459,12 @@ namespace MediaPortal.GUI.Library
     private void NotifyCardToSpin()
     {
       // Set the card spin angle to 180 degrees.
-      _selectedSpinAngle = 180.0f;
+      //_selectedSpinAngle = 180.0f;
+      SpinningCardsHelper spinningCard = _spinningCards.TryGetOrAdd(_selectedCard, i => new SpinningCardsHelper(0, 180.0f));
+      spinningCard.expected = 180.0f;
     }
 
-    private void TrySpinCard(float timePassed)
+    private void TrySpinCard(int card, float timePassed)
     {
       // Don't spin the card if not allowed.
       if (!CardAllowedToSpin())
@@ -1463,13 +1474,23 @@ namespace MediaPortal.GUI.Library
 
       // Calculate the distance between the current spin angle and the selected spin angle (desired angle).
       // The current angle is a continuous value, the selected angle is a discrete value.
-      float distance = _selectedSpinAngle - _spinAnglePosition;
+      //float distance = _selectedSpinAngle - _spinAnglePosition;
+      SpinningCardsHelper spinningCard;
+      float distance = 0.0f;
+      if (_spinningCards.TryGetValue(card, out spinningCard))
+        distance = spinningCard.expected - spinningCard.current;
 
       // When the distance between the current angle and the selected angle is small, lock (snap) the current
       // angle into the selected angle.
       if (Math.Abs(distance) < 1.0)
       {
-        _spinAnglePosition = _selectedSpinAngle;
+        //_spinAnglePosition = _selectedSpinAngle;
+        if (spinningCard != null)
+        {
+          spinningCard.current = spinningCard.expected;
+          if (spinningCard.current == 0.0f)
+            _spinningCards.Remove(card);
+        }
 
         // The card may have just stopped spinning.  If there is a queued user action then execute the action and clear
         // the queued action.
@@ -1485,30 +1506,53 @@ namespace MediaPortal.GUI.Library
         // Compute the new spin angle.  The larger the distance the faster the spinning.  As the distance gets
         // smaller the card will spin more slowly as it settles onto the selected angle.
         // _spinAnglePosition += distance * timePassed * _spinSpeed;
-        _spinAnglePosition += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
+        //_spinAnglePosition += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
+        if (spinningCard != null)
+          spinningCard.current += distance * 0.02f * _spinSpeed; // looks better, until thumb loading is optimized
       }
 
       // Set the card spin angle for this render cycle.
-      int angle = (int)Math.Floor(_spinAnglePosition);
+      int angle = (int)Math.Floor(spinningCard != null ? spinningCard.current : 0.0f);
       GUIGraphicsContext.RotateY(angle, 0, 0);
     }
 
-    private bool CardIsSpinning()
+    private bool CardIsSpinningFront()
     {
       // The card is spinning if its angle is not zero or 180 degrees.
-      return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+      //return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        return (spinningCard.current != 0.0f && spinningCard.current != 180.0f && spinningCard.expected == 0.0f);
+      return false;
+    }
+
+    private bool CardIsSpinningBack()
+    {
+        // The card is spinning if its angle is not zero or 180 degrees.
+        //return (_spinAnglePosition != 0.0f && _spinAnglePosition != 180.0f);
+        SpinningCardsHelper spinningCard;
+        if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+            return (spinningCard.current != 0.0f && spinningCard.current != 180.0f && spinningCard.expected == 180.0f);
+        return false;
     }
 
     private bool CardIsSpun()
     {
       // The card is spun around if its angle is 180 degrees.
-      return _spinAnglePosition == 180.0f;
+      //return _spinAnglePosition == 180.0f;
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        return (spinningCard.current == 180.0f);
+      return false;
     }
 
     private void UnspinCard()
     {
       // Set the spin angle to unspin the card.
-      _selectedSpinAngle = 0.0f;
+      //_selectedSpinAngle = 0.0f;
+      SpinningCardsHelper spinningCard;
+      if (_spinningCards.TryGetValue(_selectedCard, out spinningCard))
+        spinningCard.expected = 0.0f;
     }
 
     private void QueueAction(Action action)
@@ -1550,6 +1594,9 @@ namespace MediaPortal.GUI.Library
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
+
+          TrySpinCard(l, timePassed);
+
           GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
           // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, l == _selectedCard);
@@ -1598,10 +1645,10 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
 
           // Set the card spin (front to back) angle.
-          if (l == card)
-          {
-            TrySpinCard(timePassed);
-          }
+          //if (l == card)
+          //{
+          TrySpinCard(l, timePassed);
+          //}
 
           GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
           // Locate the card at it's top center (card origin is top left).
@@ -1639,7 +1686,7 @@ namespace MediaPortal.GUI.Library
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
 
           // Set the card spin (front to back) angle.
-          TrySpinCard(timePassed);
+          TrySpinCard(card, timePassed);
 
           GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
           // Locate the card at it's top center (card origin is top left).
@@ -1695,6 +1742,9 @@ namespace MediaPortal.GUI.Library
           // Set the cards local coordinates on the cover flow.
           GUIGraphicsContext.Translate(shiftx, shifty, shiftz);
           GUIGraphicsContext.RotateY(angle, 0.0f, 0.0f);
+
+          TrySpinCard(l, timePassed);
+
           GUIGraphicsContext.Translate(-_cardWidth / 2, 0, 0);
           // Locate the card at it's top center (card origin is top left).
           RenderCard(timePassed, l, shouldFocus);
@@ -1982,6 +2032,9 @@ namespace MediaPortal.GUI.Library
     {
       if (index == _selectedCard)
       {
+        //we have to ensure OnSelectionChangedHappens
+        //case when filling coverflow with new data, position (selected card index) might stay the same but properties have to refresh
+        OnSelectionChanged();
         return;
       }
 
@@ -2054,6 +2107,10 @@ namespace MediaPortal.GUI.Library
 
       UpdateProperties();
 
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED, WindowId, GetID, ParentID, 0, 0, null);
+      msg.SendToTargetWindow = true;
+      GUIGraphicsContext.SendMessage(msg);
+
       if (_lastSearchItem != SelectedListItemIndex)
       {
         ResetSearchString();
@@ -2083,6 +2140,14 @@ namespace MediaPortal.GUI.Library
       {
         GUIPropertyManager.SetProperty("#selecteditem", "{" + _searchString.ToLower() + "}");
       }
+    }
+
+    private void OnDefaultAction(Action action)
+    {
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CLICKED, WindowId, GetID, ParentID,
+                                        (int)action.wID, 0, null);
+        GUIGraphicsContext.SendMessage(msg);
+        ResetSearchString();
     }
 
     private void ResetSearchString()
@@ -2515,6 +2580,10 @@ namespace MediaPortal.GUI.Library
           return iItem;
         }
         return -1;
+      }
+      set
+      {
+        SelectCardIndexNow(value);
       }
     }
 

@@ -139,6 +139,14 @@ namespace TvLibrary.Implementations.Analog.Components
     }
 
     /// <summary>
+    /// Gets the video capture device path
+    /// </summary>
+    public String VideoCaptureDevicePath
+    {
+      get { return _videoCaptureDevice.DevicePath; }
+    }
+
+    /// <summary>
     /// Gets the audio capture name
     /// </summary>
     public String AudioCaptureName

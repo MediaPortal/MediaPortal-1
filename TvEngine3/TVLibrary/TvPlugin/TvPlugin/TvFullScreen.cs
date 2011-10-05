@@ -411,9 +411,19 @@ namespace TvPlugin
               }
             }
           }
-          _osdWindow.OnAction(action);
-          return;
+          Action newAction = new Action();
+          if (action.wID != Action.ActionType.ACTION_KEY_PRESSED && action.wID != Action.ActionType.ACTION_PAUSE &&
+              ActionTranslator.GetAction((int)Window.WINDOW_OSD, action.m_key, ref newAction))
+          {
+            _osdWindow.OnAction(newAction); // route keys to OSD window
+          }
+          else
+          {
+            // route unhandled actions to OSD window
+            _osdWindow.OnAction(action);
+          }
         }
+        return;
       }
         //@
         /*
@@ -472,12 +482,7 @@ namespace TvPlugin
               }
               else
               {
-                TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
-                _isDialogVisible = true;
-                miniGuide.AutoZap = true;
-                miniGuide.DoModal(GetID);
-                _isDialogVisible = false;
-
+                ShowMiniEpg();
                 // LastChannel has been moved to "0"
                 //if (!GUIWindowManager.IsRouted)
                 //{
@@ -917,6 +922,16 @@ namespace TvPlugin
       }
 
       base.OnAction(action);
+    }
+
+    private void ShowMiniEpg() 
+    {      
+      TVHome.Navigator.CheckChannelChange();
+      TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
+      _isDialogVisible = true;
+      miniGuide.AutoZap = true;
+      miniGuide.DoModal(GetID);
+      _isDialogVisible = false;
     }
 
     public override void SetObject(object obj)
@@ -1597,13 +1612,7 @@ namespace TvPlugin
 
         case 10104: // MiniEPG
           {
-            Log.Debug("get miniguide");
-            TvMiniGuide miniGuide = (TvMiniGuide)GUIWindowManager.GetWindow((int)Window.WINDOW_MINI_GUIDE);
-            _isDialogVisible = true;
-            Log.Debug("show miniguide");
-            miniGuide.DoModal(GetID);
-            Log.Debug("done miniguide");
-            _isDialogVisible = false;
+            ShowMiniEpg();
             break;
           }
 
@@ -1653,7 +1662,7 @@ namespace TvPlugin
 
         case 601: // RecordNow          
         case 265: // StopRec.          
-          TVHome.ManualRecord(TVHome.Navigator.Channel);
+          TVHome.ManualRecord(TVHome.Navigator.Channel, GetID);
           break;
 
         case 200042: // Linked channels
@@ -1923,6 +1932,7 @@ namespace TvPlugin
       {
         return;
       }
+      TVHome.Navigator.CheckChannelChange();
       Program currentProgram = TVHome.Navigator.GetChannel(TVHome.Navigator.Channel.IdChannel).CurrentProgram;
 
       if (currentProgram == null)
@@ -2610,9 +2620,11 @@ namespace TvPlugin
         }
       }
 
-
       // Let the navigator zap channel if needed
-      TVHome.Navigator.CheckChannelChange();
+      if (TVHome.UserChannelChanged)
+      {
+        TVHome.Navigator.CheckChannelChange();
+      }
       //Log.Debug("osd visible:{0} timeoutvalue:{1}", _zapOsdVisible ,_zapTimeOutValue);
       if (_zapOsdVisible && _zapTimeOutValue > 0)
       {
@@ -2818,6 +2830,7 @@ namespace TvPlugin
         _osdTimeoutTimer = DateTime.Now;
         if (!_zapOsdVisible)
         {
+          TVHome.Navigator.CheckChannelChange();
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_WINDOW_INIT, _osdWindow.GetID, 0, 0, GetID, 0,
                                           null);
           _osdWindow.OnMessage(msg); // Send an init msg to the OSD
@@ -3199,9 +3212,10 @@ namespace TvPlugin
       {
         if (VolumeHandler.Instance.IsMuted)
         {
+          imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          imgVolumeBar.Current = 0;
           imgVolumeMuteIcon.Visible = true;
           imgVolumeBar.Image1 = 1;
-          imgVolumeBar.Current = 0;
         }
         else
         {

@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
+using MediaPortal.Util;
 using Microsoft.DirectX.Direct3D;
 using Microsoft.Win32;
 
@@ -167,7 +168,7 @@ namespace MediaPortal.Configuration.Sections
       }
 
       // On single seat WaitForTvService is forced enabled !
-      cbWaitForTvService.Checked = Common.IsSingleSeat();
+      cbWaitForTvService.Checked = Network.IsSingleSeat();
     }
 
     public override void SaveSettings()

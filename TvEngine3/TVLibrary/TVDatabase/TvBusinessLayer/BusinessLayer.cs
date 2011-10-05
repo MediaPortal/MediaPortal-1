@@ -128,7 +128,7 @@ namespace TvDatabase
       // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
       Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
-                              0, (int)TvDatabase.DbNetworkProvider.Generic);
+                              0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
       newCard.Persist();
       return newCard;
     }
@@ -351,6 +351,26 @@ namespace TvDatabase
       SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof (TuningDetail));
       sb.AddConstraint(Operator.Equals, "networkId", networkId);
       sb.AddConstraint(Operator.Equals, "serviceId", serviceId);
+      sb.AddConstraint(Operator.Equals, "channelType", channelType);
+
+      SqlStatement stmt = sb.GetStatement(true);
+      IList<TuningDetail> details = ObjectFactory.GetCollection<TuningDetail>(stmt.Execute());
+
+      if (details == null)
+      {
+        return null;
+      }
+      if (details.Count == 0)
+      {
+        return null;
+      }
+      return details[0];
+    }
+
+    public TuningDetail GetTuningDetail(String url, int channelType)
+    {
+      SqlBuilder sb = new SqlBuilder(StatementType.Select, typeof(TuningDetail));
+      sb.AddConstraint(Operator.Equals, "url", url);
       sb.AddConstraint(Operator.Equals, "channelType", channelType);
 
       SqlStatement stmt = sb.GetStatement(true);
@@ -1684,7 +1704,7 @@ namespace TvDatabase
       // no channel = no EPG but we need a valid command text
       if (aEpgChannelList.Count < 1)
       {
-        completeStatement = "SELECT * FROM program WHERE 0=1";
+        completeStatement = "SELECT * FROM Program WHERE 0=1";
       }
       else
       {
@@ -1694,7 +1714,7 @@ namespace TvDatabase
           foreach (Channel ch in aEpgChannelList)
           {
             sbSelect.AppendFormat(
-              "(SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
+              "(SELECT idChannel,idProgram,starttime,endtime,title,episodeName,seriesNum,episodeNum,episodePart FROM Program WHERE idChannel={0} AND (Program.endtime >= NOW()) order by starttime limit 2)  UNION  ",
               ch.IdChannel);
           }
 
@@ -1704,7 +1724,7 @@ namespace TvDatabase
         else
         {
           //foreach (Channel ch in aEpgChannelList)
-          //  sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
+          //  sbSelect.AppendFormat("(SELECT TOP 2 idChannel,idProgram,starttime,endtime,title FROM Program WHERE idChannel={0} AND (Program.endtime >= getdate()))  UNION ALL  ", ch.IdChannel);
 
           //completeStatement = sbSelect.ToString();
           //completeStatement = completeStatement.Remove(completeStatement.Length - 12); // Remove trailing UNION ALL
@@ -3035,7 +3055,7 @@ namespace TvDatabase
           recNew.StartTime = prog.StartTime;
           recNew.EndTime = prog.EndTime;
           recNew.Series = true;
-          if (rec.IsSerieIsCanceled(recNew.StartTime, prog.IdChannel))
+          if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prog), prog.IdChannel))
           {
             recNew.Canceled = recNew.StartTime;
           }

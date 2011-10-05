@@ -282,8 +282,6 @@ namespace MediaPortal.Player
 
         #region PostProcessingEngine Detection
 
-        PostProcessingEngine.engine = new FFDShowEngine();
-        PostProcessingEngine.engine.LoadPostProcessing(_graphBuilder);
         IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
         if (!postengine.LoadPostProcessing(_graphBuilder))
         {
@@ -427,6 +425,8 @@ namespace MediaPortal.Player
           while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
           _line21Decoder = null;
         }
+
+        PostProcessingEngine.GetInstance().FreePostProcess();
 
         if (_vmr9 != null)
         {

@@ -68,6 +68,10 @@ namespace TvDatabase
   /// </summary>
   public class WeekEndTool
   {
+
+    private static bool _startDayLoaded = false;
+    private static DayOfWeek _firstWorkingDay = DayOfWeek.Monday;
+
     #region public method
 
     private static int GetDayIndex(DayOfWeek day)
@@ -92,7 +96,25 @@ namespace TvDatabase
 
     private static DayOfWeek GetFirstWorkingDay()
     {
-      return Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+      if (!_startDayLoaded)
+      {
+        // load first working day from database
+        var setting = Setting.RetrieveByTag("FirstDayOfWeekend");
+        if (setting == null)
+        {
+          _firstWorkingDay = DayOfWeek.Monday;
+        }
+        else
+        {
+          int dayOfWeek = Convert.ToInt16(setting.Value);
+          // in DayOfWeek enum Sunday = 0 so need to convert from value stored in database
+          // which is Saturday = 0, Sunday=1 etc
+          _firstWorkingDay = (DayOfWeek)((dayOfWeek + 1) % 7); 
+        }
+        _startDayLoaded = true;
+      }
+
+      return _firstWorkingDay;
     }
 
     /// <summary>

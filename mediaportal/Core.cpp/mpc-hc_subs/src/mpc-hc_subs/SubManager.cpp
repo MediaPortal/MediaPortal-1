@@ -89,6 +89,21 @@ void CSubManager::ApplyStyleSubStream(ISubStream* pSubStream)
 	}
 }
 
+void CSubManager::ToggleForcedOnly(bool onlyShowForcedSubs)
+{
+	CAutoLock cAutoLock(&m_csSubLock);
+	if (m_pSubStream) {
+	 CLSID clsid;
+	 if(FAILED(m_pSubStream->GetClassID(&clsid)))
+	 return;
+	 if(clsid == __uuidof(CVobSubFile))
+	 {
+	 CVobSubFile* pVSF = (CVobSubFile*) m_pSubStream.p;
+	 pVSF->m_fOnlyShowForcedSubs = onlyShowForcedSubs;
+	 }
+	}
+}
+
 void CSubManager::SetSubPicProvider(ISubStream* pSubStream)
 {
 	m_pSubStream = pSubStream;
