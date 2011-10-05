@@ -512,7 +512,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           m_bUpdateStreamPositionOnly = true;
           
           LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
-          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning /*| AM_SEEKING_NoFlush*/, &posEnd, AM_SEEKING_NoPositioning);
+          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_NoFlush, &posEnd, AM_SEEKING_NoPositioning);
           break;
         }
       }
