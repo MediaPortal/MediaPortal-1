@@ -625,12 +625,16 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
     {
       LogDebug("Read failed too many times... EOF or broken disc?");
       m_bEndOfFile = true;
+
+      m_filter.NotifyEvent(EC_ERRORABORT, 0, 0);
     }
   }
   else if (!pause)
   {
     LogDebug("Read failed...EOF");
     m_bEndOfFile = true;
+
+    m_filter.NotifyEvent(EC_ERRORABORT, 0, 0);
   }
   else if (pause && m_bFlushBuffersOnPause)
   {

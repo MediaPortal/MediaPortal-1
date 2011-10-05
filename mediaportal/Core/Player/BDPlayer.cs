@@ -1979,8 +1979,13 @@ namespace MediaPortal.Player
         switch (eventCode)
         {
           case EventCode.Complete:
-            Log.Debug("BDPlayer - GraphNotify: Complete");
-            MovieEnded();
+            // Ignore graph compete in menu mode - user must actively stop the player.
+            // Abort code is sent when the playback runs into error (broken BD etc.)
+            if (_forceTitle)
+            {
+              Log.Debug("BDPlayer - GraphNotify: Complete");
+              MovieEnded();
+            }
             break;
           case EventCode.ErrorAbort:
             Log.Debug("BDPlayer - GraphNotify: Error: {0}", param1);

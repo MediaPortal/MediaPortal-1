@@ -273,7 +273,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (buffer->bSeekRequired)
           {
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-            //DeliverEndOfStream();
+            DeliverEndOfStream();
             useEmptySample = true;
             m_bSeekDone = false;
           }
