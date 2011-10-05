@@ -273,7 +273,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (buffer->bSeekRequired)
           {
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-            //m_pReceiver->EndOfStream();
+            //DeliverEndOfStream();
             useEmptySample = true;
             m_bSeekDone = false;
           }
@@ -319,7 +319,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               m_demux.m_bAudioRequiresRebuild = true;
               useEmptySample = true;
 
-              m_pReceiver->EndOfStream();
+              DeliverEndOfStream();
             }
             else
             {
@@ -327,6 +327,14 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               CMediaType* mt = new CMediaType(*buffer->pmt);
               SetMediaType(mt);
               pSample->SetMediaType(mt);
+              
+              // Flush the stream if format change is done on the fly
+              if (!buffer->bSeekRequired)
+              {
+                DeliverBeginFlush();
+                DeliverEndFlush();
+                DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+              }
             }
           }
         } // lock ends

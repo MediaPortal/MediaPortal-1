@@ -411,7 +411,7 @@ void CVideoPin::CheckPlaybackState()
     {
       LogDebug("vid: Request zeroing the stream time");
 
-      //m_pReceiver->EndOfStream();
+      DeliverEndOfStream();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
       m_eFlushStart->Reset();
@@ -518,7 +518,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               m_demux.m_bVideoRequiresRebuild = true;
               useEmptySample = true;
 
-              m_pReceiver->EndOfStream();
+              DeliverEndOfStream();
             }
             else
             {
@@ -526,6 +526,14 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
               CMediaType* mt = new CMediaType(*buffer->pmt);
               SetMediaType(mt);
               pSample->SetMediaType(mt);
+
+              // Flush the stream if format change is done on the fly
+              if (!buffer->bSeekRequired)
+              {
+                DeliverBeginFlush();
+                DeliverEndFlush();
+                DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
+              }
             }
           }
         } // lock ends
