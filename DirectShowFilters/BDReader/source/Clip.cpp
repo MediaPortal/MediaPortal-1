@@ -301,7 +301,6 @@ bool CClip::HasAudio()
 
 bool CClip::HasVideo()
 {
-  if (firstVideo && m_vecClipVideoPackets.size()<3) return false;
 //  if (!noAudio  && firstAudio ) return false;
   if (!m_videoPmt) return false;
   if (m_vecClipVideoPackets.size()>0) return true;

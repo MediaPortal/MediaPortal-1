@@ -708,7 +708,7 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
   if (!m_bUpdateStreamPositionOnly)
   {
     LogDebug("CBDReaderFilter::Seek - Flush");
-    m_demultiplexer.Flush(true);
+    m_demultiplexer.Flush(true, true);
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 

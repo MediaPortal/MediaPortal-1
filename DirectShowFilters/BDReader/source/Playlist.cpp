@@ -155,10 +155,13 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     ret=AcceptAudioPacket(packet, seeking);
   }
 
+  bool discontinuity = false;
+
   if (packet->rtStart != Packet::INVALID_TIME && prevAudioPosition != Packet::INVALID_TIME && abs(prevAudioPosition - packet->rtStart) > 10000000)
   {
     LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d", prevAudioPosition, packet->rtStart);
     firstAudioPESPacketSeen=false;
+    discontinuity=true;
   }
 
   if (!firstAudioPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
@@ -168,7 +171,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     firstAudioPESPacketSeen=true;
     firstAudioPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
-    packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 ? 0 - firstAudioPESTimeStamp : 0;
+    packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstAudioPESTimeStamp : 0;
     if (packet->rtOffset != 0)
       packet->bSeekRequired=!seeking;
 
@@ -217,10 +220,13 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     }
   }
 
+  bool discontinuity=false;
+
   if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 20000000)
   {
     LogDebug("clip: video stream's discontinuity detected: old: %I64d new: %I64d", prevVideoPosition, packet->rtStart);
     firstVideoPESPacketSeen=false;
+    discontinuity=true;
   }
 
   if (!firstVideoPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
@@ -230,7 +236,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     firstVideoPESPacketSeen=true;
     firstVideoPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
-    packet->rtOffset = (0 - firstVideoPESTimeStamp) > 10000000 ? 0 - firstVideoPESTimeStamp : 0;
+    packet->rtOffset = (0 - firstVideoPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstVideoPESTimeStamp : 0;
     if (packet->rtOffset != 0)
       packet->bSeekRequired=!seeking;
 

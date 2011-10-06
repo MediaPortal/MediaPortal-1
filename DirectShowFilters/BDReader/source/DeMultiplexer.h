@@ -53,7 +53,7 @@ public:
   // TODO - not all of these should be puclic!
 
   HRESULT    Start();
-  void       Flush(bool pSeeking);
+  void       Flush(bool pDiscardData, bool pSeeking);
   void       IgnoreNextDiscontinuity();
   Packet*    GetVideo();
   Packet*    GetAudio();
@@ -188,7 +188,7 @@ private:
   unsigned int m_currentSubtitlePid;
   unsigned int m_iSubtitleStream;
 
-  void FlushPESBuffers(bool pSeeking);
+  void FlushPESBuffers(bool pDiscardData);
 
   bool m_bHoldAudio;
   bool m_bHoldVideo;

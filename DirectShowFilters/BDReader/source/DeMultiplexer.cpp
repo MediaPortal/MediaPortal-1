@@ -396,7 +396,7 @@ void CDeMultiplexer::FlushSubtitle()
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
 }
 
-void CDeMultiplexer::Flush(bool pSeeking)
+void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking)
 {
   LogDebug("demux:flushing");
 
@@ -407,7 +407,7 @@ void CDeMultiplexer::Flush(bool pSeeking)
   // Make sure data isn't being processed
   CAutoLock lockRead(&m_sectionRead);
 
-  FlushPESBuffers(pSeeking);
+  FlushPESBuffers(pDiscardData);
 
   CAutoLock lockVid(&m_sectionVideo);
   CAutoLock lockAud(&m_sectionAudio);
@@ -558,7 +558,7 @@ HRESULT CDeMultiplexer::Start()
 
     // Seek to start - reset the libbluray reading position
     m_filter.lib.Seek(0);
-    Flush(false);
+    Flush(true, false);
     m_bStarting = false;
 
     CMediaType pmt;
@@ -573,7 +573,7 @@ HRESULT CDeMultiplexer::Start()
   
   m_bStarting = false;
 
-  Flush(false);
+  Flush(true, false);
   // Seek to start - reset the libbluray reading position
   m_filter.lib.Seek(0);
 
@@ -740,7 +740,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
-            Flush(false);
+            Flush(true, false);
           }
         }
 
@@ -913,9 +913,9 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
   }
 }
 
-void CDeMultiplexer::FlushPESBuffers(bool pSeeking)
+void CDeMultiplexer::FlushPESBuffers(bool pDiscardData)
 {
-  if (m_videoServiceType != NO_STREAM && !pSeeking)
+  if (m_videoServiceType != NO_STREAM && !pDiscardData)
   {
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
         m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
@@ -937,6 +937,8 @@ void CDeMultiplexer::FlushPESBuffers(bool pSeeking)
   m_lastStart = 0;
   m_loopLastSearch = 1;
   m_pl.RemoveAll();
+  m_nMPEG2LastPlaylist = -1;
+  m_nMPEG2LastClip = -1;
   delete m_pCurrentAudioBuffer;
   m_pCurrentAudioBuffer = NULL;
 }
