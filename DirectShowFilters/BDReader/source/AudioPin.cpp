@@ -279,7 +279,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           }
 
           // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
-          if (!m_bUsePCM && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
+          if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
             buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
 
           if (buffer->pmt && m_mt != *buffer->pmt)
@@ -461,44 +461,41 @@ void CAudioPin::ProcessAudioSample(Packet* pBuffer, IMediaSample *pSample)
 {
   BYTE* pSampleBuffer;
 
-  if (pBuffer->pmt)
+  if (m_mt.subtype == MEDIASUBTYPE_PCM)
   {
-    if (pBuffer->pmt->subtype == MEDIASUBTYPE_PCM)
-    {
-      WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
-      WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
+    WAVEFORMATEXTENSIBLE* wfe = (WAVEFORMATEXTENSIBLE*)pBuffer->pmt->pbFormat;
+    WAVEFORMATEX* wf = (WAVEFORMATEX*)wfe;
 
-      int bufSize = pBuffer->GetDataSize();
-      bufSize -= LPCM_HEADER_SIZE;
+    int bufSize = pBuffer->GetDataSize();
+    bufSize -= LPCM_HEADER_SIZE;
 
-      BYTE* header = pBuffer->GetData();
-      int bytesPerSample = (wfe->Samples.wValidBitsPerSample+4)>>3;
-      int channel_layout = header[2] >> 4;
-      int nChannels = wf->nChannels;
-      int channelMap = channel_map_layouts[channel_layout];
-      int discChannels = (nChannels + 1) &0xfe;
+    BYTE* header = pBuffer->GetData();
+    int bytesPerSample = (wfe->Samples.wValidBitsPerSample+4)>>3;
+    int channel_layout = header[2] >> 4;
+    int nChannels = wf->nChannels;
+    int channelMap = channel_map_layouts[channel_layout];
+    int discChannels = (nChannels + 1) &0xfe;
     
-  #ifdef SOUNDDEBUG
-      LogDebug("Input Channels %d Output Channels %d nSamples Calc %d bytesPerSample %d",
-        discChannels, nChannels, bufSize / (bytesPerSample * discChannels),bytesPerSample);
-  #endif
+#ifdef SOUNDDEBUG
+    LogDebug("Input Channels %d Output Channels %d nSamples Calc %d bytesPerSample %d",
+      discChannels, nChannels, bufSize / (bytesPerSample * discChannels),bytesPerSample);
+#endif
 
-      int samples = bufSize / (bytesPerSample * discChannels);
+    int samples = bufSize / (bytesPerSample * discChannels);
 
-      pSample->SetActualDataLength(samples * wf->nChannels * ((bytesPerSample+1)&0xfe));
-      pSample->GetPointer(&pSampleBuffer);
+    pSample->SetActualDataLength(samples * wf->nChannels * ((bytesPerSample+1)&0xfe));
+    pSample->GetPointer(&pSampleBuffer);
 
-      UINT32* dst32 = (UINT32*)pSampleBuffer;
-      BYTE* src = pBuffer->GetData() + LPCM_HEADER_SIZE;
+    UINT32* dst32 = (UINT32*)pSampleBuffer;
+    BYTE* src = pBuffer->GetData() + LPCM_HEADER_SIZE;
 
-      ConvertLPCMFromBE(src, dst32, nChannels, samples, bytesPerSample , channelMap);
-    }
-    else // no specific handling - just copy the audio data
-    {
-      pSample->SetActualDataLength(pBuffer->GetDataSize());
-      pSample->GetPointer(&pSampleBuffer);
-      memcpy(pSampleBuffer, pBuffer->GetData(), pBuffer->GetDataSize());
-    }
+    ConvertLPCMFromBE(src, dst32, nChannels, samples, bytesPerSample , channelMap);
+  }
+  else // no specific handling - just copy the audio data
+  {
+    pSample->SetActualDataLength(pBuffer->GetDataSize());
+    pSample->GetPointer(&pSampleBuffer);
+    memcpy(pSampleBuffer, pBuffer->GetData(), pBuffer->GetDataSize());
   }
 }
 

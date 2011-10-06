@@ -62,7 +62,6 @@ public:
   bool HasVideo();
   bool Incomplete();
   void SetVideoPMT(AM_MEDIA_TYPE *pmt);
-  void SetAudioPMT(AM_MEDIA_TYPE *pmt);
 
   REFERENCE_TIME lastAudioPosition;
   REFERENCE_TIME lastVideoPosition;
@@ -73,7 +72,6 @@ protected:
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
   AM_MEDIA_TYPE *m_videoPmt;
-  AM_MEDIA_TYPE *m_audioPmt;
   REFERENCE_TIME clipDuration;
   REFERENCE_TIME audioPlaybackpoint;
   int superceeded;

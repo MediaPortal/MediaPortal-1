@@ -900,9 +900,9 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     
     if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
     {
-      ParseAudioFormat(m_pCurrentAudioBuffer);
+      bool audioParsed = ParseAudioFormat(m_pCurrentAudioBuffer);
 
-      if (!m_bStarting)
+      if (!m_bStarting && audioParsed)
         m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
       else
         delete m_pCurrentAudioBuffer;
@@ -1037,8 +1037,7 @@ bool CDeMultiplexer::ParseAudioFormat(Packet* p)
     else
     {
       LogDebug("demux: ParseAudioFormat - succeeded");
-      if (!m_bStarting)
-        m_playlistManager->SetAudioPMT(CreateMediaType(&m_audioParser->pmt), m_nPlaylist, m_nClip);
+      p->pmt = CreateMediaType(&m_audioParser->pmt);
     }
   }
 

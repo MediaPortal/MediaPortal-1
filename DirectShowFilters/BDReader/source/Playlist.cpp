@@ -497,15 +497,6 @@ void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
   }
 }
 
-void CPlaylist::SetAudioPMT(AM_MEDIA_TYPE * pmt, int nClip)
-{
-  CClip * clip = GetClip(nClip);
-  if (clip)
-  {
-    clip->SetAudioPMT(pmt);
-  }
-}
-
 bool CPlaylist::RemoveRedundantClips()
 {
   ivecClip it = m_vecClips.end();
