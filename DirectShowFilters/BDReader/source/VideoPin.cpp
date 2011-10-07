@@ -510,8 +510,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
             if (hrAccept != S_OK)
             {
-              CMediaType* mt = new CMediaType(*buffer->pmt);
-              SetMediaType(mt);
+              CMediaType mt(*buffer->pmt);
+              SetMediaType(&mt);
 
               LogDebug("vid: graph rebuilding required");
 
@@ -523,9 +523,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             else
             {
               LogDebug("vid: format change accepted");
-              CMediaType* mt = new CMediaType(*buffer->pmt);
-              SetMediaType(mt);
-              pSample->SetMediaType(mt);
+              CMediaType mt(*buffer->pmt);
+              SetMediaType(&mt);
+              pSample->SetMediaType(&mt);
 
               // Flush the stream if format change is done on the fly
               if (!buffer->bSeekRequired)
