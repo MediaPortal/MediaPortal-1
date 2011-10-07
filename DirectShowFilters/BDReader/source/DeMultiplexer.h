@@ -161,7 +161,6 @@ private:
   StreamParser* m_audioParser;
 
   vector<Packet*> m_vecSubtitleBuffers;
-  vector<Packet*> m_t_vecVideoBuffers;
   UINT32 m_nAudioPesLenght;
   
   typedef vector<Packet*>::iterator ivecVBuffers;

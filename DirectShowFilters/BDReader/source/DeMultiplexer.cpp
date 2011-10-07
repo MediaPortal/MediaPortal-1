@@ -115,13 +115,7 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_videoParser;
   delete m_audioParser;
 
-  ivecVBuffers itv = m_t_vecVideoBuffers.begin();
-  while (itv != m_t_vecVideoBuffers.end())
-  {
-    Packet* videoBuffer = *itv;
-    delete videoBuffer;
-    itv = m_t_vecVideoBuffers.erase(itv);
-  }
+  m_pl.RemoveAll();
 
   m_subtitleStreams.clear();
   m_audioStreams.clear();
@@ -331,19 +325,6 @@ void CDeMultiplexer::FlushVideo()
 {
   LogDebug("demux:flush video");
   CAutoLock lock (&m_sectionVideo);
-
-  // Clear PES temporary queue.
-  ivecVBuffers it = m_t_vecVideoBuffers.begin();
-  while (it != m_t_vecVideoBuffers.end())
-  {
-    Packet* videoBuffer = *it;
-    {
-      delete videoBuffer;
-      it = m_t_vecVideoBuffers.erase(it);
-      LogDebug("Flush Video - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-        videoBuffer->nClipNumber, m_nClip, videoBuffer->nPlaylist, m_nPlaylist, videoBuffer->rtStart / 10000000.0);
-    }
-  }
 
   delete m_pCurrentVideoBuffer;
   m_pCurrentVideoBuffer = NULL;
