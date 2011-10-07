@@ -104,6 +104,8 @@ public:
 		REFERENCE_TIME		m_rtStart;
 		REFERENCE_TIME		m_rtStop;
 
+        BYTE                m_nObjectNumber;
+
 		CompositionObject();
 		~CompositionObject();
 
@@ -114,6 +116,7 @@ public:
 		void				Render(SubPicDesc& spd, CSubtitle &pSubtitle);
 		void				WriteSeg (SubPicDesc& spd, SHORT nX, SHORT nY, SHORT nCount, SHORT nPaletteIndex);
 		void				SetPalette (int nNbEntry, HDMV_PALETTE* pPalette, bool bIsHD);
+        bool                HavePalette() { return m_nColorNumber > 0; }
 
 	private :
 		CHdmvSub*	m_pSub;
@@ -154,7 +157,7 @@ public:
 		return pObject!=NULL ? pObject->m_rtStop : INVALID_TIME; 
 	};
 
-	void			Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox, CSubtitle &pSubtitle);
+	void			Render(CompositionObject* pObject, SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox, CSubtitle &pSubtitle);
 	HRESULT			GetTextureSize (POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft);
 	void			Reset();
 
@@ -173,9 +176,12 @@ private :
 
 	CompositionObject*  m_pCurrentObject;
 	CAtlList<CompositionObject*>  m_pObjects;
+	HDMV_PALETTE*     m_pDefaultPalette;
+	int               m_nDefaultPaletteNbEntry;
 
 	int         m_nColorNumber;
 
+  void        CreateSubtitle();
 
 	int					ParsePresentationSegment(CGolombBuffer* pGBuffer);
 	void				ParsePalette(CGolombBuffer* pGBuffer, USHORT nSize);
