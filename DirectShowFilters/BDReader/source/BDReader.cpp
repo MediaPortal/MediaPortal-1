@@ -452,13 +452,13 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
     while(1)
     {
       //DWORD result = WaitForMultipleObjects(2, handles, false, 40);
-	  DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
+	    DWORD result = WaitForMultipleObjects(2, handles, false, INFINITE);
       if (result == WAIT_OBJECT_0) // exit event
       {
         LogDebug("CBDReaderFilter::Command thread: closing down");
         return 0;
       }
-	  /*
+      /*
       else if (result == WAIT_TIMEOUT)
       {
         LONGLONG pos = 0;
@@ -467,8 +467,8 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
         {
           lib.ProvideUserInput(CONVERT_DS_90KHz(pos), BD_VK_NONE);
         }
-	  */
       }
+      */
       else if (result == WAIT_OBJECT_0 + 1) // command in queue
       {
         LONGLONG posEnd = 0;
