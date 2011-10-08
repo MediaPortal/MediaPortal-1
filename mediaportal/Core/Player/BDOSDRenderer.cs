@@ -120,36 +120,12 @@ namespace MediaPortal.Player
           {
             _OSDTexture = new Texture(GUIGraphicsContext.DX9Device, 1920, 1080, 1, Usage.RenderTarget, Format.A8R8G8B8, Pool.Default);
           }
-
-          int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           
-          if (GUIGraphicsContext.IsFullScreenVideo)
-          {
-            wheight = GUIGraphicsContext.Height;
-            wwidth = GUIGraphicsContext.Width;
-
-            wx = GUIGraphicsContext.OverScanLeft;
-            wy = GUIGraphicsContext.OverScanTop;
-            
-            if (GUIGraphicsContext.Height < 1080 && (PlaneScene.DestRect.X == 0 || PlaneScene.DestRect.Y == 0))
-            {
-              wx += PlaneScene.DestRect.X;
-              wy += PlaneScene.DestRect.Y;
-              wwidth = PlaneScene.DestRect.Width;
-              wheight = PlaneScene.DestRect.Height;
-            }
-          }
-          else // Video overlay
-          {
-            wheight = GUIGraphicsContext.VideoWindow.Height;
-            wwidth = GUIGraphicsContext.VideoWindow.Width;
-
-            wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width);
-            wy = GUIGraphicsContext.VideoWindow.Top;
-          }
+          Rectangle src, dst;
+          VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
           
           FontEngineSetAlphaBlend(1); //TRUE
-          CreateVertexBuffer(wx, wy, wwidth, wheight);
+          CreateVertexBuffer( dst.X, dst.Y, dst.Width, dst.Height);          
 
           // Make sure D3D objects haven't been disposed for some reason. This would cause
           // an access violation on native side, causing Skin Engine to halt rendering
