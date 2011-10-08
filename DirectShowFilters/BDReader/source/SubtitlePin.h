@@ -65,7 +65,6 @@ protected:
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
-  CCritSec  m_bufferLock;
   bool      m_bSeekDone;
   bool      m_bFlushing;
   DWORD     m_seekTimer;

@@ -210,10 +210,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
         return S_OK;
       }
 
-      {
-        CAutoLock lock(&m_bufferLock);
-        buffer = demux.GetSubtitle();
-      }
+      buffer = demux.GetSubtitle();
 
       if (demux.EndOfFile())
       {
