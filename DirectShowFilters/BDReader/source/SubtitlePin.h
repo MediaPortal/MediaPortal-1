@@ -39,6 +39,7 @@ public:
   HRESULT CheckConnect(IPin* pReceivePin);
   HRESULT FillBuffer(IMediaSample* pSample);
   HRESULT BreakConnect();
+  HRESULT OnThreadStartPlay();
 
   // CSourceSeeking
   HRESULT ChangeStart();
@@ -48,8 +49,9 @@ public:
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG* pStop, DWORD StopFlags);
   STDMETHODIMP GetDuration(LONGLONG* pDuration);
   STDMETHODIMP GetCurrentPosition(LONGLONG* pCurrent);
-
-  HRESULT OnThreadStartPlay();
+  HRESULT DeliverBeginFlush();
+  HRESULT DeliverEndFlush();
+  HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
 
 	void SetRunningStatus(bool onOff);
   bool IsConnected();
@@ -57,17 +59,16 @@ public:
 protected:
   DWORD ThreadProc();
 
-  void UpdateFromSeek();
+  void CreateEmptySample(IMediaSample *pSample);
 
   CBDReaderFilter* const m_pFilter;
   bool      m_bConnected;
   BOOL      m_bDiscontinuity;
   CCritSec* m_section;
   CCritSec  m_bufferLock;
-  bool 			m_bSeeking;
+  bool      m_bSeekDone;
+  bool      m_bFlushing;
   DWORD     m_seekTimer;
   CRefTime  m_lastSeek;
-  bool      m_bInFillBuffer;
-  bool      m_bPresentSample;
-	bool      m_bRunning;
+  bool      m_bRunning;
 };

@@ -214,8 +214,13 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
 //
 void CSubtitleInputPin::Reset()
 {
-  m_bReset = true;
-  m_pesDecoder->Reset();
+  if (m_pesDecoder)
+    m_pesDecoder->Reset();
+
+  if (m_bHDMV && m_pHdmvSub)
+    m_pHdmvSub->Reset();
+  else if (m_pSubDecoder)
+    m_pSubDecoder->Reset();
 }
 
 
@@ -237,6 +242,7 @@ STDMETHODIMP CSubtitleInputPin::BeginFlush( void )
   LogDebug( "CSubtitleInputPin::BeginFlush" );
   HRESULT hr = CBaseInputPin::BeginFlush();
   CAutoLock lock_it( m_Lock );
+  Reset();
   LogDebug( "CSubtitleInputPin::BeginFlush - done" );
   return hr;
 }

@@ -82,7 +82,6 @@ private:
   CDVBSub* const    m_pDVBSub;      // Main renderer object
   CCritSec * const	m_pReceiveLock; // Sample critical section
   CCritSec* const   m_Lock;	
-  bool              m_bReset;
 
   bool              m_bHDMV;        // Blu-ray subtitles in use
 };
