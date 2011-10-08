@@ -541,8 +541,11 @@ namespace MediaPortal.Player
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
             if (_state != PlayState.Menu && _state != PlayState.PopUp)
               return false;
-            int x = (int)((action.fAmount1 - PlaneScene.DestRect.X) / ((float)PlaneScene.DestRect.Width / 1920.0f));
-            int y = (int)((action.fAmount2 - PlaneScene.DestRect.Y) / ((float)PlaneScene.DestRect.Height / 1080.0f));
+
+            Rectangle src, dst;
+            VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
+            int x = (int)((action.fAmount1 - dst.X) / ((float)dst.Width / 1920.0f));
+            int y = (int)((action.fAmount2 - dst.Y) / ((float)dst.Height / 1080.0f));
             //Log.Debug("BDPlayer: Mouse move: {0},{1}", x, y);
             _ireader.MouseMove(x, y);
             return true;
@@ -1730,18 +1733,18 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
             Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
             if(!_forceTitle)
-              EnableSubtitle = bdevent.Param == 1 ? true : false; //|| SubtitleStreams > 0;
+              EnableSubtitle = bdevent.Param == 1 ? true : false;
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
-            if (bdevent.Param != 0xfff && EnableSubtitle) // && _state == PlayState.Menu)
+            if (bdevent.Param != 0xfff && EnableSubtitle)
               CurrentSubtitleStream = bdevent.Param;
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
-            if(_forceTitle || _currentTitle != 0xffff)
+            if(_forceTitle || _currentTitle != BLURAY_TITLE_FIRST_PLAY)
               _updateItems |= UpdateItems.Chapter;
             break;
 
@@ -1752,8 +1755,19 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
-            if (bdevent.Param != 0xffff)
-              _currentTitle = bdevent.Param;          
+            switch (bdevent.Param)
+            {
+              case (int)BLURAY_TITLE_FIRST_PLAY:
+                if (!_forceTitle)
+                  menuItems = MenuItems.None;
+                break;
+              case (int)BLURAY_TITLE_TOP_MENU:
+                menuItems = MenuItems.None;
+                break;
+              default:
+                _currentTitle = bdevent.Param;
+                break;
+            }
             break;
 
           case (int)BDEvents.BD_EVENT_CHAPTER:
@@ -1770,7 +1784,7 @@ namespace MediaPortal.Player
                 _state = PlayState.Menu;
               _updateItems = UpdateItems.None;
               GUIGraphicsContext.DisableTopBar = true;
-              menuItems = MenuItems.MainMenu | MenuItems.PopUpMenu;
+              menuItems = _state == PlayState.Menu ? MenuItems.None : MenuItems.All;
             }
             else
               _updateItems |= UpdateItems.Menu;                      
@@ -1979,7 +1993,7 @@ namespace MediaPortal.Player
         switch (eventCode)
         {
           case EventCode.Complete:
-            // Ignore graph compete in menu mode - user must actively stop the player.
+            // Ignore graph complete in menu mode - user must actively stop the player.
             // Abort code is sent when the playback runs into error (broken BD etc.)
             if (_forceTitle)
             {
