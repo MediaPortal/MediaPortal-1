@@ -309,6 +309,7 @@ void CHdmvSub::CreateSubtitle()
 		  CSubtitle* sub = new CSubtitle(spd.w, spd.h, 1920, 1080);
       sub->SetPTS(object->m_rtStart);
 		  sub->SetFirstScanline(object->m_vertical_position);
+      sub->SetHorizontalPosition(object->m_horizontal_position);
 
 		  Render(object, spd, rt, rect, *sub);
 		  m_RenderedSubtitles.push_back(sub);

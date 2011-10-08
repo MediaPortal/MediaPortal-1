@@ -56,6 +56,8 @@ public:
   void SetTimeout( uint64_t timeout );
   void SetFirstScanline( int );
   int FirstScanline();
+  void SetHorizontalPosition( int x );
+  int HorizontalPosition();
 
 private:
 
@@ -66,5 +68,6 @@ private:
   uint64_t m_timeout;
   int m_screenWidth;
   int m_screenHeight;
+  int m_horizontalPosition;
 };
 #endif

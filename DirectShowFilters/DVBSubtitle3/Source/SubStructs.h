@@ -38,6 +38,7 @@ struct SUBTITLE
   unsigned    __int64 timestamp;
   unsigned    __int64 timeOut;
   int         firstScanLine;
+  int         horizontalPosition;
 };
 
 struct TEXT_SUBTITLE

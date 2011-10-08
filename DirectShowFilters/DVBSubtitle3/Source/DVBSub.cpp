@@ -502,6 +502,7 @@ STDMETHODIMP CDVBSub::GetSubtitle( int place, SUBTITLE* subtitle )
     subtitle->screenWidth = pCSubtitle->ScreenWidth();
     subtitle->timestamp = pCSubtitle->Timestamp();
     subtitle->firstScanLine = pCSubtitle->FirstScanline();
+    subtitle->horizontalPosition = pCSubtitle->HorizontalPosition();
     subtitle->timeOut = pCSubtitle->Timeout();
     LogDebug("TIMEOUT  : %i", subtitle->timeOut);
     LogDebug("TIMESTAMP: %i", subtitle->timestamp);

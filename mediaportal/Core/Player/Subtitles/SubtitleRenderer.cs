@@ -60,6 +60,7 @@ namespace MediaPortal.Player.Subtitles
     // how long to display subtitle
     public UInt64 timeOut; // in seconds
     public Int32 firstScanLine;
+    public Int32 horizontalPosition;
   }
 
   /*
@@ -132,6 +133,7 @@ namespace MediaPortal.Player.Subtitles
     public double presentTime; // NOTE: in seconds
     public double timeOut; // NOTE: in seconds
     public int firstScanLine;
+    public int horizontalPosition;
     public long id = 0;
     public Texture texture;
 
@@ -387,8 +389,8 @@ namespace MediaPortal.Player.Subtitles
         {
           Log.Debug("SubtitleRenderer:  Bitmap: bpp=" + sub.bmBitsPixel + " planes " + sub.bmPlanes + " dim = " +
                     sub.bmWidth + " x " + sub.bmHeight + " stride : " + sub.bmWidthBytes);
-          Log.Debug("SubtitleRenderer: to = " + sub.timeOut + " ts=" + sub.timeStamp + " fsl=" + sub.firstScanLine +
-                    " (startPos = " + _startPos + ")");
+          Log.Debug("SubtitleRenderer: to = " + sub.timeOut + " ts=" + sub.timeStamp + " fsl=" + sub.firstScanLine + 
+            " h pos=" + sub.horizontalPosition + " (startPos = " + _startPos + ")");
 
           Subtitle subtitle = new Subtitle();
           subtitle.subBitmap = new Bitmap(sub.bmWidth, sub.bmHeight, PixelFormat.Format32bppArgb);
@@ -399,6 +401,7 @@ namespace MediaPortal.Player.Subtitles
           subtitle.screenHeight = (uint)sub.screenHeight;
           subtitle.screenWidth = (uint)sub.screenWidth;
           subtitle.firstScanLine = sub.firstScanLine;
+          subtitle.horizontalPosition = sub.horizontalPosition;
           subtitle.id = _subCounter++;
           //Log.Debug("Received Subtitle : " + subtitle.ToString());
 
@@ -525,6 +528,7 @@ namespace MediaPortal.Player.Subtitles
         subtitle.screenHeight = 576;
         subtitle.screenWidth = 720;
         subtitle.firstScanLine = 0;
+        subtitle.horizontalPosition = 0;
 
         Texture texture = null;
         try
@@ -791,8 +795,7 @@ namespace MediaPortal.Player.Subtitles
             rationW = rationH;
 
             // Get the location to render the subtitle to
-            wx = GUIGraphicsContext.OverScanLeft +
-                 (int)(((float)(GUIGraphicsContext.Width - _currentSubtitle.width * rationW)) / 2);
+            wx = GUIGraphicsContext.OverScanLeft + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
             wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)_currentSubtitle.firstScanLine);
           }
           else // Video overlay
@@ -800,8 +803,7 @@ namespace MediaPortal.Player.Subtitles
             rationH = GUIGraphicsContext.VideoWindow.Height / (float)_currentSubtitle.screenHeight;
             rationW = rationH;
 
-            wx = GUIGraphicsContext.VideoWindow.Right - (GUIGraphicsContext.VideoWindow.Width / 2) -
-                 (int)(((float)_currentSubtitle.width * rationW) / 2);
+            wy = GUIGraphicsContext.VideoWindow.Right + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
             wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
           }
 

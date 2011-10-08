@@ -47,6 +47,7 @@ CSubtitle::CSubtitle( int subW, int subH, int screenH, int screenW )
   m_screenHeight = screenW;
 
   m_firstScanline = 0;
+  m_horizontalPosition = 0;
 
   count++;
   //LogDebug("CSubtitle:: CREATE count %d width %d height %d", count, width, height);
@@ -256,12 +257,31 @@ void CSubtitle::SetFirstScanline( int firstScanLine)
   m_firstScanline = firstScanLine;
 }
 
+
 //
 // FirstScanline
 //
 int CSubtitle::FirstScanline()
 {
- return m_firstScanline;
+  return m_firstScanline;
+}
+
+
+//
+// SetHorizontalPosition
+//
+void CSubtitle::SetHorizontalPosition( int x )
+{
+  m_horizontalPosition = x;
+}
+
+
+//
+// HorizontalPosition
+//
+int CSubtitle::HorizontalPosition()
+{
+  return m_horizontalPosition;
 }
 
 
