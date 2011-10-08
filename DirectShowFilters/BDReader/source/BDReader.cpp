@@ -445,8 +445,6 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
   handles[0] = m_hStopCommandThreadEvent;
   handles[1] = m_hCommandEvent;
 
-  ResetEvent(m_hCommandEvent);
-
   if (m_pMediaSeeking)
   {
     while(1)
@@ -1100,6 +1098,12 @@ void CBDReaderFilter::DeliverBeginFlush()
     m_pAudioPin->DeliverBeginFlush();
     m_pAudioPin->Stop();
   }
+
+  if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
+  {
+    m_pSubtitlePin->DeliverBeginFlush();
+    m_pSubtitlePin->Stop();
+  }
 }
 
 void CBDReaderFilter::DeliverEndFlush()
@@ -1114,6 +1118,12 @@ void CBDReaderFilter::DeliverEndFlush()
   {
     m_pAudioPin->DeliverEndFlush();
     m_pAudioPin->Pause();
+  }
+
+  if (m_pSubtitlePin && m_pSubtitlePin->IsConnected())
+  {
+    m_pSubtitlePin->DeliverEndFlush();
+    m_pSubtitlePin->Pause();
   }
 
   m_bFlushing = false;
