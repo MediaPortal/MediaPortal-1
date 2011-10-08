@@ -282,29 +282,40 @@ void CHdmvSub::CreateSubtitle()
   while (pos) 
 	{
     CompositionObject* object = m_pObjects.GetAt(pos);
-                  
-		RECT rect;
-		rect.top = 0;
-		rect.left = 0;
-		rect.bottom = 1080;
-		rect.right = 1920;
+              
+    if (object && object->IsRLEComplete() && object->GetRLEDataSize() > 0)
+    {
+		  RECT rect;
+		  rect.top = 0;
+		  rect.left = 0;
+		  rect.bottom = 1080;
+		  rect.right = 1920;
             
-		SubPicDesc spd;
-		spd.bpp = 32;
-		spd.vidrect = rect;
-		spd.h = object->m_height;
-		spd.w = object->m_width;
+		  SubPicDesc spd;
+		  spd.bpp = 32;
+		  spd.vidrect = rect;
+		  spd.h = object->m_height;
+		  spd.w = object->m_width;
 
-		// TODO: remove...
-		REFERENCE_TIME rt = 0;
+      if (spd.h < 1 || spd.w < 1 || spd.w > 1920 || spd.h > 1080)
+      {
+        m_pObjects.GetNext(pos);
+        continue;
+      }
+
+		  // TODO: remove...
+		  REFERENCE_TIME rt = 0;
             
-		CSubtitle* sub = new CSubtitle(spd.w, spd.h, 1920, 1080);
-    sub->SetPTS(object->m_rtStart);
-		sub->SetFirstScanline(object->m_vertical_position);
+		  CSubtitle* sub = new CSubtitle(spd.w, spd.h, 1920, 1080);
+      sub->SetPTS(object->m_rtStart);
+		  sub->SetFirstScanline(object->m_vertical_position);
 
-		Render(object, spd, rt, rect, *sub);
-		m_RenderedSubtitles.push_back(sub);
-		m_pObserver->NotifySubtitle();
+		  Render(object, spd, rt, rect, *sub);
+		  m_RenderedSubtitles.push_back(sub);
+		  m_pObserver->NotifySubtitle();
+    }
+    else
+      LogDebug("CreateSubtitle: corrupted object!");
 
     m_pObjects.GetNext(pos);
 	}
