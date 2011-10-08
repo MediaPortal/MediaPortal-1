@@ -199,6 +199,7 @@ int CSubtitleInputPin::OnNewPesPacket( int streamid, byte* header, int headerlen
     pesData = (unsigned char*)malloc( headerlen + len );
     memcpy( pesData, header, headerlen );
     memcpy( pesData + headerlen, data, len );
+    m_pSubDecoder->ProcessPES( pesData, headerlen + len, m_SubtitlePid );		
   }
 
   delete pesData;
