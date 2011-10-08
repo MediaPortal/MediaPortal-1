@@ -644,15 +644,11 @@ void CHdmvSub::CompositionObject::Render(SubPicDesc& spd, CSubtitle &pSubtitle)
 
 		if (nCount > 0)
 		{
-      //FillSolidRect (spd, nX, nY, nCount, 1, m_Colors[nPaletteIndex], 0xFFFFFFFF);
       long colors(m_Colors[nPaletteIndex]);
-      if (nPaletteIndex != 0)
-      {
-	      DWORD alpha = (colors >> 24) & 0xff;
-	      colors = (255 - alpha) << 24 | colors & 0xffffff;
+	    DWORD alpha = (colors >> 24) & 0xff;
+	    colors = (255 - alpha) << 24 | colors & 0xffffff;
 
-        pSubtitle.DrawRect(nX, nY, nCount, GetRValue(colors), GetGValue(colors), GetBValue(colors), alpha);
-      }
+      pSubtitle.DrawRect(nX, nY, nCount, GetRValue(colors), GetGValue(colors), GetBValue(colors), alpha);
 
       nX += nCount;
 		}
