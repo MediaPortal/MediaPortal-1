@@ -593,7 +593,7 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_DVD_MENU:
-            if (!Playing || _forceTitle)
+            if (_state != PlayState.Playing || _forceTitle)
               return false;
             Speed = 1;
             //Log.Debug("BDPlayer: Main menu");
@@ -1755,17 +1755,16 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
+            _currentTitle = bdevent.Param;
             switch (bdevent.Param)
             {
+              case (int)BLURAY_TITLE_TOP_MENU:
               case (int)BLURAY_TITLE_FIRST_PLAY:
                 if (!_forceTitle)
+                {
                   menuItems = MenuItems.None;
-                break;
-              case (int)BLURAY_TITLE_TOP_MENU:
-                menuItems = MenuItems.None;
-                break;
-              default:
-                _currentTitle = bdevent.Param;
+                  _state = PlayState.Menu;
+                }
                 break;
             }
             break;
