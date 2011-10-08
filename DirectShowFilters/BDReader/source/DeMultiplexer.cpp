@@ -121,16 +121,6 @@ CDeMultiplexer::~CDeMultiplexer()
   m_audioStreams.clear();
 }
 
-void CDeMultiplexer::ResetClipInfo(int pDebugMark)
-{
-  m_rtOffset = 0;
-
-  m_bUpdateSubtitleOffset = false;
-
-  m_nClip = pDebugMark;
-  m_nPlaylist = pDebugMark;
-}
-
 int CDeMultiplexer::GetVideoServiceType()
 {
   return m_videoServiceType;
@@ -339,7 +329,6 @@ void CDeMultiplexer::FlushVideo()
   m_VideoValidPES = true;
   m_mVideoValidPES = false;  
   m_WaitHeaderPES = -1;
-  m_rtOffset = 0;
 }
 
 void CDeMultiplexer::FlushAudio()
@@ -375,6 +364,11 @@ void CDeMultiplexer::FlushSubtitle()
   
   m_pCurrentSubtitleBuffer->nPlaylist = -1;
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
+
+  /*
+  IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
+  if (pDVBSubtitleFilter)
+    pDVBSubtitleFilter->NotifyChannelChange();*/
 }
 
 void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking)

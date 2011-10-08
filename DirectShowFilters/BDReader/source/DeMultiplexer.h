@@ -123,7 +123,6 @@ public:
   bool m_bRebuildOngoing;
 
 private:
-  void ResetClipInfo(int pDebugMark);
   void PacketDelivery(Packet* p);
 
   LPCTSTR StreamFormatAsString(int pStreamType);
