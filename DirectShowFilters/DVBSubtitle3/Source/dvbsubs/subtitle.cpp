@@ -158,9 +158,9 @@ void CSubtitle::DrawRect(SHORT nX, SHORT nY, SHORT nCount, int R, int G, int B, 
   long pos = nX*4 + nY*m_bitmap.bmWidthBytes;
   for( int i=0; i<nCount ; i++)
   {
-    m_Data[pos+i*4]   = R;
+    m_Data[pos+i*4]   = B;
     m_Data[pos+i*4+1] = G;
-    m_Data[pos+i*4+2] = B;
+    m_Data[pos+i*4+2] = R;
     m_Data[pos+i*4+3] = alpha;
   }
 }
