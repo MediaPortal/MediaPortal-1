@@ -418,15 +418,7 @@ namespace MediaPortal.Player
       Video = 1,
       Audio = 2
     }
-
-    [Flags]
-    protected enum UpdateItems
-    {
-      None = 0,
-      Chapter = 1,
-      Menu = 2,
-      Subtitle = 4
-    }
+    
     #endregion
 
     #region variables
@@ -493,7 +485,7 @@ namespace MediaPortal.Player
     protected int _currentTitle = 0xffff;
     protected int _currentChapter = 0xffff;
     protected int _currentSubtitleStream = 0xfff;
-	protected int _currentAudioStream = 0;
+    protected int _currentAudioStream = 0;
     protected EventBuffer eventBuffer = new EventBuffer();
     protected MenuItems menuItems = MenuItems.All;
     protected double[] chapters;
@@ -501,8 +493,6 @@ namespace MediaPortal.Player
     protected int _currentVideoFormat;
     protected int _currentAudioFormat;
     protected int _currentVideoFormatRate;
-    protected UpdateItems _updateItems;
-    protected int _updateNow = 0;
     protected static BDPlayerSettings settings;
     #endregion
 
@@ -897,9 +887,7 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
         UpdateCurrentPosition();
-        if (iSpeed == 1)        
-          DoDelayedUpdate();
-        
+                
         if (_videoWin != null)
         {
           if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -1744,8 +1732,8 @@ namespace MediaPortal.Player
 
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
-            if(_forceTitle || _currentTitle != BLURAY_TITLE_FIRST_PLAY)
-              _updateItems |= UpdateItems.Chapter;
+            if (_forceTitle || (_currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU))              
+              UpdateChapters();
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
@@ -1766,6 +1754,12 @@ namespace MediaPortal.Player
                   _state = PlayState.Menu;
                 }
                 break;
+              default:
+                menuItems = MenuItems.All;
+                _state = PlayState.Playing;
+                GUIGraphicsContext.DisableTopBar = false;
+                GUIGraphicsContext.TopBarHidden = true;
+                break;
             }
             break;
 
@@ -1781,12 +1775,9 @@ namespace MediaPortal.Player
               Log.Debug("BDPlayer: Toggle {0} menu on", _state == PlayState.Menu ? "main" : "popup");
               if (_state != PlayState.PopUp)
                 _state = PlayState.Menu;
-              _updateItems = UpdateItems.None;
               GUIGraphicsContext.DisableTopBar = true;
               menuItems = _state == PlayState.Menu ? MenuItems.None : MenuItems.All;
             }
-            else
-              _updateItems |= UpdateItems.Menu;                      
             break;
         }
       }
@@ -1814,46 +1805,7 @@ namespace MediaPortal.Player
         _currentVideoFormatRate = videoRate;
         RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
       }
-    } 
-
-    protected void DoDelayedUpdate()
-    {
-      lock (lockobj)
-      {
-        if ((_updateItems & UpdateItems.Menu) == UpdateItems.Menu)
-        {
-          if ((_updateNow & 4) == 4)
-          {
-            _updateNow -= 4;
-            Log.Debug("BDPlayer: Toggle menu off");
-            _updateItems &= ~UpdateItems.Menu;
-            _state = PlayState.Playing;
-            GUIGraphicsContext.DisableTopBar = false;
-            GUIGraphicsContext.TopBarHidden = true;
-            menuItems = MenuItems.All;            
-          }
-          else
-            _updateNow++;
-        }
-
-        if ((_updateItems & UpdateItems.Chapter) == UpdateItems.Chapter)
-        {
-          if ((_updateNow & 32) == 32)
-          {
-            _updateNow -= 32;
-            Log.Debug("BDPlayer: Chapters update");
-            _updateItems &= ~UpdateItems.Chapter;            
-            UpdateChapters();
-            if (chapters != null && menuItems == MenuItems.MainMenu) //direct play to main movie
-            {
-              menuItems = MenuItems.All;
-            }
-          }
-          else
-            _updateNow += 8;
-        }
-      }
-    }
+    }     
 
     protected void UpdateChapters()
     {
