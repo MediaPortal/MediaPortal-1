@@ -79,7 +79,6 @@ public:
   STDMETHODIMP Notify(IBaseFilter* pSender, Quality q);
   HRESULT DeliverBeginFlush();
   HRESULT DeliverEndFlush();
-
   HRESULT DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
   bool IsConnected();
 
