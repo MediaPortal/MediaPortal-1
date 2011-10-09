@@ -539,11 +539,8 @@ namespace MediaPortal.Player
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
             if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
               return false;
-
-            Rectangle src, dst;
-            VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
-            int x = (int)((action.fAmount1 - dst.X) / ((float)dst.Width / 1920.0f));
-            int y = (int)((action.fAmount2 - dst.Y) / ((float)dst.Height / 1080.0f));
+            int x = (int)((action.fAmount1 - PlaneScene.DestRect.X) / ((float)PlaneScene.DestRect.Width / 1920.0f));
+            int y = (int)((action.fAmount2 - PlaneScene.DestRect.Y) / ((float)PlaneScene.DestRect.Height / 1080.0f));
             //Log.Debug("BDPlayer: Mouse move: {0},{1}", x, y);
             _ireader.MouseMove(x, y);
             return true;
