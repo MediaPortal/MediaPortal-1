@@ -794,7 +794,7 @@ void CBDReaderFilter::HandleMenuStateChange(bool pVisible)
   ev.event = BD_CUSTOM_EVENT_MENU_VISIBILITY;
   ev.param = pVisible ? 1 : 0;
 
-  if (m_pCallback)
+  if (m_pCallback && !m_bFirstPlay)
   {
     m_pCallback->OnBDEvent(ev);
   }

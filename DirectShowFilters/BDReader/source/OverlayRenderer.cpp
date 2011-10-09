@@ -49,7 +49,7 @@ void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
 
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 {
-  bool bIsMenuOpen = m_bIsMenuOpen;
+  bool bIsMenuOpen = false;
 
   if (!ov)
   {
@@ -136,6 +136,8 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
         }
 
         osdTexture.texture->UnlockRect(0);
+        bIsMenuOpen = true;
+        m_iCloseCount = 0;
       }
       else
       {
@@ -150,33 +152,31 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 
   TRACE_PERF("OverlayProc - mark 3");
 
-  m_pLib->HandleOSDUpdate(osdTexture);
-
-  TRACE_PERF("OverlayProc - mark 4");
-
-  if (ov->plane == 1)
-  {
-    bIsMenuOpen = true;
-  }
 
   if (bIsMenuOpen != m_bIsMenuOpen)
   {
     m_pLib->HandleMenuStateChange(bIsMenuOpen);
     m_bIsMenuOpen = bIsMenuOpen;
   }
+  
+  TRACE_PERF("OverlayProc - mark 4");
+
+  m_pLib->HandleOSDUpdate(osdTexture);
 
   TRACE_PERF("OverlayProc end");
 }
 
 void COverlayRenderer::CloseOverlay()
 {
+  m_iCloseCount++;
   OSDTexture nullTexture = {0};
 
   TRACE_PERF("ClearOverlay - clear overlay");
   m_pLib->HandleOSDUpdate(nullTexture);
     
-  if (m_bIsMenuOpen)
+  if (m_bIsMenuOpen && m_iCloseCount > 1)
   {
+    m_iCloseCount = 0;
     m_pLib->HandleMenuStateChange(false);
     m_bIsMenuOpen = false;
   }
