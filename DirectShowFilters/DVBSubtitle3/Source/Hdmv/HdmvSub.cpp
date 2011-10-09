@@ -237,10 +237,11 @@ HRESULT CHdmvSub::ParsePES(const unsigned char* data, int len,
 									break;
 								}
 
-								m_pCurrentObject->m_rtStop = rtStart;
-								m_pObjects.AddTail (m_pCurrentObject);
+								m_pCurrentObject->m_rtStop = Get_pes_pts(header);
+								//m_pObjects.AddTail (m_pCurrentObject);
+
 								//TRACE_HDMVSUB ("CHdmvSub:HDMV : %S => %S\n", ReftimeToString (m_pCurrentObject->m_rtStart), ReftimeToString(rtStart));
-								m_pCurrentObject = NULL;
+								//m_pCurrentObject = NULL;
 							}
 					if (ParsePresentationSegment(&SegmentBuffer) > 0) {
 						//m_pCurrentObject->m_rtStart	= Get_pes_pts(header);;
@@ -256,8 +257,13 @@ HRESULT CHdmvSub::ParsePES(const unsigned char* data, int len,
 				case END_OF_DISPLAY :
 					// TRACE_HDMVSUB ("CHdmvSub:END_OF_DISPLAY     %S\n", ReftimeToString(rtStart));
 			          {
-			            LogDebugPTS("END_OF_DISPLAY", Get_pes_pts( header ));
-                  m_pObjects.RemoveAll();
+                  UINT64 time = Get_pes_pts( header );
+			            LogDebugPTS("END_OF_DISPLAY", time);
+
+                  if (m_pObjects.GetCount() == 0 && m_pCurrentObject)
+                    m_pObserver->UpdateSubtitleTimeout(m_pCurrentObject->m_rtStop);
+                  else
+                    m_pObjects.RemoveAll();
 		          }
 					break;
 				default :

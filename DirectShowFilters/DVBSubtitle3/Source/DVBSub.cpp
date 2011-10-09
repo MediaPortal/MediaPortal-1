@@ -390,7 +390,7 @@ void CDVBSub::NotifySubtitle()
   if( m_bHDMV )
   {
     pSubtitle = m_pHdmvSub->GetLatestSubtitle();
-    pSubtitle->SetTimeout( 3 );
+    pSubtitle->SetTimeout( 20 );
   }
   else
   {
@@ -448,7 +448,7 @@ void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
   {
     // Calculate the timeout
     __int64 timeOut( 0 ); 
-    timeOut = pTimeout + m_currentTimeCompensation.Millisecs() - m_prevSubtitleTimestamp;
+    timeOut = pTimeout - m_prevSubtitleTimestamp;
     timeOut = timeOut/90;
 
     LogDebug("Calling update timeout observer - timeout = %lld ms", timeOut );
