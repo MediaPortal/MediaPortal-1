@@ -776,40 +776,24 @@ namespace MediaPortal.Player.Subtitles
             return;
           }
         }
-        //bool alphaTest = false;
-        //bool alphaBlend = false;
+        
         VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
         try
         {
-          // store current settings so they can be restored when we are done
-          //alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
-          
-
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           float rationW = 1, rationH = 1;
 
-          if (GUIGraphicsContext.IsFullScreenVideo)
-          {
-            rationH = GUIGraphicsContext.Height / (float)_currentSubtitle.screenHeight;
-            rationW = rationH;
+          Rectangle src, dst;
+          VMR9Util.g_vmr9.GetVideoWindows(out src, out dst);
 
-            // Get the location to render the subtitle to
-            wx = GUIGraphicsContext.OverScanLeft + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-            wy = GUIGraphicsContext.OverScanTop + (int)(rationH * (float)_currentSubtitle.firstScanLine);
-          }
-          else // Video overlay
-          {
-            rationH = GUIGraphicsContext.VideoWindow.Height / (float)_currentSubtitle.screenHeight;
-            rationW = rationH;
-
-            wx = GUIGraphicsContext.VideoWindow.Left + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
-            wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
-          }
-
+          rationH = dst.Height / (float)_currentSubtitle.screenHeight;
+          rationW = dst.Width / (float)_currentSubtitle.screenWidth;
+          wx = dst.X + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+          wy = dst.Y + (int)(rationH * (float)_currentSubtitle.firstScanLine);          
           wwidth = (int)((float)_currentSubtitle.width * rationW);
           wheight = (int)((float)_currentSubtitle.height * rationH);
-
+          
           // make sure the vertex buffer is ready and correct for the coordinates
           CreateVertexBuffer(wx, wy, wwidth, wheight);
 

@@ -312,12 +312,12 @@ void CHdmvSub::CreateSubtitle()
 		  // TODO: remove...
 		  REFERENCE_TIME rt = 0;
             
-		  CSubtitle* sub = new CSubtitle(spd.w, spd.h, 1920, 1080);
+		  CSubtitle* sub = new CSubtitle(spd.w, spd.h, m_VideoDescriptor.nVideoHeight, m_VideoDescriptor.nVideoWidth);
       sub->SetPTS(object->m_rtStart);
 		  sub->SetFirstScanline(object->m_vertical_position);
       sub->SetHorizontalPosition(object->m_horizontal_position);
 
-		  Render(object, spd, rt, rect, *sub);
+      Render(object, spd, rt, rect, *sub);
 		  m_RenderedSubtitles.push_back(sub);
 		  m_pObserver->NotifySubtitle();
     }

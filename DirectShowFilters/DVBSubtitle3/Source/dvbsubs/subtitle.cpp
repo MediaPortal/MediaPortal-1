@@ -43,8 +43,8 @@ CSubtitle::CSubtitle( int subW, int subH, int screenH, int screenW )
   m_bitmap.bmPlanes		  = 1;
   m_bitmap.bmWidthBytes	= subW * 4; // 32 bits per pixel
 
-  m_screenWidth = screenH;
-  m_screenHeight = screenW;
+  m_screenHeight = screenH;
+  m_screenWidth = screenW;
 
   m_firstScanline = 0;
   m_horizontalPosition = 0;
@@ -290,7 +290,7 @@ int CSubtitle::HorizontalPosition()
 //
 int CSubtitle::ScreenHeight()
 {
-  return 1080;//m_screenHeight;
+  return m_screenHeight;
 }
 
 
@@ -299,5 +299,5 @@ int CSubtitle::ScreenHeight()
 //
 int CSubtitle::ScreenWidth()
 {
-  return 1920;//1024;//m_screenWidth;
+  return m_screenWidth;
 }
