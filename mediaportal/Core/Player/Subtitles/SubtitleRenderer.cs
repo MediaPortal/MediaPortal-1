@@ -803,7 +803,7 @@ namespace MediaPortal.Player.Subtitles
             rationH = GUIGraphicsContext.VideoWindow.Height / (float)_currentSubtitle.screenHeight;
             rationW = rationH;
 
-            wx = GUIGraphicsContext.VideoWindow.Right + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
+            wx = GUIGraphicsContext.VideoWindow.Left + (int)(rationW * (float)_currentSubtitle.horizontalPosition);
             wy = GUIGraphicsContext.VideoWindow.Top + (int)(rationH * (float)_currentSubtitle.firstScanLine);
           }
 
