@@ -759,8 +759,7 @@ bool CLibBlurayWrapper::ProvideUserInput(INT64 pPts, UINT32 pKey)
     }
     else
     {
-      _bd_user_input(m_pBd, pPts, pKey); // todo check return value
-      return true;
+      return _bd_user_input(m_pBd, pPts, pKey) >= 0 ? true : false;
     }
   }
   return false;
