@@ -642,8 +642,7 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
 
   strncpy(m_pathToBD, path, pathLen - extLen);
   m_pathToBD[pathLen - extLen] = '\0';
-
-  m_bFirstPlay = true;
+  
   lib.OpenBluray(m_pathToBD);
   UINT32 titleCount = lib.GetTitles(TITLES_ALL);
 
@@ -666,6 +665,7 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
 
 STDMETHODIMP CBDReaderFilter::Start()
 {
+  m_bFirstPlay = true;
   lib.Play();
 
   HRESULT hr = m_demultiplexer.Start();

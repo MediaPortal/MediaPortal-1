@@ -1746,7 +1746,7 @@ namespace MediaPortal.Player
           case (int)BDEvents.BD_EVENT_PLAYITEM:
             Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
             CurrentStreamInfo();
-            break; 
+            break;
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
@@ -1757,13 +1757,14 @@ namespace MediaPortal.Player
               case (int)BLURAY_TITLE_FIRST_PLAY:
                 if (!_forceTitle)
                 {
-                  menuItems = MenuItems.None;                  
+                  menuItems = MenuItems.None;
                 }
                 break;
               default:
-                menuItems = MenuItems.All;                
-                GUIGraphicsContext.DisableTopBar = false;
-                GUIGraphicsContext.TopBarHidden = true;
+                if (_forceTitle)
+                  menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
+                else
+                  menuItems = MenuItems.All;
                 break;
             }
             break;
@@ -1786,7 +1787,11 @@ namespace MediaPortal.Player
               menuItems = menuVisible == MenuVisible.Root ? MenuItems.None : MenuItems.All;
             }
             else
+            {
               menuVisible = MenuVisible.None;
+              GUIGraphicsContext.DisableTopBar = false;
+              GUIGraphicsContext.TopBarHidden = true;
+            }
             break;
         }
       }
@@ -2185,6 +2190,7 @@ namespace MediaPortal.Player
           _ireader.ForceTitleBasedPlayback(_forceTitle, (uint)_titleToPlay);
 
           Log.Debug("BDPlayer: Starting BDReader");
+          eventBuffer.Clear();
           hr = _ireader.Start();
           if (hr != 0)
           {
