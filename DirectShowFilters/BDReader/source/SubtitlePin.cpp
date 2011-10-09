@@ -185,7 +185,6 @@ void CSubtitlePin::CreateEmptySample(IMediaSample *pSample)
     pSample->SetTime(NULL, NULL);
     pSample->SetActualDataLength(0);
     pSample->SetSyncPoint(false);
-    pSample->SetDiscontinuity(true);
   }
   else
   {
