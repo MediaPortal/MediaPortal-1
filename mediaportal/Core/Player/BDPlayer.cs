@@ -1723,14 +1723,12 @@ namespace MediaPortal.Player
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
-            Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
-            if(!_forceTitle)
-              EnableSubtitle = bdevent.Param == 1 ? true : false;
+            Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);            
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
             Log.Debug("BDPlayer: Subtitle changed to {0}", bdevent.Param);
-            if (bdevent.Param != 0xfff && EnableSubtitle)
+            if (bdevent.Param != 0xfff)
               CurrentSubtitleStream = bdevent.Param;
             break;
 
