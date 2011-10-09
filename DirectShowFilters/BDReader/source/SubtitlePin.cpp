@@ -270,7 +270,6 @@ HRESULT CSubtitlePin::OnThreadStartPlay()
 
   LogDebug("sub: OnThreadStartPlay: %6.3f", m_rtStart / 10000000.0);
 
-  DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
   return CSourceStream::OnThreadStartPlay();
 }
 
