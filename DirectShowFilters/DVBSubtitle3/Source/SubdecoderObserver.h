@@ -26,5 +26,5 @@ class MSubdecoderObserver
   public:
     virtual ~MSubdecoderObserver(){};
     virtual void NotifySubtitle() = 0;
-    virtual void UpdateSubtitleTimeout( uint64_t pTimeout ) = 0;
+    virtual void UpdateSubtitleTimeout( uint64_t pEndTimestamp ) = 0;
 };

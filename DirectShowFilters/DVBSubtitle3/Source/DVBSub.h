@@ -81,7 +81,7 @@ public:
 
   // From MSubdecoderObserver
   void NotifySubtitle();
-  void UpdateSubtitleTimeout( uint64_t pTimeout );
+  void UpdateSubtitleTimeout( uint64_t pEndTimestamp );
   
   void NotifySeeking();
 

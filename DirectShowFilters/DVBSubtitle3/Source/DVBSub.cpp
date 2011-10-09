@@ -442,13 +442,13 @@ void CDVBSub::NotifySubtitle()
 //
 // UpdateSubtitleTimeout
 //
-void CDVBSub::UpdateSubtitleTimeout( uint64_t pTimeout )
+void CDVBSub::UpdateSubtitleTimeout( uint64_t pEndTimestamp )
 {
   if( m_pUpdateTimeoutObserver )
   {
     // Calculate the timeout
     __int64 timeOut( 0 ); 
-    timeOut = pTimeout - m_prevSubtitleTimestamp;
+    timeOut = pEndTimestamp - m_prevSubtitleTimestamp;
     timeOut = timeOut/90;
 
     LogDebug("Calling update timeout observer - timeout = %lld ms", timeOut );
