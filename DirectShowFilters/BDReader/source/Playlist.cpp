@@ -159,7 +159,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
 
   if (packet->rtStart != Packet::INVALID_TIME && prevAudioPosition != Packet::INVALID_TIME && abs(prevAudioPosition - packet->rtStart) > 10000000)
   {
-    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d", prevAudioPosition, packet->rtStart);
+    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d seeking %d", prevAudioPosition, packet->rtStart, seeking);
     firstAudioPESPacketSeen=false;
     discontinuity=true;
   }
@@ -176,7 +176,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushAudio(packet);
-    LogDebug("clip: first Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired);
+    LogDebug("clip: first Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired, seeking);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstAudioPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {
@@ -224,7 +224,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
 
   if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 20000000)
   {
-    LogDebug("clip: video stream's discontinuity detected: old: %I64d new: %I64d", prevVideoPosition, packet->rtStart);
+    LogDebug("clip: video stream's discontinuity detected: old: %I64d new: %I64d seeking %d", prevVideoPosition, packet->rtStart, seeking);
     firstVideoPESPacketSeen=false;
     discontinuity=true;
   }
@@ -241,7 +241,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushVideo(packet);
-    LogDebug("clip: first Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired);
+    LogDebug("clip: first Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired, seeking);
   }
   if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstVideoPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
   {
