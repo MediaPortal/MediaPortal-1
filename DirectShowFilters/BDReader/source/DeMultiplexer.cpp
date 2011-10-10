@@ -354,10 +354,11 @@ void CDeMultiplexer::FlushSubtitle()
   {
     Packet* subtitleBuffer = *it;
 
-    delete subtitleBuffer;
     it = m_vecSubtitleBuffers.erase(it);
-    LogDebug("Flush Subtitle - sample was removed clip: %d:%d pl: %d:%d start: %03.5f", 
-      subtitleBuffer->nClipNumber, m_nClip, subtitleBuffer->nPlaylist, m_nPlaylist, subtitleBuffer->rtStart / 10000000.0);
+    LogDebug("Flush Subtitle - sample was removed clip: %d pl: %d start: %03.5f", 
+      subtitleBuffer->nClipNumber, subtitleBuffer->nPlaylist, subtitleBuffer->rtStart / 10000000.0);
+
+    delete subtitleBuffer;
   }
 
   m_pCurrentSubtitleBuffer = new Packet();
