@@ -197,7 +197,10 @@ bool CClip::AcceptAudioPacket(Packet* packet)
       bSeekNeededAudio = false;
     }
     m_vecClipAudioPackets.push_back(packet);
-    lastAudioPosition=packet->rtStart;
+    
+    if (packet->rtStart != Packet::INVALID_TIME)
+      lastAudioPosition=packet->rtStart;
+    
     noAudio=false;
   }
   return true;
@@ -223,7 +226,9 @@ bool CClip::AcceptVideoPacket(Packet*  packet)
       bSeekNeededVideo = false;
     }
     m_vecClipVideoPackets.push_back(packet);
-    lastVideoPosition=packet->rtStart;
+    
+    if (packet->rtStart != Packet::INVALID_TIME)
+      lastVideoPosition=packet->rtStart;
   }
   return true;
 }
