@@ -54,8 +54,6 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
-  m_bIgnoreAudioSeeking=false;
-  m_bIgnoreVideoSeeking=false;
   
   // remove old playlists
   ivecPlaylists it = m_vecPlaylists.begin();
@@ -69,7 +67,6 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
     }
     else ++it;
   }
-
 
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f clipOffset %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, clipOffsetTime/10000000.0, audioPresent, duration/10000000.0);
   if (m_vecPlaylists.size()==0)
@@ -89,6 +86,9 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   else
   {
     //completely new playlist
+    m_bIgnoreAudioSeeking=false;
+    m_bIgnoreVideoSeeking=false;
+
     CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
     newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, true);
     m_vecPlaylists.push_back(newPlaylist);
