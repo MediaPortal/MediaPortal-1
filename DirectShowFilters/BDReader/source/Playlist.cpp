@@ -172,7 +172,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     firstAudioPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
     packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstAudioPESTimeStamp : 0;
-    if (packet->rtOffset != 0)
+    if (packet->rtOffset != 0 || seeking)
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushAudio(packet);
@@ -237,7 +237,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     firstVideoPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
     
     packet->rtOffset = (0 - firstVideoPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstVideoPESTimeStamp : 0;
-    if (packet->rtOffset != 0)
+    if (packet->rtOffset != 0 || seeking)
       packet->bSeekRequired=!seeking;
 
     m_currentAudioSubmissionClip->FlushVideo(packet);
