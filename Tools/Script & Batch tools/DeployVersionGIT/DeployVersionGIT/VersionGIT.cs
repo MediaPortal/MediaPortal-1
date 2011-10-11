@@ -37,7 +37,7 @@ namespace DeployVersionGIT
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
-      procInfo.Arguments = String.Format("--git-dir=\"{0}\\.git\" --no-pager describe", directory);
+      procInfo.Arguments = String.Format("--git-dir=\"{0}\\.git\" --no-pager describe --match Release_1.*", directory);
       procInfo.FileName = file.FullName;
 
       Console.WriteLine("Running : {0}", file.FullName);
