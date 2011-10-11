@@ -1629,8 +1629,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
           {
             Packet* p = m_pl.RemoveHead().Detach();
 
-            while(m_pl.GetCount())
-              p->Append(*m_pl.RemoveHead().Detach());
+            while (m_pl.GetCount())
+            {
+              Packet* head = m_pl.RemoveHead().Detach();
+              p->Append(*head);
+              delete head;
+            }
     
             if (m_CurrentVideoPts.IsValid)
             {
