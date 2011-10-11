@@ -25,6 +25,9 @@
 #include "GolombBuffer.h"
 #include <math.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\..\alloctracing.h"
+
 #define INDEX_TRANSPARENT	0xFF
 
 #if (0)		// Set to 1 to activate HDMV subtitles traces

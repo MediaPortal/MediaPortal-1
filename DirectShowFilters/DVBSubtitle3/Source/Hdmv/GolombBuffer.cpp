@@ -25,6 +25,9 @@
 #include "stdafx.h"
 #include "GolombBuffer.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\..\alloctracing.h"
+
 CGolombBuffer::CGolombBuffer(BYTE* pBuffer, int nSize)
 {
 	m_pBuffer	= pBuffer;

@@ -7,6 +7,9 @@
 #include <shlobj.h>
 #include <tchar.h>
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 static char logFile[MAX_PATH];
 static WORD logFileParsed = -1;
 

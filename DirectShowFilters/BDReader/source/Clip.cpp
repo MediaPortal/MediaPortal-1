@@ -25,6 +25,9 @@
 #include <streams.h>
 #include "mediaformats.h"
 
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
+
 extern void LogDebug(const char *fmt, ...);
 
 CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded)
