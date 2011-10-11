@@ -58,8 +58,11 @@ CHdmvSub::CHdmvSub(void)
 
 CHdmvSub::~CHdmvSub()
 {
-	m_pObjects.RemoveAll();
-	delete[] m_pSegBuffer;
+  m_pObjects.RemoveAll();
+  delete[] m_pSegBuffer;
+  delete[] m_pDefaultPalette;
+
+  delete m_pCurrentObject;
 
   for( unsigned int i( 0 ) ; i < m_RenderedSubtitles.size() ; i++ )
   {
