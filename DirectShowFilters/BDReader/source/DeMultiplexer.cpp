@@ -958,15 +958,10 @@ void CDeMultiplexer::PacketDelivery(CAutoPtr<Packet> p)
     {
       m_playlistManager->SubmitVideoPacket(p.Detach());
     }
-    else
-    {
-      delete p;
-    }
   }
   else
   {
     ParseVideoFormat(p);
-    delete p;
   }
 }
 
