@@ -114,6 +114,7 @@ CVideoPin::~CVideoPin()
 {
   m_eFlushStart->Set();
   delete m_eFlushStart;
+  delete m_pCachedBuffer;
 }
 
 void CVideoPin::DetectVideoDecoder()

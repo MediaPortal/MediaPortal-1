@@ -76,6 +76,8 @@ CAudioPin::~CAudioPin()
 
   if (m_demux.m_eAudioPlSeen)
     m_demux.m_eAudioPlSeen->Set();
+
+  delete m_pCachedBuffer;
 }
 
 STDMETHODIMP CAudioPin::NonDelegatingQueryInterface(REFIID riid, void** ppv)
