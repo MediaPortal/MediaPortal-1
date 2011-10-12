@@ -123,7 +123,7 @@ public:
   bool m_bRebuildOngoing;
 
 private:
-  void PacketDelivery(Packet* p);
+  void PacketDelivery(CAutoPtr<Packet> p);
 
   LPCTSTR StreamFormatAsString(int pStreamType);
 

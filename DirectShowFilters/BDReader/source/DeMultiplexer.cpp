@@ -939,23 +939,8 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   }
 }
 
-void CDeMultiplexer::PacketDelivery(Packet* pIn)
+void CDeMultiplexer::PacketDelivery(CAutoPtr<Packet> p)
 {
-  Packet* p = new Packet();
-  p->SetData(pIn->GetData(), pIn->GetDataSize());
-  p->rtStart = pIn->rtStart;
-  p->rtStop = pIn->rtStop;
-  p->bDiscontinuity = pIn->bDiscontinuity;
-  p->nClipNumber = pIn->nClipNumber;
-  p->nPlaylist = pIn->nPlaylist;
-  CPcr timestamp;
-  
-  if (p->rtStart != Packet::INVALID_TIME)
-  {
-    timestamp.PcrReferenceBase = CONVERT_DS_90KHz(p->rtStart);
-    timestamp.IsValid = true;
-  }
-    
   if (m_filter.GetVideoPin()->IsConnected())
   {
     if (p->rtStart != Packet::INVALID_TIME)
@@ -971,19 +956,17 @@ void CDeMultiplexer::PacketDelivery(Packet* pIn)
     ParseVideoFormat(p);
     if (!m_bStarting)
     {
-      m_playlistManager->SubmitVideoPacket(p);
+      m_playlistManager->SubmitVideoPacket(p.Detach());
     }
     else
     {
       delete p;
-      p = NULL;
     }
   }
   else
   {
     ParseVideoFormat(p);
     delete p;
-    p = NULL;
   }
 }
 
