@@ -111,6 +111,8 @@ protected:
   bool m_bFlushing;
   bool m_bSeekDone;
   bool m_bDiscontinuity;
+  bool m_bFirstSample;
+  bool m_bClipEndingNotified;
 
   bool m_bUsePCM;
 };

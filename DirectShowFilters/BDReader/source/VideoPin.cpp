@@ -94,7 +94,9 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_rtStreamOffset(0),
   m_bFlushing(false),
   m_bSeekDone(true),
-  m_bDiscontinuity(false)
+  m_bDiscontinuity(false),
+  m_bFirstSample(true),
+  m_bClipEndingNotified(false)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -476,7 +478,23 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         buffer = m_demux.GetVideo();
 
       if (!buffer)
-        Sleep(10);
+      {
+        if (m_bFirstSample)
+          Sleep(10);
+        else 
+        {
+          CreateEmptySample(pSample);
+          if (!m_bClipEndingNotified)
+          {
+            DeliverEndOfStream();
+            m_bClipEndingNotified = true;
+          }
+          else
+            Sleep(10);
+		  
+          return S_OK;
+        }
+      }
       else
       {
         bool useEmptySample = false;
@@ -580,6 +598,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         pSample->GetPointer(&pSampleBuffer);
         memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
 
+        m_bFirstSample = false;
+
 #ifdef LOG_VIDEO_PIN_SAMPLES
         LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - m_rtStart) / 10000000.0, 
           buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
@@ -602,6 +622,8 @@ HRESULT CVideoPin::OnThreadStartPlay()
   {
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
+    m_bFirstSample = true;
+    m_bClipEndingNotified = false;
   }
 
   return S_OK;

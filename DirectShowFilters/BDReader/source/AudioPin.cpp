@@ -50,7 +50,9 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bFlushing(false),
   m_bSeekDone(true),
   m_bDiscontinuity(false),
-  m_bUsePCM(false)
+  m_bUsePCM(false),
+  m_bFirstSample(true),
+  m_bClipEndingNotified(false)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -262,7 +264,23 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       }
 
       if (!buffer)
-        Sleep(10);
+      {
+        if (m_bFirstSample)
+          Sleep(10);
+        else 
+        {
+          CreateEmptySample(pSample);
+          if (!m_bClipEndingNotified)
+          {
+            DeliverEndOfStream();
+            m_bClipEndingNotified = true;
+          }
+          else
+            Sleep(10);
+		  
+          return S_OK;
+        }
+      }
       else
       {
         bool useEmptySample = false;
@@ -389,6 +407,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 #ifdef LOG_AUDIO_PIN_SAMPLES
           LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - m_rtStart) / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);          
 #endif
+          m_bFirstSample = false;
+
           delete buffer;
         }
         else
@@ -562,6 +582,8 @@ HRESULT CAudioPin::OnThreadStartPlay()
   {
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
+    m_bFirstSample = true;
+    m_bClipEndingNotified = false;
 
     if (m_demux.m_eAudioPlSeen)
       m_demux.m_eAudioPlSeen->Reset();
