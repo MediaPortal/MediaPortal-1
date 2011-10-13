@@ -143,7 +143,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
 
 bool CClip::FakeAudioAvailable()
 {
-  return (audioPlaybackpoint<lastVideoPosition);
+  return audioPlaybackpoint <= playlistFirstPacketTime + clipDuration;
 }
 
 Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
