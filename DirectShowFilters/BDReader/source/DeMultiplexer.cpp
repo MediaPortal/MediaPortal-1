@@ -43,8 +43,6 @@
 #define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * (1000.0 / 9.0))
 #define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / (1000.0 / 9.0))
 
-const double mediaChangeTimeout = 5000;
-
 extern void LogDebug(const char *fmt, ...);
 
 CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
@@ -92,6 +90,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bAudioFormatParsed = false;
 
   m_bAC3Substream = false;
+  m_AudioValidPES = false;
+  m_VideoValidPES = false;
 
   m_videoServiceType = NO_STREAM;
   m_nVideoPid = -1;
@@ -327,7 +327,6 @@ void CDeMultiplexer::FlushVideo()
   m_fHasAccessUnitDelimiters = false;
 
   m_VideoValidPES = true;
-  m_mVideoValidPES = false;  
   m_WaitHeaderPES = -1;
 }
 
@@ -514,7 +513,7 @@ HRESULT CDeMultiplexer::Start()
   const DWORD readTimeout = 5000;
 #endif
 
-  while((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
+  while ((GetTickCount() - m_Time) < readTimeout && !m_bReadFailed)
   {
     int BytesRead = ReadFromFile(false, false);
 
@@ -1347,7 +1346,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
 #endif
     
     m_WaitHeaderPES = m_pBuild->GetCount();
-    m_mVideoValidPES = m_VideoValidPES;
 
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
     {
@@ -1471,9 +1469,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
     if (header->PayloadUnitStart)
     {
       m_WaitHeaderPES = m_p->GetCount();
-      m_mVideoValidPES = m_VideoValidPES;
 
-  #ifdef LOG_DEMUXER_VIDEO_SAMPLES
+#ifdef LOG_DEMUXER_VIDEO_SAMPLES
       //LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
   #endif
     }
@@ -1533,6 +1530,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         m_lastStart -= 9 + start[8];
         m_p->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
         m_WaitHeaderPES = -1;
+        m_VideoValidPES = true;
 		
         m_p->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
         m_p->rtStop = m_p->rtStart + 1;

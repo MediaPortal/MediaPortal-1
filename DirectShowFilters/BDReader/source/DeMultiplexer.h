@@ -169,7 +169,6 @@ private:
   bool m_bAC3Substream;
   bool m_AudioValidPES;
   bool m_VideoValidPES;
-  bool m_mVideoValidPES;
   int  m_WaitHeaderPES;
 
   Packet* m_pCurrentSubtitleBuffer;
