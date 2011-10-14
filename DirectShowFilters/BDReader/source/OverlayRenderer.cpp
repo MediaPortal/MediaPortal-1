@@ -137,7 +137,6 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 
         osdTexture.texture->UnlockRect(0);
         bIsMenuOpen = true;
-        m_iCloseCount = 0;
       }
       else
       {
@@ -167,16 +166,14 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
 }
 
 void COverlayRenderer::CloseOverlay()
-{
-  m_iCloseCount++;
+{  
   OSDTexture nullTexture = {0};
 
   TRACE_PERF("ClearOverlay - clear overlay");
   m_pLib->HandleOSDUpdate(nullTexture);
     
-  if (m_bIsMenuOpen && m_iCloseCount > 1)
-  {
-    m_iCloseCount = 0;
+  if (m_bIsMenuOpen)
+  {    
     m_pLib->HandleMenuStateChange(false);
     m_bIsMenuOpen = false;
   }

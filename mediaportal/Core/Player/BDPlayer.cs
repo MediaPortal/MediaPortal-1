@@ -298,13 +298,11 @@ namespace MediaPortal.Player
       Ended      
     }
 
-    protected enum MenuVisible
+    protected enum MenuState
     {
       None,
       Root,
-      PopUp,
-      RootPending,
-      PopUpPending
+      PopUp
     }
 
     protected enum BDKeys
@@ -501,7 +499,9 @@ namespace MediaPortal.Player
     protected int _currentAudioFormat;
     protected int _currentVideoFormatRate;
     protected static BDPlayerSettings settings;
-    protected MenuVisible menuVisible;
+    protected MenuState menuState;
+    protected int _iMenuOffPendingCount = -1;
+    protected bool _bMenuOn;
     #endregion
 
     #region ctor/dtor
@@ -537,7 +537,7 @@ namespace MediaPortal.Player
         switch (action.wID)
         {
           case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             int x = (int)((action.fAmount1 - PlaneScene.DestRect.X) / ((float)PlaneScene.DestRect.Width / 1920.0f));
             int y = (int)((action.fAmount2 - PlaneScene.DestRect.Y) / ((float)PlaneScene.DestRect.Height / 1080.0f));
@@ -546,42 +546,42 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Mouse select");
             _ireader.Action((int)BDKeys.BD_VK_MOUSE_ACTIVATE);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_LEFT:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Move left");
             _ireader.Action((int)BDKeys.BD_VK_LEFT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_RIGHT:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Move right");
             _ireader.Action((int)BDKeys.BD_VK_RIGHT);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_UP:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Move up");
             _ireader.Action((int)BDKeys.BD_VK_UP);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_MOVE_DOWN:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Move down");
             _ireader.Action((int)BDKeys.BD_VK_DOWN);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_SELECT_ITEM:
-            if (menuVisible != MenuVisible.Root && menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn)
               return false;
             Log.Debug("BDPlayer: Select");
             _ireader.Action((int)BDKeys.BD_VK_ENTER);
@@ -589,24 +589,24 @@ namespace MediaPortal.Player
 
           case GUI.Library.Action.ActionType.ACTION_DVD_MENU:
             if (!Playing || _forceTitle)
-              return false;
+              return true;
             Speed = 1;
             //Log.Debug("BDPlayer: Main menu");
+            menuState = MenuState.Root;
             _ireader.Action((int)BDKeys.BD_VK_ROOT_MENU);
-            menuVisible = MenuVisible.RootPending;
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_BD_POPUP_MENU:
             if (!Playing || _forceTitle)
-              return false;
+              return true;
             Speed = 1;
-            //Log.Debug("BDPlayer: Popup menu toggle");
-            _ireader.Action((int)BDKeys.BD_VK_POPUP);            
-            menuVisible = MenuVisible.PopUpPending;
+            //Log.Debug("BDPlayer: Popup menu toggle");                        
+            menuState = MenuState.PopUp;
+            _ireader.Action((int)BDKeys.BD_VK_POPUP);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREVIOUS_MENU:
-            if (menuVisible != MenuVisible.PopUp)
+            if (!_bMenuOn || menuState != MenuState.PopUp)
               return false;
             Speed = 1;
             //Log.Debug("BDPlayer: Popup menu off");
@@ -614,16 +614,16 @@ namespace MediaPortal.Player
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_NEXT_CHAPTER:
-            if (!Playing)
-              return false;
+            if (!Playing || _currentChapter == 0xffff)
+              return true;
             Speed = 1;
             Log.Debug("BDPlayer: NextChapter, current: {0}", _currentChapter + 1);
             _ireader.SetChapter((uint)_currentChapter + 1);
             return true;
 
           case GUI.Library.Action.ActionType.ACTION_PREV_CHAPTER:
-            if (!Playing)
-              return false;
+            if (!Playing || _currentChapter == 0xffff)
+              return true;
             Speed = 1;
             Log.Debug("BDPlayer: PrevChapter, current: {0}", _currentChapter + 1);
             if (_currentChapter > 0)
@@ -891,7 +891,12 @@ namespace MediaPortal.Player
       {
         _updateTimer = DateTime.Now;
         UpdateCurrentPosition();
-                
+
+        if (_iMenuOffPendingCount > 1)
+          SwitchMenuOff();
+        else if (_iMenuOffPendingCount > 0)
+          _iMenuOffPendingCount++;
+
         if (_videoWin != null)
         {
           if (GUIGraphicsContext.Overlay == false && GUIGraphicsContext.IsFullScreenVideo == false)
@@ -1433,7 +1438,8 @@ namespace MediaPortal.Player
 
     public int OnOSDUpdate(OSDTexture osdTexture)
     {
-      BDOSDRenderer.GetInstance().DrawItem(osdTexture);
+      if (Playing)
+        BDOSDRenderer.GetInstance().DrawItem(osdTexture);
       return 0;
     }
 
@@ -1616,7 +1622,7 @@ namespace MediaPortal.Player
     protected virtual double[] GetChapters(BDTitleInfo titleInfo)
     {
       double[] chapters = new double[titleInfo.chapter_count];
-
+            
       if (chapters.Length > 2) // only two chapters means beginning and end - no real chapters
       {
         for (int i = 0; i < chapters.Length; i++)
@@ -1629,6 +1635,8 @@ namespace MediaPortal.Player
             Log.Debug("BDPlayer: Chapter info #{0}: start time: {1}", titleInfo.chapters[i].idx, String.Format("{0:D2}:{1:D2}:{2:D2}", ts.Hours, ts.Minutes, ts.Seconds));
           }
         }
+        if (chapters[chapters.Length - 1] < 300) // 5 min sanity check
+          chapters = null;
       }
       else
         chapters = null;
@@ -1723,7 +1731,7 @@ namespace MediaPortal.Player
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST:
-            Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);            
+            Log.Debug("BDPlayer: Subtitles available {0}", bdevent.Param);
             break;
 
           case (int)BDEvents.BD_EVENT_PG_TEXTST_STREAM:
@@ -1732,34 +1740,38 @@ namespace MediaPortal.Player
               CurrentSubtitleStream = bdevent.Param;
             break;
 
+          case (int)BDEvents.BD_EVENT_IG_STREAM:
+            Log.Debug("BDPlayer: Interactive graphics available {0}", bdevent.Param);
+            break;
+
           case (int)BDEvents.BD_EVENT_PLAYLIST:
             Log.Debug("BDPlayer: Playlist changed to {0}", bdevent.Param);
-            if (_forceTitle || (_currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU))              
+            if (_forceTitle || (_currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU))
               UpdateChapters();
             break;
 
           case (int)BDEvents.BD_EVENT_PLAYITEM:
-            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);
+            Log.Debug("BDPlayer: Playitem changed to {0}", bdevent.Param);            
             CurrentStreamInfo();
+            if (menuState == MenuState.Root && chapters != null && _currentTitle != BLURAY_TITLE_FIRST_PLAY && _currentTitle != BLURAY_TITLE_TOP_MENU)
+              menuItems = MenuItems.All;
             break;
 
           case (int)BDEvents.BD_EVENT_TITLE:
             Log.Debug("BDPlayer: Title changed to {0}", bdevent.Param);
             _currentTitle = bdevent.Param;
+            _currentChapter = 0xffff;
             switch (bdevent.Param)
             {
-              case (int)BLURAY_TITLE_TOP_MENU:
+              case (int)BLURAY_TITLE_TOP_MENU:                
               case (int)BLURAY_TITLE_FIRST_PLAY:
                 if (!_forceTitle)
                 {
                   menuItems = MenuItems.None;
+                  menuState = MenuState.Root;
                 }
                 break;
               default:
-                if (_forceTitle)
-                  menuItems = MenuItems.Chapter | MenuItems.Audio | MenuItems.Subtitle;
-                else
-                  menuItems = MenuItems.All;
                 break;
             }
             break;
@@ -1774,22 +1786,32 @@ namespace MediaPortal.Player
             if (bdevent.Param == 1)
             {
               Log.Debug("BDPlayer: Toggle menu on");
-              if (menuVisible == MenuVisible.PopUpPending)
-                menuVisible = MenuVisible.PopUp;
+              if (menuState == MenuState.PopUp)
+                menuItems = MenuItems.All;
               else
-                menuVisible = MenuVisible.Root;
+                menuItems = MenuItems.None;
+
               GUIGraphicsContext.DisableTopBar = true;
-              menuItems = menuVisible == MenuVisible.Root ? MenuItems.None : MenuItems.All;
+              _iMenuOffPendingCount = 0;
+              _bMenuOn = true;
             }
-            else
+            else if (_iMenuOffPendingCount == 0)
             {
-              menuVisible = MenuVisible.None;
-              GUIGraphicsContext.DisableTopBar = false;
-              GUIGraphicsContext.TopBarHidden = true;
+              _iMenuOffPendingCount++;
             }
             break;
         }
       }
+    }
+
+    private void SwitchMenuOff()
+    {
+      Log.Debug("BDPlayer: Toggle menu off");
+      _iMenuOffPendingCount = -1;
+      _bMenuOn = false;
+      menuState = MenuState.Root;
+      GUIGraphicsContext.DisableTopBar = false;
+      GUIGraphicsContext.TopBarHidden = true;      
     }
 
     protected void CurrentStreamInfo()

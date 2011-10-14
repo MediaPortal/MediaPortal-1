@@ -48,7 +48,6 @@ private:
   void CloseOverlay();
 
   bool m_bIsMenuOpen;
-  int m_iCloseCount;
 
   uint32_t m_palette[PALETTE_SIZE];
 
