@@ -808,28 +808,6 @@ namespace TvLibrary.Implementations.Analog
     }
 
     /// <summary>
-    /// Sets up the cross bar.
-    /// </summary>
-    /// <param name="vmode">The crossbar video mode.</param>
-    /// <param name="amode">The crossbar audio mode.</param>
-    private void SetupCrossBar(AnalogChannel.VideoInputType vmode, AnalogChannel.AudioInputType amode)
-    {
-      Log.Log.WriteFile("HDPVR: SetupCrossBar:{0} / {1}", vmode, amode);
-      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
-      if (crossBarFilter != null)
-      {
-        if (_videoPinMap.ContainsKey(vmode))
-        {
-          crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[vmode]);
-        }
-        if (_audioPinMap.ContainsKey(amode))
-        {
-          crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[amode]);
-        }
-      }
-    }
-
-    /// <summary>
     /// Method which starts the graph
     /// </summary>
     public override void RunGraph(int subChannel)
@@ -881,22 +859,40 @@ namespace TvLibrary.Implementations.Analog
 
     private void PerformTuning(IChannel channel)
     {
+      Log.Log.WriteFile("HDPVR: Tune");
       AnalogChannel analogChannel = channel as AnalogChannel;
       if (analogChannel == null)
       {
         throw new NullReferenceException();
       }
-      if (_previousChannel != null)
+
+      // Set up the crossbar.
+      IAMCrossbar crossBarFilter = _filterCrossBar as IAMCrossbar;
+
+      // Video
+      if ((_previousChannel == null || _previousChannel.VideoSource != analogChannel.VideoSource) &&
+        _videoPinMap.ContainsKey(analogChannel.VideoSource))
       {
-        if (_previousChannel.VideoSource != analogChannel.VideoSource)
+        Log.Log.WriteFile("HDPVR:   video input -> {0}", analogChannel.VideoSource);
+        crossBarFilter.Route(_videoOutPinIndex, _videoPinMap[analogChannel.VideoSource]);
+      }
+
+      // Audio
+      if (analogChannel.AudioSource == AnalogChannel.AudioInputType.Automatic)
+      {
+        if (_videoPinRelatedAudioMap.ContainsKey(analogChannel.VideoSource))
         {
-          SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
+          Log.Log.WriteFile("HDPVR:   audio input -> (auto)");
+          crossBarFilter.Route(_audioOutPinIndex, _videoPinRelatedAudioMap[analogChannel.VideoSource]);
         }
       }
-      else
+      else if ((_previousChannel == null || _previousChannel.AudioSource != analogChannel.AudioSource) &&
+        _audioPinMap.ContainsKey(analogChannel.AudioSource))
       {
-        SetupCrossBar(analogChannel.VideoSource, analogChannel.AudioSource);
+        Log.Log.WriteFile("HDPVR:   audio input -> {0}", analogChannel.AudioSource);
+        crossBarFilter.Route(_audioOutPinIndex, _audioPinMap[analogChannel.AudioSource]);
       }
+
       _lastSignalUpdate = DateTime.MinValue;
       _tunerLocked = false;
       _previousChannel = analogChannel;
@@ -945,6 +941,7 @@ namespace TvLibrary.Implementations.Analog
         int videoSvhsNr = 0;
         int videoYrYbYNr = 0;
         int videoRgbNr = 0;
+        int videoHdmiNr = 0;
         for (int i = 0; i < inputs; ++i)
         {
           crossBarFilter.get_CrossbarPinInfo(true, i, out relatedPinIndex, out connectorType);
@@ -1072,6 +1069,24 @@ namespace TvLibrary.Implementations.Analog
                 case 3:
                   _videoPinMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, i);
                   _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.YRYBYInput3, relatedPinIndex);
+                  break;
+              }
+              break;
+            case PhysicalConnectorType.Video_SerialDigital:
+              videoHdmiNr++;
+              switch (videoHdmiNr)
+              {
+                case 1:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput1, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput1, relatedPinIndex);
+                  break;
+                case 2:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput2, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput2, relatedPinIndex);
+                  break;
+                case 3:
+                  _videoPinMap.Add(AnalogChannel.VideoInputType.HdmiInput3, i);
+                  _videoPinRelatedAudioMap.Add(AnalogChannel.VideoInputType.HdmiInput3, relatedPinIndex);
                   break;
               }
               break;

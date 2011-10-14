@@ -31,6 +31,7 @@ using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player.Subtitles;
 using MediaPortal.Profile;
+using MediaPortal.Player.PostProcessing;
 
 namespace MediaPortal.Player
 {
@@ -183,6 +184,7 @@ namespace MediaPortal.Player
     protected int _lastFrameCounter;
     protected string videoFilter = "";
     protected string audioFilter = "";
+    protected bool VideoChange = false;
 
     #endregion
 
@@ -1527,6 +1529,23 @@ namespace MediaPortal.Player
           {
             Log.Error("Error stopping graph: {0}", error.Message);
           }
+          
+          try
+          {
+            //Make sure the graph has really stopped
+            FilterState state;
+            hr = _mediaCtrl.GetState(1000, out state);
+            DsError.ThrowExceptionForHR(hr);
+            if (state != FilterState.Stopped)
+            {
+              Log.Error("TSReaderPlayer: graph still running");
+            }
+          }
+          catch (Exception error)
+          {
+            Log.Error("Error checking graph state: {0}", error.Message);
+          }
+
           if (needRebuild)
           {
             // this is a hack for MS Video Decoder and AC3 audio change
@@ -1558,6 +1577,17 @@ namespace MediaPortal.Player
             }
             DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, _fileSource);
             DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
+          }
+
+          //Re-enable PostProcessing
+          if (iChangedMediaTypes != 1 && VideoChange)
+          { 
+            PostProcessingEngine.GetInstance().FreePostProcess();
+            IPostProcessingEngine postengine = PostProcessingEngine.GetInstance(true);
+            if (!postengine.LoadPostProcessing(_graphBuilder))
+            {
+              PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+            }
           }
           /*
           else
@@ -1936,6 +1966,7 @@ namespace MediaPortal.Player
 
     private void ReAddFilters(string selection)
     {
+      VideoChange = false;
       // we have to find first filter connected to tsreader which will be removed
       IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
       IPin pinTo;
@@ -1947,6 +1978,7 @@ namespace MediaPortal.Player
         FilterInfo fInfo;
         pInfo.filter.QueryFilterInfo(out fInfo);
         Log.Debug("TSReaderPlayer: Remove filter - {0}", fInfo.achName);
+        DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
         _graphBuilder.RemoveFilter(pInfo.filter);
         DsUtils.FreePinInfo(pInfo);
         DirectShowUtil.ReleaseComObject(fInfo.pGraph);
@@ -1960,6 +1992,7 @@ namespace MediaPortal.Player
       if (selection == "Video")
       {
         DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
+        VideoChange = true;
       }
       else
       {

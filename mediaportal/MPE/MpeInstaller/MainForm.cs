@@ -88,7 +88,8 @@ namespace MpeInstaller
           PackageClass pc = MpeCore.MpeInstaller.InstalledExtensions.Get(args.PackageID);
           if (pc == null) return;
 
-          pc.UnInstall();
+          UnInstall dlg = new UnInstall();
+          dlg.Execute(pc, args.Silent);
 
           return;
         }
@@ -235,11 +236,29 @@ namespace MpeInstaller
       if (pak == null)
       {
         MessageBox.Show("Package loading error ! Install aborted!");
+        try
+        {
+          if (newPackageLoacation != packageClass.GeneralInfo.Location)
+            File.Delete(newPackageLoacation);
+        }
+        catch { }
         return;
       }
       if (!pak.CheckDependency(false))
       {
-        MessageBox.Show("Dependency check error ! Install aborted!");
+        if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty,
+          MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+        {
+          DependencyForm frm = new DependencyForm(pak);
+          frm.ShowDialog();
+        }
+        pak.ZipProvider.Dispose();
+        try
+        {
+          if (newPackageLoacation != packageClass.GeneralInfo.Location)
+            File.Delete(newPackageLoacation);
+        }
+        catch { }
         return;
       }
 
@@ -259,6 +278,13 @@ namespace MpeInstaller
       }
       pak.StartInstallWizard();
       RefreshLists();
+      pak.ZipProvider.Dispose();
+      try
+      {
+        if (newPackageLoacation != packageClass.GeneralInfo.Location)
+          File.Delete(newPackageLoacation);
+      }
+      catch { }
       this.Show();
     }
 
@@ -395,13 +421,20 @@ namespace MpeInstaller
       if (!pak.CheckDependency(false))
       {
         if (!silent)
-          MessageBox.Show("Dependency check error ! Update aborted!");
+        {
+          if (MessageBox.Show("Dependency check error! Update aborted!\nWould you like to view more details?", string.Empty,
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+          {
+            DependencyForm frm = new DependencyForm(pak);
+            frm.ShowDialog();
+          }
+        }
         return false;
       }
       if (!silent)
         if (
           MessageBox.Show(
-            "This operation update extension " + packageClass.GeneralInfo.Name + " to the version " +
+            "This operation will update the extension " + packageClass.GeneralInfo.Name + " to the version " +
             pak.GeneralInfo.Version + " \n Do you want to continue ? ", "Install extension", MessageBoxButtons.YesNo,
             MessageBoxIcon.Exclamation) != DialogResult.Yes)
           return false;
@@ -478,9 +511,7 @@ namespace MpeInstaller
       if (IsOldFormat(file))
       {
         if (!silent)
-          MessageBox.Show("This is a old format file (mpi). MPInstaller will be used to install it! ");
-        string mpiPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPInstaller.exe");
-        Process.Start(mpiPath, "\"" + file + "\"");
+          MessageBox.Show("This is an old format file (mpi).  The extension will NOT be installed. ");
         return;
       }
       MpeCore.MpeInstaller.Init();
@@ -502,8 +533,8 @@ namespace MpeInstaller
             if (!silent)
               if (
                 MessageBox.Show(
-                  "This extension already have a installed version. \nThis will be uninstalled first. \nDo you want to continue ?  \n" +
-                  "Old extension version: " + installedPak.GeneralInfo.Version + " \n" +
+                  "Another version of this extension is installed\nand needs to be uninstalled first.\nDo you want to continue?\n" +
+                  "Old extension version: " + installedPak.GeneralInfo.Version + "\n" +
                   "New extension version: " + pak.GeneralInfo.Version,
                   "Install extension", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) != DialogResult.Yes)
                 return;
@@ -529,7 +560,14 @@ namespace MpeInstaller
       else
       {
         if (!silent)
-          MessageBox.Show("Installation aborted, some of the dependency not found !");
+        {
+          if (MessageBox.Show("Dependency check error! Install aborted!\nWould you like to view more details?", string.Empty, 
+            MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+          {
+            DependencyForm frm = new DependencyForm(pak);
+            frm.ShowDialog();
+          }
+        }
       }
     }
 

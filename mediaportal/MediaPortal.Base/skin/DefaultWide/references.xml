@@ -40,7 +40,7 @@
     <textcolor>FFdddddd</textcolor>
     <disabledcolor>80ffffff</disabledcolor>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -64,7 +64,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="0">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -88,7 +88,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -196,7 +196,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -227,7 +227,7 @@
     <animation effect="zoom" start="100,100" end="105,105" time="50">focus</animation>
     <animation effect="zoom" start="105,105" end="100,100" time="50">unfocus</animation>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -282,7 +282,7 @@
     <unfocusedAlpha>160</unfocusedAlpha>
     <keepaspectratio>false</keepaspectratio>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -474,13 +474,13 @@
     <font>font10</font>
     <shadedColor>20ffffff</shadedColor>
     <selectedColor>ffffffff</selectedColor>
-    <playedColor>cc006600</playedColor>
-    <textcolor>ff000000</textcolor>
+    <playedColor>ffffcc00</playedColor>
+    <textcolor>ffffffff</textcolor>
     <textcolor2>ffffffff</textcolor2>
     <textcolor3>ffffffff</textcolor3>
     <colordiffuse>ffffffff</colordiffuse>
-    <remoteColor>ff000000</remoteColor>
-    <downloadColor>ff666666</downloadColor>
+    <remoteColor>ffffcc000</remoteColor>
+    <downloadColor>ffffcc000</downloadColor>
     <dimColor>ffffffff</dimColor>
     <scrollStartDelaySec>1</scrollStartDelaySec>
     <suffix>|</suffix>
@@ -494,8 +494,8 @@
     <thumbPosYBig>15</thumbPosYBig>
     <thumbZoom>yes</thumbZoom>
     <enableFocusZoom>yes</enableFocusZoom>
-    <textXOff>2000</textXOff>
-    <textYOff>2000</textYOff>
+    <textXOff>0</textXOff>
+    <textYOff>0</textYOff>
     <showFrame>true</showFrame>
     <frameNoFocus>icon_empty_nofocus.png</frameNoFocus>
     <frameFocus>icon_empty_focus.png</frameFocus>
@@ -636,7 +636,7 @@
     <textcolor>white</textcolor>
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -654,7 +654,7 @@
     <scrollStartDelaySec>8</scrollStartDelaySec>
     <spaceBetweenItems>2</spaceBetweenItems>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>
@@ -679,7 +679,7 @@
     <textcolor>white</textcolor>
     <colordiffuse>ffffffff</colordiffuse>
     <shadowAngle>45</shadowAngle>
-    <shadowDistance>3</shadowDistance>
+    <shadowDistance>1</shadowDistance>
     <shadowColor>ff000000</shadowColor>
   </control>
   <control>

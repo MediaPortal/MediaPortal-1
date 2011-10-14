@@ -138,8 +138,6 @@
 			<action layer="0" condition="WINDOW" conproperty="2" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="25" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="603" command="ACTION" cmdproperty="80" sound="click.wav" />
-			<action layer="0" condition="WINDOW" conproperty="605" command="ACTION" cmdproperty="80" sound="click.wav" />
-			<action layer="0" condition="WINDOW" conproperty="606" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="501" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="601" command="ACTION" cmdproperty="80" sound="click.wav" />
 			<action layer="0" condition="WINDOW" conproperty="759" command="ACTION" cmdproperty="80" sound="click.wav" />

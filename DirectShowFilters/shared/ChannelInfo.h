@@ -47,6 +47,7 @@ public:
   char ServiceName[255];
 	int hasVideo;
 	int hasAudio;
+  int hasCaDescriptor;
 
   CPidTable PidTable;
   int PatVersion;

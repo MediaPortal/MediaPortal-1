@@ -316,7 +316,7 @@
       <posY>100</posY>
       <width>150</width>
       <height>220</height>
-      <texture mask="video_poster_mask.png">#thumb</texture>
+      <texture mask="videothumbmask.png">#thumb</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
@@ -330,7 +330,7 @@
       <posY>100</posY>
       <width>150</width>
       <height>220</height>
-      <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
+      <texture mask="videothumbmask.png">Videothumbframe.png</texture>
       
       
     </control>

@@ -208,7 +208,7 @@ namespace MediaPortal.Playlists
           {
             // This message is sent by both the internal and BASS player
             // In case of gapless/crossfading it is only sent after the last song
-            PlayNext();
+            PlayNext(false);
             if (!g_Player.Playing)
             {
               g_Player.Release();
@@ -372,6 +372,11 @@ namespace MediaPortal.Playlists
 
     public void PlayNext()
     {
+      PlayNext(true);
+    }
+
+    public void PlayNext(bool setFullScreenVideo)
+    {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
         return;
@@ -409,7 +414,7 @@ namespace MediaPortal.Playlists
         iSong = 0;
       }
 
-      if (!Play(iSong))
+      if (!Play(iSong, setFullScreenVideo))
       {
         if (!g_Player.Playing)
         {
@@ -419,6 +424,11 @@ namespace MediaPortal.Playlists
     }
 
     public void PlayPrevious()
+    {
+      PlayPrevious(true);
+    }
+
+    public void PlayPrevious(bool setFullScreenVideo)
     {
       if (_currentPlayList == PlayListType.PLAYLIST_NONE)
       {
@@ -437,7 +447,7 @@ namespace MediaPortal.Playlists
         iSong = playlist.Count - 1;
       }
 
-      if (!Play(iSong))
+      if (!Play(iSong, setFullScreenVideo))
       {
         if (!g_Player.Playing)
         {
@@ -466,6 +476,11 @@ namespace MediaPortal.Playlists
     }
 
     public bool Play(int iSong)
+    {
+      return Play(iSong, true);
+    }
+
+    public bool Play(int iSong, bool setFullScreenVideo)
     {
       // if play returns false PlayNext is called but this does not help against selecting an invalid track
       bool skipmissing = false;
@@ -555,7 +570,7 @@ namespace MediaPortal.Playlists
         {
           item.Played = true;
           skipmissing = false;
-          if (Util.Utils.IsVideo(item.FileName))
+          if (Util.Utils.IsVideo(item.FileName) && setFullScreenVideo)
           {
             if (g_Player.HasVideo)
             {

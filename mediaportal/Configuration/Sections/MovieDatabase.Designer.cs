@@ -25,9 +25,9 @@ namespace MediaPortal.Configuration.Sections
     {
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MovieDatabase));
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+      System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
       this.toolTipMPvdb = new System.Windows.Forms.ToolTip(this.components);
       this.useFoldernameCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.useFanartCheckBox = new MediaPortal.UserInterface.Controls.MPCheckBox();
@@ -79,10 +79,10 @@ namespace MediaPortal.Configuration.Sections
       this.bDatabaseDown = new MediaPortal.UserInterface.Controls.MPButton();
       this.bDatabaseUp = new MediaPortal.UserInterface.Controls.MPButton();
       this.lvDatabase = new MediaPortal.UserInterface.Controls.MPListView();
-      this.chDatabaseDB = new System.Windows.Forms.ColumnHeader();
-      this.chDatabaseTitle = new System.Windows.Forms.ColumnHeader();
-      this.chDatabaseLanguage = new System.Windows.Forms.ColumnHeader();
-      this.chDatabaseLimit = new System.Windows.Forms.ColumnHeader();
+      this.chDatabaseDB = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.chDatabaseTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.chDatabaseLanguage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.chDatabaseLimit = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.groupBoxAvailableGrabbers = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.linkLabel2 = new System.Windows.Forms.LinkLabel();
       this.linkLabel1 = new System.Windows.Forms.LinkLabel();
@@ -133,15 +133,15 @@ namespace MediaPortal.Configuration.Sections
       this.tabPageFiles = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox6 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.listViewFiles = new System.Windows.Forms.ListView();
-      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageActors = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox5 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.textBoxNewActor = new MediaPortal.UserInterface.Controls.MPTextBox();
       this.listViewMovieActors = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
-      this.columnHeader5 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+      this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.listViewAllActors = new MediaPortal.UserInterface.Controls.MPListView();
-      this.chName = new System.Windows.Forms.ColumnHeader();
+      this.chName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageActorDetails = new System.Windows.Forms.TabPage();
       this.mpGroupBox3 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.mpLabel21 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -172,9 +172,9 @@ namespace MediaPortal.Configuration.Sections
       this.buttonUnmapGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.buttonMapGenre = new MediaPortal.UserInterface.Controls.MPButton();
       this.listViewGenres = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.listViewAllGenres = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.tabPageCoverArt = new MediaPortal.UserInterface.Controls.MPTabPage();
       this.groupBox7 = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.labCoverSearchStr = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -290,9 +290,7 @@ namespace MediaPortal.Configuration.Sections
       this.useFoldernameCheckBox.Size = new System.Drawing.Size(258, 17);
       this.useFoldernameCheckBox.TabIndex = 13;
       this.useFoldernameCheckBox.Text = "Folder name for title (each movie in it\'s own folder)";
-      this.toolTipMPvdb.SetToolTip(this.useFoldernameCheckBox, "Use folder name for video file title.\r\nEvery video file must be in it\'s own folde" +
-              "r,\r\notherwise scan results can be unexpected.\r\nVideo with more files (Name CD1, " +
-              "Name CD2..)\r\ninside folder is allowed.");
+      this.toolTipMPvdb.SetToolTip(this.useFoldernameCheckBox, resources.GetString("useFoldernameCheckBox.ToolTip"));
       this.useFoldernameCheckBox.UseVisualStyleBackColor = true;
       this.useFoldernameCheckBox.CheckedChanged += new System.EventHandler(this.useFoldername_CheckedChanged);
       // 
@@ -678,8 +676,8 @@ namespace MediaPortal.Configuration.Sections
       this.sharesListBox.Size = new System.Drawing.Size(461, 169);
       this.sharesListBox.TabIndex = 0;
       this.toolTipMPvdb.SetToolTip(this.sharesListBox, "Local or network folders which will\r\nbe used for search and scan video files.");
-      this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       this.sharesListBox.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.sharesListBox_ItemCheck);
+      this.sharesListBox.SelectedIndexChanged += new System.EventHandler(this.sharesListBox_SelectedIndexChanged);
       // 
       // buttonRemoveFile
       // 
@@ -921,8 +919,8 @@ namespace MediaPortal.Configuration.Sections
             0,
             0});
       this.mpNumericUpDownLimit.Visible = false;
-      this.mpNumericUpDownLimit.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.mpNumericUpDownLimit_KeyPress);
       this.mpNumericUpDownLimit.Leave += new System.EventHandler(this.mpNumericUpDownLimit_Leave);
+      this.mpNumericUpDownLimit.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.mpNumericUpDownLimit_KeyPress);
       // 
       // mpDeleteGrabber
       // 
@@ -1873,14 +1871,14 @@ namespace MediaPortal.Configuration.Sections
       this.dgActorMovies.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
       this.dgActorMovies.BackgroundColor = System.Drawing.SystemColors.Window;
       this.dgActorMovies.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-      dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-      dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
-      dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-      dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-      dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-      dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+      dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+      dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+      dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+      dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+      dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+      dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+      this.dgActorMovies.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
       this.dgActorMovies.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
       this.dgActorMovies.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.Year,
@@ -1900,8 +1898,8 @@ namespace MediaPortal.Configuration.Sections
       // Year
       // 
       this.Year.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-      dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-      this.Year.DefaultCellStyle = dataGridViewCellStyle5;
+      dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+      this.Year.DefaultCellStyle = dataGridViewCellStyle2;
       this.Year.HeaderText = "Year";
       this.Year.MinimumWidth = 60;
       this.Year.Name = "Year";
@@ -1910,8 +1908,8 @@ namespace MediaPortal.Configuration.Sections
       // 
       // Title
       // 
-      dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.White;
-      this.Title.DefaultCellStyle = dataGridViewCellStyle6;
+      dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.White;
+      this.Title.DefaultCellStyle = dataGridViewCellStyle3;
       this.Title.HeaderText = "Title";
       this.Title.MinimumWidth = 220;
       this.Title.Name = "Title";

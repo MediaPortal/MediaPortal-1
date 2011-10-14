@@ -501,7 +501,7 @@ namespace TvDatabase
     }
 
     public static bool IsScheduleRecording(int id, Program prg)
-    {
+    { // this is not about the schedule at all...  is asking whether program is recording right now
       bool isScheduleRecording = false;
       Schedule schedule = Schedule.Retrieve(id);
 
@@ -568,11 +568,11 @@ namespace TvDatabase
     public static void SynchProgramStatesForAll()
     {
       Log.Info("schedule.SynchProgramStatesForAll");
-      IList<Schedule> allSChedules = Schedule.ListAll();
+      IList<Schedule> allSchedules = Schedule.ListAll();
 
-      if (allSChedules != null && allSChedules.Count > 0)
+      if (allSchedules != null && allSchedules.Count > 0)
       {
-        foreach (Schedule schedule in allSChedules)
+        foreach (Schedule schedule in allSchedules)
         {
           Schedule.SynchProgramStates(schedule.idSchedule);
         }
@@ -581,189 +581,114 @@ namespace TvDatabase
 
     public static void ResetProgramStates(int idSchedule)
     {
-      ApplyProgramStates(idSchedule, true);
-    }
-
-    private static void SynchProgramStates(int idSchedule)
-    {
-      ApplyProgramStates(idSchedule, false);
-    }
-
-    private static void ApplyProgramStates(int idSchedule, bool clear)
-    {
-      try
+      Schedule schedule = Schedule.Retrieve(idSchedule);
+      if (schedule == null)
       {
-        Schedule schedule = Schedule.Retrieve(idSchedule);
-        if (schedule == null)
+        return;
+      }
+
+      var progs = GetProgramsForSchedule(schedule);
+      foreach (var prog in progs)
+      {
+        Program.ResetPendingState(prog.IdProgram);
+        prog.Persist();
+      }
+    }
+
+    public static void SynchProgramStates(int idSchedule)
+    {
+      Schedule schedule = Schedule.Retrieve(idSchedule);
+      if (schedule == null)
+      {
+        return;
+      }
+
+      var progs = GetProgramsForSchedule(schedule);
+      foreach (var prog in progs)
+      {
+        if(schedule.IsSerieIsCanceled(schedule.GetSchedStartTimeForProg(prog)))
         {
-          return;
+          // program has been cancelled so reset any pending recording flags
+          Program.ResetPendingState(prog.IdProgram);
+          prog.Persist();
         }
-
-        // update the needed program entries (states) based on schedule type-         
-        switch (schedule.scheduleType)
+        else
         {
-          case (int)ScheduleRecordingType.Once:
-            Program prgOnce = Program.RetrieveOnce(schedule.programName, schedule.startTime, schedule.endTime,
-                                                   schedule.ReferencedChannel().IdChannel);
-
-            //if the program is in the future, then set it as being pending.
-            if (prgOnce != null && !schedule.IsSerieIsCanceled(prgOnce.StartTime))
-            {
-              prgOnce.IsRecordingOncePending = !clear;
-              prgOnce.IsRecordingSeriesPending = false;
-              prgOnce.Persist();
-            }
-            break;
-
-          case (int)ScheduleRecordingType.Daily:
-            List<Program> prgsDaily =
-              (List<Program>)
-              Program.RetrieveDaily(schedule.startTime, schedule.endTime,
-                                    schedule.ReferencedChannel().IdChannel);
-
-            if (prgsDaily != null && prgsDaily.Count > 0)
-            {
-              foreach (Program prgDaily in prgsDaily)
-              {
-                if (!schedule.IsSerieIsCanceled(prgDaily.StartTime))
-                {
-                  SetAdvScheduleState(schedule, clear, prgDaily);
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-            List<Program> prgsEveryTimeOnEveryChannel =
-              (List<Program>)
-              Program.RetrieveEveryTimeOnEveryChannel(schedule.programName);
-
-            if (prgsEveryTimeOnEveryChannel != null && prgsEveryTimeOnEveryChannel.Count > 0)
-            {
-              foreach (Program prgEveryTimeOnEveryChannel in prgsEveryTimeOnEveryChannel)
-              {
-                if (
-                  !schedule.IsSerieIsCanceled(prgEveryTimeOnEveryChannel.StartTime, prgEveryTimeOnEveryChannel.IdChannel))
-                {
-                  SetAdvScheduleState(schedule, clear, prgEveryTimeOnEveryChannel);
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-            List<Program> prgsEveryTimeOnThisChannel =
-              (List<Program>)
-              Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.ReferencedChannel().IdChannel);
-
-            if (prgsEveryTimeOnThisChannel != null && prgsEveryTimeOnThisChannel.Count > 0)
-            {
-              foreach (Program prgEveryTimeOnThisChannel in prgsEveryTimeOnThisChannel)
-              {
-                if (!schedule.IsSerieIsCanceled(prgEveryTimeOnThisChannel.StartTime))
-                {
-                  SetAdvScheduleState(schedule, clear, prgEveryTimeOnThisChannel);
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-            List<Program> prgsWeeklyEveryTimeOnThisChannel =
-              (List<Program>)
-              Program.RetrieveWeeklyEveryTimeOnThisChannel(schedule.startTime, schedule.endTime, schedule.programName,
-                                                           schedule.ReferencedChannel().IdChannel);
-
-            if (prgsWeeklyEveryTimeOnThisChannel != null && prgsWeeklyEveryTimeOnThisChannel.Count > 0)
-            {
-              foreach (Program prgWeeklyEveryTimeOnThisChannel in prgsWeeklyEveryTimeOnThisChannel)
-              {
-                if (!schedule.IsSerieIsCanceled(prgWeeklyEveryTimeOnThisChannel.StartTime))
-                {
-                  prgWeeklyEveryTimeOnThisChannel.IsRecordingOncePending = false;
-                  prgWeeklyEveryTimeOnThisChannel.IsRecordingSeriesPending = !clear;
-                  prgWeeklyEveryTimeOnThisChannel.Persist();
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.Weekends:
-            List<Program> prgsWeekends =
-              (List<Program>)
-              Program.RetrieveWeekends(schedule.startTime, schedule.endTime,
-                                       schedule.ReferencedChannel().IdChannel);
-
-            if (prgsWeekends != null && prgsWeekends.Count > 0)
-            {
-              foreach (Program prgWeekends in prgsWeekends)
-              {
-                if (!schedule.IsSerieIsCanceled(prgWeekends.StartTime))
-                {
-                  SetAdvScheduleState(schedule, clear, prgWeekends);
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.Weekly:
-            List<Program> prgsWeekly =
-              (List<Program>)
-              Program.RetrieveWeekly(schedule.startTime, schedule.endTime,
-                                     schedule.ReferencedChannel().IdChannel);
-
-            if (prgsWeekly != null && prgsWeekly.Count > 0)
-            {
-              foreach (Program prgWeekly in prgsWeekly)
-              {
-                if (!schedule.IsSerieIsCanceled(prgWeekly.StartTime))
-                {
-                  SetAdvScheduleState(schedule, clear, prgWeekly);
-                }
-              }
-            }
-            break;
-
-          case (int)ScheduleRecordingType.WorkingDays:
-            List<Program> prgsWorkingDays =
-              (List<Program>)
-              Program.RetrieveWorkingDays(schedule.startTime, schedule.endTime,
-                                          schedule.ReferencedChannel().IdChannel);
-
-            if (prgsWorkingDays != null && prgsWorkingDays.Count > 0)
-            {
-              foreach (Program prgWorkingDays in prgsWorkingDays)
-              {
-                if (!schedule.IsSerieIsCanceled(prgWorkingDays.StartTime))
-                {
-                  SetAdvScheduleState(schedule, clear, prgWorkingDays);
-                }
-              }
-            }
-            break;
+          bool isPartialRecording = Schedule.IsPartialRecording(schedule, prog);
+          if (schedule.ScheduleType == (int)ScheduleRecordingType.Once)
+          {
+            // is one off recording that is still active so set pending flags accordingly
+            prog.IsRecordingOncePending = true;
+            prog.IsRecordingSeriesPending = false;
+            prog.IsPartialRecordingSeriesPending = false;
+            prog.Persist();
+          }
+          else if (isPartialRecording)
+          {
+            // is part of a series recording but is a time based schedule and program times do not
+            // match up with schedule times so flag as partial recording
+            prog.IsRecordingOncePending = false;
+            prog.IsRecordingSeriesPending = false;
+            prog.IsPartialRecordingSeriesPending = true;
+            prog.Persist();
+          }
+          else
+          {
+            // is part of a series recording but is not a partial recording
+            prog.IsRecordingOncePending = false;
+            prog.IsRecordingSeriesPending = true;
+            prog.IsPartialRecordingSeriesPending = false;
+            prog.Persist();
+          }
         }
       }
-      catch (Exception e)
-      {
-        Log.Write(e);
-      }
     }
 
-    private static void SetAdvScheduleState(Schedule schedule, bool clear, Program prg)
+    public static IList<Program> GetProgramsForSchedule(Schedule schedule)
     {
-      prg.IsRecordingOncePending = false;
-
-      bool isPartialRec = IsPartialRecording(schedule, prg);
-
-      if (isPartialRec)
+      IList<Program> progs = null;
+      switch (schedule.scheduleType)
       {
-        prg.IsPartialRecordingSeriesPending = !clear;
-      }
-      {
-        prg.IsRecordingSeriesPending = !clear;
+        case (int)ScheduleRecordingType.Once:
+          var prgOnce = Program.RetrieveOnce(schedule.programName, schedule.startTime, schedule.endTime,
+                                                 schedule.ReferencedChannel().IdChannel);
+          progs = new List<Program>();
+          if (prgOnce != null)
+          {
+            progs.Add(prgOnce);
+          }
+          break;
+
+        case (int)ScheduleRecordingType.Daily:
+          progs = Program.RetrieveDaily(schedule.startTime, schedule.endTime,schedule.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
+          progs = Program.RetrieveEveryTimeOnEveryChannel(schedule.programName);
+          break;
+
+        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
+          progs = Program.RetrieveEveryTimeOnThisChannel(schedule.programName, schedule.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
+          progs = Program.RetrieveWeeklyEveryTimeOnThisChannel(schedule.startTime, schedule.endTime, schedule.programName, schedule.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.Weekends:
+          progs = Program.RetrieveWeekends(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.Weekly:
+          progs = Program.RetrieveWeekly(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          break;
+
+        case (int)ScheduleRecordingType.WorkingDays:
+          progs = Program.RetrieveWorkingDays(schedule.startTime, schedule.endTime, schedule.ReferencedChannel().IdChannel);
+          break;
       }
 
-      prg.Persist();
+      return progs;
     }
 
     public static bool IsPartialRecording(Schedule schedule, Program prg)
@@ -1125,7 +1050,7 @@ namespace TvDatabase
         case ScheduleRecordingType.EveryTimeOnEveryChannel:
           if (program.Title == ProgramName)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime, program.IdChannel))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -1135,7 +1060,7 @@ namespace TvDatabase
         case ScheduleRecordingType.EveryTimeOnThisChannel:
           if (program.Title == ProgramName && program.IdChannel == IdChannel)
           {
-            if (filterCanceledRecordings && IsSerieIsCanceled(program.StartTime, program.IdChannel))
+            if (filterCanceledRecordings && IsSerieIsCanceled(GetSchedStartTimeForProg(program), program.IdChannel))
             {
               return false;
             }
@@ -1269,9 +1194,34 @@ namespace TvDatabase
 
       if (isProgramWithinStartEndTimes)
       {
-        isSerieNotCanceled = !(filterCanceledRecordings && IsSerieIsCanceled(program.StartTime));
+        isSerieNotCanceled = !(filterCanceledRecordings && IsSerieIsCanceled(scheduleStartTime));
       }
       return isSerieNotCanceled;
+    }
+
+    /// <summary>
+    /// This takes a program as an argument and overlaps it with the schedule start time
+    /// The date element of the start time of a schedule is the date of the first episode
+    /// but for cancelling episodes of a time based schedule the cancellation row in the database 
+    /// needs the start time of the episode rather than a program.
+    /// eg. if a schedule is setup 20:00 until 21:00 every day starting on 1st April and on 3rd April the 
+    /// there is no program for this period and user selects a program at 20:30 to 21:30 and asks to 
+    /// cancel the epsiode, we need to return 3rd April 20:00 
+    /// 
+    /// If program does not fall within schedule (eg. you call with a program that starts 21:30)
+    /// this will return that start time of the program
+    /// </summary>
+    /// <param name="prog">The program to check</param>
+    /// <returns>The start time of the episode within a schedule that overlaps with program</returns>
+    public DateTime GetSchedStartTimeForProg(Program prog)
+    {
+      DateTime dtSchedStart;
+      DateTime dtSchedEnd;
+      if (GetAdjustedScheduleTimeRange(prog, out dtSchedStart, out dtSchedEnd))
+      {
+        return dtSchedStart;
+      }
+      return prog.StartTime;
     }
 
     /// <summary>

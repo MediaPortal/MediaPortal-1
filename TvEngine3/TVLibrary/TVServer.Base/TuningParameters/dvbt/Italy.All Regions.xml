@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- List updated on 5 June 2011 from  -->
 <ArrayOfDVBTTuning xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<!-- Band III-VHF (eur.) -->
   <DVBTTuning>
     <Frequency>177500</Frequency>
     <BandWidth>7</BandWidth>
@@ -11,32 +13,12 @@
     <Offset>125</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>186000</Frequency>
-    <BandWidth>7</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>194500</Frequency>
-    <BandWidth>7</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
     <Frequency>191500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>191625</Frequency>
-    <BandWidth>7</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
     <Frequency>198500</Frequency>
-    <BandWidth>7</BandWidth>
-    <Offset>125</Offset>
-  </DVBTTuning>
-  <DVBTTuning>
-    <Frequency>203500</Frequency>
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
@@ -60,6 +42,7 @@
     <BandWidth>7</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+<!-- Band IV-VHF -->
   <DVBTTuning>
     <Frequency>474000</Frequency>
     <BandWidth>8</BandWidth>
@@ -145,6 +128,7 @@
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>
+<!-- Band V-VHF -->
   <DVBTTuning>
     <Frequency>610000</Frequency>
     <BandWidth>8</BandWidth>
@@ -166,7 +150,7 @@
     <Offset>125</Offset>
   </DVBTTuning>
   <DVBTTuning>
-    <Frequency>643000</Frequency>
+    <Frequency>642000</Frequency>
     <BandWidth>8</BandWidth>
     <Offset>125</Offset>
   </DVBTTuning>

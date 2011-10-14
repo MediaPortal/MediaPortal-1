@@ -75,6 +75,7 @@ namespace MediaPortal.Player.Subtitles
     protected string subPaths;
     protected int adjustPosY;
     protected bool autoShow;
+    protected bool selectionOff;
 
     public void LoadSettings()
     {
@@ -100,6 +101,7 @@ namespace MediaPortal.Player.Subtitles
         subPaths = xmlreader.GetValueAsString("subtitles", "paths", @".\");
         adjustPosY = xmlreader.GetValueAsInt("subtitles", "adjustY", 0);
         autoShow = xmlreader.GetValueAsBool("subtitles", "enabled", true);
+        selectionOff = xmlreader.GetValueAsBool("subtitles", "selectionoff", true);
         LoadAdvancedSettings(xmlreader);
       }
     }

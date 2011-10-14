@@ -150,6 +150,7 @@ namespace MediaPortal.Music.Database
         _supportedExtensions = xmlreader.GetValueAsString("music", "extensions", Util.Utils.AudioExtensionsDefault);
         _stripArtistPrefixes = xmlreader.GetValueAsBool("musicfiles", "stripartistprefixes", false);
         _dateAddedValue = xmlreader.GetValueAsInt("musicfiles", "dateadded", 0);
+        _updateSinceLastImport = xmlreader.GetValueAsBool("musicfiles", "updateSinceLastImport", false);
 
         try
         {

@@ -33,8 +33,8 @@ namespace MpeCore.Classes.VersionProvider
 
     public bool Validate(DependencyItem componentItem)
     {
-      if (componentItem.MinVersion.CompareTo(Version(componentItem.Id)) >= 0 &&
-          componentItem.MaxVersion.CompareTo(Version(componentItem.Id)) <= 0)
+      if (componentItem.MinVersion.CompareTo(Version(componentItem.Id)) <= 0 &&
+          componentItem.MaxVersion.CompareTo(Version(componentItem.Id)) >= 0)
         return true;
       return false;
     }

@@ -36,15 +36,6 @@ namespace MediaPortal.Configuration.Sections
   {
     public class ShareData
     {
-      /*public enum Views
-      {
-        List,
-        Icons,
-        BigIcons,
-        Filmstrip,
-        CoverFlow
-      }*/
-
       public string Name;
       public string Folder;
       public string PinCode;
@@ -321,7 +312,7 @@ namespace MediaPortal.Configuration.Sections
         shareData.Port = editShare.Port;
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
-        shareData.DefaultLayout = (Layout)editShare.View;
+        shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
 
         AddShare(shareData, currentlyCheckedItem == null);
       }
@@ -372,7 +363,7 @@ namespace MediaPortal.Configuration.Sections
           editShare.LoginName = shareData.LoginName;
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
-          editShare.View = (int)shareData.DefaultLayout;
+          editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -389,7 +380,7 @@ namespace MediaPortal.Configuration.Sections
             shareData.Port = editShare.Port;
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
-            shareData.DefaultLayout = (Layout)editShare.View;
+            shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
 
             selectedItem.Tag = shareData;
 
@@ -758,6 +749,32 @@ namespace MediaPortal.Configuration.Sections
         xmlwriter.SetValueAsBool(section, "rememberlastfolder", RememberLastFolder);
         xmlwriter.SetValueAsBool(section, "AddOpticalDiskDrives", AddOpticalDiskDrives);
         xmlwriter.SetValueAsBool(section, "SwitchRemovableDrives", SwitchRemovableDrives);
+      }
+    }
+
+    public Layout ProperLayoutFromDefault(int defaultView)
+    {
+      switch (defaultView)
+      {
+        case 1: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.SmallIcons;
+        case 2: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.LargeIcons;
+        case 3: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.AlbumView;
+        case 4: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.Filmstrip;
+        case 5: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.CoverFlow;
+        default: return MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
+      }
+    }
+
+    public int ProperDefaultFromLayout(Layout layout)
+    {
+      switch (layout)
+      {
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.SmallIcons: return 1;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.LargeIcons: return 2;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.AlbumView: return 3;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.Filmstrip: return 4;
+        case MediaPortal.GUI.Library.GUIFacadeControl.Layout.CoverFlow: return 5;
+        default: return 0;
       }
     }
   }

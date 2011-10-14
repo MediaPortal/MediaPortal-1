@@ -802,7 +802,11 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   if (m_pids.PcrPid==0) return;
 
   if (header.Pid==0) return;
-  if (header.TScrambling) return;
+    
+  // 'TScrambling' check commented out - headers are never scrambled, 
+  // so it's safe to detect scrambled payload at PES level (in FillVideo()/FillAudio())
+  
+  //if (header.TScrambling) return;
 
   //skip any packets with errors in it
   if (header.TransportError) return;
@@ -896,7 +900,10 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
     {
       CBuffer *Cbuf=*m_t_vecAudioBuffers.begin();
       byte *p = Cbuf->Data() ;
-      if ((p[0]==0) && (p[1]==0) && (p[2]==1))
+      if ((p[0]==0) && (p[1]==0) && (p[2]==1) //Valid start code
+          && ((p[3] & 0x80)!=0)     //Valid stream ID
+          && ((p[6] & 0xC0)==0x80)  //Valid marker bits
+          && ((p[6] & 0x20)!=0x20)) //Payload not scrambled
       {
         //get pts/dts from pes header
         CPcr pts;
@@ -1074,9 +1081,6 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 {
   int headerlen = header.PayLoadStart;
 
-  CPcr pts;
-  CPcr dts;
-
   if(!m_p)
   {
     m_p.Attach(new Packet());
@@ -1084,7 +1088,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     m_p->rtStart = Packet::INVALID_TIME;
     m_lastStart = 0;
   }
-  
+
   if (header.PayloadUnitStart)
   {
     m_WaitHeaderPES = m_p->GetCount();
@@ -1093,7 +1097,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
   }
   
   CAutoPtr<Packet> p(new Packet());
-  
+
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
@@ -1114,15 +1118,16 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     {
       LogDebug("demux:vid Incomplete PES ( Avail %d )", AvailablePESlength);    
       return;
-    }  
-    
-    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
+    }
+
+    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1) //Invalid start code
+        || ((start[3] & 0x80)==0)) //Invalid stream ID
     {
       LogDebug("Pes 0-0-1 fail");
       m_VideoValidPES=false;
       m_p->rtStart = Packet::INVALID_TIME;
       m_WaitHeaderPES = -1;
-    }   
+    }
     else
     {
       if (AvailablePESlength < 9+start[8])
@@ -1132,9 +1137,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       }
       else
       { // full PES header is available.
+      	if ((start[6] & 0xC0)!=0x80   //Invalid marker bits
+          || (start[6] & 0x20)==0x20) //Payload scrambled
+        {
+          return;
+      	}
         CPcr pts;
         CPcr dts;
-      
+
         m_VideoValidPES=true ;
         if (CPcr::DecodeFromPesHeader(start,0,pts,dts))
         {
@@ -1225,7 +1235,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 //          LogDebug("Output NALU Type: %d (%d)", p->GetAt(4)&0x1f,p->GetCount());
           //CH246IFrameScanner iFrameScanner;
           //iFrameScanner.ProcessNALU(p);
-    
+
           while(m_pl.GetCount())
           {
             CAutoPtr<Packet> p2 = m_pl.RemoveHead();
@@ -1234,7 +1244,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 //          LogDebug("Output NALU Type: %d (%d)", p2->GetAt(4)&0x1f,p2->GetCount());
             p->Append(*p2);
           }
-        
+
           CPcr timestamp;
           if(p->rtStart != Packet::INVALID_TIME )
           {
@@ -1242,12 +1252,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             timestamp.IsValid=true;
           }
 //          LogDebug("frame len %d decoded PTS %f p timestamp %f", p->GetCount(), pts.ToClock(), timestamp.ToClock());
-    
+
           int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
           int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
 
-          bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
-    
+          bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), false);
+
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
           {
             CRefTime Ref;
@@ -1275,7 +1285,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               }
               m_LastValidFrameCount++;
             }
-    
+
             pCurrentVideoBuffer->SetFrameType(Gop? 'I':'?');
             pCurrentVideoBuffer->SetFrameCount(0);
             pCurrentVideoBuffer->SetVideoServiceType(m_pids.videoPids[0].VideoServiceType);
@@ -1303,11 +1313,11 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
                  }
               }
               m_bVideoAtEof = false;
-    
+
             // ownership is transfered to vector
             m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
           }
-    
+
           if (lastVidResX!=m_mpegPesParser->basicVideoInfo.width || lastVidResY!=m_mpegPesParser->basicVideoInfo.height)
           {
             LogDebug("DeMultiplexer: %x video format changed: res=%dx%d aspectRatio=%d:%d fps=%d isInterlaced=%d",header.Pid,m_mpegPesParser->basicVideoInfo.width,m_mpegPesParser->basicVideoInfo.height,m_mpegPesParser->basicVideoInfo.arx,m_mpegPesParser->basicVideoInfo.ary,m_mpegPesParser->basicVideoInfo.fps,m_mpegPesParser->basicVideoInfo.isInterlaced);
@@ -1330,7 +1340,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               m_mpegParserTriggerFormatChange=false;
             }
           }
-        }  
+        }
         else
           m_bSetVideoDiscontinuity = !m_mVideoValidPES;
         m_pl.RemoveAll();
@@ -1343,14 +1353,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
         p2->bDiscontinuity = FALSE;
         p2->rtStart = Packet::INVALID_TIME;
       }
-      
+
 //      LogDebug(".......> Store NALU length = %d (%d)", (*(p2->GetData()+4) & 0x1F), p2->GetCount()) ;
       m_pl.AddTail(p2);
 
       start = next;
       m_lastStart = start - m_p->GetData() + 1;
     }
-      
+
     if(start > m_p->GetData())
     {
       m_lastStart -= (start - m_p->GetData());
@@ -1362,17 +1372,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
 
 void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
-{                                                
+{
   static const double frame_rate[16]={1.0/25.0,       1001.0/24000.0, 1.0/24.0, 1.0/25.0,
                                     1001.0/30000.0, 1.0/30.0,       1.0/50.0, 1001.0/60000.0,
                                     1.0/60.0,       1.0/25.0,       1.0/25.0, 1.0/25.0,
                                     1.0/25.0,       1.0/25.0,       1.0/25.0, 1.0/25.0 };
   static const char tc[]="XIPBXXXX";
-    
-  int headerlen = header.PayLoadStart;
 
-  CPcr pts;
-  CPcr dts;
+  int headerlen = header.PayLoadStart;
 
   if(!m_p)
   {
@@ -1382,18 +1389,18 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     m_lastStart = 0;
     m_bInBlock=false;
   }
-  
+
   if (header.PayloadUnitStart)
   {
     m_WaitHeaderPES = m_p->GetCount();
     m_mVideoValidPES = m_VideoValidPES;
 //    LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
   }
-  
+
   CAutoPtr<Packet> p(new Packet());
   
   if (headerlen < 188)
-  {            
+  {
     int dataLen = 188-headerlen;
     p->SetCount(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
@@ -1407,20 +1414,21 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
   {
     int AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES;
     BYTE* start = m_p->GetData() + m_WaitHeaderPES;
-    
+
     if (AvailablePESlength < 9)
     {
       LogDebug("demux:vid Incomplete PES ( Avail %d )", AvailablePESlength);    
       return;
-    }  
-    
-    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1))
+    }
+
+    if ((start[0]!=0) || (start[1]!=0) || (start[2]!=1) //Invalid start code
+        || ((start[3] & 0x80)==0)) //Invalid stream ID
     {
       LogDebug("Pes 0-0-1 fail");
       m_VideoValidPES=false;
       m_p->rtStart = Packet::INVALID_TIME;
       m_WaitHeaderPES = -1;
-    }   
+    }
     else
     {
       if (AvailablePESlength < 9+start[8])
@@ -1430,9 +1438,14 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       }
       else
       { // full PES header is available.
+      	if ((start[6] & 0xC0)!=0x80   //Invalid marker bits
+          || (start[6] & 0x20)==0x20) //Payload scrambled
+        {
+          return;
+      	}
         CPcr pts;
         CPcr dts;
-      
+
 //      m_VideoValidPES=true ;
         if (CPcr::DecodeFromPesHeader(start,0,pts,dts))
         {
@@ -1462,7 +1475,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
       }
     }
   }
-  
+
   if (m_p->GetCount())
   {
     BYTE* start = m_p->GetData();
@@ -1507,7 +1520,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
         CAutoPtr<Packet> p2(new Packet());		
         p2->SetCount(size);
         memcpy (p2->GetData(), m_p->GetData(), size);
-        
+
         if (*(DWORD*)p2->GetData() == 0x00010000)     // picture_start_code ?
         {
           BYTE *p = p2->GetData() ; 
@@ -1517,18 +1530,18 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           // TODO: try to drop non I-Frames when > 2.0x playback speed
           //if (frame_type != 'I')
 
-			//double rate = 0.0;
+            //double rate = 0.0;
             //m_filter.GetVideoPin()->GetRate(&rate);
 
           m_pl.AddTail(p2);
 //          LogDebug("DeMultiplexer::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
-        
+
           if (m_VideoValidPES)
           {
             CAutoPtr<Packet> p(new Packet());
             p = m_pl.RemoveHead();
 //            LogDebug("Output Type: %x %d", *(DWORD*)p->GetData(),p->GetCount());
-    
+
             while(m_pl.GetCount())
             {
               CAutoPtr<Packet> p2 = m_pl.RemoveHead();
@@ -1541,9 +1554,9 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             int lastVidResX=m_mpegPesParser->basicVideoInfo.width;
             int lastVidResY=m_mpegPesParser->basicVideoInfo.height;
 
-            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(),(m_pids.videoPids[0].VideoServiceType==SERVICE_TYPE_VIDEO_MPEG2));
+            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), p->GetCount(), true);
             if (Gop) m_LastValidFrameCount=-1;
-    
+
             if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
             {
               CRefTime Ref;
@@ -1591,7 +1604,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                 m_bSetVideoDiscontinuity=false;
                 pCurrentVideoBuffer->SetDiscontinuity();
               }
-              
+
               REFERENCE_TIME MediaTime;
               m_filter.GetMediaPosition(&MediaTime);
               if (m_filter.m_bStreamCompensated && m_bVideoAtEof && !m_filter.m_bRenderingClockTooFast)
@@ -1611,7 +1624,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                  }
               }
               m_bVideoAtEof = false ;
-    
+
               // ownership is transfered to vector
               m_vecVideoBuffers.push_back(pCurrentVideoBuffer);
             }
@@ -1639,7 +1652,11 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
                 m_mpegParserTriggerFormatChange=false;
               }
             }
-          }  
+          }
+          else
+          {
+            m_bSetVideoDiscontinuity = true;
+          }
           m_VideoValidPES=true ;                                    // We've just completed a frame, set flag until problem clears it 
           m_pl.RemoveAll() ;                                        
         }
@@ -1648,7 +1665,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           m_curFrameRate = frame_rate[*(p2->GetData()+7) & 0x0F] ;  // Extract frame rate in seconds.
    	      m_pl.AddTail(p2);                                         // Add sequence header.
    	    }
-      
+
         start = next;
         m_lastStart = start - m_p->GetData() + 1;
       }
@@ -1666,6 +1683,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 /// if so store it in the subtitle buffers
 void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 {
+  if (header.TScrambling) return;
   if (m_filter.GetSubtitlePin()->IsConnected()==false) return;
   if (m_iSubtitleStream<0 || m_iSubtitleStream>=m_subtitleStreams.size()) return;
 
@@ -1717,6 +1735,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 
 void CDeMultiplexer::FillTeletext(CTsHeader& header, byte* tsPacket)
 {
+  if (header.TScrambling) return;
   if (m_pids.TeletextPid==0) return;
   if (header.Pid!=m_pids.TeletextPid) return;
   if ( header.AdaptionFieldOnly() ) return;
@@ -1757,12 +1776,12 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
   if (info.PatVersion != m_iPatVersion)
   {
     LogDebug("OnNewChannel pat version:%d->%d",m_iPatVersion, info.PatVersion);
-	  if (m_filter.m_bLiveTv && ((m_ReqPatVersion & 0x0F) != (info.PatVersion & 0x0F)) && (m_iPatVersion!=-1))
-	  {
-		  LogDebug("Unexpected LiveTV PAT change due to provider, update m_ReqPatVersion to new PAT version : %d",m_ReqPatVersion);
-		  // Unexpected LiveTV PAT change due to provider.
-		  m_ReqPatVersion = info.PatVersion ;
-	  }
+    if (m_filter.m_bLiveTv && ((m_ReqPatVersion & 0x0F) != (info.PatVersion & 0x0F)) && (m_iPatVersion!=-1))
+    {
+      LogDebug("Unexpected LiveTV PAT change due to provider, update m_ReqPatVersion to new PAT version : %d",m_ReqPatVersion);
+      // Unexpected LiveTV PAT change due to provider.
+      m_ReqPatVersion = info.PatVersion ;
+    }
     m_iPatVersion=info.PatVersion;
     m_bSetAudioDiscontinuity=true;
     m_bSetVideoDiscontinuity=true;
@@ -1892,16 +1911,16 @@ void CDeMultiplexer::OnNewChannel(CChannelInfo& info)
     {
       if (m_audioStreams.size() == 1)
       {
-	      if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
-          {
-		        m_AudioStreamType = newAudioStreamType ;
-            // notify the ITSReaderCallback. MP will then rebuild the graph
-            LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
-            m_filter.OnMediaTypeChanged(1);
-            SetMediaChanging(true); 
-		      }
-	      }
+        if ((m_AudioStreamType == SERVICE_TYPE_AUDIO_UNKNOWN) || (m_AudioStreamType != newAudioStreamType))
+        {
+          m_AudioStreamType = newAudioStreamType ;
+          // notify the ITSReaderCallback. MP will then rebuild the graph
+          LogDebug("DeMultiplexer: Audio media types changed. Trigger OnMediaTypeChanged()...");
+          m_filter.OnMediaTypeChanged(1);
+          SetMediaChanging(true); 
+        }
       }
+    }
     #else
     if (audioChanged && videoChanged)
       m_filter.OnMediaTypeChanged(3);

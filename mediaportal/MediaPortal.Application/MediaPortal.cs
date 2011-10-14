@@ -161,6 +161,7 @@ public class MediaPortalApp : D3DApp, IRender
   private static bool _avoidVersionChecking;
 #endif
   private bool _resetOnResize;
+  private string _OutdatedSkinName = null;
 
   #endregion
 
@@ -1469,7 +1470,6 @@ public class MediaPortalApp : D3DApp, IRender
     _mouseTimeOutTimer = DateTime.Now;
     UpdateSplashScreenMessage(GUILocalizeStrings.Get(64)); // Starting plugins...
     PluginManager.Load();
-    CheckForIncompatibelPlugins();
     PluginManager.Start();
     tMouseClickTimer = new Timer(SystemInformation.DoubleClickTime);
     tMouseClickTimer.AutoReset = false;
@@ -1525,7 +1525,31 @@ public class MediaPortalApp : D3DApp, IRender
     {
       Log.Error("MediaPortalApp: Error setting date and time properties - {0}", ex.Message);
     }
+    if (_OutdatedSkinName != null || PluginManager.IncompatiblePluginAssemblies.Count > 0 || PluginManager.IncompatiblePlugins.Count > 0)
+    {
+      GUIWindowManager.SendThreadCallback(ShowStartupWarningDialogs, 0, 0, null);
+    }
     AutoPlay.StartListening();
+  }
+
+  private int ShowStartupWarningDialogs(int param1, int param2, object data)
+  {
+    // If skin is outdated it may not have a skin file for this dialog but user may choose to use it anyway
+    // So show incompatible plugins dialog first (possibly using default skin)
+    if (PluginManager.IncompatiblePluginAssemblies.Count > 0 || PluginManager.IncompatiblePlugins.Count > 0)
+    {
+      GUIDialogIncompatiblePlugins dlg = (GUIDialogIncompatiblePlugins)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_INCOMPATIBLE_PLUGINS);
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+    }
+
+    if (_OutdatedSkinName != null)
+    {
+      GUIDialogOldSkin dlg = (GUIDialogOldSkin)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_OLD_SKIN);
+      dlg.UserSkin = _OutdatedSkinName;
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+    }
+
+    return 0;
   }
 
   /// <summary>
@@ -2381,7 +2405,7 @@ public class MediaPortalApp : D3DApp, IRender
             if (GUIGraphicsContext.Vmr9Active)
             {
               GUIGraphicsContext.ShowBackground = false;
-              GUIGraphicsContext.Overlay = false;
+              //GUIGraphicsContext.Overlay = false;
             }
             else
             {
@@ -2398,7 +2422,7 @@ public class MediaPortalApp : D3DApp, IRender
           {
             Log.Info("Main: Using GUI as background");
             GUIGraphicsContext.ShowBackground = true;
-            GUIGraphicsContext.Overlay = true;
+            //GUIGraphicsContext.Overlay = true;
           }
           return;
 
@@ -3798,39 +3822,42 @@ public class MediaPortalApp : D3DApp, IRender
 
   protected void CheckSkinVersion()
   {
-    using (OldSkinForm form = new OldSkinForm())
+    using (Settings xmlreader = new MPSettings())
     {
-      if (form.CheckSkinVersion(m_strSkin, SkinVersion))
+      bool ignoreErrors = false;
+      ignoreErrors = xmlreader.GetValueAsBool("general", "dontshowskinversion", false);
+      if (ignoreErrors)
       {
         return;
       }
-#if !DEBUG
-      if (splashScreen != null)
-      {
-        splashScreen.AllowWindowOverlay((Form)form);
-      }
-#endif
-      form.ShowDialog(this);
     }
+
+    Version versionSkin = null;
+    string filename = Config.GetFile(Config.Dir.Skin, m_strSkin, "references.xml");
+    if (File.Exists(filename))
+    {
+      XmlDocument doc = new XmlDocument();
+      doc.Load(filename);
+      XmlNode node = doc.SelectSingleNode("/controls/skin/version");
+      if (node != null && node.InnerText != null)
+      {
+        versionSkin = new Version(node.InnerText);
+      }
+    }
+    if (SkinVersion == versionSkin)
+    {
+      return;
+    }
+
+    // Skin is incompatible, switch to default
+    _OutdatedSkinName = m_strSkin;
+    float screenHeight = GUIGraphicsContext.currentScreen.Bounds.Height;
+    float screenWidth = GUIGraphicsContext.currentScreen.Bounds.Width;
+    float screenRatio = (screenWidth / screenHeight);
+    m_strSkin = screenRatio > 1.5 ? "DefaultWide" : "Default";
+    Config.SkinName = m_strSkin;
   }
 
-  protected void CheckForIncompatibelPlugins()
-  {
-    using (var form = new IncompatiblePluginsForm())
-    {
-      if (!form.CheckForIncompatiblePlugins())
-      {
-        return;
-      }
-#if !DEBUG
-      if (splashScreen != null)
-      {
-        splashScreen.AllowWindowOverlay((Form)form);
-      }
-#endif
-      form.ShowDialog(this);
-    }
-  }
 
   #region registry helper function
 

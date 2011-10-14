@@ -117,7 +117,17 @@ namespace MediaPortal.GUI.Library
             }
           }
         }
-        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+        if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_DOUBLECLICK)
+        {
+          int x = (int)action.fAmount1;
+          int y = (int)action.fAmount2;
+          if (DoesPostRender() && InWindow(x, y))
+          {
+            OnAction(action);
+            return (int)GUIWindowManager.FocusState.FOCUSED;
+          }
+        }
+        if (action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
         {
           if (DoesPostRender())
           {

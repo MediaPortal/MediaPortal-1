@@ -876,6 +876,10 @@ namespace MediaPortal.InputDevices
                 case "WINDOW":
                   conditionString =
                     GetFriendlyName(Enum.GetName(typeof (GUIWindow.Window), Convert.ToInt32(conProperty)));
+                  if (string.IsNullOrEmpty(conditionString))
+                  {
+                    continue;
+                  }
                   break;
                 case "FULLSCREEN":
                   if (conProperty == "TRUE")
@@ -1452,6 +1456,11 @@ namespace MediaPortal.InputDevices
 
     private string GetFriendlyName(string name)
     {
+      if (string.IsNullOrEmpty(name))
+      {
+        return string.Empty;
+      }
+
       if ((name.IndexOf("ACTION") != -1) || (name.IndexOf("WINDOW") != -1))
       {
         name = name.Substring(7);

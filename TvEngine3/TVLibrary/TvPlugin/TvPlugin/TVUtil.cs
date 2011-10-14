@@ -20,7 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Text;
+using MediaPortal.Configuration;
 using MediaPortal.Dialogs;
 using MediaPortal.GUI.Library;
 using MediaPortal.Player;
@@ -74,49 +77,27 @@ namespace TvPlugin
 
     #endregion
 
+    public static void SetGentleConfigFile()
+    {
+      try
+      {
+        NameValueCollection appSettings = ConfigurationManager.AppSettings;
+        appSettings.Set("GentleConfigFile", Config.GetFile(Config.Dir.Config, "gentle.config"));
+      }
+      catch (Exception ex)
+      {
+        Log.Error("TVUtil.SetGentleConfigFile: Error occured while setting the gentle configuration store: {0}", ex);
+        throw;
+      }
+    }
+
     public IList<Schedule> GetRecordingTimes(Schedule rec)
     {
       DateTime startTime = DateTime.Now;
       DateTime endTime = startTime.AddDays(_days);
 
-      IList<Schedule> recordings = new List<Schedule>();
-      IList<Program> programs = new List<Program>();
-
-      switch (rec.ScheduleType)
-      {
-        case (int)ScheduleRecordingType.Once:
-          recordings.Add(rec);
-          return recordings;          
-
-        case (int)ScheduleRecordingType.Daily:
-          programs = Program.RetrieveDaily(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.WorkingDays:
-          programs = Program.RetrieveWorkingDays(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekends:
-          programs = Program.RetrieveWeekends(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.Weekly:
-          programs = Program.RetrieveWeekly(rec.StartTime, rec.EndTime, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnThisChannel:
-          programs = Program.RetrieveEveryTimeOnThisChannel(rec.ProgramName, rec.ReferencedChannel().IdChannel, _days);
-          break;
-
-        case (int)ScheduleRecordingType.EveryTimeOnEveryChannel:
-          programs = Program.RetrieveEveryTimeOnEveryChannel(rec.ProgramName, _days);
-          break;
-
-        case (int)ScheduleRecordingType.WeeklyEveryTimeOnThisChannel:
-          programs = Program.RetrieveWeeklyEveryTimeOnThisChannel(rec.StartTime, rec.EndTime, rec.ProgramName, rec.ReferencedChannel().IdChannel);          
-          break;
-      }
-      recordings = AddProgramsToSchedulesList(rec, programs);
+      IList<Program> programs = Schedule.GetProgramsForSchedule(rec);
+      IList<Schedule> recordings = recordings = AddProgramsToSchedulesList(rec, programs);
       return recordings;
     }
 
@@ -133,9 +114,10 @@ namespace TvPlugin
           recNew.EndTime = prg.EndTime;
           recNew.IdChannel = prg.IdChannel;
           recNew.Series = true;
+          recNew.IdParentSchedule = rec.IdSchedule;
           recNew.ProgramName = prg.Title;
 
-          if (rec.IsSerieIsCanceled(recNew.StartTime))
+          if (rec.IsSerieIsCanceled(rec.GetSchedStartTimeForProg(prg)))
           {
             recNew.Canceled = recNew.StartTime;
           }
@@ -563,9 +545,16 @@ namespace TvPlugin
 
         if (confirmed)
         {
-          DateTime canceledStartTime = prg.StartTime;
-          int idChannel = prg.IdChannel;
-          wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);
+          if (prg != null)
+          {
+            DateTime canceledStartTime = schedule.GetSchedStartTimeForProg(prg);
+            int idChannel = prg.IdChannel;
+            wasDeleted = StopRecAndDeleteSchedule(schedule, parentSchedule, idChannel, canceledStartTime);             
+          }
+          else
+          {
+            wasDeleted = StopRecording(schedule);
+          }
         }
       }
       return wasDeleted;
@@ -827,11 +816,20 @@ namespace TvPlugin
       return confirmed;
     }
 
-    private static bool PromptDeleteRecording(int IdSchedule, Program prg)
+    private static bool PromptDeleteRecording(int idSchedule, Program prg)
     {
-      bool confirmed = false;      
-            
-      bool isRec = TvDatabase.Schedule.IsScheduleRecording(IdSchedule, prg);
+      bool confirmed = false;
+      bool isRec = false;
+      if (prg != null)
+      {
+        isRec = TvDatabase.Schedule.IsScheduleRecording(idSchedule, prg);  
+      }
+      else
+      {
+        var tvServer = new TvServer();
+        VirtualCard vCard;
+        isRec = tvServer.IsRecordingSchedule(idSchedule, out vCard);
+      }      
 
       if (isRec)
       {

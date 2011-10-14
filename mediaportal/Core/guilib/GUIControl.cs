@@ -1709,8 +1709,8 @@ namespace MediaPortal.GUI.Library
           return;
         }
       }
-      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), false);
-      List<VisualEffect> forwardAnims = GetAnimations(animType, false);
+      List<VisualEffect> reverseAnims = GetAnimations((AnimationType)(-(int)animType), true);
+      List<VisualEffect> forwardAnims = GetAnimations(animType, true);
       bool done = false;
       foreach (VisualEffect reverseAnim in reverseAnims)
       {

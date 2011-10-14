@@ -33,6 +33,7 @@ namespace SetupControls
       InitializeComponent();
     }
 
+    [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public TuningDetail TuningDetail { get; set; }
 
     private void mpButtonCancel_Click(object sender, EventArgs e)

@@ -32,6 +32,7 @@ class MPEG2TransportStreamFromPESSource: public MPEG2TransportStreamMultiplexor 
 public:
   static MPEG2TransportStreamFromPESSource*
   createNew(UsageEnvironment& env, MPEG1or2DemuxedElementaryStream* inputSource);
+  virtual void SetSourceType(int sourceType);
 
 protected:
   MPEG2TransportStreamFromPESSource(UsageEnvironment& env,

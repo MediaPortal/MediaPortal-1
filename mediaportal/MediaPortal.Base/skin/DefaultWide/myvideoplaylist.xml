@@ -139,11 +139,8 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">missing_Coverart.png</texture>
-      <visible>!control.hasthumb(500)</visible>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
-      
-      
+      <texture mask="videothumbmask.png">missing_Coverart.png</texture>
+      <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
     </control>
     <control>
       <id>500</id>
@@ -152,10 +149,8 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">#selectedthumb</texture>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
-      
-      
+      <texture mask="videothumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
       <type>image</type>
@@ -164,10 +159,8 @@
       <posY>193</posY>
       <width>180</width>
       <height>250</height>
-      <texture mask="video_poster_mask.png">Videothumbframe.png</texture>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
-      
-      
+      <texture mask="videothumbmask.png">Videothumbframe.png</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -179,7 +172,6 @@
       <label>Info:</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -191,7 +183,6 @@
       <label>#selecteditem</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
       <description>Selected item Label</description>
@@ -203,7 +194,6 @@
       <label>#selecteditem2</label>
       <font>font14</font>
       <visible>[facadeview.playlist|facadeview.album]+Control.HasFocus(50)</visible>
-      <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
   </controls>
 </window>

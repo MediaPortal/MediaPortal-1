@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using MediaPortal.GUI.Library;
 using MediaPortal.Profile;
 using MediaPortal.UserInterface.Controls;
+using MediaPortal.Util;
 
 namespace MediaPortal.Configuration.Sections
 {
@@ -303,7 +304,7 @@ namespace MediaPortal.Configuration.Sections
         Log.Debug("Configuration: Exception: {0}", ex);
       }
 
-      _SingleSeat = Common.IsSingleSeat();
+      _SingleSeat = Network.IsSingleSeat();
     }
 
     public override void SaveSettings()
@@ -351,7 +352,7 @@ namespace MediaPortal.Configuration.Sections
 
         //When TvServer is changed, if user changed mode (SingleSeat/MultiSeat), he needs to review the RTSP setting in DebugOptions section
         if ((xmlwriter.GetValueAsBool("tvservice", "DebugOptions", false) || SettingsForm.debug_options) &&
-            (_SingleSeat != Common.IsSingleSeat()))
+            (_SingleSeat != Network.IsSingleSeat()))
         {
           MessageBox.Show("Please review your RTSP settings in \"DebugOptions\" section", "Warning",
                           MessageBoxButtons.OK, MessageBoxIcon.Exclamation);

@@ -170,8 +170,7 @@ namespace TvDatabase
         try
         {
           base.Persist();
-          Program.ResetSingleState(this.cancelDateTime, this.ReferencedSchedule().ReferencedChannel().IdChannel,
-                                   this.ReferencedSchedule().ProgramName);
+          Schedule.SynchProgramStates(this.ReferencedSchedule().IdSchedule);
         }
         catch (Exception ex)
         {

@@ -201,7 +201,7 @@ void CPatParser::OnSdtReceived(const CChannelInfo& sdtInfo)
 	strcpy(info.ServiceName,sdtInfo.ServiceName);
 }
 
-void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2> pidInfo)
+void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,bool hasCaDescriptor,vector<PidInfo2> pidInfo)
 {
   itChannels it=m_mapChannels.find(serviceId);
   if (it!=m_mapChannels.end())
@@ -210,6 +210,7 @@ void CPatParser::OnPmtReceived2(int pid,int serviceId,int pcrPid,vector<PidInfo2
 		if (!info.PmtReceived) 
 		{
 			AnalyzePidInfo(pidInfo,info.hasVideo,info.hasAudio);
+			info.hasCaDescriptor = hasCaDescriptor ? 1 : 0;
 			info.PmtReceived=true;
       m_tickCount = GetTickCount();
 		}
@@ -403,9 +404,9 @@ void CPatParser::Dump()
   while (it!=m_mapChannels.end()) 
   {
     CChannelInfo& info=it->second;
-		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d",i,
+		LogDebug("%4d)  p:%-15s s:%-25s  onid:%4x tsid:%4x sid:%4x major:%3d minor:%3x freq:%3x type:%3d pmt:%4x othermux:%d freeca:%d hasVideo:%d hasAudio:%d hasCaDescriptor:%d",i,
             info.ProviderName,info.ServiceName,info.NetworkId,info.TransportId,info.ServiceId,info.MajorChannel,info.MinorChannel,info.Frequency,
-						info.ServiceType,info.PidTable.PmtPid,info.OtherMux,info.FreeCAMode,info.hasVideo,info.hasAudio);
+            info.ServiceType,info.PidTable.PmtPid,info.OtherMux,info.FreeCAMode,info.hasVideo,info.hasAudio,info.hasCaDescriptor);
 
     it++;
     i++;

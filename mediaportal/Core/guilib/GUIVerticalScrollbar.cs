@@ -120,8 +120,10 @@ namespace MediaPortal.GUI.Library
 
       // Scale handle-parts for resolution.
 
-      int backgroundWidth = _imageBackground.TextureWidth;
-      GUIGraphicsContext.ScaleVertical(ref backgroundWidth);
+      //int backgroundWidth = _imageBackground.TextureWidth;
+      //int backgroundWidth = _imageBackground.Width;
+      int backgroundWidth = Width;
+      GUIGraphicsContext.ScaleHorizontal(ref backgroundWidth);
       _imageBackground.Width = backgroundWidth;
 
       int handleHeight = _imageTop.TextureHeight;
@@ -129,15 +131,18 @@ namespace MediaPortal.GUI.Library
       _imageTop.Height = handleHeight;
       _imageBottom.Height = handleHeight;
 
-      int handleWidth = _imageTop.TextureWidth;
-      GUIGraphicsContext.ScaleVertical(ref handleWidth);
+      double ratio = (double)_imageTop.TextureWidth / (double)_imageBackground.TextureWidth;
+
+      //int handleWidth = _imageTop.TextureWidth;
+      int handleWidth = (int)(Width * ratio);
+      GUIGraphicsContext.ScaleHorizontal(ref handleWidth);
       _imageTop.Width = handleWidth;
       _imageBottom.Width = handleWidth;
 
       _heightKnob = (int)(2 * _imageTop.Height);
       _startPositionY = _imageBackground.YPosition;
-      _endPositionY = _startPositionY + _imageBackground.Height - _imageTop.Height;
-      fPosYOff *= (float)(_endPositionY - _startPositionY);
+      _endPositionY = _startPositionY + _imageBackground.Height;
+      fPosYOff *= (float)(_endPositionY - _imageTop.Height - _startPositionY);
       _knobPositionY = _startPositionY + (int)fPosYOff;
 
       _imageBackground.Render(timePassed);

@@ -1942,12 +1942,18 @@ namespace TvLibrary.Implementations.Analog.Components
         }
         _pinVideoConnected = true;
         Log.Log.WriteFile("analog: connected pinvideo->mpeg muxer");
-        //Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        // Some Adaptec devices use the LPCM pin for audio so we check this can connect if applicable.
+        // Note that this does *not* apply to the Adaptec AVC-3610.
         bool isAdaptec = false;
-        if (_capture.VideoCaptureName.Contains("Adaptec USB Capture Device") ||
-            _capture.VideoCaptureName.Contains("Adaptec PCI Capture Device")
-            || _capture.AudioCaptureName.Contains("Adaptec USB Capture Device") ||
-            _capture.AudioCaptureName.Contains("Adaptec PCI Capture Device"))
+        if (!_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0091#") && // Adaptec AVC-3610 tuner 1
+            !_capture.VideoCaptureDevicePath.ToLower().StartsWith(@"@device:pnp:\\?\usb#vid_03f3&pid_0093#") && // Adaptec AVC-3610 tuner 2
+            (
+              _capture.VideoCaptureName.Contains("Adaptec USB Capture Device") ||
+              _capture.VideoCaptureName.Contains("Adaptec PCI Capture Device") ||
+              _capture.AudioCaptureName.Contains("Adaptec USB Capture Device") ||
+              _capture.AudioCaptureName.Contains("Adaptec PCI Capture Device")
+            )
+        )
         {
           Log.Log.WriteFile("analog: AddMpegMuxer, Adaptec device found using LPCM");
           isAdaptec = true;

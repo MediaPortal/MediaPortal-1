@@ -57,7 +57,7 @@ public:
   bool        GetChannel(int index, CChannelInfo& info);
   void        Dump();
 	void        OnSdtReceived(const CChannelInfo& sdtInfo);
-	void				OnPmtReceived2(int pid,int serviceId, int pcrPid,vector<PidInfo2> pidInfo);
+	void				OnPmtReceived2(int pid, int serviceId, int pcrPid, bool hasCaDescriptor, vector<PidInfo2> pidInfo);
   void        OnChannel(const CChannelInfo& info);
 
 private:

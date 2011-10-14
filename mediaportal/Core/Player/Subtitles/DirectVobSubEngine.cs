@@ -40,7 +40,6 @@ namespace MediaPortal.Player.Subtitles
     private List<string> intNames = new List<string>();
     private int extCount;
     private int current;
-    private FFDShowAPI ffdshowAPI;
 
     #region ISubEngine Members
 
@@ -48,6 +47,17 @@ namespace MediaPortal.Player.Subtitles
     {
       FreeSubtitles();
       LoadSettings();
+
+      {
+        //remove InternalScriptRenderer as it takes subtitle pin
+        IBaseFilter isr = null;
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.InternalScriptRenderer, out isr);
+        if (isr != null)
+        {
+          graphBuilder.RemoveFilter(isr);
+          DirectShowUtil.ReleaseComObject(isr);
+        }
+      }
 
       vobSub = (IDirectVobSub)DirectVobSubUtil.AddToGraph(graphBuilder);
       if (vobSub == null)
@@ -59,7 +69,7 @@ namespace MediaPortal.Player.Subtitles
         LOGFONT logFont = new LOGFONT();
         int txtcolor;
         bool fShadow, fOutLine, fAdvancedRenderer = false;
-        int size = Marshal.SizeOf(typeof (LOGFONT));
+        int size = Marshal.SizeOf(typeof(LOGFONT));
         vobSub.get_TextSettings(logFont, size, out txtcolor, out fShadow, out fOutLine, out fAdvancedRenderer);
         FontStyle fontStyle = defStyle.fontIsBold ? FontStyle.Regular : FontStyle.Bold;
         Font Subfont = new Font(defStyle.fontName, defStyle.fontSize, fontStyle, GraphicsUnit.Point,
@@ -79,6 +89,10 @@ namespace MediaPortal.Player.Subtitles
         //load sub streams
         IBaseFilter hms = null;
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.HaaliGuid, out hms);
+        if (hms == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVFilterSource, out hms);
+        if (hms == null)
+          DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVFilter, out hms);
         embeddedSelector = hms as IAMStreamSelect;
         if (embeddedSelector != null)
         {
@@ -93,25 +107,18 @@ namespace MediaPortal.Player.Subtitles
           extCount--;
         }
       }
-      {
-        IBaseFilter baseFilter = null;
-        DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoDXVAGuid, out baseFilter);
-        if (baseFilter == null)
-          DirectShowUtil.FindFilterByClassID(graphBuilder, FFDShowAPI.FFDShowVideoRawGuid, out baseFilter);
 
-        ffdshowAPI = new FFDShowAPI((object)baseFilter);
+      FFDShowEngine.DisableFFDShowSubtitles(graphBuilder);
 
-        FFDShow.Interfaces.IffdshowDec ffdshowDec = baseFilter as FFDShow.Interfaces.IffdshowDec;
-        if (ffdshowDec != null)
-        {
-          ffdshowAPI.DoShowSubtitles = false;
-          Log.Info("DirectVobSubEngine - FFDshow interfaces found -> Disable Subtitle");
-        }
-      }
       Current = 0;
-      Enable = autoShow;
+      if (selectionOff)
+      {
+        Enable = false;
+      }
+      else
+      {
+        Enable = autoShow;
+      }
       return true;
     }
 
@@ -135,7 +142,33 @@ namespace MediaPortal.Player.Subtitles
         if (sPDWGroup == 2 && sName.LastIndexOf("No ") == -1)
         {
           intSubs.Add(istream);
-          intNames.Add(sName);
+          // Try Find Language by LCID
+          String langName = "";
+          if (sPLCid != 0)
+          {
+            int size = Util.Win32API.GetLocaleInfo(sPLCid, 2, null, 0);
+            String languageName = new String(' ', size);
+
+            Util.Win32API.GetLocaleInfo(sPLCid, 2, languageName, size);
+            if (!languageName.Equals(new String(' ', size)))
+            {
+              if (languageName.Contains("\0"))
+                langName = languageName.Substring(0, languageName.IndexOf("\0"));
+              else
+                langName = languageName;
+              int ipos = langName.IndexOf("(");
+              if (ipos > 0)
+              {
+                langName = langName.Substring(0, ipos);
+                langName = langName.Trim();
+              }
+            }
+          }
+          else
+          {
+            langName = sName;
+          }
+          intNames.Add(langName);
         }
       }
     }
@@ -154,7 +187,7 @@ namespace MediaPortal.Player.Subtitles
       current = -1;
     }
 
-    public void SaveToDisk() {}
+    public void SaveToDisk() { }
 
     public bool IsModified()
     {
@@ -171,7 +204,7 @@ namespace MediaPortal.Player.Subtitles
       get { return AutoSaveTypeEnum.NEVER; }
     }
 
-    public void Render(Rectangle subsRect, Rectangle frameRect) {}
+    public void Render(Rectangle subsRect, Rectangle frameRect) { }
 
     public int GetCount()
     {
@@ -281,11 +314,18 @@ namespace MediaPortal.Player.Subtitles
       Delay = Delay - delayInterval;
     }
 
-    public void SetTime(long nsSampleTime) {}
+    public void SetTime(long nsSampleTime) { }
 
     public bool AutoShow
     {
       get { return autoShow; }
+      set
+      {
+        autoShow = value;
+        bool fBuffer, fOnlyForced, fPolygonize;
+        vobSub.get_VobSubSettings(out fBuffer, out fOnlyForced, out fPolygonize);
+        vobSub.put_VobSubSettings(fBuffer, !this.autoShow, fPolygonize);
+      }
     }
 
     #endregion
@@ -335,6 +375,10 @@ namespace MediaPortal.Player.Subtitles
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.MPCMatroska, out hms);
       if (hms == null)
         DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.MPCMatroskaSource, out hms);
+      if (hms == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVFilter, out hms);
+      if (hms == null)
+        DirectShowUtil.FindFilterByClassID(graphBuilder, ClassId.LAVFilterSource, out hms);
       if (hms != null)
       {
         IPin pinSubTo = null;
@@ -344,7 +388,7 @@ namespace MediaPortal.Player.Subtitles
         {
           while (true)
           {
-            IPin freeSubtitle = DirectShowUtil.FindFirstFreePin(hms, PinDirection.Output, "");
+            IPin freeSubtitle = DirectShowUtil.FindFirstFreePinSub(hms, PinDirection.Output, "");
             IPin freeVobSub = DirectShowUtil.FindFirstFreePin(vob, PinDirection.Input, "Input");
             if (freeSubtitle != null && freeVobSub != null)
             {
@@ -367,6 +411,8 @@ namespace MediaPortal.Player.Subtitles
           Log.Debug("VideoPlayerVMR9: Connecting Haali's subtitle output to VobSub's input.");
           // Try to render pins
           IPin pinVobSubSub = DirectShowUtil.FindPin(vob, PinDirection.Input, "Input");
+          // If pinSubTo is already connected (disconnect it)
+          graphBuilder.Disconnect(pinSubTo);
           graphBuilder.Connect(pinSubTo, pinVobSubSub);
           DirectShowUtil.ReleaseComObject(pinSubTo);
           pinSubTo = null;

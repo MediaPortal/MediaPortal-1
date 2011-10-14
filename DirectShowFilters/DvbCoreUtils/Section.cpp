@@ -69,6 +69,9 @@ void CSection::Copy(const CSection &section)
 
 int CSection::CalcSectionLength(byte* tsPacket,int start)
 {
+  if(start >= 188)
+    return 0;
+
 	if (BufferPos < 3)
   {
 		byte bHi=0;

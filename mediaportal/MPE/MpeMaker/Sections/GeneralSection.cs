@@ -58,8 +58,8 @@ namespace MpeMaker.Sections
       txt_forum.Text = pak.GeneralInfo.ForumPage;
       txt_update.Text = pak.GeneralInfo.UpdateUrl;
       txt_online.Text = pak.GeneralInfo.OnlineLocation;
-      txt_description.Text = pak.GeneralInfo.ExtensionDescription;
-      txt_versiondesc.Text = pak.GeneralInfo.VersionDescription;
+      txt_description.Lines = pak.GeneralInfo.ExtensionDescription.Split('\n');
+      txt_versiondesc.Lines = pak.GeneralInfo.VersionDescription.Split('\n');
       txt_tags.Text = pak.GeneralInfo.Tags;
       date_release.Value = pak.GeneralInfo.ReleaseDate;
       Package = pak;

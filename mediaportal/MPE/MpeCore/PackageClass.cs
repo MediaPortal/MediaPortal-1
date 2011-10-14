@@ -23,11 +23,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using System.Xml;
 using MpeCore.Classes;
 using MpeCore.Classes.Events;
 using MpeCore.Classes.Project;
 using MpeCore.Classes.SectionPanel;
 using MpeCore.Classes.ZipProvider;
+using System.Text;
 
 namespace MpeCore
 {
@@ -52,6 +54,7 @@ namespace MpeCore
       ZipProvider = new ZipProviderClass();
       UnInstallInfo = new UnInstallInfoCollection();
       Dependencies = new DependencyItemCollection();
+      PluginDependencies = new PluginDependencyItemCollection();
       ProjectSettings = new ProjectSettings();
       Silent = false;
       IsHiden = false;
@@ -62,9 +65,11 @@ namespace MpeCore
     public GroupItemCollection Groups { get; set; }
     public SectionItemCollection Sections { get; set; }
     public DependencyItemCollection Dependencies { get; set; }
+    public PluginDependencyItemCollection PluginDependencies { get; set; }
     public GeneralInfoItem GeneralInfo { get; set; }
     public FileItemCollection UniqueFileList { get; set; }
     public ProjectSettings ProjectSettings { get; set; }
+    public bool IsSkin { get; set; }
 
     [XmlIgnore]
     public ExtensionCollection Parent { get; set; }
@@ -116,7 +121,12 @@ namespace MpeCore
     /// </summary>
     public void Install()
     {
-      UnInstallInfo = new UnInstallInfoCollection(this);
+      if (UnInstallInfo == null)
+      {
+        UnInstallInfo = new UnInstallInfoCollection(this);
+      }
+      else
+        UnInstallInfo.SetInfo(this);
       foreach (GroupItem groupItem in Groups.Items)
       {
         if (groupItem.Checked)
@@ -136,7 +146,7 @@ namespace MpeCore
     /// </summary>
     public void UnInstall()
     {
-      for (int i = UnInstallInfo.Items.Count - 1; i > 0; i--)
+      for (int i = UnInstallInfo.Items.Count - 1; i >= 0; i--)
       {
         UnInstallItem item = UnInstallInfo.Items[i];
         if (string.IsNullOrEmpty(item.ActionType))
@@ -167,14 +177,33 @@ namespace MpeCore
     /// <returns>Return if all dependency met</returns>
     public bool CheckDependency(bool silent)
     {
+      bool hasMPDependency = false;
+      MpeCore.Classes.VersionProvider.MediaPortalVersion MPDependency = new Classes.VersionProvider.MediaPortalVersion();
+      MpeCore.Classes.VersionProvider.SkinVersion skinDependency = new Classes.VersionProvider.SkinVersion();
+      bool hasSkinDependency = false;
       foreach (DependencyItem item in Dependencies.Items)
       {
-        if (!MpeInstaller.VersionProviders[item.Type].Validate(item))
+        if (!hasMPDependency && item.Type == MPDependency.DisplayName)
         {
-          if (item.WarnOnly)
+          hasMPDependency = true;
+        }
+        if (item.Type == skinDependency.DisplayName)
+        {
+          hasSkinDependency = true;
+          if (!skinDependency.Validate(item))
           {
             if (!silent)
-              MessageBox.Show(item.Message, "Dependency warning", MessageBoxButtons.OK,
+              MessageBox.Show("Skin is not compatible with current MediaPortal version.", "Dependency error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+          }
+          continue;
+        }
+        if (!MpeInstaller.VersionProviders[item.Type].Validate(item))
+        {
+          if (item.WarnOnly && item.Type != MPDependency.DisplayName)
+          {
+            if (!silent)
+              MessageBox.Show(string.Format("{0}", item.Message), "Dependency warning", MessageBoxButtons.OK,
                               MessageBoxIcon.Warning);
           }
           else
@@ -185,7 +214,142 @@ namespace MpeCore
           }
         }
       }
+      if (!hasMPDependency)
+      {
+        return false;
+      }
+      if (IsSkin && !hasSkinDependency)
+      {
+        return false;
+      }
+      if (!CheckPluginsDependencies())
+      {
+        return false;
+      }
       return true;
+    }
+
+    public bool CheckPluginsDependencies()
+    {
+      if (!ProvidesPlugins())
+      {
+        return true;
+      }
+      if (PluginDependencies.Items.Count == 0)
+      {
+        return false;
+      }
+      foreach (PluginDependencyItem dep in PluginDependencies.Items)
+      {
+        if (!CheckPluginDependency(dep))
+          return false;
+      }
+      return true;
+    }
+
+    public static bool CheckPluginDependency(PluginDependencyItem dep)
+    {
+      XmlSerializer xs = new XmlSerializer(typeof(PluginDependencyItem));
+      String XmlizedString = null;
+      MemoryStream memoryStream = new MemoryStream();
+      using (XmlTextWriter xmlTextWriter = new XmlTextWriter(memoryStream, Encoding.ASCII))
+      {
+        xs.Serialize(xmlTextWriter, dep);
+        memoryStream = (MemoryStream)xmlTextWriter.BaseStream;
+      }
+      XmlizedString = ByteArrayToString(Encoding.ASCII, memoryStream.ToArray());
+      XmlDocument doc = new XmlDocument();
+      doc.LoadXml(XmlizedString);
+      return MediaPortal.Common.Utils.CompatibilityManager.IsPluginCompatible(doc.DocumentElement);
+    }
+
+    /// <summary>
+    /// Checks wether package includes a skin.
+    /// </summary>
+    /// <returns>Returns true if package conatins a skin</returns>
+    public bool ProvidesSkin(out FileItem referenceFile)
+    {
+      IsSkin = false;
+      referenceFile = null;
+      System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+      foreach (FileItem file in UniqueFileList.Items)
+      {
+        if (file.DestinationFilename.StartsWith("%" + MediaPortal.Configuration.Config.Dir.Skin + "%", true, invariantCulture) 
+          && file.DestinationFilename.EndsWith("references.xml", true, invariantCulture))
+        {
+          referenceFile = file;
+          IsSkin = true;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public bool ProvidesPlugins()
+    {
+      System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+      foreach (FileItem file in UniqueFileList.Items)
+      {
+        if (file.DestinationFilename.StartsWith("%" + MediaPortal.Configuration.Config.Dir.Plugins + "%", true, invariantCulture)
+          && file.DestinationFilename.EndsWith(".dll", true, invariantCulture))
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    private static string ByteArrayToString(Encoding encoding, byte[] byteArray)
+    {
+      return encoding.GetString(byteArray);
+    }
+
+    /// <summary>
+    /// Checks if package has a MediaPortal dependency.
+    /// </summary>
+    /// <returns>Returns true if package has the dependency</returns>
+    public bool CheckMPDependency(out DependencyItem dep)
+    {
+      MpeCore.Classes.VersionProvider.MediaPortalVersion MPDependency = new Classes.VersionProvider.MediaPortalVersion();
+      if (CheckDependency(MPDependency, out dep))
+      {
+        if (dep.MaxVersion.CompareTo(MPDependency.Version(null)) > 0)
+        {
+          dep.MaxVersion = MPDependency.Version(null);
+        }
+        return true;
+      }
+      return false;
+    }
+
+    /// <summary>
+    /// Checks if package has a Skin dependency.
+    /// </summary>
+    /// <returns>Returns true if package has the dependency</returns>
+    public bool CheckSkinDependency(out DependencyItem dep)
+    {
+      MpeCore.Classes.VersionProvider.SkinVersion SkinDependency = new Classes.VersionProvider.SkinVersion();
+      return CheckDependency(SkinDependency, out dep);
+    }
+
+    /// <summary>
+    /// Checks if package has a dependency of the specified type.
+    /// </summary>
+    /// <param name="depType">Type of VersionProvider to check for</param>
+    /// <param name="depItem">Specific dependency item in dpendencies collection that is of the desired type</param>
+    /// <returns>Returns true if package has the dependency</returns>
+    public bool CheckDependency(MpeCore.Interfaces.IVersionProvider depType, out DependencyItem depItem)
+    {
+      depItem = null;
+      foreach (DependencyItem item in Dependencies.Items)
+      {
+        if (item.Type == depType.DisplayName)
+        {
+          depItem = item;
+          return true;
+        }
+      }
+      return false;
     }
 
     /// <summary>
@@ -399,8 +563,11 @@ namespace MpeCore
       }
     }
 
-    private void GenerateUniqueFileList()
+    public void GenerateUniqueFileList()
     {
+      FileItemCollection copy = new FileItemCollection();
+      foreach (FileItem item in UniqueFileList.Items)
+        copy.Add(item);
       UniqueFileList.Items.Clear();
       foreach (GroupItem groupItem in Groups.Items)
       {
@@ -418,7 +585,13 @@ namespace MpeCore
           if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
           {
             if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
-              UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+            {
+              FileItem existingItem = copy.GetByLocalFileName(sectionParam.Value);
+              if (existingItem != null)
+                UniqueFileList.Add(existingItem);
+              else
+                UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+            }
             else
               UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
           }
@@ -430,7 +603,13 @@ namespace MpeCore
             if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
             {
               if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
-                UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+              {
+                FileItem existingItem = copy.GetByLocalFileName(sectionParam.Value);
+                if (existingItem != null)
+                  UniqueFileList.Add(existingItem);
+                else
+                  UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+              }
               else
                 UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
             }
@@ -443,7 +622,13 @@ namespace MpeCore
         if (sectionParam.ValueType == ValueTypeEnum.File && !string.IsNullOrEmpty(sectionParam.Value))
         {
           if (!UniqueFileList.ExistLocalFileName(sectionParam.Value))
-            UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+          {
+            FileItem existingItem = copy.GetByLocalFileName(sectionParam.Value);
+            if (existingItem != null)
+              UniqueFileList.Add(existingItem);
+            else
+              UniqueFileList.Add(new FileItem(sectionParam.Value, true));
+          }
           else
             UniqueFileList.GetByLocalFileName(sectionParam.Value).SystemFile = true;
         }
@@ -521,6 +706,7 @@ namespace MpeCore
           this.UniqueFileList = packageClass.UniqueFileList;
           this.Dependencies = packageClass.Dependencies;
           this.ProjectSettings = packageClass.ProjectSettings;
+          this.PluginDependencies = packageClass.PluginDependencies;
           var pak = new PackageClass();
           foreach (SectionParam item in pak.GeneralInfo.Params.Items)
           {
@@ -561,15 +747,113 @@ namespace MpeCore
         return false;
       }
 
+      if (!Path.IsPathRooted(xmlFile))
+        xmlFile = Path.GetFullPath(Path.Combine(Path.GetDirectoryName(this.ProjectSettings.ProjectFilename), xmlFile));
+
       ExtensionCollection list = ExtensionCollection.Load(xmlFile);
 
       PackageClass pakToAdd = this;
       pakToAdd.GeneralInfo.OnlineLocation = ReplaceInfo(pakToAdd.GeneralInfo.OnlineLocation);
+
+      SectionParam iconParam = pakToAdd.GeneralInfo.Params[ParamNamesConst.ICON];
+      pakToAdd.GeneralInfo.Params.Items.Remove(pakToAdd.GeneralInfo.Params[ParamNamesConst.ICON]);
+
       list.Add(pakToAdd);
 
       list.Save(xmlFile);
 
+      pakToAdd.GeneralInfo.Params.Items.Insert(0, iconParam);
+
       return true;
+    }
+
+    public void SetPluginsDependencies()
+    {
+      PluginDependencies.Items.Clear();
+      List<string> providedPlugins = new List<string>();
+      System.Globalization.CultureInfo invariantCulture = System.Globalization.CultureInfo.InvariantCulture;
+      foreach (FileItem file in UniqueFileList.Items)
+      {
+        if (file.DestinationFilename.StartsWith("%" + MediaPortal.Configuration.Config.Dir.Plugins + "%", true, invariantCulture)
+          && file.DestinationFilename.EndsWith(".dll", true, invariantCulture))
+        {
+          string asm = file.LocalFileName;
+          string assemblyPath = asm;
+          if (!Path.IsPathRooted(asm))
+          {
+            assemblyPath = Path.Combine(Path.GetDirectoryName(ProjectSettings.ProjectFilename), assemblyPath);
+            assemblyPath = Path.GetFullPath(assemblyPath);
+          }
+          if (Util.IsPlugin(assemblyPath))
+          {
+            providedPlugins.Add(asm);
+          }
+        }
+      }
+      foreach (string asm in providedPlugins)
+      {
+        PluginDependencyItem dep = new PluginDependencyItem();
+        dep.AssemblyName = Path.GetFileName(asm);
+        string assemblyPath = asm;
+        if (!Path.IsPathRooted(asm))
+        {
+          assemblyPath = Path.Combine(Path.GetDirectoryName(ProjectSettings.ProjectFilename), assemblyPath);
+          assemblyPath = Path.GetFullPath(assemblyPath);
+        }
+        if (dep.ScanVersionInfo(assemblyPath))
+        {
+          PluginDependencies.Add(dep);
+        }
+      }
+    }
+
+    private static DependencyItem CreateStrictDependency(MpeCore.Interfaces.IVersionProvider depType)
+    {
+      DependencyItem depItem = new DependencyItem();
+      depItem.Type = depType.DisplayName;
+      depItem.WarnOnly = false;
+      depItem.MinVersion = depType.Version(null);
+      depItem.MaxVersion = depType.Version(null);
+      depItem.Name = depType.DisplayName;
+      return depItem;
+    }
+
+    public void CreateMPDependency()
+    {
+      MpeCore.Classes.VersionProvider.MediaPortalVersion MPVersion = new MpeCore.Classes.VersionProvider.MediaPortalVersion();
+      Dependencies.Add(CreateStrictDependency(MPVersion));
+    }
+
+    public void CreateSkinDependency(FileItem referenceFile)
+    {
+      MpeCore.Classes.VersionProvider.SkinVersion skinVersion = new MpeCore.Classes.VersionProvider.SkinVersion();
+      DependencyItem dep;
+      CheckSkinDependency(out dep);
+      if (dep != null)
+      {
+        Dependencies.Items.Remove(dep);
+      }
+      dep = CreateStrictDependency(skinVersion);
+      Version versionSkin = null;
+      string fileName = referenceFile.LocalFileName;
+      if (!Path.IsPathRooted(fileName))
+      {
+        fileName = Path.Combine(Path.GetDirectoryName(ProjectSettings.ProjectFilename), fileName);
+        fileName = Path.GetFullPath(fileName);
+      }
+      if (File.Exists(fileName))
+      {
+        XmlDocument doc = new XmlDocument();
+        doc.Load(fileName);
+        XmlNode node = doc.SelectSingleNode("/controls/skin/version");
+        if (node != null && node.InnerText != null)
+        {
+          versionSkin = new Version(node.InnerText);
+          dep.MinVersion = new VersionInfo(versionSkin);
+          dep.MaxVersion = new VersionInfo(versionSkin);
+        }
+      }
+      Dependencies.Add(dep);
     }
 
     /// <summary>

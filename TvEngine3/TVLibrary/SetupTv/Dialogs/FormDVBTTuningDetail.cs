@@ -88,15 +88,20 @@ namespace SetupTv.Dialogs
 
     private bool ValidateInput()
     {
-      if (textBoxDVBTfreq.Text.Length == 0)
+      int lcn, freq, onid, tsid, sid, pmt;
+      if (textBoxDVBTChannel.Text.Length == 0)
       {
-        MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a channel number!", "Incorrect input");
         return false;
       }
-      int lcn, freq, onid, tsid, sid, pmt;
       if (!Int32.TryParse(textBoxDVBTChannel.Text, out lcn))
       {
         MessageBox.Show(this, "Please enter a valid channel number!", "Incorrect input");
+        return false;
+      }
+      if (textBoxDVBTfreq.Text.Length == 0)
+      {
+        MessageBox.Show(this, "Please enter a frequency!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxDVBTfreq.Text, out freq))
@@ -104,29 +109,39 @@ namespace SetupTv.Dialogs
         MessageBox.Show(this, "Please enter a valid frequency!", "Incorrect input");
         return false;
       }
+      if (comboBoxBandWidth.SelectedIndex < 0)
+      {
+        MessageBox.Show(this, "Please select a valid bandwidth!", "Incorrect input");
+        return false;
+      }
       if (!Int32.TryParse(textBoxNetworkId.Text, out onid))
       {
-        MessageBox.Show(this, "Please enter a valid network id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid network ID!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxTransportId.Text, out tsid))
       {
-        MessageBox.Show(this, "Please enter a valid transport id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid transport ID!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxServiceId.Text, out sid))
       {
-        MessageBox.Show(this, "Please enter a valid service id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid service ID!", "Incorrect input");
+        return false;
+      }
+      if (onid < 0 || tsid < 0 || sid < 0)
+      {
+        MessageBox.Show(this, "Please enter valid network, transport and service IDs!", "Incorrect input");
         return false;
       }
       if (!Int32.TryParse(textBoxPmt.Text, out pmt))
       {
-        MessageBox.Show(this, "Please enter a valid pmt id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
-      if (onid <= 0 && tsid < 0 && sid < 0)
+      if (pmt < 0)
       {
-        MessageBox.Show(this, "Please enter a valid network, transport and service id!", "Incorrect input");
+        MessageBox.Show(this, "Please enter a valid PMT PID!", "Incorrect input");
         return false;
       }
       return true;

@@ -34,14 +34,23 @@ namespace MpeCore.Classes
     public UnInstallInfoCollection(PackageClass pak)
     {
       Items = new List<UnInstallItem>();
-      Version = pak.GeneralInfo.Version;
-      ExtensionId = pak.GeneralInfo.Id;
+      SetInfo(pak);
     }
 
 
     public List<UnInstallItem> Items { get; set; }
     public string ExtensionId { get; set; }
     public VersionInfo Version { get; set; }
+
+    /// <summary>
+    /// Sets version and Id information from the package specified. Used to determine where to save uninstall data
+    /// </summary>
+    /// <param name="pak">Package from which to gather the information</param>
+    public void SetInfo(PackageClass pak)
+    {
+      Version = pak.GeneralInfo.Version;
+      ExtensionId = pak.GeneralInfo.Id;
+    }
 
     /// <summary>
     /// Gets the location folder were stored the backup and the uninstall informations
@@ -101,6 +110,8 @@ namespace MpeCore.Classes
     {
       foreach (UnInstallItem item in Items)
       {
+        if (item.OriginalFile == null || item.BackUpFile == null)
+          continue;
         if (item.OriginalFile.CompareTo(fileName) == 0 && File.Exists(item.BackUpFile))
           return true;
       }

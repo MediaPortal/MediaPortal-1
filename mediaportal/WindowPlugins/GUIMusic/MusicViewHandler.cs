@@ -52,6 +52,19 @@ namespace MediaPortal.GUI.Music
       get { return previousLevel; }
     }
 
+    public override string CurrentView
+    {
+      get
+      {
+        return base.CurrentView;
+      }
+      set
+      {
+        previousLevel = -1;
+        base.CurrentView = value;
+      }
+    }
+
     public MusicViewHandler()
     {
       if (!File.Exists(customMusicViews))
@@ -100,10 +113,15 @@ namespace MediaPortal.GUI.Music
       currentSong = song;
     }
 
-    public List<Song> Execute()
+    public bool Execute(out List<Song> songs)
     {
-      //build the query
-      List<Song> songs = new List<Song>();
+      if (currentLevel < 0)
+      {
+        previousLevel = -1;
+        songs = new List<Song>();
+        return false;
+      }
+
       string whereClause = string.Empty;
       string orderClause = string.Empty;
       FilterDefinition definition = (FilterDefinition)currentView.Filters[CurrentLevel];
@@ -148,11 +166,21 @@ namespace MediaPortal.GUI.Music
 
           sql = String.Format("Select UPPER(SUBSTR({0},1,{1})) as IX, Count(distinct {2}) from {3} GROUP BY IX",
                               searchField, definition.Restriction, countField, searchTable);
-          database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          // only group special characters into a "#" entry is field is text based
+          if (defRoot.Where == "rating" || defRoot.Where == "year" || defRoot.Where == "track" || defRoot.Where == "disc#" ||
+              defRoot.Where == "timesplayed" || defRoot.Where == "favourites" || defRoot.Where == "date")
+          {
+            database.GetSongsByFilter(sql, out songs, table);
+          }
+          else
+          {
+            database.GetSongsByIndex(sql, out songs, CurrentLevel, table);
+          }
 
           previousLevel = currentLevel;
+          
+          return true;  
 
-          return songs;
         }
 
         switch (table)
@@ -211,7 +239,7 @@ namespace MediaPortal.GUI.Music
 
               previousLevel = currentLevel;
 
-              return songs;
+              return true;
             }
             else if (defRoot.Where == "recently added")
             {
@@ -386,13 +414,16 @@ namespace MediaPortal.GUI.Music
           {
             currentLevel = currentLevel - 1;
           }
-          songs = Execute();
+          if (!Execute(out songs))
+          {
+            return false;
+          }
         }
       }
 
       previousLevel = currentLevel;
 
-      return songs;
+      return true;
     }
 
     private void BuildSelect(FilterDefinition filter, ref string whereClause, int filterLevel)

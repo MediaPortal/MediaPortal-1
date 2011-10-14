@@ -41,11 +41,12 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// Creates the new channel.
     /// </summary>
-    /// <param name="info">The info.</param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      DVBSChannel tuningChannel = (DVBSChannel)_card.CurrentChannel;
+      DVBSChannel tuningChannel = (DVBSChannel)channel;
       DVBSChannel dvbsChannel = new DVBSChannel();
       dvbsChannel.Name = info.service_name;
       dvbsChannel.LogicalChannelNumber = info.LCN;

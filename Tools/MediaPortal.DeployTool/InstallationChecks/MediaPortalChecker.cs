@@ -113,30 +113,24 @@ namespace MediaPortal.DeployTool.InstallationChecks
       result.state = CheckState.NOT_INSTALLED;
 
       string[] UninstKeys = {
-                              "MediaPortal", // 1.x
-                              "MediaPortal 0.2.3.0"
-                            }; // 0.2.3.0
+                              "MediaPortal",        // 1.x
+                              "MediaPortal 0.2.3.0" // 0.2.3.0
+                            };
 
       foreach (string UnistKey in UninstKeys)
       {
-        RegistryKey key =
-          Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey);
-
-        if (key != null)
-        {
-          string MpPath = (string)key.GetValue("UninstallString");
-          string MpVer = (string)key.GetValue("DisplayVersion");
-          key.Close();
+        string regkey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + UnistKey;
+        string MpPath = Utils.PathFromRegistry(regkey);
+        Version MpVer = Utils.VersionFromRegistry(regkey);
 
 #if DEBUG
-          MessageBox.Show("Verifying tree " + UnistKey + " (MpPath=" + MpPath + ",version=" + MpVer + ")",
-                          "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        MessageBox.Show("Verifying tree " + UnistKey + " (MpPath=" + MpPath + ",version=" + MpVer + ")",
+                        "Debug information", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
-          if (MpPath != null && File.Exists(MpPath))
-          {
-            result.state = MpVer == Utils.GetDisplayVersion() ? CheckState.INSTALLED : CheckState.VERSION_MISMATCH;
-          }
+        if (MpPath != null && File.Exists(MpPath))
+        {
+          result.state = Utils.IsPackageUpdatabled(MpVer) ? CheckState.VERSION_MISMATCH : CheckState.INSTALLED;
         }
       }
       return result;

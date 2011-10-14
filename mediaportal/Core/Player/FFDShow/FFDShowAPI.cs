@@ -31,6 +31,7 @@ using System.IO;
 using System.Runtime.Remoting.Messaging;
 using FFDShow.Interfaces;
 using MediaPortal.GUI.Library;
+using DShowNET.Helper;
 
 namespace FFDShow
 {
@@ -1719,6 +1720,21 @@ namespace FFDShow
     /// </summary>
     public void Dispose()
     {
+      if (ffdshowDec != null)
+        DirectShowUtil.ReleaseComObject(ffdshowDec);
+      else if (ffDecoder != null)
+        DirectShowUtil.ReleaseComObject(ffDecoder);
+      else if (ffdshowBase != null)
+        DirectShowUtil.ReleaseComObject(ffdshowBase);
+      else if (ffdshowDecVideo != null)
+        DirectShowUtil.ReleaseComObject(ffdshowDecVideo);
+      else if (streamSelect != null)
+        DirectShowUtil.ReleaseComObject(streamSelect);
+      ffdshowDec = null;
+      ffDecoder = null;
+      ffdshowBase = null;
+      ffdshowDecVideo = null;
+      streamSelect = null;
       System.GC.SuppressFinalize(this);
     }
 

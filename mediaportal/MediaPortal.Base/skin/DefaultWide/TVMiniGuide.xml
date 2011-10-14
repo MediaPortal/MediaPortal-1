@@ -21,7 +21,6 @@
       <height>557</height>
       <posX>106</posX>
       <posY>75</posY>
-      <colordiffuse>ccffffff</colordiffuse>
     </control>
     <control>
       <description>exit button</description>

@@ -164,6 +164,8 @@ namespace MediaPortal.GUI.Library
     private int _columnCount;
     private bool _scrollingUp = false;
     private bool _scrollingDown = false;
+    private bool _scrollingDownLast = false;
+    private bool _compensatingDown, _compensatingUp = false;
     private int _scrollCounter = 0;
     private string _suffix = "|";
     private GUIFont _font = null;
@@ -660,7 +662,7 @@ namespace MediaPortal.GUI.Library
         btn.Height = _textureHeight + _zoomYPixels;
         btn.SetPosition(dwPosX - (_zoomXPixels / 2), dwPosY - (_zoomYPixels / 2));
         btn.Render(timePassed);
-        if (pFocusImage != null && _zoomXPixels == 0 && _zoomYPixels == 0)
+        if (pFocusImage != null/* && _zoomXPixels == 0 && _zoomYPixels == 0*/)
         {
           pFocusImage.ImageAlignment = Alignment.ALIGN_CENTER;
           pFocusImage.ImageVAlignment = VAlignment.ALIGN_MIDDLE;
@@ -719,6 +721,9 @@ namespace MediaPortal.GUI.Library
         _frameLimiter++;
       else
         _frameLimiter = 1;
+
+      if (_scrollStartOffset >= _rowCount)
+        _scrollStartOffset = _rowCount - 1;
 
       int dwPosY = 0;
       if ((_cursorX > 0 || _cursorY > 0) && !ValidItem(_cursorX, _cursorY))
@@ -804,7 +809,7 @@ namespace MediaPortal.GUI.Library
           {
             int dwPosX = _positionX + iCol * _itemWidth;
             int iItem = iCol + _offset;
-            if (iItem > 0 && iItem < _listItems.Count)
+            if (iItem >= 0 && iItem < _listItems.Count)
             {
               GUIListItem pItem = _listItems[iItem];
               RenderItem(timePassed, 0, false, dwPosX, dwPosY, pItem, i == 0);
@@ -908,6 +913,17 @@ namespace MediaPortal.GUI.Library
             iPage++;
           }
           _controlUpDown.Value = iPage + 1;
+          if (_scrollingDownLast)
+          {
+            _scrollingDownLast = false;
+            _cursorX = _listItems.Count % _columnCount - 1 >= 0 ? _listItems.Count % _columnCount - 1 : 0;
+          }
+          if (_compensatingDown)
+          {
+            _cursorY -= 1;
+            _compensatingDown = false;
+            OnDown();
+          }
           _refresh = true;
           OnSelectionChanged();
         }
@@ -925,6 +941,12 @@ namespace MediaPortal.GUI.Library
             iPage++;
           }
           _controlUpDown.Value = iPage + 1;
+          if (_compensatingUp)
+          {
+            _cursorY += 1;
+            _compensatingUp = false;
+            OnUp();
+          }
           _refresh = true;
           OnSelectionChanged();
         }
@@ -1320,7 +1342,7 @@ namespace MediaPortal.GUI.Library
             _listItems.Add(newItem);
           }
           int iItemsPerPage = _rowCount * _columnCount;
-          int iPages = _listItems.Count / iItemsPerPage;
+          int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
           if ((_listItems.Count % iItemsPerPage) != 0)
           {
             iPages++;
@@ -1418,7 +1440,7 @@ namespace MediaPortal.GUI.Library
         if (_listItems.Count - iItem + 1 <= _columnCount) // special handling for the last rows
         {
           int iItemsPerPage = (_rowCount * _columnCount);
-          iPage = (iItem + 1) / iItemsPerPage;
+          iPage = iItemsPerPage == 0 ? 0 : (iItem + 1) / iItemsPerPage;
           if ((iItem + 1) % iItemsPerPage > 0)
           {
             iPage++;
@@ -1865,7 +1887,7 @@ namespace MediaPortal.GUI.Library
       _columnCount = (int)(_width / fWidth);
 
       int iItemsPerPage = _rowCount * _columnCount;
-      int iPages = _listItems.Count / iItemsPerPage;
+      int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
       if ((_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
@@ -2076,6 +2098,12 @@ namespace MediaPortal.GUI.Library
             iPage++;
           }
           _controlUpDown.Value = iPage + 1;
+          if (_compensatingUp)
+          {
+            _cursorY += 1;
+            _compensatingUp = false;
+            OnUp();
+          }
         }
 
         if ((_cursorY > _scrollStartOffset) || ((_cursorY > 0) && (_offset == 0)))
@@ -2084,6 +2112,8 @@ namespace MediaPortal.GUI.Library
         }
         else if (_cursorY <= _scrollStartOffset && _offset != 0)
         {
+          if (_cursorY < _scrollStartOffset)
+            _compensatingUp = true;
           _scrollCounter = _itemHeight;
           _scrollingUp = true;
         }
@@ -2105,10 +2135,14 @@ namespace MediaPortal.GUI.Library
               {
                 _offset = 0;
               }
-              _cursorY = _rowCount;
-              while (_offset + _cursorY * _columnCount + _cursorX >= _listItems.Count)
+              _cursorY = _rowCount - 1;
+              //while (_offset + _cursorY * _columnCount + _cursorX >= _listItems.Count)
+              //{
+              //  _cursorY--;
+              //}
+              while (!ValidItem(_cursorX, _cursorY) && _cursorX > 0)
               {
-                _cursorY--;
+                _cursorX--;
               }
             }
           }
@@ -2154,15 +2188,31 @@ namespace MediaPortal.GUI.Library
             iPage++;
           }
           _controlUpDown.Value = iPage + 1;
+          if (_scrollingDownLast)
+          {
+            _scrollingDownLast = false;
+            _cursorX = _listItems.Count % _columnCount - 1 >= 0 ? _listItems.Count % _columnCount - 1 : 0;
+          }
+          if (_compensatingDown)
+          {
+            _cursorY -= 1;
+            _compensatingDown = false;
+            OnDown();
+          }
         }
         int iMaxRows = _listItems.Count / _columnCount;
-        if (_listItems.Count % _columnCount > 0)
+        int iHalfLastRowElements = _listItems.Count % _columnCount;
+        if (iHalfLastRowElements > 0)
         {
           iMaxRows++;
         }
+        int iCurrRow = (_offset + _columnCount + (_cursorY) * _columnCount) / _columnCount;
+        //if (_cursorY + 1 > _rowCount - _scrollStartOffset && iCurrRow != iMaxRows) _cursorY--;
         int iNextRow = (_offset + _columnCount + (_cursorY + 1) * _columnCount) / _columnCount;
 
-        if ((_cursorY + 1 == _rowCount - _scrollStartOffset) && (iNextRow <= iMaxRows - _scrollStartOffset))
+        //if ((_cursorY + 1 >= _rowCount - _scrollStartOffset) && (iNextRow <= iMaxRows - _scrollStartOffset))
+        if ((_cursorY + 1 >= _rowCount - _scrollStartOffset) && (_offset + (_columnCount * _rowCount) < _listItems.Count))
+          
         {
           // we reached the scroll row
           {
@@ -2170,33 +2220,31 @@ namespace MediaPortal.GUI.Library
             if (!ValidItem(_cursorX, _cursorY))
             {
               // we reached the last row 
-
-              if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+              _offset -= _columnCount;
+              int iOffsetInc = _columnCount - _cursorX - 1 + iHalfLastRowElements;
+              _offset += iOffsetInc;
+              if (!ValidItem(_cursorX, _cursorY))
               {
-                //check if _downControlId is set -> then go to the window
-                if (_downControlId > 0)
-                {
-                  GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID,
-                                                  _downControlId, (int)action.wID, 0, null);
-                  GUIGraphicsContext.SendMessage(msg);
-                }
-                else
-                {
-                  // move to the first row
-                  _offset = 0;
-                  _cursorY = 0;
-                }
+                SetDownFocus(action, iOffsetInc);
               }
               else
               {
-                _offset -= _columnCount;
+                _offset -= iOffsetInc;// +iHalfLastRowElements;
+                _scrollCounter = _itemHeight;
+                _scrollingDown = true;
+                _scrollingDownLast = true;
               }
             }
             else
             {
-              _offset -= _columnCount;
-              _scrollCounter = _itemHeight;
-              _scrollingDown = true;
+              {
+                _offset -= _columnCount;
+                if (_cursorY > _rowCount - _scrollStartOffset - 1)
+                  _compensatingDown = true;
+                  //_cursorY -= 1;
+                _scrollCounter = _itemHeight;
+                _scrollingDown = true;
+              }
             }
 
             OnSelectionChanged();
@@ -2210,24 +2258,14 @@ namespace MediaPortal.GUI.Library
           {
             _cursorY++;
           }
+          else if (ValidItem(iHalfLastRowElements - 1, _cursorY + 1))
+          {
+            _cursorX = iHalfLastRowElements - 1;
+            _cursorY++;
+          }
           else
           {
-            if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
-            {
-              //check if _downControlId is set -> then go to the window
-              if (_downControlId > 0)
-              {
-                GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID, _downControlId,
-                                                (int)action.wID, 0, null);
-                GUIGraphicsContext.SendMessage(msg);
-              }
-              else
-              {
-                // move to the first row
-                _offset = 0;
-                _cursorY = 0;
-              }
-            }
+            SetDownFocus(action, 0);
           }
           OnSelectionChanged();
         }
@@ -2241,6 +2279,29 @@ namespace MediaPortal.GUI.Library
         }
       }
       _lastCommandTime = AnimationTimer.TickCount;
+    }
+
+    private void SetDownFocus(Action action, int offsetDecrease) {
+      if ((AnimationTimer.TickCount - _lastCommandTime) > _loopDelay)
+      {
+        //check if _downControlId is set -> then go to the window
+        if (_downControlId > 0)
+        {
+            GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SETFOCUS, WindowId, GetID,
+                                            _downControlId, (int)action.wID, 0, null);
+            GUIGraphicsContext.SendMessage(msg);
+        }
+        else
+        {
+          // move to the first row
+          _offset = 0;
+          _cursorY = 0;
+        }
+      }
+      else if (offsetDecrease != 0)
+      {
+        _offset -= offsetDecrease;
+      }
     }
 
     public string ScrollySuffix
@@ -2801,7 +2862,7 @@ namespace MediaPortal.GUI.Library
       }
       _listItems.Add(item);
       int iItemsPerPage = _rowCount * _columnCount;
-      int iPages = _listItems.Count / iItemsPerPage;
+      int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
       if ((_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;
@@ -2820,7 +2881,7 @@ namespace MediaPortal.GUI.Library
       }
       _listItems.Insert(index, item);
       int iItemsPerPage = _rowCount * _columnCount;
-      int iPages = _listItems.Count / iItemsPerPage;
+      int iPages = iItemsPerPage == 0 ? 0 : _listItems.Count / iItemsPerPage;
       if ((_listItems.Count % iItemsPerPage) != 0)
       {
         iPages++;

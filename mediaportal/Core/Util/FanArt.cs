@@ -91,7 +91,7 @@ namespace MediaPortal.Util
 
       filename = Path.GetFileNameWithoutExtension(filename);
       filename = Utils.RemoveTrailingSlash(filename);
-
+      
       if (localFile.Length > 7 && localFile.Substring(0, 7).Equals("file://"))
       {
         localFile = localFile.Replace("file://", "");
@@ -114,7 +114,16 @@ namespace MediaPortal.Util
         //
         if (!isUrl)
         {
-          File.Copy(localFile, dbFile, true);
+          try
+          {
+            if (!localFile.Equals(dbFile, StringComparison.OrdinalIgnoreCase) && File.Exists(localFile))
+              File.Copy(localFile, dbFile, true);
+          }
+          catch (Exception ex)
+          {
+            Log.Error(ex);
+          }
+          
         }
         else
         {
@@ -137,17 +146,31 @@ namespace MediaPortal.Util
             string fileclean = CleanFilename(filename);
             _fileMovie = SetFanArtFileName(fileclean, index);
 
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
           else // DVD Video
           {
             SetDvdMovieFile(path, index);
-            if (dbFile.ToLower() != _fileMovie.ToLower())
+            if (!dbFile.Equals(_fileMovie, StringComparison.OrdinalIgnoreCase) && File.Exists(dbFile))
             {
-              File.Copy(dbFile, _fileMovie, true);
+              try
+              {
+                File.Copy(dbFile, _fileMovie, true);
+              }
+              catch (Exception ex)
+              {
+                Log.Error(ex);
+              }
             }
           }
         }
@@ -165,8 +188,9 @@ namespace MediaPortal.Util
     /// <param name="random"></param>
     /// <param name="countFA"></param>
     /// <param name="share"></param>
+    /// <param name="strSearch"></param>
     public void GetTmdbFanartByApi(string path, string filename, string imdbTT, string title, bool random, int countFA,
-                                   bool share)
+                                   bool share, string strSearch)
     {
       if (!Win32API.IsConnectedToInternet())
       {
@@ -194,14 +218,33 @@ namespace MediaPortal.Util
         }
         else
         {
-          tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
-                    title;
-          tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
-                              title;
+          if (strSearch == string.Empty)
+          {
+            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+                      title;
+            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+                                title;
+            
+          }
+          else
+          {
+            tmdbUrl = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" +
+                      strSearch;
+            tmdbUrlWorkaround = "http://api.themoviedb.org/2.1/Movie.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a//" +
+                                strSearch;
+          }
           random = false;
         }
         // Download fanart xml 
-        string tmdbXml = GetPage(tmdbUrl, "utf-8", out strAbsUrl);
+        string tmdbXml = string.Empty;
+        if (!GetPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbXml))
+        {
+          if (!GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl, ref tmdbXml))
+          {
+            Log.Info("Fanart Serach: TMDB returns no API result for - {0} ({1})", title, tmdbUrl);
+            return;
+          }
+        }
 
         string matchBackdrop = "<image\\stype=\"backdrop\"\\surl=\"(?<BackDrop>.*?)\"";
 
@@ -213,12 +256,6 @@ namespace MediaPortal.Util
         {
           MatchCollection mcBd = Regex.Matches(tmdbXml, matchBackdrop);
           // Set fanart collection
-          if (mcBd.Count == 0)
-          {
-            // Try workaround search if no fanart count
-            tmdbXml = GetPage(tmdbUrlWorkaround, "utf-8", out strAbsUrl);
-            mcBd = Regex.Matches(tmdbXml, matchBackdrop);
-          }
           if (mcBd.Count != 0)
           {
             foreach (Match mBd in mcBd)
@@ -234,6 +271,11 @@ namespace MediaPortal.Util
                 _fanartList.Add(strBd);
               }
             }
+          }
+          else
+          {
+            Log.Info("Fanart Serach: No fanart found for - {0} ({1})", title, tmdbUrl);
+            return;
           }
           // Check if fanart collection is lower than wanted fanarts quantity per movie
           if (_fanartList.Count < countFA)
@@ -258,7 +300,7 @@ namespace MediaPortal.Util
                   string fileclean = CleanFilename(filename);
                   _fileMovie = SetFanArtFileName(fileclean, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
                   // DVD Video
@@ -266,7 +308,7 @@ namespace MediaPortal.Util
                 {
                   SetDvdMovieFile(path, 0);
 
-                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                  if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                     File.Copy(_fileFanArt, _fileMovie, true);
                 }
               }
@@ -293,7 +335,7 @@ namespace MediaPortal.Util
                     string fileclean = CleanFilename(filename);
                     _fileMovie = SetFanArtFileName(fileclean, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                     // DVD video
@@ -301,7 +343,7 @@ namespace MediaPortal.Util
                   {
                     SetDvdMovieFile(path, i);
 
-                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+                    if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                       File.Copy(_fileFanArt, _fileMovie, true);
                   }
                 }
@@ -357,7 +399,7 @@ namespace MediaPortal.Util
               string fileclean = CleanFilename(filename);
               _fileMovie = SetFanArtFileName(fileclean, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
               // DVD Video
@@ -365,7 +407,7 @@ namespace MediaPortal.Util
             {
               SetDvdMovieFile(path, index);
 
-              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase))
+              if (!_fileMovie.Equals(_fileFanArt, StringComparison.OrdinalIgnoreCase) && File.Exists(_fileFanArt))
                 File.Copy(_fileFanArt, _fileMovie, true);
             }
           }
@@ -382,6 +424,8 @@ namespace MediaPortal.Util
       // FanArt directory
       string configDir;
       GetFanArtFolder(out configDir);
+      
+      title = MakeFanartFileName(title);
 
       if (Directory.Exists(configDir))
       {
@@ -469,11 +513,54 @@ namespace MediaPortal.Util
     // Set fanart filename
     public static string SetFanArtFileName(string title, int index)
     {
+      title = MakeFanartFileName(title);
+
       string configDir = string.Empty;
       GetFanArtFolder(out configDir);
       string ext = ".jpg";
       //
       return configDir + title + "{" + index + "}" + ext;
+    }
+
+    public static string MakeFanartFileName(string strText)
+    {
+      if (strText == null) return string.Empty;
+      if (strText.Length == 0) return string.Empty;
+
+      string strFName = strText.Replace(':', ' ');
+      strFName = strFName.Replace('/', ' ');
+      strFName = strFName.Replace('\\', ' ');
+      strFName = strFName.Replace('*', ' ');
+      strFName = strFName.Replace('?', ' ');
+      strFName = strFName.Replace('\"', ' ');
+      strFName = strFName.Replace('<', ' ');
+      strFName = strFName.Replace('>', ' ');
+      strFName = strFName.Replace('|', ' ');
+
+      bool unclean = true;
+      char[] invalids = Path.GetInvalidFileNameChars();
+      while (unclean)
+      {
+        unclean = false;
+
+        char[] filechars = strFName.ToCharArray();
+
+        foreach (char c in filechars)
+        {
+          if (!unclean)
+            foreach (char i in invalids)
+            {
+              if (c == i)
+              {
+                unclean = true;
+                //Log.Warn("Utils: *** File name {1} still contains invalid chars - {0}", Convert.ToString(c), strFName);
+                strFName = strFName.Replace(c, ' ');
+                break;
+              }
+            }
+        }
+      }
+      return strFName;
     }
 
     #endregion
@@ -485,6 +572,8 @@ namespace MediaPortal.Util
     {
       try
       {
+        title = MakeFanartFileName(title);
+
         _fileFanArt = SetFanArtFileName(title, index);
         var webClient = new WebClient();
         webClient.DownloadFile((string)_fanartList[index], _fileFanArt);
@@ -571,9 +660,9 @@ namespace MediaPortal.Util
     }
 
     // Get URL HTML body
-    private string GetPage(string strUrl, string strEncode, out string absoluteUri)
+    private bool GetPage(string strUrl, string strEncode, out string absoluteUri, ref string strBody)
     {
-      string strBody = string.Empty;
+      bool sucess = true;
       absoluteUri = String.Empty;
       Stream receiveStream = null;
       StreamReader sr = null;
@@ -594,11 +683,9 @@ namespace MediaPortal.Util
 
         absoluteUri = result.ResponseUri.AbsoluteUri;
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Error("Fanart: Error retreiving from WebPage: {0} Encoding:{1} err:{2} stack:{3}", strUrl, strEncode,
-                  ex.Message,
-                  ex.StackTrace);
+        sucess = false;
       }
       finally
       {
@@ -627,7 +714,7 @@ namespace MediaPortal.Util
           catch (Exception) {}
         }
       }
-      return strBody;
+      return sucess;
     }
 
     #endregion

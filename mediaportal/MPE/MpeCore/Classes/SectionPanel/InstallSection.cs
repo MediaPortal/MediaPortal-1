@@ -109,8 +109,8 @@ namespace MpeCore.Classes.SectionPanel
 
     private void SetValues()
     {
-      button_back.Visible = false;
-      button_cancel.Visible = false;
+      button_back.Enabled = false;
+      button_cancel.Enabled = false;
       this.Width = 500;
     }
 
@@ -132,8 +132,8 @@ namespace MpeCore.Classes.SectionPanel
       if (Mode == ShowModeEnum.Real)
       {
         base.button_next.Enabled = false;
-        base.button_back.Visible = false;
-        base.button_cancel.Visible = false;
+        base.button_back.Enabled = false;
+        base.button_cancel.Enabled = false;
         foreach (var actionItem in Section.Actions.Items)
         {
           if (actionItem.ExecuteLocation != ActionExecuteLocationEnum.AfterPanelShow)

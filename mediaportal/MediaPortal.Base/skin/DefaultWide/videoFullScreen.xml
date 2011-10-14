@@ -3,7 +3,7 @@
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>true</disabletopbar>
+  <disabletopbar>false</disabletopbar>
   <controls>
     <control>
       <description>background image (not used!)</description>
@@ -14,7 +14,7 @@
       <width>1000</width>
       <height>89</height>
       <texture>blue.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
+      <colordiffuse>eeffffff</colordiffuse>
       <visible>window.ispauseosdvisible|player.rewinding|player.forwarding</visible>
     </control>
     <control>
@@ -26,7 +26,7 @@
       <height>120</height>
       <width>1290</width>
       <texture>blue.png</texture>
-      <colordiffuse>ccffffff</colordiffuse>
+      <colordiffuse>eeffffff</colordiffuse>
       <visible>!window.isosdvisible+window.ispauseosdvisible+player.paused|player.rewinding|player.forwarding|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
     <control>
@@ -231,7 +231,7 @@
     <control>
       <description>background image to cover above images when changing screen resolution</description>
       <type>image</type>
-      <id>0</id>
+      <id>7654</id>
       <posX>520</posX>
       <posY>635</posY>
       <width>350</width>
@@ -267,6 +267,18 @@
       <imageHeight>3</imageHeight>
       <texture>volume.states.png</texture>
       <visible>no</visible>
+    </control>
+    <control>
+      <description>Time</description>
+      <type>label</type>
+      <id>9999</id>
+      <posX>1250</posX>
+      <posY>635</posY>
+      <label>#time</label>
+      <align>right</align>
+      <font>font13</font>
+      <textcolor>ffa9d0f7</textcolor>
+      <visible>control.isVisible(111)|control.isVisible(10)|control.isVisible(11)|control.isVisible(12)</visible>
     </control>
   </controls>
 </window>

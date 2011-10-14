@@ -173,7 +173,7 @@ namespace MediaPortal.GUI.Library
         if (Disabled)
         {
           // If disabled, draw the text in the disabled color.
-          _font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
+          _font.DrawText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_disabledColor), _label, Alignment.ALIGN_LEFT, -1);
         }
         else
         {
@@ -182,12 +182,12 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1, 5,
-                                   5, 0xff000000);
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_textColor), _label, Alignment.ALIGN_LEFT, -1, 5,
+                                   5, GUIGraphicsContext.MergeAlpha(0xff000000));
             }
             else
             {
-              _font.DrawText((float)dwTextPosX, (float)_positionY, _textColor, _label, Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_textColor), _label, Alignment.ALIGN_LEFT, -1);
             }
           }
             // Draw non-focused text and shadow
@@ -195,13 +195,13 @@ namespace MediaPortal.GUI.Library
           {
             if (_shadow)
             {
-              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT,
+              _font.DrawShadowText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_disabledColor), _label, Alignment.ALIGN_LEFT,
                                    -1,
-                                   5, 5, 0xff000000);
+                                   5, 5, GUIGraphicsContext.MergeAlpha(0xff000000));
             }
             else
             {
-              _font.DrawText((float)dwTextPosX, (float)_positionY, _disabledColor, _label, Alignment.ALIGN_LEFT, -1);
+              _font.DrawText((float)dwTextPosX, (float)_positionY, GUIGraphicsContext.MergeAlpha((uint)_disabledColor), _label, Alignment.ALIGN_LEFT, -1);
             }
           }
         }

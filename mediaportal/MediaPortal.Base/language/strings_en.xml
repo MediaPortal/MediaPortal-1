@@ -1007,8 +1007,15 @@
     <String id="1219">Album Artists (Index)</String>
     <String id="1220">Sort by: Date Created</String>
     <String id="1221">Sort by: Date Modified</String>
+    <String id="1222">Groups</String>
+    <String id="1223">Existing Playlist Detected</String>
+    <String id="1224">Do you want to clear the current playlist?</String>
+    <String id="1225">Queue item</String>
+    <String id="1226">Queue all items</String>
     <String id="1230">Date added:</String>
     <String id="1231">Last played:</String>
+		<String id="1240">Lock content</String>
+		<String id="1241">Unlock content</String>
     <String id="1300" prefix="My ">TV Shows</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
@@ -1051,6 +1058,14 @@
     <String id="1600">Do you want to power off?</String>
     <String id="1601">Do you want to suspend?</String>
     <String id="1602">Do you want to hibernate?</String>
+    <String id="1900">Outdated Skin</String>
+    <String id="1901">Your currently selected skin ({0}) is outdated. This could cause problems while using MediaPortal. For this reason MediaPortal has temporarily switched to the default skin. If however you would like to try using the outdated skin, press the 'Ignore and try' button, but remember: Do NOT file a bug report using this skin!
+(to dismiss this warning either wait until it closes automatically or press Back/ESC on you remote)</String>
+    <String id="1902">Do not show this message again</String>
+    <String id="1903">Ignore and try ({0})...</String>
+    <String id="1910">Incompatible plugins</String>
+    <String id="1911">The following plugins are incompatible with this version of MediaPortal and were automatically disabled:</String>
+    <String id="1912">Continue|Continue ({0})...|Continue ({0})...</String>
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Hard drive</String>
     <String id="1952">Fan</String>
@@ -1971,5 +1986,8 @@
     <String id="200087">Mute</String>
     <String id="200090">Edition</String>
     <String id="200091">Chapter</String>
-	</Section>
+    <String id="200092">Forced Only</String>
+    <String id="200093">Disc mount time out reached!</String>
+    <String id="200094">Keep trying for further 60 seconds?</String>
+  </Section>
 </Language>

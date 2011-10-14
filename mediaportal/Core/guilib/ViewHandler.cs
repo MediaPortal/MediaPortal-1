@@ -108,6 +108,11 @@ namespace MediaPortal.GUI.Library
         }
         
         FilterDefinition def = (FilterDefinition)currentView.Filters[currentLevel];
+
+        if (def.SqlOperator == "group")
+        {
+          return GUILocalizeStrings.Get(1222);
+        }
         
         return(GetLocalizedViewLevel(def.Where));
       }

@@ -38,6 +38,14 @@ namespace MpeCore.Classes
       Revision = "0";
     }
 
+    public VersionInfo(Version version)
+    {
+      Major = version.Major.ToString();
+      Minor = version.Minor.ToString();
+      Build = version.Build.ToString();
+      Revision = version.Revision.ToString();
+    }
+
     private string _major;
 
     public string Major

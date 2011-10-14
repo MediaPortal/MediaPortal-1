@@ -291,16 +291,7 @@
       <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
     </Compile>
     <Compile Include="Direct3D.cs" />
-    <Compile Include="IncompatiblePluginsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IncompatiblePluginsForm.Designer.cs">
-      <DependentUpon>IncompatiblePluginsForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MediaPortal.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="OldSkinForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -309,8 +300,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SplashScreen.cs">
-    </Compile>
+    <Compile Include="SplashScreen.cs" />
     <Compile Include="ThreadMessageFilter.cs" />
     <Compile Include="WorkingSet.cs" />
     <EmbeddedResource Include="CodecsForm.resx">
@@ -329,15 +319,8 @@
       <SubType>Designer</SubType>
       <DependentUpon>FullScreenSplashScreen.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="IncompatiblePluginsForm.resx">
-      <DependentUpon>IncompatiblePluginsForm.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="MediaPortal.resx">
       <DependentUpon>MediaPortal.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OldSkinForm.resx">
-      <DependentUpon>OldSkinForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

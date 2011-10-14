@@ -106,8 +106,10 @@ namespace MediaPortal.GUI.Music
     protected PlayNowJumpToType PlayNowJumpTo = PlayNowJumpToType.None;
     protected bool UsingInternalMusicPlayer = false;
 
-    protected bool PlayAllOnSingleItemPlayNow = true;
     protected string _currentPlaying = string.Empty;
+    protected string _selectOption = string.Empty;
+    protected bool _addAllOnSelect;
+    protected bool _playlistIsCurrent;
     
     protected static BackgroundWorker bw;
     protected static bool defaultPlaylistLoaded = false;
@@ -141,7 +143,7 @@ namespace MediaPortal.GUI.Music
 
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
-        string playNowJumpTo = xmlreader.GetValueAsString("musicmisc", "playnowjumpto", "none");
+        string playNowJumpTo = xmlreader.GetValueAsString("music", "playnowjumpto", "none");
 
         switch (playNowJumpTo)
         {
@@ -199,17 +201,9 @@ namespace MediaPortal.GUI.Music
         _createMissingFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "createMissingFolderThumbs", false);
         _useFolderThumbs = xmlreader.GetValueAsBool("musicfiles", "useFolderThumbs", true);
 
-        String strPlayMode = xmlreader.GetValueAsString("musicfiles", "playmode", "play");
-        if (strPlayMode == "playlist")
-        {
-          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAYLIST_MODE;
-        }
-        else
-        {
-          MusicState.CurrentPlayMode = MusicState.PlayMode.PLAY_MODE;
-        }
-
-        PlayAllOnSingleItemPlayNow = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+        _selectOption = xmlreader.GetValueAsString("musicfiles", "selectOption", "play");
+        _addAllOnSelect = xmlreader.GetValueAsBool("musicfiles", "addall", true);
+        _playlistIsCurrent = xmlreader.GetValueAsBool("musicfiles", "playlistIsCurrent", true);
 
         for (int i = 0; i < _sortModes.Length; ++i)
         {
@@ -317,6 +311,7 @@ namespace MediaPortal.GUI.Music
       {
         return false;
       }
+      
       return true;
     }
 
@@ -358,12 +353,22 @@ namespace MediaPortal.GUI.Music
       }
       if (action.wID == Action.ActionType.ACTION_QUEUE_ITEM)
       {
-        // when adding item only add a single item
-        // so override add all setting
-        bool existingPlayAll = PlayAllOnSingleItemPlayNow;
-        PlayAllOnSingleItemPlayNow = false;
-        AddSelectionToPlaylist(false);
-        PlayAllOnSingleItemPlayNow = existingPlayAll;
+        // if playlist screen shows current playlist or user is playing music using background playlist
+        // then queue track in that list
+        if (_playlistIsCurrent || playlistPlayer.CurrentPlaylistType == PlayListType.PLAYLIST_MUSIC_TEMP)
+        {
+          AddSelectionToCurrentPlaylist(false,false);
+        }
+        else
+        {
+          // user is playing a playlist so add track to the playlist
+          AddSelectionToPlaylist();
+        }
+        return;
+      }
+      if (action.wID == Action.ActionType.ACTION_ADD_TO_PLAYLIST)
+      {
+        AddSelectionToPlaylist();
         return;
       }
       base.OnAction(action);
@@ -1813,54 +1818,54 @@ namespace MediaPortal.GUI.Music
 
         if (item.IsFolder || item.Label == "..")
         {
-          GUIPropertyManager.SetProperty("#title", string.Empty);
-          GUIPropertyManager.SetProperty("#track", string.Empty);
-          GUIPropertyManager.SetProperty("#rating", string.Empty);
-          GUIPropertyManager.SetProperty("#duration", string.Empty);
-          GUIPropertyManager.SetProperty("#artist", string.Empty);
-          GUIPropertyManager.SetProperty("#bitRate", string.Empty);
-          GUIPropertyManager.SetProperty("#comment", string.Empty);
-          GUIPropertyManager.SetProperty("#composer", string.Empty);
-          GUIPropertyManager.SetProperty("#conductor", string.Empty);
-          GUIPropertyManager.SetProperty("#lyrics", string.Empty);
-          GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
-          GUIPropertyManager.SetProperty("#filetype", string.Empty);
-          GUIPropertyManager.SetProperty("#codec", string.Empty);
-          GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
-          GUIPropertyManager.SetProperty("#bpm", string.Empty);
-          GUIPropertyManager.SetProperty("#channels", string.Empty);
-          GUIPropertyManager.SetProperty("#samplerate", string.Empty);
+          GUIPropertyManager.SetProperty("#music.title", string.Empty);
+          GUIPropertyManager.SetProperty("#music.track", string.Empty);
+          GUIPropertyManager.SetProperty("#music.rating", string.Empty);
+          GUIPropertyManager.SetProperty("#music.duration", string.Empty);
+          GUIPropertyManager.SetProperty("#music.artist", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bitRate", string.Empty);
+          GUIPropertyManager.SetProperty("#music.comment", string.Empty);
+          GUIPropertyManager.SetProperty("#music.composer", string.Empty);
+          GUIPropertyManager.SetProperty("#music.conductor", string.Empty);
+          GUIPropertyManager.SetProperty("#music.lyrics", string.Empty);
+          GUIPropertyManager.SetProperty("#music.timesplayed", string.Empty);
+          GUIPropertyManager.SetProperty("#music.filetype", string.Empty);
+          GUIPropertyManager.SetProperty("#music.codec", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bitratemode", string.Empty);
+          GUIPropertyManager.SetProperty("#music.bpm", string.Empty);
+          GUIPropertyManager.SetProperty("#music.channels", string.Empty);
+          GUIPropertyManager.SetProperty("#music.samplerate", string.Empty);
         }
         else
         {
-          GUIPropertyManager.SetProperty("#title", tag.Title);
-          GUIPropertyManager.SetProperty("#track", strTrack);
-          GUIPropertyManager.SetProperty("#rating", strRating);
-          GUIPropertyManager.SetProperty("#duration", strDuration);
-          GUIPropertyManager.SetProperty("#artist", tag.Artist);
-          GUIPropertyManager.SetProperty("#bitRate", strBitrate);
-          GUIPropertyManager.SetProperty("#comment", tag.Comment);
-          GUIPropertyManager.SetProperty("#composer", tag.Composer);
-          GUIPropertyManager.SetProperty("#conductor", tag.Conductor);
-          GUIPropertyManager.SetProperty("#lyrics", tag.Lyrics);
-          GUIPropertyManager.SetProperty("#timesplayed", strTimesPlayed);
-          GUIPropertyManager.SetProperty("#filetype", tag.FileType);
-          GUIPropertyManager.SetProperty("#codec", tag.Codec);
-          GUIPropertyManager.SetProperty("#bitratemode", tag.BitRateMode);
-          GUIPropertyManager.SetProperty("#bpm", strBPM);
-          GUIPropertyManager.SetProperty("#channels", strChannels);
-          GUIPropertyManager.SetProperty("#samplerate", strSampleRate);
+          GUIPropertyManager.SetProperty("#music.title", tag.Title);
+          GUIPropertyManager.SetProperty("#music.track", strTrack);
+          GUIPropertyManager.SetProperty("#music.rating", strRating);
+          GUIPropertyManager.SetProperty("#music.duration", strDuration);
+          GUIPropertyManager.SetProperty("#music.artist", tag.Artist);
+          GUIPropertyManager.SetProperty("#music.bitRate", strBitrate);
+          GUIPropertyManager.SetProperty("#music.comment", tag.Comment);
+          GUIPropertyManager.SetProperty("#music.composer", tag.Composer);
+          GUIPropertyManager.SetProperty("#music.conductor", tag.Conductor);
+          GUIPropertyManager.SetProperty("#music.lyrics", tag.Lyrics);
+          GUIPropertyManager.SetProperty("#music.timesplayed", strTimesPlayed);
+          GUIPropertyManager.SetProperty("#music.filetype", tag.FileType);
+          GUIPropertyManager.SetProperty("#music.codec", tag.Codec);
+          GUIPropertyManager.SetProperty("#music.bitratemode", tag.BitRateMode);
+          GUIPropertyManager.SetProperty("#music.bpm", strBPM);
+          GUIPropertyManager.SetProperty("#music.channels", strChannels);
+          GUIPropertyManager.SetProperty("#music.samplerate", strSampleRate);
         }
 
-        GUIPropertyManager.SetProperty("#album", tag.Album);
-        GUIPropertyManager.SetProperty("#genre", tag.Genre);
-        GUIPropertyManager.SetProperty("#year", strYear);
-        GUIPropertyManager.SetProperty("#albumArtist", tag.AlbumArtist);
-        GUIPropertyManager.SetProperty("#discid", strDiscID);
-        GUIPropertyManager.SetProperty("#disctotal", strDiscTotal);
-        GUIPropertyManager.SetProperty("#trackTotal", strTrackTotal);
-        GUIPropertyManager.SetProperty("#datelastplayed", strDateLastPlayed);
-        GUIPropertyManager.SetProperty("#dateadded", strDateAdded);
+        GUIPropertyManager.SetProperty("#music.album", tag.Album);
+        GUIPropertyManager.SetProperty("#music.genre", tag.Genre);
+        GUIPropertyManager.SetProperty("#music.year", strYear);
+        GUIPropertyManager.SetProperty("#music.albumArtist", tag.AlbumArtist);
+        GUIPropertyManager.SetProperty("#music.discid", strDiscID);
+        GUIPropertyManager.SetProperty("#music.disctotal", strDiscTotal);
+        GUIPropertyManager.SetProperty("#music.trackTotal", strTrackTotal);
+        GUIPropertyManager.SetProperty("#music.datelastplayed", strDateLastPlayed);
+        GUIPropertyManager.SetProperty("#music.dateadded", strDateAdded);
 
         // see if we have album info
         AlbumInfo _albumInfo = new AlbumInfo();
@@ -1885,7 +1890,16 @@ namespace MediaPortal.GUI.Music
 
         // see if we have artist info
         ArtistInfo _artistInfo = new ArtistInfo();
-        if (MusicDatabase.Instance.GetArtistInfo(tag.AlbumArtist, ref _artistInfo))
+        String strArtist;
+        if (string.IsNullOrEmpty(tag.Artist))
+        {
+          strArtist = tag.AlbumArtist;
+        }
+        else
+        {
+          strArtist = tag.Artist;
+        }
+        if (MusicDatabase.Instance.GetArtistInfo(strArtist, ref _artistInfo))
         {
           GUIPropertyManager.SetProperty("#ArtistInfo.Bio", _artistInfo.AMGBio);
           GUIPropertyManager.SetProperty("#ArtistInfo.Born", _artistInfo.Born);
@@ -1908,32 +1922,32 @@ namespace MediaPortal.GUI.Music
       }
       else
       {
-        GUIPropertyManager.SetProperty("#title", string.Empty);
-        GUIPropertyManager.SetProperty("#track", string.Empty);
-        GUIPropertyManager.SetProperty("#album", string.Empty);
-        GUIPropertyManager.SetProperty("#artist", string.Empty);
-        GUIPropertyManager.SetProperty("#genre", string.Empty);
-        GUIPropertyManager.SetProperty("#year", string.Empty);
-        GUIPropertyManager.SetProperty("#rating", string.Empty);
-        GUIPropertyManager.SetProperty("#duration", string.Empty);
-        GUIPropertyManager.SetProperty("#albumArtist", string.Empty);
-        GUIPropertyManager.SetProperty("#bitRate", string.Empty);
-        GUIPropertyManager.SetProperty("#comment", string.Empty);
-        GUIPropertyManager.SetProperty("#composer", string.Empty);
-        GUIPropertyManager.SetProperty("#conductor", string.Empty);
-        GUIPropertyManager.SetProperty("#discid", string.Empty);
-        GUIPropertyManager.SetProperty("#disctotal", string.Empty);
-        GUIPropertyManager.SetProperty("#lyrics", string.Empty);
-        GUIPropertyManager.SetProperty("#timesplayed", string.Empty);
-        GUIPropertyManager.SetProperty("#trackTotal", string.Empty);
-        GUIPropertyManager.SetProperty("#filetype", string.Empty);
-        GUIPropertyManager.SetProperty("#codec", string.Empty);
-        GUIPropertyManager.SetProperty("#bitratemode", string.Empty);
-        GUIPropertyManager.SetProperty("#bpm", string.Empty);
-        GUIPropertyManager.SetProperty("#channels", string.Empty);
-        GUIPropertyManager.SetProperty("#samplerate", string.Empty);
-        GUIPropertyManager.SetProperty("#datelastplayed", string.Empty);
-        GUIPropertyManager.SetProperty("#dateadded", string.Empty);
+        GUIPropertyManager.SetProperty("#music.title", string.Empty);
+        GUIPropertyManager.SetProperty("#music.track", string.Empty);
+        GUIPropertyManager.SetProperty("#music.album", string.Empty);
+        GUIPropertyManager.SetProperty("#music.artist", string.Empty);
+        GUIPropertyManager.SetProperty("#music.genre", string.Empty);
+        GUIPropertyManager.SetProperty("#music.year", string.Empty);
+        GUIPropertyManager.SetProperty("#music.rating", string.Empty);
+        GUIPropertyManager.SetProperty("#music.duration", string.Empty);
+        GUIPropertyManager.SetProperty("#music.albumArtist", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bitRate", string.Empty);
+        GUIPropertyManager.SetProperty("#music.comment", string.Empty);
+        GUIPropertyManager.SetProperty("#music.composer", string.Empty);
+        GUIPropertyManager.SetProperty("#music.conductor", string.Empty);
+        GUIPropertyManager.SetProperty("#music.discid", string.Empty);
+        GUIPropertyManager.SetProperty("#music.disctotal", string.Empty);
+        GUIPropertyManager.SetProperty("#music.lyrics", string.Empty);
+        GUIPropertyManager.SetProperty("#music.timesplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#music.trackTotal", string.Empty);
+        GUIPropertyManager.SetProperty("#music.filetype", string.Empty);
+        GUIPropertyManager.SetProperty("#music.codec", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bitratemode", string.Empty);
+        GUIPropertyManager.SetProperty("#music.bpm", string.Empty);
+        GUIPropertyManager.SetProperty("#music.channels", string.Empty);
+        GUIPropertyManager.SetProperty("#music.samplerate", string.Empty);
+        GUIPropertyManager.SetProperty("#music.datelastplayed", string.Empty);
+        GUIPropertyManager.SetProperty("#music.dateadded", string.Empty);
       }
 
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
@@ -1960,7 +1974,14 @@ namespace MediaPortal.GUI.Music
     /// what tracks need to be added to the playlist
     /// </summary>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    protected virtual void AddSelectionToPlaylist(bool clearPlaylist) {}
+    /// <param name="addAllTracks">Whether to add all tracks in folder</param>
+    protected virtual void AddSelectionToCurrentPlaylist(bool clearPlaylist, bool addAllTracks) {}
+
+    /// <summary>
+    /// Adds songs to the playlist without affecting what is playing
+    /// </summary>
+    protected virtual void AddSelectionToPlaylist() {}
+
 
     /// <summary>
     /// Just helper method to turn the enum in MusicState into
@@ -1969,10 +1990,11 @@ namespace MediaPortal.GUI.Music
     /// <returns></returns>
     protected PlayListType GetPlayListType()
     {
-      // we used to also use PLAYLIST_MUSIC_TEMP
-      // this method is here incase we want to implement
-      // multiple playlists again
-      return PlayListType.PLAYLIST_MUSIC;
+      if (_playlistIsCurrent)
+      {
+        return PlayListType.PLAYLIST_MUSIC;
+      }
+      return PlayListType.PLAYLIST_MUSIC_TEMP;
     }
 
     /// <summary>
@@ -1982,7 +2004,8 @@ namespace MediaPortal.GUI.Music
     /// </summary>
     /// <param name="pItems">A list of PlayListItem to be added</param>
     /// <param name="clearPlaylist">If True then current playlist will be cleared</param>
-    protected void AddItemsToPlaylist(List<PlayListItem> pItems, bool clearPlaylist)
+    /// <param name="addAllTracks">Whether to add all tracks in folder to playlist</param>
+    protected void AddItemsToCurrentPlaylist(List<PlayListItem> pItems, bool clearPlaylist, bool addAllTracks)
     {
       PlayList pl = playlistPlayer.GetPlaylist(GetPlayListType());
       playlistPlayer.CurrentPlaylistType = GetPlayListType();
@@ -1999,38 +2022,6 @@ namespace MediaPortal.GUI.Music
       //then start at the end of the playlist
       int iCurrentItemCount = pl.Count;
 
-      if (!(g_Player.Playing && g_Player.IsMusic))
-      {
-        // nothing is playing or something other than music is playing
-        // and we are in playlist mode so may want to just add tracks to existing
-        // playlist but start from the track we have just added
-        if (iCurrentItemCount > 0)
-        {
-          // we are in playlist mode (play mode will have cleared list already)
-          // and playlist has existing items but is not playing
-          // so check with user if they want to clear the current playlist
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          if (dlgYesNo != null)
-          {
-            // need localised strings here
-            dlgYesNo.SetHeading("Existing Playlist Detected");
-            dlgYesNo.SetLine(1, "Do you want to clear the current playlist?");
-            dlgYesNo.DoModal(GetID);
-            if (dlgYesNo.IsConfirmed)
-            {
-              // clear playlist as requested by user
-              pl.Clear();
-              playlistPlayer.Reset();
-            }
-            else
-            {
-              // start from end of playlist
-              iStartFrom = iCurrentItemCount;
-            }
-          }
-        }
-      }
-
       foreach (PlayListItem pItem in pItems)
       {
         // actually add items to the playlist
@@ -2044,7 +2035,7 @@ namespace MediaPortal.GUI.Music
         // if playlist has been cleared before calling this
         // or there is nothing in existing playlist then
         // start playback
-        if (!facadeLayout.SelectedListItem.IsFolder && PlayAllOnSingleItemPlayNow)
+        if (!facadeLayout.SelectedListItem.IsFolder && pItems.Count > 1)
         {
           // we are here is we are in tracks listing and playlist was empty
           // we are adding multiple tracks to playlist so need to ensure
@@ -2075,6 +2066,27 @@ namespace MediaPortal.GUI.Music
       DoPlayNowJumpTo(pItems.Count);
     }
 
+    /// <summary>
+    /// When playlist is not current playlist (current tracks are added to TEMP playlist)
+    /// Then allow users to add tracks to the playlist without affecting playback
+    /// </summary>
+    /// <param name="pItems">Items to add to the playlist</param>
+    protected void AddItemsToPlaylist(List<PlayListItem> pItems)
+    {
+      PlayList pl = playlistPlayer.GetPlaylist(PlayListType.PLAYLIST_MUSIC);
+
+      foreach (PlayListItem pItem in pItems)
+      {
+        // actually add items to the playlist
+        pl.Add(pItem);
+      }
+
+      if (facadeLayout.SelectedListItemIndex < facadeLayout.Count - 1)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, facadeLayout.SelectedListItemIndex + 1);
+      }
+    }
+
     protected void InsertItemsToPlaylist(List<PlayListItem> pItems)
     {
       PlayList pl = playlistPlayer.GetPlaylist(GetPlayListType());
@@ -2083,38 +2095,6 @@ namespace MediaPortal.GUI.Music
       //if not clearing the playlist and playback is stopped
       //then start at the end of the playlist
       int iCurrentItemCount = pl.Count;
-
-
-      if (!(g_Player.Playing && g_Player.IsMusic))
-      {
-        // nothing is playing or something other than music is playing
-        if (iCurrentItemCount > 0)
-        {
-          // we are in playlist mode (play mode will have cleared list already)
-          // and playlist has existing items but is not playing
-          // so check with user if they want to clear the current playlist
-          GUIDialogYesNo dlgYesNo = (GUIDialogYesNo)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_YES_NO);
-          if (dlgYesNo != null)
-          {
-            // need localised strings here
-            dlgYesNo.SetHeading("Existing Playlist Detected");
-            dlgYesNo.SetLine(1, "Do you want to clear the current playlist?");
-            dlgYesNo.DoModal(GetID);
-            if (dlgYesNo.IsConfirmed)
-            {
-              // clear playlist as requested by user
-              pl.Clear();
-              playlistPlayer.Reset();
-              iStartFrom = 0;
-            }
-            else
-            {
-              iStartFrom = iCurrentItemCount;
-            }
-          }
-        }
-      }
-
 
       int index = Math.Max(playlistPlayer.CurrentSong, 0);
       for (int i = 0; i < pItems.Count; i++)

@@ -151,10 +151,12 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="Dialogs\GUIDialogCIMenu.cs" />
+    <Compile Include="Dialogs\GUIDialogIncompatiblePlugins.cs" />
     <Compile Include="Dialogs\GUIDialogMenu.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Dialogs\GUIDialogNotifyLastFM.cs" />
+    <Compile Include="Dialogs\GUIDialogOldSkin.cs" />
     <Compile Include="Dialogs\GUIDialogPlayStop.cs" />
     <Compile Include="Dialogs\GUIDialogDateTime.cs">
       <SubType>Code</SubType>

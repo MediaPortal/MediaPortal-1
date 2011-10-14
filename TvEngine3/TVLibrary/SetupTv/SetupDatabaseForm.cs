@@ -299,7 +299,7 @@ namespace SetupTv
 
         // As the connection string sets the DB schema name we need to compose it after cleaning the statement.
         string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text, "",
-                                                          true, 300);
+                                                          true, 30);
         switch (provider)
         {
           case ProviderType.SqlServer:
@@ -591,7 +591,7 @@ namespace SetupTv
     public void SaveGentleConfig()
     {
       string connectionString = ComposeConnectionString(tbServerHostName.Text, tbUserID.Text, tbPassword.Text,
-                                                        tbDatabaseName.Text, true, 300);
+                                                        tbDatabaseName.Text, true, 30);
       XmlDocument doc = new XmlDocument();
       try
       {

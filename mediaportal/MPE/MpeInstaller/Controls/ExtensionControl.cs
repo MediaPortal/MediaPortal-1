@@ -274,6 +274,8 @@ namespace MpeInstaller.Controls
     private void img_dep_Click(object sender, EventArgs e)
     {
       ExtensionControl_Click(null, null);
+      DependencyForm depForm = new DependencyForm(this.Package);
+      depForm.ShowDialog();
     }
 
     private void btn_conf_Click(object sender, EventArgs e)
@@ -354,6 +356,8 @@ namespace MpeInstaller.Controls
     private void img_dep1_Click(object sender, EventArgs e)
     {
       ExtensionControl_Click(null, null);
+      DependencyForm depForm = new DependencyForm(this.Package);
+      depForm.ShowDialog();
     }
 
     private void img_update1_Click(object sender, EventArgs e)

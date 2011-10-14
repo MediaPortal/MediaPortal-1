@@ -81,7 +81,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Sets the after tune event listener on the internal card.
     /// </summary>
-    /// <value>the delegate</returns>
+    /// <value>the delegate</value>
     public TvCardBase.OnAfterTuneDelegate AfterTuneEvent
     {
       set
@@ -94,7 +94,7 @@ namespace TvLibrary.Implementations.Hybrid
     /// <summary>
     /// Gets whether or not card supports pausing the graph.
     /// </summary>
-    /// <value><c>true</c> if the card supports pausing the graph, otherwise <c>false</c></returns>
+    /// <value><c>true</c> if the card supports pausing the graph, otherwise <c>false</c></value>
     public bool SupportsPauseGraph
     {
       get { return _internalCard.SupportsPauseGraph; }

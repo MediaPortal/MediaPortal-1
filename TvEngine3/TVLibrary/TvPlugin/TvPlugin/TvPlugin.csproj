@@ -130,6 +130,7 @@
     <Compile Include="..\..\..\..\Common-MP-TVE3\SolutionInfo.cs">
       <Link>SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="GuideBase.cs" />
     <Compile Include="RadioSearch.cs" />
     <Compile Include="Helper\BitHelper.cs" />
     <Compile Include="RadioRecorded.cs" />

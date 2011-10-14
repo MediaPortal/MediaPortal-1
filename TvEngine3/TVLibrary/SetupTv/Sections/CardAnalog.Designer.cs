@@ -35,14 +35,15 @@ namespace SetupTv.Sections
       this.mpButtonScanTv = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpButtonScanRadio = new MediaPortal.UserInterface.Controls.MPButton();
       this.mpListView1 = new MediaPortal.UserInterface.Controls.MPListView();
-      this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.mpLabel4 = new MediaPortal.UserInterface.Controls.MPLabel();
       this.mpComboBoxSensitivity = new MediaPortal.UserInterface.Controls.MPComboBox();
-      this.mpButton1 = new MediaPortal.UserInterface.Controls.MPButton();
+      this.mpButtonAddSvideoChannels = new MediaPortal.UserInterface.Controls.MPButton();
       this.checkBoxNoMerge = new System.Windows.Forms.CheckBox();
       this.mpTabControl1 = new MediaPortal.UserInterface.Controls.MPTabControl();
       this.tabPage1 = new System.Windows.Forms.TabPage();
+      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.mpGrpScanProgress = new MediaPortal.UserInterface.Controls.MPGroupBox();
       this.label1 = new System.Windows.Forms.Label();
       this.progressBarQuality = new System.Windows.Forms.ProgressBar();
@@ -132,7 +133,6 @@ namespace SetupTv.Sections
       this.lowPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.portablePlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
       this.defaultPlayback = new MediaPortal.UserInterface.Controls.MPRadioButton();
-      this.checkBoxCreateSignalGroup = new System.Windows.Forms.CheckBox();
       this.mpTabControl1.SuspendLayout();
       this.tabPage1.SuspendLayout();
       this.mpGrpScanProgress.SuspendLayout();
@@ -157,7 +157,7 @@ namespace SetupTv.Sections
       this.mpComboBoxCountry.Location = new System.Drawing.Point(78, 17);
       this.mpComboBoxCountry.Name = "mpComboBoxCountry";
       this.mpComboBoxCountry.Size = new System.Drawing.Size(206, 21);
-      this.mpComboBoxCountry.TabIndex = 0;
+      this.mpComboBoxCountry.TabIndex = 3;
       // 
       // mpLabel1
       // 
@@ -174,7 +174,7 @@ namespace SetupTv.Sections
       this.mpLabel2.Location = new System.Drawing.Point(26, 47);
       this.mpLabel2.Name = "mpLabel2";
       this.mpLabel2.Size = new System.Drawing.Size(44, 13);
-      this.mpLabel2.TabIndex = 3;
+      this.mpLabel2.TabIndex = 4;
       this.mpLabel2.Text = "Source:";
       // 
       // mpComboBoxSource
@@ -184,7 +184,7 @@ namespace SetupTv.Sections
       this.mpComboBoxSource.Location = new System.Drawing.Point(78, 44);
       this.mpComboBoxSource.Name = "mpComboBoxSource";
       this.mpComboBoxSource.Size = new System.Drawing.Size(206, 21);
-      this.mpComboBoxSource.TabIndex = 1;
+      this.mpComboBoxSource.TabIndex = 5;
       // 
       // mpButtonScanTv
       // 
@@ -192,7 +192,7 @@ namespace SetupTv.Sections
       this.mpButtonScanTv.Location = new System.Drawing.Point(317, 15);
       this.mpButtonScanTv.Name = "mpButtonScanTv";
       this.mpButtonScanTv.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanTv.TabIndex = 4;
+      this.mpButtonScanTv.TabIndex = 10;
       this.mpButtonScanTv.Text = "Scan for TV channels";
       this.mpButtonScanTv.UseVisualStyleBackColor = true;
       this.mpButtonScanTv.Click += new System.EventHandler(this.mpButtonScan_Click);
@@ -203,7 +203,7 @@ namespace SetupTv.Sections
       this.mpButtonScanRadio.Location = new System.Drawing.Point(317, 44);
       this.mpButtonScanRadio.Name = "mpButtonScanRadio";
       this.mpButtonScanRadio.Size = new System.Drawing.Size(131, 23);
-      this.mpButtonScanRadio.TabIndex = 5;
+      this.mpButtonScanRadio.TabIndex = 11;
       this.mpButtonScanRadio.Text = "Scan for radio channels";
       this.mpButtonScanRadio.UseVisualStyleBackColor = true;
       this.mpButtonScanRadio.Click += new System.EventHandler(this.mpButtonScanRadio_Click);
@@ -221,7 +221,7 @@ namespace SetupTv.Sections
       this.mpListView1.Location = new System.Drawing.Point(11, 85);
       this.mpListView1.Name = "mpListView1";
       this.mpListView1.Size = new System.Drawing.Size(439, 141);
-      this.mpListView1.TabIndex = 11;
+      this.mpListView1.TabIndex = 18;
       this.mpListView1.UseCompatibleStateImageBehavior = false;
       this.mpListView1.View = System.Windows.Forms.View.Details;
       // 
@@ -237,7 +237,7 @@ namespace SetupTv.Sections
       this.progressBar1.Location = new System.Drawing.Point(11, 68);
       this.progressBar1.Name = "progressBar1";
       this.progressBar1.Size = new System.Drawing.Size(437, 10);
-      this.progressBar1.TabIndex = 12;
+      this.progressBar1.TabIndex = 17;
       // 
       // mpLabel4
       // 
@@ -245,7 +245,7 @@ namespace SetupTv.Sections
       this.mpLabel4.Location = new System.Drawing.Point(26, 74);
       this.mpLabel4.Name = "mpLabel4";
       this.mpLabel4.Size = new System.Drawing.Size(86, 13);
-      this.mpLabel4.TabIndex = 14;
+      this.mpLabel4.TabIndex = 6;
       this.mpLabel4.Text = "Radio sensitivity:";
       // 
       // mpComboBoxSensitivity
@@ -259,18 +259,18 @@ namespace SetupTv.Sections
       this.mpComboBoxSensitivity.Location = new System.Drawing.Point(132, 71);
       this.mpComboBoxSensitivity.Name = "mpComboBoxSensitivity";
       this.mpComboBoxSensitivity.Size = new System.Drawing.Size(152, 21);
-      this.mpComboBoxSensitivity.TabIndex = 2;
+      this.mpComboBoxSensitivity.TabIndex = 7;
       // 
-      // mpButton1
+      // mpButtonAddSvideoChannels
       // 
-      this.mpButton1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-      this.mpButton1.Location = new System.Drawing.Point(317, 102);
-      this.mpButton1.Name = "mpButton1";
-      this.mpButton1.Size = new System.Drawing.Size(131, 23);
-      this.mpButton1.TabIndex = 3;
-      this.mpButton1.Text = "Add S-Video channels";
-      this.mpButton1.UseVisualStyleBackColor = true;
-      this.mpButton1.Click += new System.EventHandler(this.mpButton1_Click);
+      this.mpButtonAddSvideoChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+      this.mpButtonAddSvideoChannels.Location = new System.Drawing.Point(317, 102);
+      this.mpButtonAddSvideoChannels.Name = "mpButtonAddSvideoChannels";
+      this.mpButtonAddSvideoChannels.Size = new System.Drawing.Size(131, 23);
+      this.mpButtonAddSvideoChannels.TabIndex = 12;
+      this.mpButtonAddSvideoChannels.Text = "Add S-Video channels";
+      this.mpButtonAddSvideoChannels.UseVisualStyleBackColor = true;
+      this.mpButtonAddSvideoChannels.Click += new System.EventHandler(this.mpButton1_Click);
       // 
       // checkBoxNoMerge
       // 
@@ -278,7 +278,7 @@ namespace SetupTv.Sections
       this.checkBoxNoMerge.Location = new System.Drawing.Point(17, 123);
       this.checkBoxNoMerge.Name = "checkBoxNoMerge";
       this.checkBoxNoMerge.Size = new System.Drawing.Size(208, 17);
-      this.checkBoxNoMerge.TabIndex = 15;
+      this.checkBoxNoMerge.TabIndex = 9;
       this.checkBoxNoMerge.Text = "Don\'t merge channels with same name";
       this.checkBoxNoMerge.UseVisualStyleBackColor = true;
       // 
@@ -306,7 +306,7 @@ namespace SetupTv.Sections
       this.tabPage1.Controls.Add(this.mpGrpScanProgress);
       this.tabPage1.Controls.Add(this.mpLabel1);
       this.tabPage1.Controls.Add(this.checkBoxNoMerge);
-      this.tabPage1.Controls.Add(this.mpButton1);
+      this.tabPage1.Controls.Add(this.mpButtonAddSvideoChannels);
       this.tabPage1.Controls.Add(this.mpComboBoxCountry);
       this.tabPage1.Controls.Add(this.mpComboBoxSensitivity);
       this.tabPage1.Controls.Add(this.mpLabel2);
@@ -320,6 +320,16 @@ namespace SetupTv.Sections
       this.tabPage1.Size = new System.Drawing.Size(466, 388);
       this.tabPage1.TabIndex = 0;
       this.tabPage1.Text = "Scanning";
+      // 
+      // checkBoxCreateSignalGroup
+      // 
+      this.checkBoxCreateSignalGroup.AutoSize = true;
+      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(17, 106);
+      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
+      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(133, 17);
+      this.checkBoxCreateSignalGroup.TabIndex = 8;
+      this.checkBoxCreateSignalGroup.Text = "Create \"Analog\" group";
+      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
       // 
       // mpGrpScanProgress
       // 
@@ -346,7 +356,7 @@ namespace SetupTv.Sections
       this.label1.Location = new System.Drawing.Point(11, 25);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(64, 13);
-      this.label1.TabIndex = 30;
+      this.label1.TabIndex = 13;
       this.label1.Text = "Signal level:";
       // 
       // progressBarQuality
@@ -356,7 +366,7 @@ namespace SetupTv.Sections
       this.progressBarQuality.Location = new System.Drawing.Point(101, 51);
       this.progressBarQuality.Name = "progressBarQuality";
       this.progressBarQuality.Size = new System.Drawing.Size(347, 10);
-      this.progressBarQuality.TabIndex = 33;
+      this.progressBarQuality.TabIndex = 16;
       // 
       // progressBarLevel
       // 
@@ -365,7 +375,7 @@ namespace SetupTv.Sections
       this.progressBarLevel.Location = new System.Drawing.Point(101, 28);
       this.progressBarLevel.Name = "progressBarLevel";
       this.progressBarLevel.Size = new System.Drawing.Size(347, 10);
-      this.progressBarLevel.TabIndex = 32;
+      this.progressBarLevel.TabIndex = 14;
       // 
       // label2
       // 
@@ -373,7 +383,7 @@ namespace SetupTv.Sections
       this.label2.Location = new System.Drawing.Point(11, 48);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(72, 13);
-      this.label2.TabIndex = 31;
+      this.label2.TabIndex = 15;
       this.label2.Text = "Signal quality:";
       // 
       // tabPage3
@@ -395,7 +405,7 @@ namespace SetupTv.Sections
       this.label31.Location = new System.Drawing.Point(17, 334);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(432, 13);
-      this.label31.TabIndex = 35;
+      this.label31.TabIndex = 8;
       this.label31.Text = "Note: A restart of TvServer might be needed when changing these settings";
       // 
       // groupBox3
@@ -405,7 +415,7 @@ namespace SetupTv.Sections
       this.groupBox3.Location = new System.Drawing.Point(8, 91);
       this.groupBox3.Name = "groupBox3";
       this.groupBox3.Size = new System.Drawing.Size(447, 57);
-      this.groupBox3.TabIndex = 34;
+      this.groupBox3.TabIndex = 0;
       this.groupBox3.TabStop = false;
       this.groupBox3.Text = "Video Decoder";
       // 
@@ -416,7 +426,7 @@ namespace SetupTv.Sections
       this.videoStandardComboBox.Location = new System.Drawing.Point(137, 19);
       this.videoStandardComboBox.Name = "videoStandardComboBox";
       this.videoStandardComboBox.Size = new System.Drawing.Size(281, 21);
-      this.videoStandardComboBox.TabIndex = 14;
+      this.videoStandardComboBox.TabIndex = 2;
       // 
       // mpLabel3
       // 
@@ -424,7 +434,7 @@ namespace SetupTv.Sections
       this.mpLabel3.Location = new System.Drawing.Point(10, 22);
       this.mpLabel3.Name = "mpLabel3";
       this.mpLabel3.Size = new System.Drawing.Size(81, 13);
-      this.mpLabel3.TabIndex = 13;
+      this.mpLabel3.TabIndex = 1;
       this.mpLabel3.Text = "Video standard:";
       // 
       // groupBox2
@@ -436,7 +446,7 @@ namespace SetupTv.Sections
       this.groupBox2.Location = new System.Drawing.Point(8, 176);
       this.groupBox2.Name = "groupBox2";
       this.groupBox2.Size = new System.Drawing.Size(447, 81);
-      this.groupBox2.TabIndex = 33;
+      this.groupBox2.TabIndex = 3;
       this.groupBox2.TabStop = false;
       this.groupBox2.Text = "Stream Config";
       // 
@@ -451,7 +461,7 @@ namespace SetupTv.Sections
       this.frameRateComboBox.Location = new System.Drawing.Point(137, 19);
       this.frameRateComboBox.Name = "frameRateComboBox";
       this.frameRateComboBox.Size = new System.Drawing.Size(281, 21);
-      this.frameRateComboBox.TabIndex = 12;
+      this.frameRateComboBox.TabIndex = 5;
       // 
       // label3
       // 
@@ -459,7 +469,7 @@ namespace SetupTv.Sections
       this.label3.Location = new System.Drawing.Point(10, 22);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(60, 13);
-      this.label3.TabIndex = 0;
+      this.label3.TabIndex = 4;
       this.label3.Text = "Frame rate:";
       // 
       // resolutionComboBox
@@ -479,7 +489,7 @@ namespace SetupTv.Sections
       this.resolutionComboBox.Location = new System.Drawing.Point(137, 46);
       this.resolutionComboBox.Name = "resolutionComboBox";
       this.resolutionComboBox.Size = new System.Drawing.Size(281, 21);
-      this.resolutionComboBox.TabIndex = 11;
+      this.resolutionComboBox.TabIndex = 7;
       // 
       // label4
       // 
@@ -487,7 +497,7 @@ namespace SetupTv.Sections
       this.label4.Location = new System.Drawing.Point(10, 49);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(60, 13);
-      this.label4.TabIndex = 1;
+      this.label4.TabIndex = 6;
       this.label4.Text = "Frame size:";
       // 
       // tabPage4
@@ -533,7 +543,7 @@ namespace SetupTv.Sections
       this.defaultValuesButton.Location = new System.Drawing.Point(307, 274);
       this.defaultValuesButton.Name = "defaultValuesButton";
       this.defaultValuesButton.Size = new System.Drawing.Size(117, 23);
-      this.defaultValuesButton.TabIndex = 59;
+      this.defaultValuesButton.TabIndex = 27;
       this.defaultValuesButton.Text = "Default Values";
       this.defaultValuesButton.UseVisualStyleBackColor = true;
       this.defaultValuesButton.Click += new System.EventHandler(this.defaultValuesButton_Click);
@@ -544,7 +554,7 @@ namespace SetupTv.Sections
       this.backlightCompensationValue.Location = new System.Drawing.Point(383, 232);
       this.backlightCompensationValue.Name = "backlightCompensationValue";
       this.backlightCompensationValue.Size = new System.Drawing.Size(41, 13);
-      this.backlightCompensationValue.TabIndex = 58;
+      this.backlightCompensationValue.TabIndex = 26;
       this.backlightCompensationValue.Text = "label14";
       // 
       // whiteBalanceValue
@@ -553,7 +563,7 @@ namespace SetupTv.Sections
       this.whiteBalanceValue.Location = new System.Drawing.Point(383, 207);
       this.whiteBalanceValue.Name = "whiteBalanceValue";
       this.whiteBalanceValue.Size = new System.Drawing.Size(41, 13);
-      this.whiteBalanceValue.TabIndex = 57;
+      this.whiteBalanceValue.TabIndex = 23;
       this.whiteBalanceValue.Text = "label14";
       // 
       // colorEnableValue
@@ -562,7 +572,7 @@ namespace SetupTv.Sections
       this.colorEnableValue.Location = new System.Drawing.Point(383, 182);
       this.colorEnableValue.Name = "colorEnableValue";
       this.colorEnableValue.Size = new System.Drawing.Size(41, 13);
-      this.colorEnableValue.TabIndex = 56;
+      this.colorEnableValue.TabIndex = 20;
       this.colorEnableValue.Text = "label14";
       // 
       // gammaValue
@@ -571,7 +581,7 @@ namespace SetupTv.Sections
       this.gammaValue.Location = new System.Drawing.Point(383, 157);
       this.gammaValue.Name = "gammaValue";
       this.gammaValue.Size = new System.Drawing.Size(41, 13);
-      this.gammaValue.TabIndex = 55;
+      this.gammaValue.TabIndex = 17;
       this.gammaValue.Text = "label14";
       // 
       // sharpnessValue
@@ -580,7 +590,7 @@ namespace SetupTv.Sections
       this.sharpnessValue.Location = new System.Drawing.Point(383, 132);
       this.sharpnessValue.Name = "sharpnessValue";
       this.sharpnessValue.Size = new System.Drawing.Size(41, 13);
-      this.sharpnessValue.TabIndex = 54;
+      this.sharpnessValue.TabIndex = 14;
       this.sharpnessValue.Text = "label14";
       // 
       // saturationValue
@@ -589,7 +599,7 @@ namespace SetupTv.Sections
       this.saturationValue.Location = new System.Drawing.Point(383, 107);
       this.saturationValue.Name = "saturationValue";
       this.saturationValue.Size = new System.Drawing.Size(41, 13);
-      this.saturationValue.TabIndex = 53;
+      this.saturationValue.TabIndex = 11;
       this.saturationValue.Text = "label14";
       // 
       // hueValue
@@ -598,7 +608,7 @@ namespace SetupTv.Sections
       this.hueValue.Location = new System.Drawing.Point(383, 82);
       this.hueValue.Name = "hueValue";
       this.hueValue.Size = new System.Drawing.Size(41, 13);
-      this.hueValue.TabIndex = 52;
+      this.hueValue.TabIndex = 8;
       this.hueValue.Text = "label14";
       // 
       // contrastValue
@@ -607,7 +617,7 @@ namespace SetupTv.Sections
       this.contrastValue.Location = new System.Drawing.Point(383, 57);
       this.contrastValue.Name = "contrastValue";
       this.contrastValue.Size = new System.Drawing.Size(41, 13);
-      this.contrastValue.TabIndex = 51;
+      this.contrastValue.TabIndex = 5;
       this.contrastValue.Text = "label14";
       // 
       // brightnessValue
@@ -616,7 +626,7 @@ namespace SetupTv.Sections
       this.brightnessValue.Location = new System.Drawing.Point(383, 32);
       this.brightnessValue.Name = "brightnessValue";
       this.brightnessValue.Size = new System.Drawing.Size(41, 13);
-      this.brightnessValue.TabIndex = 50;
+      this.brightnessValue.TabIndex = 2;
       this.brightnessValue.Text = "label14";
       // 
       // backlightCompensationScrollbar
@@ -624,7 +634,7 @@ namespace SetupTv.Sections
       this.backlightCompensationScrollbar.Location = new System.Drawing.Point(148, 232);
       this.backlightCompensationScrollbar.Name = "backlightCompensationScrollbar";
       this.backlightCompensationScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.backlightCompensationScrollbar.TabIndex = 49;
+      this.backlightCompensationScrollbar.TabIndex = 25;
       this.backlightCompensationScrollbar.ValueChanged += new System.EventHandler(this.backlightCompensationScrollbar_ValueChanged);
       // 
       // whiteBalanceScrollbar
@@ -632,7 +642,7 @@ namespace SetupTv.Sections
       this.whiteBalanceScrollbar.Location = new System.Drawing.Point(148, 207);
       this.whiteBalanceScrollbar.Name = "whiteBalanceScrollbar";
       this.whiteBalanceScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.whiteBalanceScrollbar.TabIndex = 48;
+      this.whiteBalanceScrollbar.TabIndex = 22;
       this.whiteBalanceScrollbar.ValueChanged += new System.EventHandler(this.whiteBalanceScrollbar_ValueChanged);
       // 
       // colorEnableScrollbar
@@ -640,7 +650,7 @@ namespace SetupTv.Sections
       this.colorEnableScrollbar.Location = new System.Drawing.Point(148, 182);
       this.colorEnableScrollbar.Name = "colorEnableScrollbar";
       this.colorEnableScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.colorEnableScrollbar.TabIndex = 47;
+      this.colorEnableScrollbar.TabIndex = 19;
       this.colorEnableScrollbar.ValueChanged += new System.EventHandler(this.colorEnableScrollbar_ValueChanged);
       // 
       // gammaScrollbar
@@ -648,7 +658,7 @@ namespace SetupTv.Sections
       this.gammaScrollbar.Location = new System.Drawing.Point(148, 157);
       this.gammaScrollbar.Name = "gammaScrollbar";
       this.gammaScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.gammaScrollbar.TabIndex = 46;
+      this.gammaScrollbar.TabIndex = 16;
       this.gammaScrollbar.ValueChanged += new System.EventHandler(this.gammaScrollbar_ValueChanged);
       // 
       // sharpnessScrollbar
@@ -656,7 +666,7 @@ namespace SetupTv.Sections
       this.sharpnessScrollbar.Location = new System.Drawing.Point(148, 132);
       this.sharpnessScrollbar.Name = "sharpnessScrollbar";
       this.sharpnessScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.sharpnessScrollbar.TabIndex = 45;
+      this.sharpnessScrollbar.TabIndex = 13;
       this.sharpnessScrollbar.ValueChanged += new System.EventHandler(this.sharpnessScrollbar_ValueChanged);
       // 
       // saturationScrollbar
@@ -664,7 +674,7 @@ namespace SetupTv.Sections
       this.saturationScrollbar.Location = new System.Drawing.Point(148, 107);
       this.saturationScrollbar.Name = "saturationScrollbar";
       this.saturationScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.saturationScrollbar.TabIndex = 44;
+      this.saturationScrollbar.TabIndex = 10;
       this.saturationScrollbar.ValueChanged += new System.EventHandler(this.saturationScrollbar_ValueChanged);
       // 
       // hueScrollbar
@@ -672,7 +682,7 @@ namespace SetupTv.Sections
       this.hueScrollbar.Location = new System.Drawing.Point(148, 82);
       this.hueScrollbar.Name = "hueScrollbar";
       this.hueScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.hueScrollbar.TabIndex = 43;
+      this.hueScrollbar.TabIndex = 7;
       this.hueScrollbar.ValueChanged += new System.EventHandler(this.hueScrollbar_ValueChanged);
       // 
       // contrastScrollbar
@@ -680,7 +690,7 @@ namespace SetupTv.Sections
       this.contrastScrollbar.Location = new System.Drawing.Point(148, 57);
       this.contrastScrollbar.Name = "contrastScrollbar";
       this.contrastScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.contrastScrollbar.TabIndex = 42;
+      this.contrastScrollbar.TabIndex = 4;
       this.contrastScrollbar.ValueChanged += new System.EventHandler(this.contrastScrollbar_ValueChanged);
       // 
       // brightnessScrollbar
@@ -688,7 +698,7 @@ namespace SetupTv.Sections
       this.brightnessScrollbar.Location = new System.Drawing.Point(148, 32);
       this.brightnessScrollbar.Name = "brightnessScrollbar";
       this.brightnessScrollbar.Size = new System.Drawing.Size(219, 13);
-      this.brightnessScrollbar.TabIndex = 41;
+      this.brightnessScrollbar.TabIndex = 1;
       this.brightnessScrollbar.ValueChanged += new System.EventHandler(this.brightnessScrollbar_ValueChanged);
       // 
       // label13
@@ -697,7 +707,7 @@ namespace SetupTv.Sections
       this.label13.Location = new System.Drawing.Point(21, 232);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(124, 13);
-      this.label13.TabIndex = 40;
+      this.label13.TabIndex = 24;
       this.label13.Text = "Backlight Compensation:";
       // 
       // label12
@@ -706,7 +716,7 @@ namespace SetupTv.Sections
       this.label12.Location = new System.Drawing.Point(21, 207);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(80, 13);
-      this.label12.TabIndex = 39;
+      this.label12.TabIndex = 21;
       this.label12.Text = "White Balance:";
       // 
       // label11
@@ -715,7 +725,7 @@ namespace SetupTv.Sections
       this.label11.Location = new System.Drawing.Point(21, 182);
       this.label11.Name = "label11";
       this.label11.Size = new System.Drawing.Size(70, 13);
-      this.label11.TabIndex = 38;
+      this.label11.TabIndex = 18;
       this.label11.Text = "Color Enable:";
       // 
       // label10
@@ -724,7 +734,7 @@ namespace SetupTv.Sections
       this.label10.Location = new System.Drawing.Point(21, 157);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(46, 13);
-      this.label10.TabIndex = 37;
+      this.label10.TabIndex = 15;
       this.label10.Text = "Gamma:";
       // 
       // label9
@@ -733,7 +743,7 @@ namespace SetupTv.Sections
       this.label9.Location = new System.Drawing.Point(21, 132);
       this.label9.Name = "label9";
       this.label9.Size = new System.Drawing.Size(60, 13);
-      this.label9.TabIndex = 36;
+      this.label9.TabIndex = 12;
       this.label9.Text = "Sharpness:";
       // 
       // label8
@@ -742,7 +752,7 @@ namespace SetupTv.Sections
       this.label8.Location = new System.Drawing.Point(21, 107);
       this.label8.Name = "label8";
       this.label8.Size = new System.Drawing.Size(58, 13);
-      this.label8.TabIndex = 35;
+      this.label8.TabIndex = 9;
       this.label8.Text = "Saturation:";
       // 
       // label7
@@ -751,7 +761,7 @@ namespace SetupTv.Sections
       this.label7.Location = new System.Drawing.Point(21, 82);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(30, 13);
-      this.label7.TabIndex = 34;
+      this.label7.TabIndex = 6;
       this.label7.Text = "Hue:";
       // 
       // label6
@@ -760,7 +770,7 @@ namespace SetupTv.Sections
       this.label6.Location = new System.Drawing.Point(21, 57);
       this.label6.Name = "label6";
       this.label6.Size = new System.Drawing.Size(49, 13);
-      this.label6.TabIndex = 33;
+      this.label6.TabIndex = 3;
       this.label6.Text = "Contrast:";
       // 
       // label5
@@ -769,7 +779,7 @@ namespace SetupTv.Sections
       this.label5.Location = new System.Drawing.Point(20, 32);
       this.label5.Name = "label5";
       this.label5.Size = new System.Drawing.Size(59, 13);
-      this.label5.TabIndex = 32;
+      this.label5.TabIndex = 0;
       this.label5.Text = "Brightness:";
       // 
       // tabPage2
@@ -799,7 +809,7 @@ namespace SetupTv.Sections
       this.customSettingsGroup.Location = new System.Drawing.Point(238, 74);
       this.customSettingsGroup.Name = "customSettingsGroup";
       this.customSettingsGroup.Size = new System.Drawing.Size(200, 107);
-      this.customSettingsGroup.TabIndex = 4;
+      this.customSettingsGroup.TabIndex = 35;
       this.customSettingsGroup.TabStop = false;
       this.customSettingsGroup.Text = "Custom Settings";
       // 
@@ -811,7 +821,7 @@ namespace SetupTv.Sections
       this.customValuePeak.Location = new System.Drawing.Point(76, 67);
       this.customValuePeak.Name = "customValuePeak";
       this.customValuePeak.Size = new System.Drawing.Size(82, 20);
-      this.customValuePeak.TabIndex = 5;
+      this.customValuePeak.TabIndex = 40;
       this.customValuePeak.Value = new decimal(new int[] {
             75,
             0,
@@ -826,7 +836,7 @@ namespace SetupTv.Sections
       this.customValue.Location = new System.Drawing.Point(76, 32);
       this.customValue.Name = "customValue";
       this.customValue.Size = new System.Drawing.Size(82, 20);
-      this.customValue.TabIndex = 4;
+      this.customValue.TabIndex = 37;
       this.customValue.Value = new decimal(new int[] {
             50,
             0,
@@ -840,26 +850,26 @@ namespace SetupTv.Sections
       this.mpLabel22.Location = new System.Drawing.Point(164, 69);
       this.mpLabel22.Name = "mpLabel22";
       this.mpLabel22.Size = new System.Drawing.Size(15, 13);
-      this.mpLabel22.TabIndex = 3;
+      this.mpLabel22.TabIndex = 41;
       this.mpLabel22.Text = "%";
       // 
       // mpLabel21
       // 
       this.mpLabel21.AutoSize = true;
-      this.mpLabel21.Location = new System.Drawing.Point(6, 68);
+      this.mpLabel21.Location = new System.Drawing.Point(6, 69);
       this.mpLabel21.Name = "mpLabel21";
       this.mpLabel21.Size = new System.Drawing.Size(64, 13);
-      this.mpLabel21.TabIndex = 2;
+      this.mpLabel21.TabIndex = 39;
       this.mpLabel21.Text = "Peak value:";
       // 
       // mpLabel20
       // 
       this.mpLabel20.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
       this.mpLabel20.AutoSize = true;
-      this.mpLabel20.Location = new System.Drawing.Point(164, 34);
+      this.mpLabel20.Location = new System.Drawing.Point(164, 36);
       this.mpLabel20.Name = "mpLabel20";
       this.mpLabel20.Size = new System.Drawing.Size(15, 13);
-      this.mpLabel20.TabIndex = 1;
+      this.mpLabel20.TabIndex = 38;
       this.mpLabel20.Text = "%";
       // 
       // mpLabel19
@@ -868,7 +878,7 @@ namespace SetupTv.Sections
       this.mpLabel19.Location = new System.Drawing.Point(6, 34);
       this.mpLabel19.Name = "mpLabel19";
       this.mpLabel19.Size = new System.Drawing.Size(37, 13);
-      this.mpLabel19.TabIndex = 0;
+      this.mpLabel19.TabIndex = 36;
       this.mpLabel19.Text = "Value:";
       // 
       // bitRateModeGroup
@@ -898,7 +908,7 @@ namespace SetupTv.Sections
       this.mpLabel11.Location = new System.Drawing.Point(148, 16);
       this.mpLabel11.Name = "mpLabel11";
       this.mpLabel11.Size = new System.Drawing.Size(56, 13);
-      this.mpLabel11.TabIndex = 12;
+      this.mpLabel11.TabIndex = 10;
       this.mpLabel11.Text = "Recording";
       // 
       // panel2
@@ -909,7 +919,7 @@ namespace SetupTv.Sections
       this.panel2.Location = new System.Drawing.Point(184, 14);
       this.panel2.Name = "panel2";
       this.panel2.Size = new System.Drawing.Size(26, 93);
-      this.panel2.TabIndex = 5;
+      this.panel2.TabIndex = 100;
       // 
       // cbrRecord
       // 
@@ -919,7 +929,7 @@ namespace SetupTv.Sections
       this.cbrRecord.Location = new System.Drawing.Point(7, 20);
       this.cbrRecord.Name = "cbrRecord";
       this.cbrRecord.Size = new System.Drawing.Size(13, 12);
-      this.cbrRecord.TabIndex = 5;
+      this.cbrRecord.TabIndex = 11;
       this.cbrRecord.TabStop = true;
       this.cbrRecord.UseVisualStyleBackColor = true;
       // 
@@ -931,7 +941,7 @@ namespace SetupTv.Sections
       this.vbrRecord.Location = new System.Drawing.Point(7, 40);
       this.vbrRecord.Name = "vbrRecord";
       this.vbrRecord.Size = new System.Drawing.Size(13, 12);
-      this.vbrRecord.TabIndex = 3;
+      this.vbrRecord.TabIndex = 12;
       this.vbrRecord.TabStop = true;
       this.vbrRecord.UseVisualStyleBackColor = true;
       // 
@@ -944,7 +954,7 @@ namespace SetupTv.Sections
       this.vbrPeakRecord.Location = new System.Drawing.Point(7, 60);
       this.vbrPeakRecord.Name = "vbrPeakRecord";
       this.vbrPeakRecord.Size = new System.Drawing.Size(13, 12);
-      this.vbrPeakRecord.TabIndex = 4;
+      this.vbrPeakRecord.TabIndex = 13;
       this.vbrPeakRecord.TabStop = true;
       this.vbrPeakRecord.UseVisualStyleBackColor = true;
       // 
@@ -954,7 +964,7 @@ namespace SetupTv.Sections
       this.mpLabel12.Location = new System.Drawing.Point(6, 16);
       this.mpLabel12.Name = "mpLabel12";
       this.mpLabel12.Size = new System.Drawing.Size(51, 13);
-      this.mpLabel12.TabIndex = 11;
+      this.mpLabel12.TabIndex = 3;
       this.mpLabel12.Text = "Playback";
       // 
       // mpLabel8
@@ -964,7 +974,7 @@ namespace SetupTv.Sections
       this.mpLabel8.Location = new System.Drawing.Point(28, 76);
       this.mpLabel8.Name = "mpLabel8";
       this.mpLabel8.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel8.TabIndex = 8;
+      this.mpLabel8.TabIndex = 9;
       this.mpLabel8.Text = "Variable bit rate peak";
       this.mpLabel8.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -975,7 +985,7 @@ namespace SetupTv.Sections
       this.mpLabel7.Location = new System.Drawing.Point(28, 56);
       this.mpLabel7.Name = "mpLabel7";
       this.mpLabel7.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel7.TabIndex = 7;
+      this.mpLabel7.TabIndex = 8;
       this.mpLabel7.Text = "Variable bit rate average";
       this.mpLabel7.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -986,7 +996,7 @@ namespace SetupTv.Sections
       this.mpLabel6.Location = new System.Drawing.Point(28, 36);
       this.mpLabel6.Name = "mpLabel6";
       this.mpLabel6.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel6.TabIndex = 6;
+      this.mpLabel6.TabIndex = 7;
       this.mpLabel6.Text = "Constant bit rate";
       this.mpLabel6.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -998,7 +1008,7 @@ namespace SetupTv.Sections
       this.vbrPeakPlayback.Location = new System.Drawing.Point(9, 76);
       this.vbrPeakPlayback.Name = "vbrPeakPlayback";
       this.vbrPeakPlayback.Size = new System.Drawing.Size(13, 12);
-      this.vbrPeakPlayback.TabIndex = 2;
+      this.vbrPeakPlayback.TabIndex = 6;
       this.vbrPeakPlayback.TabStop = true;
       this.vbrPeakPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1009,7 +1019,7 @@ namespace SetupTv.Sections
       this.vbrPlayback.Location = new System.Drawing.Point(9, 56);
       this.vbrPlayback.Name = "vbrPlayback";
       this.vbrPlayback.Size = new System.Drawing.Size(13, 12);
-      this.vbrPlayback.TabIndex = 1;
+      this.vbrPlayback.TabIndex = 5;
       this.vbrPlayback.TabStop = true;
       this.vbrPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1020,7 +1030,7 @@ namespace SetupTv.Sections
       this.cbrPlayback.Location = new System.Drawing.Point(9, 36);
       this.cbrPlayback.Name = "cbrPlayback";
       this.cbrPlayback.Size = new System.Drawing.Size(13, 12);
-      this.cbrPlayback.TabIndex = 0;
+      this.cbrPlayback.TabIndex = 4;
       this.cbrPlayback.TabStop = true;
       this.cbrPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1067,7 +1077,7 @@ namespace SetupTv.Sections
       this.bitRate.Location = new System.Drawing.Point(9, 206);
       this.bitRate.Name = "bitRate";
       this.bitRate.Size = new System.Drawing.Size(210, 161);
-      this.bitRate.TabIndex = 3;
+      this.bitRate.TabIndex = 14;
       this.bitRate.TabStop = false;
       this.bitRate.Text = "Bitrate";
       // 
@@ -1078,7 +1088,7 @@ namespace SetupTv.Sections
       this.mpLabel10.Location = new System.Drawing.Point(148, 16);
       this.mpLabel10.Name = "mpLabel10";
       this.mpLabel10.Size = new System.Drawing.Size(56, 13);
-      this.mpLabel10.TabIndex = 10;
+      this.mpLabel10.TabIndex = 28;
       this.mpLabel10.Text = "Recording";
       // 
       // panel1
@@ -1092,7 +1102,7 @@ namespace SetupTv.Sections
       this.panel1.Location = new System.Drawing.Point(176, 14);
       this.panel1.Name = "panel1";
       this.panel1.Size = new System.Drawing.Size(34, 145);
-      this.panel1.TabIndex = 5;
+      this.panel1.TabIndex = 101;
       // 
       // defaultRecord
       // 
@@ -1102,7 +1112,7 @@ namespace SetupTv.Sections
       this.defaultRecord.Location = new System.Drawing.Point(15, 20);
       this.defaultRecord.Name = "defaultRecord";
       this.defaultRecord.Size = new System.Drawing.Size(13, 12);
-      this.defaultRecord.TabIndex = 11;
+      this.defaultRecord.TabIndex = 29;
       this.defaultRecord.TabStop = true;
       this.defaultRecord.UseVisualStyleBackColor = true;
       // 
@@ -1114,7 +1124,7 @@ namespace SetupTv.Sections
       this.customRecord.Location = new System.Drawing.Point(15, 40);
       this.customRecord.Name = "customRecord";
       this.customRecord.Size = new System.Drawing.Size(13, 12);
-      this.customRecord.TabIndex = 12;
+      this.customRecord.TabIndex = 30;
       this.customRecord.TabStop = true;
       this.customRecord.UseVisualStyleBackColor = true;
       // 
@@ -1126,7 +1136,7 @@ namespace SetupTv.Sections
       this.portableRecord.Location = new System.Drawing.Point(15, 60);
       this.portableRecord.Name = "portableRecord";
       this.portableRecord.Size = new System.Drawing.Size(13, 12);
-      this.portableRecord.TabIndex = 13;
+      this.portableRecord.TabIndex = 31;
       this.portableRecord.TabStop = true;
       this.portableRecord.UseVisualStyleBackColor = true;
       // 
@@ -1138,7 +1148,7 @@ namespace SetupTv.Sections
       this.lowRecord.Location = new System.Drawing.Point(15, 80);
       this.lowRecord.Name = "lowRecord";
       this.lowRecord.Size = new System.Drawing.Size(13, 12);
-      this.lowRecord.TabIndex = 14;
+      this.lowRecord.TabIndex = 32;
       this.lowRecord.TabStop = true;
       this.lowRecord.UseVisualStyleBackColor = true;
       // 
@@ -1150,7 +1160,7 @@ namespace SetupTv.Sections
       this.mediumRecord.Location = new System.Drawing.Point(15, 100);
       this.mediumRecord.Name = "mediumRecord";
       this.mediumRecord.Size = new System.Drawing.Size(13, 12);
-      this.mediumRecord.TabIndex = 15;
+      this.mediumRecord.TabIndex = 33;
       this.mediumRecord.TabStop = true;
       this.mediumRecord.UseVisualStyleBackColor = true;
       // 
@@ -1162,7 +1172,7 @@ namespace SetupTv.Sections
       this.highRecord.Location = new System.Drawing.Point(15, 120);
       this.highRecord.Name = "highRecord";
       this.highRecord.Size = new System.Drawing.Size(13, 12);
-      this.highRecord.TabIndex = 16;
+      this.highRecord.TabIndex = 34;
       this.highRecord.TabStop = true;
       this.highRecord.UseVisualStyleBackColor = true;
       // 
@@ -1173,7 +1183,7 @@ namespace SetupTv.Sections
       this.mpLabel18.Location = new System.Drawing.Point(28, 136);
       this.mpLabel18.Name = "mpLabel18";
       this.mpLabel18.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel18.TabIndex = 21;
+      this.mpLabel18.TabIndex = 27;
       this.mpLabel18.Text = "High";
       this.mpLabel18.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1184,7 +1194,7 @@ namespace SetupTv.Sections
       this.mpLabel17.Location = new System.Drawing.Point(27, 116);
       this.mpLabel17.Name = "mpLabel17";
       this.mpLabel17.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel17.TabIndex = 20;
+      this.mpLabel17.TabIndex = 26;
       this.mpLabel17.Text = "Medium";
       this.mpLabel17.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1195,7 +1205,7 @@ namespace SetupTv.Sections
       this.mpLabel16.Location = new System.Drawing.Point(28, 96);
       this.mpLabel16.Name = "mpLabel16";
       this.mpLabel16.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel16.TabIndex = 19;
+      this.mpLabel16.TabIndex = 25;
       this.mpLabel16.Text = "Low";
       this.mpLabel16.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1206,7 +1216,7 @@ namespace SetupTv.Sections
       this.mpLabel15.Location = new System.Drawing.Point(28, 76);
       this.mpLabel15.Name = "mpLabel15";
       this.mpLabel15.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel15.TabIndex = 18;
+      this.mpLabel15.TabIndex = 24;
       this.mpLabel15.Text = "Portable";
       this.mpLabel15.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1217,7 +1227,7 @@ namespace SetupTv.Sections
       this.mpLabel14.Location = new System.Drawing.Point(28, 56);
       this.mpLabel14.Name = "mpLabel14";
       this.mpLabel14.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel14.TabIndex = 17;
+      this.mpLabel14.TabIndex = 23;
       this.mpLabel14.Text = "Custom";
       this.mpLabel14.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1228,7 +1238,7 @@ namespace SetupTv.Sections
       this.mpLabel13.Location = new System.Drawing.Point(28, 36);
       this.mpLabel13.Name = "mpLabel13";
       this.mpLabel13.Size = new System.Drawing.Size(157, 23);
-      this.mpLabel13.TabIndex = 13;
+      this.mpLabel13.TabIndex = 22;
       this.mpLabel13.Text = "Default";
       this.mpLabel13.TextAlign = System.Drawing.ContentAlignment.TopCenter;
       // 
@@ -1239,7 +1249,7 @@ namespace SetupTv.Sections
       this.customPlayback.Location = new System.Drawing.Point(9, 56);
       this.customPlayback.Name = "customPlayback";
       this.customPlayback.Size = new System.Drawing.Size(13, 12);
-      this.customPlayback.TabIndex = 5;
+      this.customPlayback.TabIndex = 17;
       this.customPlayback.TabStop = true;
       this.customPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1249,7 +1259,7 @@ namespace SetupTv.Sections
       this.mpLabel9.Location = new System.Drawing.Point(6, 16);
       this.mpLabel9.Name = "mpLabel9";
       this.mpLabel9.Size = new System.Drawing.Size(51, 13);
-      this.mpLabel9.TabIndex = 9;
+      this.mpLabel9.TabIndex = 15;
       this.mpLabel9.Text = "Playback";
       // 
       // highPlayback
@@ -1259,7 +1269,7 @@ namespace SetupTv.Sections
       this.highPlayback.Location = new System.Drawing.Point(9, 136);
       this.highPlayback.Name = "highPlayback";
       this.highPlayback.Size = new System.Drawing.Size(13, 12);
-      this.highPlayback.TabIndex = 4;
+      this.highPlayback.TabIndex = 21;
       this.highPlayback.TabStop = true;
       this.highPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1270,7 +1280,7 @@ namespace SetupTv.Sections
       this.mediumPlayback.Location = new System.Drawing.Point(9, 116);
       this.mediumPlayback.Name = "mediumPlayback";
       this.mediumPlayback.Size = new System.Drawing.Size(13, 12);
-      this.mediumPlayback.TabIndex = 3;
+      this.mediumPlayback.TabIndex = 20;
       this.mediumPlayback.TabStop = true;
       this.mediumPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1281,7 +1291,7 @@ namespace SetupTv.Sections
       this.lowPlayback.Location = new System.Drawing.Point(9, 96);
       this.lowPlayback.Name = "lowPlayback";
       this.lowPlayback.Size = new System.Drawing.Size(13, 12);
-      this.lowPlayback.TabIndex = 2;
+      this.lowPlayback.TabIndex = 19;
       this.lowPlayback.TabStop = true;
       this.lowPlayback.UseVisualStyleBackColor = true;
       // 
@@ -1292,7 +1302,7 @@ namespace SetupTv.Sections
       this.portablePlayback.Location = new System.Drawing.Point(9, 76);
       this.portablePlayback.Name = "portablePlayback";
       this.portablePlayback.Size = new System.Drawing.Size(13, 12);
-      this.portablePlayback.TabIndex = 1;
+      this.portablePlayback.TabIndex = 18;
       this.portablePlayback.TabStop = true;
       this.portablePlayback.UseVisualStyleBackColor = true;
       // 
@@ -1303,19 +1313,9 @@ namespace SetupTv.Sections
       this.defaultPlayback.Location = new System.Drawing.Point(9, 36);
       this.defaultPlayback.Name = "defaultPlayback";
       this.defaultPlayback.Size = new System.Drawing.Size(13, 12);
-      this.defaultPlayback.TabIndex = 0;
+      this.defaultPlayback.TabIndex = 16;
       this.defaultPlayback.TabStop = true;
       this.defaultPlayback.UseVisualStyleBackColor = true;
-      // 
-      // checkBoxCreateSignalGroup
-      // 
-      this.checkBoxCreateSignalGroup.AutoSize = true;
-      this.checkBoxCreateSignalGroup.Location = new System.Drawing.Point(17, 106);
-      this.checkBoxCreateSignalGroup.Name = "checkBoxCreateSignalGroup";
-      this.checkBoxCreateSignalGroup.Size = new System.Drawing.Size(133, 17);
-      this.checkBoxCreateSignalGroup.TabIndex = 35;
-      this.checkBoxCreateSignalGroup.Text = "Create \"Analog\" group";
-      this.checkBoxCreateSignalGroup.UseVisualStyleBackColor = true;
       // 
       // CardAnalog
       // 
@@ -1368,7 +1368,7 @@ namespace SetupTv.Sections
     private System.Windows.Forms.ProgressBar progressBar1;
     private MediaPortal.UserInterface.Controls.MPLabel mpLabel4;
     private MediaPortal.UserInterface.Controls.MPComboBox mpComboBoxSensitivity;
-    private MediaPortal.UserInterface.Controls.MPButton mpButton1;
+    private MediaPortal.UserInterface.Controls.MPButton mpButtonAddSvideoChannels;
     private System.Windows.Forms.CheckBox checkBoxNoMerge;
     private MediaPortal.UserInterface.Controls.MPTabControl mpTabControl1;
     private System.Windows.Forms.TabPage tabPage1;

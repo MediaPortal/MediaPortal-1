@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2005</id>
   <defaultcontrol>13</defaultcontrol>
   <allowoverlay>no</allowoverlay>
-  <disabletopbar>true</disabletopbar>
+  <disabletopbar>false</disabletopbar>
   <controls>
     <control>
       <description>background image (not used!)</description>
@@ -232,7 +232,7 @@
     <control>
       <description>background image to cover above images when changing screen resolution</description>
       <type>image</type>
-      <id>0</id>
+      <id>7654</id>
       <posX>292</posX>
       <posY>508</posY>
       <width>196</width>

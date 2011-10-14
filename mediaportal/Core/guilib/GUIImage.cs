@@ -2076,13 +2076,13 @@ namespace MediaPortal.GUI.Library
 
           // Upper left corner
           FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                 cvmaxLeft, (int)_borderColorKey, m,
+                                 cvmaxLeft, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey), m,
                                  cornerTexture.TextureNumber, 0, 0, 0, 0);
           // indicates fontEngine should ignore texture blending
 
           // Upper right corner
           FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                 cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                 cumaxRight, cvmaxRight, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey), m,
                                  cornerTexture.TextureNumber, 0, 0, 0, 0);
           // indicates fontEngine should ignore texture blending
         }
@@ -2184,13 +2184,13 @@ namespace MediaPortal.GUI.Library
 
           // Lower left corner
           FontEngineDrawTexture2(cornerTexture.TextureNumber, cxLeft, cyLeft, cwLeft, chLeft, cuLeft, cvLeft, cumaxLeft,
-                                 cvmaxLeft, (int)_borderColorKey, m,
+                                 cvmaxLeft, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey), m,
                                  cornerTexture.TextureNumber, 0, 0, 0, 0);
           // indicates fontEngine should ignore texture blending
 
           // Lower right corner
           FontEngineDrawTexture2(cornerTexture.TextureNumber, cxRight, cyRight, cwRight, chRight, cuRight, cvRight,
-                                 cumaxRight, cvmaxRight, (int)_borderColorKey, m,
+                                 cumaxRight, cvmaxRight, (int)GUIGraphicsContext.MergeAlpha((uint)_borderColorKey), m,
                                  cornerTexture.TextureNumber, 0, 0, 0, 0);
           // indicates fontEngine should ignore texture blending
         }

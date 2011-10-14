@@ -1105,7 +1105,7 @@ namespace TvLibrary.Implementations.DVB
       if (_currentAudioStream == null)
         return;
 
-      if (_channelInfo.network_pmt_PID > 0)
+      if (_channelInfo.network_pmt_PID >= 0)
       {
         _tsFilterInterface.RecordSetPmtPid(_subChannelIndex, _channelInfo.network_pmt_PID, _channelInfo.serviceID, _pmtData,
                                            _pmtLength);

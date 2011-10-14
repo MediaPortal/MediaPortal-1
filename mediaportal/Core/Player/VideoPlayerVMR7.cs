@@ -39,6 +39,10 @@ namespace MediaPortal.Player
   public abstract class VideoPlayerVMR7 : IPlayer
   {
     protected const int MAX_STREAMS = 100;
+    protected const string FFDSHOW_AUDIO_DECODER_FILTER = "ffdshow Audio Decoder";
+    protected const string MEDIAPORTAL_AUDIOSWITCHER_FILTER = "MediaPortal AudioSwitcher";
+    protected const string LAV_SPLITTER_FILTER = "LAV Splitter";
+    protected const string FILE_SYNC_FILTER = "File Source (Async.)";
 
     protected struct FilterStreamInfos
     {
@@ -56,20 +60,32 @@ namespace MediaPortal.Player
       {
         cStreams = 0;
         Streams = new FilterStreamInfos[MAX_STREAMS];
+        cStreamsExternal = 0;
+        StreamsExternal = new FilterStreamInfos[MAX_STREAMS];
       }
 
-      public FilterStreamInfos GetStreamInfos(StreamType Type, int Id)
+      public FilterStreamInfos GetStreamInfos(StreamType type, int id)
       {
-        FilterStreamInfos empty = new FilterStreamInfos();
-        for (int i = 0; i < cStreams; i++)
+        return GetStreamInfos(type, id, cStreams, Streams);
+      }
+
+      public FilterStreamInfos GetStreamInfosExternal(StreamType type, int id)
+      {
+        return GetStreamInfos(type, id, cStreamsExternal, StreamsExternal);
+      }
+
+      private static FilterStreamInfos GetStreamInfos(StreamType type, int id, int streamsCount, FilterStreamInfos[] streams)
+      {
+        var empty = new FilterStreamInfos();
+        for (int i = 0; i < streamsCount; i++)
         {
-          if (Type == Streams[i].Type)
+          if (type == streams[i].Type)
           {
-            if (Id == 0)
+            if (id == 0)
             {
-              return Streams[i];
+              return streams[i];
             }
-            Id--;
+            id--;
           }
         }
         return empty;
@@ -88,14 +104,24 @@ namespace MediaPortal.Player
         return ret;
       }
 
-      public bool AddStreamInfos(FilterStreamInfos StreamInfos)
+      public bool AddStreamInfos(FilterStreamInfos streamInfos)
       {
-        if (cStreams == MAX_STREAMS)
+        return AddStreamInfos(streamInfos, ref cStreams, Streams);
+      }      
+
+      public bool AddStreamInfosEx(FilterStreamInfos streamInfos)
+      {
+        return AddStreamInfos(streamInfos, ref cStreamsExternal, StreamsExternal);
+      }
+
+      private static bool AddStreamInfos(FilterStreamInfos streamInfos, ref int streamsCount, FilterStreamInfos[] streams)
+      {
+        if (streamsCount == MAX_STREAMS)
         {
           return false;
         }
-        Streams[cStreams] = StreamInfos;
-        cStreams++;
+        streams[streamsCount] = streamInfos;
+        streamsCount++;
         return true;
       }
 
@@ -119,10 +145,13 @@ namespace MediaPortal.Player
       public void DeleteAllStreams()
       {
         cStreams = 0;
+        cStreamsExternal = 0;
       }
 
       private FilterStreamInfos[] Streams;
       private int cStreams;
+      private FilterStreamInfos[] StreamsExternal;
+      private int cStreamsExternal;
     } ;
 
     public enum PlayState
@@ -204,6 +233,14 @@ namespace MediaPortal.Player
     protected int m_lastFrameCounter = 0;
 
     protected const string defaultLanguageCulture = "EN";
+
+    protected bool AudioExternal = false;
+
+    protected IBaseFilter _audioSwitcher = null;
+    protected IBaseFilter _FFDShowAudio = null;
+    protected IBaseFilter _AudioSourceFilter = null;
+    protected IBaseFilter _AudioExtFilter = null;
+    protected IBaseFilter _AudioExtSplitterFilter = null;
 
     public override double[] Chapters
     {
@@ -1255,6 +1292,15 @@ namespace MediaPortal.Player
                      FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
         EnableStream(FStreams.GetStreamInfos(StreamType.Audio, value).Id, AMStreamSelectEnableFlags.Enable,
                      FStreams.GetStreamInfos(StreamType.Audio, value).Filter);
+
+        if (FStreams.GetStreamInfos(StreamType.Audio, value).Filter != MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Name == "Audio " && AudioExternal)
+        {
+          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, 0,
+                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
+          EnableStream(FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Id, AMStreamSelectEnableFlags.Enable,
+                       FStreams.GetStreamInfosExternal(StreamType.Audio, 0).Filter);
+        }
+
         return;
       }
     }
@@ -1406,7 +1452,7 @@ namespace MediaPortal.Player
       if (streamName.EndsWith(".mp3") || streamName.EndsWith(".ac3") || streamName.EndsWith(".mka") ||
           streamName.EndsWith(".dts"))
       {
-        return Path.GetExtension(streamName).ToUpper().Replace(".", "");
+        return Path.GetExtension(streamName).ToUpper().Replace(".", "EXTERNAL ");
       }
 
       // No stream info from splitter
@@ -1716,6 +1762,12 @@ namespace MediaPortal.Player
       set { SubEngine.GetInstance().Enable = value; }
     }
 
+    public override bool EnableForcedSubtitle
+    {
+      get { return SubEngine.GetInstance().AutoShow; }
+      set { SubEngine.GetInstance().AutoShow = value; }
+    }
+
     public bool AnalyseStreams()
     {
       try
@@ -1798,34 +1850,34 @@ namespace MediaPortal.Player
                   {
                     FSInfos.Type = StreamType.Unknown;
                   }
-                    //VIDEO
+                  //VIDEO
                   else if (sPDWGroup == 0)
                   {
                     FSInfos.Type = StreamType.Video;
                   }
-                    //AUDIO
+                  //AUDIO
                   else if (sPDWGroup == 1)
                   {
                     FSInfos.Type = StreamType.Audio;
                   }
-                    //SUBTITLE
+                  //SUBTITLE
                   else if (sPDWGroup == 2 && sName.LastIndexOf("off") == -1 && sName.LastIndexOf("Hide ") == -1 &&
                            sName.LastIndexOf("No ") == -1 && sName.LastIndexOf("Miscellaneous ") == -1)
                   {
                     FSInfos.Type = StreamType.Subtitle;
                   }
-                    //NO SUBTITILE TAG
+                  //NO SUBTITILE TAG
                   else if ((sPDWGroup == 2 && (sName.LastIndexOf("off") != -1 || sName.LastIndexOf("No ") != -1)) ||
                            (sPDWGroup == 6590033 && sName.LastIndexOf("Hide ") != -1))
                   {
                     FSInfos.Type = StreamType.Subtitle_hidden;
                   }
-                    //DirectVobSub SHOW SUBTITLE TAG
+                  //DirectVobSub SHOW SUBTITLE TAG
                   else if (sPDWGroup == 6590033 && sName.LastIndexOf("Show ") != -1)
                   {
                     FSInfos.Type = StreamType.Subtitle_shown;
                   }
-                    //EDITION
+                  //EDITION
                   else if (sPDWGroup == 18)
                   {
                     FSInfos.Type = StreamType.Edition;
@@ -1845,13 +1897,18 @@ namespace MediaPortal.Player
                   switch (FSInfos.Type)
                   {
                     case StreamType.Unknown:
-                      break;
-                    case StreamType.Video:
-                    case StreamType.Audio:
                     case StreamType.Subtitle:
-                    case StreamType.Edition:
                     case StreamType.Subtitle_file:
+                    case StreamType.Video:
+                      break;
+                    case StreamType.Audio:
+                    case StreamType.Edition:
                     case StreamType.PostProcessing:
+                      if (FSInfos.Type == StreamType.Audio && FSInfos.Filter == MEDIAPORTAL_AUDIOSWITCHER_FILTER && FSInfos.Name == "Audio ")
+                      {
+                        FStreams.AddStreamInfosEx(FSInfos);
+                        break;
+                      }
                       if (FStreams.GetStreamCount(FSInfos.Type) == 0)
                       {
                         FSInfos.Current = true;
@@ -1871,7 +1928,7 @@ namespace MediaPortal.Player
           DirectShowUtil.ReleaseComObject(enumFilters);
         }
       }
-      catch {}
+      catch { }
       return true;
     }
 

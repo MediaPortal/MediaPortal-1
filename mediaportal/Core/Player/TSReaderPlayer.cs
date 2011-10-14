@@ -632,6 +632,8 @@ namespace MediaPortal.Player
             _fileSource = null;
           }
 
+          PostProcessingEngine.GetInstance().FreePostProcess();
+
           if (_vmr9 != null)
           {
             _vmr9.Enable(false);
@@ -821,6 +823,7 @@ namespace MediaPortal.Player
 
         if (_subSelector != null)
         {
+          if (value != -1)
           _subSelector.SetOption(value);
         }
       }

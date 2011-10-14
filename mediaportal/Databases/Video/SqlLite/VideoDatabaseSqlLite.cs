@@ -122,7 +122,6 @@ namespace MediaPortal.Video.Database
             SetMovieWatchedStatus(movieId, true);
           }
         }
-
       }
     }
 
@@ -149,13 +148,13 @@ namespace MediaPortal.Video.Database
       DatabaseUtility.AddTable(m_db, "genrelinkmovie",
                                "CREATE TABLE genrelinkmovie ( idGenre integer, idMovie integer)");
       DatabaseUtility.AddTable(m_db, "movie",
-                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text)");
-      // Added user review, Fanart url
+                               "CREATE TABLE movie ( idMovie integer primary key, idPath integer, hasSubtitles integer, discid text, watched bool)");
       DatabaseUtility.AddTable(m_db, "movieinfo",
                                "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
                                "CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer )");
-      DatabaseUtility.AddTable(m_db, "actors", "CREATE TABLE actors ( idActor integer primary key, strActor text )");
+      DatabaseUtility.AddTable(m_db, "actors", 
+                               "CREATE TABLE actors ( idActor integer primary key, strActor text )");
       DatabaseUtility.AddTable(m_db, "path",
                                "CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)");
       DatabaseUtility.AddTable(m_db, "files",
@@ -164,7 +163,6 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE resume ( idResume integer primary key, idFile integer, stoptime integer, resumeData blob)");
       DatabaseUtility.AddTable(m_db, "duration",
                                "CREATE TABLE duration ( idDuration integer primary key, idFile integer, duration integer)");
-      // Added thumbURL, IMDBActorID
       DatabaseUtility.AddTable(m_db, "actorinfo",
                                "CREATE TABLE actorinfo ( idActor integer, dateofbirth text, placeofbirth text, minibio text, biography text, thumbURL text, IMDBActorID text)");
       DatabaseUtility.AddTable(m_db, "actorinfomovies",

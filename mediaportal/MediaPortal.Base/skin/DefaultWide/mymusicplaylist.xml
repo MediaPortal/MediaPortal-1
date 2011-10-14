@@ -269,7 +269,7 @@
       <width>215</width>
       <height>202</height>
       <texture mask="Picturethumbmask.png">missing_Coverart.png</texture>
-      <visible>!control.hasthumb(500)]</visible>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
@@ -280,6 +280,7 @@
       <width>215</width>
       <height>202</height>
       <texture mask="Picturethumbmask.png">#selectedthumb</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>
@@ -290,6 +291,7 @@
       <width>215</width>
       <height>202</height>
       <texture mask="Picturethumbmask.png">Picturethumbframe.png</texture>
+      <visible>[facadeview.list|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
     <control>

@@ -392,8 +392,10 @@ void CDiskRecorder::SetPmtPid(int pmtPid,int serviceId,byte* pmtData,int pmtLeng
 	m_AudioOrVideoSeen=false ;
 	WriteLog("Old pids cleared");
 	WriteLog("got pmt - tableid: 0x%x section_length: %d sid: 0x%x",section.table_id,section.section_length,section.table_id_extension);
-	int pcrPid; vector<PidInfo2> pidInfos;
-	if (!m_pPmtParser->DecodePmt(section,pcrPid,pidInfos))
+	int pcrPid;
+	bool hasCaDescriptor = false;
+	vector<PidInfo2> pidInfos;
+	if (!m_pPmtParser->DecodePmt(section,pcrPid,hasCaDescriptor,pidInfos))
 	{
 		WriteLog("!!! PANIC - DecodePmt(...) returned FALSE !!!");
 		return;
@@ -1017,7 +1019,8 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 						if ((m_tsHeader.ContinuityCounter != ((info.ccPrev+1) & 0x0F)))
 						{
               m_iTsContinuityCounter++;
-							/*if (m_tsHeader.ContinuityCounter == info.ccPrev)
+							/*
+              if (m_tsHeader.ContinuityCounter == info.ccPrev)
 							{	
 								// May be duplicated....
 								int PayLoadLen = 188-m_tsHeader.PayLoadStart ;
@@ -1028,11 +1031,12 @@ void CDiskRecorder::WriteTs(byte* tsPacket)
 									return ; 
 								}
 								else
-									LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
+                
+                LogDebug("Recorder:Pid %x Continuity error...! Should be same ! %x ( prev %x ), PayLoadLen : %d", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev, PayLoadLen) ;
 							}
 							else
-								LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x )", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
               */
+						  LogDebug("Recorder:Pid %x Continuity error... %x ( prev %x ) - bad signal?", m_tsHeader.Pid, m_tsHeader.ContinuityCounter, info.ccPrev) ;
 						}
 					}
 					else

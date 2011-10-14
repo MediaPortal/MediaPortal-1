@@ -125,7 +125,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 char** serviceName,
 									 int* pmtPid,
 									 int* hasVideo,
-									 int* hasAudio)
+									 int* hasAudio,
+									 int* hasCaDescriptor)
 {
 	static char sServiceName[128];
 	static char sProviderName[128];
@@ -160,6 +161,7 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 			*freeCAMode=info.FreeCAMode;
 			*hasVideo=info.hasVideo;
 			*hasAudio=info.hasAudio;
+			*hasCaDescriptor=info.hasCaDescriptor;
 		}
 	}
 	catch(...)
@@ -245,7 +247,7 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     *type=1;
     return 0;
   }
-  if (m_nit.m_nit.cableNIT.size()>0)
+  if (m_nit.m_nit.terrestialNIT.size()>0)
   {
     if (channel<0 || channel >=m_nit.m_nit.terrestialNIT.size()) return 0;
     NITTerrestrialDescriptor& des = m_nit.m_nit.terrestialNIT[channel];

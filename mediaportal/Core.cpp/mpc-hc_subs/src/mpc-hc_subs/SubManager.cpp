@@ -89,6 +89,21 @@ void CSubManager::ApplyStyleSubStream(ISubStream* pSubStream)
 	}
 }
 
+void CSubManager::ToggleForcedOnly(bool onlyShowForcedSubs)
+{
+	CAutoLock cAutoLock(&m_csSubLock);
+	if (m_pSubStream) {
+	 CLSID clsid;
+	 if(FAILED(m_pSubStream->GetClassID(&clsid)))
+	 return;
+	 if(clsid == __uuidof(CVobSubFile))
+	 {
+	 CVobSubFile* pVSF = (CVobSubFile*) m_pSubStream.p;
+	 pVSF->m_fOnlyShowForcedSubs = onlyShowForcedSubs;
+	 }
+	}
+}
+
 void CSubManager::SetSubPicProvider(ISubStream* pSubStream)
 {
 	m_pSubStream = pSubStream;
@@ -120,11 +135,11 @@ bool CSubManager::SelectStream(int i)
 {
 	if (i >= 0 && i < (int) m_intSubs.GetCount())
 	{
-		ATLTRACE("SelectStream %d", i);
 		int index = m_intSubs[i];
 		m_isIntSubStreamSelected = true;
 		SetSubPicProvider(m_intSubStream);
 		HRESULT hr = m_pSS->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
+		ATLTRACE("SelectStream %d, result: %s", i, hr == S_OK ? "success" : "failure");
 		return hr == S_OK;
 	}
 	return false;
@@ -260,9 +275,9 @@ void CSubManager::Render(int x, int y, int width, int height)
 	{
  		CRect rcSource, rcDest;
 		if (SUCCEEDED (pSubPic->GetSourceAndDest(&size, rcSource, rcDest))) {
-			ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
-			ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
-			ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
+			//ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
+			//ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
+			//ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
 			rcDest.OffsetRect(x, y);
 			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
 			m_d3DDev->GetFVF(&fvf);
@@ -409,6 +424,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 	DWORD cStreams = 0;
 	if(SUCCEEDED(m_pSS->Count(&cStreams)))
 	{
+		CComQIPtr<ITrackInfo> pTrackInfo(pBF);
 		for(int i = 0; i < (int)cStreams; i++)
 		{
 			DWORD dwFlags = 0;
@@ -439,6 +455,16 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF)
 					m_intSubs.Add(i);
 					m_intNames.Add(lang);
 					m_intTrackNames.Add(track);
+					if (pTrackInfo) 
+					{
+						TrackElement trackElement;
+						memset(&trackElement, 0, sizeof(trackElement));
+						pTrackInfo->GetTrackInfo(i, &trackElement);
+						if (trackElement.FlagForced) {
+							m_forcedSubIndex = m_intSubs.GetCount() - 1;;
+							ATLTRACE("subtitle track %d is forced", i);
+						}
+					}
 				}
 			}
 
@@ -603,7 +629,9 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 	if(GetCount() > 0)
 	{
 		if (onlyShowForcedSubs && m_forcedSubIndex >= 0) {
-			SetCurrent(m_forcedSubIndex);
+			//if IAMStreamSelect available, m_forcedSubIndex is index of internal subs
+			//(they are counted after external subs)
+			SetCurrent(m_pSS != NULL ? GetExtCount() + m_forcedSubIndex : m_forcedSubIndex);
 			m_enabled = true;
 		} else {
 			SetCurrent(0); //stream 0, disabled

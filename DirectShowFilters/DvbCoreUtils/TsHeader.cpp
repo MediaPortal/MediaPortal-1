@@ -96,7 +96,10 @@ void CTsHeader::Decode(byte *data)
 	if (HasAdaptionField) 
 	{
 		AdaptionFieldLength=data[4];
-		PayLoadStart=5+AdaptionFieldLength;
+
+        // Only set payload start if it starts in this packet
+        if((5 + AdaptionFieldLength) < 188)
+          PayLoadStart=5+AdaptionFieldLength;
 	}
 	if (PayloadUnitStart && !HasPayload)
 		PayloadUnitStart=false;

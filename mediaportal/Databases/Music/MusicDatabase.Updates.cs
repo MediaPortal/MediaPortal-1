@@ -227,7 +227,8 @@ namespace MediaPortal.Music.Database
         int idSong = DatabaseUtility.GetAsInt(results, 0, "idTrack");
         int iTimesPlayed = DatabaseUtility.GetAsInt(results, 0, "iTimesPlayed");
 
-        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0} where idTrack='{1}'", ++iTimesPlayed, idSong);
+        strSQL = String.Format("UPDATE tracks SET iTimesPlayed={0}, dateLastPlayed='{1}' where idTrack='{2}'", 
+          ++iTimesPlayed, DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), idSong);
         if (DirectExecute(strSQL).Rows.Count > 0)
         {
           Log.Debug("MusicDatabase: increased playcount for song {1} to {0}", Convert.ToString(iTimesPlayed), aFileName);
@@ -500,6 +501,7 @@ namespace MediaPortal.Music.Database
     /// <returns></returns>
     public int MusicDatabaseReorg(ArrayList shares)
     {
+      LoadDBSettings();
       return MusicDatabaseReorg(shares, null);
     }
 
@@ -548,7 +550,7 @@ namespace MediaPortal.Music.Database
       }
       DatabaseReorgEventArgs MyArgs = new DatabaseReorgEventArgs();
 
-      DateTime startTime = DateTime.Now;
+      DateTime startTime = DateTime.UtcNow;
 
       try
       {
@@ -595,7 +597,7 @@ namespace MediaPortal.Music.Database
         Log.Info("Musicdatabasereorg: Total Songs: {0}. {1} added / {2} updated / {3} skipped", _processCount,
                  _songsAdded, _songsUpdated, _songsSkipped);
 
-        DateTime stopTime = DateTime.Now;
+        DateTime stopTime = DateTime.UtcNow;
         TimeSpan ts = stopTime - startTime;
         float fSecsPerTrack = ((float)ts.TotalSeconds / (float)_processCount);
         string trackPerSecSummary = "";
@@ -1313,7 +1315,7 @@ namespace MediaPortal.Music.Database
             strFileName, tag.Artist, tag.AlbumArtist, tag.Album, tag.Genre, tag.Composer, tag.Conductor, tag.Title,
             tag.Track, tag.TrackTotal, tag.Duration, tag.Year, 0, tag.Rating, 0,
             0, tag.DiscID, tag.DiscTotal, tag.Lyrics, tag.Comment, tag.FileType, tag.Codec, tag.BitRateMode,
-            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue, dateadded
+            tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss"), dateadded.ToString("yyyy-MM-dd HH:mm:ss")
             );
         try
         {
@@ -1422,7 +1424,7 @@ namespace MediaPortal.Music.Database
               tag.Genre, tag.Title, tag.Track, tag.TrackTotal,
               tag.Duration, tag.Year, tag.Rating, tag.DiscID, tag.DiscTotal,
               tag.Lyrics, tag.Composer, tag.Conductor, tag.Comment, tag.FileType, tag.Codec,
-              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded,
+              tag.BitRateMode, tag.BPM, tag.BitRate, tag.Channels, tag.SampleRate, dateadded.ToString("yyyy-MM-dd HH:mm:ss"),
               strFileName
               );
           try

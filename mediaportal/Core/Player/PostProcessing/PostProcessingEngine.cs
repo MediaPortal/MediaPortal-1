@@ -39,6 +39,11 @@ namespace MediaPortal.Player.PostProcessing
     bool LoadPostProcessing(IGraphBuilder graphBuilder);
     int CropVertical { get; set; }
     int CropHorizontal { get; set; }
+    int AudioDelay { get; set; }
+    int AudioDelayInterval { get; }
+    void AudioDelayPlus();
+    void AudioDelayMinus();
+    void FreePostProcess();
   }
 
   public class PostProcessingEngine
@@ -53,7 +58,6 @@ namespace MediaPortal.Player.PostProcessing
     public static IPostProcessingEngine GetInstance(bool forceinitialize)
     {
       if (engine == null || forceinitialize)
-
       {
         /*public static IPostProcessingEngine GetInstance()
               { */
@@ -119,6 +123,22 @@ namespace MediaPortal.Player.PostProcessing
         get { return 0; }
         set { }
       }
+
+      public void FreePostProcess() { }
+
+      public int AudioDelayInterval
+      {
+        get { return 0; }
+      }
+
+      public int AudioDelay
+      {
+        get { return 0; }
+        set { }
+      }
+
+      public void AudioDelayMinus() { }
+      public void AudioDelayPlus() { }
 
       #endregion
     }

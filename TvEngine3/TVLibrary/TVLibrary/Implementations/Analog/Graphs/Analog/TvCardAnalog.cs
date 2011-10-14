@@ -496,27 +496,33 @@ namespace TvLibrary.Implementations.Analog
       if (_tuner != null)
       {
         _tuner.Dispose();
+        _tuner = null;
         _tunerDevice = null;
       }
       if (_crossbar != null)
       {
         _crossbar.Dispose();
+        _crossbar = null;
       }
       if (_tvAudio != null)
       {
         _tvAudio.Dispose();
+        _tvAudio = null;
       }
       if (_capture != null)
       {
         _capture.Dispose();
+        _capture = null;
       }
       if (_encoder != null)
       {
         _encoder.Dispose();
+        _encoder = null;
       }
       if (_teletext != null)
       {
         _teletext.Dispose();
+        _teletext = null;
       }
       if (_tsFileSink != null)
       {
@@ -524,6 +530,7 @@ namespace TvLibrary.Implementations.Analog
         _tsFileSink = null;
       }
       _rotEntry.Dispose();
+      _rotEntry = null;
       Release.ComObject("Graphbuilder", _graphBuilder);
       _graphBuilder = null;
       _graphState = GraphState.Idle;
@@ -561,7 +568,7 @@ namespace TvLibrary.Implementations.Analog
         _capBuilder = (ICaptureGraphBuilder2)new CaptureGraphBuilder2();
         _capBuilder.SetFiltergraph(_graphBuilder);
         Graph graph = _configuration.Graph;
-        _tuner = new Tuner(_tunerDevice);
+        _tuner = new Tuner(_device);
         if (!_tuner.CreateFilterInstance(graph, _graphBuilder))
         {
           Log.Log.Error("analog: unable to add tv tuner filter");

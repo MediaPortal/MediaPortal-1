@@ -1007,8 +1007,15 @@
     <String id="1219">Album artister (oversikt)</String>
     <String id="1220">Sorter etter: Dato lagret</String>
     <String id="1221">Sorter etter: Endret dato</String>
+    <String id="1222">Grupper</String>
+    <String id="1223">En eksisterende spilleliste funnet</String>
+    <String id="1224">Vil du tømme den gjeldende spillelisten?</String>
+    <String id="1225">Legg i kø</String>
+    <String id="1226">Legg alle i kø</String>
     <String id="1230">Dato lagt til</String>
     <String id="1231">Sist avspilt</String>
+    <String id="1240">Lås innhold</String>
+    <String id="1241">Lås opp innhold</String>
     <String id="1300" prefix="Mine ">TV Serier</String>
     <String id="1440" prefix="Min ">Tekst-TV</String>
     <String id="1441">Tekst-TV</String>
@@ -1051,6 +1058,14 @@
     <String id="1600">Vil du slå av PCen?</String>
     <String id="1601">Vil du sette PCen i hvilemodus?</String>
     <String id="1602">Vil du sette PCen i dvalemodus?</String>
+    <String id="1900">Utdatert skinn funnet</String>
+    <String id="1901">Det valgte skinnet ({0}) er utdatert. Dette kan medføre problemer når du bruker MediaPortal. På grunn av dette har MediaPortal midlertidig byttet til standard skinn. Hvis du allikevel vil prøve å bruke det utdaterte skinnet, klikk på 'ignorer og prøv' knappen, men husk: IKKE lag en bug/feilmelding når dette skinnet brukes!
+(for å fjerne denne meldingen, enten vent til den avsluttes automatisk eller trykk Tilbake/ESC på fjernkontrollen)</String>
+    <String id="1902">Ikke vis denne meldingen igjen</String>
+    <String id="1903">Ignorer og prøv ({0})...</String>
+    <String id="1910">Inkompatibel tillegg oppdaget</String>
+    <String id="1911">Følgende tillegget er inkompatibel med denne versjonen av MediaPortal og ble automatisk deaktivert:</String>
+    <String id="1912">Fortsetter|Fortsetter ({0})...|Fortsetter ({0})...</String>
     <String id="1950" prefix="Min ">Status</String>
     <String id="1951">Harddisk</String>
     <String id="1952">Vifte</String>
@@ -1900,7 +1915,7 @@
     <String id="200014">start med å velge språk og land nedenfor:</String>
     <String id="200015">Trykk "Neste" for å gå videre.</String>
     <String id="200017">Velkommen til MediaPortal</String>
-    <String id="200018">Gratulerer. MediaPortal er nå satt opp og klar til å brukes.</String>
+    <String id="200018">Gratulerer. MediaPortal er nå satt opp, og er klar til å brukes.</String>
     <String id="200019">Trykk "Avslutt" for å lukke assistenten.</String>
     <String id="200020">Avslutt</String>
     <String id="200021">TV-oppsett - EPG</String>
@@ -1925,9 +1940,9 @@
     <String id="200038">På en PC delt med andre programmer</String>
     <String id="200039">Legg til skip step</String>
     <String id="200040">Fjern skip step</String>
-    <String id="200041">Tuner informasjon</String>
+    <String id="200041">Tunerinformasjon</String>
     <String id="200042">Sammenkoblede kanaler</String>
-    <String id="200043">Rensk opp i TV-opptak</String>
+    <String id="200043">Rydd opp i TV-opptak</String>
     <String id="200044">Ugyldige TV-opptak</String>
     <String id="200045">Begge</String>
     <String id="200046">Lag miniatyrbilder</String>
@@ -1939,29 +1954,29 @@
     <String id="200052">Aktive opptak</String>
     <String id="200053">Ingen aktive opptak</String>
     <String id="200054">Kunne ikke slette TV-opptaket.</String>
-    <String id="200055">Live TV visning kan bli avbrutt.</String>
+    <String id="200055">Live TV-visning kan bli avbrutt.</String>
     <String id="200059">Audio Dual Mono Modus</String>
     <String id="200060">Stereo</String>
     <String id="200061">Venstre kanal til venstre og høyre høytaler</String>
     <String id="200062">Høyre kanal til venstre og høyre høytaler</String>
     <String id="200063">Miks begge</String>
-    <String id="200064">Koblet til TV Server</String>
-    <String id="200065">Noen av portene ser ut til å være blokert</String>
-    <String id="200066">Kan ikke koble til TV Server</String>
+    <String id="200064">Koblet til TV-server</String>
+    <String id="200065">Noen av portene ser ut til å være blokkert</String>
+    <String id="200066">Kan ikke koble til TV-server</String>
     <String id="200067">Koblet til databasen</String>
     <String id="200068">Kan ikke koble til databasen</String>
-    <String id="200069">Alle IP porter ser ut til å fungere</String>
+    <String id="200069">Alle IP-porter ser ut til å fungere</String>
     <String id="200070">Vennligst sjekk brannmurinnstillingene dine</String>
     <String id="200071">Slette denne mappen og alle undermapper?</String>
-    <String id="200072">Episoder som kommer snart</String>
-    <String id="200073">Postprocessing</String>
+    <String id="200072">Kommende episoder</String>
+    <String id="200073">Postprosessering</String>
     <String id="200074">Postprocessing bilde</String>
     <String id="200075">Endre størrelse</String>
-    <String id="200076">Undertekst filer</String>
+    <String id="200076">Undertekstfiler</String>
     <String id="200077">Deinterlace</String>
-    <String id="200078">Krympe</String>
-    <String id="200079">Vertikal krymping</String>
-    <String id="200080">Horisontal krymping</String>
+    <String id="200078">Beskjær</String>
+    <String id="200079">Vertikal beskjæring</String>
+    <String id="200080">Horisontal beskjæring</String>
     <String id="200081">MENY VIDEO</String>
     <String id="200082">MENY LYD</String>
     <String id="200083">MENY UNDERTEKST</String>

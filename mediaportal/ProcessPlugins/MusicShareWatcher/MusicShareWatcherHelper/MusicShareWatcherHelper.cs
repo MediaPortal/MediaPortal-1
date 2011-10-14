@@ -250,10 +250,8 @@ namespace MediaPortal.MusicShareWatcher
               switch (currentEvent.Type)
               {
                 case MusicShareWatcherEvent.EventType.Create:
-                  AddNewSong(currentEvent.FileName);
-                  break;
                 case MusicShareWatcherEvent.EventType.Change:
-                  musicDB.UpdateSong(currentEvent.FileName);
+                  AddUpdateSong(currentEvent.FileName);
                   break;
                 case MusicShareWatcherEvent.EventType.Delete:
                   musicDB.DeleteSong(currentEvent.FileName, true);
@@ -287,13 +285,12 @@ namespace MediaPortal.MusicShareWatcher
       }
     }
 
-    // Method used by OnCreated to fill the song structure
-    private static void AddNewSong(string strFileName)
+    // Method used by OnCreated / OncHanged to add / update the song structure
+    private static void AddUpdateSong(string strFileName)
     {
-      // Has the song already be added? 
-      // This happens when a full directory is copied into the share.
       if (musicDB.SongExists(strFileName))
       {
+        musicDB.UpdateSong(strFileName);
         return;
       }
       // For some reason the Create is fired already by windows while the file is still copied.

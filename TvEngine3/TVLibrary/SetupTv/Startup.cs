@@ -206,6 +206,14 @@ namespace SetupTv
           dlg.schemaName = dlg.schemaNameDefault;
         }
       }
+
+      if (dlg.tbServerHostName.Text.Trim().ToLower() == "localhost" | dlg.tbServerHostName.Text.Trim() == "127.0.0.1")
+      {
+        Log.Info("*****************************************************************");
+        Log.Info("* WARNING, connection host ({0}) not officially supported *", dlg.tbServerHostName.Text);
+        Log.Info("*****************************************************************"); 
+      }
+
       if ((startupMode != StartupMode.Normal && startupMode != StartupMode.DeployMode) ||
           (!dlg.TestConnection(startupMode)))
       {

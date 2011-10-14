@@ -294,6 +294,19 @@ namespace MediaPortal.GUI.Library
       return env.result;
     }
 
+    public static void SendThreadCallback(Callback callback, int param1, int param2, object data)
+    {
+      CallbackEnv env = new CallbackEnv();
+      env.callback = callback;
+      env.param1 = param1;
+      env.param2 = param2;
+      env.data = data;
+
+      GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_CALLBACK, 0, 0, 0, 0, 0, env);
+      SendThreadMessage(msg);
+    }
+
+
     /// <summary>
     /// process the thread messages and actions
     /// This method gets called by the main thread only and ensures that
@@ -404,11 +417,21 @@ namespace MediaPortal.GUI.Library
         }
       }
 
-      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
+      if (action.wID == Action.ActionType.ACTION_MOUSE_CLICK || action.wID == Action.ActionType.ACTION_MOUSE_DOUBLECLICK || action.wID == Action.ActionType.ACTION_MOUSE_MOVE)
       {
         if (OnPostRenderAction != null)
         {
-          OnPostRenderAction(action, null, false);
+          //OnPostRenderAction(action, null, false);
+          Delegate[] delegates = OnPostRenderAction.GetInvocationList();
+          for (int i = 0; i < delegates.Length; ++i)
+          {
+            int iActiveWindow = ActiveWindow;
+            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, false });
+            if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
+            {
+              return;
+            }
+          }
         }
       }
 
@@ -804,19 +827,17 @@ namespace MediaPortal.GUI.Library
             _listHistory.RemoveAt(_listHistory.Count - 1);
           }
           // Get previous window id (previous to the last active window) id
-          if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+          if (_listHistory.Count <= 0)
           {
-            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+            if (_startWithBasicHome && File.Exists(GUIGraphicsContext.Skin + @"\basichome.xml"))
+            {
+              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_SECOND_HOME;
+            }
+            else
+            {
+              _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
+            }
           }
-          else
-          {
-            _previousActiveWindowId = (int)GUIWindow.Window.WINDOW_HOME;
-          }
-          if (_listHistory.Count > 0)
-          {
-            _previousActiveWindowId = _listHistory[_listHistory.Count - 1];
-          }
-
           newWindowId = _previousActiveWindowId;
           // Check if replacement window was fault, ifso return to home          
           if (replaceWindow)

@@ -1338,6 +1338,14 @@ namespace MediaPortal.GUI.Library
         {
           _layoutPlayList.SelectedListItemIndex = value;
         }
+        else if (_currentLayout == Layout.Filmstrip && _layoutFilmStrip != null)
+        {
+          _layoutFilmStrip.SelectedListItemIndex = value;
+        }
+        else if (_currentLayout == Layout.CoverFlow && _layoutCoverFlow != null)
+        {
+          _layoutCoverFlow.SelectedListItemIndex = value;
+        }
       }
     }
 

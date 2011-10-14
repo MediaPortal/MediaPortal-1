@@ -53,10 +53,12 @@ namespace SetupTv.Dialogs
       // mpButtonCancel
       // 
       this.mpButtonCancel.Location = new System.Drawing.Point(353, 313);
+      this.mpButtonCancel.TabIndex = 7;
       // 
       // mpButtonOk
       // 
       this.mpButtonOk.Location = new System.Drawing.Point(254, 313);
+      this.mpButtonOk.TabIndex = 6;
       this.mpButtonOk.Click += new System.EventHandler(this.mpButtonOk_Click);
       // 
       // groupBox2
@@ -85,7 +87,7 @@ namespace SetupTv.Dialogs
       this.label51.Location = new System.Drawing.Point(15, 127);
       this.label51.Name = "label51";
       this.label51.Size = new System.Drawing.Size(64, 13);
-      this.label51.TabIndex = 18;
+      this.label51.TabIndex = 182;
       this.label51.Text = "VCR Signal:";
       // 
       // checkBoxVCR
@@ -94,7 +96,8 @@ namespace SetupTv.Dialogs
       this.checkBoxVCR.Location = new System.Drawing.Point(95, 127);
       this.checkBoxVCR.Name = "checkBoxVCR";
       this.checkBoxVCR.Size = new System.Drawing.Size(15, 14);
-      this.checkBoxVCR.TabIndex = 17;
+      this.checkBoxVCR.TabIndex = 400;
+      this.checkBoxVCR.TabStop = false;
       this.checkBoxVCR.UseVisualStyleBackColor = true;
       // 
       // label30
@@ -120,7 +123,7 @@ namespace SetupTv.Dialogs
       this.label29.Location = new System.Drawing.Point(15, 48);
       this.label29.Name = "label29";
       this.label29.Size = new System.Drawing.Size(60, 13);
-      this.label29.TabIndex = 14;
+      this.label29.TabIndex = 142;
       this.label29.Text = "Frequency:";
       // 
       // textBoxChannel
@@ -147,7 +150,7 @@ namespace SetupTv.Dialogs
       this.label3.Location = new System.Drawing.Point(15, 103);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(46, 13);
-      this.label3.TabIndex = 10;
+      this.label3.TabIndex = 102;
       this.label3.Text = "Country:";
       // 
       // comboBoxInput
@@ -168,7 +171,7 @@ namespace SetupTv.Dialogs
       this.label2.Location = new System.Drawing.Point(15, 76);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(57, 13);
-      this.label2.TabIndex = 8;
+      this.label2.TabIndex = 82;
       this.label2.Text = "Input type:";
       // 
       // label1
@@ -177,7 +180,7 @@ namespace SetupTv.Dialogs
       this.label1.Location = new System.Drawing.Point(15, 26);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(49, 13);
-      this.label1.TabIndex = 6;
+      this.label1.TabIndex = 252;
       this.label1.Text = "Channel:";
       // 
       // groupBox1
@@ -212,7 +215,7 @@ namespace SetupTv.Dialogs
       this.comboBoxAudioSource.Location = new System.Drawing.Point(93, 59);
       this.comboBoxAudioSource.Name = "comboBoxAudioSource";
       this.comboBoxAudioSource.Size = new System.Drawing.Size(258, 21);
-      this.comboBoxAudioSource.TabIndex = 18;
+      this.comboBoxAudioSource.TabIndex = 5;
       // 
       // label52
       // 
@@ -220,7 +223,7 @@ namespace SetupTv.Dialogs
       this.label52.Location = new System.Drawing.Point(13, 62);
       this.label52.Name = "label52";
       this.label52.Size = new System.Drawing.Size(74, 13);
-      this.label52.TabIndex = 19;
+      this.label52.TabIndex = 192;
       this.label52.Text = "Audio Source:";
       // 
       // comboBoxVideoSource
@@ -240,7 +243,10 @@ namespace SetupTv.Dialogs
             "RGB #3",
             "YRYBY #1",
             "YRYBY #2",
-            "YRYBY #3"});
+            "YRYBY #3",
+            "HDMI #1",
+            "HDMI #2",
+            "HDMI #3"});
       this.comboBoxVideoSource.Location = new System.Drawing.Point(93, 32);
       this.comboBoxVideoSource.Name = "comboBoxVideoSource";
       this.comboBoxVideoSource.Size = new System.Drawing.Size(258, 21);
@@ -252,7 +258,7 @@ namespace SetupTv.Dialogs
       this.label28.Location = new System.Drawing.Point(13, 35);
       this.label28.Name = "label28";
       this.label28.Size = new System.Drawing.Size(74, 13);
-      this.label28.TabIndex = 12;
+      this.label28.TabIndex = 122;
       this.label28.Text = "Video Source:";
       // 
       // label31
@@ -262,7 +268,7 @@ namespace SetupTv.Dialogs
       this.label31.Location = new System.Drawing.Point(28, 279);
       this.label31.Name = "label31";
       this.label31.Size = new System.Drawing.Size(360, 13);
-      this.label31.TabIndex = 22;
+      this.label31.TabIndex = 222;
       this.label31.Text = "Note: A reboot might be needed when changing the frequency";
       // 
       // FormAnalogTuningDetail

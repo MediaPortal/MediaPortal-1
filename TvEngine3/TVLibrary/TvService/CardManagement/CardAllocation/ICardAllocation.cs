@@ -39,7 +39,13 @@ namespace TvService
     /// List is sorted by "same transponder" and priority
     /// </summary>
     /// <returns>list containg all free cards which can receive the channel</returns>
-    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel,
-                                                 ref IUser user);
+    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user, out Dictionary<int, TvResult> cardsUnAvailable);
+
+    /// <summary>
+    /// Gets a list of all available cards which can receive the channel specified
+    /// List is sorted by "same transponder" and priority
+    /// </summary>
+    /// <returns>list containg all free cards which can receive the channel</returns>
+    List<CardDetail> GetAvailableCardsForChannel(Dictionary<int, ITvCardHandler> cards, Channel dbChannel, ref IUser user);
   }
 }

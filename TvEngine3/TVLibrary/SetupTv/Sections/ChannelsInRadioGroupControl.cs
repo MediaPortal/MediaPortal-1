@@ -515,6 +515,26 @@ namespace SetupTv.Sections
       lvwColumnSorter.Order = SortOrder.None;
     }
 
+    private void listView1_AfterLabelEdit(object sender, LabelEditEventArgs e)
+    {
+      if (e.Label != null)
+      {
+        Channel channel = ((RadioGroupMap)listView1.Items[e.Item].Tag).ReferencedChannel();
+        channel.DisplayName = e.Label;
+        channel.Persist();
+      }
+    }
+
+    private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
+    {
+      Channel ch = ((RadioGroupMap)e.Item.Tag).ReferencedChannel();
+      if (ch.VisibleInGuide != e.Item.Checked)
+      {
+        ch.VisibleInGuide = e.Item.Checked;
+        ch.Persist();
+      }
+    }
+
     private void mpButtonOrderByName_Click(object sender, EventArgs e)
     {
       this.listView1_ColumnClick(null, new ColumnClickEventArgs(0));

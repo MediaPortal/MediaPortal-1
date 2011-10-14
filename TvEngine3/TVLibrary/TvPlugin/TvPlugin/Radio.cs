@@ -65,7 +65,7 @@ namespace TvPlugin
     private string currentFolder = null;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
-    private bool hideAllChannelsGroup = false;
+    private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
     private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
@@ -106,6 +106,7 @@ namespace TvPlugin
 
     public Radio()
     {
+      TVUtil.SetGentleConfigFile();
       GetID = (int)Window.WINDOW_RADIO;
     }
 
@@ -244,15 +245,18 @@ namespace TvPlugin
 
     public override void OnAdded()
     {
-      Log.Info("RadioHome:OnAdded");     
-    } 
+      Log.Info("RadioHome:OnAdded");
+
+      LoadSettings();
+      LoadChannelGroups();
+    }    
 
     protected override void OnPageLoad()
     {
+      Log.Info("RadioHome:OnPageLoad");
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msgStopRecorder);
-      LoadSettings();
+      GUIWindowManager.SendMessage(msgStopRecorder);      
       switch (currentSortMethod)
       {
         case SortMethod.Name:
@@ -270,31 +274,8 @@ namespace TvPlugin
         case SortMethod.Number:
           btnSortBy.SelectedItem = 4;
           break;
-      }
+      }      
 
-      Settings xmlreader = new MPSettings();
-      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
-
-
-      TvBusinessLayer layer = new TvBusinessLayer();
-      IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
-      if (channels != null && channels.Count > 0)
-      {
-        _currentChannel = channels[0];
-      }
-      
-      if(AllRadioGroups.Count == 0)
-      {
-        IList<RadioChannelGroup> allGroups = RadioChannelGroup.ListAll();
-        
-        foreach (RadioChannelGroup group in allGroups) {
-          if(!(hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels)))
-          {
-            AllRadioGroups.Add(group);
-          }
-        }
-      }
-      
       SelectCurrentItem();
       LoadDirectory(currentFolder);
 
@@ -305,8 +286,38 @@ namespace TvPlugin
         Play(facadeLayout.SelectedListItem);
       }
 
-      btnSortBy.SortChanged += SortChanged;
+      btnSortBy.SortChanged += SortChanged;       
+    }    
+
+    private static void LoadChannelGroups()
+    {
+      Settings xmlreader = new MPSettings();
+      string currentchannelName = xmlreader.GetValueAsString("myradio", "channel", String.Empty);
+
+      TvBusinessLayer layer = new TvBusinessLayer();
+      IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
+      if (channels != null && channels.Count > 0)
+      {
+        _currentChannel = channels[0];
+      }
+
+      if (AllRadioGroups.Count == 0)
+      {
+        IList<RadioChannelGroup> allGroups = RadioChannelGroup.ListAll();
+
+        foreach (RadioChannelGroup group in allGroups)
+        {
+          if (hideAllChannelsGroup && group.GroupName.Equals(TvConstants.RadioGroupNames.AllChannels) &&
+              allGroups.Count > 1)
+          {
+            continue;
+          }
+
+          AllRadioGroups.Add(group);
+        }
+      }
     }
+
 
     private void SetLastChannel()
     {
@@ -508,6 +519,7 @@ namespace TvPlugin
             item.Label = channel.DisplayName;
             item.IsFolder = false;
             item.MusicTag = channel;
+            item.AlbumInfoTag = map;
             if (channel.IsWebstream())
             {
               item.IconImageBig = "DefaultMyradioStreamBig.png";
@@ -692,15 +704,19 @@ namespace TvPlugin
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
           {
+            RadioGroupMap channel1GroupMap = (RadioGroupMap)item1.AlbumInfoTag;
+            RadioGroupMap channel2GroupMap = (RadioGroupMap)item2.AlbumInfoTag;
+            int channel1GroupSort = channel1GroupMap.SortOrder;
+            int channel2GroupSort = channel2GroupMap.SortOrder;
             if (bAscending)
             {
-              if (channel1.SortOrder > channel2.SortOrder)
+              if (channel1GroupSort > channel2GroupSort)
               {
                 return 1;
               }
               return -1;
             }
-            if (channel2.SortOrder > channel1.SortOrder)
+            if (channel2GroupSort > channel1GroupSort)
             {
               return 1;
             }

@@ -101,6 +101,7 @@ namespace MediaPortal.GUI.Video
     private DateTime _updateTimer = DateTime.Now;
     private DateTime _vmr7UpdateTimer = DateTime.Now;
     private bool _IsDialogVisible = false;
+    private bool _IsClosingDialog = false;
     private bool _needToClearScreen = false;
     private bool _isVolumeVisible = false;
     private bool _isForbiddenVisible = false;
@@ -1065,6 +1066,7 @@ namespace MediaPortal.GUI.Video
         case GUIMessage.MessageType.GUI_MSG_WINDOW_INIT:
           {
             base.OnMessage(message);
+
             _osdWindow = (GUIVideoOSD)GUIWindowManager.GetWindow((int)Window.WINDOW_OSD);
 
             HideControl(GetID, (int)Control.LABEL_ROW1);
@@ -1076,8 +1078,10 @@ namespace MediaPortal.GUI.Video
               LoadSettings();
 
             GUIWindowManager.IsOsdVisible = false;
+            GUIWindowManager.IsPauseOsdVisible = g_Player.Paused;
             _isOsdVisible = false;
-            _isPauseOsdVisible = false;
+            _isPauseOsdVisible = g_Player.Paused;
+            m_dwOSDTimeOut = DateTime.Now;
             _showStep = false;
             _showStatus = false;
             _showTime = false;
@@ -1100,14 +1104,9 @@ namespace MediaPortal.GUI.Video
             NotifyDialogVisible = false;
 
             ResetAllControls(); // make sure the controls are positioned relevant to the OSD Y offset
-
-            GUIGraphicsContext.IsFullScreenVideo = true;
             ScreenStateChanged();
             _needToClearScreen = true;
             UpdateGUI();
-            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
-            RenderVolume(false);
-            RenderForbidden(false);
             if (!screenState.Paused)
             {
               for (int i = (int)Control.PANEL1; i < (int)Control.PANEL2; ++i)
@@ -1115,6 +1114,14 @@ namespace MediaPortal.GUI.Video
                 HideControl(GetID, i);
               }
             }
+
+            GUIGraphicsContext.IsFullScreenVideo = true;
+            GUILayerManager.RegisterLayer(this, GUILayerManager.LayerType.Osd);
+
+            RenderVolume(false);
+            RenderForbidden(false);
+
+            //return base.OnMessage(message);
             return true;
           }
 
@@ -1129,7 +1136,9 @@ namespace MediaPortal.GUI.Video
                 _osdWindow.OnMessage(msg); // Send a de-init msg to the OSD
               }
               _isOsdVisible = false;
+              _isPauseOsdVisible = false;
               GUIWindowManager.IsOsdVisible = false;
+              GUIWindowManager.IsPauseOsdVisible = false;
               GUIGraphicsContext.IsFullScreenVideo = false;
 
               GUILayerManager.UnRegisterLayer(this);
@@ -2037,13 +2046,13 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-      if (GUIGraphicsContext.Vmr9Active || GUIWindowManager.IsRouted)
+      if (GUIGraphicsContext.Vmr9Active)
       {
         base.Render(timePassed);
-        if (_isOsdVisible)
-        {
-          _osdWindow.Render(timePassed);
-        }
+      }
+      if (_isOsdVisible)
+      {
+        _osdWindow.Render(timePassed);
       }
     }
 
@@ -2126,9 +2135,10 @@ namespace MediaPortal.GUI.Video
       {
         if (VolumeHandler.Instance.IsMuted)
         {
+          imgVolumeBar.Maximum = VolumeHandler.Instance.StepMax;
+          imgVolumeBar.Current = 0;
           imgVolumeMuteIcon.Visible = true;
           imgVolumeBar.Image1 = 1;
-          imgVolumeBar.Current = 0;
         }
         else
         {
@@ -2214,11 +2224,27 @@ namespace MediaPortal.GUI.Video
     private void g_Player_PlayBackStopped(g_Player.MediaType type, int stoptime, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback was stopped, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Video || GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     private void g_Player_PlayBackEnded(g_Player.MediaType type, string filename)
     {
       SettingsLoaded = false; // we should reload
+      // playback ended, if we are the current window, close our context menu, so we also get closed
+      if (type != g_Player.MediaType.Video || GUIWindowManager.ActiveWindow != GetID) return;
+      if (!_IsClosingDialog)
+      {
+        _IsClosingDialog = true;
+        GUIDialogWindow.CloseRoutedWindow();
+        _IsClosingDialog = false;
+      }
     }
 
     #endregion
@@ -2247,7 +2273,7 @@ namespace MediaPortal.GUI.Video
     public void RenderLayer(float timePassed)
     {
       Render(timePassed);
-      base.Render(timePassed);
+      //base.Render(timePassed);
     }
 
     #endregion

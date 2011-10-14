@@ -74,7 +74,7 @@ public:
   bool    IsReady();
 	void		SetFilter(int pid,int serviceId);
 	void		GetFilter(int &pid,int &serviceId);
-  void    DecodePmtPidTable(CSection& section);
+  bool    DecodePmtPidTable(CSection& section);
   CPidTable&  GetPidInfo();
 protected:
   int				m_pmtPid;

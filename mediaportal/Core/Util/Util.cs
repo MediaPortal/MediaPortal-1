@@ -2431,8 +2431,6 @@ namespace MediaPortal.Util
       if (string.IsNullOrEmpty(ArtistName) || string.IsNullOrEmpty(AlbumName))
         return string.Empty;
 
-      RemoveStackEndings(ref AlbumName);
-
       string name = string.Format("{0}-{1}", ArtistName, AlbumName);
       return GetCoverArtName(Thumbs.MusicAlbum, name);
     }

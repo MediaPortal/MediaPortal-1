@@ -39,16 +39,17 @@ namespace TvLibrary.Implementations.DVB
     /// <summary>
     /// CreateNewChannel
     /// </summary>
-    /// <param name="info"></param>
-    /// <returns></returns>
-    protected override IChannel CreateNewChannel(ChannelInfo info)
+    /// <param name="channel">The high level tuning detail.</param>
+    /// <param name="info">The subchannel detail.</param>
+    /// <returns>The new channel.</returns>
+    protected override IChannel CreateNewChannel(IChannel channel, ChannelInfo info)
     {
-      DVBIPChannel tunningChannel = (DVBIPChannel)_card.CurrentChannel;
+      DVBIPChannel tuningChannel = (DVBIPChannel)channel;
       DVBIPChannel dvbipChannel = new DVBIPChannel();
       dvbipChannel.Name = info.service_name;
       dvbipChannel.LogicalChannelNumber = info.LCN;
       dvbipChannel.Provider = info.service_provider_name;
-      dvbipChannel.Url = tunningChannel.Url;
+      dvbipChannel.Url = tuningChannel.Url;
       dvbipChannel.IsTv = IsTvService(info.serviceType);
       dvbipChannel.IsRadio = IsRadioService(info.serviceType);
       dvbipChannel.NetworkId = info.networkID;
@@ -58,6 +59,24 @@ namespace TvLibrary.Implementations.DVB
       dvbipChannel.FreeToAir = !info.scrambled;
       Log.Log.Write("Found: {0}", dvbipChannel);
       return dvbipChannel;
+    }
+
+    protected override bool IsValidChannel(ChannelInfo info, short hasAudio, short hasVideo)
+    {
+      //In DVB-IP there are several ways to describe a channel. It is possible that no service type is given. 
+      //Until we can fully implement DVB-IP support we check if video or audio is available to determine the channel type.
+      if (info.serviceType <= 0)
+      {
+        if (hasVideo != 0)
+        {
+          info.serviceType = (int)DvbServiceType.DigitalTelevision;
+        }
+        else if (hasAudio != 0)
+        {
+          info.serviceType = (int)DvbServiceType.DigitalRadio;
+        }
+      } 
+      return base.IsValidChannel(info, hasAudio, hasVideo);
     }
   }
 }
