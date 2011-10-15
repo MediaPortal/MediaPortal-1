@@ -263,6 +263,10 @@ private:
   bool m_bFlushing;
   CAMEvent m_eEndFlush;
   CAMEvent m_eEndNewSegment;
+  CAMEvent m_eEndChapterChanged;
+  CAMEvent m_eSeekDone;
+  
+  bool m_bChapterChangeRequested;
 
   bool m_bRebuildOngoing;
   CAMEvent m_eRebuild;

@@ -120,7 +120,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_rtLastStart(0),
   m_rtLastStop(0),
   m_bFlushing(false),
-  m_bRebuildOngoing(false)
+  m_bRebuildOngoing(false),
+  m_bChapterChangeRequested(false)
 {
   // use the following line if you are having trouble setting breakpoints
   // #pragma comment( lib, "strmbasd" )
@@ -361,7 +362,21 @@ STDMETHODIMP CBDReaderFilter::SetAngle(UINT8 angle)
 
 STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
 {
-  return lib.SetChapter(chapter) ? S_OK : S_FALSE;
+  m_bChapterChangeRequested = true;
+
+  HRESULT hr = S_FALSE;
+
+  UINT32 current = 0;
+  if (lib.GetChapter(&current))
+  {
+    if (current != chapter)
+    {
+      hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
+      m_eEndChapterChanged.Wait();
+      m_eEndChapterChanged.Reset();
+    }
+  }
+  return hr;
 }
 
 STDMETHODIMP CBDReaderFilter::GetAngle(UINT8* angle)
@@ -515,6 +530,9 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
             m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
 
+            m_eSeekDone.Wait();
+            m_eSeekDone.Reset();
+
             m_demultiplexer.SetMediaChanging(false);
 
             break;
@@ -525,6 +543,10 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           
           LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
           HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_NoFlush, &posEnd, AM_SEEKING_NoPositioning);
+
+          m_eSeekDone.Wait();
+          m_eSeekDone.Reset();
+
           break;
         }
       }
@@ -722,7 +744,9 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 
-  m_demultiplexer.IgnoreNextDiscontinuity();
+  if (!m_bUpdateStreamPositionOnly)
+    m_demultiplexer.IgnoreNextDiscontinuity();
+
   m_bUpdateStreamPositionOnly = false;
 
   if (m_pDVBSubtitle)
@@ -988,12 +1012,18 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   //
   // - Ignore seek request when playback is stopping
   if (m_bRebuildOngoing || m_bStopping)
+  {
+    m_eSeekDone.Set();
     return S_OK;
+  }
 
   if (!pCurrent && !pStop
-    || (dwCurrentFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
-    && (dwStopFlags&AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) 
+    || (dwCurrentFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning 
+    && (dwStopFlags & AM_SEEKING_PositioningBitsMask) == AM_SEEKING_NoPositioning) 
+  {
+    m_eSeekDone.Set();
     return S_OK;
+  }
 
   REFERENCE_TIME
     rtCurrent = m_rtCurrent,
@@ -1041,6 +1071,13 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - already seeked to pos - mark 1");
 #endif
 
+    if (m_bChapterChangeRequested)
+    {
+      m_bChapterChangeRequested = false;
+      m_eEndChapterChanged.Set();
+    }
+
+    m_eSeekDone.Set();
     return S_OK;
   }
 
@@ -1050,6 +1087,13 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - already seeked to pos - mark 2");
 #endif
 
+    if (m_bChapterChangeRequested)
+    {
+      m_bChapterChangeRequested = false;
+      m_eEndChapterChanged.Set();
+    }
+
+    m_eSeekDone.Set();
     m_lastSeekers.insert(caller);
     return S_OK;
   }
@@ -1072,13 +1116,27 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
 
     // Do not allow new seek to happen before the old one is completed 
     m_eEndNewSegment.Wait();
+
+    if (m_bChapterChangeRequested)
+    {
+      m_bChapterChangeRequested = false;
+      m_eEndChapterChanged.Set();
+    }
   }
   else
   {
 #ifdef LOG_SEEK_INFORMATION   
     LogDebug("  ::SetPositions() - no ThreadExists()");
 #endif
+
+    if (m_bChapterChangeRequested)
+    {
+      m_bChapterChangeRequested = false;
+      m_eEndChapterChanged.Set();
+    }
   }
+
+  m_eSeekDone.Set();
 
   return S_OK;
 }
