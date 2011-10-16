@@ -345,6 +345,7 @@
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="MusicPlayer\BASS\BassMusicPlayer.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>
@@ -383,7 +384,7 @@
     <Compile Include="MusicPlayer\DSP\VSTPlugin.cs" />
     <Compile Include="MusicPlayer\DSP\VSTPluginParm.cs" />
     <Compile Include="Player\IAutoCrop.cs" />
-    <Compile Include="MusicPlayer\BASS\BassAudio.cs" />
+    <Compile Include="MusicPlayer\BASS\BassAudioEngine.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualization.cs" />
     <Compile Include="MusicPlayer\Visualization\IVisualizationManager.cs" />
     <Compile Include="MusicPlayer\Visualization\IWMPEffects.cs" />
