@@ -153,6 +153,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   // Manual reset to allow easier command queue handling
   m_hCommandEvent = CreateEvent(NULL, true, false, NULL); 
   m_hStopCommandThreadEvent = CreateEvent(NULL, false, false, NULL);
+
+  Create(); // CAMThread
 }
 
 CBDReaderFilter::~CBDReaderFilter()
@@ -267,6 +269,10 @@ void CBDReaderFilter::IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime)
 {
   {
     CAutoLock lock(&m_csCommandQueue);
+
+    if (!m_hCommandThread)
+      m_hCommandThread = CreateThread(NULL, 0, CBDReaderFilter::CommandThreadEntryPoint, (LPVOID)this, 0, &m_dwThreadId);
+
     DS_CMD cmd;
     cmd.id = pCommand;
     cmd.refTime = pTime;
@@ -581,11 +587,7 @@ STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d -->done", msec / 1000.0, m_State);
 
   if (!m_hCommandThread)
-  {
     m_hCommandThread = CreateThread(NULL, 0, CBDReaderFilter::CommandThreadEntryPoint, (LPVOID)this, 0, &m_dwThreadId);
-  }
-
-  Create(); // CAMThread
 
   return hr;
 }
