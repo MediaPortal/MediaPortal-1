@@ -1472,7 +1472,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
 
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
       //LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
-  #endif
+#endif
     }
   
     CAutoPtr<Packet> p(new Packet());
@@ -1521,7 +1521,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
           if (CPcr::DecodeFromPesHeader(start, 0, pts, dts))
           {
   #ifdef LOG_DEMUXER_VIDEO_SAMPLES
-            LogDebug("demux: vid last pts: %6.3f pts %6.3f clip: %d playlist: %d", pts.ToClock(), m_nClip, m_nPlaylist);
+            LogDebug("demux: vid pts: %6.3f clip: %d playlist: %d", pts.ToClock(), m_nClip, m_nPlaylist);
   #endif
             m_VideoPts = pts;
           }
