@@ -27,72 +27,145 @@ namespace DeployVersionGIT
 {
   public class VersionGIT
   {
+    private const string AnyReleaseTagPattern = "Release_1.*";
+    private const string ReleaseTagPattern = "Release_1.*.0*";
+    private const string ServiceReleaseTagPattern = "Release_1.{0}.*";
+    //private const string ReleaseTagRegEx = @"^Release_1\.(?<minver>[0-9]+)\.0";
+    //private const string ServiceReleaseTagRegEx = @"^Release_1\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)";
+    private const string ServiceReleaseBranchRegEx = @"^Release_1\.(?<minver>[0-9]+)\.[xX]";
+
+    private const string DescribeOutputRegEx =
+      @"^Release_1\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(-(?<build>[0-9]+)\-[0-9a-z]{8}\s*$";
+
     private string _version;
     private string _fullVersion;
 
-    public bool ReadVersion(string directory)
+    private Process RunGitCommand(string arguments)
     {
       FileInfo file = new FileInfo(Environment.GetEnvironmentVariable("ProgramFiles") + @"\Git\bin\git.exe");
 
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
-      procInfo.Arguments = String.Format("--git-dir=\"{0}\\.git\" --no-pager describe --match Release_1.*", directory);
+      procInfo.Arguments = arguments;
       procInfo.FileName = file.FullName;
 
       Console.WriteLine("Running : {0}", file.FullName);
 
       if (file.Exists)
       {
-        // Start process
-        Process proc = Process.Start(procInfo);
-
-        // Get process output
-        if (proc != null)
-        {
-          string git = proc.StandardOutput.ReadToEnd();
-
-          Regex tortoiseRegex = new Regex(@"^.*\-(?<version>[0-9]+)\-[0-9a-z]{8}\s*$", RegexOptions.Multiline);
-
-          string ver = tortoiseRegex.Match(git).Groups["version"].Value;
-          if (String.IsNullOrEmpty(ver))
-          {
-            Console.WriteLine("Unable to determine GIT version.");
-            return false;
-          }
-          _version = ver;
-          _fullVersion = git.Trim(' ','\n','\r','\t');
-        }
-        else
-        {
-          return false;
-        }
-
-        // Get branchname
-        procInfo.Arguments = String.Format("--git-dir=\"{0}\\.git\" --no-pager branch --no-color", directory);
-        proc = Process.Start(procInfo);
-        if (proc != null)
-        {
-          string git = proc.StandardOutput.ReadToEnd();
-
-          Regex tortoiseRegex = new Regex(@"^[*]\s*(?<branch>.*)\s*$", RegexOptions.Multiline);
-
-          string branch = tortoiseRegex.Match(git).Groups["branch"].Value.Trim(' ', '\n', '\r', '\t');
-          if (String.IsNullOrEmpty(branch))
-          {
-            Console.WriteLine("Unable to determine GIT branch.");
-          }
-          else
-          {
-            _fullVersion = _fullVersion + " (" + branch + " branch)";
-          }
-        }
-        return true;
+        return Process.Start(procInfo);
       }
 
       Console.WriteLine("git.exe not found!");
-      return false;
+      return null;
     }
+
+    private string GetGitDir(string directory)
+    {
+      while (!Directory.Exists(directory + @"\.git"))
+      {
+        var parent = Directory.GetParent(directory);
+        if (parent == null)
+        {
+          return ".git";
+        }
+        directory = parent.FullName;
+      }
+      return directory + @"\.git";
+    }
+
+    public string GetCurrentBranch(string gitDir, string committish)
+    {
+      using (
+        var proc = RunGitCommand(string.Format("--git-dir=\"{0}\" --no-pager symbolic-ref {1} --no-color", gitDir, committish)))
+      {
+        if (proc != null)
+        {
+          string gitOut = proc.StandardOutput.ReadToEnd();
+          Regex regex = new Regex(@"^refs/heads/(?<branch>.+)", RegexOptions.Multiline);
+          return regex.Match(gitOut).Groups["branch"].Value.Trim(' ', '\n', '\r', '\t');
+        }
+      }
+      return null;
+    }
+
+    public string GetCurrentBranch(string gitDir)
+    {
+      return GetCurrentBranch(gitDir, "HEAD");
+    }
+
+    public string GitDescribe(string gitDir, string pattern)
+    {
+      using (
+        var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager describe --tags --match {1}", gitDir, pattern)))
+      {
+        if (proc != null)
+        {
+          return proc.StandardOutput.ReadToEnd();
+        }
+      }
+      return null;
+    }
+
+    public bool ReadVersion(string directory)
+    {
+      string gitDir = GetGitDir(directory);
+      string branch = GetCurrentBranch(gitDir);
+      string pattern = AnyReleaseTagPattern;
+
+      Regex regEx;
+      Match match;
+
+      if (branch.Equals("master", StringComparison.InvariantCultureIgnoreCase))
+      {
+        // on master branch so only consider normal releases (1.x.0[alpha/beta/rc]) not service releases (1.x.1, 1.x.2 etc)
+        pattern = ReleaseTagPattern;
+      }
+      else
+      {
+        regEx = new Regex(ServiceReleaseBranchRegEx);
+        match = regEx.Match(branch);
+        if (match.Success)
+        {
+          // on a service release branch so only consider service releases on the same branch
+          pattern = string.Format(ServiceReleaseTagPattern, match.Groups["minver"].Value);
+        }
+        // Otherwise we are on a feature branch, use default pattern (any release)
+      }
+
+      regEx = new Regex(DescribeOutputRegEx);
+      string gitOut = GitDescribe(gitDir, pattern);
+      match = regEx.Match(gitOut);
+      if (!match.Success && pattern != AnyReleaseTagPattern)
+      {
+        pattern = AnyReleaseTagPattern;
+        gitOut = GitDescribe(gitDir, pattern);
+        match = regEx.Match(gitOut);
+      }
+      if (match.Success)
+      {
+        string build = match.Groups["build"].Value;
+        _version = (String.IsNullOrEmpty(build)) ? "0" : build;
+        _fullVersion = gitOut.Trim(' ', '\n', '\r', '\t');
+      }
+      else
+      {
+        Console.WriteLine("Unable to determine GIT version.");
+        return false;
+      }
+
+      if (String.IsNullOrEmpty(branch))
+      {
+        Console.WriteLine("Unable to determine GIT branch.");
+      }
+      else
+      {
+        _fullVersion = _fullVersion + "-" + branch;
+      }
+      return true;
+    }
+
 
     public string GetVersion()
     {
@@ -103,5 +176,7 @@ namespace DeployVersionGIT
     {
       return _fullVersion;
     }
+
   }
+
 }

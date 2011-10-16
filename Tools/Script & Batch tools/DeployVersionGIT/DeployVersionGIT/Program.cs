@@ -68,6 +68,10 @@ namespace DeployVersionGIT
       if (options.IsOption(CommandLineOptions.Option.GetVersion))
       {
         string gitDir = options.GetOption(CommandLineOptions.Option.git);
+        if (string.IsNullOrEmpty(gitDir))
+        {
+          gitDir = directory;
+        }
         VersionGIT git = new VersionGIT();
         bool versionExists = git.ReadVersion(gitDir);
 
@@ -101,6 +105,10 @@ namespace DeployVersionGIT
       else
       {
         string gitDir = options.GetOption(CommandLineOptions.Option.git);
+        if (string.IsNullOrEmpty(gitDir))
+        {
+          gitDir = directory;
+        }
         VersionGIT git = new VersionGIT();
         bool versionExists = git.ReadVersion(gitDir);
 
