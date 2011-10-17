@@ -508,6 +508,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_demux.m_bVideoPlSeen = true;
             buffer->bSeekRequired = false;
             useEmptySample = true;
+            m_bClipEndingNotified = false;
 
             buffer->rtPlaylistTime == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtPlaylistTime;
           }

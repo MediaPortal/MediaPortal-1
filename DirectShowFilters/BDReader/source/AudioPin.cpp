@@ -295,8 +295,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
             DeliverEndOfStream();
             useEmptySample = true;
+            m_bClipEndingNotified = false;
             m_bSeekDone = false;
           }
+
+          // An ugly workaround to get the audio pin to stream after stream end has been delivered.
+          if (m_bClipEndingNotified)
+            m_pFilter->IssueCommand(SEEK, 0);
 
           // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
           if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
