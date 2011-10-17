@@ -40,8 +40,8 @@
 
 #define NO_STREAM -1
 #define PACKET_GRANULARITY 80000
-#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)((x * (111 +1 / 9))
-#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)((x * 111) + (x/9))
+#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)((x * (111 +1 / 9)))
+#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)((x * 111) + (x / 9))
 
 extern void LogDebug(const char *fmt, ...);
 
