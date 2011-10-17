@@ -746,7 +746,7 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 
-  if (!m_bUpdateStreamPositionOnly)
+  if (!m_bChapterChangeRequested)
     m_demultiplexer.IgnoreNextDiscontinuity();
 
   m_bUpdateStreamPositionOnly = false;
