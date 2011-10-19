@@ -48,7 +48,9 @@
 !ifdef VER_BUILD ; means !build_release was used
   !undef VER_BUILD
 
-  !system 'include-MP-PreBuild.bat'
+  ;!system 'include-MP-PreBuild.bat'
+  !system '"..\Script & Batch tools\DeployVersionGIT\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /GetVersion=version.template.txt /path=${GIT_ROOT}'
+
   !include "version.txt"
   !delfile "version.txt"
   !if ${VER_BUILD} == 0
@@ -89,7 +91,7 @@ Icon "${git_DeployTool}\Install.ico"
 !if ${VER_BUILD} == 0
   OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
 !else
-  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_GIT${VER_BUILD}_${buildTIMESTAMP}.exe"
+  OutFile "${git_OUT}\MediaPortalSetup_${VERSION}_${buildTIMESTAMP}.exe"
 !endif
 InstallDir "$TEMP\MediaPortal Installation"
 

@@ -29,9 +29,10 @@ namespace DeployVersionGIT
     private static void Main(string[] args)
     {
 
-      string version;
-      int versionInt;
+      string build;
+      int buildInt;
       string fullVersion;
+      string branch;
 
       ICommandLineOptions argsOptions = new CommandLineOptions();
 
@@ -67,7 +68,32 @@ namespace DeployVersionGIT
 
       if (options.IsOption(CommandLineOptions.Option.GetVersion))
       {
-        string gitDir = options.GetOption(CommandLineOptions.Option.git);
+        string templateName = options.GetOption(CommandLineOptions.Option.GetVersion);
+        string template;
+
+        if (string.IsNullOrEmpty(templateName))
+        {
+          template = "{VER_BUILD}";
+        }
+        else
+        {
+          if (!File.Exists(templateName))
+          {
+            Console.WriteLine(string.Format("Version template '{0}' does not exist", templateName));
+            Environment.Exit(0);
+          }
+
+          using (var stream = new StreamReader(templateName))
+          {
+            template = stream.ReadToEnd();
+          }
+        }
+
+        string gitDir = null; 
+        if (options.IsOption(CommandLineOptions.Option.git))
+        {
+          gitDir = options.GetOption(CommandLineOptions.Option.git);
+        }
         if (string.IsNullOrEmpty(gitDir))
         {
           gitDir = directory;
@@ -85,19 +111,25 @@ namespace DeployVersionGIT
           Environment.Exit(0);
         }
 
-        version = git.GetVersion();
+        build = git.GetBuild();
         fullVersion = git.GetFullVersion();
+        branch = git.GetBranch();
 
         TextWriter write = new StreamWriter("version.txt");
-        write.Write(fullVersion);
+        template= template
+          .Replace("{GIT_VER_FULL}", fullVersion)
+          .Replace("{GIT_VER_BUILD}", build)
+          .Replace("{GIT_BRANCH}", (branch == "master")? "" : branch);
+
+        write.Write(template);
         write.Close();
-        Int32.TryParse(version, out versionInt);
-        Environment.Exit(versionInt);
+        Int32.TryParse(build, out buildInt);
+        Environment.Exit(buildInt);
       }
 
       if (options.IsOption(CommandLineOptions.Option.revert))
       {
-        version = "0";
+        build = "0";
         fullVersion = "";
 
         Console.WriteLine("Reverting to build 0");
@@ -118,13 +150,13 @@ namespace DeployVersionGIT
           Environment.Exit(0);
         }
 
-        version = git.GetVersion();
+        build = git.GetBuild();
         fullVersion = git.GetFullVersion();
 
         Console.WriteLine("GIT Version: " + fullVersion);
       }
 
-      AssemblyUpdate update = new AssemblyUpdate(version, fullVersion);
+      AssemblyUpdate update = new AssemblyUpdate(build, fullVersion);
       update.UpdateAll(directory);
     }
   }

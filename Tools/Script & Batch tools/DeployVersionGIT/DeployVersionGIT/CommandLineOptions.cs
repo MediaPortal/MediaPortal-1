@@ -50,10 +50,11 @@ namespace DeployVersionGIT
     public void DisplayOptions()
     {
       Console.WriteLine("Vaid Command Line options:");
-      Console.WriteLine("/git=<directory>  git directory");
-      Console.WriteLine("/path=<directory> working directory");
-      Console.WriteLine("/revert           revert to build 0");
-      Console.WriteLine("/GetVersion       writes the git revision in textfile version.txt");
+      Console.WriteLine("/git=<directory>         git directory");
+      Console.WriteLine("/path=<directory>        working directory");
+      Console.WriteLine("/revert                  revert to build 0");
+      Console.WriteLine("/GetVersion[=<filename>] writes the git revision in textfile version.txt");
+      Console.WriteLine("                         if <filename> is included, it will be used as a template");
     }
 
     public bool IsOption(Option option)

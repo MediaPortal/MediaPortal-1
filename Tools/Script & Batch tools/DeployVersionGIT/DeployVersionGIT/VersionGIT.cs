@@ -30,15 +30,18 @@ namespace DeployVersionGIT
     private const string AnyReleaseTagPattern = "Release_1.*";
     private const string ReleaseTagPattern = "Release_1.*.0*";
     private const string ServiceReleaseTagPattern = "Release_1.{0}.*";
-    //private const string ReleaseTagRegEx = @"^Release_1\.(?<minver>[0-9]+)\.0";
-    //private const string ServiceReleaseTagRegEx = @"^Release_1\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)";
-    private const string ServiceReleaseBranchRegEx = @"^Release_1\.(?<minver>[0-9]+)\.[xX]";
+    //private const string ReleaseTagRegEx = @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.0";
+    //private const string ServiceReleaseTagRegEx = @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)";
+    private const string ServiceReleaseBranchRegEx = @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.[xX]";
 
     private const string DescribeOutputRegEx =
-      @"^Release_1\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(-(?<build>[0-9]+)\-[0-9a-z]{8}\s*$";
+      @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(?:-(?<reltype>[^0-9][^-]*))?(?:-(?<build>[0-9]+)\-g[0-9a-z]{7})?\s*$";
 
-    private string _version;
+    private Version _version;
+    private string _releaseType;
     private string _fullVersion;
+    private string _branch;
+    private string _committish;
 
     private Process RunGitCommand(string arguments)
     {
@@ -68,17 +71,20 @@ namespace DeployVersionGIT
         var parent = Directory.GetParent(directory);
         if (parent == null)
         {
-          return ".git";
+          Console.WriteLine("Git dir not found");
+          return ".";
         }
         directory = parent.FullName;
       }
-      return directory + @"\.git";
+      Console.WriteLine("Using git dir: {0}", directory);
+      var pathRE = new Regex(@"^([a-zA-Z])\:");
+      return pathRE.Replace(directory.Replace('\\','/'), "$1") + "/.git";
     }
 
     public string GetCurrentBranch(string gitDir, string committish)
     {
       using (
-        var proc = RunGitCommand(string.Format("--git-dir=\"{0}\" --no-pager symbolic-ref {1} --no-color", gitDir, committish)))
+        var proc = RunGitCommand(string.Format("--git-dir=\"{0}\" --no-pager symbolic-ref {1} ", gitDir, committish)))
       {
         if (proc != null)
         {
@@ -111,13 +117,13 @@ namespace DeployVersionGIT
     public bool ReadVersion(string directory)
     {
       string gitDir = GetGitDir(directory);
-      string branch = GetCurrentBranch(gitDir);
       string pattern = AnyReleaseTagPattern;
 
       Regex regEx;
       Match match;
 
-      if (branch.Equals("master", StringComparison.InvariantCultureIgnoreCase))
+      _branch = GetCurrentBranch(gitDir);
+      if (_branch.Equals("master", StringComparison.InvariantCultureIgnoreCase))
       {
         // on master branch so only consider normal releases (1.x.0[alpha/beta/rc]) not service releases (1.x.1, 1.x.2 etc)
         pattern = ReleaseTagPattern;
@@ -125,7 +131,7 @@ namespace DeployVersionGIT
       else
       {
         regEx = new Regex(ServiceReleaseBranchRegEx);
-        match = regEx.Match(branch);
+        match = regEx.Match(_branch);
         if (match.Success)
         {
           // on a service release branch so only consider service releases on the same branch
@@ -134,7 +140,7 @@ namespace DeployVersionGIT
         // Otherwise we are on a feature branch, use default pattern (any release)
       }
 
-      regEx = new Regex(DescribeOutputRegEx);
+      regEx = new Regex(DescribeOutputRegEx, RegexOptions.Multiline);
       string gitOut = GitDescribe(gitDir, pattern);
       match = regEx.Match(gitOut);
       if (!match.Success && pattern != AnyReleaseTagPattern)
@@ -146,7 +152,11 @@ namespace DeployVersionGIT
       if (match.Success)
       {
         string build = match.Groups["build"].Value;
-        _version = (String.IsNullOrEmpty(build)) ? "0" : build;
+        build = (String.IsNullOrEmpty(build)) ? "0" : build;
+        var minver = int.Parse(match.Groups["minver"].Value);
+        var revision = int.Parse(match.Groups["revision"].Value);
+        _releaseType = match.Groups["reltype"].Value;
+        _version = new Version(1, minver, int.Parse(build), revision);
         _fullVersion = gitOut.Trim(' ', '\n', '\r', '\t');
       }
       else
@@ -155,26 +165,31 @@ namespace DeployVersionGIT
         return false;
       }
 
-      if (String.IsNullOrEmpty(branch))
+      if (String.IsNullOrEmpty(_branch))
       {
         Console.WriteLine("Unable to determine GIT branch.");
       }
       else
       {
-        _fullVersion = _fullVersion + "-" + branch;
+        _fullVersion = _fullVersion + "-" + _branch;
       }
       return true;
     }
 
 
-    public string GetVersion()
+    public string GetBuild()
     {
-      return _version;
+      return _version.Build.ToString();
     }
 
     public string GetFullVersion()
     {
       return _fullVersion;
+    }
+
+    public string GetBranch()
+    {
+      return _branch;
     }
 
   }
