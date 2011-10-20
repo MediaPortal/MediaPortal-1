@@ -157,7 +157,7 @@ namespace DeployVersionGIT
         var revision = int.Parse(match.Groups["revision"].Value);
         _releaseType = match.Groups["reltype"].Value;
         _version = new Version(1, minver, int.Parse(build), revision);
-        _fullVersion = gitOut.Trim(' ', '\n', '\r', '\t');
+        _fullVersion = gitOut.Trim(' ', '\n', '\r', '\t').Replace("Release_", "");
       }
       else
       {
