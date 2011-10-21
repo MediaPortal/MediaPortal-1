@@ -25,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Player.DSP;
 using MediaPortal.UserInterface.Controls;

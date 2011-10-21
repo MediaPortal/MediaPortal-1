@@ -34,6 +34,7 @@ using System.Xml;
 using MediaPortal.Configuration;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.Playlists;
 using MediaPortal.Profile;

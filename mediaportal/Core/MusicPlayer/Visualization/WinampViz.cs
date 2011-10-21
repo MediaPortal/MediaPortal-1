@@ -22,6 +22,7 @@ using System;
 using System.Drawing;
 using System.IO;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using MediaPortal.TagReader;
 using MediaPortal.Util;

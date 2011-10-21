@@ -405,7 +405,7 @@ namespace MediaPortal.Playlists
           // Switch back to standard playback mode
           if (Player.BassMusicPlayer.IsDefaultMusicPlayer)
           {
-            Player.BassMusicPlayer._Player.SwitchToDefaultPlaybackMode();
+            Player.BassMusicPlayer.Player.SwitchToDefaultPlaybackMode();
           }
 
           _currentPlayList = PlayListType.PLAYLIST_NONE;

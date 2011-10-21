@@ -23,6 +23,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using BassVis_Api;
 

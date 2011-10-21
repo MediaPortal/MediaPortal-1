@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
+using MediaPortal.MusicPlayer.BASS;
 using MediaPortal.Player;
 using Microsoft.Win32;
 using BassVis_Api;
