@@ -416,8 +416,8 @@ void CVideoPin::CheckPlaybackState()
 
       DeliverEndOfStream();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
-      m_eFlushStart->Wait();
       m_eFlushStart->Reset();
+      m_eFlushStart->Wait();
     }
 
     m_demux.m_eAudioPlSeen->Reset();
