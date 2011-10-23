@@ -144,6 +144,7 @@ private:
   void StillMode(unsigned int pSeconds);
 
   HMODULE m_hDLL;
+  bool m_bLibInitialized;
 
   BLURAY* m_pBd;
   const BLURAY_DISC_INFO* m_pDiscInfo;

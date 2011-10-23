@@ -33,6 +33,7 @@ extern void LogDebug(const char *fmt, ...);
 
 CLibBlurayWrapper::CLibBlurayWrapper() :
   m_hDLL(NULL),
+  m_bLibInitialized(false),
   m_pBd(NULL),
   m_playbackMode(TitleBased),
   m_pTitleInfo(NULL),
@@ -141,6 +142,7 @@ bool CLibBlurayWrapper::Initialize()
   if (!m_hDLL)
   {
     LogDebug("CLibBlurayWrapper - Failed to load c:\\bluray.dll");
+    m_bLibInitialized = false;
     return false;
   }
 
@@ -225,16 +227,24 @@ bool CLibBlurayWrapper::Initialize()
       !_bd_get_clip_infos)
   {
     LogDebug("CLibBlurayWrapper - failed to load method from lib - a version mismatch?");
+    m_bLibInitialized = false;
     return false;
   }
 
   LogDebug("CLibBlurayWrapper - initialization succeeded");
+  m_bLibInitialized = true;
   return true;
 }
 
 bool CLibBlurayWrapper::OpenBluray(const char* pRootPath)
 {
-  LogDebug("CLibBlurayWrapper - OpenBluray: %s",pRootPath);
+  LogDebug("CLibBlurayWrapper - OpenBluray: %s", pRootPath);
+
+  if (!m_bLibInitialized)
+  {
+    LogDebug("CLibBlurayWrapper - OpenBluray - DLL not initialized!");
+    return false;
+  }
 
   CAutoLock cLibLock(&m_csLibLock);
 

@@ -672,7 +672,11 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   strncpy(m_pathToBD, path, pathLen - extLen);
   m_pathToBD[pathLen - extLen] = '\0';
   
-  lib.OpenBluray(m_pathToBD);
+  if (!lib.OpenBluray(m_pathToBD))
+  {
+    return VFW_E_NOT_FOUND;
+  }
+
   UINT32 titleCount = lib.GetTitles(TITLES_ALL);
 
   for (unsigned int i = 0; i < titleCount; i++)
