@@ -1141,7 +1141,13 @@ namespace MediaPortal.Player
 
     public override string CurrentFile
     {
-      get { return _currentFile; }
+      get
+      {
+        if (_currentFile.Contains("index.bdmv"))
+          _currentFile = GetDiscTitle(settings.menuLang);
+
+        return _currentFile;
+      }
     }
 
     public override void Stop()
@@ -2452,6 +2458,53 @@ namespace MediaPortal.Player
         _videoWidth = _vmr9.VideoWidth;
         _videoHeight = _vmr9.VideoHeight;
       }
+    }
+
+    protected string GetDiscTitle(string language)
+    {
+      string discTitle = string.Empty;
+
+      if (Directory.Exists(_currentFile.Replace("index.bdmv", @"META\DL")))
+      {
+        string[] xmls = Directory.GetFiles(_currentFile.Replace("index.bdmv", @"META\DL"), "bdmt*.xml", SearchOption.TopDirectoryOnly);
+
+        foreach (string xml in xmls)
+        {
+          if (xml.Contains(language) || xml.Contains("eng"))
+          {
+            System.Xml.XmlTextReader reader = new System.Xml.XmlTextReader(xml);
+            reader.WhitespaceHandling = System.Xml.WhitespaceHandling.Significant;
+
+            while (reader.Read())
+            {
+              if (reader.Name == "di:name")
+              {
+                reader.Read();
+                if (xml.Contains(language))
+                  return reader.Value;
+                else
+                  discTitle = reader.Value;
+                break;
+              }
+            }
+            break;
+          }
+        }
+
+        if (!String.IsNullOrEmpty(discTitle))
+          return discTitle;
+      }
+
+      Util.Utils.GetDVDLabel(_currentFile, out discTitle);
+
+      if (String.IsNullOrEmpty(discTitle))
+      {
+        discTitle = _currentFile.Remove(_currentFile.IndexOf(@"\BDMV"));
+        discTitle = discTitle.Substring(discTitle.LastIndexOf(@"\") + 1);
+      }
+      discTitle = discTitle.Replace("_", " ");
+
+      return String.IsNullOrEmpty(discTitle) ? _currentFile : discTitle;
     }
 
     protected double VideoRatetoDouble(int videoRate)
