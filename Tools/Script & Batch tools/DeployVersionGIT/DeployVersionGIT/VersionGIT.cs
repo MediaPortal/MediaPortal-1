@@ -36,7 +36,9 @@ namespace DeployVersionGIT
     private const string ServiceReleaseBranchRegEx = @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.[xX]";
 
     private const string DescribeOutputRegEx =
-      @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(?:-(?<reltype>[^0-9][^-]*))?(?:-(?<build>[0-9]+)\-g(?<committish>[0-9a-z]+))?\s*$";
+      @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(?:[-_](?<reltype>[^0-9][^-]*))?(?:-(?<build>[0-9]+)\-g(?<committish>[0-9a-z]+))?\s*$";
+
+    private const string ReleaseTagLogEntryRegEx = @"^[0-9a-fA-F]+\s+\((.+\s)?tag:\s(?<tag>Release_1\.\d+\.\d+[^),]+)";
 
     private Version _version;
     private string _releaseType;
@@ -104,8 +106,42 @@ namespace DeployVersionGIT
 
     public string GitDescribe(string gitDir, string pattern)
     {
+      return GitDescribe(gitDir, pattern, true);
+    }
+
+    public string GitDescribe(string gitDir, string pattern, bool firstParent)
+    {
+      if (firstParent)
+      {
+        // try to find the latest tag using only first-parent links that matches pattern
+        using (
+          var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager log  --oneline --decorate=short --first-parent", gitDir)))
+        {
+          if (proc != null)
+          {
+            var output = proc.StandardOutput;
+            var logRegEx = new Regex(ReleaseTagLogEntryRegEx);
+            var patternRegEx = new Regex("^" + pattern.Replace("?", ".?").Replace("*", ".*"));
+            while (!output.EndOfStream)
+            {
+              var line = output.ReadLine();
+              var match = logRegEx.Match(line);
+              if (match.Success)
+              {
+                var tag = match.Groups["tag"].Value;
+                if (patternRegEx.IsMatch(tag))
+                {
+                  pattern = tag;
+                  break;
+                }
+              }
+            }
+            //proc.WaitForExit();
+          }
+        }
+      }
       using (
-        var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager describe --tags --match {1} --abbrev={2}", gitDir, pattern, DEFAULT_COMMITTISH_LEN)))
+        var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager describe --tags --match \"{1}\" --abbrev={2}", gitDir, pattern, DEFAULT_COMMITTISH_LEN)))
       {
         if (proc != null)
         {
