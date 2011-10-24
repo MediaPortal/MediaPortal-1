@@ -45,17 +45,16 @@ namespace DeployVersionGIT
 
     private Process RunGitCommand(string arguments)
     {
-      string programFiles = Environment.GetEnvironmentVariable("ProgramFiles(x86)")?? Environment.GetEnvironmentVariable("ProgramFiles");
-      
-      FileInfo file = new FileInfo(programFiles + @"\Git\bin\git.exe");
+      string programFiles = Environment.GetEnvironmentVariable("ProgramFiles(x86)") ?? Environment.GetEnvironmentVariable("ProgramFiles");
 
+      FileInfo file = new FileInfo(programFiles + @"\Git\bin\git.exe");
       ProcessStartInfo procInfo = new ProcessStartInfo();
       procInfo.RedirectStandardOutput = true;
       procInfo.UseShellExecute = false;
       procInfo.Arguments = arguments;
       procInfo.FileName = file.FullName;
 
-      Console.WriteLine("Running : {0}", file.FullName);
+      Console.WriteLine("Running : {0} {1}", file.FullName, arguments);
 
       if (file.Exists)
       {
@@ -74,24 +73,23 @@ namespace DeployVersionGIT
         if (parent == null)
         {
           Console.WriteLine("Git dir not found");
-          return ".";
+          return "./.git";
         }
         directory = parent.FullName;
       }
       Console.WriteLine("Using git dir: {0}", directory);
-      var pathRE = new Regex(@"^([a-zA-Z])\:");
-      return pathRE.Replace(directory.Replace('\\','/'), "$1") + "/.git";
+      return directory + @"\.git";
     }
 
     public string GetCurrentBranch(string gitDir, string committish)
     {
       using (
-        var proc = RunGitCommand(string.Format("--git-dir=\"{0}\" --no-pager symbolic-ref {1} ", gitDir, committish)))
+        var proc = RunGitCommand(string.Format("--git-dir=\"{0}\" name-rev --refs=\"refs/heads/*\" --name-only {1} ", gitDir, committish)))
       {
         if (proc != null)
         {
           string gitOut = proc.StandardOutput.ReadToEnd();
-          Regex regex = new Regex(@"^refs/heads/(?<branch>.+)", RegexOptions.Multiline);
+          Regex regex = new Regex(@"^(?<branch>[^^~ \t\n\r]+)", RegexOptions.Multiline);
           return regex.Match(gitOut).Groups["branch"].Value.Trim(' ', '\n', '\r', '\t');
         }
       }
