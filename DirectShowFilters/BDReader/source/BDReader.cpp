@@ -606,19 +606,22 @@ STDMETHODIMP CBDReaderFilter::Stop()
 
   lib.SetState(State_Stopped);
 
-  if (m_pSubtitlePin)
-    m_pSubtitlePin->SetRunningStatus(false);
+  if (!m_bRebuildOngoing)
+  {
+    if (m_pSubtitlePin)
+      m_pSubtitlePin->SetRunningStatus(false);
 
-  m_demultiplexer.m_bVideoRequiresRebuild = false;
-  m_demultiplexer.m_bAudioRequiresRebuild = false;
-  m_demultiplexer.m_bVideoPlSeen = false;
+    m_demultiplexer.m_bVideoRequiresRebuild = false;
+    m_demultiplexer.m_bAudioRequiresRebuild = false;
+    m_demultiplexer.m_bVideoPlSeen = false;
 
-  if (m_pVideoPin)
-    m_pVideoPin->StopWait();
+    if (m_pVideoPin)
+      m_pVideoPin->StopWait();
 
-  if (m_demultiplexer.m_eAudioPlSeen)
-    m_demultiplexer.m_eAudioPlSeen->Set();
-
+    if (m_demultiplexer.m_eAudioPlSeen)
+      m_demultiplexer.m_eAudioPlSeen->Set();
+  }
+  
   LogDebug("CBDReaderFilter::Stop()  -stop source");
   HRESULT hr = CSource::Stop();
   LogDebug("CBDReaderFilter::Stop()  -stop source done");
