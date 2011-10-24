@@ -416,7 +416,6 @@ void CVideoPin::CheckPlaybackState()
     else if (!m_bStopWait)
     {
       LogDebug("vid: Request zeroing the stream time");
-      DeliverEndOfStream();
       m_eFlushStart->Reset();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
@@ -513,6 +512,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->bSeekRequired = false;
             useEmptySample = true;
             m_bClipEndingNotified = false;
+            DeliverEndOfStream();
 
             buffer->rtPlaylistTime == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtPlaylistTime;
           }
