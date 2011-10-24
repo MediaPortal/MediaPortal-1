@@ -96,7 +96,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bSeekDone(true),
   m_bDiscontinuity(false),
   m_bFirstSample(true),
-  m_bClipEndingNotified(false)
+  m_bClipEndingNotified(false),
+  m_bStopWait(false)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -296,8 +297,10 @@ DWORD CVideoPin::ThreadProc()
 
 void CVideoPin::StopWait()
 {
+  m_bStopWait = true;
+
   if (m_eFlushStart)
-    m_eFlushStart->Set();  
+    m_eFlushStart->Set();
 }
 
 HRESULT CVideoPin::DoBufferProcessingLoop(void)
@@ -410,7 +413,7 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
     }
-    else
+    else if (!m_bStopWait)
     {
       LogDebug("vid: Request zeroing the stream time");
       DeliverEndOfStream();
@@ -418,6 +421,8 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
     }
+
+    m_bStopWait = false;
 
     m_demux.m_eAudioPlSeen->Reset();
     m_demux.m_bVideoPlSeen = false;

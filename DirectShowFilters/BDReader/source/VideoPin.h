@@ -110,5 +110,6 @@ protected:
   bool m_bDiscontinuity;
   bool m_bFirstSample;
   bool m_bClipEndingNotified;
+  bool m_bStopWait;
 };
 
