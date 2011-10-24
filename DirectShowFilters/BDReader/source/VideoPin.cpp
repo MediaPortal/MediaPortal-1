@@ -413,10 +413,9 @@ void CVideoPin::CheckPlaybackState()
     else
     {
       LogDebug("vid: Request zeroing the stream time");
-
       DeliverEndOfStream();
-      m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Reset();
+      m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
     }
 
