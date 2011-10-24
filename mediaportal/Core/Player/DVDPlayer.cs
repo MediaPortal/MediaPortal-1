@@ -144,6 +144,7 @@ namespace MediaPortal.Player
     protected string _currentFile;
     protected double _duration;
     protected Geometry.Type _aspectRatio = Geometry.Type.Normal;
+    protected Point pt;
 
     protected const int WM_DVD_EVENT = 0x00008002; // message from dvd graph
     protected const int WS_CHILD = 0x40000000; // attributes for video window
@@ -943,6 +944,11 @@ namespace MediaPortal.Player
     /// <summary> update menu items to match current playback state </summary>
     protected void UpdateMenu() {}
 
+    public override MenuItems ShowMenuItems
+    {
+      get { return MenuItems.All ^ MenuItems.PopUpMenu; }
+    }
+
     public override int PositionX
     {
       get { return _positionX; }
@@ -1414,49 +1420,7 @@ namespace MediaPortal.Player
       {
         return;
       }
-      // BAV, 02.03.08: checking GUIGraphicsContext.InVmr9Render makes no sense here, there are no changes in render items
-      //                removing this should solve 1 min delays in skip steps
-      //if (GUIGraphicsContext.InVmr9Render) return;
-      HandleMouseMessages();
       OnProcess();
-    }
-
-    private void HandleMouseMessages()
-    {
-      if (!GUIGraphicsContext.IsFullScreenVideo || _state != PlayState.Menu || buttonCount == 0)
-      {
-        return;
-      }
-      //if (GUIGraphicsContext.Vmr9Active) return;
-      try
-      {
-        Point pt;
-        foreach (Message m in _mouseMsg)
-        {
-          long lParam = m.LParam.ToInt32();
-          int x = (int)(lParam & 0xffff) - 213;
-          int y = (int)(lParam >> 16) - 270;
-
-          pt = new Point(x, y);
-
-          if (m.Msg == WM_MOUSEMOVE)
-          {
-            // Highlight the button at the current position, if it exists
-            _dvdCtrl.SelectAtPosition(pt);
-          }
-
-          if (m.Msg == WM_LBUTTONUP)
-          {
-            // Select the button at the current position, if it exists
-            _dvdCtrl.ActivateAtPosition(pt);
-          }
-        }
-      }
-      catch (Exception ex)
-      {
-        Log.Error("DVDPlayer:HandleMouseMessages() {0} {1} {2}", ex.Message, ex.Source, ex.StackTrace);
-      }
-      _mouseMsg.Clear();
     }
 
     protected virtual void OnProcess()
@@ -1602,6 +1566,23 @@ namespace MediaPortal.Player
       {
         switch (action.wID)
         {
+          case GUI.Library.Action.ActionType.ACTION_MOUSE_MOVE:
+            if (buttonCount > 0)
+            {
+              pt = new Point((int)action.fAmount1, (int)action.fAmount2);
+              _dvdCtrl.SelectAtPosition(pt);
+              return true;
+            }
+            break;
+
+          case GUI.Library.Action.ActionType.ACTION_MOUSE_CLICK:
+            if (buttonCount > 0)
+            {              
+              _dvdCtrl.ActivateAtPosition(pt);
+              return true;
+            }
+            break;
+
           case Action.ActionType.ACTION_MOVE_LEFT:
             Log.Info("DVDPlayer: move left {0}", buttonCount);
             if (buttonCount > 0)

@@ -1223,8 +1223,8 @@ namespace MediaPortal.GUI.Video
       {
         if ((g_Player.ShowMenuItems & MenuItems.MainMenu) == MenuItems.MainMenu)
           dlg.AddLocalizedString(974); // Root menu
-        if (g_Player.CurrentFile.EndsWith(".bdmv") && (g_Player.ShowMenuItems & MenuItems.PopUpMenu) == MenuItems.PopUpMenu)
-            dlg.AddLocalizedString(1700); // BD popup menu        
+        if ((g_Player.ShowMenuItems & MenuItems.PopUpMenu) == MenuItems.PopUpMenu)
+          dlg.AddLocalizedString(1700); // BD popup menu        
         if(!g_Player.HasChapters && (g_Player.ShowMenuItems & MenuItems.Chapter) == MenuItems.Chapter)
         {
           dlg.AddLocalizedString(975); // Previous chapter
