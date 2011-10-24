@@ -64,7 +64,7 @@
     !ifndef COMMITTISH
       !define VER_COMMITTISH  ""
     !else
-      !define VER_COMMITTISH  "-${COMMITTISH}"
+      !define VER_COMMITTISH  "-g${COMMITTISH}"
     !endif
 
     !define VER_SVN "-${VER_BUILD}${VER_COMMITTISH}${VER_BRANCH}${VER_DEBUG} for TESTING ONLY"
