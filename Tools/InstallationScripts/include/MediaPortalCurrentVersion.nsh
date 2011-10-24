@@ -61,7 +61,13 @@
       !define VER_BRANCH  " (${BRANCH} branch)"
     !endif
 
-    !define VER_SVN "-${VER_BUILD}${VER_BRANCH}${VER_DEBUG} for TESTING ONLY"
+    !ifndef COMMITTISH
+      !define VER_COMMITTISH  ""
+    !else
+      !define VER_COMMITTISH  "-${COMMITTISH}"
+    !endif
+
+    !define VER_SVN "-${VER_BUILD}${VER_COMMITTISH}${VER_BRANCH}${VER_DEBUG} for TESTING ONLY"
 !else
 	!define VER_SVN ""
 !endif

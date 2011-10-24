@@ -27,6 +27,7 @@ namespace DeployVersionGIT
 {
   public class VersionGIT
   {
+    public const int DEFAULT_COMMITTISH_LEN = 7;
     private const string AnyReleaseTagPattern = "Release_1.*";
     private const string ReleaseTagPattern = "Release_1.*.0*";
     private const string ServiceReleaseTagPattern = "Release_1.{0}.*";
@@ -35,7 +36,7 @@ namespace DeployVersionGIT
     private const string ServiceReleaseBranchRegEx = @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.[xX]";
 
     private const string DescribeOutputRegEx =
-      @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(?:-(?<reltype>[^0-9][^-]*))?(?:-(?<build>[0-9]+)\-g[0-9a-z]{7})?\s*$";
+      @"^Release_(?<majver>[0-9]+)\.(?<minver>[0-9]+)\.(?<revision>[0-9]+)(?:-(?<reltype>[^0-9][^-]*))?(?:-(?<build>[0-9]+)\-g(?<committish>[0-9a-z]+))?\s*$";
 
     private Version _version;
     private string _releaseType;
@@ -104,7 +105,7 @@ namespace DeployVersionGIT
     public string GitDescribe(string gitDir, string pattern)
     {
       using (
-        var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager describe --tags --match {1}", gitDir, pattern)))
+        var proc = RunGitCommand(String.Format("--git-dir=\"{0}\" --no-pager describe --tags --match {1} --abbrev={2}", gitDir, pattern, DEFAULT_COMMITTISH_LEN)))
       {
         if (proc != null)
         {
@@ -157,6 +158,7 @@ namespace DeployVersionGIT
         var revision = int.Parse(match.Groups["revision"].Value);
         _releaseType = match.Groups["reltype"].Value;
         _version = new Version(1, minver, int.Parse(build), revision);
+        _committish = match.Groups["committish"].Value;
         _fullVersion = gitOut.Trim(' ', '\n', '\r', '\t').Replace("Release_", "");
       }
       else
@@ -176,10 +178,19 @@ namespace DeployVersionGIT
       return true;
     }
 
+    public Version GetVersion()
+    {
+      return _version;
+    }
 
     public string GetBuild()
     {
       return _version.Build.ToString();
+    }
+
+    public string GetCommittish()
+    {
+      return _committish;
     }
 
     public string GetFullVersion()

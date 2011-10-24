@@ -114,12 +114,14 @@ namespace DeployVersionGIT
         build = git.GetBuild();
         fullVersion = git.GetFullVersion();
         branch = git.GetBranch();
+        var committish = git.GetCommittish();
 
         TextWriter write = new StreamWriter("version.txt");
         template= template
           .Replace("{GIT_VER_FULL}", fullVersion)
           .Replace("{GIT_VER_BUILD}", build)
-          .Replace("{GIT_BRANCH}", (branch == "master")? "" : branch);
+          .Replace("{GIT_BRANCH}", (branch == "master")? "" : branch)
+          .Replace("{GIT_COMITTISH}", committish);
 
         write.Write(template);
         write.Close();
