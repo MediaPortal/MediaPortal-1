@@ -41,7 +41,7 @@ CSubtitlePin::CSubtitlePin(LPUNKNOWN pUnk, CBDReaderFilter *pFilter, HRESULT *ph
   m_bConnected(false),
   m_bRunning(false),
   m_bFlushing(false),
-  m_bSeekDone(false)
+  m_bSeekDone(true)
 {
   m_rtStart = 0;
 
@@ -63,6 +63,7 @@ bool CSubtitlePin::IsConnected()
 {
   return m_bConnected;
 }
+
 STDMETHODIMP CSubtitlePin::NonDelegatingQueryInterface( REFIID riid, void ** ppv )
 {
   if (riid == IID_IMediaSeeking)
@@ -217,7 +218,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
         return S_FALSE; 
       }
 
-      if (buffer == NULL)
+      if (!buffer)
         Sleep(20);
       else
       {
@@ -225,7 +226,7 @@ HRESULT CSubtitlePin::FillBuffer(IMediaSample *pSample)
         {
           LogDebug("sub: Set discontinuity");
           pSample->SetDiscontinuity(true);
-          m_bDiscontinuity = true;
+          m_bDiscontinuity = false;
         }
 
         pSample->SetTime(NULL, NULL);

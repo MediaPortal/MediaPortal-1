@@ -75,7 +75,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bReadFailed = false;
   m_bFlushBuffersOnPause = false;
 
-  m_bUpdateSubtitleOffset = false;
+  m_bUpdateSubtitleOffset = true;
 
   m_fHasAccessUnitDelimiters = false;
 
@@ -98,6 +98,8 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_nMPEG2LastPlaylist = -1;
   m_nMPEG2LastClip = -1;
+
+  m_rtOffset = _I64_MAX;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
