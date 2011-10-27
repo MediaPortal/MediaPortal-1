@@ -402,6 +402,8 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoPlSeen)
   {
+    DeliverEndOfStream();
+
     m_demux.m_eAudioPlSeen->Wait();
 
     if (m_demux.m_bVideoRequiresRebuild || m_demux.m_bAudioRequiresRebuild)
@@ -512,7 +514,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->bSeekRequired = false;
             useEmptySample = true;
             m_bClipEndingNotified = false;
-            DeliverEndOfStream();
 
             buffer->rtPlaylistTime == 0 ? m_rtStreamOffset = _I64_MAX : m_rtStreamOffset = buffer->rtPlaylistTime;
           }
@@ -541,8 +542,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
               m_demux.m_bVideoRequiresRebuild = true;
               useEmptySample = true;
-
-              DeliverEndOfStream();
             }
             else
             {
