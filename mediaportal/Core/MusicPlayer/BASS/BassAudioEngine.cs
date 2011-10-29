@@ -99,22 +99,14 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private delegate void ShowVisualizationWindowDelegate(bool visible);
 
-    private SYNCPROC PlaybackFadeOutProcDelegate = null;
-    private SYNCPROC PlaybackEndProcDelegate = null;
-    private SYNCPROC CueTrackEndProcDelegate = null;
-    private SYNCPROC PlaybackStreamFreedProcDelegate = null;
-    private SYNCPROC MetaTagSyncProcDelegate = null;
-    private SYNCPROC PlayBackSlideEndDelegate = null;
-
     #endregion
 
     #region Variables
 
-    private const int MAXSTREAMS = 2;
-    private List<int> Streams = new List<int>(MAXSTREAMS);
-    private List<List<int>> StreamEventSyncHandles = new List<List<int>>();
     private List<int> DecoderPluginHandles = new List<int>();
-    private int CurrentStreamIndex = 0;
+
+    private MusicStream _currentStream = null;
+    private MusicStream _oldStream = null;
 
     private PlayState _State = PlayState.Init;
     private string FilePath = string.Empty;
@@ -142,26 +134,12 @@ namespace MediaPortal.MusicPlayer.BASS
     private bool NeedUpdate = true;
     private bool NotifyPlaying = true;
 
-    private string _cdDriveLetters; // Contains the Druve letters of all available CD Drives
+    
     private bool _isCDDAFile = false;
     private int _asioDeviceNumber = -1;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
     private BassAsioHandler _asioHandler = null; // Make it Global to prevent GC stealing the object
-
-    // DSP related variables
-    private bool _dspActive = false;
-    private DSP_Gain _gain = null;
-    private BASS_BFX_DAMP _damp = null;
-    private BASS_BFX_COMPRESSOR _comp = null;
-    private int _dampPrio = 3;
-    private int _compPrio = 2;
-    // VST Related variables
-    private List<string> _VSTPlugins = new List<string>();
-    private Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
-    // Winamp related variables
-    private bool _waDspInitialised = false;
-    private Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
 
     private int _mixer = 0;
     // Mixing Matrix
@@ -189,10 +167,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private TAG_INFO _tagInfo;
 
-    // Midi File support
-    private BASS_MIDI_FONT[] soundFonts = null;
-    private List<int> soundFontHandles = new List<int>();
-
     #endregion
 
     #region Properties
@@ -212,9 +186,9 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       get
       {
-        int stream = GetCurrentStream();
+        MusicStream stream = _currentStream;
 
-        if (stream == 0)
+        if (stream == null)
         {
           return 0;
         }
@@ -239,20 +213,20 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       get
       {
-        int stream = GetCurrentStream();
+        MusicStream stream = _currentStream;
 
-        if (stream == 0)
+        if (stream == null)
         {
           return 0;
         }
 
-        long pos = Bass.BASS_ChannelGetPosition(stream); // position in bytes
+        long pos = Bass.BASS_ChannelGetPosition(stream.BassStream); // position in bytes
 
         // In case of last.fm subtract the starting time
         //if (_isLastFMRadio)
         //  pos -= _lastFMSongStartPosition;
 
-        double curPosition = (double)Bass.BASS_ChannelBytes2Seconds(stream, pos); // the elapsed time length
+        double curPosition = (double)Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos); // the elapsed time length
         if (currentCueSheet != null && cueTrackStartPos > 0)
         {
           curPosition -= cueTrackStartPos;
@@ -610,6 +584,41 @@ namespace MediaPortal.MusicPlayer.BASS
       DisposeAndCleanUp();
     }
 
+    void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
+    {
+      if (sender == null)
+      {
+        return;
+      }
+      MusicStream musicStream = (MusicStream)sender;
+
+      switch (action)
+      {
+        case MusicStream.StreamAction.Ended:
+          if (TrackPlaybackCompleted != null)
+          {
+            TrackPlaybackCompleted(this, musicStream.FilePath);
+          }
+          musicStream.Dispose();
+          break;
+
+        case MusicStream.StreamAction.CrossFade:
+          if (CrossFade != null)
+          {
+            CrossFade(this, musicStream.FilePath);
+          }
+          break;
+
+        case MusicStream.StreamAction.InternetStreamChanged:
+          if (InternetStreamSongChanged != null)
+          {
+            InternetStreamSongChanged(this);
+          }
+          break;
+      }
+
+    }
+
     #endregion
 
     #region Initialisation
@@ -640,24 +649,10 @@ namespace MediaPortal.MusicPlayer.BASS
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, Config.BufferingMs);
         }
 
-        for (int i = 0; i < MAXSTREAMS; i++)
-        {
-          Streams.Add(0);
-        }
-
-        PlaybackFadeOutProcDelegate = new SYNCPROC(PlaybackFadeOutProc);
-        PlaybackEndProcDelegate = new SYNCPROC(PlaybackEndProc);
-        CueTrackEndProcDelegate = new SYNCPROC(CueTrackEndProc);
-        PlaybackStreamFreedProcDelegate = new SYNCPROC(PlaybackStreamFreedProc);
-        MetaTagSyncProcDelegate = new SYNCPROC(MetaTagSyncProc);
-
-        StreamEventSyncHandles.Add(new List<int>());
-        StreamEventSyncHandles.Add(new List<int>());
-
         InitializeControls();
-        LoadAudioDecoderPlugins();
-        LoadDSPPlugins();
-        GetCDDrives();
+        Config.LoadAudioDecoderPlugins();
+        Config.LoadDSPPlugins();
+
         Log.Info("BASS: Initializing BASS environment done.");
 
         _Initialized = true;
@@ -846,215 +841,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
-    /// <summary>
-    /// Load External BASS Audio Decoder Plugins
-    /// </summary>
-    private void LoadAudioDecoderPlugins()
-    {
-      Log.Info("BASS: Loading audio decoder add-ins...");
-
-      string appPath = Application.StartupPath;
-      string decoderFolderPath = Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
-
-      if (!Directory.Exists(decoderFolderPath))
-      {
-        Log.Error(@"BASS: Unable to find \musicplayer\plugins\audio decoders folder in MediaPortal.exe path.");
-        return;
-      }
-
-      DirectoryInfo dirInfo = new DirectoryInfo(decoderFolderPath);
-      FileInfo[] decoders = dirInfo.GetFiles();
-
-      int pluginHandle = 0;
-      int decoderCount = 0;
-
-      foreach (FileInfo file in decoders)
-      {
-        if (Path.GetExtension(file.Name).ToLower() != ".dll")
-        {
-          continue;
-        }
-
-        pluginHandle = Bass.BASS_PluginLoad(file.FullName);
-
-        if (pluginHandle != 0)
-        {
-          DecoderPluginHandles.Add(pluginHandle);
-          decoderCount++;
-          Log.Debug("BASS: Added DecoderPlugin: {0}", file.FullName);
-        }
-
-        else
-        {
-          Log.Debug("BASS: Unable to load: {0}", file.FullName);
-        }
-      }
-
-      if (decoderCount > 0)
-      {
-        Log.Info("BASS: Loaded {0} Audio Decoders.", decoderCount);
-      }
-
-      else
-      {
-        Log.Error(
-          @"BASS: No audio decoders were loaded. Confirm decoders are present in \musicplayer\plugins\audio decoders folder.");
-      }
-
-      // Look for any SF2 files available in the folder.
-      // SF2 files contain sound fonts needed for midi playback
-      List<BASS_MIDI_FONT> tmpFonts = new List<BASS_MIDI_FONT>();
-      foreach (FileInfo file in decoders)
-      {
-        if (Path.GetExtension(file.Name).ToLower() != ".sf2")
-        {
-          continue;
-        }
-        int font = BassMidi.BASS_MIDI_FontInit(file.FullName);
-        if (font != 0)
-        {
-          BASS_MIDI_FONTINFO fontInfo = new BASS_MIDI_FONTINFO();
-          BassMidi.BASS_MIDI_FontGetInfo(font, fontInfo);
-          Log.Info("BASS: Loading Midi font: {0}", fontInfo.ToString());
-          soundFontHandles.Add(font);
-          BASS_MIDI_FONT soundFont = new BASS_MIDI_FONT(font, -1, 0);
-          tmpFonts.Add(soundFont);
-        }
-      }
-
-      if (tmpFonts.Count > 0)
-      {
-        soundFonts = tmpFonts.ToArray();
-      }
-    }
-
-    /// <summary>
-    /// Load BASS DSP Plugins specified setup in the Configuration
-    /// </summary>
-    private void LoadDSPPlugins()
-    {
-      Log.Debug("BASS: Loading DSP plugins ...");
-      _dspActive = false;
-      // BASS DSP/FX
-      foreach (BassEffect basseffect in Player.DSP.Settings.Instance.BassEffects)
-      {
-        _dspActive = true;
-        foreach (BassEffectParm parameter in basseffect.Parameter)
-        {
-          setBassDSP(basseffect.EffectName, parameter.Name, parameter.Value);
-        }
-      }
-
-      // VST Plugins
-      string vstPluginDir = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
-      int vstHandle = 0;
-      foreach (VSTPlugin plugins in Player.DSP.Settings.Instance.VSTPlugins)
-      {
-        // Get the vst handle and enable it
-        string plugin = String.Format(@"{0}\{1}", vstPluginDir, plugins.PluginDll);
-        vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-        if (vstHandle > 0)
-        {
-          _dspActive = true;
-          _VSTPlugins.Add(plugins.PluginDll);
-          // Store the handle in the dictionary for later reference
-          _vstHandles[plugins.PluginDll] = vstHandle;
-          // Set all parameters for the plugin
-          foreach (VSTPluginParm paramter in plugins.Parameter)
-          {
-            NumberFormatInfo format = new NumberFormatInfo();
-            format.NumberDecimalSeparator = ".";
-            try
-            {
-              BassVst.BASS_VST_SetParam(vstHandle, paramter.Index, float.Parse(paramter.Value));
-            }
-            catch (Exception) {}
-          }
-        }
-        else
-        {
-          Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", plugin, Bass.BASS_ErrorGetCode());
-        }
-      }
-
-      // Winamp Plugins can only be loaded on play to prevent Crashes
-      if (Player.DSP.Settings.Instance.WinAmpPlugins.Count > 0)
-      {
-        _dspActive = true;
-      }
-
-      Log.Debug("BASS: Finished loading DSP plugins ...");
-    }
-
-    /// <summary>
-    /// Sets the parameter for a given Bass effect
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <param name="format"></param>
-    private void setBassDSP(string id, string name, string value)
-    {
-      switch (id)
-      {
-        case "Gain":
-          if (name == "Gain_dbV")
-          {
-            double gainDB = double.Parse(value);
-            if (_gain == null)
-            {
-              _gain = new DSP_Gain();
-            }
-
-            if (gainDB == 0.0)
-            {
-              _gain.SetBypass(true);
-            }
-            else
-            {
-              _gain.SetBypass(false);
-              _gain.Gain_dBV = gainDB;
-            }
-          }
-          break;
-
-        case "DynAmp":
-          if (name == "Preset")
-          {
-            if (_damp == null)
-            {
-              _damp = new BASS_BFX_DAMP();
-            }
-
-            switch (Convert.ToInt32(value))
-            {
-              case 0:
-                _damp.Preset_Soft();
-                break;
-              case 1:
-                _damp.Preset_Medium();
-                break;
-              case 2:
-                _damp.Preset_Hard();
-                break;
-            }
-          }
-          break;
-
-        case "Compressor":
-          if (name == "Threshold")
-          {
-            if (_comp == null)
-            {
-              _comp = new BASS_BFX_COMPRESSOR();
-            }
-
-            _comp.Preset_Medium();
-            _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(Convert.ToInt32(value) / 10d, 1.0);
-          }
-          break;
-      }
-    }
 
     #endregion
 
@@ -1082,13 +868,13 @@ namespace MediaPortal.MusicPlayer.BASS
         Bass.BASS_ChannelStop(_mixer);
       }
 
+      if (_currentStream != null)
+      {
+        _currentStream.Dispose();
+      }
+
       Bass.BASS_Stop();
       Bass.BASS_Free();
-
-      foreach (int stream in Streams)
-      {
-        FreeStream(stream);
-      }
 
       foreach (int pluginHandle in DecoderPluginHandles)
       {
@@ -1126,39 +912,6 @@ namespace MediaPortal.MusicPlayer.BASS
         Bass.BASS_Free();
         _BassFreed = true;
       }
-    }
-
-    /// <summary>
-    /// Free a Stream
-    /// </summary>
-    /// <param name="stream"></param>
-    private void FreeStream(int stream)
-    {
-      int streamIndex = -1;
-
-      for (int i = 0; i < Streams.Count; i++)
-      {
-        if (Streams[i] == stream)
-        {
-          streamIndex = i;
-          break;
-        }
-      }
-
-      if (streamIndex != -1)
-      {
-        List<int> eventSyncHandles = StreamEventSyncHandles[streamIndex];
-
-        foreach (int syncHandle in eventSyncHandles)
-        {
-          Bass.BASS_ChannelRemoveSync(stream, syncHandle);
-        }
-      }
-
-      Bass.BASS_StreamFree(stream);
-      stream = 0;
-
-      _CrossFading = false; // Set crossfading to false, Play() will update it when the next song starts
     }
 
     /// <summary>
@@ -1306,11 +1059,6 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     internal int GetCurrentVizStream()
     {
-      if (Streams.Count == 0)
-      {
-        return -1;
-      }
-
       // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
       if (Config.UseAsio)
       {
@@ -1323,7 +1071,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        return GetCurrentStream();
+        return _currentStream.BassStream;
       }
     }
 
@@ -1355,137 +1103,24 @@ namespace MediaPortal.MusicPlayer.BASS
     #region Private Methods
 
     /// <summary>
-    /// Returns the Current Stream
-    /// </summary>
-    /// <returns></returns>
-    internal int GetCurrentStream()
-    {
-      if (Streams.Count == 0)
-      {
-        return -1;
-      }
-
-      if (CurrentStreamIndex < 0)
-      {
-        CurrentStreamIndex = 0;
-      }
-
-      else if (CurrentStreamIndex >= Streams.Count)
-      {
-        CurrentStreamIndex = Streams.Count - 1;
-      }
-
-      return Streams[CurrentStreamIndex];
-    }
-
-    /// <summary>
-    /// Returns the Next Stream
-    /// </summary>
-    /// <returns></returns>
-    private int GetNextStream()
-    {
-      int currentStream = GetCurrentStream();
-
-      if (currentStream == -1)
-      {
-        return -1;
-      }
-
-      if (currentStream == 0 || Bass.BASS_ChannelIsActive(currentStream) == BASSActive.BASS_ACTIVE_STOPPED)
-      {
-        return currentStream;
-      }
-
-      CurrentStreamIndex++;
-
-      if (CurrentStreamIndex >= Streams.Count)
-      {
-        CurrentStreamIndex = 0;
-      }
-
-      return Streams[CurrentStreamIndex];
-    }
-
-    private void GetCDDrives()
-    {
-      // Get the number of CD/DVD drives
-      int driveCount = BassCd.BASS_CD_GetDriveCount();
-      StringBuilder builderDriveLetter = new StringBuilder();
-      // Get Drive letters assigned
-      for (int i = 0; i < driveCount; i++)
-      {
-        builderDriveLetter.Append(BassCd.BASS_CD_GetInfo(i).DriveLetter);
-        BassCd.BASS_CD_Release(i);
-      }
-      _cdDriveLetters = builderDriveLetter.ToString();
-    }
-
-    /// <summary>
     /// Sets the End Position for the CUE Track
     /// </summary>
     /// <param name="stream"></param>
-    private void setCueTrackEndPosition(int stream)
+    private void setCueTrackEndPosition(MusicStream stream)
     {
       if (currentCueSheet != null)
       {
         if (cueTrackEndEventHandler != 0)
         {
-          Bass.BASS_ChannelRemoveSync(stream, cueTrackEndEventHandler);
+          Bass.BASS_ChannelRemoveSync(stream.BassStream, cueTrackEndEventHandler);
         }
 
-        Bass.BASS_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, cueTrackStartPos));
+        Bass.BASS_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, cueTrackStartPos));
         if (cueTrackEndPos > cueTrackStartPos)
         {
-          cueTrackEndEventHandler = RegisterCueTrackEndEvent(stream, CurrentStreamIndex,
-                                                             Bass.BASS_ChannelSeconds2Bytes(stream, cueTrackEndPos));
+          //cueTrackEndEventHandler = RegisterCueTrackEndEvent(stream, CurrentStreamIndex,
+          //                                                   Bass.BASS_ChannelSeconds2Bytes(stream, cueTrackEndPos));
         }
-      }
-    }
-
-    /// <summary>
-    /// Is this a MOD file?
-    /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
-    private bool IsMODFile(string filePath)
-    {
-      string ext = Path.GetExtension(filePath).ToLower();
-
-      switch (ext)
-      {
-        case ".mod":
-        case ".mo3":
-        case ".it":
-        case ".xm":
-        case ".s3m":
-        case ".mtm":
-        case ".umx":
-          return true;
-
-        default:
-          return false;
-      }
-    }
-
-    /// <summary>
-    /// Is this a MIDI file?
-    /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
-    private bool IsMidiFile(string filePath)
-    {
-      string ext = Path.GetExtension(filePath).ToLower();
-
-      switch (ext)
-      {
-        case ".midi":
-        case ".mid":
-        case ".rmi":
-        case ".kar":
-          return true;
-
-        default:
-          return false;
       }
     }
 
@@ -1494,9 +1129,9 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    private bool StreamIsPlaying(int stream)
+    private bool StreamIsPlaying(MusicStream stream)
     {
-      return stream != 0 && (Bass.BASS_ChannelIsActive(stream) == BASSActive.BASS_ACTIVE_PLAYING);
+      return stream != null && (Bass.BASS_ChannelIsActive(stream.BassStream) == BASSActive.BASS_ACTIVE_PLAYING);
     }
 
     /// <summary>
@@ -1504,18 +1139,18 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    private double GetTotalStreamSeconds(int stream)
+    private double GetTotalStreamSeconds(MusicStream stream)
     {
-      if (stream == 0)
+      if (stream == null)
       {
         return 0;
       }
 
       // length in bytes
-      long len = Bass.BASS_ChannelGetLength(stream);
+      long len = Bass.BASS_ChannelGetLength(stream.BassStream);
 
       // the total time length
-      double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len);
+      double totaltime = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, len);
       return totaltime;
     }
 
@@ -1525,7 +1160,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     private double GetStreamElapsedTime()
     {
-      return GetStreamElapsedTime(GetCurrentStream());
+      return GetStreamElapsedTime(_currentStream);
     }
 
     /// <summary>
@@ -1533,399 +1168,19 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     /// <param name="stream"></param>
     /// <returns></returns>
-    private double GetStreamElapsedTime(int stream)
+    private double GetStreamElapsedTime(MusicStream stream)
     {
-      if (stream == 0)
+      if (stream.BassStream == 0)
       {
         return 0;
       }
 
       // position in bytes
-      long pos = Bass.BASS_ChannelGetPosition(stream);
+      long pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
 
       // the elapsed time length
-      double elapsedtime = Bass.BASS_ChannelBytes2Seconds(stream, pos);
+      double elapsedtime = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
       return elapsedtime;
-    }
-
-    #endregion
-
-    #region BASS SyncProcs
-
-    /// <summary>
-    /// Register the various Playback Events
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="streamIndex"></param>
-    /// <returns></returns>
-    private List<int> RegisterPlaybackEvents(int stream, int streamIndex)
-    {
-      if (stream == 0)
-      {
-        return null;
-      }
-
-      List<int> syncHandles = new List<int>();
-
-      // Don't register the fade out event for last.fm radio, as it causes problems
-      // if (!_isLastFMRadio)
-      syncHandles.Add(RegisterPlaybackFadeOutEvent(stream, streamIndex, Config.CrossFadeIntervalMs));
-
-      syncHandles.Add(RegisterPlaybackEndEvent(stream, streamIndex));
-      syncHandles.Add(RegisterStreamFreedEvent(stream));
-
-      return syncHandles;
-    }
-
-    /// <summary>
-    /// Register the Fade out Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="streamIndex"></param>
-    /// <param name="fadeOutMS"></param>
-    /// <returns></returns>
-    private int RegisterPlaybackFadeOutEvent(int stream, int streamIndex, int fadeOutMS)
-    {
-      int syncHandle = 0;
-      long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
-      double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
-      double fadeOutSeconds = 0;
-
-      if (fadeOutMS > 0)
-        fadeOutSeconds = fadeOutMS / 1000.0;
-
-      long bytePos = Bass.BASS_ChannelSeconds2Bytes(stream, totaltime - fadeOutSeconds);
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS,
-                                            bytePos, PlaybackFadeOutProcDelegate,
-                                            IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterPlaybackFadeOutEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
-      return syncHandle;
-    }
-
-    /// <summary>
-    /// Register the Playback end Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="streamIndex"></param>
-    /// <returns></returns>
-    private int RegisterPlaybackEndEvent(int stream, int streamIndex)
-    {
-      int syncHandle = 0;
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream,
-                                            BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_END,
-                                            0, PlaybackEndProcDelegate,
-                                            IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterPlaybackEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
-      return syncHandle;
-    }
-
-    /// <summary>
-    /// Register Stream Free Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private int RegisterStreamFreedEvent(int stream)
-    {
-      int syncHandle = 0;
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_FREE, 0, PlaybackStreamFreedProcDelegate,
-                                            IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterStreamFreedEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
-      return syncHandle;
-    }
-
-    /// <summary>
-    /// REgister the CUE file TRack End Event
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="streamIndex"></param>
-    /// <param name="endPos"></param>
-    /// <returns></returns>
-    private int RegisterCueTrackEndEvent(int stream, int streamIndex, long endPos)
-    {
-      int syncHandle = 0;
-
-      syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_ONETIME | BASSSync.BASS_SYNC_POS, endPos,
-                                            CueTrackEndProcDelegate, IntPtr.Zero);
-
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterPlaybackCueTrackEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
-      return syncHandle;
-    }
-
-
-    /// <summary>
-    /// Unregister the Playback Events
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <param name="syncHandles"></param>
-    /// <returns></returns>
-    private bool UnregisterPlaybackEvents(int stream, List<int> syncHandles)
-    {
-      try
-      {
-        foreach (int syncHandle in syncHandles)
-        {
-          if (syncHandle != 0)
-          {
-            Bass.BASS_ChannelRemoveSync(stream, syncHandle);
-          }
-        }
-      }
-
-      catch
-      {
-        return false;
-      }
-
-      return true;
-    }
-
-    /// <summary>
-    /// Fade Out  Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void PlaybackFadeOutProc(int handle, int stream, int data, IntPtr userData)
-    {
-      Log.Debug("BASS: PlaybackFadeOutProc of stream {0}", stream);
-
-      if (Config.CrossFadeIntervalMs > 0)
-      {
-        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
-      }
-
-      if (CrossFade != null)
-      {
-        CrossFade(this, FilePath);
-      }
-
-      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, Config.CrossFadeIntervalMs);
-      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
-      if (removed)
-      {
-        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackFadeOutProc");
-      }
-    }
-
-    /// <summary>
-    /// Playback end Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void PlaybackEndProc(int handle, int stream, int data, IntPtr userData)
-    {
-      Log.Debug("BASS: PlaybackEndProc of stream {0}", stream);
-
-      if (TrackPlaybackCompleted != null)
-      {
-        TrackPlaybackCompleted(this, FilePath);
-      }
-
-      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
-      if (removed)
-      {
-        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in PlaybackEndProc");
-      }
-    }
-
-    /// <summary>
-    /// Stream Freed Proc
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void PlaybackStreamFreedProc(int handle, int stream, int data, IntPtr userData)
-    {
-      //Console.WriteLine("PlaybackStreamFreedProc");
-      Log.Debug("BASS: PlaybackStreamFreedProc of stream {0}", stream);
-
-      HandleSongEnded(false);
-
-      for (int i = 0; i < Streams.Count; i++)
-      {
-        if (stream == Streams[i])
-        {
-          Streams[i] = 0;
-          break;
-        }
-      }
-    }
-
-    /// <summary>
-    /// CUE Track End Procedure
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="stream"></param>
-    /// <param name="data"></param>
-    /// <param name="userData"></param>
-    private void CueTrackEndProc(int handle, int stream, int data, IntPtr userData)
-    {
-      Log.Debug("BASS: CueTrackEndProc of stream {0}", stream);
-
-      if (Config.CrossFadeIntervalMs > 0)
-      {
-        // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendThreadMessage(msg);
-      }
-
-      if (CrossFade != null)
-      {
-        CrossFade(this, FilePath);
-      }
-
-      bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);
-      if (removed)
-      {
-        Log.Debug("BassAudio: *** BASS_ChannelRemoveSync in CueTrackEndProc");
-      }
-    }
-
-    /// <summary>
-    /// Gets the tags from the Internet Stream.
-    /// </summary>
-    /// <param name="stream"></param>
-    private void SetStreamTags(int stream)
-    {
-      string[] tags = Bass.BASS_ChannelGetTagsICY(stream);
-      if (tags != null)
-      {
-        foreach (string item in tags)
-        {
-          if (item.ToLower().StartsWith("icy-name:"))
-          {
-            GUIPropertyManager.SetProperty("#Play.Current.Album", item.Substring(9));
-          }
-
-          if (item.ToLower().StartsWith("icy-genre:"))
-          {
-            GUIPropertyManager.SetProperty("#Play.Current.Genre", item.Substring(10));
-          }
-
-          Log.Info("BASS: Connection Information: {0}", item);
-        }
-      }
-      else
-      {
-        tags = Bass.BASS_ChannelGetTagsHTTP(stream);
-        if (tags != null)
-        {
-          foreach (string item in tags)
-          {
-            Log.Info("BASS: Connection Information: {0}", item);
-          }
-        }
-      }
-    }
-
-    /// <summary>
-    /// This Callback Procedure is called by BASS, once a song changes.
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="channel"></param>
-    /// <param name="data"></param>
-    /// <param name="user"></param>
-    private void MetaTagSyncProc(int handle, int channel, int data, IntPtr user)
-    {
-      // BASS_SYNC_META is triggered on meta changes of SHOUTcast streams
-      if (_tagInfo.UpdateFromMETA(Bass.BASS_ChannelGetTags(channel, BASSTag.BASS_TAG_META), false, false))
-      {
-        GetMetaTags();
-      }
-    }
-
-    /// <summary>
-    /// Set the Properties out of the Tags
-    /// </summary>
-    private void GetMetaTags()
-    {
-      // There seems to be an issue with setting correctly the title via taginfo
-      // So let's filter it out ourself
-      string title = _tagInfo.title;
-      int streamUrlIndex = title.IndexOf("';StreamUrl=");
-      if (streamUrlIndex > -1)
-      {
-        title = _tagInfo.title.Substring(0, streamUrlIndex);
-      }
-
-      Log.Info("BASS: Internet Stream. New Song: {0} - {1}", _tagInfo.artist, title);
-      // and display what we get
-      GUIPropertyManager.SetProperty("#Play.Current.Album", _tagInfo.album);
-      GUIPropertyManager.SetProperty("#Play.Current.Artist", _tagInfo.artist);
-      GUIPropertyManager.SetProperty("#Play.Current.Title", title);
-      GUIPropertyManager.SetProperty("#Play.Current.Comment", _tagInfo.comment);
-      GUIPropertyManager.SetProperty("#Play.Current.Genre", _tagInfo.genre);
-      GUIPropertyManager.SetProperty("#Play.Current.Year", _tagInfo.year);
-
-      if (InternetStreamSongChanged != null)
-      {
-        InternetStreamSongChanged(this);
-      }
-    }
-
-    /// <summary>
-    /// Register Slide End Event for Soft Stop
-    /// </summary>
-    /// <param name="stream"></param>
-    /// <returns></returns>
-    private void RegisterStreamSlideEndEvent(int stream)
-    {
-      PlayBackSlideEndDelegate = new SYNCPROC(SlideEndedProc);
-      int syncHandle = Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_SLIDE, 0, PlayBackSlideEndDelegate,
-                                                IntPtr.Zero);
-      if (syncHandle == 0)
-      {
-        Log.Debug("BASS: RegisterSlideEndEvent of stream {0} failed with error {1}", stream,
-                  Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-      }
-
-      return;
-    }
-
-    /// <summary>
-    /// This Callback Procedure is called by BASS, once a Slide Ended.
-    /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="channel"></param>
-    /// <param name="data"></param>
-    /// <param name="user"></param>
-    private void SlideEndedProc(int handle, int channel, int data, IntPtr user)
-    {
-      Log.Debug("BASS: Slide of channel ended.");
-      StopInternal();
     }
 
     #endregion
@@ -1944,7 +1199,7 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      int stream = GetCurrentStream();
+      MusicStream stream = _oldStream;
 
       bool doFade = false;
       bool result = true;
@@ -1952,7 +1207,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        if (filePath.ToLower().CompareTo(FilePath.ToLower()) == 0 && stream != 0)
+        if (stream != null && filePath.ToLower().CompareTo(stream.FilePath.ToLower()) == 0)
         {
           // Selected file is equal to current stream
           if (_State == PlayState.Paused)
@@ -1960,11 +1215,11 @@ namespace MediaPortal.MusicPlayer.BASS
             // Resume paused stream
             if (Config.SoftStop)
             {
-              Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
+              Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
             }
             else
             {
-              Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1);
+              Bass.BASS_ChannelSetAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1);
             }
 
             result = Bass.BASS_Start();
@@ -2038,143 +1293,64 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        if (stream != 0 && StreamIsPlaying(stream))
+        if (stream != null && stream.IsPlaying)
         {
-          int oldStream = stream;
-          double oldStreamDuration = GetTotalStreamSeconds(oldStream);
-          double oldStreamElapsedSeconds = GetStreamElapsedTime(oldStream);
-          double crossFadeSeconds = (double)Config.CrossFadeIntervalMs;
-
-          if (crossFadeSeconds > 0)
-            crossFadeSeconds = crossFadeSeconds / 1000.0;
-
-          if ((oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > -1))
+          if (!stream.IsCrossFading)
           {
-            FadeOutStop(oldStream);
-          }
-          else
-          {
-            Bass.BASS_ChannelStop(oldStream);
-          }
+            double oldStreamDuration = GetTotalStreamSeconds(_oldStream);
+            double oldStreamElapsedSeconds = GetStreamElapsedTime(_oldStream);
+            double crossFadeSeconds = (double)Config.CrossFadeIntervalMs;
 
-          doFade = true;
-          stream = GetNextStream();
+            if (crossFadeSeconds > 0)
+              crossFadeSeconds = crossFadeSeconds / 1000.0;
 
-          if (stream != 0 || StreamIsPlaying(stream))
-          {
-            FreeStream(stream);
+            if ((oldStreamDuration - (oldStreamElapsedSeconds + crossFadeSeconds) > -1))
+            {
+              FadeOutStop(_oldStream);
+            }
+            else
+            {
+              Bass.BASS_ChannelStop(_oldStream.BassStream);
+            }
           }
-        }
-
-        if (stream != 0)
-        {
-          if (!Stopped) // Check if stopped already to avoid that Stop() is called two or three times
-          {
-            Stop();
-          }
-          FreeStream(stream);
         }
 
         _State = PlayState.Init;
 
-        // Make sure Bass is ready to begin playing again
-        Bass.BASS_Start();
-
-        float crossOverSeconds = 0;
-
-        if (Config.CrossFadeIntervalMs > 0)
+        if (filePath == string.Empty)
         {
-          crossOverSeconds = (float)Config.CrossFadeIntervalMs / 1000f;
+          return result;
         }
+
+        _currentStream = new MusicStream(filePath);
+        stream = _currentStream;
+        
+        // Enable events, for various Playback Actions to be handled
+        stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
+
+        // Is Mixing / ASIO enabled, then we create a mixer channel and assign the stream to the mixer
+        if ((Config.Mixing || Config.UseAsio) && stream.BassStream != 0)
+        {
+          // Do an upmix of the stereo according to the matrix.
+          // Now Plugin the stream to the mixer and set the mixing matrix
+          BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
+                                              BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE |
+                                              BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER);
+          BassMix.BASS_Mixer_ChannelSetMatrix(stream.BassStream, _MixingMatrix);
+        }
+
+
 
         if (filePath != string.Empty)
         {
-          // Turn on parsing of ASX files
-          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PLAYLIST, 2);
+          
 
-          // We need different flags for standard BASS and ASIO / Mixing
-          BASSFlag streamFlags;
-          if (Config.UseAsio || Config.Mixing)
-          {
-            streamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
-            // Don't use the BASS_STREAM_AUTOFREE flag on a decoding channel. will produce a BASS_ERROR_NOTAVAIL
-          }
-          else
-          {
-            streamFlags = BASSFlag.BASS_SAMPLE_FLOAT | BASSFlag.BASS_STREAM_AUTOFREE;
-          }
 
-          FilePath = filePath;
+          /*
+          
+          
 
-          // create the stream
-          _isCDDAFile = false;
-          _isRadio = false;
-          _isLastFMRadio = false;
-          if (Util.Utils.IsCDDA(filePath))
-          {
-            _isCDDAFile = true;
 
-            // StreamCreateFile causes problems with Multisession disks, so use StreamCreate with driveindex and track index
-            int driveindex = _cdDriveLetters.IndexOf(filePath.Substring(0, 1));
-            int tracknum = Convert.ToInt16(filePath.Substring(filePath.IndexOf(".cda") - 2, 2));
-            stream = BassCd.BASS_CD_StreamCreate(driveindex, tracknum - 1, streamFlags);
-            if (stream == 0)
-              Log.Error("BASS: CD: {0}.", Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-          }
-          else if (filePath.ToLower().Contains(@"http://") || filePath.ToLower().Contains(@"https://") ||
-                   filePath.ToLower().StartsWith("mms") || filePath.ToLower().StartsWith("rtsp"))
-          {
-            // We're playing Internet Radio Stream
-            _isLastFMRadio = Util.Utils.IsLastFMStream(filePath);
-            if (!_isLastFMRadio)
-            {
-              // We're playing Internet Radio Stream, but not LastFM
-              _isRadio = true;
-            }
-
-            stream = Bass.BASS_StreamCreateURL(filePath, 0, streamFlags, null, IntPtr.Zero);
-
-            if (stream != 0)
-            {
-              // Get the Tags and set the Meta Tag SyncProc
-              _tagInfo = new TAG_INFO(filePath);
-              SetStreamTags(stream);
-
-              if (BassTags.BASS_TAG_GetFromURL(stream, _tagInfo))
-              {
-                GetMetaTags();
-              }
-
-              Bass.BASS_ChannelSetSync(stream, BASSSync.BASS_SYNC_META, 0, MetaTagSyncProcDelegate, IntPtr.Zero);
-            }
-            Log.Debug("BASSAudio: Webstream found - trying to fetch stream {0}", Convert.ToString(stream));
-          }
-          else if (IsMODFile(filePath))
-          {
-            // Load a Mod file
-            stream = Bass.BASS_MusicLoad(filePath, 0, 0,
-                                         BASSFlag.BASS_SAMPLE_SOFTWARE | BASSFlag.BASS_SAMPLE_FLOAT |
-                                         BASSFlag.BASS_MUSIC_AUTOFREE | BASSFlag.BASS_MUSIC_PRESCAN |
-                                         BASSFlag.BASS_MUSIC_RAMP, 0);
-          }
-          else
-          {
-            // Create a Standard Stream
-            stream = Bass.BASS_StreamCreateFile(filePath, 0, 0, streamFlags);
-          }
-
-          // Is Mixing / ASIO enabled, then we create a mixer channel and assign the stream to the mixer
-          if ((Config.Mixing || Config.UseAsio) && stream != 0)
-          {
-            // Do an upmix of the stereo according to the matrix.
-            // Now Plugin the stream to the mixer and set the mixing matrix
-            BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream,
-                                                BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE |
-                                                BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER);
-            BassMix.BASS_Mixer_ChannelSetMatrix(stream, _MixingMatrix);
-          }
-
-          Streams[CurrentStreamIndex] = stream;
 
           if (stream != 0)
           {
@@ -2196,68 +1372,14 @@ namespace MediaPortal.MusicPlayer.BASS
               Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1, Config.CrossFadeIntervalMs);
             }
 
-            // Attach active DSP effects to the Stream
-            if (_dspActive)
-            {
-              // BASS effects
-              if (_gain != null)
-              {
-                _gain.ChannelHandle = stream;
-                _gain.Start();
-              }
-              if (_damp != null)
-              {
-                int dampHandle = Bass.BASS_ChannelSetFX(stream, BASSFXType.BASS_FX_BFX_DAMP, _dampPrio);
-                Bass.BASS_FXSetParameters(dampHandle, _damp);
-              }
-              if (_comp != null)
-              {
-                int compHandle = Bass.BASS_ChannelSetFX(stream, BASSFXType.BASS_FX_BFX_COMPRESSOR, _compPrio);
-                Bass.BASS_FXSetParameters(compHandle, _comp);
-              }
 
-              // VST Plugins
-              foreach (string plugin in _VSTPlugins)
-              {
-                int vstHandle = BassVst.BASS_VST_ChannelSetDSP(stream, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
-                // Copy the parameters of the plugin as loaded on from the settings
-                int vstParm = _vstHandles[plugin];
-                BassVst.BASS_VST_SetParamCopyParams(vstParm, vstHandle);
-              }
-
-              // Init Winamp DSP only if we got a winamp plugin actiavtes
-              int waDspPlugin = 0;
-              if (Player.DSP.Settings.Instance.WinAmpPlugins.Count > 0 && !_waDspInitialised)
-              {
-                BassWaDsp.BASS_WADSP_Init(GUIGraphicsContext.ActiveForm);
-                _waDspInitialised = true;
-                foreach (WinAmpPlugin plugins in Player.DSP.Settings.Instance.WinAmpPlugins)
-                {
-                  waDspPlugin = BassWaDsp.BASS_WADSP_Load(plugins.PluginDll, 5, 5, 100, 100, null);
-                  if (waDspPlugin > 0)
-                  {
-                    _waDspPlugins[plugins.PluginDll] = waDspPlugin;
-                    BassWaDsp.BASS_WADSP_Start(waDspPlugin, 0, 0);
-                  }
-                  else
-                  {
-                    Log.Debug("Couldn't load WinAmp Plugin {0}. Error code: {1}", plugins.PluginDll,
-                              Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
-                  }
-                }
-              }
-
-              foreach (int waPluginHandle in _waDspPlugins.Values)
-              {
-                BassWaDsp.BASS_WADSP_ChannelSetDSP(waPluginHandle, stream, 1);
-              }
-            }
           }
           else
           {
             Log.Error("BASS: Unable to create Stream for {0}.  Reason: {1}.", filePath,
                       Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
           }
+          */
 
           bool playbackStarted = false;
           if (Config.Mixing)
@@ -2275,13 +1397,9 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           else if (Config.UseAsio)
           {
-            // Get some information about the stream
-            BASS_CHANNELINFO info = new BASS_CHANNELINFO();
-            Bass.BASS_ChannelGetInfo(stream, info);
-
             // In order to provide data for visualisation we need to clone the stream
             _streamcopy = new StreamCopy();
-            _streamcopy.ChannelHandle = stream;
+            _streamcopy.ChannelHandle = stream.BassStream;
             _streamcopy.StreamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
             // decode the channel, so that we have a Streamcopy
 
@@ -2289,9 +1407,9 @@ namespace MediaPortal.MusicPlayer.BASS
             _asioHandler.Volume = (float)Config.StreamVolume / 100f;
 
             // Set the Sample Rate from the stream
-            _asioHandler.SampleRate = (double)info.freq;
+            _asioHandler.SampleRate = (double)stream.ChannelInfo.freq;
             // try to set the device rate too (saves resampling)
-            BassAsio.BASS_ASIO_SetRate((double)info.freq);
+            BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
 
             try
             {
@@ -2317,10 +1435,10 @@ namespace MediaPortal.MusicPlayer.BASS
           else
           {
             setCueTrackEndPosition(stream);
-            playbackStarted = Bass.BASS_ChannelPlay(stream, false);
+            playbackStarted = Bass.BASS_ChannelPlay(stream.BassStream, false);
           }
 
-          if (stream != 0 && playbackStarted)
+          if (stream.BassStream != 0 && playbackStarted)
           {
             Log.Info("BASS: playback started");
 
@@ -2359,12 +1477,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath,
                       Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
 
-            // Release all of the sync proc handles
-            if (StreamEventSyncHandles[CurrentStreamIndex] != null)
-            {
-              UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
-            }
-
+            stream.Dispose();
             result = false;
           }
         }
@@ -2384,9 +1497,9 @@ namespace MediaPortal.MusicPlayer.BASS
     public override void Pause()
     {
       _CrossFading = false;
-      int stream = GetCurrentStream();
+      MusicStream stream = _currentStream;
 
-      Log.Debug("BASS: Pause of stream {0}", stream);
+      Log.Debug("BASS: Pause of stream {0}", stream.FilePath);
       try
       {
         PlayState oldPlayState = _State;
@@ -2403,13 +1516,13 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-in over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
+            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1, 500);
             Bass.BASS_Start();
           }
 
           else
           {
-            Bass.BASS_ChannelSetAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 1);
+            Bass.BASS_ChannelSetAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 1);
             Bass.BASS_Start();
           }
 
@@ -2426,10 +1539,10 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.SoftStop)
           {
             // Fade-out over 500ms
-            Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
+            Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, 0, 500);
 
             // Wait until the slide is done
-            while (Bass.BASS_ChannelIsSliding(stream, BASSAttribute.BASS_ATTRIB_VOL))
+            while (Bass.BASS_ChannelIsSliding(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL))
               System.Threading.Thread.Sleep(20);
 
             Bass.BASS_Pause();
@@ -2489,22 +1602,22 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       _CrossFading = false;
 
-      int stream = GetCurrentStream();
+      MusicStream stream = _currentStream;
       Log.Debug("BASS: Stop of stream {0}. File: {1}", stream, CurrentFile);
       try
       {
         // Unregister all SYNCs and free the channel manually.
         // Otherwise, the HandleSongEnded would be called twice
-        UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
+        //UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
 
         if (Config.Mixing || Config.UseAsio)
         {
-          Bass.BASS_ChannelStop(stream);
-          BassMix.BASS_Mixer_ChannelRemove(stream);
+          Bass.BASS_ChannelStop(stream.BassStream);
+          BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
         }
         else
         {
-          Bass.BASS_ChannelStop(stream);
+          Bass.BASS_ChannelStop(stream.BassStream);
         }
 
 
@@ -2517,10 +1630,10 @@ namespace MediaPortal.MusicPlayer.BASS
         try
         {
           // Some Winamp dsps might raise an exception when closing
-          foreach (int waDspPlugin in _waDspPlugins.Values)
-          {
-            BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
-          }
+          //foreach (int waDspPlugin in _waDspPlugins.Values)
+          //{
+          //  BassWaDsp.BASS_WADSP_Stop(waDspPlugin);
+          //}
         }
         catch (Exception) {}
 
@@ -2534,7 +1647,7 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        stream = 0;
+        stream.Dispose();
 
         if (PlaybackStop != null)
         {
@@ -2610,17 +1723,17 @@ namespace MediaPortal.MusicPlayer.BASS
     /// Fade out Song
     /// </summary>
     /// <param name="stream"></param>
-    private void FadeOutStop(int stream)
+    private void FadeOutStop(MusicStream stream)
     {
-      Log.Debug("BASS: FadeOutStop of stream {0}", stream);
+      Log.Debug("BASS: FadeOutStop of stream {0}", stream.FilePath);
 
       if (!StreamIsPlaying(stream))
       {
         return;
       }
 
-      int level = Bass.BASS_ChannelGetLevel(stream);
-      Bass.BASS_ChannelSlideAttribute(stream, BASSAttribute.BASS_ATTRIB_VOL, -1, Config.CrossFadeIntervalMs);
+      int level = Bass.BASS_ChannelGetLevel(stream.BassStream);
+      Bass.BASS_ChannelSlideAttribute(stream.BassStream, BASSAttribute.BASS_ATTRIB_VOL, -1, Config.CrossFadeIntervalMs);
     }
 
     /// <summary>
@@ -2657,21 +1770,21 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        int stream = GetCurrentStream();
-        long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
-        double totaltime = Bass.BASS_ChannelBytes2Seconds(stream, len); // the total time length
+        MusicStream stream = _currentStream;
+        long len = Bass.BASS_ChannelGetLength(stream.BassStream); // length in bytes
+        double totaltime = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, len); // the total time length
 
         long pos = 0; // position in bytes
         if (Config.Mixing)
         {
-          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
         }
         else
         {
-          pos = Bass.BASS_ChannelGetPosition(stream);
+          pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
         }
 
-        double timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
+        double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
         double offsetSecs = (double)ms / 1000.0;
 
         if (timePos + offsetSecs >= totaltime)
@@ -2681,11 +1794,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (Config.Mixing)
         {
-          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos + offsetSecs));
+          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos + offsetSecs));
           // the elapsed time length
         }
         else
-          Bass.BASS_ChannelSetPosition(stream, timePos + offsetSecs); // the elapsed time length
+          Bass.BASS_ChannelSetPosition(stream.BassStream, timePos + offsetSecs); // the elapsed time length
       }
 
       catch
@@ -2717,24 +1830,24 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      int stream = GetCurrentStream();
+      MusicStream stream = _currentStream;
       bool result = false;
 
       try
       {
-        long len = Bass.BASS_ChannelGetLength(stream); // length in bytes
+        long len = Bass.BASS_ChannelGetLength(stream.BassStream); // length in bytes
 
         long pos = 0; // position in bytes
         if (Config.Mixing)
         {
-          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream);
+          pos = BassMix.BASS_Mixer_ChannelGetPosition(stream.BassStream);
         }
         else
         {
-          pos = Bass.BASS_ChannelGetPosition(stream);
+          pos = Bass.BASS_ChannelGetPosition(stream.BassStream);
         }
 
-        double timePos = Bass.BASS_ChannelBytes2Seconds(stream, pos);
+        double timePos = Bass.BASS_ChannelBytes2Seconds(stream.BassStream, pos);
         double offsetSecs = (double)ms / 1000.0;
 
         if (timePos - offsetSecs <= 0)
@@ -2744,11 +1857,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (Config.Mixing)
         {
-          BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, timePos - offsetSecs));
+          BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, timePos - offsetSecs));
           // the elapsed time length
         }
         else
-          Bass.BASS_ChannelSetPosition(stream, timePos - offsetSecs); // the elapsed time length
+          Bass.BASS_ChannelSetPosition(stream.BassStream, timePos - offsetSecs); // the elapsed time length
       }
 
       catch
@@ -2773,7 +1886,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       try
       {
-        int stream = GetCurrentStream();
+        MusicStream stream = _currentStream;
 
         if (StreamIsPlaying(stream))
         {
@@ -2783,11 +1896,11 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           if (Config.Mixing)
           {
-            BassMix.BASS_Mixer_ChannelSetPosition(stream, Bass.BASS_ChannelSeconds2Bytes(stream, position));
+            BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
           }
           else
           {
-            Bass.BASS_ChannelSetPosition(stream, (float)position);
+            Bass.BASS_ChannelSetPosition(stream.BassStream, (float)position);
           }
         }
       }
@@ -3135,9 +2248,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
       // Find out with which stream to deal with
       int level = 0;
+
+      MusicStream stream = _currentStream;
       if (Config.Mixing)
       {
-        level = BassMix.BASS_Mixer_ChannelGetLevel(GetCurrentStream());
+        level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
       }
       else if (Config.UseAsio)
       {
@@ -3148,7 +2263,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       else
       {
-        level = Bass.BASS_ChannelGetLevel(GetCurrentStream());
+        level = Bass.BASS_ChannelGetLevel(stream.BassStream);
       }
 
       if (!Config.UseAsio) // For Asio, we already got the peaklevel above

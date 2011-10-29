@@ -347,6 +347,9 @@
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
     <Compile Include="MusicPlayer\BASS\BassMusicPlayer.cs" />
     <Compile Include="MusicPlayer\BASS\Config.cs" />
+    <Compile Include="MusicPlayer\BASS\Enums.cs" />
+    <Compile Include="MusicPlayer\BASS\MusicStream.cs" />
+    <Compile Include="MusicPlayer\BASS\Utils.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>

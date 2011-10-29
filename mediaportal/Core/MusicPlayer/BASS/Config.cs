@@ -18,7 +18,20 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Windows.Forms;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player.DSP;
+using Un4seen.Bass;
+using Un4seen.Bass.AddOn.Cd;
+using Un4seen.Bass.AddOn.Fx;
+using Un4seen.Bass.AddOn.Midi;
+using Un4seen.Bass.AddOn.Vst;
+using Un4seen.Bass.Misc;
 
 namespace MediaPortal.MusicPlayer.BASS
 {
@@ -44,6 +57,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Variables
 
+    private static List<int> _decoderPluginHandles = new List<int>();
+
     private static Config _instance = null;
 
     private static string _soundDevice;
@@ -59,7 +74,32 @@ namespace MediaPortal.MusicPlayer.BASS
     private static bool _mixing;
     private static bool _useASIO;
 
-    private static PlayBackType _playBackType; 
+    private static PlayBackType _playBackType;
+
+    private static string _cdDriveLetters = ""; // Contains the Drive letters of all available CD Drives
+
+    // DSP related variables
+    private static bool _dspActive = false;
+
+    // DSP related Variables
+    private static DSP_Gain _gain = null;
+    private static BASS_BFX_DAMP _damp = null;
+    private static BASS_BFX_COMPRESSOR _comp = null;
+    private static int _dampPrio = 3;
+    private static int _compPrio = 2;
+
+    // VST Related variables
+    private static List<string> _vstPlugins = new List<string>();
+    private static Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
+
+    // Winamp related variables
+    private static bool _waDspInitialised = false;
+    private static Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
+
+    // Midi File support
+    private static BASS_MIDI_FONT[] _soundFonts = null;
+    private static List<int> _soundFontHandles = new List<int>();
+
     #endregion
 
     #region Properties
@@ -122,6 +162,23 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _playBackType; }
     }
 
+    public static string CdDriveLetters
+    {
+      get
+      {
+        // Check, if we have the CDDruves loaded yet
+        if (_cdDriveLetters == "")
+        {
+          GetCDDrives();
+        }
+        return _cdDriveLetters;
+      }
+    }
+
+    public static bool DSPActive
+    {
+      get { return _dspActive; }
+    }
     #endregion
 
     #region Constructor
@@ -200,6 +257,230 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
       }
+    }
+
+    /// <summary>
+    /// Load External BASS Audio Decoder Plugins
+    /// </summary>
+    public static void LoadAudioDecoderPlugins()
+    {
+      Log.Info("BASS: Loading audio decoder add-ins...");
+
+      string appPath = Application.StartupPath;
+      string decoderFolderPath = Path.Combine(appPath, @"musicplayer\plugins\audio decoders");
+
+      if (!Directory.Exists(decoderFolderPath))
+      {
+        Log.Error(@"BASS: Unable to find \musicplayer\plugins\audio decoders folder in MediaPortal.exe path.");
+        return;
+      }
+
+      DirectoryInfo dirInfo = new DirectoryInfo(decoderFolderPath);
+      FileInfo[] decoders = dirInfo.GetFiles();
+
+      int pluginHandle = 0;
+      int decoderCount = 0;
+
+      foreach (FileInfo file in decoders)
+      {
+        if (Path.GetExtension(file.Name).ToLower() != ".dll")
+        {
+          continue;
+        }
+
+        pluginHandle = Bass.BASS_PluginLoad(file.FullName);
+
+        if (pluginHandle != 0)
+        {
+          _decoderPluginHandles.Add(pluginHandle);
+          decoderCount++;
+          Log.Debug("BASS: Added DecoderPlugin: {0}", file.FullName);
+        }
+
+        else
+        {
+          Log.Debug("BASS: Unable to load: {0}", file.FullName);
+        }
+      }
+
+      if (decoderCount > 0)
+      {
+        Log.Info("BASS: Loaded {0} Audio Decoders.", decoderCount);
+      }
+
+      else
+      {
+        Log.Error(
+          @"BASS: No audio decoders were loaded. Confirm decoders are present in \musicplayer\plugins\audio decoders folder.");
+      }
+
+      // Look for any SF2 files available in the folder.
+      // SF2 files contain sound fonts needed for midi playback
+      List<BASS_MIDI_FONT> tmpFonts = new List<BASS_MIDI_FONT>();
+      foreach (FileInfo file in decoders)
+      {
+        if (Path.GetExtension(file.Name).ToLower() != ".sf2")
+        {
+          continue;
+        }
+        int font = BassMidi.BASS_MIDI_FontInit(file.FullName);
+        if (font != 0)
+        {
+          BASS_MIDI_FONTINFO fontInfo = new BASS_MIDI_FONTINFO();
+          BassMidi.BASS_MIDI_FontGetInfo(font, fontInfo);
+          Log.Info("BASS: Loading Midi font: {0}", fontInfo.ToString());
+          _soundFontHandles.Add(font);
+          BASS_MIDI_FONT soundFont = new BASS_MIDI_FONT(font, -1, 0);
+          tmpFonts.Add(soundFont);
+        }
+      }
+
+      if (tmpFonts.Count > 0)
+      {
+        _soundFonts = tmpFonts.ToArray();
+      }
+    }
+
+    /// <summary>
+    /// Load BASS DSP Plugins specified setup in the Configuration
+    /// </summary>
+    public static void LoadDSPPlugins()
+    {
+      Log.Debug("BASS: Loading DSP plugins ...");
+      _dspActive = false;
+      // BASS DSP/FX
+      foreach (BassEffect basseffect in Player.DSP.Settings.Instance.BassEffects)
+      {
+        _dspActive = true;
+        foreach (BassEffectParm parameter in basseffect.Parameter)
+        {
+          setBassDSP(basseffect.EffectName, parameter.Name, parameter.Value);
+        }
+      }
+
+      // VST Plugins
+      string vstPluginDir = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
+      int vstHandle = 0;
+      foreach (VSTPlugin plugins in Player.DSP.Settings.Instance.VSTPlugins)
+      {
+        // Get the vst handle and enable it
+        string plugin = String.Format(@"{0}\{1}", vstPluginDir, plugins.PluginDll);
+        vstHandle = BassVst.BASS_VST_ChannelSetDSP(0, plugin, BASSVSTDsp.BASS_VST_DEFAULT, 1);
+        if (vstHandle > 0)
+        {
+          _dspActive = true;
+          _vstPlugins.Add(plugins.PluginDll);
+          // Store the handle in the dictionary for later reference
+          _vstHandles[plugins.PluginDll] = vstHandle;
+          // Set all parameters for the plugin
+          foreach (VSTPluginParm paramter in plugins.Parameter)
+          {
+            NumberFormatInfo format = new NumberFormatInfo();
+            format.NumberDecimalSeparator = ".";
+            try
+            {
+              BassVst.BASS_VST_SetParam(vstHandle, paramter.Index, float.Parse(paramter.Value));
+            }
+            catch (Exception) { }
+          }
+        }
+        else
+        {
+          Log.Debug("Couldn't load VST Plugin {0}. Error code: {1}", plugin, Bass.BASS_ErrorGetCode());
+        }
+      }
+
+      // Winamp Plugins can only be loaded on play to prevent Crashes
+      if (Player.DSP.Settings.Instance.WinAmpPlugins.Count > 0)
+      {
+        _dspActive = true;
+      }
+
+      Log.Debug("BASS: Finished loading DSP plugins ...");
+    }
+
+    /// <summary>
+    /// Sets the parameter for a given Bass effect
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="name"></param>
+    /// <param name="value"></param>
+    /// <param name="format"></param>
+    private static void setBassDSP(string id, string name, string value)
+    {
+      switch (id)
+      {
+        case "Gain":
+          if (name == "Gain_dbV")
+          {
+            double gainDB = double.Parse(value);
+            if (_gain == null)
+            {
+              _gain = new DSP_Gain();
+            }
+
+            if (gainDB == 0.0)
+            {
+              _gain.SetBypass(true);
+            }
+            else
+            {
+              _gain.SetBypass(false);
+              _gain.Gain_dBV = gainDB;
+            }
+          }
+          break;
+
+        case "DynAmp":
+          if (name == "Preset")
+          {
+            if (_damp == null)
+            {
+              _damp = new BASS_BFX_DAMP();
+            }
+
+            switch (Convert.ToInt32(value))
+            {
+              case 0:
+                _damp.Preset_Soft();
+                break;
+              case 1:
+                _damp.Preset_Medium();
+                break;
+              case 2:
+                _damp.Preset_Hard();
+                break;
+            }
+          }
+          break;
+
+        case "Compressor":
+          if (name == "Threshold")
+          {
+            if (_comp == null)
+            {
+              _comp = new BASS_BFX_COMPRESSOR();
+            }
+
+            _comp.Preset_Medium();
+            _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(Convert.ToInt32(value) / 10d, 1.0);
+          }
+          break;
+      }
+    }
+
+    private static void GetCDDrives()
+    {
+      // Get the number of CD/DVD drives
+      int driveCount = BassCd.BASS_CD_GetDriveCount();
+      StringBuilder builderDriveLetter = new StringBuilder();
+      // Get Drive letters assigned
+      for (int i = 0; i < driveCount; i++)
+      {
+        builderDriveLetter.Append(BassCd.BASS_CD_GetInfo(i).DriveLetter);
+        BassCd.BASS_CD_Release(i);
+      }
+      _cdDriveLetters = builderDriveLetter.ToString();
     }
 
     #endregion 
