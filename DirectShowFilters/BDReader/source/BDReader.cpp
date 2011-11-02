@@ -666,8 +666,8 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   LogDebug("CBDReaderFilter::Load()");
 
   wcscpy(m_fileName, pszFileName);
-  char path[MAX_PATH];
-  WideCharToMultiByte(CP_ACP, 0, m_fileName, -1, path, MAX_PATH, 0, 0);
+  char path[4096];
+  WideCharToMultiByte(CP_UTF8, 0, m_fileName, -1, path, 4096, 0, 0);
 
   int pathLen = strlen(path);
   int extLen = strlen("\\BDMV\\index.bdmv");
