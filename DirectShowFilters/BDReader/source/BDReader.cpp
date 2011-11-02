@@ -676,8 +676,7 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
   if (pathLen < extLen)
     return S_FALSE; // cannot be a path to Blu-ray
 
-  if (!(strcmp(path + pathLen - 16, "\\BDMV\\index.bdmv") == 0 ||
-      strcmp(path + pathLen - 16, "\\bdmv\\index.bdmv") == 0))
+  if (stricmp(path + pathLen - 16, "\\bdmv\\index.bdmv") != 0)
     return S_FALSE; // not a BD
 
   strncpy(m_pathToBD, path, pathLen - extLen);
