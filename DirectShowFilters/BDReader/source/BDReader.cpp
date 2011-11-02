@@ -539,7 +539,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             m_bUpdateStreamPositionOnly = true;
 
             LogDebug("CBDReaderFilter::Command thread: seek - pos: %06.3f (rebuild)", cmd.refTime.Millisecs() / 1000.0);
-            m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning, &posEnd, AM_SEEKING_NoPositioning);
+            m_pMediaSeeking->SetPositions(&pos, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
 
             m_eSeekDone.Wait();
             m_eSeekDone.Reset();
@@ -553,7 +553,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           m_bUpdateStreamPositionOnly = true;
           
           LogDebug("CBDReaderFilter::Command thread: seek requested - pos: %06.3f", cmd.refTime.Millisecs() / 1000.0);
-          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_NoFlush, &posEnd, AM_SEEKING_NoPositioning);
+          HRESULT hr = m_pMediaSeeking->SetPositions((LONGLONG*)&cmd.refTime.m_time, AM_SEEKING_AbsolutePositioning | AM_SEEKING_FakeSeek, &posEnd, AM_SEEKING_NoPositioning);
 
           m_eSeekDone.Wait();
           m_eSeekDone.Reset();
@@ -1050,16 +1050,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     rtCurrent = m_rtCurrent,
     rtStop = m_rtStop;
 
-  bool resetStreamPosition = caller == m_pVideoPin && (*pCurrent == 0 || *pCurrent == _I64_MAX);
-
-  if (*pCurrent == _I64_MAX)
-  {
-#ifdef LOG_SEEK_INFORMATION   
-    LogDebug("  ::SetPositions() - fake seek to zero stream time");
-#endif
-
-    *pCurrent = 0;
-  }
+  bool resetStreamPosition = caller == m_pVideoPin && dwCurrentFlags & AM_SEEKING_FakeSeek;
 
   if (pCurrent) 
   {
