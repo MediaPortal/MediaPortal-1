@@ -92,10 +92,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private static List<string> _vstPlugins = new List<string>();
     private static Dictionary<string, int> _vstHandles = new Dictionary<string, int>();
 
-    // Winamp related variables
-    private static bool _waDspInitialised = false;
-    private static Dictionary<string, int> _waDspPlugins = new Dictionary<string, int>();
-
     // Midi File support
     private static BASS_MIDI_FONT[] _soundFonts = null;
     private static List<int> _soundFontHandles = new List<int>();
@@ -178,6 +174,22 @@ namespace MediaPortal.MusicPlayer.BASS
     public static bool DSPActive
     {
       get { return _dspActive; }
+    }
+
+    public static List<string> VstPlugins
+    {
+      get { return _vstPlugins; }
+    }
+ 
+    public static Dictionary<string, int> VstHandles
+    {
+      get { return _vstHandles; }
+    }
+
+
+    public static BASS_MIDI_FONT[] SoundFonts
+    {
+      get { return _soundFonts; }
     }
     #endregion
 
@@ -348,15 +360,6 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       Log.Debug("BASS: Loading DSP plugins ...");
       _dspActive = false;
-      // BASS DSP/FX
-      foreach (BassEffect basseffect in Player.DSP.Settings.Instance.BassEffects)
-      {
-        _dspActive = true;
-        foreach (BassEffectParm parameter in basseffect.Parameter)
-        {
-          setBassDSP(basseffect.EffectName, parameter.Name, parameter.Value);
-        }
-      }
 
       // VST Plugins
       string vstPluginDir = Path.Combine(Application.StartupPath, @"musicplayer\plugins\dsp");
@@ -397,76 +400,6 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       Log.Debug("BASS: Finished loading DSP plugins ...");
-    }
-
-    /// <summary>
-    /// Sets the parameter for a given Bass effect
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <param name="format"></param>
-    private static void setBassDSP(string id, string name, string value)
-    {
-      switch (id)
-      {
-        case "Gain":
-          if (name == "Gain_dbV")
-          {
-            double gainDB = double.Parse(value);
-            if (_gain == null)
-            {
-              _gain = new DSP_Gain();
-            }
-
-            if (gainDB == 0.0)
-            {
-              _gain.SetBypass(true);
-            }
-            else
-            {
-              _gain.SetBypass(false);
-              _gain.Gain_dBV = gainDB;
-            }
-          }
-          break;
-
-        case "DynAmp":
-          if (name == "Preset")
-          {
-            if (_damp == null)
-            {
-              _damp = new BASS_BFX_DAMP();
-            }
-
-            switch (Convert.ToInt32(value))
-            {
-              case 0:
-                _damp.Preset_Soft();
-                break;
-              case 1:
-                _damp.Preset_Medium();
-                break;
-              case 2:
-                _damp.Preset_Hard();
-                break;
-            }
-          }
-          break;
-
-        case "Compressor":
-          if (name == "Threshold")
-          {
-            if (_comp == null)
-            {
-              _comp = new BASS_BFX_COMPRESSOR();
-            }
-
-            _comp.Preset_Medium();
-            _comp.fThreshold = (float)Un4seen.Bass.Utils.DBToLevel(Convert.ToInt32(value) / 10d, 1.0);
-          }
-          break;
-      }
     }
 
     private static void GetCDDrives()
