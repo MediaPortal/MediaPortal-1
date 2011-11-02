@@ -181,10 +181,6 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
     m_currentAudioSubmissionClip->FlushAudio(packet);
     LogDebug("clip: first Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired, seeking);
   }
-  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstAudioPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
-  {
-    firstAudioPESTimeStamp=m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
-  } 
 
   return ret;
 }
@@ -246,10 +242,7 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
     m_currentAudioSubmissionClip->FlushVideo(packet);
     LogDebug("clip: first Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired, seeking);
   }
-  if (!firstPacketRead && ret && packet->rtStart!=Packet::INVALID_TIME && firstVideoPESTimeStamp > m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart)
-  {
-    firstVideoPESTimeStamp=m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
-  } 
+ 
   return ret;
 }
 
@@ -291,7 +284,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
   bool ret = true;
   if (m_vecClips.size() && m_vecClips.back()->nClip == clipNumber) return false;
   m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration, discontinuousClip));
-  if (m_currentAudioPlayBackClip==NULL)
+  if (!m_currentAudioPlayBackClip)
   {
     // initialise
     m_currentAudioPlayBackClip=m_currentVideoPlayBackClip=m_currentAudioSubmissionClip=m_currentVideoSubmissionClip=*m_vecClips.begin();

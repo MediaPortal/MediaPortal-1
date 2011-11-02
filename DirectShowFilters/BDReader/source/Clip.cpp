@@ -45,13 +45,8 @@ CClip::CClip(int clipNumber, REFERENCE_TIME firstPacketTime, REFERENCE_TIME clip
   firstVideo=true;
   bSeekNeededVideo = seekNeeded;
   bSeekNeededAudio = seekNeeded;
-  if (seekNeeded)
-  {
-    clipPlaylistOffset = firstPacketTime;
-  }
   m_videoPmt=NULL;
 }
-
 
 CClip::~CClip(void)
 {
@@ -174,8 +169,6 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
 
 bool CClip::AcceptAudioPacket(Packet* packet)
 {
-  //check if this clip is looping (Fixes some menus which repeat a clip)
-  if (!firstAudio && packet->rtStart == playlistFirstPacketTime) bSeekNeededAudio = true;
   if (packet->nClipNumber != nClip)
   {
     // Oh dear, not for this clip so throw it away
@@ -203,8 +196,6 @@ bool CClip::AcceptAudioPacket(Packet* packet)
 
 bool CClip::AcceptVideoPacket(Packet*  packet)
 {
-  //check if this clip is looping (Fixes some menus which repeat a clip)
-  if (!firstVideo && packet->rtStart == playlistFirstPacketTime) bSeekNeededVideo = true;
   if (packet->nClipNumber != nClip)
   {
     // Oh dear, not for this clip so throw it away
