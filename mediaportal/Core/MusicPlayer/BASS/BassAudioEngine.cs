@@ -21,11 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
-using System.IO;
-using System.Text;
 using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using MediaPortal.ExtensionMethods;
 using MediaPortal.GUI.Library;
@@ -35,13 +31,9 @@ using MediaPortal.TagReader;
 using MediaPortal.Visualization;
 using Un4seen.Bass;
 using Un4seen.Bass.AddOn.Cd;
-using Un4seen.Bass.AddOn.Fx;
-using Un4seen.Bass.AddOn.Midi;
 using Un4seen.Bass.AddOn.Mix;
 using Un4seen.Bass.AddOn.Tags;
-using Un4seen.Bass.AddOn.Vst;
 using Un4seen.Bass.AddOn.WaDsp;
-using Un4seen.Bass.Misc;
 using Un4seen.BassAsio;
 using Action = MediaPortal.GUI.Library.Action;
 
@@ -109,15 +101,14 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private List<int> DecoderPluginHandles = new List<int>();
 
-    private PlayState _State = PlayState.Init;
-    private string FilePath = string.Empty;
+    private PlayState _state = PlayState.Init;
+    private string _filePath = string.Empty;
     private VisualizationInfo VizPluginInfo = null;
     private int VizFPS = 20;
 
     private int _DefaultCrossFadeIntervalMS = 4000;
-    private bool _Initialized = false;
-    private bool _BassFreed = false;
-    //private Timer UpdateTimer = new Timer();
+    private bool _initialized = false;
+    private bool _bassFreed = false;
     private VisualizationWindow VizWindow = null;
     private VisualizationManager VizManager = null;
     private int _playBackType;
@@ -174,7 +165,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override bool Initializing
     {
-      get { return (_State == PlayState.Init); }
+      get { return (_state == PlayState.Init); }
     }
 
     /// <summary>
@@ -238,7 +229,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public PlayState State
     {
-      get { return _State; }
+      get { return _state; }
     }
 
     /// <summary>
@@ -246,7 +237,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override bool Ended
     {
-      get { return _State == PlayState.Ended; }
+      get { return _state == PlayState.Ended; }
     }
 
     /// <summary>
@@ -254,7 +245,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override bool Paused
     {
-      get { return (_State == PlayState.Paused); }
+      get { return (_state == PlayState.Paused); }
     }
 
     /// <summary>
@@ -262,7 +253,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override bool Playing
     {
-      get { return (_State == PlayState.Playing || _State == PlayState.Paused); }
+      get { return (_state == PlayState.Playing || _state == PlayState.Paused); }
     }
 
     /// <summary>
@@ -270,7 +261,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override bool Stopped
     {
-      get { return (_State == PlayState.Init); }
+      get { return (_state == PlayState.Init); }
     }
 
     /// <summary>
@@ -278,7 +269,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override string CurrentFile
     {
-      get { return (_currentCueSheet != null ? _currentCueFakeTrackFileName : FilePath); }
+      get { return (_currentCueSheet != null ? _currentCueFakeTrackFileName : _filePath); }
     }
 
     /// <summary>
@@ -462,7 +453,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public bool Initialized
     {
-      get { return _Initialized; }
+      get { return _initialized; }
     }
 
     /// <summary>
@@ -478,7 +469,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public bool BassFreed
     {
-      get { return _BassFreed; }
+      get { return _bassFreed; }
     }
 
     /// <summary>
@@ -574,6 +565,11 @@ namespace MediaPortal.MusicPlayer.BASS
       DisposeAndCleanUp();
     }
 
+    /// <summary>
+    /// This Message is sent from a MusicStream
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="action"></param>
     void OnMusicStreamMessage(object sender, MusicStream.StreamAction action)
     {
       if (sender == null)
@@ -647,10 +643,12 @@ namespace MediaPortal.MusicPlayer.BASS
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
 
+        _playBackType = (int)Config.PlayBack;
+
         Log.Info("BASS: Initializing BASS environment done.");
 
-        _Initialized = true;
-        _BassFreed = true;
+        _initialized = true;
+        _bassFreed = true;
       }
 
       catch (Exception ex)
@@ -731,8 +729,8 @@ namespace MediaPortal.MusicPlayer.BASS
           }
 
           Log.Info("BASS: Initialization done.");
-          _Initialized = true;
-          _BassFreed = false;
+          _initialized = true;
+          _bassFreed = false;
         }
         else
         {
@@ -897,7 +895,7 @@ namespace MediaPortal.MusicPlayer.BASS
       // Remove the Vis Window, as it might interfere with the overlay of other plugins
       RemoveVisualizationWindow();
 
-      if (!_BassFreed)
+      if (!_bassFreed)
       {
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
         if (Config.UseAsio)
@@ -912,7 +910,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         Bass.BASS_Free();
-        _BassFreed = true;
+        _bassFreed = true;
       }
     }
 
@@ -1155,6 +1153,11 @@ namespace MediaPortal.MusicPlayer.BASS
       return _currentStreamIndex;
     }
 
+    /// <summary>
+    /// Parse the Cue file. Return a Fake Cue track and adjest the playback position within the file.
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
     private bool HandleCueFile(ref string filePath)
     {
       _cueTrackStartPos = 0;
@@ -1191,7 +1194,7 @@ namespace MediaPortal.MusicPlayer.BASS
         // If audio file is not changed, just set new start/end position and reset pause
         string audioFilePath = System.IO.Path.GetDirectoryName(cueFakeTrack.CueFileName) +
                                System.IO.Path.DirectorySeparatorChar + track.DataFile.Filename;
-        if (audioFilePath.CompareTo(FilePath) == 0 /* && StreamIsPlaying(stream)*/)
+        if (audioFilePath.CompareTo(_filePath) == 0 /* && StreamIsPlaying(stream)*/)
         {
           SetCueTrackEndPosition(GetCurrentStream());
           return true;
@@ -1241,7 +1244,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <returns></returns>
     public override bool Play(string filePath)
     {
-      if (!_Initialized)
+      if (!_initialized)
       {
         return false;
       }
@@ -1256,7 +1259,7 @@ namespace MediaPortal.MusicPlayer.BASS
         if (currentStream != null && filePath.ToLower().CompareTo(currentStream.FilePath.ToLower()) == 0)
         {
           // Selected file is equal to current stream
-          if (_State == PlayState.Paused)
+          if (_state == PlayState.Paused)
           {
             // Resume paused stream
             if (Config.SoftStop)
@@ -1277,11 +1280,11 @@ namespace MediaPortal.MusicPlayer.BASS
 
             if (result)
             {
-              _State = PlayState.Playing;
+              _state = PlayState.Playing;
 
               if (PlaybackStateChanged != null)
               {
-                PlaybackStateChanged(this, PlayState.Paused, _State);
+                PlaybackStateChanged(this, PlayState.Paused, _state);
               }
             }
 
@@ -1297,6 +1300,7 @@ namespace MediaPortal.MusicPlayer.BASS
          }
         }
 
+        // If we're not Crossfading, we want to stop the current stream at this time
         if (currentStream != null && currentStream.IsPlaying)
         {
           if (!currentStream.IsCrossFading)
@@ -1305,14 +1309,14 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        _State = PlayState.Init;
+        _state = PlayState.Init;
 
         if (filePath == string.Empty)
         {
           return result;
         }
 
-        FilePath = filePath;
+        _filePath = filePath;
 
         MusicStream stream = new MusicStream(filePath);
         _streams[GetNextStream()] = stream;
@@ -1393,7 +1397,7 @@ namespace MediaPortal.MusicPlayer.BASS
           Log.Info("BASS: playback started");
 
           GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_STARTED, 0, 0, 0, 0, 0, null);
-          msg.Label = FilePath;
+          msg.Label = _filePath;
           GUIWindowManager.SendThreadMessage(msg);
           NotifyPlaying = true;
 
@@ -1408,12 +1412,12 @@ namespace MediaPortal.MusicPlayer.BASS
           SetVisualizationWindow();
           SetVideoWindow();
 
-          PlayState oldState = _State;
-          _State = PlayState.Playing;
+          PlayState oldState = _state;
+          _state = PlayState.Playing;
 
-          if (oldState != _State && PlaybackStateChanged != null)
+          if (oldState != _state && PlaybackStateChanged != null)
           {
-            PlaybackStateChanged(this, oldState, _State);
+            PlaybackStateChanged(this, oldState, _state);
           }
 
           if (PlaybackStart != null)
@@ -1450,7 +1454,7 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Debug("BASS: Pause of stream {0}", stream.FilePath);
       try
       {
-        PlayState oldPlayState = _State;
+        PlayState oldPlayState = _state;
 
         if (oldPlayState == PlayState.Ended || oldPlayState == PlayState.Init)
         {
@@ -1459,7 +1463,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         if (oldPlayState == PlayState.Paused)
         {
-          _State = PlayState.Playing;
+          _state = PlayState.Playing;
 
           if (Config.SoftStop)
           {
@@ -1482,7 +1486,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         else
         {
-          _State = PlayState.Paused;
+          _state = PlayState.Paused;
 
           if (Config.SoftStop)
           {
@@ -1507,11 +1511,11 @@ namespace MediaPortal.MusicPlayer.BASS
           }
         }
 
-        if (oldPlayState != _State)
+        if (oldPlayState != _state)
         {
           if (PlaybackStateChanged != null)
           {
-            PlaybackStateChanged(this, oldPlayState, _State);
+            PlaybackStateChanged(this, oldPlayState, _state);
           }
         }
       }
@@ -1519,20 +1523,10 @@ namespace MediaPortal.MusicPlayer.BASS
       catch {}
     }
 
-
     /// <summary>
     /// Stopping Playback
     /// </summary>
     public override void Stop()
-    {
-        StopInternal();
-    }
-
-    /// <summary>
-    /// Internal Stop called by the above method
-    /// Needed to handle the sliding for a fade out correctly
-    /// </summary>
-    private void StopInternal()
     {
       MusicStream stream = GetCurrentStream();
       Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
@@ -1597,9 +1591,9 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void HandleSongEnded()
     {
-      PlayState oldState = _State;
+      PlayState oldState = _state;
 
-      if (!Util.Utils.IsAudio(FilePath))
+      if (!Util.Utils.IsAudio(_filePath))
       {
         GUIGraphicsContext.IsFullScreenVideo = false;
       }
@@ -1609,12 +1603,12 @@ namespace MediaPortal.MusicPlayer.BASS
 
       GUIGraphicsContext.IsPlaying = false;
 
-      FilePath = "";
-      _State = PlayState.Init;
+      _filePath = "";
+      _state = PlayState.Init;
 
-      if (oldState != _State && PlaybackStateChanged != null)
+      if (oldState != _state && PlaybackStateChanged != null)
       {
-        PlaybackStateChanged(this, oldState, _State);
+        PlaybackStateChanged(this, oldState, _state);
       }
     }
 
@@ -1798,7 +1792,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dTime"></param>
     public override void SeekRelative(double dTime)
     {
-      if (_State != PlayState.Init)
+      if (_state != PlayState.Init)
       {
         double dCurTime = GetCurrentStream().StreamElapsedTime;
 
@@ -1822,7 +1816,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dTime"></param>
     public override void SeekAbsolute(double dTime)
     {
-      if (_State != PlayState.Init)
+      if (_state != PlayState.Init)
       {
         if (dTime < 0.0d)
         {
@@ -1842,7 +1836,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="iPercentage"></param>
     public override void SeekRelativePercentage(int iPercentage)
     {
-      if (_State != PlayState.Init)
+      if (_state != PlayState.Init)
       {
         double dCurrentPos = GetCurrentStream().StreamElapsedTime;
         double dDuration = Duration;
@@ -1871,7 +1865,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="iPercentage"></param>
     public override void SeekAsolutePercentage(int iPercentage)
     {
-      if (_State != PlayState.Init)
+      if (_state != PlayState.Init)
       {
         if (iPercentage < 0)
         {
@@ -2006,7 +2000,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
       if (!GUIWindowManager.IsRouted && VizPluginInfo.VisualizationType != VisualizationInfo.PluginType.None)
       {
-        VizWindow.Visible = _State == PlayState.Playing;
+        VizWindow.Visible = _state == PlayState.Playing;
       }
       else
       {

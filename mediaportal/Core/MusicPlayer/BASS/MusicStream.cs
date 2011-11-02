@@ -438,6 +438,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     #region Public Methods
 
+
+
     /// <summary>
     /// Slide in the Channel over the Defined Crossfade intervall
     /// </summary>
