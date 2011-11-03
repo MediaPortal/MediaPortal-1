@@ -120,7 +120,7 @@ namespace DeployVersionGIT
         template= template
           .Replace("{GIT_VER_FULL}", fullVersion)
           .Replace("{GIT_VER_BUILD}", build)
-          .Replace("{GIT_BRANCH}", (branch == "master")? "" : branch)
+          .Replace("{GIT_BRANCH}", git.IsReleaseBranch()? "" : branch)
           .Replace("{GIT_COMITTISH}", committish);
 
         write.Write(template);

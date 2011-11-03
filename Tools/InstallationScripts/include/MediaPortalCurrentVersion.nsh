@@ -55,10 +55,14 @@
 !endif
 
 !if ${VER_BUILD} != 0                      # it's a svn release
-    !ifndef BRANCH
+    !ifdef BRANCH
+      !if "${BRANCH}" != ""
+        !define VER_BRANCH  " (${BRANCH} branch)"
+      !endif
+    !endif
+
+    !ifndef VER_BRANCH
       !define VER_BRANCH  ""
-    !else
-      !define VER_BRANCH  " (${BRANCH} branch)"
     !endif
 
     !ifndef COMMITTISH
