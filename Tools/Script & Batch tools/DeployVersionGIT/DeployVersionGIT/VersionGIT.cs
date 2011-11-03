@@ -242,6 +242,10 @@ namespace DeployVersionGIT
       return _branch;
     }
 
+    public bool IsReleaseBranch()
+    {
+      return _isReleaseBranch;
+    }
   }
 
 }
