@@ -357,6 +357,11 @@ public class MediaPortalApp : D3DApp, IRender
 
       Log.Info("Main: MediaPortal v" + versionInfo.FileVersion + " is starting up on " +
                OSInfo.OSInfo.GetOSDisplayVersion());
+#if DEBUG
+      Log.Info("Debug build: " + Application.ProductVersion);
+#else
+      Log.Info("Build: " + Application.ProductVersion);
+#endif
 
       //Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(false);

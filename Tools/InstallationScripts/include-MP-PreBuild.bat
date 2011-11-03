@@ -6,5 +6,5 @@ rem                 !system '"Debug\DeployVersionSVN.exe" /GetVersion /svn=%cd%'
 rem       is not able to write the exit code  (%errorlevel%) to a variable.
 rem       It is only available to compare the exit code.
 
-"..\Script & Batch tools\DeployVersionSVN\DeployVersionSVN\bin\Release\DeployVersionSVN.exe" /GetVersion /svn=%cd%
-echo !define VER_BUILD %errorlevel% > version.txt
+"..\Script & Batch tools\DeployVersionGIT\DeployVersionGIT\bin\Release\DeployVersionGIT.exe" /GetVersion=version.template.txt /path=%cd%
+rem echo !define VER_BUILD %errorlevel% > version.txt
