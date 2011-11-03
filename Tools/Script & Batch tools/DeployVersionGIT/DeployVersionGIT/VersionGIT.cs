@@ -45,6 +45,7 @@ namespace DeployVersionGIT
     private string _fullVersion;
     private string _branch;
     private string _committish;
+    private bool _isReleaseBranch;
 
     private Process RunGitCommand(string arguments)
     {
@@ -164,6 +165,7 @@ namespace DeployVersionGIT
       {
         // on master branch so only consider normal releases (1.x.0[alpha/beta/rc]) not service releases (1.x.1, 1.x.2 etc)
         pattern = ReleaseTagPattern;
+        _isReleaseBranch = true;
       }
       else
       {
@@ -173,6 +175,7 @@ namespace DeployVersionGIT
         {
           // on a service release branch so only consider service releases on the same branch
           pattern = string.Format(ServiceReleaseTagPattern, match.Groups["minver"].Value);
+          _isReleaseBranch = true;
         }
         // Otherwise we are on a feature branch, use default pattern (any release)
       }
@@ -209,7 +212,7 @@ namespace DeployVersionGIT
       }
       else
       {
-        _fullVersion = _fullVersion + (_branch == "master"? "":"-" + _branch);
+        _fullVersion = _fullVersion + (_isReleaseBranch? "":"-" + _branch);
       }
       return true;
     }
