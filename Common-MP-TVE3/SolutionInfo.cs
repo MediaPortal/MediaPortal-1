@@ -54,4 +54,5 @@ using System.Reflection;
 [assembly: AssemblyVersion("1.2.1.0")]
 [assembly: AssemblyFileVersion("1.2.1.0")]
 
+//[assembly: AssemblyInformationalVersion("")]
 //[assembly: CompatibleVersion("1.1.8.*", "1.1.8.*")]

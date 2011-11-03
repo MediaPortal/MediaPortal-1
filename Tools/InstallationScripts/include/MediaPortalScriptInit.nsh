@@ -45,32 +45,32 @@
 
 ##### path definitions
 
-!define svn_MP "${svn_ROOT}\mediaportal"
-!define svn_TVServer "${svn_ROOT}\TvEngine3\TVLibrary"
-!define svn_Common_MP_TVE3 "${svn_ROOT}\Common-MP-TVE3"
-!define svn_DeployTool "${svn_ROOT}\Tools\MediaPortal.DeployTool"
-!define svn_DirectShowFilters "${svn_ROOT}\DirectShowFilters"
+!define git_MP "${git_ROOT}\mediaportal"
+!define git_TVServer "${git_ROOT}\TvEngine3\TVLibrary"
+!define git_Common_MP_TVE3 "${git_ROOT}\Common-MP-TVE3"
+!define git_DeployTool "${git_ROOT}\Tools\MediaPortal.DeployTool"
+!define git_DirectShowFilters "${git_ROOT}\DirectShowFilters"
 
-!define svn_TvEngine2 "${svn_ROOT}\TvEngine2"
+!define git_TvEngine2 "${git_ROOT}\TvEngine2"
 
-!define svn_DeployVersionSVN "${svn_ROOT}\Tools\Script & Batch tools\DeployVersionSVN"
+!define git_DeployVersionGIT "${git_ROOT}\Tools\Script & Batch tools\DeployVersionGIT"
 
 #code after build scripts are fixed
 !if "$%COMPUTERNAME%" != "S15341228"
-!define svn_OUT "${svn_ROOT}\Release"
+!define git_OUT "${git_ROOT}\Release"
 !else
 
 #code before build scripts are fixed
 !if "${SKRIPT_NAME}" == "MediaPortal"
-  !define svn_OUT "${svn_MP}\Setup\Release"
+  !define git_OUT "${git_MP}\Setup\Release"
 !else
 
   !if "${SKRIPT_NAME}" == "MediaPortal TV Server / Client"
-    !define svn_OUT "${svn_TVServer}\Setup\Release"
+    !define git_OUT "${git_TVServer}\Setup\Release"
   !else
 
     !if "${SKRIPT_NAME}" == "MediaPortal Unpacker"
-      !define svn_OUT "${svn_InstallScripts}"
+      !define git_OUT "${git_InstallScripts}"
     !endif
 
   !endif
@@ -78,4 +78,4 @@
 #end of workaound code
 !endif
 
-!system 'mkdir "${svn_OUT}"'
+!system 'mkdir "${git_OUT}"'

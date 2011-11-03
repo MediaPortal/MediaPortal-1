@@ -34,13 +34,13 @@
 !include x64.nsh
 
 !ifndef NO_OS_DETECTION
-  !include "${svn_InstallScripts}\include\WinVerEx.nsh"
+  !include "${git_InstallScripts}\include\WinVerEx.nsh"
   # references to additional plugins, if not used, these won't be included
-  !AddPluginDir "${svn_InstallScripts}\GetVersion-plugin\Plugins"
+  !AddPluginDir "${git_InstallScripts}\GetVersion-plugin\Plugins"
 !endif
 
 !ifndef NO_INSTALL_LOG
-  !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+  !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 !else
 
   !ifndef LOG_TEXT
@@ -71,8 +71,8 @@
   !define TV3_REG_UNINSTALL "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\MediaPortal TV Server"
 !endif
 
-; modify your registry and uncomment the following line to test if the svn version check is working
-;!define SVN_BUILD
+; modify your registry and uncomment the following line to test if the git version check is working
+;!define GIT_BUILD
 !define MIN_INSTALLED_MP_VERSION      "1.0.4.0"
 !define MIN_INSTALLED_MP_VERSION_TEXT "v1.1.0 beta1"
 !define WEB_DOWNLOAD_MIN_MP_VERSION   "http://www.team-mediaportal.com/news/global/mediaportal_1.1.0_beta_1_-_released!.html"
@@ -399,7 +399,7 @@
 
   SetOverwrite on
   SetOutPath "$PLUGINSDIR"
-  File "${svn_ROOT}\Tools\Script & Batch tools\SetRights\bin\Release\SetRights.exe"
+  File "${git_ROOT}\Tools\Script & Batch tools\SetRights\bin\Release\SetRights.exe"
 
   SetShellVarContext all
   nsExec::ExecToLog '"$PLUGINSDIR\SetRights.exe" FOLDER "$APPDATA\Team MediaPortal"'
@@ -781,13 +781,13 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${LOG_TEXT} "INFO" "============================"
 !macroend
 
-!ifdef SVN_BUILD
-!macro MinimumVersionForSVNCheck
-  ${LOG_TEXT} "INFO" ".: MinimumVersionForSVNCheck: Compare installed and minimum version for this SVN snapshot :."
+!ifdef GIT_BUILD
+!macro MinimumVersionForGITCheck
+  ${LOG_TEXT} "INFO" ".: MinimumVersionForGITCheck: Compare installed and minimum version for this GIT snapshot :."
 
 !if "${PRODUCT_NAME}" == "MediaPortal"
   ${IfNot} ${MPIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)" IDNO +2
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
     ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
     Abort
   ${Else}
@@ -798,7 +798,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 !if "${PRODUCT_NAME}" == "MediaPortal TV Server / Client"
   ${IfNot} ${TVServerIsInstalled}
   ${AndIfNot} ${TVClientIsInstalled}
-    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_NOMP)" IDNO +2
+    MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_NOMP)" IDNO +2
     ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
     Abort
   ${Else}
@@ -813,7 +813,7 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
       ; installed version is NEWER than min
     ${ElseIf} $R0 == 2
       ; installed version is OLDER than min
-      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION)" IDNO +2
+      MessageBox MB_YESNO|MB_ICONSTOP "$(TEXT_MSGBOX_ERROR_GIT_WRONG_VERSION)" IDNO +2
       ExecShell open "${WEB_DOWNLOAD_MIN_MP_VERSION}"
       Abort
     ${Else}
@@ -831,9 +831,9 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 
 !macro DoPreInstallChecks
 
-!ifdef SVN_BUILD
-  ; check if correct MP version ist installed, which is required for this svn snapshot
-  !insertmacro MinimumVersionForSVNCheck
+!ifdef GIT_BUILD
+  ; check if correct MP version ist installed, which is required for this git snapshot
+  !insertmacro MinimumVersionForGITCheck
 !endif
 
   ; OS and other common initialization checks are done in the following NSIS header file
@@ -874,9 +874,9 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
 
 !macro DoPreInstallChecks
 
-!ifdef SVN_BUILD
-  ; check if correct MP version ist installed, which is required for this svn snapshot
-  !insertmacro MinimumVersionForSVNCheck
+!ifdef GIT_BUILD
+  ; check if correct MP version ist installed, which is required for this git snapshot
+  !insertmacro MinimumVersionForGITCheck
 !endif
 
   ; OS and other common initialization checks are done in the following NSIS header file

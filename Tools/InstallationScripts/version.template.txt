@@ -1,0 +1,4 @@
+!define VER_BUILD   {GIT_VER_BUILD}
+!define VER_FULL    "{GIT_VER_FULL}"
+!define BRANCH      "{GIT_BRANCH}"
+!define COMMITTISH  "{GIT_COMITTISH}"

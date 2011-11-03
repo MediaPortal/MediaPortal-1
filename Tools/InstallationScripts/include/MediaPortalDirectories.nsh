@@ -26,7 +26,7 @@
 !include WordFunc.nsh
 
 !ifndef NO_INSTALL_LOG
-  !include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+  !include "${git_InstallScripts}\include\LoggingMacros.nsh"
 !else
 
   !ifndef LOG_TEXT
@@ -43,8 +43,8 @@
 !endif
 
 
-!AddPluginDir "${svn_InstallScripts}\XML-plugin\Plugin"
-!include "${svn_InstallScripts}\XML-plugin\Include\XML.nsh"
+!AddPluginDir "${git_InstallScripts}\XML-plugin\Plugin"
+!include "${git_InstallScripts}\XML-plugin\Include\XML.nsh"
 
 #---------------------------------------------------------------------------
 #   Read      Special MediaPortal directories from  xml

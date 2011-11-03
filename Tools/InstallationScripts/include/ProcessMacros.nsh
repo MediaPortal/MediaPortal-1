@@ -22,10 +22,10 @@
 !define ProcessMacros_INCLUDED
 
 !include LogicLib.nsh
-!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
+!include "${git_InstallScripts}\include\LoggingMacros.nsh"
 
-!AddPluginDir "${svn_InstallScripts}\nsSCM-plugin\Plugin"
-!AddPluginDir "${svn_InstallScripts}\KillProc-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\nsSCM-plugin\Plugin"
+!AddPluginDir "${git_InstallScripts}\KillProc-plugin\Plugin"
 
 #***************************
 #***************************
