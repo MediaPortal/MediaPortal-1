@@ -684,7 +684,7 @@ namespace MediaPortal.MusicPlayer.BASS
             // not playing anything via BASS, so don't need an update thread
             Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
             // setup BASS - "no sound" device but 48000 (default for ASIO)
-            initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber));
+            initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber,BASSASIOInit.BASS_ASIO_THREAD));
 
             // When used in config the ASIO_INIT fails. Ignore it here, to be able using the visualisations
             if (Application.ExecutablePath.Contains("Configuration"))
@@ -722,7 +722,7 @@ namespace MediaPortal.MusicPlayer.BASS
           else if (Config.UseAsio && _mixer == 0)
           {
             // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
-            _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 2,
+            _mixer = BassMix.BASS_Mixer_StreamCreate(48000, 2,
                                                      BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_STREAM_DECODE);
             // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
             _asioHandler = new BassAsioHandler(0, 0, _mixer);

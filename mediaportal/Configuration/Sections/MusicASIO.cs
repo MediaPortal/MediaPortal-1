@@ -86,7 +86,7 @@ namespace MediaPortal.Configuration.Sections
     {
       // Free the selecetd device and activate the new one
       BassAsio.BASS_ASIO_Free();
-      if (BassAsio.BASS_ASIO_Init(asioDeviceComboBox.SelectedIndex))
+      if (BassAsio.BASS_ASIO_Init(asioDeviceComboBox.SelectedIndex, BASSASIOInit.BASS_ASIO_THREAD))
       {
         BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
         if (info != null)
@@ -169,7 +169,7 @@ namespace MediaPortal.Configuration.Sections
             if (asioDevices[i].name == _asioDeviceSelected)
             {
               found = true;
-              bool rc = BassAsio.BASS_ASIO_Init(i);
+              bool rc = BassAsio.BASS_ASIO_Init(i, BASSASIOInit.BASS_ASIO_THREAD);
               break;
             }
           }

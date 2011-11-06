@@ -199,8 +199,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private void CreateStream()
     {
       // Enable Later, when everything is changed
-      //BASSFlag streamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
-      BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
+      BASSFlag streamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
+      //BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
 
       _fileType = Utils.GetFileType(_filePath);
 
