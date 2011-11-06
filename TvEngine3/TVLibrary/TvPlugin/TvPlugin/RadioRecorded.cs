@@ -817,6 +817,7 @@ namespace TvPlugin
       //set object count label
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(itemlist.Count - (itemlist.Count > 0 && itemlist[0].Label == ".." ? 1 : 0)));
 
+      SwitchLayout();
       OnSort();
       UpdateProperties();
     }
