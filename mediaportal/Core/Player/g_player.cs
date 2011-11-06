@@ -766,6 +766,18 @@ namespace MediaPortal.Player
       }
     }
 
+    public static MenuItems ShowMenuItems
+    {
+      get
+      {
+        if (_player == null)
+        {
+          return MenuItems.All;
+        }
+        return _player.ShowMenuItems;
+      }
+    }
+
     public static bool HasChapters
     {
       get
@@ -774,7 +786,7 @@ namespace MediaPortal.Player
         {
           return false;
         }
-        if (_chapters == null)
+        if (Chapters == null)
         {
           return false;
         }
@@ -1320,6 +1332,7 @@ namespace MediaPortal.Player
           }
         }
 
+        _currentFileName = strFile;
         _player = _factory.Create(strFile, type);
 
         if (_player != null)
@@ -1697,6 +1710,7 @@ namespace MediaPortal.Player
         {
           return null;
         }
+        _chapters = _player.Chapters;
         return _chapters;
       }
     }
@@ -1709,6 +1723,7 @@ namespace MediaPortal.Player
         {
           return null;
         }
+        _chaptersname = _player.ChaptersName;
         return _chaptersname;
       }
     }

@@ -434,7 +434,7 @@ namespace MediaPortal.Player.Subtitles
       }
       else if (options[option].isAuto)
       {
-        return "Auto:" + options[option].language;
+        return "Auto: " + options[option].language;
       }
       else if (options[option].type == SubtitleType.Teletext && options[option].entry.language.Trim().Length == 0)
       {
@@ -455,7 +455,7 @@ namespace MediaPortal.Player.Subtitles
       }
       else if (currentOption.isAuto)
       {
-        return "Auto:" + currentOption.language;
+        return "Auto: " + currentOption.language;
       }
       else if (currentOption.type == SubtitleType.Teletext && currentOption.entry.language.Trim().Length == 0)
       {

@@ -1066,6 +1066,10 @@
     <String id="1910">Incompatible plugins</String>
     <String id="1911">The following plugins are incompatible with this version of MediaPortal and were automatically disabled:</String>
     <String id="1912">Continue|Continue ({0})...|Continue ({0})...</String>
+    <String id="1700">Popup Menu</String>
+    <String id="1701">Select play mode</String>
+    <String id="1702">Title: #{0} - chapters: {1}, duration: {2}</String>
+    <String id="1703">Select from all titles</String>
     <String id="1950" prefix="My ">Status</String>
     <String id="1951">Hard drive</String>
     <String id="1952">Fan</String>

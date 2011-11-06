@@ -453,10 +453,7 @@ namespace MediaPortal.Player
       {
         if (!GUIGraphicsContext.InVmr9Render)
         {
-          if (_textureAddress != 0)
-          {
-            InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
-          }
+          InternalPresentImage(_vmr9Util.VideoWidth, _vmr9Util.VideoHeight, _arVideoWidth, _arVideoHeight, true);
         }
       }
       catch (Exception ex)
@@ -867,9 +864,10 @@ namespace MediaPortal.Player
           RenderBlackImage(timePassed);
         }
 
-        //Render video texture
+        // Render video texture
         if (_shouldRenderTexture == false)
         {
+          BDOSDRenderer.GetInstance().Render();
           return;
         }
 
@@ -884,8 +882,10 @@ namespace MediaPortal.Player
         RenderBlackImage(timePassed);
         GUIGraphicsContext.RenderBlackImage = false;
       }
+
       SubtitleRenderer.GetInstance().Render();
       SubEngine.GetInstance().Render(_subsRect, _destinationRect);
+      BDOSDRenderer.GetInstance().Render();
     }
 
     public bool ShouldRenderLayer()

@@ -1188,7 +1188,7 @@ namespace MediaPortal.GUI.Video
       dlg.AddLocalizedString(941); // Change aspect ratio
 
       // Audio stream selection, show only when more than one streams exists
-      if (g_Player.AudioStreams > 1)
+      if ((g_Player.ShowMenuItems & MenuItems.Audio) == MenuItems.Audio && g_Player.AudioStreams > 1)
       {
         dlg.AddLocalizedString(492);
       }
@@ -1207,7 +1207,7 @@ namespace MediaPortal.GUI.Video
 
       // SubTitle stream and/or files selection, show only when there exists any streams,
       //    dialog shows then the streams and an item to disable them
-      if (g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
+      if ((g_Player.ShowMenuItems & MenuItems.Subtitle) == MenuItems.Subtitle && g_Player.SubtitleStreams > 0 || g_Player.SupportsCC)
       {
         dlg.AddLocalizedString(462);
       }
@@ -1218,15 +1218,21 @@ namespace MediaPortal.GUI.Video
         dlg.AddLocalizedString(200073);
       }
 
-
       dlg.AddLocalizedString(970); // Previous window
       if (g_Player.IsDVD)
       {
-        dlg.AddLocalizedString(974); // Root menu
-        dlg.AddLocalizedString(975); // Previous chapter
-        dlg.AddLocalizedString(976); // Next chapter
+        if ((g_Player.ShowMenuItems & MenuItems.MainMenu) == MenuItems.MainMenu)
+          dlg.AddLocalizedString(974); // Root menu
+        if (g_Player.CurrentFile.EndsWith(".bdmv") && (g_Player.ShowMenuItems & MenuItems.PopUpMenu) == MenuItems.PopUpMenu)
+            dlg.AddLocalizedString(1700); // BD popup menu        
+        if(!g_Player.HasChapters && (g_Player.ShowMenuItems & MenuItems.Chapter) == MenuItems.Chapter)
+        {
+          dlg.AddLocalizedString(975); // Previous chapter
+          dlg.AddLocalizedString(976); // Next chapter
+        }
       }
-      else if (g_Player.HasChapters) // For video files with chapters
+
+      if (g_Player.HasChapters && (g_Player.ShowMenuItems & MenuItems.Chapter) == MenuItems.Chapter) // For video files with chapters
       {
         dlg.AddLocalizedString(200091);
       }
@@ -1265,6 +1271,10 @@ namespace MediaPortal.GUI.Video
         case 974: // DVD root menu
           Action actionMenu = new Action(Action.ActionType.ACTION_DVD_MENU, 0, 0);
           GUIGraphicsContext.OnAction(actionMenu);
+          break;
+        case 1700: // BD popup menu
+          Action actionPopupMenu = new Action(Action.ActionType.ACTION_BD_POPUP_MENU, 0, 0);
+          GUIGraphicsContext.OnAction(actionPopupMenu);
           break;
         case 975: // DVD previous chapter
           Action actionPrevChapter = new Action(Action.ActionType.ACTION_PREV_CHAPTER, 0, 0);
@@ -1519,7 +1529,7 @@ namespace MediaPortal.GUI.Video
           strLang = strLang.Substring(0, ipos);
         }
         string strName = g_Player.SubtitleName(i);
-        if (!string.IsNullOrEmpty(strName))
+        if (!string.IsNullOrEmpty(strName) && !strLang.Equals(strName))
         {
           dlg.Add(String.Format("{0} [{1}]", strLang.TrimEnd(), strName.TrimStart()));
         }

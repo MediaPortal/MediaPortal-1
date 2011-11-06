@@ -277,6 +277,11 @@ namespace MediaPortal.Player
           }
 
           string extension = Path.GetExtension(aFileName).ToLower();
+          if (extension == ".bdmv")
+          {
+            return new BDPlayer();
+          }
+
           if (extension != ".tv" && extension != ".sbe" && extension != ".dvr-ms" &&
               aFileName.ToLower().IndexOf(".tsbuffer") < 0 && aFileName.ToLower().IndexOf("radio.tsbuffer") < 0)
           {

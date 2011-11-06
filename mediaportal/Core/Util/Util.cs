@@ -166,7 +166,7 @@ namespace MediaPortal.Util
       ".mp3,.wma,.ogg,.flac,.wav,.cda,.m3u,.pls,.b4s,.m4a,.m4p,.mp4,.wpl,.wv,.ape,.mpc";
 
     public static string VideoExtensionsDefault =
-      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo";
+      ".avi,.mpg,.mpeg,.mp4,.divx,.ogm,.mkv,.wmv,.qt,.rm,.mov,.mts,.m2ts,.sbe,.dvr-ms,.ts,.dat,.ifo,.bdmv";
 
     public static string PictureExtensionsDefault = ".jpg,.jpeg,.gif,.bmp,.png";
     public static string ImageExtensionsDefault = ".cue,.bin,.iso,.ccd,.bwt,.mds,.cdi,.nrg,.pdi,.b5t,.img";

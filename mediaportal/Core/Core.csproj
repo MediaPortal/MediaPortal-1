@@ -345,6 +345,8 @@
     <Compile Include="guilib\GUIStandardKeyboard.cs" />
     <Compile Include="guilib\ViewHandler.cs" />
     <Compile Include="guilib\XMLSkinFunctionAttribute.cs" />
+    <Compile Include="Player\BDOSDRenderer.cs" />
+    <Compile Include="Player\BDPlayer.cs" />
     <Compile Include="Player\FFDShow\FFDShowEngine.cs" />
     <Compile Include="Player\FFDShow\FFDShowReceiver.cs">
       <SubType>Form</SubType>

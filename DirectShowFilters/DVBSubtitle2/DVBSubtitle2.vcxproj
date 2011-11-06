@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>MP_DVB_Subtitles</ProjectName>
+    <ProjectName>MP_DVB_Subtitle_2</ProjectName>
     <ProjectGuid>{68A0BF54-311B-4EB9-A859-398357D6B591}</ProjectGuid>
     <RootNamespace>MPStreamAnalyzer</RootNamespace>
   </PropertyGroup>

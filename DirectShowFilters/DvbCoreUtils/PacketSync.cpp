@@ -41,25 +41,35 @@ void CPacketSync::Reset(void)
 //          In case of data flow change ( Seek, tv Zap .... ) Reset() should be called first to flush buffer.
 void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
+  if(!m_streamTypeDetected)
+  {
+    if( !AnalyzeStream(pData, nDataLen) )
+    {
+      // unable to detect between 188 / 192 byte packets
+      // need more data...
+      return;
+    }
+  }
+  
   int syncOffset=0;
   if (m_tempBufferPos > 0 )
   {
-    if (pData[TS_PACKET_LEN - m_tempBufferPos]==TS_PACKET_SYNC)
+    if (pData[m_packetLen - m_tempBufferPos]==TS_PACKET_SYNC)
     {
-      syncOffset = TS_PACKET_LEN - m_tempBufferPos;
+      syncOffset = m_packetLen - m_tempBufferPos;// - m_syncbyteOffset;
       if (syncOffset) memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
       OnTsPacket(m_tempBuffer);
     }
     m_tempBufferPos = 0;
   }
 
-  while (syncOffset + TS_PACKET_LEN < nDataLen)
+  while (syncOffset + m_packetLen < nDataLen)
   {
     if ((pData[syncOffset] == TS_PACKET_SYNC) &&
-        (pData[syncOffset + TS_PACKET_LEN]==TS_PACKET_SYNC))
+        (pData[syncOffset + m_packetLen]==TS_PACKET_SYNC))
     {
-      OnTsPacket( &pData[syncOffset] );
-      syncOffset += TS_PACKET_LEN;
+      OnTsPacket( &pData[syncOffset/*+m_syncbyteOffset*/] );
+      syncOffset += m_packetLen;
     }
     else
       syncOffset++;
@@ -84,3 +94,56 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 void CPacketSync::OnTsPacket(byte* tsPacket)
 {
 }
+
+bool CPacketSync::AnalyzeStream(byte* pData, int nDataLen)
+{
+  int count_188=0;
+  int count_192=0;
+  int corrupted=0;
+  int syncOffset=0;
+
+  while (syncOffset < nDataLen)
+  {
+    if (syncOffset + TS_PACKET_LEN > nDataLen) 
+    {
+      break;
+    }
+    if (pData[syncOffset] == TS_PACKET_SYNC) 
+    {
+      if(pData[syncOffset+MT2S_PACKET_LEN] == TS_PACKET_SYNC)
+      {
+        count_192++;
+        syncOffset += MT2S_PACKET_LEN -1;
+      }
+      else if(pData[syncOffset+TS_PACKET_LEN] == TS_PACKET_SYNC)
+      {
+        count_188++;
+        syncOffset += TS_PACKET_LEN -1;
+      }
+      else
+      {
+        corrupted++;
+      }
+    }
+    syncOffset++;
+  }
+
+  // allow 10% amount of corrupted packets
+  if( corrupted < count_188/10 || corrupted < count_192/10)
+  {
+    if( count_188 > count_192)
+    {
+      m_packetLen=TS_PACKET_LEN;
+      m_syncbyteOffset=0;
+    }
+    else
+    {
+      m_packetLen=MT2S_PACKET_LEN;
+      m_syncbyteOffset=4; // MT2S has four byte timestamp before TS sync byte
+    }
+    m_streamTypeDetected = true;
+    return true;
+  }
+  return false;
+}
+

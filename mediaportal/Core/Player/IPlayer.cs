@@ -159,6 +159,15 @@ namespace MediaPortal.Player
     }
 
     /// <summary>
+    /// Property which indicates what menu items can be shown
+    /// Used only at BDPlayer
+    /// </summary>
+    public virtual MenuItems ShowMenuItems
+    {
+      get { return MenuItems.All; }
+    }
+
+    /// <summary>
     /// Property which indicate if we're playing a TV recording or timeshifting file 
     /// </summary>
     public virtual bool IsTV

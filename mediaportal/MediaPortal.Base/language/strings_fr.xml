@@ -1022,6 +1022,10 @@
     <String id="1600">Voulez-vous arrêter ?</String>
     <String id="1601">Voulez-vous mettre en veille ?</String>
     <String id="1602">Voulez-vous mettre en veille prolongée ?</String>
+    <String id="1700">Menu BD contextuel</String>
+    <String id="1701">Choix du mode de lecture</String>
+    <String id="1702">Titre: #{0} - chapitre: {1}, durée: {2}</String>
+    <String id="1703">Sélection parmis tous les titres</String>
     <String id="1950" prefix="Mon ">Etat</String>
     <String id="1951">Disque dur</String>
     <String id="1952">Ventilateur</String>

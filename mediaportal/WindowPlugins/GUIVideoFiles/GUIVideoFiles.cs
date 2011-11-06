@@ -768,6 +768,11 @@ namespace MediaPortal.GUI.Video
           isFolderAMovie = true;
           path = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
         }
+        else if ((File.Exists(path + @"\BDMV\index.bdmv")) && (item.Label != ".."))
+        {
+          isFolderAMovie = true;
+          path = item.Path + @"\BDMV\index.bdmv";
+        }
         else
         {
           isFolderAMovie = false;
@@ -1212,6 +1217,12 @@ namespace MediaPortal.GUI.Video
           string dvdFolder = strFile.Substring(0, strFile.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           strMovie = Path.GetFileName(dvdFolder);
         }
+        else if (strFile.ToUpper().IndexOf(@"\BDMV\index.bdmv") >= 0)
+        {
+          //Blu-Ray folder
+          string dvdFolder = strFile.Substring(0, strFile.ToUpper().IndexOf(@"\BDMV\index.bdmv"));
+          strMovie = Path.GetFileName(dvdFolder);
+        }
         else
         {
           //Movie 
@@ -1224,6 +1235,10 @@ namespace MediaPortal.GUI.Video
         if (File.Exists(pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
         {
           strFile = pItem.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+        }
+        else if (File.Exists(pItem.Path + @"\BDMV\index.bdmv"))
+        {
+          strFile = pItem.Path + @"\BDMV\index.bdmv";
         }
         strMovie = pItem.DVDLabel;
       }
@@ -1351,6 +1366,11 @@ namespace MediaPortal.GUI.Video
           {
             if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.DVD)
               OnPlayDVD(message.Label, GetID);
+            else if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.BLURAY)
+            {
+              g_Player.Play((message.Label + "\\BDMV\\index.bdmv"), g_Player.MediaType.Video);
+              g_Player.ShowFullScreenWindow();
+            }
             else if (message.Param2 == (int)Ripper.AutoPlay.MediaSubType.VCD ||
                      message.Param2 == (int)Ripper.AutoPlay.MediaSubType.FILES)
               OnPlayFiles((System.Collections.ArrayList)message.Object);
@@ -1564,6 +1584,11 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.GetMovieInfo(path + @"\VIDEO_TS\VIDEO_TS.IFO", ref info);
           isFile = true;
         }
+        if (info.IsEmpty && File.Exists(path + @"\BDMV\index.bdmv")) //still empty and is ripped DVD
+        {
+          VideoDatabase.GetMovieInfo(path + @"\BDMV\index.bdmv", ref info);
+          isFile = true;
+        }
         if (info.IsEmpty)
         {
           if (_markWatchedFiles)
@@ -1636,7 +1661,7 @@ namespace MediaPortal.GUI.Video
           {
             title = movieDetails.Title;
           }
-          if (askForResumeMovie)
+          if (askForResumeMovie && !filename.EndsWith(@"\BDMV\index.bdmv"))
           {
             GUIResumeDialog.Result result =
               GUIResumeDialog.ShowResumeDialog(title, timeMovieStopped,
@@ -2068,6 +2093,11 @@ namespace MediaPortal.GUI.Video
           string dvdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\VIDEO_TS\VIDEO_TS.IFO"));
           description = Path.GetFileName(dvdFolder);
         }
+        else if (file.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV") >= 0)
+        {
+          string dvdFolder = file.Substring(0, file.ToUpper().IndexOf(@"\BDMV\INDEX.BDMV"));
+          description = Path.GetFileName(dvdFolder);
+        }
         else
         {
           description = Path.GetFileName(file);
@@ -2129,7 +2159,7 @@ namespace MediaPortal.GUI.Video
           }
           if (Util.Utils.IsDVD(item.Path))
           {
-            if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+            if (File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO") || File.Exists(item.Path + @"\BDMV\index.bdmv"))
             {
               dlg.AddLocalizedString(341); //play
             }
@@ -2687,6 +2717,11 @@ namespace MediaPortal.GUI.Video
                 string strFile = String.Format(@"{0}\VIDEO_TS.IFO", item.Path);
                 availableFiles.Add(strFile);
               }
+              else if (item.Path.ToLower().IndexOf("bdmv") >= 0)
+              {
+                string strFile = String.Format(@"{0}\index.bdmv", item.Path);
+                availableFiles.Add(strFile);
+              }
               else
               {
                 AddVideoFiles(item.Path, ref availableFiles);
@@ -2730,7 +2765,7 @@ namespace MediaPortal.GUI.Video
                               ".utf", ".utf8", ".utf-8", ".sub", ".srt", ".smi", ".rt", ".txt", ".ssa", ".aqt", ".jss",
                               ".ass", ".idx", ".ifo"
                             };
-        if (!isDVD)
+        if (!isDVD || path.ToUpper().IndexOf("BDMV") < 0)
         {
           // check if movie has subtitles
           for (int i = 0; i < sub_exts.Length; i++)

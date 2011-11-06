@@ -141,6 +141,10 @@ namespace MediaPortal.Player.Subtitles
       {
         subBitmap.SafeDispose();
         subBitmap = null;
+        unsafe
+        {
+          texture.UpdateUnmanagedPointer(null);
+        }
       }
 
       if (texture != null && !texture.Disposed)
@@ -650,7 +654,10 @@ namespace MediaPortal.Player.Subtitles
     {
       try
       {
-        _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
+        if (g_Player.IsDVD)
+          _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub3");
+        else
+          _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
         _subFilter = _filter as IDVBSubtitleSource;
         Log.Debug("SubtitleRenderer: CreateFilter success: " + (_filter != null) + " & " + (_subFilter != null));
       }
@@ -766,14 +773,14 @@ namespace MediaPortal.Player.Subtitles
           }
         }
         //bool alphaTest = false;
-        bool alphaBlend = false;
-        VertexFormats vertexFormat = CustomVertex.TransformedColoredTextured.Format;
+        //bool alphaBlend = false;
+        VertexFormats vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
 
         try
         {
           // store current settings so they can be restored when we are done
-          alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
-          vertexFormat = GUIGraphicsContext.DX9Device.VertexFormat;
+          //alphaBlend = GUIGraphicsContext.DX9Device.GetRenderStateBoolean(RenderStates.AlphaBlendEnable);
+          
 
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;
           float rationW = 1, rationH = 1;
@@ -855,9 +862,10 @@ namespace MediaPortal.Player.Subtitles
       {
         Log.Debug("Subtitle: Creating vertex buffer");
         _vertexBuffer = new VertexBuffer(typeof (CustomVertex.TransformedTextured),
-                                         4, GUIGraphicsContext.DX9Device,
-                                         0, CustomVertex.TransformedTextured.Format,
-                                         GUIGraphicsContext.GetTexturePoolType());
+                                        4, GUIGraphicsContext.DX9Device,
+                                        Usage.Dynamic | Usage.WriteOnly,
+                                        CustomVertex.TransformedTextured.Format,
+                                        GUIGraphicsContext.GetTexturePoolType());
         _wx = _wy = _wwidth = _wheight = 0;
       }
 
@@ -878,7 +886,7 @@ namespace MediaPortal.Player.Subtitles
         // lower right
         verts[3] = new CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
-        _vertexBuffer.Unlock();
+        _vertexBuffer.SetData(verts, 0, LockFlags.None);
 
         // remember what the vertexBuffer is set to
         _wy = wy;
