@@ -41,13 +41,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
-// TODO - check why these break Alpha & Omega BD
-
-//#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)((x * (111 +1 / 9)))
-//#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)((x * 111) + (x / 9))
-
-#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * (1000.0 / 9.0))
-#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / (1000.0 / 9.0))
+#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)((x * (111 +1 / 9)))
+#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)((x * 111) + (x / 9))
 
 extern void SetThreadName(DWORD dwThreadID, char* threadName);
 extern void LogDebug(const char *fmt, ...);
