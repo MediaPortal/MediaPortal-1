@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectName>MP_DVB_Subtitle3</ProjectName>
+    <ProjectName>MP_DVB_Subtitle_3</ProjectName>
     <ProjectGuid>{FEA1D3DB-F7BC-46F4-B1AE-F582548939CA}</ProjectGuid>
     <RootNamespace>MPStreamAnalyzer</RootNamespace>
   </PropertyGroup>
@@ -208,7 +208,6 @@
     <ClInclude Include="Source\Hdmv\HdmvSub.h" />
     <ClInclude Include="Source\Hdmv\Rasterizer.h" />
     <ClInclude Include="Source\Hdmv\SeparableFilter.h" />
-    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
