@@ -601,6 +601,11 @@ namespace MediaPortal.Player
             _mediaCtrl = null;
           }
 
+          if (_vmr9 != null)
+          {
+            _vmr9.Enable(false);
+          }
+
           if (_mediaEvt != null)
           {
             hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
@@ -632,15 +637,6 @@ namespace MediaPortal.Player
             _fileSource = null;
           }
 
-          PostProcessingEngine.GetInstance().FreePostProcess();
-
-          if (_vmr9 != null)
-          {
-            _vmr9.Enable(false);
-            _vmr9.SafeDispose();
-            _vmr9 = null;
-          }
-
           if (_line21Decoder != null)
           {
             while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
@@ -663,6 +659,12 @@ namespace MediaPortal.Player
           {
             _dvbSubRenderer.SetPlayer(null);
             _dvbSubRenderer = null;
+          }
+
+          if (_vmr9 != null)
+          {
+            _vmr9.SafeDispose();
+            _vmr9 = null;
           }
 
           GUIGraphicsContext.form.Invalidate(true);

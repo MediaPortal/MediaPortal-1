@@ -488,6 +488,11 @@ namespace MediaPortal.Player
           mediaCtrl = null;
         }
 
+        if (Vmr9 != null)
+        {
+          Vmr9.Enable(false);
+        }
+
         if (mediaEvt != null)
         {
           hr = mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
@@ -520,13 +525,6 @@ namespace MediaPortal.Player
           _audioSwitcher = null;
         }
 
-        if (Vmr9 != null)
-        {
-          Vmr9.Enable(false);
-          Vmr9.SafeDispose();
-          Vmr9 = null;
-        }
-
         if (graphBuilder != null)
         {
           DirectShowUtil.RemoveFilters(graphBuilder);
@@ -537,6 +535,12 @@ namespace MediaPortal.Player
           }
           DirectShowUtil.ReleaseComObject(graphBuilder);
           graphBuilder = null;
+        }
+
+        if (Vmr9 != null)
+        {
+          Vmr9.SafeDispose();
+          Vmr9 = null;
         }
 
         GUIGraphicsContext.form.Invalidate(true);

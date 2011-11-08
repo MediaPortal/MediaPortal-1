@@ -28,13 +28,14 @@
 #include "IAVSyncClock.h"
 #include "dshowhelper.h"
 #include "evrcustompresenter.h"
+#include "outerevr.h"
 #include "scheduler.h"
 #include "timesource.h"
 #include "statsrenderer.h"
 #include "autoint.h"
 
 // For more details for memory leak detection see the alloctracing.h header
-//#include "..\..\alloctracing.h"
+#include "..\..\alloctracing.h"
 
 void LogIID(REFIID riid)
 {
@@ -58,10 +59,10 @@ void LogGUID(REFGUID guid)
   CoTaskMemFree(str);
 }
 
-MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter* EVRFilter, BOOL pIsWin7):
+MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDevice9* direct3dDevice, HMONITOR monitor, IBaseFilter** EVRFilter, BOOL pIsWin7):
+  CUnknown(NAME("MPEVRCustomPresenter"), NULL),
   m_refCount(1), 
   m_qScheduledSamples(NUM_SURFACES),
-  m_EVRFilter(EVRFilter),
   m_bIsWin7(pIsWin7),
   m_bMsVideoCodec(true),
   m_pAVSyncClock(NULL),
@@ -74,22 +75,25 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   m_iClockAdjustmentsDone(0),
   m_nNextPhDev(0),
   m_avPhaseDiff(0.0),
-  m_sumPhaseDiff(0.0)
+  m_sumPhaseDiff(0.0),
+  m_pOuterEVR(NULL),
+  m_bStopping(false),
+  m_bEndBuffering(false)
 {
   ZeroMemory((void*)&m_dPhaseDeviations, sizeof(double) * NUM_PHASE_DEVIATIONS);
 
   timeBeginPeriod(1);
-  if (m_pMFCreateVideoSampleFromSurface != NULL)
+  if (m_pMFCreateVideoSampleFromSurface)
   {
     HRESULT hr;
     LogRotate();
     if (NO_MP_AUD_REND)
     {
-      Log("---------- v1.4.55f ----------- instance 0x%x", this);
+      Log("---------- v1.4.55f BD mod ----------- instance 0x%x", this);
     }
     else
     {
-      Log("---------- v0.0.55f ----------- instance 0x%x", this);
+      Log("---------- v0.0.55f BD mod ----------- instance 0x%x", this);
       Log("--- audio renderer testing --- instance 0x%x", this);
     }
     m_hMonitor = monitor;
@@ -172,7 +176,21 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
     }
   }
 
+  HRESULT result;
+  m_pOuterEVR = new COuterEVR(NAME("COuterEVR"), (IUnknown*)(INonDelegatingUnknown*)this, result, this);
+
+  if (FAILED(result))
+  {	
+    Log("Failed to create OuterEVR!");
+  }
+  else
+  {
+    (*EVRFilter) = m_EVRFilter = static_cast<IBaseFilter*>(m_pOuterEVR);
+  }
+  
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
+  
+  AddRef(); // TODO - figure you the one off in reference count
 }
 
 void MPEVRCustomPresenter::SetFrameSkipping(bool onOff)
@@ -253,6 +271,16 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::Invoke(__RPC__in_opt IMFAsyncRes
   return S_OK;
 }
 
+STDMETHODIMP MPEVRCustomPresenter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
+{
+  if (riid == __uuidof(IUnknown)) 
+  {
+    return __super::NonDelegatingQueryInterface(riid, ppv);
+  }
+
+  HRESULT hr = QueryInterface(riid, ppv);
+  return SUCCEEDED(hr) ? hr : __super::NonDelegatingQueryInterface(riid, ppv);
+}
 
 // IUnknown
 HRESULT MPEVRCustomPresenter::QueryInterface(REFIID riid, void** ppvObject)
@@ -324,30 +352,36 @@ HRESULT MPEVRCustomPresenter::QueryInterface(REFIID riid, void** ppvObject)
   }
   else
   {
-    LogIID(riid);
-    *ppvObject = NULL;
-    hr = E_NOINTERFACE;
+    hr = m_pOuterEVR->NonDelegatingQueryInterface(riid, (void**)ppvObject);
+    if (hr != S_OK)
+    {
+      LogIID(riid);
+      *ppvObject = NULL;
+      hr = E_NOINTERFACE;
+    }
   }
   CHECK_HR(hr, "QueryInterface failed")
   return hr;
 }
 
-
 ULONG MPEVRCustomPresenter::AddRef()
 {
-  return InterlockedIncrement(&m_refCount);
+  return m_pOuterEVR->AddRef();
 }
-
 
 ULONG MPEVRCustomPresenter::Release()
 {
-  ULONG ret = InterlockedDecrement(&m_refCount);
-  if (ret == 0)
-  {
-    Log("MPEVRCustomPresenter::Cleanup()");
-    delete this;
-  }
-  return ret;
+  return m_pOuterEVR->Release();
+}
+
+ULONG MPEVRCustomPresenter::NonDelegatingRelease()
+{
+  return m_pOuterEVR->NonDelegatingRelease();
+}
+
+ULONG MPEVRCustomPresenter::NonDelegatingAddRef()
+{
+  return m_pOuterEVR->NonDelegatingAddRef();
 }
 
 HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::GetSlowestRate(MFRATE_DIRECTION eDirection, BOOL fThin, __RPC__out float *pflRate)
@@ -467,6 +501,9 @@ HRESULT MPEVRCustomPresenter::InitServicePointers(IMFTopologyServiceLookup *pLoo
 HRESULT MPEVRCustomPresenter::ReleaseServicePointers()
 {
   Log("ReleaseServicePointers");
+
+  CAutoLock lock(this);
+
   // on some channel changes it may happen that ReleaseServicePointers is called only after InitServicePointers 
   // is called to avoid this rare condition, we only release when not in state begin_streaming
   m_pMediaType.Release();
@@ -1481,6 +1518,7 @@ void MPEVRCustomPresenter::StopWorkers()
 {
   Log("Stopping workers...");
   CAutoLock lock(this);
+  m_bStopping = true;
   Log("Threads running : %s", m_bSchedulerRunning?"TRUE":"FALSE");
   if (!m_bSchedulerRunning)
   {
@@ -1707,6 +1745,7 @@ void MPEVRCustomPresenter::ScheduleSample(IMFSample* pSample)
   }
 
   m_qScheduledSamples.Put(pSample);
+  m_SampleAddedEvent.Set();
   if (m_qScheduledSamples.Count() >= 1)
   {
     NotifyScheduler(false);
@@ -1737,6 +1776,13 @@ BOOL MPEVRCustomPresenter::CheckForEndOfStream()
 
 HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool setInAvail)
 {
+  if (m_bStopping)
+  {
+    return S_OK;  
+  }
+
+  CAutoLock lock(this);
+
   LOG_TRACE("ProcessInputNotify");
   HRESULT hr = S_OK;
   *samplesProcessed = 0;
@@ -1751,19 +1797,9 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
     m_bInputAvailable = true;
   }
     
-  if (m_pClock != NULL)
+  if (!m_pClock)
   {
-    MFCLOCK_STATE state;
-    m_pClock->GetState(0, &state);
-    if (state == MFCLOCK_STATE_PAUSED)
-    {
-      // Log("Should not be processing data in pause mode");
-      m_bInputAvailable = FALSE;
-      return S_OK;
-    }
-  }
-  else 
-  {
+    //Log("No clock");
     return S_OK;
   }
 
@@ -1875,9 +1911,13 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     case MFVP_MESSAGE_FLUSH:
       // The presenter should discard any pending samples.
       Log("ProcessMessage MFVP_MESSAGE_FLUSH");
-      // Delegate to avoid a weird deadlock with application-idle handler Flush();
-      m_bFlush = TRUE;
-      NotifyScheduler(true);
+      PauseThread(m_hTimer, &m_timerParams);
+      PauseThread(m_hWorker, &m_workerParams);
+      PauseThread(m_hScheduler, &m_schedulerParams);
+      Flush(FALSE);
+      WakeThread(m_hScheduler, &m_schedulerParams);
+      WakeThread(m_hWorker, &m_workerParams);
+      WakeThread(m_hTimer, &m_timerParams);
     break;
 
     case MFVP_MESSAGE_INVALIDATEMEDIATYPE:
@@ -1892,12 +1932,20 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
     break;
 
     case MFVP_MESSAGE_PROCESSINPUTNOTIFY:
-      // One input stream on the mixer has received a new sample.
-      LOG_TRACE("ProcessMessage MFVP_MESSAGE_PROCESSINPUTNOTIFY");
-      // ImmediateCheckForInput();
-      m_bFirstInputNotify = TRUE;
-      NotifyWorker(true);
-    break;
+      {
+        // One input stream on the mixer has received a new sample.
+        LOG_TRACE("ProcessMessage MFVP_MESSAGE_PROCESSINPUTNOTIFY");
+        m_bFirstInputNotify = TRUE;
+      
+        int samplesProcessed = 0;
+
+        if (m_state == MP_RENDER_STATE_STARTED)
+          NotifyWorker(true);
+        else
+          ProcessInputNotify(&samplesProcessed, false);
+
+        break;
+      }
 
     case MFVP_MESSAGE_BEGINSTREAMING:
       // The EVR switched from stopped to paused. The presenter should allocate resources.
@@ -1906,7 +1954,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
       m_bEndStreaming = FALSE;
       m_bInputAvailable = FALSE;
       m_bFirstInputNotify = FALSE;
-      m_state = MP_RENDER_STATE_STARTED;
+      m_state = MP_RENDER_STATE_PAUSED;
       StartWorkers();
       DwmEnableMMCSSOnOff(false);
 
@@ -1919,12 +1967,14 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::ProcessMessage(MFVP_MESSAGE_TYPE
       // The EVR switched from running or paused to stopped. The presenter should free resources.
       Log("ProcessMessage MFVP_MESSAGE_ENDSTREAMING");
       m_state = MP_RENDER_STATE_STOPPED;
+      m_EndOfStreamingEvent.Set();
     break;
 
     case MFVP_MESSAGE_ENDOFSTREAM:
       // All streams have ended. The ulParam parameter is not used and should be zero.
       Log("ProcessMessage MFVP_MESSAGE_ENDOFSTREAM");
       m_bEndStreaming = TRUE;
+      m_bEndBuffering = true;
       CheckForEndOfStream();
     break;
 
@@ -1960,16 +2010,17 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockStart(MFTIME hnsSystemTim
 {
   Log("OnClockStart");
   m_state = MP_RENDER_STATE_STARTED;
-  PauseThread(m_hWorker, &m_workerParams);
-  PauseThread(m_hScheduler, &m_schedulerParams);
+  
   ResetTraceStats();
   ResetFrameStats();
-  Flush(FALSE);
+
   WakeThread(m_hScheduler, &m_schedulerParams);
   WakeThread(m_hWorker, &m_workerParams);
+
   NotifyWorker(true);
   NotifyScheduler(true);
   GetAVSyncClockInterface();
+  m_bEndBuffering = false;
   return S_OK;
 }
 
@@ -1991,6 +2042,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockPause(MFTIME hnsSystemTim
 {
   Log("OnClockPause");
   m_state = MP_RENDER_STATE_PAUSED;
+  m_bEndBuffering = false;
   return S_OK;
 }
 
@@ -2004,6 +2056,7 @@ HRESULT STDMETHODCALLTYPE MPEVRCustomPresenter::OnClockRestart(MFTIME hnsSystemT
   NotifyScheduler(true);
   GetAVSyncClockInterface();
   SetupAudioRenderer();
+  m_bEndBuffering = false;
   return S_OK;
 }
 
@@ -3605,6 +3658,63 @@ void MPEVRCustomPresenter::AdjustAVSync(double currentPhaseDiff)
   }
 
   m_dPreviousVariableFreq = m_dVariableFreq;
+}
+
+
+// IBaseFilter delegate
+bool MPEVRCustomPresenter::GetState(DWORD dwMilliSecsTimeout, FILTER_STATE* State, HRESULT& pReturnValue)
+{
+  bool moreSamplesNeeded = BufferMoreSamples();
+  bool stopWaiting = false;
+
+  if (!moreSamplesNeeded) // all samples have arrieved 
+  {
+    return false;
+  }
+
+  HANDLE hEvts[2] = {m_SampleAddedEvent, m_EndOfStreamingEvent};
+  DWORD waitResult = 0;
+
+  while (!stopWaiting) // wait samples to be buffered 
+  {
+    waitResult = WaitForMultipleObjects(2, hEvts, false, dwMilliSecsTimeout);
+    switch (waitResult)
+    {
+      case WAIT_OBJECT_0:     // m_SampleAddedEvent
+        moreSamplesNeeded = BufferMoreSamples();
+        break;
+      case WAIT_OBJECT_0 + 1: // m_StoppingEvent
+        moreSamplesNeeded = false;
+        stopWaiting = true;
+        break;
+      case WAIT_TIMEOUT:
+        moreSamplesNeeded = BufferMoreSamples();
+        stopWaiting = true;
+        break;
+      default:
+        stopWaiting = true;
+        moreSamplesNeeded = false;
+        break;
+    }
+  }
+
+  if (moreSamplesNeeded)
+  {
+    *State = State_Paused;
+    pReturnValue = VFW_S_STATE_INTERMEDIATE;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
+bool MPEVRCustomPresenter::BufferMoreSamples()
+{
+  CAutoLock sLock(&m_lockSamples);
+  CAutoLock ssLock(&m_lockScheduledSamples);
+  return m_qScheduledSamples.Count() < NUM_SURFACES && !m_bEndBuffering && m_state != MP_RENDER_STATE_STOPPED;
 }
 
 

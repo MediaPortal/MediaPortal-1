@@ -85,8 +85,8 @@ namespace MediaPortal.Player
     private static extern unsafe void Vmr9SetDeinterlacePrefs(uint dwMethod);
 
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
-    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, IBaseFilter vmr9Filter,
-                                              uint monitor);
+    private static extern unsafe bool EvrInit(IVMR9PresentCallback callback, uint dwD3DDevice, 
+                                              ref IBaseFilter vmr9Filter, uint monitor);
 
     //, uint dwWindow);
     [DllImport("dshowhelper.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
@@ -361,24 +361,7 @@ namespace MediaPortal.Player
         throw new Exception("VMR9Helper: Multiple instances of VMR9 running!!!");
       }
 
-      if (_useEvr)
-      {
-        _vmr9Filter = (IBaseFilter)new EnhancedVideoRenderer();
-        Log.Info("VMR9: added EVR Renderer to graph");
-      }
-      else
-      {
-        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
-        Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
-      }
-
-      if (_vmr9Filter == null)
-      {
-        Error.SetError("Unable to play movie", "Renderer could not be added");
-        Log.Error("VMR9: Renderer not installed / cannot be used!");
-        return false;
-      }
-
+      HResult hr;
       IntPtr hMonitor;
       AdapterInformation ai = GUIGraphicsContext.currentFullscreenAdapterInfo;
       hMonitor = Manager.GetAdapterMonitor(ai.Adapter);
@@ -387,17 +370,26 @@ namespace MediaPortal.Player
       _scene = new PlaneScene(this);
       _scene.Init();
 
-      HResult hr;
       if (_useEvr)
       {
-        EvrInit(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
-        //(uint)GUIGraphicsContext.ActiveForm);
+        EvrInit(_scene, (uint)upDevice.ToInt32(), ref _vmr9Filter, (uint)hMonitor.ToInt32());
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Enhanced Video Renderer"));
+        Log.Info("VMR9: added EVR Renderer to graph");
       }
       else
       {
+        _vmr9Filter = (IBaseFilter)new VideoMixingRenderer9();
+        Log.Info("VMR9: added Video Mixing Renderer 9 to graph");
+
         Vmr9Init(_scene, (uint)upDevice.ToInt32(), _vmr9Filter, (uint)hMonitor.ToInt32());
         hr = new HResult(graphBuilder.AddFilter(_vmr9Filter, "Video Mixing Renderer 9"));
+      }
+
+      if (_vmr9Filter == null)
+      {
+        Error.SetError("Unable to play movie", "Renderer could not be added");
+        Log.Error("VMR9: Renderer not installed / cannot be used!");
+        return false;
       }
 
       if (hr != 0)

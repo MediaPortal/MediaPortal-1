@@ -14,11 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
+#include "stdafx.h"
+
 #include <streams.h>
 #include <d3dx9.h>
 
 #include "statsrenderer.h"
 #include "evrcustompresenter.h"
+
+// For more details for memory leak detection see the alloctracing.h header
+#include "..\..\alloctracing.h"
 
 #define countof(array) (sizeof(array)/sizeof(array[0]))
 
