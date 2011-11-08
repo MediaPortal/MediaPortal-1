@@ -41,6 +41,9 @@
 
 //#define SOUNDDEBUG // you will get NO sound if you enable debugging as there is a lot of output 
 
+#define CONVERT_90KHz_DS(x) (REFERENCE_TIME)(x * 111 + x / 9)
+#define CONVERT_DS_90KHz(x) (REFERENCE_TIME)(x / 100 - x / 1000)
+
 using namespace std;
 
 class CSubtitlePin;
