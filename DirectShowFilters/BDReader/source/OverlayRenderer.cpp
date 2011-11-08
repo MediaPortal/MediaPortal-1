@@ -161,6 +161,8 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
   TRACE_PERF("OverlayProc - mark 4");
 
   m_pLib->HandleOSDUpdate(osdTexture);
+  if (osdTexture.texture)
+    osdTexture.texture->Release();
 
   TRACE_PERF("OverlayProc end");
 }
