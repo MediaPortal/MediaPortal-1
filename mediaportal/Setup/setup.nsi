@@ -517,7 +517,9 @@ SectionEnd
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\MPAudioSwitcher.ax"
   ; used for digital tv
   !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\TsReader.ax"
-
+  ; used for Blu-ray
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\BDReader.ax"
+  !insertmacro UnInstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "$MPdir.Base\DVBSub3.ax"
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   !include "${git_MP}\Setup\uninstall.nsh"
