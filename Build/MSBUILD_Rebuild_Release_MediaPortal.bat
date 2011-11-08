@@ -6,9 +6,9 @@ call BuildInit.bat %1
 
 rem build
 echo.
-echo Writing SVN revision assemblies...
-rem %DeployVersionSVN% /svn="%MediaPortal%" >> %log%
-%DeployVersionSVN% /svn="%CommonMPTV%" >> %log%
+echo Writing GIT revision assemblies...
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
 echo Building MediaPortal...
@@ -16,12 +16,12 @@ echo Building MediaPortal...
 
 echo.
 echo Reverting assemblies...
-rem %DeployVersionSVN% /svn="%MediaPortal%" /revert >> %log%
-%DeployVersionSVN% /svn="%CommonMPTV%" /revert >> %log%
+rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" /revert >> %log%
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" /revert >> %log%
 
 echo.
-echo Reading the svn revision...
-%DeployVersionSVN% /svn="%CommonMPTV%" /GetVersion >> %log%
+echo Reading the git revision...
+%DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" /GetVersion >> %log%
 rem SET /p version=<version.txt >> %log%
 SET version=%errorlevel%
 DEL version.txt >> %log%

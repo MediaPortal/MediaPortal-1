@@ -64,6 +64,11 @@ namespace MediaPortal.Configuration
       FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(Application.ExecutablePath);
 
       Log.Info("Configuration v" + versionInfo.FileVersion + " is starting up on " + OSInfo.OSInfo.GetOSDisplayVersion());
+#if DEBUG
+      Log.Info("Debug build: " + Application.ProductVersion);
+#else
+      Log.Info("Build: " + Application.ProductVersion);
+#endif
 
       //Check for unsupported operating systems
       OSPrerequisites.OSPrerequisites.OsCheck(true);

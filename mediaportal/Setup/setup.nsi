@@ -28,8 +28,8 @@
 #---------------------------------------------------------------------------
 # SPECIAL BUILDS
 #---------------------------------------------------------------------------
-##### SVN_BUILD
-# This build will be created by svn bot only.
+##### GIT_BUILD
+# This build will be created by git bot only.
 # Creating such a build, will only include the changed and new files since latest stable release to the installer.
 
 ##### HEISE_BUILD
@@ -44,24 +44,24 @@
 # SKRIPT_NAME is needed to diff between the install scripts in imported headers
 !define SKRIPT_NAME "MediaPortal"
 # path definitions, all others are done in MediaPortalScriptInit
-!define svn_ROOT "..\.."
-!define svn_InstallScripts "${svn_ROOT}\Tools\InstallationScripts"
+!define git_ROOT "..\.."
+!define git_InstallScripts "${git_ROOT}\Tools\InstallationScripts"
 # common script init
-!include "${svn_InstallScripts}\include\MediaPortalScriptInit.nsh"
+!include "${git_InstallScripts}\include\MediaPortalScriptInit.nsh"
 
 # additional path definitions
-!ifdef SVN_BUILD
+!ifdef GIT_BUILD
   !define MEDIAPORTAL.BASE "C:\compile\compare_mp1_test"
 !else
-  !define MEDIAPORTAL.BASE "${svn_MP}\MediaPortal.Base"
+  !define MEDIAPORTAL.BASE "${git_MP}\MediaPortal.Base"
 !endif
-!define MEDIAPORTAL.XBMCBIN "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}"
+!define MEDIAPORTAL.XBMCBIN "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}"
 
 
 #---------------------------------------------------------------------------
 # pre build commands
 #---------------------------------------------------------------------------
-!include "${svn_MP}\Setup\setup-preBuild.nsh"
+!include "${git_MP}\Setup\setup-preBuild.nsh"
 
 
 #---------------------------------------------------------------------------
@@ -78,7 +78,7 @@
 !define STARTMENU_GROUP       "$SMPROGRAMS\Team MediaPortal\MediaPortal"
 
 ; import version from shared file
-!include "${svn_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
+!include "${git_InstallScripts}\include\MediaPortalCurrentVersion.nsh"
 
 SetCompressor /SOLID lzma
 
@@ -113,35 +113,35 @@ Var MPTray_Running
 !include FileFunc.nsh
 !include Memento.nsh
 
-!include "${svn_InstallScripts}\include\FileAssociation.nsh"
-!include "${svn_InstallScripts}\include\LanguageMacros.nsh"
-!include "${svn_InstallScripts}\include\LoggingMacros.nsh"
-!include "${svn_InstallScripts}\include\MediaPortalDirectories.nsh"
-!include "${svn_InstallScripts}\include\MediaPortalMacros.nsh"
-!include "${svn_InstallScripts}\include\ProcessMacros.nsh"
-!include "${svn_InstallScripts}\include\WinVerEx.nsh"
+!include "${git_InstallScripts}\include\FileAssociation.nsh"
+!include "${git_InstallScripts}\include\LanguageMacros.nsh"
+!include "${git_InstallScripts}\include\LoggingMacros.nsh"
+!include "${git_InstallScripts}\include\MediaPortalDirectories.nsh"
+!include "${git_InstallScripts}\include\MediaPortalMacros.nsh"
+!include "${git_InstallScripts}\include\ProcessMacros.nsh"
+!include "${git_InstallScripts}\include\WinVerEx.nsh"
 
-!ifndef SVN_BUILD
-!include "${svn_InstallScripts}\pages\AddRemovePage.nsh"
+!ifndef GIT_BUILD
+!include "${git_InstallScripts}\pages\AddRemovePage.nsh"
 !endif
-!include "${svn_InstallScripts}\pages\UninstallModePage.nsh"
+!include "${git_InstallScripts}\pages\UninstallModePage.nsh"
 
 
 #---------------------------------------------------------------------------
 # INSTALLER INTERFACE settings
 #---------------------------------------------------------------------------
 !define MUI_ABORTWARNING
-!define MUI_ICON    "${svn_InstallScripts}\Resources\install.ico"
-!define MUI_UNICON  "${svn_InstallScripts}\Resources\install.ico"
+!define MUI_ICON    "${git_InstallScripts}\Resources\install.ico"
+!define MUI_UNICON  "${git_InstallScripts}\Resources\install.ico"
 
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP              "${svn_InstallScripts}\Resources\header.bmp"
+!define MUI_HEADERIMAGE_BITMAP              "${git_InstallScripts}\Resources\header.bmp"
 !if ${VER_BUILD} == 0       # it's an official release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp.bmp"
-!else                       # it's a svn release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp-svn.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp.bmp"
+!else                       # it's a git release
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp-git.bmp"
 !endif
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${svn_InstallScripts}\Resources\wizard-mp.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp.bmp"
 !define MUI_HEADERIMAGE_RIGHT
 
 !define MUI_COMPONENTSPAGE_SMALLDESC
@@ -166,10 +166,10 @@ Var MPTray_Running
 # INSTALLER INTERFACE
 #---------------------------------------------------------------------------
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\MediaPortal License.rtf"
-!insertmacro MUI_PAGE_LICENSE "${svn_MP}\Docs\BASS License.txt"
+!insertmacro MUI_PAGE_LICENSE "${git_MP}\Docs\MediaPortal License.rtf"
+!insertmacro MUI_PAGE_LICENSE "${git_MP}\Docs\BASS License.txt"
 
-!ifndef SVN_BUILD
+!ifndef GIT_BUILD
 Page custom PageReinstallMode PageLeaveReinstallMode
 !endif
 
@@ -209,9 +209,9 @@ UninstPage custom un.UninstallModePage un.UninstallModePageLeave
 Name          "${PRODUCT_NAME}"
 BrandingText  "${PRODUCT_NAME} ${VERSION} by ${PRODUCT_PUBLISHER}"
 !if ${VER_BUILD} == 0       # it's an official release
-  OutFile "${svn_OUT}\package-mediaportal.exe"
-!else                       # it's a svn release
-  OutFile "${svn_OUT}\Setup-MediaPortal-svn-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
+  OutFile "${git_OUT}\package-mediaportal.exe"
+!else                       # it's a git release
+  OutFile "${git_OUT}\Setup-MediaPortal-git-${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${VER_BUILD}.exe"
 !endif
 InstallDir ""
 CRCCheck on
@@ -279,7 +279,7 @@ ShowUninstDetails show
 
 Function RunUninstaller
 
-!ifndef SVN_BUILD
+!ifndef GIT_BUILD
   ${VersionCompare} 1.0.2.22779 $PREVIOUS_VERSION $R0
   ; old (un)installers should be called silently
   ${If} $R0 == 2 ;previous is higher than 22780
@@ -313,7 +313,7 @@ Section "-prepare" SecPrepare
     ${If} $PREVIOUS_VERSION == ""
       ${LOG_TEXT} "INFO" "It seems MP is not installed, no update procedure will be done"
     ${ElseIf} $R3 != 0
-      ${LOG_TEXT} "INFO" "An SVN version ($0) of MP is installed. Update is not supported."
+      ${LOG_TEXT} "INFO" "A GIT version ($0) of MP is installed. Update is not supported."
     ${Else}
       ${LOG_TEXT} "INFO" "MediaPortal $0 is installed."
     ${EndIf}
@@ -347,7 +347,7 @@ Section "MediaPortal core files (required)" SecCore
 
   SetOverwrite on
 
-  #CONFIG FILES ARE ALWAYS INSTALLED by SVN and FINAL releases, BECAUSE of the config dir location
+  #CONFIG FILES ARE ALWAYS INSTALLED by GIT and FINAL releases, BECAUSE of the config dir location
   #MediaPortal Paths should not be overwritten
   !define EXCLUDED_CONFIG_FILES "\
     /x 'eHome Infrared Transceiver List XP.xml' \
@@ -365,35 +365,35 @@ Section "MediaPortal core files (required)" SecCore
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
   # Files which were diffed before including in installer
-  # means all of them are in full installer, but only the changed and new ones are in svn installer 
+  # means all of them are in full installer, but only the changed and new ones are in git installer 
   #We can not use the complete mediaportal.base dir recoursivly , because the plugins, thumbs need to be extracted to their special MPdir location
   # exluding only the folders does not work because /x plugins won't extract the \plugins AND musicplayer\plugins directory
   SetOutPath "$MPdir.Base"
   !ifdef HEISE_BUILD
-	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES} ${EXCLUDED_FILES_FOR_HEISE_BUILD} "${MEDIAPORTAL.BASE}\*"
+	File /nonfatal /x .git ${EXCLUDED_CONFIG_FILES} ${EXCLUDED_FILES_FOR_HEISE_BUILD} "${MEDIAPORTAL.BASE}\*"
   !else
-	File /nonfatal /x .svn ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
+	File /nonfatal /x .git ${EXCLUDED_CONFIG_FILES}  "${MEDIAPORTAL.BASE}\*"
   !endif
   SetOutPath "$MPdir.Base\defaults"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\defaults\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\defaults\*"
   SetOutPath "$MPdir.Base\MovieThumbnailer"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\MovieThumbnailer\*"
   SetOutPath "$MPdir.Base\MusicPlayer"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\MusicPlayer\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\MusicPlayer\*"
   SetOutPath "$MPdir.Base\Profiles"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Profiles\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Profiles\*"
   SetOutPath "$MPdir.Base\Wizards"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\Wizards\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\Wizards\*"
 
   # special MP directories
   SetOutPath "$MPdir.Language"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\language\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\language\*"
   SetOutPath "$MPdir.Plugins"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\plugins\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\plugins\*"
   SetOutPath "$MPdir.Skin"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\skin\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\skin\*"
   SetOutPath "$MPdir.Thumbs"
-  File /nonfatal /r /x .svn "${MEDIAPORTAL.BASE}\thumbs\*"
+  File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\thumbs\*"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
   ; create empty folders
@@ -417,60 +417,60 @@ Section "MediaPortal core files (required)" SecCore
 
 
   SetOutPath "$MPdir.Base"
-  File "${svn_MP}\MediaPortal.Base\MediaPortalDirs.xml"
-  File "${svn_MP}\MediaPortal.Base\BuiltInPlugins.xml"
+  File "${git_MP}\MediaPortal.Base\MediaPortalDirs.xml"
+  File "${git_MP}\MediaPortal.Base\BuiltInPlugins.xml"
   ; MediaPortal.exe
-  File "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
-  File "${svn_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
+  File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe"
+  File "${git_MP}\MediaPortal.Application\bin\${BUILD_TYPE}\MediaPortal.exe.config"
   ; Configuration
-  File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
-  File "${svn_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
+  File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe"
+  File "${git_MP}\Configuration\bin\${BUILD_TYPE}\Configuration.exe.config"
   ; Core
-  File "${svn_MP}\core\bin\${BUILD_TYPE}\Core.dll"
-  File "${svn_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
-  File "${svn_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
-  File "${svn_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
-  File "${svn_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
-  File "${svn_MP}\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
-  File "${svn_MP}\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
-  File "${svn_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
-  File "${svn_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
+  File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
+  File "${git_Common_MP_TVE3}\DirectShowLib\bin\${BUILD_TYPE}\DirectShowLib.dll"
+  File "${git_MP}\core.cpp\fontEngine\bin\${BUILD_TYPE}\fontengine.dll"
+  File "${git_MP}\core.cpp\DirectShowHelper\bin\${BUILD_TYPE}\dshowhelper.dll"
+  File "${git_MP}\core.cpp\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
+  File "${git_MP}\core.cpp\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
+  File "${git_MP}\core.cpp\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
+  File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Utils
-  File "${svn_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
+  File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   ; Common Utils
-  File "${svn_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
+  File "${git_Common_MP_TVE3}\Common.Utils\bin\${BUILD_TYPE}\Common.Utils.dll"
   ; Support
-  File "${svn_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
+  File "${git_MP}\MediaPortal.Support\bin\${BUILD_TYPE}\MediaPortal.Support.dll"
   ; Databases
-  File "${svn_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
+  File "${git_MP}\databases\bin\${BUILD_TYPE}\Databases.dll"
   ; MusicShareWatcher
-  File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
-  File "${svn_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
+  File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcher\bin\${BUILD_TYPE}\MusicShareWatcher.exe"
+  File "${git_MP}\ProcessPlugins\MusicShareWatcher\MusicShareWatcherHelper\bin\${BUILD_TYPE}\MusicShareWatcherHelper.dll"
   ; WatchDog
-  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
-  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
-  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
-  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
-  File "${svn_MP}\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\WatchDog.exe"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DaggerLib.DSGraphEdit.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\DirectShowLib-2005.dll"
+  File "${git_MP}\WatchDog\bin\${BUILD_TYPE}\MediaFoundation.dll"
   ; MP Tray
-  File "${svn_MP}\MPTray\bin\${BUILD_TYPE}\MPTray.exe"
+  File "${git_MP}\MPTray\bin\${BUILD_TYPE}\MPTray.exe"
   ; Plugins
-  File "${svn_MP}\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
-  File "${svn_MP}\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
-  File "${svn_MP}\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
+  File "${git_MP}\RemotePlugins\bin\${BUILD_TYPE}\RemotePlugins.dll"
+  File "${git_MP}\RemotePlugins\Remotes\HcwRemote\HCWHelper\bin\${BUILD_TYPE}\HcwHelper.exe"
+  File "${git_MP}\RemotePlugins\Remotes\X10Remote\Interop.X10.dll"
   SetOutPath "$MPdir.Plugins\ExternalPlayers"
-  File "${svn_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
+  File "${git_MP}\ExternalPlayers\bin\${BUILD_TYPE}\ExternalPlayers.dll"
   SetOutPath "$MPdir.Plugins\process"
-  File "${svn_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
+  File "${git_MP}\ProcessPlugins\bin\${BUILD_TYPE}\ProcessPlugins.dll"
   SetOutPath "$MPdir.Plugins\subtitle"
-  File "${svn_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
+  File "${git_MP}\SubtitlePlugins\bin\${BUILD_TYPE}\SubtitlePlugins.dll"
   SetOutPath "$MPdir.Plugins\Windows"
-  File "${svn_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
-  File "${svn_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
+  File "${git_MP}\Dialogs\bin\${BUILD_TYPE}\Dialogs.dll"
+  File "${git_MP}\WindowPlugins\bin\${BUILD_TYPE}\WindowPlugins.dll"
   ; Doc
   SetOutPath "$MPdir.Base\Docs"
-  File "${svn_MP}\Docs\BASS License.txt"
-  File "${svn_MP}\Docs\MediaPortal License.rtf"
+  File "${git_MP}\Docs\BASS License.txt"
+  File "${git_MP}\Docs\MediaPortal License.rtf"
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
@@ -478,11 +478,11 @@ Section "MediaPortal core files (required)" SecCore
   #---------------------------------------------------------------------------
   SetOutPath "$MPdir.Base"
   ;filter used for SVCD and VCD playback
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\cdxareader.ax"                             "$MPdir.Base\cdxareader.ax"       "$MPdir.Base"
   ; used for channels with two mono languages in one stereo streams
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\MPAudioswitcher\bin\${BUILD_TYPE}\MPAudioSwitcher.ax"  "$MPdir.Base\MPAudioSwitcher.ax"  "$MPdir.Base"
   ; used for digital tv
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\TsReader\bin\${BUILD_TYPE}\TsReader.ax"                "$MPdir.Base\TsReader.ax"         "$MPdir.Base"
   WriteRegStr HKCR "Media Type\Extensions\.ts"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tp"        "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
   WriteRegStr HKCR "Media Type\Extensions\.tsbuffer"  "Source Filter" "{b9559486-e1bb-45d3-a2a2-9a7afe49b23f}"
@@ -513,7 +513,7 @@ SectionEnd
 
 
 ### AUTO-GENERATED   UNINSTALLATION CODE ###
-  !include "${svn_MP}\Setup\uninstall.nsh"
+  !include "${git_MP}\Setup\uninstall.nsh"
 ### AUTO-GENERATED   UNINSTALLATION CODE   END ###
 
 
@@ -596,12 +596,12 @@ Section "-MPC-HC audio/video decoders" SecGabest
 
   SetOutPath "$MPdir.Base"
   ; register the default video and audio codecs from the MediaPlayer Classic Home Cinema Project
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax"   "$MPdir.Base"
-  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${svn_DirectShowFilters}\bin\Release\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\MpaDecFilter.ax"   "$MPdir.Base\MpaDecFilter.ax"   "$MPdir.Base"
+  !insertmacro InstallLib REGDLL NOTSHARED NOREBOOT_NOTPROTECTED "${git_DirectShowFilters}\bin\Release\Mpeg2DecFilter.ax" "$MPdir.Base\Mpeg2DecFilter.ax" "$MPdir.Base"
   
   ; adjust the merit of this directshow filter
   SetOutPath "$MPdir.Base"
-  File "${svn_ROOT}\Tools\Script & Batch tools\SetMerit\bin\Release\SetMerit.exe"
+  File "${git_ROOT}\Tools\Script & Batch tools\SetMerit\bin\Release\SetMerit.exe"
 
   ${LOG_TEXT} "INFO" "set merit for MPA"
   nsExec::ExecToLog '"$MPdir.Base\SetMerit.exe" {3D446B6F-71DE-4437-BE15-8CE47174340F} 00600000'
@@ -623,10 +623,10 @@ Section "-Powerscheduler Client plugin" SecPowerScheduler
   ${LOG_TEXT} "INFO" "Installing Powerscheduler client plugin..."
 
   SetOutPath "$MPdir.Base"
-  File "${svn_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
+  File "${git_Common_MP_TVE3}\PowerScheduler.Interfaces\bin\${BUILD_TYPE}\PowerScheduler.Interfaces.dll"
 
   SetOutPath "$MPdir.Plugins\Process"
-  File "${svn_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
+  File "${git_MP}\PowerSchedulerClientPlugin\bin\${BUILD_TYPE}\PowerSchedulerClientPlugin.dll"
 SectionEnd
 !macro Remove_${SecPowerScheduler}
   ${LOG_TEXT} "INFO" "Uninstalling Powerscheduler client plugin..."
@@ -641,9 +641,9 @@ Section "-MediaPortal Extension Installer" SecMpeInstaller
 
   ; install files
   SetOutPath "$MPdir.Base"
-  File "${svn_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
-  File "${svn_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
-  File "${svn_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
+  File "${git_MP}\MPE\MpeCore\bin\${BUILD_TYPE}\MpeCore.dll"
+  File "${git_MP}\MPE\MpeInstaller\bin\${BUILD_TYPE}\MpeInstaller.exe"
+  File "${git_MP}\MPE\MpeMaker\bin\${BUILD_TYPE}\MpeMaker.exe"
 
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1

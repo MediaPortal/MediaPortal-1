@@ -41,7 +41,7 @@
     !define VER_BUILD   0
 !endif
 
-!ifndef ${VER_TYPE}
+!ifndef VER_TYPE
 	!define VER_TYPE ""
 	!define SPC ""
 !else
@@ -55,9 +55,26 @@
 !endif
 
 !if ${VER_BUILD} != 0                      # it's a svn release
-    !define VER_SVN "${VER_DEBUG} for TESTING ONLY"
+    !ifdef BRANCH
+      !if "${BRANCH}" != ""
+        !define VER_BRANCH  " (${BRANCH} branch)"
+      !endif
+    !endif
+
+    !ifndef VER_BRANCH
+      !define VER_BRANCH  ""
+    !endif
+
+    !ifndef COMMITTISH
+      !define VER_COMMITTISH  ""
+    !else
+      !define VER_COMMITTISH  "-g${COMMITTISH}"
+    !endif
+
+    !define VER_SVN "-${VER_BUILD}${VER_COMMITTISH}${VER_BRANCH}${VER_DEBUG} for TESTING ONLY"
 !else
 	!define VER_SVN ""
 !endif
+
 
 !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${SPC}${VER_TYPE}${VER_SVN}"
