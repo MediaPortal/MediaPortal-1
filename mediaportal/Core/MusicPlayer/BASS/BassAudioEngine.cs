@@ -97,6 +97,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private const int Maxstreams = 2;
     private List<MusicStream> _streams = new List<MusicStream>(Maxstreams);
+    private List<BassAsioHandler> _asioHandlers = new List<BassAsioHandler>(Maxstreams);
     private int _currentStreamIndex = 0;
 
     private List<int> DecoderPluginHandles = new List<int>();
@@ -129,7 +130,6 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _asioDeviceNumber = -1;
     private int _speed = 1;
     private DateTime _seekUpdate = DateTime.Now;
-    private BassAsioHandler _asioHandler = null; // Make it Global to prevent GC stealing the object
 
     private int _mixer = 0;
     // Mixing Matrix
@@ -615,30 +615,62 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     private void Initialize()
     {
+      bool result = true;
       try
       {
         Log.Info("BASS: Initialize BASS environment ...");
         LoadSettings();
 
         BassRegistration.BassRegistration.Register();
-        // Set the Global Volume. 0 = silent, 10000 = Full
-        // We get 0 - 100 from Configuration, so multiply by 100
-        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, Config.StreamVolume * 100);
 
-        if (Config.Mixing || Config.UseAsio)
+        result = BassRegistration.BassRegistration.Register();
+        if (result)
         {
-          // In case of mixing use a Buffer of 500ms only, because the Mixer plays the complete bufer, before for example skipping
-         Config.BufferingMs = 500;
+          // Initialize BASS to "no sound"
+          // If Playing later via Directsound, we will init it in the InitDirectSoundDevice section
+          result = Bass.BASS_Init(0, 48000, 0, IntPtr.Zero, Guid.Empty);
+          if (!result)
+          {
+            if (Bass.BASS_ErrorGetCode() == BASSError.BASS_ERROR_ALREADY)
+            {
+              result = true;
+            }
+            else
+              HandleBassError("Initialze");
+          }
         }
-        else
+
+        if (result)
         {
+          // BASS_CONFIG_UPDATEPERIOD is set in InitDSDevice in case 
+          // we are going to playback over DirectSound.
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
+          
+          // Set the Global Volume. 0 = silent, 10000 = Full
+          // We get 0 - 100 from Configuration, so multiply by 100
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_GVOL_STREAM, Config.StreamVolume * 100);
           Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_BUFFER, Config.BufferingMs);
+
+          // network buffersize for webstreams should be larger then the playbackbuffer.
+          // To insure a stable playback-start.
+          int netBufferSize = Config.BufferingMs;
+
+          // Minimize at default value.
+          if (netBufferSize < 5000)
+            netBufferSize = 5000;
+
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_BUFFER, netBufferSize);
+
+          // PreBuffer() takes care of this.
+          Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_NET_PREBUF, 0);
         }
 
-        // Initialise the _streams
+        // Initialise the Stream and Asdio HandlerIndexes with null values
         _streams.Add(null);
         _streams.Add(null);
-
+        _asioHandlers.Add(null);
+        _asioHandlers.Add(null);
+        
         InitializeControls();
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
@@ -668,43 +700,13 @@ namespace MediaPortal.MusicPlayer.BASS
         bool initOK = false;
         if (Config.UseAsio)
         {
-          Log.Info("BASS: Using ASIO device: {0}", Config.AsioDevice);
-          BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
-          // Check if the ASIO device read is amongst the one retrieved
-          for (int i = 0; i < asioDevices.Length; i++)
-          {
-            if (asioDevices[i].name == Config.AsioDevice)
-            {
-              _asioDeviceNumber = i;
-              break;
-            }
-          }
-          if (_asioDeviceNumber > -1)
-          {
-            // not playing anything via BASS, so don't need an update thread
-            Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
-            // setup BASS - "no sound" device but 48000 (default for ASIO)
-            initOK = (Bass.BASS_Init(0, 48000, 0, IntPtr.Zero) && BassAsio.BASS_ASIO_Init(_asioDeviceNumber,BASSASIOInit.BASS_ASIO_THREAD));
-
-            // When used in config the ASIO_INIT fails. Ignore it here, to be able using the visualisations
-            if (Application.ExecutablePath.Contains("Configuration"))
-            {
-              initOK = true;
-            }
-          }
-          else
-          {
-            initOK = false;
-            Log.Error("BASS: Specified ASIO device not found. BASS is disabled.");
-          }
+          initOK = InitAsio();
         }
         else
         {
-          int soundDevice = GetSoundDevice();
-
-          initOK =
-            (Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero));
+          initOK = InitDirectSoundDevice();
         }
+
         if (initOK)
         {
           if (Settings.Instance.WinAmpPlugins.Count > 0)
@@ -718,14 +720,6 @@ namespace MediaPortal.MusicPlayer.BASS
           {
             _mixer = BassMix.BASS_Mixer_StreamCreate(44100, 8,
                                                      BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_STREAM_AUTOFREE);
-          }
-          else if (Config.UseAsio && _mixer == 0)
-          {
-            // For ASIO we neeed an Decoding Mixer with the number of Channels equals the ASIO Channels
-            _mixer = BassMix.BASS_Mixer_StreamCreate(48000, 2,
-                                                     BASSFlag.BASS_MIXER_NONSTOP | BASSFlag.BASS_STREAM_DECODE);
-            // assign ASIO and assume the ASIO format, samplerate and number of channels from the BASS stream
-            _asioHandler = new BassAsioHandler(0, 0, _mixer);
           }
 
           Log.Info("BASS: Initialization done.");
@@ -750,6 +744,111 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Error("BASS: Initialize failed. Reason: {0}", ex.Message);
       }
     }
+
+
+    /// <summary>
+    /// Initialise the DirectSOund Device
+    /// </summary>
+    /// <returns></returns>
+    private bool InitDirectSoundDevice()
+    {
+      bool result = false;
+
+      int soundDevice = GetSoundDevice();
+
+      result =
+        Bass.BASS_Init(soundDevice, 44100, BASSInit.BASS_DEVICE_DEFAULT | BASSInit.BASS_DEVICE_LATENCY, IntPtr.Zero);
+
+      // Bass will maximize the value to 100 ms
+      Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 80);
+
+      if (!result)
+      {
+        HandleBassError("InitDirectSoundDevice");
+      }
+
+      return result;
+    }
+
+
+    /// <summary>
+    /// Initialises the Asio Device
+    /// </summary>
+    /// <returns></returns>
+    private bool InitAsio()
+    {
+      bool result = false;
+
+      Log.Info("BASS: Using ASIO device: {0}", Config.AsioDevice);
+      BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
+      // Check if the ASIO device read is amongst the one retrieved
+      for (int i = 0; i < asioDevices.Length; i++)
+      {
+        if (asioDevices[i].name == Config.AsioDevice)
+        {
+          _asioDeviceNumber = i;
+          break;
+        }
+      }
+
+      if (_asioDeviceNumber > -1)
+      {
+        // not playing anything via BASS, so don't need an update thread
+        Bass.BASS_SetConfig(BASSConfig.BASS_CONFIG_UPDATEPERIOD, 0);
+
+        result = BassAsio.BASS_ASIO_Init(_asioDeviceNumber, BASSASIOInit.BASS_ASIO_THREAD);
+        if (!result)
+        {
+          HandleBassError("InitAsio");
+        }
+        else
+        {
+          // Get some information about the Device
+          BASS_ASIO_INFO info = BassAsio.BASS_ASIO_GetInfo();
+          if (info != null)
+          {
+            Log.Info("BASS: Device Information");
+            Log.Info("BASS: ---------------------------------------------");
+            Log.Info("BASS: Name: {0} {1}", info.name, info.version);
+            Log.Info("BASS: # Input Channels: {0}", info.inputs);
+            Log.Info("BASS: # Output Channels: {0}", info.outputs);
+            Log.Info("BASS: Minimum Buffer Samples: {0}", info.bufmin);
+            Log.Info("BASS: Maximum Buffer Samples: {0}", info.bufmax);
+            Log.Info("BASS: Default Buffer Length: {0}", info.bufpref);
+            Log.Info("BASS: ---------------------------------------------");
+
+            Log.Info("BASS: Channel Information");
+            Log.Info("BASS: ---------------------------------------------");
+            for (int i = 0; i < info.outputs; i ++)
+            {
+              BASS_ASIO_CHANNELINFO chanInfo = BassAsio.BASS_ASIO_ChannelGetInfo(false, i);
+              if (chanInfo != null)
+              {
+                Log.Info("BASS: {0}", chanInfo.ToString());
+              }
+            }
+            Log.Info("BASS: ---------------------------------------------");
+          }
+          else
+          {
+            Log.Error("BASS: Error getting Device Info: {0}", BassAsio.BASS_ASIO_ErrorGetCode());
+          }
+        }
+
+        // When used in config the ASIO_INIT fails. Ignore it here, to be able using the visualisations
+        if (Application.ExecutablePath.Contains("Configuration"))
+        {
+          result = true;
+        }
+      }
+      else
+      {
+        Log.Error("BASS: Specified ASIO device not found. BASS is disabled.");
+      }
+
+      return result;
+    }
+
 
     /// <summary>
     /// Get the Sound devive as set in the Configuartion
@@ -784,7 +883,11 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          Log.Info("BASS: Using Sound Device {0}", Config.SoundDevice);
+          Log.Info("BASS: Device Information");
+          Log.Info("BASS: ---------------------------------------------");
+          Log.Info("BASS: Name: {0}", soundDeviceDescriptions[sounddevice].name);
+          Log.Info("BASS: Default Device: {0}", soundDeviceDescriptions[sounddevice].IsDefault.ToString());
+          Log.Info("BASS: ---------------------------------------------");
         }
       }
       return sounddevice;
@@ -855,11 +958,19 @@ namespace MediaPortal.MusicPlayer.BASS
         BassWaDsp.BASS_WADSP_Free();
       }
       catch (Exception) {}
+
       if (Config.UseAsio)
       {
-        BassAsio.BASS_ASIO_Stop();
+        foreach (BassAsioHandler handler in _asioHandlers)
+        {
+          if (handler != null)
+          {
+            handler.Dispose();
+          }
+        }
         BassAsio.BASS_ASIO_Free();
       }
+
       if (_mixer != 0)
       {
         Bass.BASS_ChannelStop(_mixer);
@@ -900,8 +1011,13 @@ namespace MediaPortal.MusicPlayer.BASS
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
         if (Config.UseAsio)
         {
-          BassAsio.BASS_ASIO_Stop();
-          BassAsio.BASS_ASIO_Free();
+          foreach (BassAsioHandler handler in _asioHandlers)
+          {
+            if (handler != null)
+            {
+              handler.Dispose();
+            }
+          }
         }
         if (_mixer != 0)
         {
@@ -1233,6 +1349,15 @@ namespace MediaPortal.MusicPlayer.BASS
       return stream != null && (Bass.BASS_ChannelIsActive(stream.BassStream) == BASSActive.BASS_ACTIVE_PLAYING);
     }
 
+    /// <summary>
+    /// Displays Information about a BASS Exception
+    /// </summary>
+    /// <param name="methodName"></param>
+    private void HandleBassError(string methodName)
+    {
+      Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof (BASSError), Bass.BASS_ErrorGetCode()));
+    }
+
     #endregion
 
     #region IPlayer Implementation
@@ -1250,6 +1375,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       MusicStream currentStream = GetCurrentStream();
+      BassAsioHandler currentAsioHandler = _asioHandlers[_currentStreamIndex];
 
       bool result = true;
       Speed = 1; // Set playback Speed to normal speed
@@ -1273,9 +1399,9 @@ namespace MediaPortal.MusicPlayer.BASS
 
             result = Bass.BASS_Start();
 
-            if (Config.UseAsio)
+            if (Config.UseAsio && currentAsioHandler != null)
             {
-              result = BassAsio.BASS_ASIO_Start(0);
+              result = currentAsioHandler.Pause(false);   // Continue playback of Paused stream
             }
 
             if (result)
@@ -1324,46 +1450,20 @@ namespace MediaPortal.MusicPlayer.BASS
         // Enable events, for various Playback Actions to be handled
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
-        // Is Mixing / ASIO enabled, then we create a mixer channel and assign the stream to the mixer
-        if ((Config.Mixing || Config.UseAsio) && stream.BassStream != 0)
-        {
-          // Do an upmix of the stereo according to the matrix.
-          // Now Plugin the stream to the mixer and set the mixing matrix
-          BassMix.BASS_Mixer_StreamAddChannel(_mixer, stream.BassStream,
-                                              BASSFlag.BASS_MIXER_MATRIX | BASSFlag.BASS_STREAM_AUTOFREE |
-                                              BASSFlag.BASS_MIXER_NORAMPIN | BASSFlag.BASS_MIXER_BUFFER);
-          BassMix.BASS_Mixer_ChannelSetMatrix(stream.BassStream, _MixingMatrix);
-        }
-
         bool playbackStarted = false;
-        if (Config.Mixing)
-        {
-          if (Bass.BASS_ChannelIsActive(_mixer) == BASSActive.BASS_ACTIVE_PLAYING)
-          {
-            SetCueTrackEndPosition(stream);
-            playbackStarted = true;
-          }
-          else
-          {
-            playbackStarted = Bass.BASS_ChannelPlay(_mixer, false);
-            SetCueTrackEndPosition(stream);
-          }
-        }
-        else if (Config.UseAsio)
+        
+        if (Config.UseAsio && stream.BassStream != 0)
         {
           // In order to provide data for visualisation we need to clone the stream
           _streamcopy = new StreamCopy();
           _streamcopy.ChannelHandle = stream.BassStream;
           _streamcopy.StreamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
-          // decode the channel, so that we have a Streamcopy
 
-          _asioHandler.Pan = Config.AsioBalance;
-          _asioHandler.Volume = (float)Config.StreamVolume / 100f;
+          BassAsioHandler asioHandler = new BassAsioHandler(_asioDeviceNumber, 0, stream.BassStream);
+          asioHandler.Pan = Config.AsioBalance;
+          asioHandler.Volume = (float)Config.StreamVolume / 100f;
 
-          // Set the Sample Rate from the stream
-          _asioHandler.SampleRate = (double)stream.ChannelInfo.freq;
-          // try to set the device rate too (saves resampling)
-          BassAsio.BASS_ASIO_SetRate((double)stream.ChannelInfo.freq);
+          _asioHandlers[_currentStreamIndex] = asioHandler;
 
           try
           {
@@ -1371,19 +1471,15 @@ namespace MediaPortal.MusicPlayer.BASS
           }
           catch (Exception)
           {
-            Log.Error("Captured an error on StreamCopy start");
+            Log.Error("BASS: Captured an error on StreamCopy start");
           }
 
-          if (BassAsio.BASS_ASIO_IsStarted())
+          SetCueTrackEndPosition(stream);
+          playbackStarted = asioHandler.Start(0);
+
+          if (!playbackStarted)
           {
-            SetCueTrackEndPosition(stream);
-            playbackStarted = true;
-          }
-          else
-          {
-            BassAsio.BASS_ASIO_Stop();
-            playbackStarted = BassAsio.BASS_ASIO_Start(0);
-            SetCueTrackEndPosition(stream);
+            Log.Error("BASS: Error starting ASIO Playback: {0}", Enum.GetName(typeof(BASSError), BassAsio.BASS_ASIO_ErrorGetCode()));
           }
         }
         else
@@ -1480,7 +1576,10 @@ namespace MediaPortal.MusicPlayer.BASS
 
           if (Config.UseAsio)
           {
-            BassAsio.BASS_ASIO_Start(0);
+            if (_asioHandlers[_currentStreamIndex] != null)
+            {
+              _asioHandlers[_currentStreamIndex].Pause(false);
+            }
           }
         }
 
@@ -1507,7 +1606,10 @@ namespace MediaPortal.MusicPlayer.BASS
 
           if (Config.UseAsio)
           {
-            BassAsio.BASS_ASIO_Stop();
+            if (_asioHandlers[_currentStreamIndex] != null)
+            {
+              _asioHandlers[_currentStreamIndex].Pause(true);
+            }
           }
         }
 
@@ -1536,20 +1638,25 @@ namespace MediaPortal.MusicPlayer.BASS
         // Otherwise, the HandleSongEnded would be called twice
         //UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
 
-        if (Config.Mixing || Config.UseAsio)
+        if (Config.Mixing)
         {
           Bass.BASS_ChannelStop(stream.BassStream);
           BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
         }
-        else
+        else if (Config.UseAsio)
+        {
+          foreach (BassAsioHandler asioHandler in _asioHandlers)
+          {
+            if (asioHandler != null)
+            {
+              asioHandler.Stop();
+              asioHandler.Dispose();
+            }
+          }
+        }
+        else 
         {
           Bass.BASS_ChannelStop(stream.BassStream);
-        }
-
-
-        if (Config.UseAsio)
-        {
-          BassAsio.BASS_ASIO_Stop();
         }
 
         // If we did a playback of a Audio CD, release the CD, as we might have problems with other CD related functions

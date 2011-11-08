@@ -198,9 +198,14 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private void CreateStream()
     {
-      // Enable Later, when everything is changed
-      BASSFlag streamFlags = BASSFlag.BASS_STREAM_DECODE | BASSFlag.BASS_SAMPLE_FLOAT;
-      //BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
+
+      BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
+      
+      if (Config.UseAsio)
+      {
+        streamFlags |= BASSFlag.BASS_STREAM_DECODE;
+      }
+      
 
       _fileType = Utils.GetFileType(_filePath);
 
@@ -270,8 +275,9 @@ namespace MediaPortal.MusicPlayer.BASS
         return;
       }
 
-      Log.Info("BASS: Channel Information for file: {0}", _filePath);
+      Log.Info("BASS: Channel Information");
       Log.Info("BASS: ---------------------------------------------");
+      Log.Info("BASS: File: {0}", _filePath);
       Log.Info("BASS: Type of Channels: {0}", _channelInfo.ctype);
       Log.Info("BASS: Number of Channels: {0}", _channelInfo.chans);
       Log.Info("BASS: Channel Frequency: {0}", _channelInfo.freq);
