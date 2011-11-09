@@ -110,12 +110,12 @@ namespace MediaPortal.Visualization
       switch (VizPluginInfo.VisualizationType)
       {
         case VisualizationInfo.PluginType.Sonique:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, hInstance, GUIGraphicsContext.form.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_SONIQUE, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_SONIQUE);
           break;
 
         case VisualizationInfo.PluginType.Winamp:
-          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, hInstance, GUIGraphicsContext.form.Handle);
+          BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, GUIGraphicsContext.form.Handle);
           _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
           break;
       }

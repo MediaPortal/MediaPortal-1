@@ -183,7 +183,15 @@ namespace MediaPortal.Visualization
       {
         try
         {
-          BassVis.BASSVIS_Free(_visParam, ref _baseVisParam);
+          int counter = 0;
+
+          bool bFree = BassVis.BASSVIS_Free(_visParam);
+          while ((!bFree) && (counter <= 10))
+          {
+            bFree = BassVis.BASSVIS_IsFree(_visParam);
+            System.Windows.Forms.Application.DoEvents();
+            counter++;
+          }
         }
         catch (AccessViolationException) {}
 

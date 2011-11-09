@@ -1812,8 +1812,7 @@ namespace MediaPortal.Configuration.Sections
         BassVis.BASSVIS_Quit(_visParam);
       }
       _visParam = new BASSVIS_PARAM(BASSVISKind.BASSVISKIND_WINAMP);
-      BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, System.Diagnostics.Process.GetCurrentProcess().Handle,
-                           MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
+      BassVis.BASSVIS_Init(BASSVISKind.BASSVISKIND_WINAMP, MediaPortal.GUI.Library.GUIGraphicsContext.form.Handle);
       int tmpVis = BassVis.BASSVIS_GetPluginHandle(BASSVISKind.BASSVISKIND_WINAMP, VizPluginInfo.FilePath);
       if (tmpVis != 0)
       {
