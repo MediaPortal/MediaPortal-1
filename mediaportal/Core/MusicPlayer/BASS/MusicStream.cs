@@ -57,9 +57,7 @@ namespace MediaPortal.MusicPlayer.BASS
     public enum StreamAction
     {
       Ended,
-      CrossFade,
       InternetStreamChanged,
-      Freed,
     }
 
     #endregion
@@ -700,11 +698,6 @@ namespace MediaPortal.MusicPlayer.BASS
         // Only sent GUI_MSG_PLAYBACK_CROSSFADING when gapless/crossfading mode is used
         GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYBACK_CROSSFADING, 0, 0, 0, 0, 0, null);
         GUIWindowManager.SendThreadMessage(msg);
-      }
-
-      if (MusicStreamMessage != null)
-      {
-        MusicStreamMessage(this, StreamAction.CrossFade);
       }
 
       bool removed = Bass.BASS_ChannelRemoveSync(stream, handle);

@@ -586,12 +586,15 @@ namespace MediaPortal.MusicPlayer.BASS
             TrackPlaybackCompleted(this, musicStream.FilePath);
           }
           musicStream.Dispose();
-          break;
-
-        case MusicStream.StreamAction.CrossFade:
-          if (CrossFade != null)
+          // Check, if PlaylistPlayer has to offer more files
+          if (Playlists.PlayListPlayer.SingletonPlayer.GetNext() == string.Empty)
           {
-            CrossFade(this, musicStream.FilePath);
+            // Reached the end of Playback so let's stop playback
+            MusicStream currentStream = GetCurrentStream();
+            if (currentStream != null && !StreamIsPlaying(currentStream))
+            {
+              Stop();
+            }
           }
           break;
 
@@ -1634,10 +1637,6 @@ namespace MediaPortal.MusicPlayer.BASS
       Log.Debug("BASS: Stop of stream {0}.", stream.FilePath);
       try
       {
-        // Unregister all SYNCs and free the channel manually.
-        // Otherwise, the HandleSongEnded would be called twice
-        //UnregisterPlaybackEvents(stream, StreamEventSyncHandles[CurrentStreamIndex]);
-
         if (Config.Mixing)
         {
           Bass.BASS_ChannelStop(stream.BassStream);
@@ -1711,7 +1710,7 @@ namespace MediaPortal.MusicPlayer.BASS
       GUIGraphicsContext.IsPlaying = false;
 
       _filePath = "";
-      _state = PlayState.Init;
+      _state = PlayState.Ended;
 
       if (oldState != _state && PlaybackStateChanged != null)
       {
