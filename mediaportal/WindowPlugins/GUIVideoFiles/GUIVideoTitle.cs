@@ -51,6 +51,7 @@ namespace MediaPortal.GUI.Video
     private int currentPin = 0;
     private ArrayList currentProtectedShare = new ArrayList();
 
+    private static string _currentView = string.Empty;
     // Last View lvl postion on back from VideoInfo screen
     private int _currentLevel = 0;
     
@@ -514,13 +515,8 @@ namespace MediaPortal.GUI.Video
     // Prevents wrong selected item if switch to title view from actors, years, genres..
     protected override void OnShowViews()
     {
-      string currentView = handler.CurrentLevelWhere;
+      _currentView = handler.CurrentLevelWhere;
       base.OnShowViews();
-      // Check if user changed view and if "True" reset search parameters
-      if (handler.CurrentLevelWhere != currentView)
-      {
-        // Future use
-      }
     }
 
     protected override void OnInfo(int itemIndex)
@@ -683,6 +679,7 @@ namespace MediaPortal.GUI.Video
           if (item.Label == selectedItemLabel)
           {
             currentSelectedItem = itemIndex;
+            SelectItem();
             break;
           }
           itemIndex++;
@@ -694,6 +691,7 @@ namespace MediaPortal.GUI.Video
         if (handler.CurrentLevelWhere.ToLower() == "genre")
         {
           SetGenreThumbs(itemlist);
+          SelectItem();
         }
         else if (handler.CurrentLevelWhere.ToLower() == "actor")
         {
@@ -702,6 +700,7 @@ namespace MediaPortal.GUI.Video
         else if (handler.CurrentLevelWhere.ToLower() == "year")
         {
           SetYearThumbs(itemlist);
+          SelectItem();
         }
         else
         {
@@ -775,7 +774,6 @@ namespace MediaPortal.GUI.Video
 
           SetItemThumb(item, genreCover);
         }
-        SelectItem();
       }
     }
 
@@ -806,7 +804,6 @@ namespace MediaPortal.GUI.Video
           string yearCover = Util.Utils.GetCoverArt(Thumbs.MovieYear, movie.Year.ToString());
           SetItemThumb(item, yearCover);
         }
-        SelectItem();
       }
     }
 
