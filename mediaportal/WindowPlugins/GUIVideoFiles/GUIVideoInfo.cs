@@ -100,9 +100,17 @@ namespace MediaPortal.GUI.Video
       {
         videoOverlay.Focused = false;
       }
-
+      // GoBack bug fix (corrupted video info)
       if (currentMovie == null)
       {
+        if (GUIWindowManager.HasPreviousWindow())
+        {
+          GUIWindowManager.ShowPreviousWindow();
+        }
+        else
+        {
+          GUIWindowManager.CloseCurrentWindow();
+        }
         return;
       }
       // Default picture					
