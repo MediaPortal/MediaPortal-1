@@ -63,7 +63,7 @@ namespace MediaPortal.Video.Database
         {
           Directory.CreateDirectory(strPath);
         }
-        catch (Exception) {}
+        catch (Exception) { }
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -153,7 +153,7 @@ namespace MediaPortal.Video.Database
                                "CREATE TABLE movieinfo ( idMovie integer, idDirector integer, strPlotOutline text, strPlot text, strTagLine text, strVotes text, fRating text,strCast text,strCredits text, iYear integer, strGenre text, strPictureURL text, strTitle text, IMDBID text, mpaa text,runtime integer, iswatched integer, strUserReview text, strFanartURL text)");
       DatabaseUtility.AddTable(m_db, "actorlinkmovie",
                                "CREATE TABLE actorlinkmovie ( idActor integer, idMovie integer )");
-      DatabaseUtility.AddTable(m_db, "actors", 
+      DatabaseUtility.AddTable(m_db, "actors",
                                "CREATE TABLE actors ( idActor integer primary key, strActor text )");
       DatabaseUtility.AddTable(m_db, "path",
                                "CREATE TABLE path ( idPath integer primary key, strPath text, cdlabel text)");
@@ -270,7 +270,7 @@ namespace MediaPortal.Video.Database
             string strFname = DatabaseUtility.Get(results, iRow, "strFilename");
             if (bExact)
             {
-              if (strFname == strFileName)
+              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
               {
                 // was just returning 'true' here, but this caused problems with
                 // the bookmarks as these are stored by fileid. forza.
@@ -289,7 +289,7 @@ namespace MediaPortal.Video.Database
                 Int32.TryParse(DatabaseUtility.Get(results, iRow, "idMovie"), out lMovieId);
                 return lFileId;
               }
-              if (strFname == strFileName)
+              if (strFname.ToUpperInvariant() == strFileName.ToUpperInvariant())
               {
                 // was just returning 'true' here, but this caused problems with
                 // the bookmarks as these are stored by fileid. forza.
@@ -373,6 +373,8 @@ namespace MediaPortal.Video.Database
         {
           int lPathId;
           Int32.TryParse(DatabaseUtility.Get(results, 0, "idPath"), out lPathId);
+          strSQL = String.Format("update path set strPath='{0}' where idPath = {1}", strPath, lPathId);
+          m_db.Execute(strSQL);
           return lPathId;
         }
       }
@@ -1050,7 +1052,7 @@ namespace MediaPortal.Video.Database
         {
           if (szGenres.IndexOf("/") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] {'/'});
+            Tokens f = new Tokens(szGenres, new[] { '/' });
             foreach (string strGenre in f)
             {
               strGenre.Trim();
@@ -1072,7 +1074,7 @@ namespace MediaPortal.Video.Database
         if (details.Cast != Strings.Unknown)
         {
           string castFix = details.Cast.Replace("''", "'");
-          char[] splitter = {'\n', ','};
+          char[] splitter = { '\n', ',' };
           string[] actors = castFix.Split(splitter);
 
           for (int i = 0; i < actors.Length; ++i)
@@ -1422,7 +1424,7 @@ namespace MediaPortal.Video.Database
 
     private string ToHexString(byte[] bytes)
     {
-      char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+      char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
       char[] chars = new char[bytes.Length * 2];
       for (int i = 0; i < bytes.Length; i++)
       {
@@ -1565,7 +1567,7 @@ namespace MediaPortal.Video.Database
     {
       try
       {
-        
+
         string sql = String.Format("select * from movie where idMovie={0}", idMovie);
         SQLiteResultSet results = m_db.Execute(sql);
         if (results.Rows.Count == 0)
@@ -1574,7 +1576,7 @@ namespace MediaPortal.Video.Database
         }
         int watched;
         int.TryParse(DatabaseUtility.Get(results, 0, "watched"), out watched);
-        
+
         if (watched != 0)
         {
           return true;
