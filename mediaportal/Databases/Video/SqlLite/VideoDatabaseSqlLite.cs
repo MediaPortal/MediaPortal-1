@@ -63,7 +63,7 @@ namespace MediaPortal.Video.Database
         {
           Directory.CreateDirectory(strPath);
         }
-        catch (Exception) { }
+        catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, @"VideoDatabaseV5.db3"));
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
@@ -1052,7 +1052,7 @@ namespace MediaPortal.Video.Database
         {
           if (szGenres.IndexOf("/") >= 0)
           {
-            Tokens f = new Tokens(szGenres, new[] { '/' });
+            Tokens f = new Tokens(szGenres, new[] {'/'});
             foreach (string strGenre in f)
             {
               strGenre.Trim();
@@ -1074,7 +1074,7 @@ namespace MediaPortal.Video.Database
         if (details.Cast != Strings.Unknown)
         {
           string castFix = details.Cast.Replace("''", "'");
-          char[] splitter = { '\n', ',' };
+          char[] splitter = {'\n', ','};
           string[] actors = castFix.Split(splitter);
 
           for (int i = 0; i < actors.Length; ++i)
@@ -1424,7 +1424,7 @@ namespace MediaPortal.Video.Database
 
     private string ToHexString(byte[] bytes)
     {
-      char[] hexDigits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+      char[] hexDigits = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
       char[] chars = new char[bytes.Length * 2];
       for (int i = 0; i < bytes.Length; i++)
       {
