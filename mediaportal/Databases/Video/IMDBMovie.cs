@@ -18,8 +18,12 @@
 
 #endregion
 
+using System;
+using System.Collections;
 using MediaPortal.GUI.Library;
+using MediaPortal.Player;
 using MediaPortal.Util;
+using System.Web;
 
 namespace MediaPortal.Video.Database
 {
@@ -63,6 +67,10 @@ namespace MediaPortal.Video.Database
     private string _mStrUserReview = string.Empty;
     // Fanart
     private string _mStrFanartURL = string.Empty;
+    // Date added
+    private string _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+    // Date watched
+    private string _dateWatched = string.Empty;
 
     public IMDBMovie() {}
 
@@ -268,6 +276,18 @@ namespace MediaPortal.Video.Database
       set { _mStrDatabase = value; }
     }
 
+    public string DateAdded
+    {
+      get { return _dateAdded; }
+      set { _dateAdded = value; }
+    }
+
+    public string DateWatched
+    {
+      get { return _dateWatched; }
+      set { _dateWatched = value; }
+    }
+
     public void Reset()
     {
       _mStrDirector = string.Empty;
@@ -294,11 +314,18 @@ namespace MediaPortal.Video.Database
       _mStrMpaRating = string.Empty;
       _mIRunTime = 0;
       _mIWatched = 0;
+      _dateAdded = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+      _dateWatched = string.Empty;
     }
 
+    [Obsolete("This method is obsolete; use method SetProperties(bool isFolder, string file) instead.")]
     public void SetProperties(bool isFolder)
     {
-      // Title suffix for problem with covers and movie with the same name
+      SetProperties(isFolder, string.Empty);
+    }
+
+    public void SetProperties(bool isFolder, string file)
+    {
       string strThumb = GetStrThumb();
 
       GUIPropertyManager.SetProperty("#director", Director);
@@ -307,7 +334,7 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#dvdlabel", DVDLabel);
       GUIPropertyManager.SetProperty("#imdbnumber", IMDBNumber);
       GUIPropertyManager.SetProperty("#file", File);
-      GUIPropertyManager.SetProperty("#plot", Plot);
+      GUIPropertyManager.SetProperty("#plot", HttpUtility.HtmlDecode(Plot));
       GUIPropertyManager.SetProperty("#plotoutline", PlotOutline);
       GUIPropertyManager.SetProperty("#userreview", UserReview); // Added
       GUIPropertyManager.SetProperty("#rating", Rating.ToString());
@@ -319,18 +346,52 @@ namespace MediaPortal.Video.Database
       GUIPropertyManager.SetProperty("#year", Year.ToString());
       GUIPropertyManager.SetProperty("#runtime", RunTime.ToString());
       GUIPropertyManager.SetProperty("#mpaarating", MPARating);
+
+      // Movie id property
+      if (!string.IsNullOrEmpty(file))
+      {
+        SetMovieIDProperty(file, isFolder);
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#movieid", "-1");
+      }
+
+      // Watched property
       string strValue = "no";
+      
       if (Watched > 0 && !isFolder)
       {
         strValue = "yes";
       }
+      
       if (isFolder)
       {
         strValue = string.Empty;
       }
       GUIPropertyManager.SetProperty("#iswatched", strValue);
-    }
+      
+      // Watched percent property
+      int percent = 0;
+      VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), ref percent);
+      GUIPropertyManager.SetProperty("#watchedpercent", percent.ToString());
 
+      // MediaInfo Properties
+      try
+      {
+        ResetMediaInfoProperties();
+
+        if (!string.IsNullOrEmpty(file))
+        {
+          SetMediaInfoProperties(file);
+        }
+      }
+      catch (Exception e)
+      {
+        Log.Error("IMDBMovie Media Info error: file:{0}, error:{1}", file, e);
+      }
+    }
+    
     public void SetPlayProperties()
     {
       // Title suffix for problem with covers and movie with the same name
@@ -360,6 +421,60 @@ namespace MediaPortal.Video.Database
         strValue = "yes";
       }
       GUIPropertyManager.SetProperty("#Play.Current.IsWatched", strValue);
+    }
+
+    private void SetMovieIDProperty(string file, bool isFolder)
+    {
+      VirtualDirectory vDir = new VirtualDirectory();
+      int pin = 0;
+      vDir.LoadSettings("movies");
+
+      if (isFolder && !vDir.IsProtectedShare(file, out pin))
+      {
+        ArrayList mList = new ArrayList();
+        VideoDatabase.GetMoviesByPath(file, ref mList);
+        if (mList.Count > 0)
+        {
+          Random rnd = new Random();
+          int r = rnd.Next(mList.Count);
+          IMDBMovie movieDetails = (IMDBMovie)mList[r];
+          GUIPropertyManager.SetProperty("#movieid", movieDetails.ID.ToString());
+        }
+        else
+        {
+          GUIPropertyManager.SetProperty("#movieid", "-1");
+        }
+      }
+      else if (isFolder && vDir.IsProtectedShare(file, out pin))
+      {
+        GUIPropertyManager.SetProperty("#movieid", "-1");
+      }
+      else
+      {
+        GUIPropertyManager.SetProperty("#movieid", ID.ToString());
+      }
+    }
+
+    private void ResetMediaInfoProperties()
+    {
+      GUIPropertyManager.SetProperty("#VideoCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#VideoResolution", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioCodec", string.Empty);
+      GUIPropertyManager.SetProperty("#AudioChannels", string.Empty);
+      GUIPropertyManager.SetProperty("#HasSubtitles", "False");
+      GUIPropertyManager.SetProperty("#AspectRatio", string.Empty);
+    }
+
+    private void SetMediaInfoProperties(string file)
+    {
+      VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
+      VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
+      GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
+      GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
+      GUIPropertyManager.SetProperty("#AudioCodec", Util.Utils.MakeFileName(mInfo.AudioCodec));
+      GUIPropertyManager.SetProperty("#AudioChannels", mInfo.AudioChannels);
+      GUIPropertyManager.SetProperty("#HasSubtitles", mInfo.HasSubtitles.ToString());
+      GUIPropertyManager.SetProperty("#AspectRatio", mInfo.AspectRatio);
     }
 
     private string GetStrThumb()

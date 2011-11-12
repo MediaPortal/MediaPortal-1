@@ -19,10 +19,16 @@
           <id>50</id>
           <posX>622</posX>
           <posY>200</posY>
-          <width>622</width>
+          <width>650</width>
           <height>500</height>
           <onleft>2</onleft>
           <onright>2</onright>
+					<textXOff2>585</textXOff2>
+					<textYOff2>2</textYOff2>
+					<textXOff3>640</textXOff3>
+					<textYOff3>8</textYOff3>
+					<textalign3>right</textalign3>
+					<font3>font10</font3>
           <scrollOffset>2</scrollOffset>
           <spinPosX>1148</spinPosX>
           <spinPosY>660</spinPosY>
@@ -68,6 +74,7 @@
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
           <dimColor>ffffffff</dimColor>
+					<keepaspectratio>no</keepaspectratio>
         </control>
         <control>
           <description>Filmstrip view</description>
@@ -103,6 +110,9 @@
           <visible>facadeview.filmstrip</visible>
           <thumbAnimation effect="zoom" start="100,100" end="130,130" time="200">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="130,130" end="100,100" time="200">unfocus</thumbAnimation>
+					<spinPosX>1185</spinPosX>
+          <spinPosY>530</spinPosY>
+					<keepaspectratio>no</keepaspectratio>
         </control>
         <control>
           <description>Cover Flow view</description>

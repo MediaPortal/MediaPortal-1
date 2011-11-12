@@ -132,57 +132,78 @@ namespace MediaPortal.Util
 
       actorList.Clear();
 
-      string movieURL = "http://akas.imdb.com/title/" + imdbMovieID;
+      //string movieURL = "http://www.imdb.com/title/" + imdbMovieID;
+      string movieURL = "http://www.imdb.com/title/" + imdbMovieID + @"/fullcredits#cast";
       string strBodyActors = GetPage(movieURL, "utf-8");
+
+      if (strBodyActors == string.Empty)
+        return;
 
       // Director
       string strDirector = string.Empty;
+      string strDirectorName = string.Empty;
+      //string regexBlockPattern =
+      //  @"<h5>Director[s]?:</h5>(?<directors_block>.*?)</div>|<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
       string regexBlockPattern =
-        @"<h5>Director[s]?:</h5>(?<directors_block>.*?)</div>|<h4[^>]*>[^D]*Director[s]?:[^<]*</h4>[^<]*(?<directors_block>.*?)</div>";
+        @"name=""director[s]""(?<directors_block>.*?)<h5>";
       string regexPattern = @"<a\s+href=""/name/(?<idDirector>nm\d{7})/""[^>]*>(?<movieDirectors>[^<]+)</a>";
       string block =
-        Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
+        Regex.Match(HttpUtility.HtmlDecode(strBodyActors), regexBlockPattern, RegexOptions.Singleline).Groups["directors_block"].Value;
       strDirector = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["idDirector"].Value;
+      strDirectorName = Regex.Match(block, regexPattern, RegexOptions.Singleline).Groups["movieDirectors"].Value;
 
       if (strDirector != string.Empty)
       {
         // Add prefix that it's director, will be removed on fetching details
-        actorList.Add("*d" + strDirector);
+        actorList.Add("*d" + strDirectorName + "|" + strDirector + "|" + GUILocalizeStrings.Get(199).Replace(":", string.Empty));
       }
 
       // cast
       regexBlockPattern = @"<table class=""cast"">.*?</table>|<table class=""cast_list"">.*?</table>";
-      regexPattern = @"<td[^<]*<a\s+href=""/name/(?<imdbActorID>nm\d{7})/""[^>]*>(?<movieActors>[^<]*)</a>";
+      //regexPattern = @"<td[^<]*<a\s+href=""/name/(?<imdbActorID>nm\d{7})/""[^>]*>(?<actor>[^<]*)</a>.*?<td.class=""character"">.*?<div>(?<role>.*?)</div>";
+      regexPattern = @"<td[^<]*<a\s+href=""/name/(?<imdbActorID>nm\d{7})/""[^>]*>(?<actor>[^<]*)</a>.*?<td.class=""char"">(?<role>.*?)<*?</td>";
 
       Match castBlock = Regex.Match(strBodyActors, regexBlockPattern, RegexOptions.Singleline);
-
-      // These are some fallback methods to find the block with the cast, in case something changes on IMDB, these may work reasonably well anyway...
-      if (!castBlock.Success)
-        castBlock = Regex.Match(strBodyActors, @"redited\scast.*?</table>");
-      if (!castBlock.Success)
-        castBlock = Regex.Match(strBodyActors, @"first\sbilled\sonly.*?</table>");
-      if (!castBlock.Success)
-        castBlock = Regex.Match(strBodyActors, @"redited\scast.*?more");
-      if (!castBlock.Success)
-        castBlock = Regex.Match(strBodyActors, @"first\sbilled\sonly.*?more");
-
       string strCastBlock = HttpUtility.HtmlDecode(castBlock.Value);
 
       if (strCastBlock != null)
       {
         MatchCollection mc = Regex.Matches(strCastBlock, regexPattern, RegexOptions.Singleline);
 
-        string strActorID = string.Empty;
-
         if (mc.Count != 0)
         {
           foreach (Match m in mc)
           {
-            strActorID = string.Empty;
+            string strActorID = string.Empty;
             strActorID = m.Groups["imdbActorID"].Value;
             strActorID = Utils.stripHTMLtags(strActorID).Trim();
-            if (strActorID != string.Empty)
-              actorList.Add(strActorID);
+
+            string strActorName = string.Empty;
+            strActorName = m.Groups["actor"].Value;
+            strActorName = Utils.stripHTMLtags(strActorName).Trim();
+
+            string strRole = string.Empty;
+            strRole = m.Groups["role"].Value;
+            strRole = HttpUtility.HtmlDecode(strRole);
+            strRole = Utils.stripHTMLtags(strRole).Trim().Replace("\n", "");
+            strRole = strRole.Replace(",", ";").Replace("  ", "");
+            string regex = "(\\(.*\\))";
+            strRole = Regex.Replace(strRole, regex, "").Trim();
+
+            // Check if we have allready actor as director (actor also is director for movie)
+            bool found = false;
+            for (int i = 0; i < actorList.Count; i++)
+            {
+              if (actorList[i].ToString().Contains(strActorID))
+              {
+                if (strRole != string.Empty)
+                  actorList[i] = actorList[i] + ", " + strRole;
+                found = true;
+                break;
+              }
+            }
+            if (!found && strActorID != string.Empty)
+              actorList.Add(strActorName + "|" + strActorID + "|" + strRole);
           }
         }
       }
@@ -201,6 +222,7 @@ namespace MediaPortal.Util
         // Make the Webrequest
         //Log.Info("IMDB: get page:{0}", strURL);
         WebRequest req = WebRequest.Create(strURL);
+        req.Headers.Add("Accept-Language", "en-US");
         req.Timeout = 10000;
         result = req.GetResponse();
         receiveStream = result.GetResponseStream();
@@ -210,11 +232,11 @@ namespace MediaPortal.Util
         sr = new StreamReader(receiveStream, encode);
         strBody = sr.ReadToEnd();
       }
-      catch (Exception ex)
+      catch (Exception)
       {
-        Log.Error("Error retreiving WebPage: {0} Encoding:{1} err:{2} stack:{3}", strURL, strEncode, ex.Message,
-                  ex.StackTrace);
+        Log.Info("IMDBSearch: {0} unavailable.", strURL);
       }
+
       finally
       {
         if (sr != null)

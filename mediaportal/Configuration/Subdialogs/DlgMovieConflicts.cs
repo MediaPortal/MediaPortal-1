@@ -410,6 +410,16 @@ namespace MediaPortal.Configuration.Sections
     public bool OnActorsStarting(IMDBFetcher fetcher)
     {
       _progressDialog.ResetProgress();
+      _progressDialog.SetHeading("Downloading Actors and roles...");
+      _progressDialog.SetLine1("Downloading Actors and Roles...");
+      _progressDialog.SetLine2(fetcher.MovieName);
+      _progressDialog.Instance = fetcher;
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      _progressDialog.ResetProgress();
       _progressDialog.SetHeading("Downloading Actor info...");
       _progressDialog.SetLine1("Downloading Actor info...");
       _progressDialog.SetLine2(fetcher.MovieName);
@@ -472,6 +482,12 @@ namespace MediaPortal.Configuration.Sections
         _newMovieToFind = dlg.NewTitleToFind;
         selectedMovie = -1;
       }
+      return true;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selectedActor)
+    {
+      selectedActor= -1;
       return true;
     }
 

@@ -41,7 +41,8 @@ namespace MediaPortal.GUI.Video
       Rating = 4,
       Label = 5,
       Unwatched = 6,
-      Modified = 7
+      Modified = 7,
+      Created = 8,
     }
 
     protected SortMethod currentSortMethod;
@@ -151,6 +152,44 @@ namespace MediaPortal.GUI.Video
             return String.Compare(item2.Label, item1.Label, true);
           }
 
+        case SortMethod.Date: // Only recently added/watched->database view + date used for sort for title
+
+          if (item1.Label2 == string.Empty || item2.Label2 == string.Empty)
+          {
+            if (item1.FileInfo == null)
+            {
+              if (!this.TryGetFileInfo(ref item1))
+              {
+                return -1;
+              }
+            }
+
+            if (item2.FileInfo == null)
+            {
+              if (!this.TryGetFileInfo(ref item2))
+              {
+                return -1;
+              }
+            }
+
+            item1.Label2 = item1.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item1.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+            item2.Label2 = item2.FileInfo.CreationTime.ToShortDateString() + " " +
+                           item2.FileInfo.CreationTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+
+            if (item1.Label2 == string.Empty || item2.Label2 == string.Empty)
+              return -1;
+          }
+          
+          if (sortAscending)
+          {
+            return DateTime.Compare(Convert.ToDateTime(item1.Label2), Convert.ToDateTime(item2.Label2));
+          }
+          else
+          {
+            return DateTime.Compare(Convert.ToDateTime(item2.Label2), Convert.ToDateTime(item1.Label2));
+          }
+          
         case SortMethod.Label:
           if (sortAscending)
           {
@@ -186,7 +225,7 @@ namespace MediaPortal.GUI.Video
             }
           }
 
-        case SortMethod.Date:
+        case SortMethod.Created:
 
           if (item1.FileInfo == null)
           {

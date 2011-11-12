@@ -101,6 +101,11 @@ namespace MediaPortal.Video.Database
       _database.GetFiles(lMovieId, ref movies);
     }
 
+    public static void GetVideoFilesMediaInfo(string strFilenameAndPath, ref VideoFilesMediaInfo mediaInfo)
+    {
+      _database.GetVideoFilesMediaInfo(strFilenameAndPath, ref mediaInfo);
+    }
+
     public static int AddGenre(string strGenre1)
     {
       return _database.AddGenre(strGenre1);
@@ -126,9 +131,9 @@ namespace MediaPortal.Video.Database
       _database.RemoveGenresForMovie(lMovieId);
     }
 
-    public static int AddActor(string strActor1)
+    public static int AddActor(string strActorImdbId, string strActorName)
     {
-      return _database.AddActor(strActor1);
+      return _database.AddActor(strActorImdbId, strActorName);
     }
 
     public static void GetActors(ArrayList actors)
@@ -148,14 +153,19 @@ namespace MediaPortal.Video.Database
       _database.GetActorsByMovieID(idMovie, ref actorsByMovieID);
     }
 
-    public static void AddActorToMovie(int lMovieId, int lActorId)
+    public static void AddActorToMovie(int lMovieId, int lActorId, string role)
     {
-      _database.AddActorToMovie(lMovieId, lActorId);
+      _database.AddActorToMovie(lMovieId, lActorId, role);
     }
 
-    public static void DeleteActor(string actor)
+    public static string GetRoleByMovieAndActorId (int lMovieId, int lActorId)
     {
-      _database.DeleteActor(actor);
+      return _database.GetRoleByMovieAndActorId(lMovieId, lActorId);
+    }
+
+    public static void DeleteActor(string actorImdbId)
+    {
+      _database.DeleteActor(actorImdbId);
     }
 
     public static void RemoveActorsForMovie(int lMovieId)
@@ -218,6 +228,12 @@ namespace MediaPortal.Video.Database
       _database.SetWatched(details);
     }
 
+    // Date watched
+    public static void SetDateWatched(IMDBMovie details)
+    {
+      _database.SetDateWatched(details);
+    }
+
     public static void DeleteMovieStopTime(int iFileId)
     {
       _database.DeleteMovieStopTime(iFileId);
@@ -253,14 +269,14 @@ namespace MediaPortal.Video.Database
       _database.SetMovieDuration(iFileId, duration);
     }
 
-    public static void SetMovieWatchedStatus(int iMovieId, bool watched)
+    public static void SetMovieWatchedStatus(int iMovieId, bool watched, int percent)
     {
-      _database.SetMovieWatchedStatus(iMovieId, watched);
+      _database.SetMovieWatchedStatus(iMovieId, watched, percent);
     }
 
-    public static bool GetmovieWatchedStatus(int iMovieId)
+    public static bool GetmovieWatchedStatus(int iMovieId, ref int percent)
     {
-      return _database.GetMovieWatchedStatus(iMovieId);
+      return _database.GetMovieWatchedStatus(iMovieId, ref percent);
     }
 
     public static void DeleteMovie(string strFilenameAndPath)
@@ -360,6 +376,11 @@ namespace MediaPortal.Video.Database
       return _database.GetActorInfo(idActor);
     }
 
+    public static string GetActorImdbId(int idActor)
+    {
+      return _database.GetActorImdbId(idActor);
+    }
+
     public static SQLiteResultSet GetResults(string sql)
     {
       return _database.GetResults(sql);
@@ -388,6 +409,11 @@ namespace MediaPortal.Video.Database
     public static void RemoveAllVideoThumbBlacklistEntries()
     {
       _database.RemoveAllVideoThumbBlacklistEntries();
+    }
+
+    public static void  ExecuteSql (string sql)
+    {
+      _database.ExecuteSQL(sql);
     }
   }
 }

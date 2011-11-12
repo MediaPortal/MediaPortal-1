@@ -662,13 +662,39 @@ namespace MediaPortal.Util
             break;
           }
         }
+        //
         bool createVideoThumbs;
-        using (Profile.Settings xmlreader = new Profile.MPSettings())
+        bool getItemThumb = true;
+          
+        using (Settings xmlreader = new MPSettings())
         {
           createVideoThumbs = xmlreader.GetValueAsBool("thumbnails", "tvrecordedondemand", true);
+          //
+          //Get movies shares and check for video thumb create
+          //
+          const int maximumShares = 128;
+          for (int index = 0; index < maximumShares; index++)
+          {
+            // Get share dir
+            string sharePath = String.Format("sharepath{0}", index);
+            string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+            // Get item dir
+            string itemDir = string.Empty;
+            if (!item.IsRemote)
+            {
+              itemDir = (GetParentDirectory(item.Path));
+            }
+            // Check if share dir correspond to item dir
+            if (AreEqual(shareDir, itemDir))
+            {
+              string thumbsCreate = String.Format("videothumbscreate{0}", index);
+              getItemThumb = xmlreader.GetValueAsBool("movies", thumbsCreate, true);
+              break;
+            }
+          }
         }
-
-        if (createVideoThumbs && !foundVideoThumb)
+        
+        if (createVideoThumbs && !foundVideoThumb && getItemThumb)
         {
           if (Path.IsPathRooted(item.Path) && IsVideo(item.Path) &&
               !VirtualDirectory.IsImageFile(Path.GetExtension(item.Path).ToLower()))
@@ -720,6 +746,74 @@ namespace MediaPortal.Util
         }
       }
     }
+
+    /// <summary>
+    /// Function to check share path and selected item path.
+    /// Item path can have deeper subdir level but must begin
+    /// with share path to return TRUE, selected item extra 
+    /// subdir levels will be ignored
+    /// </summary>
+    /// <param name="dir1">share path</param>
+    /// <param name="dir2">selected item path</param>
+    /// <returns>true: paths are equal, false: paths do not match</returns>
+    private static bool AreEqual(string dir1, string dir2)
+    {
+      if (dir1 == string.Empty | dir2 == string.Empty)
+        return false;
+
+      try
+      {
+        DirectoryInfo parent1 = new DirectoryInfo(dir1);
+        DirectoryInfo parent2 = new DirectoryInfo(dir2);
+
+        // Build a list of parents
+        List<string> folder1Parents = new List<string>();
+        List<string> folder2Parents = new List<string>();
+
+        while (parent1 != null)
+        {
+          folder1Parents.Add(parent1.Name);
+          parent1 = parent1.Parent;
+        }
+
+        while (parent2 != null)
+        {
+          folder2Parents.Add(parent2.Name);
+          parent2 = parent2.Parent;
+        }
+        // Share path can't be deeper than item path
+        if (folder1Parents.Count > folder2Parents.Count)
+        {
+          return false;
+        }
+        // Remove extra subdirs from item path
+        if (folder2Parents.Count > folder1Parents.Count)
+        {
+          int diff = folder2Parents.Count - folder1Parents.Count;
+          for (int i = 0; i < diff; i++)
+          {
+            folder2Parents.RemoveAt(0);
+          }
+        }
+
+        bool equal = true;
+        // Final check
+        for (int i = 0; i < folder1Parents.Count; i++)
+        {
+          if (folder1Parents[i] != folder2Parents[i])
+          {
+            equal = false;
+            break;
+          }
+        }
+        return equal;
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
 
     public static void GetVideoThumb(object i)
     {

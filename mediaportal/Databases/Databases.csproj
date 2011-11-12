@@ -288,6 +288,9 @@
     </Compile>
     <Compile Include="Video\IVideoDatabase.cs" />
     <Compile Include="Video\VideoDatabase.cs" />
+    <Compile Include="Video\VideoFilesMediaInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Video\VideoThumbBlacklistDBImpl.cs" />
   </ItemGroup>
   <ItemGroup>

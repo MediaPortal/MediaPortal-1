@@ -49,17 +49,19 @@ namespace MediaPortal.Configuration.Sections
       public bool ActiveConnection = true;
       public Layout DefaultLayout = MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
       public bool ScanShare = false;
-
+      public bool CreateThumbs = true;
+      
       public bool HasPinCode
       {
         get { return (PinCode.Length > 0); }
       }
 
-      public ShareData(string name, string folder, string pinCode)
+      public ShareData(string name, string folder, string pinCode, bool thumbs)
       {
         this.Name = name;
         this.Folder = folder;
         this.PinCode = pinCode;
+        this.CreateThumbs = thumbs;
       }
     }
 
@@ -76,7 +78,10 @@ namespace MediaPortal.Configuration.Sections
     private MPCheckBox checkBoxRemember;
     private MPCheckBox checkBoxAddOpticalDiskDrives;
     private MPCheckBox checkBoxSwitchRemovableDrive;
+    private ColumnHeader columnHeader4;
     private IContainer components = null;
+
+    private string selectedSection = string.Empty;
 
     public BaseShares()
       : base("<Unknown>")
@@ -130,6 +135,7 @@ namespace MediaPortal.Configuration.Sections
       this.columnHeader1 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader3 = new System.Windows.Forms.ColumnHeader();
       this.columnHeader2 = new System.Windows.Forms.ColumnHeader();
+      this.columnHeader4 = new System.Windows.Forms.ColumnHeader();
       this.groupBox1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -251,12 +257,11 @@ namespace MediaPortal.Configuration.Sections
             | System.Windows.Forms.AnchorStyles.Left)
            | System.Windows.Forms.AnchorStyles.Right)));
       this.sharesListView.CheckBoxes = true;
-      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[]
-                                             {
-                                               this.columnHeader1,
-                                               this.columnHeader3,
-                                               this.columnHeader2
-                                             });
+      this.sharesListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader1,
+            this.columnHeader3,
+            this.columnHeader2,
+            this.columnHeader4});
       this.sharesListView.FullRowSelect = true;
       this.sharesListView.Location = new System.Drawing.Point(16, 24);
       this.sharesListView.Name = "sharesListView";
@@ -280,7 +285,11 @@ namespace MediaPortal.Configuration.Sections
       // columnHeader2
       // 
       this.columnHeader2.Text = "Folder";
-      this.columnHeader2.Width = 273;
+      this.columnHeader2.Width = 210;
+      // 
+      // columnHeader4
+      // 
+      this.columnHeader4.Text = "Thumbs";
       // 
       // BaseShares
       // 
@@ -299,12 +308,25 @@ namespace MediaPortal.Configuration.Sections
     private void addButton_Click(object sender, EventArgs e)
     {
       EditShareForm editShare = new EditShareForm();
+      
+      if (selectedSection == "movies")
+      {
+        editShare.labelCreateThumbs.Visible = true;
+        editShare.cbCreateThumbs.Visible = true;
+        editShare.CreateThumbs = true;
+      }
+      else
+      {
+        editShare.labelCreateThumbs.Visible = false;
+        editShare.cbCreateThumbs.Visible = false;
+        editShare.CreateThumbs = true;
+      }
 
       DialogResult dialogResult = editShare.ShowDialog(this);
 
       if (dialogResult == DialogResult.OK)
       {
-        ShareData shareData = new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode);
+        ShareData shareData = new ShareData(editShare.ShareName, editShare.Folder, editShare.PinCode, editShare.CreateThumbs);
         shareData.IsRemote = editShare.IsRemote;
         shareData.Server = editShare.Server;
         shareData.LoginName = editShare.LoginName;
@@ -313,7 +335,20 @@ namespace MediaPortal.Configuration.Sections
         shareData.ActiveConnection = editShare.ActiveConnection;
         shareData.RemoteFolder = editShare.RemoteFolder;
         shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
-
+        //CreateThumbs
+        if (selectedSection == "movies")
+        {
+          //int drivetype = Util.Utils.getDriveType(shareData.Folder);
+          //if (drivetype != 2 && 
+          //    drivetype != 5)
+          //{
+          shareData.CreateThumbs = editShare.CreateThumbs;
+          //}
+          //else
+          //{
+          //  shareData.CreateThumbs = false;
+          //}
+        }
         AddShare(shareData, currentlyCheckedItem == null);
       }
     }
@@ -323,7 +358,10 @@ namespace MediaPortal.Configuration.Sections
       ListViewItem listItem =
         new ListViewItem(new string[]
                            {
-                             shareData.Name, shareData.HasPinCode ? "Yes" : "No", shareData.Folder,
+                             shareData.Name, 
+                             shareData.HasPinCode ? "Yes" : "No", 
+                             shareData.Folder,
+                             shareData.CreateThumbs ? "Yes" : "No", 
                              shareData.ActiveConnection ? "Yes" : "No"
                            });
 
@@ -364,6 +402,22 @@ namespace MediaPortal.Configuration.Sections
           editShare.PassWord = shareData.PassWord;
           editShare.RemoteFolder = shareData.RemoteFolder;
           editShare.View = ProperDefaultFromLayout(shareData.DefaultLayout);
+          // CreateThumbs
+          int drivetype = Util.Utils.getDriveType(shareData.Folder);
+          if (selectedSection == "movies") // && 
+                           //drivetype != 2 && 
+                           //drivetype != 5)
+          {
+            editShare.labelCreateThumbs.Visible = true;
+            editShare.cbCreateThumbs.Visible = true;
+            editShare.CreateThumbs = shareData.CreateThumbs;
+          }
+          else
+          {
+            editShare.labelCreateThumbs.Visible = false;
+            editShare.cbCreateThumbs.Visible = false;
+            editShare.CreateThumbs = true;
+          }
 
           DialogResult dialogResult = editShare.ShowDialog(this);
 
@@ -381,12 +435,25 @@ namespace MediaPortal.Configuration.Sections
             shareData.ActiveConnection = editShare.ActiveConnection;
             shareData.RemoteFolder = editShare.RemoteFolder;
             shareData.DefaultLayout = ProperLayoutFromDefault(editShare.View);
-
+            //CreateThumbs
+            if (selectedSection == "movies")
+            {
+              //if (drivetype != 2 && 
+              //    drivetype != 5)
+              //{
+              shareData.CreateThumbs = editShare.CreateThumbs;
+              //}
+              //else
+              //{
+              //  shareData.CreateThumbs = false;
+              //}
+            }
             selectedItem.Tag = shareData;
 
             selectedItem.SubItems[0].Text = shareData.Name;
             selectedItem.SubItems[1].Text = shareData.HasPinCode ? "Yes" : "No";
             selectedItem.SubItems[2].Text = shareData.Folder;
+            selectedItem.SubItems[3].Text = shareData.CreateThumbs ? "Yes" : "No";
             if (shareData.IsRemote)
             {
               selectedItem.SubItems[2].Text = String.Format("ftp://{0}:{1}{2}", shareData.Server, shareData.Port,
@@ -530,7 +597,14 @@ namespace MediaPortal.Configuration.Sections
                 name = String.Format("({0}:) Ram", drive.Substring(0, 1).ToUpper());
                 break;
             }
-            AddShare(new ShareData(name, drive, string.Empty), false);
+            if (driveType == DriveType.Fixed || driveType == DriveType.RemoteDisk)
+            {
+              AddShare(new ShareData(name, drive, string.Empty, true), false);
+            }
+            else
+            {
+              AddShare(new ShareData(name, drive, string.Empty, false), false);
+            }
           }
         }
       }
@@ -572,6 +646,7 @@ namespace MediaPortal.Configuration.Sections
 
     protected void LoadSettings(string section, string defaultSharePath)
     {
+      selectedSection = section;
       using (Settings xmlreader = new MPSettings())
       {
         string defaultShare = xmlreader.GetValueAsString(section, "default", "");
@@ -623,10 +698,17 @@ namespace MediaPortal.Configuration.Sections
             string shareScan = String.Format("sharescan{0}", index);
             shareScanData = xmlreader.GetValueAsBool(section, shareScan, true);
           }
+          // For Movies Shares, we can indicate, if we want to create thumbs
+          bool thumbs = true;
+          if (section == "movies")
+          {
+            string thumbsCreate = String.Format("videothumbscreate{0}", index);
+            thumbs = xmlreader.GetValueAsBool(section, thumbsCreate, true);
+          }
 
           if (!String.IsNullOrEmpty(shareNameData))
           {
-            ShareData newShare = new ShareData(shareNameData, sharePathData, sharePinData);
+            ShareData newShare = new ShareData(shareNameData, sharePathData, sharePinData, thumbs);
             newShare.IsRemote = shareTypeData;
             newShare.Server = shareServerData;
             newShare.LoginName = shareLoginData;
@@ -639,13 +721,30 @@ namespace MediaPortal.Configuration.Sections
             {
               newShare.ScanShare = shareScanData;
             }
-
+            // ThumbsCreate
+            if (section == "movies")
+            {
+              newShare.CreateThumbs = thumbs;
+            }
             AddShare(newShare, shareNameData.Equals(defaultShare));
           }
         }
         if (AddOpticalDiskDrives)
         {
           AddStaticShares(DriveType.DVD, "DVD");
+        }
+        if (section == "movies")
+        {
+          sharesListView.Columns[2].Width = 210;
+          if (!sharesListView.Columns.Contains(columnHeader4))
+               sharesListView.Columns.Add(columnHeader4);
+          sharesListView.Columns[3].Width = 60;
+        }
+        else
+        {
+          sharesListView.Columns[2].Width = 270;
+          if (sharesListView.Columns.Contains(columnHeader4))
+          sharesListView.Columns.Remove(columnHeader4);
         }
       }
     }
@@ -691,6 +790,12 @@ namespace MediaPortal.Configuration.Sections
             xmlwriter.RemoveEntry(section, shareScan);
           }
 
+          if (section == "movies")
+          {
+            string thumbs = String.Format("videothumbscreate{0}", index);
+            xmlwriter.RemoveEntry(section, thumbs);
+          }
+          
           string shareNameData = string.Empty;
           string sharePathData = string.Empty;
           string sharePinData = string.Empty;
@@ -702,6 +807,8 @@ namespace MediaPortal.Configuration.Sections
           string shareRemotePathData = string.Empty;
           int shareLayout = (int)MediaPortal.GUI.Library.GUIFacadeControl.Layout.List;
           bool shareScanData = false;
+          //ThumbsCreate (default true)
+          bool thumbsCreate = true;
 
           if (CurrentShares != null && CurrentShares.Count > index)
           {
@@ -720,6 +827,8 @@ namespace MediaPortal.Configuration.Sections
               shareRemotePathData = shareData.RemoteFolder;
               shareLayout = (int)shareData.DefaultLayout;
               shareScanData = shareData.ScanShare;
+              // ThumbsCreate
+              thumbsCreate = shareData.CreateThumbs;
 
               if (CurrentShares[index] == DefaultShare)
               {
@@ -741,6 +850,12 @@ namespace MediaPortal.Configuration.Sections
               {
                 string shareScan = String.Format("sharescan{0}", index);
                 xmlwriter.SetValueAsBool(section, shareScan, shareScanData);
+              }
+              //ThumbsCreate
+              if (section == "movies")
+              {
+                string thumbs = String.Format("videothumbscreate{0}", index);
+                xmlwriter.SetValueAsBool(section, thumbs, thumbsCreate);
               }
             }
           }

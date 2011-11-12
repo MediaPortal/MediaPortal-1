@@ -59,6 +59,7 @@ namespace MediaPortal.GUI.Video
     #region SkinControls
 
     [SkinControl(6)] protected GUIButtonControl btnPlayDVD = null;
+    [SkinControl(7)] protected GUIButtonControl btnScanNew = null;
     [SkinControl(8)] protected GUIButtonControl btnTrailers = null;
     [SkinControl(9)] protected GUIButtonControl btnSavedPlaylists = null;
 
@@ -114,6 +115,8 @@ namespace MediaPortal.GUI.Video
       {
         case "modified":
           return VideoSort.SortMethod.Modified;
+        case "created":
+          return VideoSort.SortMethod.Created;
         case "date":
           return VideoSort.SortMethod.Date;
         case "label":
@@ -228,6 +231,21 @@ namespace MediaPortal.GUI.Video
         }
         return;
       }
+
+      if (control == btnScanNew)
+      {
+        // Check Internet connection
+        if (!Win32API.IsConnectedToInternet())
+        {
+          GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+          dlgOk.SetHeading(257);
+          dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+          dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+          return;
+        }
+
+        OnSearchNew();
+      }
     }
 
     protected void OnShowSavedPlaylists(string _directory)
@@ -298,11 +316,8 @@ namespace MediaPortal.GUI.Video
         case VideoSort.SortMethod.Name:
           strLine = GUILocalizeStrings.Get(365);
           break;
-        case VideoSort.SortMethod.Modified:
-          strLine = GUILocalizeStrings.Get(1221);
-          break;
         case VideoSort.SortMethod.Date:
-          strLine = GUILocalizeStrings.Get(1220);
+          strLine = GUILocalizeStrings.Get(104);
           break;
         case VideoSort.SortMethod.Size:
           strLine = GUILocalizeStrings.Get(105);
@@ -318,6 +333,12 @@ namespace MediaPortal.GUI.Video
           break;
         case VideoSort.SortMethod.Unwatched:
           strLine = GUILocalizeStrings.Get(527);
+          break;
+        case VideoSort.SortMethod.Created:
+          strLine = GUILocalizeStrings.Get(1220);
+          break;
+        case VideoSort.SortMethod.Modified:
+          strLine = GUILocalizeStrings.Get(1221);
           break;
       }
 
@@ -362,8 +383,12 @@ namespace MediaPortal.GUI.Video
       // Save view
       using (Profile.Settings xmlwriter = new Profile.MPSettings())
       {
-        xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
-        xmlwriter.SetValue("movies", "startview", VideoState.View);
+        // Save only MyVideos window views
+        if (GUIVideoFiles.IsVideoWindow(VideoState.StartWindow))
+        {
+          xmlwriter.SetValue("movies", "startWindow", VideoState.StartWindow.ToString());
+          xmlwriter.SetValue("movies", "startview", VideoState.View);
+        }
       }
 
       m_bPlaylistsLayout = false;
@@ -440,7 +465,7 @@ namespace MediaPortal.GUI.Video
           {
             item.Label2 = strSize1;
           }
-          else if (CurrentSortMethod == VideoSort.SortMethod.Modified || CurrentSortMethod == VideoSort.SortMethod.Date)
+          else if (CurrentSortMethod == VideoSort.SortMethod.Created || CurrentSortMethod == VideoSort.SortMethod.Date || CurrentSortMethod == VideoSort.SortMethod.Modified)
           {
             item.Label2 = strDate;
           }
@@ -461,16 +486,21 @@ namespace MediaPortal.GUI.Video
       }
       dlg.Reset();
       dlg.SetHeading(495); // Sort options
-
+      
+      // Watch for enums in VideoSort.cs
       dlg.AddLocalizedString(365); // name
-      dlg.AddLocalizedString(1220); // date created (date)
-      dlg.AddLocalizedString(1221); // date modified 
+      dlg.AddLocalizedString(104); // date created (date)
       dlg.AddLocalizedString(105); // size
       dlg.AddLocalizedString(366); // year
       dlg.AddLocalizedString(367); // rating
       dlg.AddLocalizedString(430); // label
       dlg.AddLocalizedString(527); // unwatched
-
+      if (GUIWindowManager.ActiveWindow == (int)Window.WINDOW_VIDEOS)
+      {
+        dlg.AddLocalizedString(1221); // date modified
+        dlg.AddLocalizedString(1220); // date created
+      }
+      
       // set the focus to currently used sort method
       dlg.SelectedLabel = (int)CurrentSortMethod;
 
@@ -487,12 +517,16 @@ namespace MediaPortal.GUI.Video
         case 365:
           CurrentSortMethod = VideoSort.SortMethod.Name;
           break;
+        case 104:
+          CurrentSortMethod = VideoSort.SortMethod.Date;
+          CurrentSortAsc = false;
+          break;
         case 1221:
           CurrentSortMethod = VideoSort.SortMethod.Modified;
           CurrentSortAsc = false;
           break;
         case 1220:
-          CurrentSortMethod = VideoSort.SortMethod.Date;
+          CurrentSortMethod = VideoSort.SortMethod.Created;
           CurrentSortAsc = false;
           break;
         case 105:

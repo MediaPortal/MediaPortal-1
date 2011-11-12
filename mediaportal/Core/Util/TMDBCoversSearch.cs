@@ -24,8 +24,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Net;
-using MediaPortal.GUI.Library;
 using System.Web;
+using MediaPortal.GUI.Library;
 
 namespace MediaPortal.Util
 {
@@ -108,6 +108,40 @@ namespace MediaPortal.Util
             _imageList.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
           }
         }
+      }
+    }
+
+    public void SearchActorImage(string actorName, ref ArrayList actorThumbs)
+    {
+      if (!Win32API.IsConnectedToInternet())
+      {
+        return;
+      }
+      actorThumbs.Clear();
+
+      if (!string.IsNullOrEmpty(actorName))
+      {
+        // Use IDMB ID - no wild goose chase
+        string defaultPosterPageLinkUrl =
+          "http://api.themoviedb.org/2.1/Person.search/en/xml/2ed40b5d82aa804a2b1fcedb5ca8d97a/" + actorName;
+        string strXML = GetPage(defaultPosterPageLinkUrl, "utf-8");
+
+        // Get all cover links and put it in the "cover" group
+        MatchCollection covers = Regex.Matches(strXML, @"<image\stype=""profile""\surl=""(?<cover>.*?)""");
+        if (covers.Count == 0)
+        {
+          return; 
+        }
+
+        foreach (Match cover in covers)
+        {
+          // Get cover - using mid quality cover
+          if (HttpUtility.HtmlDecode(cover.Groups["cover"].Value).ToLower().Contains("original.jpg"))
+          {
+            actorThumbs.Add(HttpUtility.HtmlDecode(cover.Groups["cover"].Value));
+          }
+        }
+        return;
       }
     }
 

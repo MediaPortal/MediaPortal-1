@@ -79,6 +79,9 @@ namespace MediaPortal.GUI.Library
       _properties["#mpaarating"] = string.Empty; // imdb movie MPAA rating
       _properties["#runtime"] = string.Empty; // imdb movie runtime 
       _properties["#iswatched"] = string.Empty; // boolean indication movie has been watched
+      _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
+      _properties["#watchedpercent"] = string.Empty; // videofile watched percentage
+
       _properties["#music.title"] = string.Empty;
       _properties["#music.artist"] = string.Empty;
       _properties["#music.rating"] = string.Empty;
@@ -255,7 +258,8 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Runtime"] = string.Empty;
       _properties["#Play.Current.MPAARating"] = string.Empty;
       _properties["#Play.Current.IsWatched"] = string.Empty;
-
+      _properties["#Play.Current.WatchedPercent"] = string.Empty;
+      
       _properties["#Play.Current.ArtistThumb"] = string.Empty;
       _properties["#Play.Current.Lastfm.TrackTags"] = string.Empty;
       _properties["#Play.Current.Lastfm.SimilarArtists"] = string.Empty;
@@ -470,6 +474,7 @@ namespace MediaPortal.GUI.Library
       SetProperty("#Play.Current.Runtime", string.Empty);
       SetProperty("#Play.Current.MPAARating", string.Empty);
       SetProperty("#Play.Current.IsWatched", string.Empty);
+      SetProperty("#Play.Current.watchedpercent", string.Empty);
       SetProperty("#Play.Current.AlbumArtist", string.Empty);
       SetProperty("#Play.Current.BitRate", string.Empty);
       SetProperty("#Play.Current.Comment", string.Empty);

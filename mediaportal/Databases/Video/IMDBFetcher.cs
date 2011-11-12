@@ -22,12 +22,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 using MediaPortal.Profile;
-using System.Diagnostics;
 
 namespace MediaPortal.Video.Database
 {
@@ -40,17 +40,24 @@ namespace MediaPortal.Video.Database
     private Thread _movieThread;
     private Thread _detailsThread;
     private Thread _actorsThread;
+    private Thread _actorThread;
     private IMDB.IProgress _progress;
     private bool _disableCancel;
     private bool _getActors;
     private bool _isFanArt;
     private static bool _currentCreateVideoThumbs; // Original setting for thumbnail creation
-
+    private String _actor;
+    private IMDBActor _imdbActor;
+    private int _actorId;
+    private int _actorIndex;
+    
     public IMDBFetcher(IMDB.IProgress progress)
     {
       _imdb = new IMDB(this);
       _progress = progress;
     }
+
+    #region Movie Fetch
 
     public bool Fetch(string movieName)
     {
@@ -97,6 +104,7 @@ namespace MediaPortal.Video.Database
       }
     }
 
+    // Movie details fetch/refresh
     public bool FetchDetails(int selectedMovie, ref IMDBMovie currentMovie)
     {
       try
@@ -130,8 +138,7 @@ namespace MediaPortal.Video.Database
       }
       return true;
     }
-
-    // Changed Cover and fanart grabbing
+    
     private void FetchDetailsThread()
     {
       try
@@ -167,8 +174,6 @@ namespace MediaPortal.Video.Database
           bool folderTitle = xmlreader.GetValueAsBool("moviedatabase", "usefolderastitle", false);
           // Number of downloaded fanart per movie
           int faCount = xmlreader.GetValueAsInt("moviedatabase", "fanartnumber", 1);
-          // Also add fanart for share view
-          bool faShare = xmlreader.GetValueAsBool("moviedatabase", "usefanartshare", true);
           
           OnProgress(line1, _url.Title, string.Empty, percent);
           
@@ -289,7 +294,6 @@ namespace MediaPortal.Video.Database
           if (_isFanArt)
           {
             FanArt fanartSearch = new FanArt();
-            string strFile = _movieDetails.File;
             // Check local fanart (only if every movie is in it's own folder), lookin for fanart.jpg
             if (folderTitle)
             {
@@ -305,14 +309,14 @@ namespace MediaPortal.Video.Database
             if (_movieDetails.FanartURL == string.Empty || _movieDetails.FanartURL == Strings.Unknown)
             {
               fanartSearch.GetTmdbFanartByApi
-                (_movieDetails.Path, strFile, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, faShare, string.Empty);
+                (_movieDetails.ID, _movieDetails.IMDBNumber, _movieDetails.Title, true, faCount, string.Empty);
               // Set fanart url to db
               _movieDetails.FanartURL = fanartSearch.DefaultFanartUrl;
             }
             else // Local file or user url
             {
               fanartSearch.GetLocalFanart
-                (_movieDetails.Path, strFile, _movieDetails.Title, _movieDetails.FanartURL, 0, faShare);
+                (_movieDetails.ID, _movieDetails.FanartURL, 0);
             }
             percent = percent + step; // **Progress bar message fanart End
             OnProgress(line1, _url.Title, string.Empty, percent);
@@ -320,12 +324,16 @@ namespace MediaPortal.Video.Database
           //
           // Actors - Only get actors if we really want to.
           //
-          if (_getActors)
+          //if (_getActors)
+          //{
+          Match ttcheck = Regex.Match(_movieDetails.IMDBNumber, @"tt\d{7}");
+          if (ttcheck.Success)
           {
             line1 = GUILocalizeStrings.Get(344); // **Progress bar actors start sets actual value to 0
             OnProgress(line1, _url.Title, string.Empty, 0);
             FetchActorsInMovie();
           }
+          //}
           OnDisableCancel(this);
           if (_movieDetails.ID >= 0)
           {
@@ -359,7 +367,8 @@ namespace MediaPortal.Video.Database
             // Save details to database
             //
             // Check movie table if there is an entry that new movie is already played as share
-            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID))
+            int percentage = 0;
+            if (VideoDatabase.GetmovieWatchedStatus(_movieDetails.ID, ref percentage))
             {
               _movieDetails.Watched = 1;
             }
@@ -385,48 +394,16 @@ namespace MediaPortal.Video.Database
       }
     }
 
-    // Added only actors refresh
+    #endregion
+
+    #region actors fetch
+
+    // All movie Actors fetch/refresh
     public static bool FetchMovieActors(IMDB.IProgress progress, IMDBMovie details)
     {
       IMDBFetcher fetcher = new IMDBFetcher(progress);
       fetcher._movieDetails = details;
-      return fetcher.FetchOnlyActors();
-    }
-
-    // Added only actors refresh
-    public bool FetchOnlyActors()
-    {
-      if (!OnActorsStarting(this))
-      {
-        return false;
-      }
-      _actorsThread = new Thread(FetchOnlyActorsThread);
-      _actorsThread.IsBackground = true;
-      _actorsThread.Name = "IMDBActors";
-      _actorsThread.Start();
-      if (!OnActorsStarted(this))
-      {
-        CancelFetchActors();
-        return false;
-      }
-      return true;
-    }
-
-    // Added only actors refresh
-    private void FetchOnlyActorsThread()
-    {
-      try
-      {
-        FetchActorsInMovie();
-      }
-      catch (ThreadAbortException) {}
-      finally
-      {
-        OnDetailsEnd(this);
-        //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
-        _actorsThread = null;
-        _disableCancel = false;
-      }
+      return fetcher.FetchActors();
     }
 
     public bool FetchActors()
@@ -435,15 +412,18 @@ namespace MediaPortal.Video.Database
       {
         return false;
       }
+      
       _actorsThread = new Thread(FetchActorsThread);
       _actorsThread.IsBackground = true;
       _actorsThread.Name = "IMDBActors";
       _actorsThread.Start();
+      
       if (!OnActorsStarted(this))
       {
         CancelFetchActors();
         return false;
       }
+      
       return true;
     }
 
@@ -453,164 +433,291 @@ namespace MediaPortal.Video.Database
       {
         FetchActorsInMovie();
       }
-      catch (ThreadAbortException) {}
+      catch (ThreadAbortException) { }
       finally
       {
-        OnActorsEnd(this);
+        OnDetailsEnd(this);
         //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+        if (_actorsThread.IsAlive)
+          _actorsThread.Abort();
         _actorsThread = null;
         _disableCancel = false;
       }
     }
 
-    // Changed actors find & count display on progress bar window
     private void FetchActorsInMovie()
     {
-      bool director = false; // Actor is director
-      bool byImdbId = true;
-      // Lookup by movie IMDBid number from which will get actorIMDBid, lookup by name is not so db friendly
-
+      ArrayList actors = new ArrayList();
+      
       if (_movieDetails == null)
       {
         return;
       }
-      ArrayList actors = new ArrayList();
-      // Try first by IMDBMovieId to find IMDBactorID (100% accuracy)
-      IMDBSearch actorlist = new IMDBSearch();
-      // New actor search method
-      actorlist.SearchActors(_movieDetails.IMDBNumber, ref actors);
 
-      // If search by IMDBid fails try old fetch method (by name, less accurate)
-      if (actors.Count == 0)
+      // Check for IMDBid 
+      Match ttcheck = Regex.Match(_movieDetails.IMDBNumber, @"tt\d{7}");
+      if (ttcheck.Success)
       {
-        byImdbId = false;
-        string cast = _movieDetails.Cast + "," + _movieDetails.Director;
-        char[] splitter = {'\n', ','};
-        string[] temp = cast.Split(splitter);
-
-        foreach (string element in temp)
-        {
-          string el = element.Trim();
-          if (el != string.Empty)
-          {
-            actors.Add(el);
-          }
-        }
+        // Returns nmxxxxxxx as actor name (IMDB actorID)
+        IMDBSearch imdbActors = new IMDBSearch();
+        imdbActors.SearchActors(_movieDetails.IMDBNumber, ref actors);
       }
-
+      else
+      {
+        return;
+      }
+      
       if (actors.Count > 0)
       {
-        int percent = 0;
+        // Clean old actors for movie
+        VideoDatabase.RemoveActorsForMovie(_movieDetails.ID);
+
         for (int i = 0; i < actors.Count; ++i)
         {
-          // Is actor movie director??
-          switch (byImdbId) // True-new method, false-old method
-          {
-            case true:
-              {
-                // Director
-                if (actors[i].ToString().Length > 1 && actors[i].ToString().Substring(0, 2) == "*d")
-                {
-                  director = true;
-                  // Remove director prefix (came from IMDBmovieID actor search)
-                  actors[i] = actors[0].ToString().Replace("*d", string.Empty);
-                }
-                else
-                {
-                  director = false;
-                }
-                break;
-              }
-            case false:
-              {
-                // from old method (just comparing name with dbmoviedetail director name)
-                if (actors[i].ToString().Contains(_movieDetails.Director))
-                {
-                  director = true;
-                }
-                else
-                {
-                  director = false;
-                }
-                break;
-              }
-          }
           string actor = (string)actors[i];
+          string actorImdbId = string.Empty;
+          string actorName = string.Empty;
           string role = string.Empty;
+          bool director = false;
 
-          if (byImdbId == false)
+          char[] splitter = { '|' };
+          string[] temp = actor.Split(splitter);
+          actorName = temp[0];
+          // Check if actor is movie director
+          if (actorName.StartsWith("*d"))
           {
-            int pos = actor.IndexOf(" as ");
-            if (pos >= 0)
-            {
-              role = actor.Substring(pos + 4);
-              actor = actor.Substring(0, pos);
-            }
+            actorName = actorName.Replace("*d", string.Empty);
+            director = true;
           }
-
-          actor = actor.Trim();
-          string line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
-          string line2 = actor;
-          string line3 = string.Empty;
-          OnProgress(line1, line2, line3, percent);
-          _imdb.FindActor(actor);
-          IMDBActor imdbActor = new IMDBActor();
-
-          if (_imdb.Count > 0)
+          actorImdbId = temp[1];
+          role = temp[2];
+          
+          // Add actor and link actor to movie
+          int actorId = VideoDatabase.AddActor(actorImdbId, actorName);
+          
+          if (actorId == -1)
+            continue;
+          
+          VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId, role);
+          // Update director in movieinfo
+          if (director)
           {
-            int index = FuzzyMatch(actor);
-            if (index == -1)
-            {
-              index = 0;
-            }
-
-            //Log.Info("Getting actor:{0}", _imdb[index].Title);
-            _imdb.GetActorDetails(_imdb[index], director, out imdbActor);
-            //Log.Info("Adding actor:{0}({1}),{2}", imdbActor.Name, actor, percent);
-            int actorId = VideoDatabase.AddActor(imdbActor.Name);
-            if (actorId > 0)
-            {
-              line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
-              line2 = imdbActor.Name;
-              line3 = string.Empty;
-              OnProgress(line1, line2, line3, -1);
-              VideoDatabase.SetActorInfo(actorId, imdbActor);
-              VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId);
-
-              if (imdbActor.ThumbnailUrl != string.Empty)
-              {
-                string largeCoverArt = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-                string coverArt = Util.Utils.GetCoverArtName(Thumbs.MovieActors, imdbActor.Name);
-                Util.Utils.FileDelete(largeCoverArt);
-                Util.Utils.FileDelete(coverArt);
-                line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
-                line2 = GUILocalizeStrings.Get(1009);
-                OnProgress(line1, line2, line3, percent);
-                DownloadCoverArt(Thumbs.MovieActors, imdbActor.ThumbnailUrl, imdbActor.Name);
-              }
-            }
+            _movieDetails.DirectorID = actorId;
+            _movieDetails.Director = actorName;
+            VideoDatabase.SetMovieInfoById(_movieDetails.ID, ref _movieDetails);
           }
-          else
-          {
-            line1 = GUILocalizeStrings.Get(986) + " " + (i + 1) + "/" + actors.Count;
-            line2 = actor;
-            line3 = string.Empty;
-            OnProgress(line1, line2, line3, -1);
-            int actorId = VideoDatabase.AddActor(actor);
-            imdbActor.Name = actor;
-            IMDBActor.IMDBActorMovie imdbActorMovie = new IMDBActor.IMDBActorMovie();
-            imdbActorMovie.MovieTitle = _movieDetails.Title;
-            imdbActorMovie.Year = _movieDetails.Year;
-            imdbActorMovie.Role = role;
-            imdbActor.Add(imdbActorMovie);
-            VideoDatabase.SetActorInfo(actorId, imdbActor);
-            VideoDatabase.AddActorToMovie(_movieDetails.ID, actorId);
-          }
-          percent += 100 / actors.Count;
         }
       }
     }
+    
+    // Single Actor info fetch/refresh
+    /// <summary>
+    /// Downloads actor info.
+    /// Movie details can be empty (it is used to help update role for movie if role is empty)
+    /// </summary>
+    /// <param name="progress"></param>
+    /// <param name="details"></param>
+    /// <param name="actor"></param>
+    /// <param name="actorId"></param>
+    public static IMDBActor FetchMovieActor(IMDB.IProgress progress, IMDBMovie details, string actor, int actorId)
+    {
+      if (actor == string.Empty)
+        return null;
+      
+      IMDBFetcher fetcher = new IMDBFetcher(progress);
+      fetcher._movieDetails = details;
+      // Find actor
+      IMDB imdb = new IMDB();
 
+      // Don't search for actor if name is IMDBactorId (little speed up)
+      if (!actor.StartsWith("nm"))
+      {
+        imdb = fetcher.FindActor(actor);
+
+        // Check for results
+        if (imdb.Count > 0)
+        {
+          int i = 0;
+
+          // If more than 1, invoke selection
+          if (imdb.Count > 1)
+          {
+            if (!fetcher.OnSelectActor(fetcher, out i))
+            {
+              return null;
+            }
+          }
+          // Fetch actor details
+          return fetcher.FetchActorDetails(actor, actorId, i);
+        }
+      }
+      else // Direct get actor details (by actorImdbId) as name
+      {
+        fetcher._imdb.SetIMDBActor("http://www.imdb.com/name/" + actor, actor);
+        return fetcher.FetchActorDetails(actor, actorId, 0);
+      }
+      return null;
+    }
+    
+    public IMDB FindActor(string actor)
+    {
+      if (!OnActorInfoStarting(this))
+      {
+        return _imdb;
+      }
+
+      _actor = actor;
+      _actorThread = new Thread(FindActorThread);
+      _actorThread.IsBackground = true;
+      _actorThread.Name = "IMDBSingleActor";
+      _actorThread.Start();
+      
+      //if (!OnActorInfoStarting(this))
+      if (OnActorsStarted(this))
+      {
+        CancelFetchActor();
+        return _imdb;
+      }
+      
+      return _imdb;
+    }
+
+    private void FindActorThread()
+    {
+      try
+      {
+        FindActor();
+      }
+      catch (ThreadAbortException) { }
+      finally
+      {
+        OnDetailsEnd(this);
+        //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+        if (_actorThread.IsAlive)
+          _actorThread.Abort();
+        _actorThread = null;
+        _disableCancel = false;
+      }
+    }
+
+    private void FindActor()
+    {
+      _imdb = new IMDB();
+      string line1 = GUILocalizeStrings.Get(197); ; //Querying IMDB info.
+      string line2 = string.Empty;
+      string line3 = string.Empty;
+      OnProgress(line1, line2, line3, -1);
+      _imdb.FindActor(_actor);
+    }
+
+    //
+    // Single Actor Details
+    //
+    public IMDBActor FetchActorDetails(string actor, int actorId, int actorIndex)
+    {
+      if (!OnActorInfoStarting(this))
+      {
+        return _imdbActor;
+      }
+      _actor = actor;
+      _actorId = actorId;
+      _actorIndex = actorIndex;
+
+      if(_actorThread != null)
+      {
+        _actorThread.Abort();
+        _actorThread = null;
+      }
+
+      _actorThread = new Thread(FetchActorDetailsThread);
+      _actorThread.IsBackground = true;
+      _actorThread.Name = "IMDBSingleActorDetails";
+      _actorThread.Start();
+
+      if (!OnActorsStarted(this))
+      {
+        CancelFetchActor();
+        return _imdbActor;
+      }
+      
+      return _imdbActor;
+    }
+
+    private void FetchActorDetailsThread()
+    {
+      try
+      {
+        FetchActorDetails();
+      }
+      catch (ThreadAbortException) { }
+      finally
+      {
+        OnDetailsEnd(this);
+        //Log.Info("Ending Thread for Fetching actors:{0}", actorsThread.ManagedThreadId);
+        if (_actorThread.IsAlive)
+          _actorThread.Abort();
+        _actorThread = null;
+        _disableCancel = false;
+      }
+    }
+
+    private void FetchActorDetails()
+    {
+      string line1 = _actor;
+      string line2 = string.Empty;
+      string line3 = string.Empty;
+      OnProgress(line1, line2, line3, -1);
+      _imdb.GetActorDetails(_imdb[_actorIndex], out _imdbActor);
+
+      // Try to update role
+      for (int j = 0; j < _imdbActor.Count; j++)
+      {
+        string actorRole = _imdbActor[j].Role;
+        string actorMovieId = _imdbActor[j].MovieImdbID;
+        if (actorMovieId == _movieDetails.IMDBNumber)
+        {
+          VideoDatabase.AddActorToMovie(_movieDetails.ID, _actorId, actorRole);
+          break;
+        }
+      }
+
+      // Update ActorImdbId
+      string sql = string.Format("update Actors set IMDBActorId='{0}' where idActor ={1}",
+                                  _imdbActor.IMDBActorID,
+                                  _actorId);
+      VideoDatabase.ExecuteSql(sql);
+      
+      VideoDatabase.SetActorInfo(_actorId, _imdbActor);
+      
+      // Actor thumbs
+      if (!string.IsNullOrEmpty(_imdbActor.ThumbnailUrl))
+      {
+        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+        Util.Utils.FileDelete(largeCoverArtImage);
+        Util.Utils.FileDelete(coverArtImage);
+        line1 = _actor;
+        line2 = GUILocalizeStrings.Get(1009); //Downloading cover art
+        line3 = string.Empty;
+        OnProgress(line1, line2, line3, -1);
+        DownloadCoverArt(Thumbs.MovieActors, _imdbActor.ThumbnailUrl, _actorId.ToString());
+      }
+      else
+      {
+        // Sometimes we can have wrong actor pic (wrong actor selected in list before) so delete it
+        string largeCoverArtImage = Util.Utils.GetLargeCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+        string coverArtImage = Util.Utils.GetCoverArtName(Thumbs.MovieActors, _actorId.ToString());
+        Util.Utils.FileDelete(largeCoverArtImage);
+        Util.Utils.FileDelete(coverArtImage);
+
+        //Log.Debug("IMDBFetcher single actor fetch: url=null for actor {0}", actor);
+      }
+      _imdbActor = VideoDatabase.GetActorInfo(_actorId);
+    }
+
+    #endregion
+
+    
     public void CancelFetchActors()
     {
       if (_actorsThread == null)
@@ -621,6 +728,19 @@ namespace MediaPortal.Video.Database
       {
         //Log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
         _actorsThread.Abort();
+      }
+    }
+
+    public void CancelFetchActor()
+    {
+      if (_actorThread == null)
+      {
+        return;
+      }
+      if ((_actorThread.IsAlive) && (!_disableCancel))
+      {
+        //Log.Info("Aborting Thread for Fetching:{0}", actorsThread.ManagedThreadId);
+        _actorThread.Abort();
       }
     }
 
@@ -657,6 +777,11 @@ namespace MediaPortal.Video.Database
       set { _movieName = value; }
     }
 
+    public string ActorName
+    {
+      get { return _actor; }
+    }
+
     // count the elements
     public int Count
     {
@@ -687,10 +812,10 @@ namespace MediaPortal.Video.Database
       int matchingIndex = -1;
       int matchingDistance = int.MaxValue;
       bool isAmbiguous = false;
+      name = _imdb.GetSearchString(name);
 
       for (int index = 0; index < _imdb.Count; ++index)
       {
-        name = _imdb.GetSearchString(name);
         int distance = Levenshtein.Match(name, _imdb[index].Title.ToLower());
 
         if (distance == matchingDistance && matchingDistance != int.MaxValue)
@@ -815,6 +940,15 @@ namespace MediaPortal.Video.Database
       return false;
     }
 
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      if (_progress != null)
+      {
+        return _progress.OnActorInfoStarting(fetcher);
+      }
+      return false;
+    }
+
     public bool OnActorsEnd(IMDBFetcher fetcher)
     {
       if (_progress != null)
@@ -848,6 +982,16 @@ namespace MediaPortal.Video.Database
       if (_progress != null)
       {
         return _progress.OnSelectMovie(fetcher, out selected);
+      }
+      selected = -1;
+      return false;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      if (_progress != null)
+      {
+        return _progress.OnSelectActor(fetcher, out selected);
       }
       selected = -1;
       return false;
@@ -1006,7 +1150,26 @@ namespace MediaPortal.Video.Database
           {
             IMDB tmpImdb = new IMDB();
             selectedMovie = fetcher.FuzzyMatch(tmpImdb.GetSearchString(fetcher.MovieName));
-            if (selectedMovie == -1)
+            if (selectedMovie == -1 && fetcher.Count > 0)
+            {
+              if (!fetcher.OnSelectMovie(fetcher, out selectedMovie))
+              {
+                return false;
+              }
+              //if (!fetcher.OnMovieNotFound(fetcher))
+              //{
+              //  return false;
+              //}
+              //if (!fetcher.OnRequestMovieTitle(fetcher, out strMovieName))
+              //{
+              //  return false;
+              //}
+              //if (strMovieName == string.Empty)
+              //{
+              //  return false;
+              //}
+            }
+            else if (selectedMovie == -1)
             {
               if (!fetcher.OnMovieNotFound(fetcher))
               {
@@ -1136,7 +1299,6 @@ namespace MediaPortal.Video.Database
       catch (Exception) {}
     }
 
-    // Changed - referesh DB only - CDx method for multiple movie files
     /// <summary>
     /// Download IMDB info for all movies in a collection of paths
     /// </summary>

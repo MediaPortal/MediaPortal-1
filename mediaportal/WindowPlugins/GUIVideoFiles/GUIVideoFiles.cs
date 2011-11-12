@@ -23,8 +23,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Threading;
+using System.Xml;
 using System.Xml.Serialization;
+using CSScriptLibrary;
 using MediaPortal.Configuration;
 using MediaPortal.Database;
 using MediaPortal.Dialogs;
@@ -138,6 +142,22 @@ namespace MediaPortal.GUI.Video
     private DateTime _resetSMSsearchDelay;
 
     private int _howToPlayAll = 3;
+    //Video info in share view before play
+    private bool _videoInfoInShare;
+    private bool _playClicked;
+
+    private int _watchedPercentage = 95;
+    public static GUIListItem _currentSelectedGUIItem;
+
+    private Thread _setThumbs;
+    private List<GUIListItem> _threadGUIItems = new List<GUIListItem>();
+    private ISelectDVDHandler _threadISelectDVDHandler;
+    private bool _setThumbsThreadAborted = false;
+
+    // grabber index holds information/urls of available grabbers to download
+    private static string _grabberIndexFile = Config.GetFile(Config.Dir.Config, "MovieInfoGrabber.xml");
+    private static string _grabberIndexUrl = @"http://install.team-mediaportal.com/MP1/MovieInfoGrabber.xml";
+    private static Dictionary<string, IIMDBScriptGrabber> _grabberList;
 
     #endregion
 
@@ -194,8 +214,50 @@ namespace MediaPortal.GUI.Video
       LoadSettings();
     }
 
-    #region Serialisation
+    protected override void OnSearchNew()
+    {
+      int maximumShares = 128;
+      ArrayList availablePaths = new ArrayList();
 
+      using (Profile.Settings xmlreader = new MPSettings())
+      {
+        for (int index = 0; index < maximumShares; index++)
+        {
+          string sharePath = String.Format("sharepath{0}", index);
+          string shareDir = xmlreader.GetValueAsString("movies", sharePath, "");
+          string shareScan = String.Format("sharescan{0}", index);
+          bool shareScanData = xmlreader.GetValueAsBool("movies", shareScan, true);
+
+          if (shareScanData && shareDir != string.Empty)
+          {
+            availablePaths.Add(shareDir);
+          }
+        }
+
+        //bool getActors = xmlreader.GetValueAsBool("moviedatabase", "getactors", true);
+        IMDBFetcher.ScanIMDB(this, availablePaths, true, true, true, false);
+        // Send global message that movie is refreshed/scanned
+        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+        GUIWindowManager.SendMessage(msg);
+
+        _currentSelectedItem = facadeLayout.SelectedListItemIndex;
+        
+        if (_currentSelectedItem > 0)
+        {
+          _currentSelectedItem--;
+        }
+
+        LoadDirectory(_currentFolder);
+
+        if (_currentSelectedItem >= 0)
+        {
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _currentSelectedItem);
+        }
+      }
+    }
+
+    #region Serialisation
+    
     protected override void LoadSettings()
     {
       base.LoadSettings();
@@ -205,6 +267,13 @@ namespace MediaPortal.GUI.Video
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
         VideoState.StartWindow = xmlreader.GetValueAsInt("movies", "startWindow", GetID);
         VideoState.View = xmlreader.GetValueAsString("movies", "startview", "369");
+        
+        // Prevent unaccesible My Videos from corrupted config
+        if (!GUIVideoFiles.IsVideoWindow(VideoState.StartWindow))
+        {
+          VideoState.StartWindow = GetID;
+          VideoState.View = "369";
+        }
 
         _isFuzzyMatching = xmlreader.GetValueAsBool("movies", "fuzzyMatching", false);
         _scanSkipExisting = xmlreader.GetValueAsBool("moviedatabase", "scanskipexisting", false);
@@ -214,6 +283,8 @@ namespace MediaPortal.GUI.Video
         _fileMenuEnabled = xmlreader.GetValueAsBool("filemenu", "enabled", true);
         _fileMenuPinCode = Util.Utils.DecryptPin(xmlreader.GetValueAsString("filemenu", "pincode", string.Empty));
         _howToPlayAll = xmlreader.GetValueAsInt("movies", "playallinfolder", 3);
+        _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
+        _videoInfoInShare = xmlreader.GetValueAsBool("moviedatabase", "movieinfoshareview", false);
 
         _virtualDirectory = VirtualDirectories.Instance.Movies;
 
@@ -322,6 +393,10 @@ namespace MediaPortal.GUI.Video
         ShowFileMenu(true);
       }
 
+      if (action.wID == Action.ActionType.ACTION_PLAY || action.wID == Action.ActionType.ACTION_MUSIC_PLAY)
+      {
+        _playClicked = true;
+      }
       base.OnAction(action);
     }
 
@@ -345,6 +420,7 @@ namespace MediaPortal.GUI.Video
     protected override void OnPageLoad()
     {
       base.OnPageLoad();
+      
       if (!KeepVirtualDirectory(PreviousWindowId))
       {
         Reset();
@@ -372,6 +448,12 @@ namespace MediaPortal.GUI.Video
 
     protected override void OnPageDestroy(int newWindowId)
     {
+      if (_setThumbs != null && _setThumbs.IsAlive)
+      {
+        _setThumbs.Abort();
+        _setThumbs = null;
+      }
+
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       SaveFolderSettings(_currentFolder);
       base.OnPageDestroy(newWindowId);
@@ -592,7 +674,7 @@ namespace MediaPortal.GUI.Video
       {
         itemlist = _cachedItems;
         SelectDVDHandler selectDvdHandler = new SelectDVDHandler();
-
+        
         foreach (GUIListItem item in itemlist)
         {
           if (watchedFiles != null && watchedFiles.Contains(item.Path))
@@ -606,7 +688,9 @@ namespace MediaPortal.GUI.Video
             if (item.IsFolder)
               file = selectDvdHandler.GetFolderVideoFile(item.Path);
             // Check db for watched status for played movie or changed status in movie info window
-            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file));
+            int percentWatched = 0;
+            item.IsPlayed = VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), ref percentWatched);
+            item.Label3 = percentWatched + "%";
           }
           //Do NOT add OnItemSelected event handler here, because its still there...
           facadeLayout.Add(item);
@@ -687,7 +771,7 @@ namespace MediaPortal.GUI.Video
           GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
         }
         // folder.jpg will already be assigned from "itemlist = virtualDirectory.GetDirectory(_currentFolder);" here
-        selectDVDHandler.SetIMDBThumbs(itemlist, _markWatchedFiles, _eachFolderIsMovie);
+        SetImdbThumbs(itemlist, selectDVDHandler);
 
         foreach (GUIListItem item in itemlist)
         {
@@ -737,10 +821,28 @@ namespace MediaPortal.GUI.Video
         UpdateButtonStates();
         SelectCurrentItem();
       }
+      
+      // Reload thumbs if previous load thumb thread aborted (only when cache is active)
+      // If thumb thread was aborted and on next loaddirectory with cache "on", some thumbs
+      // can be missing and wan't be loaded, so here we reload them again.
+      if (_setThumbsThreadAborted)
+      {
+        ISelectDVDHandler selectDVDHandler;
+        if (GlobalServiceProvider.IsRegistered<ISelectDVDHandler>())
+        {
+          selectDVDHandler = GlobalServiceProvider.Get<ISelectDVDHandler>();
+        }
+        else
+        {
+          selectDVDHandler = new SelectDVDHandler();
+          GlobalServiceProvider.Add<ISelectDVDHandler>(selectDVDHandler);
+        }
+        SetImdbThumbs(itemlist, selectDVDHandler);
+      }
 
       GUIWaitCursor.Hide();
     }
-
+    
     protected override void OnClicked(int controlId, GUIControl control, Action.ActionType actionType)
     {
       base.OnClicked(controlId, control, actionType);
@@ -755,6 +857,7 @@ namespace MediaPortal.GUI.Video
 
       if (item == null)
       {
+        _playClicked = false;
         return;
       }
       bool isFolderAMovie = false;
@@ -784,6 +887,7 @@ namespace MediaPortal.GUI.Video
       {
         if (!_virtualDirectory.RequestPin(path))
         {
+          _playClicked = false;
           return;
         }
         if (_virtualDirectory.IsRemote(path))
@@ -792,6 +896,7 @@ namespace MediaPortal.GUI.Video
           {
             if (!_virtualDirectory.ShouldWeDownloadFile(path))
             {
+              _playClicked = false;
               return;
             }
             if (!_virtualDirectory.DownloadRemoteFile(path, item.FileInfo.Length))
@@ -803,7 +908,7 @@ namespace MediaPortal.GUI.Video
               msg.Param3 = 0;
               msg.Param4 = 0;
               GUIWindowManager.SendMessage(msg);
-
+              _playClicked = false;
               return;
             }
             else
@@ -821,6 +926,7 @@ namespace MediaPortal.GUI.Video
         {
           if (!_virtualDirectory.IsRemoteFileDownloaded(path, item.FileInfo.Length))
           {
+            _playClicked = false;
             return;
           }
         }
@@ -832,14 +938,25 @@ namespace MediaPortal.GUI.Video
         if (PlayListFactory.IsPlayList(movieFileName))
         {
           LoadPlayList(movieFileName);
+          _playClicked = false;
           return;
         }
 
         if (!CheckMovie(movieFileName))
         {
+          _playClicked = false;
           return;
         }
+
+        if (_videoInfoInShare && VideoDatabase.HasMovieInfo(movieFileName) && !_playClicked)
+        {
+          OnInfo(facadeLayout.SelectedListItemIndex);
+          return;
+        }
+        
         bool askForResumeMovie = true;
+        _playClicked = false;
+
         if (_mapSettings.Stack)
         {
           int selectedFileIndex = 0;
@@ -1121,8 +1238,13 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-      //if (  MediaPortal.Util.Utils.IsNFO(strFile)) return;
+      
       if (PlayListFactory.IsPlayList(strFile))
+      {
+        return;
+      }
+      // Don't add web streams (e.g.: from Online videos)
+      if (strFile.StartsWith("http:"))
       {
         return;
       }
@@ -1167,6 +1289,7 @@ namespace MediaPortal.GUI.Video
     {
       _currentSelectedItem = facadeLayout.SelectedListItemIndex;
       GUIListItem pItem = facadeLayout.SelectedListItem;
+      _currentSelectedGUIItem = pItem;
       if (pItem == null)
       {
         return;
@@ -1271,10 +1394,17 @@ namespace MediaPortal.GUI.Video
         }
         Log.Info("GUIVideoFiles: IMDB search: {0}, file:{1}, path:{2}", movieDetails.SearchString, movieDetails.File,
                  movieDetails.Path);
-        if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, _getActors))
+        if (!IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, _isFuzzyMatching, false))
         {
           return;
         }
+        else
+        {
+          // Send global message that movie is refreshed/scanned
+          GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_VIDEOINFO_REFRESH, 0, 0, 0, 0, 0, null);
+          GUIWindowManager.SendMessage(msg);
+        }
+
       }
       // Movie is in the database
       GUIVideoInfo videoInfo = (GUIVideoInfo)GUIWindowManager.GetWindow((int)Window.WINDOW_VIDEO_INFO);
@@ -1379,23 +1509,44 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void SetMovieUnwatched(string movieFileName, bool isFolder)
+    private void SetMovieWatchStatus(string movieFileName, bool isFolder, bool watched)
     {
       SelectDVDHandler isDvdFolder = new SelectDVDHandler();
 
       if (isFolder && isDvdFolder.IsDvdDirectory(movieFileName))
         movieFileName = isDvdFolder.GetFolderVideoFile(movieFileName);
 
+      VideoDatabase.AddMovieFile(movieFileName);
+
       if (VideoDatabase.HasMovieInfo(movieFileName))
       {
         IMDBMovie movieDetails = new IMDBMovie();
-        int idMovie = VideoDatabase.GetMovieInfo(movieFileName, ref movieDetails);
-        movieDetails.Watched = 0;
+        
+        if (!watched)
+        {
+          movieDetails.Watched = 0;
+        }
+        else
+        {
+          movieDetails.Watched = 1;
+        }
+        
         VideoDatabase.SetWatched(movieDetails);
       }
-      int idFile = VideoDatabase.GetFileId(movieFileName);
-      VideoDatabase.DeleteMovieStopTime(idFile);
-      VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), false);
+      
+      int iPercent = 0;
+      
+      if (!watched)
+      {
+        VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), ref iPercent);
+        VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), false, iPercent);
+      }
+      else
+      {
+        iPercent = 100;
+        VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), ref iPercent);
+        VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(movieFileName), true, iPercent);
+      }
     }
 
     public bool CheckMovie(string movieFileName)
@@ -1511,7 +1662,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    private void SetMovieProperties(string path)
+    private void SetMovieProperties(string path, string filename)
     {
       bool isFile = false;
       if (Util.Utils.IsVideo(path))
@@ -1520,7 +1671,7 @@ namespace MediaPortal.GUI.Video
       if (path == "..")
       {
         info.Reset();
-        info.SetProperties(true);
+        info.SetProperties(true, string.Empty);
         return;
       }
       bool isDirectory = false;
@@ -1578,17 +1729,28 @@ namespace MediaPortal.GUI.Video
         if (isMultiMovieFolder || !isFile)
         {
           info.Reset();
-          info.SetProperties(true);
+          info.SetProperties(true, filename);
           return;
         }
-        info.SetProperties(false);
+        info.SetProperties(false, filename);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void item_OnItemSelected(GUIListItem item, GUIControl parent)
     {
-      SetMovieProperties(item.Path);
+      string filename = string.Empty;
+
+      if (item.Path != ".." && File.Exists(item.Path + @"\VIDEO_TS\VIDEO_TS.IFO"))
+      {
+        filename = item.Path + @"\VIDEO_TS\VIDEO_TS.IFO";
+      }
+      else
+      {
+        filename = item.Path;
+      }
+
+      SetMovieProperties(item.Path, filename);
       GUIFilmstripControl filmstrip = parent as GUIFilmstripControl;
       if (filmstrip != null)
       {
@@ -1765,7 +1927,7 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-
+      
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
       int iidMovie = VideoDatabase.GetMovieId(filename);
@@ -1818,7 +1980,7 @@ namespace MediaPortal.GUI.Video
         {
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, 0, null);
           watchedMovies.Add(strFilePath);
-          VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true);
+          VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true, 100);
         }
 
         else if ((filename.Trim().ToLower().Equals(strFilePath.Trim().ToLower())) && (timeMovieStopped > 0))
@@ -1830,11 +1992,25 @@ namespace MediaPortal.GUI.Video
           VideoDatabase.SetMovieStopTimeAndResumeData(idFile, timeMovieStopped, resumeData);
           Log.Debug("GUIVideoFiles: {0} store resume time", caller);
 
-          //Set file "watched" only if 80% or higher played time (share view)
-          if (playTimePercentage >= 80)
+          //Set file "watched" only if  user % value or higher played time (share view)
+          if (playTimePercentage >= _watchedPercentage)
           {
             watchedMovies.Add(strFilePath);
-            VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true);
+            VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true, playTimePercentage);
+          }
+          else
+          {
+            int iPercent = 0; // Not used, just needed for the watched status call
+            bool watched = VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), ref iPercent);
+            
+            if (!watched)
+            {
+              VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), false, playTimePercentage);
+            }
+            else // Update new percentage if already watched
+            {
+              VideoDatabase.SetMovieWatchedStatus(VideoDatabase.GetMovieId(strFilePath), true, playTimePercentage);
+            }
           }
         }
         else
@@ -1847,9 +2023,10 @@ namespace MediaPortal.GUI.Video
         // Update db view watched status for played movie
         IMDBMovie movie = new IMDBMovie();
         VideoDatabase.GetMovieInfo(filename, ref movie);
-        if (!movie.IsEmpty && (playTimePercentage >= 80 || g_Player.IsDVDMenu)) //Flag movie "watched" status only if 80% or higher played time (database view)
+        if (!movie.IsEmpty && (playTimePercentage >= _watchedPercentage || g_Player.IsDVDMenu)) //Flag movie "watched" status only if user % value or higher played time (database view)
         {
           movie.Watched = 1;
+          movie.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
           VideoDatabase.SetMovieInfoById(movie.ID, ref movie);
         }
 
@@ -1896,7 +2073,7 @@ namespace MediaPortal.GUI.Video
       {
         return;
       }
-
+      
       // Handle all movie files from idMovie
       ArrayList movies = new ArrayList();
       HashSet<string> watchedMovies = new HashSet<string>();
@@ -1945,13 +2122,23 @@ namespace MediaPortal.GUI.Video
           playTimePercentage = 100;
         }
 
-        if (playTimePercentage >= 80)
+        IMDBMovie details = new IMDBMovie();
+        VideoDatabase.GetMovieInfoById(iidMovie, ref details);
+
+        if (playTimePercentage >= _watchedPercentage)
         {
-          IMDBMovie details = new IMDBMovie();
-          VideoDatabase.GetMovieInfoById(iidMovie, ref details);
           details.Watched = 1;
           VideoDatabase.SetWatched(details);
-          VideoDatabase.SetMovieWatchedStatus(iidMovie, true);
+          VideoDatabase.SetMovieWatchedStatus(iidMovie, true, playTimePercentage);
+          // Set date watched
+          details.DateWatched = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+          VideoDatabase.SetDateWatched(details);
+        }
+        else
+        {
+          int percent = 0;
+          bool wStatus = VideoDatabase.GetmovieWatchedStatus(iidMovie, ref percent);
+          VideoDatabase.SetMovieWatchedStatus(iidMovie, wStatus, playTimePercentage);
         }
       }
     }
@@ -1972,9 +2159,7 @@ namespace MediaPortal.GUI.Video
       }
     }
 
-    //
     // Play all files in selected directory
-    //
     private void OnPlayAll(string path)
     {
       // Get all video files in selected folder and it's subfolders
@@ -2106,6 +2291,9 @@ namespace MediaPortal.GUI.Video
       dlg.Reset();
       dlg.SetHeading(498); // menu
 
+      // Refresh files/folders
+      dlg.AddLocalizedString(1256); // Refresh current directory
+
       if (!facadeLayout.Focus)
       {
         // Menu button context menuu
@@ -2164,6 +2352,10 @@ namespace MediaPortal.GUI.Video
                 {
                   dlg.AddLocalizedString(830); //Reset watched status for DVD folder
                 }
+                else
+                {
+                  dlg.AddLocalizedString(1260); // Set watched status
+                }
               }
               //
               dlg.AddLocalizedString(102); //Scan            
@@ -2186,6 +2378,10 @@ namespace MediaPortal.GUI.Video
             if (item.IsPlayed)
             {
               dlg.AddLocalizedString(830); //Reset watched status
+            }
+            else
+            {
+              dlg.AddLocalizedString(1260); // Set watched status
             }
 
             if (!IsFolderPinProtected(item.Path) && !item.IsRemote && _fileMenuEnabled)
@@ -2211,6 +2407,9 @@ namespace MediaPortal.GUI.Video
       {
         dlg.AddLocalizedString(831);
       }
+
+      dlg.AddLocalizedString(1263); // Set default grabber
+      dlg.AddLocalizedString(1262); // Update grabber scripts
 
       dlg.DoModal(GetID);
       if (dlg.SelectedId == -1)
@@ -2289,9 +2488,19 @@ namespace MediaPortal.GUI.Video
           break;
 
         case 830: // Reset watched status
-          SetMovieUnwatched(item.Path, item.IsFolder);
+          SetMovieWatchStatus(item.Path, item.IsFolder, false);
+          int selectedIndex = facadeLayout.SelectedListItemIndex;
           LoadDirectory(_currentFolder);
           UpdateButtonStates();
+          facadeLayout.SelectedListItemIndex = selectedIndex;
+          break;
+
+        case 1260: // Set watched status
+          SetMovieWatchStatus(item.Path, item.IsFolder, true);
+          selectedIndex = facadeLayout.SelectedListItemIndex;
+          LoadDirectory(_currentFolder);
+          UpdateButtonStates();
+          facadeLayout.SelectedListItemIndex = selectedIndex;
           break;
 
         case 500: // File menu
@@ -2319,8 +2528,8 @@ namespace MediaPortal.GUI.Video
             pDlgOK.DoModal(GUIWindowManager.ActiveWindow);
           }
           break;
-          // Play all
-        case 1204:
+
+        case 1204: // Play all
           {
             if (!_virtualDirectory.RequestPin(item.Path))
             {
@@ -2328,6 +2537,20 @@ namespace MediaPortal.GUI.Video
             }
             OnPlayAll(item.Path);
           }
+          break;
+
+        case 1256: // Refresh current directory
+          {
+            if (!string.IsNullOrEmpty(_currentFolder))
+              LoadDirectory(_currentFolder, false);
+          }
+          break;
+
+        case 1262: // Update grabber scripts
+          UpdateGrabberScripts();
+          break;
+        case 1263: // Set deault grabber script
+          SetDefaultGrabber();
           break;
       }
     }
@@ -2522,6 +2745,7 @@ namespace MediaPortal.GUI.Video
       return _virtualDirectory.IsProtectedShare(folder, out pinCode);
     }
 
+    /*
     private static void DownloadThumbnail(string folder, string url, string name)
     {
       if (url == null)
@@ -2575,7 +2799,7 @@ namespace MediaPortal.GUI.Video
         IMDBActor imdbActor = new IMDBActor();
         for (int x = 0; x < _imdb.Count; ++x)
         {
-          _imdb.GetActorDetails(_imdb[x], true, out imdbActor);
+          _imdb.GetActorDetails(_imdb[x], out imdbActor);
           if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
           {
             break;
@@ -2623,7 +2847,7 @@ namespace MediaPortal.GUI.Video
             IMDBActor imdbActor = new IMDBActor();
             for (int x = 0; x < _imdb.Count; ++x)
             {
-              _imdb.GetActorDetails(_imdb[x], false, out imdbActor);
+              _imdb.GetActorDetails(_imdb[x], out imdbActor);
               if (imdbActor.ThumbnailUrl != null && imdbActor.ThumbnailUrl.Length > 0)
               {
                 break;
@@ -2654,6 +2878,7 @@ namespace MediaPortal.GUI.Video
         }
       }
     }
+    */
 
     private static void AddVideoFiles(string path, ref ArrayList availableFiles)
     {
@@ -2966,6 +3191,283 @@ namespace MediaPortal.GUI.Video
       PlayMovieFromPlayList(askForResumeMovie, requestPin);
     }
 
+    public static void UpdateGrabberScripts()
+    {
+      // Check Internet connection
+      if (!Win32API.IsConnectedToInternet())
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(257);
+        dlgOk.SetLine(1, GUILocalizeStrings.Get(703));
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+        return;
+      }
+      
+      // Initialize progress bar
+      GUIDialogProgress progressDialog =
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+      progressDialog.Reset();
+      progressDialog.SetHeading("Updating MovieInfo grabber scripts...");
+      progressDialog.ShowProgressBar(true);
+      progressDialog.SetLine(1, "Downloading the index file...");
+      progressDialog.SetLine(2, "Downloading...");
+      progressDialog.SetPercentage(100);
+      progressDialog.StartModal(GUIWindowManager.ActiveWindow);
+      
+      if (DownloadFile(_grabberIndexFile, _grabberIndexUrl) == false)
+      {
+        progressDialog.Close();
+        return;
+      }
+
+      // read index file
+      if (!File.Exists(_grabberIndexFile))
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(257);
+        dlgOk.SetLine(1, GUILocalizeStrings.Get(1261)); // No grabber index found
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+        progressDialog.Close();
+        return;
+      }
+      XmlDocument doc = new XmlDocument();
+      doc.Load(_grabberIndexFile);
+      XmlNodeList sectionNodes = doc.SelectNodes("MovieInfoGrabber/grabber");
+
+      // download all grabbers
+      //progressDialog.Total = sectionNodes.Count;
+      int percent = 0;
+      if (sectionNodes != null)
+      {
+        for (int i = 0; i < sectionNodes.Count; i++)
+        {
+          if (progressDialog.IsCanceled)
+          {
+            break;
+          }
+
+          string url = sectionNodes[i].Attributes["url"].Value;
+          string id = Path.GetFileName(url);
+          progressDialog.SetLine(1, "Downloading grabber: " + id);
+          progressDialog.SetLine(2, "Processing grabbers...");
+          progressDialog.SetPercentage(percent);
+          //progressDialog.Count = i + 1;
+          percent += 100 / (sectionNodes.Count - 1);
+          progressDialog.Progress();
+
+          if (DownloadFile(IMDB.ScriptDirectory + @"\" + id, url) == false)
+          {
+            progressDialog.Close();
+            return;
+          }
+        }
+      }
+      progressDialog.Close();
+    }
+
+    private static bool DownloadFile(string filepath, string url)
+    {
+      string grabberTempFile = Path.GetTempFileName();
+
+      //Application.DoEvents();
+      try
+      {
+        if (File.Exists(grabberTempFile))
+        {
+          File.Delete(grabberTempFile);
+        }
+
+        //Application.DoEvents();
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        try
+        {
+          // Use the current user in case an NTLM Proxy or similar is used.
+          // request.Proxy = WebProxy.GetDefaultProxy();
+          request.Proxy.Credentials = CredentialCache.DefaultCredentials;
+        }
+        catch (Exception) { }
+        //Application.DoEvents();
+
+        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+        {
+          //Application.DoEvents();
+          using (Stream resStream = response.GetResponseStream())
+          {
+            using (TextReader tin = new StreamReader(resStream, Encoding.Default))
+            {
+              using (TextWriter tout = File.CreateText(grabberTempFile))
+              {
+                while (true)
+                {
+                  string line = tin.ReadLine();
+                  if (line == null)
+                  {
+                    break;
+                  }
+                  tout.WriteLine(line);
+                }
+              }
+            }
+          }
+        }
+
+        File.Delete(filepath);
+        File.Move(grabberTempFile, filepath);
+        return true;
+      }
+      catch (Exception ex)
+      {
+        Log.Error("EXCEPTION in DownloadFile | {0}\r\n{1}", ex.Message, ex.Source);
+        return false;
+      }
+    }
+
+    public static void SetDefaultGrabber()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_MENU);
+      if (dlg == null)
+      {
+        return;
+      }
+      dlg.Reset();
+      dlg.SetHeading(1263); // menu
+
+      // read index file
+      if (!File.Exists(_grabberIndexFile))
+      {
+        GUIDialogOK dlgOk = (GUIDialogOK)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_OK);
+        dlgOk.SetHeading(257);
+        dlgOk.SetLine(1, GUILocalizeStrings.Get(1261)); // No grabber index found
+        dlgOk.DoModal(GUIWindowManager.ActiveWindow);
+        return;
+      }
+      _grabberList = new Dictionary<string, IIMDBScriptGrabber>();
+
+      Directory.CreateDirectory(IMDB.ScriptDirectory);
+      DirectoryInfo di = new DirectoryInfo(IMDB.ScriptDirectory);
+
+      FileInfo[] fileList = di.GetFiles("*.csscript", SearchOption.AllDirectories);
+
+      GUIWaitCursor.Show();
+      
+      foreach (FileInfo f in fileList)
+      {
+        try
+        {
+          AsmHelper script = new AsmHelper(CSScript.Load(f.FullName, null, false));
+          IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");
+          
+          _grabberList.Add(Path.GetFileNameWithoutExtension(f.FullName), grabber);
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Script grabber error file: {0}, message : {1}", f.FullName, ex.Message);
+        }
+      }
+
+      string defaultDatabase = string.Empty;
+      int defaultIndex = 0;
+      int dbNumber;
+      
+      using (MediaPortal.Profile.Settings xmlreader = new MPSettings())
+      {
+        defaultDatabase = xmlreader.GetValueAsString("moviedatabase", "database" + 0, "IMDB");
+        dbNumber = xmlreader.GetValueAsInt("moviedatabase", "number", 0);
+      }
+
+      foreach (KeyValuePair<string, IIMDBScriptGrabber>  grabber in _grabberList)
+      {
+        dlg.Add(grabber.Value.GetName() + " - " + grabber.Value.GetLanguage());
+        
+        if (defaultDatabase == grabber.Key)
+        {
+          dlg.SelectedLabel = defaultIndex;
+        }
+        else
+        {
+          defaultIndex++;
+        }
+      }
+
+      GUIWaitCursor.Hide();
+
+      dlg.DoModal(GUIWindowManager.ActiveWindow);
+      
+      if (dlg.SelectedId == -1)
+      {
+        return;
+      }
+      
+      using (MediaPortal.Profile.Settings xmlwriter = new MPSettings())
+      {
+        KeyValuePair<string, IIMDBScriptGrabber> grabber = _grabberList.ElementAt(dlg.SelectedLabel);
+        
+
+        if (grabber.Key != "IMDB")
+        {
+          if (dbNumber == 0)
+          {
+            dbNumber = 1;
+          }
+          xmlwriter.SetValue("moviedatabase", "number", dbNumber);
+          xmlwriter.SetValue("moviedatabase", "database" + 0, grabber.Key);
+          xmlwriter.SetValue("moviedatabase", "title" + 0, grabber.Value.GetName());
+          xmlwriter.SetValue("moviedatabase", "language" + 0, grabber.Value.GetLanguage());
+          xmlwriter.SetValue("moviedatabase", "limit" + 0, 25);
+        }
+        else
+        {
+          for (int i = 0; i < 4; i++)
+          {
+            xmlwriter.SetValue("moviedatabase", "number", 0);
+            xmlwriter.RemoveEntry("moviedatabase", "database" + i);
+            xmlwriter.RemoveEntry("moviedatabase", "title" + i);
+            xmlwriter.RemoveEntry("moviedatabase", "language" + i);
+            xmlwriter.RemoveEntry("moviedatabase", "limit" + i);
+          }
+        }
+      }
+    }
+
+    #region Thread Set thumbs
+    
+    private void SetImdbThumbs(List<GUIListItem> itemlist, ISelectDVDHandler selectDVDHandler)
+    {
+      if (_setThumbs != null && _setThumbs.IsAlive)
+      {
+        _setThumbs.Abort();
+        _setThumbs = null;
+      }
+
+      _setThumbsThreadAborted = false;
+
+      _threadGUIItems.Clear();
+      _threadGUIItems = itemlist;
+      _threadISelectDVDHandler = selectDVDHandler;
+
+      _setThumbs = new Thread(ThreadSetIMDBThumbs);
+      _setThumbs.Priority = ThreadPriority.Lowest;
+      _setThumbs.IsBackground = true;
+      _setThumbs.Start();
+      
+    }
+
+    private void ThreadSetIMDBThumbs()
+    {
+      try
+      {
+        _threadISelectDVDHandler.SetIMDBThumbs(_threadGUIItems, _markWatchedFiles, _eachFolderIsMovie);
+        SelectCurrentItem();
+      }
+      catch (ThreadAbortException)
+      {
+        Log.Info("GUIVideoFiles: Thread SetIMDBThumbs aborted.");
+        _setThumbsThreadAborted = true;
+      }
+    }
+
+    #endregion
+    
     #region IMDB.IProgress
 
     public bool OnDisableCancel(IMDBFetcher fetcher)
@@ -3123,12 +3625,36 @@ namespace MediaPortal.GUI.Video
       }
       else
       {
-        heading = GUILocalizeStrings.Get(986);
+        heading = GUILocalizeStrings.Get(1257);
       }
       pDlgProgress.Reset();
       pDlgProgress.SetHeading(heading);
       //pDlgProgress.SetLine(0, strMovieName);
       pDlgProgress.SetLine(1, fetcher.MovieName);
+      pDlgProgress.SetLine(2, string.Empty);
+      pDlgProgress.SetObject(fetcher);
+      pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
+      return true;
+    }
+
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      GUIDialogProgress pDlgProgress =
+        (GUIDialogProgress)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_PROGRESS);
+      // show dialog that we're downloading the actor info
+      String heading;
+      if (_scanning)
+      {
+        heading = String.Format("{0}:{1}/{2}", GUILocalizeStrings.Get(986), scanningFileNumber, scanningFileTotal);
+      }
+      else
+      {
+        heading = GUILocalizeStrings.Get(1258);
+      }
+      pDlgProgress.Reset();
+      pDlgProgress.SetHeading(heading);
+      //pDlgProgress.SetLine(0, strMovieName);
+      pDlgProgress.SetLine(1, fetcher.ActorName);
       pDlgProgress.SetLine(2, string.Empty);
       pDlgProgress.SetObject(fetcher);
       pDlgProgress.StartModal(GUIWindowManager.ActiveWindow);
@@ -3237,6 +3763,29 @@ namespace MediaPortal.GUI.Video
       }
     }
 
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selectedActor)
+    {
+      GUIDialogSelect pDlgSelect = (GUIDialogSelect)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_SELECT);
+      // more then 1 actor found
+      // ask user to select 1
+      pDlgSelect.SetHeading("Select actor:"); //select actor
+      pDlgSelect.Reset();
+      for (int i = 0; i < fetcher.Count; ++i)
+      {
+        pDlgSelect.Add(fetcher[i].Title);
+      }
+      pDlgSelect.EnableButton(false);
+      pDlgSelect.DoModal(GUIWindowManager.ActiveWindow);
+
+      // and wait till user selects one
+      selectedActor = pDlgSelect.SelectedLabel;
+      if (selectedActor != -1)
+      {
+        return true;
+      }
+      return false;
+    }
+
     public bool OnScanStart(int total)
     {
       _scanning = true;
@@ -3309,7 +3858,7 @@ namespace MediaPortal.GUI.Video
             if (searchText != string.Empty)
             {
               movieDetails.SearchString = searchText;
-              if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, _getActors))
+              if (IMDBFetcher.GetInfoFromIMDB(this, ref movieDetails, false, true))
               {
                 if (movieDetails != null)
                 {

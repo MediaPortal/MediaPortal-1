@@ -18,6 +18,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 
 namespace MediaPortal.Video.Database
@@ -27,15 +28,33 @@ namespace MediaPortal.Video.Database
   /// </summary>
   public class IMDBActor
   {
-    public class IMDBActorMovie
+    public class IMDBActorMovie : IComparable
     {
-      public string MovieTitle;
-      public string Role;
-      public int Year;
+      public string MovieTitle = string.Empty;
+      public string Role = string.Empty;
+      public int Year = 1900;
       //Added
-      public string imdbID;
+      public int ActorID = -1;
+      public string MovieImdbID = string.Empty;
+      public string MoviePlot = string.Empty;
+      public string MovieCover = string.Empty;
+      public string MovieCast = string.Empty;
+      public string MovieGenre = string.Empty;
+      public string MovieCredits = string.Empty;
+      public string MovieMpaaRating = string.Empty;
+      public int MovieRuntime = 0;
+
+      public int CompareTo(object movie)
+      {
+        if (!(movie is IMDBActorMovie))
+          throw new InvalidCastException();
+        
+        IMDBActorMovie sortByYear = (IMDBActorMovie)movie;
+        return sortByYear.Year.CompareTo(Year);
+       }
     }
 
+    
     //Changed - _thumbnailURL added - IMDBActorID added
     private int _id;
     private string _name = string.Empty;
@@ -46,7 +65,7 @@ namespace MediaPortal.Video.Database
     private string _miniBiography = string.Empty;
     private string _biography = string.Empty;
     private ArrayList _movies = new ArrayList();
-
+    
     public IMDBActor() {}
 
     //Added
@@ -68,7 +87,7 @@ namespace MediaPortal.Video.Database
       get { return _imdbActorID; }
       set { _imdbActorID = value; }
     }
-
+    
     //Added
     public string ThumbnailUrl
     {
@@ -103,6 +122,11 @@ namespace MediaPortal.Video.Database
     public int Count
     {
       get { return _movies.Count; }
+    }
+
+    public void SortActorMoviesByYear()
+    {
+      _movies.Sort();
     }
 
     public IMDBActorMovie this[int index]

@@ -55,7 +55,7 @@
         <label>207</label>
         <font>font13</font>
         <onleft>22</onleft>
-        <onright>22</onright>
+        <onright>24</onright>
         <onup>2</onup>
         <ondown>4</ondown>
       </control>
@@ -66,7 +66,7 @@
         <label>206</label>
         <font>font13</font>
         <onleft>22</onleft>
-        <onright>22</onright>
+        <onright>24</onright>
         <onup>3</onup>
         <ondown>7</ondown>
       </control>
@@ -77,7 +77,7 @@
         <label>183</label>
         <font>font13</font>
         <onleft>22</onleft>
-        <onright>22</onright>
+        <onright>24</onright>
         <onup>4</onup>
         <ondown>5</ondown>
       </control>
@@ -87,27 +87,46 @@
         <id>5</id>
         <label>184</label>
         <onleft>22</onleft>
-        <onright>22</onright>
+        <onright>24</onright>
         <onup>7</onup>
-        <ondown>6</ondown>
+        <ondown>26</ondown>
       </control>
+	  <control>
+		<description>Rename title</description>
+		<type>button</type>
+		<id>26</id>
+		<label>118</label>
+		<onup>5</onup>
+		<ondown>6</ondown>
+	  </control>
       <control>
         <description>Watched</description>
         <type>togglebutton</type>
         <id>6</id>
         <label>1010</label>
         <onleft>22</onleft>
-        <onright>22</onright>
-        <onup>5</onup>
-        <ondown>10</ondown>
+        <onright>24</onright>
+        <onup>26</onup>
+        <ondown>4755</ondown>
       </control>
+			<control>
+				<description>Trailer (Online Videos)</description>
+				<type>button</type>
+				<id>4755</id>
+				<label>5906</label>
+				<hyperlink>4755</hyperlink>
+				<hyperlinkParameter>site:IMDb Movie Trailers|search:#(iif(neq(#imdbnumber,''),#imdbnumber,#title))|return:Locked</hyperlinkParameter>
+				<onup>6</onup>
+				<ondown>10</ondown>
+				<visible>plugin.isenabled(OnlineVideos)</visible>
+			</control>
     </control>
     <control>
       <description>image title:</description>
       <type>label</type>
       <id>30</id>
       <posX>100</posX>
-      <posY>450</posY>
+      <posY>530</posY>
       <label>734</label>
       <font>font12</font>
       <align>left</align>
@@ -120,8 +139,8 @@
       <type>spincontrol</type>
       <id>10</id>
       <posX>100</posX>
-      <posY>485</posY>
-      <onup>6</onup>
+      <posY>575</posY>
+      <onup>8</onup>
       <ondown>11</ondown>
       <animation effect="fade" time="250">WindowOpen</animation>
       <animation effect="fade" time="250">WindowClose</animation>
@@ -131,7 +150,7 @@
       <type>label</type>
       <id>100</id>
       <posX>100</posX>
-      <posY>530</posY>
+      <posY>605</posY>
       <label>427</label>
       <font>font12</font>
       <textcolor>FFB2D4F5</textcolor>
@@ -143,7 +162,7 @@
       <type>spincontrol</type>
       <id>11</id>
       <posX>100</posX>
-      <posY>565</posY>
+      <posY>640</posY>
       <onup>10</onup>
       <ondown>2</ondown>
       <onleft>5</onleft>
@@ -298,7 +317,7 @@
       <type>textboxscrollup</type>
       <id>20</id>
       <posX>355</posX>
-      <posY>500</posY>
+      <posY>520</posY>
       <width>846</width>
       <height>180</height>
       <label>#plot</label>
@@ -315,7 +334,7 @@
       <posY>125</posY>
       <width>240</width>
       <height>343</height>
-      <texture flipY="true" mask="videothumbmask.png">#thumb</texture>
+      <texture flipY="true" mask="video_poster_mask.png">#thumb</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
@@ -329,7 +348,7 @@
       <posY>125</posY>
       <width>240</width>
       <height>343</height>
-      <texture flipY="true" mask="videothumbmask.png">Videothumbframe.png</texture>
+      <texture flipY="true" mask="video_poster_mask.png">Videothumbframe.png</texture>
       
       
     </control>
@@ -338,7 +357,7 @@
       <type>textbox</type>
       <id>22</id>
       <posX>355</posX>
-      <posY>500</posY>
+      <posY>520</posY>
       <width>846</width>
       <height>187</height>
       <onleft>2</onleft>
@@ -355,11 +374,171 @@
       <type>textboxscrollup</type>
       <id>23</id>
       <posX>355</posX>
-      <posY>500</posY>
+      <posY>520</posY>
       <width>846</width>
       <height>187</height>
       <label>#userreview</label>
       <font>font11</font>
     </control>
+	
+	<control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>515</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+    </control>
+	
+	<control>
+      <description>Video codec</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>650</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>Yes</visible>
+	  <texture>logos\#VideoCodec.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+	
+	<control>
+      <description>Video resolution</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>740</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>Yes</visible>
+	  <texture>logos\#VideoResolution.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+       
+    <control>
+      <description>Aspect ratio</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>830</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>Yes</visible>
+	  <texture>logos\#AspectRatio.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+	
+	<control>
+      <description>Audio codec</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>920</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>Yes</visible>
+	  <texture>logos\#AudioCodec.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+	
+	<control>
+      <description>Audio channels</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1010</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>Yes</visible>
+	  <texture>logos\#AudioChannels.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+     
+    <control>
+      <description>Subtitles</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1100</posX>
+      <posY>465</posY>
+      <width>85</width>
+      <height>42</height>
+      <visible>string.equals(#HasSubtitles, True)</visible>
+      <texture>logos\subtitles.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
+      <centered>yes</centered>
+    </control>
+	
+	<!--control>
+      <description>Seperator</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>91</posX>
+      <posY>515</posY>
+      <width>1100</width>
+      <height>1</height>
+      <texture>hbar1white.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>control.isvisible(24)</visible>
+    </control-->
+	<control>
+      <description>Actors listcontrol</description>
+      <type>listcontrol</type>
+      <id>24</id>
+      <posX>380</posX>
+			<width>420</width>
+			<posY>525</posY>
+			<height>200</height>
+      <onleft>2</onleft>
+      <onright>2</onright>
+      <scrollOffset>2</scrollOffset>
+      <spinPosX>710</spinPosX>
+      <spinPosY>680</spinPosY>
+      <spinCanFocus>no</spinCanFocus>
+      <unfocusedAlpha>160</unfocusedAlpha>
+	  <font>font11</font>
+	  <textvisible2>no</textvisible2>
+	  <textvisible3>no</textvisible3>
+	</control>
+	
+	<control>
+			<description>Plot value</description>
+			<type>textboxscrollup</type>
+			<id>1</id>
+			<posX>810</posX>
+			<posY>525</posY>
+			<width>470</width>
+			<font>font11</font>
+			<height>180</height>
+			<textcolor>ffFFFFFF</textcolor>
+			<onleft>3</onleft>
+			<onright>3</onright>
+			<onup>2</onup>
+			<ondown>2</ondown>
+			<seperator>: : :</seperator>
+			<label>#plot</label>
+			<visible>control.isvisible(24)</visible>
+		</control>
+	
+	<control>
+		<description>Artist Art</description>
+		<type>image</type>
+		<id>25</id>
+		<keepaspectratio>yes</keepaspectratio>
+		<centered>yes</centered>
+		<posX>211</posX> 
+		<posY>525</posY> 
+		<width>230</width> 
+		<height>160</height> 
+		<texture flipY="true" mask="video_poster_mask.png">#actorThumb</texture>
+	</control>
   </controls>
 </window>

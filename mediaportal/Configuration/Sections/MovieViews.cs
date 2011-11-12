@@ -33,6 +33,8 @@ namespace MediaPortal.Configuration.Sections
                                       "genre",
                                       "year",
                                       "rating",
+                                      "recently added",
+                                      "recently watched",                                      
                                     };
 
     private string[] sqloperators = new string[]

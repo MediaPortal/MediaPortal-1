@@ -211,105 +211,114 @@ namespace MediaPortal.GUI.Video
     // Changed - cover for movies with the same name
     public void SetIMDBThumbs(IList items, bool markWatchedFiles, bool eachMovieHasDedicatedFolder)
     {
-      GUIListItem pItem;
-      IMDBMovie movieDetails = new IMDBMovie();
-
-      for (int x = 0; x < items.Count; x++)
+      try 
       {
-        string strThumb = string.Empty;
-        pItem = (GUIListItem)items[x];
-        string file = string.Empty;
-        bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
-        // Skip DVD backup folder
-        if (pItem.IsFolder && !IsDvdDirectory(pItem.Path))
+        GUIListItem pItem;
+        IMDBMovie movieDetails = new IMDBMovie();
+
+        for (int x = 0; x < items.Count; x++)
         {
-          if (pItem.Label == "..")
+          string strThumb = string.Empty;
+          pItem = (GUIListItem)items[x];
+          string file = string.Empty;
+          bool isFolderPinProtected = (pItem.IsFolder && IsFolderPinProtected(pItem.Path));
+          // Skip DVD backup folder
+          if (pItem.IsFolder && !IsDvdDirectory(pItem.Path))
           {
-            continue;
-          }
-
-          if (isFolderPinProtected)
-          {
-            // hide maybe rated content
-            Util.Utils.SetDefaultIcons(pItem);
-            continue;
-          }
-
-          // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
-          else
-          {
-            if (eachMovieHasDedicatedFolder)
-            {
-              file = GetFolderVideoFile(pItem.Path);
-            }
-          }
-        }
-          // If folder is DVD backup folder then take it for watched status
-        else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
-        {
-          file = GetFolderVideoFile(pItem.Path);
-        }
-
-        else if (!pItem.IsFolder ||
-                 (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
-        {
-          file = pItem.Path;
-        }
-
-        else
-        {
-          continue;
-        }
-
-        if (!string.IsNullOrEmpty(file))
-        {
-          int fileId = VideoDatabase.GetFileId(file);
-          int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
-          bool foundWatched = false;
-          // Set thumb for movies
-          if (id >= 0)
-          {
-            if (Util.Utils.IsDVD(pItem.Path))
-            {
-              pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
-            }
-
-            string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
-            strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
-          }
-          // Find watched status for videos
-          if (fileId >= 0 && markWatchedFiles)
-          {
-            if (VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file)))
-              foundWatched = true;
-          }
-          // Set watched status for list item
-          if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path) && foundWatched))
-          {
-            pItem.IsPlayed = foundWatched;
-          }
-
-          if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
-          {
-            strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
-                                     Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
-            if (!Util.Utils.FileExistsInCache(strThumb))
+            if (pItem.Label == "..")
             {
               continue;
             }
+
+            if (isFolderPinProtected)
+            {
+              // hide maybe rated content
+              Util.Utils.SetDefaultIcons(pItem);
+              continue;
+            }
+
+            // If this is enabled you'll see the thumb of the first movie in that dir - but if you put serveral movies into that dir you'll be irritated...          
+            else
+            {
+              if (eachMovieHasDedicatedFolder)
+              {
+                file = GetFolderVideoFile(pItem.Path);
+              }
+            }
           }
-
-          pItem.ThumbnailImage = strThumb;
-          pItem.IconImageBig = strThumb;
-          pItem.IconImage = strThumb;
-
-          strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
-          if (Util.Utils.FileExistsInCache(strThumb))
+            // If folder is DVD backup folder then take it for watched status
+          else if (pItem.IsFolder && IsDvdDirectory(pItem.Path))
           {
-            pItem.ThumbnailImage = strThumb;
+            file = GetFolderVideoFile(pItem.Path);
           }
-        } // <-- file == empty
-      } // of for (int x = 0; x < items.Count; ++x)
+
+          else if (!pItem.IsFolder ||
+                   (pItem.IsFolder && VirtualDirectory.IsImageFile(Path.GetExtension(pItem.Path).ToLower())))
+          {
+            file = pItem.Path;
+          }
+
+          else
+          {
+            continue;
+          }
+
+          if (!string.IsNullOrEmpty(file))
+          {
+            int fileId = VideoDatabase.GetFileId(file);
+            int id = VideoDatabase.GetMovieInfo(file, ref movieDetails);
+            bool foundWatched = false;
+            // Set thumb for movies
+            if (id >= 0)
+            {
+              if (Util.Utils.IsDVD(pItem.Path))
+              {
+                pItem.Label = String.Format("({0}:) {1}", pItem.Path.Substring(0, 1), movieDetails.Title);
+              }
+
+              string titleExt = movieDetails.Title + "{" + movieDetails.ID + "}";
+              strThumb = Util.Utils.GetCoverArt(Thumbs.MovieTitle, titleExt);
+            }
+            // Find watched status for videos
+            int percentWatched = 0;
+
+            if (fileId >= 0 && markWatchedFiles)
+            {
+              if (VideoDatabase.GetmovieWatchedStatus(VideoDatabase.GetMovieId(file), ref percentWatched))
+              {
+                foundWatched = true;
+              }
+            }
+            // Set watched status for list item
+            if (!pItem.IsFolder || (IsDvdDirectory(pItem.Path)))// && foundWatched))
+            {
+              pItem.IsPlayed = foundWatched;
+              pItem.Label3 = percentWatched + "%";
+            }
+
+            if (!Util.Utils.FileExistsInCache(strThumb) || string.IsNullOrEmpty(strThumb))
+            {
+              strThumb = string.Format(@"{0}\{1}", Thumbs.MovieTitle,
+                                       Util.Utils.MakeFileName(Util.Utils.SplitFilename(Path.ChangeExtension(file, ".jpg"))));
+              if (!Util.Utils.FileExistsInCache(strThumb))
+              {
+                continue;
+              }
+            }
+
+            pItem.ThumbnailImage = strThumb;
+            pItem.IconImageBig = strThumb;
+            pItem.IconImage = strThumb;
+
+            strThumb = Util.Utils.ConvertToLargeCoverArt(strThumb);
+            if (Util.Utils.FileExistsInCache(strThumb))
+            {
+              pItem.ThumbnailImage = strThumb;
+            }
+          } // <-- file == empty
+        } // of for (int x = 0; x < items.Count; ++x)
+      }
+      catch (Exception){}
     }
 
     public bool IsDvdDirectory(string path)

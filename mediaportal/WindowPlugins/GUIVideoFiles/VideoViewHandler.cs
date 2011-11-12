@@ -21,6 +21,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Soap;
 using MediaPortal.Configuration;
@@ -79,11 +80,11 @@ namespace MediaPortal.GUI.Video
       ArrayList movies = new ArrayList();
       string whereClause = string.Empty;
       string orderClause = string.Empty;
-      string fromClause = "actors,movie,movieinfo,path";
+      string fromClause = "movie,movieinfo,path";
       if (CurrentLevel > 0)
       {
         whereClause =
-          "where actors.idactor=movieinfo.idDirector and movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+          "where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
       }
 
       for (int i = 0; i < CurrentLevel; ++i)
@@ -136,7 +137,9 @@ namespace MediaPortal.GUI.Video
         {
           movies = new ArrayList();
           sql = String.Format("select distinct iYear from movieinfo ");
+          
           SQLiteResultSet results = VideoDatabase.GetResults(sql);
+          
           for (int i = 0; i < results.Rows.Count; i++)
           {
             IMDBMovie movie = new IMDBMovie();
@@ -144,14 +147,60 @@ namespace MediaPortal.GUI.Video
             movies.Add(movie);
           }
         }
+        // Recently added
+        else if (defRoot.Where == "recently added")
+        {
+          try
+          {
+            if (string.IsNullOrEmpty(defRoot.Restriction))
+              defRoot.Restriction = "7";
+
+            TimeSpan ts = new TimeSpan(Convert.ToInt32(defRoot.Restriction), 0, 0, 0);
+            DateTime searchDate = DateTime.Today - ts;
+
+            //whereClause = String.Format("where actors.idActor=movieinfo.idDirector and movieinfo.dateAdded >= '{0}'", 
+            //                            searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
+            whereClause = String.Format("where movieinfo.dateAdded >= '{0}'",
+                                        searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
+            sql = String.Format("select * from movieinfo {0} {1}", whereClause, orderClause);
+            
+            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+          }
+          catch (Exception) { }
+        }
+        // Recently watched
+        else if (defRoot.Where == "recently watched")
+        {
+          try
+          {
+            if (string.IsNullOrEmpty(defRoot.Restriction))
+              defRoot.Restriction = "7";
+
+            TimeSpan ts = new TimeSpan(Convert.ToInt32(defRoot.Restriction), 0, 0, 0);
+            DateTime searchDate = DateTime.Today - ts;
+
+            //whereClause = String.Format("where actors.idActor=movieinfo.idDirector and movieinfo.dateWatched >= '{0}'", 
+            //                            searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
+            whereClause = String.Format("where movieinfo.dateWatched >= '{0}'",
+                                        searchDate.ToString("yyyy-MM-dd" + " 00:00:00"));
+            
+            sql = String.Format("select * from movieinfo {0} {1}", whereClause, orderClause);
+            
+            VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, false);
+          }
+          catch (Exception) { }
+        }
         else
         {
           whereClause =
-            "where actors.idActor=movieinfo.idDirector and movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+            "where movieinfo.idmovie=movie.idmovie and movie.idpath=path.idpath";
+          
           BuildRestriction(defRoot, ref whereClause);
+          
           sql = String.Format("select * from {0} {1} {2}",
                               fromClause, whereClause, orderClause);
-          VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true);
+          
+          VideoDatabase.GetMoviesByFilter(sql, out movies, false, true, true);
         }
       }
       else if (CurrentLevel < MaxLevels - 1)
@@ -160,19 +209,24 @@ namespace MediaPortal.GUI.Video
         bool useAlbumTable = false;
         bool useActorsTable = false;
         bool useGenreTable = false;
+        
         FilterDefinition defCurrent = (FilterDefinition)currentView.Filters[CurrentLevel];
+        
         string table = GetTable(defCurrent.Where, ref useMovieInfoTable, ref useAlbumTable, ref useActorsTable,
                                 ref useGenreTable);
+        
         sql = String.Format("select distinct {0}.* {1} {2} {3}",
                             table, fromClause, whereClause, orderClause);
+        
         VideoDatabase.GetMoviesByFilter(sql, out movies, useActorsTable, useMovieInfoTable, useGenreTable);
       }
       else
       {
         sql =
           String.Format(
-            "select movieinfo.fRating,actors.strActor,movieinfo.strCredits,movieinfo.strTagLine,movieinfo.strPlotOutline,movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL,movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime,movieinfo.iswatched from {0} {1} {2}",
+            "select movieinfo.fRating,movieinfo.strCredits,movieinfo.strDirector,movieinfo.strTagLine,movieinfo.strPlotOutline,movieinfo.strPlot,movieinfo.strVotes,movieinfo.strCast,movieinfo.iYear,movieinfo.strGenre,movieinfo.strPictureURL,movieinfo.strTitle,path.strPath,movie.discid,movieinfo.IMDBID,movieinfo.idMovie,path.cdlabel,movieinfo.mpaa,movieinfo.runtime,movieinfo.iswatched, movieinfo.strUserReview from {0} {1} {2}",
             fromClause, whereClause, orderClause);
+        
         VideoDatabase.GetMoviesByFilter(sql, out movies, true, true, true);
       }
       return movies;
@@ -292,6 +346,16 @@ namespace MediaPortal.GUI.Video
         useMovieInfoTable = true;
         return "movieinfo";
       }
+      if (where == "recently added")
+      {
+        useMovieInfoTable = true;
+        return "movieinfo";
+      }
+      if (where == "recently watched")
+      {
+        useMovieInfoTable = true;
+        return "movieinfo";
+      }
       return null;
     }
 
@@ -320,6 +384,14 @@ namespace MediaPortal.GUI.Video
       if (where == "rating")
       {
         return "fRating";
+      }
+      if (where == "recently added")
+      {
+        return "dateAdded";
+      }
+      if (where == "recently watched")
+      {
+        return "dateWatched";
       }
       return null;
     }
@@ -350,6 +422,14 @@ namespace MediaPortal.GUI.Video
       {
         return "movieinfo.fRating";
       }
+      if (where == "recently added")
+      {
+        return "movieinfo.idMovie";
+      }
+      if (where == "recently watched")
+      {
+        return "movieinfo.idMovie";
+      }
       return null;
     }
 
@@ -378,6 +458,14 @@ namespace MediaPortal.GUI.Video
       if (where == "rating")
       {
         return "movieinfo.fRating";
+      }
+      if (where == "recently added")
+      {
+        return "movieinfo.dateAdded";
+      }
+      if (where == "recently watched")
+      {
+        return "movieinfo.dateWatched";
       }
       return null;
     }
@@ -408,6 +496,14 @@ namespace MediaPortal.GUI.Video
       {
         return (int)movie.Rating;
       }
+      if (where == "recently added")
+      {
+        return movie.ID; ;
+      }
+      if (where == "recently watched")
+      {
+        return movie.ID; ;
+      }
       return -1;
     }
 
@@ -435,6 +531,20 @@ namespace MediaPortal.GUI.Video
         item.Label = movie.Year.ToString();
         item.Label2 = string.Empty;
         item.Label3 = string.Empty;
+      }
+      if (definition.Where == "recently added")
+      {
+        item.Label = movie.Title;
+        item.Label2 = Convert.ToDateTime(movie.DateAdded).ToShortDateString() + " " +
+                      Convert.ToDateTime(movie.DateAdded).ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        //item.Label3 = string.Empty;          // Watched percentage is here
+      }
+      if (definition.Where == "recently watched")
+      {
+        item.Label = movie.Title;
+        item.Label2 = Convert.ToDateTime(movie.DateWatched).ToShortDateString() + " " +
+                      Convert.ToDateTime(movie.DateWatched).ToString("t", CultureInfo.CurrentCulture.DateTimeFormat);
+        //item.Label3 = string.Empty;          // Watched percentage is here
       }
     }
 

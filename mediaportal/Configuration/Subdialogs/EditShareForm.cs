@@ -55,6 +55,8 @@ namespace MediaPortal.Configuration
     private MPLabel label9;
     private MPComboBox comboBox1;
     private MPCheckBox checkBoxPASV;
+    public MPCheckBox cbCreateThumbs;
+    public MPLabel labelCreateThumbs;
 
     /// <summary>
     /// Required designer variable.
@@ -98,6 +100,8 @@ namespace MediaPortal.Configuration
     private void InitializeComponent()
     {
       this.groupBox1 = new MediaPortal.UserInterface.Controls.MPGroupBox();
+      this.cbCreateThumbs = new MediaPortal.UserInterface.Controls.MPCheckBox();
+      this.labelCreateThumbs = new MediaPortal.UserInterface.Controls.MPLabel();
       this.checkBoxPASV = new MediaPortal.UserInterface.Controls.MPCheckBox();
       this.comboBox1 = new MediaPortal.UserInterface.Controls.MPComboBox();
       this.label9 = new MediaPortal.UserInterface.Controls.MPLabel();
@@ -127,11 +131,11 @@ namespace MediaPortal.Configuration
       // 
       // groupBox1
       // 
-      this.groupBox1.Anchor =
-        ((System.Windows.Forms.AnchorStyles)
-         ((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-           | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                  | System.Windows.Forms.AnchorStyles.Left)
+                  | System.Windows.Forms.AnchorStyles.Right)));
+      this.groupBox1.Controls.Add(this.cbCreateThumbs);
+      this.groupBox1.Controls.Add(this.labelCreateThumbs);
       this.groupBox1.Controls.Add(this.checkBoxPASV);
       this.groupBox1.Controls.Add(this.comboBox1);
       this.groupBox1.Controls.Add(this.label9);
@@ -161,6 +165,28 @@ namespace MediaPortal.Configuration
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Folder settings";
       this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+      // 
+      // cbCreateThumbs
+      // 
+      this.cbCreateThumbs.AutoSize = true;
+      this.cbCreateThumbs.Checked = true;
+      this.cbCreateThumbs.CheckState = System.Windows.Forms.CheckState.Checked;
+      this.cbCreateThumbs.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+      this.cbCreateThumbs.Location = new System.Drawing.Point(325, 43);
+      this.cbCreateThumbs.Name = "cbCreateThumbs";
+      this.cbCreateThumbs.Size = new System.Drawing.Size(13, 12);
+      this.cbCreateThumbs.TabIndex = 28;
+      this.cbCreateThumbs.UseVisualStyleBackColor = true;
+      this.cbCreateThumbs.Visible = false;
+      // 
+      // labelCreateThumbs
+      // 
+      this.labelCreateThumbs.Location = new System.Drawing.Point(293, 24);
+      this.labelCreateThumbs.Name = "labelCreateThumbs";
+      this.labelCreateThumbs.Size = new System.Drawing.Size(87, 16);
+      this.labelCreateThumbs.TabIndex = 27;
+      this.labelCreateThumbs.Text = "Create Thumbs";
+      this.labelCreateThumbs.Visible = false;
       // 
       // checkBoxPASV
       // 
@@ -322,7 +348,7 @@ namespace MediaPortal.Configuration
       // 
       this.label4.Location = new System.Drawing.Point(216, 24);
       this.label4.Name = "label4";
-      this.label4.Size = new System.Drawing.Size(168, 16);
+      this.label4.Size = new System.Drawing.Size(63, 16);
       this.label4.TabIndex = 12;
       this.label4.Text = "Pin Code";
       // 
@@ -624,6 +650,12 @@ namespace MediaPortal.Configuration
     {
       get { return comboBox1.SelectedIndex; }
       set { comboBox1.SelectedIndex = value; }
+    }
+
+    public bool CreateThumbs
+    {
+      get { return cbCreateThumbs.Checked; }
+      set { cbCreateThumbs.Checked = value; }
     }
   }
 }
