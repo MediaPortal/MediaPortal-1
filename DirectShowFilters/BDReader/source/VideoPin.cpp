@@ -97,7 +97,9 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bDiscontinuity(false),
   m_bFirstSample(true),
   m_bClipEndingNotified(false),
-  m_bStopWait(false)
+  m_bStopWait(false),
+  m_rtPrevSample(_I64_MIN),
+  m_rtStreamTimeOffset(0)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -402,7 +404,7 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoPlSeen)
   {
-    DeliverEndOfStream();
+    //DeliverEndOfStream();
 
     m_demux.m_eAudioPlSeen->Wait();
 
@@ -417,14 +419,17 @@ void CVideoPin::CheckPlaybackState()
     }
     else if (!m_bStopWait)
     {
+      /*
       LogDebug("vid: Request zeroing the stream time");
       m_eFlushStart->Reset();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
+      */
     }
 
     m_bStopWait = false;
 
+    m_demux.m_ePlaylistChangeDone->Set();
     m_demux.m_eAudioPlSeen->Reset();
     m_demux.m_bVideoPlSeen = false;
   }
@@ -491,7 +496,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           CreateEmptySample(pSample);
           if (!m_bClipEndingNotified)
           {
-            DeliverEndOfStream();
+            //DeliverEndOfStream();
             m_bClipEndingNotified = true;
           }
           else
@@ -516,6 +521,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bClipEndingNotified = false;
 
             m_rtStreamOffset = buffer->rtPlaylistTime;
+
+            m_rtStreamTimeOffset = m_rtPrevSample;
           }
 
           if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
@@ -573,6 +580,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         }
 
         bool hasTimestamp = buffer->rtStart != Packet::INVALID_TIME;
+        REFERENCE_TIME rtCorrectedStartTime = 0;
+        REFERENCE_TIME rtCorrectedStopTime = 0;
 
         if (hasTimestamp)
         {
@@ -584,13 +593,15 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_bDiscontinuity = false;
           }
 
-          REFERENCE_TIME rtCorrectedStartTime = buffer->rtStart - m_rtStart;
-          REFERENCE_TIME rtCorrectedStopTime = buffer->rtStop - m_rtStart;
+          rtCorrectedStartTime = buffer->rtStart - m_rtStart + m_rtStreamTimeOffset;
+          rtCorrectedStopTime = buffer->rtStop - m_rtStart + m_rtStreamTimeOffset;
 
           if (abs(m_dRateSeeking - 1.0) > 0.5)
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           else
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
+
+          m_rtPrevSample = rtCorrectedStartTime;
         }
         else // Buffer has no timestamp
           pSample->SetTime(NULL, NULL);
@@ -605,7 +616,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         m_bFirstSample = false;
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
-        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, (buffer->rtStart - m_rtStart) / 10000000.0, 
+        LogDebug("vid: %6.3f corr %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 
           buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
 #endif
         delete buffer;

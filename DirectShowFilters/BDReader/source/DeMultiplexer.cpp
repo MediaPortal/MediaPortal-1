@@ -78,6 +78,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_fHasAccessUnitDelimiters = false;
 
   m_eAudioPlSeen = new CAMEvent(true);
+  m_ePlaylistChangeDone = new CAMEvent(true);
   m_bVideoPlSeen = false;
   m_bAudioRequiresRebuild = false;
   m_bVideoRequiresRebuild = false;
@@ -106,6 +107,7 @@ CDeMultiplexer::~CDeMultiplexer()
   m_bShuttingDown = true;
 
   delete m_eAudioPlSeen;
+  delete m_ePlaylistChangeDone;
 
   delete m_playlistManager;
 
@@ -716,6 +718,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
             Flush(true, false);
+            m_filter.ResetPlaybackOffset();
           }
         }
 

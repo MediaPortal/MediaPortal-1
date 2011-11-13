@@ -108,6 +108,10 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_bUpdateStreamPositionOnly(false),
   m_dwThreadId(0),
   m_pMediaSeeking(NULL),
+  m_rtRunStart(0),
+  m_rtPlaybackOffset(_I64_MIN),
+  m_rtPlaylistDuration(_I64_MIN),
+  m_nPlaylist(0),
   m_rtStart(0),
   m_rtStop(0),
   m_rtCurrent(0),
@@ -310,6 +314,43 @@ void CBDReaderFilter::TriggerOnMediaChanged()
   {
     LogDebug("CBDReaderFilter: TriggerOnMediaChanged - no callback set!");
   }
+}
+
+void CBDReaderFilter::OnPlaybackPositionChange()
+{
+  if (m_pCallback && m_pClock)
+  {
+    REFERENCE_TIME time = 0;
+    m_pClock->GetTime(&time);
+
+    if (m_rtPlaybackOffset == _I64_MIN)
+    {
+      m_rtPlaybackOffset = time;
+      m_rtPlaylistDuration = _I64_MIN;
+    }
+
+    if (m_rtPlaylistDuration == _I64_MIN)
+    {
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
+      m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
+      lib.FreeTitleInfo(info);
+    }
+
+    if (time - m_rtPlaybackOffset > m_rtPlaylistDuration)
+    {
+      m_rtPlaybackOffset = time;
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
+      m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
+      lib.FreeTitleInfo(info);
+    }
+
+    m_pCallback->OnClockChange(m_rtPlaylistDuration, time - m_rtPlaybackOffset);
+  }
+}
+
+void CBDReaderFilter::ResetPlaybackOffset()
+{
+  m_rtPlaybackOffset = _I64_MIN;
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -566,7 +607,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
 
 STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 {
-  CRefTime runTime = tStart;
+  CRefTime runTime = m_rtRunStart = tStart;
   double msec = (double)runTime.Millisecs();
   msec /= 1000.0;
   LogDebug("CBDReaderFilter::Run(%05.2f) state %d", msec / 1000.0, m_State);
@@ -805,6 +846,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
       break;
 
     case BD_EVENT_PLAYLIST:
+      m_nPlaylist = pEv.param;
       break;
   }
 

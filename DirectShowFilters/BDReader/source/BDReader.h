@@ -64,6 +64,7 @@ DECLARE_INTERFACE_(IBDReaderCallback, IUnknown)
   STDMETHOD(OnMediaTypeChanged)(int videoRate, int videoFormat, int audioFormat)PURE;	
   STDMETHOD(OnBDEvent)(BD_EVENT event)PURE;
   STDMETHOD(OnOSDUpdate)(OSDTexture texture)PURE;
+  STDMETHOD(OnClockChange)(REFERENCE_TIME duration, REFERENCE_TIME position)PURE;
 };
 
 DECLARE_INTERFACE_(IBDReaderAudioChange, IUnknown)
@@ -189,14 +190,16 @@ public:
   STDMETHODIMP SetPositions(LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   STDMETHODIMP SetPositionsInternal(void *caller, LONGLONG* pCurrent, DWORD dwCurrentFlags, LONGLONG* pStop, DWORD dwStopFlags);
   
-  bool            IsStopping();
+  bool IsStopping();
 
-  void            IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
-  void            TriggerOnMediaChanged();
+  void IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
+  void TriggerOnMediaChanged();
+  void OnPlaybackPositionChange();
+  void ResetPlaybackOffset();
 
   CLibBlurayWrapper lib;
 
-  bool            m_bStopping;
+  bool  m_bStopping;
 
 protected:
 
@@ -250,6 +253,11 @@ private:
   bool            m_bUpdateStreamPositionOnly;
 
   bool m_bFirstPlay;
+
+  REFERENCE_TIME m_rtRunStart;
+  REFERENCE_TIME m_rtPlaybackOffset;
+  REFERENCE_TIME m_rtPlaylistDuration;
+  uint32_t m_nPlaylist;
 
   // Times
   REFERENCE_TIME m_rtStart;

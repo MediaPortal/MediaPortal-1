@@ -111,5 +111,8 @@ protected:
   bool m_bFirstSample;
   bool m_bClipEndingNotified;
   bool m_bStopWait;
+
+  REFERENCE_TIME m_rtPrevSample;
+  REFERENCE_TIME m_rtStreamTimeOffset;
 };
 

@@ -157,6 +157,9 @@ namespace MediaPortal.Player
 
     [PreserveSig]
     int OnOSDUpdate([Out] OSDTexture osdTexture);
+
+    [PreserveSig]
+    int OnClockChange([Out] long duration, [Out] long position);
   }
   #endregion
 
@@ -843,7 +846,7 @@ namespace MediaPortal.Player
       _width = GUIGraphicsContext.VideoWindow.Width;
       _height = GUIGraphicsContext.VideoWindow.Height;
       _geometry = GUIGraphicsContext.ARType;
-      UpdateCurrentPosition();
+      //UpdateCurrentPosition();
       OnInitialized();
       Log.Debug("BDPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);
 
@@ -890,7 +893,7 @@ namespace MediaPortal.Player
       if (ts.TotalMilliseconds >= 200 || iSpeed != 1)
       {
         _updateTimer = DateTime.Now;
-        UpdateCurrentPosition();
+        //UpdateCurrentPosition();
 
         if (_iMenuOffPendingCount > 1)
           SwitchMenuOff();
@@ -1199,7 +1202,7 @@ namespace MediaPortal.Player
           {
             int SeekTries = 3;
 
-            UpdateCurrentPosition();
+            //UpdateCurrentPosition();
             if (dTimeInSecs < 0)
             {
               dTimeInSecs = 0;
@@ -1244,7 +1247,7 @@ namespace MediaPortal.Player
           }
         }
 
-        UpdateCurrentPosition();
+        //UpdateCurrentPosition();
         if (_dvbSubRenderer != null)
         {
           _dvbSubRenderer.OnSeek(CurrentPosition);
@@ -1484,6 +1487,16 @@ namespace MediaPortal.Player
         eventBuffer.Set(bdevent);
         //Log.Debug("BDPlayer OnBDEvent: {0}, param: {1}", bdevent.Event, bdevent.Param);
       }
+      return 0;
+    }
+
+    public int OnClockChange(long duration, long position)
+    {
+      _currentPos = position / 10000000.0;
+      _duration = duration / 10000000.0;
+      
+      Log.Debug("duration {0} position {1}", _duration, _currentPos);
+
       return 0;
     }
 
@@ -1906,8 +1919,8 @@ namespace MediaPortal.Player
     {
       if (_mediaPos != null)
       {
-        _mediaPos.get_CurrentPosition(out _currentPos);
-        _mediaPos.get_Duration(out _duration);
+        //_mediaPos.get_CurrentPosition(out _currentPos);
+        //_mediaPos.get_Duration(out _duration);
       }
     }
 
