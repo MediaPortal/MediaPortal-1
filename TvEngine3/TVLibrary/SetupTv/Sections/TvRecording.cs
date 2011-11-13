@@ -974,7 +974,6 @@ namespace SetupTv.Sections
                                0,
                                SqlDateTime.MaxValue.Value,
                                0,
-                               GetServerId(),
                                aTag.episodeName,
                                aTag.seriesNum,
                                aTag.episodeNum,
@@ -1036,29 +1035,6 @@ namespace SetupTv.Sections
       }
       catch (Exception) {}
       return recordingFile;
-    }
-
-    private static int GetServerId()
-    {
-      int serverId = 1;
-      try
-      {
-        string localHost = System.Net.Dns.GetHostName();
-        string localDomainName =
-          System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.ToLowerInvariant();
-        IList<Server> dbsServers = Server.ListAll();
-        foreach (Server computer in dbsServers)
-        {
-          if (computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() ||
-              computer.HostName.ToLowerInvariant() == localHost.ToLowerInvariant() + "." + localDomainName)
-            serverId = computer.IdServer;
-        }
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show(string.Format("Could not get ServerID for recording!\n{0}", ex.Message));
-      }
-      return serverId;
     }
 
     private static int GetChannelIdByDisplayName(string aChannelName)

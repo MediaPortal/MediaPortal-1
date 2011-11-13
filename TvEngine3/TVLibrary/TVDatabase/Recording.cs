@@ -47,7 +47,6 @@ namespace TvDatabase
     [TableColumn("keepUntil", NotNull = true)] private int keepUntil;
     [TableColumn("keepUntilDate", NotNull = true)] private DateTime keepUntilDate;
     [TableColumn("timesWatched", NotNull = true)] private int timesWatched;
-    [TableColumn("idServer", NotNull = true), ForeignKey("Server", "idServer")] private int idServer;
     // stores the last position - to make resume possible
     [TableColumn("stopTime", NotNull = true)] private int stopTime;
     [TableColumn("episodeName", NotNull = true)] private string episodeName;
@@ -64,7 +63,7 @@ namespace TvDatabase
     /// </summary> 
     public Recording(int idChannel, int idSchedule, bool isRecording, DateTime startTime, DateTime endTime, string title,
                      string description, string genre,
-                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, int idServer,
+                     string fileName, int keepUntil, DateTime keepUntilDate, int timesWatched, 
                      string episodeName,
                      string seriesNum, string episodeNum, string episodePart)
     {
@@ -81,7 +80,6 @@ namespace TvDatabase
       this.keepUntil = keepUntil;
       this.keepUntilDate = keepUntilDate;
       this.timesWatched = timesWatched;
-      this.idServer = idServer;
       stopTime = 0;
       this.episodeName = episodeName;
       this.seriesNum = seriesNum;
@@ -96,7 +94,7 @@ namespace TvDatabase
     public Recording(int idRecording, bool isRecording, int idSchedule, int idChannel, DateTime startTime,
                      DateTime endTime, string title,
                      string description, string genre, string fileName, int keepUntil, DateTime keepUntilDate,
-                     int timesWatched, int idServer, int stopTime, string episodeName,
+                     int timesWatched, int stopTime, string episodeName,
                      string seriesNum, string episodeNum, string episodePart)
     {
       this.idSchedule = idSchedule;
@@ -112,7 +110,6 @@ namespace TvDatabase
       this.keepUntil = keepUntil;
       this.keepUntilDate = keepUntilDate;
       this.timesWatched = timesWatched;
-      this.idServer = idServer;
       this.stopTime = stopTime;
       this.episodeName = episodeName;
       this.seriesNum = seriesNum;
@@ -288,19 +285,6 @@ namespace TvDatabase
       {
         isChanged |= timesWatched != value;
         timesWatched = value;
-      }
-    }
-
-    /// <summary>
-    /// Property relating to database column idServer
-    /// </summary>
-    public int IdServer
-    {
-      get { return idServer; }
-      set
-      {
-        isChanged |= idServer != value;
-        idServer = value;
       }
     }
 
@@ -588,14 +572,6 @@ namespace TvDatabase
     public Schedule ReferencedSchedule()
     {
       return Schedule.Retrieve(Idschedule);
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    public Server ReferencedServer()
-    {
-      return Server.Retrieve(IdServer);
     }
 
     #endregion

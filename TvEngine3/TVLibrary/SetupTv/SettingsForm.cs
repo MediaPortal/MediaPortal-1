@@ -42,7 +42,6 @@ namespace SetupTv
     private readonly PluginLoader _pluginLoader = new PluginLoader();
     private Plugins pluginsRoot;
     private TvBusinessLayer layer;
-    private Servers servers;
     private TvCards cardPage;
     private bool showAdvancedSettings;
 
@@ -94,216 +93,132 @@ namespace SetupTv
         Log.Write(ex);
       }
 
-      try
-      {
-        Server.ListAll();
-      }
-      catch (Exception ex)
-      {
-        MessageBox.Show("Failed to open database");
-        Log.Error("Unable to get list of servers");
-        Log.Write(ex);
-      }
-
       Project project = new Project();
       AddSection(project);
 
+      cardPage = new TvCards();
+      cardPage.TvCardsChanged += OnTvCardsChanged;
+      AddSection(cardPage);
       layer = new TvBusinessLayer();
-      servers = new Servers();
-      AddSection(servers);
-      IList<Server> dbsServers = Server.ListAll();
+      AddServerTvCards(false);
 
-      if (dbsServers != null)
-      {
-        foreach (Server server in dbsServers)
-        {
-          if (server.IsMaster)
-          {
-            bool connected = false;
-            while (!connected)
-            {
-              RemoteControl.HostName = server.HostName;
+      TvChannels tvChannels = new TvChannels();
+      AddSection(tvChannels);
+      AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
+      AddChildSection(tvChannels, new TvChannelMapping());
 
-              if (server.ReferringCard().Count > 0)
-              {
-                try
-                {
-                  Card c = (Card)server.ReferringCard()[0];
-                  RemoteControl.Instance.Type(c.IdCard);
-                  connected = true;
-                }
-                catch (Exception ex)
-                {
-                  string localHostname = Dns.GetHostName();
-                  if (localHostname != server.HostName)
-                  {
-                    DialogResult dlg = MessageBox.Show(String.Format("Unable to connect to <{0}>.\n" +
-                                                                     "Do you want to try the current comupter name ({1}) instead?",
-                                                                     server.HostName, localHostname),
-                                                       "Wrong config detected",
-                                                       MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-                    if (dlg == DialogResult.Yes)
-                    {
-                      Log.Info("Controller: server {0} changed to {1}", server.HostName, localHostname);
-                      server.HostName = localHostname;
-                      server.Persist();
-                      RemoteControl.Clear();
-                      ServiceHelper.Restart();
-                      ServiceHelper.WaitInitialized();
-                    }
-                    else
-                    {
-                      MessageBox.Show("Setup will now close");
-                      Environment.Exit(-1);
-                    }
-                  }
-                  else
-                  {
-                    Log.Error("Cannot connect to server {0}", server.HostName);
-                    Log.Write(ex);
-                    DialogResult dlg = MessageBox.Show("Unable to connect to <" + server.HostName + ">.\n" +
-                                                       "Please check the TV Server logs for details.\n\n" +
-                                                       "Setup will now close.");
-                    Environment.Exit(-1);
-                  }
-                }
-              }
-            }
-            break;
-          }
-        }
+      RadioChannels radioChannels = new RadioChannels();
+      AddSection(radioChannels);
+      AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
+      AddChildSection(radioChannels, new RadioChannelMapping());
 
-        AddServerTvCards(servers, dbsServers, false);
+      Epg EpgSection = new Epg();
+      AddSection(EpgSection);
+      AddChildSection(EpgSection, new TvEpgGrabber());
+      AddChildSection(EpgSection, new RadioEpgGrabber());
 
-        TvChannels tvChannels = new TvChannels();
-        AddSection(tvChannels);
-        AddChildSection(tvChannels, new TvCombinations("TV Combinations"));
-        AddChildSection(tvChannels, new TvChannelMapping());
+      AddSection(new ScanSettings());
+      AddSection(new TvRecording());
+      AddSection(new TvTimeshifting());
+      AddSection(new TvSchedules());
+      AddSection(new StreamingServer());
 
-        RadioChannels radioChannels = new RadioChannels();
-        AddSection(radioChannels);
-        AddChildSection(radioChannels, new RadioCombinations("Radio Combinations"));
-        AddChildSection(radioChannels, new RadioChannelMapping());
+      AddSection(new TestService("Manual Control"));
+      AddSection(new TestChannels("Test Channels"));
 
-        Epg EpgSection = new Epg();
-        AddSection(EpgSection);
-        AddChildSection(EpgSection, new TvEpgGrabber());
-        AddChildSection(EpgSection, new RadioEpgGrabber());
+      _pluginLoader.Load();
+      pluginsRoot = new Plugins("Plugins", _pluginLoader);
+      AddSection(pluginsRoot);
 
-        AddSection(new ScanSettings());
-        AddSection(new TvRecording());
-        AddSection(new TvTimeshifting());
-        AddSection(new TvSchedules());
-        AddSection(new StreamingServer());
+      pluginsRoot.ChangedActivePlugins += SectChanged;
         AddSection(new UserPriorities());
 
-        AddSection(new TestService("Manual Control"));
-        AddSection(new TestChannels("Test Channels"));
-
-        _pluginLoader.Load();
-        pluginsRoot = new Plugins("Plugins", _pluginLoader);
-        AddSection(pluginsRoot);
-
-        pluginsRoot.ChangedActivePlugins += SectChanged;
-
-        foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
+      foreach (ITvServerPlugin plugin in _pluginLoader.Plugins)
+      {
+        SectionSettings settings = plugin.Setup;
+        if (settings != null)
         {
-          SectionSettings settings = plugin.Setup;
-          if (settings != null)
+          Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+          settings.Text = plugin.Name;
+          if (isActive.Value == "true")
           {
-            Setting isActive = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-            settings.Text = plugin.Name;
-            if (isActive.Value == "true")
-            {
-              AddChildSection(pluginsRoot, settings);
-            }
+            AddChildSection(pluginsRoot, settings);
           }
         }
-        if (showAdvancedSettings)
-        {
-          AddSection(new DebugOptions());
-        }
-        AddSection(new ImportExport());
-        AddSection(new ThirdPartyChecks());
-
-        sectionTree.SelectedNode = sectionTree.Nodes[0];
-        // make sure window is in front of mediaportal
       }
+      if (showAdvancedSettings)
+      {
+        AddSection(new DebugOptions());
+      }
+      AddSection(new ImportExport());
+      AddSection(new ThirdPartyChecks());
+
+      sectionTree.SelectedNode = sectionTree.Nodes[0];
+      // make sure window is in front of mediaportal
+
       BringToFront();
     }
 
-    private void AddServerTvCards(Servers servers, IList<Server> dbsServers, bool reloaded)
+    private void AddServerTvCards(bool reloaded)
     {
-      foreach (Server server in dbsServers)
+      foreach (Card dbsCard in Card.ListAll())
       {
-        bool isLocal = (server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() ||
-                        server.HostName.ToLowerInvariant() == Dns.GetHostName().ToLowerInvariant() + "."
-                        +
-                        System.Net.NetworkInformation.IPGlobalProperties.GetIPGlobalProperties().DomainName.
-                          ToLowerInvariant());
-        cardPage = new TvCards(server.HostName);
-        cardPage.TvCardsChanged += OnTvCardsChanged;
-        AddChildSection(servers, cardPage, 0);
-        foreach (Card dbsCard in server.ReferringCard())
+        if (dbsCard.Enabled == true && RemoteControl.Instance.CardPresent(dbsCard.IdCard))
         {
-          if (dbsCard.Enabled == true && RemoteControl.Instance.CardPresent(dbsCard.IdCard))
+          CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
+          string cardName = dbsCard.Name;
+          int cardNo = dbsCard.IdCard;
+          switch (type)
           {
-            CardType type = RemoteControl.Instance.Type(dbsCard.IdCard);
-            int cardId = dbsCard.IdCard;
-            string cardName = dbsCard.Name;
-            switch (type)
-            {
-              case CardType.Analog:
-                cardName = String.Format("{0} Analog {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbT:
-                cardName = String.Format("{0} DVB-T {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbC:
-                cardName = String.Format("{0} DVB-C {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbS:
-                cardName = String.Format("{0} DVB-S {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.Atsc:
-                cardName = String.Format("{0} ATSC {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.DvbIP:
-                cardName = String.Format("{0} DVB-IP {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard), 1);
-                break;
-              case CardType.RadioWebStream:
-                cardName = String.Format("{0} {1}", cardId, cardName);
-                InfoPage RadioWebStreamInfo = new InfoPage(cardName);
-                RadioWebStreamInfo.InfoText =
-                  "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
-                AddChildSection(cardPage, RadioWebStreamInfo, 1);
-                break;
-              case CardType.Unknown:
-                cardName = String.Format("{0} Unknown {1}", cardId, cardName);
-                AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard), 1);
-                break;
-            }
-          }
-        }
-        if (isLocal)
-        {
-          Utils.CheckForDvbHotfix();
-        }
-        if (reloaded)
-        {
-          SectionTreeNode activeNode = (SectionTreeNode)settingSections[server.HostName];
-          if (activeNode != null)
-          {
-            activeNode.Expand();
+            case CardType.Analog:
+              cardName = String.Format("{0} Analog {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard));
+              break;
+            case CardType.DvbT:
+              cardName = String.Format("{0} DVB-T {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardDvbT(cardName, dbsCard.IdCard));
+              break;
+            case CardType.DvbC:
+              cardName = String.Format("{0} DVB-C {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardDvbC(cardName, dbsCard.IdCard));
+              break;
+            case CardType.DvbS:
+              cardName = String.Format("{0} DVB-S {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardDvbS(cardName, dbsCard.IdCard));
+              break;
+            case CardType.Atsc:
+              cardName = String.Format("{0} ATSC {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardAtsc(cardName, dbsCard.IdCard));
+              break;
+            case CardType.DvbIP:
+              cardName = String.Format("{0} DVB-IP {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardDvbIP(cardName, dbsCard.IdCard));
+              break;
+            case CardType.RadioWebStream:
+              cardName = String.Format("{0} {1}", cardNo, cardName);
+              InfoPage RadioWebStreamInfo = new InfoPage(cardName);
+              RadioWebStreamInfo.InfoText =
+                "The RadioWebStream card does not have any options.\n\n\nYou can add your favourite radio webstreams under:\n\n --> 'Radio Channels', 'Add', 'Web-Stream' or by importing a playlist.";
+              AddChildSection(cardPage, RadioWebStreamInfo);
+              break;
+            case CardType.Unknown:
+              cardName = String.Format("{0} Unknown {1}", cardNo, cardName);
+              AddChildSection(cardPage, new CardAnalog(cardName, dbsCard.IdCard));
+              break;
           }
         }
       }
+      Utils.CheckForDvbHotfix();
+      
+      if (reloaded)
+      {
+        SectionTreeNode activeNode = (SectionTreeNode)settingSections[cardPage.Text];
+        if (activeNode != null)
+        {
+          activeNode.Expand();
+        }
+      }
+
     }
 
     /// <summary>
@@ -330,11 +245,9 @@ namespace SetupTv
           RemoteControl.Instance.Restart();
 
           // remove all tv servers / cards, add current ones back later
-          RemoveAllChildSections((SectionTreeNode)settingSections[servers.Text]);
+          RemoveAllChildSections((SectionTreeNode)settingSections[cardPage.Text]);
 
-          // re-add tvservers and cards to tree
-          IList<Server> dbsServers = Server.ListAll();
-          AddServerTvCards(servers, dbsServers, true);
+          AddServerTvCards(true);
         }
         finally
         {
@@ -361,29 +274,7 @@ namespace SetupTv
           //Remove the section from the hashtable in case we add it again
           settingSections.Remove(childNode.Text);
         }
-        // first remove all children and sections, then nodes themself (otherwise collection changes during iterate)
-        foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
-        {
-          parentTreeNode.Nodes.Remove(childNode);
-        }
-      }
-    }
-
-    public void RemoveAllChildSections(SectionSettings parentSection)
-    {
-      // Remove section from tree
-      if (parentSection != null)
-      {
-        SectionTreeNode parentTreeNode = (SectionTreeNode)settingSections[parentSection.Text];
-        foreach (SectionTreeNode childNode in parentTreeNode.Nodes)
-        {
-          // recursive delete all children
-          RemoveAllChildSections(childNode);
-
-          //Remove the section from the hashtable in case we add it again
-          settingSections.Remove(childNode.Text);
-          parentTreeNode.Nodes.Remove(childNode);
-        }
+        parentTreeNode.Nodes.Clear();
       }
     }
 

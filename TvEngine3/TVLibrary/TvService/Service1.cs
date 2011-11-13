@@ -704,27 +704,24 @@ namespace TvService
       // start plugins
       foreach (ITvServerPlugin plugin in _plugins.Plugins)
       {
-        if (plugin.MasterOnly == false || _controller.IsMaster)
+        Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
+        if (setting.Value == "true")
         {
-          Setting setting = layer.GetSetting(String.Format("plugin{0}", plugin.Name), "false");
-          if (setting.Value == "true")
+          Log.Info("TV Service: Plugin: {0} started", plugin.Name);
+          try
           {
-            Log.Info("TV Service: Plugin: {0} started", plugin.Name);
-            try
-            {
-              plugin.Start(_controller);
-              _pluginsStarted.Add(plugin);
-            }
-            catch (Exception ex)
-            {
-              Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
-              Log.Write(ex);
-            }
+            plugin.Start(_controller);
+            _pluginsStarted.Add(plugin);
           }
-          else
+          catch (Exception ex)
           {
-            Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
+            Log.Info("TV Service:  Plugin: {0} failed to start", plugin.Name);
+            Log.Write(ex);
           }
+        }
+        else
+        {
+          Log.Info("TV Service: Plugin: {0} disabled", plugin.Name);
         }
       }
 

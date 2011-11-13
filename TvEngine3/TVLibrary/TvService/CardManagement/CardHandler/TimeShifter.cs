@@ -72,22 +72,6 @@ namespace TvService
         if (_cardHandler.DataBaseCard.Enabled == false)
           return "";
 
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return "";
-          if (_cardHandler.IsLocal == false)
-          {
-            return RemoteControl.Instance.TimeShiftFileName(ref user);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return "";
-        }
         var context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return null;
@@ -117,23 +101,6 @@ namespace TvService
         if (_cardHandler.DataBaseCard.Enabled == false)
           return false;
 
-        try
-        {
-          RemoteControl.HostName = _cardHandler.DataBaseCard.ReferencedServer().HostName;
-          if (!RemoteControl.Instance.CardPresent(_cardHandler.DataBaseCard.IdCard))
-            return false;
-          if (_cardHandler.IsLocal == false)
-          {
-            return RemoteControl.Instance.TimeShiftGetCurrentFilePosition(ref user, ref position,
-                                                                          ref bufferId);
-          }
-        }
-        catch (Exception)
-        {
-          Log.Error("card: unable to connect to slave controller at:{0}",
-                    _cardHandler.DataBaseCard.ReferencedServer().HostName);
-          return false;
-        }
         var context = _cardHandler.Card.Context as ITvCardContext;
         if (context == null)
           return false;

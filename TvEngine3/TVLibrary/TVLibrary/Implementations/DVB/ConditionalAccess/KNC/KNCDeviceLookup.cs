@@ -50,11 +50,8 @@ namespace TvLibrary.Implementations.DVB
     {
       // temporary list to hold device paths
       List<String> deviceids = new List<String>();
-      IList<Server> dbsServers = Server.ListAll();
-
-      foreach (Server server in dbsServers)
       {
-        foreach (Card dbsCard in server.ReferringCard())
+        foreach (Card dbsCard in Card.ListAll())
         {
           // only count all KNC cards
           if (dbsCard.Name.StartsWith("KNC BDA") || dbsCard.Name.StartsWith("Mystique"))

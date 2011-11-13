@@ -49,7 +49,9 @@ namespace SetupTv.Sections
       }
     }
 
-    private Server _ourServer;
+    private string _hostName;
+
+    private int _rtspPort;
 
     public StreamingServer()
       : this("Streaming Server") {}
@@ -63,12 +65,16 @@ namespace SetupTv.Sections
     public override void OnSectionActivated()
     {
       timer1.Enabled = true;
-
-      _ourServer = Server.Retrieve(RemoteControl.Instance.IdServer);
-      string ourServerName = _ourServer.HostName;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      Setting hostNameSetting = layer.GetSetting("hostName");
+      _hostName = hostNameSetting.Value;
+      Setting rtspPortSetting = layer.GetSetting("rtspPort");
+      _rtspPort = Int32.Parse(rtspPortSetting.Value);
+      
+      string ourServerName = _hostName;
       try
       {
-        ourServerName = Dns.GetHostEntry(_ourServer.HostName).HostName;
+        ourServerName = Dns.GetHostEntry(_hostName).HostName;
       }
       catch (Exception ex)
       {
@@ -83,17 +89,17 @@ namespace SetupTv.Sections
       foreach (string ipAdress in ipAdresses)
       {
         IpAddressComboBox.Items.Add(new IpAddressOption(ipAdress, ipAdress));
-        if (String.Compare(ipAdress, _ourServer.HostName, true) == 0)
+        if (String.Compare(ipAdress, _hostName, true) == 0)
         {
           selected = counter;
         }
         counter++;
       }
       IpAddressComboBox.SelectedIndex = selected;
-      if (_ourServer.RtspPort >= PortNoNumericUpDown.Minimum && _ourServer.RtspPort <= PortNoNumericUpDown.Maximum)
+      if (_rtspPort >= PortNoNumericUpDown.Minimum && _rtspPort <= PortNoNumericUpDown.Maximum)
       {
-        PortNoNumericUpDown.Value = _ourServer.RtspPort;
-        PortNoNumericUpDown.Text = _ourServer.RtspPort.ToString(); // in case value is the same but text is empty
+        PortNoNumericUpDown.Value = _rtspPort;
+        PortNoNumericUpDown.Text = _rtspPort.ToString(); // in case value is the same but text is empty
       }
     }
 
@@ -107,29 +113,19 @@ namespace SetupTv.Sections
 
     private void ApplyStreamingSettings()
     {
-      if (_ourServer != null)
+      string newHostName = ((IpAddressOption) IpAddressComboBox.SelectedItem).HostName;
+      int newRtspPort = (int) PortNoNumericUpDown.Value;
+      if (_hostName != newHostName ||
+          _rtspPort != newRtspPort)
       {
-        string newHostName = ((IpAddressOption)IpAddressComboBox.SelectedItem).HostName;
-        int newRtspPort = (int)PortNoNumericUpDown.Value;
-        bool needRestart = false;
-        //int.TryParse(PortNoNumericUpDown.Text, out newRtspPort);
-        if (_ourServer.HostName != newHostName ||
-            _ourServer.RtspPort != newRtspPort)
-        {
-          _ourServer.HostName = newHostName;
-          _ourServer.RtspPort = newRtspPort;
-          needRestart = true;
-        }
-        if (_ourServer.IsChanged)
-        {
-          // _ourServer may have changed because RtspPort was 0 in DB and was automatically
-          // changed to the default value (554), so we need to persist anyway
-          _ourServer.Persist();
-        }
-        if (needRestart)
-        {
-          ServiceNeedsToRestart();
-        }
+        TvBusinessLayer layer = new TvBusinessLayer();
+        Setting hostNameSetting = layer.GetSetting("hostName");
+        hostNameSetting.Value = newHostName;
+        hostNameSetting.Persist();
+        Setting rtspPortSetting = layer.GetSetting("rtspPort");
+        rtspPortSetting.Value = "" + newRtspPort;
+        rtspPortSetting.Persist();
+        ServiceNeedsToRestart();
       }
     }
 

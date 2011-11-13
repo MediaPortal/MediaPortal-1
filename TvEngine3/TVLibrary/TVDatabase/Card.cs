@@ -53,7 +53,6 @@ namespace TvDatabase
     [TableColumn("grabEPG", NotNull = true)] private bool grabEPG;
     [TableColumn("lastEpgGrab", NotNull = true)] private DateTime lastEpgGrab;
     [TableColumn("recordingFolder", NotNull = true)] private string recordingFolder;
-    [TableColumn("idServer", NotNull = true), ForeignKey("Server", "idServer")] private int idServer;
     [TableColumn("enabled", NotNull = true)] private bool enabled;
     [TableColumn("camType", NotNull = true)] private int camType;
     [TableColumn("timeshiftingFolder", NotNull = true)] private string timeshiftingFolder;
@@ -84,7 +83,6 @@ namespace TvDatabase
       this.grabEPG = grabEPG;
       this.lastEpgGrab = lastEpgGrab;
       this.recordingFolder = recordingFolder;
-      this.idServer = idServer;
       this.enabled = enabled;
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
@@ -100,7 +98,7 @@ namespace TvDatabase
     /// Create a new object by specifying all fields (except the auto-generated primary key field). 
     /// </summary> 
     public Card(string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab, string recordingFolder,
-                int idServer, bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
+                bool enabled, int camType, string timeshiftingFolder, int recordingFormat,
                 int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
     {
       isChanged = true;
@@ -110,7 +108,6 @@ namespace TvDatabase
       this.grabEPG = grabEPG;
       this.lastEpgGrab = lastEpgGrab;
       this.recordingFolder = recordingFolder;
-      this.idServer = idServer;
       this.enabled = enabled;
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
@@ -127,7 +124,7 @@ namespace TvDatabase
     /// construct objects from retrieved rows. 
     /// </summary> 
     public Card(int idCard, string devicePath, string name, int priority, bool grabEPG, DateTime lastEpgGrab,
-                string recordingFolder, int idServer, bool enabled, int camType, string timeshiftingFolder,
+                string recordingFolder, bool enabled, int camType, string timeshiftingFolder,
                 int recordingFormat, int decryptLimit, bool preloadCard, bool stopGraph, bool caModule, int netProvider)
     {
       this.idCard = idCard;
@@ -137,7 +134,6 @@ namespace TvDatabase
       this.grabEPG = grabEPG;
       this.lastEpgGrab = lastEpgGrab;
       this.recordingFolder = recordingFolder;
-      this.idServer = idServer;
       this.enabled = enabled;
       this.camType = camType;
       this.timeshiftingFolder = timeshiftingFolder;
@@ -327,19 +323,6 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Property relating to database column idServer
-    /// </summary>
-    public int IdServer
-    {
-      get { return idServer; }
-      set
-      {
-        isChanged |= idServer != value;
-        idServer = value;
-      }
-    }
-
-    /// <summary>
     /// Property relating to database column enabled
     /// </summary>
     public bool Enabled
@@ -353,7 +336,7 @@ namespace TvDatabase
     }
 
     /// <summary>
-    /// Property relating to database column idServer
+    /// Property relating to database column camType
     /// </summary>
     public int CamType
     {
@@ -556,14 +539,6 @@ namespace TvDatabase
 
       // TODO In the end, a GentleList should be returned instead of an arraylist
       //return new GentleList( typeof(ChannelMap), this );
-    }
-
-    /// <summary>
-    ///
-    /// </summary>
-    public Server ReferencedServer()
-    {
-      return Server.Retrieve(IdServer);
     }
 
     #endregion

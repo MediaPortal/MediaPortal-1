@@ -39,12 +39,6 @@ namespace TvControl
     /// <value>Returns the AssemblyVersion of tvservice.exe</value>
     string GetAssemblyVersion { get; }
 
-    /// <summary>
-    /// Gets the server.
-    /// </summary>
-    /// <value>The server.</value>
-    int IdServer { get; }
-
     ///<summary>
     ///Gets the total number of tv-cards installed.
     ///</summary>
@@ -907,11 +901,6 @@ namespace TvControl
     /// <param name="cardId">The card id.</param>
     /// <param name="user">The user.</param>
     void RemoveUserFromOtherCards(int cardId, IUser user);
-
-    /// <summary>
-    /// Determines whether or not this is a master controller
-    /// </summary>
-    bool IsMaster { get; }
 
     /// <summary>
     /// Determines the number of active streams on the server

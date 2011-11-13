@@ -139,20 +139,6 @@ namespace TvService
         {
           continue;
         }
-        try
-        {
-          RemoteControl.HostName = card.ReferencedServer().HostName;
-          if (!_tvController.CardPresent(card.IdCard))
-          {
-            continue;
-          }
-        }
-        catch (Exception e)
-        {
-          Log.Error("card: unable to start job for card {0} at:{0}", e.Message, card.Name,
-                    card.ReferencedServer().HostName);
-        }
-
         EpgCard epgCard = new EpgCard(_tvController, card);
         _epgCards.Add(epgCard);
       }

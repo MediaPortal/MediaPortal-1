@@ -154,12 +154,6 @@
     <Compile Include="Dialogs\FormEditChannel.designer.cs">
       <DependentUpon>FormEditChannel.cs</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FormEditIpAdress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Dialogs\FormEditIpAdress.designer.cs">
-      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
-    </Compile>
     <Compile Include="Dialogs\FormPreview.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -444,12 +438,6 @@
     <Compile Include="Sections\ScanSettings.Designer.cs">
       <DependentUpon>ScanSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Sections\Servers.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\Servers.Designer.cs">
-      <DependentUpon>Servers.cs</DependentUpon>
-    </Compile>
     <Compile Include="Sections\StreamingServer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -581,10 +569,6 @@
       <DependentUpon>FormEditChannel.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dialogs\FormEditIpAdress.resx">
-      <DependentUpon>FormEditIpAdress.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\FormPreview.resx">
       <DependentUpon>FormPreview.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -653,10 +637,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ScanSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Sections\Servers.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>Servers.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Sections\StreamingServer.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StreamingServer.cs</DependentUpon>
@@ -680,6 +660,8 @@
     <EmbeddedResource Include="40_upgrade_sqlserver_database.sql" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="61_upgrade_mysql_database.sql" />
+    <EmbeddedResource Include="61_upgrade_sqlserver_database.sql" />
     <Content Include="images\animation.SatDish.gif" />
     <Content Include="images\icon.card.gif" />
     <Content Include="images\icon.computer.gif" />

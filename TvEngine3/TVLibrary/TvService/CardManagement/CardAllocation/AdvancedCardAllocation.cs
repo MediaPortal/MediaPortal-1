@@ -318,8 +318,7 @@ namespace TvService
       bool isCardPresent = IsCardPresent(cardId);
       if (!isCardPresent)
       {
-        Log.Error("card: unable to connect to slave controller at:{0}",
-                  cardHandler.DataBaseCard.ReferencedServer().HostName);
+        Log.Error("card: card not present");
         return false;
       }
 

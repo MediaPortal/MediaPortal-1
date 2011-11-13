@@ -115,19 +115,18 @@ namespace TvDatabase
 
     #region cards
 
-    public Card AddCard(string name, string devicePath, Server server)
+    public Card AddCard(string name, string devicePath)
     {
       Card card = GetCardByDevicePath(devicePath);
       if (card != null)
       {
         card.Name = name;
-        card.IdServer = server.IdServer;
         return card;
       }
       //
       // Card(devicePath, name, priority, grabEPG, lastEpgGrab, recordingFolder, idServer, enabled, camType, timeshiftingFolder, recordingFormat, decryptLimit)
       //
-      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", server.IdServer, true, 0, "", 0,
+      Card newCard = new Card(devicePath, name, 1, true, new DateTime(2000, 1, 1), "", true, 0, "", 0,
                               0, false, true, false, (int)TvDatabase.DbNetworkProvider.Generic);
       newCard.Persist();
       return newCard;

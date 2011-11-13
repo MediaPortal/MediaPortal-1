@@ -55,12 +55,6 @@ namespace TvEngine
     /// </summary>
     string Author { get; }
 
-    /// <summary>
-    /// returns if the plugin should only run on the master server
-    /// or also on slave servers
-    /// </summary>
-    bool MasterOnly { get; }
-
     #endregion
 
     #region  methods

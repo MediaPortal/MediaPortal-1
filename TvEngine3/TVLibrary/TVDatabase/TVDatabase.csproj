@@ -99,7 +99,6 @@
     <Compile Include="Recording.cs" />
     <Compile Include="Satellite.cs" />
     <Compile Include="Schedule.cs" />
-    <Compile Include="Server.cs" />
     <Compile Include="Setting.cs" />
     <Compile Include="Timespan.cs" />
     <Compile Include="TuningDetail.cs" />

@@ -91,35 +91,23 @@ namespace SetupTv.Sections
       XmlNode rootElement = xmlDoc.CreateElement("tvserver");
       AddAttribute(rootElement, "version", "1.0");
 
-      XmlNode nodeServers = xmlDoc.CreateElement("servers");
-      IList<Server> servers = Server.ListAll();
-      foreach (Server server in servers)
+      XmlNode nodeCards = xmlDoc.CreateElement("cards");
+      IList<Card> cards = Card.ListAll();
+      foreach (Card card in cards)
       {
-        XmlNode nodeServer = xmlDoc.CreateElement("server");
-        AddAttribute(nodeServer, "HostName", server.HostName);
-        AddAttribute(nodeServer, "IdServer", server.IdServer);
-        AddAttribute(nodeServer, "IsMaster", server.IsMaster);
-
-        XmlNode nodeCards = xmlDoc.CreateElement("cards");
-        IList<Card> cards = Card.ListAll();
-        foreach (Card card in cards)
-        {
-          XmlNode nodeCard = xmlDoc.CreateElement("card");
-          AddAttribute(nodeCard, "IdCard", card.IdCard);
-          AddAttribute(nodeCard, "DevicePath", card.DevicePath);
-          AddAttribute(nodeCard, "Enabled", card.Enabled);
-          AddAttribute(nodeCard, "CamType", card.CamType);
-          AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
-          AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
-          AddAttribute(nodeCard, "Name", card.Name);
-          AddAttribute(nodeCard, "Priority", card.Priority);
-          AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
-          nodeCards.AppendChild(nodeCard);
-        }
-        nodeServer.AppendChild(nodeCards);
-        nodeServers.AppendChild(nodeServer);
+        XmlNode nodeCard = xmlDoc.CreateElement("card");
+        AddAttribute(nodeCard, "IdCard", card.IdCard);
+        AddAttribute(nodeCard, "DevicePath", card.DevicePath);
+        AddAttribute(nodeCard, "Enabled", card.Enabled);
+        AddAttribute(nodeCard, "CamType", card.CamType);
+        AddAttribute(nodeCard, "GrabEPG", card.GrabEPG);
+        AddAttribute(nodeCard, "LastEpgGrab", card.LastEpgGrab);
+        AddAttribute(nodeCard, "Name", card.Name);
+        AddAttribute(nodeCard, "Priority", card.Priority);
+        AddAttribute(nodeCard, "RecordingFolder", card.RecordingFolder);
+        nodeCards.AppendChild(nodeCard);
       }
-      rootElement.AppendChild(nodeServers);
+      rootElement.AppendChild(nodeCards);
 
       XmlNode nodechannels = xmlDoc.CreateElement("channels");
       IList<Channel> channels = Channel.ListAll();

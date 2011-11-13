@@ -45,8 +45,6 @@ namespace TvService
 {
   /// <summary>
   /// This class servers all requests from remote clients
-  /// and if server is the master it will delegate the requests to the 
-  /// correct slave servers
   /// </summary>
   public class TVController : MarshalByRefObject, IController, IDisposable, ITvServerEvent, IEpgEvents, ICiMenuCallbacks
   {
@@ -78,17 +76,9 @@ namespace TvService
     /// </summary>
     private RtspStreaming _streamer;
 
-    /// <summary>
-    /// Indicates if we're the master server or not
-    /// </summary>
-    private bool _isMaster;
-
     private Thread heartBeatMonitorThread;
 
-    /// <summary>
-    /// Reference to our server
-    /// </summary>
-    private Server _ourServer;
+    /// <summary>camType
 
     /// <summary>
     private TvCardCollection _localCardCollection;
@@ -191,20 +181,6 @@ namespace TvService
     public Dictionary<int, ITvCardHandler> CardCollection
     {
       get { return _cards; }
-    }
-
-    /// <summary>
-    /// Determines whether the specified card is the local pc or not.
-    /// </summary>
-    /// <param name="cardId">card</param>
-    /// <returns>
-    /// 	<c>true</c> if the specified host name is local; otherwise, <c>false</c>.
-    /// </returns>
-    private bool IsLocal(int cardId)
-    {
-      if (ValidateTvControllerParams(cardId, false))
-        return false;
-      return _cards[cardId].IsLocal;
     }
 
     #region CI Menu action functions
@@ -518,63 +494,15 @@ namespace TvService
             Log.Info("Controller: local ip address:{0}", ipaddress.ToString());
           }
         }
-
-        //get all registered servers from the database
-        IList<Server> servers;
-        try
-        {
-          servers = Server.ListAll();
-        }
-        catch (Exception ex)
-        {
-          Log.Error("Controller: Failed to fetch tv servers from database - {0}",
-                    Utils.BlurConnectionStringPassword(ex.Message));
-          return false;
-        }
-
-        // find ourself
-        foreach (Server server in servers)
-        {
-          if (IsLocal(server.HostName))
-          {
-            Log.Info("Controller: server running on {0}", server.HostName);
-            _ourServer = server;
-            break;
-          }
-        }
-
-        //we do not exist yet?
-        if (_ourServer == null)
-        {
-          //then add ourself to the server
-          if (servers.Count == 0)
-          {
-            //there are no other servers so we are the master one.
-            Log.Info("Controller: create new server in database");
-            _ourServer = new Server(false, Dns.GetHostName(), RtspStreaming.DefaultPort);
-            _ourServer.IsMaster = true;
-            _isMaster = true;
-            _ourServer.Persist();
-            Log.Info("Controller: new server created for {0} master:{1} ", Dns.GetHostName(), _isMaster);
-          }
-          else
-          {
-            Log.Error(
-              "Controller: sorry, master/slave server setups are not supported. Since there is already another server in the db, we exit here.");
-            return false;
-          }
-        }
-        _isMaster = _ourServer.IsMaster;
-
-        //enumerate all tv cards in this pc...        
-        _maxFreeCardsToTry = Int32.Parse(_layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value);
-
+        TvBusinessLayer layer = new TvBusinessLayer();
+        //enumerate all tv cards in this pc...
+        _maxFreeCardsToTry = Int32.Parse(layer.GetSetting("timeshiftMaxFreeCardsToTry", "0").Value);
+        IList<Card> cardsInDbs = Card.ListAll();
         for (int i = 0; i < _localCardCollection.Cards.Count; ++i)
         {
           //for each card, check if its already mentioned in the database
           bool found = false;
-          IList<Card> cards = _ourServer.ReferringCard();
-          foreach (Card card in cards)
+          foreach (Card card in cardsInDbs)
           {
             if (card.DevicePath == _localCardCollection.Cards[i].DevicePath)
             {
@@ -586,16 +514,15 @@ namespace TvService
           {
             // card is not yet in the database, so add it
             Log.Info("Controller: add card:{0}", _localCardCollection.Cards[i].Name);
-            _layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath, _ourServer);
+            layer.AddCard(_localCardCollection.Cards[i].Name, _localCardCollection.Cards[i].DevicePath);
           }
         }
         //notify log about cards from the database which are removed from the pc
-        IList<Card> cardsInDbs = Card.ListAll();
+        cardsInDbs = Card.ListAll();
         int cardsInstalled = _localCardCollection.Cards.Count;
         foreach (Card dbsCard in cardsInDbs)
         {
-          if (dbsCard.ReferencedServer().IdServer == _ourServer.IdServer)
-          {
+          
             bool found = false;
             for (int cardNumber = 0; cardNumber < cardsInstalled; ++cardNumber)
             {
@@ -663,7 +590,7 @@ namespace TvService
                 CardRemove(dbsCard.IdCard);
               }
             }
-          }
+
         }
 
         Dictionary<int, ITVCard> localcards = new Dictionary<int, ITVCard>();
@@ -671,8 +598,7 @@ namespace TvService
         cardsInDbs = Card.ListAll();
         foreach (Card card in cardsInDbs)
         {
-          if (IsLocal(card.ReferencedServer().HostName))
-          {
+          
             for (int x = 0; x < _localCardCollection.Cards.Count; ++x)
             {
               if (_localCardCollection.Cards[x].DevicePath == card.DevicePath)
@@ -681,7 +607,7 @@ namespace TvService
                 break;
               }
             }
-          }
+          
         }
 
         Log.Info("Controller: setup hybrid cards");
@@ -708,7 +634,7 @@ namespace TvService
           if (localcards.ContainsKey(dbsCard.IdCard))
           {
             ITVCard card = localcards[dbsCard.IdCard];
-            TvCardHandler tvcard = new TvCardHandler(dbsCard, card);
+            TvCardHandler tvcard = new TvCardHandler(dbsCard, card, this);
             _cards[dbsCard.IdCard] = tvcard;
           }
 
@@ -758,17 +684,59 @@ namespace TvService
         }
 
         Log.Info("Controller: setup streaming");
-        _streamer = new RtspStreaming(_ourServer.HostName, _ourServer.RtspPort);
-
-        if (_isMaster)
+        Setting hostNameSetting = layer.GetSetting("hostName");
+        if (hostNameSetting.Value.Equals(String.Empty))
         {
-          _epgGrabber = new EpgGrabber(this);
-          _epgGrabber.Start();
-          _scheduler = new Scheduler(this);
-          _scheduler.Start();
+          string dnsName = Dns.GetHostName();
+          Log.Info("Controller: server hostname not found in database Using: {0}", dnsName);
+          hostNameSetting.Value = dnsName;
+          hostNameSetting.Persist();
         }
+        else
+        {
+          if (!IsLocal(hostNameSetting.Value))
+          {
+            string dnsName = Dns.GetHostName();
+            Log.Info("Controller: server hostname {0} is not local, using: {1}", hostNameSetting.Value, dnsName);
+            hostNameSetting.Value = dnsName;
+            hostNameSetting.Persist();
+          }
+        }
+        string hostName = hostNameSetting.Value;
+        Log.Info("Controller: server running on {0}", hostName);
 
-        SetupHeartbeatThread();
+        Setting rtspPortSetting = layer.GetSetting("rtspPort");
+        int rtspPort;
+        if (rtspPortSetting.Value.Equals(String.Empty))
+        {
+          rtspPort = RtspStreaming.DefaultPort;
+          Log.Info("Controller: server rtsp port not found in database, using: {0}", rtspPort);
+          rtspPortSetting.Value = "" + rtspPort;
+          rtspPortSetting.Persist();
+        }
+        else
+        {
+          if (!Int32.TryParse(rtspPortSetting.Value, out rtspPort))
+          {
+            rtspPort = RtspStreaming.DefaultPort;
+            Log.Info("Controller: server rtsp port {0} is not an integer, using: {1}", rtspPortSetting.Value, rtspPort);
+            rtspPortSetting.Value = "" + rtspPort;
+            rtspPortSetting.Persist();
+          }
+          else
+          {
+            Log.Info("Controller: server using rtsp port: {0}", rtspPort);
+          }
+
+        }
+        _streamer = new RtspStreaming(hostName, rtspPort);
+
+        _epgGrabber = new EpgGrabber(this);
+        _epgGrabber.Start();
+        _scheduler = new Scheduler(this);
+        _scheduler.Start();
+        
+        SetupHeartbeatThread();  
         ExecutePendingDeletions();
 
         // Re-evaluate program states
@@ -899,15 +867,6 @@ namespace TvService
     public string GetAssemblyVersion
     {
       get { return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion; }
-    }
-
-    /// <summary>
-    /// Gets the server.
-    /// </summary>
-    /// <value>The server.</value>
-    public int IdServer
-    {
-      get { return _ourServer.IdServer; }
     }
 
     /// <summary>
@@ -1827,21 +1786,6 @@ namespace TvService
       try
       {
         int cardId = user.CardId;
-        if (false == _cards[cardId].IsLocal)
-        {
-          try
-          {
-            RemoteControl.HostName = _cards[cardId].DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.StartTimeShifting(ref user, ref fileName);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      _cards[cardId].DataBaseCard.ReferencedServer().HostName);
-            return TvResult.UnknownError;
-          }
-        }
-
         Fire(this, new TvServerEventArgs(TvServerEventType.StartTimeShifting, GetVirtualCard(user), (User)user));
         StopEPGgrabber();        
 
@@ -1957,26 +1901,6 @@ namespace TvService
         ITvCardHandler tvcard = _cards[cardId];
         if (tvcard.DataBaseCard.Enabled == false)
           return true;        
-
-        if (false == tvcard.IsLocal)
-        {
-          try
-          {
-            if (IsGrabbingEpg(cardId))
-            {              
-              StopEPGgrabber();        
-              // we need this, otherwise tvservice will hang in the event stoptimeshifting is called by heartbeat timeout function
-            }
-            RemoteControl.HostName = tvcard.DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.StopTimeShifting(ref user);
-          }
-          catch (Exception)
-          {
-            Log.Error("card: unable to connect to slave controller at:{0}",
-                      tvcard.DataBaseCard.ReferencedServer().HostName);
-            return false;
-          }
-        }
 
         HybridCard hybridCard = tvcard.Card as HybridCard;
         if (hybridCard != null)
@@ -2177,20 +2101,6 @@ namespace TvService
           return false;
         }
 
-        if (!IsLocal(rec.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = rec.ReferencedServer().HostName;
-            return RemoteControl.Instance.DeleteRecording(rec.IdRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
-          }
-          return false;
-        }
-
         _streamer.RemoveFile(rec.FileName);
         bool result = RecordingFileHandler.DeleteRecordingOnDisk(rec.FileName);
         if (result)
@@ -2218,19 +2128,6 @@ namespace TvService
         if (rec == null)
         {
           return false;
-        }
-        if (!IsLocal(rec.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = rec.ReferencedServer().HostName;
-            return RemoteControl.Instance.IsRecordingValid(rec.IdRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", rec.ReferencedServer().HostName);
-          }
-          return true;
         }
         return (File.Exists(rec.FileName));
       }
@@ -2301,8 +2198,6 @@ namespace TvService
       {
         if (ValidateTvControllerParams(cardId))
           return -1;
-        if (_isMaster == false)
-          return -1;
         if (_cards[cardId].DataBaseCard.Enabled == false)
           return -1;
         //if (!CardPresent(cardId)) return -1;
@@ -2346,22 +2241,7 @@ namespace TvService
       {
         if (_cards[user.CardId].DataBaseCard.Enabled == false)
           return "";
-        //if (!CardPresent(user.CardId)) return "";
-        if (IsLocal(user.CardId) == false)
-        {
-          try
-          {
-            RemoteControl.HostName = _cards[user.CardId].DataBaseCard.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetStreamingUrl(user);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}",
-                      _cards[user.CardId].DataBaseCard.ReferencedServer().HostName);
-            return "";
-          }
-        }
-        return String.Format("rtsp://{0}:{1}/stream{2}.{3}", _ourServer.HostName, _streamer.Port, user.CardId,
+        return String.Format("rtsp://{0}:{1}/stream{2}.{3}", _streamer.Address, _streamer.Port, user.CardId,
                              user.SubChannel);
       }
       catch (Exception)
@@ -2382,19 +2262,6 @@ namespace TvService
           return "";
         if (recording.FileName.Length == 0)
           return "";
-        if (!IsLocal(recording.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = recording.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetRecordingUrl(idRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
-            return "";
-          }
-        }
         try
         {
           if (File.Exists(recording.FileName))
@@ -2403,7 +2270,7 @@ namespace TvService
             string streamName = String.Format("{0:X}", recording.FileName.GetHashCode());
             RtspStream stream = new RtspStream(streamName, recording.FileName, recording.Title);
             _streamer.AddStream(stream);
-            string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
+            string url = String.Format("rtsp://{0}:{1}/{2}", _streamer.Address, _streamer.Port, streamName);
             Log.Info("Controller: streaming url:{0} file:{1}", url, recording.FileName);
             return url;
           }
@@ -2436,19 +2303,6 @@ namespace TvService
           return "";
         if (recording.FileName.Length == 0)
           return "";
-        if (!IsLocal(recording.ReferencedServer().HostName))
-        {
-          try
-          {
-            RemoteControl.HostName = recording.ReferencedServer().HostName;
-            return RemoteControl.Instance.GetRecordingChapters(idRecording);
-          }
-          catch (Exception)
-          {
-            Log.Error("Controller: unable to connect to slave controller at:{0}", recording.ReferencedServer().HostName);
-            return "";
-          }
-        }
         try
         {
           string chapterFile = Path.ChangeExtension(recording.FileName, ".txt");
@@ -2485,7 +2339,7 @@ namespace TvService
         string streamName = String.Format("{0:X}", fileName.GetHashCode());
         RtspStream stream = new RtspStream(streamName, fileName, streamName);
         _streamer.AddStream(stream);
-        string url = String.Format("rtsp://{0}:{1}/{2}", _ourServer.HostName, _streamer.Port, streamName);
+        string url = String.Format("rtsp://{0}:{1}/{2}", _streamer.Address, _streamer.Port, streamName);
         Log.Info("Controller: streaming url:{0} file:{1}", url, fileName);
         return url;
       }
@@ -3148,9 +3002,7 @@ namespace TvService
       card = null;
       try
       {
-        Log.Info("IsRecordingSchedule:{0} {1}", idSchedule, _isMaster);
-        if (_isMaster == false)
-          return false;
+        Log.Info("IsRecordingSchedule:{0}", idSchedule);
         if (!_scheduler.IsRecordingSchedule(idSchedule, out card))
         {
           Log.Info("IsRecordingSchedule: scheduler is not recording schedule");
@@ -3176,8 +3028,6 @@ namespace TvService
     {
       try
       {
-        if (_isMaster == false)
-          return;
         _scheduler.StopRecordingSchedule(idSchedule);
       }
       catch (Exception ex)
@@ -3520,14 +3370,6 @@ namespace TvService
     }
 
     /// <summary>
-    /// Indicates if we're the master server or not
-    /// </summary>
-    public bool IsMaster
-    {
-      get { return _isMaster; }
-    }
-
-    /// <summary>
     /// Returns a dictionary of channels that are timeshfiting and recording.
     /// </summary>
     public Dictionary<int, ChannelState> GetAllTimeshiftingAndRecordingChannels()
@@ -3753,10 +3595,19 @@ namespace TvService
         {
           return _streamer.Port;
         }
-        else
+        return 0;
+      }
+    }
+
+    public string StreamingHost
+    {
+      get
+      {
+        if (_streamer != null)
         {
-          return 0;
+          return _streamer.Address;
         }
+        return null;
       }
     }
 
