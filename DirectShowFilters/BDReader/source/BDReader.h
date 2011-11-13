@@ -254,9 +254,9 @@ private:
 
   bool m_bFirstPlay;
 
-  REFERENCE_TIME m_rtRunStart;
   REFERENCE_TIME m_rtPlaybackOffset;
   REFERENCE_TIME m_rtPlaylistDuration;
+  REFERENCE_TIME m_rtSeekPosition;
   uint32_t m_nPlaylist;
 
   // Times

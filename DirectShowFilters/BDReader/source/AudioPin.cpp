@@ -304,6 +304,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //m_bSeekDone = false;
 
             m_rtStreamTimeOffset = m_rtPrevSample;
+            m_rtStart = 0;
           }
 
           // An ugly workaround to get the audio pin to stream after stream end has been delivered.
@@ -652,6 +653,7 @@ HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
 
   LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
+  m_rtStreamTimeOffset = m_rtPrevSample = 0;
 
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
   if (FAILED(hr))
