@@ -601,7 +601,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           else
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
-          m_rtPrevSample = rtCorrectedStartTime;
+          m_rtPrevSample = rtCorrectedStopTime;
         }
         else // Buffer has no timestamp
           pSample->SetTime(NULL, NULL);

@@ -417,7 +417,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             // TODO Check if we could use a bit bigger delta time when updating the playback position
             m_pFilter->OnPlaybackPositionChange();
 
-            m_rtPrevSample = rtCorrectedStartTime;
+            m_rtPrevSample = rtCorrectedStopTime;
           }
           else
           {

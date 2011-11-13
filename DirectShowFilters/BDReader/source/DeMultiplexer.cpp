@@ -793,8 +793,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         m_bAC3Substream = false;
 
         m_pCurrentAudioBuffer->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
-        m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + 1;
-          
+        
+        if (!m_bStarting)
+        {
+          WAVEFORMATEX* wfe = (WAVEFORMATEX*)m_audioParser->pmt.pbFormat;
+          REFERENCE_TIME duration = (wfe->nBlockAlign * 10000000) / wfe->nAvgBytesPerSec;
+          m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + duration;
+        }
+
         m_pCurrentAudioBuffer->nClipNumber = m_nClip;
         m_pCurrentAudioBuffer->nPlaylist = m_nPlaylist;
 
@@ -1422,9 +1428,21 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
         m_lastStart -= 9 + start[8];
         m_pBuild->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
         
-        m_pBuild->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
-        m_pBuild->rtStop = m_pBuild->rtStart + 1;
+        if (pts.IsValid)
+        {
+          m_pBuild->rtStart = CONVERT_90KHz_DS(pts.PcrReferenceBase);
         
+          if (!m_bStarting)
+          {
+            if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
+              m_pBuild->rtStop = m_pBuild->rtStart + ((VIDEOINFOHEADER*)m_videoParser->pmt.pbFormat)->AvgTimePerFrame;
+            else
+              m_pBuild->rtStop = m_pBuild->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
+          }
+        }
+        else
+          m_pBuild->rtStart = m_pBuild->rtStop = Packet::INVALID_TIME;
+
         m_pBuild->nClipNumber = m_nClip;
         m_pBuild->nPlaylist = m_nPlaylist;
 
@@ -1535,8 +1553,15 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         m_WaitHeaderPES = -1;
         m_VideoValidPES = true;
 		
-        m_p->rtStart = pts.IsValid ? CONVERT_90KHz_DS(pts.PcrReferenceBase) : Packet::INVALID_TIME;
-        m_p->rtStop = m_p->rtStart + 1;
+        if (pts.IsValid)
+        {
+          m_p->rtStart = CONVERT_90KHz_DS(pts.PcrReferenceBase);
+          
+          if (!m_bStarting)
+		    m_p->rtStop = m_p->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
+        }
+        else
+           m_p->rtStart = m_p->rtStop = Packet::INVALID_TIME;
         
         if (m_nMPEG2LastPlaylist == -1)
           m_nMPEG2LastPlaylist = m_nPlaylist;
@@ -1630,7 +1655,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
               }
             }
             p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
-            p->rtStop = p->rtStart + 1;
+			
+     		if (!m_bStarting)
+              p->rtStop = p->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
+
             p->nClipNumber = m_p->nClipNumber;
             p->nPlaylist = m_p->nPlaylist;
 
