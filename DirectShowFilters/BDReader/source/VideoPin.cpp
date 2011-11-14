@@ -417,17 +417,15 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
     }
-    else if (!m_bStopWait)
+    else if (!m_bStopWait && m_demux.m_bStreamPaused)
     {
-      /*
       LogDebug("vid: Request zeroing the stream time");
       m_eFlushStart->Reset();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
-      */
     }
 
-    m_bStopWait = false;
+    m_bStopWait = m_demux.m_bStreamPaused = false;
 
     m_demux.m_ePlaylistChangeDone->Set();
     m_demux.m_eAudioPlSeen->Reset();

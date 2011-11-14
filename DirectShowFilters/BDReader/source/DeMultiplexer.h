@@ -122,6 +122,7 @@ public:
   bool m_bAudioRequiresRebuild;
   bool m_bVideoRequiresRebuild;
   bool m_bRebuildOngoing;
+  bool m_bStreamPaused;
 
 private:
   void PacketDelivery(CAutoPtr<Packet> p);

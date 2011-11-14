@@ -85,6 +85,7 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_playlistManager = new CPlaylistManager();
   m_loopLastSearch = 1;
   m_bDiscontinuousClip = false;
+  m_bStreamPaused = false;
   m_bVideoFormatParsed = false;
   m_bAudioFormatParsed = false;
 
@@ -631,9 +632,12 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
       break;
 
     case BD_EVENT_STILL_TIME:
+      m_bStreamPaused = true;
       break;
 
     case BD_EVENT_STILL:
+      if (pEv.param == 1)
+        m_bStreamPaused = true;
       break;
 
     case BD_EVENT_TITLE:
