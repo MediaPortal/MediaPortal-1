@@ -797,8 +797,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
         if (!m_bStarting)
         {
           WAVEFORMATEX* wfe = (WAVEFORMATEX*)m_audioParser->pmt.pbFormat;
-          REFERENCE_TIME duration = (wfe->nBlockAlign * 10000000) / wfe->nAvgBytesPerSec;
-          m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + duration;
+
+          if (wfe)
+          {
+            REFERENCE_TIME duration = (wfe->nBlockAlign * 10000000) / wfe->nAvgBytesPerSec;
+            m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + duration;
+          }
+          else
+            m_pCurrentAudioBuffer->rtStop = m_pCurrentAudioBuffer->rtStart + 1;  
         }
 
         m_pCurrentAudioBuffer->nClipNumber = m_nClip;
