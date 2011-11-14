@@ -404,7 +404,8 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoPlSeen)
   {
-    //DeliverEndOfStream();
+    if (m_demux.m_bVideoRequiresRebuild)
+      DeliverEndOfStream();
 
     m_demux.m_eAudioPlSeen->Wait();
 
