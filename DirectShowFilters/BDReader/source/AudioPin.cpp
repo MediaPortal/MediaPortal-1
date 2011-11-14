@@ -303,7 +303,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             m_bClipEndingNotified = false;
             //m_bSeekDone = false;
 
-            m_rtStreamTimeOffset = m_rtPrevSample;
+            m_rtStreamTimeOffset = m_rtPrevSample - buffer->rtPlaylistTime;
             m_rtStart = 0;
           }
 

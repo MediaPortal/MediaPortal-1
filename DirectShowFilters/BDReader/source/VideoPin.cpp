@@ -522,7 +522,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
             m_rtStreamOffset = buffer->rtPlaylistTime;
 
-            m_rtStreamTimeOffset = m_rtPrevSample;
+            m_rtStreamTimeOffset = m_rtPrevSample - buffer->rtPlaylistTime;
             m_rtStart = 0;
           }
 
