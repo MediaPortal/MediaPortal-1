@@ -331,7 +331,7 @@ void CBDReaderFilter::OnPlaybackPositionChange()
 
     if (m_rtPlaylistDuration == _I64_MIN)
     {
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist - 1);
       m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
       lib.FreeTitleInfo(info);
     }
@@ -339,7 +339,7 @@ void CBDReaderFilter::OnPlaybackPositionChange()
     if (time - m_rtPlaybackOffset > m_rtPlaylistDuration)
     {
       m_rtPlaybackOffset = time;
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist - 1);
       m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
       lib.FreeTitleInfo(info);
     }
