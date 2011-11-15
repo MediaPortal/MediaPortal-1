@@ -1471,8 +1471,6 @@ namespace MediaPortal.Player
       _currentPos = position / 10000000.0;
       _duration = duration / 10000000.0;
       
-      Log.Debug("duration {0} position {1}", _duration, _currentPos);
-
       return 0;
     }
 
