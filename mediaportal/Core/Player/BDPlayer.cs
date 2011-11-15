@@ -458,9 +458,11 @@ namespace MediaPortal.Player
     protected int _volumeBeforeSeeking = 0;
     protected IGraphBuilder _graphBuilder = null;
     protected IMediaSeeking _mediaSeeking = null;
-    protected IMediaPosition _mediaPos = null;
     protected double _currentPos;
     protected double _duration = -1d;
+    protected DsLong _currentPosDS;
+    protected DsLong _durationDS = -1;
+
     protected DsROTEntry _rotEntry = null;
     protected int _aspectX = 1;
     protected int _aspectY = 1;
@@ -846,7 +848,6 @@ namespace MediaPortal.Player
       _width = GUIGraphicsContext.VideoWindow.Width;
       _height = GUIGraphicsContext.VideoWindow.Height;
       _geometry = GUIGraphicsContext.ARType;
-      //UpdateCurrentPosition();
       OnInitialized();
       Log.Debug("BDPlayer: position:{0}, duration:{1}", CurrentPosition, Duration);
 
@@ -893,7 +894,6 @@ namespace MediaPortal.Player
       if (ts.TotalMilliseconds >= 200 || iSpeed != 1)
       {
         _updateTimer = DateTime.Now;
-        //UpdateCurrentPosition();
 
         if (_iMenuOffPendingCount > 1)
           SwitchMenuOff();
@@ -1200,9 +1200,6 @@ namespace MediaPortal.Player
         {
           lock (_mediaCtrl)
           {
-            int SeekTries = 3;
-
-            //UpdateCurrentPosition();
             if (dTimeInSecs < 0)
             {
               dTimeInSecs = 0;
@@ -1210,35 +1207,12 @@ namespace MediaPortal.Player
             dTimeInSecs *= 10000000d;
 
             long lTime = (long)dTimeInSecs;
+            long pStop = 0;
 
-            while (SeekTries > 0)
-            {
-              long pStop = 0;
-              long lContentStart, lContentEnd;
-              _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-              lTime += lContentStart;
-              Log.Debug("BDPlayer:seekabs:{0} start:{1} end:{2}", lTime, lContentStart, lContentEnd);
+            Log.Debug("BDPlayer:seekabs: {0} duration :{1}", dTimeInSecs, Duration);
 
-              int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
-                                                  new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
-              long lStreamPos;
-              _mediaSeeking.GetCurrentPosition(out lStreamPos); // stream position
-              _mediaSeeking.GetAvailable(out lContentStart, out lContentEnd);
-              Log.Debug("BDPlayer: pos: {0} start:{1} end:{2}", lStreamPos, lContentStart, lContentEnd);
-              if (lStreamPos >= lContentStart)
-              {
-                Log.Info("BDPlayer seek done:{0:X}", hr);
-                SeekTries = 0;
-              }
-              else
-              {
-                // This could happen in LiveTv/Rstp when TsBuffers are reused and requested position is before "start"
-                // Only way to recover correct position is to seek again on "start"
-                SeekTries--;
-                lTime = 0;
-                Log.Warn("BDPlayer seek again : pos: {0} lower than start:{1} end:{2} ( Cnt {3} )", lStreamPos, lContentStart, lContentEnd, SeekTries);
-              }
-            }
+            int hr = _mediaSeeking.SetPositions(new DsLong(lTime), AMSeekingSeekingFlags.AbsolutePositioning,
+                                                new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
 
             if (VMR9Util.g_vmr9 != null)
             {
@@ -1247,7 +1221,6 @@ namespace MediaPortal.Player
           }
         }
 
-        //UpdateCurrentPosition();
         if (_dvbSubRenderer != null)
         {
           _dvbSubRenderer.OnSeek(CurrentPosition);
@@ -1492,6 +1465,9 @@ namespace MediaPortal.Player
 
     public int OnClockChange(long duration, long position)
     {
+      _currentPosDS = position;
+      _durationDS = duration;
+
       _currentPos = position / 10000000.0;
       _duration = duration / 10000000.0;
       
@@ -1915,15 +1891,6 @@ namespace MediaPortal.Player
       }
     }
 
-    protected void UpdateCurrentPosition()
-    {
-      if (_mediaPos != null)
-      {
-        //_mediaPos.get_CurrentPosition(out _currentPos);
-        //_mediaPos.get_Duration(out _duration);
-      }
-    }
-
     protected void DoGraphRebuild()
     {
       if (_mediaCtrl != null)
@@ -2040,11 +2007,9 @@ namespace MediaPortal.Player
         return;
         // before the StopWhenReady() method has been completed. It results as a kind of mess in the BDReader....
       } // So, it's better to verify a new frame has been pesented.
-      long earliest, latest, current, stop, rewind, pStop;
+      long rewind, pStop;
       lock (_mediaCtrl)
       {
-        _mediaSeeking.GetAvailable(out earliest, out latest);
-        _mediaSeeking.GetPositions(out current, out stop);
 
         //Log.Info(" time from last : {6} {7} {8} earliest:{0} latest:{1} current:{2} stop:{3} speed:{4}, total:{5}",
         //         earliest / 10000000, latest / 10000000, current / 10000000, stop / 10000000, _speedRate, (latest - earliest) / 10000000, (long)ts.TotalMilliseconds, VMR9Util.g_vmr9.FreeFrameCounter, Speed);
@@ -2055,15 +2020,15 @@ namespace MediaPortal.Player
         {
           lTimerInterval = 1000;
         }
-        rewind = (long)(current + ((long)(lTimerInterval) * Speed * 10000));
+        rewind = _currentPosDS + (long)lTimerInterval * Speed * 10000;
         int hr;
         pStop = 0;
         // if we end up before the first moment of time then just
         // start @ the beginning
-        if ((rewind < earliest) && (iSpeed < 0))
+        if ((rewind < 0) && (iSpeed < 0))
         {
-          rewind = earliest;
-          Log.Info("BDPlayer: timeshift SOF seek back:{0}", rewind / 10000000);
+          rewind = 0;
+          Log.Info("BDPlayer: seek to start");
           hr = _mediaSeeking.SetPositions(new DsLong(rewind), AMSeekingSeekingFlags.AbsolutePositioning | AMSeekingSeekingFlags.SeekToKeyFrame,
                                           new DsLong(pStop), AMSeekingSeekingFlags.NoPositioning);
           Speed = 1;
@@ -2073,13 +2038,14 @@ namespace MediaPortal.Player
         // start @ the end -1sec
         long margin = 100000;
 
-        if ((rewind > (latest - margin)) && (iSpeed > 0))
+
+        if ((rewind > (_durationDS - margin)) && (iSpeed > 0))
         {
           Log.Info("BDPlayer: Fastforward reached the end of file, stopping playback");
-          _state = PlayState.Ended;
+          //_state = PlayState.Ended;
           return;
         }
-        //seek to new moment in time
+        // seek to new moment in time
         //Log.Info(" seek :{0}",rewind/10000000);
         if (VMR9Util.g_vmr9 != null)
         {
@@ -2298,7 +2264,6 @@ namespace MediaPortal.Player
         _mediaCtrl = (IMediaControl)_graphBuilder;
         _mediaEvt = (IMediaEventEx)_graphBuilder;
         _mediaSeeking = (IMediaSeeking)_graphBuilder;
-        _mediaPos = (IMediaPosition)_graphBuilder;
 
         try
         {
