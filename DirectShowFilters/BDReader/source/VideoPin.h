@@ -114,7 +114,6 @@ protected:
 
   REFERENCE_TIME m_rtPrevSample;
   REFERENCE_TIME m_rtStreamTimeOffset;
-
-  uint32_t m_nCurrentPlaylist;
+  REFERENCE_TIME m_rtTitleDuration;
 };
 

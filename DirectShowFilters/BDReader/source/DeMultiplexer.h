@@ -235,6 +235,8 @@ private:
   bool m_bUpdateSubtitleOffset;
 
   REFERENCE_TIME m_rtOffset;
+  REFERENCE_TIME m_rtTitleDuration;
+  REFERENCE_TIME m_nMPEG2LastTitleDuration;
 
   unsigned int m_iReadErrors;
   // Used for playlist/clip tracking

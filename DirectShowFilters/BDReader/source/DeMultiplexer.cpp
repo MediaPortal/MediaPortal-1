@@ -98,8 +98,10 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
 
   m_nMPEG2LastPlaylist = -1;
   m_nMPEG2LastClip = -1;
+  m_nMPEG2LastTitleDuration = -1;
 
   m_rtOffset = _I64_MAX;
+  m_rtTitleDuration = 0;
 }
 
 CDeMultiplexer::~CDeMultiplexer()
@@ -367,6 +369,7 @@ void CDeMultiplexer::FlushSubtitle()
   
   m_pCurrentSubtitleBuffer->nPlaylist = -1;
   m_pCurrentSubtitleBuffer->nClipNumber = -1;
+  m_pCurrentSubtitleBuffer->rtTitleDuration = 0;
 
   /*
   IDVBSubtitle* pDVBSubtitleFilter(m_filter.GetSubtitleFilter());
@@ -704,6 +707,10 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           return;
         }
 
+        UINT64 position = 0;
+        m_filter.lib.CurrentPosition(position, (UINT64&)m_rtTitleDuration);
+        m_rtTitleDuration = CONVERT_90KHz_DS(m_rtTitleDuration);
+
         bool interrupted = false;
 
         if (!m_bStarting)
@@ -812,6 +819,7 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
         m_pCurrentAudioBuffer->nClipNumber = m_nClip;
         m_pCurrentAudioBuffer->nPlaylist = m_nPlaylist;
+        m_pCurrentAudioBuffer->rtTitleDuration = m_rtTitleDuration;
 
         int pesHeaderLen = p[8] + 9;
         m_nAudioPesLenght = (p[4] << 8) + p[5] - (pesHeaderLen - 6);
@@ -1037,6 +1045,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       m_p->rtStop = p->rtStop;
       p->rtStop = Packet::INVALID_TIME;
 
+      m_p->rtTitleDuration = p->rtTitleDuration;
       m_p->nClipNumber = p->nClipNumber;
       m_p->nPlaylist = p->nPlaylist;
     }
@@ -1102,7 +1111,9 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     m_p->nClipNumber = -2; // to easen tracking
     p2->nPlaylist = m_p->nPlaylist;
     m_p->nClipNumber = -2; // to easen tracking
-		
+    p2->rtTitleDuration = m_p->rtTitleDuration;
+    m_p->rtTitleDuration = -2; // to easen tracking
+
     m_pl.AddTail(p2);
     if (p)
     {
@@ -1125,6 +1136,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
 
       m_p->nClipNumber = p->nClipNumber;
       m_p->nPlaylist = p->nPlaylist;
+      m_p->rtTitleDuration = p->rtTitleDuration;
     }
     start = next;
   }
@@ -1199,6 +1211,9 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
 
       m_p->nPlaylist = p->nPlaylist;
       p->nClipNumber = -3; // to easen tracking
+
+      m_p->rtTitleDuration = p->rtTitleDuration;
+      p->rtTitleDuration = -3; // to easen tracking
     }
 
     m_p->Append(*p);
@@ -1287,6 +1302,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
 
     p2->nClipNumber = m_p->nClipNumber;
     p2->nPlaylist = m_p->nPlaylist;
+    p2->rtTitleDuration = m_p->rtTitleDuration;
 
     p2->SetData(start, next - start);
 
@@ -1317,6 +1333,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
 
       m_p->nClipNumber = p->nClipNumber;
       m_p->nPlaylist = p->nPlaylist;
+      m_p->rtTitleDuration = p->rtTitleDuration;
 
       m_p->pmt = p->pmt;
       p->pmt = NULL;
@@ -1353,6 +1370,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     m_pBuild->rtStart = Packet::INVALID_TIME;
     m_pBuild->nClipNumber = m_nClip;
     m_pBuild->nPlaylist = m_nPlaylist;
+    m_pBuild->rtTitleDuration = m_rtTitleDuration;
 
     m_lastStart = 0;
   }
@@ -1375,6 +1393,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
       m_pBuild->rtStart = Packet::INVALID_TIME;
       m_pBuild->nClipNumber = m_nClip;
       m_pBuild->nPlaylist = m_nPlaylist;
+      m_pBuild->rtTitleDuration = m_rtTitleDuration;
       m_lastStart = 0;
       m_WaitHeaderPES = 0;
     }
@@ -1411,6 +1430,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
       m_pBuild->rtStart = Packet::INVALID_TIME;
       m_pBuild->nClipNumber = -21;
       m_pBuild->nPlaylist = -21;
+      m_pBuild->rtTitleDuration = -21;
 
       m_WaitHeaderPES = -1;
     }   
@@ -1454,6 +1474,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
 
         m_pBuild->nClipNumber = m_nClip;
         m_pBuild->nPlaylist = m_nPlaylist;
+        m_pBuild->rtTitleDuration = m_rtTitleDuration;
 
         m_WaitHeaderPES = -1;
       }
@@ -1492,6 +1513,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
       m_p->rtStart = Packet::INVALID_TIME;
       m_p->nPlaylist = m_nPlaylist;
       m_p->nClipNumber = m_nClip;
+      m_p->rtTitleDuration = m_rtTitleDuration;
       m_lastStart = 0;
       m_bInBlock = false;
     }
@@ -1567,7 +1589,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
           m_p->rtStart = CONVERT_90KHz_DS(pts.PcrReferenceBase);
           
           if (!m_bStarting)
-		    m_p->rtStop = m_p->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
+            m_p->rtStop = m_p->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
         }
         else
            m_p->rtStart = m_p->rtStop = Packet::INVALID_TIME;
@@ -1578,10 +1600,15 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         if (m_nMPEG2LastClip == -1)
           m_nMPEG2LastClip = m_nClip;
 
+        if (m_nMPEG2LastTitleDuration == -1)
+          m_nMPEG2LastTitleDuration = m_rtTitleDuration;
+
         m_p->nPlaylist = m_nMPEG2LastPlaylist;
         m_p->nClipNumber = m_nMPEG2LastClip;
+        m_p->rtTitleDuration = m_nMPEG2LastTitleDuration;
         m_nMPEG2LastPlaylist = m_nPlaylist;
         m_nMPEG2LastClip = m_nClip;
+        m_nMPEG2LastTitleDuration = m_rtTitleDuration;
       }
     }
   }
@@ -1665,11 +1692,12 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
             }
             p->rtStart = CONVERT_90KHz_DS(m_CurrentVideoPts.PcrReferenceBase);
 			
-     		if (!m_bStarting)
+     		    if (!m_bStarting)
               p->rtStop = p->rtStart + ((MPEG2VIDEOINFO*)m_videoParser->pmt.pbFormat)->hdr.AvgTimePerFrame;
 
             p->nClipNumber = m_p->nClipNumber;
             p->nPlaylist = m_p->nPlaylist;
+            p->rtTitleDuration = m_p->rtTitleDuration;
 
             ParseVideoFormat(p);
 
@@ -1761,6 +1789,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
 
     m_pCurrentSubtitleBuffer->nClipNumber = m_nClip;
     m_pCurrentSubtitleBuffer->nPlaylist = m_nPlaylist;
+    m_pCurrentSubtitleBuffer->rtTitleDuration = m_rtTitleDuration;
 
     m_vecSubtitleBuffers.push_back(m_pCurrentSubtitleBuffer);
 

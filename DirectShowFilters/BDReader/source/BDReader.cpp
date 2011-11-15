@@ -109,9 +109,8 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_dwThreadId(0),
   m_pMediaSeeking(NULL),
   m_rtPlaybackOffset(_I64_MIN),
-  m_rtPlaylistDuration(_I64_MIN),
   m_rtSeekPosition(0),
-  m_nPlaylist(-1),
+  m_rtTitleDuration(0),
   m_rtStart(0),
   m_rtStop(0),
   m_rtCurrent(0),
@@ -324,35 +323,18 @@ void CBDReaderFilter::OnPlaybackPositionChange()
     m_pClock->GetTime(&time);
 
     if (m_rtPlaybackOffset == _I64_MIN)
-    {
       m_rtPlaybackOffset = time;
-      m_rtPlaylistDuration = _I64_MIN;
-    }
 
-    if (m_rtPlaylistDuration == _I64_MIN)
-    {
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
-      m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
-      lib.FreeTitleInfo(info);
-    }
-
-    if (time - m_rtPlaybackOffset > m_rtPlaylistDuration)
-    {
-      m_rtPlaybackOffset = time;
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
-      m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
-      lib.FreeTitleInfo(info);
-    }
-
-    m_pCallback->OnClockChange(m_rtPlaylistDuration, time - m_rtPlaybackOffset + m_rtSeekPosition);
+    m_pCallback->OnClockChange(m_rtTitleDuration, time - m_rtPlaybackOffset + m_rtSeekPosition);
   }
 }
 
-void CBDReaderFilter::ResetPlaybackOffset(uint32_t pPlaylist, REFERENCE_TIME pSeekPosition)
+void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pTitleDuration, REFERENCE_TIME pSeekPosition)
 {
+  LogDebug("CBDReaderFilter: ResetPlaybackOffset duration: %6.3f seek position: %6.3f", pTitleDuration / 10000000.0, pSeekPosition / 10000000.0);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
-  m_nPlaylist = pPlaylist;
+  m_rtTitleDuration = pTitleDuration;
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -1143,7 +1125,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     return S_OK;
   }
 
-  ResetPlaybackOffset(m_nPlaylist, m_rtSeekPosition + rtCurrent - m_rtLastStart);
+  ResetPlaybackOffset(m_rtTitleDuration, m_rtSeekPosition + rtCurrent - m_rtLastStart);
 
   m_rtLastStart = rtCurrent;
   m_rtLastStop = rtStop;
