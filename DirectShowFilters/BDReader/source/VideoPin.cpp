@@ -96,6 +96,7 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bSeekDone(true),
   m_bDiscontinuity(false),
   m_bFirstSample(true),
+  m_bInitDuration(true),
   m_bClipEndingNotified(false),
   m_bStopWait(false),
   m_rtPrevSample(_I64_MIN),
@@ -606,8 +607,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           else
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
-          if (m_bFirstSample)
+          if (m_bInitDuration)
+          {
             m_pFilter->ResetPlaybackOffset(m_rtTitleDuration, m_rtStreamOffset);
+            m_bInitDuration = false;
+          }
 
           // TODO Check if we could use a bit bigger delta time when updating the playback position
           m_pFilter->OnPlaybackPositionChange();
