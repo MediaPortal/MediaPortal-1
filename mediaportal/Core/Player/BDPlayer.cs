@@ -1826,7 +1826,7 @@ namespace MediaPortal.Player
       {
         BDStreamInfo clipInfo = new BDStreamInfo();
         _ireader.GetCurrentClipStreamInfo(ref clipInfo);
-        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate));
+        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps, duration: {3}", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate), _duration);
         UpdateRefreshRate(clipInfo.rate);
       }
       catch
@@ -1837,7 +1837,7 @@ namespace MediaPortal.Player
 
     protected void UpdateRefreshRate(int videoRate)
     {
-      if (_currentVideoFormatRate != videoRate)
+      if (_currentVideoFormatRate != videoRate && _duration > 300)
       {
         _currentVideoFormatRate = videoRate;
         RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
