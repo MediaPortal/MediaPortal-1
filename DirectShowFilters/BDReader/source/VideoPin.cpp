@@ -427,7 +427,7 @@ void CVideoPin::CheckPlaybackState()
       m_eFlushStart->Wait();
     }
     else
-      m_pFilter->ResetPlaybackOffset(m_nCurrentPlaylist, 0);
+      m_pFilter->ResetPlaybackOffset(m_nCurrentPlaylist, m_rtStreamOffset);
 
     m_bStopWait = m_demux.m_bStreamPaused = false;
 
