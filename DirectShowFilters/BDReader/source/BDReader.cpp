@@ -326,6 +326,7 @@ void CBDReaderFilter::OnPlaybackPositionChange()
       m_rtPlaybackOffset = time;
 
     m_pCallback->OnClockChange(m_rtTitleDuration, time - m_rtPlaybackOffset + m_rtSeekPosition);
+    //LogDebug("dur: %6.3f pos: %6.3f", m_rtTitleDuration / 10000000.0, (time - m_rtPlaybackOffset + m_rtSeekPosition) / 10000000.0);
   }
 }
 
