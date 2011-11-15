@@ -847,6 +847,7 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
 
     case BD_EVENT_PLAYLIST:
       m_nPlaylist = pEv.param;
+      m_rtSeekPosition = 0;
       ResetPlaybackOffset();
       break;
   }
