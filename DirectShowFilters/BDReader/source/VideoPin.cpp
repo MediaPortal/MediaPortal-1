@@ -99,7 +99,8 @@ CVideoPin::CVideoPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bClipEndingNotified(false),
   m_bStopWait(false),
   m_rtPrevSample(_I64_MIN),
-  m_rtStreamTimeOffset(0)
+  m_rtStreamTimeOffset(0),
+  m_nCurrentPlaylist(-1)
 {
   m_rtStart = 0;
   m_bConnected = false;
@@ -425,6 +426,8 @@ void CVideoPin::CheckPlaybackState()
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
     }
+    else
+      m_pFilter->ResetPlaybackOffset(m_nCurrentPlaylist, 0);
 
     m_bStopWait = m_demux.m_bStreamPaused = false;
 
@@ -568,6 +571,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           }
         } // lock ends
 
+        m_nCurrentPlaylist = buffer->nPlaylist;
+
         if (useEmptySample)
         {
           m_pCachedBuffer = buffer;
@@ -600,6 +605,9 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
           else
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
+
+          // TODO Check if we could use a bit bigger delta time when updating the playback position
+          m_pFilter->OnPlaybackPositionChange();
 
           m_rtPrevSample = rtCorrectedStopTime;
         }

@@ -111,7 +111,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_rtPlaybackOffset(_I64_MIN),
   m_rtPlaylistDuration(_I64_MIN),
   m_rtSeekPosition(0),
-  m_nPlaylist(0),
+  m_nPlaylist(-1),
   m_rtStart(0),
   m_rtStop(0),
   m_rtCurrent(0),
@@ -331,7 +331,7 @@ void CBDReaderFilter::OnPlaybackPositionChange()
 
     if (m_rtPlaylistDuration == _I64_MIN)
     {
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist - 1);
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
       m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
       lib.FreeTitleInfo(info);
     }
@@ -339,7 +339,7 @@ void CBDReaderFilter::OnPlaybackPositionChange()
     if (time - m_rtPlaybackOffset > m_rtPlaylistDuration)
     {
       m_rtPlaybackOffset = time;
-      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist - 1);
+      BLURAY_TITLE_INFO* info = lib.GetTitleInfo(m_nPlaylist);
       m_rtPlaylistDuration = CONVERT_90KHz_DS(info->duration);
       lib.FreeTitleInfo(info);
     }
@@ -348,9 +348,11 @@ void CBDReaderFilter::OnPlaybackPositionChange()
   }
 }
 
-void CBDReaderFilter::ResetPlaybackOffset()
+void CBDReaderFilter::ResetPlaybackOffset(uint32_t pPlaylist, REFERENCE_TIME pSeekPosition)
 {
+  m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
+  m_nPlaylist = pPlaylist;
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -846,9 +848,6 @@ void CBDReaderFilter::HandleBDEvent(BD_EVENT& pEv, UINT64 pPos)
       break;
 
     case BD_EVENT_PLAYLIST:
-      m_nPlaylist = pEv.param;
-      m_rtSeekPosition = 0;
-      ResetPlaybackOffset();
       break;
   }
 
@@ -1144,8 +1143,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     return S_OK;
   }
 
-  m_rtSeekPosition += rtCurrent - m_rtLastStart;
-  ResetPlaybackOffset();
+  ResetPlaybackOffset(m_nPlaylist, m_rtSeekPosition + rtCurrent - m_rtLastStart);
 
   m_rtLastStart = rtCurrent;
   m_rtLastStop = rtStop;
