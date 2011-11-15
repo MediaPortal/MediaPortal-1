@@ -277,7 +277,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           CreateEmptySample(pSample);
           if (!m_bClipEndingNotified)
           {
-            //DeliverEndOfStream();
+            DeliverEndOfStream();
             m_bClipEndingNotified = true;
           }
           else
