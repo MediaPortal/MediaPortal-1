@@ -195,7 +195,8 @@ public:
   void IssueCommand(DS_CMD_ID pCommand, REFERENCE_TIME pTime);
   void TriggerOnMediaChanged();
   void OnPlaybackPositionChange();
-  void ResetPlaybackOffset(REFERENCE_TIME pTitleDuration, REFERENCE_TIME pSeekAmount);
+  void ResetPlaybackOffset(REFERENCE_TIME pSeekAmount);
+  void SetTitleDuration(REFERENCE_TIME pTitleDuration);
 
   CLibBlurayWrapper lib;
 

@@ -406,6 +406,8 @@ void CVideoPin::CheckPlaybackState()
 {
   if (m_demux.m_bVideoPlSeen)
   {
+    m_pFilter->SetTitleDuration(m_rtTitleDuration);
+
     if (m_demux.m_bVideoRequiresRebuild)
       DeliverEndOfStream();
 
@@ -428,7 +430,7 @@ void CVideoPin::CheckPlaybackState()
       m_eFlushStart->Wait();
     }
     else
-      m_pFilter->ResetPlaybackOffset(m_rtTitleDuration, m_rtStreamOffset);
+      m_pFilter->ResetPlaybackOffset(m_rtStreamOffset);
 
     m_bStopWait = m_demux.m_bStreamPaused = false;
 
@@ -609,7 +611,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
           if (m_bInitDuration)
           {
-            m_pFilter->ResetPlaybackOffset(m_rtTitleDuration, m_rtStreamOffset);
+            m_pFilter->SetTitleDuration(m_rtTitleDuration);
+            m_pFilter->ResetPlaybackOffset(m_rtStreamOffset);
             m_bInitDuration = false;
           }
 

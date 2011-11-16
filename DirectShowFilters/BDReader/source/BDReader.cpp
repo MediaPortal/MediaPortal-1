@@ -330,12 +330,17 @@ void CBDReaderFilter::OnPlaybackPositionChange()
   }
 }
 
-void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pTitleDuration, REFERENCE_TIME pSeekPosition)
+void CBDReaderFilter::SetTitleDuration(REFERENCE_TIME pTitleDuration)
 {
-  LogDebug("CBDReaderFilter: ResetPlaybackOffset duration: %6.3f seek position: %6.3f", pTitleDuration / 10000000.0, pSeekPosition / 10000000.0);
+  LogDebug("CBDReaderFilter: SetTitleDuration duration: %6.3f", pTitleDuration / 10000000.0);
+  m_rtTitleDuration = pTitleDuration;
+}
+
+void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
+{
+  LogDebug("CBDReaderFilter: ResetPlaybackOffset seek position: %6.3f", pSeekPosition / 10000000.0);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
-  m_rtTitleDuration = pTitleDuration;
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -1066,7 +1071,9 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     rtCurrent = m_rtCurrent,
     rtStop = m_rtStop;
 
-  bool resetStreamPosition = caller == m_pVideoPin && dwCurrentFlags & AM_SEEKING_FakeSeek;
+
+  bool fakeSeek = dwCurrentFlags & AM_SEEKING_FakeSeek;
+  bool resetStreamPosition = caller == m_pVideoPin && fakeSeek;
 
   if (pCurrent) 
   {
@@ -1126,7 +1133,10 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     return S_OK;
   }
 
-  ResetPlaybackOffset(m_rtTitleDuration, m_rtSeekPosition + rtCurrent - m_rtLastStart);
+  if (fakeSeek)
+    ResetPlaybackOffset(0);
+  else
+    ResetPlaybackOffset(m_rtSeekPosition + rtCurrent - m_rtLastStart);
 
   m_rtLastStart = rtCurrent;
   m_rtLastStop = rtStop;
