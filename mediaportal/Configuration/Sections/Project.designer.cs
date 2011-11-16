@@ -242,7 +242,7 @@ namespace MediaPortal.Configuration.Sections
       this.labelVersion3.Name = "labelVersion3";
       this.labelVersion3.Size = new System.Drawing.Size(125, 13);
       this.labelVersion3.TabIndex = 2;
-      this.labelVersion3.Text = "(SVN is for testing only!!!)";
+      this.labelVersion3.Text = "(Snapshot-Build is for testing only!!!)";
       // 
       // labelVersion2
       // 
