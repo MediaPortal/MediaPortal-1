@@ -241,15 +241,16 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging())
+      if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || 
+        (m_demux.m_eAudioPlSeen->Check() && m_demux.m_ePlaylistChangeDone->Check()))
       {
         CreateEmptySample(pSample);
         Sleep(1);
         return S_OK;
       }
 
-      if (m_demux.m_eAudioPlSeen->Check())
-        m_demux.m_ePlaylistChangeDone->Wait();
+      //if (m_demux.m_eAudioPlSeen->Check())
+        //m_demux.m_ePlaylistChangeDone->Wait();
 
       if (m_pCachedBuffer)
       {
