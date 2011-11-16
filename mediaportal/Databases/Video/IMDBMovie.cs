@@ -468,6 +468,16 @@ namespace MediaPortal.Video.Database
     private void SetMediaInfoProperties(string file)
     {
       VideoFilesMediaInfo mInfo = new VideoFilesMediaInfo();
+
+      VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
+
+      string hasSubtitles = "false";
+
+      if (mInfo.HasSubtitles)
+      {
+        hasSubtitles = "true";
+      }
+
       VideoDatabase.GetVideoFilesMediaInfo(file, ref mInfo);
       GUIPropertyManager.SetProperty("#VideoCodec", Util.Utils.MakeFileName(mInfo.VideoCodec));
       GUIPropertyManager.SetProperty("#VideoResolution", mInfo.VideoResolution);
