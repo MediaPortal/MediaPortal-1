@@ -136,7 +136,7 @@ Var frominstall
 !if ${VER_BUILD} == 0       # it's an official release
   !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv.bmp"
 !else                       # it's a git release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv-git.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv-snapshot.bmp"
 !endif
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-tv.bmp"
 !define MUI_HEADERIMAGE_RIGHT

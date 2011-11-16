@@ -89,15 +89,15 @@ _____________________________________________________________________________
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_REBOOT_REQUIRED            "A reboot is required after a previous action. Reboot you system and try it again."
 !insertmacro LANG_STRING TEXT_MSGBOX_ERROR_UPDATE_BUT_NOT_INSTALLED   "${PRODUCT_NAME} is not installed. It is not possible to install this update.$\r$\n$\r$\n$(TEXT_MSGBOX_INSTALLATION_CANCELD)"
 
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP               "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
-!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION      "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this SVN-Snapshot. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_NOMP               "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this Snapshot-Build. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
+!insertmacro LANG_STRING TEXT_MSGBOX_ERROR_SVN_WRONG_VERSION      "${PRODUCT_NAME} ${MIN_INSTALLED_MP_VERSION_TEXT} is not installed. It is required to install this Snapshot-Build. Please install it first.$\r$\nDo you want to open the download page in your browser now?"
 
 
 !insertmacro LANG_STRING UPDATE_ERROR_WRONGEXE                    "updating ${PRODUCT_NAME} is only allowed by starting MediaPortalUpdater!"
 !insertmacro LANG_STRING UPDATE_ERROR_UNKNOWN                     "strange / unknown error, please use full installer"
 !insertmacro LANG_STRING UPDATE_ERROR_NOTHING_INSTALLED           "Nothing to do, nothing installed, please use the full installer"
-!insertmacro LANG_STRING UPDATE_ERROR_VERSION_MP                  "wrong version of MediaPortal is installed or svn, please use the full installer"
-!insertmacro LANG_STRING UPDATE_ERROR_VERSION_TVSERVER            "wrong version or TVServer or Client plugin is installed or svn, please use the full installer"
+!insertmacro LANG_STRING UPDATE_ERROR_VERSION_MP                  "wrong version of MediaPortal is installed or snapshot-build, please use the full installer"
+!insertmacro LANG_STRING UPDATE_ERROR_VERSION_TVSERVER            "wrong version or TVServer or Client plugin is installed or snapshot-build, please use the full installer"
 
 
 

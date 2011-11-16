@@ -242,7 +242,7 @@ namespace SetupTv.Sections
       this.labelVersion3.Name = "labelVersion3";
       this.labelVersion3.Size = new System.Drawing.Size(115, 13);
       this.labelVersion3.TabIndex = 2;
-      this.labelVersion3.Text = "(SVN for testing only!!!)";
+      this.labelVersion3.Text = "(Snapshot-Build for testing only!!!)";
       // 
       // labelVersion2
       // 
