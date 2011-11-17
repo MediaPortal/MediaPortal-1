@@ -4391,6 +4391,19 @@ namespace TvPlugin
       return true;
     }
 
+    public bool OnActorInfoStarting(IMDBFetcher fetcher)
+    {
+      // won't occure
+      return true;
+    }
+
+    public bool OnSelectActor(IMDBFetcher fetcher, out int selected)
+    {
+      // won't occure
+      selected = 0;
+      return true;
+    }
+
     public bool OnDetailsNotFound(IMDBFetcher fetcher)
     {
       Log.Info("IMDB Fetcher: OnDetailsNotFound");
