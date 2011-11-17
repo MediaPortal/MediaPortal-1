@@ -34,7 +34,6 @@ Packet::Packet()
   nPlaylist = -100;
   bDiscontinuity = false;
   bSyncPoint = false;
-  bAppendable = false;
   bSeekRequired = false;
   rtStart = -100;
   rtStop = -100;
