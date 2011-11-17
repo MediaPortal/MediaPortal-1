@@ -341,6 +341,7 @@ void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
   LogDebug("CBDReaderFilter: ResetPlaybackOffset seek position: %6.3f", pSeekPosition / 10000000.0);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
+  m_rtLastStart = 0;
 }
 
 STDMETHODIMP CBDReaderFilter::SetGraphCallback(IBDReaderCallback* pCallback)
@@ -1134,7 +1135,7 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
   }
 
   if (fakeSeek)
-    ResetPlaybackOffset(0);
+    ResetPlaybackOffset(m_rtSeekPosition);
   else
     ResetPlaybackOffset(m_rtSeekPosition + rtCurrent - m_rtLastStart);
 
