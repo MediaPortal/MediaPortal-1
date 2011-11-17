@@ -30,15 +30,7 @@
 
 Packet::Packet() 
 { 
-  nClipNumber = -100;
-  nPlaylist = -100;
-  bDiscontinuity = false;
-  bSyncPoint = false;
-  bSeekRequired = false;
-  rtStart = -100;
-  rtStop = -100;
-  rtOffset = 0;//-100; /// is this needed? i.e. fixed somewhere else so that all packets will have a valid offset (initial versions did have some packets where this was left at -100)
-  pmt = NULL;
+  ResetProperties();
 }
 
 Packet::~Packet() 
@@ -58,4 +50,31 @@ void Packet::SetData(const void* ptr, DWORD len)
 {
   SetCount(len); 
   memcpy(GetData(), ptr, len);
+}
+
+void Packet::CopyProperties(Packet& pSrc)
+{
+  nClipNumber = pSrc.nClipNumber;
+  nPlaylist = pSrc.nPlaylist;
+  bDiscontinuity = pSrc.bDiscontinuity;
+  bSyncPoint = pSrc.bSyncPoint;
+  bSeekRequired = pSrc.bSeekRequired; 
+  rtStart = pSrc.rtStart;
+  rtStop = pSrc.rtStop;
+  rtOffset = pSrc.rtOffset;
+  rtPlaylistTime = pSrc.rtPlaylistTime;
+}
+
+void Packet::ResetProperties()
+{
+  nClipNumber = -100;
+  nPlaylist = -100;
+  bDiscontinuity = false;
+  bSyncPoint = false;
+  bSeekRequired = false;
+  rtStart = -100;
+  rtStop = -100;
+  rtOffset = 0;//-100; /// is this needed? i.e. fixed somewhere else so that all packets will have a valid offset (initial versions did have some packets where this was left at -100)
+  rtPlaylistTime = 0;
+  pmt = NULL;
 }

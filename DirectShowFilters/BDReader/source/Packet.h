@@ -32,6 +32,8 @@ public:
   virtual ~Packet();
   virtual int GetDataSize();
   void SetData(const void* ptr, DWORD len);
+  void CopyProperties(Packet& pSrc);
+  void ResetProperties();
 
   INT32 nClipNumber;
   INT32 nPlaylist;
