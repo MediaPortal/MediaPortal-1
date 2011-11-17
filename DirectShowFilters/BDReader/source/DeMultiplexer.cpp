@@ -60,8 +60,6 @@ CDeMultiplexer::CDeMultiplexer(CBDReaderFilter& filter) : m_filter(filter)
   m_bHoldSubtitle = false;
   m_bShuttingDown = false;
   m_iAudioIdx = -1;
-  m_bSetAudioDiscontinuity = false;
-  m_bSetVideoDiscontinuity = false;
   m_bRebuildOngoing = false;
   m_pSubUpdateCallback = NULL;
   SetMediaChanging(false);
@@ -508,8 +506,6 @@ HRESULT CDeMultiplexer::Start()
   m_bEndOfFile = false;
   m_bHoldAudio = false;
   m_bHoldVideo = false;
-  m_bSetAudioDiscontinuity = false;
-  m_bSetVideoDiscontinuity = false;
   DWORD dwBytesProcessed = 0;
   DWORD m_Time = GetTickCount();
 
@@ -973,11 +969,6 @@ void CDeMultiplexer::PacketDelivery(CAutoPtr<Packet> p)
       m_LastValidFrameCount++;
     }
     
-    if (m_bSetVideoDiscontinuity)
-    {
-      m_bSetVideoDiscontinuity = false;
-      p->bDiscontinuity = true;
-    }
     ParseVideoFormat(p);
     if (!m_bStarting)
     {
@@ -1033,21 +1024,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     {
       m_p.Attach(new Packet());
       m_p->SetCount(0, PACKET_GRANULARITY);
-      m_p->bDiscontinuity = p->bDiscontinuity;
-      p->bDiscontinuity = FALSE;
-
-      m_p->bSyncPoint = p->bSyncPoint;
-      p->bSyncPoint = FALSE;
-
-      m_p->rtStart = p->rtStart;
-      p->rtStart = Packet::INVALID_TIME;
-
-      m_p->rtStop = p->rtStop;
-      p->rtStop = Packet::INVALID_TIME;
-
-      m_p->rtTitleDuration = p->rtTitleDuration;
-      m_p->nClipNumber = p->nClipNumber;
-      m_p->nPlaylist = p->nPlaylist;
+      m_p->TransferProperties(*p, false, false);
     }
 
     m_p->Append(*p);
@@ -1099,45 +1076,16 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       else p2->Append(*p3);
     }
 
-    p2->bDiscontinuity = m_p->bDiscontinuity;
-    m_p->bDiscontinuity = FALSE;
-    p2->bSyncPoint = m_p->bSyncPoint;
-    m_p->bSyncPoint = FALSE;
-    p2->rtStart = m_p->rtStart;
-    m_p->rtStart = Packet::INVALID_TIME;
-    p2->rtStop = m_p->rtStop;
-    m_p->rtStop = Packet::INVALID_TIME;
-    p2->nClipNumber = m_p->nClipNumber;
-    m_p->nClipNumber = -2; // to easen tracking
-    p2->nPlaylist = m_p->nPlaylist;
-    m_p->nClipNumber = -2; // to easen tracking
-    p2->rtTitleDuration = m_p->rtTitleDuration;
-    m_p->rtTitleDuration = -2; // to easen tracking
 
+    p2->TransferProperties(*m_p, false, true);
     m_pl.AddTail(p2);
+
     if (p)
     {
-      if (p->rtStart != Packet::INVALID_TIME) 
-      {
-        m_p->rtStart = p->rtStart;
-        m_p->rtStop = p->rtStop;
-        p->rtStart = Packet::INVALID_TIME;
-      }
-      if (p->bDiscontinuity) 
-      {
-        m_p->bDiscontinuity = p->bDiscontinuity;
-        p->bDiscontinuity = FALSE;
-      }
-      if (p->bSyncPoint) 
-      {
-        m_p->bSyncPoint = p->bSyncPoint;
-        p->bSyncPoint = FALSE;
-      }
-
-      m_p->nClipNumber = p->nClipNumber;
-      m_p->nPlaylist = p->nPlaylist;
-      m_p->rtTitleDuration = p->rtTitleDuration;
+      m_p->CopyProperties(*p, true);
+      p->rtStart = Packet::INVALID_TIME;
     }
+
     start = next;
   }
 
@@ -1194,26 +1142,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
     {
       m_p.Attach(new Packet());
       m_p->SetCount(0, PACKET_GRANULARITY);
-      m_p->bDiscontinuity = p->bDiscontinuity;
-      p->bDiscontinuity = FALSE;
-
-      m_p->bSyncPoint = p->bSyncPoint;
-      p->bSyncPoint = FALSE;
-
-      m_p->rtStart = p->rtStart;
-      p->rtStart = Packet::INVALID_TIME;
-
-      m_p->rtStop = p->rtStop;
-      p->rtStop = Packet::INVALID_TIME;
-
-      m_p->nClipNumber = p->nClipNumber;
-      p->nClipNumber = -3; // to easen tracking
-
-      m_p->nPlaylist = p->nPlaylist;
-      p->nClipNumber = -3; // to easen tracking
-
-      m_p->rtTitleDuration = p->rtTitleDuration;
-      p->rtTitleDuration = -3; // to easen tracking
+      m_p->TransferProperties(*p, false, false);
     }
 
     m_p->Append(*p);
@@ -1285,59 +1214,14 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
 
     CAutoPtr<Packet> p2(new Packet());
     p2->SetCount(0, PACKET_GRANULARITY);
-    p2->bDiscontinuity = m_p->bDiscontinuity;
-    m_p->bDiscontinuity = false;
-
-    p2->bSyncPoint = m_p->bSyncPoint;
-    m_p->bSyncPoint = false;
-
-    p2->rtStart = m_p->rtStart;
-    m_p->rtStart = Packet::INVALID_TIME;
-
-    p2->rtStop = m_p->rtStop;
-    m_p->rtStop = Packet::INVALID_TIME;
-
-    p2->pmt = m_p->pmt;
-    m_p->pmt = NULL;
-
-    p2->nClipNumber = m_p->nClipNumber;
-    p2->nPlaylist = m_p->nPlaylist;
-    p2->rtTitleDuration = m_p->rtTitleDuration;
-
+    p2->CopyProperties(*m_p);
     p2->SetData(start, next - start);
 
     PacketDelivery(p2);
    
     if (p)
-    {
-      if (p->rtStart != Packet::INVALID_TIME) 
-      {
-        m_p->rtStart = p->rtStart;
-        m_p->rtStop = p->rtStop;
-        p->rtStart = Packet::INVALID_TIME;
-      }
-      if (p->bDiscontinuity) 
-      {
-        m_p->bDiscontinuity = p->bDiscontinuity;
-        p->bDiscontinuity = FALSE;
-      }
-
-      if (p->bSyncPoint) 
-      {
-        m_p->bSyncPoint = p->bSyncPoint;
-        p->bSyncPoint = FALSE;
-      }
-
-      if (m_p->pmt) 
-        DeleteMediaType(m_p->pmt);
-
-      m_p->nClipNumber = p->nClipNumber;
-      m_p->nPlaylist = p->nPlaylist;
-      m_p->rtTitleDuration = p->rtTitleDuration;
-
-      m_p->pmt = p->pmt;
-      p->pmt = NULL;
-    }
+      m_p->CopyProperties(*p, true);
+      p->rtStart = Packet::INVALID_TIME;
 
     start = next;
     if (!pFlushBuffers || start!=end)
@@ -1701,12 +1585,6 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
 
             ParseVideoFormat(p);
 
-            if (m_bSetVideoDiscontinuity)
-            {
-              m_bSetVideoDiscontinuity = false;
-              p->bDiscontinuity = true;
-            }
-              
             if (!m_bStarting)
               m_playlistManager->SubmitVideoPacket(p);
             else

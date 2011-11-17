@@ -201,9 +201,6 @@ private:
   bool m_bStarting;
   bool m_bReadFailed;
 
-  bool m_bSetAudioDiscontinuity;
-  bool m_bSetVideoDiscontinuity;
-
   int (CALLBACK *m_pSubUpdateCallback)(int c, void* opts, int* bi);
 
   // Used only for H.264 stream demuxing
