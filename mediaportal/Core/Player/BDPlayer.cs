@@ -502,6 +502,7 @@ namespace MediaPortal.Player
     protected MenuState menuState;
     protected int _iMenuOffPendingCount = -1;
     protected bool _bMenuOn;
+    protected bool _subtitlesEnabled = true;
     #endregion
 
     #region ctor/dtor
@@ -1536,6 +1537,7 @@ namespace MediaPortal.Player
         settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "English");
         settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "English");
         settings.parentalControl = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
+        _subtitlesEnabled = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
         string regionCode = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
         switch (regionCode)
         {
@@ -2305,6 +2307,7 @@ namespace MediaPortal.Player
 
         // if only dvb subs are enabled, pass null for ttxtDecoder
         _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
+        EnableSubtitle = _subtitlesEnabled;
         
         if (_audioRendererFilter != null)
         {
