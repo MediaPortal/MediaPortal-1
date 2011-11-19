@@ -39,20 +39,10 @@ namespace MediaPortal.Player
     #region variables
 
     private VMR9Util _vmr9 = null;
-    protected IBaseFilter _audioSwitcherFilter = null;
     protected IAudioStream _audioStream = null;
     protected ISubtitleStream _subtitleStream = null;
     protected TeletextReceiver _ttxtReceiver = null;
     protected ITeletextSource _teletextSource = null;
-    private bool enableDVBBitmapSubtitles = false;
-    private bool enableDVBTtxtSubtitles = false;
-    private bool enableMPAudioSwitcher = false;
-    private int relaxTsReader = 0; // Disable dropping of discontinued dvb packets    
-    private string strVideoCodec = "";
-    private string strAudioCodec = "";
-    private string strAACAudioCodec = "";
-    private string strDDPLUSAudioCodec = "";
-    private string strH264VideoCodec = "";
 
     #endregion
 
@@ -102,12 +92,12 @@ namespace MediaPortal.Player
 
     public override eAudioDualMonoMode GetAudioDualMonoMode()
     {
-      if (_audioSwitcherFilter == null)
+      if (filterCodec._audioSwitcherFilter == null)
       {
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
         return eAudioDualMonoMode.UNSUPPORTED;
       }
-      IMPAudioSwitcherFilter mpSwitcher = _audioSwitcherFilter as IMPAudioSwitcherFilter;
+      IMPAudioSwitcherFilter mpSwitcher = filterCodec._audioSwitcherFilter as IMPAudioSwitcherFilter;
       if (mpSwitcher == null)
       {
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
@@ -127,12 +117,12 @@ namespace MediaPortal.Player
 
     public override bool SetAudioDualMonoMode(eAudioDualMonoMode mode)
     {
-      if (_audioSwitcherFilter == null)
+      if (filterCodec._audioSwitcherFilter == null)
       {
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
         return false;
       }
-      IMPAudioSwitcherFilter mpSwitcher = _audioSwitcherFilter as IMPAudioSwitcherFilter;
+      IMPAudioSwitcherFilter mpSwitcher = filterCodec._audioSwitcherFilter as IMPAudioSwitcherFilter;
       if (mpSwitcher == null)
       {
         Log.Info("TsReaderPlayer: AudioDualMonoMode switching not available. Audioswitcher filter not loaded");
@@ -148,43 +138,6 @@ namespace MediaPortal.Player
         Log.Info("TsReaderPlayer: SetAudioDualMonoMode mode={0} succeeded", mode.ToString(), hr);
       }
       return (hr == 0);
-    }
-
-    protected void LoadMyTvFilterSettings(ref int intFilters, ref string strFilters, ref string strVideoCodec,
-                                          ref string strAudioCodec, ref string strAACAudioCodec,
-                                          ref string strDDPLUSAudioCodec,
-                                          ref string strH264VideoCodec, ref string strAudioRenderer,
-                                          ref bool enableDVBBitmapSubtitles, ref bool enableDVBTtxtSubtitles,
-                                          ref int relaxTsReader)
-    {
-      using (Settings xmlreader = new MPSettings())
-      {
-        // FlipGer: load infos for custom filters
-        int intCount = 0;
-        while (xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") != "undefined")
-        {
-          if (xmlreader.GetValueAsBool("mytv", "usefilter" + intCount.ToString(), false))
-          {
-            strFilters += xmlreader.GetValueAsString("mytv", "filter" + intCount.ToString(), "undefined") + ";";
-            intFilters++;
-          }
-          intCount++;
-        }
-        strVideoCodec = xmlreader.GetValueAsString("mytv", "videocodec", "");
-        strAudioCodec = xmlreader.GetValueAsString("mytv", "audiocodec", "");
-        strAACAudioCodec = xmlreader.GetValueAsString("mytv", "aacaudiocodec", "");
-        strDDPLUSAudioCodec = xmlreader.GetValueAsString("mytv", "ddplusaudiocodec", "");
-        strH264VideoCodec = xmlreader.GetValueAsString("mytv", "h264videocodec", "");
-        strAudioRenderer = xmlreader.GetValueAsString("mytv", "audiorenderer", "Default DirectSound Device");
-        enableDVBBitmapSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbbitmapsubtitles", false);
-        enableDVBTtxtSubtitles = xmlreader.GetValueAsBool("tvservice", "dvbttxtsubtitles", false);
-        enableMPAudioSwitcher = xmlreader.GetValueAsBool("tvservice", "audiodualmono", false);
-        relaxTsReader = (xmlreader.GetValueAsBool("mytv", "relaxTsReader", false) == false ? 0 : 1);
-        // as int for passing through interface
-        string strValue = xmlreader.GetValueAsString("mytv", "defaultar", "Normal");
-        GUIGraphicsContext.ARType = Util.Utils.GetAspectRatio(strValue);
-        _CodecSupportsFastSeeking = xmlreader.GetValueAsBool("debug", "CodecSupportsFastSeeking", true);
-      }
     }
 
     protected override void OnInitialized()
@@ -212,35 +165,90 @@ namespace MediaPortal.Player
       _updateNeeded = false;
     }
 
-    protected override void MatchFilters(string format)
+    protected override string MatchFilters(string format)
     {
       if (format == "Video")
       {
         if (_videoFormat.streamType == VideoStreamType.MPEG2)
         {
-          videoFilter = strVideoCodec;
+          return this.filterConfig.Video;
         }
         else
         {
-          videoFilter = strH264VideoCodec;
+          return this.filterConfig.VideoH264;
         }
       }
       else
       {
         if (AudioType(CurrentAudioStream).Contains("AAC"))
         {
-          audioFilter = strAACAudioCodec;
+          return this.filterConfig.AudioAAC;
         }
         else
         {
           if (AudioType(CurrentAudioStream).Equals("AC3plus"))
           {
-            audioFilter = strDDPLUSAudioCodec;
+            return this.filterConfig.AudioDDPlus;
           }
           else
           {
-            audioFilter = strAudioCodec;
+            return this.filterConfig.Audio;
           }
+        }
+      }
+    }
+
+    protected override void PostProcessAddVideo()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (availableVideoFilters.Contains(filter.ToString()) && filter.ToString() != "Core CC Parser")
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterVideo.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected override void PostProcessAddAudio()
+    {
+      foreach (string filter in this.filterConfig.OtherFilters)
+      {
+        if (availableAudioFilters.Contains(filter.ToString()))
+        {
+          var comObject = DirectShowUtil.AddFilterToGraph(_graphBuilder, filter);
+          if (comObject != null)
+          {
+            PostProcessFilterAudio.Add(filter, comObject);
+          }
+        }
+      }
+    }
+
+    protected override void AudioRendererAdd()
+    {
+      if (this.filterConfig.AudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
+      {
+        filterCodec._audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, filterConfig.AudioRenderer, true);
+      }
+    }    
+
+    protected override void MPAudioSwitcherAdd()
+    {
+      if (filterConfig.enableMPAudioSwitcher) //audio switcher must be in graph before tsreader audiochangecallback
+      {
+        if (filterCodec._audioSwitcherFilter != null)
+        {
+          DirectShowUtil.ReleaseComObject(filterCodec._audioSwitcherFilter);
+          filterCodec._audioSwitcherFilter = null;
+        }
+        filterCodec._audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
+        if (filterCodec._audioSwitcherFilter == null)
+        {
+          Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
         }
       }
     }
@@ -251,33 +259,23 @@ namespace MediaPortal.Player
       Log.Info("TSReaderPlayer: GetInterfaces()");
       try
       {
-        string strAudioRenderer = "";
-        int intFilters = 0; // FlipGer: count custom filters
-        string strFilters = ""; // FlipGer: collect custom filters
-
-        LoadMyTvFilterSettings(ref intFilters, ref strFilters, ref strVideoCodec, ref strAudioCodec,
-                               ref strAACAudioCodec, ref strDDPLUSAudioCodec, ref strH264VideoCodec,
-                               ref strAudioRenderer,
-                               ref enableDVBBitmapSubtitles, ref enableDVBTtxtSubtitles, ref relaxTsReader);
-
         _graphBuilder = (IGraphBuilder)new FilterGraph();
         _rotEntry = new DsROTEntry((IFilterGraph)_graphBuilder);
 
-        if (strAudioRenderer.Length > 0) //audio renderer must be in graph before audio switcher
-        {
-          _audioRendererFilter = DirectShowUtil.AddAudioRendererToGraph(_graphBuilder, strAudioRenderer, true);
-        }
+        //Get filterCodecName and filterConfig
+        filterConfig = GetFilterConfiguration();
+        filterCodec = GetFilterCodec();
+
+        #region add AudioRenderer
+
+        //Add Audio Renderer
+        AudioRendererAdd();
+
+        #endregion
 
         #region add AudioSwitcher
 
-        if (enableMPAudioSwitcher) //audio switcher must be in graph before tsreader audiochangecallback
-        {
-          _audioSwitcherFilter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal AudioSwitcher");
-          if (_audioSwitcherFilter == null)
-          {
-            Log.Error("TSReaderPlayer: Failed to add AudioSwitcher to graph");
-          }
-        }
+        MPAudioSwitcherAdd();
 
         #endregion
 
@@ -287,7 +285,7 @@ namespace MediaPortal.Player
         _fileSource = (IBaseFilter)reader;
         _ireader = (ITSReader)reader;
         _interfaceTSReader = _fileSource;
-        _ireader.SetRelaxedMode(relaxTsReader); // enable/disable continousity filtering
+        _ireader.SetRelaxedMode(filterConfig.relaxTsReader); // enable/disable continousity filtering
         _ireader.SetTsReaderCallback(this);
         _ireader.SetRequestAudioChangeCallback(this);
         Log.Info("TSReaderPlayer: Add TsReader to graph");
@@ -319,14 +317,14 @@ namespace MediaPortal.Player
         #region add codecs
 
         Log.Info("TSReaderPlayer: Add codecs");
-        // add preferred video & audio codecs
-        MatchFilters("Video");
-        MatchFilters("Audio");
 
         // does .ts file contain video?
         // default is _isRadio=false which prevents recorded radio file playing
         if (!_videoFormat.IsValid)
+        {
+          Log.Debug("TSReaderPlayer: Stream is Radio");
           _isRadio = true;
+        }
 
         if (!_isRadio)
         {
@@ -334,12 +332,16 @@ namespace MediaPortal.Player
           _vmr9.AddVMR9(_graphBuilder);
           _vmr9.Enable(false);
 
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, videoFilter);
-          if (enableDVBBitmapSubtitles)
+          // Add preferred video filters
+          UpdateFilters("Video");
+          Log.Debug("TSReaderPlayer: UpdateFilters Video done");
+
+          if (filterConfig.enableDVBBitmapSubtitles)
           {
             try
             {
               SubtitleRenderer.GetInstance().AddSubtitleFilter(_graphBuilder);
+              Log.Debug("TSReaderPlayer: SubtitleRenderer AddSubtitleFilter");
             }
             catch (Exception e)
             {
@@ -348,14 +350,9 @@ namespace MediaPortal.Player
           }
         }
 
-        DirectShowUtil.AddFilterToGraph(_graphBuilder, audioFilter);
-
-        // FlipGer: add custom filters to graph
-        string[] arrFilters = strFilters.Split(';');
-        for (int i = 0; i < intFilters; i++)
-        {
-          DirectShowUtil.AddFilterToGraph(_graphBuilder, arrFilters[i]);
-        }
+        // Add preferred audio filters
+        UpdateFilters("Audio");
+        Log.Debug("TSReaderPlayer: UpdateFilters Audio done");
 
         #endregion
 
@@ -365,6 +362,7 @@ namespace MediaPortal.Player
         if (!postengine.LoadPostProcessing(_graphBuilder))
         {
           PostProcessingEngine.engine = new PostProcessingEngine.DummyEngine();
+          Log.Debug("TSReaderPlayer: PostProcessingEngine to DummyEngine");
         }
 
         #endregion
@@ -411,6 +409,11 @@ namespace MediaPortal.Player
         else
         {
           DirectShowUtil.RenderGraphBuilderOutputPins(_graphBuilder, _fileSource);
+          if (!filterConfig.enableCCSubtitles)
+          {
+            CleanupCC();
+            Log.Debug("TSReaderPlayer: CleanupCC filter (Tv/Recorded Stream Detected)");
+          }
         }
         DirectShowUtil.RemoveUnusedFiltersFromGraph(_graphBuilder);
 
@@ -432,7 +435,7 @@ namespace MediaPortal.Player
 
         if (!_isRadio)
         {
-          if (enableDVBTtxtSubtitles || enableDVBBitmapSubtitles)
+          if (filterConfig.enableDVBTtxtSubtitles || filterConfig.enableDVBBitmapSubtitles)
           {
             try
             {
@@ -444,7 +447,7 @@ namespace MediaPortal.Player
               Log.Error(e);
             }
           }
-          if (enableDVBBitmapSubtitles)
+          if (filterConfig.enableDVBBitmapSubtitles)
           {
             _subtitleStream = (ISubtitleStream)_fileSource;
             if (_subtitleStream == null)
@@ -452,7 +455,7 @@ namespace MediaPortal.Player
               Log.Error("TSReaderPlayer: Unable to get ISubtitleStream interface");
             }
           }
-          if (enableDVBTtxtSubtitles)
+          if (filterConfig.enableDVBTtxtSubtitles)
           {
             //Log.Debug("TSReaderPlayer: Obtaining TeletextSource");
             _teletextSource = (ITeletextSource)_fileSource;
@@ -467,50 +470,40 @@ namespace MediaPortal.Player
             // if _subtitleStream is null the subtitle will just not setup for bitmap subs 
             _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, ttxtDecoder);
           }
-          else if (enableDVBBitmapSubtitles)
+          else if (filterConfig.enableDVBBitmapSubtitles)
           {
             // if only dvb subs are enabled, pass null for ttxtDecoder
             _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
           }
         }
-        if (_audioRendererFilter != null)
+        if (filterCodec._audioRendererFilter != null)
         {
           //Log.Info("TSReaderPlayer:set reference clock");
-          IMediaFilter mp = (IMediaFilter)_graphBuilder;
-          IReferenceClock clock = (IReferenceClock)_audioRendererFilter;
+          /*IMediaFilter mp = (IMediaFilter)_graphBuilder;
+          IReferenceClock clock = (IReferenceClock)filterCodec._audioRendererFilter;
           hr = mp.SetSyncSource(null);
-          hr = mp.SetSyncSource(clock);
+          hr = mp.SetSyncSource(clock);*/
           //Log.Info("TSReaderPlayer:set reference clock:{0:X}", hr);
           _basicAudio = (IBasicAudio)_graphBuilder;
         }
         if (!_isRadio)
         {
-          IBaseFilter basefilter;
-          _graphBuilder.FindFilterByName("Line 21 Decoder", out basefilter);
-          if (basefilter == null)
+          if (filterConfig.enableCCSubtitles)
           {
-            _graphBuilder.FindFilterByName("Line21 Decoder", out basefilter);
-          }
-          if (basefilter == null)
-          {
-            _graphBuilder.FindFilterByName("Line 21 Decoder 2", out basefilter);
-          }
-          if (basefilter != null)
-          {
-            Log.Info("TSreaderPlayer: Line21 Decoder (Closed Captions), in use"); //: {0}", showClosedCaptions);
-            _line21Decoder = (IAMLine21Decoder)basefilter;
-            if (_line21Decoder != null)
+            CleanupCC();
+            ReleaseCC();
+            ReleaseCC2();
+            CoreCCParserCheck();
+            DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.VideoCodec);
+            Log.Debug("TSReaderPlayer: Render VideoCodec filter (Tv/Recorded Stream Detected)");
+            EnableCC();
+            Log.Debug("TSReaderPlayer: EnableCC");
+            if (CoreCCPresent)
             {
-              AMLine21CCState state = AMLine21CCState.Off;
-              hr = _line21Decoder.SetServiceState(state);
-              if (hr == 0)
-              {
-                Log.Info("TSReaderPlayer: Closed Captions state change successful");
-              }
-              else
-              {
-                Log.Info("TSReaderPlayer: Failed to change Closed Captions state");
-              }
+              DirectShowUtil.RenderUnconnectedOutputPins(_graphBuilder, filterCodec.CoreCCParser);
+              Log.Debug("TSReaderPlayer: Render CoreCCParser filter (Tv/Recorded Stream Detected)");
+              EnableCC2();
+              Log.Debug("TSReaderPlayer: EnableCC2");
             }
           }
           if (!_vmr9.IsVMR9Connected)
@@ -529,6 +522,13 @@ namespace MediaPortal.Player
           Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
           CurrentSubtitleStream = lastSubIndex;
         }
+
+        if (!filterConfig.autoShowSubWhenTvStarts)
+        {
+          Log.Debug("TSReaderPlayer: Automatically show subtitles when TV starts is set to {0}", filterConfig.autoShowSubWhenTvStarts);
+          EnableSubtitle = filterConfig.autoShowSubWhenTvStarts;
+        }
+
         return true;
       }
       catch (Exception ex)
@@ -536,6 +536,199 @@ namespace MediaPortal.Player
         Log.Error("TSReaderPlayer: Exception while creating DShow graph {0}", ex.Message);
         Cleanup();
         return false;
+      }
+    }
+
+    protected override void CoreCCParserCheck()
+    {
+      #region find Core CC Parser
+      if (filterCodec.CoreCCParser != null)
+      {
+        DirectShowUtil.ReleaseComObject(filterCodec.CoreCCParser);
+        filterCodec.CoreCCParser = null;
+      }
+      filterCodec.CoreCCParser = DirectShowUtil.GetFilterByName(_graphBuilder, "Core CC Parser");
+      if (filterCodec.CoreCCParser == null && _videoFormat.streamType == VideoStreamType.MPEG2)
+      {
+        if (filterConfig.OtherFilters.Contains("Core CC Parser") && filterConfig.enableCCSubtitles)
+        {
+          filterCodec.CoreCCParser = DirectShowUtil.AddFilterToGraph(_graphBuilder, "Core CC Parser");
+          CoreCCPresent = true;
+        }
+      }
+      else
+      {
+        if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.MPEG2)
+        {
+          CoreCCPresent = true;
+        }
+        else if (filterCodec.CoreCCParser != null && _videoFormat.streamType == VideoStreamType.H264)
+        {
+          _graphBuilder.RemoveFilter(filterCodec.CoreCCParser);
+          DirectShowUtil.ReleaseComObject(filterCodec.CoreCCParser);
+          filterCodec.CoreCCParser = null;
+        }
+      }
+      #endregion
+    }
+
+    protected override void CleanupCC()
+    {
+      //Need to remove and release each Line21 in the graph for both Class ID.
+      while (true)
+      {
+        IBaseFilter basefilter;
+        DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_1, out basefilter);
+        if (basefilter == null)
+          DirectShowUtil.FindFilterByClassID(_graphBuilder, ClassId.Line21_2, out basefilter);
+        if (basefilter != null)
+        {
+          _graphBuilder.RemoveFilter(basefilter);
+          DirectShowUtil.ReleaseComObject(basefilter);
+          basefilter = null;
+          Log.Info("TSReaderPlayer: Cleanup Captions");
+        }
+        else
+        {
+          break;
+        }
+      }
+    }
+
+    protected override void ReleaseCC()
+    {
+      //Cleanup Line 21 Analog
+      int hr;
+      if (_mediaCtrl != null)
+      hr = _mediaCtrl.Stop();
+
+      if (filterCodec.line21VideoCodec != null)
+      {
+        DirectShowUtil.ReleaseComObject(filterCodec.line21VideoCodec);
+        filterCodec.line21VideoCodec = null;
+      }
+      if (_line21DecoderAnalog != null)
+      {
+        DirectShowUtil.ReleaseComObject(_line21DecoderAnalog);
+        _line21DecoderAnalog = null;
+      }
+    }
+
+    protected override void ReleaseCC2()
+    {
+      //Cleanup Line 21 Digital
+      int hr;
+      if (_mediaCtrl != null)
+      hr = _mediaCtrl.Stop();
+      if (filterCodec.line21CoreCCParser != null)
+      {
+        DirectShowUtil.ReleaseComObject(filterCodec.line21CoreCCParser);
+        filterCodec.line21CoreCCParser = null;
+      }
+      if (_line21DecoderDigital != null)
+      {
+        DirectShowUtil.ReleaseComObject(_line21DecoderDigital);
+        _line21DecoderDigital = null;
+      }
+    }
+
+    protected override void EnableCC()
+    {
+      if (!_isRadio)
+      {
+        IPin pinFromVideo = DsFindPin.ByDirection((IBaseFilter)filterCodec.VideoCodec, PinDirection.Output, 1);
+        if (pinFromVideo != null)
+        {
+          IPin pinToFilter;
+          int hr = pinFromVideo.ConnectedTo(out pinToFilter);
+          if (hr >= 0 && pinToFilter != null)
+          {
+            PinInfo pInfo;
+            pinToFilter.QueryPinInfo(out pInfo);
+            FilterInfo fInfo;
+            pInfo.filter.QueryFilterInfo(out fInfo);
+            if (!fInfo.achName.Contains("Enhanced Video Renderer") && !fInfo.achName.Contains("Video Mixing Renderer 9"))
+            {
+              Log.Debug("TSReaderPlayer: Enable loading line21VideoCodec - {0}", fInfo.achName);
+              filterCodec.line21VideoCodec = DirectShowUtil.GetFilterByName(_graphBuilder, fInfo.achName);
+            }
+            DsUtils.FreePinInfo(pInfo);
+            DirectShowUtil.ReleaseComObject(fInfo.pGraph); //Sebastiii Test
+            DirectShowUtil.ReleaseComObject(pinToFilter); pinToFilter = null;
+          }
+          DirectShowUtil.ReleaseComObject(pinFromVideo); pinFromVideo = null;
+
+          _line21DecoderAnalog = (IAMLine21Decoder)filterCodec.line21VideoCodec;
+          if (_line21DecoderAnalog != null)
+          {
+            AMLine21CCState state = AMLine21CCState.Off;
+            hr = _line21DecoderAnalog.SetServiceState(state);
+            if (hr == 0)
+            {
+              Log.Info("TSReaderPlayer: Closed Captions Analog state change successful");
+            }
+            else
+            {
+              Log.Info("TSReaderPlayer: Failed to change Closed Captions Analog state");
+            }
+          }
+        }
+      }
+      using (MPSettings xmlreader = new MPSettings())
+      {
+        int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
+        Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
+        CurrentSubtitleStream = lastSubIndex;
+      }
+    }
+
+    protected override void EnableCC2()
+    {
+      if (!_isRadio)
+      {
+        if (CoreCCPresent)
+        {
+          IPin pinFromSplitter = DsFindPin.ByDirection((IBaseFilter)filterCodec.CoreCCParser, PinDirection.Output, 1);
+          IPin pinToFilterCC;
+          int hr = pinFromSplitter.ConnectedTo(out pinToFilterCC);
+          if (hr >= 0 && pinToFilterCC != null)
+          {
+            PinInfo pInfo;
+            pinToFilterCC.QueryPinInfo(out pInfo);
+            FilterInfo fInfo;
+            pInfo.filter.QueryFilterInfo(out fInfo);
+            if (!fInfo.achName.Contains("Enhanced Video Renderer") && !fInfo.achName.Contains("Video Mixing Renderer 9"))
+            {
+              Log.Debug("TSReaderPlayer: Enable loading line21CoreCCParser - {0}", fInfo.achName);
+              filterCodec.line21CoreCCParser = DirectShowUtil.GetFilterByName(_graphBuilder, fInfo.achName);
+            }
+            DsUtils.FreePinInfo(pInfo);
+            DirectShowUtil.ReleaseComObject(fInfo.pGraph); //Sebastiii Test
+            DirectShowUtil.ReleaseComObject(pinToFilterCC); pinToFilterCC = null;
+          }
+          DirectShowUtil.ReleaseComObject(pinFromSplitter); pinFromSplitter = null;
+
+          _line21DecoderDigital = (IAMLine21Decoder)filterCodec.line21CoreCCParser;
+          if (_line21DecoderDigital != null)
+          {
+            AMLine21CCState stateCC2 = AMLine21CCState.Off;
+            hr = _line21DecoderDigital.SetServiceState(stateCC2);
+            if (hr == 0)
+            {
+              Log.Info("TSReaderPlayer: Closed Captions Digital state change successful");
+            }
+            else
+            {
+              Log.Info("TSReaderPlayer: Failed to change Closed Captions Digital state");
+            }
+          }
+        }
+      }
+      using (MPSettings xmlreader = new MPSettings())
+      {
+        int lastSubIndex = xmlreader.GetValueAsInt("tvservice", "lastsubtitleindex", 0);
+        Log.Debug("TSReaderPlayer: Last subtitle index: {0}", lastSubIndex);
+        CurrentSubtitleStream = lastSubIndex;
       }
     }
 
@@ -575,7 +768,7 @@ namespace MediaPortal.Player
           return;
         }
         int hr;
-        Log.Info("TSReaderPlayer: cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
+        Log.Info("TSReaderPlayer: Cleanup DShow graph {0}", GUIGraphicsContext.InVmr9Render);
         try
         {
           if (_mediaCtrl != null)
@@ -601,18 +794,25 @@ namespace MediaPortal.Player
             _mediaCtrl = null;
           }
 
+          /*_videoWin = _graphBuilder as IVideoWindow;
+          if (_videoWin != null)
+          {
+            hr = _videoWin.put_Visible(OABool.False);
+            Log.Info("TSReaderPlayer: Cleanup Get hr value {0}", hr);
+            hr = _videoWin.put_Owner(IntPtr.Zero);
+            _videoWin = null;
+          }*/
+
+          /*//Janne
+          if (_vmr9 != null)
+          {
+            _vmr9.Enable(false);
+          }*/
+
           if (_mediaEvt != null)
           {
             hr = _mediaEvt.SetNotifyWindow(IntPtr.Zero, WM_GRAPHNOTIFY, IntPtr.Zero);
             _mediaEvt = null;
-          }
-
-          _videoWin = _graphBuilder as IVideoWindow;
-          if (_videoWin != null)
-          {
-            hr = _videoWin.put_Visible(OABool.False);
-            hr = _videoWin.put_Owner(IntPtr.Zero);
-            _videoWin = null;
           }
 
           _mediaSeeking = null;
@@ -620,31 +820,104 @@ namespace MediaPortal.Player
           _basicVideo = null;
           _ireader = null;
 
-          if (_audioRendererFilter != null)
+          if (filterCodec != null && filterCodec._audioRendererFilter != null)
           {
-            while (DirectShowUtil.ReleaseComObject(_audioRendererFilter) > 0) ;
-            _audioRendererFilter = null;
+            DirectShowUtil.ReleaseComObject(filterCodec._audioRendererFilter, 5000);
+            filterCodec._audioRendererFilter = null;
+            Log.Debug("TSReaderPlayer: Cleanup _audioRendererFilter");
           }
 
           if (_fileSource != null)
           {
             DirectShowUtil.ReleaseComObject(_fileSource, 5000);
             _fileSource = null;
+            Log.Debug("TSReaderPlayer: Cleanup _fileSource");
           }
 
           PostProcessingEngine.GetInstance().FreePostProcess();
+          Log.Debug("TSReaderPlayer: Cleanup FreePostProcess");
+
+          //ReleaseComObject from PostProcessFilter list objects.
+          foreach (var ppFilter in PostProcessFilterVideo)
+          {
+            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+          }
+          PostProcessFilterVideo.Clear();
+          foreach (var ppFilter in PostProcessFilterAudio)
+          {
+            if (ppFilter.Value != null) DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+          }
+          PostProcessFilterAudio.Clear();
+          Log.Debug("TSReaderPlayer: Cleanup PostProcess");
+
+          if (filterCodec != null && filterCodec._audioSwitcherFilter != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec._audioSwitcherFilter, 5000);
+            filterCodec._audioSwitcherFilter = null;
+            Log.Debug("TSReaderPlayer: Cleanup _audioSwitcherFilter");
+          }
+
+          if (_line21DecoderAnalog != null)
+          {
+            DirectShowUtil.ReleaseComObject(_line21DecoderAnalog, 5000);
+            _line21DecoderAnalog = null;
+            Log.Debug("TSReaderPlayer: Cleanup _line21DecoderAnalog");
+          }
+
+          if (_line21DecoderDigital != null)
+          {
+            hr = DirectShowUtil.ReleaseComObject(_line21DecoderDigital, 5000);
+            _line21DecoderDigital = null;
+            Log.Debug("TSReaderPlayer: Cleanup _line21DecoderDigital");
+          }
+
+          if (filterCodec != null && filterCodec.CoreCCParser != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.CoreCCParser, 5000);
+            filterCodec.CoreCCParser = null;
+            Log.Debug("TSReaderPlayer: Cleanup CoreCCParser");
+          }
+
+          if (filterCodec != null && filterCodec.AudioCodec != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.AudioCodec, 5000);
+            filterCodec.AudioCodec = null;
+            Log.Debug("TSReaderPlayer: Cleanup AudioCodec");
+          }
+
+          if (filterCodec != null && filterCodec.VideoCodec != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.VideoCodec, 5000);
+            filterCodec.VideoCodec = null;
+            Log.Debug("TSReaderPlayer: Cleanup VideoCodec");
+          }
+
+          if (filterCodec != null && filterCodec.line21VideoCodec != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.line21VideoCodec, 5000);
+            filterCodec.line21VideoCodec = null;
+            Log.Debug("TSReaderPlayer: Cleanup line21VideoCodec");
+          }
+
+          if (filterCodec != null && filterCodec.line21CoreCCParser != null)
+          {
+            DirectShowUtil.ReleaseComObject(filterCodec.line21CoreCCParser, 5000);
+            filterCodec.line21CoreCCParser = null;
+            Log.Debug("TSReaderPlayer: Cleanup line21CoreCCParser");
+          }
+
+          /*if (_fileSource != null)
+          {
+            DirectShowUtil.ReleaseComObject(_fileSource, 5000);
+            _fileSource = null;
+            Log.Debug("TSReaderPlayer: Cleanup _fileSource");
+          }*/
 
           if (_vmr9 != null)
           {
             _vmr9.Enable(false);
             _vmr9.SafeDispose();
             _vmr9 = null;
-          }
-
-          if (_line21Decoder != null)
-          {
-            while ((hr = DirectShowUtil.ReleaseComObject(_line21Decoder)) > 0) ;
-            _line21Decoder = null;
           }
 
           if (_graphBuilder != null)
@@ -655,8 +928,10 @@ namespace MediaPortal.Player
               _rotEntry.SafeDispose();
               _rotEntry = null;
             }
-            while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+            //while ((hr = DirectShowUtil.ReleaseComObject(_graphBuilder)) > 0) ;
+            DirectShowUtil.ReleaseComObject(_graphBuilder, 5000);
             _graphBuilder = null;
+            Log.Debug("TSReaderPlayer: Cleanup _graphBuilder");
           }
 
           if (_dvbSubRenderer != null)
@@ -664,6 +939,14 @@ namespace MediaPortal.Player
             _dvbSubRenderer.SetPlayer(null);
             _dvbSubRenderer = null;
           }
+
+          /*//Janne
+          if (_vmr9 != null)
+          {
+            _vmr9.SafeDispose();
+            _vmr9 = null;
+            Log.Debug("TSReaderPlayer: Cleanup _vmr9");
+          }*/
 
           GUIGraphicsContext.form.Invalidate(true);
           _state = PlayState.Init;
@@ -673,9 +956,9 @@ namespace MediaPortal.Player
           Log.Error("TSReaderPlayer: Exception while cleaning DShow graph - {0} {1}", ex.Message, ex.StackTrace);
         }
         //switch back to directx windowed mode
-        Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode");
-        GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
-        GUIWindowManager.SendMessage(msg);
+        //Log.Info("TSReaderPlayer: Disabling DX9 exclusive mode Cleanup");
+        //GUIMessage msg = new GUIMessage(GUIMessage.MessageType.GUI_MSG_SWITCH_FULL_WINDOWED, 0, 0, 0, 0, 0, null);
+        //GUIWindowManager.SendMessage(msg);
       }
     }
 
@@ -785,7 +1068,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (SupportsCC && UseCC)
+        if (SupportsCC && (UseCC || UseCC2))
         {
           return -1;
         }
@@ -804,7 +1087,9 @@ namespace MediaPortal.Player
         {
           if (value == -1)
           {
+            UseCC2 = true;
             UseCC = true;
+            FFDShowEngine.EnableFFDShowSubtitles(_graphBuilder);
             if (_subSelector != null)
             {
               _dvbSubRenderer.RenderSubtitles = false;
@@ -814,6 +1099,8 @@ namespace MediaPortal.Player
           else
           {
             UseCC = false;
+            UseCC2 = false;
+            FFDShowEngine.DisableFFDShowSubtitles(_graphBuilder);
             if (_subSelector != null)
             {
               _dvbSubRenderer.RenderSubtitles = true;
@@ -859,7 +1146,7 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (SupportsCC && UseCC)
+        if (SupportsCC && (UseCC || UseCC2))
         {
           return true;
         }
@@ -883,6 +1170,15 @@ namespace MediaPortal.Player
               _dvbSubRenderer.RenderSubtitles = false;
             }
             UseCC = value;
+            UseCC2 = value;
+            if (value)
+            {
+              FFDShowEngine.EnableFFDShowSubtitles(_graphBuilder);
+            }
+            else
+            {
+              FFDShowEngine.DisableFFDShowSubtitles(_graphBuilder);
+            }
           }
           else
           {
@@ -890,13 +1186,21 @@ namespace MediaPortal.Player
             {
               _dvbSubRenderer.RenderSubtitles = value;
             }
-            UseCC = false;
           }
         }
 
         else if (_subSelector != null)
         {
           _dvbSubRenderer.RenderSubtitles = value;
+          if (value)
+          {
+            FFDShowEngine.EnableFFDShowSubtitles(_graphBuilder);
+          }
+          else
+          {
+            FFDShowEngine.DisableFFDShowSubtitles(_graphBuilder);
+
+          }
         }
       }
     }
@@ -905,9 +1209,9 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (enableDVBBitmapSubtitles)
+        if (filterConfig.enableCCSubtitles)
         {
-          return (_line21Decoder != null);
+          return (_line21DecoderDigital != null || _line21DecoderAnalog != null);
         }
         else
           return false;
@@ -918,27 +1222,61 @@ namespace MediaPortal.Player
     {
       get
       {
-        if (_line21Decoder == null)
+        if (_line21DecoderAnalog == null)
         {
           return false;
         }
         AMLine21CCState state;
-        _line21Decoder.GetServiceState(out state);
+        _line21DecoderAnalog.GetServiceState(out state);
         return (state == AMLine21CCState.On);
       }
       set
       {
-        if (_line21Decoder != null)
+        if (_line21DecoderAnalog != null)
         {
           AMLine21CCState state = AMLine21CCState.Off;
           if (value)
           {
             state = AMLine21CCState.On;
           }
-          int hr = _line21Decoder.SetServiceState(state);
+          int hr = _line21DecoderAnalog.SetServiceState(state);
           if (hr == 0)
           {
-            Log.Info("TSReaderPlayer: Closed Captions state change successful");
+            Log.Info("TSReaderPlayer: Closed Captions Analog state change successful");
+          }
+          else
+          {
+            Log.Info("TSReaderPlayer: Failed to change Closed Captions state");
+          }
+        }
+      }
+    }
+
+    public bool UseCC2
+    {
+      get
+      {
+        if (_line21DecoderDigital == null)
+        {
+          return false;
+        }
+        AMLine21CCState stateCC2;
+        _line21DecoderDigital.GetServiceState(out stateCC2);
+        return (stateCC2 == AMLine21CCState.On);
+      }
+      set
+      {
+        if (_line21DecoderDigital != null)
+        {
+          AMLine21CCState stateCC2 = AMLine21CCState.Off;
+          if (value)
+          {
+            stateCC2 = AMLine21CCState.On;
+          }
+          int hr = _line21DecoderDigital.SetServiceState(stateCC2);
+          if (hr == 0)
+          {
+            Log.Info("TSReaderPlayer: Closed Captions Digital state change successful");
           }
           else
           {

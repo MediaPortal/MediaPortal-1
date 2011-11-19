@@ -386,7 +386,7 @@ namespace MediaPortal.Player.Subtitles
       List<SubtitleOption> options = CollectOptions();
       if (index >= options.Count)
       {
-        Log.Error("SetOption with too large index!");
+        //Log.Error("SetOption with too large index!");
         return;
       }
       SubtitleOption option = options[index];
