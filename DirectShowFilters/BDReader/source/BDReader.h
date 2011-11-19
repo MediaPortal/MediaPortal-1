@@ -258,6 +258,8 @@ private:
   REFERENCE_TIME m_rtPlaybackOffset;
   REFERENCE_TIME m_rtSeekPosition;
   REFERENCE_TIME m_rtTitleDuration;
+  REFERENCE_TIME m_rtCurrentTime;
+  CCritSec       m_csClock;
 
   // Times
   REFERENCE_TIME m_rtStart;

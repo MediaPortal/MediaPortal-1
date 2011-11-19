@@ -111,6 +111,7 @@ CBDReaderFilter::CBDReaderFilter(IUnknown *pUnk, HRESULT *phr):
   m_rtPlaybackOffset(_I64_MIN),
   m_rtSeekPosition(0),
   m_rtTitleDuration(0),
+  m_rtCurrentTime(0),
   m_rtStart(0),
   m_rtStop(0),
   m_rtCurrent(0),
@@ -322,23 +323,33 @@ void CBDReaderFilter::OnPlaybackPositionChange()
     REFERENCE_TIME time = 0;
     m_pClock->GetTime(&time);
 
-    if (m_rtPlaybackOffset == _I64_MIN)
-      m_rtPlaybackOffset = time;
+    {
+      CAutoLock lock(&m_csClock);
 
-    m_pCallback->OnClockChange(m_rtTitleDuration, time - m_rtPlaybackOffset + m_rtSeekPosition);
-    //LogDebug("dur: %6.3f pos: %6.3f", m_rtTitleDuration / 10000000.0, (time - m_rtPlaybackOffset + m_rtSeekPosition) / 10000000.0);
+      if (m_rtPlaybackOffset == _I64_MIN)
+        m_rtPlaybackOffset = time;
+
+      m_rtCurrentTime = time - m_rtPlaybackOffset + m_rtSeekPosition;
+
+      m_pCallback->OnClockChange(m_rtTitleDuration, m_rtCurrentTime);
+      //LogDebug("dur: %6.3f pos: %6.3f", m_rtTitleDuration / 10000000.0, (time - m_rtPlaybackOffset + m_rtSeekPosition) / 10000000.0);
+    }
   }
 }
 
 void CBDReaderFilter::SetTitleDuration(REFERENCE_TIME pTitleDuration)
 {
   LogDebug("CBDReaderFilter: SetTitleDuration duration: %6.3f", pTitleDuration / 10000000.0);
+  
+  CAutoLock lock(&m_csClock);
   m_rtTitleDuration = pTitleDuration;
 }
 
 void CBDReaderFilter::ResetPlaybackOffset(REFERENCE_TIME pSeekPosition)
 {
   LogDebug("CBDReaderFilter: ResetPlaybackOffset seek position: %6.3f", pSeekPosition / 10000000.0);
+  
+  CAutoLock lock(&m_csClock);
   m_rtSeekPosition = pSeekPosition;
   m_rtPlaybackOffset = _I64_MIN;
   m_rtLastStart = 0;
@@ -546,7 +557,10 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
           
             LONGLONG pos = 0;
             if (cmd.refTime.m_time < 0)
-              m_pMediaSeeking->GetCurrentPosition(&pos);
+            {
+              CAutoLock lock(&m_csClock);
+              pos = m_rtCurrentTime;
+            }
             else
               pos = cmd.refTime.m_time;
 
