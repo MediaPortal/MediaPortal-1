@@ -583,6 +583,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
             m_eSeekDone.Reset();
 
             m_demultiplexer.SetMediaChanging(false);
+            m_demultiplexer.m_bRebuildOngoing = false;
 
             break;
 		      }
