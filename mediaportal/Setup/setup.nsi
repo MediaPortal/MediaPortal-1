@@ -139,7 +139,7 @@ Var MPTray_Running
 !if ${VER_BUILD} == 0       # it's an official release
   !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp.bmp"
 !else                       # it's a git release
-  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp-git.bmp"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp-snapshot.bmp"
 !endif
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP      "${git_InstallScripts}\Resources\wizard-mp.bmp"
 !define MUI_HEADERIMAGE_RIGHT

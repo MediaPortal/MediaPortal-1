@@ -507,6 +507,7 @@ namespace MediaPortal.Player
     protected MenuState menuState;
     protected int _iMenuOffPendingCount = -1;
     protected bool _bMenuOn;
+    protected bool _subtitlesEnabled = true;
     #endregion
 
     #region ctor/dtor
@@ -1523,6 +1524,7 @@ namespace MediaPortal.Player
         settings.audioLang = xmlreader.GetValueAsString("bdplayer", "audiolanguage", "English");
         settings.subtitleLang = xmlreader.GetValueAsString("bdplayer", "subtitlelanguage", "English");
         settings.parentalControl = xmlreader.GetValueAsInt("bdplayer", "parentalcontrol", 99);
+        _subtitlesEnabled = xmlreader.GetValueAsBool("bdplayer", "subtitlesenabled", true);
         string regionCode = xmlreader.GetValueAsString("bdplayer", "regioncode", "B");
         switch (regionCode)
         {
@@ -1813,7 +1815,7 @@ namespace MediaPortal.Player
       {
         BDStreamInfo clipInfo = new BDStreamInfo();
         _ireader.GetCurrentClipStreamInfo(ref clipInfo);
-        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate));
+        Log.Debug("BDPlayer: CurrentStreamInfo - video format: {0}({1})@{2}fps, duration: {3}", StreamTypetoString(clipInfo.coding_type), VideoFormattoString(clipInfo.format), VideoRatetoDouble(clipInfo.rate), _duration);
         UpdateRefreshRate(clipInfo.rate);
       }
       catch
@@ -1824,7 +1826,7 @@ namespace MediaPortal.Player
 
     protected void UpdateRefreshRate(int videoRate)
     {
-      if (_currentVideoFormatRate != videoRate)
+      if (_currentVideoFormatRate != videoRate && _duration > 300)
       {
         _currentVideoFormatRate = videoRate;
         RefreshRateChanger.SetRefreshRateBasedOnFPS(VideoRatetoDouble(videoRate), "", RefreshRateChanger.MediaType.Video);
@@ -2281,6 +2283,7 @@ namespace MediaPortal.Player
 
         // if only dvb subs are enabled, pass null for ttxtDecoder
         _subSelector = new SubtitleSelector(_subtitleStream, _dvbSubRenderer, null);
+        EnableSubtitle = _subtitlesEnabled;
         
         if (_audioRendererFilter != null)
         {
