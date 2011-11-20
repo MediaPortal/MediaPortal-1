@@ -117,7 +117,6 @@ public:
   void HandleMenuStateChange(bool pVisible);
 
   CAMEvent* m_eAudioPlSeen;
-  CAMEvent* m_ePlaylistChangeDone;
   bool m_bVideoPlSeen;
   bool m_bAudioRequiresRebuild;
   bool m_bVideoRequiresRebuild;

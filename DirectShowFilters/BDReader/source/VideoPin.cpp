@@ -433,7 +433,6 @@ void CVideoPin::CheckPlaybackState()
 
     m_bStopWait = m_demux.m_bStreamPaused = false;
 
-    m_demux.m_ePlaylistChangeDone->Set();
     m_demux.m_eAudioPlSeen->Reset();
     m_demux.m_bVideoPlSeen = false;
   }

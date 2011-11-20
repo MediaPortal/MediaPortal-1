@@ -241,16 +241,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
     do
     {
-      if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || 
-        (m_demux.m_eAudioPlSeen->Check() && m_demux.m_ePlaylistChangeDone->Check()))
+      if (!m_bSeekDone || m_pFilter->IsStopping() || m_bFlushing || m_demux.IsMediaChanging() || m_demux.m_bRebuildOngoing || 
+        m_demux.m_eAudioPlSeen->Check() )
       {
         CreateEmptySample(pSample);
         Sleep(1);
         return S_OK;
       }
-
-      //if (m_demux.m_eAudioPlSeen->Check())
-        //m_demux.m_ePlaylistChangeDone->Wait();
 
       if (m_pCachedBuffer)
       {
@@ -380,10 +377,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
           
           if (buffer->bSeekRequired)
-          {
             m_demux.m_eAudioPlSeen->Set();
-            m_demux.m_ePlaylistChangeDone->Reset();
-          }
 
           m_pCachedBuffer->bSeekRequired = false;
 
