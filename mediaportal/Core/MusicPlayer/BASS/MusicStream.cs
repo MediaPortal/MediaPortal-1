@@ -198,8 +198,8 @@ namespace MediaPortal.MusicPlayer.BASS
     {
 
       BASSFlag streamFlags = BASSFlag.BASS_SAMPLE_FLOAT;
-      
-      if (Config.UseAsio)
+
+      if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         streamFlags |= BASSFlag.BASS_STREAM_DECODE;
       }

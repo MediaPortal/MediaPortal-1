@@ -41,19 +41,6 @@ namespace MediaPortal.MusicPlayer.BASS
   /// </summary>
   public class Config
   {
-    #region Enum
-
-    /// <summary>
-    /// States, how the Playback is handled
-    /// </summary>
-    public enum PlayBackType : int
-    {
-      NORMAL = 0,
-      GAPLESS = 1,
-      CROSSFADE = 2
-    }
-
-    #endregion
 
     #region Variables
 
@@ -61,8 +48,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static Config _instance = null;
 
+    private static AudioPlayer _audioPlayer;
     private static string _soundDevice;
-    private static string _asioDevice;
 
     private static int _streamVolume;
     private static int _bufferingMs;
@@ -72,7 +59,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
     private static bool _softStop;
     private static bool _mixing;
-    private static bool _useASIO;
 
     private static PlayBackType _playBackType;
 
@@ -110,9 +96,9 @@ namespace MediaPortal.MusicPlayer.BASS
       get { return _soundDevice; }
     }
 
-    public static string AsioDevice
+    public static AudioPlayer MusicPlayer
     {
-      get { return _asioDevice; }
+      get { return _audioPlayer; }
     }
 
     public static int StreamVolume
@@ -146,11 +132,6 @@ namespace MediaPortal.MusicPlayer.BASS
     public static bool Mixing
     {
       get { return _mixing; }
-    }
-
-    public static bool UseAsio
-    {
-      get { return _useASIO; }
     }
 
     public static PlayBackType PlayBack
@@ -217,6 +198,8 @@ namespace MediaPortal.MusicPlayer.BASS
       using (Profile.Settings xmlreader = new Profile.MPSettings())
       {
         Log.Info("BASS: LOading Settings");
+        string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
+        _audioPlayer = (AudioPlayer)Enum.Parse(typeof (AudioPlayer), strAudioPlayer);
         _soundDevice = xmlreader.GetValueAsString("audioplayer", "sounddevice", "Default Sound Device");
         _streamVolume = xmlreader.GetValueAsInt("audioplayer", "streamOutputLevel", 85);
         _bufferingMs = xmlreader.GetValueAsInt("audioplayer", "buffering", 5000);
@@ -245,8 +228,6 @@ namespace MediaPortal.MusicPlayer.BASS
 
         _mixing = xmlreader.GetValueAsBool("audioplayer", "mixing", false);
 
-        _useASIO = xmlreader.GetValueAsBool("audioplayer", "asio", false);
-        _asioDevice = xmlreader.GetValueAsString("audioplayer", "asiodevice", "None");
         _asioBalance = (float)xmlreader.GetValueAsInt("audioplayer", "asiobalance", 0) / 100.00f;
 
         bool doGaplessPlayback = xmlreader.GetValueAsBool("audioplayer", "gaplessPlayback", false);

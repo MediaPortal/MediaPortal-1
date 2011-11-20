@@ -83,8 +83,27 @@ namespace MediaPortal.Player
         {
           using (Profile.Settings xmlreader = new Profile.MPSettings())
           {
-            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "BASS engine");
-            _isDefaultMusicPlayer = String.Compare(strAudioPlayer, "BASS engine", true) == 0;
+            string strAudioPlayer = xmlreader.GetValueAsString("audioplayer", "player", "0");
+            AudioPlayer audioPlayer = AudioPlayer.Bass;
+            try
+            {
+              audioPlayer = (AudioPlayer)Enum.Parse(typeof(AudioPlayer), strAudioPlayer);
+            }
+            catch (Exception) // We end up here in the conversion Phase, where we have still a string ioncluded
+            {}
+
+            switch (audioPlayer)
+            {
+              case AudioPlayer.Bass:
+              case AudioPlayer.Asio:
+              case AudioPlayer.WasApi:
+                _isDefaultMusicPlayer = true;
+                break;
+
+              default:
+                _isDefaultMusicPlayer = false;
+                break;
+            }
             _settingsLoaded = true;
           }
         }

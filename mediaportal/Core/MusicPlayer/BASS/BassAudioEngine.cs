@@ -534,17 +534,17 @@ namespace MediaPortal.MusicPlayer.BASS
             string type = "";
             switch (_playBackType)
             {
-              case (int)Config.PlayBackType.NORMAL:
+              case (int)PlayBackType.NORMAL:
                 Config.CrossFadeIntervalMs = 100;
                 type = "Normal";
                 break;
 
-              case (int)Config.PlayBackType.GAPLESS:
+              case (int)PlayBackType.GAPLESS:
                 Config.CrossFadeIntervalMs = 200;
                 type = "Gapless";
                 break;
 
-              case (int)Config.PlayBackType.CROSSFADE:
+              case (int)PlayBackType.CROSSFADE:
                 Config.CrossFadeIntervalMs = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
                 type = "Crossfading";
                 break;
@@ -701,7 +701,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         Log.Info("BASS: Initializing BASS audio engine...");
         bool initOK = false;
-        if (Config.UseAsio)
+        
+        if (Config.MusicPlayer == AudioPlayer.Asio)
         {
           initOK = InitAsio();
         }
@@ -732,7 +733,7 @@ namespace MediaPortal.MusicPlayer.BASS
         else
         {
           BASSError error = Bass.BASS_ErrorGetCode();
-          if (Config.UseAsio)
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             BASSError errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
             Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}",
@@ -782,12 +783,12 @@ namespace MediaPortal.MusicPlayer.BASS
     {
       bool result = false;
 
-      Log.Info("BASS: Using ASIO device: {0}", Config.AsioDevice);
+      Log.Info("BASS: Using ASIO device: {0}", Config.SoundDevice);
       BASS_ASIO_DEVICEINFO[] asioDevices = BassAsio.BASS_ASIO_GetDeviceInfos();
       // Check if the ASIO device read is amongst the one retrieved
       for (int i = 0; i < asioDevices.Length; i++)
       {
-        if (asioDevices[i].name == Config.AsioDevice)
+        if (asioDevices[i].name == Config.SoundDevice)
         {
           _asioDeviceNumber = i;
           break;
@@ -962,7 +963,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       catch (Exception) {}
 
-      if (Config.UseAsio)
+      if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         foreach (BassAsioHandler handler in _asioHandlers)
         {
@@ -971,6 +972,7 @@ namespace MediaPortal.MusicPlayer.BASS
             handler.Dispose();
           }
         }
+        BassAsio.BASS_ASIO_Stop();
         BassAsio.BASS_ASIO_Free();
       }
 
@@ -1012,7 +1014,7 @@ namespace MediaPortal.MusicPlayer.BASS
       if (!_bassFreed)
       {
         Log.Info("BASS: Freeing BASS. Non-audio media playback requested.");
-        if (Config.UseAsio)
+        if (Config.MusicPlayer == AudioPlayer.Asio)
         {
           foreach (BassAsioHandler handler in _asioHandlers)
           {
@@ -1179,7 +1181,7 @@ namespace MediaPortal.MusicPlayer.BASS
     internal int GetCurrentVizStream()
     {
       // In case od ASIO return the clone of the stream, because for a decoding channel, we can't get data from the original stream
-      if (Config.UseAsio)
+      if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         return _streamcopy.Stream;
       }
@@ -1402,7 +1404,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
             result = Bass.BASS_Start();
 
-            if (Config.UseAsio && currentAsioHandler != null)
+            if (Config.MusicPlayer == AudioPlayer.Asio && currentAsioHandler != null)
             {
               result = currentAsioHandler.Pause(false);   // Continue playback of Paused stream
             }
@@ -1454,8 +1456,8 @@ namespace MediaPortal.MusicPlayer.BASS
         stream.MusicStreamMessage += new MusicStream.MusicStreamMessageHandler(OnMusicStreamMessage);
 
         bool playbackStarted = false;
-        
-        if (Config.UseAsio && stream.BassStream != 0)
+
+        if (Config.MusicPlayer == AudioPlayer.Asio && stream.BassStream != 0)
         {
           // In order to provide data for visualisation we need to clone the stream
           _streamcopy = new StreamCopy();
@@ -1577,7 +1579,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Bass.BASS_Start();
           }
 
-          if (Config.UseAsio)
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             if (_asioHandlers[_currentStreamIndex] != null)
             {
@@ -1607,7 +1609,7 @@ namespace MediaPortal.MusicPlayer.BASS
             Bass.BASS_Pause();
           }
 
-          if (Config.UseAsio)
+          if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             if (_asioHandlers[_currentStreamIndex] != null)
             {
@@ -1642,7 +1644,7 @@ namespace MediaPortal.MusicPlayer.BASS
           Bass.BASS_ChannelStop(stream.BassStream);
           BassMix.BASS_Mixer_ChannelRemove(stream.BassStream);
         }
-        else if (Config.UseAsio)
+        else if (Config.MusicPlayer == AudioPlayer.Asio)
         {
           foreach (BassAsioHandler asioHandler in _asioHandlers)
           {
@@ -2159,7 +2161,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void SwitchToGaplessPlaybackMode()
     {
-      if (_playBackType == (int)Config.PlayBackType.CROSSFADE)
+      if (_playBackType == (int)PlayBackType.CROSSFADE)
       {
         // Store the current settings, so that when the album playback is completed, we can switch back to the default
         if (_savedPlayBackType == -1)
@@ -2168,10 +2170,10 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof (Config.PlayBackType), _playBackType),
-                 Enum.GetName(typeof (Config.PlayBackType), (int)Config.PlayBackType.GAPLESS));
+                 Enum.GetName(typeof (PlayBackType), _playBackType),
+                 Enum.GetName(typeof (PlayBackType), (int)PlayBackType.GAPLESS));
 
-        _playBackType = (int)Config.PlayBackType.GAPLESS;
+        _playBackType = (int)PlayBackType.GAPLESS;
         Config.CrossFadeIntervalMs = 200;
       }
     }
@@ -2184,8 +2186,8 @@ namespace MediaPortal.MusicPlayer.BASS
       if (_savedPlayBackType > -1)
       {
         Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof (Config.PlayBackType), _playBackType),
-                 Enum.GetName(typeof (Config.PlayBackType), _savedPlayBackType));
+                 Enum.GetName(typeof (PlayBackType), _playBackType),
+                 Enum.GetName(typeof (PlayBackType), _savedPlayBackType));
 
         if (_savedPlayBackType == 0)
         {
@@ -2225,7 +2227,7 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
       }
-      else if (Config.UseAsio)
+      else if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
         float fpeakR = (int)BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
@@ -2237,7 +2239,7 @@ namespace MediaPortal.MusicPlayer.BASS
         level = Bass.BASS_ChannelGetLevel(stream.BassStream);
       }
 
-      if (!Config.UseAsio) // For Asio, we already got the peaklevel above
+      if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above
       {
         peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
         peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level

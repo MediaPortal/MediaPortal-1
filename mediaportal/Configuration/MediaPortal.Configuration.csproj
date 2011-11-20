@@ -251,6 +251,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Sections\Music.Designer.cs">
+      <DependentUpon>Music.cs</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUpgradeManager.cs" />
     <Compile Include="HelpSystem.cs" />
     <Compile Include="ListViewSort.cs" />
@@ -480,12 +483,6 @@
     </Compile>
     <Compile Include="Sections\General.Designer.cs">
       <DependentUpon>General.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Sections\MusicASIO.Designer.cs">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
     </Compile>
     <Compile Include="Sections\MusicDSP.cs">
       <SubType>UserControl</SubType>
@@ -813,10 +810,6 @@
     <EmbeddedResource Include="Sections\General.resx">
       <SubType>Designer</SubType>
       <DependentUpon>General.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Sections\MusicASIO.resx">
-      <DependentUpon>MusicASIO.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Sections\MusicDSP.resx">
       <DependentUpon>MusicDSP.cs</DependentUpon>

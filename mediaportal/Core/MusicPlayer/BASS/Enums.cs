@@ -22,6 +22,27 @@ using System;
 
 namespace MediaPortal.MusicPlayer.BASS
 {
+  /// <summary>
+  /// Selected Audio Player
+  /// </summary>
+  public enum AudioPlayer
+  {
+    Bass = 0,
+    Asio = 1,
+    WasApi = 2,
+    DShow = 3
+  }
+
+  /// <summary>
+  /// States, how the Playback is handled
+  /// </summary>
+  public enum PlayBackType
+  {
+    NORMAL = 0,
+    GAPLESS = 1,
+    CROSSFADE = 2
+  }
+
   public enum StreamContentType
   {
     PCM,
