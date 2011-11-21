@@ -711,11 +711,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
         {
           REFERENCE_TIME clipOffset = m_rtOffset * -1;
 
-          // Assume video is always present - some BDs have audio streams in clip info 
-          // and there is still no real audio data available
-          bool hasAudio = clip->raw_stream_count > 1 && clip->audio_stream_count > 0;
-          
-          interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, hasAudio, 
+          interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
         
@@ -758,6 +754,36 @@ void CDeMultiplexer::OnTsPacket(byte* tsPacket)
   FillSubtitle(header, tsPacket);
   FillAudio(header, tsPacket);
   FillVideo(header, tsPacket);
+}
+
+bool CDeMultiplexer::AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip)
+{
+  bool hasAudio = false;
+
+  for (int i = 0; i < pClip->raw_stream_count; i++) 
+  {
+    switch (pClip->raw_streams[i].coding_type)
+    {
+      case BLURAY_STREAM_TYPE_AUDIO_MPEG1:
+      case BLURAY_STREAM_TYPE_AUDIO_MPEG2:
+      case BLURAY_STREAM_TYPE_AUDIO_LPCM:
+      case BLURAY_STREAM_TYPE_AUDIO_AC3:
+      case BLURAY_STREAM_TYPE_AUDIO_DTS:
+      case BLURAY_STREAM_TYPE_AUDIO_TRUHD:
+      case BLURAY_STREAM_TYPE_AUDIO_AC3PLUS:
+      case BLURAY_STREAM_TYPE_AUDIO_DTSHD:
+      case BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER:
+        hasAudio = true;
+        break;
+      default:
+        break;
+    }
+
+    if (hasAudio)
+      break;
+  }
+
+  return hasAudio;
 }
 
 void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
