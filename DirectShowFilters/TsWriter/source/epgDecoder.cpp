@@ -746,7 +746,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 				return;
 			}
 
-			if(buf[6]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			// 0x1f is tag for freesat/freeview huffman encoding
+			// buf[7] - huffman table id. Including this reduces the chance of non encoded
+			// text being sent through
+			if(buf[6]==0x1f && (buf[7] == 1 || buf[7] == 2))
 			{
 				eventText=FreesatHuffmanToString(&buf[6],event_len);
 			}
@@ -788,7 +791,10 @@ void CEpgDecoder::DecodeShortEventDescriptor(byte* buf, EPGEvent& epgEvent,int P
 				return;
 			}
 			// Check if huffman encoded.
-			if(buf[off+1]==0x1f && (PID==PID_FREESAT_EPG || PID==PID_FREESAT2_EPG))
+			// 0x1f is tag for freesat/freeview huffman encoding
+			// off+2 - huffman table id. Including this reduces the chance of non encoded
+			// text being sent through
+			if(buf[off+1]==0x1f && (buf[off+2] == 1 || buf[off+2] == 2))
 			{
 				eventDescription=FreesatHuffmanToString(&buf[off+1],text_len);
 			}
