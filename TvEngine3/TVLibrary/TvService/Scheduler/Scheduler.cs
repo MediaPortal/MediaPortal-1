@@ -544,13 +544,9 @@ namespace TvService
                 }
                 if (pastRecordEpisode.Equals(ToRecordEpisode, StringComparison.CurrentCultureIgnoreCase))
                 {
-                  // How to handle "interrupted" recordings?
-                  // E.g. Windows reboot because of update installation: Previously the tvservice restarted to record the episode 
-                  // and simply took care of creating a unique filename.
-                  // Now we need to check whether Recording's and Scheduling's Starttime are identical. If they are we expect that
-                  // the recording process should be resume because of previous failures.
-                  if (pastRecordings[i].StartTime <= newRecording.Program.EndTime.AddMinutes(newRecording.Schedule.PostRecordInterval) &&
-                      pastRecordings[i].EndTime >= newRecording.Program.StartTime.AddMinutes(-newRecording.Schedule.PreRecordInterval))
+                  // Check if new program overlaps with existing recording
+                  // if so assume previous failure and recording needs to be resumed
+                  if (!ProgramOverlaps(pastRecordings[i], newRecording))
                   {
                     // Check whether the file itself does really exist
                     // There could be faulty drivers 
@@ -618,6 +614,18 @@ namespace TvService
         Log.Error("Scheduler: Error checking schedule {0} for repeatings {1}", ToRecordTitle, ex1.ToString());
       }
       return NewRecordingNeeded;
+    }
+
+    private static bool ProgramOverlaps(Recording rec, RecordingDetail newRec)
+    {
+      var startExisting = rec.StartTime;
+      var endExisting = rec.EndTime;
+      var startNew = newRec.Program.StartTime.AddMinutes(-newRec.Schedule.PreRecordInterval);
+      var endNew = newRec.Program.EndTime.AddMinutes(newRec.Schedule.PostRecordInterval);
+      var isOverlap = (startNew >= startExisting && startNew < endExisting) ||
+                      (startNew <= startExisting && endNew >= endExisting) ||
+                      (endNew > startExisting && endNew <= endExisting);
+      return isOverlap;
     }
 
     private void CancelSchedule(RecordingDetail newRecording, int scheduleId)
