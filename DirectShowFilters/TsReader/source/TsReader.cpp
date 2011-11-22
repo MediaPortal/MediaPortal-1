@@ -1441,11 +1441,11 @@ HRESULT CTsReaderFilter::FindSubtitleFilter()
       FILTER_INFO filterInfo;
       if (pFilter->QueryFilterInfo(&filterInfo) == S_OK)
       {
-        if (!wcsicmp(L"MediaPortal DVBSub2", filterInfo.achName))
+        if (!wcsicmp(L"MediaPortal DVBSub3", filterInfo.achName))
         {
-          HRESULT fhr = pFilter->QueryInterface( IID_IDVBSubtitle2, ( void**)&m_pDVBSubtitle );
+          HRESULT fhr = pFilter->QueryInterface( IID_IDVBSubtitle3, ( void**)&m_pDVBSubtitle );
           assert( fhr == S_OK);
-          //LogDebug("Testing that DVBSub2 works");
+          //LogDebug("Testing that DVBSub3 works");
           m_pDVBSubtitle->Test(1);
         }
         filterInfo.pGraph->Release();

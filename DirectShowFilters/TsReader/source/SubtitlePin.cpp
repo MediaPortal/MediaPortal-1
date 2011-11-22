@@ -142,7 +142,7 @@ HRESULT CSubtitlePin::CheckConnect(IPin *pReceivePin)
   filterInfo.pGraph->Release();
 
   if (!SUCCEEDED(hr)) return E_FAIL;
-  if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub2") !=0 )
+  if (wcscmp(filterInfo.achName,L"MediaPortal DVBSub3") !=0 )
   {
     //LogDebug("sub pin: Cant connect to filter name %s", filterInfo.achName);
     return E_FAIL;

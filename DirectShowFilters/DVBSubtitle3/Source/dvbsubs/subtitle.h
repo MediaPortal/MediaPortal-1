@@ -33,7 +33,7 @@ class CSubtitle
 {
 public:
 
-  CSubtitle( int subW, int subH, int screenH, int screenW );
+  CSubtitle( int subW, int subH, int screenW, int screenH );
   
   ~CSubtitle();
   BITMAP m_bitmap;
