@@ -333,6 +333,7 @@
     <Compile Include="ExtensionMethods\ListExtMethods.cs" />
     <Compile Include="ExtensionMethods\DictionaryExtMethods.cs" />
     <Compile Include="ExtensionMethods\ObjectMethods.cs" />
+    <Compile Include="ExtensionMethods\StringMethods.cs" />
     <Compile Include="guilib\ExpressionManager.cs" />
     <Compile Include="guilib\Functions.cs" />
     <Compile Include="guilib\FontObject.cs" />
