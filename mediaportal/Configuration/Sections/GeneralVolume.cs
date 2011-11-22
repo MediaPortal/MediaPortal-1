@@ -83,15 +83,15 @@ namespace MediaPortal.Configuration.Sections
         // Force a couple of settings for Vista / Windows 7
         if (OSInfo.OSInfo.VistaOrLater())
         {
-          volumeStyle = 4;
-          groupBoxMixerControl.Enabled = false;
+          //volumeStyle = 4;
+          //groupBoxMixerControl.Enabled = false;
         }
 
-        if (OSInfo.OSInfo.Win7OrLater())
-        {
-          isDigital = true;
-          groupBoxScale.Enabled = false;
-        }
+        //if (OSInfo.OSInfo.Win7OrLater())
+        //{
+        //  isDigital = true;
+        //  groupBoxScale.Enabled = false;
+        //}
 
         _useClassicHandler.Checked = volumeStyle == 0;
         _useWindowsHandler.Checked = volumeStyle == 1;
@@ -112,7 +112,7 @@ namespace MediaPortal.Configuration.Sections
         if (SettingsForm.audioplayer_mixing)
         {
           isDigital = true;
-          groupBoxMixerControl.Enabled = false;
+          //groupBoxMixerControl.Enabled = false;
         }
         _useMasterVolume.Checked = !isDigital;
         _useWave.Checked = isDigital;
