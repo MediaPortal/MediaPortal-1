@@ -110,6 +110,9 @@ namespace MediaPortal.Util
     public static extern IntPtr DispatchMessageA([In] ref MSG msg);
 
     [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+    public static extern bool IsWindowUnicode(HandleRef hWnd);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
     public static extern IntPtr GetParent(HandleRef hWnd);
 
     [DllImport("user32", SetLastError = true)]

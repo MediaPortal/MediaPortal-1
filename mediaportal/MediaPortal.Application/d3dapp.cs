@@ -2658,6 +2658,37 @@ namespace MediaPortal
     {
       try
       {
+        bool flag = false;
+        while (Win32API.PeekMessage(ref msgApi, IntPtr.Zero, 0, 0, 0))
+        {
+          if (msgApi.hwnd != IntPtr.Zero && Win32API.IsWindowUnicode(new HandleRef(null, msgApi.hwnd)))
+          {
+            flag = true;
+            if (!Win32API.GetMessageW(ref msgApi, IntPtr.Zero, 0, 0))
+            {
+              continue;
+            }
+          }
+          else
+          {
+            flag = false;
+            if (!Win32API.GetMessageA(ref msgApi, IntPtr.Zero, 0, 0))
+            {
+              continue;
+            }
+          }
+          Win32API.TranslateMessage(ref msgApi);
+          if (flag)
+          {
+            Win32API.DispatchMessageW(ref msgApi);
+          }
+          else
+          {
+            Win32API.DispatchMessageA(ref msgApi);
+          }
+        }
+
+        /* close, but no cigar
         // fully process ours
         if (Win32API.PeekMessage(ref msgApi, this.Handle, 0, 0, 0))
         {
@@ -2680,6 +2711,7 @@ namespace MediaPortal
         Win32API.TranslateMessage(ref msgApi);
         Win32API.DispatchMessageA(ref msgApi);
         //	System.Windows.Forms.Application.DoEvents();//SLOW
+        */
       }
 #if DEBUG
       catch (Exception ex)
