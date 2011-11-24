@@ -447,6 +447,10 @@ namespace MediaPortal.Util
       try
       {
         Show("Shell_TrayWnd", "", bVisible);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Show("Button", "Start", bVisible);
+        }
       }
       catch (Exception) {}
     }
@@ -456,6 +460,10 @@ namespace MediaPortal.Util
       try
       {
         Enable("Shell_TrayWnd", "", bEnable);
+        if (OSInfo.OSInfo.Win7OrLater())
+        {
+          Enable("Button", "Start", bEnable);
+        }
       }
       catch (Exception) {}
     }
