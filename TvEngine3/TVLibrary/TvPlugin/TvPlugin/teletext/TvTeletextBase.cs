@@ -80,7 +80,8 @@ namespace TvPlugin
     protected bool _redrawForeground = true;
     protected bool _showFirstAvailableSubPage = false;
     protected DateTime _trottling = DateTime.MinValue;
-
+    protected int _defaultCharSetDesignation = 0;
+    protected System.Drawing.Text.TextRenderingHint _textRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
     #endregion
 
     #region Properties
@@ -90,6 +91,26 @@ namespace TvPlugin
       get 
       { 
         return true;
+      }
+      }
+
+    public int DefaultCharSetDesignation
+    {
+      get
+      {
+        return _defaultCharSetDesignation;
+      }
+      set
+      {
+        if (_defaultCharSetDesignation != value)
+        {
+          _defaultCharSetDesignation = value;
+          if (_renderer != null)
+          {
+            _renderer.DefaultCharSetDesignation = _defaultCharSetDesignation;
+          }
+          _numberOfRequestedUpdates++;
+        }
       }
     }
 
@@ -142,6 +163,10 @@ namespace TvPlugin
       _renderer.HiddenMode = _hiddenMode;
       _renderer.PageSelectText = Convert.ToString(currentPageNumber, 16);
       _renderer.PercentageOfMaximumHeight = _percentageOfMaximumHeight;
+      _renderer.DefaultCharSetDesignation = _defaultCharSetDesignation;
+      _renderer.TextRenderingHint = _textRenderingHint;
+      // For now second G0 charset designation is always Latin
+      _renderer.SecondCharSetDesignation = 0; 
 
       _waiting = false;
 
@@ -587,6 +612,7 @@ namespace TvPlugin
         Log.Error(ex);
       }
     }*/
+
     protected void Redraw()
     {
       Bitmap bitmap;
@@ -730,10 +756,63 @@ namespace TvPlugin
     {
       using (Settings xmlreader = new MPSettings())
       {
+        string strValue;
         _hiddenMode = xmlreader.GetValueAsBool("mytv", "teletextHidden", false);
         _transparentMode = xmlreader.GetValueAsBool("mytv", "teletextTransparent", false);
         _rememberLastValues = xmlreader.GetValueAsBool("mytv", "teletextRemember", true);
         _percentageOfMaximumHeight = xmlreader.GetValueAsInt("mytv", "teletextMaxFontSize", 100);
+
+        // Read language setting
+        strValue = xmlreader.GetValueAsString("myteletext", "defaultLanguage", "latin1");
+        switch (strValue.ToLower())
+        {
+          case "latin1":
+            _defaultCharSetDesignation = 0;
+            break;
+          case "latin2":
+            _defaultCharSetDesignation = 1;
+            break;
+          case "latin3":
+            _defaultCharSetDesignation = 2;
+            break;
+          case "latin4":
+            _defaultCharSetDesignation = 3;
+            break;
+          case "cyrillic":
+            _defaultCharSetDesignation = 4;
+            break;
+          case "greek":
+            _defaultCharSetDesignation = 6;
+            break;
+          case "arabic":
+            _defaultCharSetDesignation = 8;
+            break;
+          case "hebrew":
+            _defaultCharSetDesignation = 10;
+            break;
+          default:
+            _defaultCharSetDesignation = 0;
+            break;
+        }
+        strValue = xmlreader.GetValueAsString("myteletext", "fontQuality", "normal-gridfit");
+        switch (strValue.ToLower())
+        {
+          case "normal":
+            _textRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel;
+            break;
+          case "normal-gridfit":
+            _textRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            break;
+          case "smooth":
+            _textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+            break;
+          case "smooth-gridfit":
+            _textRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+            break;
+          default:
+            _textRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixelGridFit;
+            break;
+        }
       }
     }
 
@@ -742,12 +821,40 @@ namespace TvPlugin
     /// </summary>
     protected void SaveSettings()
     {
+      using (Settings xmlwriter = new MPSettings())
+      {
       if (_rememberLastValues)
       {
         using (Settings xmlreader = new MPSettings())
+          xmlwriter.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
+          xmlwriter.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);
+        }
+        switch (_defaultCharSetDesignation)
         {
-          xmlreader.SetValueAsBool("mytv", "teletextHidden", _hiddenMode);
-          xmlreader.SetValueAsBool("mytv", "teletextTransparent", _transparentMode);
+          case 0:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "latin1");
+            break;
+          case 1:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "latin2");
+            break;
+          case 2:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "latin3");
+            break;
+          case 3:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "latin4");
+            break;
+          case 4:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "cyrillic");
+            break;
+          case 6:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "greek");
+            break;
+          case 8:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "arabic");
+            break;
+          case 10:
+            xmlwriter.SetValue("myteletext", "defaultLanguage", "hebrew");
+            break;
         }
       }
     }

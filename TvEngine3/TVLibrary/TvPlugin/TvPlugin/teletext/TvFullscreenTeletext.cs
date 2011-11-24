@@ -19,6 +19,7 @@
 #endregion
 
 using MediaPortal.GUI.Library;
+using MediaPortal.Dialogs;
 
 namespace TvPlugin
 {
@@ -82,10 +83,99 @@ namespace TvPlugin
           // Rerender the image
           RequestUpdate(false);
           break;
+        case Action.ActionType.ACTION_CONTEXT_MENU:
+          ShowContextMenu();
+          return;
       }
       base.OnAction(action);
     }
 
+    #endregion
+
+    #region Context Menu
+    private void ShowContextMenu()
+    {
+      GUIDialogMenu dlg = (GUIDialogMenu)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_MENU);
+      if (dlg == null || _renderer == null)
+      {
+        GUIWindowManager.ShowPreviousWindow();
+        return;
+      }
+
+      dlg.Reset();
+      dlg.SetHeading(1441); // Teletext
+
+      dlg.AddLocalizedString(1439); // Change default language
+      dlg.AddLocalizedString(970); // Previous window
+
+      dlg.DoModal(GetID);
+
+      if (dlg.SelectedId == -1)
+        return;
+      switch (dlg.SelectedId)
+      {
+        case 1439: // Change default language
+          {
+            dlg.Reset();
+            dlg.SetHeading(1438); // Change default Teletext language
+
+            dlg.AddLocalizedString(1400); // Latin
+            dlg.AddLocalizedString(1401); // Latin / Polish
+            dlg.AddLocalizedString(1402); // Latin / Turkish
+            dlg.AddLocalizedString(1403); // Latin: sb/cr/sl/ro
+            dlg.AddLocalizedString(1404); // Cyrilic
+            dlg.AddLocalizedString(1405); // Greek / Turkish
+            dlg.AddLocalizedString(1406); // Arabic
+            dlg.AddLocalizedString(1407); // Hebrew / Arabic
+
+            if (DefaultCharSetDesignation <= 4 && DefaultCharSetDesignation >= 0)
+              dlg.SelectedLabel = DefaultCharSetDesignation;
+            else if (DefaultCharSetDesignation == 6)
+              dlg.SelectedLabel = 5;
+            else if (DefaultCharSetDesignation == 8)
+              dlg.SelectedLabel = 6;
+            else if (DefaultCharSetDesignation == 10)
+              dlg.SelectedLabel = 7;
+
+            dlg.DoModal(GetID);
+
+            if (dlg.SelectedId == -1)
+              return;
+            switch (dlg.SelectedId)
+            {
+              case 1400:
+                DefaultCharSetDesignation = 0;
+                break;
+              case 1401:
+                DefaultCharSetDesignation = 1;
+                break;
+              case 1402:
+                DefaultCharSetDesignation = 2;
+                break;
+              case 1403:
+                DefaultCharSetDesignation = 3;
+                break;
+              case 1404:
+                DefaultCharSetDesignation = 4;
+                break;
+              case 1405:
+                DefaultCharSetDesignation = 6;
+                break;
+              case 1406:
+                DefaultCharSetDesignation = 8;
+                break;
+              case 1407:
+                DefaultCharSetDesignation = 10;
+                break;
+            }
+            //SaveSettings();
+            return;
+          }
+        case 970: // Previous window
+          GUIWindowManager.ShowPreviousWindow();
+          return;
+      }
+    }
     #endregion
 
     #region Rendering method

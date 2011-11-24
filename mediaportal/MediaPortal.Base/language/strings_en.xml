@@ -530,6 +530,7 @@
     <String id="594">Subpage</String>
     <String id="595">Fullscreen</String>
     <String id="596">Waiting for Page {0}/{1}...</String>
+    <String id="597">Language</String>
     <String id="599">Storm</String>
     <String id="600">TV Guide</String>
     <String id="601">Record Now</String>
@@ -1017,6 +1018,16 @@
 		<String id="1240">Lock content</String>
 		<String id="1241">Unlock content</String>
     <String id="1300" prefix="My ">TV Shows</String>
+    <String id="1400">Latin</String>
+    <String id="1401">Latin / Polish</String>
+    <String id="1402">Latin / Turkish</String>
+    <String id="1403">Latin: sb/cr/sl/ro</String>
+    <String id="1404">Cyrillic</String>
+    <String id="1405">Greek / Turkish</String>
+    <String id="1406">Arabic</String>
+    <String id="1407">Hebrew / Arabic</String>
+    <String id="1438">Change Teletext language</String>
+    <String id="1439">Change language</String>
     <String id="1440" prefix="My ">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Scroll speed (horizontal)</String>

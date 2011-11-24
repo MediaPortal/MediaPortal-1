@@ -507,6 +507,7 @@
     <String id="594">Υποσελίδα</String>
     <String id="595">Πλήρης σελίδα</String>
     <String id="596">Αναμονή για σελίδα {0}/{1}...</String>
+    <String id="597">Γλώσσα</String>
     <String id="599">Καταιγίδα</String>
     <String id="600">Οδηγός TV</String>
     <String id="601">Εγγραφή Τώρα</String>
@@ -966,6 +967,16 @@
     <String id="1198">DVD Navigator</String>
     <String id="1200">Οδηγός ρυθμίσεων</String>
     <String id="1300">TV Εκπομπές</String>
+    <String id="1400">Latin</String>
+    <String id="1401">Latin / Polish</String>
+    <String id="1402">Latin / Turkish</String>
+    <String id="1403">Latin: sb/cr/sl/ro</String>
+    <String id="1404">Cyrillic</String>
+    <String id="1405">Ελληνικά / Turkish</String>
+    <String id="1406">Arabic</String>
+    <String id="1407">Hebrew / Arabic</String>
+    <String id="1438">Αλλαγή γλώσσας Teletext</String>
+    <String id="1439">Αλλαγή γλώσσας</String>
     <String id="1440">Teletext</String>
     <String id="1441">Teletext</String>
     <String id="1442">Ταχύτητα κύλισης (οριζόντια)</String>

@@ -198,8 +198,20 @@
         <posY>266</posY>
         <label>595</label>
         <onup>506</onup>
-        <ondown>502</ondown>
+        <ondown>508</ondown>
         <onright>507</onright>
+      </control>
+      <control>
+        <description>Language</description>
+        <type>button</type>
+        <id>508</id>
+        <posX>60</posX>
+        <posY>301</posY>
+        <label>597</label>
+        <width>170</width>
+        <onup>507</onup>
+        <ondown>502</ondown>
+        <onright>508</onright>
       </control>
     </control>
     <control>
