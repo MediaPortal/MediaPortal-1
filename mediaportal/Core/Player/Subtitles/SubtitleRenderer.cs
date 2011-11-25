@@ -658,10 +658,7 @@ namespace MediaPortal.Player.Subtitles
     {
       try
       {
-        if (g_Player.IsDVD)
-          _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub3");
-        else
-          _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub2");
+        _filter = DirectShowUtil.AddFilterToGraph(_graphBuilder, "MediaPortal DVBSub3");
         _subFilter = _filter as IDVBSubtitleSource;
         Log.Debug("SubtitleRenderer: CreateFilter success: " + (_filter != null) + " & " + (_subFilter != null));
       }

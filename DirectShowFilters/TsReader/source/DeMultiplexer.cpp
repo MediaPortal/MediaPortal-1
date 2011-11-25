@@ -34,7 +34,7 @@
 #include "audioPin.h"
 #include "videoPin.h"
 #include "subtitlePin.h"
-#include "..\..\DVBSubtitle2\Source\IDVBSub.h"
+#include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "mediaFormats.h"
 #include "h264nalu.h"
 #include <cassert>
@@ -1701,6 +1701,7 @@ void CDeMultiplexer::FillSubtitle(CTsHeader& header, byte* tsPacket)
       pDVBSubtitleFilter->SetFirstPcr(m_duration.FirstStartPcr().PcrReferenceBase);
       LogDebug(" done - SetFirstPcr");
       m_currentSubtitlePid = m_subtitleStreams[m_iSubtitleStream].pid;
+      pDVBSubtitleFilter->SetHDMV(false);
     }
   }
 

@@ -37,7 +37,7 @@ static int count = 0;
 //
 // Constructor
 //
-CSubtitle::CSubtitle( int subW, int subH, int screenH, int screenW )
+CSubtitle::CSubtitle( int subW, int subH, int screenW, int screenH )
 {
   m_bitmap.bmType			  = 0;
   m_bitmap.bmBitsPixel	= 32;

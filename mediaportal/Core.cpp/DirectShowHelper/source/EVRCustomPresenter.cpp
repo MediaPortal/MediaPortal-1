@@ -189,8 +189,6 @@ MPEVRCustomPresenter::MPEVRCustomPresenter(IVMR9Callback* pCallback, IDirect3DDe
   }
   
   m_pStatsRenderer = new StatsRenderer(this, m_pD3DDev);
-  
-  AddRef(); // TODO - figure you the one off in reference count
 }
 
 void MPEVRCustomPresenter::SetFrameSkipping(bool onOff)
@@ -229,6 +227,9 @@ void MPEVRCustomPresenter::ReleaseCallback()
 {
   CAutoLock sLock(&m_lockCallback);
   m_pCallback = NULL;
+
+  if (m_pOuterEVR)
+    m_pOuterEVR->Release();
 }
 
 MPEVRCustomPresenter::~MPEVRCustomPresenter()
@@ -239,7 +240,7 @@ MPEVRCustomPresenter::~MPEVRCustomPresenter()
   {
     m_pCallback->PresentImage(0, 0, 0, 0, 0, 0);
   }
-  if(m_pAVSyncClock)
+  if (m_pAVSyncClock)
   {
     SAFE_RELEASE(m_pAVSyncClock);
   }

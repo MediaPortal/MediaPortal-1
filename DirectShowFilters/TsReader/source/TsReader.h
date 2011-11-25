@@ -27,7 +27,7 @@
 #include "TSThread.h"
 #include "rtspclient.h"
 #include "memorybuffer.h"
-#include "..\..\DVBSubtitle2\Source\IDVBSub.h"
+#include "..\..\DVBSubtitle3\Source\IDVBSub.h"
 #include "ISubtitleStream.h"
 #include "IAudioStream.h"
 #include "ITeletextSource.h"
