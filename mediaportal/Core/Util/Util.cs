@@ -2529,13 +2529,8 @@ namespace MediaPortal.Util
 
     private static void UpdateFileNameForCache(ref string filename)
     {
-      if (string.IsNullOrEmpty(filename)) return; ;
-      string path = GetDirectoryName(filename);
-      if (path.Length > 0)
-      {
-        path = path.ToLower();
-        filename = filename.ReplaceEx(path, path);
-      }
+      if (string.IsNullOrEmpty(filename)) return;
+      filename = filename.ToLower();
     }
 
     private static IEnumerable<string> DirSearch(string sDir)
