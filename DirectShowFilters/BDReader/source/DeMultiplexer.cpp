@@ -146,10 +146,11 @@ bool CDeMultiplexer::SetAudioStream(int stream)
 
   // Get the new audio stream type
   int newAudioStreamType =  m_audioStreams[stream].audioType;   
-	m_iAudioStream = stream;
+  m_iAudioStream = stream;
+  m_iAudioIdx = stream;
 
   if (m_AudioStreamType != newAudioStreamType)
-  {    
+  {
     LogDebug("demux: old %s new audio %s", StreamFormatAsString(m_AudioStreamType), StreamFormatAsString(newAudioStreamType));
 		m_AudioStreamType = newAudioStreamType;
   }
@@ -639,6 +640,7 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
 
     case BD_EVENT_PLAYLIST:
       m_nPlaylist = pEv.param;
+      m_iAudioIdx = -1;
       break;
 
     case BD_EVENT_AUDIO_STREAM:
@@ -1765,7 +1767,6 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
     }	
 		
     bd_player_settings& settings = m_filter.lib.GetBDPlayerSettings();
-    bool defaultLanguageFound = false;
     for (int i(0); i < clip->audio_stream_count; i++)
     {
       stAudioStream audio;
@@ -1778,36 +1779,21 @@ void CDeMultiplexer::ParseAudioStreams(BLURAY_CLIP_INFO* clip)
       audio.audioType = clip->audio_streams[i].coding_type;
       audio.pid = clip->audio_streams[i].pid;
 			
-      if (strncmp(audio.language, settings.audioLang, 3) == 0 && !defaultLanguageFound)
+      if (strncmp(audio.language, settings.audioLang, 3) == 0 && m_iAudioIdx < 0)
       {
-        defaultLanguageFound = true;
-        m_iAudioStream = i;
-        m_AudioStreamType = audio.audioType;
-        LogDebug("   Audio*   [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
+        m_iAudioIdx = i;
       }
-      else
-      {
-        LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));
-      }
-				
+      LogDebug("   Audio    [%4d] %s %s", audio.pid, audio.language, StreamFormatAsString(audio.audioType));				
       m_audioStreams.push_back(audio);
     }
 		
-    if (m_iAudioStream != m_iAudioIdx && m_iAudioIdx >= 0 && m_iAudioIdx < clip->audio_stream_count)
-    {					
-      m_AudioStreamType = clip->audio_streams[m_iAudioIdx].coding_type;
-      m_iAudioStream = m_iAudioIdx;
-      m_iAudioIdx = -1;
-      LogDebug("demux: ParseAudioStreams - requested stream mismatch, obey lib");
-      return;
-    }
-
-    if (!defaultLanguageFound)
+    if(m_iAudioIdx < 0)
     {
-      m_iAudioStream = 0;
-      m_AudioStreamType = clip->audio_streams[0].coding_type;
-      LogDebug("demux: ParseAudioStreams - requested stream not found, 1st selected");
+      m_iAudioIdx = 0;
     }
+    m_iAudioStream = m_iAudioIdx;
+    m_AudioStreamType = clip->audio_streams[m_iAudioIdx].coding_type;
+    LogDebug("demux: ParseAudioStreams - Audio track #%d selected", m_iAudioIdx);
   }
 }
 
