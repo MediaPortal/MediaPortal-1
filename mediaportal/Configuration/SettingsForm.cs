@@ -311,11 +311,6 @@ namespace MediaPortal.Configuration
             FiltersWinDVD7Decoder windvdConfig = new FiltersWinDVD7Decoder();
             AddSection(new ConfigPage(filterSection, windvdConfig, true));
           }
-          if (filter.Contains("CyberLink Audio Decoder"))
-          {
-            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
-            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
-          }
           if (filter.Equals("DScaler Audio Decoder"))
           {
             FiltersDScalerAudio dscalerConfig = new FiltersDScalerAudio();
@@ -325,6 +320,11 @@ namespace MediaPortal.Configuration
           {
             FiltersMPEG2DecAudio mpaConfig = new FiltersMPEG2DecAudio();
             AddSection(new ConfigPage(filterSection, mpaConfig, true));
+          }
+          if (filter.Contains("CyberLink Audio Decoder"))
+          {
+            FiltersPowerDVDAudioDecoder pdvdAudioConfig = new FiltersPowerDVDAudioDecoder();
+            AddSection(new ConfigPage(filterSection, pdvdAudioConfig, true));
           }
         }
       }
@@ -338,6 +338,18 @@ namespace MediaPortal.Configuration
         }
         foreach (string filter in availableVideoFilters)
         {
+          // if we do not have the audio codec installed we want to see the video config nevertheless
+          if (filter.Contains("CyberLink Video/SP Decoder"))
+          {
+            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
+            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
+          }
+          // if we do not have the audio codec installed we want to see the video config nevertheless
+          if (filter.Contains("CyberLink Video Decoder (PDVD10)") || filter.Contains("CyberLink Video Decoder (PDVD11)"))
+          {
+            FiltersPowerDVDDecoder10 pdvdConfig10 = new FiltersPowerDVDDecoder10();
+            AddSection(new ConfigPage(filterSection, pdvdConfig10, true));
+          }
           if (filter.Equals("MPC - MPEG-2 Video Decoder (Gabest)"))
           {
             FiltersMPEG2DecVideo mpvConfig = new FiltersMPEG2DecVideo();
@@ -347,12 +359,6 @@ namespace MediaPortal.Configuration
           {
             FiltersDScalerVideo dscalervConfig = new FiltersDScalerVideo();
             AddSection(new ConfigPage(filterSection, dscalervConfig, true));
-          }
-          // if we do not have the audio codec installed we want to see the video config nevertheless
-          if (filter.Contains("CyberLink Video/SP Decoder"))
-          {
-            FiltersPowerDVDDecoder pdvdConfig = new FiltersPowerDVDDecoder();
-            AddSection(new ConfigPage(filterSection, pdvdConfig, true));
           }
         }
       }
