@@ -331,7 +331,7 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 {
-  LogDebug("   overlay - %s x: %d y: %d w: %d h: %d plane: %d pts: %d", CommandAsString(ov->cmd),
+  LogDebug("   overlay - %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
     ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
 }
 
@@ -340,13 +340,13 @@ LPCTSTR COverlayRenderer::CommandAsString(int pCmd)
 	switch (pCmd)
 	{
     case BD_OVERLAY_INIT:
-      return _T("BD_OVERLAY_INIT");
+      return _T("BD_OVERLAY_INIT ");
     case BD_OVERLAY_CLOSE:
       return _T("BD_OVERLAY_CLOSE");    
     case BD_OVERLAY_DRAW:
-      return _T("BD_OVERLAY_DRAW");
+      return _T("BD_OVERLAY_DRAW ");
     case BD_OVERLAY_WIPE:
-      return _T("BD_OVERLAY_WIPE");
+      return _T("BD_OVERLAY_WIPE ");
     case BD_OVERLAY_CLEAR:
       return _T("BD_OVERLAY_CLEAR");
     case BD_OVERLAY_FLUSH:
