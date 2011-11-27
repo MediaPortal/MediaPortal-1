@@ -331,7 +331,8 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 {
-  LogDebug("   overlay - %s", CommandAsString(ov->cmd));
+  LogDebug("   overlay - %s x: %d y: %d w: %d h: %d plane: %d pts: %d", CommandAsString(ov->cmd),
+    ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
 }
 
 LPCTSTR COverlayRenderer::CommandAsString(int pCmd)
