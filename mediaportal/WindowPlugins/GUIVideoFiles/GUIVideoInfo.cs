@@ -276,10 +276,7 @@ namespace MediaPortal.GUI.Video
         //
         // 07.11.2010 Deda: Cache entry Flag change for cover thumb file
         //
-        Util.Utils.FileLookUpItem fileLookUpItem = new Util.Utils.FileLookUpItem();
-        fileLookUpItem.Filename = coverArtImage;
-        fileLookUpItem.Exists = false;
-        Util.Utils.UpdateLookUpCacheItem(fileLookUpItem, coverArtImage);
+        Util.Utils.DoInsertNonExistingFileIntoCache(coverArtImage);
         //
         Util.Utils.FileDelete(largeCoverArtImage);
         Refresh(false);
