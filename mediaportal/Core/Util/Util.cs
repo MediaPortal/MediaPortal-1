@@ -1469,6 +1469,8 @@ namespace MediaPortal.Util
         // Set to hidden to avoid losing focus.
         procInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
         procInfo.CreateNoWindow = true;
+        procInfo.FileName = strProgram;
+        procInfo.UseShellExecute = false;
       }
       return StartProcess(procInfo, bWaitForExit);
     }
