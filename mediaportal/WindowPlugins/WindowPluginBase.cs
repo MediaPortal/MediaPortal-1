@@ -246,7 +246,7 @@ namespace WindowPlugins
       // skip all this if we're not active window
       if (GUIWindowManager.ActiveWindow != GetID)
       {
-        return
+        return;
       }
 
       if (handler != null)
