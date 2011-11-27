@@ -58,9 +58,12 @@ void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
   ov.plane = BD_OVERLAY_PG;
 
   OpenOverlay(&ov);
+  ClearArea(m_pPlanes[BD_OVERLAY_PG], &ov);
 
   ov.plane = BD_OVERLAY_IG;
+
   OpenOverlay(&ov);
+  ClearArea(m_pPlanes[BD_OVERLAY_IG], &ov);
 }
 
 void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
@@ -118,6 +121,7 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
         ov2.plane = ov->plane;
 
         OpenOverlay(&ov2);
+        ClearArea(m_pPlanes[ov->plane], &ov2);
 
         if (ov->plane == 1) 
         {
