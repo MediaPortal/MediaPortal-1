@@ -92,32 +92,6 @@ namespace Gentle.Framework
 			get { return connectionString; }
 		}
 
-    /// <summary>
-    /// Returns the connection string used by this provider instance with any password fields removed.
-    /// </summary>
-    public string SafeConnectionString
-    {
-      get
-      {
-        string safeConnectionString = connectionString;
-        if (connectionString != null)
-        {
-          String connString = connectionString.ToLowerInvariant();
-          int posPassword = connString.IndexOf("password=");
-          if (posPassword != -1)
-          {
-            int posEndPassword = connString.IndexOf(";", posPassword + 9);
-            safeConnectionString = connString.Substring(0, posPassword);
-            if (posEndPassword != -1)
-            {
-              safeConnectionString += connString.Substring(posEndPassword + 1);
-            }
-          }
-        }
-        return safeConnectionString;
-      }
-    }
-
 		/// <summary>
 		/// Returns the schema name used by this provider instance, or null if no schema name is used.
 		/// </summary>

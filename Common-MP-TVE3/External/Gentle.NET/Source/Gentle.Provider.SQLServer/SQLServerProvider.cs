@@ -116,8 +116,8 @@ namespace Gentle.Provider.SQLServer
 			}
 			catch( Exception e )
 			{
-				Check.LogInfo( LogCategories.General, "Using provider {0} and connectionString {1}.", Name, SafeConnectionString );
-				Check.Fail( e, Error.DatabaseUnavailable, Name, SafeConnectionString );
+				Check.LogInfo( LogCategories.General, "Using provider {0} and connectionString {1}.", Name, ConnectionString );
+				Check.Fail( e, Error.DatabaseUnavailable, Name, ConnectionString );
 				throw new GentleException( Error.Unspecified, "Unreachable code" );
 			}
 		}

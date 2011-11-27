@@ -100,7 +100,7 @@ namespace Gentle.Provider.Sybase
 			}
 			catch( Exception e )
 			{
-				Check.Fail( e, Error.DatabaseUnavailable, Name, SafeConnectionString );
+				Check.Fail( e, Error.DatabaseUnavailable, Name, ConnectionString );
 				throw new GentleException( Error.Unspecified, "Unreachable code" );
 			}
 		}
