@@ -95,7 +95,7 @@ namespace Gentle.Provider.Jet
 			}
 			catch( Exception e )
 			{
-				Check.Fail( e, Error.DatabaseUnavailable, Name, ConnectionString );
+				Check.Fail( e, Error.DatabaseUnavailable, Name, SafeConnectionString );
 				throw new GentleException( Error.Unspecified, "Unreachable code" );
 			}
 		}

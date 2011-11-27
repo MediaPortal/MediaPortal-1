@@ -93,7 +93,7 @@ namespace Gentle.Provider.MySQL
 			}
 			catch( Exception e )
 			{
-				Check.Fail( e, Error.DatabaseUnavailable, Name, ConnectionString );
+				Check.Fail( e, Error.DatabaseUnavailable, Name, SafeConnectionString );
 				throw new GentleException( Error.Unspecified, "Unreachable code!" );
 			}
 		}
