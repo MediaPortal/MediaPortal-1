@@ -829,7 +829,7 @@ namespace MediaPortal.GUI.Library
           int green = (int)((color >> 8) & 0xff);
           int blue = (int)(color & 0xff);
           GUIFontManager.DrawText(_d3dxFont, xpos, ypos, Color.FromArgb(alpha, red, green, blue), text, maxWidth,
-                                  _fontHeight);
+                                  _fileName, _fontHeight, _fontStyle);
           return;
         }
 
@@ -884,7 +884,7 @@ namespace MediaPortal.GUI.Library
         {
           if (containsOutOfBoundsChar(text))
           {
-            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fontHeight);
+            GUIFontManager.DrawText(_d3dxFont, xpos, ypos, color, text, maxWidth, _fileName, _fontHeight, _fontStyle);
             return;
           }
 
@@ -961,7 +961,7 @@ namespace MediaPortal.GUI.Library
         char c = text[i];
         if (c < _StartCharacter || c >= _EndCharacter)
         {
-          GUIFontManager.MeasureText(_d3dxFont, text, ref textwidth, ref textheight, _fontHeight);
+          GUIFontManager.MeasureText(_d3dxFont, text, ref textwidth, ref textheight, _fileName, _fontHeight, _fontStyle);
           return;
         }
       }

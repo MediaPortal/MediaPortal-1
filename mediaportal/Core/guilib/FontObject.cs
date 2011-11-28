@@ -34,7 +34,9 @@ namespace MediaPortal.GUI.Library
 
     #region Properties
 
+    public string name { get; set; }
     public int size { get; set; }
+    public System.Drawing.FontStyle style { get; set; }
 
     public System.Drawing.Font font { get; set; }
 

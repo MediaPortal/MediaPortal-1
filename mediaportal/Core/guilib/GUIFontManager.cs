@@ -69,7 +69,9 @@ namespace MediaPortal.GUI.Library
       public string text;
       public float[,] matrix;
       public Viewport viewport;
+      public string fontName;
       public int fontHeight;
+      public FontStyle fontStyle;
     } ;
 
     #endregion
@@ -271,7 +273,7 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, int fontSize)
+    public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, string fontName, int fontSize, FontStyle fontStyle)
     {
       if (text[0] == ' ') // anti-trim
       {
@@ -285,7 +287,7 @@ namespace MediaPortal.GUI.Library
       // Text drawing doesnt work with DX9Ex & sprite
       if (GUIGraphicsContext.IsDirectX9ExUsed())
       {
-        MeasureText(text, ref textwidth, ref textheight, fontSize);
+        MeasureText(text, ref textwidth, ref textheight, fontName, fontSize, fontStyle);
       }
       else
       {
@@ -307,7 +309,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="textwidth"></param>
     /// <param name="textheight"></param>
     /// <param name="fontSize"></param>
-    public static void MeasureText(string text, ref float textwidth, ref float textheight, int fontSize)
+    private static void MeasureText(string text, ref float textwidth, ref float textheight, string fontName, int fontSize, FontStyle fontStyle)
     {
       try
       {
@@ -319,7 +321,7 @@ namespace MediaPortal.GUI.Library
             g.TextRenderingHint = TextRenderingHint.AntiAlias;
             g.TextContrast = 0;
 
-            Size size = g.MeasureString(text, CachedSystemFont(fontSize)).ToSize();
+            Size size = g.MeasureString(text, CachedSystemFont(fontName, fontSize, fontStyle)).ToSize();
             textwidth = size.Width;
             textheight = size.Height;
           }
@@ -331,13 +333,13 @@ namespace MediaPortal.GUI.Library
       }
     }
 
-    private static System.Drawing.Font CachedSystemFont(int fontSize)
+    private static System.Drawing.Font CachedSystemFont(string fontName, int fontSize, FontStyle fontStyle)
     {
       bool fontCached = false;
       int cacheSlot = 0;
       foreach (FontObject cachedFont in _listFontObjects)
       {
-        if (cachedFont.size == fontSize)
+        if (cachedFont.name == fontName && cachedFont.size == fontSize && cachedFont.style == fontStyle)
         {
           fontCached = true;
           break;
@@ -347,9 +349,16 @@ namespace MediaPortal.GUI.Library
 
       if (!fontCached)
       {
-        System.Drawing.Font systemFont = new System.Drawing.Font("Arial", fontSize);
+        System.Drawing.Font systemFont = new System.Drawing.Font(fontName, fontSize, fontStyle);
+        if (systemFont.Name != fontName)
+        {
+          systemFont.Dispose();
+          systemFont = new System.Drawing.Font("Arial", fontSize, fontStyle);
+        }
         FontObject newFont = new FontObject();
+        newFont.name = systemFont.Name;
         newFont.size = fontSize;
+        newFont.style = fontStyle;
         newFont.font = systemFont;
         _listFontObjects.Add(newFont);
       }
@@ -357,10 +366,12 @@ namespace MediaPortal.GUI.Library
       return _listFontObjects[cacheSlot].font;
     }
 
-    public static void DrawText(Font fnt, float xpos, float ypos, Color color, string text, int maxWidth, int fontHeight)
+    public static void DrawText(Font fnt, float xpos, float ypos, Color color, string text, int maxWidth, string fontName, int fontHeight, FontStyle fontStyle)
     {
       FontManagerDrawText draw;
+      draw.fontName = fontName;
       draw.fontHeight = fontHeight;
+      draw.fontStyle = fontStyle;
       draw.fnt = fnt;
       draw.xpos = xpos;
       draw.ypos = ypos;
@@ -377,8 +388,12 @@ namespace MediaPortal.GUI.Library
       _d3dxSpriteUsed = true;
     }
 
-    private static void DrawTextUsingTexture(FontManagerDrawText draw, int fontSize)
+    private static void DrawTextUsingTexture(FontManagerDrawText draw)
     {
+      int fontSize = draw.fontHeight;
+      string fontName = draw.fontName;
+      FontStyle fontStyle = draw.fontStyle;
+
       bool textureCached = false;
       int cacheSlot = 0;
       FontTexture drawingTexture = new FontTexture();
@@ -405,7 +420,7 @@ namespace MediaPortal.GUI.Library
         Texture texture = null;
         float textwidth = 0, textheight = 0;
 
-        MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
+        MeasureText(draw.text, ref textwidth, ref textheight, fontName, fontSize, fontStyle);
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
@@ -421,7 +436,7 @@ namespace MediaPortal.GUI.Library
                 g.SmoothingMode = SmoothingMode.AntiAlias;
                 g.TextRenderingHint = TextRenderingHint.AntiAlias;
                 g.TextContrast = 0;
-                g.DrawString(draw.text, CachedSystemFont(fontSize), Brushes.White, new Point((int)0, (int)0),
+                g.DrawString(draw.text, CachedSystemFont(fontName, fontSize, fontStyle), Brushes.White, new Point((int)0, (int)0),
                              StringFormat.GenericTypographic);
 
                 bitmap.Save(imageStream, ImageFormat.Bmp);
@@ -465,7 +480,7 @@ namespace MediaPortal.GUI.Library
           Log.Error("GUIFontManager: Error in DrawTextUsingTexture - {0}", ex.Message);
         }
 
-        MeasureText(draw.text, ref textwidth, ref textheight, fontSize);
+        MeasureText(draw.text, ref textwidth, ref textheight, fontName, fontSize, fontStyle);
         size.Width = (int)textwidth;
         size.Height = (int)textheight;
 
@@ -548,7 +563,7 @@ namespace MediaPortal.GUI.Library
             GUIGraphicsContext.DX9Device.Transform.View = projm;
             if (GUIGraphicsContext.IsDirectX9ExUsed())
             {
-              DrawTextUsingTexture(draw, draw.fontHeight);
+              DrawTextUsingTexture(draw);
             }
             else
             {
