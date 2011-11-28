@@ -32,7 +32,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       2
-!define VER_REVISION    0
+!define VER_REVISION    1
 ;!define VER_TYPE        ""                 # can be "RC", "Beta". Please comment if Final release
 
 #**********************************************************************************************************#
