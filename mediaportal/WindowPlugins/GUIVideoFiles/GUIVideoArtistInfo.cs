@@ -233,7 +233,7 @@ namespace MediaPortal.GUI.Video
 
       dlg.AddLocalizedString(1253); // Refresh all actor movies
 
-      if (!item.IsRemote) // Movie in MP database
+      if (item.IsPlayed) // Movie in MP database
       {
         dlg.AddLocalizedString(208); // Play
         dlg.AddLocalizedString(368); // IMDB
@@ -340,15 +340,15 @@ namespace MediaPortal.GUI.Video
           IMDBMovie movie = new IMDBMovie();
           movie = (IMDBMovie)movies[0];
           item.DVDLabel = movie.ID.ToString(); // DVD label holds videodatabase movieID
-          //item.IsPlayed = true;
+          item.IsPlayed = true;
           // New colors suggested by Dadeo
-          if (movie.Watched > 0)
-            item.IsPlayed = true;
+          //if (movie.Watched > 0)
+          //  item.IsPlayed = true;
         }
-        else // We don't have a movie
-        {
-          item.IsRemote = true;
-        }
+        //else // We don't have a movie
+        //{
+        //  item.IsRemote = true;
+        //}
         
         item.ThumbnailImage = filenameL;
         item.OnItemSelected += OnItemSelected;
@@ -446,7 +446,7 @@ namespace MediaPortal.GUI.Video
                                                                    ListItemMovieInfo(item).MovieCast);
         GUIPropertyManager.SetProperty("#ActorMovieTitle", ListItemMovieInfo(item).MovieTitle);
         // For fanart handler
-        if (!item.IsRemote)
+        if (item.IsPlayed)
         {
           GUIPropertyManager.SetProperty("#movieid", item.DVDLabel);
         }
@@ -1053,13 +1053,13 @@ namespace MediaPortal.GUI.Video
       try
       {
         // Make the Webrequest
-        //Log.Info("IMDB: get page:{0}", strURL);
-        WebRequest req = WebRequest.Create(strUrl);
-        req.Headers.Add("Accept-Language", "en-US");
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(strUrl);
+        
         try
         {
           // Use the current user in case an NTLM Proxy or similar is used.
-          // wr.Proxy = WebProxy.GetDefaultProxy();
+          req.Headers.Add("Accept-Language", "en-US");
+          req.UserAgent = "Mozilla/8.0 (compatible; MSIE 9.0; Windows NT 6.1; .NET CLR 1.0.3705;)";
           req.Proxy.Credentials = CredentialCache.DefaultCredentials;
         }
         catch (Exception) { }
