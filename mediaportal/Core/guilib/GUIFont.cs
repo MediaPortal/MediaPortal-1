@@ -1260,7 +1260,7 @@ namespace MediaPortal.GUI.Library
         _textureFont.Disposing -= new EventHandler(_textureFont_Disposing);
         _textureFont.Disposing += new EventHandler(_textureFont_Disposing);
         SetFontEgine();
-        _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, _systemFont);
+        _d3dxFont = new Microsoft.DirectX.Direct3D.Font(GUIGraphicsContext.DX9Device, GUIFontManager.GetFontDescription(_systemFont));
       }
       finally
       {

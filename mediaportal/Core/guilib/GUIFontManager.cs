@@ -49,6 +49,16 @@ namespace MediaPortal.GUI.Library
     [DllImport("fontEngine.dll", ExactSpelling = true, CharSet = CharSet.Auto, SetLastError = true)]
     private static extern unsafe void FontEngineSetDevice(void* device);
 
+    [DllImport("user32.dll")]
+    static extern IntPtr GetDC(IntPtr hWnd);
+
+    [DllImport("User32.dll")]
+    public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+    [DllImport("gdi32.dll")]
+    static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
+
     #region Constructors
 
     // singleton. Dont allow any instance of this class
@@ -273,6 +283,27 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static FontDescription GetFontDescription(System.Drawing.Font fnt)
+    {
+      FontDescription desc = new FontDescription();
+
+      IntPtr dC = GetDC(IntPtr.Zero);
+      int deviceCaps = GetDeviceCaps(dC, 90); //LOGPIXELSY
+      ReleaseDC(IntPtr.Zero, dC);
+
+      desc.FaceName = fnt.Name;
+      desc.OutputPrecision = Precision.TtOnly;
+      desc.MipLevels = 1;
+      desc.Height = (int)((double)((-1 * fnt.Size * (float)deviceCaps) / 72));
+      desc.Width = 0;
+      desc.CharSet = CharacterSet.Default;
+      desc.Quality = FontQuality.ClearType;
+      desc.PitchAndFamily = PitchAndFamily.FamilyDoNotCare;
+      desc.Weight = fnt.Bold ? FontWeight.Bold : FontWeight.Normal;
+      desc.IsItalic = fnt.Italic;
+      return desc;
+    }
+
     public static void MeasureText(Font fnt, string text, ref float textwidth, ref float textheight, string fontName, int fontSize, FontStyle fontStyle)
     {
       if (text[0] == ' ') // anti-trim
@@ -394,22 +425,22 @@ namespace MediaPortal.GUI.Library
       string fontName = draw.fontName;
       FontStyle fontStyle = draw.fontStyle;
 
-      bool textureCached = false;
-      int cacheSlot = 0;
-      FontTexture drawingTexture = new FontTexture();
-      foreach (FontTexture cachedTexture in _listFontTextures)
+      int cacheSlot = -1;
+      FontTexture drawingTexture = null;
+      //foreach (FontTexture cachedTexture in _listFontTextures)
+      for (int i = _listFontTextures.Count - 1; i >=0; i--)
       {
-        if (cachedTexture.text == draw.text && cachedTexture.size == fontSize)
+        FontTexture cachedTexture = _listFontTextures[i];
+        if (cachedTexture.text == draw.text && cachedTexture.name == fontName && cachedTexture.size == fontSize && cachedTexture.style == fontStyle)
         {
-          textureCached = true;
           drawingTexture = cachedTexture;
+          cacheSlot = i;
           break;
         }
-        cacheSlot++;
       }
 
       Size size = new Size(0, 0);
-      if (textureCached)
+      if (drawingTexture != null)
       {
         //keep commonly used textures at the top of the pile
         _listFontTextures.RemoveAt(cacheSlot);
@@ -487,7 +518,9 @@ namespace MediaPortal.GUI.Library
         FontTexture newTexture = new FontTexture();
         newTexture.text = draw.text;
         newTexture.texture = texture;
+        newTexture.name = fontName;
         newTexture.size = fontSize;
+        newTexture.style = fontStyle;
 
         if (_listFontTextures.Count >= _maxCachedTextures)
         {

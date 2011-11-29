@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using Microsoft.DirectX.Direct3D;
@@ -35,7 +36,9 @@ namespace MediaPortal.GUI.Library
 
     #region Properties
 
+    public string name { get; set; }
     public int size { get; set; }
+    public FontStyle style { get; set; }
     public string text { get; set; }
     public Texture texture { get; set; }
 
