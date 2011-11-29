@@ -75,7 +75,7 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
   }
   else
 
-  if (ov->plane > 1) 
+  if (ov->plane > BD_OVERLAY_IG) 
     return;
 
   LogCommand(ov);
@@ -97,28 +97,27 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 
   switch (ov->cmd) 
   {
-    case BD_OVERLAY_DRAW:    /* draw bitmap (x,y,w,h,img,palette) */
+    case BD_OVERLAY_DRAW:
       DrawBitmap(plane, ov);
       break;
 
-    case BD_OVERLAY_WIPE:    /* clear area (x,y,w,h) */
+    case BD_OVERLAY_WIPE:
       ClearArea(plane, ov);
       break;
 
-    case BD_OVERLAY_CLEAR:   /* clear plane */
+    case BD_OVERLAY_CLEAR:
       ClearOverlay();
       break;
 
     case BD_OVERLAY_FLUSH:
       m_pLib->HandleOSDUpdate(*plane);
 
-      if (ov->plane == 1) 
+      if (ov->plane == BD_OVERLAY_IG) 
         m_pLib->HandleMenuStateChange(true);
       
       break;
 
     default:
-      //LOGMSG("unknown overlay command %d", ov->cmd);
       break;
   }
 }
@@ -140,7 +139,7 @@ void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
     if (hr == S_OK)
       m_pPlanes[pOv->plane] = osdTexture;
     else
-      LogDebug("   OpenOverlay: CreateTexture 0x%08x", hr);
+      LogDebug("ovr: OpenOverlay - CreateTexture 0x%08x", hr);
   }
 }
 
@@ -246,12 +245,12 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
             }
           }
           else 
-            LogDebug("   ovr: DrawBitmap - pOv->img is NULL");
+            LogDebug("ovr: DrawBitmap - pOv->img is NULL");
 
           texture->UnlockRect(0);
         }
         else
-          LogDebug("   LockRect 0x%08x", hr);
+          LogDebug("ovr: DrawBitmap LockRect 0x%08x", hr);
 
         RECT sourceRect;
         sourceRect.left = 0;
@@ -278,7 +277,7 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
         texture->Release();
       }
       else
-        LogDebug("   CreateTexture 0x%08x", hr);
+        LogDebug("ovr: DrawBitmap - CreateTexture2 0x%08x", hr);
     }
   }
 }
@@ -306,7 +305,7 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 {
-  LogDebug("   overlay - %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
+  LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
     ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
 }
 
