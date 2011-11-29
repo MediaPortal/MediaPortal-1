@@ -86,46 +86,41 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
       OpenOverlay(ov);
       return;
     case BD_OVERLAY_CLOSE:
-      CloseOverlay( ov->plane);
+      CloseOverlay(ov->plane);
       return;
   }
 
   OSDTexture* plane = m_pPlanes[ov->plane];
 
+  if (!plane)
+    return; 
+
   switch (ov->cmd) 
   {
     case BD_OVERLAY_DRAW:    /* draw bitmap (x,y,w,h,img,palette) */
-      if (plane)
-        DrawBitmap(plane, ov);
-      return;
+      DrawBitmap(plane, ov);
+      break;
 
     case BD_OVERLAY_WIPE:    /* clear area (x,y,w,h) */
       ClearArea(plane, ov);
-      return;
+      break;
 
     case BD_OVERLAY_CLEAR:   /* clear plane */
       ClearOverlay();
-      return;
+      break;
 
     case BD_OVERLAY_FLUSH:
-      if (plane)
-      {
-        m_pLib->HandleOSDUpdate(*plane);
+      m_pLib->HandleOSDUpdate(*plane);
 
-        if (ov->plane == 1) 
-        {
-          m_pLib->HandleMenuStateChange(true);
-          //this->menu_open = 1;
-          //send_num_buttons(this, 1);
-        }
-      return;
-      }
+      if (ov->plane == 1) 
+        m_pLib->HandleMenuStateChange(true);
+      
+      break;
 
     default:
       //LOGMSG("unknown overlay command %d", ov->cmd);
-      return;
+      break;
   }
-
 }
 
 void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
@@ -164,9 +159,7 @@ void COverlayRenderer::CloseOverlay(const int pPlane)
     ClearOverlay();
 
     if (pPlane == 1) 
-    {
       m_pLib->HandleMenuStateChange(false);
-    }
   }
 }
 
@@ -253,21 +246,12 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
             }
           }
           else 
-          {
-            // Clear part of the overlay
-            for (int i = 0; i < pOv->h; i++)
-            {
-              memset(dst, 0x00, pOv->w * 4); // D3DFMT_A8R8G8B8
-              dst += lockedRect.Pitch / 4;
-            }
-          }
+            LogDebug("   ovr: DrawBitmap - pOv->img is NULL");
 
           texture->UnlockRect(0);
         }
         else
-        {
           LogDebug("   LockRect 0x%08x", hr);
-        }
 
         RECT sourceRect;
         sourceRect.left = 0;
@@ -294,9 +278,7 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
         texture->Release();
       }
       else
-      {
         LogDebug("   CreateTexture 0x%08x", hr);
-      }
     }
   }
 }
