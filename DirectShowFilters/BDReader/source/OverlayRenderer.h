@@ -52,6 +52,8 @@ private:
 
   void DecodePalette(const BD_OVERLAY* ov);
 
+  void CopyToFrontBuffer();
+
   void LogCommand(const BD_OVERLAY* ov);
   LPCTSTR CommandAsString(int pCmd);
 
@@ -61,4 +63,5 @@ private:
   IDirect3DDevice9* m_pD3DDevice;
 
   OSDTexture* m_pPlanes[2];
+  OSDTexture* m_pPlanesBackbuffer[2];
 };

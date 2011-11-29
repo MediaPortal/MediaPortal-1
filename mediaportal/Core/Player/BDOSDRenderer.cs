@@ -84,11 +84,6 @@ namespace MediaPortal.Player
             if (_OSDTexture == null)
               _OSDTexture = new Texture(item.texture);
           }
-          else
-          {
-            Rectangle dstRect = new Rectangle(0, 0, 1920, 1080);
-            GUIGraphicsContext.DX9Device.ColorFill(_OSDTexture.GetSurfaceLevel(0), dstRect, 0x00000000);
-          }
         }
       }
       catch (Exception ex)
