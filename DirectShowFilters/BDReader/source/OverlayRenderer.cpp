@@ -38,6 +38,8 @@ COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   
   m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
   m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
+
+  ResetDirtyRect();
 }
 
 COverlayRenderer::~COverlayRenderer()
@@ -224,6 +226,11 @@ void COverlayRenderer::ClearOverlay()
   ov.plane = BD_OVERLAY_IG;
 
   ClearArea(m_pPlanesBackbuffer[BD_OVERLAY_IG], &ov);
+  
+  m_dirtyRect.left = 0;
+  m_dirtyRect.top = 0;
+  m_dirtyRect.right = 1920;
+  m_dirtyRect.bottom = 1080;
 }
 
 void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
@@ -240,6 +247,8 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
 
     if (m_pD3DDevice)
     {
+      AdjustDirtyRect(pOv);
+      
       D3DLOCKED_RECT lockedRect;
     
       HRESULT hr = m_pD3DDevice->CreateTexture(pOv->w, pOv->h, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
@@ -353,13 +362,35 @@ void COverlayRenderer::CopyToFrontBuffer()
     return;
   }
 
-  m_pD3DDevice->StretchRect(sourceSurface, NULL, dstSurface, NULL, D3DTEXF_NONE);
+  m_pD3DDevice->StretchRect(sourceSurface, &m_dirtyRect, dstSurface, &m_dirtyRect, D3DTEXF_NONE);
 
   if (FAILED(hr))
     LogDebug("ovr: CopyToFrontBuffer - StretchRect: 0x%08x");
 
   sourceSurface->Release();  
   dstSurface->Release();
+
+  ResetDirtyRect();
+}
+
+void COverlayRenderer::ResetDirtyRect()
+{
+  m_dirtyRect.bottom = 0;
+  m_dirtyRect.top = 1080;
+  m_dirtyRect.left = 1920;
+  m_dirtyRect.right = 0;
+}
+
+void COverlayRenderer::AdjustDirtyRect(const BD_OVERLAY* pOv)
+{
+  if (m_dirtyRect.left > pOv->x)
+    m_dirtyRect.left = pOv->x;
+  if (m_dirtyRect.right < pOv->x + pOv->w)
+    m_dirtyRect.right = pOv->x + pOv->w;
+  if (m_dirtyRect.top > pOv->y)
+    m_dirtyRect.top = pOv->y;
+  if (m_dirtyRect.bottom < pOv->y + pOv->h)
+    m_dirtyRect.bottom = pOv->y + pOv->h;
 }
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
