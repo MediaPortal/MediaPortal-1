@@ -111,17 +111,6 @@ void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
       if (plane)
       {
         m_pLib->HandleOSDUpdate(*plane);
-        m_pPlanes[ov->plane] = NULL;
-
-        BD_OVERLAY ov2;
-        ov2.x = 0;
-        ov2.y = 0;
-        ov2.w = 1920;
-        ov2.h = 1080;
-        ov2.plane = ov->plane;
-
-        OpenOverlay(&ov2);
-        ClearArea(m_pPlanes[ov->plane], &ov2);
 
         if (ov->plane == 1) 
         {

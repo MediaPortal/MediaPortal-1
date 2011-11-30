@@ -80,10 +80,9 @@ namespace MediaPortal.Player
         {
           if (item.texture != null && item.width > 0 && item.height > 0)
           {
-            if (_OSDTexture != null)
-              _OSDTexture.Dispose();
-
-            _OSDTexture = new Texture(item.texture);
+			// todo: support 2 planes
+            if (_OSDTexture == null)
+              _OSDTexture = new Texture(item.texture);
           }
           else
           {
