@@ -22,6 +22,22 @@
 
 #include <stdint.h>
 
+#define BD_OVERLAY_INTERFACE_VERSION 2
+
+typedef enum {
+    BD_OVERLAY_PG = 0,  /* Presentation Graphics plane */
+    BD_OVERLAY_IG = 1,  /* Interactive Graphics plane (on top of PG plane) */
+} bd_overlay_plane_e;
+
+typedef enum {
+    BD_OVERLAY_INIT,    /* init overlay plane. Size of full plane in x,y,w,h */
+    BD_OVERLAY_CLEAR,   /* clear plane */
+    BD_OVERLAY_DRAW,    /* draw bitmap (x,y,w,h,img,palette) */
+    BD_OVERLAY_WIPE,    /* clear area (x,y,w,h) */
+    BD_OVERLAY_FLUSH,   /* all changes have been done, flush overlay to display at given pts */
+    BD_OVERLAY_CLOSE,   /* close overlay */
+} bd_overlay_cmd_e;
+
 typedef struct bd_pg_palette_entry_s {
     uint8_t Y;
     uint8_t Cr;
@@ -36,7 +52,8 @@ typedef struct bd_pg_rle_elem_s {
 
 typedef struct bd_overlay_s {
     int64_t  pts;
-    uint8_t  plane; /* 0 - PG, 1 - IG */
+    uint8_t  plane; /* bd_overlay_plane_e */
+    uint8_t  cmd;   /* bd_overlay_cmd_e */
 
     uint16_t x;
     uint16_t y;
@@ -45,6 +62,7 @@ typedef struct bd_overlay_s {
 
     const BD_PG_PALETTE_ENTRY * palette;
     const BD_PG_RLE_ELEM      * img;
+
 } BD_OVERLAY;
 
 
