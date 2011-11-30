@@ -24,8 +24,6 @@
 #include <D3d9.h>
 #include "LibBlurayWrapper.h"
 
-#define TRACE_PERF //LogDebug
-
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
@@ -33,155 +31,293 @@ extern void LogDebug(const char *fmt, ...);
 
 COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
   m_pLib(pLib),
-  m_bIsMenuOpen(false),
   m_pD3DDevice(NULL)
 {
+  m_pPlanes[BD_OVERLAY_PG] = NULL;
+  m_pPlanes[BD_OVERLAY_IG] = NULL;
+  
+  m_pPlanesBackbuffer[BD_OVERLAY_PG] = NULL;
+  m_pPlanesBackbuffer[BD_OVERLAY_IG] = NULL;
+
+  ResetDirtyRect();
 }
 
 COverlayRenderer::~COverlayRenderer()
 {
+  if (m_pPlanes[BD_OVERLAY_PG] && m_pPlanes[BD_OVERLAY_IG]->texture)
+    m_pPlanes[BD_OVERLAY_PG]->texture->Release();
+
+  if (m_pPlanes[BD_OVERLAY_IG] && m_pPlanes[BD_OVERLAY_IG]->texture)
+    m_pPlanes[BD_OVERLAY_IG]->texture->Release();
+
+  if (m_pPlanesBackbuffer[BD_OVERLAY_PG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
+    m_pPlanesBackbuffer[BD_OVERLAY_PG]->texture->Release();
+
+  if (m_pPlanesBackbuffer[BD_OVERLAY_IG] && m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture)
+    m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture->Release();
 }
 
 void COverlayRenderer::SetD3DDevice(IDirect3DDevice9* device)
 {
   m_pD3DDevice = device;
+
+  BD_OVERLAY ov;
+  ov.x = 0;
+  ov.y = 0;
+  ov.w = 1920;
+  ov.h = 1080;
+  ov.plane = BD_OVERLAY_PG;
+
+  OpenOverlay(&ov);
+  ClearArea(m_pPlanes[BD_OVERLAY_PG], &ov);
+
+  ov.plane = BD_OVERLAY_IG;
+
+  OpenOverlay(&ov);
+  ClearArea(m_pPlanes[BD_OVERLAY_IG], &ov);
 }
 
-void COverlayRenderer::OverlayProc(const BD_OVERLAY* const ov)
+void COverlayRenderer::OverlayProc(const BD_OVERLAY* ov)
 {
-  bool bIsMenuOpen = false;
-
   if (!ov)
   {
-    CloseOverlay();
+    CloseOverlay(-1);
     return;
   }
   else
+
+  if (ov->plane > BD_OVERLAY_IG) 
+    return;
+
+  LogCommand(ov);
+
+  switch (ov->cmd) 
   {
-    TRACE_PERF("OverlayProc - %d %d %d %d plane:%d pts:%d", ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
+    case BD_OVERLAY_INIT:
+      OpenOverlay(ov);
+      return;
+    case BD_OVERLAY_CLOSE:
+      CloseOverlay(ov->plane);
+      return;
   }
 
-  if (ov->plane > 1) 
+  OSDTexture* plane = m_pPlanesBackbuffer[ov->plane];
+
+  if (!plane)
+    return; 
+
+  switch (ov->cmd) 
   {
+    case BD_OVERLAY_DRAW:
+      DrawBitmap(plane, ov);
+      break;
+
+    case BD_OVERLAY_WIPE:
+      ClearArea(plane, ov);
+      break;
+
+    case BD_OVERLAY_CLEAR:
+      ClearOverlay();
+      break;
+
+    case BD_OVERLAY_FLUSH:
+    {
+      CopyToFrontBuffer();
+      
+      OSDTexture* plane = m_pPlanes[ov->plane];
+      m_pLib->HandleOSDUpdate(*plane);
+
+      if (ov->plane == BD_OVERLAY_IG) 
+        m_pLib->HandleMenuStateChange(true);
+      
+      break;
+    }
+
+    default:
+      break;
+  }
+}
+
+void COverlayRenderer::OpenOverlay(const BD_OVERLAY* pOv)
+{
+  if (!m_pPlanes[pOv->plane])
+  {
+    // Create front and back buffer textures
+    for (int i = 0; i < 2; i++)
+    {
+      OSDTexture** plane = NULL;
+
+      if (i == 0)
+        plane = &m_pPlanes[pOv->plane];
+      else
+        plane = &m_pPlanesBackbuffer[pOv->plane];
+
+      OSDTexture* osdTexture = new OSDTexture;
+      osdTexture->height = pOv->h;
+      osdTexture->width = pOv->w;
+      osdTexture->x = pOv->x;
+      osdTexture->y = pOv->y;
+      osdTexture->texture = NULL;
+
+      HRESULT hr = m_pD3DDevice->CreateTexture(osdTexture->width, osdTexture->height, 1, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, 
+                                                D3DPOOL_DEFAULT, &osdTexture->texture, NULL);
+
+      if (hr == S_OK)
+        (*plane) = osdTexture;
+      else
+        LogDebug("ovr: OpenOverlay - CreateTexture 0x%08x", hr);
+    }
+  }
+}
+
+void COverlayRenderer::CloseOverlay(const int pPlane)
+{
+  if (pPlane < 0) 
+  {
+    CloseOverlay(0);
+    CloseOverlay(1);
     return;
   }
 
-  TRACE_PERF("OverlayProc - mark 1");
-
-  if (ov->palette)
+  if (pPlane < 2 && m_pPlanes[pPlane]) 
   {
-    DecodePalette(ov);
+    // TODO: clear specific plane
+    ClearOverlay();
+    CopyToFrontBuffer();
+
+    if (pPlane == 1) 
+      m_pLib->HandleMenuStateChange(false);
   }
+}
 
-  if (!ov->img)
-  {
-    // Clear the whole overlay area and close overlay
-    if (ov->x == 0 && ov->y == 0 && ov->w == 1920 && ov->h == 1080) 
-    {
-      // Nothing to display
-      CloseOverlay();
-      return;
-    }
-  }
-
-  TRACE_PERF("OverlayProc - mark 2");
-
-  OSDTexture osdTexture;
-  osdTexture.height = ov->h;
-  osdTexture.width = ov->w;
-  osdTexture.x = ov->x;
-  osdTexture.y = ov->y;
-  osdTexture.texture = NULL;
-
+void COverlayRenderer::ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv)
+{
   if (m_pD3DDevice)
   {
-    D3DLOCKED_RECT lockedRect;
+    HRESULT hr = S_FALSE;
     
-    HRESULT hr = m_pD3DDevice->CreateTexture(ov->w, ov->h, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
-                                D3DPOOL_DEFAULT, &osdTexture.texture, NULL);
-    
+    RECT dstRect;
+    dstRect.left = pOv->x;
+    dstRect.top = pOv->y;
+    dstRect.right = pOv->x + pOv->w;
+    dstRect.bottom = pOv->y + pOv->h;
+
+    IDirect3DSurface9* dstSurface = NULL;
+    hr = pPlane->texture->GetSurfaceLevel(0, &dstSurface);
+
     if (SUCCEEDED(hr))
     {
-      hr = osdTexture.texture->LockRect(0, &lockedRect, NULL, 0);
-      if (SUCCEEDED(hr))
-      {
-        UINT32* dst = (UINT32*)lockedRect.pBits;
-        const BD_PG_RLE_ELEM* rlep = ov->img;
-        unsigned pixels = ov->w * ov->h;
-
-        // Copy image data to the texture
-        if (ov->img)
-        {
-          for (unsigned int i = 0; i < pixels; rlep++)
-          {
-            for (unsigned int j = rlep->len; j > 0; j--)
-            {
-              if (i > 0 && i % ov->w == 0)
-                dst += lockedRect.Pitch / 4 - ov->w;
-
-              *dst = m_palette[rlep->color];
-              dst++;
-              i++;
-            }
-          }
-        }
-        else 
-        {
-          // Clear part of the overlay
-          for (int i = 0; i < ov->h; i++)
-          {
-            memset(dst, 0x00, ov->w * 4); // D3DFMT_A8R8G8B8
-            dst += lockedRect.Pitch / 4;
-          }
-        }
-
-        osdTexture.texture->UnlockRect(0);
-        bIsMenuOpen = true;
-      }
-      else
-      {
-        LogDebug("   LockRect 0x%08x", hr);
-      }
+      hr = m_pD3DDevice->ColorFill(dstSurface, &dstRect, 0x00000000); 
+      if (FAILED(hr))
+        LogDebug("ovr: ClearArea - ColorFill failed: 0x%08x");
     }
     else
+      LogDebug("ovr: ClearArea - GetSurfaceLevel failed: 0x%08x");
+  }
+}
+
+void COverlayRenderer::ClearOverlay()
+{
+  BD_OVERLAY ov;
+  ov.x = 0;
+  ov.y = 0;
+  ov.w = 1920;
+  ov.h = 1080;
+  ov.plane = BD_OVERLAY_IG;
+
+  ClearArea(m_pPlanesBackbuffer[BD_OVERLAY_IG], &ov);
+  
+  m_dirtyRect.left = 0;
+  m_dirtyRect.top = 0;
+  m_dirtyRect.right = 1920;
+  m_dirtyRect.bottom = 1080;
+}
+
+void COverlayRenderer::DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv)
+{
+  if (!pPlane)
+    return;
+
+  if (pOv->palette)
+    DecodePalette(pOv);
+
+  if (pOv->img)
+  {
+    IDirect3DTexture9* texture = NULL;
+
+    if (m_pD3DDevice)
     {
-      LogDebug("   CreateTexture 0x%08x", hr);
+      AdjustDirtyRect(pOv);
+      
+      D3DLOCKED_RECT lockedRect;
+    
+      HRESULT hr = m_pD3DDevice->CreateTexture(pOv->w, pOv->h, 1, D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, 
+                                                D3DPOOL_DEFAULT, &texture, NULL);
+    
+      if (SUCCEEDED(hr))
+      {
+        hr = texture->LockRect(0, &lockedRect, NULL, 0);
+        if (SUCCEEDED(hr))
+        {
+          UINT32* dst = (UINT32*)lockedRect.pBits;
+          const BD_PG_RLE_ELEM* rlep = pOv->img;
+          unsigned pixels = pOv->w * pOv->h;
+
+          // Copy image data to the texture
+          if (pOv->img)
+          {
+            for (unsigned int i = 0; i < pixels; rlep++)
+            {
+              for (unsigned int j = rlep->len; j > 0; j--)
+              {
+                if (i > 0 && i % pOv->w == 0)
+                  dst += lockedRect.Pitch / 4 - pOv->w;
+
+                *dst = m_palette[rlep->color];
+                dst++;
+                i++;
+              }
+            }
+          }
+          else 
+            LogDebug("ovr: DrawBitmap - pOv->img is NULL");
+
+          texture->UnlockRect(0);
+        }
+        else
+          LogDebug("ovr: DrawBitmap LockRect 0x%08x", hr);
+
+        RECT sourceRect;
+        sourceRect.left = 0;
+        sourceRect.top = 0;
+        sourceRect.right = pOv->w;
+        sourceRect.bottom = pOv->h;
+
+        RECT dstRect;
+        dstRect.left = pOv->x;
+        dstRect.top = pOv->y;
+        dstRect.right = pOv->x + pOv->w;
+        dstRect.bottom = pOv->y + pOv->h;
+
+        IDirect3DSurface9* sourceSurface = NULL;
+        IDirect3DSurface9* dstSurface = NULL;
+
+        texture->GetSurfaceLevel(0, &sourceSurface);
+        pPlane->texture->GetSurfaceLevel(0, &dstSurface);
+
+        m_pD3DDevice->StretchRect(sourceSurface, &sourceRect, dstSurface, &dstRect, D3DTEXF_NONE);
+
+        sourceSurface->Release();
+        dstSurface->Release();
+        texture->Release();
+      }
+      else
+        LogDebug("ovr: DrawBitmap - CreateTexture2 0x%08x", hr);
     }
   }
-
-  TRACE_PERF("OverlayProc - mark 3");
-
-
-  if (bIsMenuOpen != m_bIsMenuOpen)
-  {
-    m_pLib->HandleMenuStateChange(bIsMenuOpen);
-    m_bIsMenuOpen = bIsMenuOpen;
-  }
-  
-  TRACE_PERF("OverlayProc - mark 4");
-
-  m_pLib->HandleOSDUpdate(osdTexture);
-  if (osdTexture.texture)
-    osdTexture.texture->Release();
-
-  TRACE_PERF("OverlayProc end");
 }
 
-void COverlayRenderer::CloseOverlay()
-{  
-  OSDTexture nullTexture = {0};
-
-  TRACE_PERF("ClearOverlay - clear overlay");
-  m_pLib->HandleOSDUpdate(nullTexture);
-    
-  if (m_bIsMenuOpen)
-  {    
-    m_pLib->HandleMenuStateChange(false);
-    m_bIsMenuOpen = false;
-  }
-}
-
-void COverlayRenderer::DecodePalette(const BD_OVERLAY* const ov)
+void COverlayRenderer::DecodePalette(const BD_OVERLAY* ov)
 {
   for (unsigned int i = 0; i < PALETTE_SIZE; i++) 
   {
@@ -202,7 +338,84 @@ void COverlayRenderer::DecodePalette(const BD_OVERLAY* const ov)
   }
 }
 
-bool COverlayRenderer::IsMenuOpen()
+void COverlayRenderer::CopyToFrontBuffer()
 {
-  return m_bIsMenuOpen;
+  IDirect3DSurface9* sourceSurface = NULL;
+  IDirect3DSurface9* dstSurface = NULL;
+
+  HRESULT hr = S_FALSE;
+
+  hr = m_pPlanesBackbuffer[BD_OVERLAY_IG]->texture->GetSurfaceLevel(0, &sourceSurface);
+
+  if (FAILED(hr))
+  {
+    LogDebug("ovr: CopyToFrontBuffer - GetSurfaceLevel(1): 0x%08x");
+    return;
+  }
+    
+  hr = m_pPlanes[BD_OVERLAY_IG]->texture->GetSurfaceLevel(0, &dstSurface);
+
+  if (FAILED(hr))
+  {
+    sourceSurface->Release();
+    LogDebug("ovr: CopyToFrontBuffer - GetSurfaceLevel(2): 0x%08x");
+    return;
+  }
+
+  m_pD3DDevice->StretchRect(sourceSurface, &m_dirtyRect, dstSurface, &m_dirtyRect, D3DTEXF_NONE);
+
+  if (FAILED(hr))
+    LogDebug("ovr: CopyToFrontBuffer - StretchRect: 0x%08x");
+
+  sourceSurface->Release();  
+  dstSurface->Release();
+
+  ResetDirtyRect();
+}
+
+void COverlayRenderer::ResetDirtyRect()
+{
+  m_dirtyRect.bottom = 0;
+  m_dirtyRect.top = 1080;
+  m_dirtyRect.left = 1920;
+  m_dirtyRect.right = 0;
+}
+
+void COverlayRenderer::AdjustDirtyRect(const BD_OVERLAY* pOv)
+{
+  if (m_dirtyRect.left > pOv->x)
+    m_dirtyRect.left = pOv->x;
+  if (m_dirtyRect.right < pOv->x + pOv->w)
+    m_dirtyRect.right = pOv->x + pOv->w;
+  if (m_dirtyRect.top > pOv->y)
+    m_dirtyRect.top = pOv->y;
+  if (m_dirtyRect.bottom < pOv->y + pOv->h)
+    m_dirtyRect.bottom = pOv->y + pOv->h;
+}
+
+void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
+{
+  LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
+    ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
+}
+
+LPCTSTR COverlayRenderer::CommandAsString(int pCmd)
+{
+	switch (pCmd)
+	{
+    case BD_OVERLAY_INIT:
+      return _T("BD_OVERLAY_INIT ");
+    case BD_OVERLAY_CLOSE:
+      return _T("BD_OVERLAY_CLOSE");    
+    case BD_OVERLAY_DRAW:
+      return _T("BD_OVERLAY_DRAW ");
+    case BD_OVERLAY_WIPE:
+      return _T("BD_OVERLAY_WIPE ");
+    case BD_OVERLAY_CLEAR:
+      return _T("BD_OVERLAY_CLEAR");
+    case BD_OVERLAY_FLUSH:
+      return _T("BD_OVERLAY_FLUSH");
+  	default:
+	  	return _T("UNKNOWN");
+	}
 }

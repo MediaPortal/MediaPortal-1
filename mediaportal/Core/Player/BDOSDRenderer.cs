@@ -78,26 +78,11 @@ namespace MediaPortal.Player
       {
         lock (_OSDLock)
         {
-          if (_OSDTexture == null || _OSDTexture.Disposed)
-          {
-            _OSDTexture = new Texture(GUIGraphicsContext.DX9Device, 1920, 1080, 1, Usage.RenderTarget, Format.A8R8G8B8, Pool.Default);
-          }
-
           if (item.texture != null && item.width > 0 && item.height > 0)
           {
-            Rectangle sourceRect = new Rectangle(0, 0, item.width, item.height);
-            Rectangle dstRect = new Rectangle(item.x, item.y, item.width, item.height);
-
-            Texture itemTexture = new Texture(item.texture);
-
-            GUIGraphicsContext.DX9Device.StretchRectangle(itemTexture.GetSurfaceLevel(0), sourceRect,
-              _OSDTexture.GetSurfaceLevel(0), dstRect, 0);
-            itemTexture.Dispose();
-          }
-          else
-          {
-            Rectangle dstRect = new Rectangle(0, 0, 1920, 1080);
-            GUIGraphicsContext.DX9Device.ColorFill(_OSDTexture.GetSurfaceLevel(0), dstRect, 0x00000000);
+			      // todo: support 2 planes
+            if (_OSDTexture == null)
+              _OSDTexture = new Texture(item.texture);
           }
         }
       }
@@ -118,7 +103,7 @@ namespace MediaPortal.Player
         {
           if (_OSDTexture == null || _OSDTexture.Disposed)
           {
-            _OSDTexture = new Texture(GUIGraphicsContext.DX9Device, 1920, 1080, 1, Usage.RenderTarget, Format.A8R8G8B8, Pool.Default);
+            return;
           }
 
           int wx = 0, wy = 0, wwidth = 0, wheight = 0;          
@@ -209,6 +194,7 @@ namespace MediaPortal.Player
         verts[3] = new CustomVertex.TransformedTextured(wx + wwidth, wy + wheight, 0, 1, 1, 1);
 
         _vertexBuffer.SetData(verts, 0, LockFlags.None);
+        _vertexBuffer.Unlock();
         
         // remember what the vertexBuffer is set to
         _wy = wy;

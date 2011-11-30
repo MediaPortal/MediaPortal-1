@@ -44,22 +44,24 @@ extern "C" {
 typedef struct bluray BLURAY;
 
 typedef enum {
-    BLURAY_STREAM_TYPE_VIDEO_MPEG1        = 0x01,
-    BLURAY_STREAM_TYPE_VIDEO_MPEG2        = 0x02,
-    BLURAY_STREAM_TYPE_AUDIO_MPEG1        = 0x03,
-    BLURAY_STREAM_TYPE_AUDIO_MPEG2        = 0x04,
-    BLURAY_STREAM_TYPE_AUDIO_LPCM         = 0x80,
-    BLURAY_STREAM_TYPE_AUDIO_AC3          = 0x81,
-    BLURAY_STREAM_TYPE_AUDIO_DTS          = 0x82,
-    BLURAY_STREAM_TYPE_AUDIO_TRUHD        = 0x83,
-    BLURAY_STREAM_TYPE_AUDIO_AC3PLUS      = 0x84,
-    BLURAY_STREAM_TYPE_AUDIO_DTSHD        = 0x85,
-    BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER = 0x86,
-    BLURAY_STREAM_TYPE_VIDEO_VC1          = 0xea,
-    BLURAY_STREAM_TYPE_VIDEO_H264         = 0x1b,
-    BLURAY_STREAM_TYPE_SUB_PG             = 0x90,
-    BLURAY_STREAM_TYPE_SUB_IG             = 0x91,
-    BLURAY_STREAM_TYPE_SUB_TEXT           = 0x92
+    BLURAY_STREAM_TYPE_VIDEO_MPEG1              = 0x01,
+    BLURAY_STREAM_TYPE_VIDEO_MPEG2              = 0x02,
+    BLURAY_STREAM_TYPE_AUDIO_MPEG1              = 0x03,
+    BLURAY_STREAM_TYPE_AUDIO_MPEG2              = 0x04,
+    BLURAY_STREAM_TYPE_AUDIO_LPCM               = 0x80,
+    BLURAY_STREAM_TYPE_AUDIO_AC3                = 0x81,
+    BLURAY_STREAM_TYPE_AUDIO_DTS                = 0x82,
+    BLURAY_STREAM_TYPE_AUDIO_TRUHD              = 0x83,
+    BLURAY_STREAM_TYPE_AUDIO_AC3PLUS            = 0x84,
+    BLURAY_STREAM_TYPE_AUDIO_DTSHD              = 0x85,
+    BLURAY_STREAM_TYPE_AUDIO_DTSHD_MASTER       = 0x86,
+    BLURAY_STREAM_TYPE_VIDEO_VC1                = 0xea,
+    BLURAY_STREAM_TYPE_VIDEO_H264               = 0x1b,
+    BLURAY_STREAM_TYPE_SUB_PG                   = 0x90,
+    BLURAY_STREAM_TYPE_SUB_IG                   = 0x91,
+    BLURAY_STREAM_TYPE_SUB_TEXT                 = 0x92,
+    BLURAY_STREAM_TYPE_AUDIO_AC3PLUS_SECONDARY  = 0xa1,
+    BLURAY_STREAM_TYPE_AUDIO_DTSHD_SECONDARY    = 0xa2
 } bd_stream_type_e;
 
 typedef enum {
@@ -167,6 +169,12 @@ typedef struct bd_title_info {
     BLURAY_CLIP_INFO     *clips;
     BLURAY_TITLE_CHAPTER *chapters;
 } BLURAY_TITLE_INFO;
+
+/**
+ *  Get library version
+ *
+ */
+void bd_get_version(int *major, int *minor, int *micro);
 
 /**
  *
@@ -476,8 +484,9 @@ void bd_stop_bdj(BLURAY *bd); // shutdown BD-J and clean up resources
 
 typedef enum {
     BD_EVENT_NONE = 0,
-    BD_EVENT_ERROR,
-    BD_EVENT_ENCRYPTED,
+    BD_EVENT_ERROR,       /* Fatal error. Playback can't be continued. */
+    BD_EVENT_READ_ERROR,  /* Reading of .m2ts aligned unit failed. Next call to read will try next block. */
+    BD_EVENT_ENCRYPTED,   /* .m2ts file is encrypted and can't be played */
 
     /* current playback position */
     BD_EVENT_ANGLE,     /* current angle, 1...N */

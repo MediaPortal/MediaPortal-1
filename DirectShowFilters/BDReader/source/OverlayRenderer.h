@@ -26,6 +26,7 @@
 #include <overlay.h>
 #include <streams.h>
 #include <D3d9.h>
+#include "OSDTexture.h"
 
 #define PALETTE_SIZE 256
 
@@ -37,20 +38,34 @@ public:
   COverlayRenderer(CLibBlurayWrapper* pLib);
   ~COverlayRenderer();
 
-  void OverlayProc(const BD_OVERLAY* const ov);
+  void OverlayProc(const BD_OVERLAY* ov);
   void SetD3DDevice(IDirect3DDevice9* device);
 
-  bool IsMenuOpen();
-
 private:
-  
-  void DecodePalette(const BD_OVERLAY* const ov);
-  void CloseOverlay();
 
-  bool m_bIsMenuOpen;
+  void OpenOverlay(const BD_OVERLAY* pOv);
+  void CloseOverlay(const int pPlane);
+
+  void ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv);
+  void ClearOverlay();
+  void DrawBitmap(OSDTexture* pPlane, const BD_OVERLAY* pOv);
+
+  void DecodePalette(const BD_OVERLAY* ov);
+
+  void CopyToFrontBuffer();
+  void ResetDirtyRect();
+  void AdjustDirtyRect(const BD_OVERLAY* pOv);
+
+  void LogCommand(const BD_OVERLAY* ov);
+  LPCTSTR CommandAsString(int pCmd);
 
   uint32_t m_palette[PALETTE_SIZE];
 
   CLibBlurayWrapper* m_pLib;
   IDirect3DDevice9* m_pD3DDevice;
+
+  OSDTexture* m_pPlanes[2];
+  OSDTexture* m_pPlanesBackbuffer[2];
+
+  RECT m_dirtyRect;
 };
