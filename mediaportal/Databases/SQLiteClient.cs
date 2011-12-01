@@ -20,10 +20,13 @@
 
 using System;
 using System.Collections;
+using System.Data;
 using System.IO;
 using System.Runtime.InteropServices;
 using MediaPortal.Database;
 using MediaPortal.GUI.Library;
+using System.Threading;
+using System.Data.SQLite;
 
 namespace SQLite.NET
 {
@@ -38,6 +41,7 @@ namespace SQLite.NET
     [DllImport("shlwapi.dll")]
     private static extern bool PathIsNetworkPath(string Path);
 
+    /*
     [DllImport("sqlite.dll")]
     internal static extern int sqlite3_open16([MarshalAs(UnmanagedType.LPWStr)] string dbname, out IntPtr handle);
 
@@ -55,6 +59,11 @@ namespace SQLite.NET
 
     [DllImport("sqlite.dll")]
     internal static extern SqliteError sqlite3_prepare16(IntPtr sqlite_handle,
+                                                         [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen,
+                                                         out IntPtr pVm, out IntPtr pzTail);
+
+    [DllImport("sqlite.dll")]
+    internal static extern SqliteError sqlite3_prepare16_v2(IntPtr sqlite_handle,
                                                          [MarshalAs(UnmanagedType.LPWStr)] string zSql, int zSqllen,
                                                          out IntPtr pVm, out IntPtr pzTail);
 
@@ -94,19 +103,21 @@ namespace SQLite.NET
 
     [DllImport("sqlite.dll")]
     internal static extern IntPtr sqlite3_libversion();
+    */
 
     #endregion
 
     #region variables
 
     // Fields
-    private int busyRetries = 5;
-    private int busyRetryDelay = 25;
+    //private int busyRetries = 10;
+    //private int busyRetryDelay = 25;
     private static int currentWaitCount = 0;
-    private IntPtr dbHandle = IntPtr.Zero;
+    //private IntPtr dbHandle = IntPtr.Zero;
     private string databaseName = string.Empty;
     private string DBName = string.Empty;
     //private long dbHandleAdres=0;
+    private System.Data.SQLite.SQLiteConnection _connection;
 
     #endregion
 
@@ -185,14 +196,15 @@ namespace SQLite.NET
 
     static SQLiteClient()
     {
-      string libVersion;
+      //string libVersion;
       currentWaitCount = 0;
-      IntPtr pName = sqlite3_libversion();
-      if (pName != IntPtr.Zero)
-      {
-        libVersion = Marshal.PtrToStringAnsi(pName);
-        Log.Info("using sqlite {0}", libVersion);
-      }
+      //IntPtr pName = sqlite3_libversion();
+      //if (pName != IntPtr.Zero)
+      //{
+      //  libVersion = Marshal.PtrToStringAnsi(pName);
+      //  Log.Info("using sqlite {0}", libVersion);
+      //}
+      Log.Info("Using System.Data.SQLite v{0}", System.Data.SQLite.SQLiteConnection.SQLiteVersion);
     }
 
     private static bool WaitForFile(string fileName)
@@ -245,15 +257,16 @@ namespace SQLite.NET
       bool isRemotePath = PathIsNetworkPath(dbName);
       if (isRemotePath)
       {
-        Log.Info("SQLLiteClient: database is remote {0}", this.DBName);
+        Log.Info("SQLiteClient: Database is remote {0}", dbName);
         WaitForFile(dbName);
       }
 
       this.DBName = dbName;
       databaseName = Path.GetFileName(dbName);
       //Log.Info("dbs:open:{0}",databaseName);
-      dbHandle = IntPtr.Zero;
+      //dbHandle = IntPtr.Zero;
 
+      /*
       SqliteError err = (SqliteError)sqlite3_open16(dbName, out dbHandle);
       //Log.Info("dbs:opened:{0} {1} {2:X}",databaseName, err.ToString(),dbHandle.ToInt32());
       if (err != SqliteError.OK)
@@ -261,6 +274,32 @@ namespace SQLite.NET
         throw new SQLiteException(string.Format("Failed to open database, SQLite said: {0} {1}", dbName, err.ToString()));
       }
       //Log.Info("dbs:opened:{0} {1:X}",databaseName, dbHandle.ToInt32());
+      */
+
+      // SE - for testing purposes!
+      //string databaseCopy = string.Format("{0}\\{1} - Copy{2}", Path.GetDirectoryName(dbName), Path.GetFileNameWithoutExtension(dbName), Path.GetExtension(dbName));
+      string databaseCopy = dbName;
+      if (CheckConnection())
+      {
+        Close();
+      }
+      _connection = new SQLiteConnection(string.Format("Data Source={0};Pooling=true;FailIfMissing=false", databaseCopy));
+      try
+      {
+        _connection.Open();
+      }
+      catch (Exception ex)
+      {
+        try
+        {
+          _connection.Close();
+        }
+        catch { }
+        if (_connection != null)
+          _connection.Dispose();
+        _connection = null;
+        throw new SQLiteException(string.Format("SQLiteClient: Failed to open database {0}: {1}", dbName, ex.ToString()));
+      }
     }
 
     public string DatabaseName
@@ -275,15 +314,49 @@ namespace SQLite.NET
 
     public int ChangedRows()
     {
+      /*
       if (dbHandle == IntPtr.Zero)
       {
         return 0;
       }
       return sqlite3_changes(dbHandle);
+      */
+
+      if (!CheckConnection())
+      {
+        return 0;
+      }
+
+      return _connection.Changes;
+    }
+
+    private bool CheckConnection()
+    {
+      return _connection != null && _connection.State != ConnectionState.Broken && _connection.State != ConnectionState.Closed && _connection.State != ConnectionState.Connecting;
     }
 
     public void Close()
     {
+      try
+      {
+        if (CheckConnection())
+          _connection.Close();
+      }
+      catch (Exception ex)
+      {
+        throw new SQLiteException(string.Format("Failed to open database {0}: {1}", databaseName, ex.ToString()));
+      }
+      finally
+      {
+        //dbHandle = IntPtr.Zero;
+        if (_connection != null)
+          _connection.Dispose();
+        _connection = null;
+        databaseName = string.Empty;
+        DBName = string.Empty;
+      }
+
+      /*
       if (dbHandle != IntPtr.Zero)
       {
         //System.Diagnostics.Debugger.Launch();
@@ -303,8 +376,10 @@ namespace SQLite.NET
           databaseName = string.Empty;
         }
       }
+      */
     }
-
+    
+    /*
     private void ThrowError(string statement, string sqlQuery, SqliteError err)
     {
       string errorMsg = Marshal.PtrToStringUni(sqlite3_errmsg16(dbHandle));
@@ -316,9 +391,63 @@ namespace SQLite.NET
                       err.ToString(),
                       errorMsg, sqlQuery), err);
     }
+    */
 
     public SQLiteResultSet Execute(string query)
     {
+      SQLiteResultSet settemp = new SQLiteResultSet();
+
+      if (!CheckConnection())
+      {
+        Log.Error("SQLiteClient: _connection==null");
+        return settemp;
+      }
+      if (query == null)
+      {
+        Log.Error("SQLiteClient: query==null");
+        return settemp;
+      }
+      if (query.Length == 0)
+      {
+        Log.Error("SQLiteClient: query==''");
+        return settemp;
+      }
+
+      DataTable table = new DataTable();
+      using (SQLiteCommand cmd = _connection.CreateCommand())
+      {
+        cmd.CommandText = query;
+        //SQLiteDataReader reader = cmdExecuteReader();
+        using (SQLiteDataReader reader = cmd.ExecuteReader())
+        {
+          table.Load(reader);
+          reader.Close();
+        }
+      }
+
+      settemp.LastCommand = query;
+      if (settemp.ColumnNames.Count == 0)
+      {
+        for (int j = 0; j < table.Columns.Count; j++)
+        {
+          string colName = table.Columns[j].ColumnName;
+          settemp.columnNames.Add(colName);
+          settemp.ColumnIndices[colName] = j;
+        }
+      }
+
+      for (int i = 0; i < table.Rows.Count; i++)
+      {
+        SQLiteResultSet.Row row = new SQLiteResultSet.Row();
+        for (int j = 0; j < table.Columns.Count; j++)
+        {
+          row.fields.Add(PrepareColumnData(table.Rows[i][j]));
+        }
+        settemp.Rows.Add(row);
+      }
+      return settemp;
+
+      /*
       SQLiteResultSet set1 = new SQLiteResultSet();
       lock (typeof (SQLiteClient))
       {
@@ -343,7 +472,7 @@ namespace SQLite.NET
         {
           IntPtr pVm;
           IntPtr pzTail;
-          err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+          err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
           if (err == SqliteError.OK)
           {
             ReadpVm(query, set1, ref pVm);
@@ -363,8 +492,19 @@ namespace SQLite.NET
         }
       }
       return set1;
+      */
     }
 
+    private string PrepareColumnData(object data)
+    {
+      if (data is System.Byte[])
+      {
+        return BitConverter.ToString(data as System.Byte[]).Replace("-", string.Empty);
+      }
+      return data.ToString();
+    }
+
+    /*
     internal void ReadpVm(string query, SQLiteResultSet set1, ref IntPtr pVm)
     {
       int pN;
@@ -378,14 +518,30 @@ namespace SQLite.NET
       TimeSpan ts = now - DateTime.Now;
       while (true && ts.TotalSeconds > -15)
       {
-        res = sqlite3_step(pVm);
-        pN = sqlite3_column_count(pVm);
-        /*
-        if (res == SqliteError.ERROR)
+        for (int i = 0; i <= busyRetries; i++)
         {
-          ThrowError("sqlite3_step", query, res);
+          res = sqlite3_step(pVm);
+          if (res == SqliteError.LOCKED || res == SqliteError.BUSY)
+          {
+            Thread.Sleep(busyRetryDelay);
+          }
+          else
+          {
+            if (i > 0)
+            {
+              Log.Debug("SqlClient: database was busy (Available after " + i + " retries)");
+            }
+            break;
+          }
         }
-        */
+
+        pN = sqlite3_column_count(pVm);
+        //
+        //if (res == SqliteError.ERROR)
+        //{
+        //  ThrowError("sqlite3_step", query, res);
+        //}
+        //
         if (res == SqliteError.DONE)
         {
           break;
@@ -413,7 +569,7 @@ namespace SQLite.NET
           else
           {
             IntPtr pzTail;
-            err = sqlite3_prepare16(dbHandle, query, query.Length * 2, out pVm, out pzTail);
+            err = sqlite3_prepare16_v2(dbHandle, query, query.Length * 2, out pVm, out pzTail);
 
             res = sqlite3_step(pVm);
             pN = sqlite3_column_count(pVm);
@@ -463,12 +619,7 @@ namespace SQLite.NET
         ThrowError("sqlite3_step", query, res);
       }
     }
-
-    ~SQLiteClient()
-    {
-      //Log.Info("dbs:{0} ~ctor()", databaseName);
-      Close();
-    }
+    */
 
     /*
 
@@ -554,7 +705,12 @@ namespace SQLite.NET
 
     public int LastInsertID()
     {
-      return sqlite3_last_insert_rowid(dbHandle);
+      if (!CheckConnection())
+      {
+        return 0;
+      }
+
+      return (int)_connection.LastInsertRowId;
     }
 
 
@@ -563,12 +719,12 @@ namespace SQLite.NET
       return string.Format("'{0}'", input.Replace("'", "''"));
     }
 
-
+    /*
     // Properties
     public int BusyRetries
     {
       get { return busyRetries; }
-      set { busyRetries = value; }
+      set { busyRetries = value > 0 ? value : 0; }
     }
 
 
@@ -577,12 +733,17 @@ namespace SQLite.NET
       get { return busyRetryDelay; }
       set { busyRetryDelay = value; }
     }
+    */
 
     #region IDisposable Members
 
+    ~SQLiteClient()
+    {
+      Close();
+    }
+
     public void Dispose()
     {
-      //Log.Info("dbs:{0} Dispose()", databaseName);
       Close();
     }
 

@@ -72,10 +72,6 @@ namespace MediaPortal.Picture.Database
         }
         catch (Exception) {}
         m_db = new SQLiteClient(Config.GetFile(Config.Dir.Database, "PictureDatabase.db3"));
-        // Retry 10 times on busy (DB in use or system resources exhausted)
-        m_db.BusyRetries = 10;
-        // Wait 100 ms between each try (default 10)
-        m_db.BusyRetryDelay = 100;
 
         DatabaseUtility.SetPragmas(m_db);
         CreateTables();
