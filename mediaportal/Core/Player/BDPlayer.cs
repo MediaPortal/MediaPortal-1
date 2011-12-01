@@ -341,6 +341,7 @@ namespace MediaPortal.Player
     {
       BD_EVENT_NONE = 0,
       BD_EVENT_ERROR,
+      BD_EVENT_READ_ERROR,
       BD_EVENT_ENCRYPTED,
 
       /* current playback position */
