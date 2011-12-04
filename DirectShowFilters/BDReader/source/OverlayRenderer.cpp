@@ -210,6 +210,8 @@ void COverlayRenderer::ClearArea(OSDTexture* pPlane, const BD_OVERLAY* pOv)
       hr = m_pD3DDevice->ColorFill(dstSurface, &dstRect, 0x00000000); 
       if (FAILED(hr))
         LogDebug("ovr: ClearArea - ColorFill failed: 0x%08x");
+      else
+        AdjustDirtyRect(pOv);
     }
     else
       LogDebug("ovr: ClearArea - GetSurfaceLevel failed: 0x%08x");
