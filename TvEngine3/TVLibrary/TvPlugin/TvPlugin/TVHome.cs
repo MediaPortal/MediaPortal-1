@@ -1756,16 +1756,7 @@ namespace TvPlugin
           string text = message.Label2;
           Channel ch = message.Object as Channel;
           //Log.Debug("Received rec notify message: {0}, {1}, {2}", heading, text, (ch != null).ToString()); //remove later
-          string logo = string.Empty;
-          if (null != ch && ch.IsTv)
-          {
-            logo = Utils.GetCoverArt(Thumbs.TVChannel, ch.DisplayName);
-          }
-          else if (null != ch && ch.IsRadio)
-          {
-            logo = Utils.GetCoverArt(Thumbs.Radio, ch.DisplayName);
-          }
-
+          string logo = TVUtil.GetChannelLogo(ch);
           GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_DIALOG_NOTIFY);
           if (pDlgNotify != null)
           {
@@ -3053,9 +3044,6 @@ namespace TvPlugin
       _lastError.FailingChannel = channel;
       _lastError.Messages.Clear();
 
-      // reset the last channel, so you can switch back after error
-      TVHome.Navigator.SetFailingChannel(_lastError.FailingChannel);
-
       int TextID = 0;
       _lastError.Messages.Add(GUILocalizeStrings.Get(1500));
       switch (succeeded)
@@ -3129,9 +3117,9 @@ namespace TvPlugin
       }
 
       GUIDialogNotify pDlgNotify = (GUIDialogNotify)GUIWindowManager.GetWindow((int)Window.WINDOW_DIALOG_NOTIFY);
-      string caption = GUILocalizeStrings.Get(605) + " - " + channel.DisplayName;
-      // +GUILocalizeStrings.Get(1512); ("tune last?")
+      string caption = GUILocalizeStrings.Get(605) + " - " + _lastError.FailingChannel.DisplayName;
       pDlgNotify.SetHeading(caption); //my tv
+      pDlgNotify.SetImage(TVUtil.GetChannelLogo(_lastError.FailingChannel));
       StringBuilder sbMessage = new StringBuilder();
       // ignore the "unable to start timeshift" line to avoid scrolling, because NotifyDLG has very few space available.
       for (int idx = 1; idx < _lastError.Messages.Count; idx++)
