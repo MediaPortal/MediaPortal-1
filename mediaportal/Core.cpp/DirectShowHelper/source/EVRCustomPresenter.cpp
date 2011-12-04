@@ -503,8 +503,6 @@ HRESULT MPEVRCustomPresenter::ReleaseServicePointers()
 {
   Log("ReleaseServicePointers");
 
-  CAutoLock lock(this);
-
   // on some channel changes it may happen that ReleaseServicePointers is called only after InitServicePointers 
   // is called to avoid this rare condition, we only release when not in state begin_streaming
   m_pMediaType.Release();
@@ -1781,8 +1779,6 @@ HRESULT MPEVRCustomPresenter::ProcessInputNotify(int* samplesProcessed, bool set
   {
     return S_OK;  
   }
-
-  CAutoLock lock(this);
 
   LOG_TRACE("ProcessInputNotify");
   HRESULT hr = S_OK;
