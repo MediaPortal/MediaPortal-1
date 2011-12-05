@@ -31,6 +31,7 @@ using MediaPortal.Util;
 using TvControl;
 using TvDatabase;
 using Action = MediaPortal.GUI.Library.Action;
+using MediaPortal.Player.PostProcessing;
 
 namespace TvPlugin
 {
@@ -74,17 +75,25 @@ namespace TvPlugin
       OSD_CLEARBOOKMARKS = 602,
       OSD_BOOKMARKS_LIST_LABEL = 650,
       OSD_VIDEOPOS = 700,
-      OSD_SHARPNESS = 701,
+      /*OSD_SHARPNESS = 701,
       OSD_SATURATIONLABEL = 702,
       OSD_SATURATION = 703,
       OSD_BRIGHTNESS = 704,
       OSD_CONTRAST = 705,
       OSD_GAMMA = 706,
-      OSD_SHARPNESSLABEL = 710,
+      OSD_SHARPNESSLABEL = 710,*/
       OSD_VIDEOPOS_LABEL = 750,
-      OSD_BRIGHTNESSLABEL = 752,
-      OSD_CONTRASTLABEL = 753,
-      OSD_GAMMALABEL = 754,
+      //OSD_BRIGHTNESSLABEL = 752,
+      //OSD_CONTRASTLABEL = 753,
+      //OSD_GAMMALABEL = 754,
+      OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF = 707,
+      OSD_VIDEO_POSTPROC_RESIZE_ONOFF = 708,
+      OSD_VIDEO_POSTPROC_CROP_ONOFF = 709,
+      OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL = 710,
+      OSD_VIDEO_POSTPROC_CROP_VERTICAL = 711,
+      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL = 712,
+      OSD_VIDEO_POSTPROC_CROP_HORIZONTAL = 713,
+      OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF = 714,
       OSD_SUBTITLE_DELAY = 800,
       OSD_SUBTITLE_ONOFF = 801,
       OSD_SUBTITLE_LIST = 802,
@@ -115,6 +124,9 @@ namespace TvPlugin
     private int _immediateSeekValue = 10;
     private int m_subtitleDelay = 0;
     private int m_delayInterval = 0;
+
+    private int m_audioDelay = 0;
+    private int m_delayIntervalAudio = 0;
 
     private IList listTvChannels;
 
@@ -401,6 +413,9 @@ namespace TvPlugin
             m_delayInterval = MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayInterval;
             if (m_delayInterval > 0)
               m_subtitleDelay = MediaPortal.Player.Subtitles.SubEngine.GetInstance().Delay / m_delayInterval;
+            m_delayIntervalAudio = PostProcessingEngine.GetInstance().AudioDelayInterval;
+            if (m_delayIntervalAudio > 0)
+              m_audioDelay = PostProcessingEngine.GetInstance().AudioDelay / m_delayIntervalAudio;
             return true;
           }
 
@@ -692,22 +707,40 @@ namespace TvPlugin
                 // set the controls values
                 float fPercent = (float)(100 * (g_Player.CurrentPosition / g_Player.Duration));
                 SetSliderValue(0.0f, 100.0f, (float)fPercent, (int)Controls.OSD_VIDEOPOS);
+                bool hasPostProc = g_Player.HasPostprocessing;
+                if (hasPostProc)
+                {
+                  IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+                  SetCheckmarkValue(engine.EnablePostProcess, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  SetCheckmarkValue(engine.EnableResize, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  SetCheckmarkValue(engine.EnableCrop, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  SetCheckmarkValue(engine.EnableDeinterlace, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  UpdatePostProcessing();
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+                  ShowControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+                }
 
 
-                UpdateGammaContrastBrightness();
+                //UpdateGammaContrastBrightness();
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_VIDEOPOS);
-                ShowControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
+                /*ShowControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
                 ShowControl(GetID, (int)Controls.OSD_SATURATION);
                 ShowControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
-                ShowControl(GetID, (int)Controls.OSD_SHARPNESS);
+                ShowControl(GetID, (int)Controls.OSD_SHARPNESS);*/
                 ShowControl(GetID, (int)Controls.OSD_VIDEOPOS_LABEL);
-                ShowControl(GetID, (int)Controls.OSD_BRIGHTNESS);
+                /*ShowControl(GetID, (int)Controls.OSD_BRIGHTNESS);
                 ShowControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
                 ShowControl(GetID, (int)Controls.OSD_CONTRAST);
                 ShowControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
                 ShowControl(GetID, (int)Controls.OSD_GAMMA);
-                ShowControl(GetID, (int)Controls.OSD_GAMMALABEL);
+                ShowControl(GetID, (int)Controls.OSD_GAMMALABEL);*/
                 FocusControl(GetID, (int)Controls.OSD_VIDEOPOS, 0); // set focus to the first control in our group
               }
             }
@@ -717,9 +750,25 @@ namespace TvPlugin
               ToggleSubMenu(iControl, (int)Controls.OSD_SUBMENU_BG_AUDIO); // hide or show the sub-menu
               if (isSubMenuVisible) // is sub menu on?
               {
-                // set the controls values
-                //SetSliderValue(-10.0f, 10.0f, g_application.m_pPlayer.GetAVDelay(), Controls.OSD_AVDELAY);
-
+                GUISliderControl pControl = (GUISliderControl)GetControl((int)Controls.OSD_AVDELAY);
+                pControl.SpinType = GUISpinControl.SpinType.SPIN_CONTROL_TYPE_FLOAT;
+                pControl.SetRange(-20, 20);
+                SetSliderValue(-20, 20, m_audioDelay, (int)Controls.OSD_AVDELAY);
+ 
+                 // show the controls on this sub menu
+                bool hasPostProc = g_Player.HasPostprocessing;
+                if (hasPostProc)
+                {
+                  GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", "true");
+                  pControl.FloatInterval = 1;
+                }
+                else
+                { 
+                  GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", "false");
+                  pControl.FloatValue = 0;
+                  m_audioDelay = 0;
+                  pControl.FloatInterval = 0;
+                }
                 // show the controls on this sub menu
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY);
                 ShowControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
@@ -736,7 +785,7 @@ namespace TvPlugin
       return base.OnMessage(message);
     }
 
-    private void UpdateGammaContrastBrightness()
+    /*private void UpdateGammaContrastBrightness()
     {
       float fBrightNess = (float)GUIGraphicsContext.Brightness;
       float fContrast = (float)GUIGraphicsContext.Contrast;
@@ -749,6 +798,13 @@ namespace TvPlugin
       SetSliderValue(0.0f, 100.0f, (float)fGamma, (int)Controls.OSD_GAMMA);
       SetSliderValue(0.0f, 100.0f, (float)fSaturation, (int)Controls.OSD_SATURATION);
       SetSliderValue(0.0f, 100.0f, (float)fSharpness, (int)Controls.OSD_SHARPNESS);
+    }*/
+
+    private void UpdatePostProcessing()
+    {
+      IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+      SetSliderValue(0.0f, 100.0f, (float)engine.CropVertical, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+      SetSliderValue(0.0f, 100.0f, (float)engine.CropHorizontal, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
     }
 
     private void SetVideoProgress()
@@ -883,20 +939,30 @@ namespace TvPlugin
       lstAudioStreamList.Visible = false;
 
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
-      HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
+      GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", " ");
+      /*HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
       HideControl(GetID, (int)Controls.OSD_SHARPNESS);
       HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
-      HideControl(GetID, (int)Controls.OSD_SATURATION);
+      HideControl(GetID, (int)Controls.OSD_SATURATION);*/
       HideControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
 
-      HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
+      /*HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
       HideControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
 
       HideControl(GetID, (int)Controls.OSD_GAMMA);
-      HideControl(GetID, (int)Controls.OSD_GAMMALABEL);
+      HideControl(GetID, (int)Controls.OSD_GAMMALABEL);*/
 
-      HideControl(GetID, (int)Controls.OSD_CONTRAST);
-      HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL_LABEL);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL_LABEL);
+
+      //HideControl(GetID, (int)Controls.OSD_CONTRAST);
+      //HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
 
       HideControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
@@ -1008,7 +1074,7 @@ namespace TvPlugin
             }
           }
           break;
-        case (int)Controls.OSD_SATURATION:
+        /*case (int)Controls.OSD_SATURATION:
           {
             GUISliderControl pControl = GetControl(iControlID) as GUISliderControl;
             if (null != pControl)
@@ -1112,6 +1178,21 @@ namespace TvPlugin
                 }
                 break;                
       */
+        case (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF:
+          {
+            PostProcessingEngine.GetInstance().EnablePostProcess = !PostProcessingEngine.GetInstance().EnablePostProcess;
+            break;
+          }
+        case (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF:
+          {
+            PostProcessingEngine.GetInstance().EnableResize = !PostProcessingEngine.GetInstance().EnableResize;
+            break;
+          }
+        case (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF:
+          {
+            PostProcessingEngine.GetInstance().EnableDeinterlace = !PostProcessingEngine.GetInstance().EnableDeinterlace;
+            break;
+          }
         case (int)Controls.OSD_SUBTITLE_ONOFF:
           {
             g_Player.EnableSubtitle = !g_Player.EnableSubtitle;
@@ -1161,11 +1242,50 @@ namespace TvPlugin
               {
                 MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayMinus();
               }
-              else
+              else if (pControl.FloatValue > m_subtitleDelay)
               {
                 MediaPortal.Player.Subtitles.SubEngine.GetInstance().DelayPlus();
               }
               m_subtitleDelay = (int)pControl.FloatValue;
+            }
+          }
+          break;
+        case (int)Controls.OSD_VIDEO_POSTPROC_CROP_VERTICAL:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl)
+            {
+              PostProcessingEngine.GetInstance().CropVertical = pControl.Percentage;
+              UpdatePostProcessing();
+            }
+          }
+          break;
+        case (int)Controls.OSD_VIDEO_POSTPROC_CROP_HORIZONTAL:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            if (null != pControl)
+            {
+              PostProcessingEngine.GetInstance().CropHorizontal = pControl.Percentage;
+              UpdatePostProcessing();
+            }
+          }
+          break;
+          case (int)Controls.OSD_AVDELAY:
+          {
+            GUISliderControl pControl = (GUISliderControl)GetControl(iControlID);
+            IPostProcessingEngine engine = PostProcessingEngine.GetInstance();
+
+            if (null != pControl && g_Player.HasPostprocessing)
+            {
+              if (pControl.FloatValue < m_audioDelay)
+              { 
+                  PostProcessingEngine.GetInstance().AudioDelayMinus();
+              }
+              else if (pControl.FloatValue > m_audioDelay)
+              { 
+                  PostProcessingEngine.GetInstance().AudioDelayPlus();
+              }
+              m_audioDelay = (int)pControl.FloatValue;
             }
           }
           break;
@@ -1375,20 +1495,21 @@ namespace TvPlugin
       lstAudioStreamList.Visible = false;
 
       HideControl(GetID, (int)Controls.OSD_AVDELAY);
-      HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
+      GUIPropertyManager.SetProperty("#TvOSD.AudioVideoDelayPossible", " ");
+      /*HideControl(GetID, (int)Controls.OSD_SATURATIONLABEL);
       HideControl(GetID, (int)Controls.OSD_SATURATION);
       HideControl(GetID, (int)Controls.OSD_SHARPNESSLABEL);
-      HideControl(GetID, (int)Controls.OSD_SHARPNESS);
+      HideControl(GetID, (int)Controls.OSD_SHARPNESS);*/
       HideControl(GetID, (int)Controls.OSD_AVDELAY_LABEL);
 
-      HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
+      /*HideControl(GetID, (int)Controls.OSD_BRIGHTNESS);
       HideControl(GetID, (int)Controls.OSD_BRIGHTNESSLABEL);
 
       HideControl(GetID, (int)Controls.OSD_GAMMA);
       HideControl(GetID, (int)Controls.OSD_GAMMALABEL);
 
       HideControl(GetID, (int)Controls.OSD_CONTRAST);
-      HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);
+      HideControl(GetID, (int)Controls.OSD_CONTRASTLABEL);*/
 
       HideControl(GetID, (int)Controls.OSD_CREATEBOOKMARK);
       HideControl(GetID, (int)Controls.OSD_BOOKMARKS_LIST);
@@ -1398,6 +1519,9 @@ namespace TvPlugin
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_DELAY_LABEL);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_ONOFF);
       HideControl(GetID, (int)Controls.OSD_SUBTITLE_LIST);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEBLOCK_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_RESIZE_ONOFF);
+      HideControl(GetID, (int)Controls.OSD_VIDEO_POSTPROC_DEINTERLACE_ONOFF);
 
       ToggleButton((int)Controls.OSD_MUTE, false);
       ToggleButton((int)Controls.OSD_SUBTITLES, false);
