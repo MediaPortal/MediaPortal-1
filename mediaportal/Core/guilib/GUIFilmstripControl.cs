@@ -651,7 +651,7 @@ namespace MediaPortal.GUI.Library
         TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
         GUIGraphicsContext.ControlTransform = new TransformMatrix();
         //doesn't render items when scrolling left if this "if" clause is uncommented - should be fixed later
-        if (!_scrollingLeft)
+        //if (!_scrollingLeft)
         {
           if (_showFolder)
           {
@@ -716,7 +716,7 @@ namespace MediaPortal.GUI.Library
         TransformMatrix matrix = GUIGraphicsContext.ControlTransform;
         GUIGraphicsContext.ControlTransform = new TransformMatrix();
         //doesn't render items when scrolling left if this "if" clause is uncommented - should be fixed later
-        if (!_scrollingLeft)
+        //if (!_scrollingLeft)
         {
           if (_showFolder)
           {
