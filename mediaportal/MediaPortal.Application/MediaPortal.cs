@@ -1383,6 +1383,10 @@ public class MediaPortalApp : D3DApp, IRender
 
       Log.Debug("Main: OnResume - autoplay start listening");
       AutoPlay.StartListening();
+
+      Log.Info("Main: OnResume - initializing volume handler");
+      MediaPortal.Player.VolumeHandler vh = MediaPortal.Player.VolumeHandler.Instance;
+
       _onResumeRunning = false;
       ignoreContextMenuAction = false;
       _lastOnresume = DateTime.Now;
@@ -1529,7 +1533,10 @@ public class MediaPortalApp : D3DApp, IRender
     {
       GUIWindowManager.SendThreadCallback(ShowStartupWarningDialogs, 0, 0, null);
     }
+    Log.Debug("Main: Autoplay start listening");
     AutoPlay.StartListening();
+    Log.Info("Main: Initializing volume handler");
+    MediaPortal.Player.VolumeHandler vh = MediaPortal.Player.VolumeHandler.Instance;
   }
 
   private int ShowStartupWarningDialogs(int param1, int param2, object data)
