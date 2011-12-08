@@ -33,18 +33,6 @@
         <onleft>2</onleft>
         <onright>2</onright>
         <onup>21</onup>
-        <ondown>6</ondown>
-      </control>
-      <control>
-        <description>Enable ID3  other tagformats</description>
-        <type>checkmark</type>
-        <id>6</id>
-        <posX>255</posX>
-        <posY>265</posY>
-        <label>258</label>
-        <onleft>6</onleft>
-        <onright>6</onright>
-        <onup>2</onup>
         <ondown>8</ondown>
       </control>
       <control>
@@ -66,7 +54,7 @@
         <height>41</height>
         <onleft>8</onleft>
         <onright>8</onright>
-        <onup>6</onup>
+        <onup>2</onup>
         <ondown>13</ondown>
       </control>
       <control>
