@@ -123,6 +123,9 @@ public:
   bool m_bRebuildOngoing;
   bool m_bStreamPaused;
 
+  CCritSec m_sectionRead;
+
+
 private:
   void PacketDelivery(CAutoPtr<Packet> p);
 
@@ -156,7 +159,6 @@ private:
   CCritSec m_sectionVideo;
   CCritSec m_sectionSubtitle;
   CCritSec m_sectionMediaChanging;
-  CCritSec m_sectionRead;
 
   StreamParser* m_videoParser;
   StreamParser* m_audioParser;

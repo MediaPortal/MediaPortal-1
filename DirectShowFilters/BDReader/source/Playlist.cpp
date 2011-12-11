@@ -71,6 +71,7 @@ Packet* CPlaylist::ReturnNextAudioPacket()
       ret=ReturnNextAudioPacket();
     }
   }
+  if (m_vecClips.back()->IsSuperceeded(SUPERCEEDED_AUDIO_RETURN)) SetEmptiedAudio();
   return ret;
 }
 
@@ -136,7 +137,7 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
   REFERENCE_TIME prevAudioPosition = m_currentAudioSubmissionClip->lastAudioPosition;
   if (m_currentAudioSubmissionClip->nClip == packet->nClipNumber)
   {
-    m_currentAudioSubmissionClip->AcceptAudioPacket(packet);
+    ret = m_currentAudioSubmissionClip->AcceptAudioPacket(packet);
   }
   else 
   {
@@ -160,26 +161,12 @@ bool CPlaylist::AcceptAudioPacket(Packet*  packet, bool seeking)
 
   bool discontinuity = false;
 
-  if (packet->rtStart != Packet::INVALID_TIME && prevAudioPosition != Packet::INVALID_TIME && abs(prevAudioPosition - packet->rtStart) > 10000000)
-  {
-    LogDebug("clip: audio stream's discontinuity detected: old: %I64d new: %I64d seeking %d", prevAudioPosition, packet->rtStart, seeking);
-    firstAudioPESPacketSeen=false;
-    discontinuity=true;
-  }
-
   if (!firstAudioPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     REFERENCE_TIME oldPEStime = firstAudioPESTimeStamp;
 
     firstAudioPESPacketSeen=true;
     firstAudioPESTimeStamp= m_currentAudioSubmissionClip->clipPlaylistOffset - packet->rtStart;
-    
-    packet->rtOffset = (0 - firstAudioPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstAudioPESTimeStamp : 0;
-    if (packet->rtOffset > 10000000 || seeking)
-      packet->bSeekRequired=!seeking;
-
-    m_currentAudioSubmissionClip->FlushAudio(packet);
-    LogDebug("clip: first Packet (aud) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstAudioPESTimeStamp, packet->bSeekRequired, seeking);
   }
 
   return ret;
@@ -196,6 +183,11 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
   }
   else
   {
+    if (nPlaylist != packet->nPlaylist)
+    {
+      m_currentVideoSubmissionClip->Superceed(SUPERCEEDED_VIDEO_FILL);
+      return false;
+    }
     if (m_currentVideoSubmissionClip->nClip==packet->nClipNumber)
     {
       prevVideoPosition = m_currentVideoSubmissionClip->lastVideoPosition; 
@@ -221,26 +213,12 @@ bool CPlaylist::AcceptVideoPacket(Packet* packet, bool firstPacket, bool seeking
 
   bool discontinuity=false;
 
-  if (packet->rtStart != Packet::INVALID_TIME && prevVideoPosition != Packet::INVALID_TIME && abs(prevVideoPosition - packet->rtStart) > 20000000)
-  {
-    LogDebug("clip: video stream's discontinuity detected: old: %I64d new: %I64d seeking %d", prevVideoPosition, packet->rtStart, seeking);
-    firstVideoPESPacketSeen=false;
-    discontinuity=true;
-  }
-
   if (!firstVideoPESPacketSeen && ret && packet->rtStart!=Packet::INVALID_TIME)
   {
     REFERENCE_TIME oldPEStime = firstVideoPESTimeStamp;
 
     firstVideoPESPacketSeen=true;
     firstVideoPESTimeStamp= m_currentVideoSubmissionClip->clipPlaylistOffset - packet->rtStart;
-    
-    packet->rtOffset = (0 - firstVideoPESTimeStamp) > 10000000 || !discontinuity ? 0 - firstVideoPESTimeStamp : 0;
-    if (packet->rtOffset > 10000000 || seeking)
-      packet->bSeekRequired=!seeking;
-
-    m_currentAudioSubmissionClip->FlushVideo(packet);
-    LogDebug("clip: first Packet (vid) %I64d old: %I64d new: %I64d seekRequired %d seeking %d", packet->rtStart, oldPEStime, firstVideoPESTimeStamp, packet->bSeekRequired, seeking);
   }
  
   return ret;
@@ -279,11 +257,21 @@ CClip * CPlaylist::GetNextVideoClip(CClip * currentClip, int superceedType)
   return ret;
 }
 
-bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip)
+bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool discontinuousClip)
 {
   bool ret = true;
   if (m_vecClips.size() && m_vecClips.back()->nClip == clipNumber) return false;
-  m_vecClips.push_back(new CClip(clipNumber, clipStart, clipOffset, audioPresent, duration, discontinuousClip));
+
+  ivecClip it = m_vecClips.begin();
+  while (it!=m_vecClips.end())
+  {
+    CClip * clip=*it;
+    if (!clip->noAudio && clip != m_vecClips.back()) clip->Superceed(SUPERCEEDED_AUDIO_FILL);
+    if (clip != m_vecClips.back()) clip->Superceed(SUPERCEEDED_VIDEO_FILL);
+    ++it;
+  }
+
+  m_vecClips.push_back(new CClip(clipNumber, nPlaylist, clipStart, clipOffset, playlistClipOffset, audioPresent, duration, discontinuousClip));
   if (!m_currentAudioPlayBackClip)
   {
     // initialise
@@ -390,7 +378,7 @@ bool CPlaylist::IsFakingAudio()
   return nextClip->noAudio;
 }
 
-void CPlaylist::ClearAllButCurrentClip(bool resetClip)
+REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip)
 {
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
@@ -417,7 +405,9 @@ void CPlaylist::ClearAllButCurrentClip(bool resetClip)
     {
       m_currentAudioPlayBackClip->Reset();
     }
+    return m_currentAudioPlayBackClip->clipDuration;
   }
+  return 0LL;
 }
 
 void CPlaylist::Reset(int playlistNumber, REFERENCE_TIME firstPacketTime)
@@ -467,14 +457,24 @@ bool CPlaylist::HasVideo()
   return false;
 }
 
-bool CPlaylist::Incomplete()
+REFERENCE_TIME CPlaylist::Incomplete()
 {
-  if (m_currentAudioPlayBackClip)
+  if (m_vecClips.size()>0)
   {
-    return m_currentAudioPlayBackClip->Incomplete();
+    return m_vecClips.back()->Incomplete();
   }
 
-  return false;
+  return 0LL;
+}
+
+REFERENCE_TIME CPlaylist::PlayedDuration()
+{
+  if (m_vecClips.size()>0)
+  {
+    return m_vecClips.back()->PlayedDuration();
+  }
+
+  return 0LL;
 }
 
 CClip * CPlaylist::GetClip(int nClip)
@@ -490,12 +490,12 @@ CClip * CPlaylist::GetClip(int nClip)
   return ret;
 }
 
-void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip)
+void CPlaylist::SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip, bool changingMediaType)
 {
   CClip * clip = GetClip(nClip);
   if (clip)
   {
-    clip->SetVideoPMT(pmt);
+    clip->SetVideoPMT(pmt, changingMediaType);
   }
 }
 
@@ -518,4 +518,17 @@ bool CPlaylist::RemoveRedundantClips()
   }
   if (m_vecClips.size()==0) return true;
   return false;
+}
+
+vector<CClip*> CPlaylist::Superceed()
+{
+  vector<CClip*> ret;
+  ivecClip it = m_vecClips.begin();
+  while (it!=m_vecClips.end())
+  {
+    CClip * clip=*it;
+    if (clip->noAudio) ret.push_back(clip);
+    ++it;
+  }
+  return ret;
 }

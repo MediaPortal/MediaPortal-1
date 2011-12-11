@@ -36,7 +36,7 @@ public:
   Packet* ReturnNextAudioPacket();
   Packet* ReturnNextAudioPacket(int clip);
   Packet* ReturnNextVideoPacket();
-  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool discontinuousClip);
+  bool CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, REFERENCE_TIME playlistClipOffset, bool discontinuousClip);
   bool RemoveRedundantClips(); // returns true if no clips left;
   bool AcceptAudioPacket(Packet*  packet, bool seeking);
   bool AcceptVideoPacket(Packet*  packet, bool firstPacket, bool seeking);
@@ -56,11 +56,13 @@ public:
   bool IsFakingAudio();
   bool IsFakeAudioAvailable();
   REFERENCE_TIME playlistFirstPacketTime;
-  void ClearAllButCurrentClip(bool resetClip);
+  REFERENCE_TIME ClearAllButCurrentClip(bool resetClip);
   bool HasAudio();
   bool HasVideo();
-  bool Incomplete();
-  void SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip);
+  REFERENCE_TIME Incomplete();
+  REFERENCE_TIME PlayedDuration();
+  void SetVideoPMT(AM_MEDIA_TYPE * pmt, int nClip, bool changingMediaType);
+  vector<CClip*> Superceed();
 
 protected:
   typedef vector<CClip*>::iterator ivecClip;

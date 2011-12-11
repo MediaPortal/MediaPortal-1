@@ -42,7 +42,7 @@ using namespace std;
 class CClip
 {
 public:
-  CClip(int clipNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded);
+  CClip(int clipNumber, int playlistNumber, REFERENCE_TIME playlistFirstPacketTime, REFERENCE_TIME clipOffset, REFERENCE_TIME playlistOffset, bool audioPresent, REFERENCE_TIME duration, bool seekNeeded);
   ~CClip(void);
   Packet* ReturnNextAudioPacket(REFERENCE_TIME playlistOffset);
   Packet* ReturnNextVideoPacket(REFERENCE_TIME playlistOffset);
@@ -51,20 +51,28 @@ public:
   void FlushAudio(Packet* pPacketToKeep = NULL);
   void FlushVideo(Packet* pPacketToKeep = NULL);
   int  nClip;
+  int  nPlaylist;
   bool noAudio;
   void Superceed(int superceedType);
   bool IsSuperceeded(int superceedType);
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
-  void Reset();
+  REFERENCE_TIME Reset();
   bool FakeAudioAvailable();
   bool HasAudio();
   bool HasVideo();
-  bool Incomplete();
-  void SetVideoPMT(AM_MEDIA_TYPE *pmt);
+  REFERENCE_TIME Incomplete();
+  REFERENCE_TIME PlayedDuration();
+  void SetVideoPMT(AM_MEDIA_TYPE *pmt, bool changingMediaType);
 
   REFERENCE_TIME lastAudioPosition;
   REFERENCE_TIME lastVideoPosition;
+
+  REFERENCE_TIME firstAudioPosition;
+  REFERENCE_TIME firstVideoPosition;
+
+  REFERENCE_TIME clipDuration;
+  REFERENCE_TIME m_playlistOffset;
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;
@@ -72,7 +80,6 @@ protected:
   vector<Packet*> m_vecClipAudioPackets;
   vector<Packet*> m_vecClipVideoPackets;
   AM_MEDIA_TYPE *m_videoPmt;
-  REFERENCE_TIME clipDuration;
   REFERENCE_TIME audioPlaybackpoint;
   int superceeded;
 

@@ -29,8 +29,8 @@
 #include "Packet.h"
 #include <streams.h>
 
-//#define LOG_AUDIO_PACKETS
-//#define LOG_VIDEO_PACKETS
+#define LOG_AUDIO_PACKETS
+#define LOG_VIDEO_PACKETS
 
 using namespace std;
 
@@ -56,15 +56,23 @@ public:
 
 protected:
   typedef vector<CPlaylist*>::iterator ivecPlaylists;
+  typedef vector<CClip*>::iterator ivecClip;
   CPlaylist * GetNextAudioPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextVideoPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextAudioSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetNextVideoSubmissionPlaylist(CPlaylist* currentPlaylist);
   CPlaylist * GetPlaylist(int playlist);
 
-  bool Incomplete();
+  REFERENCE_TIME Incomplete();
+  REFERENCE_TIME ClipPlayTime();
+  REFERENCE_TIME m_rtPlaylistOffset;
 
   vector<CPlaylist *> m_vecPlaylists;
+  vector<CClip*> m_vecNonFilledClips;
+
+  AM_MEDIA_TYPE *m_vPmt;
+  AM_MEDIA_TYPE *m_aPmt;
+
   CPlaylist * m_currentAudioPlayBackPlaylist;
   CPlaylist * m_currentVideoPlayBackPlaylist;
   CPlaylist * m_currentAudioSubmissionPlaylist;

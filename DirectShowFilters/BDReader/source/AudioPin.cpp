@@ -54,7 +54,9 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bFirstSample(true),
   m_bClipEndingNotified(false),
   m_rtPrevSample(_I64_MIN),
-  m_rtStreamTimeOffset(0)
+  m_rtStreamTimeOffset(0),
+  m_prevPl(-1),
+  m_prevCl(-1)
 {
   m_bConnected = false;
   m_rtStart = 0;
@@ -275,6 +277,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           CreateEmptySample(pSample);
           if (!m_bClipEndingNotified)
           {
+            LogDebug("aud:DeliverendOfStream");
             DeliverEndOfStream();
             m_bClipEndingNotified = true;
           }
@@ -287,22 +290,41 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
       else
       {
         bool useEmptySample = false;
+        bool checkPlaybackState = false;
+        REFERENCE_TIME rtStart = m_rtStart;
 
         //JoinAudioBuffers(buffer, &demux);
         
         {
           CAutoLock lock(m_section);
 
+          if (m_prevPl == -1)
+          {
+            m_prevPl = buffer->nPlaylist;
+            m_prevCl = buffer->nClipNumber;
+          }
+          //if (m_prevPl != buffer->nPlaylist)
+          //{
+          //  checkPlaybackState = true;
+          //  m_prevPl = buffer->nPlaylist;
+          //}
+
+          if (m_bZeroStreamOffset)
+          {
+            m_rtStreamTimeOffset =  buffer->rtStart - (buffer->rtPlaylistTime - m_rtStart);
+            m_bZeroStreamOffset = false;
+          }
+
           if (buffer->bSeekRequired)
           {
-            LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %I64d rtStart: %I64d", buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset, buffer->rtStart);
-            //DeliverEndOfStream();
+            LogDebug("aud: Playlist changed to %d - bSeekRequired: %d offset: %6.3f rtStart: %6.3f m_rtPrevSample: %6.3f rtPlaylistTime: %6.3f", 
+              buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
+
             useEmptySample = true;
             m_bClipEndingNotified = false;
-            //m_bSeekDone = false;
 
-            m_rtStreamTimeOffset = m_rtPrevSample - buffer->rtPlaylistTime;
-            m_rtStart = 0;
+            m_prevPl = buffer->nPlaylist;
+            m_prevCl = buffer->nClipNumber;
           }
 
           // An ugly workaround to get the audio pin to stream after stream end has been delivered.
@@ -359,13 +381,9 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               SetMediaType(&mt);
               pSample->SetMediaType(&mt);
 
-              // Flush the stream if format change is done on the fly
-              if (!buffer->bSeekRequired)
-              {
-                DeliverBeginFlush();
-                DeliverEndFlush();
-                DeliverNewSegment(m_rtStart, m_rtStop, m_dRateSeeking);
-              }
+              CreateEmptySample(pSample);
+              m_pCachedBuffer = buffer;
+              return S_OK;
             }
           }
         } // lock ends
@@ -376,9 +394,11 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           m_pCachedBuffer = buffer;
           LogDebug("aud: cached push  %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
           
-          if (buffer->bSeekRequired)
+          if (buffer->bSeekRequired || checkPlaybackState)
+          {
             m_demux.m_eAudioPlSeen->Set();
-
+            m_rtStreamTimeOffset =  buffer->rtStart - (buffer->rtPlaylistTime - m_rtStart);
+          }
           m_pCachedBuffer->bSeekRequired = false;
 
           return S_OK;
@@ -406,8 +426,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
             //refTime /= m_dRateSeeking; //the if rate===1.0 makes this redundant
 
             pSample->SetSyncPoint(true); // allow all packets to be seeking targets
-            rtCorrectedStartTime = buffer->rtStart - m_rtStart + m_rtStreamTimeOffset;
-            rtCorrectedStopTime = buffer->rtStop - m_rtStart + m_rtStreamTimeOffset;
+            rtCorrectedStartTime = buffer->rtStart - m_rtStreamTimeOffset;
+            rtCorrectedStopTime = buffer->rtStop - m_rtStreamTimeOffset;
             pSample->SetTime(&rtCorrectedStartTime, &rtCorrectedStopTime);
 
             m_rtPrevSample = rtCorrectedStopTime;
@@ -421,7 +441,8 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           ProcessAudioSample(buffer, pSample);
 #ifdef LOG_AUDIO_PIN_SAMPLES
-          LogDebug("aud: %6.3f corr %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
+          LogDebug("aud: %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,
+            buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist);
 #endif
           m_bFirstSample = false;
 
@@ -645,7 +666,7 @@ HRESULT CAudioPin::DeliverNewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop
 
   LogDebug("aud: DeliverNewSegment start: %6.3f stop: %6.3f rate: %6.3f", tStart / 10000000.0, tStop / 10000000.0, dRate);
   m_rtStart = tStart;
-  m_rtStreamTimeOffset = m_rtPrevSample = 0;
+  m_rtPrevSample = 0;
 
   HRESULT hr = __super::DeliverNewSegment(tStart, tStop, dRate);
   if (FAILED(hr))

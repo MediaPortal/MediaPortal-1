@@ -36,6 +36,9 @@ CPlaylistManager::CPlaylistManager(void)
   m_VideoPacketsUntilLatestplaylist=0;
   m_bIgnoreAudioSeeking=false;
   m_bIgnoreVideoSeeking=false;
+  m_rtPlaylistOffset = 0LL;
+  m_vPmt = NULL;
+  m_aPmt = NULL;
 }
 
 
@@ -57,7 +60,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
 {
   CAutoLock lock (&m_sectionAudio);
   CAutoLock lockv (&m_sectionVideo);
-  
+  bool ret;
   // remove old playlists
   ivecPlaylists it = m_vecPlaylists.begin();
   while (it!=m_vecPlaylists.end())
@@ -72,11 +75,23 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   }
 
   LogDebug("Playlist Manager new Playlist %d clip %d start %6.3f clipOffset %6.3f Audio %d duration %6.3f",nPlaylist, nClip, firstPacketTime/10000000.0, clipOffsetTime/10000000.0, audioPresent, duration/10000000.0);
+
+  REFERENCE_TIME remainingClipTime = Incomplete();
+  REFERENCE_TIME playedDuration = ClipPlayTime();
+  ret = remainingClipTime>5000000LL;
+  if (ret)
+  {
+    LogDebug("Playlist Manager::CreateNewPlaylistClip TimeStamp Correction changed from %I64d to %I64d",m_rtPlaylistOffset,m_rtPlaylistOffset-remainingClipTime);
+  }
+  LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
+
+  m_rtPlaylistOffset += playedDuration;
+
   if (m_vecPlaylists.size()==0)
   {
     //first playlist
     CPlaylist * firstPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, false);
+    firstPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false);
     m_vecPlaylists.push_back(firstPlaylist);
     m_currentAudioPlayBackPlaylist=m_currentVideoPlayBackPlaylist=m_currentAudioSubmissionPlaylist=m_currentVideoSubmissionPlaylist=firstPlaylist;
   }
@@ -84,20 +99,33 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   {
     //new clip in existing playlist
     CPlaylist * existingPlaylist = m_vecPlaylists.back();
-    existingPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, discontinuousClip);
+    existingPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false /*discontinuousClip*/);
   }
   else
   {
     //completely new playlist
-    m_bIgnoreAudioSeeking=false;
-    m_bIgnoreVideoSeeking=false;
+//    m_bIgnoreAudioSeeking=false;
+//    m_bIgnoreVideoSeeking=false;
+
+//    m_rtPlaylistOffset = 0LL;
+    CPlaylist * existingPlaylist = m_vecPlaylists.back();
+    vector<CClip*> audioLess = existingPlaylist->Superceed();
+    if (audioLess.size())
+    {
+      ivecClip it = audioLess.begin();
+      while (it!=audioLess.end())
+      {
+        CClip * clip=*it;
+        m_vecNonFilledClips.push_back(clip);
+        ++it;
+      }
+    }
 
     CPlaylist * newPlaylist = new CPlaylist(nPlaylist,firstPacketTime);
-    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, true);
+    newPlaylist->CreateNewClip(nClip,firstPacketTime, clipOffsetTime, audioPresent, duration, m_rtPlaylistOffset, false);
     m_vecPlaylists.push_back(newPlaylist);
   }
-    
-  return Incomplete(); // was current clip interrupted?
+  return ret; // was current clip interrupted?
 }
 
 bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
@@ -109,10 +137,26 @@ bool CPlaylistManager::SubmitAudioPacket(Packet * packet)
     LogDebug("m_currentAudioSubmissionPlaylist is NULL!!!");
     return false;
   }
-  if (m_currentAudioSubmissionPlaylist->nPlaylist==packet->nPlaylist)
+  if (m_vecNonFilledClips.size())
   {
-    ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet, m_bIgnoreAudioSeeking);
+    ivecClip it = m_vecNonFilledClips.begin();
+    while (it!=m_vecNonFilledClips.end())
+    {
+      CClip * clip=*it;
+      if (!((clip->nClip == packet->nClipNumber) && (clip->nPlaylist == packet->nPlaylist)))
+      {
+        clip->Superceed(SUPERCEEDED_AUDIO_FILL);
+        it = m_vecNonFilledClips.erase(it);
+      }
+      else
+      {
+        ++it;
+      }
+    }
   }
+
+
+  ret=m_currentAudioSubmissionPlaylist->AcceptAudioPacket(packet, m_bIgnoreAudioSeeking);
   if (ret) 
   {
     m_bIgnoreAudioSeeking = false;
@@ -159,10 +203,7 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
     LogDebug("m_currentVideoSubmissionPlaylist is NULL!!!");
     return false;
   }
-  if (m_currentVideoSubmissionPlaylist->nPlaylist==packet->nPlaylist)
-  {
-    ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,m_bIgnoreVideoSeeking);
-  }
+  ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,m_bIgnoreVideoSeeking);
   if (ret) 
   {
     m_bIgnoreVideoSeeking = false;
@@ -185,7 +226,12 @@ bool CPlaylistManager::SubmitVideoPacket(Packet * packet)
       {
         ret=m_currentVideoSubmissionPlaylist->AcceptVideoPacket(packet,false,m_bIgnoreVideoSeeking);
         if (ret)
+        {
+#ifdef LOG_VIDEO_PACKETS
+    LogDebug("Video Packet %I64d Accepted in %d %d", packet->rtStart, packet->nPlaylist, packet->nClipNumber);
+#endif
           m_bIgnoreVideoSeeking = false;
+        }
       }
       else
       {
@@ -220,9 +266,11 @@ Packet* CPlaylistManager::GetNextAudioPacket()
   Packet* ret=m_currentAudioPlayBackPlaylist->ReturnNextAudioPacket();
   if (ret==NULL)
   {
+    LogDebug("playlistManager: checking for audio playback playlist after %d",m_currentAudioPlayBackPlaylist->nPlaylist);
     CPlaylist* nextPlaylist = GetNextAudioPlaylist(m_currentAudioPlayBackPlaylist);
     if (m_currentAudioPlayBackPlaylist!=nextPlaylist)
     {
+      LogDebug("playlistManager: setting audio playback playlist to %d",nextPlaylist->nPlaylist);
       m_currentAudioPlayBackPlaylist->SetEmptiedAudio();
       m_currentAudioPlayBackPlaylist = nextPlaylist;
       ret=m_currentAudioPlayBackPlaylist->ReturnNextAudioPacket();
@@ -386,6 +434,7 @@ bool CPlaylistManager::HasAudio()
   CPlaylist * nextPlaylist = GetNextAudioPlaylist(m_currentAudioPlayBackPlaylist);
   if (nextPlaylist!=m_currentAudioPlayBackPlaylist)
   {
+    LogDebug("playlistManager: testing audio playback for playlist %d - %d",nextPlaylist->nPlaylist, nextPlaylist->HasAudio());
     return nextPlaylist->HasAudio();
   }
   return false;
@@ -397,6 +446,7 @@ bool CPlaylistManager::HasVideo()
   CPlaylist * nextPlaylist = GetNextVideoPlaylist(m_currentVideoPlayBackPlaylist);
   if (nextPlaylist!=m_currentVideoPlayBackPlaylist)
   {
+//    LogDebug("playlistManager: testing video playback for playlist %d - %d",nextPlaylist->nPlaylist, nextPlaylist->HasVideo());
     return nextPlaylist->HasVideo();
   }
   return false;
@@ -405,8 +455,8 @@ bool CPlaylistManager::HasVideo()
 void CPlaylistManager::IgnoreNextDiscontinuity()
 {
   LogDebug("CPlaylistManager::IgnoreNextDiscontinuity point in stream");
-  m_bIgnoreAudioSeeking=true;
-  m_bIgnoreVideoSeeking=true;
+//  m_bIgnoreAudioSeeking=true;
+//  m_bIgnoreVideoSeeking=true;
 }
 
 void CPlaylistManager::ClearAllButCurrentClip(bool resetClip)
@@ -432,16 +482,32 @@ void CPlaylistManager::ClearAllButCurrentClip(bool resetClip)
   if (m_vecPlaylists.size()>0)
   {
     m_currentAudioPlayBackPlaylist=m_currentVideoPlayBackPlaylist=m_currentAudioSubmissionPlaylist=m_currentVideoSubmissionPlaylist=m_vecPlaylists.back();
-    m_currentAudioPlayBackPlaylist->ClearAllButCurrentClip(resetClip);
+    m_rtPlaylistOffset += m_vecPlaylists.back()->ClearAllButCurrentClip(resetClip);
   }
+  else
+  {
+    m_rtPlaylistOffset=0;
+  }
+  if (resetClip) m_rtPlaylistOffset=0;
 }
 
-bool CPlaylistManager::Incomplete()
+REFERENCE_TIME CPlaylistManager::Incomplete()
 {
-  bool ret = false;
-  if (!m_vecPlaylists.empty() && m_currentAudioPlayBackPlaylist != m_vecPlaylists.back())
+  REFERENCE_TIME ret = 0LL;
+  if (!m_vecPlaylists.empty())
   {
-    ret = m_currentAudioPlayBackPlaylist->Incomplete();
+    ret = m_vecPlaylists.back()->Incomplete();
+  }
+    
+  return ret;
+}
+
+REFERENCE_TIME CPlaylistManager::ClipPlayTime()
+{
+  REFERENCE_TIME ret = 0LL;
+  if (!m_vecPlaylists.empty())
+  {
+    ret = m_vecPlaylists.back()->PlayedDuration();
   }
     
   return ret;
@@ -451,6 +517,17 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 {
   if (pmt)
   {
+    bool seekRequired = false;
+    if (!m_vPmt)
+    {
+      m_vPmt = pmt;
+    }
+    else if (pmt->subtype != m_vPmt->subtype)  //  TODO check if extra code needed for Cyberlink etc
+    {
+      seekRequired = true;
+      m_vPmt = pmt;
+    }
+    
     LogDebug("CPlaylistManager: Setting video PMT {%08x-%04x-%04x-%02X%02X-%02X%02X%02X%02X%02X%02X} for (%d, %d)",
 	  pmt->subtype.Data1, pmt->subtype.Data2, pmt->subtype.Data3,
       pmt->subtype.Data4[0], pmt->subtype.Data4[1], pmt->subtype.Data4[2],
@@ -459,7 +536,7 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
     CPlaylist* pl=GetPlaylist(nPlaylist);
     if (pl)
     {
-      pl->SetVideoPMT(pmt, nClip);
+      pl->SetVideoPMT(pmt, nClip, seekRequired);
     }  
   }
 }

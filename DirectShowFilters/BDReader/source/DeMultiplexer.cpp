@@ -395,10 +395,7 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking)
   FlushVideo();
   FlushSubtitle();
 
-  m_playlistManager->ClearAllButCurrentClip(true);
-
-  if (pSeeking)
-    IgnoreNextDiscontinuity();
+  m_playlistManager->ClearAllButCurrentClip(pSeeking);
 
   SetHoldAudio(false);
   SetHoldVideo(false);
@@ -589,6 +586,7 @@ int CDeMultiplexer::ReadFromFile(bool isAudio, bool isVideo)
     }
   
     m_iReadErrors = 0;
+    if (dwReadBytes < sizeof(m_readBuffer)) FlushPESBuffers(false);
     return dwReadBytes;
   }
   else if (dwReadBytes == -1)
@@ -716,16 +714,18 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           interrupted = m_playlistManager->CreateNewPlaylistClip(m_nPlaylist, m_nClip, AudioStreamsAvailable(clip), 
             CONVERT_90KHz_DS(clipIn), CONVERT_90KHz_DS(clipOffset), CONVERT_90KHz_DS(duration), m_bDiscontinuousClip);
           m_bDiscontinuousClip = false;
-        
+
+
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
-            Flush(true, false);
+            Flush(true, true);
+          }
+          else
+          {
+            FlushPESBuffers(false);
           }
         }
-
-        if (!interrupted)
-          FlushPESBuffers(false);
 
         m_bVideoFormatParsed = false;
         m_bAudioFormatParsed = false;

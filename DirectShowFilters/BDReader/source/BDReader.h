@@ -32,8 +32,8 @@
 #include "LibBlurayWrapper.h"
 #include "BDEventObserver.h"
 
-//#define LOG_VIDEO_PIN_SAMPLES
-//#define LOG_AUDIO_PIN_SAMPLES
+#define LOG_VIDEO_PIN_SAMPLES
+#define LOG_AUDIO_PIN_SAMPLES
 //#define LOG_DEMUXER_AUDIO_SAMPLES
 //#define LOG_DEMUXER_VIDEO_SAMPLES
 
@@ -278,7 +278,6 @@ private:
   bool m_bFlushing;
   CAMEvent m_eEndFlush;
   CAMEvent m_eEndNewSegment;
-  CAMEvent m_eEndChapterChanged;
   CAMEvent m_eSeekDone;
   
   bool m_bChapterChangeRequested;

@@ -417,9 +417,11 @@ STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
   {
     if (current != chapter)
     {
+      CAutoLock(&(m_demultiplexer.m_sectionRead));
+      m_demultiplexer.Flush(true,true);
       hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
-      m_eEndChapterChanged.Wait();
-      m_eEndChapterChanged.Reset();
+      m_eSeekDone.Wait();
+      m_eSeekDone.Reset();
     }
   }
   return hr;
@@ -1122,12 +1124,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - already seeked to pos - mark 1");
 #endif
 
-    if (m_bChapterChangeRequested)
-    {
-      m_bChapterChangeRequested = false;
-      m_eEndChapterChanged.Set();
-    }
-
     m_eSeekDone.Set();
     return S_OK;
   }
@@ -1137,12 +1133,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
 #ifdef LOG_SEEK_INFORMATION   
     LogDebug("  ::SetPositions() - already seeked to pos - mark 2");
 #endif
-
-    if (m_bChapterChangeRequested)
-    {
-      m_bChapterChangeRequested = false;
-      m_eEndChapterChanged.Set();
-    }
 
     m_eSeekDone.Set();
     m_lastSeekers.insert(caller);
@@ -1173,11 +1163,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     // Do not allow new seek to happen before the old one is completed 
     m_eEndNewSegment.Wait();
 
-    if (m_bChapterChangeRequested)
-    {
-      m_bChapterChangeRequested = false;
-      m_eEndChapterChanged.Set();
-    }
   }
   else
   {
@@ -1185,11 +1170,6 @@ STDMETHODIMP CBDReaderFilter::SetPositionsInternal(void *caller, LONGLONG* pCurr
     LogDebug("  ::SetPositions() - no ThreadExists()");
 #endif
 
-    if (m_bChapterChangeRequested)
-    {
-      m_bChapterChangeRequested = false;
-      m_eEndChapterChanged.Set();
-    }
   }
 
   m_eSeekDone.Set();
