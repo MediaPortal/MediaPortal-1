@@ -419,16 +419,16 @@ void CVideoPin::CheckPlaybackState()
 
     if (m_demux.m_bVideoRequiresRebuild || m_demux.m_bAudioRequiresRebuild)
     {
+      LogDebug("vid: REBUILD");
       m_demux.m_bVideoRequiresRebuild = false;
       m_demux.m_bAudioRequiresRebuild = false;
-
-      LogDebug("vid: REBUILD");
       m_pFilter->IssueCommand(REBUILD, m_rtStreamOffset);
       m_demux.m_bRebuildOngoing = true;
     }
     else if (!m_bStopWait && (m_demux.m_bStreamPaused || m_bDoFakeSeek))    
     {
       LogDebug("vid: Request zeroing the stream time");
+      DeliverEndOfStream();
       m_eFlushStart->Reset();
       m_pFilter->IssueCommand(SEEK, m_rtStreamOffset);
       m_eFlushStart->Wait();
