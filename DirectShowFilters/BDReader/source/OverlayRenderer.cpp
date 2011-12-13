@@ -27,6 +27,8 @@
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
 
+//#define LOG_OVERLAY_COMMANDS
+
 extern void LogDebug(const char *fmt, ...);
 
 COverlayRenderer::COverlayRenderer(CLibBlurayWrapper* pLib) :
@@ -397,8 +399,10 @@ void COverlayRenderer::AdjustDirtyRect(const BD_OVERLAY* pOv)
 
 void COverlayRenderer::LogCommand(const BD_OVERLAY* ov)
 {
+#ifdef LOG_OVERLAY_COMMANDS
   LogDebug("ovr: %s x: %4d y: %4d w: %4d h: %4d plane: %1d pts: %d", CommandAsString(ov->cmd),
     ov->x, ov->y, ov->w, ov->h, ov->plane, ov->pts);
+#endif 
 }
 
 LPCTSTR COverlayRenderer::CommandAsString(int pCmd)
