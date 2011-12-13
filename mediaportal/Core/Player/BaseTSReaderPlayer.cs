@@ -198,8 +198,8 @@ namespace MediaPortal.Player
 
     protected Dictionary<string, object> PostProcessFilterVideo = new Dictionary<string, object>();
     protected Dictionary<string, object> PostProcessFilterAudio = new Dictionary<string, object>();
-    protected ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
-    protected ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
+    //protected ArrayList availableVideoFilters = FilterHelper.GetFilters(MediaType.Video, MediaSubType.Null);
+    //protected ArrayList availableAudioFilters = FilterHelper.GetFilters(MediaType.Audio, MediaSubType.Null);
 
     public TVFilterConfig filterConfig;
     public FilterCodec filterCodec;
@@ -1875,16 +1875,19 @@ namespace MediaPortal.Player
       if (selection == "Video")
       {
         VideoChange = false;
-        foreach (var ppFilter in PostProcessFilterVideo)
+        if (PostProcessFilterVideo.Count > 0)
         {
-          if (ppFilter.Value != null)
+          foreach (var ppFilter in PostProcessFilterVideo)
           {
-            DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-            DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            }
           }
+          PostProcessFilterVideo.Clear();
+          Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         }
-        PostProcessFilterVideo.Clear();
-        Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessVideo");
         if (filterConfig.enableCCSubtitles)
         {
           ReleaseCC();
@@ -1893,16 +1896,19 @@ namespace MediaPortal.Player
       }
       else
       {
-        foreach (var ppFilter in PostProcessFilterAudio)
+        if (PostProcessFilterAudio.Count > 0)
         {
-          if (ppFilter.Value != null)
+          foreach (var ppFilter in PostProcessFilterAudio)
           {
-            DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
-            DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            if (ppFilter.Value != null)
+            {
+              DirectShowUtil.RemoveFilters(_graphBuilder, ppFilter.Key);
+              DirectShowUtil.ReleaseComObject(ppFilter.Value, 5000);
+            }
           }
+          PostProcessFilterAudio.Clear();
+          Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessAudio");
         }
-        PostProcessFilterAudio.Clear();
-        Log.Info("TSReaderPlayer: UpdateFilters Cleanup PostProcessAudio");
 
         if (filterConfig.enableMPAudioSwitcher)
         {
@@ -1919,45 +1925,48 @@ namespace MediaPortal.Player
       // we have to find first filter connected to tsreader which will be removed
       IPin pinFrom = DirectShowUtil.FindPin(_fileSource, PinDirection.Output, selection);
       IPin pinTo;
-      int hr = pinFrom.ConnectedTo(out pinTo);
-      if (hr >= 0 && pinTo != null)
+      if (pinFrom != null)
       {
-        PinInfo pInfo;
-        pinTo.QueryPinInfo(out pInfo);
-        FilterInfo fInfo;
-        pInfo.filter.QueryFilterInfo(out fInfo);
+        int hr = pinFrom.ConnectedTo(out pinTo);
+        if (hr >= 0 && pinTo != null)
+        {
+          PinInfo pInfo;
+          pinTo.QueryPinInfo(out pInfo);
+          FilterInfo fInfo;
+          pInfo.filter.QueryFilterInfo(out fInfo);
 
-        if (selection == "Video" && fInfo.achName.Equals("Core CC Parser"))
-        {
-          IPin pinFromOut = DsFindPin.ByDirection(filterCodec.CoreCCParser, PinDirection.Output, 0);
-          IPin pinToVideo;
-          hr = pinFromOut.ConnectedTo(out pinToVideo);
-          if (hr >= 0 && pinToVideo != null)
+          if (selection == "Video" && fInfo.achName.Equals("Core CC Parser"))
           {
-            PinInfo pInfoNext;
-            pinToVideo.QueryPinInfo(out pInfoNext);
-            FilterInfo fInfoNext;
-            pInfoNext.filter.QueryFilterInfo(out fInfoNext);
-            Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfoNext.achName);
-            DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
-            _graphBuilder.RemoveFilter(pInfoNext.filter);
-            DsUtils.FreePinInfo(pInfoNext);
-            DirectShowUtil.ReleaseComObject(fInfoNext.pGraph);
-            DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+            IPin pinFromOut = DsFindPin.ByDirection(filterCodec.CoreCCParser, PinDirection.Output, 0);
+            IPin pinToVideo;
+            hr = pinFromOut.ConnectedTo(out pinToVideo);
+            if (hr >= 0 && pinToVideo != null)
+            {
+              PinInfo pInfoNext;
+              pinToVideo.QueryPinInfo(out pInfoNext);
+              FilterInfo fInfoNext;
+              pInfoNext.filter.QueryFilterInfo(out fInfoNext);
+              Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfoNext.achName);
+              DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+              _graphBuilder.RemoveFilter(pInfoNext.filter);
+              DsUtils.FreePinInfo(pInfoNext);
+              DirectShowUtil.ReleaseComObject(fInfoNext.pGraph);
+              DirectShowUtil.ReleaseComObject(pinToVideo); pinToVideo = null;
+            }
+            DirectShowUtil.ReleaseComObject(pinFromOut); pinFromOut = null;
           }
-          DirectShowUtil.ReleaseComObject(pinFromOut); pinFromOut = null;
+          else
+          {
+            DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
+            _graphBuilder.RemoveFilter(pInfo.filter);
+            Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
+          }
+          DsUtils.FreePinInfo(pInfo);
+          DirectShowUtil.ReleaseComObject(fInfo.pGraph);
+          DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
         }
-        else
-        {
-          DirectShowUtil.DisconnectAllPins(_graphBuilder, pInfo.filter);
-          _graphBuilder.RemoveFilter(pInfo.filter);
-          Log.Debug("TSReaderPlayer: UpdateFilters Remove filter - {0}", fInfo.achName);
-        }
-        DsUtils.FreePinInfo(pInfo);
-        DirectShowUtil.ReleaseComObject(fInfo.pGraph);
-        DirectShowUtil.ReleaseComObject(pinTo); pinTo = null;
+        DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
       }
-      DirectShowUtil.ReleaseComObject(pinFrom); pinFrom = null;
 
       if (selection == "Video")
       {

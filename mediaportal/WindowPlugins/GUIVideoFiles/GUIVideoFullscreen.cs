@@ -777,15 +777,15 @@ namespace MediaPortal.GUI.Video
               g_Player.SwitchToNextSubtitle();
               if (g_Player.EnableSubtitle)
               {
-                int streamId = g_Player.CurrentSubtitleStream;
-                string strName = g_Player.SubtitleName(streamId);
-                string langName = g_Player.SubtitleLanguage(streamId);
                 if (g_Player.CurrentSubtitleStream == -1 && g_Player.SupportsCC)
                 {
                   msg.Label = "CC1 Analog";
                 }
                 else
                 {
+                  int streamId = g_Player.CurrentSubtitleStream;
+                  string strName = g_Player.SubtitleName(streamId);
+                  string langName = g_Player.SubtitleLanguage(streamId);
                   if (!string.IsNullOrEmpty(strName))
                     msg.Label = string.Format("{0} [{1}] ({2}/{3})", langName, strName.TrimStart(),
                                               streamId + 1, subStreamsCount);
