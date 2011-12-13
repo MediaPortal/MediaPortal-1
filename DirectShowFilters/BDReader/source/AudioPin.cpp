@@ -311,7 +311,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           if (m_bZeroStreamOffset)
           {
-            m_rtStreamTimeOffset =  buffer->rtStart - (buffer->rtPlaylistTime - m_rtStart);
+            m_rtStreamTimeOffset =  buffer->rtClipTime;
             m_bZeroStreamOffset = false;
           }
 
@@ -397,7 +397,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (buffer->bSeekRequired || checkPlaybackState)
           {
             m_demux.m_eAudioPlSeen->Set();
-            m_rtStreamTimeOffset =  buffer->rtStart - (buffer->rtPlaylistTime - m_rtStart);
+            m_rtStreamTimeOffset =  buffer->rtClipTime;
           }
           m_pCachedBuffer->bSeekRequired = false;
 

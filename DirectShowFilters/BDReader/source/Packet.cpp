@@ -80,6 +80,7 @@ void Packet::ResetProperties(bool pResetClipInfo)
     nPlaylist = -100;
     rtOffset = 0;//-100; /// is this needed? i.e. fixed somewhere else so that all packets will have a valid offset (initial versions did have some packets where this was left at -100)
     rtPlaylistTime = 0;
+    rtClipTime = 0;
     rtTitleDuration = 0;
   }
 

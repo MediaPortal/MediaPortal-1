@@ -378,7 +378,7 @@ bool CPlaylist::IsFakingAudio()
   return nextClip->noAudio;
 }
 
-REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip)
+REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint)
 {
   ivecClip it = m_vecClips.begin();
   while (it!=m_vecClips.end())
@@ -403,7 +403,7 @@ REFERENCE_TIME CPlaylist::ClearAllButCurrentClip(bool resetClip)
     m_currentAudioPlayBackClip=m_currentVideoPlayBackClip=m_currentAudioSubmissionClip=m_currentVideoSubmissionClip=m_vecClips.back();
     if (resetClip) 
     {
-      m_currentAudioPlayBackClip->Reset();
+      m_currentAudioPlayBackClip->Reset(rtClipStartPoint);
     }
     return m_currentAudioPlayBackClip->clipDuration;
   }

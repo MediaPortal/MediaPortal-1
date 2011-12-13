@@ -374,7 +374,7 @@ void CDeMultiplexer::FlushSubtitle()
     pDVBSubtitleFilter->NotifyChannelChange();*/
 }
 
-void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking)
+void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking, REFERENCE_TIME rtSeekTime)
 {
   LogDebug("demux:flushing");
 
@@ -395,7 +395,7 @@ void CDeMultiplexer::Flush(bool pDiscardData, bool pSeeking)
   FlushVideo();
   FlushSubtitle();
 
-  m_playlistManager->ClearAllButCurrentClip(pSeeking);
+  m_playlistManager->ClearAllButCurrentClip(pSeeking, rtSeekTime);
 
   SetHoldAudio(false);
   SetHoldVideo(false);
@@ -531,7 +531,7 @@ HRESULT CDeMultiplexer::Start()
 
     // Seek to start - reset the libbluray reading position
     m_filter.lib.Seek(0);
-    Flush(true, false);
+    Flush(true, false, 0LL);
     m_bStarting = false;
 
     CMediaType pmt;
@@ -546,7 +546,7 @@ HRESULT CDeMultiplexer::Start()
   
   m_bStarting = false;
 
-  Flush(true, false);
+  Flush(true, false, 0LL);
   // Seek to start - reset the libbluray reading position
   m_filter.lib.Seek(0);
 
@@ -719,7 +719,9 @@ void CDeMultiplexer::HandleBDEvent(BD_EVENT& pEv, UINT64 /*pPos*/)
           if (interrupted)
           {
             LogDebug("demux: current clip was interrupted - triggering flush");
-            Flush(true, true);
+            //TODO get clipstart relative to clip start
+            REFERENCE_TIME rtClipStart = 0LL;
+            Flush(true, true, rtClipStart);
           }
           else
           {

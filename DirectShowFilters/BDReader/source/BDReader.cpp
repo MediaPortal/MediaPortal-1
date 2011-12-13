@@ -418,8 +418,10 @@ STDMETHODIMP CBDReaderFilter::SetChapter(UINT32 chapter)
     if (current != chapter)
     {
       CAutoLock(&(m_demultiplexer.m_sectionRead));
-      m_demultiplexer.Flush(true,true);
       hr = lib.SetChapter(chapter) ? S_OK : S_FALSE;
+      // TODO get chapter position in playlist
+      REFERENCE_TIME rtChapterStart;
+      m_demultiplexer.Flush(true, true, rtChapterStart);
       m_eSeekDone.Wait();
       m_eSeekDone.Reset();
     }
@@ -615,6 +617,7 @@ DWORD WINAPI CBDReaderFilter::CommandThread()
 
 STDMETHODIMP CBDReaderFilter::Run(REFERENCE_TIME tStart)
 {
+  tStart=0LL;
   CRefTime runTime = m_rtStart = tStart;
   double msec = (double)runTime.Millisecs();
   msec /= 1000.0;
@@ -800,7 +803,7 @@ void CBDReaderFilter::Seek(REFERENCE_TIME rtAbsSeek)
   if (!m_bUpdateStreamPositionOnly)
   {
     LogDebug("CBDReaderFilter::Seek - Flush");
-    m_demultiplexer.Flush(true, true);
+    m_demultiplexer.Flush(true, true, rtAbsSeek);
     lib.Seek(CONVERT_DS_90KHz(rtAbsSeek));
   }
 

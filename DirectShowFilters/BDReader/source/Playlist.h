@@ -56,7 +56,7 @@ public:
   bool IsFakingAudio();
   bool IsFakeAudioAvailable();
   REFERENCE_TIME playlistFirstPacketTime;
-  REFERENCE_TIME ClearAllButCurrentClip(bool resetClip);
+  REFERENCE_TIME ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtClipStartPoint);
   bool HasAudio();
   bool HasVideo();
   REFERENCE_TIME Incomplete();

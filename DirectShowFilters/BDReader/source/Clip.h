@@ -57,7 +57,7 @@ public:
   bool IsSuperceeded(int superceedType);
   REFERENCE_TIME playlistFirstPacketTime;
   REFERENCE_TIME clipPlaylistOffset;
-  REFERENCE_TIME Reset();
+  REFERENCE_TIME Reset(REFERENCE_TIME rtClipStartPoint);
   bool FakeAudioAvailable();
   bool HasAudio();
   bool HasVideo();
@@ -73,6 +73,7 @@ public:
 
   REFERENCE_TIME clipDuration;
   REFERENCE_TIME m_playlistOffset;
+  REFERENCE_TIME m_rtClipStartingOffset;
 
 protected:
   typedef vector<Packet*>::iterator ivecVideoBuffers;

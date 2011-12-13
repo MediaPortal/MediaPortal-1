@@ -50,6 +50,7 @@ CClip::CClip(int clipNumber, int playlistNumber, REFERENCE_TIME firstPacketTime,
   m_playlistOffset = clipOffset;
   firstAudioPosition = playlistFirstPacketTime;
   firstVideoPosition = playlistFirstPacketTime;
+  m_rtClipStartingOffset = 0;
 }
 
 CClip::~CClip(void)
@@ -99,6 +100,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   if (ret && ret->rtStart!=Packet::INVALID_TIME)
   {
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
+    ret->rtClipTime = m_rtClipStartingOffset;
   }
   if (bSeekNeededAudio && ret->rtStart!=Packet::INVALID_TIME)
   {
@@ -130,7 +132,10 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   if (ret) ret->pmt = CreateMediaType(m_videoPmt);
   
   if (ret && ret->rtStart!=Packet::INVALID_TIME)
+  {
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
+    ret->rtClipTime = m_rtClipStartingOffset;
+  }
 
   if (bSeekNeededVideo && ret->rtStart!=Packet::INVALID_TIME)
   {
@@ -278,7 +283,7 @@ void CClip::FlushVideo(Packet* pPacketToKeep)
   }
 }
 
-REFERENCE_TIME CClip::Reset()
+REFERENCE_TIME CClip::Reset(REFERENCE_TIME rtClipStartPoint)
 {
   LogDebug("Reseting (%d,%d)", nPlaylist, nClip);
   REFERENCE_TIME ret = PlayedDuration();
@@ -296,6 +301,7 @@ REFERENCE_TIME CClip::Reset()
   bSeekNeededVideo=true;
   firstAudioPosition = _I64_MAX;
   firstVideoPosition = _I64_MAX;
+  m_rtClipStartingOffset = rtClipStartPoint;
   return ret;
 }
 
@@ -334,21 +340,17 @@ REFERENCE_TIME CClip::Incomplete()
 REFERENCE_TIME CClip::PlayedDuration()
 {
   REFERENCE_TIME
-    start=firstAudioPosition, 
+    start=playlistFirstPacketTime - m_rtClipStartingOffset, 
     finish=lastAudioPosition,
     playDuration;
-  if (firstAudioPosition>firstVideoPosition  && !firstVideo)
-  {
-    start = firstVideoPosition;
-  }
   if (lastAudioPosition<lastVideoPosition)
   {
     finish = lastVideoPosition;
   }
-  playDuration = finish - start;
+  playDuration = finish - playlistFirstPacketTime;
   //incompete will trigger a flush so don't count any time from the clip
   if (Incomplete() > 5000000LL) return 0LL;
-  if (abs(clipDuration - playDuration) < 5000000LL) return clipDuration;
+  if (abs(clipDuration - playDuration) < 5000000LL) return clipDuration - m_rtClipStartingOffset;
   return finish - start;
 }
 
