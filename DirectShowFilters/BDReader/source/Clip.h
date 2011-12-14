@@ -68,6 +68,9 @@ public:
   REFERENCE_TIME lastAudioPosition;
   REFERENCE_TIME lastVideoPosition;
 
+  REFERENCE_TIME audioPlaybackPosition;
+  REFERENCE_TIME videoPlaybackPosition;
+
   REFERENCE_TIME firstAudioPosition;
   REFERENCE_TIME firstVideoPosition;
 

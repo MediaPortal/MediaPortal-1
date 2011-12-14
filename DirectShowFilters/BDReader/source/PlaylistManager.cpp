@@ -482,13 +482,13 @@ void CPlaylistManager::ClearAllButCurrentClip(bool resetClip, REFERENCE_TIME rtC
   if (m_vecPlaylists.size()>0)
   {
     m_currentAudioPlayBackPlaylist=m_currentVideoPlayBackPlaylist=m_currentAudioSubmissionPlaylist=m_currentVideoSubmissionPlaylist=m_vecPlaylists.back();
-    m_rtPlaylistOffset += m_vecPlaylists.back()->ClearAllButCurrentClip(resetClip, rtClipStartPoint);
+//    m_rtPlaylistOffset += m_vecPlaylists.back()->ClearAllButCurrentClip(resetClip, rtClipStartPoint);
   }
   else
   {
-    m_rtPlaylistOffset=0;
+    //m_rtPlaylistOffset=0;
   }
-  if (resetClip) m_rtPlaylistOffset=0;
+  //if (resetClip) m_rtPlaylistOffset=0;
 }
 
 REFERENCE_TIME CPlaylistManager::Incomplete()

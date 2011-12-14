@@ -543,7 +543,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             useEmptySample = true;
             m_bClipEndingNotified = false;
 
-            m_bDoFakeSeek = true;
+            //m_bDoFakeSeek = true;
             checkPlaybackState = true;
 
             m_prevPl = buffer->nPlaylist;

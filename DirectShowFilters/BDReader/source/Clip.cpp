@@ -101,6 +101,7 @@ Packet* CClip::ReturnNextAudioPacket(REFERENCE_TIME playlistOffset)
   {
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
     ret->rtClipTime = m_rtClipStartingOffset;
+    audioPlaybackPosition = ret->rtStart;
   }
   if (bSeekNeededAudio && ret->rtStart!=Packet::INVALID_TIME)
   {
@@ -135,6 +136,7 @@ Packet* CClip::ReturnNextVideoPacket(REFERENCE_TIME playlistOffset)
   {
     ret->rtPlaylistTime = ret->rtStart - m_playlistOffset;
     ret->rtClipTime = m_rtClipStartingOffset;
+    if (ret->rtStart > videoPlaybackPosition) videoPlaybackPosition = ret->rtStart;
   }
 
   if (bSeekNeededVideo && ret->rtStart!=Packet::INVALID_TIME)
@@ -297,8 +299,8 @@ REFERENCE_TIME CClip::Reset(REFERENCE_TIME rtClipStartPoint)
   clipPlaylistOffset = playlistFirstPacketTime;
   firstAudio=true;
   firstVideo=true;
-  bSeekNeededAudio=true;
-  bSeekNeededVideo=true;
+//  bSeekNeededAudio=true;
+//  bSeekNeededVideo=true;
   firstAudioPosition = _I64_MAX;
   firstVideoPosition = _I64_MAX;
   m_rtClipStartingOffset = rtClipStartPoint;
@@ -327,8 +329,8 @@ bool CClip::HasVideo()
 
 REFERENCE_TIME CClip::Incomplete()
 {
-  REFERENCE_TIME ret = playlistFirstPacketTime + clipDuration - lastVideoPosition;
-  if (playlistFirstPacketTime + clipDuration - lastAudioPosition < ret) ret = playlistFirstPacketTime + clipDuration - lastAudioPosition; 
+  REFERENCE_TIME ret = playlistFirstPacketTime + clipDuration - videoPlaybackPosition;
+  if (playlistFirstPacketTime + clipDuration - audioPlaybackPosition < ret) ret = playlistFirstPacketTime + clipDuration - audioPlaybackPosition; 
   if (ret > 5000000LL)
   {    
     LogDebug("clip: Incomplete - nClip: %d lastAudioPosition: %I64d first: %I64d duration: %I64d", 
@@ -341,15 +343,13 @@ REFERENCE_TIME CClip::PlayedDuration()
 {
   REFERENCE_TIME
     start=playlistFirstPacketTime - m_rtClipStartingOffset, 
-    finish=lastAudioPosition,
+    finish=audioPlaybackPosition,
     playDuration;
-  if (lastAudioPosition<lastVideoPosition)
+  if (audioPlaybackPosition < videoPlaybackPosition)
   {
-    finish = lastVideoPosition;
+    finish = videoPlaybackPosition;
   }
   playDuration = finish - playlistFirstPacketTime;
-  //incompete will trigger a flush so don't count any time from the clip
-  if (Incomplete() > 5000000LL) return 0LL;
   if (abs(clipDuration - playDuration) < 5000000LL) return clipDuration - m_rtClipStartingOffset;
   return finish - start;
 }
