@@ -360,6 +360,7 @@ void CClip::SetVideoPMT(AM_MEDIA_TYPE *pmt, bool changingMediaType)
   bSeekNeededVideo |= changingMediaType;
   bSeekNeededAudio |= changingMediaType;
   if (m_videoPmt) DeleteMediaType(m_videoPmt);
+  if (changingMediaType) clipPlaylistOffset = playlistFirstPacketTime;
   m_videoPmt = CreateMediaType(pmt);
 }
 

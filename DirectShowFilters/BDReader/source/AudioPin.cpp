@@ -335,7 +335,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
             buffer->pmt->subtype = MEDIASUBTYPE_BD_LPCM_AUDIO;
 
-          if (buffer->pmt && m_mt != *buffer->pmt)
+          if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bSeekRequired)
           {
             HRESULT hrAccept = S_FALSE;
             LogMediaType(buffer->pmt);

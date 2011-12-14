@@ -537,6 +537,7 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
     if (pl)
     {
       pl->SetVideoPMT(pmt, nClip, seekRequired);
+      if (seekRequired) m_rtPlaylistOffset = 0;
     }  
   }
 }
