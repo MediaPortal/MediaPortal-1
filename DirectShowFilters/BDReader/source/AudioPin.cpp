@@ -52,7 +52,6 @@ CAudioPin::CAudioPin(LPUNKNOWN pUnk, CBDReaderFilter* pFilter, HRESULT* phr, CCr
   m_bDiscontinuity(false),
   m_bUsePCM(false),
   m_bFirstSample(true),
-  m_bClipEndingNotified(false),
   m_rtPrevSample(_I64_MIN),
   m_rtStreamTimeOffset(0),
   m_prevPl(-1),
@@ -275,15 +274,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
         else 
         {
           CreateEmptySample(pSample);
-          if (!m_bClipEndingNotified)
-          {
-            LogDebug("aud:DeliverendOfStream");
-            DeliverEndOfStream();
-            m_bClipEndingNotified = true;
-          }
-          else
-            Sleep(10);
-		  
+          Sleep(10);
           return S_OK;
         }
       }
@@ -321,15 +312,10 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               buffer->nPlaylist, buffer->bSeekRequired, buffer->rtOffset / 10000000.0, buffer->rtStart / 10000000.0, m_rtPrevSample / 10000000.0, buffer->rtPlaylistTime / 10000000.0);
 
             useEmptySample = true;
-            m_bClipEndingNotified = false;
 
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;
           }
-
-          // An ugly workaround to get the audio pin to stream after stream end has been delivered.
-          if (m_bClipEndingNotified)
-            m_pFilter->IssueCommand(SEEK, 0);
 
           // Do not convert LPCM to PCM if audio decoder supports LPCM (LAV audio decoder style)
           if (!m_bUsePCM && buffer->pmt && buffer->pmt->subtype == MEDIASUBTYPE_PCM)
@@ -372,7 +358,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               m_demux.m_bAudioRequiresRebuild = true;
               useEmptySample = true;
 
-              //DeliverEndOfStream();
+              DeliverEndOfStream();
             }
             else
             {
@@ -620,7 +606,6 @@ HRESULT CAudioPin::OnThreadStartPlay()
     CAutoLock lock(CSourceSeeking::m_pLock);
     m_bDiscontinuity = true;
     m_bFirstSample = true;
-    m_bClipEndingNotified = false;
 
     if (m_demux.m_eAudioPlSeen)
       m_demux.m_eAudioPlSeen->Reset();
