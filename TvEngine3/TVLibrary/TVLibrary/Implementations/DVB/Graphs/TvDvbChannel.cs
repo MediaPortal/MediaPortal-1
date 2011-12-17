@@ -187,7 +187,6 @@ namespace TvLibrary.Implementations.DVB
       Log.Log.WriteFile("TvDvbChannel ctor new subchIndex:{0}", _subChannelIndex);
 
       _subChannelId = subChannelId;
-      _conditionalAccess.AddSubChannel(_subChannelId, channel);
       _timeshiftFileName = "";
       _recordingFileName = "";
       _pmtData = null;
@@ -1225,7 +1224,7 @@ namespace TvLibrary.Implementations.DVB
                 audioPid = _currentAudioStream.Pid;
               }
 
-              if (_conditionalAccess.SendPMT(_subChannelId, channel, _pmtData, _pmtLength,
+              if (_conditionalAccess.SendPmt(_subChannelId, channel, _pmtData, _pmtLength,
                                              audioPid))
               {
                 Log.Log.WriteFile("subch:{0} cam flags:{1}", _subChannelId, _conditionalAccess.IsCamReady());

@@ -969,7 +969,7 @@ namespace TvLibrary.Implementations.DVB
           if (c.Channel.Equals(context.Channel))
             exists = true;
         }
-        if (!exists && context.ServiceId != 0 && context.Channel.FreeToAir == false)
+        if (!exists && context.Channel.ServiceId != 0 && context.Channel.FreeToAir == false)
           // also check for sid != 0, otherwise TT API fails
         {
           filteredChannels.Add(context);
@@ -980,8 +980,8 @@ namespace TvLibrary.Implementations.DVB
       for (int i = 0; i < filteredChannels.Count; ++i)
       {
         ConditionalAccessContext context = filteredChannels[i];
-        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.ServiceId);
-        Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.ServiceId);
+        Log.Log.Debug("TechnoTrend: DescrambleMultiple: serviceId:{0}", context.Channel.ServiceId);
+        Marshal.WriteInt16(ptrPmt, 2 * i, (short)context.Channel.ServiceId);
       }
 
       if (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk)

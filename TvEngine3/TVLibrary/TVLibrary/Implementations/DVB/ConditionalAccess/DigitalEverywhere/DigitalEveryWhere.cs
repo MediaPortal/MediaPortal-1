@@ -467,7 +467,7 @@ namespace TvLibrary.Implementations.DVB
       int count = 0;
       foreach (ConditionalAccessContext context in filteredChannels)
       {
-        bool result = SendPMTToFireDTV(context.PMT, context.PMTLength, count, filteredChannels.Count);
+        bool result = SendPMTToFireDTV(context.Pmt, context.PmtLength, count, filteredChannels.Count);
         count++;
         if (!result)
           succeeded = false;

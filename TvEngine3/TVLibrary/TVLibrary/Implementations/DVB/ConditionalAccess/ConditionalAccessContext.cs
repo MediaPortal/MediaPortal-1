@@ -26,22 +26,21 @@ using TvLibrary.Interfaces;
 namespace TvLibrary.Implementations.DVB
 {
   ///<summary>
-  /// CA Context 
+  /// A class for holding CA context information.
   ///</summary>
   public class ConditionalAccessContext
   {
     private CamType _camType;
     private DVBBaseChannel _channel;
-    private byte[] _PMT;
+    private byte[] _pmt;
     private int _pmtLength;
     private int _audioPid;
-    private int _serviceId;
-    private List<ushort> _HwPids;
+    private List<ushort> _pids;
 
     /// <summary>
-    /// Gets or sets the type of the cam.
+    /// Gets or sets the type of the CAM.
     /// </summary>
-    /// <value>The type of the cam.</value>
+    /// <value>The type of the CAM.</value>
     public CamType CamType
     {
       get { return _camType; }
@@ -62,26 +61,26 @@ namespace TvLibrary.Implementations.DVB
     /// Gets or sets the PMT.
     /// </summary>
     /// <value>The PMT.</value>
-    public byte[] PMT
+    public byte[] Pmt
     {
-      get { return _PMT; }
-      set { _PMT = value; }
+      get { return _pmt; }
+      set { _pmt = value; }
     }
 
     /// <summary>
     /// Gets or sets the length of the PMT.
     /// </summary>
     /// <value>The length of the PMT.</value>
-    public int PMTLength
+    public int PmtLength
     {
       get { return _pmtLength; }
       set { _pmtLength = value; }
     }
 
     /// <summary>
-    /// Gets or sets the audio pid.
+    /// Gets or sets the audio PID.
     /// </summary>
-    /// <value>The audio pid.</value>
+    /// <value>The audio PID.</value>
     public int AudioPid
     {
       get { return _audioPid; }
@@ -89,23 +88,13 @@ namespace TvLibrary.Implementations.DVB
     }
 
     /// <summary>
-    /// Gets or sets the service id.
+    /// Gets or sets the PID list.
     /// </summary>
-    /// <value>The service id.</value>
-    public int ServiceId
+    /// <value>The PID list.</value>
+    public List<ushort> Pids
     {
-      get { return _serviceId; }
-      set { _serviceId = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the Pid list for hardware filtering.
-    /// </summary>
-    /// <value>The Pid list.</value>
-    public List<ushort> HwPids
-    {
-      get { return _HwPids; }
-      set { _HwPids = value; }
+      get { return _pids; }
+      set { _pids = value; }
     }
   }
 }

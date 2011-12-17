@@ -31,6 +31,30 @@ namespace TvLibrary.Implementations.DVB
   /// </summary>
   public static class DVB_MMI
   {
+    #region enums
+
+    /// <summary>
+    /// MMI application information application type.
+    /// </summary>
+    public enum ApplicationType : byte
+    {
+      /// Conditional access application.
+      ConditionalAccess = 1,
+      /// Electronic programme guide application.
+      ElectronicProgrammeGuide
+    }
+
+    /// <summary>
+    /// MMI enquiry answer response type.
+    /// </summary>
+    public enum ResponseType : byte
+    {
+      /// The response is a cancel request.
+      Cancel = 0,
+      /// The response contains an answer from the user.
+      Answer
+    }
+
     /// <summary>
     /// MMI Tags inside MMI object
     /// </summary>
@@ -53,6 +77,8 @@ namespace TvLibrary.Implementations.DVB
       /// Last text
       TEXT_LAST = 0x9F8803
     } ;
+
+    #endregion
 
     /// <summary>
     /// interpretes parts of an byte[] as status int
