@@ -335,15 +335,14 @@ namespace TvLibrary.Implementations.DVB
         lnbFrequency = (uint)lnbHighLof;
       }
 
-      int antennaNr = BandTypeConverter.GetAntennaNr(dvbsChannel);
-      TbsToneBurst toneBurst = TbsToneBurst.DataBurst;
-      if (antennaNr == 1)
+      TbsToneBurst toneBurst = TbsToneBurst.Off;
+      if (dvbsChannel.DisEqc == DisEqcType.SimpleA)
       {
         toneBurst = TbsToneBurst.ToneBurst;
       }
-      else if (antennaNr == 0)
+      else if (dvbsChannel.DisEqc == DisEqcType.SimpleB)
       {
-        toneBurst = TbsToneBurst.Off;
+        toneBurst = TbsToneBurst.DataBurst;
       }
 
       BdaExtensionParams tuningParams = new BdaExtensionParams();
@@ -355,7 +354,9 @@ namespace TvLibrary.Implementations.DVB
       tuningParams.LnbPower = TbsLnbPower.On;
       tuningParams.Tone22k = isHighBand ? Tbs22k.On : Tbs22k.Off;
       tuningParams.ToneBurst = toneBurst;
-      tuningParams.DiseqcPort = (TbsDiseqcPort)antennaNr;
+      // DiSEqC commands are already sent using the raw command interface. No need to resend them and
+      // unnecessarily slow down the tune request.
+      tuningParams.DiseqcPort = TbsDiseqcPort.Null;
       tuningParams.InnerFecRate = (byte)dvbsChannel.InnerFecRate;
       tuningParams.Modulation = (byte)dvbsChannel.ModulationType;
 

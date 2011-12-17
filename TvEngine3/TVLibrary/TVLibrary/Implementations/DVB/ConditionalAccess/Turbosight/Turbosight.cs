@@ -1246,48 +1246,34 @@ namespace TvLibrary.Implementations.DVB
     /// <returns><c>true</c> if the command is successfully sent, otherwise <c>false</c></returns>
     public bool SendDiseqcCommand(ScanParameters parameters, DVBSChannel channel)
     {
-      //TODO: just because there is no DiSEqC port does not mean we can skip this.
-      int antennaNr = BandTypeConverter.GetAntennaNr(channel);
-      if (antennaNr == 0)
-      {
-        return true;
-      }
-
-      /*
-      // Nothing to do if:
-      // - DiSEqC is not required, or the switch setting is already correct AND
-      // - the previous channel's polarisation was the same as this one AND
-      // - the previous channel was in the same band as this one
-      if (
-        _previousChannel != null &&
-        (
-          channel.DisEqc == DisEqcType.None ||
-          BandTypeConverter.GetAntennaNr(_previousChannel) == lnbNumber
-        ) &&
-        _previousChannel.Polarisation == channel.Polarisation &&
-        BandTypeConverter.IsHiBand(_previousChannel, parameters) == isHighBand
-      )
-      {
-        Log.Log.Debug("Turbosight (internal): DiSEqC setting already correct, polarisation:{0}, high-band:{1}, DiSEqC:{2}",
-                  channel.Polarisation, isHighBand, channel.DisEqc);
-        _previousChannel = channel;
-        return;
-      }
-
-      _previousChannel = channel;*/
-
       bool isHighBand = BandTypeConverter.IsHiBand(channel, parameters);
-      bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
-                            (channel.Polarisation == Polarisation.CircularL));
-      byte command = 0xf0;
-      command |= (byte)(isHighBand ? 1 : 0);
-      command |= (byte)((isHorizontal) ? 2 : 0);
-      command |= (byte)((antennaNr - 1) << 2);
-      bool successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
-      //Thread.Sleep(200);
+      TbsToneBurst toneBurst = TbsToneBurst.Off;
+      bool successDiseqc = true;
+      if (channel.DisEqc == DisEqcType.SimpleA)
+      {
+        toneBurst = TbsToneBurst.ToneBurst;
+      }
+      else if (channel.DisEqc == DisEqcType.SimpleB)
+      {
+        toneBurst = TbsToneBurst.DataBurst;
+      }
+      else if (channel.DisEqc != DisEqcType.None)
+      {
+        int antennaNr = BandTypeConverter.GetAntennaNr(channel);
+        bool isHorizontal = ((channel.Polarisation == Polarisation.LinearH) ||
+                              (channel.Polarisation == Polarisation.CircularL));
+        byte command = 0xf0;
+        command |= (byte)(isHighBand ? 1 : 0);
+        command |= (byte)((isHorizontal) ? 2 : 0);
+        command |= (byte)((antennaNr - 1) << 2);
+        successDiseqc = SendDiSEqCCommand(new byte[4] { 0xe0, 0x10, 0x38, command });
+      }
 
-      TbsToneBurst toneBurst = antennaNr > 1 ? TbsToneBurst.DataBurst : TbsToneBurst.ToneBurst;
-      Tbs22k tone22k = isHighBand ? Tbs22k.On : Tbs22k.Off;
+      Tbs22k tone22k = Tbs22k.Off;
+      if (isHighBand)
+      {
+        tone22k = Tbs22k.On;
+      }
       bool successTone = SetToneState(toneBurst, tone22k);
 
       return (successDiseqc && successTone);
