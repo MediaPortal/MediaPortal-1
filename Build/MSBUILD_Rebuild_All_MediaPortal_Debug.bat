@@ -29,3 +29,11 @@ DEL version.txt >> %log%
 echo.
 echo Building Installer...
 "%progpath%\NSIS\makensis.exe" /DBUILD_TYPE=%BUILD_TYPE% /DVER_BUILD=%version% "%MediaPortal%\Setup\setup.nsi" >> %log%
+
+@ECHO OFF
+
+call "MSBUILD_Rebuild_Release_MediaPortal.bat" Debug
+
+@ECHO OFF
+
+call "MSBUILD_Rebuild_Release_TVServer_Client.bat" Debug

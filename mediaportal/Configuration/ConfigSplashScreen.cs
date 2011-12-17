@@ -112,9 +112,17 @@ namespace MediaPortal.Configuration
           {
             if (frm.Focused)
             {
-              frm.TopMost = false;
-              _hintForm.TopMost = true;
-              _hintForm.BringToFront();
+              try
+              {
+                frm.TopMost = false;
+                _hintForm.TopMost = true;
+                _hintForm.BringToFront();
+              }
+              catch
+              {
+                //ignore
+              }
+
             }
           }
           else

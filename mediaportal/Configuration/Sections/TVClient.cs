@@ -174,7 +174,7 @@ namespace MediaPortal.Configuration.Sections
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvLibrary.Interfaces.dll");
+        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\Mediaportal.TV.Server.TVLibrary.Interfaces.dll");
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();

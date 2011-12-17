@@ -875,8 +875,8 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
     private void GetTVSource()
     {
       MiniDisplayHelper.UseTVServer = false;
-      if ((File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvControl.dll") &&
-           File.Exists(Config.GetFolder(Config.Dir.Base) + @"\TvLibrary.Interfaces.dll")) &&
+      if ((File.Exists(Config.GetFolder(Config.Dir.Base) + @"\Mediaportal.TV.Server.TVControl.dll") &&
+           File.Exists(Config.GetFolder(Config.Dir.Base) + @"\Mediaportal.TV.Server.TVLibrary.Interfaces.dll")) &&
           File.Exists(Config.GetFolder(Config.Dir.Plugins) + @"\Windows\TvPlugin.dll"))
       {
         using (Profile.Settings settings = new Profile.MPSettings())

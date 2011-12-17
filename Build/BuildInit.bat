@@ -24,7 +24,7 @@ set DeployVersionGIT="%GIT_ROOT%\Tools\Script & Batch tools\DeployVersionGIT\Dep
 set CommonMPTV="%GIT_ROOT%\Common-MP-TVE3"
 set DirectShowFilters="%GIT_ROOT%\DirectShowFilters"
 set MediaPortal="%GIT_ROOT%\mediaportal"
-set TVLibrary="%GIT_ROOT%\TvEngine3\TVLibrary"
+set TVLibrary="%GIT_ROOT%\TvEngine3\Mediaportal\TV\Server"
 
 
 REM set log file

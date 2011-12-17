@@ -41,12 +41,12 @@
 !endif
 
 !ifdef BUILD_MediaPortal
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_MP}\MediaPortal.sln"' = 0
 !endif
 
 !ifdef BUILD_TVServer
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvLibrary.sln"' = 0
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\\Server\Mediaportal.TV.Server.sln"' = 0
+;!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_TVServer}\TvPlugin\TvPlugin.sln"' = 0
 !endif
 
 !if ${VER_BUILD} != 0
@@ -56,10 +56,10 @@
 !endif
 
 !ifdef BUILD_DeployTool
-!system '"$%WINDIR%\Microsoft.NET\Framework\v3.5\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
+!system '"$%WINDIR%\Microsoft.NET\Framework\v4.0.30319\MSBUILD.exe" /p:ALToolPath="${ALToolPath}" /target:Rebuild /property:Configuration=Release;Platform=x86 "${git_DeployTool}\MediaPortal.DeployTool.sln"' = 0
 !endif
 
 !ifdef BUILD_Installer
 !system '"${NSISDIR}\makensis.exe" "${git_MP}\Setup\setup.nsi"' = 0
-!system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Setup\setup.nsi"' = 0
+!system '"${NSISDIR}\makensis.exe" "${git_TVServer}\Server\Setup\setup.nsi"' = 0
 !endif

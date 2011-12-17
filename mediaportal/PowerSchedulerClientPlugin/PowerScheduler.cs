@@ -39,6 +39,8 @@ using MediaPortal.Player;
 using MediaPortal.Profile;
 using MediaPortal.Services;
 using MediaPortal.Util;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 using TvEngine.PowerScheduler;
 using TvEngine.PowerScheduler.Interfaces;
 using Action = MediaPortal.GUI.Library.Action;
