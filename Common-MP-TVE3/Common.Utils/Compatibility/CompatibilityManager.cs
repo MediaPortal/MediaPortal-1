@@ -179,7 +179,7 @@ namespace MediaPortal.Common.Utils
     /// its defining assembly is searched for the same attribute.
     /// </remarks>
     public static bool IsPluginCompatible(Type plugin)
-    {
+    {      
       var mpVersions =
         (CompatibleVersionAttribute[])plugin.GetCustomAttributes(typeof(CompatibleVersionAttribute), true);
       if (mpVersions.Length == 0)

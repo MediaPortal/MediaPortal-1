@@ -28,7 +28,7 @@ using Microsoft.Win32.SafeHandles;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces
 {
   /// <summary>
   /// Implements a timer which the process can be waiting on. The 

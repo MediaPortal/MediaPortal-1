@@ -22,6 +22,7 @@
 
 using System;
 using System.Collections.Generic;
+using Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces;
 
 #endregion
 

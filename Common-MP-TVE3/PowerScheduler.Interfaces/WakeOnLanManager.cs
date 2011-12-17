@@ -30,7 +30,7 @@ using System.Threading;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces
 {
   public class WakeOnLanManager
   {

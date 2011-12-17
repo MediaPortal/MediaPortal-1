@@ -24,7 +24,7 @@ using System;
 
 #endregion
 
-namespace TvEngine.PowerScheduler
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces
 {
   /// <summary>
   /// Used by the <see cref="MediaPortal.TV.Recording.WaitableTimer"/>

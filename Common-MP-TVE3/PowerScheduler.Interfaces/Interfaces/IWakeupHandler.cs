@@ -24,7 +24,7 @@ using System;
 
 #endregion
 
-namespace TvEngine.PowerScheduler.Interfaces
+namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces
 {
   /// <summary>
   /// To be implemented by classes who want to control system resume

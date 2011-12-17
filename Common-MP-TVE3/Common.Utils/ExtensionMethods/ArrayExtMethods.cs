@@ -18,27 +18,24 @@
 
 #endregion
 
-#region Usings
-
-#endregion
-
-namespace Mediaportal.TV.Server.Plugins.PowerScheduler.Interfaces.Interfaces
+namespace MediaPortal.Common.Utils.ExtensionMethods
 {
-  public interface IStandbyHandler
+  public static class ArrayExtMethods
   {
-    /// <summary>
-    /// Indicator whether or not to allow suspension/hibernation of the system
-    /// </summary>
-    bool DisAllowShutdown { get; }
-
-    /// <summary>
-    /// Called when the user turns away from the system.
-    /// </summary>
-    void UserShutdownNow();
-
-    /// <summary>
-    /// Description of the source that allows / disallows shutdown
-    /// </summary>
-    string HandlerName { get; }
+    public static void DisposeAndClear<T>(this T[] source)
+    {
+      if (source != null)
+      {
+        for (int i = 0; i < source.Length; i++)
+          //for (int i = source.Length - 1; i >= 0; i--)
+        {
+          object o = source[i];
+          DisposeHelper.DisposeItem(o);
+        }
+        /*foreach (object o in source)
+        {          
+        }*/
+      }
+    }
   }
 }
