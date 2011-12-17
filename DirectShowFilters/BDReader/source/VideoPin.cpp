@@ -561,6 +561,8 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
           //  useEmptySample = true;
 
            // checkPlaybackState = true;
+
+            m_bClipEndingNotified = false;
           }
 
           if (buffer->pmt && !CompareMediaTypes(buffer->pmt, &m_mt))
