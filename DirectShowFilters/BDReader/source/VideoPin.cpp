@@ -489,7 +489,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
         LogDebug("vid: cached fetch %6.3f corr %6.3f clip: %d playlist: %d", m_pCachedBuffer->rtStart / 10000000.0, (m_pCachedBuffer->rtStart - m_rtStart) / 10000000.0, m_pCachedBuffer->nClipNumber, m_pCachedBuffer->nPlaylist);
         buffer = m_pCachedBuffer;
         m_pCachedBuffer = NULL;
-        m_rtStreamTimeOffset =  buffer->rtClipTime;
+//        m_rtStreamTimeOffset =  buffer->rtClipTime;
       }
       else
         buffer = m_demux.GetVideo();
@@ -527,11 +527,11 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             m_prevCl = buffer->nClipNumber;
           }
 
-          if (m_bZeroStreamOffset)
-          {
-            m_rtStreamTimeOffset =  buffer->rtClipTime;
-            m_bZeroStreamOffset = false;
-          }
+          //if (m_bZeroStreamOffset)
+          //{
+          //  m_rtStreamTimeOffset =  buffer->rtClipTime;
+          //  m_bZeroStreamOffset = false;
+          //}
 
           if (buffer->bSeekRequired)
           {
@@ -542,9 +542,6 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             buffer->bSeekRequired = false;
             useEmptySample = true;
             m_bClipEndingNotified = false;
-
-            //m_bDoFakeSeek = true;
-            checkPlaybackState = true;
 
             m_prevPl = buffer->nPlaylist;
             m_prevCl = buffer->nClipNumber;

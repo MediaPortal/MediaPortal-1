@@ -29,8 +29,8 @@
 #include "Packet.h"
 #include <streams.h>
 
-#define LOG_AUDIO_PACKETS
-#define LOG_VIDEO_PACKETS
+//#define LOG_AUDIO_PACKETS
+//#define LOG_VIDEO_PACKETS
 
 using namespace std;
 

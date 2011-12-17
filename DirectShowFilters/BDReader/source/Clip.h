@@ -91,6 +91,7 @@ protected:
   bool firstVideo;
   bool bSeekNeededVideo;
   bool bSeekNeededAudio;
+  bool firstPacketAccepted;
 
   Packet* GenerateFakeAudio(REFERENCE_TIME rtStart);
 };

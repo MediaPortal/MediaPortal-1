@@ -302,7 +302,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
 
           if (m_bZeroStreamOffset)
           {
-            m_rtStreamTimeOffset =  buffer->rtClipTime;
+//            m_rtStreamTimeOffset =  buffer->rtClipTime;
             m_bZeroStreamOffset = false;
           }
 
@@ -382,8 +382,13 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
           
           if (buffer->bSeekRequired || checkPlaybackState)
           {
+            if (buffer->pmt && m_mt != *buffer->pmt && !buffer->bSeekRequired)
+            {
+              CMediaType mt(*buffer->pmt);
+              SetMediaType(&mt);
+            }
             m_demux.m_eAudioPlSeen->Set();
-            m_rtStreamTimeOffset =  buffer->rtClipTime;
+//            m_rtStreamTimeOffset =  buffer->rtClipTime;
           }
           m_pCachedBuffer->bSeekRequired = false;
 

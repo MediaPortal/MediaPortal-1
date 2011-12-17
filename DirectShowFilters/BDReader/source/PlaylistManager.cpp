@@ -79,10 +79,7 @@ bool CPlaylistManager::CreateNewPlaylistClip(int nPlaylist, int nClip, bool audi
   REFERENCE_TIME remainingClipTime = Incomplete();
   REFERENCE_TIME playedDuration = ClipPlayTime();
   ret = remainingClipTime>5000000LL;
-  if (ret)
-  {
-    LogDebug("Playlist Manager::CreateNewPlaylistClip TimeStamp Correction changed from %I64d to %I64d",m_rtPlaylistOffset,m_rtPlaylistOffset-remainingClipTime);
-  }
+
   LogDebug("Playlist Manager::TimeStamp Correction changed to %I64d adding %I64d",m_rtPlaylistOffset + playedDuration, playedDuration);
 
   m_rtPlaylistOffset += playedDuration;
