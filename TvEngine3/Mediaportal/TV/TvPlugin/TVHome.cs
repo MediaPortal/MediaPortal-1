@@ -295,7 +295,7 @@ namespace Mediaportal.TV.TvPlugin
 
     public override void OnAdded()
     {
-      System.Diagnostics.Debugger.Launch();
+      //System.Diagnostics.Debugger.Launch();
       Log.Info("TVHome:OnAdded");
 
       GUIGraphicsContext.OnBlackImageRendered += new BlackImageRenderedHandler(OnBlackImageRendered);
