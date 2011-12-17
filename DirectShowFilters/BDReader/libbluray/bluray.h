@@ -170,6 +170,12 @@ typedef struct bd_title_info {
     BLURAY_TITLE_CHAPTER *chapters;
 } BLURAY_TITLE_INFO;
 
+typedef struct bd_sound_effect {
+    uint8_t         num_channels; /* 1 - mono, 2 - stereo */
+    uint32_t        num_frames;
+    const int16_t  *samples;      /* 48000 Hz, 16 bit LPCM. interleaved if stereo */
+} BLURAY_SOUND_EFFECT;
+
 /**
  *  Get library version
  *
@@ -519,6 +525,8 @@ typedef enum {
     /* Still playback for n seconds (reached end of still mode play item) */
     BD_EVENT_STILL_TIME,             /* 0 = infinite ; 1...300 = seconds */
 
+    BD_EVENT_SOUND_EFFECT,           /* effect ID */
+
     BD_CUSTOM_EVENT_MENU_VISIBILITY = 1000 /* 0 - not shown, 1 shown*/
 
 } bd_event_e;
@@ -638,6 +646,17 @@ int bd_user_input(BLURAY *bd, int64_t pts, uint32_t key);
  * @return <0 on error, 0 when mouse is outside of buttons, 1 when mouse is inside button
  */
 int bd_mouse_select(BLURAY *bd, int64_t pts, uint16_t x, uint16_t y);
+
+/**
+ *
+ *  Get sound effect
+ *
+ * @param bd  BLURAY object
+ * @param effect_id  sound effect id (0...N)
+ * @param effect     sound effect data
+ * @return <0 when no effects, 0 when id out of range, 1 on success
+ */
+int bd_get_sound_effect(BLURAY *bd, unsigned sound_id, struct bd_sound_effect *effect);
 
 /*
  *
